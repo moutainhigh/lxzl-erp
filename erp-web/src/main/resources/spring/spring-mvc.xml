@@ -30,30 +30,6 @@
 	<bean class="com.lxzl.se.web.handler.CommonExceptionHandler">
 	</bean>
 	
-	<!-- 拦截器 -->
-    <mvc:interceptors>
-        <mvc:interceptor>
-            <mvc:mapping path="/*"/>  <!-- 拦截/  /test  /login  等等单层结构的请求  -->
-            <mvc:mapping path="/**/*.aspx"/><!-- 拦截后缀为.aspx的请求 -->
-            <mvc:mapping path="/**/*.do"/><!-- 拦截后缀为 .do的请求 -->
-            <mvc:exclude-mapping path="/index"/>
-            <mvc:exclude-mapping path="/login"/>
-            <mvc:exclude-mapping path="/signIn"/>
-            <mvc:exclude-mapping path="/register"/>
-            <bean class="com.lxzl.erp.web.interceptor.SecurityInterceptor">
-            </bean>
-        </mvc:interceptor>
-    </mvc:interceptors>
-
-	<mvc:interceptors>
-		<mvc:interceptor>
-			<mvc:mapping path="/**" />
-			<bean class="com.lxzl.se.web.interceptor.LogInterceptor">
-				<property name="openLog" value="${logback.http.openLog}" />
-			</bean>
-		</mvc:interceptor>
-	</mvc:interceptors>
-	
 	<!-- defaultServlet负责对静态资源文件的访问 -->
 	<mvc:default-servlet-handler />
 
