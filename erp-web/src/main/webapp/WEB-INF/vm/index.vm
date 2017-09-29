@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Demo</title>
+	#parse("layout/include.vm")
+	<script type="text/javascript"></script>
+</head>
+<body>
+	<div>
+	当前用户为：$!{user.nick}
+	</div>
+	My name is $!{environment} demo!<br/>
+	<div class="wrapper"></div>
+</body>
+<script type="text/javascript" src="http://${static.domain}/library/dist/js/website.js"></script>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Demo</title>
+	#parse("layout/include.vm")
+	<script type="text/javascript"></script>
+</head>
+<body>
+	Test excel!<br/>
+	<form id="form1" method="post" enctype="multipart/form-data" action="$!{request.contextPath}/example/testImportExcel">  
+		excel导入：<input id="t1" type="file" name="excelFile" /><input type="submit" value="提交" />
+	</form>
+	<form id="form2" method="get" action="$!{request.contextPath}/example/testExportExcel">  
+		<input type="hidden" name="file" value="test.xlsx" />
+		excel导出: <input id="t2" type="button" onclick="return export1()" value="导出" />
+	</form>
+	<div class="wrapper"></div>
+</body>
+<script type="text/javascript" src="http://${static.domain}/library/dist/js/website.js"></script>
+<script type="text/javascript">
+	function export1() {
+		$("#form2").submit();
+		return true;
+	}
+</script>
+</html>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config xmlns="http://code.lxzl.com/schema/ddl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://code.lxzl.com/schema/ddl ddl-config.xsd">
+	<tables>
+		<table table="user" column="username" tableNum="2" db="demo" />
+	</tables>
+</config>

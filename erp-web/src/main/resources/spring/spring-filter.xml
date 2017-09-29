@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:sec="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/security 
+		http://www.springframework.org/schema/security/spring-security.xsd">
+		
+	<!-- filter链表 -->
+	<bean id="springSecurityFilterChain" class="org.springframework.security.web.FilterChainProxy">
+		<sec:filter-chain-map request-matcher="ant">
+			<sec:filter-chain pattern="/**" filters="sessionFilter,characterHandlingFilter,encryptFilter" />
+		</sec:filter-chain-map>
+	</bean>
+
+	<bean id="sessionFilter" class="com.lxzl.se.web.filter.SessionFilter">
+		<property name="sessionConfig" ref="sessionConfig" />
+		<property name="sessionManager" ref="sessionManager" />
+	</bean>
+	
+	<bean id="characterHandlingFilter" class="com.lxzl.se.web.filter.CharacterHandlingFilter">
+		<property name="encoding" value="UTF-8" />
+		<property name="forceEncoding" value="true" />
+	</bean>
+
+	<bean id="encryptFilter" class="com.lxzl.se.web.filter.EncryptFilter">
+		<property name="encrypt" value="${response.encrypt}" />
+		<!-- secretKey可以为空，不为空的情况下则必须长度16位 -->
+		<property name="secretKey" value="${response.secretKey}" /> 
+	</bean>
+	
+	<bean id="sessionConfig" class="com.lxzl.se.core.session.config.SessionConfig">
+		<property name="domain" value="${session.domain}" />
+		<property name="path" value="${session.path}" />
+	</bean>
+
+	<bean id="sessionPersister" class="com.lxzl.se.core.session.persistence.redis.RedisSessionPersister">
+		<property name="dynamicRedisSource" ref="dynamicRedisSource" />
+	</bean>
+
+	<bean id="sessionManager" class="com.lxzl.se.core.session.SessionManager">
+		<property name="sessionPersister" ref="sessionPersister" />
+	</bean>
+
+</beans>

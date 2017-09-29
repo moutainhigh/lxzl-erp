@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/cache 
+    	http://www.springframework.org/schema/cache/spring-cache.xsd
+    	http://www.springframework.org/schema/jdbc 
+    	http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
+    	
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="maxActive" value="${jdbc.maxActive}" />
+		<property name="initialSize" value="${jdbc.initialSize}" />
+		<property name="maxWait" value="${jdbc.maxWait}" />
+		<property name="maxIdle" value="${jdbc.maxIdle}" />
+		<property name="testOnBorrow" value="${jdbc.testOnBorrow}" />
+		<property name="validationQuery" value="select 1 from dual" />
+	</bean>
+
+	<bean id="dataSourceSlave1" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName.slave1}" />
+		<property name="url" value="${jdbc.url.slave1}" />
+		<property name="username" value="${jdbc.username.slave1}" />
+		<property name="password" value="${jdbc.password.slave1}" />
+		<property name="maxActive" value="${jdbc.maxActive.slave1}" />
+		<property name="initialSize" value="${jdbc.initialSize.slave1}" />
+		<property name="maxWait" value="${jdbc.maxWait.slave1}" />
+		<property name="maxIdle" value="${jdbc.maxIdle.slave1}" />
+		<property name="testOnBorrow" value="${jdbc.testOnBorrow.slave1}" />
+		<property name="validationQuery" value="select 1 from dual" />
+	</bean>
+	
+	<bean id="dataSourceProxy" class="com.lxzl.se.dataaccess.mysql.client.DataSourceProxy">
+		<property name="dataSource" ref="dataSource" />
+		<property name="dbName" value="${jdbc.db}" />
+		<property name="dataSourceKey" value="${jdbc.key}" />
+		<property name="isDefault" value="${jdbc.isDefault}" />
+		<property name="slaveDataSourceMap">
+			<map>
+				<entry key="${jdbc.key.slave1}" value-ref="dataSourceSlave1" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="quartzDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${jdbc.quartz.driverClassName}" />
+		<property name="url" value="${jdbc.quartz.url}" />
+		<property name="username" value="${jdbc.quartz.username}" />
+		<property name="password" value="${jdbc.quartz.password}" />
+		<property name="maxActive" value="${jdbc.quartz.maxActive}" />
+		<property name="initialSize" value="${jdbc.quartz.initialSize}" />
+		<property name="maxWait" value="${jdbc.quartz.maxWait}" />
+		<property name="maxIdle" value="${jdbc.quartz.maxIdle}" />
+		<property name="testOnBorrow" value="${jdbc.quartz.testOnBorrow}" />
+		<property name="validationQuery" value="select 1 from dual" />
+	</bean>
+
+	<bean id="quartzDataSourceSlave1" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${jdbc.quartz.driverClassName.slave1}" />
+		<property name="url" value="${jdbc.quartz.url.slave1}" />
+		<property name="username" value="${jdbc.quartz.username.slave1}" />
+		<property name="password" value="${jdbc.quartz.password.slave1}" />
+		<property name="maxActive" value="${jdbc.quartz.maxActive.slave1}" />
+		<property name="initialSize" value="${jdbc.quartz.initialSize.slave1}" />
+		<property name="maxWait" value="${jdbc.quartz.maxWait.slave1}" />
+		<property name="maxIdle" value="${jdbc.quartz.maxIdle.slave1}" />
+		<property name="testOnBorrow" value="${jdbc.quartz.testOnBorrow.slave1}" />
+		<property name="validationQuery" value="select 1 from dual" />
+	</bean>
+	
+	<bean id="quartzDataSourceProxy" class="com.lxzl.se.dataaccess.mysql.client.DataSourceProxy">
+		<property name="dataSource" ref="quartzDataSource" />
+		<property name="dbName" value="${jdbc.quartz.db}" />
+		<property name="dataSourceKey" value="${jdbc.quartz.key}" />
+		<property name="slaveDataSourceMap">
+			<map>
+				<entry key="${jdbc.quartz.key.slave1}" value-ref="quartzDataSourceSlave1" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dynamicDataSource" />
+	</bean>
+
+	<!-- sqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+		p:typeAliasesPackage="com.lxzl.erp.dataaccess.domain">
+		<property name="dataSource" ref="dynamicDataSource" />
+		<property name="configLocation" value="classpath:/sqlmap-config.xml" />
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" p:basePackage="com.lxzl.erp.dataaccess.dao.mysql"
+		p:sqlSessionFactoryBeanName="sqlSessionFactory" />
+
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 事务注解驱动 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- 事务管理 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dynamicDataSource" />
+	</bean>
+	
+	<bean id="dynamicDataSource" class="com.lxzl.se.dataaccess.mysql.source.DynamicDataSource">
+		<property name="targetDataSources">
+			<map>
+				<entry value-ref="dataSource" key="${jdbc.key}" />
+			</map>
+		</property>
+		<property name="lenientFallback" value="false" />
+		<property name="openLog" value="${logback.sql.openLog}" />
+		<property name="logLength" value="${logback.sql.logLength}" />
+		<property name="ignorePattern" value="${logback.sql.ignorePattern}" />
+		<property name="slowLimit" value="${jdbc.slowQuery.limit}" />
+	</bean>
+
+	<bean id="dynamicCreateDataSourceManager" class="com.lxzl.se.dataaccess.mysql.source.DynamicCreateDataSourceManager">
+		<property name="dynamicDataSource" ref="dynamicDataSource" />
+	</bean>
+	
+</beans>

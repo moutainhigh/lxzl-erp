@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<bean id="rabbitAdmin" class="org.springframework.amqp.rabbit.core.RabbitAdmin">
+		<constructor-arg ref="connectionFactory" />
+	</bean>
+
+	<bean id="rabbitTemplate" class="org.springframework.amqp.rabbit.core.RabbitTemplate">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="messageConverter" ref="messageConverter" />
+		<property name="exchange" value="${mq.producer.exchange}" />
+		<property name="routingKey" value="${mq.producer.routing.key}" />
+	</bean>
+	
+	<bean id="rabbitTemplateProxy" class="com.lxzl.se.core.mq.producer.RabbitTemplateProxy">
+		<property name="rabbitTemplate" ref="rabbitTemplate" />
+		<property name="isDefault" value="${mq.producer.isDefault}" />
+	</bean>
+	
+	<bean id="mqMessageSender" class="com.lxzl.se.core.mq.source.DynamicMqMessageSender">
+		<property name="openLog" value="${logback.mq.openLog}" />
+	</bean>
+	
+	<bean id="dynamicCreateMqProducerManager" class="com.lxzl.se.core.mq.source.DynamicCreateMqProducerManager">
+		<property name="dynamicMqMessageSender" ref="mqMessageSender" />
+	</bean>
+</beans>

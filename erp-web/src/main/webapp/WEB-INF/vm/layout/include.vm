@@ -1,0 +1,4 @@
+<script type="text/javascript" src="$!{request.contextPath}/js/component/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+    var contextPath = "$!{request.contextPath}";
+</script>

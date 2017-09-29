@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:hdp="http://www.springframework.org/schema/hadoop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/hadoop  
+	http://www.springframework.org/schema/hadoop/spring-hadoop.xsd">
+	
+	<bean id="fastdfsConfig" class="com.lxzl.se.dataaccess.fastdfs.config.FastdfsConfig">
+		<property name="trackerServers" value="${fastdfs.tracker.servers}" />
+		<property name="trackerHttpPort" value="${fastdfs.tracker.http.port}" />
+		<property name="antiStealToken" value="${fastdfs.anti.steal.token}" />
+		<property name="secretKey" value="${fastdfs.secret.key}" />
+		<property name="connectTimeout" value="${fastdfs.connect.timeout}" />
+		<property name="networkTimeout" value="${fastdfs.network.timeout}" />
+		<property name="charset" value="${fastdfs.charset}" />
+	</bean>
+
+	<bean id="fastdfsClient" class="com.lxzl.se.dataaccess.fastdfs.client.FastdfsClient">
+		<property name="fastdfsConfig" ref="fastdfsConfig" />
+	</bean>
+	
+	<bean id="fastdfsClientProxy" class="com.lxzl.se.dataaccess.fastdfs.client.FastdfsClientProxy">
+		<property name="fastdfsSourceKey" value="${fastdfs.key}" />
+		<property name="fastdfsClient" ref="fastdfsClient" />
+		<property name="isDefault" value="${fastdfs.isDefault}" />
+	</bean>
+	
+	<bean id="dynamicFastdfsSource" class="com.lxzl.se.dataaccess.fastdfs.source.DynamicFastdfsSource" />
+	
+	<bean id="dynamicCreateFastdfsSourceManager" class="com.lxzl.se.dataaccess.fastdfs.source.DynamicCreateFastdfsSourceManager">
+		<property name="dynamicFastdfsSource" ref="dynamicFastdfsSource" />
+	</bean>
+</beans>

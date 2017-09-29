@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.LogMysqlDAO">
+
+	<resultMap type="com.lxzl.erp.dataaccess.domain.LogDO" id="log">
+		<result column="id" property="id" />
+		<result column="content" property="content" />
+		<result column="execute_times" property="executeTimes" />
+		<result column="status" property="status" />
+		<result column="create_user" property="createUser" />
+		<result column="create_time" property="createTime" />
+		<result column="update_user" property="updateUser" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+
+	<sql id="columnList">
+		id, content, execute_times, status, create_user, create_time, update_user, update_time
+	</sql>
+
+	<update id="updateLogs">
+		UPDATE log
+		SET
+		status = #{newStatus},
+		execute_times = execute_times + #{num},
+		update_time = now()
+		WHERE status in 
+		<foreach collection="oldStatusList" item="oldStatus" index="index" open="(" close=")" separator=",">
+	        #{oldStatus}
+	    </foreach>
+		<if test="taskItemIds.size() != 0">
+			AND id IN
+			<foreach collection="taskItemIds" item="taskItemId" index="index" open="(" close=")" separator=",">
+	        	#{taskItemId}
+	        </foreach>
+        </if>
+	</update>
+
+	<select id="findUnHandleLogsForSchedule" resultMap="log">
+		SELECT
+		<include refid="columnList" />
+		FROM log
+		WHERE status in (0, 2) 
+		<if test="taskItemIds.size() != 0">
+			AND mod(id, #{taskItemNum}) IN
+			<foreach collection="taskItemIds" item="taskItemId" index="index" open="(" close=")" separator=",">
+	        	#{taskItemId}
+	        </foreach>
+        </if>
+		AND execute_times &lt; 5 LIMIT #{fetchNum}
+	</select>
+
+</mapper>

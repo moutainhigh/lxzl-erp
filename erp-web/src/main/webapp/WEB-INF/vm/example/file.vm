@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Demo</title>
+	#parse("layout/include.vm")
+	<script type="text/javascript"></script>
+</head>
+<body>
+	Test fastdfs file:<br/>
+	<form id="form1" method="post" enctype="multipart/form-data" action="$!{request.contextPath}/example/testUploadFile">  
+		上传文件：<input id="t1" type="file" name="file" />
+		<input type="submit" value="提交" /> 
+	</form>
+	<form id="form2" method="get" action="$!{request.contextPath}/example/testDownloadFile">  
+		<input type="hidden" name="fileId" value="group1/M00/00/00/CgIyuFgbFkaABbWFAAC9yYIXfkE898.jpg" />
+		下载文件: <input id="t2" type="button" onclick="return download1()" value="下载" />
+	</form>
+	<div class="wrapper"></div>
+</body>
+<script type="text/javascript" src="http://${static.domain}/library/dist/js/website.js"></script>
+<script type="text/javascript">
+	function download1() {
+		$("#form2").submit();
+		return true;
+	}
+</script>
+</html>
