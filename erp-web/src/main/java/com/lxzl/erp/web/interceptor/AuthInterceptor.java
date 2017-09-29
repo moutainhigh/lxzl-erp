@@ -12,7 +12,7 @@
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 //
-//import com.lxzl.erp.core.service.UserService;
+//import com.lxzl.demo.core.service.UserService;
 //import com.lxzl.se.common.domain.ContextConstants;
 //import com.lxzl.se.common.util.login.LoginUtil;
 //import com.lxzl.se.web.config.LoginConfig;

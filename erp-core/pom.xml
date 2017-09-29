@@ -20,11 +20,6 @@
 			<artifactId>erp-dataaccess</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!-- erp rpc service -->
-		<dependency>
-			<groupId>com.lxzl.systemframework.erp</groupId>
-			<artifactId>erp-rpc-api</artifactId>
-		</dependency>
 	</dependencies>
 	<build>
 		<resources>

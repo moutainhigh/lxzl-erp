@@ -23,7 +23,6 @@ import com.lxzl.erp.core.service.CaptchaService;
 import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.LogService;
 import com.lxzl.erp.core.service.MessageService;
-import com.lxzl.erp.core.service.RpcTestService;
 import com.lxzl.erp.core.service.TokenService;
 import com.lxzl.erp.core.service.UserService;
 import com.lxzl.erp.dataaccess.domain.LogDO;
@@ -58,9 +57,6 @@ public class ExampleController extends BaseController {
 	private MessageService messageService;
 
 	@Autowired
-	private RpcTestService rpcTestService;
-
-	@Autowired
 	private LogService logService;
 
 	@RequestMapping(value = "/testAll")
@@ -79,8 +75,6 @@ public class ExampleController extends BaseController {
 		userService.findByUsername(username);
 
 		String value = tokenService.generateToken(1000l);
-
-		rpcTestService.testRpc();
 
 		String message1 = "{\"itemHost\":\"item.lxzl.com\",\"itemId\":\"121345325\",\"abtestKey\":\"A\",\"pageContent\":\"<html>商品</html>\", \"action\":\"add\"}";
 		messageService.sendCommentMsg(message1);
@@ -150,19 +144,10 @@ public class ExampleController extends BaseController {
 		return result;
 	}
 
-	@RequestMapping(value = "/testRpc")
-	public Result testRpc(HttpServletRequest request, Model model) {
-		String m = rpcTestService.testRpc();
-		// 返回页面
-		Result result = new Result(ResultCode.COMMON_SUCCESS, true);
-		result.setProperty("value", m);
-		return result;
-	}
-
 	@RequestMapping(value = "/testMq")
 	public Result testMq(HttpServletRequest request, Model model) {
 		String message = "{\"itemHost\":\"item.lxzl.com\",\"itemId\":\"121345325\",\"abtestKey\":\"A\",\"pageContent\":\"<html>啊啊啊啊</html>\", \"action\":\"add\"}";
-		String messageId = messageService.sendCommentMsg(message);
+		boolean messageId = messageService.sendCommentMsg(message);
 		// 返回页面
 		Result result = new Result(ResultCode.COMMON_SUCCESS, true);
 		result.setProperty("messageId", messageId);

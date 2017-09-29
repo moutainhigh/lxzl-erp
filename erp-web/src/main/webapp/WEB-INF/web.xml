@@ -18,9 +18,11 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
 	<!-- filter -->
-	<!--<filter>
+	<filter>
 		<filter-name>WebContextFilter</filter-name>
 		<filter-class>com.lxzl.se.web.filter.WebContextFilter</filter-class>
 	</filter>
@@ -29,7 +31,7 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-	<filter>
+	<!--<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
@@ -38,7 +40,19 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>-->
 
-	<!-- servlet -->
+    <filter>
+        <filter-name>sessionFilter</filter-name>
+        <filter-class>com.lxzl.erp.web.filter.SessionFilter</filter-class>
+        <init-param>
+            <param-name>excludedPages</param-name>
+            <param-value>/WEB-INF/*,/js/*,/img/*,/login,/user/login,/static/*</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>sessionFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+	 <!--servlet-->
 	<servlet>
 		<servlet-name>dispatcher</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>

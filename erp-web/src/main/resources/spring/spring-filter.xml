@@ -15,7 +15,7 @@
 	<!-- filter链表 -->
 	<bean id="springSecurityFilterChain" class="org.springframework.security.web.FilterChainProxy">
 		<sec:filter-chain-map request-matcher="ant">
-			<sec:filter-chain pattern="/**" filters="sessionFilter,characterHandlingFilter,encryptFilter" />
+			<sec:filter-chain pattern="/**" filters="characterHandlingFilter,encryptFilter" />
 		</sec:filter-chain-map>
 	</bean>
 
@@ -40,7 +40,7 @@
 		<property name="path" value="${session.path}" />
 	</bean>
 
-	<bean id="sessionPersister" class="com.lxzl.se.core.session.persistence.redis.RedisSessionPersister">
+	<bean id="sessionPersister" class="com.lxzl.se.core.session.persistence.impl.RedisSessionPersister">
 		<property name="dynamicRedisSource" ref="dynamicRedisSource" />
 	</bean>
 

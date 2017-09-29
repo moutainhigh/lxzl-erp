@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.lxzl.erp.core.service.LogService;
-import com.lxzl.erp.dataaccess.dao.hbase.LogHbaseDAO;
 import com.lxzl.erp.dataaccess.dao.mysql.LogMysqlDAO;
 import com.lxzl.erp.dataaccess.domain.LogDO;
 import com.lxzl.se.common.util.validate.ValidateUtil;
@@ -19,9 +18,6 @@ public class LogServiceImpl extends BaseServiceImpl implements LogService {
 
 	@Autowired
 	private LogMysqlDAO logMysqlDAO;
-
-	@Autowired
-	private LogHbaseDAO logHbaseDAO;
 
 	@Override
 	public List<LogDO> findUnHandleLogs(Integer taskItemNum, List<String> taskItems, Integer fetchNum) {
@@ -68,14 +64,14 @@ public class LogServiceImpl extends BaseServiceImpl implements LogService {
 		log.setUpdateUser(updateUser);
 		log.setUpdateTime(updateTime);
 
-		boolean flag = logHbaseDAO.addLog(log);
+		boolean flag = false;
 		return flag;
 	}
 
 	@Override
 	public LogDO findHistroyLog(Integer id) {
 		ValidateUtil.notNull(id, "id不允许为空");
-		LogDO log = logHbaseDAO.getLog(id);
+		LogDO log = new LogDO();
 		return log;
 	}
 

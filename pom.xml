@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright (C) 2012-2013 erp, Inc. Licensed under the Apache License, Version 2.0 (the "License"); you may not use this 
+<!-- Copyright (C) 2017-2018 erp, Inc. Licensed under the Apache License, Version 2.0 (the "License"); you may not use this 
 	file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
 	Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS 
 	IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language 
@@ -19,8 +19,8 @@
 		<module>erp-common</module>
 		<module>erp-core</module>
 		<module>erp-dataaccess</module>
-		<module>erp-rpc-api</module>
-		<module>erp-rpc</module>
+		<!-- <module>erp-rpc-api</module> -->
+		<!-- <module>erp-rpc</module> -->
 		<module>erp-web</module>
 		<module>erp-worker</module>
 	</modules>
@@ -43,8 +43,6 @@
 		<dep.findbugs-maven-plugin.version>2.5.1</dep.findbugs-maven-plugin.version>
 		<!-- se -->
 		<lxzl.module.se>1.0.0</lxzl.module.se>
-		<!-- rpc service version -->
-		<lxzl.module.erp.rpc.service>1.0.0</lxzl.module.erp.rpc.service>
 	</properties>
 	<prerequisites>
 		<maven>${jm.maven.version}</maven>
@@ -56,12 +54,6 @@
 				<groupId>com.lxzl.systemframework</groupId>
 				<artifactId>lxse</artifactId>
 				<version>${lxzl.module.se}</version>
-			</dependency>
-			<!-- erp rpc service -->
-			<dependency>
-				<groupId>com.lxzl.systemframework.erp</groupId>
-				<artifactId>erp-rpc-api</artifactId>
-				<version>${lxzl.module.erp.rpc.service}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

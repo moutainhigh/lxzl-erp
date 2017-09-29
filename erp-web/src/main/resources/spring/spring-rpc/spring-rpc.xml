@@ -12,8 +12,6 @@
     	<property name="registryAddress" value="${dubbo.registry}" />
     	<property name="registryUsername" value="${dubbo.username}" />
     	<property name="registryPassword" value="${dubbo.password}" />
-    	<property name="registryFile" value="${dubbo.registry.file}" />
-    	<property name="monitor" value="10.2.50.34:7070" />
     	<property name="isDefault" value="${dubbo.isDefault}" />
     </bean>
     

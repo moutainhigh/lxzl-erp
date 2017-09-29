@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.lxzl.se.web.context.WebContext;
 
 /**
- * @author lxzl
+ * @author huangyixiang
  * 
  *         2014年4月10日
  */

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.lxzl.se.core.quartz.component.QuartzManager;
 import com.lxzl.se.core.tbschedule.component.ScheduleManager;
-import com.lxzl.se.core.tbschedule.config.ScheduleParameter;
 import com.lxzl.se.unit.test.BaseUnTransactionalTest;
 
 public class WorkerTester extends BaseUnTransactionalTest {
@@ -35,17 +34,17 @@ public class WorkerTester extends BaseUnTransactionalTest {
 	@Test
 	public void testQuartz() {
 		String schedName = "erp-workerScheduler";
-		String jobName = "测试订单统计任务";
-		String jobGroup = "测试订单任务组";
-		String jobClassName = "demoTestJob";
-		String description = "测试统计每日的订单总量并且分组";
+		String jobName = "统计每日销售数据";
+		String jobGroup = "统计销售数据组";
+		String jobClassName = "countAmountJob";
+		String description = "统计每日销售数据";
 		boolean isRecovery = false;
-		String triggerName = "测试每分钟执行的订单统计";
-		String triggerGroup = "测试订单触发器组";
+		String triggerName = "每日执行统计销售数据任务";
+		String triggerGroup = "执行统计销售数据任务组";
 		boolean isCronTrigger = true;
-		String expression = "30 * * * * ?";
+		String expression = "0 0 0 * * ?"; //每天0点触发
 		Map<String, String> extraInfo = new HashMap<String, String>();
-		extraInfo.put("extra", "erp");
+		extraInfo.put("extra", "demo");
 		quartzManager.getAllJobs();
 		quartzManager.saveOrUpdateJob(schedName, jobName, jobGroup, jobClassName, description, isRecovery, triggerName, triggerGroup, isCronTrigger,
 				expression, null, null, extraInfo);
@@ -61,7 +60,7 @@ public class WorkerTester extends BaseUnTransactionalTest {
 
 	@Test
 	public void testTbschedule() {
-		String scheduleName = "erp-workerScheduler";
+		String scheduleName = "demo-workerScheduler";
 		String taskName = "测试日志分析任务";
 		String taskBeanName = "logAnalysisTask";
 		String strategyName = "测试日志分析任务策略器";
@@ -69,8 +68,8 @@ public class WorkerTester extends BaseUnTransactionalTest {
 		String startTime = "0 36 17 * * ?";
 		String endTime = "0 40 17 * * ?";
 		//scheduleManager.saveOrUpdateTask(scheduleName, taskName, taskBeanName, strategyName, extraInfo);
-		scheduleManager.saveOrUpdateTask(scheduleName, taskName, taskBeanName, strategyName, 20, 20, null, ScheduleParameter.SLEEP_MODEL, startTime, endTime,
-				extraInfo);
+//		scheduleManager.saveOrUpdateTask(scheduleName, taskName, taskBeanName, strategyName, 20, 20, null, ScheduleParameter.SLEEP_MODEL, startTime, endTime,
+//				extraInfo);
 		try {
 			Thread.sleep(5000l);
 		} catch (InterruptedException e) {

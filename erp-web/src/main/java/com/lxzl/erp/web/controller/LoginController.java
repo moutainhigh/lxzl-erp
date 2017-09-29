@@ -14,6 +14,7 @@ import com.lxzl.se.common.util.CommonUtil;
 import com.lxzl.se.web.controller.BaseController;
 
 @Controller
+@RequestMapping("/login")
 public class LoginController extends BaseController {
 
 	@Autowired

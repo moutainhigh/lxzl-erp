@@ -1,1 +1,0 @@
-mvn deploy -Dmaven.test.skip=true -DrepositoryId=snapshots & cd .. & call deployPomSnapshot

@@ -12,7 +12,7 @@
 		http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
 		http://www.springframework.org/schema/mvc
 		http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
-		http://www.springframework.org/schema/cache 
+		http://www.springframework.org/schema/cache
     	http://www.springframework.org/schema/cache/spring-cache.xsd">
 
 	<!-- 自动扫描的包名 -->
@@ -31,6 +31,20 @@
 	</bean>
 	
 	<!-- 拦截器 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/*"/>  <!-- 拦截/  /test  /login  等等单层结构的请求  -->
+            <mvc:mapping path="/**/*.aspx"/><!-- 拦截后缀为.aspx的请求 -->
+            <mvc:mapping path="/**/*.do"/><!-- 拦截后缀为 .do的请求 -->
+            <mvc:exclude-mapping path="/index"/>
+            <mvc:exclude-mapping path="/login"/>
+            <mvc:exclude-mapping path="/signIn"/>
+            <mvc:exclude-mapping path="/register"/>
+            <bean class="com.lxzl.erp.web.interceptor.SecurityInterceptor">
+            </bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />

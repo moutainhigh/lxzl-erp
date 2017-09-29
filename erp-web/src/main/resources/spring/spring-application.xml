@@ -19,4 +19,5 @@
 		<property name="application" value="${application.name}" />
 		<property name="authKey" value="${application.auth.key}" />
 	</bean>
+
 </beans>

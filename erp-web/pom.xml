@@ -21,7 +21,7 @@
 			<artifactId>erp-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-	</dependencies>
+    </dependencies>
 	<!-- 多环境打包 -->
 	<profiles>
 		<!-- 开发环境，默认激活 -->
@@ -56,7 +56,7 @@
 			<properties>
 				<env>product</env>
 			</properties>
-			<!-- <activation> <activeByDefault>true</activeByDefault> </activation> -->
+			<!--  <activation> <activeByDefault>true</activeByDefault> </activation> -->
 		</profile>
 	</profiles>
 	<build>
@@ -132,7 +132,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin> 
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -140,19 +140,7 @@
 					<webResources>
 						<resource>
 							<directory>src/main/webapp</directory>
-							<excludes>
-								<exclude>doc/*.*</exclude>
-								<exclude>img/*.*</exclude>
-							</excludes>
 							<filtering>true</filtering>
-						</resource>
-						<resource>
-							<directory>src/main/webapp</directory>
-							<includes>
-								<include>doc/*.*</include>
-								<include>img/*.*</include>
-							</includes>
-							<filtering>false</filtering>
 						</resource>
 					</webResources>
 				</configuration>
