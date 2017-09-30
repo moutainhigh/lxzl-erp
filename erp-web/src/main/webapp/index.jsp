@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Demo</title>
 <script type="text/javascript">
-	var contexPath = "<%=request.getContextPath()%>";
+    var contexPath = "<%=request.getContextPath()%>";
     window.location= contexPath + "/login" ;
 </script>
 </head>
