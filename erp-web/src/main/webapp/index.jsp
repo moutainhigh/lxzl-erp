@@ -7,7 +7,7 @@
 <title>Demo</title>
 <script type="text/javascript">
 	var contexPath = "<%=request.getContextPath()%>"; 
-	window.location= contexPath + "/index" ;
+	window.location= contexPath + "/login" ;
 </script>
 </head>
 <body>
