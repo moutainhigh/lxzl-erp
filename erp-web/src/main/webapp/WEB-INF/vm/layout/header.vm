@@ -1,1 +1,19 @@
-<h1>Demo</h1>
+#parse("layout/meta.vm")
+
+#set( $static.domain = "http://192.168.10.167/erp")
+
+<!-- Theme CSS -->
+<link rel="stylesheet" type="text/css" href="${static.domain}/assets/skin/default_skin/css/theme.css">
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="${static.domain}/assets/img/favicon.ico">
+
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="${static.domain}/assets/img/favicon.ico">
+<!--[if lt IE 9]>
+<script src="${static.domain}/html5Js/html5shiv.js"></script>
+<script src="${static.domain}/html5Js/respond.min.js"></script>
+<![endif]-->
+
+

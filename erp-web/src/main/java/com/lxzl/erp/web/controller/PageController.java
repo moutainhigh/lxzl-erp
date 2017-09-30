@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller("pageController")
 public class PageController extends BaseController {
 
-    @RequestMapping("/index")
+    @RequestMapping("/home")
     public String index() {
+<<<<<<< HEAD
         return "/index";
     }
 
@@ -24,4 +25,9 @@ public class PageController extends BaseController {
     public String login() {
         return "/index";
     }
+=======
+        return "/home";
+    }
+
+>>>>>>> 45f08709db694f0cd2db353bdfa344e398b13436
 }
