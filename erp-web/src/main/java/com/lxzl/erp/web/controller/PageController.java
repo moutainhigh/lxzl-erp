@@ -20,11 +20,6 @@ public class PageController extends BaseController {
         return "/test";
     }
 
-    @RequestMapping("/login")
-    public String login() {
-        return "/index";
-    }
-
     @RequestMapping("/home")
     public String productList() {
         return "/home";
