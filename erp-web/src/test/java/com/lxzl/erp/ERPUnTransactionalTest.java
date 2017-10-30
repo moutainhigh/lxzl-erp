@@ -35,55 +35,55 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
     protected MockMvc mockMvc;
     @Autowired
     protected WebApplicationContext wac;
-    @Autowired
-    protected MockHttpSession session;
+//    @Autowired
+//    protected MockHttpSession session;
     @Before
     public void setup(){
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-        try {
-            this.session = getLoginSession("weblee","123456");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            this.session = getLoginSession("weblee","123456");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
     /**
      * 测试结束后释放对象
      */
-    @After
-    public void destroy() {
-        session.clearAttributes();
-    }
+//    @After
+//    public void destroy() {
+//        session.clearAttributes();
+//    }
     /**
      * 获取登入信息session
      * @return
      * @throws Exception
      */
 
-    public MockHttpSession getLoginSession(String name ,String password) throws Exception{
-        MultiValueMap<String,String> multiValueMap = new LinkedMultiValueMap<String,String>();
-        multiValueMap.add("userName", name);
-        multiValueMap.add("password", password);
-        MvcResult result = this.mockMvc
-                .perform((post("/user/login").param("userName", name).param("password", password)))
-                .andExpect(status().isOk())
-                .andReturn();
-        return (MockHttpSession)result.getRequest().getSession();
-    }
+//    public MockHttpSession getLoginSession(String name ,String password) throws Exception{
+//        MultiValueMap<String,String> multiValueMap = new LinkedMultiValueMap<String,String>();
+//        multiValueMap.add("userName", name);
+//        multiValueMap.add("password", password);
+//        MvcResult result = this.mockMvc
+//                .perform((post("/user/ppp").param("userName", name).param("password", password)))
+//                .andExpect(status().isOk())
+//                .andReturn();
+//        return (MockHttpSession)result.getRequest().getSession();
+//    }
 
-    public MvcResult jsonRequest(String uri,Object o) throws Exception {
+    public MvcResult jsonTestRequest(String uri,Object o) throws Exception {
         MvcResult mvcResult =mockMvc.perform(post(uri)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JSON.toJSONString(o))
-                .session(session)
+//                .session(session)
         ).andExpect(status().isOk())
                 .andReturn();
 
         return mvcResult;
     }
-    public MvcResult jsonRequest(String uri) throws Exception {
+    public MvcResult jsonTestRequest(String uri) throws Exception {
         MvcResult mvcResult =mockMvc.perform(post(uri)
                 .contentType(MediaType.APPLICATION_JSON)
-                .session(session)
+//                .session(session)
         ).andExpect(status().isOk())
                 .andReturn();
 
@@ -102,5 +102,8 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
             log.info("JSON解析失败，此接口的返回类型不是Result对象！");
         }
         return testResult;
+    }
+    public TestResult getJsonTestResult(String uri, Object o) throws Exception {
+        return getJsonTestResult(jsonTestRequest(uri,o));
     }
 }

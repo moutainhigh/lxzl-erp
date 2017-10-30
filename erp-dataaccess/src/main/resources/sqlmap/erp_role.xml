@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.user.RoleMysqlDAO">
+
+    <resultMap id="RoleDO" type="com.lxzl.erp.dataaccess.domain.user.RoleDO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="role_desc" jdbcType="VARCHAR" property="roleDesc"/>
+        <result column="is_super_admin" jdbcType="VARCHAR" property="isSuperAdmin"/>
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <sql id="column_List">
+        tr.id,tr.role_name,tr.role_desc,tr.is_super_admin,tr.data_status,tr.remark,tr.create_time,tr.update_time
+    </sql>
+
+    <select id="findList" resultMap="RoleDO" parameterType="map">
+        select
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        from erp_role tr
+        left join erp_user tuc on tuc.id = tr.create_user
+        left join erp_user tuu on tuu.id = tr.update_user
+        <where>
+            <if test="maps.roleName != null">
+                and tr.role_name like CONCAT('%','${maps.roleName}','%' )
+            </if>
+            <if test="maps.isSuperAdmin != null">
+                and tr.is_super_admin = #{maps.isSuperAdmin, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and tr.data_status = 1
+            </if>
+        </where>
+        order by tr.id desc
+        limit #{maps.start},#{maps.pageSize}
+    </select>
+
+    <select id="findListCount" resultType="java.lang.Integer" parameterType="map">
+        select count(1)
+        from erp_role tr
+        <where>
+            <if test="maps.roleName != null">
+                and tr.role_name like CONCAT('%','${maps.roleName}','%' )
+            </if>
+            <if test="maps.isSuperAdmin != null">
+                and tr.is_super_admin = #{maps.isSuperAdmin, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and tr.data_status = 1
+            </if>
+        </where>
+    </select>
+
+    <select id="findByMapId" resultMap="RoleDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        from erp_role tr
+        left join erp_user tuc on tuc.id = tr.create_user
+        left join erp_user tuu on tuu.id = tr.update_user
+        where tr.id = #{roleId, jdbcType=INTEGER} and tr.data_status = 1
+    </select>
+
+    <select id="findByUserId" resultMap="RoleDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        from erp_role tr
+        inner join erp_user_role tur on tr.id = tur.role_id and tur.data_status = 1
+        left join erp_user tuc on tuc.id = tr.create_user
+        left join erp_user tuu on tuu.id = tr.update_user
+        where tur.user_id = #{userId, jdbcType=INTEGER} and tr.data_status = 1
+    </select>
+
+    <sql id="set_column_sql">
+        <set>
+            <if test="roleName != null">
+                role_name = #{roleName, jdbcType=VARCHAR},
+            </if>
+            <if test="roleDesc != null">
+                role_desc = #{roleDesc, jdbcType=VARCHAR},
+            </if>
+            <if test="isSuperAdmin != null">
+                is_super_admin = #{isSuperAdmin, jdbcType=INTEGER},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus, jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+    </sql>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.user.RoleDO">
+        INSERT INTO erp_role
+        <include refid="set_column_sql"/>
+    </insert>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.user.RoleDO">
+        update erp_role
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+</mapper>

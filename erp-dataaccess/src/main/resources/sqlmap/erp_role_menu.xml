@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.user.RoleMenuMysqlDAO">
+
+    <resultMap id="RoleMenuDO" type="com.lxzl.erp.dataaccess.domain.user.RoleMenuDO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="role_id" jdbcType="INTEGER" property="roleId"/>
+        <result column="menu_id" jdbcType="INTEGER" property="menuId"/>
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <sql id="column_List">
+        trm.id,trm.role_id,trm.menu_id,trm.data_status,trm.remark,trm.create_time,trm.update_time
+    </sql>
+
+    <select id="findList" resultMap="RoleMenuDO" parameterType="map">
+        select
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        from erp_role_menu trm
+        left join erp_user tuc on tuc.id = trm.create_user
+        left join erp_user tuu on tuu.id = trm.update_user
+        <where>
+            <if test="maps.roleId != null">
+                and trm.role_id = #{maps.roleId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.menuId != null">
+                and trm.menu_id = #{maps.menuId, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and trm.data_status != 2
+            </if>
+        </where>
+        order by trm.id desc
+        limit #{maps.start},#{maps.pageSize}
+    </select>
+
+    <select id="findListCount" resultType="java.lang.Integer" parameterType="map">
+        select count(1)
+        from erp_role_menu trm
+        <where>
+            <if test="maps.roleId != null">
+                and trm.role_id = #{maps.roleId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.menuId != null">
+                and trm.menu_id = #{maps.menuId, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and trm.data_status != 2
+            </if>
+        </where>
+    </select>
+
+    <select id="findByMapId" resultMap="RoleMenuDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        from erp_role_menu trm
+        left join erp_user tuc on tuc.id = trm.create_user
+        left join erp_user tuu on tuu.id = trm.update_user
+        where trm.id = #{id, jdbcType=INTEGER} and trm.data_status != 2
+    </select>
+
+    <select id="findRoleMenu" resultMap="RoleMenuDO" parameterType="map">
+        select
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        from erp_role_menu trm
+        left join erp_user tuc on tuc.id = trm.create_user
+        left join erp_user tuu on tuu.id = trm.update_user
+        where trm.role_id = #{roleId, jdbcType=INTEGER} and trm.menu_Id = #{menuId, jdbcType=INTEGER} and trm.data_status != 2
+    </select>
+
+    <select id="findMenuListByRoleSet" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select distinct  trm.menu_id
+        from erp_role_menu trm
+        where trm.role_id in
+        <foreach collection="roleSet" open="(" close=")" separator="," item="roleId">#{roleId}</foreach> and trm.data_status != 2
+        order by trm.menu_id
+    </select>
+
+    <select id="findListByRoleSet" resultMap="RoleMenuDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        from erp_role_menu trm
+        left join erp_user tuc on tuc.id = trm.create_user
+        left join erp_user tuu on tuu.id = trm.update_user
+        where trm.role_id in
+        <foreach collection="roleSet" open="(" close=")" separator="," item="roleId">#{roleId}</foreach> and trm.data_status != 2
+    </select>
+
+    <sql id="set_column_sql">
+        <set>
+            <if test="menuId != null">
+                menu_id = #{menuId, jdbcType=INTEGER},
+            </if>
+            <if test="roleId != null">
+                role_id = #{roleId, jdbcType=INTEGER},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus, jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+    </sql>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.user.RoleMenuDO">
+        INSERT INTO erp_role_menu
+        <include refid="set_column_sql"/>
+    </insert>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.user.RoleMenuDO">
+        update erp_role_menu
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <update id="deleteMenuByRoleId" parameterType="java.lang.Integer">
+        delete from erp_role_menu
+        WHERE role_id = #{roleId, jdbcType=INTEGER}
+    </update>
+</mapper>

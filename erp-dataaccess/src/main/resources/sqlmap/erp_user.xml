@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.user.UserMysqlDAO">
+    <resultMap type="com.lxzl.erp.dataaccess.domain.user.UserDO" id="userResult">
+        <id column="id" property="id" />
+        <result column="user_type" property="userType" />
+        <result column="user_name" property="userName" />
+        <result column="real_name" property="realName" />
+        <result column="password" property="password" />
+        <result column="email" property="email" />
+        <result column="email_verify_code" property="emailVerifyCode" />
+        <result column="email_verify_time" property="emailVerifyTime" />
+        <result column="phone" property="phone" />
+        <result column="phone_verify_code" property="phoneVerifyCode" />
+        <result column="phone_verify_time" property="phoneVerifyTime" />
+        <result column="is_activated" property="isActivated" />
+        <result column="is_disabled" property="isDisabled" />
+        <result column="register_time" property="registerTime" />
+        <result column="last_login_time" property="lastLoginTime" />
+        <result column="last_login_ip" property="lastLoginIp" />
+        <result column="remark" property="remark" />
+
+        <collection property="userRoleList" resultMap="RoleDO"/>
+        <collection property="roleList" resultMap="RoleDO"/>
+    </resultMap>
+    <resultMap id="RoleDO" type="com.lxzl.erp.dataaccess.domain.user.RoleDO">
+        <id column="role_role_id" jdbcType="INTEGER" property="id"/>
+        <result column="role_role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="role_role_desc" jdbcType="VARCHAR" property="roleDesc"/>
+        <result column="role_is_super_admin" jdbcType="VARCHAR" property="isSuperAdmin"/>
+        <result column="role_data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="role_remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="role_create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="role_create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="role_update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="role_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <sql id="columnList">
+        u.id,u.user_type,u.user_name,u.real_name,u.password,u.email,u.email_verify_code,u.email_verify_time,u.phone,u.phone_verify_code,u.phone_verify_time,u.is_activated,u.is_disabled,u.register_time,u.last_login_time,u.last_login_ip,u.remark
+    </sql>
+    <sql id="role_columnList">
+        tr.id role_role_id,tr.role_name role_role_name,tr.role_desc role_role_desc,tr.is_super_admin role_is_super_admin,tr.data_status role_data_status
+        ,tr.remark role_remark,tr.create_time role_create_time,tr.update_time role_update_time,tr.create_user role_create_user,tr.update_user role_update_user
+    </sql>
+
+    <sql id="set_column_sql">
+        <set>
+            <if test="userType != null">
+                user_type = #{userType, jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName, jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null">
+                real_name = #{realName, jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password, jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email, jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone, jdbcType=VARCHAR},
+            </if>
+            <if test="isActivated != null">
+                is_activated = #{isActivated, jdbcType=INTEGER},
+            </if>
+            <if test="isDisabled != null">
+                is_disabled = #{isDisabled, jdbcType=INTEGER},
+            </if>
+            <if test="registerTime != null">
+                register_time = #{registerTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+    </sql>
+    <insert id="save" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+        insert into
+        erp_user
+        <include refid="set_column_sql"/>
+    </insert>
+
+    <update id="update">
+        update
+        erp_user u
+        <include refid="set_column_sql"/>
+        where
+        id = #{id}
+    </update>
+    <select id="findByUsername" resultMap="userResult">
+        select
+        <include refid="columnList" />
+        from
+        erp_user u
+        where
+        u.user_name = #{userName}
+    </select>
+    <select id="findByUserId" resultMap="userResult">
+        select
+        <include refid="columnList" />
+        from
+        erp_user u
+        where
+        u.id = #{userId}
+    </select>
+
+    <select id="listCount" resultType="java.lang.Integer" parameterType="map">
+        select count(1) from erp_user u
+        <where>
+            <if test="userPageParam.realName!=null and userPageParam.realName!=''">
+                and u.real_name like '%${userPageParam.realName}%'
+            </if>
+        </where>
+
+    </select>
+    <select id="listPage" resultMap="userResult" parameterType="map">
+        select a.*,<include refid="role_columnList"/> from
+        (select <include refid="columnList"/> from erp_user u
+        <where>
+            <if test="userPageParam.realName!=null and userPageParam.realName!=''">
+                and u.real_name like '%${userPageParam.realName}%'
+            </if>
+        </where>
+        order by u.register_time desc
+        limit #{pageQuery.start},#{pageQuery.pageSize}
+        ) a
+        left join erp_user_role tur on tur.user_id = a.id and tur.data_status = 1
+        left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
+        order by a.register_time desc
+    </select>
+</mapper>

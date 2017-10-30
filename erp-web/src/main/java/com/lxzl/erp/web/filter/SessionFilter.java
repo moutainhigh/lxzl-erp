@@ -58,7 +58,7 @@ public class SessionFilter implements Filter {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {//不在过滤url之外，判断session是否存在
             HttpSession session = ((HttpServletRequest) request).getSession();
-            if (session == null || session.getAttribute(CommonConstant.USER_SESSION_KEY) == null) {
+            if (session == null || session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY) == null) {
                 log.info("用户session已失效,请求地址"+requestPath);
                 String type = request.getHeader("X-Requested-With");
                 if ("XMLHttpRequest".equalsIgnoreCase(type)) {// AJAX REQUEST PROCESS

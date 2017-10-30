@@ -15,7 +15,7 @@ public class MenuTest extends ERPUnTransactionalTest {
 
     @Test
     public void testMysql() throws Exception {
-        MvcResult mvcResult = jsonRequest("/menu/getMenu");
+        MvcResult mvcResult = jsonTestRequest("/menu/getMenu");
         TestResult result = getJsonTestResult(mvcResult);
     }
 }

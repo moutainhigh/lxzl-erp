@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.system.SysMenuMysqlDAO">
+
+    <resultMap id="SysMenuDO" type="com.lxzl.erp.dataaccess.domain.system.SysMenuDO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="menu_name" jdbcType="VARCHAR" property="menuName"/>
+        <result column="parent_menu_id" jdbcType="INTEGER" property="parentMenuId"/>
+        <result column="menu_order" jdbcType="INTEGER" property="menuOrder"/>
+        <result column="is_folder" jdbcType="INTEGER" property="isFolder"/>
+        <result column="menu_url" jdbcType="VARCHAR" property="menuUrl"/>
+        <result column="menu_icon" jdbcType="VARCHAR" property="menuIcon"/>
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="is_available" jdbcType="INTEGER" property="isAvailable"/>
+    </resultMap>
+
+    <sql id="column_List">
+        tsm.id,tsm.menu_name,tsm.parent_menu_id,tsm.menu_order,tsm.is_folder,tsm.menu_url,tsm.menu_icon,tsm.data_status,tsm.level,tsm.remark,tsm.create_user,tsm.create_time,tsm.update_user,tsm.update_time
+    </sql>
+
+    <select id="findByMenuId" resultMap="SysMenuDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>
+        from erp_sys_menu tsm
+        <where>
+            <if test="menuId != null">
+                and id = #{menuId, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and data_status = 1
+            </if>
+        </where>
+    </select>
+
+    <select id="findByMenuURL" resultMap="SysMenuDO" parameterType="java.lang.String">
+        select
+        <include refid="column_List"/>
+        from erp_sys_menu tsm
+        where menu_url = #{menuUrl, jdbcType=VARCHAR} and data_status = 1
+        LIMIT 0,1
+    </select>
+
+    <select id="findByParentId" resultMap="SysMenuDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>
+        from erp_sys_menu tsm
+        <where>
+            <if test="parentMenuId != null">
+                and parent_menu_id = #{parentMenuId, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and data_status = 1
+            </if>
+        </where>
+    </select>
+
+    <select id="findRoleMenu" resultMap="SysMenuDO" parameterType="map">
+        select distinct
+        <include refid="column_List"/>
+        from erp_sys_menu tsm
+        <if test="maps.roleSet != null &amp;&amp; maps.roleSet.size() > 0">
+            inner join erp_role_menu trm on tsm.id = trm.menu_id
+        </if>
+        <where>
+            <if test="maps.roleSet != null &amp;&amp; maps.roleSet.size() > 0">
+                and trm.role_id in <foreach collection="maps.roleSet" open="(" close=")" separator="," item="roleId">#{roleId}</foreach>
+            </if>
+            <if test="true">
+                and tsm.data_status != 2
+            </if>
+        </where>
+        order by level,is_folder,menu_order
+    </select>
+
+    <select id="findAllMenu" resultMap="SysMenuDO" parameterType="map">
+        select distinct
+        <include refid="column_List"/>,case when trm.role_id is not null then 1 else 0 end as is_available
+        from erp_sys_menu tsm
+        left join erp_role_menu trm on tsm.id = trm.menu_id
+        <if test="maps.roleSet != null &amp;&amp; maps.roleSet.size() > 0">
+            and trm.role_id in <foreach collection="maps.roleSet" open="(" close=")" separator="," item="roleId">#{roleId}</foreach>
+        </if>
+        <where>
+            <if test="true">
+                and tsm.data_status != 2
+            </if>
+        </where>
+        order by level,is_folder,menu_order
+    </select>
+
+    <insert id="save" parameterType="com.lxzl.erp.dataaccess.domain.system.SysMenuDO">
+        INSERT INTO erp_sys_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="menuName != null">
+                menu_name,
+            </if>
+            <if test="parentMenuId != null">
+                parent_menu_id,
+            </if>
+            <if test="menuOrder != null">
+                menu_order,
+            </if>
+            <if test="isFolder != null">
+                is_folder,
+            </if>
+            <if test="menuUrl != null">
+                menu_url,
+            </if>
+            <if test="menuIcon != null">
+                menu_icon,
+            </if>
+            <if test="dataStatus != null">
+                data_status,
+            </if>
+            <if test="level != null">
+                level,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="createUser != null">
+                create_user,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateUser != null">
+                update_user,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="menuName != null">
+                #{menuName, jdbcType=VARCHAR},
+            </if>
+            <if test="parentMenuId != null">
+                #{parentMenuId, jdbcType=INTEGER},
+            </if>
+            <if test="menuOrder != null">
+                #{menuOrder, jdbcType=INTEGER},
+            </if>
+            <if test="isFolder != null">
+                #{isFolder, jdbcType=INTEGER},
+            </if>
+            <if test="menuUrl != null">
+                #{menuUrl, jdbcType=VARCHAR},
+            </if>
+            <if test="menuIcon != null">
+                #{menuIcon, jdbcType=VARCHAR},
+            </if>
+            <if test="dataStatus != null">
+                #{dataStatus, jdbcType=INTEGER},
+            </if>
+            <if test="level != null">
+                #{level, jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.system.SysMenuDO">
+        update erp_sys_menu
+        <set>
+            <if test="menuName != null">
+                menu_name = #{menuName, jdbcType=VARCHAR},
+            </if>
+            <if test="parentMenuId != null">
+                parent_menu_id = #{parentMenuId, jdbcType=INTEGER},
+            </if>
+            <if test="menuOrder != null">
+                menu_order = #{menuOrder, jdbcType=INTEGER},
+            </if>
+            <if test="isFolder != null">
+                is_folder = #{isFolder, jdbcType=INTEGER},
+            </if>
+            <if test="menuUrl != null">
+                menu_url = #{menuUrl, jdbcType=VARCHAR},
+            </if>
+            <if test="menuIcon != null">
+                menu_icon = #{menuIcon, jdbcType=VARCHAR},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus, jdbcType=INTEGER},
+            </if>
+            <if test="level != null">
+                level = #{level, jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+</mapper>
