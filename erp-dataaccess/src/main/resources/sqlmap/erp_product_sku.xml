@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMysqlDAO">
+
+    <resultMap type="com.lxzl.erp.dataaccess.domain.product.ProductSkuDO" id="ProductSkuDO">
+        <id column="id" property="id"/>
+        <result column="sku_name" property="skuName"/>
+        <result column="product_name" property="productName"/>
+        <result column="product_id" property="productId"/>
+        <result column="stock" property="stock"/>
+        <result column="sku_price" property="skuPrice"/>
+        <result column="original_price" property="originalPrice"/>
+        <result column="sale_price" property="salePrice"/>
+        <result column="custom_code" property="customCode"/>
+        <result column="bar_code" property="barCode"/>
+        <result column="properties" property="properties"/>
+        <result column="remark" property="remark"/>
+        <result column="data_status" property="dataStatus"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <collection property="productSkuPropertyDOList" resultMap="ProductSkuPropertyDO" />
+    </resultMap>
+
+    <resultMap type="com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO" id="ProductSkuPropertyDO">
+        <result column="sku_property_id" property="id"/>
+        <result column="sku_property_product_id" property="productId"/>
+        <result column="sku_property_property_id" property="propertyId"/>
+        <result column="sku_property_property_name" property="propertyName"/>
+        <result column="sku_property_property_value_id" property="propertyValueId"/>
+        <result column="sku_property_property_value_Name" property="propertyValueName"/>
+        <result column="sku_property_is_sku" property="isSku"/>
+        <result column="sku_property_sku_id" property="skuId"/>
+        <result column="sku_property_remark" property="remark"/>
+        <result column="sku_property_data_status" property="dataStatus"/>
+        <result column="sku_property_create_user" property="createUser"/>
+        <result column="sku_property_create_time" property="createTime"/>
+        <result column="sku_property_update_user" property="updateUser"/>
+        <result column="sku_property_update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="column_List">
+		eps.id as id,eps.sku_name as sku_name,eps.product_id as product_id,eps.stock as stock,eps.original_price as original_price,eps.sku_price as sku_price,eps.sale_price as sale_price,eps.custom_code as custom_code,eps.bar_code as bar_code,eps.properties as properties,eps.remark as remark,eps.data_status as data_status,eps.create_time as create_time,eps.create_user as create_user,eps.update_time as update_time,eps.update_user as update_user
+	</sql>
+
+    <sql id="sku_property_column_List">
+        epsps.id AS sku_property_id,epsps.product_id AS sku_property_product_id,epsps.property_id AS sku_property_property_id,epsps.property_value_id AS sku_property_property_value_id,epsps.is_sku AS sku_property_is_sku,epsps.sku_id AS sku_property_sku_id,epsps.remark AS sku_property_remark,epsps.data_status AS sku_property_data_status,epsps.create_time AS sku_property_create_time,epsps.create_user AS sku_property_create_user,epsps.update_time AS sku_property_update_time,epsps.update_user AS sku_property_update_user
+    </sql>
+
+
+    <select id="findById" resultMap="ProductSkuDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>
+        from erp_product_sku eps where eps.id = #{id, jdbcType=INTEGER} and eps.data_status = 1
+    </select>
+
+    <select id="findByProductId" resultMap="ProductSkuDO" parameterType="java.lang.Integer">
+        SELECT sku_main.*
+        <trim prefix=",">
+            <include refid="sku_property_column_List" />
+        </trim>
+        ,mpcp.property_name AS sku_property_property_name,mpcpv.property_value_name AS sku_property_property_value_Name
+        FROM (
+            SELECT
+            <include refid="column_List"/>
+            FROM erp_product_sku eps WHERE eps.product_id = #{productId, jdbcType=INTEGER} AND eps.data_status = 1
+        ) sku_main
+        LEFT JOIN erp_product_sku_property epsps ON epsps.sku_id = sku_main.id AND epsps.data_status = 1 AND epsps.is_sku = 1
+        LEFT JOIN erp_product_category_property mpcp ON epsps.property_id = mpcp.id
+        LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id
+    </select>
+
+
+
+    <sql id="set_column_sql">
+        <set>
+            <if test="skuName != null">
+                sku_name = #{skuName, jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null">
+                product_id = #{productId, jdbcType=INTEGER},
+            </if>
+            <if test="stock != null">
+                stock = #{stock, jdbcType=INTEGER},
+            </if>
+            <if test="originalPrice != null">
+                original_price = #{originalPrice, jdbcType=DECIMAL},
+            </if>
+            <if test="skuPrice != null">
+                sku_price = #{skuPrice, jdbcType=DECIMAL},
+            </if>
+            <if test="salePrice != null">
+                sale_price = #{salePrice, jdbcType=DECIMAL},
+            </if>
+            <if test="customCode != null">
+                custom_code = #{customCode, jdbcType=VARCHAR},
+            </if>
+            <if test="barCode != null">
+                bar_code = #{barCode, jdbcType=VARCHAR},
+            </if>
+            <if test="properties != null">
+                properties = #{properties, jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus, jdbcType=INTEGER},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+    </sql>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductSkuDO">
+        update erp_product_sku
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.product.ProductSkuDO">
+        INSERT INTO erp_product_sku
+        <include refid="set_column_sql"/>
+    </insert>
+
+    <select id="findProductSkuCountByParams" resultType="java.lang.Integer" parameterType="map">
+        select count(eps.id)
+        from erp_product_sku eps inner join erp_product mp
+        on eps.product_id = ep.id
+        <where>
+            <if test="maps.productSkuQueryParam.productId != null">
+                and eps.product_id = #{maps.productSkuQueryParam.productId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.productSkuQueryParam.productName != null &amp;&amp; maps.productSkuQueryParam.productName != ''">
+                and ep.product_name like CONCAT('%','${maps.productSkuQueryParam.productName}','%' )
+            </if>
+            <if test="maps.productSkuQueryParam.skuName != null &amp;&amp; maps.productSkuQueryParam.skuName != ''">
+                and eps.sku_name like CONCAT('%','${maps.productSkuQueryParam.skuName}','%' )
+            </if>
+            <if test="true">
+                and eps.data_status = 1
+            </if>
+        </where>
+    </select>
+    <select id="findProductSkuByParams" resultMap="ProductSkuDO" parameterType="map">
+        SELECT eps.product_name as product_name,<include refid="column_List"/>
+        <trim prefix=",">
+            <include refid="sku_property_column_List" />
+        </trim>
+        ,mpcp.property_name AS sku_property_property_name,mpcpv.property_value_name AS sku_property_property_value_Name
+        FROM
+        (
+        select
+        ep.product_name as product_name,
+        <include refid="column_List"/>
+        from erp_product_sku eps inner join erp_product ep
+        on eps.product_id = ep.id
+        <where>
+            <if test="maps.productSkuQueryParam.productId != null">
+                and eps.product_id = #{maps.productSkuQueryParam.productId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.productSkuQueryParam.productName != null &amp;&amp; maps.productSkuQueryParam.productName != ''">
+                and ep.product_name like CONCAT('%','${maps.productSkuQueryParam.productName}','%' )
+            </if>
+            <if test="maps.productSkuQueryParam.skuName != null &amp;&amp; maps.productSkuQueryParam.skuName != ''">
+                and eps.sku_name like CONCAT('%','${maps.productSkuQueryParam.skuName}','%' )
+            </if>
+            <if test="true">
+                and eps.data_status = 1
+            </if>
+        </where>
+        LIMIT #{maps.start},#{maps.pageSize}
+        ) eps
+        LEFT JOIN erp_product_sku_property epsps ON epsps.sku_id = eps.id AND epsps.data_status = 1
+        LEFT JOIN erp_product_category_property mpcp ON epsps.property_id = mpcp.id AND mpcp.data_status = 1
+        LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id AND mpcpv.data_status = 1
+        ORDER BY eps.create_time DESC
+    </select>
+</mapper>

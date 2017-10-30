@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyMysqlDAO">
+
+    <resultMap type="com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO" id="ProductCategoryPropertyDO">
+        <id column="id" property="id"/>
+        <result column="property_name" property="propertyName"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="property_type" property="propertyType"/>
+        <result column="is_input" property="isInput"/>
+        <result column="is_checkbox" property="isCheckbox"/>
+        <result column="is_required" property="isRequired"/>
+        <result column="data_order" property="dataOrder"/>
+        <result column="data_status" property="dataStatus"/>
+        <result column="remark" property="remark"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <collection property="productCategoryPropertyValueDOList" resultMap="ProductCategoryPropertyValueDO" />
+    </resultMap>
+
+    <resultMap type="com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO" id="ProductCategoryPropertyValueDO">
+        <result column="value_id" property="id"/>
+        <result column="value_property_value_name" property="propertyValueName"/>
+        <result column="value_property_id" property="propertyId"/>
+        <result column="value_category_id" property="categoryId"/>
+        <result column="value_data_order" property="dataOrder"/>
+        <result column="value_data_status" property="dataStatus"/>
+        <result column="value_remark" property="remark"/>
+        <result column="value_create_user" property="createUser"/>
+        <result column="value_create_time" property="createTime"/>
+        <result column="value_update_user" property="updateUser"/>
+        <result column="value_update_time" property="updateTime"/>
+    </resultMap>
+    <sql id="column_List">
+		epcp.id as id,epcp.property_name as property_name,epcp.category_id as category_id,epcp.property_type as property_type,epcp.is_input as is_input,epcp.is_checkbox as is_checkbox,epcp.is_required as is_required,epcp.data_order as data_order,epcp.data_status as data_status,epcp.remark as remark,epcp.create_time as create_time,epcp.create_user as create_user,epcp.update_time as update_time,epcp.update_user as update_user
+	</sql>
+    <sql id="value_column_List">
+        epcpv.id as value_id,epcpv.property_value_name as value_property_value_name,epcpv.property_id as value_property_id,epcpv.category_id as value_category_id,epcpv.data_order as value_data_order,epcpv.data_status as value_data_status,epcpv.remark as value_remark,epcpv.create_time as value_create_time,epcpv.create_user as value_create_user,epcpv.update_time as value_update_time,epcpv.update_user as value_update_user
+    </sql>
+
+    <select id="findById" resultMap="ProductCategoryPropertyDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>
+        from erp_product_category_property where id = #{id, jdbcType=INTEGER} AND data_status = 1
+    </select>
+
+    <select id="findProductCategoryPropertyListByCategoryId" resultMap="ProductCategoryPropertyDO" parameterType="map">
+        SELECT category_main.*
+        <trim prefix=",">
+            <include refid="value_column_List" />
+        </trim>
+        FROM(
+            select
+            <include refid="column_List"/>
+            from erp_product_category_property epcp
+            <where>
+                <if test="maps.categoryId != null">
+                    and category_id = #{maps.categoryId, jdbcType=INTEGER}
+                </if>
+                <if test="true">
+                    and data_status = 1
+                </if>
+            </where>
+            ORDER BY data_order
+        ) category_main
+        LEFT JOIN erp_product_category_property_value epcpv on category_main.id = epcpv.property_id
+        <where>
+            <if test="maps.categoryId != null">
+                and epcpv.category_id = #{maps.categoryId, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and epcpv.data_status = 1
+            </if>
+        </where>
+        order by category_main.data_order,epcpv.data_order
+    </select>
+
+    <select id="findProductCategoryPropertyListByProductId" resultMap="ProductCategoryPropertyDO" parameterType="map">
+        SELECT category_main.*
+        <trim prefix=",">
+            <include refid="value_column_List" />
+        </trim>
+        FROM(
+            select DISTINCT
+            <include refid="column_List"/>
+            from erp_product_category_property epcp
+            INNER JOIN erp_product_sku_property mpsp ON epcp.id = mpsp.property_id AND mpsp.data_status = 1 AND mpsp.is_sku = 1
+            <where>
+                <if test="maps.productId != null">
+                    and mpsp.product_id = #{maps.productId, jdbcType=INTEGER}
+                </if>
+                <if test="true">
+                    and epcp.data_status = 1
+                </if>
+            </where>
+            ORDER BY data_order DESC
+        ) category_main
+        INNER JOIN erp_product_category_property_value epcpv on category_main.id = epcpv.property_id AND epcpv.data_status = 1
+        INNER JOIN erp_product_sku_property mpsp ON epcpv.id = mpsp.property_value_id AND mpsp.data_status = 1  AND mpsp.is_sku = 1
+        <where>
+            <if test="maps.productId != null">
+                and mpsp.product_id = #{maps.productId, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and epcpv.data_status = 1
+            </if>
+        </where>
+        order by category_main.data_order DESC,epcpv.data_order DESC
+    </select>
+
+    <sql id="set_column_sql">
+        <set>
+            <if test="propertyName != null">
+                property_name = #{propertyName, jdbcType=VARCHAR},
+            </if>
+            <if test="categoryId != null">
+                category_id = #{categoryId, jdbcType=INTEGER},
+            </if>
+            <if test="propertyType != null">
+                property_type = #{propertyType, jdbcType=INTEGER},
+            </if>
+            <if test="isInput != null">
+                is_input = #{isInput, jdbcType=INTEGER},
+            </if>
+            <if test="isCheckbox != null">
+                is_checkbox = #{isCheckbox, jdbcType=INTEGER},
+            </if>
+            <if test="isRequired != null">
+                is_required = #{isRequired, jdbcType=INTEGER},
+            </if>
+            <if test="dataOrder != null">
+                data_order = #{dataOrder, jdbcType=VARCHAR},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus, jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+    </sql>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO">
+        update erp_product_category_property
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO">
+        INSERT INTO erp_product_category_property
+        <include refid="set_column_sql"/>
+    </insert>
+</mapper>

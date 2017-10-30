@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuPropertyMysqlDAO">
+
+    <resultMap type="com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO" id="ProductSkuPropertyDO">
+        <id column="id" property="id"/>
+        <result column="product_id" property="productId"/>
+        <result column="property_id" property="propertyId"/>
+        <result column="property_value_id" property="propertyValueId"/>
+        <result column="is_sku" property="isSku"/>
+        <result column="sku_id" property="skuId"/>
+        <result column="remark" property="remark"/>
+        <result column="data_status" property="dataStatus"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="column_List">
+		id,product_id,property_id,property_value_id,is_sku,sku_id,remark,data_status,create_time,create_user,update_time,update_user
+	</sql>
+
+    <select id="findById" resultMap="ProductSkuPropertyDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>
+        from erp_product_sku_property where id = #{id, jdbcType=INTEGER}
+    </select>
+
+    <select id="findSkuIdByParams" resultType="java.lang.Integer" parameterType="map">
+        select sku_id from
+          (select sku_id,count(sku_id) sku_count from erp_product_sku_property
+            where is_sku = #{maps.isSku, jdbcType=INTEGER} and product_id = #{maps.productId, jdbcType=INTEGER} and data_status = 1
+            and property_value_id in
+            <foreach collection="maps.propertyValueIdList" item="propertyValueId" index="index" open="(" close=")" separator=",">
+                #{propertyValueId}
+            </foreach> GROUP BY sku_id) count_sku
+        where count_sku.sku_count = (select count(ID) from erp_product_sku_property where sku_id = count_sku.sku_id)
+        AND count_sku.sku_count = #{maps.propertyValueIdCount, jdbcType=INTEGER}
+    </select>
+
+    <select id="findSkuProperties" resultMap="ProductSkuPropertyDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>
+        from erp_product_sku_property where sku_id = #{skuId, jdbcType=INTEGER}  and data_status = 1 and is_sku = 1
+    </select>
+
+    <select id="findProductProperties" resultMap="ProductSkuPropertyDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>
+        from erp_product_sku_property where product_id = #{productId, jdbcType=INTEGER}  and data_status = 1 and is_sku = 0
+    </select>
+
+    <select id="findByProductIdAndPropertyValue" resultMap="ProductSkuPropertyDO" parameterType="map">
+        select
+        <include refid="column_List"/>
+        from erp_product_sku_property where product_id = #{productId, jdbcType=INTEGER} and property_value_id =  #{propertyValueId, jdbcType=INTEGER} and data_status = 1 and is_sku = 0
+    </select>
+
+    <sql id="set_column_sql">
+        <set>
+
+            <if test="productId != null">
+                product_id = #{productId, jdbcType=INTEGER},
+            </if>
+            <if test="propertyId != null">
+                property_id = #{propertyId, jdbcType=INTEGER},
+            </if>
+            <if test="propertyValueId != null">
+                property_value_id = #{propertyValueId, jdbcType=INTEGER},
+            </if>
+            <if test="isSku != null">
+                is_sku = #{isSku, jdbcType=INTEGER},
+            </if>
+            <if test="skuId != null">
+                sku_id = #{skuId, jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus, jdbcType=INTEGER},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+    </sql>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO">
+        update erp_product_sku_property
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO">
+        INSERT INTO erp_product_sku_property
+        <include refid="set_column_sql"/>
+    </insert>
+</mapper>

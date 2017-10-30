@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.product.ProductMysqlDAO">
+
+    <resultMap type="com.lxzl.erp.dataaccess.domain.product.ProductDO" id="ProductDO">
+        <result column="id" property="id"/>
+        <result column="product_name" property="productName"/>
+        <result column="brand_id" property="brandId"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="subtitle" property="subtitle"/>
+        <result column="unit" property="unit"/>
+        <result column="list_price" property="listPrice"/>
+        <result column="is_sale" property="isSale"/>
+        <result column="product_desc" property="productDesc"/>
+        <result column="keyword" property="keyword"/>
+        <result column="remark" property="remark"/>
+        <result column="data_status" property="dataStatus"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <collection property="productImgDOList" resultMap="ProductImgDO" />
+        <collection property="productDescImgDOList" resultMap="ProductDescImgDO" />
+        <collection property="productSkuDOList" resultMap="ProductSkuDO" />
+        <collection property="productPropertyDOList" resultMap="ProductPropertyDO" />
+    </resultMap>
+
+    <resultMap id="ProductImgDO" type="com.lxzl.erp.dataaccess.domain.product.ProductImgDO">
+        <id column="img_id" jdbcType="INTEGER" property="id"/>
+        <result column="img_img_type" jdbcType="INTEGER" property="imgType"/>
+        <result column="img_original_name" jdbcType="VARCHAR" property="originalName"/>
+        <result column="img_product_id" jdbcType="INTEGER" property="productId"/>
+        <result column="img_img_url" jdbcType="VARCHAR" property="imgUrl"/>
+        <result column="img_data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="img_is_main" jdbcType="INTEGER" property="isMain"/>
+        <result column="img_img_order" jdbcType="INTEGER" property="imgOrder"/>
+        <result column="img_remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="img_create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="img_create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="img_update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="img_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <resultMap id="ProductDescImgDO" type="com.lxzl.erp.dataaccess.domain.product.ProductImgDO">
+        <id column="desc_img_id" jdbcType="INTEGER" property="id"/>
+        <result column="desc_img_img_type" jdbcType="INTEGER" property="imgType"/>
+        <result column="desc_img_original_name" jdbcType="VARCHAR" property="originalName"/>
+        <result column="desc_img_product_id" jdbcType="INTEGER" property="productId"/>
+        <result column="desc_img_img_url" jdbcType="VARCHAR" property="imgUrl"/>
+        <result column="desc_img_data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="desc_img_is_main" jdbcType="INTEGER" property="isMain"/>
+        <result column="desc_img_img_order" jdbcType="INTEGER" property="imgOrder"/>
+        <result column="desc_img_remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="desc_img_create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="desc_img_create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="desc_img_update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="desc_img_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <resultMap type="com.lxzl.erp.dataaccess.domain.product.ProductSkuDO" id="ProductSkuDO">
+        <result column="sku_id" property="id"/>
+        <result column="sku_sku_name" property="skuName"/>
+        <result column="sku_product_id" property="productId"/>
+        <result column="sku_stock" property="stock"/>
+        <result column="sku_sku_price" property="skuPrice"/>
+        <result column="sku_original_price" property="originalPrice"/>
+        <result column="sku_sale_price" property="salePrice"/>
+        <result column="sku_custom_code" property="customCode"/>
+        <result column="sku_bar_code" property="barCode"/>
+        <result column="sku_properties" property="properties"/>
+        <result column="sku_remark" property="remark"/>
+        <result column="sku_data_status" property="dataStatus"/>
+        <result column="sku_create_user" property="createUser"/>
+        <result column="sku_create_time" property="createTime"/>
+        <result column="sku_update_user" property="updateUser"/>
+        <result column="sku_update_time" property="updateTime"/>
+        <collection property="productSkuPropertyDOList" resultMap="ProductSkuPropertyDO" />
+    </resultMap>
+
+    <resultMap type="com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO" id="ProductPropertyDO">
+        <result column="property_id" property="id"/>
+        <result column="property_product_id" property="productId"/>
+        <result column="property_property_id" property="propertyId"/>
+        <result column="property_property_name" property="propertyName"/>
+        <result column="property_property_value_id" property="propertyValueId"/>
+        <result column="property_property_value_name" property="propertyValueName"/>
+        <result column="property_is_sku" property="isSku"/>
+        <result column="property_sku_id" property="skuId"/>
+        <result column="property_remark" property="remark"/>
+        <result column="property_data_status" property="dataStatus"/>
+        <result column="property_create_user" property="createUser"/>
+        <result column="property_create_time" property="createTime"/>
+        <result column="property_update_user" property="updateUser"/>
+        <result column="property_update_time" property="updateTime"/>
+    </resultMap>
+
+    <resultMap type="com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO" id="ProductSkuPropertyDO">
+        <result column="sku_property_id" property="id"/>
+        <result column="sku_property_product_id" property="productId"/>
+        <result column="sku_property_property_id" property="propertyId"/>
+        <result column="sku_property_property_value_id" property="propertyValueId"/>
+        <result column="sku_property_is_sku" property="isSku"/>
+        <result column="sku_property_sku_id" property="skuId"/>
+        <result column="sku_property_remark" property="remark"/>
+        <result column="sku_property_data_status" property="dataStatus"/>
+        <result column="sku_property_create_user" property="createUser"/>
+        <result column="sku_property_create_time" property="createTime"/>
+        <result column="sku_property_update_user" property="updateUser"/>
+        <result column="sku_property_update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="column_List">
+		ep.id AS id,ep.product_name AS product_name,ep.brand_id AS brand_id,ep.category_id AS category_id,ep.subtitle AS subtitle,ep.unit AS unit,ep.list_price AS list_price,ep.is_sale AS is_sale,ep.product_desc AS product_desc,ep.keyword AS keyword,ep.remark AS remark,ep.data_status AS data_status,ep.create_time AS create_time,ep.create_user AS create_user,ep.update_time AS update_time,ep.update_user AS update_user
+	</sql>
+
+    <sql id="img_column_List">
+		epi.id as img_id,epi.img_type as img_img_type,epi.original_name as img_original_name,epi.product_id as img_product_id,epi.img_url as img_img_url,epi.data_status as img_data_status,epi.remark as img_remark,epi.is_main as img_is_main,epi.img_order as img_img_order,epi.create_user as img_create_user,epi.create_time as img_create_time,epi.update_user as img_update_user,epi.update_time as img_update_time
+	</sql>
+
+    <sql id="desc_img_column_List">
+		epidesc.id as desc_img_id,epidesc.img_type as desc_img_img_type,epidesc.original_name as desc_img_original_name,epidesc.product_id as desc_img_product_id,epidesc.img_url as desc_img_img_url,epidesc.data_status as desc_img_data_status,epidesc.remark as desc_img_remark,epidesc.is_main as desc_img_is_main,epidesc.img_order as desc_img_img_order,epidesc.create_user as desc_img_create_user,epidesc.create_time as desc_img_create_time,epidesc.update_user as desc_img_update_user,epidesc.update_time as desc_img_update_time
+	</sql>
+
+    <sql id="sku_column_List">
+		eps.id AS sku_id,eps.sku_name AS sku_sku_name,eps.product_id AS sku_product_id,eps.stock AS sku_stock,eps.original_price AS sku_original_price,eps.sku_price AS sku_sku_price,eps.sale_price AS sku_sale_price,eps.custom_code AS sku_custom_code,eps.bar_code AS sku_bar_code,eps.properties AS sku_properties,eps.remark AS sku_remark,eps.data_status AS sku_data_status,eps.create_time AS sku_create_time,eps.create_user AS sku_create_user,eps.update_time AS sku_update_time,eps.update_user AS sku_update_user
+	</sql>
+
+    <sql id="property_column_List">
+        epsp.id AS property_id,epsp.product_id AS property_product_id,epsp.property_id AS property_property_id,epsp.property_value_id AS property_property_value_id,epsp.is_sku AS property_is_sku,epsp.sku_id AS property_sku_id,epsp.remark AS property_remark,epsp.data_status AS property_data_status,epsp.create_time AS property_create_time,epsp.create_user AS property_create_user,epsp.update_time AS property_update_time,epsp.update_user AS property_update_user
+    </sql>
+
+    <sql id="sku_property_column_List">
+        epsps.id AS sku_property_id,epsps.product_id AS sku_property_product_id,epsps.property_id AS sku_property_property_id,epsps.property_value_id AS sku_property_property_value_id,epsps.is_sku AS sku_property_is_sku,epsps.sku_id AS sku_property_sku_id,epsps.remark AS sku_property_remark,epsps.data_status AS sku_property_data_status,epsps.create_time AS sku_property_create_time,epsps.create_user AS sku_property_create_user,epsps.update_time AS sku_property_update_time,epsps.update_user AS sku_property_update_user
+    </sql>
+
+    <select id="findById" resultMap="ProductDO" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_product ep WHERE id = #{id, jdbcType=INTEGER}
+    </select>
+
+    <select id="findProductByParams" resultMap="ProductDO" parameterType="map">
+        SELECT m_product.*
+        <trim prefix=",">
+            <include refid="img_column_List" />
+        </trim>
+        FROM (
+            SELECT
+            <include refid="column_List"/>
+            FROM erp_product ep
+            <where>
+                <if test="maps.productQueryParam.productId != null &amp;&amp; maps.productQueryParam.productId != ''">
+                    and ep.id = #{maps.productQueryParam.productId, jdbcType=INTEGER}
+                </if>
+                <if test="maps.productQueryParam.productName != null &amp;&amp; maps.productQueryParam.productName != ''">
+                    and ep.product_name like CONCAT('%','${maps.productQueryParam.productName}','%' )
+                </if>
+                <if test="maps.productQueryParam.isSale != null">
+                    and ep.is_sale = #{maps.productQueryParam.isSale, jdbcType=INTEGER}
+                </if>
+                <if test="true">
+                    and ep.data_status = 1
+                </if>
+            </where>
+            ORDER BY ep.create_time DESC
+            LIMIT #{maps.start},#{maps.pageSize}
+        ) m_product
+        LEFT JOIN erp_product_img epi ON epi.product_id = m_product.id AND epi.data_status = 1 AND epi.img_type = 1
+        ORDER BY m_product.create_time DESC,epi.is_main DESC,epi.img_order DESC
+    </select>
+
+    <select id="findProductCountByParams" resultType="java.lang.Integer" parameterType="map">
+        SELECT count(id)
+        FROM erp_product ep
+        <where>
+            <if test="maps.productQueryParam.productId != null &amp;&amp; maps.productQueryParam.productId != ''">
+                and ep.id = #{maps.productQueryParam.productId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.productQueryParam.productName != null &amp;&amp; maps.productQueryParam.productName != ''">
+                and ep.product_name like CONCAT('%','${maps.productQueryParam.productName}','%' )
+            </if>
+            <if test="maps.productQueryParam.isSale != null">
+                and ep.is_sale = #{maps.productQueryParam.isSale, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and ep.data_status = 1
+            </if>
+        </where>
+    </select>
+
+    <select id="findByProductId" resultMap="ProductDO" parameterType="java.lang.Integer">
+        SELECT m_product.*
+        <trim prefix=",">
+            <include refid="img_column_List" />
+        </trim>
+        <trim prefix=",">
+            <include refid="desc_img_column_List" />
+        </trim>
+        <trim prefix=",">
+            <include refid="property_column_List" />
+        </trim>
+        ,epcp.property_name property_property_name,epcpv.property_value_name property_property_value_name
+        FROM (
+            SELECT
+            <include refid="column_List"/>
+            FROM erp_product ep WHERE id = #{productId, jdbcType=INTEGER} and data_status = 1
+        ) m_product
+        LEFT JOIN erp_product_img epi ON epi.product_id = m_product.id AND epi.data_status = 1 AND epi.img_type = 1
+        LEFT JOIN erp_product_img epidesc ON epidesc.product_id = m_product.id AND epidesc.data_status = 1 AND epidesc.img_type = 2
+        LEFT JOIN erp_product_sku_property epsp ON epsp.product_id = m_product.id AND epsp.data_status = 1 AND epsp.is_sku = 0
+        LEFT JOIN erp_product_category_property epcp ON epcp.id = epsp.property_id AND epcp.data_status = 1
+        LEFT JOIN erp_product_category_property_value epcpv ON epcpv.id = epsp.property_value_id AND epcpv.data_status = 1
+        ORDER BY epcp.data_order DESC,epcpv.data_order DESC,epi.img_order DESC,epidesc.img_order DESC
+    </select>
+
+    <sql id="set_column_sql">
+        <set>
+            <if test="productName != null">
+                product_name = #{productName, jdbcType=VARCHAR},
+            </if>
+            <if test="categoryId != null">
+                category_id = #{categoryId, jdbcType=INTEGER},
+            </if>
+            <if test="brandId != null">
+                brand_id = #{brandId, jdbcType=INTEGER},
+            </if>
+            <if test="subtitle != null">
+                subtitle = #{subtitle, jdbcType=VARCHAR},
+            </if>
+            <if test="unit != null">
+                unit = #{unit, jdbcType=INTEGER},
+            </if>
+            <if test="listPrice != null">
+                list_price = #{listPrice, jdbcType=DECIMAL},
+            </if>
+            <if test="isSale != null">
+                is_sale = #{isSale, jdbcType=INTEGER},
+            </if>
+            <if test="productDesc != null">
+                product_desc = #{productDesc, jdbcType=VARCHAR},
+            </if>
+            <if test="keyword != null">
+                keyword = #{keyword, jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus, jdbcType=INTEGER},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+    </sql>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductDO">
+        update erp_product
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <insert id="save" keyColumn="id" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.product.ProductDO">
+        INSERT INTO erp_product
+        <include refid="set_column_sql"/>
+    </insert>
+</mapper>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMysqlDAO">
+
+    <resultMap id="ProductEquipmentDO" type="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO">
+        <id column="id" property="id"/>
+        <result column="equipment_no" property="equipmentNo"/>
+        <result column="product_id" property="productId"/>
+        <result column="product_name" property="productName"/>
+        <result column="sku_id" property="skuId"/>
+        <result column="equipment_status" property="equipmentStatus"/>
+        <result column="data_status" property="dataStatus"/>
+        <result column="remark" property="remark"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <collection property="productImgDOList" resultMap="ProductImgDO" />
+    </resultMap>
+
+
+    <resultMap id="ProductImgDO" type="com.lxzl.erp.dataaccess.domain.product.ProductImgDO">
+        <id column="img_id" jdbcType="INTEGER" property="id"/>
+        <result column="img_img_type" jdbcType="INTEGER" property="imgType"/>
+        <result column="img_original_name" jdbcType="VARCHAR" property="originalName"/>
+        <result column="img_product_id" jdbcType="INTEGER" property="productId"/>
+        <result column="img_img_url" jdbcType="VARCHAR" property="imgUrl"/>
+        <result column="img_data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="img_is_main" jdbcType="INTEGER" property="isMain"/>
+        <result column="img_img_order" jdbcType="INTEGER" property="imgOrder"/>
+        <result column="img_remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="img_create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="img_create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="img_update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="img_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <sql id="column_List">
+        epe.id,epe.equipment_no,epe.product_id,epe.sku_id,epe.equipment_status,epe.data_status,epe.remark,epe.create_user,epe.create_time,epe.update_user,epe.update_time
+    </sql>
+    <sql id="img_column_List">
+        epi.id as img_id,epi.img_type as img_img_type,epi.original_name as img_original_name,epi.product_id as img_product_id,epi.img_url as img_img_url,epi.data_status as img_data_status,epi.remark as img_remark,epi.is_main as img_is_main,epi.img_order as img_img_order,epi.create_user as img_create_user,epi.create_time as img_create_time,epi.update_user as img_update_user,epi.update_time as img_update_time
+    </sql>
+
+    <select id="findById" resultMap="ProductEquipmentDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>
+        from erp_product_equipment epe where id = #{id, jdbcType=INTEGER} and data_status = 1
+    </select>
+
+    <select id="findByEquipmentNo" resultMap="ProductEquipmentDO" parameterType="java.lang.String">
+        select
+        <include refid="column_List"/>
+        from erp_product_equipment epe where equipment_no = #{equipmentNo, jdbcType=INTEGER} and data_status = 1
+    </select>
+
+
+
+    <select id="findProductEquipmentByParams" resultMap="ProductEquipmentDO" parameterType="map">
+        SELECT product_equipment.*
+        <trim prefix=",">
+            <include refid="img_column_List" />
+        </trim>
+        FROM
+        (
+            select
+            <include refid="column_List"/>
+            , mp.product_name AS product_name
+            from erp_product_equipment epe
+            INNER JOIN erp_product mp ON epe.product_id = mp.id
+            <where>
+                <if test="maps.productEquipmentQueryParam.productEquipmentId != null">
+                    and epe.id = #{maps.productEquipmentQueryParam.productEquipmentId, jdbcType=INTEGER}
+                </if>
+                <if test="maps.productEquipmentQueryParam.equipmentNo != null &amp;&amp; maps.productEquipmentQueryParam.equipmentNo != ''">
+                    and epe.equipment_no = #{maps.productEquipmentQueryParam.equipmentNo, jdbcType=INTEGER}
+                </if>
+                <if test="maps.productEquipmentQueryParam.productId != null">
+                    and epe.product_id = #{maps.productEquipmentQueryParam.productId, jdbcType=INTEGER}
+                </if>
+                <if test="maps.productEquipmentQueryParam.productName != null &amp;&amp; maps.productEquipmentQueryParam.productName != ''">
+                    and mp.product_name like CONCAT('%','${maps.productEquipmentQueryParam.productName}','%' )
+                </if>
+                <if test="maps.productEquipmentQueryParam.skuId != null">
+                    and epe.sku_id = #{maps.productEquipmentQueryParam.skuId, jdbcType=INTEGER}
+                </if>
+                <if test="maps.productEquipmentQueryParam.equipmentStatus != null">
+                    and epe.equipment_status = #{maps.productEquipmentQueryParam.equipmentStatus, jdbcType=INTEGER}
+                </if>
+                <if test="maps.productEquipmentQueryParam.createStartTime != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != ''">
+                    <![CDATA[ AND epe.create_time >= #{maps.productEquipmentQueryParam.createStartTime} ]]>
+                </if>
+                <if test="maps.productEquipmentQueryParam.createEndTime != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != ''">
+                    <![CDATA[ AND epe.create_time <= #{maps.productEquipmentQueryParam.createEndTime} ]]>
+                </if>
+                <if test="true">
+                    and epe.data_status = 1
+                </if>
+            </where>
+            LIMIT #{maps.start},#{maps.pageSize}
+        ) product_equipment
+        LEFT JOIN erp_product_img epi ON epi.product_id = product_equipment.product_id AND epi.data_status = 1 AND epi.img_type = 1
+        ORDER BY product_equipment.create_time DESC,epi.is_main DESC
+    </select>
+
+    <select id="findProductEquipmentCountByParams" resultType="java.lang.Integer" parameterType="map">
+        select count(epe.id)
+        from erp_product_equipment epe
+        INNER JOIN erp_product mp ON epe.product_id = mp.id
+        <where>
+            <if test="maps.productEquipmentQueryParam.productEquipmentId != null">
+                and epe.id = #{maps.productEquipmentQueryParam.productEquipmentId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.productEquipmentQueryParam.equipmentNo != null &amp;&amp; maps.productEquipmentQueryParam.equipmentNo != ''">
+                and epe.equipment_no = #{maps.productEquipmentQueryParam.equipmentNo, jdbcType=INTEGER}
+            </if>
+            <if test="maps.productEquipmentQueryParam.productName != null &amp;&amp; maps.productEquipmentQueryParam.productName != ''">
+                and mp.product_name like CONCAT('%','${maps.productEquipmentQueryParam.productName}','%' )
+            </if>
+            <if test="maps.productEquipmentQueryParam.productId != null">
+                and epe.product_id = #{maps.productEquipmentQueryParam.productId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.productEquipmentQueryParam.skuId != null">
+                and epe.sku_id = #{maps.productEquipmentQueryParam.skuId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.productEquipmentQueryParam.equipmentStatus != null">
+                and epe.equipment_status = #{maps.productEquipmentQueryParam.equipmentStatus, jdbcType=INTEGER}
+            </if>
+            <if test="maps.productEquipmentQueryParam.createStartTime != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != ''">
+                <![CDATA[ AND epe.create_time >= #{maps.productEquipmentQueryParam.createStartTime} ]]>
+            </if>
+            <if test="maps.productEquipmentQueryParam.createEndTime != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != ''">
+                <![CDATA[ AND epe.create_time <= #{maps.productEquipmentQueryParam.createEndTime} ]]>
+            </if>
+            <if test="true">
+                and epe.data_status = 1
+            </if>
+        </where>
+    </select>
+
+
+    <sql id="set_column_sql">
+        <set>
+            <if test="equipmentNo != null">
+                equipment_no = #{equipmentNo, jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null">
+                product_id = #{productId, jdbcType=INTEGER},
+            </if>
+            <if test="skuId != null">
+                sku_id = #{skuId, jdbcType=INTEGER},
+            </if>
+            <if test="equipmentStatus != null">
+                equipment_status = #{equipmentStatus, jdbcType=INTEGER},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus, jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+    </sql>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO">
+        update erp_product_equipment
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO">
+        INSERT INTO mall_product_equipment
+        <include refid="set_column_sql"/>
+    </insert>
+</mapper>
