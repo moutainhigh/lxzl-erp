@@ -71,6 +71,34 @@ CREATE TABLE `erp_role_menu` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='角色功能表';
 
+DROP TABLE if exists `erp_role_data`;
+CREATE TABLE `erp_role_data` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `role_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '角色ID',
+  `department_id` bigint(20) COMMENT '部门ID',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='角色功能表';
+
+DROP TABLE if exists `erp_user_data`;
+CREATE TABLE `erp_user_data` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `active_user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '观察者用户ID',
+  `passive_user_id` bigint(20) COMMENT '被观察者用户ID',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='角色功能表';
+
 DROP TABLE if exists `erp_sys_menu`;
 CREATE TABLE `erp_sys_menu` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '功能编号，唯一',
@@ -202,6 +230,7 @@ CREATE TABLE `erp_product_category_property_value` (
 DROP TABLE if exists `erp_product`;
 CREATE TABLE `erp_product` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '商品ID',
+  `product_no` varchar(100) NOT NULL COMMENT '商品编码',
   `product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称',
   `brand_id` bigint(20) COMMENT '所属品牌ID',
   `category_id` bigint(20) NOT NULL COMMENT '所属类目ID',
@@ -273,6 +302,22 @@ CREATE TABLE `erp_product_equipment` (
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='商品设备表';
+
+DROP TABLE if exists `erp_materiel`;
+CREATE TABLE `erp_materiel` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '设备ID',
+  `materiel_no` varchar(100) NOT NULL COMMENT '物料唯一编号',
+  `materiel_name` varchar(100) COLLATE utf8_bin COMMENT '物料名称',
+  `materiel_type` int(11) NOT NULL DEFAULT '0' COMMENT '物料类型，1机箱，2内存条，3电源，4CPU，5散热器，6显卡，7主板，8固态硬盘，9机械硬盘等',
+  `materiel_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '物料本身的价值',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='物料表';
 
 DROP TABLE if exists `erp_product_img`;
 CREATE TABLE `erp_product_img` (
