@@ -18,21 +18,27 @@ public class ErrorCode {
     public static final String USER_NOT_LOGIN = "J000995";
     public static final String ID_NOT_NULL = "J000994";
 
+
     public static final String USER_NAME_NOT_NULL = "J100000";
     public static final String USER_PASSWORD_NOT_NULL = "J100001";
     public static final String USER_DISABLE = "J100002";
     public static final String USER_NOT_ACTIVATED = "J100003";
     public static final String USER_NAME_NOT_FOUND = "J100004";
     public static final String USER_PASSWORD_ERROR = "J100005";
-    public static final String USER_EXISTS = "J100015";
-    public static final String USER_NOT_EXISTS = "J100016";
-    public static final String USER_ROLE_NOT_NULL = "J100017";
-    public static final String ROLE_NOT_NULL = "J100018";
-    public static final String ROLE_HAVE_USER = "J100019";
-    public static final String ROLE_NAME_NOT_NULL = "J100020";
-    public static final String OPERATOR_IS_NOT_YOURSELF = "J900015";
+    public static final String USER_EXISTS = "J100006";
+    public static final String USER_NOT_EXISTS = "J100007";
+    public static final String USER_ROLE_NOT_NULL = "J100008";
+    public static final String ROLE_NOT_NULL = "J100009";
+    public static final String ROLE_HAVE_USER = "J100010";
+    public static final String ROLE_NAME_NOT_NULL = "J100011";
+    public static final String OPERATOR_IS_NOT_YOURSELF = "J100012";
+    public static final String ROLE_ID_NOT_NULL = "J100013";
+    public static final String DEPARTMENT_ID_NOT_NULL = "J100014";
+    public static final String DEPARTMENT_NOT_NULL = "J100015";
+    public static final String USER_NOT_NULL = "J100016";
+    public static final String ACTIVE_USER_ID_NOT_NULL = "J100017";
 
-
+    public static final String SUB_COMPANY_NAME_NOT_NULL = "J200000";
 
     static
     {
@@ -53,10 +59,17 @@ public class ErrorCode {
         MAP.put(USER_ROLE_NOT_NULL,"用户角色不能为空");
         MAP.put(ROLE_NOT_NULL,"角色不存在");
         MAP.put(USER_NOT_EXISTS,"用户不存在");
+        MAP.put(ROLE_ID_NOT_NULL,"角色ID不能为空");
+        MAP.put(DEPARTMENT_ID_NOT_NULL,"部门ID不能为空");
+        MAP.put(DEPARTMENT_NOT_NULL,"部门不能为空");
+        MAP.put(USER_NOT_NULL,"用户不能为空");
+        MAP.put(ACTIVE_USER_ID_NOT_NULL,"观察者用户ID不能为空");
 
         MAP.put(OPERATOR_IS_NOT_YOURSELF,"操作者不是本人，不能操作");
         MAP.put(ROLE_NAME_NOT_NULL,"角色名称不能为空");
         MAP.put(ROLE_HAVE_USER,"角色包含用户");
+
+        MAP.put(SUB_COMPANY_NAME_NOT_NULL,"子公司名称不能为空");
     }
 
     public static String getMessage(String code)

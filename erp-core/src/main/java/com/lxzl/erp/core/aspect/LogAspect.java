@@ -42,6 +42,12 @@ public class LogAspect {
         HttpServletRequest request = sra.getRequest();
 
         String url = request.getServletPath().toString();
+        if("".equals(url)){
+            url = request.getPathInfo();
+        }
+        if("".equals(url)){
+            url = request.getRequestURI();
+        }
         log.info("**********************************************  Request To Controller ("+url+") **********************************************");
         log.info("------------------------  Request Parameters  ------------------------");
         Object[] os = pjp.getArgs();

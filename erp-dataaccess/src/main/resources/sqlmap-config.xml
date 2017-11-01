@@ -16,7 +16,7 @@
         <mapper resource="sqlmap/erp_user.xml" />
         <mapper resource="sqlmap/erp_user_role.xml" />
         <mapper resource="sqlmap/erp_materiel.xml" />
-        <mapper resource="sqlmap/erp_equipment_materie.xml" />
+        <mapper resource="sqlmap/erp_equipment_materiel.xml" />
         <mapper resource="sqlmap/erp_product.xml" />
         <mapper resource="sqlmap/erp_product_brand.xml" />
         <mapper resource="sqlmap/erp_product_category.xml" />
@@ -28,6 +28,11 @@
         <mapper resource="sqlmap/erp_product_img.xml" />
         <mapper resource="sqlmap/erp_product_sku.xml" />
         <mapper resource="sqlmap/erp_product_sku_property.xml" />
+        <mapper resource="sqlmap/erp_sub_company.xml" />
+        <mapper resource="sqlmap/erp_user_sub_company.xml" />
+        <mapper resource="sqlmap/erp_role_department_data.xml" />
+        <mapper resource="sqlmap/erp_role_user_data.xml" />
+        <mapper resource="sqlmap/erp_role_user_final.xml" />
     </mappers>
 
 </configuration>

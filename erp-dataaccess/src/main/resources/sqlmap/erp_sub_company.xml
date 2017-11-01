@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper">
+
+    <resultMap id="SubCompanyDO" type="com.lxzl.erp.dataaccess.domain.company.SubCompanyDO">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    </resultMap>
+
+    <sql id="column_List">
+        esc.id,esc.sub_company_name,esc.data_status,esc.remark,esc.create_time,esc.create_user,esc.update_time,esc.update_user
+    </sql>
+
+
+    <sql id="set_column_sql">
+        <set>
+            <if test="subCompanyName != null">
+                sub_company_name = #{subCompanyName,jdbcType=VARCHAR},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+        </set>
+    </sql>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.company.SubCompanyDO">
+        INSERT INTO erp_sub_company
+        <include refid="set_column_sql"/>
+    </insert>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.company.SubCompanyDO">
+        update erp_sub_company
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <select id="listCount" resultType="java.lang.Integer" parameterType="map">
+        select count(1) from erp_sub_company esc
+        <where>
+            <if test="subCompanyQueryParam.subCompanyName!=null and subCompanyQueryParam.subCompanyName!=''">
+                and esc.sub_company_name like '%${subCompanyQueryParam.subCompanyName}%'
+            </if>
+        </where>
+
+    </select>
+    <select id="listPage" resultMap="SubCompanyDO" parameterType="map">
+        select <include refid="column_List"/> from erp_sub_company esc
+        order by esc.create_time desc
+        limit #{pageQuery.start},#{pageQuery.pageSize}
+    </select>
+
+</mapper>

@@ -1,7 +1,7 @@
 package com.lxzl.erp.core.service.user.impl.support;
 
 
-import com.lxzl.erp.common.domain.erp.user.User;
+import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 
 import java.util.ArrayList;

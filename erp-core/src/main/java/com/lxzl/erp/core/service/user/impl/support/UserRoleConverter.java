@@ -1,14 +1,11 @@
 package com.lxzl.erp.core.service.user.impl.support;
 
 import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.domain.erp.system.Menu;
-import com.lxzl.erp.common.domain.erp.user.Role;
-import com.lxzl.erp.common.domain.erp.user.RoleMenu;
-import com.lxzl.erp.common.domain.erp.user.UserRole;
+import com.lxzl.erp.common.domain.company.pojo.Department;
+import com.lxzl.erp.common.domain.system.pojo.Menu;
+import com.lxzl.erp.common.domain.user.pojo.*;
 import com.lxzl.erp.dataaccess.domain.system.SysMenuDO;
-import com.lxzl.erp.dataaccess.domain.user.RoleDO;
-import com.lxzl.erp.dataaccess.domain.user.RoleMenuDO;
-import com.lxzl.erp.dataaccess.domain.user.UserRoleDO;
+import com.lxzl.erp.dataaccess.domain.user.*;
 import org.springframework.beans.BeanUtils;
 
 import java.util.*;
@@ -240,5 +237,69 @@ public class UserRoleConverter {
 
         return menu;
 
+    }
+
+
+    public static RoleDepartmentDataDO convertRoleDepartmentData(RoleDepartmentData roleDepartmentData) {
+        RoleDepartmentDataDO roleDepartmentDataDO = new RoleDepartmentDataDO();
+        BeanUtils.copyProperties(roleDepartmentData,roleDepartmentDataDO);
+        roleDepartmentDataDO.setId(roleDepartmentData.getRoleDepartmentDataId());
+        return roleDepartmentDataDO;
+    }
+    public static RoleDepartmentData convertRoleDepartmentDataDO(RoleDepartmentDataDO roleDepartmentDataDO) {
+        RoleDepartmentData roleDepartmentData = new RoleDepartmentData();
+        BeanUtils.copyProperties(roleDepartmentDataDO,roleDepartmentData);
+        roleDepartmentData.setRoleDepartmentDataId(roleDepartmentDataDO.getId());
+        return roleDepartmentData;
+    }
+    public static RoleDepartmentData convertRoleDepartmentDataDOList(List<RoleDepartmentDataDO> roleDepartmentDataDOList) {
+        RoleDepartmentData roleDepartmentData = null;
+        if (roleDepartmentDataDOList != null && roleDepartmentDataDOList.size() > 0) {
+            roleDepartmentData = new RoleDepartmentData();
+            roleDepartmentData.setRoleId(roleDepartmentDataDOList.get(0).getRoleId());
+            List<Department> departmentList = new ArrayList<>();
+            for (RoleDepartmentDataDO roleDepartmentDataDO : roleDepartmentDataDOList) {
+                Department department = new Department();
+                department.setDepartmentId(roleDepartmentDataDO.getDepartmentId());
+                department.setDepartmentName(roleDepartmentDataDO.getDepartmentName());
+                departmentList.add(department);
+            }
+            roleDepartmentData.setDepartmentList(departmentList);
+        }
+        return roleDepartmentData;
+    }
+
+    public static RoleUserData convertRoleUserDataDOList(List<RoleUserDataDO> roleUserDataDOList) {
+        RoleUserData roleUserData = null;
+        if (roleUserDataDOList != null && roleUserDataDOList.size() > 0) {
+            roleUserData = new RoleUserData();
+            roleUserData.setActiveUserId(roleUserDataDOList.get(0).getActiveUserId());
+            List<User> userList = new ArrayList<>();
+            for (RoleUserDataDO roleUserDataDO : roleUserDataDOList) {
+                User passiveUser = new User();
+                passiveUser.setUserId(roleUserDataDO.getPassiveUserId());
+                passiveUser.setUserName(roleUserDataDO.getPassiveUserName());
+                userList.add(passiveUser);
+            }
+            roleUserData.setPassiveUserList(userList);
+        }
+        return roleUserData;
+    }
+
+    public static RoleUserFinal convertRoleUserFinalDOList(List<RoleUserFinalDO> roleUserFinalDOList) {
+        RoleUserFinal roleUserFinal = null;
+        if (roleUserFinalDOList != null && roleUserFinalDOList.size() > 0) {
+            roleUserFinal = new RoleUserFinal();
+            roleUserFinal.setActiveUserId(roleUserFinalDOList.get(0).getActiveUserId());
+            List<User> userList = new ArrayList<>();
+            for (RoleUserFinalDO roleUserFinalDO : roleUserFinalDOList) {
+                User passiveUser = new User();
+                passiveUser.setUserId(roleUserFinalDO.getPassiveUserId());
+                passiveUser.setUserName(roleUserFinalDO.getPassiveUserName());
+                userList.add(passiveUser);
+            }
+            roleUserFinal.setPassiveUserList(userList);
+        }
+        return roleUserFinal;
     }
 }

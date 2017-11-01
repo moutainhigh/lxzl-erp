@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.equipment.EquitmentMaterielMysqlDAO">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.equipment.EquitmentMaterielMapper">
 
 	<resultMap type="com.lxzl.erp.dataaccess.domain.equipment.EquipmentMaterielDO" id="EquipmentMaterielDO">
 		<id column="id" jdbcType="BIGINT" property="id" />
@@ -21,7 +21,7 @@
 		eem.id,eem.equipment_id,eem.materiel_id,eem.materiel_count,eem.data_status,eem.remark,eem.create_time,eem.create_user,eem.update_time,eem.update_user
 	</sql>
 
-	<select id="findById" resultMap="MaterielDO" parameterType="java.lang.Integer">
+	<select id="findById" resultMap="EquipmentMaterielDO" parameterType="java.lang.Integer">
 		select
 		<include refid="column_List"/>
 		from erp_equipment_materiel eem where eem.id = #{id, jdbcType=INTEGER} and eem.data_status = 1

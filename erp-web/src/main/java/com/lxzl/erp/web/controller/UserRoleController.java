@@ -2,7 +2,12 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.erp.user.*;
+import com.lxzl.erp.common.domain.user.RoleMenuQueryParam;
+import com.lxzl.erp.common.domain.user.RoleQueryParam;
+import com.lxzl.erp.common.domain.user.UserRoleQueryParam;
+import com.lxzl.erp.common.domain.user.pojo.*;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.QueryGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
@@ -17,7 +22,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @RequestMapping("/userRole")
 @Controller
@@ -75,6 +81,81 @@ public class UserRoleController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    /**
+     * 更新角色可观察部门（数据级）
+     * @param roleDepartmentData
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "updateRoleDepartmentData", method = RequestMethod.POST)
+    public Result updateRoleDepartmentData(@RequestBody @Validated({AddGroup.class}) RoleDepartmentData roleDepartmentData, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = userRoleService.updateRoleDepartmentData(roleDepartmentData);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+    /**
+     * 查询角色可观察部门列表（数据级）
+     * @param role
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "getRoleDepartmentDataListByRole", method = RequestMethod.POST)
+    public Result getRoleDepartmentDataListByRole(@RequestBody @Validated({IdGroup.class}) Role role, BindingResult validResult) {
+        ServiceResult<String, RoleDepartmentData> serviceResult = userRoleService.getRoleDepartmentDataListByRole(role.getRoleId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+
+
+
+    /**
+     * 更新用户可观察用户（数据级）
+     * @param roleUserData
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "updateRoleUserData", method = RequestMethod.POST)
+    public Result updateRoleUserData(@RequestBody @Validated({AddGroup.class}) RoleUserData roleUserData, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = userRoleService.updateRoleUserData(roleUserData);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+    /**
+     * 查询观察者可观察用户列表（数据级）
+     * @param roleUserData
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "getRoleUserDataListByUser", method = RequestMethod.POST)
+    public Result getRoleUserDataListByUser(@RequestBody @Validated({ExtendGroup.class}) RoleUserData roleUserData, BindingResult validResult) {
+        ServiceResult<String, RoleUserData> serviceResult = userRoleService.getRoleUserDataListByUser(roleUserData.getActiveUserId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+
+
+
+    /**
+     * 重新构建观察者最终可观察用户权限并保存（数据级）
+     * @param roleUserData
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "rebuildFinalRoleUserData", method = RequestMethod.POST)
+    public Result rebuildFinalRoleUserData(@RequestBody @Validated({ExtendGroup.class}) RoleUserData roleUserData, BindingResult validResult) {
+        ServiceResult<String, RoleUserFinal> serviceResult = userRoleService.rebuildFinalRoleUserData(roleUserData.getActiveUserId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 获取用户最终数据权限（数据级）
+     * @param roleUserData
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "getFinalRoleUserData", method = RequestMethod.POST)
+    public Result getFinalRoleUserData(@RequestBody @Validated({ExtendGroup.class}) RoleUserData roleUserData, BindingResult validResult) {
+        ServiceResult<String, RoleUserFinal> serviceResult = userRoleService.getFinalRoleUserData(roleUserData.getActiveUserId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
     @Autowired
     private UserRoleService userRoleService;
 

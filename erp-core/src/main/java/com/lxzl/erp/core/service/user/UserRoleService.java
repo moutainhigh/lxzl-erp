@@ -3,8 +3,12 @@ package com.lxzl.erp.core.service.user;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.erp.user.*;
+import com.lxzl.erp.common.domain.user.RoleMenuQueryParam;
+import com.lxzl.erp.common.domain.user.RoleQueryParam;
+import com.lxzl.erp.common.domain.user.UserRoleQueryParam;
+import com.lxzl.erp.common.domain.user.pojo.*;
 import com.lxzl.se.core.service.BaseService;
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,4 +27,13 @@ public interface UserRoleService extends BaseService {
     ServiceResult<String, UserRole> getUserRoleList(UserRoleQueryParam param);
     ServiceResult<String, Integer> saveRoleMenu(RoleMenu roleMenu);
     ServiceResult<String, RoleMenu> getRoleMenuList(RoleMenuQueryParam param);
+
+    ServiceResult<String, Integer> updateRoleDepartmentData(RoleDepartmentData roleDepartmentData);
+    ServiceResult<String, RoleDepartmentData> getRoleDepartmentDataListByRole(Integer roleId);
+
+    ServiceResult<String, Integer> updateRoleUserData(RoleUserData roleUserData);
+    ServiceResult<String, RoleUserData> getRoleUserDataListByUser(Integer activeUserId);
+
+    ServiceResult<String, RoleUserFinal> rebuildFinalRoleUserData(Integer activeUserId);
+    ServiceResult<String, RoleUserFinal> getFinalRoleUserData(Integer activeUserId);
 }

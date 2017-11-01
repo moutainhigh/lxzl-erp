@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.user.RoleDepartmentDataMapper">
+
+    <resultMap id="RoleDepartmentDataDO" type="com.lxzl.erp.dataaccess.domain.user.RoleDepartmentDataDO">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="role_id" jdbcType="BIGINT" property="roleId" />
+        <result column="department_id" jdbcType="BIGINT" property="departmentId" />
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+        <result column="department_name" jdbcType="VARCHAR" property="departmentName" />
+    </resultMap>
+
+    <sql id="column_List">
+        rdd.id,rdd.role_id,rdd.department_id,rdd.data_status,rdd.remark,rdd.create_time,rdd.create_user,rdd.update_time,rdd.update_user
+    </sql>
+
+
+    <sql id="set_column_sql">
+        <set>
+            <if test="roleId != null">
+                role_id = #{roleId,jdbcType=BIGINT},
+            </if>
+            <if test="departmentId != null">
+                department_id = #{departmentId,jdbcType=BIGINT},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+        </set>
+    </sql>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.user.RoleDepartmentDataDO">
+        INSERT INTO erp_role_department_data
+        <include refid="set_column_sql"/>
+    </insert>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.user.RoleDepartmentDataDO">
+        update erp_role_department_data
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+    <update id="deleteByRoleAndDepartment" parameterType="map">
+        update erp_role_department_data set data_status = 2
+        WHERE role_id = ${roleId} and department_id = ${departmentId}
+    </update>
+    <select id="getRoleDepartmentDataListByRoleId" resultMap="RoleDepartmentDataDO" parameterType="map">
+        select  <include refid="column_List"/> ,d.department_name from erp_role_department_data rdd left join erp_department d on rdd.department_id=d.id
+        <where>
+            <if test="roleId!=null">
+                and rdd.role_id = '${roleId}'
+            </if>
+            and rdd.data_status = 1
+        </where>
+    </select>
+    <select id="listCount" resultType="java.lang.Integer" parameterType="map">
+        select count(1) from erp_role_department_data rdd
+        <where>
+            <if test="subCompanyQueryParam.subCompanyName!=null">
+                and rdd.sub_company_name like '%${subCompanyQueryParam.subCompanyName}%'
+            </if>
+            and rdd.data_status = 1
+        </where>
+
+    </select>
+    <select id="listPage" resultMap="RoleDepartmentDataDO" parameterType="map">
+        select <include refid="column_List"/> from erp_role_department_data rdd
+        and rdd.data_status = 1
+        order by rdd.create_time drdd
+        limit #{pageQuery.start},#{pageQuery.pageSize}
+    </select>
+
+</mapper>

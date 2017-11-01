@@ -6,15 +6,15 @@ import com.lxzl.erp.common.constant.UserType;
 import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.erp.user.LoginParam;
-import com.lxzl.erp.common.domain.erp.user.User;
-import com.lxzl.erp.common.domain.erp.user.UserPageParam;
+import com.lxzl.erp.common.domain.user.LoginParam;
+import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserConverter;
-import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMysqlDAO;
-import com.lxzl.erp.dataaccess.dao.mysql.user.UserMysqlDAO;
-import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMysqlDAO;
+import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMapper;
 import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.user.UserRoleDO;
@@ -37,16 +37,16 @@ import java.util.Map;
 public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     @Autowired
-    private UserMysqlDAO userMysqlDAO;
+    private UserMapper userMapper;
 
     @Autowired(required = false)
     private HttpSession session;
 
     @Autowired
-    private UserRoleMysqlDAO userRoleMysqlDAO;
+    private UserRoleMapper userRoleMapper;
 
     @Autowired
-    private RoleMysqlDAO roleMysqlDAO;
+    private RoleMapper roleMapper;
 
     @Autowired
     private UserRoleService userRoleService;
@@ -55,7 +55,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, User> login(LoginParam loginParam, String ip) {
         ServiceResult<String, User> result = new ServiceResult<>();
-        UserDO userDO = userMysqlDAO.findByUsername(loginParam.getUserName());
+        UserDO userDO = userMapper.findByUsername(loginParam.getUserName());
         if (userDO == null) {
             result.setErrorCode(ErrorCode.USER_NAME_NOT_FOUND);
         } else if (userDO.getIsDisabled().equals(CommonConstant.COMMON_CONSTANT_NO)) {
@@ -65,11 +65,11 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         } else if (!userDO.getPassword().equals(generateMD5Password(userDO.getUserName(), loginParam.getPassword(), ApplicationConfig.authKey))) {
             result.setErrorCode(ErrorCode.USER_PASSWORD_ERROR);
         } else {
-            userDO.setRoleList(userRoleMysqlDAO.findRoleListByUserId(userDO.getId()));
+            userDO.setRoleList(userRoleMapper.findRoleListByUserId(userDO.getId()));
             User user = UserConverter.convert(userDO);
             userDO.setLastLoginIp(ip);
             userDO.setLastLoginTime(new Date());
-            userMysqlDAO.update(userDO);
+            userMapper.update(userDO);
             session.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, user);
             result.setErrorCode(ErrorCode.SUCCESS);
             result.setResult(user);
@@ -83,7 +83,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        UserDO userDO = userMysqlDAO.findByUsername(user.getUserName());
+        UserDO userDO = userMapper.findByUsername(user.getUserName());
         if (userDO != null) {
             result.setErrorCode(ErrorCode.USER_EXISTS);
             return result;
@@ -115,7 +115,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         }
         userDO.setCreateTime(currentTime);
         userDO.setUpdateTime(currentTime);
-        userMysqlDAO.save(userDO);
+        userMapper.save(userDO);
         saveRoleMap(userDO, finalRoleIdMap, currentTime, loginUser);
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -136,7 +136,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
                     userRoleDO.setCreateUser(loginUser.getUserId().toString());
                     userRoleDO.setUpdateUser(loginUser.getUserId().toString());
                 }
-                userRoleMysqlDAO.save(userRoleDO);
+                userRoleMapper.save(userRoleDO);
             }
         }
     }
@@ -147,7 +147,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         }
         for (Integer roleId : roleIdList) {
             if (roleId != null) {
-                RoleDO roleDO = roleMysqlDAO.findByMapId(roleId);
+                RoleDO roleDO = roleMapper.findByMapId(roleId);
                 if (roleDO == null) {
                     return ErrorCode.ROLE_NOT_NULL;
                 } else if (finalRoleIdMap.get(roleId) == null) {
@@ -165,7 +165,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> updateUser(User user) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        UserDO userDO = userMysqlDAO.findByUserId(user.getUserId());
+        UserDO userDO = userMapper.findByUserId(user.getUserId());
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
 
         Date currentTime = new Date();
@@ -183,7 +183,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             return result;
         }*/
         Map<Integer, Integer> modifyRoleIdMap = new HashMap<Integer, Integer>();
-        List<UserRoleDO> oldUserRoleList = userRoleMysqlDAO.findListByUserId(user.getUserId());
+        List<UserRoleDO> oldUserRoleList = userRoleMapper.findListByUserId(user.getUserId());
         Map<Integer, UserRoleDO> oldRoleIdMap = new HashMap<>();
         for (UserRoleDO userRoleDO : oldUserRoleList) {
             oldRoleIdMap.put(userRoleDO.getRoleId(), userRoleDO);
@@ -204,7 +204,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         userDO.setPassword(null);
         userDO.setUpdateUser(loginUser.getUserId().toString());
         userDO.setUpdateTime(currentTime);
-        userMysqlDAO.update(userDO);
+        userMapper.update(userDO);
 
         for (Integer roleId : modifyRoleIdMap.keySet()) {
             UserRoleDO userRoleDO = null;
@@ -219,13 +219,13 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
                     userRoleDO.setUpdateTime(currentTime);
                     userRoleDO.setCreateUser(loginUser.getUserId().toString());
                     userRoleDO.setUpdateUser(loginUser.getUserId().toString());
-                    userRoleMysqlDAO.save(userRoleDO);
+                    userRoleMapper.save(userRoleDO);
                 }
                 //标记删除的做删除操作
                 if (CommonConstant.COMMON_CONSTANT_OP_DELETE.equals(modifyRoleIdMap.get(roleId))) {
                     userRoleDO = oldRoleIdMap.get(roleId);
                     userRoleDO.setDataStatus(CommonConstant.COMMON_CONSTANT_OP_DELETE);
-                    userRoleMysqlDAO.update(userRoleDO);
+                    userRoleMapper.update(userRoleDO);
                 }
             }
         }
@@ -239,7 +239,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         ServiceResult<String, Integer> result = new ServiceResult<>();
         Date currentTime = new Date();
-        UserDO userDO = userMysqlDAO.findByUserId(user.getUserId());
+        UserDO userDO = userMapper.findByUserId(user.getUserId());
         if (userDO == null) {
             result.setErrorCode(ErrorCode.USER_NOT_EXISTS);
             return result;
@@ -253,7 +253,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         userDO.setPassword(generateMD5Password(userDO.getUserName(), user.getPassword(), ApplicationConfig.authKey));
         userDO.setUpdateTime(currentTime);
         userDO.setUpdateUser(loginUser.getUserId().toString());
-        userMysqlDAO.update(userDO);
+        userMapper.update(userDO);
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(userDO.getId());
@@ -263,12 +263,12 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     @Override
     public ServiceResult<String, User> getUserById(Integer userId) {
         ServiceResult<String, User> result = new ServiceResult<>();
-        UserDO userDO = userMysqlDAO.findByUserId(userId);
+        UserDO userDO = userMapper.findByUserId(userId);
         if (userDO == null) {
             result.setErrorCode(ErrorCode.USER_NOT_EXISTS);
             return result;
         }
-        List<UserRoleDO> roleDOList = userRoleMysqlDAO.findListByUserId(userId);
+        List<UserRoleDO> roleDOList = userRoleMapper.findListByUserId(userId);
         userDO.setUserRoleList(roleDOList);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(UserConverter.convert(userDO));
@@ -276,13 +276,13 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     }
 
     @Override
-    public ServiceResult<String, Page<User>> userPage(UserPageParam userPageParam) {
+    public ServiceResult<String, Page<User>> userPage(UserQueryParam userQueryParam) {
         ServiceResult<String, Page<User>> result = new ServiceResult<>();
-        PageQuery pageQuery = new PageQuery(userPageParam.getPageNo(), userPageParam.getPageSize());
-        Integer totalCount = userMysqlDAO.listCount(userPageParam, pageQuery);
-        List<UserDO> list = userMysqlDAO.listPage(userPageParam, pageQuery);
+        PageQuery pageQuery = new PageQuery(userQueryParam.getPageNo(), userQueryParam.getPageSize());
+        Integer totalCount = userMapper.listCount(userQueryParam, pageQuery);
+        List<UserDO> list = userMapper.listPage(userQueryParam, pageQuery);
         List<User> userList = UserConverter.convertUserList(list);
-        Page<User> page = new Page<>(userList, totalCount, userPageParam.getPageNo(), userPageParam.getPageSize());
+        Page<User> page = new Page<>(userList, totalCount, userQueryParam.getPageNo(), userQueryParam.getPageSize());
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;

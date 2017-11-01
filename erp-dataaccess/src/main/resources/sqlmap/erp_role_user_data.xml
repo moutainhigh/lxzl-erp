@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.user.RoleUserDataMapper">
+
+    <resultMap id="RoleUserDataDO" type="com.lxzl.erp.dataaccess.domain.user.RoleUserDataDO">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="active_user_id" jdbcType="BIGINT" property="activeUserId" />
+        <result column="passive_user_id" jdbcType="BIGINT" property="passiveUserId" />
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+        <result column="passive_user_name" jdbcType="VARCHAR" property="passiveUserName" />
+    </resultMap>
+
+    <sql id="column_List">
+        rud.id,rud.active_user_id,rud.passive_user_id,rud.data_status,rud.remark,rud.create_time,rud.create_user,rud.update_time,rud.update_user
+    </sql>
+
+
+    <sql id="set_column_sql">
+        <set>
+            <if test="activeUserId != null">
+                active_user_id = #{activeUserId,jdbcType=BIGINT},
+            </if>
+            <if test="passiveUserId != null">
+                passive_user_id = #{passiveUserId,jdbcType=BIGINT},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+        </set>
+    </sql>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.user.RoleUserDataDO">
+        INSERT INTO erp_role_user_data
+        <include refid="set_column_sql"/>
+    </insert>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.user.RoleUserDataDO">
+        update erp_role_user_data
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+    <update id="deleteByActiveAndPassive" parameterType="map">
+        update erp_role_user_data set data_status = 2
+        WHERE active_user_id = ${activeUserId} and passive_user_id = ${passiveUserId}
+    </update>
+    <select id="getRoleUserDataListByActiveId" resultMap="RoleUserDataDO" parameterType="map">
+        select  <include refid="column_List"/> ,u.real_name passive_user_name from erp_role_user_data rud left join erp_user u on rud.passive_user_id=u.id
+        <where>
+            <if test="activeUserId!=null">
+                and rud.active_user_id = '${activeUserId}'
+            </if>
+            and rud.data_status = 1
+        </where>
+    </select>
+
+</mapper>

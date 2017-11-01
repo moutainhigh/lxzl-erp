@@ -21,7 +21,7 @@ public class ExceptionHandlerAdvice {
     private final Logger log = LoggerFactory.getLogger(getClass());
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> exception(Exception exception , WebRequest request) {
-        log.error(exception.getMessage());
+        log.error("CommonExceptionHandler catche the System Exception, ", exception);
         return new ResponseEntity<Object>(resultGenerator.generate(ErrorCode.SYSTEM_ERROR,ErrorCode.getMessage(ErrorCode.SYSTEM_ERROR) ),HttpStatus.OK);
     }
     @Autowired

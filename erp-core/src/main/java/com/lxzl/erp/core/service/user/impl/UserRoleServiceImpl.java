@@ -4,20 +4,18 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.erp.system.Menu;
-import com.lxzl.erp.common.domain.erp.user.*;
+import com.lxzl.erp.common.domain.company.pojo.Department;
+import com.lxzl.erp.common.domain.system.pojo.Menu;
+import com.lxzl.erp.common.domain.user.RoleMenuQueryParam;
+import com.lxzl.erp.common.domain.user.RoleQueryParam;
+import com.lxzl.erp.common.domain.user.UserRoleQueryParam;
+import com.lxzl.erp.common.domain.user.pojo.*;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserRoleConverter;
-import com.lxzl.erp.dataaccess.dao.mysql.system.SysMenuMysqlDAO;
-import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMenuMysqlDAO;
-import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMysqlDAO;
-import com.lxzl.erp.dataaccess.dao.mysql.user.UserMysqlDAO;
-import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMysqlDAO;
+import com.lxzl.erp.dataaccess.dao.mysql.system.SysMenuMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.*;
 import com.lxzl.erp.dataaccess.domain.system.SysMenuDO;
-import com.lxzl.erp.dataaccess.domain.user.RoleDO;
-import com.lxzl.erp.dataaccess.domain.user.RoleMenuDO;
-import com.lxzl.erp.dataaccess.domain.user.UserDO;
-import com.lxzl.erp.dataaccess.domain.user.UserRoleDO;
+import com.lxzl.erp.dataaccess.domain.user.*;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,19 +37,25 @@ import java.util.*;
 public class UserRoleServiceImpl implements UserRoleService {
 
     @Autowired
-    private SysMenuMysqlDAO sysMenuMysqlDAO;
+    private SysMenuMapper sysMenuMapper;
 
     @Autowired
-    private UserRoleMysqlDAO userRoleMysqlDAO;
+    private UserRoleMapper userRoleMapper;
 
     @Autowired
-    private RoleMenuMysqlDAO roleMenuMysqlDAO;
+    private RoleMenuMapper roleMenuMapper;
 
     @Autowired
-    private RoleMysqlDAO roleMysqlDAO;
+    private RoleMapper roleMapper;
 
     @Autowired
-    private UserMysqlDAO userMysqlDAO;
+    private UserMapper userMapper;
+    @Autowired
+    private RoleDepartmentDataMapper roleDepartmentDataMapper;
+    @Autowired
+    private RoleUserDataMapper roleUserDataMapper;
+    @Autowired
+    private RoleUserFinalMapper roleUserFinalMapper;
 
     @Autowired(required = false)
     private HttpSession session;
@@ -64,13 +68,13 @@ public class UserRoleServiceImpl implements UserRoleService {
     public ServiceResult<String, Boolean> allowAccess(Integer userId, String path) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
 
-        UserDO userDO = userMysqlDAO.findByUserId(userId);
+        UserDO userDO = userMapper.findByUserId(userId);
         if (userDO == null) {
             result.setResult(false);
             return result;
         }
 
-        List<RoleDO> roleList = roleMysqlDAO.findByUserId(userId);
+        List<RoleDO> roleList = roleMapper.findByUserId(userId);
         if (roleList != null && roleList.size() > 0) {
             for (RoleDO roleDO : roleList) {
                 if (CommonConstant.COMMON_CONSTANT_YES.equals(roleDO.getIsSuperAdmin())) {
@@ -83,19 +87,19 @@ public class UserRoleServiceImpl implements UserRoleService {
             return result;
         }
 
-        List<Integer> userRoleList = userRoleMysqlDAO.findRoleListByUserId(userId);
+        List<Integer> userRoleList = userRoleMapper.findRoleListByUserId(userId);
         if (userRoleList == null || userRoleList.size() == 0) {
             result.setResult(false);
             return result;
         }
 
-        List<SysMenuDO> sysMenuDOList = sysMenuMysqlDAO.findByMenuURL(path);
+        List<SysMenuDO> sysMenuDOList = sysMenuMapper.findByMenuURL(path);
         if (sysMenuDOList == null || sysMenuDOList.size() == 0) {
             result.setResult(true);
             return result;
         }
 
-        List<Integer> roleMenuList = roleMenuMysqlDAO.findMenuListByRoleSet(userRoleList);
+        List<Integer> roleMenuList = roleMenuMapper.findMenuListByRoleSet(userRoleList);
         if (roleMenuList == null || roleMenuList.size() == 0) {
             result.setResult(false);
             return result;
@@ -118,7 +122,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Override
     public boolean isSuperAdmin(Integer userId) {
-        List<RoleDO> roleList = roleMysqlDAO.findByUserId(userId);
+        List<RoleDO> roleList = roleMapper.findByUserId(userId);
         if (roleList != null && roleList.size() > 0) {
             for (RoleDO roleDO : roleList) {
                 if (CommonConstant.COMMON_CONSTANT_YES.equals(roleDO.getIsSuperAdmin())) {
@@ -150,7 +154,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         }
         roleDO.setCreateTime(new Date());
         roleDO.setUpdateTime(new Date());
-        roleMysqlDAO.save(roleDO);
+        roleMapper.save(roleDO);
 
         result.setResult(roleDO.getId());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -174,7 +178,7 @@ public class UserRoleServiceImpl implements UserRoleService {
             roleDO.setUpdateUser(loginUser.getUserId().toString());
         }
         roleDO.setUpdateTime(new Date());
-        roleMysqlDAO.update(roleDO);
+        roleMapper.update(roleDO);
 
         result.setResult(roleDO.getId());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -189,12 +193,12 @@ public class UserRoleServiceImpl implements UserRoleService {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
 
-        List<UserRoleDO> userRoleList = userRoleMysqlDAO.findListByRoleId(id);
+        List<UserRoleDO> userRoleList = userRoleMapper.findListByRoleId(id);
         if (userRoleList != null && userRoleList.size() > 0) {
             result.setErrorCode(ErrorCode.ROLE_HAVE_USER);
             return result;
         }
-        RoleDO managementRoleDO = roleMysqlDAO.findByMapId(id);
+        RoleDO managementRoleDO = roleMapper.findByMapId(id);
         if(managementRoleDO == null){
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
@@ -207,7 +211,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         }
         roleDO.setUpdateTime(new Date());
         roleDO.setDataStatus(CommonConstant.COMMON_CONSTANT_OP_DELETE);
-        roleMysqlDAO.update(roleDO);
+        roleMapper.update(roleDO);
 
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -224,8 +228,8 @@ public class UserRoleServiceImpl implements UserRoleService {
         }
         params.put("start", pageQuery.getStart());
         params.put("pageSize", pageQuery.getPageSize());
-        List<RoleDO> list = roleMysqlDAO.findList(params);
-        Integer count = roleMysqlDAO.findListCount(params);
+        List<RoleDO> list = roleMapper.findList(params);
+        Integer count = roleMapper.findListCount(params);
 
         Page<Role> page = new Page<>(UserRoleConverter.convertRoleDOList(list), count, param.getPageNo(), param.getPageSize());
         result.setResult(page);
@@ -239,12 +243,12 @@ public class UserRoleServiceImpl implements UserRoleService {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         // 超级管理员不用赋权限
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        List<Integer> dbRecordList = userRoleMysqlDAO.findRoleListByUserId(userRole.getUserId());
+        List<Integer> dbRecordList = userRoleMapper.findRoleListByUserId(userRole.getUserId());
         if (userRole.getRoleList() != null && userRole.getRoleList().size() > 0) {
             List<Integer> thisRoleList = new ArrayList<>();
             for (Role role : userRole.getRoleList()) {
                 thisRoleList.add(role.getRoleId());
-                UserRoleDO dbRecord = userRoleMysqlDAO.findUserRole(userRole.getUserId(), role.getRoleId());
+                UserRoleDO dbRecord = userRoleMapper.findUserRole(userRole.getUserId(), role.getRoleId());
                 if (dbRecord != null) {
                     continue;
                 }
@@ -258,19 +262,19 @@ public class UserRoleServiceImpl implements UserRoleService {
                 }
                 userRoleDO.setCreateTime(new Date());
                 userRoleDO.setUpdateTime(new Date());
-                userRoleMysqlDAO.save(userRoleDO);
+                userRoleMapper.save(userRoleDO);
             }
             dbRecordList.removeAll(thisRoleList);
 
         }
             for (Integer roleId : dbRecordList) {
-                UserRoleDO userRoleDO = userRoleMysqlDAO.findUserRole(userRole.getUserId(), roleId);
+                UserRoleDO userRoleDO = userRoleMapper.findUserRole(userRole.getUserId(), roleId);
                 userRoleDO.setDataStatus(CommonConstant.COMMON_CONSTANT_OP_DELETE);
                 if (loginUser != null) {
                     userRoleDO.setUpdateUser(loginUser.getUserId().toString());
                 }
                 userRoleDO.setUpdateTime(new Date());
-                userRoleMysqlDAO.update(userRoleDO);
+                userRoleMapper.update(userRoleDO);
             }
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -283,9 +287,9 @@ public class UserRoleServiceImpl implements UserRoleService {
         ServiceResult<String, UserRole> result = new ServiceResult<>();
         List<Role> roleList = new ArrayList<>();
 
-        List<Integer> roleIdList = userRoleMysqlDAO.findRoleListByUserId(param.getUserId());
+        List<Integer> roleIdList = userRoleMapper.findRoleListByUserId(param.getUserId());
         for (Integer roleId : roleIdList) {
-            roleList.add(UserRoleConverter.convertRoleDO(roleMysqlDAO.findByMapId(roleId)));
+            roleList.add(UserRoleConverter.convertRoleDO(roleMapper.findByMapId(roleId)));
         }
 
         UserRole userRole = new UserRole();
@@ -303,10 +307,10 @@ public class UserRoleServiceImpl implements UserRoleService {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
 
-        roleMenuMysqlDAO.deleteMenuByRoleId(roleMenu.getRoleId());
+        roleMenuMapper.deleteMenuByRoleId(roleMenu.getRoleId());
         if (roleMenu.getMenuList() != null && roleMenu.getMenuList().size() > 0) {
             for (Menu menu : roleMenu.getMenuList()) {
-                RoleMenuDO dbRecord = roleMenuMysqlDAO.findRoleMenu(roleMenu.getRoleId(), menu.getMenuId());
+                RoleMenuDO dbRecord = roleMenuMapper.findRoleMenu(roleMenu.getRoleId(), menu.getMenuId());
                 if (dbRecord != null) {
                     continue;
                 }
@@ -320,7 +324,7 @@ public class UserRoleServiceImpl implements UserRoleService {
                 }
                 roleMenuDO.setCreateTime(new Date());
                 roleMenuDO.setUpdateTime(new Date());
-                roleMenuMysqlDAO.save(roleMenuDO);
+                roleMenuMapper.save(roleMenuDO);
                 saveParentMenu(roleMenu.getRoleId(), menu.getMenuId());
             }
         }
@@ -331,9 +335,9 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     private void saveParentMenu(Integer roleId, Integer menuId) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        SysMenuDO sysMenuDO = sysMenuMysqlDAO.findByMenuId(menuId);
+        SysMenuDO sysMenuDO = sysMenuMapper.findByMenuId(menuId);
         if (sysMenuDO != null && !CommonConstant.SUPER_MENU_ID.equals(sysMenuDO.getParentMenuId())) {
-            RoleMenuDO dbRecord = roleMenuMysqlDAO.findRoleMenu(roleId, sysMenuDO.getParentMenuId());
+            RoleMenuDO dbRecord = roleMenuMapper.findRoleMenu(roleId, sysMenuDO.getParentMenuId());
             if (dbRecord == null) {
                 RoleMenuDO roleMenuDO = new RoleMenuDO();
                 roleMenuDO.setRoleId(roleId);
@@ -346,7 +350,7 @@ public class UserRoleServiceImpl implements UserRoleService {
                 }
                 roleMenuDO.setCreateTime(new Date());
                 roleMenuDO.setUpdateTime(new Date());
-                roleMenuMysqlDAO.save(roleMenuDO);
+                roleMenuMapper.save(roleMenuDO);
             }
             saveParentMenu(roleId, sysMenuDO.getParentMenuId());
         }
@@ -359,7 +363,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         roleSet.add(param.getRoleId());
         Map<String, Object> maps = new HashMap<>();
         maps.put("roleSet", roleSet);
-        List<SysMenuDO> menuDOList = sysMenuMysqlDAO.findAllMenu(maps);
+        List<SysMenuDO> menuDOList = sysMenuMapper.findAllMenu(maps);
 
         List<SysMenuDO> nodeList = UserRoleConverter.convertTree(menuDOList);
         List<Menu> resultList = new ArrayList<>();
@@ -367,7 +371,7 @@ public class UserRoleServiceImpl implements UserRoleService {
             resultList.add(UserRoleConverter.convert(node1));
         }
 
-        RoleDO roleDO = roleMysqlDAO.findByMapId(param.getRoleId());
+        RoleDO roleDO = roleMapper.findByMapId(param.getRoleId());
         RoleMenu roleMenu = new RoleMenu();
         if (roleDO != null) {
             roleMenu.setRoleId(roleDO.getId());
@@ -376,6 +380,187 @@ public class UserRoleServiceImpl implements UserRoleService {
         roleMenu.setMenuList(resultList);
 
         result.setResult(roleMenu);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> updateRoleDepartmentData(RoleDepartmentData roleDepartmentData) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        List<Department> departmentList = roleDepartmentData.getDepartmentList();
+        List<RoleDepartmentDataDO> oldList = roleDepartmentDataMapper.getRoleDepartmentDataListByRoleId(roleDepartmentData.getRoleId());
+        if(departmentList==null || departmentList.size()==0){
+            if(oldList!=null&&oldList.size()>0){
+                for(RoleDepartmentDataDO roleDepartmentDataDO : oldList){
+                    roleDepartmentDataMapper.deleteByRoleAndDepartment(roleDepartmentData.getRoleId(),roleDepartmentDataDO.getDepartmentId());
+                }
+                result.setErrorCode(ErrorCode.SUCCESS);
+            }else{
+                result.setErrorCode(ErrorCode.DEPARTMENT_NOT_NULL);
+            }
+            return result;
+        }
+
+
+        Map<Integer, RoleDepartmentDataDO> oldMap = new HashMap<>();
+        for(RoleDepartmentDataDO roleDepartmentDataDO : oldList){
+            oldMap.put(roleDepartmentDataDO.getDepartmentId(),roleDepartmentDataDO);
+        }
+        Map<Integer, Department> newMap = new HashMap<>();
+        for(Department department : departmentList){
+            newMap.put(department.getDepartmentId(),department);
+        }
+        RoleDepartmentDataDO roleDepartmentDataDO = new RoleDepartmentDataDO();
+        roleDepartmentDataDO.setRoleId(roleDepartmentData.getRoleId());
+        roleDepartmentDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_OP_CREATE);
+        roleDepartmentDataDO.setCreateUser(loginUser.getUserId().toString());
+        roleDepartmentDataDO.setUpdateUser(loginUser.getUserId().toString());
+        roleDepartmentDataDO.setCreateTime(new Date());
+        roleDepartmentDataDO.setUpdateTime(new Date());
+        for(Department department : departmentList){
+            //当前部门不在旧部门列表中，新增部门，在旧列表中，不处理
+            if(oldMap.containsKey(department.getDepartmentId())){
+                continue;
+            }else{
+                roleDepartmentDataDO.setDepartmentId(department.getDepartmentId());
+                roleDepartmentDataMapper.save(roleDepartmentDataDO);
+            }
+        }
+        for(RoleDepartmentDataDO departmentDataDO : oldList){
+            //旧部门不在新部门列表中，删除
+            if(!newMap.containsKey(departmentDataDO.getDepartmentId())){
+                roleDepartmentDataMapper.deleteByRoleAndDepartment(roleDepartmentData.getRoleId(),departmentDataDO.getDepartmentId());
+            }
+        }
+        result.setResult(roleDepartmentData.getRoleId());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, RoleDepartmentData> getRoleDepartmentDataListByRole(Integer roleId) {
+        ServiceResult<String, RoleDepartmentData> result = new ServiceResult<>();
+        List<RoleDepartmentDataDO> roleDepartmentDataDOList = roleDepartmentDataMapper.getRoleDepartmentDataListByRoleId(roleId);
+        RoleDepartmentData roleDepartmentData = UserRoleConverter.convertRoleDepartmentDataDOList(roleDepartmentDataDOList);
+        result.setResult(roleDepartmentData);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> updateRoleUserData(RoleUserData roleUserData) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        List<RoleUserDataDO> oldList = roleUserDataMapper.getRoleUserDataListByActiveId(roleUserData.getActiveUserId());
+
+        List<User> passiveUserList = roleUserData.getPassiveUserList();
+        if(passiveUserList==null || passiveUserList.size()==0){
+            if(oldList!=null&&oldList.size()>0){
+                for(RoleUserDataDO roleUserDataDO : oldList){
+                    roleUserDataMapper.deleteByActiveAndPassive(roleUserData.getActiveUserId(),roleUserDataDO.getPassiveUserId());
+                }
+                result.setErrorCode(ErrorCode.SUCCESS);
+            }else {
+                result.setErrorCode(ErrorCode.USER_NOT_NULL);
+            }
+            return result;
+        }
+
+
+        Map<Integer, RoleUserDataDO> oldMap = new HashMap<>();
+        for(RoleUserDataDO roleDepartmentDataDO : oldList){
+            oldMap.put(roleDepartmentDataDO.getPassiveUserId(),roleDepartmentDataDO);
+        }
+        Map<Integer, User> newMap = new HashMap<>();
+        for(User user : passiveUserList){
+            newMap.put(user.getUserId(),user);
+        }
+        RoleUserDataDO roleUserDataDO = new RoleUserDataDO();
+        roleUserDataDO.setActiveUserId(roleUserData.getActiveUserId());
+        roleUserDataDO.setDataStatus(CommonConstant.COMMON_CONSTANT_OP_CREATE);
+        roleUserDataDO.setCreateUser(loginUser.getUserId().toString());
+        roleUserDataDO.setUpdateUser(loginUser.getUserId().toString());
+        roleUserDataDO.setCreateTime(new Date());
+        roleUserDataDO.setUpdateTime(new Date());
+        for(User user : passiveUserList){
+            if(oldMap.containsKey(user.getUserId())){
+                continue;
+            }else{
+                roleUserDataDO.setPassiveUserId(user.getUserId());
+                roleUserDataMapper.save(roleUserDataDO);
+            }
+        }
+        for(RoleUserDataDO userDataDO : oldList){
+            if(!newMap.containsKey(userDataDO.getPassiveUserId())){
+                roleUserDataMapper.deleteByActiveAndPassive(roleUserData.getActiveUserId(),userDataDO.getPassiveUserId());
+            }
+        }
+        result.setResult(roleUserData.getActiveUserId());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, RoleUserData> getRoleUserDataListByUser(Integer activeUserId) {
+        ServiceResult<String, RoleUserData> result = new ServiceResult<>();
+        List<RoleUserDataDO> roleUserDataDOList = roleUserDataMapper.getRoleUserDataListByActiveId(activeUserId);
+        RoleUserData roleUserData = UserRoleConverter.convertRoleUserDataDOList(roleUserDataDOList);
+        result.setResult(roleUserData);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, RoleUserFinal> rebuildFinalRoleUserData(Integer activeUserId) {
+        ServiceResult<String, RoleUserFinal> result = new ServiceResult<>();
+        //获取用户【旧的】最终可观察用户列表
+        List<RoleUserFinalDO> roleUserFinalList = roleUserFinalMapper.getFinalRoleUserData(activeUserId);
+        Map<Integer,String> oldMap = new HashMap();
+        for(RoleUserFinalDO roleUserFinalDO : roleUserFinalList){
+            oldMap.put(roleUserFinalDO.getPassiveUserId(),"");
+        }
+
+        //获取用户最【新的】最终可观察用户列表
+        List<UserDO> userDOList = userMapper.getPassiveUserByUser(activeUserId);
+        Map<Integer,String> newMap = new HashMap();
+        for(UserDO userDO : userDOList){
+            newMap.put(userDO.getId(),"");
+        }
+        RoleUserFinalDO roleUserFinalDO = new RoleUserFinalDO();
+        roleUserFinalDO.setActiveUserId(activeUserId);
+        Date now = new Date();
+        roleUserFinalDO.setUpdateTime(now);
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        roleUserFinalDO.setUpdateUser(loginUser.getUserId().toString());
+        //旧列表有，新列表没有，数据库删除该条权限
+        for(RoleUserFinalDO old : roleUserFinalList){
+            if(!newMap.containsKey(old.getPassiveUserId())){
+                roleUserFinalDO.setPassiveUserId(old.getPassiveUserId());
+                roleUserFinalMapper.deleteByActiveUserAadPassiveUser(roleUserFinalDO);
+            }
+        }
+        //旧列表没有，新列表有，数据库添加该条权限
+        roleUserFinalDO.setDataStatus(CommonConstant.COMMON_CONSTANT_OP_CREATE);
+        roleUserFinalDO.setCreateTime(now);
+        roleUserFinalDO.setCreateUser(loginUser.getUserId().toString());
+        for(UserDO user : userDOList){
+            if(!oldMap.containsKey(user.getId())){
+                roleUserFinalDO.setPassiveUserId(user.getId());
+                roleUserFinalMapper.save(roleUserFinalDO);
+            }
+        }
+        roleUserFinalList = roleUserFinalMapper.getFinalRoleUserData(activeUserId);
+        result.setResult(UserRoleConverter.convertRoleUserFinalDOList(roleUserFinalList));
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, RoleUserFinal> getFinalRoleUserData(Integer activeUserId) {
+        ServiceResult<String, RoleUserFinal> result = new ServiceResult<>();
+        List<RoleUserFinalDO> roleUserFinalList = roleUserFinalMapper.getFinalRoleUserData(activeUserId);
+        result.setResult(UserRoleConverter.convertRoleUserFinalDOList(roleUserFinalList));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }

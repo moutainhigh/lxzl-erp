@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.company.UserSubCompanyMapper">
+
+  <resultMap id="UserSubCompanyDO" type="com.lxzl.erp.dataaccess.domain.company.UserSubCompanyDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="sub_company_id" jdbcType="BIGINT" property="subCompanyId" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+  </resultMap>
+
+  <sql id="column_List">
+    eusc.id,eusc.user_id,eusc.sub_company_id,eusc.data_status,eusc.remark,eusc.create_time,eusc.create_user,eusc.update_time,eusc.update_user
+  </sql>
+
+  <sql id="set_column_sql">
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="subCompanyId != null">
+        sub_company_id = #{subCompanyId,jdbcType=BIGINT},
+      </if>
+      <if test="dataStatus != null">
+        data_status = #{dataStatus,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+  </sql>
+  <insert id="save" keyProperty="id" useGeneratedKeys="true"
+          parameterType="com.lxzl.erp.dataaccess.domain.company.UserSubCompanyDO">
+    INSERT INTO erp_user_sub_company
+    <include refid="set_column_sql"/>
+  </insert>
+
+  <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.company.UserSubCompanyDO">
+    update erp_user_sub_company
+    <include refid="set_column_sql"/>
+    WHERE id = #{id, jdbcType=INTEGER}
+  </update>
+</mapper>

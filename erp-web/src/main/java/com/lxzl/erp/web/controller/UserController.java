@@ -4,9 +4,9 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.erp.user.LoginParam;
-import com.lxzl.erp.common.domain.erp.user.User;
-import com.lxzl.erp.common.domain.erp.user.UserPageParam;
+import com.lxzl.erp.common.domain.user.LoginParam;
+import com.lxzl.erp.common.domain.user.UserQueryParam;
+import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
@@ -80,8 +80,8 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "getUserById", method = RequestMethod.POST)
-    public Result getUserById(@RequestBody UserPageParam userPageParam) {
-        ServiceResult<String, User> serviceResult = userService.getUserById(userPageParam.getUserId());
+    public Result getUserById(@RequestBody UserQueryParam userQueryParam) {
+        ServiceResult<String, User> serviceResult = userService.getUserById(userQueryParam.getUserId());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -92,8 +92,8 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "page", method = RequestMethod.POST)
-    public Result page(@RequestBody UserPageParam userPageParam) {
-        ServiceResult<String, Page<User>> serviceResult = userService.userPage(userPageParam);
+    public Result page(@RequestBody UserQueryParam userQueryParam) {
+        ServiceResult<String, Page<User>> serviceResult = userService.userPage(userQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

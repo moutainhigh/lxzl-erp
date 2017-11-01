@@ -27,8 +27,10 @@
 	</mvc:annotation-driven>
 	
 	<!-- 添加统一异常处理器 -->
-	<bean class="com.lxzl.se.web.handler.CommonExceptionHandler">
-	</bean>
+	<!--<bean class="com.lxzl.se.web.handler.CommonExceptionHandler">-->
+	<!--</bean>-->
+
+	<bean class="com.lxzl.erp.web.ExceptionHandlerAdvice"></bean>
 	
 	<!-- defaultServlet负责对静态资源文件的访问 -->
 	<mvc:default-servlet-handler />
