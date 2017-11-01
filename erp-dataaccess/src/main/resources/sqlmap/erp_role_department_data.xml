@@ -63,13 +63,13 @@
     </update>
     <update id="deleteByRoleAndDepartment" parameterType="map">
         update erp_role_department_data set data_status = 2
-        WHERE role_id = ${roleId} and department_id = ${departmentId}
+        WHERE role_id = #{roleId} and department_id = #{departmentId}
     </update>
     <select id="getRoleDepartmentDataListByRoleId" resultMap="RoleDepartmentDataDO" parameterType="map">
         select  <include refid="column_List"/> ,d.department_name from erp_role_department_data rdd left join erp_department d on rdd.department_id=d.id
         <where>
             <if test="roleId!=null">
-                and rdd.role_id = '${roleId}'
+                and rdd.role_id = #{roleId}
             </if>
             and rdd.data_status = 1
         </where>

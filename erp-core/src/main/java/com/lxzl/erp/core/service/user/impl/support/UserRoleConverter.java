@@ -278,7 +278,7 @@ public class UserRoleConverter {
             for (RoleUserDataDO roleUserDataDO : roleUserDataDOList) {
                 User passiveUser = new User();
                 passiveUser.setUserId(roleUserDataDO.getPassiveUserId());
-                passiveUser.setUserName(roleUserDataDO.getPassiveUserName());
+                passiveUser.setRealName(roleUserDataDO.getPassiveUserName());
                 userList.add(passiveUser);
             }
             roleUserData.setPassiveUserList(userList);
@@ -295,7 +295,7 @@ public class UserRoleConverter {
             for (RoleUserFinalDO roleUserFinalDO : roleUserFinalDOList) {
                 User passiveUser = new User();
                 passiveUser.setUserId(roleUserFinalDO.getPassiveUserId());
-                passiveUser.setUserName(roleUserFinalDO.getPassiveUserName());
+                passiveUser.setRealName(roleUserFinalDO.getPassiveUserName());
                 userList.add(passiveUser);
             }
             roleUserFinal.setPassiveUserList(userList);

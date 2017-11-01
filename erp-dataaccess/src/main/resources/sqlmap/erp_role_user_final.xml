@@ -12,6 +12,8 @@
         <result column="create_user" jdbcType="VARCHAR" property="createUser" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
         <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+        <result column="passive_user_name" jdbcType="VARCHAR" property="passiveUserName" />
     </resultMap>
 
     <sql id="column_List">
@@ -60,13 +62,13 @@
         WHERE id = #{id, jdbcType=INTEGER}
     </update>
     <update id="deleteByActiveUserAadPassiveUser" parameterType="com.lxzl.erp.dataaccess.domain.user.RoleUserFinalDO">
-        update erp_role_user_final set data_status = 2 ,update_time = ${roleUserFinalDO.updateTime} ,update_user= ${roleUserFinalDO.updateUser}
-        WHERE active_user_id = ${roleUserFinalDO.activeUserId} and passive_user_id=${roleUserFinalDO.passiveUserId}
+        update erp_role_user_final set data_status = 2 ,update_time = #{roleUserFinalDO.updateTime} ,update_user= #{roleUserFinalDO.updateUser}
+        WHERE active_user_id = #{roleUserFinalDO.activeUserId} and passive_user_id=#{roleUserFinalDO.passiveUserId}
     </update>
     <select id="getFinalRoleUserData" resultMap="RoleUserFinalDO" parameterType="map">
-        select <include refid="column_List"/>,u.real_name passive_user_id from erp_role_user_final ruf
+        select <include refid="column_List"/>,u.real_name passive_user_name from erp_role_user_final ruf
         left join erp_user u on ruf.active_user_id = u.id
-        where active_user_id = ${activeUserId} and ruf.data_status = 1
+        where active_user_id = #{activeUserId} and ruf.data_status = 1
     </select>
 
 </mapper>
