@@ -16,7 +16,6 @@ public class ErrorCode {
     public static final String SYSTEM_ERROR = "J000999";
     public static final String RECORD_NOT_EXISTS = "J009999";
     public static final String USER_NOT_LOGIN = "J000995";
-    public static final String ID_NOT_NULL = "J000994";
 
 
     public static final String USER_NAME_NOT_NULL = "J100000";
@@ -31,14 +30,42 @@ public class ErrorCode {
     public static final String ROLE_NOT_NULL = "J100009";
     public static final String ROLE_HAVE_USER = "J100010";
     public static final String ROLE_NAME_NOT_NULL = "J100011";
-    public static final String OPERATOR_IS_NOT_YOURSELF = "J100012";
     public static final String ROLE_ID_NOT_NULL = "J100013";
     public static final String DEPARTMENT_ID_NOT_NULL = "J100014";
     public static final String DEPARTMENT_NOT_NULL = "J100015";
     public static final String USER_NOT_NULL = "J100016";
     public static final String ACTIVE_USER_ID_NOT_NULL = "J100017";
+    public static final String SUB_COMPANY_NAME_NOT_NULL = "J100018";
 
-    public static final String SUB_COMPANY_NAME_NOT_NULL = "J200000";
+    public static final String PRODUCT_ID_NOT_NULL = "J200000";
+    public static final String PRODUCT_NAME_NOT_NULL = "J200001";
+    public static final String PRODUCT_PROPERTY_NOT_NULL = "J200002";
+    public static final String PRODUCT_SKU_NOT_NULL = "J200003";
+    public static final String PRODUCT_SKU_PROPERTY_NOT_NULL = "J200004";
+    public static final String PRODUCT_PROPERTY_VALUE_NOT_NULL = "J200005";
+    public static final String PRODUCT_SKU_PROPERTY_VALUE_NOT_NULL = "J200006";
+    public static final String PRODUCT_IMAGE_UPLOAD_ERROR = "J200007";
+    public static final String PRODUCT_IS_NULL_OR_NOT_EXISTS = "J200008";
+    public static final String PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS = "J200009";
+    public static final String PRODUCT_SKU_PRICE_EROR = "J200010";
+
+    public static final String REMARK_PATTERN = "J900001";
+    public static final String ID_NOT_NULL = "J900002";
+    public static final String MONEY_MORE_THAN_ZERO = "J900003";
+    public static final String IMAGE_NOT_EXISTS = "J900004";
+    public static final String IMAGE_TYPE_ERROR = "J900005";
+    public static final String IMAGE_USED = "J900006";
+    public static final String DATA_DICTIONARY_NAME_NOT_NULL = "J900007";
+    public static final String PARAM_IS_NOT_NULL = "J900008";
+    public static final String HAVE_NO_CHANGE_STATUS = "J900009";
+    public static final String STATUS_PATTERN = "J900010";
+    public static final String COUNT_MORE_THAN_ZERO = "J900011";
+    public static final String DAYS_MORE_THAN_ZERO = "J900012";
+    public static final String DATA_STATUS_ERROR = "J900013";
+    public static final String VERIFY_STATUS_ERROR = "J900014";
+    public static final String OPERATOR_IS_NOT_YOURSELF = "J900015";
+    public static final String PARAM_IS_NOT_ENOUGH = "J900016";
+    public static final String NO_DUPLICATE_COMMIT = "J900017";
 
     static
     {
@@ -64,12 +91,41 @@ public class ErrorCode {
         MAP.put(DEPARTMENT_NOT_NULL,"部门不能为空");
         MAP.put(USER_NOT_NULL,"用户不能为空");
         MAP.put(ACTIVE_USER_ID_NOT_NULL,"观察者用户ID不能为空");
-
         MAP.put(OPERATOR_IS_NOT_YOURSELF,"操作者不是本人，不能操作");
         MAP.put(ROLE_NAME_NOT_NULL,"角色名称不能为空");
         MAP.put(ROLE_HAVE_USER,"角色包含用户");
-
         MAP.put(SUB_COMPANY_NAME_NOT_NULL,"子公司名称不能为空");
+
+        MAP.put(PRODUCT_ID_NOT_NULL,"商品ID不能为空");
+        MAP.put(PRODUCT_NAME_NOT_NULL,"商品名称不能为空");
+        MAP.put(PRODUCT_PROPERTY_NOT_NULL,"商品属性不能为空");
+        MAP.put(PRODUCT_SKU_NOT_NULL,"商品SKU不能为空");
+        MAP.put(PRODUCT_SKU_PROPERTY_NOT_NULL,"商品SKU属性不能为空");
+        MAP.put(PRODUCT_PROPERTY_VALUE_NOT_NULL,"商品属性值不能为空");
+        MAP.put(PRODUCT_SKU_PROPERTY_VALUE_NOT_NULL,"商品SKU属性值不能为空");
+        MAP.put(PRODUCT_IMAGE_UPLOAD_ERROR,"商品图片上传失败");
+        MAP.put(PRODUCT_IS_NULL_OR_NOT_EXISTS,"商品不存在或发生变更");
+        MAP.put(PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS,"商品SKU不存在或发生变更");
+        MAP.put(PRODUCT_SKU_PRICE_EROR,"商品SKU价格填写不正确");
+
+
+        MAP.put(REMARK_PATTERN,"备注信息超过限制，最多输入200个字符");
+        MAP.put(ID_NOT_NULL,"ID不能为空");
+        MAP.put(MONEY_MORE_THAN_ZERO,"金额不能小于0");
+        MAP.put(IMAGE_NOT_EXISTS,"图片不存在");
+        MAP.put(IMAGE_TYPE_ERROR,"图片类型错误");
+        MAP.put(IMAGE_USED,"图片已使用");
+        MAP.put(DATA_DICTIONARY_NAME_NOT_NULL,"系统字典名称不能为空");
+        MAP.put(PARAM_IS_NOT_NULL,"参数不能为空");
+        MAP.put(HAVE_NO_CHANGE_STATUS,"无需改变状态");
+        MAP.put(STATUS_PATTERN,"未知状态");
+        MAP.put(COUNT_MORE_THAN_ZERO,"数量必须大于0");
+        MAP.put(DAYS_MORE_THAN_ZERO,"天数不能小于0");
+        MAP.put(DATA_STATUS_ERROR,"数据状态异常");
+        MAP.put(VERIFY_STATUS_ERROR,"审核状态异常");
+        MAP.put(OPERATOR_IS_NOT_YOURSELF,"操作者不是本人，不能操作");
+        MAP.put(PARAM_IS_NOT_ENOUGH,"信息不全，请仔细检查");
+        MAP.put(NO_DUPLICATE_COMMIT,"禁止重复提交");
     }
 
     public static String getMessage(String code)

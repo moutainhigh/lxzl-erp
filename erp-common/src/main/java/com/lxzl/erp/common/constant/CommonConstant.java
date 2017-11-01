@@ -17,16 +17,21 @@ public class CommonConstant {
 
     public static final Integer SUPER_MENU_ID = 200000;
     public static final Integer SUPER_DATA_DICTIONARY_ID = 300000;
+    public static final Integer SUPER_PRODUCT_CATEGORY_ID = 800000;
 
     public static final String COMMUNITY_SESSION_KEY = "community_id";
     public static final String TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String MD5_KEY = "kjhku8gsasiow34";
 
-    public static final String COMMON_CONSTANT_SEPARATOR = ",";
-
     // 数据状态
     public static final Integer COMMON_CONSTANT_OP_CREATE = 1;//标记新增
     public static final Integer COMMON_CONSTANT_OP_DELETE = 2;//标记删除
+    // 操作类型
+    public static final Integer COMMON_DATA_OPERATION_TYPE_ADD = 1;      // 增加
+    public static final Integer COMMON_DATA_OPERATION_TYPE_UPDATE = 2;   // 修改
+    public static final Integer COMMON_DATA_OPERATION_TYPE_DELETE = 3;   // 删除
+
+    public static final String COMMON_CONSTANT_SEPARATOR = ",";
 
 }
