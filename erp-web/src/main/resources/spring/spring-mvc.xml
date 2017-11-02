@@ -67,6 +67,9 @@
 							<entry key="dateTool">
 								<bean class="org.apache.velocity.tools.generic.DateTool" />
 							</entry>
+							<entry key="constantConfig">
+								<bean class="com.lxzl.erp.common.domain.ConstantConfig" />
+							</entry>
 						</map>
 					</property>
 				</bean>
