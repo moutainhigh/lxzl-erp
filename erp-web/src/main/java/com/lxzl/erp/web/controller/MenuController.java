@@ -27,14 +27,12 @@ public class MenuController extends BaseController {
 
     @RequestMapping(value = "getMenu", method = RequestMethod.POST)
     public Result getMenu(HttpServletRequest request, HttpServletResponse response, Model model) {
-        response.setHeader("Access-Control-Allow-Origin", "*");
         ServiceResult<String, List<Menu>> serviceResult = menuService.findAllMenu();
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     @RequestMapping(value = "getHomeMenu", method = RequestMethod.POST)
     public Result getHomeMenu(HttpServletRequest request, HttpServletResponse response, Model model) {
-        response.setHeader("Access-Control-Allow-Origin", "*");
         ServiceResult<String, List<Menu>> serviceResult = menuService.getHomeMenu();
 
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
