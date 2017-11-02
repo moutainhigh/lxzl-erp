@@ -1,6 +1,6 @@
 <header class="navbar navbar-fixed-top bg-light">
     <div class="navbar-branding">
-        <a class="navbar-brand" href="${ctx}/home"> <b>爱租运营管理系统</b>
+        <a class="navbar-brand" href="${ctx}/home"> <b>凌雄ERP系统</b>
         </a>
         <span id="toggle_sidemenu_l" class="glyphicons glyphicons-show_lines"></span>
         <ul class="nav navbar-nav pull-right hidden">
