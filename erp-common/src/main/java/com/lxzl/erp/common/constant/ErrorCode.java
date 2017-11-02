@@ -67,6 +67,8 @@ public class ErrorCode {
     public static final String PARAM_IS_NOT_ENOUGH = "J900016";
     public static final String NO_DUPLICATE_COMMIT = "J900017";
 
+    public static final String PURCHASE_ORDER_ID_NOT_NULL = "J200000";
+
     static
     {
         MAP.put(SUCCESS,"成功");
@@ -126,6 +128,8 @@ public class ErrorCode {
         MAP.put(OPERATOR_IS_NOT_YOURSELF,"操作者不是本人，不能操作");
         MAP.put(PARAM_IS_NOT_ENOUGH,"信息不全，请仔细检查");
         MAP.put(NO_DUPLICATE_COMMIT,"禁止重复提交");
+
+        MAP.put(PURCHASE_ORDER_ID_NOT_NULL,"采购订单号不能为空");
     }
 
     public static String getMessage(String code)

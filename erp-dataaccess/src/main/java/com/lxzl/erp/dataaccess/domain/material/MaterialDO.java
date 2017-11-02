@@ -1,4 +1,4 @@
-package com.lxzl.erp.dataaccess.domain.materiel;
+package com.lxzl.erp.dataaccess.domain.material;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 
@@ -10,15 +10,15 @@ import java.math.BigDecimal;
  * @author gaochao
  * @date 2017-10-30 19:57
  */
-public class MaterielDO extends BaseDO {
+public class MaterialDO extends BaseDO {
     private Integer id;
-    private String materielNo;
-    private String materielName;
+    private String materialNo;
+    private String materialName;
     private Integer brandId;
     private Integer categoryId;
     private Integer propertyId;
     private Integer propertyValueId;
-    private BigDecimal materielPrice;
+    private BigDecimal materialPrice;
     private BigDecimal originalPrice;
     private BigDecimal rentPrice;
     private Integer dataStatus;
@@ -32,28 +32,28 @@ public class MaterielDO extends BaseDO {
         this.id = id;
     }
 
-    public String getMaterielNo() {
-        return materielNo;
+    public String getMaterialNo() {
+        return materialNo;
     }
 
-    public void setMaterielNo(String materielNo) {
-        this.materielNo = materielNo == null ? null : materielNo.trim();
+    public void setMaterialNo(String materialNo) {
+        this.materialNo = materialNo;
     }
 
-    public String getMaterielName() {
-        return materielName;
+    public String getMaterialName() {
+        return materialName;
     }
 
-    public void setMaterielName(String materielName) {
-        this.materielName = materielName == null ? null : materielName.trim();
+    public void setMaterialName(String materialName) {
+        this.materialName = materialName;
     }
 
-    public BigDecimal getMaterielPrice() {
-        return materielPrice;
+    public BigDecimal getMaterialPrice() {
+        return materialPrice;
     }
 
-    public void setMaterielPrice(BigDecimal materielPrice) {
-        this.materielPrice = materielPrice;
+    public void setMaterialPrice(BigDecimal materialPrice) {
+        this.materialPrice = materialPrice;
     }
 
     public Integer getDataStatus() {
