@@ -24,21 +24,7 @@ rebel.xml
 hs_err_pid*
 /logs
 
-erp-common/.rebel-remote.xml.bak
-erp-common/.rebel.xml.bak
-
-erp-core/.rebel-remote.xml.bak
-erp-core/.rebel.xml.bak
-
-erp-dataaccess/.rebel-remote.xml.bak
-erp-dataaccess/.rebel.xml.bak
-
-erp-dataaccess/.rebel-remote.xml.bak
-erp-dataaccess/.rebel.xml.bak
-
-erp-web/.rebel-remote.xml.bak
-erp-web/.rebel.xml.bak
-
-erp-worker/.rebel-remote.xml.bak
-erp-worker/.rebel.xml.bak
+*.rebel-remote.xml
+*.rebel-remote.xml.bak
+*.rebel.xml.bak
 
