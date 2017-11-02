@@ -12,17 +12,16 @@ import java.math.BigDecimal;
  */
 public class MaterielDO extends BaseDO {
     private Integer id;
-
     private String materielNo;
-
     private String materielName;
-
     private Integer brandId;
-
+    private Integer categoryId;
+    private Integer propertyId;
+    private Integer propertyValueId;
     private BigDecimal materielPrice;
-
+    private BigDecimal originalPrice;
+    private BigDecimal rentPrice;
     private Integer dataStatus;
-
     private String remark;
 
     public Integer getId() {
@@ -71,5 +70,53 @@ public class MaterielDO extends BaseDO {
 
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
+    }
+
+    public Integer getBrandId() {
+        return brandId;
+    }
+
+    public void setBrandId(Integer brandId) {
+        this.brandId = brandId;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Integer getPropertyId() {
+        return propertyId;
+    }
+
+    public void setPropertyId(Integer propertyId) {
+        this.propertyId = propertyId;
+    }
+
+    public Integer getPropertyValueId() {
+        return propertyValueId;
+    }
+
+    public void setPropertyValueId(Integer propertyValueId) {
+        this.propertyValueId = propertyValueId;
+    }
+
+    public BigDecimal getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public void setOriginalPrice(BigDecimal originalPrice) {
+        this.originalPrice = originalPrice;
+    }
+
+    public BigDecimal getRentPrice() {
+        return rentPrice;
+    }
+
+    public void setRentPrice(BigDecimal rentPrice) {
+        this.rentPrice = rentPrice;
     }
 }

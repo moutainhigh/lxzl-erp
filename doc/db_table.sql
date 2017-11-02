@@ -120,6 +120,9 @@ DROP TABLE if exists `erp_sub_company`;
 CREATE TABLE `erp_sub_company` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `sub_company_name` varchar(20) NOT NULL DEFAULT '' COMMENT '子公司名称',
+  `province` int(20) DEFAULT NULL COMMENT '省份ID，对应字典ID',
+  `city` int(20) DEFAULT NULL COMMENT '城市ID，对应字典ID',
+  `district` int(20) DEFAULT NULL COMMENT '区ID，对应字典ID',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',

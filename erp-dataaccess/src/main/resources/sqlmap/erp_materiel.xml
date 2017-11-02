@@ -8,8 +8,13 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="materiel_no" jdbcType="VARCHAR" property="materielNo" />
 		<result column="materiel_name" jdbcType="VARCHAR" property="materielName" />
-		<result column="materiel_type" jdbcType="INTEGER" property="materielType" />
+		<result column="brand_id" jdbcType="INTEGER" property="brandId" />
+		<result column="category_id" jdbcType="INTEGER" property="categoryId" />
+		<result column="property_id" jdbcType="INTEGER" property="propertyId" />
+		<result column="property_value_id" jdbcType="INTEGER" property="propertyValueId" />
 		<result column="materiel_price" jdbcType="DECIMAL" property="materielPrice" />
+		<result column="original_price" jdbcType="DECIMAL" property="originalPrice" />
+		<result column="rent_price" jdbcType="DECIMAL" property="rentPrice" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -19,7 +24,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		em.id,em.materiel_no,em.materiel_name,em.materiel_type,em.materiel_price,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
+		em.id,em.ateriel_no,em.ateriel_name,em.rand_id,em.ategory_id,em.roperty_id,em.roperty_value_id,em.materiel_price,em.riginal_price,em.ent_price,em.ata_status,em.emark,em.reate_time,em.reate_user,em.update_time,em.pdate_user
 	</sql>
 
 	<select id="findById" resultMap="MaterielDO" parameterType="java.lang.Integer">
@@ -37,11 +42,26 @@
 			<if test="materielName != null">
 				materiel_name = #{materielName,jdbcType=VARCHAR},
 			</if>
-			<if test="materielType != null">
-				materiel_type = #{materielType,jdbcType=INTEGER},
+			<if test="brandId != null">
+				brand_id = #{brandId,jdbcType=INTEGER},
+			</if>
+			<if test="categoryId != null">
+				category_id = #{categoryId,jdbcType=INTEGER},
+			</if>
+			<if test="propertyId != null">
+				property_id = #{propertyId,jdbcType=INTEGER},
+			</if>
+			<if test="propertyValueId != null">
+				property_value_id = #{propertyValueId,jdbcType=INTEGER},
 			</if>
 			<if test="materielPrice != null">
 				materiel_price = #{materielPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="originalPrice != null">
+				original_price = #{originalPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="rentPrice != null">
+				rent_price = #{rentPrice,jdbcType=DECIMAL},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
@@ -61,9 +81,11 @@
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
 			</if>
+			<if test="materielDesc != null">
+				materiel_desc = #{materielDesc,jdbcType=LONGVARCHAR},
+			</if>
 		</set>
 	</sql>
-
 
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.materiel.MaterielDO">
 		update erp_materiel
