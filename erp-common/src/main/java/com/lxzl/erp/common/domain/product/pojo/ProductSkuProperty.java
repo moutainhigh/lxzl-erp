@@ -1,4 +1,4 @@
-package com.lxzl.erp.common.domain.product;
+package com.lxzl.erp.common.domain.product.pojo;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 

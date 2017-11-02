@@ -6,6 +6,8 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
         <result column="role_desc" jdbcType="VARCHAR" property="roleDesc"/>
+        <result column="parent_role_id" jdbcType="INTEGER" property="parentRoleId"/>
+        <result column="parent_role_name" jdbcType="VARCHAR" property="parentRoleName"/>
         <result column="is_super_admin" jdbcType="VARCHAR" property="isSuperAdmin"/>
         <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -16,13 +18,14 @@
     </resultMap>
 
     <sql id="column_List">
-        tr.id,tr.role_name,tr.role_desc,tr.is_super_admin,tr.data_status,tr.remark,tr.create_time,tr.update_time
+        tr.id,tr.role_name,tr.parent_role_id,tr.role_desc,tr.is_super_admin,tr.data_status,tr.remark,tr.create_time,tr.update_time
     </sql>
 
     <select id="findList" resultMap="RoleDO" parameterType="map">
         select
-        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user, trp.role_name as parent_role_name
         from erp_role tr
+        left join mall_management_role trp on trp.id = tr.parent_role_id and trp.data_status = 1
         left join erp_user tuc on tuc.id = tr.create_user
         left join erp_user tuu on tuu.id = tr.update_user
         <where>
@@ -58,8 +61,9 @@
 
     <select id="findByMapId" resultMap="RoleDO" parameterType="java.lang.Integer">
         select
-        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user, trp.role_name as parent_role_name
         from erp_role tr
+        left join mall_management_role trp on trp.id = tr.parent_role_id and trp.data_status = 1
         left join erp_user tuc on tuc.id = tr.create_user
         left join erp_user tuu on tuu.id = tr.update_user
         where tr.id = #{roleId, jdbcType=INTEGER} and tr.data_status = 1
@@ -67,8 +71,9 @@
 
     <select id="findByUserId" resultMap="RoleDO" parameterType="java.lang.Integer">
         select
-        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user, trp.role_name as parent_role_name
         from erp_role tr
+        left join mall_management_role trp on trp.id = tr.parent_role_id and trp.data_status = 1
         inner join erp_user_role tur on tr.id = tur.role_id and tur.data_status = 1
         left join erp_user tuc on tuc.id = tr.create_user
         left join erp_user tuu on tuu.id = tr.update_user
@@ -79,6 +84,9 @@
         <set>
             <if test="roleName != null">
                 role_name = #{roleName, jdbcType=VARCHAR},
+            </if>
+            <if test="parentRoleId != null">
+                parent_role_id = #{parentRoleId, jdbcType=INTEGER},
             </if>
             <if test="roleDesc != null">
                 role_desc = #{roleDesc, jdbcType=VARCHAR},

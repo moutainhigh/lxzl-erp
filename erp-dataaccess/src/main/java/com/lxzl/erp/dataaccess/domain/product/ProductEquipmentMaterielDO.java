@@ -1,4 +1,4 @@
-package com.lxzl.erp.dataaccess.domain.equipment;
+package com.lxzl.erp.dataaccess.domain.product;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 
@@ -10,12 +10,12 @@ import java.io.Serializable;
  * @author gaochao
  * @date 2017-10-30 20:16
  */
-public class EquipmentMaterielDO extends BaseDO {
+public class ProductEquipmentMaterielDO extends BaseDO {
     private Integer id;
 
-    private Long equipmentId;
+    private Integer equipmentId;
 
-    private Long materielId;
+    private Integer materielId;
 
     private Integer materielCount;
 
@@ -31,19 +31,19 @@ public class EquipmentMaterielDO extends BaseDO {
         this.id = id;
     }
 
-    public Long getEquipmentId() {
+    public Integer getEquipmentId() {
         return equipmentId;
     }
 
-    public void setEquipmentId(Long equipmentId) {
+    public void setEquipmentId(Integer equipmentId) {
         this.equipmentId = equipmentId;
     }
 
-    public Long getMaterielId() {
+    public Integer getMaterielId() {
         return materielId;
     }
 
-    public void setMaterielId(Long materielId) {
+    public void setMaterielId(Integer materielId) {
         this.materielId = materielId;
     }
 

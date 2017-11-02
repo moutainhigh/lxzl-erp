@@ -3,10 +3,10 @@ package com.lxzl.erp.core.service.product;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.*;
+import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.se.core.service.BaseService;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
 import java.util.List;
 
 public interface ProductService extends BaseService {
@@ -42,9 +42,6 @@ public interface ProductService extends BaseService {
 
     // 查询设备列表
     ServiceResult<String, Page<ProductEquipment>> queryAllProductEquipment(ProductEquipmentQueryParam productEquipmentQueryParam);
-
-    // 内部使用，不能对外暴露，操作设备出入库记录
-    ServiceResult<String, Integer> operateProductEquipmentStorage(Integer equipmentId, String equipmentNo, Integer operationType, Integer orderId, Integer orderProductId, Date currentTime);
 
     // 查询商品sku列表
     ServiceResult<String, Page<ProductSku>> queryProductSkuList(ProductSkuQueryParam productSkuQueryParam);

@@ -1,4 +1,4 @@
-package com.lxzl.erp.common.domain.equipment;
+package com.lxzl.erp.common.domain.product.pojo;
 
 import java.io.Serializable;
 
@@ -8,12 +8,12 @@ import java.io.Serializable;
  * @author gaochao
  * @date 2017-10-30 20:16
  */
-public class EquipmentMateriel implements Serializable {
+public class ProductEquipmentMateriel implements Serializable {
     private Integer id;
 
-    private Long equipmentId;
+    private Integer equipmentId;
 
-    private Long materielId;
+    private Integer materielId;
 
     private Integer materielCount;
 
@@ -29,19 +29,19 @@ public class EquipmentMateriel implements Serializable {
         this.id = id;
     }
 
-    public Long getEquipmentId() {
+    public Integer getEquipmentId() {
         return equipmentId;
     }
 
-    public void setEquipmentId(Long equipmentId) {
+    public void setEquipmentId(Integer equipmentId) {
         this.equipmentId = equipmentId;
     }
 
-    public Long getMaterielId() {
+    public Integer getMaterielId() {
         return materielId;
     }
 
-    public void setMaterielId(Long materielId) {
+    public void setMaterielId(Integer materielId) {
         this.materielId = materielId;
     }
 

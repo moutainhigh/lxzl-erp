@@ -1,7 +1,7 @@
 package com.lxzl.erp.core.service.product.impl.support;
 
 import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.domain.product.ProductCategory;
+import com.lxzl.erp.common.domain.product.pojo.ProductCategory;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryDO;
 
 import java.util.ArrayList;

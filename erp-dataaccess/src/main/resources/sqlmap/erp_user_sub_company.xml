@@ -3,9 +3,9 @@
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.company.UserSubCompanyMapper">
 
   <resultMap id="UserSubCompanyDO" type="com.lxzl.erp.dataaccess.domain.company.UserSubCompanyDO">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="user_id" jdbcType="BIGINT" property="userId" />
-    <result column="sub_company_id" jdbcType="BIGINT" property="subCompanyId" />
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
     <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -21,10 +21,10 @@
   <sql id="set_column_sql">
     <set>
       <if test="userId != null">
-        user_id = #{userId,jdbcType=BIGINT},
+        user_id = #{userId,jdbcType=INTEGER},
       </if>
       <if test="subCompanyId != null">
-        sub_company_id = #{subCompanyId,jdbcType=BIGINT},
+        sub_company_id = #{subCompanyId,jdbcType=INTEGER},
       </if>
       <if test="dataStatus != null">
         data_status = #{dataStatus,jdbcType=INTEGER},

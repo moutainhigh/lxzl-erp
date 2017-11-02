@@ -1,7 +1,7 @@
 package com.lxzl.erp.core.service.product.impl.support;
 
-import com.lxzl.erp.common.domain.product.ProductCategoryProperty;
-import com.lxzl.erp.common.domain.product.ProductCategoryPropertyValue;
+import com.lxzl.erp.common.domain.product.pojo.ProductCategoryProperty;
+import com.lxzl.erp.common.domain.product.pojo.ProductCategoryPropertyValue;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
 

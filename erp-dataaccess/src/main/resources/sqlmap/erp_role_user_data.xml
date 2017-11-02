@@ -3,9 +3,9 @@
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.user.RoleUserDataMapper">
 
     <resultMap id="RoleUserDataDO" type="com.lxzl.erp.dataaccess.domain.user.RoleUserDataDO">
-        <id column="id" jdbcType="BIGINT" property="id" />
-        <result column="active_user_id" jdbcType="BIGINT" property="activeUserId" />
-        <result column="passive_user_id" jdbcType="BIGINT" property="passiveUserId" />
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="active_user_id" jdbcType="INTEGER" property="activeUserId" />
+        <result column="passive_user_id" jdbcType="INTEGER" property="passiveUserId" />
         <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -24,10 +24,10 @@
     <sql id="set_column_sql">
         <set>
             <if test="activeUserId != null">
-                active_user_id = #{activeUserId,jdbcType=BIGINT},
+                active_user_id = #{activeUserId,jdbcType=INTEGER},
             </if>
             <if test="passiveUserId != null">
-                passive_user_id = #{passiveUserId,jdbcType=BIGINT},
+                passive_user_id = #{passiveUserId,jdbcType=INTEGER},
             </if>
             <if test="dataStatus != null">
                 data_status = #{dataStatus,jdbcType=INTEGER},

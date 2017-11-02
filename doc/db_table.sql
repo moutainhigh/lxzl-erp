@@ -3,7 +3,7 @@ USE lxzl_erp;
 
 DROP TABLE if exists `erp_user`;
 CREATE TABLE `erp_user` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `user_type` int(11) DEFAULT NULL COMMENT '用户类型，1为总部人员',
   `user_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '用户名',
   `real_name` varchar(64) COLLATE utf8_bin COMMENT '真实姓名,1为普通用户',
@@ -29,10 +29,10 @@ CREATE TABLE `erp_user` (
 
 DROP TABLE if exists `erp_role`;
 CREATE TABLE `erp_role` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '角色ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '角色ID',
   `role_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '角色名称',
   `role_desc` varchar(500) COLLATE utf8_bin COMMENT '角色描述',
-  `parent_role_id` bigint(20) COMMENT '上级角色',
+  `parent_role_id` int(20) COMMENT '上级角色',
   `is_super_admin` int(11) NOT NULL DEFAULT '0' COMMENT '是否是超级管理员，0不是，1是',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -45,9 +45,9 @@ CREATE TABLE `erp_role` (
 
 DROP TABLE if exists `erp_user_role`;
 CREATE TABLE `erp_user_role` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
-  `role_id` bigint(20) NOT NULL COMMENT '角色ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `user_id` int(20) NOT NULL COMMENT '用户ID',
+  `role_id` int(20) NOT NULL COMMENT '角色ID',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -59,9 +59,9 @@ CREATE TABLE `erp_user_role` (
 
 DROP TABLE if exists `erp_role_menu`;
 CREATE TABLE `erp_role_menu` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `role_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '角色ID',
-  `menu_id` bigint(20) COMMENT '功能ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `role_id` int(20) NOT NULL DEFAULT '0' COMMENT '角色ID',
+  `menu_id` int(20) COMMENT '功能ID',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -73,9 +73,9 @@ CREATE TABLE `erp_role_menu` (
 
 DROP TABLE if exists `erp_role_department_data`;
 CREATE TABLE `erp_role_department_data` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `role_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '角色ID',
-  `department_id` bigint(20) NOT NULL COMMENT '部门ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `role_id` int(20) NOT NULL DEFAULT '0' COMMENT '角色ID',
+  `department_id` int(20) NOT NULL COMMENT '部门ID',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -87,9 +87,9 @@ CREATE TABLE `erp_role_department_data` (
 
 DROP TABLE if exists `erp_role_user_data`;
 CREATE TABLE `erp_role_user_data` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `active_user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '观察者用户ID',
-  `passive_user_id` bigint(20) COMMENT '被观察者用户ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `active_user_id` int(20) NOT NULL DEFAULT '0' COMMENT '观察者用户ID',
+  `passive_user_id` int(20) COMMENT '被观察者用户ID',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -101,11 +101,11 @@ CREATE TABLE `erp_role_user_data` (
 
 DROP TABLE if exists `erp_department`;
 CREATE TABLE `erp_department` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `department_name` varchar(20) NOT NULL DEFAULT '' COMMENT '功能名称',
   `department_type` int(20) NOT NULL COMMENT '部门类型，对应字典ID',
-  `parent_department_id` bigint(20) NOT NULL DEFAULT 0 COMMENT '上级部门ID',
-  `sub_company_id` bigint(20) NOT NULL COMMENT '所属分公司',
+  `parent_department_id` int(20) NOT NULL DEFAULT 0 COMMENT '上级部门ID',
+  `sub_company_id` int(20) NOT NULL COMMENT '所属分公司',
   `data_order` int(11) NOT NULL DEFAULT '0' COMMENT '数据排序排序，越大排越前',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -118,7 +118,7 @@ CREATE TABLE `erp_department` (
 
 DROP TABLE if exists `erp_sub_company`;
 CREATE TABLE `erp_sub_company` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `sub_company_name` varchar(20) NOT NULL DEFAULT '' COMMENT '子公司名称',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -131,9 +131,9 @@ CREATE TABLE `erp_sub_company` (
 
 DROP TABLE if exists `erp_user_department`;
 CREATE TABLE `erp_user_department` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
-  `department_id` bigint(20) NOT NULL COMMENT '部门ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `user_id` int(20) NOT NULL COMMENT '用户ID',
+  `department_id` int(20) NOT NULL COMMENT '部门ID',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -145,9 +145,9 @@ CREATE TABLE `erp_user_department` (
 
 DROP TABLE if exists `erp_user_sub_company`;
 CREATE TABLE `erp_user_sub_company` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
-  `sub_company_id` bigint(20) NOT NULL COMMENT '分公司ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `user_id` int(20) NOT NULL COMMENT '用户ID',
+  `sub_company_id` int(20) NOT NULL COMMENT '分公司ID',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -159,9 +159,9 @@ CREATE TABLE `erp_user_sub_company` (
 
 DROP TABLE if exists `erp_role_user_final`;
 CREATE TABLE `erp_role_user_final` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `active_user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '观察者用户ID',
-  `passive_user_id` bigint(20) COMMENT '被观察者用户ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `active_user_id` int(20) NOT NULL DEFAULT '0' COMMENT '观察者用户ID',
+  `passive_user_id` int(20) COMMENT '被观察者用户ID',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -173,9 +173,9 @@ CREATE TABLE `erp_role_user_final` (
 
 DROP TABLE if exists `erp_sys_menu`;
 CREATE TABLE `erp_sys_menu` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '功能编号，唯一',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '功能编号，唯一',
   `menu_name` varchar(20) NOT NULL DEFAULT '' COMMENT '功能名称',
-  `parent_menu_id` bigint(20) NOT NULL DEFAULT 200000 COMMENT '父功能ID',
+  `parent_menu_id` int(20) NOT NULL DEFAULT 200000 COMMENT '父功能ID',
   `menu_order` int(11) NOT NULL DEFAULT '0' COMMENT '功能排序，越大排越前',
   `is_folder` int(11) NOT NULL DEFAULT '0' COMMENT '0为功能夹，1为功能，2为按钮（按钮只能放在功能下）',
   `menu_url` varchar(50) NOT NULL DEFAULT '' COMMENT '功能URL，如is_folder为0，则为空',
@@ -192,7 +192,7 @@ CREATE TABLE `erp_sys_menu` (
 
 DROP TABLE if exists `erp_img`;
 CREATE TABLE `erp_img` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '图片ID，唯一',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '图片ID，唯一',
   `img_type` int(11) NOT NULL DEFAULT '0' COMMENT '图片类型',
   `original_name` varchar(200) NOT NULL DEFAULT '' COMMENT '文件原名',
   `ref_id` varchar(20) COMMENT '根据不同的业务，对应不同的ID',
@@ -209,9 +209,9 @@ CREATE TABLE `erp_img` (
 
 DROP TABLE if exists `erp_data_dictionary`;
 CREATE TABLE `erp_data_dictionary` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '字典ID，唯一',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '字典ID，唯一',
   `data_name` varchar(20) NOT NULL DEFAULT '' COMMENT '数据名称',
-  `parent_dictionary_id` bigint(20) NOT NULL DEFAULT 300000 COMMENT '父ID',
+  `parent_dictionary_id` int(20) NOT NULL DEFAULT 300000 COMMENT '父ID',
   `data_order` int(11) NOT NULL DEFAULT '0' COMMENT '数据排序排序，越大排越前',
   `data_type` int(11) NOT NULL DEFAULT '0' COMMENT '数据类型',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -227,9 +227,9 @@ CREATE TABLE `erp_data_dictionary` (
 
 DROP TABLE if exists `erp_product_category`;
 CREATE TABLE `erp_product_category` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `category_name` varchar(20) NOT NULL DEFAULT '' COMMENT '分类名称',
-  `parent_category_id` bigint(20) NOT NULL DEFAULT 800000 COMMENT '父ID',
+  `parent_category_id` int(20) NOT NULL DEFAULT 800000 COMMENT '父ID',
   `category_type` int(11) NOT NULL DEFAULT '0' COMMENT '分类类型',
   `data_order` int(11) NOT NULL DEFAULT '0' COMMENT '数据排序排序，越大排越前',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -244,8 +244,8 @@ CREATE TABLE `erp_product_category` (
 
 DROP TABLE if exists `erp_product_brand`;
 CREATE TABLE `erp_product_brand` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `category_id` bigint(20) NOT NULL COMMENT '所属类目ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `category_id` int(20) NOT NULL COMMENT '所属类目ID',
   `brand_name` varchar(20) NOT NULL DEFAULT '' COMMENT '品牌名称',
   `brand_english_name` varchar(20) NOT NULL DEFAULT '' COMMENT '品牌英文名称',
   `brand_desc` varchar(500) COLLATE utf8_bin COMMENT '品牌描述',
@@ -263,9 +263,9 @@ CREATE TABLE `erp_product_brand` (
 
 DROP TABLE if exists `erp_product_category_property`;
 CREATE TABLE `erp_product_category_property` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `property_name` varchar(64) NOT NULL DEFAULT '' COMMENT '属性名称(大名称)',
-  `category_id` bigint(20) NOT NULL COMMENT '所属类目ID',
+  `category_id` int(20) NOT NULL COMMENT '所属类目ID',
   `property_type` int(11) COMMENT '属性类型，1为销售属性，2为商品属性',
   `is_input` int(11) NOT NULL DEFAULT '0' COMMENT '是否是输入属性：0否1是',
   `is_checkbox` int(11) NOT NULL DEFAULT '0' COMMENT '是否为多选，0否1是',
@@ -283,10 +283,10 @@ CREATE TABLE `erp_product_category_property` (
 
 DROP TABLE if exists `erp_product_category_property_value`;
 CREATE TABLE `erp_product_category_property_value` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `property_value_name` varchar(64) NOT NULL DEFAULT '' COMMENT '属性值',
-  `property_id` bigint(20) NOT NULL COMMENT '所属属性ID',
-  `category_id` bigint(20) NOT NULL COMMENT '所属类目ID',
+  `property_id` int(20) NOT NULL COMMENT '所属属性ID',
+  `category_id` int(20) NOT NULL COMMENT '所属类目ID',
   `data_order` int(11) NOT NULL DEFAULT '0' COMMENT '属性排序，越大排越前',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -299,11 +299,11 @@ CREATE TABLE `erp_product_category_property_value` (
 
 DROP TABLE if exists `erp_product`;
 CREATE TABLE `erp_product` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '商品ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '商品ID',
   `product_no` varchar(100) NOT NULL COMMENT '商品编码',
   `product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称',
-  `brand_id` bigint(20) COMMENT '所属品牌ID',
-  `category_id` bigint(20) NOT NULL COMMENT '所属类目ID',
+  `brand_id` int(20) COMMENT '所属品牌ID',
+  `category_id` int(20) NOT NULL COMMENT '所属类目ID',
   `subtitle` varchar(60) NOT NULL DEFAULT '' COMMENT '副标题',
   `unit` int(20) COMMENT '单位，对应字典ID',
   `list_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '列表展示价格',
@@ -321,9 +321,9 @@ CREATE TABLE `erp_product` (
 
 DROP TABLE if exists `erp_product_sku`;
 CREATE TABLE `erp_product_sku` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'SKU ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT 'SKU ID',
   `sku_name` varchar(100) COLLATE utf8_bin COMMENT 'SKU名称',
-  `product_id` bigint(20) NOT NULL COMMENT '所属产品ID',
+  `product_id` int(20) NOT NULL COMMENT '所属产品ID',
   `stock` int(11) NOT NULL DEFAULT '0' COMMENT '库存',
   `sku_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品本身的价值',
   `original_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '原价',
@@ -342,12 +342,12 @@ CREATE TABLE `erp_product_sku` (
 
 DROP TABLE if exists `erp_product_sku_property`;
 CREATE TABLE `erp_product_sku_property` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'SKU property ID',
-  `product_id` bigint(20) NOT NULL COMMENT '所属产品ID',
-  `property_id` bigint(20) NOT NULL COMMENT '属性ID',
-  `property_value_id` bigint(20) NOT NULL COMMENT '属性值ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT 'SKU property ID',
+  `product_id` int(20) NOT NULL COMMENT '所属产品ID',
+  `property_id` int(20) NOT NULL COMMENT '属性ID',
+  `property_value_id` int(20) NOT NULL COMMENT '属性值ID',
   `is_sku` int(11) NOT NULL DEFAULT '0' COMMENT '是否是sku，1是0否',
-  `sku_id` bigint(20) COMMENT 'SKU ID',
+  `sku_id` int(20) COMMENT 'SKU ID',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -359,13 +359,13 @@ CREATE TABLE `erp_product_sku_property` (
 
 DROP TABLE if exists `erp_materiel`;
 CREATE TABLE `erp_materiel` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '设备ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '设备ID',
   `materiel_no` varchar(100) NOT NULL COMMENT '物料唯一编号',
   `materiel_name` varchar(100) COLLATE utf8_bin COMMENT '物料名称，取属性与属性值全称',
-  `brand_id` bigint(20) COMMENT '所属品牌ID',
-  `category_id` bigint(20) NOT NULL COMMENT '所属类目ID',
-  `property_id` bigint(20) NOT NULL COMMENT '属性ID',
-  `property_value_id` bigint(20) NOT NULL COMMENT '属性值ID',
+  `brand_id` int(20) COMMENT '所属品牌ID',
+  `category_id` int(20) NOT NULL COMMENT '所属类目ID',
+  `property_id` int(20) NOT NULL COMMENT '属性ID',
+  `property_value_id` int(20) NOT NULL COMMENT '属性值ID',
   `materiel_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '物料本身的价值(单价)',
   `original_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '原价',
   `rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '销售价格',
@@ -382,10 +382,10 @@ CREATE TABLE `erp_materiel` (
 
 DROP TABLE if exists `erp_product_materiel`;
 CREATE TABLE `erp_product_materiel` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `product_id` bigint(20) NOT NULL COMMENT '商品ID',
-  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID',
-  `materiel_id` bigint(20) NOT NULL COMMENT '物料ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `product_id` int(20) NOT NULL COMMENT '商品ID',
+  `product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID',
+  `materiel_id` int(20) NOT NULL COMMENT '物料ID',
   `materiel_count` int(11) NOT NULL DEFAULT '1' COMMENT '物料总数',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -398,14 +398,14 @@ CREATE TABLE `erp_product_materiel` (
 
 DROP TABLE if exists `erp_product_equipment`;
 CREATE TABLE `erp_product_equipment` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '设备ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '设备ID',
   `equipment_no` varchar(100) NOT NULL COMMENT '设备编号唯一',
-  `product_id` bigint(20) NOT NULL COMMENT '所属产品ID',
-  `sku_id` bigint(20) NOT NULL COMMENT '所属SKU ID',
-  `warehouse_id` bigint(20) NOT NULL COMMENT '目前仓库ID',
-  `warehouse_position_id` bigint(20) NOT NULL COMMENT '目前仓位ID',
-  `owner_warehouse_id` bigint(20) NOT NULL COMMENT '归属仓库ID',
-  `owner_warehouse_position_id` bigint(20) NOT NULL COMMENT '归属目前仓位ID',
+  `product_id` int(20) NOT NULL COMMENT '所属产品ID',
+  `sku_id` int(20) NOT NULL COMMENT '所属SKU ID',
+  `warehouse_id` int(20) NOT NULL COMMENT '目前仓库ID',
+  `warehouse_position_id` int(20) NOT NULL COMMENT '目前仓位ID',
+  `owner_warehouse_id` int(20) NOT NULL COMMENT '归属仓库ID',
+  `owner_warehouse_position_id` int(20) NOT NULL COMMENT '归属目前仓位ID',
   `equipment_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '设备本身价值',
   `equipment_status` int(11) NOT NULL DEFAULT '0' COMMENT '设备状态，0闲置，1租赁中，2报废',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -417,11 +417,11 @@ CREATE TABLE `erp_product_equipment` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='商品设备表';
 
-DROP TABLE if exists `erp_equipment_materiel`;
-CREATE TABLE `erp_equipment_materiel` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `equipment_id` bigint(20) NOT NULL COMMENT '设备ID',
-  `materiel_id` bigint(20) NOT NULL COMMENT '物料ID',
+DROP TABLE if exists `erp_product_equipment_materiel`;
+CREATE TABLE `erp_product_equipment_materiel` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `equipment_id` int(20) NOT NULL COMMENT '设备ID',
+  `materiel_id` int(20) NOT NULL COMMENT '物料ID',
   `materiel_count` int(11) NOT NULL DEFAULT '1' COMMENT '物料总数',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -434,10 +434,10 @@ CREATE TABLE `erp_equipment_materiel` (
 
 DROP TABLE if exists `erp_product_img`;
 CREATE TABLE `erp_product_img` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '图片ID，唯一',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '图片ID，唯一',
   `img_type` int(11) NOT NULL DEFAULT '0' COMMENT '图片类型',
   `original_name` varchar(200) NOT NULL DEFAULT '' COMMENT '文件原名',
-  `product_id` bigint(20) COMMENT '所属产品ID',
+  `product_id` int(20) COMMENT '所属产品ID',
   `img_url` varchar(200) NOT NULL DEFAULT '' COMMENT '图片URL',
   `is_main` int(11) NOT NULL DEFAULT '0' COMMENT '是否是主图，0否1是',
   `img_order` int(11) NOT NULL DEFAULT '0' COMMENT '图片排序，越大越前面',
@@ -452,10 +452,10 @@ CREATE TABLE `erp_product_img` (
 
 DROP TABLE if exists `erp_product_equipment_repair_record`;
 CREATE TABLE `erp_product_equipment_repair_record` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `equipment_no` varchar(100) NOT NULL COMMENT '设备编号唯一',
-  `order_id` bigint(20) COMMENT '订单ID',
-  `order_product_id` bigint(20) COMMENT '订单项ID',
+  `order_id` int(20) COMMENT '订单ID',
+  `order_product_id` int(20) COMMENT '订单项ID',
   `repair_reason` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '维修原因，由发起人填写',
   `repair_status` int(11) NOT NULL DEFAULT '0' COMMENT '维修状态，0发起维修，1维修中，2维修完成回库',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -471,10 +471,10 @@ CREATE TABLE `erp_product_equipment_repair_record` (
 
 DROP TABLE if exists `erp_warehouse`;
 CREATE TABLE `erp_warehouse` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `warehouse_no` varchar(100) NOT NULL COMMENT '仓库编码',
   `warehouse_name` varchar(100) COLLATE utf8_bin COMMENT '仓库名称',
-  `sub_company_id` bigint(20) NOT NULL COMMENT '分公司ID',
+  `sub_company_id` int(20) NOT NULL COMMENT '分公司ID',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -486,8 +486,8 @@ CREATE TABLE `erp_warehouse` (
 
 DROP TABLE if exists `erp_warehouse_position`;
 CREATE TABLE `erp_warehouse_position` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `warehouse_id` bigint(20) NOT NULL COMMENT '仓库ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `warehouse_id` int(20) NOT NULL COMMENT '仓库ID',
   `warehouse_position_name` varchar(100) COLLATE utf8_bin COMMENT '仓库名称',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -500,17 +500,17 @@ CREATE TABLE `erp_warehouse_position` (
 
 DROP TABLE if exists `erp_stock_order`;
 CREATE TABLE `erp_stock_order` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `stock_order_no` varchar(100) NOT NULL COMMENT '出入库单编号',
   `operation_type` int(11) NOT NULL COMMENT '操作类型，1入库，2出库',
   `cause_type` int(11) NOT NULL COMMENT '起因类型，1采购入库，2退货回库，3维修回库，4用户租赁',
   `refer_no` varchar(100) COMMENT '关联单号',
   `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '出入库单状态，0未出库，1已出库',
-  `src_warehouse_id` bigint(20) COMMENT '源仓库ID',
-  `src_warehouse_position_id` bigint(20) COMMENT '源仓位ID',
-  `target_warehouse_id` bigint(20) NOT NULL COMMENT '目标仓库ID',
-  `target_warehouse_position_id` bigint(20) NOT NULL COMMENT '目标仓位ID',
-  `owner` bigint(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
+  `src_warehouse_id` int(20) COMMENT '源仓库ID',
+  `src_warehouse_position_id` int(20) COMMENT '源仓位ID',
+  `target_warehouse_id` int(20) NOT NULL COMMENT '目标仓库ID',
+  `target_warehouse_position_id` int(20) NOT NULL COMMENT '目标仓位ID',
+  `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -522,9 +522,9 @@ CREATE TABLE `erp_stock_order` (
 
 DROP TABLE if exists `erp_stock_order_equipment`;
 CREATE TABLE `erp_stock_order_equipment` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `stock_order_no` varchar(100) NOT NULL COMMENT '出入库单编号',
-  `equipment_id` bigint(20) NOT NULL COMMENT '设备ID',
+  `equipment_id` int(20) NOT NULL COMMENT '设备ID',
   `equipment_no` varchar(100) NOT NULL COMMENT '设备编号唯一',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -539,10 +539,10 @@ CREATE TABLE `erp_stock_order_equipment` (
 
 DROP TABLE if exists `erp_order`;
 CREATE TABLE `erp_order` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `order_no` varchar(100) NOT NULL COMMENT '订单编号',
   `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '订单状态，未付款,支付中,已付款,已发货,租赁中,逾期中,退租,取消交易',
-  `buyer_user_id` bigint(20) NOT NULL COMMENT '购买人ID',
+  `buyer_user_id` int(20) NOT NULL COMMENT '购买人ID',
   `buyer_real_name` varchar(64) COLLATE utf8_bin COMMENT '真实姓名',
   `rent_type` int(11) NOT NULL DEFAULT '0' COMMENT '租赁方式，1按月租',
   `rent_time_length` int(11) NOT NULL DEFAULT '0' COMMENT '租赁期限',
@@ -560,7 +560,7 @@ CREATE TABLE `erp_order` (
   `buyer_remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '购买人备注',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
-  `owner` bigint(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
+  `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -571,11 +571,11 @@ CREATE TABLE `erp_order` (
 
 DROP TABLE if exists `erp_order_product`;
 CREATE TABLE `erp_order_product` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `order_id` bigint(20) NOT NULL COMMENT '订单ID',
-  `product_id` bigint(20) COMMENT '商品ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `product_id` int(20) COMMENT '商品ID',
   `product_name` varchar(100) COLLATE utf8_bin COMMENT '商品名称',
-  `product_sku_id` bigint(20) COMMENT '商品SKU ID',
+  `product_sku_id` int(20) COMMENT '商品SKU ID',
   `product_sku_name` varchar(100) COLLATE utf8_bin COMMENT '商品SKU名称',
   `product_count` int(11) NOT NULL DEFAULT '0' COMMENT '商品总数',
   `product_unit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品单价',
@@ -593,13 +593,13 @@ CREATE TABLE `erp_order_product` (
 
 DROP TABLE if exists `erp_order_consign_info`;
 CREATE TABLE `erp_order_consign_info` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `order_id` bigint(20) NOT NULL COMMENT '订单ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
   `consignee_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '收货人姓名',
   `consignee_phone` varchar(24) CHARACTER SET ascii DEFAULT NULL COMMENT '收货人手机号',
-  `province` bigint(20) DEFAULT NULL COMMENT '省份ID，对应字典ID',
-  `city` bigint(20) DEFAULT NULL COMMENT '城市ID，对应字典ID',
-  `district` bigint(20) DEFAULT NULL COMMENT '区ID，对应字典ID',
+  `province` int(20) DEFAULT NULL COMMENT '省份ID，对应字典ID',
+  `city` int(20) DEFAULT NULL COMMENT '城市ID，对应字典ID',
+  `district` int(20) DEFAULT NULL COMMENT '区ID，对应字典ID',
   `address` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -616,7 +616,7 @@ CREATE TABLE `erp_order_consign_info` (
 
 DROP TABLE if exists `erp_third_party_pay_record`;
 CREATE TABLE `erp_third_party_pay_record` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `record_type` int(11) DEFAULT NULL COMMENT '记录类型，1订单支付记录，2退款记录等',
   `refer_order_id` varchar(100) NOT NULL COMMENT '关联ID，type为1则关联订单',
   `refer_id` varchar(100) COMMENT '关联其他ID，type为1则关联订单',
@@ -643,10 +643,10 @@ CREATE TABLE `erp_third_party_pay_record` (
 
 DROP TABLE if exists `erp_order_pay_plan`;
 CREATE TABLE `erp_order_pay_plan` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `pay_no` varchar(100) NOT NULL COMMENT '支付编号',
   `parent_pay_no` varchar(100) COMMENT '关联的支付编号，从哪个生成的',
-  `order_id` bigint(20) NOT NULL COMMENT '订单号',
+  `order_id` int(20) NOT NULL COMMENT '订单号',
   `pay_status` int(11) NOT NULL DEFAULT '0' COMMENT '支付状态，0未支付，1支付中，2已经支付，3付款失败，4付款失效',
   `pay_time` datetime COMMENT '发起支付时间',
   `pay_time_plan` datetime NOT NULL COMMENT '原定还款时间',
@@ -666,11 +666,11 @@ CREATE TABLE `erp_order_pay_plan` (
 
 DROP TABLE if exists `erp_order_refund_record`;
 CREATE TABLE `erp_order_refund_record` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `pay_no` varchar(100) NOT NULL COMMENT '支付编号',
   `refund_no` varchar(100) NOT NULL COMMENT '退款编号',
   `parent_refund_no` varchar(100) COMMENT '关联的退款编号，从哪个生成的',
-  `order_id` bigint(20) NOT NULL COMMENT '订单号',
+  `order_id` int(20) NOT NULL COMMENT '订单号',
   `refund_message` varchar(500) COMMENT '退款信息（展示給客戶）',
   `refund_status` int(11) NOT NULL DEFAULT '0' COMMENT '支付状态，0初始化，1退款中，2退款成功，3退款关闭，4退款异常',
   `verify_status` int(11) NOT NULL DEFAULT '0' COMMENT '审核状态，0待提交，1已提交，2审批通过，3审批驳回，4取消',
@@ -694,11 +694,11 @@ CREATE TABLE `erp_order_refund_record` (
 -- -----------------------------------------采购单----------------------------------------- --
 DROP TABLE if exists `erp_purchase_order`;
 CREATE TABLE `erp_purchase_order` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `purchase_no` varchar(100) NOT NULL COMMENT '采购单编号',
-  `product_supplier_id` bigint(20) NOT NULL COMMENT '商品供应商ID',
-  `invoice_supplier_id` bigint(20) NOT NULL COMMENT '发票供应商ID',
-  `warehouse_id` bigint(20) NOT NULL COMMENT '仓库ID',
+  `product_supplier_id` int(20) NOT NULL COMMENT '商品供应商ID',
+  `invoice_supplier_id` int(20) NOT NULL COMMENT '发票供应商ID',
+  `warehouse_id` int(20) NOT NULL COMMENT '仓库ID',
   `is_invoice` int(11) NOT NULL COMMENT '是否有发票，0否1是',
   `is_new` int(11) NOT NULL COMMENT '是否全新机',
   `purchase_order_amount_total` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '采购单总价',
@@ -708,7 +708,7 @@ CREATE TABLE `erp_purchase_order` (
   `verify_user` varchar(20) NOT NULL DEFAULT '' COMMENT '审核人',
   `verify_time` datetime DEFAULT NULL COMMENT '审核时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `owner` bigint(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
+  `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
@@ -719,12 +719,12 @@ CREATE TABLE `erp_purchase_order` (
 
 DROP TABLE if exists `erp_purchase_order_product`;
 CREATE TABLE `erp_purchase_order_product` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `purchase_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
-  `product_id` bigint(20) NOT NULL COMMENT '商品ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_order_id` int(20) NOT NULL COMMENT '采购单ID',
+  `product_id` int(20) NOT NULL COMMENT '商品ID',
   `product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称冗余',
   `product_mode_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照',
-  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID',
+  `product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID',
   `product_count` int(11) NOT NULL DEFAULT '1' COMMENT '商品总数',
   `product_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品单价',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -737,12 +737,12 @@ CREATE TABLE `erp_purchase_order_product` (
 
 DROP TABLE if exists `erp_purchase_order_product_materiel`;
 CREATE TABLE `erp_purchase_order_product_materiel` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `purchase_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
-  `purchase_order_product_id` bigint(20) NOT NULL COMMENT '采购单项ID',
-  `product_id` bigint(20) NOT NULL COMMENT '商品ID',
-  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID',
-  `materiel_id` bigint(20) NOT NULL COMMENT '物料ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_order_id` int(20) NOT NULL COMMENT '采购单ID',
+  `purchase_order_product_id` int(20) NOT NULL COMMENT '采购单项ID',
+  `product_id` int(20) NOT NULL COMMENT '商品ID',
+  `product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID',
+  `materiel_id` int(20) NOT NULL COMMENT '物料ID',
   `materiel_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '物料名称冗余',
   `materiel_mode_snapshot` text COMMENT '物料冗余信息，防止商品修改留存快照',
   `materiel_count` int(11) NOT NULL DEFAULT '1' COMMENT '物料总数',
@@ -759,12 +759,12 @@ CREATE TABLE `erp_purchase_order_product_materiel` (
 
 DROP TABLE if exists `erp_purchase_delivery_order`;
 CREATE TABLE `erp_purchase_delivery_order` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `purchase_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_order_id` int(20) NOT NULL COMMENT '采购单ID',
   `purchase_delivery_no` varchar(100) NOT NULL COMMENT '采购发货单编号',
-  `product_supplier_id` bigint(20) NOT NULL COMMENT '商品供应商ID',
-  `invoice_supplier_id` bigint(20) NOT NULL COMMENT '发票供应商ID',
-  `warehouse_id` bigint(20) NOT NULL COMMENT '仓库ID',
+  `product_supplier_id` int(20) NOT NULL COMMENT '商品供应商ID',
+  `invoice_supplier_id` int(20) NOT NULL COMMENT '发票供应商ID',
+  `warehouse_id` int(20) NOT NULL COMMENT '仓库ID',
   `is_invoice` int(11) NOT NULL COMMENT '是否有发票，0否1是',
   `is_new` int(11) NOT NULL COMMENT '是否全新机',
   `purchase_order_amount_total` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '采购单总价',
@@ -774,7 +774,7 @@ CREATE TABLE `erp_purchase_delivery_order` (
   `verify_user` varchar(20) NOT NULL DEFAULT '' COMMENT '审核人',
   `verify_time` datetime DEFAULT NULL COMMENT '审核时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `owner` bigint(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
+  `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
@@ -785,17 +785,17 @@ CREATE TABLE `erp_purchase_delivery_order` (
 
 DROP TABLE if exists `erp_purchase_delivery_order_product`;
 CREATE TABLE `erp_purchase_delivery_order_product` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `purchase_delivery_order_id` bigint(20) NOT NULL COMMENT '采购发货单ID',
-  `purchase_order_product_id` bigint(20) NOT NULL COMMENT '采购单项ID',
-  `product_id` bigint(20) NOT NULL COMMENT '商品ID，来源（采购单），不可变更',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_delivery_order_id` int(20) NOT NULL COMMENT '采购发货单ID',
+  `purchase_order_product_id` int(20) NOT NULL COMMENT '采购单项ID',
+  `product_id` int(20) NOT NULL COMMENT '商品ID，来源（采购单），不可变更',
   `product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称冗余，不可修改',
-  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID 不可变更',
+  `product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID 不可变更',
   `product_mode_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照，不可修改',
   `product_count` int(11) NOT NULL DEFAULT '1' COMMENT '商品总数，来源（采购单），不可变更',
-  `real_product_id` bigint(20) NOT NULL COMMENT '实际商品ID',
+  `real_product_id` int(20) NOT NULL COMMENT '实际商品ID',
   `real_product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称冗余，可修改',
-  `real_product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID 可修改',
+  `real_product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID 可修改',
   `real_product_mode_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照，可修改',
   `real_product_count` int(11) NOT NULL DEFAULT '1' COMMENT '实际商品总数',
   `product_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品单价',
@@ -809,16 +809,16 @@ CREATE TABLE `erp_purchase_delivery_order_product` (
 
 DROP TABLE if exists `erp_purchase_delivery_order_product_materiel`;
 CREATE TABLE `erp_purchase_delivery_order_product_materiel` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `purchase_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
-  `purchase_delivery_order_product_id` bigint(20) NOT NULL COMMENT '采购发货单项ID',
-  `product_id` bigint(20) NOT NULL COMMENT '商品ID',
-  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID',
-  `materiel_id` bigint(20) NOT NULL COMMENT '物料ID，来源（采购单），不可变更',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_order_id` int(20) NOT NULL COMMENT '采购单ID',
+  `purchase_delivery_order_product_id` int(20) NOT NULL COMMENT '采购发货单项ID',
+  `product_id` int(20) NOT NULL COMMENT '商品ID',
+  `product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID',
+  `materiel_id` int(20) NOT NULL COMMENT '物料ID，来源（采购单），不可变更',
   `materiel_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '物料名称冗余，不可修改',
   `materiel_mode_snapshot` text COMMENT '物料冗余信息，防止商品修改留存快照，不可修改',
   `materiel_count` int(11) NOT NULL DEFAULT '1' COMMENT '物料总数，来源（采购单），不可变更',
-  `real_materiel_id` bigint(20) NOT NULL COMMENT '物料ID',
+  `real_materiel_id` int(20) NOT NULL COMMENT '物料ID',
   `real_materiel_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '物料名称冗余，可修改',
   `real_materiel_mode_snapshot` text COMMENT '物料冗余信息，防止商品修改留存快照，可修改',
   `real_materiel_count` int(11) NOT NULL DEFAULT '1' COMMENT '实际物料总数',
@@ -834,13 +834,13 @@ CREATE TABLE `erp_purchase_delivery_order_product_materiel` (
 -- -----------------------------------------采购收货单----------------------------------------- --
 DROP TABLE if exists `erp_purchase_receive_order`;
 CREATE TABLE `erp_purchase_receive_order` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `purchase_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
-  `purchase_delivery_order_id` bigint(20) NOT NULL COMMENT '采购发货单ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_order_id` int(20) NOT NULL COMMENT '采购单ID',
+  `purchase_delivery_order_id` int(20) NOT NULL COMMENT '采购发货单ID',
   `purchase_receive_no` varchar(100) NOT NULL COMMENT '采购收货单编号',
-  `product_supplier_id` bigint(20) NOT NULL COMMENT '商品供应商ID',
-  `invoice_supplier_id` bigint(20) NOT NULL COMMENT '发票供应商ID',
-  `warehouse_id` bigint(20) NOT NULL COMMENT '仓库ID',
+  `product_supplier_id` int(20) NOT NULL COMMENT '商品供应商ID',
+  `invoice_supplier_id` int(20) NOT NULL COMMENT '发票供应商ID',
+  `warehouse_id` int(20) NOT NULL COMMENT '仓库ID',
   `is_invoice` int(11) NOT NULL COMMENT '是否有发票，0否1是',
   `is_new` int(11) NOT NULL COMMENT '是否全新机',
   `purchase_order_amount_total` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '采购单总价',
@@ -849,7 +849,7 @@ CREATE TABLE `erp_purchase_receive_order` (
   `verify_user` varchar(20) NOT NULL DEFAULT '' COMMENT '审核人',
   `verify_time` datetime DEFAULT NULL COMMENT '审核时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `owner` bigint(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
+  `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
@@ -860,18 +860,18 @@ CREATE TABLE `erp_purchase_receive_order` (
 
 DROP TABLE if exists `erp_purchase_receive_order_product`;
 CREATE TABLE `erp_purchase_receive_order_product` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `purchase_receive_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
-  `purchase_order_product_id` bigint(20) NOT NULL COMMENT '采购单项ID',
-  `purchase_delivery_order_product_id` bigint(20) NOT NULL COMMENT '采购发货单项ID',
-  `product_id` bigint(20) NOT NULL COMMENT '商品ID，来源（采购发货单），不可变更',
-  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID 不可变更',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_receive_order_id` int(20) NOT NULL COMMENT '采购单ID',
+  `purchase_order_product_id` int(20) NOT NULL COMMENT '采购单项ID',
+  `purchase_delivery_order_product_id` int(20) NOT NULL COMMENT '采购发货单项ID',
+  `product_id` int(20) NOT NULL COMMENT '商品ID，来源（采购发货单），不可变更',
+  `product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID 不可变更',
   `product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称冗余，不可修改',
   `product_mode_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照，不可修改',
   `product_count` int(11) NOT NULL DEFAULT '1' COMMENT '商品总数，来源（采购发货单），不可变更',
-  `real_product_id` bigint(20) NOT NULL COMMENT '实际商品ID',
+  `real_product_id` int(20) NOT NULL COMMENT '实际商品ID',
   `real_product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称冗余，可修改',
-  `real_product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID',
+  `real_product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID',
   `real_product_mode_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照，可修改',
   `real_product_count` int(11) NOT NULL DEFAULT '1' COMMENT '实际商品总数',
   `product_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品单价',
@@ -885,16 +885,16 @@ CREATE TABLE `erp_purchase_receive_order_product` (
 
 DROP TABLE if exists `erp_purchase_receive_order_product_materiel`;
 CREATE TABLE `erp_purchase_receive_order_product_materiel` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `purchase_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
-  `purchase_receive_order_product_id` bigint(20) NOT NULL COMMENT '采购收货单项ID',
-  `product_id` bigint(20) NOT NULL COMMENT '商品ID',
-  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID',
-  `materiel_id` bigint(20) NOT NULL COMMENT '预计物料ID，来源（采购发货单），不可变更',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_order_id` int(20) NOT NULL COMMENT '采购单ID',
+  `purchase_receive_order_product_id` int(20) NOT NULL COMMENT '采购收货单项ID',
+  `product_id` int(20) NOT NULL COMMENT '商品ID',
+  `product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID',
+  `materiel_id` int(20) NOT NULL COMMENT '预计物料ID，来源（采购发货单），不可变更',
   `materiel_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '物料名称冗余，不可修改',
   `materiel_mode_snapshot` text COMMENT '物料冗余信息，防止商品修改留存快照，不可修改',
   `materiel_count` int(11) NOT NULL DEFAULT '1' COMMENT '预计物料总数，来源（采购发货单），不可变更',
-  `real_materiel_id` bigint(20) NOT NULL COMMENT '实际物料ID',
+  `real_materiel_id` int(20) NOT NULL COMMENT '实际物料ID',
   `real_materiel_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '物料名称冗余，可修改',
   `real_materiel_mode_snapshot` text COMMENT '物料冗余信息，防止商品修改留存快照，可修改',
   `real_materiel_count` int(11) NOT NULL DEFAULT '1' COMMENT '实际物料总数',
@@ -910,10 +910,10 @@ CREATE TABLE `erp_purchase_receive_order_product_materiel` (
 -- -----------------------------------------采购退货单----------------------------------------- --
 DROP TABLE if exists `erp_purchase_back_order`;
 CREATE TABLE `erp_purchase_back_order` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `purchase_back_no` varchar(100) NOT NULL COMMENT '采购退货单编号',
-  `supplier_id` bigint(20) NOT NULL COMMENT '商品供应商ID',
-  `warehouse_id` bigint(20) NOT NULL COMMENT '仓库ID',
+  `supplier_id` int(20) NOT NULL COMMENT '商品供应商ID',
+  `warehouse_id` int(20) NOT NULL COMMENT '仓库ID',
   `is_invoice` int(11) NOT NULL COMMENT '是否有发票，0否1是',
   `is_new` int(11) NOT NULL COMMENT '是否全新机',
   `purchase_order_amount_total` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '采购单总价',
@@ -922,7 +922,7 @@ CREATE TABLE `erp_purchase_back_order` (
   `verify_user` varchar(20) NOT NULL DEFAULT '' COMMENT '审核人',
   `verify_time` datetime DEFAULT NULL COMMENT '审核时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `owner` bigint(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
+  `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
@@ -933,14 +933,14 @@ CREATE TABLE `erp_purchase_back_order` (
 
 DROP TABLE if exists `erp_purchase_back_order_product`;
 CREATE TABLE `erp_purchase_back_order_product` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `purchase_back_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
-  `purchase_order_product_id` bigint(20) NOT NULL COMMENT '采购单项ID',
-  `purchase_delivery_order_product_id` bigint(20) NOT NULL COMMENT '采购发货单项ID',
-  `purchase_receive_order_product_id` bigint(20) NOT NULL COMMENT '采购收货单项ID',
-  `equipment_id` bigint(20) COMMENT '设备ID',
-  `product_id` bigint(20) NOT NULL COMMENT '商品ID，来源（采购收货单），不可变更',
-  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID 不可变更',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_back_order_id` int(20) NOT NULL COMMENT '采购单ID',
+  `purchase_order_product_id` int(20) NOT NULL COMMENT '采购单项ID',
+  `purchase_delivery_order_product_id` int(20) NOT NULL COMMENT '采购发货单项ID',
+  `purchase_receive_order_product_id` int(20) NOT NULL COMMENT '采购收货单项ID',
+  `equipment_id` int(20) COMMENT '设备ID',
+  `product_id` int(20) NOT NULL COMMENT '商品ID，来源（采购收货单），不可变更',
+  `product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID 不可变更',
   `product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称冗余，不可修改',
   `product_mode_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照，不可修改',
   `product_count` int(11) NOT NULL DEFAULT '1' COMMENT '商品总数，来源（采购收货单），不可变更',
@@ -955,12 +955,12 @@ CREATE TABLE `erp_purchase_back_order_product` (
 
 DROP TABLE if exists `erp_purchase_back_order_product_materiel`;
 CREATE TABLE `erp_purchase_back_order_product_materiel` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `purchase_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
-  `purchase_back_order_product_id` bigint(20) NOT NULL COMMENT '采购退货单项ID',
-  `product_id` bigint(20) NOT NULL COMMENT '商品ID',
-  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID',
-  `materiel_id` bigint(20) NOT NULL COMMENT '预计物料ID，来源（采购收货单），不可变更',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_order_id` int(20) NOT NULL COMMENT '采购单ID',
+  `purchase_back_order_product_id` int(20) NOT NULL COMMENT '采购退货单项ID',
+  `product_id` int(20) NOT NULL COMMENT '商品ID',
+  `product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID',
+  `materiel_id` int(20) NOT NULL COMMENT '预计物料ID，来源（采购收货单），不可变更',
   `materiel_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '物料名称冗余，不可修改',
   `materiel_mode_snapshot` text COMMENT '物料冗余信息，防止商品修改留存快照，不可修改',
   `materiel_count` int(11) NOT NULL DEFAULT '1' COMMENT '预计物料总数，来源（采购收货单），不可变更',
