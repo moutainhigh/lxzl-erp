@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.company.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -12,7 +13,7 @@ public class SubCompany implements Serializable {
 
     private Integer subCompanyId;
 
-    @NotEmpty(message = ErrorCode.SUB_COMPANY_NAME_NOT_NULL , groups = {UpdateGroup.class})
+    @NotEmpty(message = ErrorCode.SUB_COMPANY_NAME_NOT_NULL , groups = {AddGroup.class})
     private String subCompanyName;
 
     private Integer dataStatus;
