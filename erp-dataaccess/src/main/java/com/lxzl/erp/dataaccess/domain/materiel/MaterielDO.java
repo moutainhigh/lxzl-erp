@@ -17,7 +17,7 @@ public class MaterielDO extends BaseDO {
 
     private String materielName;
 
-    private Integer materielType;
+    private Integer brandId;
 
     private BigDecimal materielPrice;
 
@@ -47,14 +47,6 @@ public class MaterielDO extends BaseDO {
 
     public void setMaterielName(String materielName) {
         this.materielName = materielName == null ? null : materielName.trim();
-    }
-
-    public Integer getMaterielType() {
-        return materielType;
-    }
-
-    public void setMaterielType(Integer materielType) {
-        this.materielType = materielType;
     }
 
     public BigDecimal getMaterielPrice() {

@@ -1,7 +1,7 @@
 package com.lxzl.erp.core.service.product.impl.support;
 
 import com.lxzl.erp.common.domain.ConstantConfig;
-import com.lxzl.erp.common.domain.product.ProductImg;
+import com.lxzl.erp.common.domain.product.pojo.ProductImg;
 import com.lxzl.erp.dataaccess.domain.product.ProductImgDO;
 
 import java.util.ArrayList;

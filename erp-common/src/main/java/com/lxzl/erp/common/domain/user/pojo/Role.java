@@ -20,6 +20,8 @@ public class Role implements Serializable {
     @NotNull(message = ErrorCode.ROLE_ID_NOT_NULL , groups = {IdGroup.class})
     private Integer roleId;
     private String roleName;
+    private Integer parentRoleId;
+    private String parentRoleName;
     private String roleDesc;
     private Integer isSuperAdmin;
     private Integer dataStatus;
@@ -39,6 +41,22 @@ public class Role implements Serializable {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public Integer getParentRoleId() {
+        return parentRoleId;
+    }
+
+    public void setParentRoleId(Integer parentRoleId) {
+        this.parentRoleId = parentRoleId;
+    }
+
+    public String getParentRoleName() {
+        return parentRoleName;
+    }
+
+    public void setParentRoleName(String parentRoleName) {
+        this.parentRoleName = parentRoleName;
     }
 
     public String getRoleDesc() {

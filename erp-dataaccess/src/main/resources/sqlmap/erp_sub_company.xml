@@ -3,7 +3,7 @@
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper">
 
     <resultMap id="SubCompanyDO" type="com.lxzl.erp.dataaccess.domain.company.SubCompanyDO">
-        <id column="id" jdbcType="BIGINT" property="id" />
+        <id column="id" jdbcType="INTEGER" property="id" />
         <result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
         <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />

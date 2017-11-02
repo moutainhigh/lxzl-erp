@@ -2,12 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.equipment.EquitmentMaterielMapper">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMaterielMapper">
 
-	<resultMap type="com.lxzl.erp.dataaccess.domain.equipment.EquipmentMaterielDO" id="EquipmentMaterielDO">
-		<id column="id" jdbcType="BIGINT" property="id" />
-		<result column="equipment_id" jdbcType="BIGINT" property="equipmentId" />
-		<result column="materiel_id" jdbcType="BIGINT" property="materielId" />
+	<resultMap type="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterielDO" id="EquipmentMaterielDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
+		<result column="materiel_id" jdbcType="INTEGER" property="materielId" />
 		<result column="materiel_count" jdbcType="INTEGER" property="materielCount" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -24,16 +24,16 @@
 	<select id="findById" resultMap="EquipmentMaterielDO" parameterType="java.lang.Integer">
 		select
 		<include refid="column_List"/>
-		from erp_equipment_materiel eem where eem.id = #{id, jdbcType=INTEGER} and eem.data_status = 1
+		from erp_product_equipment_materiel eem where eem.id = #{id, jdbcType=INTEGER} and eem.data_status = 1
 	</select>
 
 	<sql id="set_column_sql">
 		<set>
 			<if test="equipmentId != null">
-				equipment_id = #{equipmentId,jdbcType=BIGINT},
+				equipment_id = #{equipmentId,jdbcType=INTEGER},
 			</if>
 			<if test="materielId != null">
-				materiel_id = #{materielId,jdbcType=BIGINT},
+				materiel_id = #{materielId,jdbcType=INTEGER},
 			</if>
 			<if test="materielCount != null">
 				materiel_count = #{materielCount,jdbcType=INTEGER},
@@ -59,15 +59,15 @@
 		</set>
 	</sql>
 
-	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.equipment.EquipmentMaterielDO">
-		update erp_equipment_materiel
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterielDO">
+		update erp_product_equipment_materiel
 		<include refid="set_column_sql"/>
 		WHERE id = #{id, jdbcType=INTEGER}
 	</update>
 
 	<insert id="save" keyProperty="id" useGeneratedKeys="true"
-			parameterType="com.lxzl.erp.dataaccess.domain.equipment.EquipmentMaterielDO">
-		INSERT INTO erp_equipment_materiel
+			parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterielDO">
+		INSERT INTO erp_product_equipment_materiel
 		<include refid="set_column_sql"/>
 	</insert>
 

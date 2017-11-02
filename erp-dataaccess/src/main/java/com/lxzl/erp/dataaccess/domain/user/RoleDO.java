@@ -12,10 +12,29 @@ public class RoleDO extends BaseDO {
 
     private Integer id;
     private String roleName;
+    private Integer parentRoleId;
+    private String parentRoleName;
     private String roleDesc;
     private Integer isSuperAdmin;
     private Integer dataStatus;
     private String remark;
+
+
+    public String getParentRoleName() {
+        return parentRoleName;
+    }
+
+    public void setParentRoleName(String parentRoleName) {
+        this.parentRoleName = parentRoleName;
+    }
+
+    public Integer getParentRoleId() {
+        return parentRoleId;
+    }
+
+    public void setParentRoleId(Integer parentRoleId) {
+        this.parentRoleId = parentRoleId;
+    }
 
     public Integer getId() {
         return id;

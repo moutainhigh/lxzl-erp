@@ -5,7 +5,7 @@
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.materiel.MaterielMapper">
 
 	<resultMap type="com.lxzl.erp.dataaccess.domain.materiel.MaterielDO" id="MaterielDO">
-		<id column="id" jdbcType="BIGINT" property="id" />
+		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="materiel_no" jdbcType="VARCHAR" property="materielNo" />
 		<result column="materiel_name" jdbcType="VARCHAR" property="materielName" />
 		<result column="materiel_type" jdbcType="INTEGER" property="materielType" />
