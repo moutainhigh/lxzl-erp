@@ -122,8 +122,8 @@ public class MyTest {
         }
         xmlSb.append("\t\t</set>\n");
         xmlSb.append("\t</sql>\n");
-        xmlSb.append("\t<insert id=\"save\" keyProperty=\"id\" useGeneratedKeys=\"true\"\n");
-        xmlSb.append("\t\t<insert id=\"save\" keyProperty=\"id\" useGeneratedKeys=\"true\" parameterType=\""+table.doTableName+"\">\n");
+        xmlSb.append("\t<insert id=\"save\" keyProperty=\"id\" useGeneratedKeys=\"true\" parameterType=\""+table.doTableName+"\">\n");
+        xmlSb.append("\t\tinsert into "+table.sqlTableName+" <include refid=\"set_column_sql\"/>\n");
         xmlSb.append("\t</insert>\n");
         xmlSb.append("\n");
         xmlSb.append("\t<update id=\"update\" parameterType=\""+table.doTableName+"\">\n");
@@ -203,7 +203,7 @@ public class MyTest {
         }
         public String convertPoName(String name){
             if("id".equals(name)){
-                return covertString(tableName)+"Id";
+                return covertString(tableName.substring(0,1).toLowerCase()+tableName.substring(1,tableName.length()))+"Id";
             }
             return covertString(name);
         }
