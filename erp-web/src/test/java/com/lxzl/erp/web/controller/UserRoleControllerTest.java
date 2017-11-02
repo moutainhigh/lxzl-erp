@@ -16,10 +16,9 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addRole() throws Exception {
         Role role = new Role();
-        role.setRoleName("测试");
-        role.setRoleDesc("测试详情");
-        role.setIsSuperAdmin(CommonConstant.COMMON_CONSTANT_NO);
-        role.setRemark("测试备注");
+        role.setRoleName("采购员");
+        role.setRoleDesc("负责采购");
+        role.setRemark("采购员角色");
         TestResult result = getJsonTestResult("/userRole/add",role);
     }
 
