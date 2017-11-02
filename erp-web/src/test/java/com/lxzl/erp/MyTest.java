@@ -1,7 +1,6 @@
 package com.lxzl.erp;
 
 import com.lxzl.se.common.util.StringUtil;
-import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 
 import java.io.*;
 import java.sql.*;
@@ -9,6 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyTest {
+
+    public static void main(String[] args) throws Exception {
+        test("erp_stock_order");
+    }
+
     private static String URL = "jdbc:mysql://192.168.10.205:3306/lxzl_erp?useUnicode=true&amp;characterEncoding=UTF-8";
     private static String USER = "lxzldev";
     private static String PASSWORD = "lxzldev";
@@ -142,11 +146,9 @@ public class MyTest {
         return sql.toString().substring(0,sql.length()-1);
     }
     public static String getDomainTableName(String tableName){
-        return tableName.substring(4, tableName.length());
+        return tableName.substring(3, tableName.length());
     }
-    public static void main(String[] args) throws Exception {
-        test("erp_order");
-    }
+
     public static String getUp(String s){
         String first = s.substring(0,1);
         String last = s.substring(1,s.length());
@@ -159,8 +161,8 @@ public class MyTest {
 
         public Table(String tableName){
             this.sqlTableName = tableName;
-            this.poTableName = getUp(getDomainTableName(tableName));
-            this.doTableName = getUp(getDomainTableName(tableName))+"DO";
+            this.poTableName = getUp(getDomainTableName(covertString(tableName)));
+            this.doTableName = getUp(getDomainTableName(covertString(tableName)))+"DO";
         }
     }
 
@@ -206,19 +208,7 @@ public class MyTest {
             return covertString(name);
         }
 
-        public String covertString(String name){
 
-            String[] parts = name.split("_");
-            StringBuffer newName = new StringBuffer();
-            for(int i = 0 ; i < parts.length ; i++){
-                if(i==0){
-                    newName.append(parts[i]);
-                }else if(i<parts.length){
-                    newName.append(getUp(parts[i]));
-                }
-            }
-            return newName.toString();
-        }
 
         public String convertType(String type){
             if("INT".equals(type)){
@@ -240,6 +230,20 @@ public class MyTest {
             }
             return "";
         }
+    }
+
+    public static String covertString(String name){
+
+        String[] parts = name.split("_");
+        StringBuffer newName = new StringBuffer();
+        for(int i = 0 ; i < parts.length ; i++){
+            if(i==0){
+                newName.append(parts[i]);
+            }else if(i<parts.length){
+                newName.append(getUp(parts[i]));
+            }
+        }
+        return newName.toString();
     }
     public static void appendAllPOParam(List<NameAndType> nameAndTypeList , StringBuffer sb ){
         sb.append("\n");
