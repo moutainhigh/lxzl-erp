@@ -145,11 +145,11 @@
 
     <sql id="set_column_sql">
         <set>
-            <if test="materielNo != null">
-                materiel_no = #{materielNo,jdbcType=VARCHAR},
+            <if test="materialNo != null">
+                material_no = #{materialNo,jdbcType=VARCHAR},
             </if>
-            <if test="materielName != null">
-                materiel_name = #{materielName,jdbcType=VARCHAR},
+            <if test="materialName != null">
+                material_name = #{materialName,jdbcType=VARCHAR},
             </if>
             <if test="brandId != null">
                 brand_id = #{brandId,jdbcType=INTEGER},
@@ -163,8 +163,8 @@
             <if test="propertyValueId != null">
                 property_value_id = #{propertyValueId,jdbcType=INTEGER},
             </if>
-            <if test="materielPrice != null">
-                materiel_price = #{materielPrice,jdbcType=DECIMAL},
+            <if test="materialPrice != null">
+                material_price = #{materialPrice,jdbcType=DECIMAL},
             </if>
             <if test="originalPrice != null">
                 original_price = #{originalPrice,jdbcType=DECIMAL},
@@ -190,8 +190,8 @@
             <if test="updateUser != null">
                 update_user = #{updateUser,jdbcType=VARCHAR},
             </if>
-            <if test="materielDesc != null">
-                materiel_desc = #{materielDesc,jdbcType=LONGVARCHAR},
+            <if test="materialDesc != null">
+                material_desc = #{materialDesc,jdbcType=LONGVARCHAR},
             </if>
         </set>
     </sql>

@@ -2,17 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.materiel.MaterielMapper">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper">
 
-	<resultMap type="com.lxzl.erp.dataaccess.domain.materiel.MaterielDO" id="MaterielDO">
+	<resultMap type="com.lxzl.erp.dataaccess.domain.material.MaterialDO" id="MaterialDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
-		<result column="materiel_no" jdbcType="VARCHAR" property="materielNo" />
-		<result column="materiel_name" jdbcType="VARCHAR" property="materielName" />
+		<result column="material_no" jdbcType="VARCHAR" property="materialNo" />
+		<result column="material_name" jdbcType="VARCHAR" property="materialName" />
 		<result column="brand_id" jdbcType="INTEGER" property="brandId" />
 		<result column="category_id" jdbcType="INTEGER" property="categoryId" />
 		<result column="property_id" jdbcType="INTEGER" property="propertyId" />
 		<result column="property_value_id" jdbcType="INTEGER" property="propertyValueId" />
-		<result column="materiel_price" jdbcType="DECIMAL" property="materielPrice" />
+		<result column="material_price" jdbcType="DECIMAL" property="materialPrice" />
 		<result column="original_price" jdbcType="DECIMAL" property="originalPrice" />
 		<result column="rent_price" jdbcType="DECIMAL" property="rentPrice" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -24,23 +24,23 @@
 	</resultMap>
 
 	<sql id="column_List">
-		em.id,em.ateriel_no,em.ateriel_name,em.rand_id,em.ategory_id,em.roperty_id,em.roperty_value_id,em.materiel_price,em.riginal_price,em.ent_price,em.ata_status,em.emark,em.reate_time,em.reate_user,em.update_time,em.pdate_user
+		em.id,em.ateriel_no,em.ateriel_name,em.rand_id,em.ategory_id,em.roperty_id,em.roperty_value_id,em.material_price,em.riginal_price,em.ent_price,em.ata_status,em.emark,em.reate_time,em.reate_user,em.update_time,em.pdate_user
 	</sql>
 
-	<select id="findById" resultMap="MaterielDO" parameterType="java.lang.Integer">
+	<select id="findById" resultMap="MaterialDO" parameterType="java.lang.Integer">
 		select
 		<include refid="column_List"/>
-		from erp_materiel em where em.id = #{id, jdbcType=INTEGER} and data_status = 1
+		from erp_material em where em.id = #{id, jdbcType=INTEGER} and data_status = 1
 	</select>
 
 
 	<sql id="set_column_sql">
 		<set>
-			<if test="materielNo != null">
-				materiel_no = #{materielNo,jdbcType=VARCHAR},
+			<if test="materialNo != null">
+				material_no = #{materialNo,jdbcType=VARCHAR},
 			</if>
-			<if test="materielName != null">
-				materiel_name = #{materielName,jdbcType=VARCHAR},
+			<if test="materialName != null">
+				material_name = #{materialName,jdbcType=VARCHAR},
 			</if>
 			<if test="brandId != null">
 				brand_id = #{brandId,jdbcType=INTEGER},
@@ -54,8 +54,8 @@
 			<if test="propertyValueId != null">
 				property_value_id = #{propertyValueId,jdbcType=INTEGER},
 			</if>
-			<if test="materielPrice != null">
-				materiel_price = #{materielPrice,jdbcType=DECIMAL},
+			<if test="materialPrice != null">
+				material_price = #{materialPrice,jdbcType=DECIMAL},
 			</if>
 			<if test="originalPrice != null">
 				original_price = #{originalPrice,jdbcType=DECIMAL},
@@ -81,21 +81,21 @@
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
 			</if>
-			<if test="materielDesc != null">
-				materiel_desc = #{materielDesc,jdbcType=LONGVARCHAR},
+			<if test="materialDesc != null">
+				material_desc = #{materialDesc,jdbcType=LONGVARCHAR},
 			</if>
 		</set>
 	</sql>
 
-	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.materiel.MaterielDO">
-		update erp_materiel
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.material.MaterialDO">
+		update erp_material
 		<include refid="set_column_sql"/>
 		WHERE id = #{id, jdbcType=INTEGER}
 	</update>
 
 	<insert id="save" keyProperty="id" useGeneratedKeys="true"
-			parameterType="com.lxzl.erp.dataaccess.domain.materiel.MaterielDO">
-		INSERT INTO erp_materiel
+			parameterType="com.lxzl.erp.dataaccess.domain.material.MaterialDO">
+		INSERT INTO erp_material
 		<include refid="set_column_sql"/>
 	</insert>
 

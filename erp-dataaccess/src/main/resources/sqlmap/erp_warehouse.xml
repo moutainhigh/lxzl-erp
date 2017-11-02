@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper">
+
+	<resultMap type="com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO" id="WarehouseDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="warehouse_no" jdbcType="VARCHAR" property="warehouseNo" />
+		<result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+		<result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ew.id,ew.warehouse_no,ew.warehouse_name,ew.sub_company_id,ew.data_status,ew.remark,ew.create_time,ew.create_user,ew.update_time,ew.update_user
+	</sql>
+
+	<select id="findById" resultMap="WarehouseDO" parameterType="java.lang.Integer">
+		select
+		<include refid="column_List"/>
+		from erp_warehouse ew where em.id = #{id, jdbcType=INTEGER} and data_status = 1
+	</select>
+
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="warehouseNo != null">
+				warehouse_no = #{warehouseNo,jdbcType=VARCHAR},
+			</if>
+			<if test="warehouseName != null">
+				warehouse_name = #{warehouseName,jdbcType=VARCHAR},
+			</if>
+			<if test="subCompanyId != null">
+				sub_company_id = #{subCompanyId,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO">
+		update erp_warehouse
+		<include refid="set_column_sql"/>
+		WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true"
+			parameterType="com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO">
+		INSERT INTO erp_warehouse
+		<include refid="set_column_sql"/>
+	</insert>
+
+</mapper>

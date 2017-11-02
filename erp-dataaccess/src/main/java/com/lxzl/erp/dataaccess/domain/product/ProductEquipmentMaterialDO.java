@@ -10,14 +10,14 @@ import java.io.Serializable;
  * @author gaochao
  * @date 2017-10-30 20:16
  */
-public class ProductEquipmentMaterielDO extends BaseDO {
+public class ProductEquipmentMaterialDO extends BaseDO {
     private Integer id;
 
     private Integer equipmentId;
 
-    private Integer materielId;
+    private Integer materialId;
 
-    private Integer materielCount;
+    private Integer materialCount;
 
     private Integer dataStatus;
 
@@ -39,20 +39,20 @@ public class ProductEquipmentMaterielDO extends BaseDO {
         this.equipmentId = equipmentId;
     }
 
-    public Integer getMaterielId() {
-        return materielId;
+    public Integer getMaterialId() {
+        return materialId;
     }
 
-    public void setMaterielId(Integer materielId) {
-        this.materielId = materielId;
+    public void setMaterialId(Integer materialId) {
+        this.materialId = materialId;
     }
 
-    public Integer getMaterielCount() {
-        return materielCount;
+    public Integer getMaterialCount() {
+        return materialCount;
     }
 
-    public void setMaterielCount(Integer materielCount) {
-        this.materielCount = materielCount;
+    public void setMaterialCount(Integer materialCount) {
+        this.materialCount = materialCount;
     }
 
     public Integer getDataStatus() {
