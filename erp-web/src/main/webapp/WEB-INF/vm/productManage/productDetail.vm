@@ -1,0 +1,231 @@
+<div id="viewProductModal" class="popup-basic popup-xl admin-form mfp-with-anim theme-primary ">#*mfp-hide*#
+    <form method="post" id="viewProductForm">
+        <input type="hidden" name="productId" />
+        <div class="panel">
+            <div class="panel-heading">
+                <span class="panel-title"><i class="fa fa-search"></i>查看商品</span>
+            </div>
+            <div class="panel-body p25">
+                <div class="section row">
+                    <div class="col-md-4">
+                        <label for="categoryId" class="field-label">类别</label>
+                    #*<label for="categoryId" class="field prepend-icon">
+                        <input type="text" name="categoryId" id="categoryId" class="gui-input required letterOrChinese" />
+                        <label for="categoryId" class="field-icon"><i class="fa fa-user"></i>
+                        </label>
+                    </label>*#
+                        <label for="categoryId" class="field select">
+                            <script type="text/html" id="categoryIdTpl">
+                                <option value="">请选择</option>
+                                {{#categoryList}}
+                                <option value="{{categoryId}}">{{categoryName}}</option>
+                                {{#children}}
+                                <option value="{{categoryId}}">&nbsp;&nbsp;&nbsp;&nbsp;{{categoryName}}</option>
+                                {{#children}}
+                                <option value="{{categoryId}}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{categoryName}}</option>
+                                {{/children}}
+                                {{/children}}
+                                {{/categoryList}}
+                            </script>
+                            <select id="categoryId" name="categoryId" class="required">
+                                <option value="">请选择</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="userName" class="field-label">商品名称</label>
+                        <label for="productName" class="field prepend-icon">
+                            <input type="text" name="productName" id="productName" class="gui-input required" />
+                            <label for="productName" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="subtitle" class="field-label">副标题</label>
+                        <label for="subtitle" class="field prepend-icon">
+                            <input type="text" name="subtitle" id="subtitle" class="gui-input required" />
+                            <label for="subtitle" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-4">
+                        <label for="listPrice" class="field-label">列表展示价格</label>
+                        <label for="listPrice" class="field prepend-icon">
+                            <input type="text" name="listPrice" id="listPrice" class="gui-input required moneyNumber" />
+                            <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="unit" class="field-label">单位</label>
+                        <label for="unit" class="field select">
+                            <select id="unit" name="unit">
+                                <option value="303719">件</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="isSale" class="field-label">是否销售</label>
+                        <label class="field select">
+                            <select id="isSale" name="isSale">
+                                <option value="1">是</option>
+                                <option value="0">否</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="section">
+                    <label for="productDesc" class="field-label">商品描述</label>
+                    <label for="productDesc" class="field prepend-icon">
+                        <textarea class="gui-textarea" id="productDesc" name="productDesc"></textarea>
+                        <label for="productDesc" class="field-icon"><i class="fa fa-comments"></i>
+                        </label>
+                    </label>
+                </div>
+
+                <script type="text/html" id="examplePreviewTpl">
+                    {{#productImg}}
+                    <div class="dz-preview dz-processing dz-error dz-image-preview hidden example-preview" data-img="{{dataImg}}">
+                        <div class="dz-details">
+                            <div class="dz-filename">
+                                <span data-dz-name="">{{originalName}}</span>
+                            </div>
+                            <img data-dz-thumbnail="" alt="avatar" src="{{imgDomain}}{{imgUrl}}" class="img-responsive">
+                        </div>
+                        <div class="dz-success-mark">
+                            <span>âœ?/span>
+                        </div>
+                        #*<a class="dz-remove" href="#" data-dz-remove>删除</a>*#
+                    </div>
+                    {{/productImg}}
+                </script>
+
+                <div class="section-divider mv40"><span> 商品图片  </span></div>
+                <div class="tray-bin">
+                    <div class="atl-dropzone dropzoneImg" id="dropzoneProductImg">
+                        <div class="dz-default dz-message" >
+                            <span>
+                                <i class="fa fa-cloud-upload"></i>
+                                <span class="sub-text">将图片拖入或点击</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-divider mv40"><span> 商品介绍  </span></div>
+                <div class="tray-bin">
+                    <div class="atl-dropzone dropzoneImg" id="dropzoneProductDesImg">
+                        <div class="dz-default dz-message" >
+                        <span>
+                            <i class="fa fa-cloud-upload"></i>
+                            <span class="sub-text">将图片拖入或点击</span>
+                        </span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <script type="text/html" id="productPropertiesTpl">
+                    <div class="section-divider mv40"><span> 商品属性  </span></div>
+                    {{#properties}}
+                    <div class="col-md-3 pad-r40 border-right">
+                        <div id="widget1" class="section-divider mb30">
+                            <span>{{propertyName}}</span>
+                        </div>
+                        <div class="option-group field">
+                            {{#propertyValueList}}
+                            {{#list}}
+                            <label class="option option-primary mb10 block">
+                                <input type="radio" name="productPropertyRido-{{propertyId}}" class="productPropertyRido" value="{{categoryPropertyValueId}}" data-property="{{property}}" {{#checked}}checked{{/checked}} disabled />
+                                <span class="radio"></span> {{propertyValueName}}
+                            </label>
+                            {{/list}}
+                            {{/propertyValueList}}
+                        </div>
+                    </div>
+                    {{/properties}}
+                </script>
+
+
+                <div class="section row" id="productPropertiesContainer">
+                </div>
+
+
+                <script type="text/html" id="skuPropertiesTpl">
+                    <div class="section-divider mv40"><span> 销售属性  </span></div>
+                    {{#properties}}
+                    <div class="col-md-3">
+                        <div class="option-group field">
+                            <div id="widget1" class="section-divider mb30">
+                                <span>{{propertyName}}</span>
+                            </div>
+                            {{#propertyValueList}}
+                            {{#list}}
+                            <label class="option block option-primary mb10">
+                                <input type="checkbox" name="property-{{propertyId}}" value="{{categoryPropertyValueId}}" data-property="{{property}}" {{#checked}}checked{{/checked}} disabled >
+                                <span class="checkbox"></span> {{propertyValueName}}
+                            </label>
+                            {{/list}}
+                            {{/propertyValueList}}
+                        </div>
+                    </div>
+                    {{/properties}}
+                </script>
+                <div class="section" id="skuPropertiesContainer"></div>
+
+                <script type="text/html" id="skuTableTpl">
+                    <table class="table admin-form theme-warning tc-checkbox-1 fs13 atl-tabl">
+                        <thead>
+                        <tr class="bg-light">
+                            {{#ths}}
+                            <th>{{propertyName}}</th>
+                            {{/ths}}
+                            <th>SKU名称</th>
+                            <th>商品价值</th>
+                            <th>原价</th>
+                            <th>销售价</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#sku}}
+                        {{#list}}
+                        <tr class="skuProperty" data-skuproperty="{{curskuProperty}}">
+                            {{#property}}
+                            <td>{{propertyValueName}}</td>
+                            {{/property}}
+                            <td>
+                                <label class="field prepend-icon"><input type="text" name="skuName-{{rowKey}}" value="{{skuName}}" class="skuName form-control" disabled /></label>
+                            </td>
+                            <td>
+                                <label class="field prepend-icon"><input type="text" name="skuPrice-{{rowKey}}" value="{{skuPrice}}" class="skuPrice form-control required moneyNumber" disabled /></label>
+                            </td>
+                            <td>
+                                <label class="field prepend-icon"><input type="text" name="originalPrice-{{rowKey}}" value="{{originalPrice}}" class="originalPrice form-control required moneyNumber" disabled /></label>
+                            </td>
+                            <td>
+                                <label class="field prepend-icon"><input type="text" name="salePrice-{{rowKey}}" value="{{salePrice}}" class="salePrice form-control required moneyNumber" disabled /></label>
+                            </td>
+                        </tr>
+                        {{/list}}
+                        {{/sku}}
+                        </tbody>
+                    </table>
+                </script>
+
+                <div class="section row" id="skuTable"></div>
+
+            </div>
+
+            <div class="panel-footer text-right">
+                #*<button type="submit" class="button btn-primary" id="createProductBtn">确定</button>*#
+            </div>
+        </div>
+    </form>
+</div>
+
+
+

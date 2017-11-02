@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>爱租-运营管理系统-商品管理-SKU列表</title>
+    #parse("layout/header.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+                <div class="panel mb25 mt5">
+                    <form id="searchForm">
+                        <div class="panel-heading">
+                            <span class="panel-title">SKU查询</span>
+                        </div>
+                        <div class="panel-body p25 pb5 admin-form">
+                            <div class="section row">
+                                <div class="col-md-4">
+                                    <label for="username" class="field-label">商品ID</label>
+                                    <label for="productId" class="field prepend-icon">
+                                        <input type="text" name="productId" id="productId" class="gui-input number" />
+                                        <label for="productId" class="field-icon"><i class="fa fa-tag"></i>
+                                        </label>
+                                    </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="username" class="field-label">商品名称</label>
+                                    <label for="productName" class="field prepend-icon">
+                                        <input type="productName" name="productName" id="productName" class="gui-input" />
+                                        <label for="productName" class="field-icon"><i class="fa fa-tag"></i>
+                                        </label>
+                                    </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="username" class="field-label">SKU名称</label>
+                                    <label for="skuName" class="field prepend-icon">
+                                        <input type="skuName" name="skuName" id="skuName" class="gui-input" />
+                                        <label for="skuName" class="field-icon"><i class="fa fa-tag"></i>
+                                        </label>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer text-right admin-form">
+                            <button type="submit" class="btn btn-primary"> 查询 </button>
+                            <button type="reset" class="btn"> 重置 </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel">
+                    <div class="panel-menu p12 theme-primary">
+                        <div class="row table-layout">
+                            <div class="col-md-6">
+                                <script type="text/html" id="actionButtonsTpl">
+                                    {{#acitonButtons}}
+                                    <button type="button" class="btn btn-default light" id="{{id}}" title="{{menuName}}"><i class="{{iClass}}"></i></button>
+                                    {{/acitonButtons}}
+                                </script>
+
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default light" id="btnRefresh" title="刷新"><i class="fa fa-refresh"></i>
+                                    </button>
+                                    <span id="acitonButtons"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-right">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body pn">
+                        <div class="table-responsive">
+                            <table class="table admin-form theme-warning tc-checkbox-1 fs13">
+                                <thead>
+                                <tr class="bg-light">
+                                    <th class="text-center">
+                                        <label class="option block mn">
+                                            <input type="checkbox" name="orders" value="">
+                                            <span class="checkbox mn"></span>
+                                        </label>
+                                    </th>
+                                    <th>商品ID</th>
+                                    <th>商品名称</th>
+                                    <th>SKU ID</th>
+                                    <th>SKU名称</th>
+                                    <th>属性</th>
+                                    <th>商品价值</th>
+                                    <th>原价</th>
+                                    <th>销售价格</th>
+                                    <th>库存</th>
+                                    <th class="text-right">操作</th>
+                                </tr>
+                                </thead>
+                                <script type="text/html" id="skuListTpl">
+                                    {{#listData}}
+                                    <tr>
+                                        <td class="text-center">
+                                            <label class="option block mn">
+                                                <input type="checkbox" name="mobileos" value="FR">
+                                                <span class="checkbox mn"></span>
+                                            </label>
+                                        </td>
+                                        <td>{{productId}}</td>
+                                        <td>{{productName}}</td>
+                                        <td>{{skuId}}</td>
+                                        <td>{{skuName}}</td>
+                                        <td>{{propertiesForamt}}</td>
+                                        <td>{{skuPriceFixed}}</td>
+                                        <td>{{originalPriceFixed}}</td>
+                                        <td>{{salePriceFixed}}</td>
+                                        <td>{{stock}}</td>
+                                        <td class="text-right">
+                                            <div class="btn-group text-right">
+                                                {{#acitonButtons}}
+                                                {{#acitons}}
+                                                <button type="button" class="btn btn-default btn-xs {{class}}" data-productid="{{productId}}" data-skuid="{{skuId}}"> <i class="{{iClass}}"></i>{{text}} </button>
+                                                {{/acitons}}
+                                                {{/acitonButtons}}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {{/listData}}
+                                    {{^listData}}
+                                    <tr>
+                                        <td valign="top" colspan="14">没有查询到SKU</td>
+                                    </tr>
+                                    {{/listData}}
+                                </script>
+                                <tbody id="skuListTbody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row table-layout">
+                            <div class="col-xs-6 col-md-6 text-right"></div>
+                            #parse("component/pager.vm")
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </section>
+
+        #parse("layout/sidebarRight.vm")
+    </div>
+
+    #parse("layout/footer.vm")
+
+
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/dropzone/dropzone.min.js"></script>
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js','manage.product.sku.list.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    SKUManage.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+
+</script>
+
+</body>
+</html>

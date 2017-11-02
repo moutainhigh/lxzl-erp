@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>爱租-运营管理系统-订单管理-订单列表-订单详细</title>
+    #parse("layout/header.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
+
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+
+                <div class="panel invoice-panel">
+                    <div class="panel-heading">
+                        <span class="panel-title">
+                           订单详细
+                        </span>
+                    </div>
+                    <div class="panel-body p20" id="invoice-item">
+
+                        <script type="text/html" id="orderBaseInfoTpl">
+                            {{#order}}
+                            <div class="col-md-4">
+                                <div class="pull-left">
+                                    <h4 class="mt10"> 订单编号：{{orderNo}} </h4>
+                                    <p> <b>下单时间：</b> {{createTimeFromat}} </p>
+                                    <p> <b>订单状态：</b><b class="{{orderStatusClass}}">{{orderStatusStr}}</b> </p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="pull-left">
+                                    <h5> 支付类型: {{payModeStr}} </h5>
+                                    <h5 class="mt10"> 租赁方式：{{rentTypeStr}} </h5>
+                                    <h5> 租期: {{rentTimeLength}} </h5>
+                                </div>
+                            </div>
+
+                            #*<div class="col-md-4">
+                                <div class="pull-right text-right">
+                                    <h5> 跟单员: <b class="text-primary">毛涛</b> </h5>
+                                </div>
+                            </div>*#
+                            {{/order}}
+                        </script>
+                        <div class="row mb30" id="orderBaseInfo"></div>
+
+                        <div class="row" id="invoice-info">
+                            <div class="col-md-4">
+                                <div class="panel panel-alt">
+                                    <div class="panel-heading">
+                                        <span class="panel-title"> <i class="fa fa-info"></i> 订单时间节点 </span>
+                                        <div class="panel-btns pull-right ml10"> </div>
+                                    </div>
+                                    <script type="text/html" id="orderDateInfoTpl">
+                                        {{#order}}
+                                        <ul class="list-unstyled">
+                                            <li> <b>支付时间：</b> {{payTimeFromat}}</li>
+                                            <li> <b>发货时间：</b> {{deliveryTimeFromat}}</li>
+                                            <li> <b>确认收货时间：</b> {{confirmDeliveryTimeFromat}}</li>
+                                            <li> <b>预计归还时间：</b> {{expectReturnTimeFromat}}</li>
+                                            <li> <b>实际归还时间：</b> {{actualReturnTimeFromat}}</li>
+                                        </ul>
+                                        {{/order}}
+                                    </script>
+                                    <div class="panel-body" id="orderDateInfo"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="panel panel-alt">
+                                    <div class="panel-heading">
+                                        <span class="panel-title"> <i class="fa fa-user"></i> 客户信息</span>
+                                    </div>
+                                    <script type="text/html" id="orderCustomerInfoTpl">
+                                        {{#order}}
+                                        <address>
+                                            <strong>{{buyerRealName}}</strong>
+                                            <br><b>备注：</b> {{buyerRemark}}
+                                        </address>
+                                        {{/order}}
+                                    </script>
+                                    <div class="panel-body" id="orderCustomerInfo"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="panel panel-alt">
+                                    <div class="panel-heading">
+                                        <span class="panel-title"> <i class="fa fa-location-arrow"></i> 收货地址</span>
+                                    </div>
+                                    <script type="text/html" id="orderConsignInfoTpl">
+                                        {{#orderConsignInfo}}
+                                        <address>
+                                            <strong>{{consigneeName}}</strong>
+                                            <br> {{provinceName}}{{cityName}}{{districtName}}{{address}}
+                                            <br>
+                                            <abbr title="Phone">手机号：</abbr> {{consigneePhone}}
+                                        </address>
+                                        {{/orderConsignInfo}}
+                                    </script>
+                                    <div class="panel-body" id="orderConsignInfo"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" >
+                            <div class="col-md-12">
+                                <div class="panel panel-alt">
+                                    <div class="panel-heading">
+                                        <span class="panel-title">商品信息</span>
+                                        <div class="panel-btns pull-right ml10"> </div>
+                                    </div>
+                                    <div class="panel-body pn">
+                                        <script type="text/html" id="orderProductListTpl">
+                                            {{#orderProductList}}
+                                            <tr>
+                                                <td></td>
+                                                <td>{{productId}}</td>
+                                                <td>{{productName}}</td>
+                                                <td>
+                                                    <a class="productImg open-img-popup" data-imgs={{productImgJSON}}>
+                                                        <img src="{{mainImg}}" />
+                                                    </a>
+                                                </td>
+                                                <td>{{productSkuId}}</td>
+                                                #*<td>SKU名称</td>*#
+                                                <td>{{productCount}}</td>
+                                                <td>{{productUnitAmountFixed}}</td>
+                                                <td>{{productAmountFixed}}</td>
+                                                <td>{{properties}}</td>
+                                                #*<td>设备号</td>*#
+                                                <td>{{remark}}</td>
+                                            </tr>
+                                            {{/orderProductList}}
+                                        </script>
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>序号</th>
+                                                <th>商品ID</th>
+                                                <th>商品名称</th>
+                                                <th>商品图片</th>
+                                                <th>SKUID</th>
+                                                #*<th>SKU名称</th>*#
+                                                <th>商品总数</th>
+                                                <th>商品单价</th>
+                                                <th>商品价格</th>
+                                                <th>属性值</th>
+                                                #*<th>设备号</th>*#
+                                                <th>备注</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="orderProductList"></tbody>
+                                        </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row" >
+                            <div class="col-md-12">
+                                <div class="panel panel-alt">
+                                    <div class="panel-heading">
+                                        <span class="panel-title">缴租计划</span>
+                                        <div class="panel-btns pull-right ml10"> </div>
+                                    </div>
+                                    <div class="panel-body pn">
+                                        <div class="table-responsive">
+                                            <script type="text/html" id="orderPayPlanListTpl">
+                                                {{#orderPayPlanList}}
+                                                <tr>
+                                                    <td>{{num}}</td>
+                                                    <td>{{payNo}}</td>
+                                                    <td>{{payStatusStr}}</td>
+                                                    <td>{{payTimeFromat}}</td>
+                                                    <td>{{payTimePlanFromat}}</td>
+                                                    <td>{{payTimeRealFromat}}</td>
+                                                    <td>{{expectAmountFixed}}</td>
+                                                    <td>{{payAmountFixed}}</td>
+                                                    <td>{{expecoverdueAmountFixed}}</td>
+                                                    <td>{{dataStatusStr}}</td>
+                                                    <td>{{remark}}</td>
+                                                </tr>
+                                                {{/orderPayPlanList}}
+                                            </script>
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th>序号</th>
+                                                    <th>支付编号</th>
+                                                    <th>支付状态</th>
+                                                    <th>发起支付时间</th>
+                                                    <th>还款时间</th>
+                                                    <th>实际还款时间</th>
+                                                    <th>预计支付金额</th>
+                                                    <th>实际支付金额</th>
+                                                    <th>逾期金额</th>
+                                                    <th>状态</th>
+                                                    <th>备注</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody id="orderPayPlanList"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="pull-right">
+                                    <script type="text/html" id="orderAmountInfoTpl">
+                                        {{#order}}
+                                        <thead>
+                                        <tr>
+                                            <th><b>商品总金额:</b>
+                                            </th>
+                                            <th>￥{{productAmountTotal}}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td><b>优惠金额</b>
+                                            </td>
+                                            <td>(-){{discountAmountTotal}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>订单金额</b>
+                                            </td>
+                                            <td>￥{{orderAmountTotal}}</td>
+                                        </tr>
+                                        #*<tr>
+                                            <td><b>已支付金额:</b>
+                                            </td>
+                                            <td>$1375.98</td>
+                                        </tr>*#
+                                        </tbody>
+                                        {{/order}}
+                                    </script>
+                                    <table class="table" id="orderAmountInfo"></table>
+                                </div>
+                                <div class="clearfix"></div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </section>
+        </section>
+
+        #parse("layout/sidebarRight.vm")
+    </div>
+    #parse("layout/footer.vm")
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js','manage.order.detail.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        OrderDetail.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+    </script>
+</body>
+</html>
