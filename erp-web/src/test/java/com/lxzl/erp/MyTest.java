@@ -168,7 +168,6 @@ public class MyTest {
 
     static class NameAndType{
         private String sqlTableName;
-        private String tableName;
         private String sqlName;
         private String doName;
         private String trueDoName;
@@ -179,7 +178,6 @@ public class MyTest {
         private boolean haveBigDecimal = false;
         public NameAndType(String name, String type,String tableName) {
             this.sqlTableName = tableName;
-            this.tableName = getUp(getDomainTableName(tableName));
             this.sqlName = name;
             this.doName = convertDoName(name);
             this.trueDoName = convertTrueDoName(name);
@@ -203,7 +201,8 @@ public class MyTest {
         }
         public String convertPoName(String name){
             if("id".equals(name)){
-                return covertString(tableName.substring(0,1).toLowerCase()+tableName.substring(1,tableName.length()))+"Id";
+                String s = covertString(getDomainTableName(this.sqlTableName))+"Id";
+                return s.substring(0,1).toLowerCase()+s.substring(1,s.length());
             }
             return covertString(name);
         }
