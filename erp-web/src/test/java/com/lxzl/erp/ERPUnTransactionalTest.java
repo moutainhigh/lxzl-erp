@@ -40,7 +40,7 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
     public void setup(){
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
         try {
-            this.session = getLoginSession("kochiu8","123456");
+            this.session = getLoginSession("admin","123456");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,7 +67,7 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JSON.toJSONString(user))
                         .param("userName", name).param("password", password)))
-//                .andExpect(status().isOk())
+                .andExpect(status().isOk())
                 .andReturn();
         return (MockHttpSession)result.getRequest().getSession();
     }
@@ -85,7 +85,7 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
     public MvcResult jsonTestRequest(String uri) throws Exception {
         MvcResult mvcResult =mockMvc.perform(post(uri)
                 .contentType(MediaType.APPLICATION_JSON)
-//                .session(session)
+                .session(session)
         ).andExpect(status().isOk())
                 .andReturn();
 
