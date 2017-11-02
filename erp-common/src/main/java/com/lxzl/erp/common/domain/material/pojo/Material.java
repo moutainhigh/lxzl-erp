@@ -1,4 +1,4 @@
-package com.lxzl.erp.common.domain.materiel.pojo;
+package com.lxzl.erp.common.domain.material.pojo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -10,16 +10,16 @@ import java.util.Date;
  * @author gaochao
  * @date 2017-10-30 19:57
  */
-public class Materiel implements Serializable {
+public class Material implements Serializable {
 
     private Integer id;
-    private String materielNo;
-    private String materielName;
+    private String materialNo;
+    private String materialName;
     private Integer brandId;
     private Integer categoryId;
     private Integer propertyId;
     private Integer propertyValueId;
-    private BigDecimal materielPrice;
+    private BigDecimal materialPrice;
     private BigDecimal originalPrice;
     private BigDecimal rentPrice;
     private Integer dataStatus;
@@ -33,20 +33,29 @@ public class Materiel implements Serializable {
         this.id = id;
     }
 
-    public String getMaterielNo() {
-        return materielNo;
+
+    public String getMaterialNo() {
+        return materialNo;
     }
 
-    public void setMaterielNo(String materielNo) {
-        this.materielNo = materielNo;
+    public void setMaterialNo(String materialNo) {
+        this.materialNo = materialNo;
     }
 
-    public String getMaterielName() {
-        return materielName;
+    public String getMaterialName() {
+        return materialName;
     }
 
-    public void setMaterielName(String materielName) {
-        this.materielName = materielName;
+    public void setMaterialName(String materialName) {
+        this.materialName = materialName;
+    }
+
+    public BigDecimal getMaterialPrice() {
+        return materialPrice;
+    }
+
+    public void setMaterialPrice(BigDecimal materialPrice) {
+        this.materialPrice = materialPrice;
     }
 
     public Integer getBrandId() {
@@ -79,14 +88,6 @@ public class Materiel implements Serializable {
 
     public void setPropertyValueId(Integer propertyValueId) {
         this.propertyValueId = propertyValueId;
-    }
-
-    public BigDecimal getMaterielPrice() {
-        return materielPrice;
-    }
-
-    public void setMaterielPrice(BigDecimal materielPrice) {
-        this.materielPrice = materielPrice;
     }
 
     public BigDecimal getOriginalPrice() {

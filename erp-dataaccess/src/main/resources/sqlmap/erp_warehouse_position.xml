@@ -2,13 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMaterielMapper">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehousePositionMapper">
 
-	<resultMap type="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterielDO" id="EquipmentMaterielDO">
+	<resultMap type="com.lxzl.erp.dataaccess.domain.warehouse.WarehousePositionDO" id="WarehousePositionDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
-		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
-		<result column="materiel_id" jdbcType="INTEGER" property="materielId" />
-		<result column="materiel_count" jdbcType="INTEGER" property="materielCount" />
+		<result column="warehouse_id" jdbcType="INTEGER" property="warehouseId" />
+		<result column="warehouse_position_name" jdbcType="VARCHAR" property="warehousePositionName" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -18,25 +17,26 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eem.id,eem.equipment_id,eem.materiel_id,eem.materiel_count,eem.data_status,eem.remark,eem.create_time,eem.create_user,eem.update_time,eem.update_user
+		ewp.id,ewp.warehouse_id,ewp.warehouse_position_name,ewp.data_status,ewp.remark,ewp.create_time,ewp.create_user,ewp.update_time,ewp.update_user,
 	</sql>
 
-	<select id="findById" resultMap="EquipmentMaterielDO" parameterType="java.lang.Integer">
+	<select id="findById" resultMap="WarehousePositionDO" parameterType="java.lang.Integer">
 		select
 		<include refid="column_List"/>
-		from erp_product_equipment_materiel eem where eem.id = #{id, jdbcType=INTEGER} and eem.data_status = 1
+		from erp_warehouse_position_position ewp where em.id = #{id, jdbcType=INTEGER} and data_status = 1
 	</select>
+
 
 	<sql id="set_column_sql">
 		<set>
-			<if test="equipmentId != null">
-				equipment_id = #{equipmentId,jdbcType=INTEGER},
+			<if test="warehouseNo != null">
+				warehouse_no = #{warehouseNo,jdbcType=VARCHAR},
 			</if>
-			<if test="materielId != null">
-				materiel_id = #{materielId,jdbcType=INTEGER},
+			<if test="warehouseName != null">
+				warehouse_name = #{warehouseName,jdbcType=VARCHAR},
 			</if>
-			<if test="materielCount != null">
-				materiel_count = #{materielCount,jdbcType=INTEGER},
+			<if test="subCompanyId != null">
+				sub_company_id = #{subCompanyId,jdbcType=INTEGER},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
@@ -59,15 +59,15 @@
 		</set>
 	</sql>
 
-	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterielDO">
-		update erp_product_equipment_materiel
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.warehouse.WarehousePositionDO">
+		update erp_warehouse_position
 		<include refid="set_column_sql"/>
 		WHERE id = #{id, jdbcType=INTEGER}
 	</update>
 
 	<insert id="save" keyProperty="id" useGeneratedKeys="true"
-			parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterielDO">
-		INSERT INTO erp_product_equipment_materiel
+			parameterType="com.lxzl.erp.dataaccess.domain.warehouse.WarehousePositionDO">
+		INSERT INTO erp_warehouse_position
 		<include refid="set_column_sql"/>
 	</insert>
 
