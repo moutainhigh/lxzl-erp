@@ -1,0 +1,34 @@
+<header id="topbar">
+    <div class="topbar-left">
+        <script type="text/html" id="breadcrumbTpl">
+            {{#default}}
+                <li class="crumb-active">
+                    <a href="${ctx}{{menuUrl}}">{{menuName}}</a>
+                </li>
+            {{/default}}
+            <li class="crumb-icon">
+                <a href="${ctx}/home">
+                    <span class="glyphicon glyphicon-home"></span>
+                </a>
+            </li>
+            {{#breadcrumb}}
+                {{#isLink}}
+                    <li class="crumb-link">
+                        <a href="${ctx}{{menuUrl}}">{{menuName}}</a>
+                    </li>
+                {{/isLink}}
+                {{^isLink}}
+                    <li class="crumb-trail">{{menuName}}</li>
+                {{/isLink}}
+            {{/breadcrumb}}
+        </script>
+        <ol class="breadcrumb" id="breadcrumb"></ol>
+    </div>
+    <div class="topbar-right">
+        <div class="ml15 ib va-m" id="toggle_sidemenu_r">
+            <a href="#" class="pl5"> <i class="fa fa-sign-in fs22 text-primary"></i>
+                #*<span class="badge badge-hero badge-danger">3</span>*#
+            </a>
+        </div>
+    </div>
+</header>

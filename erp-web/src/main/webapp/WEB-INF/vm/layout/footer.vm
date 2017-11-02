@@ -1,18 +1,28 @@
 <!-- BEGIN: PAGE SCRIPTS -->
 
 <!-- jQuery -->
-<script type="text/javascript" src="${static.domain}/vendor/jquery/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="${static.domain}/vendor/jquery/jquery_ui/jquery-ui.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/jquery/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/jquery/jquery_ui/jquery-ui.min.js"></script>
 
 <!-- Bootstrap -->
-<script type="text/javascript" src="${static.domain}/assets/js/bootstrap/bootstrap.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/assets/js/bootstrap/bootstrap.min.js"></script>
+
+<!-- Page Plugins -->
+<script type="text/javascript" src="${staticCommon}/assets/admin-tools/admin-forms/js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/mustache/mustache.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/magnific/jquery.magnific-popup.min.js"></script>
 
 <!-- Theme Javascript -->
-<script type="text/javascript" src="${static.domain}/assets/js/utility/utility.js"></script>
-<script type="text/javascript" src="${static.domain}/assets/js/main.js"></script>
-<script type="text/javascript" src="${static.domain}/assets/js/demo.js"></script>
+<script type="text/javascript" src="${staticCommon}/assets/js/utility/utility.js"></script>
+<script type="text/javascript" src="${staticCommon}/assets/js/main.js"></script>
+<script type="text/javascript" src="${staticCommon}/assets/js/demo.js"></script>
+
 <script type="text/javascript">
-    jQuery(document).ready(function() {
+    management_load_script('${staticManagement}/js','rental.common.js','layout.js','manage.user.password.js');
+</script>
+
+<script type="text/javascript">
+    /*jQuery(document).ready(function() {
 
         "use strict";
 
@@ -22,6 +32,7 @@
         // Init Theme Core
         Demo.init();
 
-    });
+
+    });*/
 </script>
 <!-- END: PAGE SCRIPTS -->
