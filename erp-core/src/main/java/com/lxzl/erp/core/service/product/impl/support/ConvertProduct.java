@@ -1,8 +1,8 @@
 package com.lxzl.erp.core.service.product.impl.support;
 
-import com.lxzl.erp.common.domain.product.Product;
-import com.lxzl.erp.common.domain.product.ProductSku;
-import com.lxzl.erp.common.domain.product.ProductSkuProperty;
+import com.lxzl.erp.common.domain.product.pojo.Product;
+import com.lxzl.erp.common.domain.product.pojo.ProductSku;
+import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO;

@@ -2,11 +2,11 @@ package com.lxzl.erp.core.service.product.impl;
 
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.ProductEquipmentOperationType;
 import com.lxzl.erp.common.constant.ProductEquipmentStatus;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.*;
+import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.FileUtil;
 import com.lxzl.erp.common.util.ListUtil;
@@ -314,33 +314,7 @@ public class ProductServiceImpl implements ProductService {
             productEquipmentDO.setUpdateTime(currentTime);
             productEquipmentDO.setCreateTime(currentTime);
             productEquipmentMapper.save(productEquipmentDO);
-            operateProductEquipmentStorage(productEquipmentDO.getId(), productEquipmentDO.getEquipmentNo(), ProductEquipmentOperationType.PRODUCT_EQUIPMENT_OPERATION_TYPE_IN, null, null, currentTime);
         }
-    }
-
-    @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, Integer> operateProductEquipmentStorage(Integer equipmentId, String equipmentNo, Integer operationType, Integer orderId, Integer orderProductId, Date currentTime) {
-        ServiceResult<String, Integer> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        ProductEquipmentStorageRecordDO productEquipmentStorageRecordDO = new ProductEquipmentStorageRecordDO();
-        productEquipmentStorageRecordDO.setOperationType(operationType);
-        productEquipmentStorageRecordDO.setEquipmentId(equipmentId);
-        productEquipmentStorageRecordDO.setEquipmentNo(equipmentNo);
-        if (ProductEquipmentOperationType.PRODUCT_EQUIPMENT_OPERATION_TYPE_OUT.equals(operationType)
-                || ProductEquipmentOperationType.PRODUCT_EQUIPMENT_OPERATION_TYPE_RETURN.equals(operationType)) {
-            productEquipmentStorageRecordDO.setOrderId(orderId);
-            productEquipmentStorageRecordDO.setOrderProductId(orderProductId);
-        }
-        productEquipmentStorageRecordDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        productEquipmentStorageRecordDO.setUpdateUser(loginUser.getUserId().toString());
-        productEquipmentStorageRecordDO.setCreateUser(loginUser.getUserId().toString());
-        productEquipmentStorageRecordDO.setUpdateTime(currentTime);
-        productEquipmentStorageRecordDO.setCreateTime(currentTime);
-        productEquipmentStorageRecordMapper.save(productEquipmentStorageRecordDO);
-        result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(productEquipmentStorageRecordDO.getId());
-        return result;
     }
 
     @Override
@@ -685,7 +659,4 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductEquipmentMapper productEquipmentMapper;
-
-    @Autowired
-    private ProductEquipmentStorageRecordMapper productEquipmentStorageRecordMapper;
 }

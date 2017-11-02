@@ -1,4 +1,4 @@
-package com.lxzl.erp.common.domain.materiel;
+package com.lxzl.erp.common.domain.materiel.pojo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
