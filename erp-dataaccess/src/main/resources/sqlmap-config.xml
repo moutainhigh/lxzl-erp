@@ -24,7 +24,6 @@
         <mapper resource="sqlmap/erp_product_category_property_value.xml" />
         <mapper resource="sqlmap/erp_product_equipment.xml" />
         <mapper resource="sqlmap/erp_product_equipment_repair_record.xml" />
-        <mapper resource="sqlmap/erp_product_equipment_storage_record.xml" />
         <mapper resource="sqlmap/erp_product_img.xml" />
         <mapper resource="sqlmap/erp_product_sku.xml" />
         <mapper resource="sqlmap/erp_product_sku_property.xml" />

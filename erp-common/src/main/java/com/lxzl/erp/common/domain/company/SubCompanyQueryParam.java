@@ -1,6 +1,6 @@
 package com.lxzl.erp.common.domain.company;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
