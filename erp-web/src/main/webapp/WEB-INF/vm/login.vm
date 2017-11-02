@@ -25,14 +25,14 @@
                     <div class="row mb15 table-layout">
 
                         <div class="col-xs-6 va-m pln">
-                            <a href="dashboard.html" title="Return to Dashboard">
-                                <img src="${staticCommon}/rental/img/logo-white.png" title="AdminDesigns Logo" class="img-responsive">
+                            <a href="#" title="Return to Dashboard">
+                                <img src="${staticCommon}/rental/img/logo-white.png" title="凌雄租赁" class="img-responsive">
                             </a>
                         </div>
 
                         <div class="col-xs-6 text-right va-b pr5">
                             <div class="login-links">
-                                <a class="active" title="Sign In">爱租运营管理系统</a>
+                                <a class="active" title="Sign In">ERP系统</a>
                             </div>
 
                         </div>

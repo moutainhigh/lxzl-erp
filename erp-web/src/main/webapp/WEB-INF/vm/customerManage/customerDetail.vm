@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>爱租-运营管理系统-客户管理-客户列表</title>
+    #parse("layout/header.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
+</head>
+<body class="profile-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="pn animated fadeIn">
+
+                <div class="pv30 ph40 bg-light dark br-b br-grey posr">
+                    <script type="text/html" id="customerHeadTpl">
+                        {{#customer}}
+                        <div class="w200 text-center pr30 hidden-xs">
+                            <img src="{{avatar}}" class="responsive" width="100%" />
+                        </div>
+                        <div class="va-t m30">
+                            <h2 class=""> {{realName}} <small>{{userName}}</small></h2>
+                            <p class="fs15"><b>用户类型：</b>{{cutomerTypeValue}}</p>
+                            <p class="fs15"><b>注册时间：</b>{{registerTimeFormat}}</p>
+                            <p class="fs15"><b>最后登录时间：</b>{{lastLoginTimeFormat}}</p>
+                            <p class="fs15"><b>联系方式：</b><span class="mr10">{{email}}</span><span>{{phone}}</span></p>
+                        </div>
+                        {{/customer}}
+                    </script>
+                    <div class="table-layout" id="customerHead"></div>
+                </div>
+
+                <div class="p25 pt35">
+                    <div class="row">
+                        <div class="col-md-4">
+
+                            <h4 class="page-header mtn br-light text-muted hidden">用户信息</h4>
+
+                            <div class="panel">
+                                <div class="panel-heading">
+                                    <span class="panel-icon"><i class="fa fa-circle"></i>
+                                    </span>
+                                    <span class="panel-title">用户状态</span>
+                                </div>
+                                <div class="panel-body pn">
+                                    <table class="table mbn tc-icon-1 tc-med-2 tc-bold-last">
+                                        <thead>
+                                        <tr class="hidden">
+                                            <th class="mw30">#</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <script type="text/html" id="customerStatusTpl">
+                                            {{#customer}}
+                                                {{#isDisabledStr}}
+                                                <tr>
+                                                    <td>
+                                                        <span class="fa fa-circle text-warning"></span>
+                                                    </td>
+                                                    <td>是否禁用</td>
+                                                    <td><span class='label {{class}}'>{{text}}</span></td>
+                                                </tr>
+                                                {{/isDisabledStr}}
+                                                {{#isActivatedStr}}
+                                                <tr>
+                                                    <td>
+                                                        <span class="fa fa-circle text-primary"></span>
+                                                    </td>
+                                                    <td>是否激活</td>
+                                                    <td><span class='label {{class}}'>{{text}}</span></td>
+                                                </tr>
+                                                {{/isActivatedStr}}
+                                                {{#verifyStatusStr}}
+                                                <tr>
+                                                    <td>
+                                                        <span class="fa fa-circle text-info"></span>
+                                                    </td>
+                                                    <td>认证状态</td>
+                                                    <td><span class='label {{class}}'>{{text}}</span></td>
+                                                </tr>
+                                                {{/verifyStatusStr}}
+                                            {{/customer}}
+                                        </script>
+                                        <tbody id="customerStatus"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="panel">
+                                <div class="panel-heading">
+                                    <span class="panel-icon"><i class="glyphicon glyphicon-map-marker"></i>
+                                    </span>
+                                    <span class="panel-title">收货地址</span>
+                                </div>
+                                <div class="panel-body pb5">
+                                    <script type="text/html" id="customerAddressTpl">
+                                        {{#userConsignInfoList}}
+                                        <address>
+                                            <strong>{{consigneeName}}</strong>
+                                            <br>
+                                            {{provinceName}}{{cityName}}{{districtName}}{{address}}
+                                            <br>
+                                            <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{consigneePhone}}
+                                        </address>
+                                        {{/userConsignInfoList}}
+                                        {{^userConsignInfoList}}
+                                        <address>
+                                           还没有添加地址信息
+                                        </address>
+                                        {{/userConsignInfoList}}
+                                    </script>
+                                   <div class="well" id="customerAddress"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-8">
+
+                            <h4 class="page-header text-muted mtn br-light hidden">User Activity</h4>
+
+                            <div class="admin-form hidden">
+                                <div class="panel mb30">
+                                    <label class="field prepend-icon">
+                                        <textarea class="gui-textarea br-light h-60" id="comment" name="comment" placeholder="Text area"></textarea>
+                                        <label for="comment" class="field-icon"><i class="fa fa-comments"></i>
+                                        </label>
+                                        <span class="input-footer hidden">
+                                            <strong>Hint:</strong>Don't be negative or off topic! just be awesome...</span>
+                                    </label>
+                                    <div class="panel-footer text-right br-t-n p8">
+                                        <button type="button" class="btn btn-primary p4 ph10">Comment</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-block psor">
+                                #*<a href="#account-form" class="profile-settings-icon">
+                                    <span class="fa fa-gear fs16 text-muted"></span>
+                                </a>*#
+                                <ul class="nav nav-tabs">
+                                    <li class="active">
+                                        <a href="#tab1" data-toggle="tab">审核资料</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" style="min-height:318px;">
+                                    <script type="text/html" id="userCollegePersonInfoTpl">
+                                        {{#userCollegePersonInfo}}
+                                        <dl class="dl-horizontal">
+                                            <dt class="mb5">真实姓名</dt><dd>{{realName}}</dd>
+                                            <dt class="mb5">学校名称</dt><dd>{{schoolName}}</dd>
+                                            <dt class="mb5">学生证编号</dt><dd>{{studentCardNo}}</dd>
+                                            <dt class="mb5">详细地址</dt><dd>{{address}}</dd>
+                                            <dt class="mb5">审核状态</dt><dd>{{verifyStatusStr}}</dd>
+                                            <dt class="mb5">审核时间</dt><dd>{{verifyTimeFormat}}</dd>
+                                            <dt class="mb5">截至有效时间</dt><dd>{{validityTimeFormat}}</dd>
+                                            <dt class="mb5">状态</dt><dd>{{dataStatusStr}}</dd>
+                                            <dt class="mb5">备注</dt><dd>{{remark}}</dd>
+                                            <dt class="mb5">上传资料</dt>
+                                            <dd>
+                                                {{#imgInfo}}
+                                                <div class="media-body" data-imgs="{{jsonstrImgs}}">
+                                                    {{#imgs}}
+                                                    <a href="#" class="mw140 mr25 mb20 pull-left collegePersonImgInfo"> <img src={{src}} width="100%" title="{{title}}"></a>
+                                                    {{/imgs}}
+                                                </div>
+                                                {{/imgInfo}}
+                                            </dd>
+                                        </dl>
+                                        {{/userCollegePersonInfo}}
+                                        {{^userCollegePersonInfo}}
+                                        <div>还没有上传审核资料</div>
+                                        {{/userCollegePersonInfo}}
+                                    </script>
+                                    <div id="userCollegePersonInfo" class="tab-pane active p15">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </section>
+        #parse("layout/sidebarRight.vm")
+    </div>
+    #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js','manage.customer.detail.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        CustomerDetail.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+    </script>
+</body>
+</html>

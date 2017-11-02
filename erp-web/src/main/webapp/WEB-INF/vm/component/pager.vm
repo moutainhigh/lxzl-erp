@@ -1,0 +1,23 @@
+<div class="col-xs-6 col-md-6 text-right pagerContainer">
+</div>
+<script type="text/html" id="pagerTpl">
+    {{#pager}}
+        <span class="hidden-xs va-m text-muted mr15"> 当前 <strong>{{currentPage}}</strong>页， 共 <strong>{{pageCount}}</strong>页 </span>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default btn-sm light" data-pageno="{{preno}}" {{preSatatus}}>
+                <i class="fa fa-chevron-left"></i>
+            </button>
+            {{#pageArr}}
+                {{#choosed}}
+                    <button type="button" class="btn btn-primary btn-sm light" data-pageno="{{pageNo}}">{{pageNo}}</button>
+                {{/choosed}}
+                {{^choosed}}
+                    <button type="button" class="btn btn-default btn-sm light" data-pageno="{{pageNo}}">{{pageNo}}</button>
+                {{/choosed}}
+            {{/pageArr}}
+            <button type="button" class="btn btn-default btn-sm light" data-pageno="{{nextno}}" {{nextStatus}}>
+                <i class="fa fa-chevron-right"></i>
+            </button>
+        </div>
+    {{/pager}}
+</script>

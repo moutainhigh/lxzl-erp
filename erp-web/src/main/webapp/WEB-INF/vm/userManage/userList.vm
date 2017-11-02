@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>爱租-运营管理系统-用户管理-用户列表</title>
+    <title>凌雄ERP-用户管理-用户列表</title>
     #parse("layout/header.vm")
 </head>
 <body class="blank-page">
@@ -31,39 +31,34 @@
                             </div>
                         </div>
                         <div class="panel-footer text-right admin-form">
-                            <button type="submit" class="btn btn-primary"> 查询 </button>
-                            <button type="reset" class="btn"> 重置 </button>
+                            <button type="submit" class="btn btn-sm btn-primary"> 查询 </button>
+                            <button type="reset" class="btn btn-sm"> 重置 </button>
                         </div>
                     </form>
                 </div>
                 <div class="panel">
                     <div class="panel-menu p12 admin-form theme-primary">
-
                         <div class="row table-layout">
                             <div class="col-md-6">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default light" id="btnRefresh" title="刷新"><i class="fa fa-refresh"></i>
+                                <script type="text/html" id="actionCommonButtonsTpl">
+                                    <button type="button" class="btn btn-sm btn-default light refreshButton"  title="刷新"><i class="fa fa-refresh"></i></button>
+                                    {{#acitonCommonButtons}}
+                                    <button type="button" class="btn btn-sm btn-default light {{class}}" title="{{text}}">
+                                        <i class="{{iClass}}"></i> {{text}}
                                     </button>
-                                    <button type="button" class="btn btn-default light" id="btnAddUser" title="添加用户">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                    #*<button type="button" class="btn btn-default light"><i class="fa fa-pencil"></i>
-                                    </button>*#
-                                    #*<button type="button" class="btn btn-default light"><i class="fa fa-trash"></i>
-                                    </button>*#
-                                </div>
+                                    {{/acitonCommonButtons}}
+                                </script>
+                                <div class="btn-group" id="actionCommonButtons"></div>
                             </div>
-                            <div class="col-md-6 text-right">
-                            </div>
+                            <div class="col-md-6 text-right"></div>
                         </div>
-
                     </div>
                     <div class="panel-body pn">
                         <div class="table-responsive">
                             <table class="table admin-form theme-warning tc-checkbox-1 fs13">
                             <thead>
                             <tr class="bg-light">
-                                <th width="6%" class="text-center"></th>
+                                <th width="6%" class="text-center">用户ID</th>
                                 <th width="10%" class="">姓名</th>
                                 <th width="10%" class="">用户名</th>
                                 <th width="10%" class="">邮箱</th>
@@ -79,10 +74,11 @@
                                 {{#listData}}
                                     <tr>
                                         <td class="text-center">
-                                            <label class="option block mn">
+                                            {{userId}}
+                                           #* <label class="option block mn">
                                                 <input type="checkbox" name="users" value="FR">
                                                 <span class="checkbox mn"></span>
-                                            </label>
+                                            </label>*#
                                         </td>
                                         <td class="">{{realName}}</td>
                                         <td class="">{{userName}}</td>
@@ -93,22 +89,13 @@
                                         <td class="">{{registerTimeFormat}}</td>
                                         <td class="">{{lastLoginTimeFormat}}</td>
                                         <td class="text-right">
+                                            {{#acitonButtons}}
                                             <div class="btn-group text-right">
-                                                <button type="button" class="btn btn-default btn-xs viewUser" data-userid={{userId}}> <i class="fa fa-search"></i> </button>
-                                                <button type="button" class="btn btn-default btn-xs editUser" data-userid={{userId}}> <i class="fa fa-pencil"></i> </button>
-                                                <button type="button" class="btn btn-default btn-xs updatePassword" data-userid={{userId}}> <i class="fa fa-lock"></i> </button>
-                                                #*<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                                    <span class="caret ml5"></span>
-                                                </button>
-                                                <ul class="dropdown-menu pull-right" role="menu">
-                                                    <li>
-                                                        <a href="#" class="editUser" data-userid={{userId}}>编辑</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" class="updatePassword" data-userid={{userId}}>修改密码</a>
-                                                    </li>
-                                                </ul>*#
+                                                {{#acitons}}
+                                                <a href="${ctx}{{menuUrl}}" type="button" class="btn btn-default btn-xs {{class}}" data-userid="{{userId}}">{{text}}</a>
+                                                {{/acitons}}
                                             </div>
+                                            {{/acitonButtons}}
                                         </td>
                                     </tr>
                                 {{/listData}}

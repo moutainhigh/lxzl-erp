@@ -13,11 +13,9 @@
 <script src="${staticCommon}/html5Js/respond.min.js"></script>
 <![endif]-->
 
-<script type="text/javascript" src="${staticCommon}/rental/loader.js?v=$!dateTool.getSystemTime()"></script>
-<script type="text/javascript" src="${staticManagement}/loader.js?v=$!dateTool.getSystemTime()"></script>
+<script type="text/javascript" src="${staticCommon}/rental/loader.js?v=$version"></script>
+<script type="text/javascript" src="${staticManagement}/loader.js?v=$version"></script>
 
 <script type="text/javascript">
     common_load_css('${staticCommon}/rental/css','master.css');
 </script>
-
-
