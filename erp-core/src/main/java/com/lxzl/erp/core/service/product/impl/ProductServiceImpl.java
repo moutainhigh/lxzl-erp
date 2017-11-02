@@ -304,7 +304,7 @@ public class ProductServiceImpl implements ProductService {
 
         for (int i = 0; i < productInStorage.getProductCount(); i++) {
             ProductEquipmentDO productEquipmentDO = new ProductEquipmentDO();
-            productEquipmentDO.setEquipmentNo(generateEquipmentNo(currentTime, (oldCount + i + 1)));
+            productEquipmentDO.setEquipmentNo(generateEquipmentNo(currentTime, productInStorage.getWarehouseId(), (oldCount + i + 1)));
             productEquipmentDO.setProductId(productInStorage.getProductId());
             productEquipmentDO.setSkuId(productInStorage.getProductSkuId());
             productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
@@ -653,7 +653,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private String generateEquipmentNo(Date currentTime, Integer warehouseId, int no) {
-        return "LX-52RENTAL-VIEWPAKER-" + new SimpleDateFormat("yyyyMMdd").format(currentTime) + (10000 + no);
+        return "LX-52RENTAL-VIEWPAKER-" + warehouseId + "-" + new SimpleDateFormat("yyyyMMdd").format(currentTime) + (10000 + no);
     }
 
     @Autowired(required = false)
