@@ -1,0 +1,93 @@
+<header class="navbar navbar-fixed-top bg-light">
+    <div class="navbar-branding">
+        <a class="navbar-brand" href="${ctx}/home"> <b>爱租运营管理系统</b>
+        </a>
+        <span id="toggle_sidemenu_l" class="glyphicons glyphicons-show_lines"></span>
+        <ul class="nav navbar-nav pull-right hidden">
+            <li>
+                <a href="#" class="sidebar-menu-toggle">
+                    <span class="octicon octicon-ruby fs20 mr10 pull-right "></span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <ul class="nav navbar-nav navbar-left">
+        #*<li>
+            <a class="sidebar-menu-toggle" href="#">
+                <span class="octicon octicon-ruby fs18"></span>
+            </a>
+        </li>*#
+        <li>
+            <a class="topbar-menu-toggle" href="#">
+                <span class="glyphicons glyphicons-magic fs16"></span>
+            </a>
+        </li>
+        <li class="hidden-xs">
+            <a class="request-fullscreen toggle-active" href="#">
+                <span class="octicon octicon-screen-full fs18"></span>
+            </a>
+        </li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown dropdown-item-slide">
+            <a class="dropdown-toggle pl10 pr10" data-toggle="dropdown" href="#">
+                <span class="octicon octicon-radio-tower fs18"></span>
+            </a>
+            <script type="text/html" id="navbarMessageListTpl">
+                {{#messageData}}
+                    <li class="bg-light p8">
+                        <span class="fw600 pl5 lh30"> 消息提醒</span>
+                        <span class="label label-warning label-sm pull-right lh20 h-20 mt5 mr5">{{messageCount}}</span>
+                    </li>
+                    {{#messageList}}
+                    <li class="p10 br-t item-1">
+                        <div class="media">
+                            <a class="media-left" href="#"> <img src="${staticCommon}/assets/img/avatars/2.jpg" class="mw40" alt="holder-img"> </a>
+                            <div class="media-body va-m">
+                                <h5 class="media-heading mv5">{{user}} <small class="text-muted">- {{messageTime}}</small> </h5> {{message}}
+                            </div>
+                        </div>
+                    </li>
+                    {{/messageList}}
+                {{/messageData}}
+            </script>
+            <ul class="dropdown-menu dropdown-hover dropdown-persist pn w350 bg-white animated animated-shorter fadeIn" role="menu" id="navbarMessageList"></ul>
+        </li>
+        <li class="ph10 pv20 hidden-xs"> <i class="fa fa-circle text-tp fs8"></i>
+        </li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle fw600 p15" data-toggle="dropdown" style="line-height: 30px;">
+                #*<img src="${staticCommon}/rental/img/avatar.png" alt="头像" class="mw30 br64 mr15">*#
+                <i class="fa fa-user mw30 br64 mr15" style="font-size: 30px;float: left;"></i>
+                <span id="navbarSpanUserName"></span>
+                <span class="caret caret-tp hidden-xs"></span>
+            </a>
+            <ul class="dropdown-menu dropdown-persist pn w250 bg-white" role="menu">
+                #*<li class="of-h">
+                    <a href="#" class="fw600 p12 animated animated-short fadeInUp">
+                        <span class="fa fa-envelope pr5"></span> 消息管理
+                        <span class="pull-right lh20 h-20 label label-warning label-sm">2</span>
+                    </a>
+                </li>
+                <li class="br-t of-h">
+                    <a href="#" class="fw600 p12 animated animated-short fadeInUp">
+                        <span class="fa fa-user pr5"></span> 朋友管理
+                        <span class="pull-right lh20 h-20 label label-warning label-sm">6</span>
+                    </a>
+                </li>
+                <li class="br-t of-h">
+                    <a href="#" class="fw600 p12 animated animated-short fadeInDown">
+                        <span class="fa fa-gear pr5"></span> 账户设置 </a>
+                </li>*#
+                <li class="br-t of-h">
+                    <a href="#" id="navUpdatePassword" class="fw600 p12 animated animated-short fadeInDown">
+                        <span class="fa fa-lock pr5"></span> 修改密码 </a>
+                </li>
+                <li class="br-t of-h">
+                    <a href="#" id="navbarLogout" class="fw600 p12 animated animated-short fadeInDown">
+                        <span class="fa fa-power-off pr5"></span> 退出 </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</header>

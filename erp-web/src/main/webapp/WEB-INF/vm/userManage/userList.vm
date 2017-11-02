@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>爱租-运营管理系统-用户管理-用户列表</title>
+    #parse("layout/header.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+                <div class="panel mb25 mt5">
+                    <form id="searchForm">
+                        <div class="panel-heading">
+                            <span class="panel-title">用户查询</span>
+                        </div>
+                        <div class="panel-body p25 pb5 admin-form">
+                            <div class="section row">
+                                <div class="col-md-12">
+                                    <label for="username" class="field-label">姓名</label>
+                                    <label for="firstname" class="field prepend-icon">
+                                        <input type="text" name="realName" id="realName" class="gui-input" placeholder="请输入用户名...">
+                                        <label for="firstname" class="field-icon"><i class="fa fa-user"></i>
+                                        </label>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer text-right admin-form">
+                            <button type="submit" class="btn btn-primary"> 查询 </button>
+                            <button type="reset" class="btn"> 重置 </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel">
+                    <div class="panel-menu p12 admin-form theme-primary">
+
+                        <div class="row table-layout">
+                            <div class="col-md-6">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default light" id="btnRefresh" title="刷新"><i class="fa fa-refresh"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-default light" id="btnAddUser" title="添加用户">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                    #*<button type="button" class="btn btn-default light"><i class="fa fa-pencil"></i>
+                                    </button>*#
+                                    #*<button type="button" class="btn btn-default light"><i class="fa fa-trash"></i>
+                                    </button>*#
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-right">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="panel-body pn">
+                        <div class="table-responsive">
+                            <table class="table admin-form theme-warning tc-checkbox-1 fs13">
+                            <thead>
+                            <tr class="bg-light">
+                                <th width="6%" class="text-center"></th>
+                                <th width="10%" class="">姓名</th>
+                                <th width="10%" class="">用户名</th>
+                                <th width="10%" class="">邮箱</th>
+                                <th width="10%" class="">手机号</th>
+                                <th width="10%" class="">激活</th>
+                                <th width="10%" class="">禁用</th>
+                                <th width="10%" class="">注册时间</th>
+                                <th width="10%" class="">最后登录时间</th>
+                                <th width="14%" class="text-right">操作</th>
+                            </tr>
+                            </thead>
+                            <script type="text/html" id="userListTpl">
+                                {{#listData}}
+                                    <tr>
+                                        <td class="text-center">
+                                            <label class="option block mn">
+                                                <input type="checkbox" name="users" value="FR">
+                                                <span class="checkbox mn"></span>
+                                            </label>
+                                        </td>
+                                        <td class="">{{realName}}</td>
+                                        <td class="">{{userName}}</td>
+                                        <td class="">{{email}}</td>
+                                        <td class="">{{phone}}</td>
+                                        <td class="">{{isActivatedStr}}</td>
+                                        <td class="">{{isDisabledStr}}</td>
+                                        <td class="">{{registerTimeFormat}}</td>
+                                        <td class="">{{lastLoginTimeFormat}}</td>
+                                        <td class="text-right">
+                                            <div class="btn-group text-right">
+                                                <button type="button" class="btn btn-default btn-xs viewUser" data-userid={{userId}}> <i class="fa fa-search"></i> </button>
+                                                <button type="button" class="btn btn-default btn-xs editUser" data-userid={{userId}}> <i class="fa fa-pencil"></i> </button>
+                                                <button type="button" class="btn btn-default btn-xs updatePassword" data-userid={{userId}}> <i class="fa fa-lock"></i> </button>
+                                                #*<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <span class="caret ml5"></span>
+                                                </button>
+                                                <ul class="dropdown-menu pull-right" role="menu">
+                                                    <li>
+                                                        <a href="#" class="editUser" data-userid={{userId}}>编辑</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" class="updatePassword" data-userid={{userId}}>修改密码</a>
+                                                    </li>
+                                                </ul>*#
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {{/listData}}
+                                {{^listData}}
+                                <tr>
+                                    <td valign="top" colspan="10">没有查询到用户</td>
+                                </tr>
+                                {{/listData}}
+                            </script>
+                            <tbody id="userListTbody"></tbody>
+                        </table>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row table-layout">
+                            <div class="col-xs-6 col-md-6 text-right"></div>
+                            #parse("component/pager.vm")
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </section>
+        #parse("layout/sidebarRight.vm")
+
+    </div>
+    #parse("layout/footer.vm")
+
+    #parse("component/user/add.vm")
+    #parse("component/user/edit.vm")
+    ##parse("component/user/password.vm")
+    #parse("component/user/view.vm")
+
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js','manage.user.js','manage.user.add.js','manage.user.edit.js','manage.user.view.js');
+    </script>
+
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        UserManage.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+    </script>
+
+</body>
+</html>

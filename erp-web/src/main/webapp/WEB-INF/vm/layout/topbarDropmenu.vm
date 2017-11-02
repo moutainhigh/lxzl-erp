@@ -1,0 +1,22 @@
+<div id="topbar-dropmenu">
+    <div class="topbar-menu row">
+        <div class="col-xs-4 col-sm-2">
+            <a href="http://www.lxzl.com.cn" target="_blank" class="metro-tile bg-success">
+                <span class="metro-icon fa fa-shopping-cart"></span>
+                <p class="metro-title">凌雄租赁商城</p>
+            </a>
+        </div>
+        <div class="col-xs-4 col-sm-2">
+            <a href="http://busi.lxzl.com.cn/" target="_blank" class="metro-tile bg-info">
+                <span class="metro-icon fa fa-cog"></span>
+                <p class="metro-title">商城运营管理系统</p>
+            </a>
+        </div>
+        #*<div class="col-xs-4 col-sm-2">
+            <a href="http://my.fecxiao.com/" target="_blank" class="metro-tile bg-alert">
+                <span class="metro-icon fa fa-users"></span>
+                <p class="metro-title">客户关系管理系统</p>
+            </a>
+        </div>*#
+    </div>
+</div>
