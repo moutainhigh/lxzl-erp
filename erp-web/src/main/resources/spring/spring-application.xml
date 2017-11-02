@@ -19,5 +19,13 @@
 		<property name="application" value="${application.name}" />
 		<property name="authKey" value="${application.auth.key}" />
 	</bean>
+	<bean id="constantConfig" class="com.lxzl.erp.common.domain.ConstantConfig">
+		<property name="uploadFileUrl" value="${upload.file.url}" />
+		<property name="imageDomain" value="${image.domain}" />
+		<property name="baseDomain" value="${base.domain}" />
+		<property name="staticCommonDomain" value="${static.common.domain}" />
+		<property name="staticDomain" value="${static.domain}" />
+		<property name="serviceDomain" value="${service.domain}" />
+	</bean>
 
 </beans>
