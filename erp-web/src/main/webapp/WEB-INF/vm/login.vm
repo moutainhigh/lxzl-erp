@@ -1,22 +1,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>登录</title>
+        <title>登录-爱租-首家大学生租赁平台</title>
         #parse("layout/header.vm")
-
-        <!-- Theme CSS -->
-        <link rel="stylesheet" type="text/css" href="${static.domain}/assets/skin/default_skin/css/theme.css">
-
-        <!-- Admin Forms CSS -->
-        <link rel="stylesheet" type="text/css" href="${static.domain}/assets/admin-tools/admin-forms/css/admin-forms.css">
-
-        <!-- Favicon -->
-        <link rel="shortcut icon" href="${static.domain}/assets/img/favicon.ico">
-        <!--[if lt IE 9]>
-        <script src="${static.domain}/html5Js/html5shiv.js"></script>
-        <script src="${static.domain}/html5Js/respond.min.js"></script>
-        <![endif]-->
-
     </head>
     <body class="external-page sb-l-c sb-r-c">
 
@@ -40,16 +26,13 @@
 
                         <div class="col-xs-6 va-m pln">
                             <a href="dashboard.html" title="Return to Dashboard">
-                                #*<img src="${static.domain}/assets/img/logos/logo_white.png" title="AdminDesigns Logo" class="img-responsive w250">*#
-                                    <img src="${static.domain}/project/img/logo-white.png" title="AdminDesigns Logo" class="img-responsive">
+                                <img src="${staticCommon}/rental/img/logo-white.png" title="AdminDesigns Logo" class="img-responsive">
                             </a>
                         </div>
 
                         <div class="col-xs-6 text-right va-b pr5">
                             <div class="login-links">
-                                <a href="pages_login.html" class="active" title="Sign In">登录</a>
-                                <span class="text-white"> | </span>
-                                <a href="pages_register.html" class="" title="Register">注册</a>
+                                <a class="active" title="Sign In">爱租运营管理系统</a>
                             </div>
 
                         </div>
@@ -60,33 +43,33 @@
 
                         <div class="panel-heading heading-border bg-white">
                             <div class="section row mn">
-                                <div class="col-sm-4">
+                                <div class="col-sm-6">
                                     <a href="http://www.lxzl.com.cn" class="button btn-social facebook span-left mr5 btn-block" target="_blank">
                                         <span><i class="fa fa-shopping-cart"></i>
                                         </span>租赁商城</a>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-6">
                                     <a href="http://busi.lxzl.com.cn/" class="button btn-social twitter span-left mr5 btn-block" target="_blank">
                                         <span><i class="fa fa-cog"></i>
                                         </span>运营管理系统</a>
                                 </div>
-                                <div class="col-sm-4">
+                                #*<div class="col-sm-4">
                                     <a href="http://my.fecxiao.com/" class="button btn-social googleplus span-left btn-block" target="_blank">
                                         <span><i class="fa fa-users"></i>
                                         </span>客户关系管理系统</a>
-                                </div>
+                                </div>*#
                             </div>
                         </div>
 
                         <!-- end .form-header section -->
-                        <form method="post" action="/" id="contact">
+                        <form method="post" action="$ctx/user/login" id="loginForm" callback-func="Login.callBakcFunc">
                             <div class="panel-body bg-light p30">
                                 <div class="row">
                                     <div class="col-sm-7 pr30">
                                         <div class="section">
                                             <label for="username" class="field-label text-muted fs18 mb10">用户名</label>
                                             <label for="username" class="field prepend-icon">
-                                                <input type="text" name="username" id="username" class="gui-input" placeholder="请输入用户名">
+                                                <input type="text" name="userName" id="userName" class="gui-input required" placeholder="请输入用户名" value="" />
                                                 <label for="username" class="field-icon"><i class="fa fa-user"></i>
                                                 </label>
                                             </label>
@@ -96,7 +79,7 @@
                                         <div class="section">
                                             <label for="username" class="field-label text-muted fs18 mb10">密码</label>
                                             <label for="password" class="field prepend-icon">
-                                                <input type="password" name="password" id="password" class="gui-input" placeholder="请输入登录密码">
+                                                <input type="password" name="password" id="password" class="gui-input required" placeholder="请输入登录密码" value="" />
                                                 <label for="password" class="field-icon"><i class="fa fa-lock"></i>
                                                 </label>
                                             </label>
@@ -119,12 +102,12 @@
                             </div>
                             <!-- end .form-body section -->
                             <div class="panel-footer clearfix p10 ph15">
-                                <button type="button" class="button btn-primary mr10 pull-right" onclick="javascript:window.location.href='/home'">登录</button>
-                                <label class="switch block switch-primary pull-left input-align mt10">
+                                <button type="submit" class="button btn-primary mr10 pull-right">登录</button>
+                                #*<label class="switch block switch-primary pull-left input-align mt10">
                                     <input type="checkbox" name="remember" id="remember">
                                     <label for="remember" data-on="是" data-off="否"></label>
                                     <span>一周内免登录</span>
-                                </label>
+                                </label>*#
                             </div>
                             <!-- end .form-footer section -->
                         </form>
@@ -140,38 +123,22 @@
     </div>
     <!-- End: Main -->
 
-    <!-- BEGIN: PAGE SCRIPTS -->
+    #parse("layout/footer.vm")
 
-    <!-- jQuery -->
-    <script type="text/javascript" src="${static.domain}/vendor/jquery/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="${static.domain}/vendor/jquery/jquery_ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}/assets/js/pages/login/EasePack.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}/assets/js/pages/login/rAF.js"></script>
+    <script type="text/javascript" src="${staticCommon}/assets/js/pages/login/TweenLite.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}/assets/js/pages/login/login.js"></script>
 
-    <!-- Bootstrap -->
-    <script type="text/javascript" src="${static.domain}/assets/js/bootstrap/bootstrap.min.js"></script>
-
-    <!-- Page Plugins -->
-    <script type="text/javascript" src="${static.domain}/assets/js/pages/login/EasePack.min.js"></script>
-    <script type="text/javascript" src="${static.domain}/assets/js/pages/login/rAF.js"></script>
-    <script type="text/javascript" src="${static.domain}/assets/js/pages/login/TweenLite.min.js"></script>
-    <script type="text/javascript" src="${static.domain}/assets/js/pages/login/login.js"></script>
-
-    <!-- Theme Javascript -->
-    <script type="text/javascript" src="${static.domain}/assets/js/utility/utility.js"></script>
-    <script type="text/javascript" src="${static.domain}/assets/js/main.js"></script>
-    <script type="text/javascript" src="${static.domain}/assets/js/demo.js"></script>
-
-    <!-- Page Javascript -->
     <script type="text/javascript">
+        management_load_script('${staticManagement}/js','rental.common.js','login.js');
+    </script>
+
+    <script type="text/javascript">
+        Rental.init();
+        Login.init();
+
         jQuery(document).ready(function() {
-
-            "use strict";
-
-            // Init Theme Core
-            Core.init();
-
-            // Init Demo JS
-            Demo.init();
-
             // Init CanvasBG and pass target starting location
             CanvasBG.init({
                 Loc: {
@@ -179,12 +146,8 @@
                     y: window.innerHeight / 3.3
                 },
             });
-
-
         });
     </script>
-
-    <!-- END: PAGE SCRIPTS -->
 
     </body>
 </html>

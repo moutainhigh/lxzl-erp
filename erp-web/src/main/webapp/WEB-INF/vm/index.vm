@@ -1,17 +1,172 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Demo</title>
-	#parse("layout/include.vm")
-	<script type="text/javascript"></script>
+    <title>爱租-运营管理系统-用户管理-用户列表</title>
+    #parse("layout/header.vm")
 </head>
-<body>
-	<div>
-	当前用户为：$!{user.nick}
-	</div>
-	My name is $!{environment} demo!<br/>
-	<div class="wrapper"></div>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+
+    <div id="main">
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+                <div class="panel mb25 mt5">
+                    <div class="panel-heading">
+                        <span class="panel-title">用户查询</span>
+                    </div>
+                    <div class="panel-body p25 pb5 admin-form">
+                        <div class="section row">
+                            <div class="col-md-3">
+                                <label for="username" class="field-label">用户名</label>
+                                <label for="firstname" class="field prepend-icon">
+                                    <input type="text" name="firstname" id="firstname" class="gui-input" placeholder="First name...">
+                                    <label for="firstname" class="field-icon"><i class="fa fa-user"></i>
+                                    </label>
+                                </label>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="username" class="field-label">邮箱</label>
+                                <label for="email" class="field prepend-icon">
+                                    <input type="email" name="email" id="email" class="gui-input" placeholder="Email address">
+                                    <label for="email" class="field-icon"><i class="fa fa-envelope"></i>
+                                    </label>
+                                </label>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="username" class="field-label">注册时间</label>
+                                <label for="firstname" class="field prepend-icon">
+                                    <input type="text" name="firstname" id="firstname" class="gui-input" placeholder="First name...">
+                                    <label for="firstname" class="field-icon"><i class="fa fa-user"></i>
+                                    </label>
+                                </label>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="username" class="field-label">状态</label>
+                                <label for="email" class="field prepend-icon">
+                                    <input type="email" name="email" id="email" class="gui-input" placeholder="Email address">
+                                    <label for="email" class="field-icon"><i class="fa fa-envelope"></i>
+                                    </label>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer text-right admin-form">
+                        <button type="submit" class="btn btn-primary btn-sm"> 查询 </button>
+                        <button type="reset" class="btn btn-sm"> 重置 </button>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-menu p12 admin-form theme-primary">
+
+                        <div class="row table-layout">
+                            <div class="hidden-xs hidden-sm col-md-12">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-sm light"><i class="fa fa-refresh"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-default btn-sm light"><i class="fa fa-pencil"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-default btn-sm light"><i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="panel-body pn">
+                        <table class="table admin-form theme-warning tc-checkbox-1 fs13">
+                            <thead>
+                            <tr class="bg-light">
+                                <th class="text-center"></th>
+                                <th class="">头像</th>
+                                <th class="">姓名</th>
+                                <th class="">邮箱</th>
+                                <th class="">注册时间</th>
+                                <th class="">上一次登录时间</th>
+                                <th class="">部门</th>
+                                <th class="text-right">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="text-center">
+                                    <label class="option block mn">
+                                        <input type="checkbox" name="mobileos" value="FR">
+                                        <span class="checkbox mn"></span>
+                                    </label>
+                                </td>
+                                <td class="w50">
+                                    <img class="img-responsive mw30 ib mr10" title="user" src="assets/img/avatars/1.jpg">
+                                </td>
+                                <td class="">Dave Robert</td>
+                                <td class="">dave@company.com</td>
+                                <td class="">12/03/2014</td>
+                                <td class="">222</td>
+                                <td class="">$3,600</td>
+                                <td class="text-right">
+                                    <div class="btn-group text-right">
+                                        <button type="button" class="btn btn-success br2 btn-xs fs12 dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> Active
+                                            <span class="caret ml5"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li>
+                                                <a href="#">Edit</a>
+                                            </li>
+                                            <li>
+                                                <a href="#">Contact</a>
+                                            </li>
+                                            <li class="divider"></li>
+                                            <li class="active">
+                                                <a href="#">Active</a>
+                                            </li>
+                                            <li>
+                                                <a href="#">Suspend</a>
+                                            </li>
+                                            <li>
+                                                <a href="#">Remove</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row table-layout">
+                            <div class="col-xs-6 col-md-6 text-right">
+
+                            </div>
+                            #parse("component/pager.vm")
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </section>
+        #parse("layout/sidebarRight.vm")
+    </div>
+
+
+    #parse("layout/footer.vm")
+
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js','rental.common.js','layout.js','manage.user.js');
+    </script>
+
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        UserManage.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+    </script>
+
 </body>
-<script type="text/javascript" src="http://${static.domain}/library/dist/js/website.js"></script>
 </html>
