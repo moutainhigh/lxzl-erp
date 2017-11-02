@@ -35,7 +35,7 @@ public class CompanyServiceImpl implements CompanyService{
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
 
         SubCompanyDO subCompanyDO = CompanyConverter.convertSubCompany(subCompany);
-        subCompanyDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+        subCompanyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         if (loginUser != null) {
             subCompanyDO.setCreateUser(loginUser.getUserId().toString());
             subCompanyDO.setUpdateUser(loginUser.getUserId().toString());

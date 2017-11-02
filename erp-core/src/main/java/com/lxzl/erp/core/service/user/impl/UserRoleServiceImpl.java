@@ -147,7 +147,7 @@ public class UserRoleServiceImpl implements UserRoleService {
             return result;
         }
         RoleDO roleDO = UserRoleConverter.convertRole(role);
-        roleDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+        roleDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         if (loginUser != null) {
             roleDO.setCreateUser(loginUser.getUserId().toString());
             roleDO.setUpdateUser(loginUser.getUserId().toString());
@@ -255,7 +255,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
                 UserRoleDO userRoleDO = UserRoleConverter.convertUserRole(userRole);
                 userRoleDO.setRoleId(role.getRoleId());
-                userRoleDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+                userRoleDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 if (loginUser != null) {
                     userRoleDO.setCreateUser(loginUser.getUserId().toString());
                     userRoleDO.setUpdateUser(loginUser.getUserId().toString());
@@ -317,7 +317,7 @@ public class UserRoleServiceImpl implements UserRoleService {
                 RoleMenuDO roleMenuDO = UserRoleConverter.convertRoleMenu(roleMenu);
 
                 roleMenuDO.setMenuId(menu.getMenuId());
-                roleMenuDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+                roleMenuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 if (loginUser != null) {
                     roleMenuDO.setCreateUser(loginUser.getUserId().toString());
                     roleMenuDO.setUpdateUser(loginUser.getUserId().toString());
@@ -343,7 +343,7 @@ public class UserRoleServiceImpl implements UserRoleService {
                 roleMenuDO.setRoleId(roleId);
                 roleMenuDO.setMenuId(sysMenuDO.getParentMenuId());
 
-                roleMenuDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+                roleMenuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 if (loginUser != null) {
                     roleMenuDO.setCreateUser(loginUser.getUserId().toString());
                     roleMenuDO.setUpdateUser(loginUser.getUserId().toString());
@@ -413,7 +413,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         }
         RoleDepartmentDataDO roleDepartmentDataDO = new RoleDepartmentDataDO();
         roleDepartmentDataDO.setRoleId(roleDepartmentData.getRoleId());
-        roleDepartmentDataDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+        roleDepartmentDataDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         roleDepartmentDataDO.setCreateUser(loginUser.getUserId().toString());
         roleDepartmentDataDO.setUpdateUser(loginUser.getUserId().toString());
         roleDepartmentDataDO.setCreateTime(new Date());
@@ -478,7 +478,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         }
         RoleUserDataDO roleUserDataDO = new RoleUserDataDO();
         roleUserDataDO.setActiveUserId(roleUserData.getActiveUserId());
-        roleUserDataDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+        roleUserDataDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         roleUserDataDO.setCreateUser(loginUser.getUserId().toString());
         roleUserDataDO.setUpdateUser(loginUser.getUserId().toString());
         roleUserDataDO.setCreateTime(new Date());
@@ -541,7 +541,7 @@ public class UserRoleServiceImpl implements UserRoleService {
             }
         }
         //旧列表没有，新列表有，数据库添加该条权限
-        roleUserFinalDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+        roleUserFinalDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         roleUserFinalDO.setCreateTime(now);
         roleUserFinalDO.setCreateUser(loginUser.getUserId().toString());
         for(UserDO user : userDOList){

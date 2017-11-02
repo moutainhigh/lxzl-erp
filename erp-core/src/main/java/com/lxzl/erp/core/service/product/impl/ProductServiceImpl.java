@@ -95,7 +95,7 @@ public class ProductServiceImpl implements ProductService {
                 ProductImgDO productImgDO = new ProductImgDO();
                 productImgDO.setOriginalName(file.getOriginalFilename());
                 productImgDO.setImgUrl(fileId);
-                productImgDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+                productImgDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 if (loginUser != null) {
                     productImgDO.setCreateUser(loginUser.getUserId().toString());
                     productImgDO.setUpdateUser(loginUser.getUserId().toString());
@@ -153,7 +153,7 @@ public class ProductServiceImpl implements ProductService {
             return result;
         }
         ProductDO productDO = ConvertProduct.convertProduct(product);
-        productDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+        productDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         if (loginUser != null) {
             productDO.setCreateUser(loginUser.getUserId().toString());
             productDO.setUpdateUser(loginUser.getUserId().toString());
@@ -185,7 +185,7 @@ public class ProductServiceImpl implements ProductService {
             return result;
         }
         ProductDO productDO = ConvertProduct.convertProduct(product);
-        productDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+        productDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         if (loginUser != null) {
             productDO.setUpdateUser(loginUser.getUserId().toString());
         }
@@ -308,7 +308,7 @@ public class ProductServiceImpl implements ProductService {
             productEquipmentDO.setProductId(productInStorage.getProductId());
             productEquipmentDO.setSkuId(productInStorage.getProductSkuId());
             productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
-            productEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+            productEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             productEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
             productEquipmentDO.setCreateUser(loginUser.getUserId().toString());
             productEquipmentDO.setUpdateTime(currentTime);
@@ -332,7 +332,7 @@ public class ProductServiceImpl implements ProductService {
             productEquipmentStorageRecordDO.setOrderId(orderId);
             productEquipmentStorageRecordDO.setOrderProductId(orderProductId);
         }
-        productEquipmentStorageRecordDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+        productEquipmentStorageRecordDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         productEquipmentStorageRecordDO.setUpdateUser(loginUser.getUserId().toString());
         productEquipmentStorageRecordDO.setCreateUser(loginUser.getUserId().toString());
         productEquipmentStorageRecordDO.setUpdateTime(currentTime);
@@ -435,7 +435,7 @@ public class ProductServiceImpl implements ProductService {
                 ProductImgDO productImgDO = ConvertProductImage.convertProductImg(productImg);
                 productImgDO.setProductId(productId);
                 productImgDO.setImgType(type);
-                productImgDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+                productImgDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 if (loginUser != null) {
                     productImgDO.setUpdateUser(loginUser.getUserId().toString());
                 }
@@ -496,7 +496,7 @@ public class ProductServiceImpl implements ProductService {
             for (ProductSku productSku : saveProductSkuList) {
                 ProductSkuDO productSkuDO = ConvertProduct.convertProductSku(productSku);
                 productSkuDO.setProductId(productId);
-                productSkuDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+                productSkuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 if (loginUser != null) {
                     productSkuDO.setCreateUser(loginUser.getUserId().toString());
                     productSkuDO.setUpdateUser(loginUser.getUserId().toString());
@@ -512,7 +512,7 @@ public class ProductServiceImpl implements ProductService {
             for (ProductSku productSku : updateProductSkuList) {
                 ProductSkuDO productSkuDO = ConvertProduct.convertProductSku(productSku);
                 productSkuDO.setProductId(productId);
-                productSkuDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+                productSkuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 if (loginUser != null) {
                     productSkuDO.setUpdateUser(loginUser.getUserId().toString());
                 }
@@ -568,7 +568,7 @@ public class ProductServiceImpl implements ProductService {
             productSkuPropertyDO.setPropertyId(productCategoryPropertyValueDO.getPropertyId());
             productSkuPropertyDO.setProductId(productId);
             productSkuPropertyDO.setIsSku(CommonConstant.COMMON_CONSTANT_NO);
-            productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+            productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             if (loginUser != null) {
                 productSkuPropertyDO.setCreateUser(loginUser.getUserId().toString());
                 productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
@@ -586,7 +586,7 @@ public class ProductServiceImpl implements ProductService {
             productSkuPropertyDO.setPropertyId(productCategoryPropertyValueDO.getPropertyId());
             productSkuPropertyDO.setProductId(productId);
             productSkuPropertyDO.setIsSku(CommonConstant.COMMON_CONSTANT_NO);
-            productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+            productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             if (loginUser != null) {
                 productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
             }
@@ -614,7 +614,7 @@ public class ProductServiceImpl implements ProductService {
                 if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(operationType)) {
                     productSkuPropertyDO.setIsSku(CommonConstant.COMMON_CONSTANT_YES);
                     productSkuPropertyDO.setSkuId(skuId);
-                    productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+                    productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                     if (loginUser != null) {
                         productSkuPropertyDO.setCreateUser(loginUser.getUserId().toString());
                         productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
@@ -625,7 +625,7 @@ public class ProductServiceImpl implements ProductService {
                 } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(operationType)) {
                     productSkuPropertyDO.setIsSku(CommonConstant.COMMON_CONSTANT_YES);
                     productSkuPropertyDO.setSkuId(skuId);
-                    productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
+                    productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                     if (loginUser != null) {
                         productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
                     }
@@ -652,7 +652,7 @@ public class ProductServiceImpl implements ProductService {
         productSkuPropertyMapper.update(productSkuPropertyDO);
     }
 
-    private String generateEquipmentNo(Date currentTime, int no) {
+    private String generateEquipmentNo(Date currentTime, Integer warehouseId, int no) {
         return "LX-52RENTAL-VIEWPAKER-" + new SimpleDateFormat("yyyyMMdd").format(currentTime) + (10000 + no);
     }
 

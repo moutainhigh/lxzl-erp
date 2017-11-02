@@ -10,6 +10,7 @@ public class ProductInStorage implements Serializable {
     private Integer productId;
     private Integer productSkuId;
     private Integer productCount;
+    private Integer warehouseId;
 
     public Integer getProductId() {
         return productId;
@@ -33,5 +34,13 @@ public class ProductInStorage implements Serializable {
 
     public void setProductCount(Integer productCount) {
         this.productCount = productCount;
+    }
+
+    public Integer getWarehouseId() {
+        return warehouseId;
+    }
+
+    public void setWarehouseId(Integer warehouseId) {
+        this.warehouseId = warehouseId;
     }
 }
