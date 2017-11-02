@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-用户管理-角色列表</title>
+    #parse("layout/header.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+            <div class="panel mb25 mt5">
+                <form id="searchForm">
+                    <div class="panel-heading">
+                        <span class="panel-title">用户查询</span>
+                    </div>
+                    <div class="panel-body p25 pb5 admin-form">
+                        <div class="section row">
+                            <div class="col-md-12">
+                                <label for="username" class="field-label">姓名</label>
+                                <label for="firstname" class="field prepend-icon">
+                                    <input type="text" name="realName" id="realName" class="gui-input" placeholder="请输入用户名...">
+                                    <label for="firstname" class="field-icon"><i class="fa fa-user"></i>
+                                    </label>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer text-right admin-form">
+                        <button type="submit" class="btn btn-sm btn-primary"> 查询 </button>
+                        <button type="reset" class="btn btn-sm"> 重置 </button>
+                    </div>
+                </form>
+            </div>
+            <div class="panel">
+                <div class="panel-menu p12 admin-form theme-primary">
+                    <div class="row table-layout">
+                        <div class="col-md-6">
+                            <script type="text/html" id="actionCommonButtonsTpl">
+                                <button type="button" class="btn btn-sm btn-default light refreshButton"  title="刷新"><i class="fa fa-refresh"></i></button>
+                                {{#acitonCommonButtons}}
+                                <button type="button" class="btn btn-sm btn-default light {{class}}" title="{{text}}">
+                                    <i class="{{iClass}}"></i> {{text}}
+                                </button>
+                                {{/acitonCommonButtons}}
+                            </script>
+                            <div class="btn-group" id="actionCommonButtons"></div>
+                        </div>
+                        <div class="col-md-6 text-right"></div>
+                    </div>
+                </div>
+                <div class="panel-body pn">
+                    <div class="table-responsive">
+                        <table class="table admin-form theme-warning tc-checkbox-1 fs13">
+                            <thead>
+                            <tr class="bg-light">
+                                <th width="10%" class="text-center">角色ID</th>
+                                <th width="20%" class="">角色名称</th>
+                                <th width="16%" class="">超级角色</th>
+                                <th width="20%" class="">角色描述</th>
+                                <th width="20%" class="">备注</th>
+                                <th width="14%" class="text-right">操作</th>
+                            </tr>
+                            </thead>
+                            <script type="text/html" id="roleListTpl">
+                                {{#listData}}
+                                <tr>
+                                    <td class="text-center">
+                                        {{roleId}}
+                                    </td>
+                                    <td class="">{{roleName}}</td>
+                                    <td class="">{{isSuperAdminStr}}</td>
+                                    <td class="">{{roleDesc}}</td>
+                                    <td class="">{{remark}}</td>
+                                    <td class="text-right">
+                                        {{#acitonButtons}}
+                                        <div class="btn-group text-right">
+                                            {{#acitons}}
+                                            <a href="${ctx}{{menuUrl}}" type="button" class="btn btn-default btn-xs {{class}}" data-userid="{{userId}}">{{text}}</a>
+                                            {{/acitons}}
+                                        </div>
+                                        {{/acitonButtons}}
+                                    </td>
+                                </tr>
+                                {{/listData}}
+                                {{^listData}}
+                                <tr>
+                                    <td valign="top" colspan="10">没有查询角色信息</td>
+                                </tr>
+                                {{/listData}}
+                            </script>
+                            <tbody id="roleListTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row table-layout">
+                        <div class="col-xs-6 col-md-6 text-right"></div>
+                        #parse("component/pager.vm")
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </section>
+    #parse("layout/sidebarRight.vm")
+
+</div>
+    #parse("layout/footer.vm")
+
+    #parse("component/user/add.vm")
+    #parse("component/user/edit.vm")
+    #parse("component/user/view.vm")
+
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js','manage.role.js');
+    </script>
+
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        RoleManage.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+    </script>
+
+</body>
+</html>
