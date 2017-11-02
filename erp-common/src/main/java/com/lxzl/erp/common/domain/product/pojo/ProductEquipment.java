@@ -3,6 +3,7 @@ package com.lxzl.erp.common.domain.product.pojo;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -12,6 +13,11 @@ public class ProductEquipment implements Serializable {
     private Integer productId;
     private String productName;
     private Integer skuId;
+    private Integer warehouseId;
+    private Integer warehousePositionId;
+    private Integer ownerWarehouseId;
+    private Integer ownerWarehousePositionId;
+    private BigDecimal equipmentPrice;
     private Integer equipmentStatus;
     private Integer dataStatus;
     private String remark;
@@ -87,5 +93,45 @@ public class ProductEquipment implements Serializable {
 
     public void setProductImgList(List<ProductImg> productImgList) {
         this.productImgList = productImgList;
+    }
+
+    public Integer getWarehouseId() {
+        return warehouseId;
+    }
+
+    public void setWarehouseId(Integer warehouseId) {
+        this.warehouseId = warehouseId;
+    }
+
+    public Integer getWarehousePositionId() {
+        return warehousePositionId;
+    }
+
+    public void setWarehousePositionId(Integer warehousePositionId) {
+        this.warehousePositionId = warehousePositionId;
+    }
+
+    public Integer getOwnerWarehouseId() {
+        return ownerWarehouseId;
+    }
+
+    public void setOwnerWarehouseId(Integer ownerWarehouseId) {
+        this.ownerWarehouseId = ownerWarehouseId;
+    }
+
+    public Integer getOwnerWarehousePositionId() {
+        return ownerWarehousePositionId;
+    }
+
+    public void setOwnerWarehousePositionId(Integer ownerWarehousePositionId) {
+        this.ownerWarehousePositionId = ownerWarehousePositionId;
+    }
+
+    public BigDecimal getEquipmentPrice() {
+        return equipmentPrice;
+    }
+
+    public void setEquipmentPrice(BigDecimal equipmentPrice) {
+        this.equipmentPrice = equipmentPrice;
     }
 }

@@ -3,11 +3,16 @@
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper">
 
     <resultMap id="ProductEquipmentDO" type="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO">
-        <id column="id" property="id"/>
-        <result column="equipment_no" property="equipmentNo"/>
-        <result column="product_id" property="productId"/>
-        <result column="product_name" property="productName"/>
-        <result column="sku_id" property="skuId"/>
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
+        <result column="product_id" jdbcType="INTEGER" property="productId" />
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="sku_id" jdbcType="INTEGER" property="skuId" />
+        <result column="warehouse_id" jdbcType="INTEGER" property="warehouseId" />
+        <result column="warehouse_position_id" jdbcType="INTEGER" property="warehousePositionId" />
+        <result column="owner_warehouse_id" jdbcType="INTEGER" property="ownerWarehouseId" />
+        <result column="owner_warehouse_position_id" jdbcType="INTEGER" property="ownerWarehousePositionId" />
+        <result column="equipment_price" jdbcType="DECIMAL" property="equipmentPrice" />
         <result column="equipment_status" property="equipmentStatus"/>
         <result column="data_status" property="dataStatus"/>
         <result column="remark" property="remark"/>
@@ -35,7 +40,7 @@
         <result column="img_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
     <sql id="column_List">
-        epe.id,epe.equipment_no,epe.product_id,epe.sku_id,epe.equipment_status,epe.data_status,epe.remark,epe.create_user,epe.create_time,epe.update_user,epe.update_time
+        epe.id,epe.equipment_no,epe.product_id,epe.sku_id,epe.warehouse_id,epe.warehouse_position_id,epe.owner_warehouse_id,epe.owner_warehouse_position_id,epe.equipment_price,epe.equipment_status,epe.data_status,epe.remark,epe.create_user,epe.create_time,epe.update_user,epe.update_time
     </sql>
     <sql id="img_column_List">
         epi.id as img_id,epi.img_type as img_img_type,epi.original_name as img_original_name,epi.product_id as img_product_id,epi.img_url as img_img_url,epi.data_status as img_data_status,epi.remark as img_remark,epi.is_main as img_is_main,epi.img_order as img_img_order,epi.create_user as img_create_user,epi.create_time as img_create_time,epi.update_user as img_update_user,epi.update_time as img_update_time
@@ -140,35 +145,53 @@
 
     <sql id="set_column_sql">
         <set>
-            <if test="equipmentNo != null">
-                equipment_no = #{equipmentNo, jdbcType=VARCHAR},
+            <if test="materielNo != null">
+                materiel_no = #{materielNo,jdbcType=VARCHAR},
             </if>
-            <if test="productId != null">
-                product_id = #{productId, jdbcType=INTEGER},
+            <if test="materielName != null">
+                materiel_name = #{materielName,jdbcType=VARCHAR},
             </if>
-            <if test="skuId != null">
-                sku_id = #{skuId, jdbcType=INTEGER},
+            <if test="brandId != null">
+                brand_id = #{brandId,jdbcType=INTEGER},
             </if>
-            <if test="equipmentStatus != null">
-                equipment_status = #{equipmentStatus, jdbcType=INTEGER},
+            <if test="categoryId != null">
+                category_id = #{categoryId,jdbcType=INTEGER},
+            </if>
+            <if test="propertyId != null">
+                property_id = #{propertyId,jdbcType=INTEGER},
+            </if>
+            <if test="propertyValueId != null">
+                property_value_id = #{propertyValueId,jdbcType=INTEGER},
+            </if>
+            <if test="materielPrice != null">
+                materiel_price = #{materielPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="originalPrice != null">
+                original_price = #{originalPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="rentPrice != null">
+                rent_price = #{rentPrice,jdbcType=DECIMAL},
             </if>
             <if test="dataStatus != null">
-                data_status = #{dataStatus, jdbcType=INTEGER},
+                data_status = #{dataStatus,jdbcType=INTEGER},
             </if>
             <if test="remark != null">
-                remark = #{remark, jdbcType=VARCHAR},
-            </if>
-            <if test="createUser != null">
-                create_user = #{createUser, jdbcType=VARCHAR},
+                remark = #{remark,jdbcType=VARCHAR},
             </if>
             <if test="createTime != null">
-                create_time = #{createTime, jdbcType=TIMESTAMP},
+                create_time = #{createTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="updateUser != null">
-                update_user = #{updateUser, jdbcType=VARCHAR},
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
             </if>
             <if test="updateTime != null">
-                update_time = #{updateTime, jdbcType=TIMESTAMP},
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="materielDesc != null">
+                materiel_desc = #{materielDesc,jdbcType=LONGVARCHAR},
             </if>
         </set>
     </sql>

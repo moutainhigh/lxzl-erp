@@ -25,7 +25,7 @@
         select
         <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user, trp.role_name as parent_role_name
         from erp_role tr
-        left join mall_management_role trp on trp.id = tr.parent_role_id and trp.data_status = 1
+        left join erp_role trp on trp.id = tr.parent_role_id and trp.data_status = 1
         left join erp_user tuc on tuc.id = tr.create_user
         left join erp_user tuu on tuu.id = tr.update_user
         <where>
@@ -63,7 +63,7 @@
         select
         <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user, trp.role_name as parent_role_name
         from erp_role tr
-        left join mall_management_role trp on trp.id = tr.parent_role_id and trp.data_status = 1
+        left join erp_role trp on trp.id = tr.parent_role_id and trp.data_status = 1
         left join erp_user tuc on tuc.id = tr.create_user
         left join erp_user tuu on tuu.id = tr.update_user
         where tr.id = #{roleId, jdbcType=INTEGER} and tr.data_status = 1
@@ -73,7 +73,7 @@
         select
         <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user, trp.role_name as parent_role_name
         from erp_role tr
-        left join mall_management_role trp on trp.id = tr.parent_role_id and trp.data_status = 1
+        left join erp_role trp on trp.id = tr.parent_role_id and trp.data_status = 1
         inner join erp_user_role tur on tr.id = tur.role_id and tur.data_status = 1
         left join erp_user tuc on tuc.id = tr.create_user
         left join erp_user tuu on tuu.id = tr.update_user

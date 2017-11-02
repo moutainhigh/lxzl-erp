@@ -3,6 +3,7 @@ package com.lxzl.erp.dataaccess.domain.product;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -12,6 +13,11 @@ public class ProductEquipmentDO extends BaseDO {
     private Integer productId;
     private String productName;
     private Integer skuId;
+    private Integer warehouseId;
+    private Integer warehousePositionId;
+    private Integer ownerWarehouseId;
+    private Integer ownerWarehousePositionId;
+    private BigDecimal equipmentPrice;
     private Integer equipmentStatus;
     private Integer dataStatus;
     private String remark;
@@ -87,5 +93,45 @@ public class ProductEquipmentDO extends BaseDO {
 
     public void setProductImgDOList(List<ProductImgDO> productImgDOList) {
         this.productImgDOList = productImgDOList;
+    }
+
+    public Integer getWarehouseId() {
+        return warehouseId;
+    }
+
+    public void setWarehouseId(Integer warehouseId) {
+        this.warehouseId = warehouseId;
+    }
+
+    public Integer getWarehousePositionId() {
+        return warehousePositionId;
+    }
+
+    public void setWarehousePositionId(Integer warehousePositionId) {
+        this.warehousePositionId = warehousePositionId;
+    }
+
+    public Integer getOwnerWarehouseId() {
+        return ownerWarehouseId;
+    }
+
+    public void setOwnerWarehouseId(Integer ownerWarehouseId) {
+        this.ownerWarehouseId = ownerWarehouseId;
+    }
+
+    public Integer getOwnerWarehousePositionId() {
+        return ownerWarehousePositionId;
+    }
+
+    public void setOwnerWarehousePositionId(Integer ownerWarehousePositionId) {
+        this.ownerWarehousePositionId = ownerWarehousePositionId;
+    }
+
+    public BigDecimal getEquipmentPrice() {
+        return equipmentPrice;
+    }
+
+    public void setEquipmentPrice(BigDecimal equipmentPrice) {
+        this.equipmentPrice = equipmentPrice;
     }
 }
