@@ -226,6 +226,28 @@ CREATE TABLE `erp_data_dictionary` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=300001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='数据字典表';
 
+
+DROP TABLE if exists `erp_supplier`;
+CREATE TABLE `erp_supplier` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '字典ID，唯一',
+  `supplier_name` varchar(100) NOT NULL DEFAULT '' COMMENT '供应商名称',
+  `province` int(20) COMMENT '省份ID，对应字典ID',
+  `city` int(20) COMMENT '城市ID，对应字典ID',
+  `district` int(20) COMMENT '区ID，对应字典ID',
+  `address` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
+  `tel` varchar(100) NOT NULL COMMENT '电话号码',
+  `contactName` varchar(100) COMMENT '联系人姓名',
+  `contactPhone` varchar(20) COMMENT '联系手机号',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='供应商表';
+
+
 -- ****************************************商品模块**************************************** --
 
 DROP TABLE if exists `erp_product_category`;
