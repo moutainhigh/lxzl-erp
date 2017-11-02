@@ -25,8 +25,9 @@ public class CommonConstant {
     public static final String MD5_KEY = "kjhku8gsasiow34";
 
     // 数据状态
-    public static final Integer COMMON_CONSTANT_OP_CREATE = 1;//标记新增
-    public static final Integer COMMON_CONSTANT_OP_DELETE = 2;//标记删除
+    public static final Integer DATA_STATUS_DISABLE = 0;//标记禁用
+    public static final Integer DATA_STATUS_ENABLE = 1;//标记可用
+    public static final Integer DATA_STATUS_DELETE = 2;//标记删除
     // 操作类型
     public static final Integer COMMON_DATA_OPERATION_TYPE_ADD = 1;      // 增加
     public static final Integer COMMON_DATA_OPERATION_TYPE_UPDATE = 2;   // 修改

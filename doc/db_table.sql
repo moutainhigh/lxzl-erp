@@ -103,7 +103,9 @@ DROP TABLE if exists `erp_department`;
 CREATE TABLE `erp_department` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `department_name` varchar(20) NOT NULL DEFAULT '' COMMENT '功能名称',
+  `department_type` int(20) NOT NULL COMMENT '部门类型，对应字典ID',
   `parent_department_id` bigint(20) NOT NULL DEFAULT 0 COMMENT '上级部门ID',
+  `sub_company_id` bigint(20) NOT NULL COMMENT '所属分公司',
   `data_order` int(11) NOT NULL DEFAULT '0' COMMENT '数据排序排序，越大排越前',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -249,7 +251,7 @@ CREATE TABLE `erp_warehouse_position` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='仓库表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='仓库表';
 
 -- ****************************************商品模块**************************************** --
 
@@ -333,7 +335,7 @@ CREATE TABLE `erp_product` (
   `brand_id` bigint(20) COMMENT '所属品牌ID',
   `category_id` bigint(20) NOT NULL COMMENT '所属类目ID',
   `subtitle` varchar(60) NOT NULL DEFAULT '' COMMENT '副标题',
-  `unit` int(11) COMMENT '单位，对应字典ID',
+  `unit` int(20) COMMENT '单位，对应字典ID',
   `list_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '列表展示价格',
   `is_rent` int(11) NOT NULL DEFAULT '0' COMMENT '是否在租：0下架；1上架',
   `product_desc` text COLLATE utf8_bin COMMENT '商品描述',
@@ -430,9 +432,10 @@ CREATE TABLE `erp_materiel` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='物料表';
 
 DROP TABLE if exists `erp_product_materiel`;
-CREATE TABLE `erp_equipment_materiel` (
+CREATE TABLE `erp_product_materiel` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `product_id` bigint(20) NOT NULL COMMENT '商品ID',
+  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID',
   `materiel_id` bigint(20) NOT NULL COMMENT '物料ID',
   `materiel_count` int(11) NOT NULL DEFAULT '1' COMMENT '物料总数',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -508,6 +511,7 @@ CREATE TABLE `erp_stock_order` (
   `src_warehouse_position_id` bigint(20) COMMENT '源仓位ID',
   `target_warehouse_id` bigint(20) NOT NULL COMMENT '目标仓库ID',
   `target_warehouse_position_id` bigint(20) NOT NULL COMMENT '目标仓位ID',
+  `owner` bigint(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -557,7 +561,7 @@ CREATE TABLE `erp_order` (
   `buyer_remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '购买人备注',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
-  `owner` bigint(20) NOT NULL DEFAULT 0 COMMENT '上级部门ID',
+  `owner` bigint(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -577,7 +581,7 @@ CREATE TABLE `erp_order_product` (
   `product_count` int(11) NOT NULL DEFAULT '0' COMMENT '商品总数',
   `product_unit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品单价',
   `product_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品价格',
-  `product_mode_params` text COMMENT '商品sku属性值，冗余，防止商品修改留存快照',
+  `product_mode_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -594,9 +598,9 @@ CREATE TABLE `erp_order_consign_info` (
   `order_id` bigint(20) NOT NULL COMMENT '订单ID',
   `consignee_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '收货人姓名',
   `consignee_phone` varchar(24) CHARACTER SET ascii DEFAULT NULL COMMENT '收货人手机号',
-  `province` bigint(11) DEFAULT NULL COMMENT '省份ID，对应字典ID',
-  `city` bigint(11) DEFAULT NULL COMMENT '城市ID，对应字典ID',
-  `district` bigint(11) DEFAULT NULL COMMENT '区ID，对应字典ID',
+  `province` bigint(20) DEFAULT NULL COMMENT '省份ID，对应字典ID',
+  `city` bigint(20) DEFAULT NULL COMMENT '城市ID，对应字典ID',
+  `district` bigint(20) DEFAULT NULL COMMENT '区ID，对应字典ID',
   `address` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -658,7 +662,7 @@ CREATE TABLE `erp_order_pay_plan` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单付款计划';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单付款计划';
 
 
 DROP TABLE if exists `erp_order_refund_record`;
@@ -684,6 +688,217 @@ CREATE TABLE `erp_order_refund_record` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='退款记录';
+) ENGINE=InnoDB AUTO_INCREMENT=5000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='退款记录';
 
 -- ****************************************支付模块**************************************** --
+
+DROP TABLE if exists `erp_purchase_order`;
+CREATE TABLE `erp_purchase_order` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_no` varchar(100) NOT NULL COMMENT '采购单编号',
+  `product_supplier_id` bigint(20) NOT NULL COMMENT '商品供应商ID',
+  `invoice_supplier_id` bigint(20) NOT NULL COMMENT '发票供应商ID',
+  `is_invoice` int(11) NOT NULL COMMENT '是否有发票，0否1是',
+  `is_new` int(11) NOT NULL COMMENT '是否全新机',
+  `purchase_order_amount_total` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '采购单总价',
+  `purchase_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '采购单状态，0待采购，1',
+  `delivery_time` datetime DEFAULT NULL COMMENT '发货时间',
+  `verify_status` int(11) NOT NULL DEFAULT '0' COMMENT '审核状态，0待提交，1已提交，2审批通过，3审批驳回，4取消',
+  `verify_user` varchar(20) NOT NULL DEFAULT '' COMMENT '审核人',
+  `verify_time` datetime DEFAULT NULL COMMENT '审核时间',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `owner` bigint(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购单表';
+
+DROP TABLE if exists `erp_purchase_order_product`;
+CREATE TABLE `erp_purchase_order_product` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
+  `product_id` bigint(20) NOT NULL COMMENT '商品ID',
+  `product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称冗余',
+  `product_mode_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照',
+  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID',
+  `product_count` int(11) NOT NULL DEFAULT '1' COMMENT '商品总数',
+  `product_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品单价',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购单商品项表';
+
+DROP TABLE if exists `erp_purchase_order_product_materiel`;
+CREATE TABLE `erp_purchase_order_product_materiel` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
+  `purchase_order_product_id` bigint(20) NOT NULL COMMENT '采购单项ID',
+  `product_id` bigint(20) NOT NULL COMMENT '商品ID',
+  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID',
+  `materiel_id` bigint(20) NOT NULL COMMENT '物料ID',
+  `materiel_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '物料名称冗余',
+  `materiel_mode_snapshot` text COMMENT '物料冗余信息，防止商品修改留存快照',
+  `materiel_count` int(11) NOT NULL DEFAULT '1' COMMENT '物料总数',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购单商品物料表';
+
+
+DROP TABLE if exists `erp_purchase_delivery_order`;
+CREATE TABLE `erp_purchase_delivery_order` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
+  `purchase_no` varchar(100) NOT NULL COMMENT '采购单编号',
+  `product_supplier_id` bigint(20) NOT NULL COMMENT '商品供应商ID',
+  `invoice_supplier_id` bigint(20) NOT NULL COMMENT '发票供应商ID',
+  `is_invoice` int(11) NOT NULL COMMENT '是否有发票，0否1是',
+  `is_new` int(11) NOT NULL COMMENT '是否全新机',
+  `purchase_order_amount_total` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '采购单总价',
+  `purchase_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '采购单状态，0待采购，1',
+  `delivery_time` datetime DEFAULT NULL COMMENT '发货时间',
+  `verify_status` int(11) NOT NULL DEFAULT '0' COMMENT '审核状态，0待提交，1已提交，2审批通过，3审批驳回，4取消',
+  `verify_user` varchar(20) NOT NULL DEFAULT '' COMMENT '审核人',
+  `verify_time` datetime DEFAULT NULL COMMENT '审核时间',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `owner` bigint(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购发货单表';
+
+DROP TABLE if exists `erp_purchase_delivery_order_product`;
+CREATE TABLE `erp_purchase_delivery_order_product` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_delivery_order_id` bigint(20) NOT NULL COMMENT '采购发货单ID',
+  `purchase_order_product_id` bigint(20) NOT NULL COMMENT '采购单项ID',
+  `product_id` bigint(20) NOT NULL COMMENT '商品ID，来源（采购单），不可变更',
+  `product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称冗余，不可修改',
+  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID 不可变更',
+  `product_mode_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照，不可修改',
+  `product_count` int(11) NOT NULL DEFAULT '1' COMMENT '商品总数，来源（采购单），不可变更',
+  `real_product_id` bigint(20) NOT NULL COMMENT '实际商品ID',
+  `real_product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称冗余，可修改',
+  `real_product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID 可修改',
+  `real_product_mode_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照，可修改',
+  `real_product_count` int(11) NOT NULL DEFAULT '1' COMMENT '实际商品总数',
+  `product_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品单价',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购发货单商品项表';
+
+DROP TABLE if exists `erp_purchase_delivery_order_product_materiel`;
+CREATE TABLE `erp_purchase_delivery_order_product_materiel` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
+  `purchase_delivery_order_product_id` bigint(20) NOT NULL COMMENT '采购发货单项ID',
+  `product_id` bigint(20) NOT NULL COMMENT '商品ID',
+  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID',
+  `materiel_id` bigint(20) NOT NULL COMMENT '物料ID，来源（采购单），不可变更',
+  `materiel_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '物料名称冗余，不可修改',
+  `materiel_mode_snapshot` text COMMENT '物料冗余信息，防止商品修改留存快照，不可修改',
+  `materiel_count` int(11) NOT NULL DEFAULT '1' COMMENT '物料总数，来源（采购单），不可变更',
+  `real_materiel_id` bigint(20) NOT NULL COMMENT '物料ID',
+  `real_materiel_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '物料名称冗余，可修改',
+  `real_materiel_mode_snapshot` text COMMENT '物料冗余信息，防止商品修改留存快照，可修改',
+  `real_materiel_count` int(11) NOT NULL DEFAULT '1' COMMENT '实际物料总数',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购单商品物料表';
+
+
+DROP TABLE if exists `erp_purchase_receive_order`;
+CREATE TABLE `erp_purchase_receive_order` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
+  `purchase_delivery_order_id` bigint(20) NOT NULL COMMENT '采购发货单ID',
+  `purchase_receive_no` varchar(100) NOT NULL COMMENT '采购收货单编号',
+  `product_supplier_id` bigint(20) NOT NULL COMMENT '商品供应商ID',
+  `invoice_supplier_id` bigint(20) NOT NULL COMMENT '发票供应商ID',
+  `is_invoice` int(11) NOT NULL COMMENT '是否有发票，0否1是',
+  `is_new` int(11) NOT NULL COMMENT '是否全新机',
+  `purchase_order_amount_total` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '采购单总价',
+  `purchase_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '采购单状态，0待采购，1',
+  `verify_status` int(11) NOT NULL DEFAULT '0' COMMENT '审核状态，0待提交，1已提交，2审批通过，3审批驳回，4取消',
+  `verify_user` varchar(20) NOT NULL DEFAULT '' COMMENT '审核人',
+  `verify_time` datetime DEFAULT NULL COMMENT '审核时间',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `owner` bigint(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购收货单表';
+
+DROP TABLE if exists `erp_purchase_receive_order_product`;
+CREATE TABLE `erp_purchase_receive_order_product` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_receive_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
+  `purchase_order_product_id` bigint(20) NOT NULL COMMENT '采购单项ID',
+  `purchase_delivery_order_product_id` bigint(20) NOT NULL COMMENT '采购发货单项ID',
+  `product_id` bigint(20) NOT NULL COMMENT '商品ID，来源（采购单），不可变更',
+  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID 不可变更',
+  `product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称冗余，不可修改',
+  `product_mode_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照，不可修改',
+  `product_count` int(11) NOT NULL DEFAULT '1' COMMENT '商品总数，来源（采购单），不可变更',
+  `real_product_id` bigint(20) NOT NULL COMMENT '实际商品ID',
+  `real_product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称冗余，可修改',
+  `real_product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID',
+  `real_product_mode_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照，可修改',
+  `real_product_count` int(11) NOT NULL DEFAULT '1' COMMENT '实际商品总数',
+  `product_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品单价',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购收货单商品项表';
+
+DROP TABLE if exists `erp_purchase_receive_order_product_materiel`;
+CREATE TABLE `erp_purchase_receive_order_product_materiel` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `purchase_order_id` bigint(20) NOT NULL COMMENT '采购单ID',
+  `purchase_receive_order_product_id` bigint(20) NOT NULL COMMENT '采购收货单项ID',
+  `product_id` bigint(20) NOT NULL COMMENT '商品ID',
+  `product_sku_id` bigint(20) NOT NULL COMMENT '商品SKU ID',
+  `materiel_id` bigint(20) NOT NULL COMMENT '预计物料ID，来源（采购发货单），不可变更',
+  `materiel_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '物料名称冗余，不可修改',
+  `materiel_mode_snapshot` text COMMENT '物料冗余信息，防止商品修改留存快照，不可修改',
+  `materiel_count` int(11) NOT NULL DEFAULT '1' COMMENT '预计物料总数，来源（采购发货单），不可变更',
+  `real_materiel_id` bigint(20) NOT NULL COMMENT '实际物料ID',
+  `real_materiel_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '物料名称冗余，可修改',
+  `real_materiel_mode_snapshot` text COMMENT '物料冗余信息，防止商品修改留存快照，可修改',
+  `real_materiel_count` int(11) NOT NULL DEFAULT '1' COMMENT '实际物料总数',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购收货单商品物料表';

@@ -129,7 +129,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
                 UserRoleDO userRoleDO = new UserRoleDO();
                 userRoleDO.setUserId(userDO.getId());
                 userRoleDO.setRoleId(roleId);
-                userRoleDO.setDataStatus(CommonConstant.COMMON_CONSTANT_OP_CREATE);
+                userRoleDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
                 userRoleDO.setCreateTime(currentTime);
                 userRoleDO.setUpdateTime(currentTime);
                 if (loginUser != null) {
@@ -191,13 +191,13 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         for (Integer oldRoleId : oldRoleIdMap.keySet()) {
             //新的角色列表中找不到原角色列表中的某角色，则标记删除
             if (finalRoleIdMap.get(oldRoleId) == null) {
-                modifyRoleIdMap.put(oldRoleId, CommonConstant.COMMON_CONSTANT_OP_DELETE);
+                modifyRoleIdMap.put(oldRoleId, CommonConstant.DATA_STATUS_DELETE);
             }
         }
         for (Integer newRoleId : finalRoleIdMap.keySet()) {
             //原角色列表中找不到新角色列表中的某角色，则标记新增
             if (oldRoleIdMap.get(newRoleId) == null) {
-                modifyRoleIdMap.put(newRoleId, CommonConstant.COMMON_CONSTANT_OP_CREATE);
+                modifyRoleIdMap.put(newRoleId, CommonConstant.DATA_STATUS_DISENABLE);
             }
         }
         //本接口不做修改密码操作
@@ -210,9 +210,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             UserRoleDO userRoleDO = null;
             if (roleId != null) {
                 //标记新增的做新增操作
-                if (CommonConstant.COMMON_CONSTANT_OP_CREATE.equals(modifyRoleIdMap.get(roleId))) {
+                if (CommonConstant.DATA_STATUS_DISENABLE.equals(modifyRoleIdMap.get(roleId))) {
                     userRoleDO = new UserRoleDO();
-                    userRoleDO.setDataStatus(CommonConstant.COMMON_CONSTANT_OP_CREATE);
+                    userRoleDO.setDataStatus(CommonConstant.DATA_STATUS_DISENABLE);
                     userRoleDO.setUserId(userDO.getId());
                     userRoleDO.setRoleId(roleId);
                     userRoleDO.setCreateTime(currentTime);
@@ -222,9 +222,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
                     userRoleMapper.save(userRoleDO);
                 }
                 //标记删除的做删除操作
-                if (CommonConstant.COMMON_CONSTANT_OP_DELETE.equals(modifyRoleIdMap.get(roleId))) {
+                if (CommonConstant.DATA_STATUS_DELETE.equals(modifyRoleIdMap.get(roleId))) {
                     userRoleDO = oldRoleIdMap.get(roleId);
-                    userRoleDO.setDataStatus(CommonConstant.COMMON_CONSTANT_OP_DELETE);
+                    userRoleDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                     userRoleMapper.update(userRoleDO);
                 }
             }
