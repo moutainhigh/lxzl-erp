@@ -1,6 +1,7 @@
 package com.lxzl.erp;
 
 import com.lxzl.se.common.util.StringUtil;
+import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 
 import java.io.*;
 import java.sql.*;
@@ -53,9 +54,10 @@ public class MyTest {
         Table table = new Table(tableName);
         String poString = getPoString(dataImport,bigDecimalImport,nameAndTypeList,table);
         String doString = getDoString(dataImport,bigDecimalImport,nameAndTypeList,table);
-        String xmlString = getXmlString(dataImport,bigDecimalImport,nameAndTypeList,table);
+        String xmlString = getXmlString(nameAndTypeList,table);
+        String mapperString = getMapperString(table);
 
-        writeToFile(poString,doString,xmlString,table);
+        writeToFile(poString,doString,xmlString,mapperString,table);
     }
     public static String getPoString(String dataImport , String bigDecimalImport , List<NameAndType> nameAndTypeList , Table table){
         StringBuffer poSb = new StringBuffer(
@@ -81,8 +83,16 @@ public class MyTest {
         doSb.append("\n}");
         return doSb.toString();
     }
+    public static String getMapperString(Table table){
+        StringBuffer mapperSb = new StringBuffer("import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;\n\n");
 
-    public static String getXmlString(String dataImport , String bigDecimalImport , List<NameAndType> nameAndTypeList , Table table){
+        String mapperName = table.poTableName+"Mapper";
+                mapperSb.append("public interface "+mapperName+" extends BaseMysqlDAO<"+table.doTableName+"> {\n");
+        mapperSb.append("\n}");
+        return mapperSb.toString();
+    }
+
+    public static String getXmlString(List<NameAndType> nameAndTypeList , Table table){
         String mapperName = table.poTableName+"Mapper";
         StringBuffer xmlSb = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         xmlSb.append("<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">\n");
@@ -267,7 +277,7 @@ public class MyTest {
     }
 
 
-    private static void  writeToFile(String poString , String doString  , String xmlString , Table table) throws IOException {
+    private static void  writeToFile(String poString , String doString  , String xmlString ,String mapperString , Table table) throws IOException {
 
 
         String dirName = table.poTableName;
@@ -293,6 +303,11 @@ public class MyTest {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             fileOutputStream.write(xmlString.getBytes());
         }
-
+        if(StringUtil.isNotEmpty(mapperString)){
+            String mapperFileName = table.poTableName +"Mapper.java";
+            File file = new File("d:/tmp/"+dirName+"/"+mapperFileName);
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(mapperString.getBytes());
+        }
     }
 }
