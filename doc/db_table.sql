@@ -234,6 +234,37 @@ CREATE TABLE `erp_supplier` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='供应商表';
 
 
+-- ****************************************审批流程**************************************** --
+
+DROP TABLE if exists `erp_workflow`;
+CREATE TABLE `erp_workflow` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `workflow_name` varchar(100) NOT NULL DEFAULT '' COMMENT '工作流名称',
+  `workflow_desc` varchar(500) COLLATE utf8_bin COMMENT '工作流描述',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=800001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='工作流表';
+
+DROP TABLE if exists `erp_workflow_node`;
+CREATE TABLE `erp_workflow_node` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `workflow_node_name` varchar(100) NOT NULL DEFAULT '' COMMENT '工作流子节点名称',
+  `workflow_id` int(20) NOT NULL COMMENT '流程ID',
+  `workflow_step` int(20) NOT NULL COMMENT '流程步骤',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=800001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='工作流节点表';
+
 -- ****************************************商品模块**************************************** --
 
 DROP TABLE if exists `erp_product_category`;
@@ -684,9 +715,6 @@ CREATE TABLE `erp_order_refund_record` (
   `order_id` int(20) NOT NULL COMMENT '订单号',
   `refund_message` varchar(500) COMMENT '退款信息（展示給客戶）',
   `refund_status` int(11) NOT NULL DEFAULT '0' COMMENT '支付状态，0初始化，1退款中，2退款成功，3退款关闭，4退款异常',
-  `verify_status` int(11) NOT NULL DEFAULT '0' COMMENT '审核状态，0待提交，1已提交，2审批通过，3审批驳回，4取消',
-  `verify_user` varchar(20) NOT NULL DEFAULT '' COMMENT '审核人',
-  `verify_time` datetime DEFAULT NULL COMMENT '审核时间',
   `refund_time` datetime COMMENT '发起支付时间',
   `refund_time_real` datetime COMMENT '实际还款时间',
   `total_amount` decimal(10,2) COMMENT '总金额',
@@ -714,6 +742,7 @@ CREATE TABLE `erp_purchase_order` (
   `is_new` int(11) NOT NULL COMMENT '是否全新机',
   `purchase_order_amount_total` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '采购单总价',
   `purchase_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '采购单状态，0待采购，1部分采购，2全部采购',
+  `commit_status` int(11) NOT NULL DEFAULT '0' COMMENT '提交状态，0未提交，1已提交',
   `delivery_time` datetime DEFAULT NULL COMMENT '发货时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
@@ -850,9 +879,6 @@ CREATE TABLE `erp_purchase_receive_order` (
   `is_new` int(11) NOT NULL COMMENT '是否全新机',
   `purchase_order_amount_total` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '采购单总价',
   `purchase_receive_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '采购单收货状态，0待收货，1已签单',
-  `verify_status` int(11) NOT NULL DEFAULT '0' COMMENT '审核状态，0待提交，1已提交，2审批通过，3审批驳回，4取消',
-  `verify_user` varchar(20) NOT NULL DEFAULT '' COMMENT '审核人',
-  `verify_time` datetime DEFAULT NULL COMMENT '审核时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -923,9 +949,6 @@ CREATE TABLE `erp_purchase_back_order` (
   `is_new` int(11) NOT NULL COMMENT '是否全新机',
   `purchase_order_amount_total` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '采购单总价',
   `purchase_back_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '采购退货单状态，0待退货，1已退回',
-  `verify_status` int(11) NOT NULL DEFAULT '0' COMMENT '审核状态，0待提交，1已提交，2审批通过，3审批驳回，4取消',
-  `verify_user` varchar(20) NOT NULL DEFAULT '' COMMENT '审核人',
-  `verify_time` datetime DEFAULT NULL COMMENT '审核时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
