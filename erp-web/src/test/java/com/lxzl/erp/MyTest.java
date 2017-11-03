@@ -91,8 +91,10 @@ public class MyTest {
         StringBuffer mapperSb = new StringBuffer("import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;\n\n");
 
         String mapperName = table.poTableName+"Mapper";
-                mapperSb.append("public interface "+mapperName+" extends BaseMysqlDAO<"+table.doTableName+"> {\n");
-        mapperSb.append("\n}");
+        mapperSb.append("public interface "+mapperName+" extends BaseMysqlDAO<"+table.doTableName+"> {\n\n");
+        mapperSb.append("\tList<"+table.doTableName+"> listPage(@Param(\"maps\") Map<String, Object> paramMap);\n\n");
+        mapperSb.append("\tInteger listCount(@Param(\"maps\") Map<String, Object> paramMap);\n");
+        mapperSb.append("}");
         return mapperSb.toString();
     }
 
@@ -109,10 +111,42 @@ public class MyTest {
                 xmlSb.append("\t\t<result column=\""+nameAndType.sqlName+"\" jdbcType=\""+nameAndType.sqlType+"\" property=\""+nameAndType.trueDoName+"\" />\n");
             }
         }
-        xmlSb.append("\t</resultMap>\n");
+        xmlSb.append("\t</resultMap>\n\n");
         xmlSb.append("\t<sql id=\"column_List\">\n");
         xmlSb.append("\t\t"+getSimpleString(table,nameAndTypeList)+"\n");
         xmlSb.append("\t</sql>\n\n");
+
+        String[] ss = table.sqlTableName.split("_");
+        StringBuffer simpleSb = new StringBuffer();
+        for(String s : ss){
+            simpleSb.append(s.substring(0,1));
+        }
+        xmlSb.append("\t<select id=\"findById\" resultMap=\""+table.doTableName+"\" parameterType=\"java.lang.Integer\">\n");
+        xmlSb.append("\t\tselect <include refid=\"column_List\"/> from "+table.sqlTableName + " "+simpleSb.toString()+" \n");
+        xmlSb.append("\t\twhere "+simpleSb.toString()+".id = #{id, jdbcType=INTEGER} and data_status = 1 \n");
+        xmlSb.append("\t</select>\n\n");
+
+        xmlSb.append("\t<select id=\"listCount\" resultMap=\"java.lang.Integer\" parameterType=\"map\">\n");
+        xmlSb.append("\t\tselect count("+simpleSb.toString()+".id) from "+table.sqlTableName+ " "+simpleSb.toString()+" \n");
+        xmlSb.append("\t\t<where>\n");
+        xmlSb.append("\t\t\t<if test=\"true\">\n");
+        xmlSb.append("\t\t\t\tand "+simpleSb.toString()+".data_status = 1\n");
+        xmlSb.append("\t\t\t</if>\n");
+        xmlSb.append("\t\t</where>\n");
+        xmlSb.append("\t</select>\n\n");
+
+        xmlSb.append("\t<select id=\"listPage\" resultMap=\""+table.doTableName+"\" parameterType=\"map\">\n");
+        xmlSb.append("\t\tselect <include refid=\"column_List\"/> from "+table.sqlTableName+ " "+simpleSb.toString()+" \n");
+        xmlSb.append("\t\t<where>\n");
+        xmlSb.append("\t\t\t<if test=\"true\">\n");
+        xmlSb.append("\t\t\t\tand "+simpleSb.toString()+".data_status = 1\n");
+        xmlSb.append("\t\t\t</if>\n");
+        xmlSb.append("\t\t</where>\n");
+        xmlSb.append("\t\tLIMIT #{maps.start},#{maps.pageSize}\n");
+        xmlSb.append("\t</select>\n\n");
+
+
+
         xmlSb.append("\t<sql id=\"set_column_sql\">\n");
         xmlSb.append("\t\t<set>\n");
         for(NameAndType nameAndType : nameAndTypeList){
@@ -121,7 +155,7 @@ public class MyTest {
             xmlSb.append("\t\t\t</if>\n");
         }
         xmlSb.append("\t\t</set>\n");
-        xmlSb.append("\t</sql>\n");
+        xmlSb.append("\t</sql>\n\n");
         xmlSb.append("\t<insert id=\"save\" keyProperty=\"id\" useGeneratedKeys=\"true\" parameterType=\""+table.doTableName+"\">\n");
         xmlSb.append("\t\tinsert into "+table.sqlTableName+" <include refid=\"set_column_sql\"/>\n");
         xmlSb.append("\t</insert>\n");
