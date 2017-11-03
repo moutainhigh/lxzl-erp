@@ -153,7 +153,7 @@ public class MyTest {
         xmlSb.append("\t<sql id=\"set_column_sql\">\n");
         xmlSb.append("\t\t<set>\n");
         for(NameAndType nameAndType : nameAndTypeList){
-            if("id".equals(nameAndType)){
+            if("id".equals(nameAndType.trueDoName)){
                 continue;
             }
             xmlSb.append("\t\t\t<if test=\""+nameAndType.trueDoName+" != null\">\n");
