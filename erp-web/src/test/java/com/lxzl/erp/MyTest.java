@@ -230,6 +230,8 @@ public class MyTest {
                 this.sqlType = "INTEGER";
             }else if("DATETIME".equals(type)){
                 this.sqlType = "TIMESTAMP";
+            }else if("TEXT".equals(type)){
+                this.sqlType = "VARCHAR";
             }else{
                 this.sqlType = type;
             }
