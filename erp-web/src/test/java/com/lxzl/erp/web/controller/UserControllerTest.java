@@ -61,6 +61,8 @@ public class UserControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void page() throws Exception {
+        UserQueryParam userQueryParam = new UserQueryParam();
+        TestResult result = getJsonTestResult("/user/page",userQueryParam);
     }
 
     @Test
