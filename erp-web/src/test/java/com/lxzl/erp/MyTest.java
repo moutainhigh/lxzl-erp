@@ -10,7 +10,7 @@ import java.util.List;
 public class MyTest {
 
     public static void main(String[] args) throws Exception {
-        test("erp_department");
+        test("erp_product_sku");
     }
 
     private static String URL = "jdbc:mysql://192.168.10.205:3306/lxzl_erp?useUnicode=true&amp;characterEncoding=UTF-8";
@@ -214,7 +214,7 @@ public class MyTest {
         private String doName;
         private String trueDoName;
         private String poName;
-        private String type;
+        private String classType;
         private String sqlType;
         private String remarks;
         private boolean haveDate = false;
@@ -228,13 +228,12 @@ public class MyTest {
             this.remarks = remarks;
             if("INT".equals(type)){
                 this.sqlType = "INTEGER";
-            }if("DATETIME".equals(type)){
+            }else if("DATETIME".equals(type)){
                 this.sqlType = "TIMESTAMP";
             }else{
                 this.sqlType = type;
             }
-
-            this.type = convertType(type);
+            this.classType = convertType(type);
         }
         public String convertDoName(String name){
             if("create_time".equals(name)||"create_user".equals(name)||"update_time".equals(name)||"update_user".equals(name)){
@@ -296,7 +295,7 @@ public class MyTest {
     public static void appendAllPOParam(List<NameAndType> nameAndTypeList , StringBuffer sb ){
         sb.append("\n\n");
         for(NameAndType nameAndType : nameAndTypeList){
-            String s = "\tprivate " + nameAndType.type +" " + nameAndType.poName+";   //"+nameAndType.remarks+"\n";
+            String s = "\tprivate " + nameAndType.classType +" " + nameAndType.poName+";   //"+nameAndType.remarks+"\n";
             sb.append(s);
         }
     }
@@ -304,7 +303,7 @@ public class MyTest {
         sb.append("\n");
         for(NameAndType nameAndType : nameAndTypeList){
             if(nameAndType.doName!=null){
-                String s = "\n\tprivate " + nameAndType.type +" " + nameAndType.doName+";";
+                String s = "\n\tprivate " + nameAndType.classType +" " + nameAndType.doName+";";
                 sb.append(s);
             }
         }
@@ -312,8 +311,8 @@ public class MyTest {
     public static void appendPOSetterAndSetter(List<NameAndType> nameAndTypeList , StringBuffer sb){
         sb.append("\n");
         for(NameAndType nameAndType : nameAndTypeList){
-            String  getter = "\n\tpublic "+nameAndType.type+" get"+getUp(nameAndType.poName)+"(){\n\t\treturn "+nameAndType.poName+";\n\t}\n";
-            String  setter = "\n\tpublic void set"+getUp(nameAndType.poName)+"("+nameAndType.type+" "+ nameAndType.poName+"){\n\t\tthis."+nameAndType.poName+" = "+nameAndType.poName+";\n\t}\n";
+            String  getter = "\n\tpublic "+nameAndType.classType+" get"+getUp(nameAndType.poName)+"(){\n\t\treturn "+nameAndType.poName+";\n\t}\n";
+            String  setter = "\n\tpublic void set"+getUp(nameAndType.poName)+"("+nameAndType.classType+" "+ nameAndType.poName+"){\n\t\tthis."+nameAndType.poName+" = "+nameAndType.poName+";\n\t}\n";
             sb.append(getter).append(setter);
         }
     }
@@ -321,8 +320,8 @@ public class MyTest {
         sb.append("\n");
         for(NameAndType nameAndType : nameAndTypeList){
             if(nameAndType.doName!=null){
-                String  getter = "\n\tpublic "+nameAndType.type+" get"+getUp(nameAndType.doName)+"(){\n\t\treturn "+nameAndType.doName+";\n\t}\n";
-                String  setter = "\n\tpublic void set"+getUp(nameAndType.doName)+"("+nameAndType.type+" "+ nameAndType.doName+"){\n\t\tthis."+nameAndType.doName+" = "+nameAndType.doName+";\n\t}\n";
+                String  getter = "\n\tpublic "+nameAndType.classType+" get"+getUp(nameAndType.doName)+"(){\n\t\treturn "+nameAndType.doName+";\n\t}\n";
+                String  setter = "\n\tpublic void set"+getUp(nameAndType.doName)+"("+nameAndType.classType+" "+ nameAndType.doName+"){\n\t\tthis."+nameAndType.doName+" = "+nameAndType.doName+";\n\t}\n";
                 sb.append(getter).append(setter);
             }
         }
