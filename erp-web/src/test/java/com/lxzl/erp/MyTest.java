@@ -32,15 +32,17 @@ public class MyTest {
         List<NameAndType> nameAndTypeList = new ArrayList<>();
         List<String> nameList = new ArrayList<>();
         List<String> typeList = new ArrayList<>();
+        List<String> remarkList = new ArrayList<>();
         while(tableRet.next()){
             nameList.add(tableRet.getString("COLUMN_NAME"));
             typeList.add(tableRet.getString("TYPE_NAME"));
+            remarkList.add(tableRet.getString("REMARKS"));
         }
         int size = nameList.size();
         boolean haveDate = false;
         boolean haveBigDecimal = false;
         for(int i = 0 ; i<size ;i++){
-            NameAndType nameAndType = new NameAndType(nameList.get(i),typeList.get(i),tableName);
+            NameAndType nameAndType = new NameAndType(nameList.get(i),typeList.get(i),remarkList.get(i),tableName);
             if(nameAndType.haveDate){
                 haveDate = nameAndType.haveDate;
             }
@@ -214,16 +216,20 @@ public class MyTest {
         private String poName;
         private String type;
         private String sqlType;
+        private String remarks;
         private boolean haveDate = false;
         private boolean haveBigDecimal = false;
-        public NameAndType(String name, String type,String tableName) {
+        public NameAndType(String name, String type,String remarks,String tableName) {
             this.sqlTableName = tableName;
             this.sqlName = name;
             this.doName = convertDoName(name);
             this.trueDoName = convertTrueDoName(name);
             this.poName = convertPoName(name);
+            this.remarks = remarks;
             if("INT".equals(type)){
                 this.sqlType = "INTEGER";
+            }if("DATETIME".equals(type)){
+                this.sqlType = "TIMESTAMP";
             }else{
                 this.sqlType = type;
             }
@@ -285,9 +291,9 @@ public class MyTest {
         return newName.toString();
     }
     public static void appendAllPOParam(List<NameAndType> nameAndTypeList , StringBuffer sb ){
-        sb.append("\n");
+        sb.append("\n\n");
         for(NameAndType nameAndType : nameAndTypeList){
-            String s = "\n\tprivate " + nameAndType.type +" " + nameAndType.poName+";";
+            String s = "\tprivate " + nameAndType.type +" " + nameAndType.poName+";   //"+nameAndType.remarks+"\n";
             sb.append(s);
         }
     }
