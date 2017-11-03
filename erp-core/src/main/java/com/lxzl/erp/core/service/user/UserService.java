@@ -3,10 +3,14 @@ package com.lxzl.erp.core.service.user;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.company.pojo.Department;
+import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.user.LoginParam;
 import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.se.core.service.BaseService;
+
+import java.util.List;
 
 public interface UserService extends BaseService {
 

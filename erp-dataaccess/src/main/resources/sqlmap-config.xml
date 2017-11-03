@@ -28,11 +28,13 @@
         <mapper resource="sqlmap/erp_product_sku.xml" />
         <mapper resource="sqlmap/erp_product_sku_property.xml" />
         <mapper resource="sqlmap/erp_sub_company.xml" />
-        <mapper resource="sqlmap/erp_user_sub_company.xml" />
         <mapper resource="sqlmap/erp_role_department_data.xml" />
         <mapper resource="sqlmap/erp_role_user_data.xml" />
         <mapper resource="sqlmap/erp_role_user_final.xml" />
         <mapper resource="sqlmap/erp_warehouse.xml" />
+        <mapper resource="sqlmap/erp_department.xml" />
+        <mapper resource="sqlmap/erp_user_department.xml" />
+        <mapper resource="sqlmap/erp_stock_order.xml" />
     </mappers>
 
 </configuration>

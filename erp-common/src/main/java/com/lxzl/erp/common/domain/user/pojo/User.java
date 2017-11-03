@@ -30,6 +30,9 @@ public class User implements Serializable {
     private String lastLoginIp;
     private String remark;
     private List<Integer> roleList;
+    private List<Integer> departmentList;
+    private List<UserDepartment> userDepartmentList;
+    private List<Role> userRoleList;
 
     public Integer getUserId() {
         return userId;
@@ -141,5 +144,29 @@ public class User implements Serializable {
 
     public void setRoleList(List<Integer> roleList) {
         this.roleList = roleList;
+    }
+
+    public List<Integer> getDepartmentList() {
+        return departmentList;
+    }
+
+    public void setDepartmentList(List<Integer> departmentList) {
+        this.departmentList = departmentList;
+    }
+
+    public List<UserDepartment> getUserDepartmentList() {
+        return userDepartmentList;
+    }
+
+    public void setUserDepartmentList(List<UserDepartment> userDepartmentList) {
+        this.userDepartmentList = userDepartmentList;
+    }
+
+    public List<Role> getUserRoleList() {
+        return userRoleList;
+    }
+
+    public void setUserRoleList(List<Role> userRoleList) {
+        this.userRoleList = userRoleList;
     }
 }

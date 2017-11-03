@@ -18,6 +18,7 @@ public class CommonConstant {
     public static final Integer SUPER_MENU_ID = 200000;
     public static final Integer SUPER_DATA_DICTIONARY_ID = 300000;
     public static final Integer SUPER_PRODUCT_CATEGORY_ID = 800000;
+    public static final Integer SUPER_DEPARTMENT_ID = 400000;
 
     public static final String COMMUNITY_SESSION_KEY = "community_id";
     public static final String TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";

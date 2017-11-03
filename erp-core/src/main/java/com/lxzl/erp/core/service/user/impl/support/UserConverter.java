@@ -1,8 +1,13 @@
 package com.lxzl.erp.core.service.user.impl.support;
 
 
+import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.domain.user.pojo.UserDepartment;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
+import com.lxzl.erp.dataaccess.domain.user.UserDepartmentDO;
+import com.lxzl.erp.dataaccess.domain.user.UserRoleDO;
+import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,18 +16,42 @@ public class UserConverter {
     public static User convert(UserDO userDO) {
         User user = new User();
         user.setUserId(userDO.getId());
-        user.setUserName(userDO.getUserName());
-        user.setRealName(userDO.getRealName());
-        user.setEmail(userDO.getEmail());
-        user.setPhone(userDO.getPhone());
-        user.setIsActivated(userDO.getIsActivated());
-        user.setIsDisabled(userDO.getIsDisabled());
-        user.setRegisterTime(userDO.getRegisterTime());
-        user.setLastLoginTime(userDO.getLastLoginTime());
-        user.setLastLoginIp(userDO.getLastLoginIp());
-        user.setRemark(userDO.getRemark());
+        BeanUtils.copyProperties(userDO, user);
         user.setRoleList(userDO.getRoleList());
+        user.setUserDepartmentList(convertUserDepartmentDOList(userDO.getUserDepartmentList()));
+        user.setUserRoleList(convertUserRoleDOListToRoleList(userDO.getUserRoleList()));
+
         return user;
+    }
+
+    public static List<Role> convertUserRoleDOListToRoleList(List<UserRoleDO> userRoleDOList){
+        List<Role> roleList = new ArrayList<>();
+        if(userRoleDOList != null && !userRoleDOList.isEmpty()){
+            for(UserRoleDO userRoleDO : userRoleDOList){
+                Role role = new Role();
+                BeanUtils.copyProperties(userRoleDO, role);
+                roleList.add(role);
+            }
+        }
+
+        return roleList;
+    }
+
+    public static List<UserDepartment> convertUserDepartmentDOList(List<UserDepartmentDO> userDepartmentDOList) {
+        List<UserDepartment> userDepartmentList = new ArrayList<>();
+        if (userDepartmentDOList != null && !userDepartmentDOList.isEmpty()) {
+            for (UserDepartmentDO userDepartmentDO : userDepartmentDOList) {
+                userDepartmentList.add(convertUserDepartmentDO(userDepartmentDO));
+            }
+        }
+
+        return userDepartmentList;
+    }
+
+    public static UserDepartment convertUserDepartmentDO(UserDepartmentDO userDepartmentDO) {
+        UserDepartment userDepartment = new UserDepartment();
+        BeanUtils.copyProperties(userDepartmentDO, userDepartment);
+        return userDepartment;
     }
 
     public static UserDO convert(User user) {

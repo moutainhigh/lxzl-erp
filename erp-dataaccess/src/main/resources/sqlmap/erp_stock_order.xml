@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper">
+
+	<resultMap id="StockOrderDO" type="com.lxzl.erp.dataaccess.domain.warehouse.StockOrderDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="stock_order_no" jdbcType="VARCHAR" property="stockOrderNo" />
+		<result column="operation_type" jdbcType="INTEGER" property="operationType" />
+		<result column="cause_type" jdbcType="INTEGER" property="causeType" />
+		<result column="refer_no" jdbcType="VARCHAR" property="referNo" />
+		<result column="order_status" jdbcType="INTEGER" property="orderStatus" />
+		<result column="src_warehouse_id" jdbcType="INTEGER" property="srcWarehouseId" />
+		<result column="src_warehouse_position_id" jdbcType="INTEGER" property="srcWarehousePositionId" />
+		<result column="target_warehouse_id" jdbcType="INTEGER" property="targetWarehouseId" />
+		<result column="target_warehouse_position_id" jdbcType="INTEGER" property="targetWarehousePositionId" />
+		<result column="owner" jdbcType="INTEGER" property="owner" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		eso.id,eso.stock_order_no,eso.operation_type,eso.cause_type,eso.refer_no,eso.order_status,eso.src_warehouse_id,eso.src_warehouse_position_id,eso.target_warehouse_id,eso.target_warehouse_position_id,eso.owner,eso.data_status,eso.remark,eso.create_time,eso.create_user,eso.update_time,eso.update_user
+	</sql>
+
+	<select id="findById" resultMap="StockOrderDO" parameterType="java.lang.Integer">
+		select <include refid="column_List"/> from erp_stock_order eso
+		where eso.id = #{id, jdbcType=INTEGER} and data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		select count(eso.id) from erp_stock_order eso
+		<where>
+			<if test="true">
+				and eso.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="StockOrderDO" parameterType="map">
+		select <include refid="column_List"/> from erp_stock_order eso
+		<where>
+			<if test="true">
+				and eso.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="id != null">
+				id = #{id,jdbcType=INTEGER},
+			</if>
+			<if test="stockOrderNo != null">
+				stock_order_no = #{stockOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="operationType != null">
+				operation_type = #{operationType,jdbcType=INTEGER},
+			</if>
+			<if test="causeType != null">
+				cause_type = #{causeType,jdbcType=INTEGER},
+			</if>
+			<if test="referNo != null">
+				refer_no = #{referNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderStatus != null">
+				order_status = #{orderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="srcWarehouseId != null">
+				src_warehouse_id = #{srcWarehouseId,jdbcType=INTEGER},
+			</if>
+			<if test="srcWarehousePositionId != null">
+				src_warehouse_position_id = #{srcWarehousePositionId,jdbcType=INTEGER},
+			</if>
+			<if test="targetWarehouseId != null">
+				target_warehouse_id = #{targetWarehouseId,jdbcType=INTEGER},
+			</if>
+			<if test="targetWarehousePositionId != null">
+				target_warehouse_position_id = #{targetWarehousePositionId,jdbcType=INTEGER},
+			</if>
+			<if test="owner != null">
+				owner = #{owner,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.warehouse.StockOrderDO">
+		insert into erp_stock_order <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.warehouse.StockOrderDO">
+		update erp_stock_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
