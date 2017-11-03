@@ -1,12 +1,9 @@
 package com.lxzl.erp.dataaccess.domain.product;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.math.BigDecimal;
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductDO extends BaseDO {
     private Integer id;
     private String productName;
@@ -15,7 +12,7 @@ public class ProductDO extends BaseDO {
     private String subtitle;
     private Integer unit;
     private BigDecimal listPrice;
-    private Integer isSale;
+    private Integer isRent;
     private String productDesc;
     private String keyword;
     private String remark;
@@ -75,12 +72,12 @@ public class ProductDO extends BaseDO {
         this.listPrice = listPrice;
     }
 
-    public Integer getIsSale() {
-        return isSale;
+    public Integer getIsRent() {
+        return isRent;
     }
 
-    public void setIsSale(Integer isSale) {
-        this.isSale = isSale;
+    public void setIsRent(Integer isRent) {
+        this.isRent = isRent;
     }
 
     public String getProductDesc() {

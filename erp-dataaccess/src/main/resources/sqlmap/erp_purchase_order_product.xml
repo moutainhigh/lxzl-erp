@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderProductMapper">
+
+	<resultMap id="PurchaseOrderProductDO" type="com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderProductDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="purchase_order_id" jdbcType="INTEGER" property="purchaseOrderId" />
+		<result column="product_id" jdbcType="INTEGER" property="productId" />
+		<result column="product_name" jdbcType="VARCHAR" property="productName" />
+		<result column="product_mode_snapshot" jdbcType="VARCHAR" property="productModeSnapshot" />
+		<result column="product_sku_id" jdbcType="INTEGER" property="productSkuId" />
+		<result column="product_count" jdbcType="INTEGER" property="productCount" />
+		<result column="product_amount" jdbcType="DECIMAL" property="productAmount" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		epop.id,epop.purchase_order_id,epop.product_id,epop.product_name,epop.product_mode_snapshot,epop.product_sku_id,epop.product_count,epop.product_amount,epop.remark,epop.create_time,epop.create_user,epop.update_time,epop.update_user
+	</sql>
+
+	<select id="findById" resultMap="PurchaseOrderProductDO" parameterType="java.lang.Integer">
+		select <include refid="column_List"/> from erp_purchase_order_product epop 
+		where epop.id = #{id, jdbcType=INTEGER} and data_status = 1 
+	</select>
+
+	<select id="findByProductSkuId" resultMap="PurchaseOrderProductDO" parameterType="java.lang.Integer">
+		select <include refid="column_List"/> from erp_purchase_order_product epop
+		where epop.product_sku_id = #{id, jdbcType=INTEGER} and data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		select count(epop.id) from erp_purchase_order_product epop 
+		<where>
+			<if test="true">
+				and epop.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="PurchaseOrderProductDO" parameterType="map">
+		select <include refid="column_List"/> from erp_purchase_order_product epop 
+		<where>
+			<if test="true">
+				and epop.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="purchaseOrderId != null">
+				purchase_order_id = #{purchaseOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="productId != null">
+				product_id = #{productId,jdbcType=INTEGER},
+			</if>
+			<if test="productName != null">
+				product_name = #{productName,jdbcType=VARCHAR},
+			</if>
+			<if test="productModeSnapshot != null">
+				product_mode_snapshot = #{productModeSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="productSkuId != null">
+				product_sku_id = #{productSkuId,jdbcType=INTEGER},
+			</if>
+			<if test="productCount != null">
+				product_count = #{productCount,jdbcType=INTEGER},
+			</if>
+			<if test="productAmount != null">
+				product_amount = #{productAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderProductDO">
+		insert into erp_purchase_order_product <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderProductDO">
+		update erp_purchase_order_product <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

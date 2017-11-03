@@ -1,14 +1,14 @@
 package com.lxzl.erp.dataaccess.dao.mysql.purchase;
 
-import com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderDO;
+import com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderProductDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
 import java.util.Map;
 
-public interface PurchaseOrderMapper extends BaseMysqlDAO<PurchaseOrderDO> {
+public interface PurchaseOrderProductMapper extends BaseMysqlDAO<PurchaseOrderProductDO> {
 
-	List<PurchaseOrderDO> listPage(@Param("maps") Map<String, Object> paramMap);
+	List<PurchaseOrderProductDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 }

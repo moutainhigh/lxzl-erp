@@ -62,9 +62,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         UserDO userDO = userMapper.findByUsername(loginParam.getUserName());
         if (userDO == null) {
             result.setErrorCode(ErrorCode.USER_NAME_NOT_FOUND);
-        } else if (userDO.getIsDisabled().equals(CommonConstant.COMMON_CONSTANT_NO)) {
+        } else if (userDO.getIsDisabled().equals(CommonConstant.COMMON_CONSTANT_YES)) {
             result.setErrorCode(ErrorCode.USER_DISABLE);
-        } else if (userDO.getIsActivated().equals(CommonConstant.COMMON_CONSTANT_NO)) {
+        } else if (userDO.getIsActivated().equals(CommonConstant.COMMON_CONSTANT_YES)) {
             result.setErrorCode(ErrorCode.USER_NOT_ACTIVATED);
         } else if (!userDO.getPassword().equals(generateMD5Password(userDO.getUserName(), loginParam.getPassword(), ApplicationConfig.authKey))) {
             result.setErrorCode(ErrorCode.USER_PASSWORD_ERROR);

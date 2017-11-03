@@ -15,7 +15,7 @@ public class Product implements Serializable {
     private String subtitle;
     private Integer unit;
     private BigDecimal listPrice;
-    private Integer isSale;
+    private Integer isRent;
     private String productDesc;
     private String keyword;
     private String remark;
@@ -77,12 +77,12 @@ public class Product implements Serializable {
         this.listPrice = listPrice;
     }
 
-    public Integer getIsSale() {
-        return isSale;
+    public Integer getIsRent() {
+        return isRent;
     }
 
-    public void setIsSale(Integer isSale) {
-        this.isSale = isSale;
+    public void setIsRent(Integer isRent) {
+        this.isRent = isRent;
     }
 
     public String getProductDesc() {

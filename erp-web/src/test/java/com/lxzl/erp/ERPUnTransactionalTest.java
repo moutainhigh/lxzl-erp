@@ -1,6 +1,7 @@
 package com.lxzl.erp;
 
 import com.alibaba.fastjson.JSON;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.unit.test.BaseUnTransactionalTest;
@@ -36,11 +37,13 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
     protected WebApplicationContext wac;
     @Autowired
     protected MockHttpSession session;
+    SessionResult sessionResult = null;
     @Before
     public void setup(){
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
         try {
-            this.session = getLoginSession("admin","123456");
+            sessionResult = getLoginSession("admin","123456");
+            this.session = sessionResult.mockHttpSession;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,7 +61,20 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
      * @throws Exception
      */
 
-    public MockHttpSession getLoginSession(String name ,String password) throws Exception{
+    class SessionResult{
+        private TestResult testResult;
+        private MockHttpSession mockHttpSession;
+        private String message;
+        private boolean isGetSession;
+
+        public SessionResult(TestResult testResult,MockHttpSession mockHttpSession, String message, boolean isGetSession) {
+            this.mockHttpSession = mockHttpSession;
+            this.message = message;
+            this.isGetSession = isGetSession;
+            this.testResult = testResult;
+        }
+    }
+    public SessionResult getLoginSession(String name ,String password) throws Exception{
         User user = new User();
         user.setUserName(name);
         user.setPassword(password);
@@ -69,10 +85,15 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
                         .param("userName", name).param("password", password)))
                 .andExpect(status().isOk())
                 .andReturn();
-        return (MockHttpSession)result.getRequest().getSession();
+        TestResult testResult = getJsonTestResult(result);
+        if(!ErrorCode.SUCCESS.equals(testResult.getCode())){
+            return new SessionResult(testResult,null,testResult.getDescription(),false);
+        }
+        return new SessionResult(testResult,(MockHttpSession)result.getRequest().getSession(),null,true);
     }
 
     public MvcResult jsonTestRequest(String uri,Object o) throws Exception {
+
         MvcResult mvcResult =mockMvc.perform(post(uri)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JSON.toJSONString(o))
@@ -106,6 +127,10 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
         return testResult;
     }
     public TestResult getJsonTestResult(String uri, Object o) throws Exception {
-        return getJsonTestResult(jsonTestRequest(uri,o));
+        if(sessionResult.isGetSession){
+            return getJsonTestResult(jsonTestRequest(uri,o));
+        }else{
+            return  sessionResult.testResult;
+        }
     }
 }

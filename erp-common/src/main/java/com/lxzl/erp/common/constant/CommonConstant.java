@@ -13,6 +13,9 @@ public class CommonConstant {
     public static final Integer COMMON_CONSTANT_YES = 1;
     public static final Integer COMMON_CONSTANT_NO = 0;
 
+    public static final int YES = 1;
+    public static final int NO  = 0;
+
     public static final String UPLOAD_USER = "admin";
 
     public static final Integer SUPER_MENU_ID = 200000;

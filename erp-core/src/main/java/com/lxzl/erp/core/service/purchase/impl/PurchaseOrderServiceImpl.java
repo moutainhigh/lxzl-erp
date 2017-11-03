@@ -1,28 +1,38 @@
 package com.lxzl.erp.core.service.purchase.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.PurchaseOrderStatus;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.company.SubCompanyQueryParam;
-import com.lxzl.erp.common.domain.company.pojo.SubCompany;
+import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
+import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrderProduct;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
-import com.lxzl.erp.core.service.company.impl.support.CompanyConverter;
-import com.lxzl.erp.core.service.product.impl.support.ConvertProduct;
+import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.core.service.purchase.impl.support.PurchaseOrderConverter;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderMapper;
-import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
-import com.lxzl.erp.dataaccess.domain.product.ProductDO;
+import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderProductMapper;
+import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderDO;
+import com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderProductDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 @Service
@@ -33,39 +43,86 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Autowired
     private PurchaseOrderMapper purchaseOrderMapper;
-
+    @Autowired
+    private ProductSkuMapper productSkuMapper;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private PurchaseOrderProductMapper purchaseOrderProductMapper;
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> add(PurchaseOrder purchaseOrder) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        String loginUserId = loginUser.getUserId().toString();
         Date now = new Date();
+        List<PurchaseOrderProduct> purchaseOrderProductList = purchaseOrder.getPurchaseOrderProductList();
+        //声明待保存的采购单项列表
+        List<PurchaseOrderProductDO> purchaseOrderProductDOList = new ArrayList<>();
+        //声明累加采购单总价
+        BigDecimal totalAmount = new BigDecimal(0);
+        // 验证采购单商品项是否合法
+        for(PurchaseOrderProduct purchaseOrderProduct : purchaseOrderProductList){
+
+            if(purchaseOrderProduct.getProductSkuId()==null){
+                result.setErrorCode(ErrorCode.PRODUCT_SKU_NOT_NULL);
+                return result;
+            }
+            if(purchaseOrderProduct.getProductAmount()==null||  purchaseOrderProduct.getProductAmount().doubleValue()<=0){
+                result.setErrorCode(ErrorCode.PRODUCT_SKU_PRICE_ERROR);
+                return result;
+            }
+            if(purchaseOrderProduct.getProductCount()==null||purchaseOrderProduct.getProductCount()<=0){
+                result.setErrorCode(ErrorCode.PRODUCT_SKU_COUNT_ERROR);
+                return result;
+            }
+            ProductSkuDO productSkuDO = productSkuMapper.findById(purchaseOrderProduct.getProductSkuId());
+            if(productSkuDO==null){
+                result.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                return result;
+            }
+            //累加采购单总价
+            totalAmount = BigDecimalUtil.add(totalAmount,BigDecimalUtil.mul(purchaseOrderProduct.getProductAmount(),new BigDecimal(purchaseOrderProduct.getProductCount())));
+
+            PurchaseOrderProductDO purchaseOrderProductDO = new PurchaseOrderProductDO();
+            //保存采购订单商品项快照
+            ServiceResult<String,Product> productResult = productService.queryProductById(productSkuDO.getProductId());
+            purchaseOrderProductDO.setProductModeSnapshot(JSON.toJSONString(productResult));
+            purchaseOrderProductDO.setProductId(productSkuDO.getProductId());
+            purchaseOrderProductDO.setProductName(productSkuDO.getProductName());
+            purchaseOrderProductDO.setProductSkuId(productSkuDO.getId());
+            purchaseOrderProductDO.setProductCount(purchaseOrderProduct.getProductCount());
+            purchaseOrderProductDO.setProductAmount(purchaseOrderProduct.getProductAmount());
+            purchaseOrderProductDO.setRemark(purchaseOrderProduct.getRemark());
+            purchaseOrderProductDO.setCreateUser(loginUserId);
+            purchaseOrderProductDO.setUpdateUser(loginUserId);
+            purchaseOrderProductDO.setCreateTime(now);
+            purchaseOrderProductDO.setUpdateTime(now);
+            purchaseOrderProductDOList.add(purchaseOrderProductDO);
+        }
         PurchaseOrderDO purchaseOrderDO = PurchaseOrderConverter.convertPurchaseOrder(purchaseOrder);
         purchaseOrderDO.setPurchaseNo(GenerateNoUtil.generateOrderNo(now, loginUser.getUserId()));
+        if(purchaseOrderDO.getInvoiceSupplierId()==null){
+            purchaseOrderDO.setInvoiceSupplierId(purchaseOrderDO.getProductSupplierId());
+        }
+        purchaseOrderDO.setPurchaseOrderAmountTotal(totalAmount);
+        purchaseOrderDO.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PENDING);
+        purchaseOrderDO.setDeliveryTime(null);
         purchaseOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        purchaseOrderDO.setCreateUser(loginUser.getUserId().toString());
-        purchaseOrderDO.setUpdateUser(loginUser.getUserId().toString());
-        purchaseOrderDO.setCreateTime(new Date());
-        purchaseOrderDO.setUpdateTime(new Date());
+        purchaseOrderDO.setOwner(loginUser.getUserId());
+        purchaseOrderDO.setCreateUser(loginUserId);
+        purchaseOrderDO.setUpdateUser(loginUserId);
+        purchaseOrderDO.setCommitStatus((CommonConstant.COMMON_CONSTANT_NO));
+        purchaseOrderDO.setCreateTime(now);
+        purchaseOrderDO.setUpdateTime(now);
         purchaseOrderMapper.save(purchaseOrderDO);
-//  `product_supplier_id` int(20) NOT NULL COMMENT '商品供应商ID',
-//  `invoice_supplier_id` int(20) NOT NULL COMMENT '发票供应商ID',
-//  `warehouse_id` int(20) NOT NULL COMMENT '仓库ID',
-//  `is_invoice` int(11) NOT NULL COMMENT '是否有发票，0否1是',
-//  `is_new` int(11) NOT NULL COMMENT '是否全新机',
-//  `purchase_order_amount_total` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '采购单总价',
-//  `purchase_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '采购单状态，0待采购，1部分采购，2全部采购',
-//  `delivery_time` datetime DEFAULT NULL COMMENT '发货时间',
-//  `verify_status` int(11) NOT NULL DEFAULT '0' COMMENT '审核状态，0待提交，1已提交，2审批通过，3审批驳回，4取消',
-//  `verify_user` varchar(20) NOT NULL DEFAULT '' COMMENT '审核人',
-//  `verify_time` datetime DEFAULT NULL COMMENT '审核时间',
-//  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-//  `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
-//  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
-//  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
-//  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
-//  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
-//  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+
+        //保存采购订单项
+        for(PurchaseOrderProductDO purchaseOrderProductDO : purchaseOrderProductDOList){
+            purchaseOrderProductDO.setPurchaseOrderId(purchaseOrderDO.getId());
+            purchaseOrderProductMapper.save(purchaseOrderProductDO);
+        }
         result.setResult(purchaseOrderDO.getId());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;

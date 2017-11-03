@@ -35,6 +35,8 @@
         <mapper resource="sqlmap/erp_department.xml" />
         <mapper resource="sqlmap/erp_user_department.xml" />
         <mapper resource="sqlmap/erp_stock_order.xml" />
+        <mapper resource="sqlmap/erp_purchase_order.xml" />
+        <mapper resource="sqlmap/erp_purchase_order_product.xml" />
     </mappers>
 
 </configuration>
