@@ -67,7 +67,7 @@ public class MyTest {
     }
     public static String getPoString(String dataImport , String bigDecimalImport , List<NameAndType> nameAndTypeList , Table table){
         StringBuffer poSb = new StringBuffer(
-                "import org.codehaus.jackson.annotate.JsonIgnoreProperties;\n" +
+                "import com.fasterxml.jackson.annotation.JsonIgnoreProperties;\n" +
                         "import java.io.Serializable;\n" +
                         dataImport+"\n" +bigDecimalImport+"\n" +
                         "\n" +

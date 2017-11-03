@@ -2,7 +2,7 @@ package com.lxzl.erp.common.domain.purchase.pojo;
 
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;

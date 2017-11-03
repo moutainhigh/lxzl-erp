@@ -1,7 +1,7 @@
 package com.lxzl.erp.common.domain.user.pojo;
 
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.system.pojo.Menu;
 
 import java.io.Serializable;

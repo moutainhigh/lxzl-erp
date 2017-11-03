@@ -1,7 +1,7 @@
 package com.lxzl.erp.dataaccess.domain.purchase;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.math.BigDecimal;
 import java.util.Date;

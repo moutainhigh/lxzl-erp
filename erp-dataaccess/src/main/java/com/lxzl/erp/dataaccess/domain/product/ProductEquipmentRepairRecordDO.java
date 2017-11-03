@@ -1,7 +1,7 @@
 package com.lxzl.erp.dataaccess.domain.product;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * 描述: 设备维修记录
