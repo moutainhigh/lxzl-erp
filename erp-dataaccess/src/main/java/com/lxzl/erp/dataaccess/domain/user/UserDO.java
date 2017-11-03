@@ -25,6 +25,8 @@ public class UserDO extends BaseDO {
 	private String remark;
 	private List<Integer> roleList;
 	private List<UserRoleDO> userRoleList;
+	private List<Integer> departmentList;
+	private List<UserDepartmentDO> userDepartmentList;
 
 	public Integer getId() {
 		return id;
@@ -144,5 +146,21 @@ public class UserDO extends BaseDO {
 
 	public void setUserRoleList(List<UserRoleDO> userRoleList) {
 		this.userRoleList = userRoleList;
+	}
+
+	public List<Integer> getDepartmentList() {
+		return departmentList;
+	}
+
+	public void setDepartmentList(List<Integer> departmentList) {
+		this.departmentList = departmentList;
+	}
+
+	public List<UserDepartmentDO> getUserDepartmentList() {
+		return userDepartmentList;
+	}
+
+	public void setUserDepartmentList(List<UserDepartmentDO> userDepartmentList) {
+		this.userDepartmentList = userDepartmentList;
 	}
 }

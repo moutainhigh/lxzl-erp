@@ -5,19 +5,23 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.company.SubCompanyQueryParam;
+import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
+import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.company.impl.support.CompanyConverter;
+import com.lxzl.erp.core.service.company.impl.support.DepartmentConverter;
+import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
+import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -28,6 +32,9 @@ public class CompanyServiceImpl implements CompanyService{
 
     @Autowired
     private SubCompanyMapper subCompanyMapper;
+
+    @Autowired
+    private DepartmentMapper departmentMapper;
 
     @Override
     public ServiceResult<String, Integer> addSubCompany(SubCompany subCompany) {
@@ -72,5 +79,23 @@ public class CompanyServiceImpl implements CompanyService{
         return result;
     }
 
+    @Override
+    public ServiceResult<String,List<Department>> getDepartmentList(DepartmentQueryParam departmentQueryParam){
+        ServiceResult<String, List<Department>> result = new ServiceResult<>();
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("start",0);
+        paramMap.put("pageSize",Integer.MAX_VALUE);
+        paramMap.put("departmentQueryParam",departmentQueryParam);
 
+        List<DepartmentDO> departmentDOList = departmentMapper.listPage(paramMap);
+        List<DepartmentDO> nodeList = DepartmentConverter.convertTree(departmentDOList);
+
+        List<Department> resultList = new ArrayList<>();
+        for (DepartmentDO node1 : nodeList) {
+            resultList.add(DepartmentConverter.convertDepartmentDO(node1));
+        }
+        result.setResult(resultList);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
 }

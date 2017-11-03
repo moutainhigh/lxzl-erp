@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.lxzl.erp.dataaccess.domain.UserDO;
 import com.lxzl.erp.web.config.LoginConfig;
 import com.lxzl.se.common.util.CommonUtil;
 import com.lxzl.se.web.controller.BaseController;

@@ -10,7 +10,7 @@ import java.util.List;
 public class MyTest {
 
     public static void main(String[] args) throws Exception {
-        test("erp_stock_order");
+        test("erp_department");
     }
 
     private static String URL = "jdbc:mysql://192.168.10.205:3306/lxzl_erp?useUnicode=true&amp;characterEncoding=UTF-8";
@@ -32,15 +32,17 @@ public class MyTest {
         List<NameAndType> nameAndTypeList = new ArrayList<>();
         List<String> nameList = new ArrayList<>();
         List<String> typeList = new ArrayList<>();
+        List<String> remarkList = new ArrayList<>();
         while(tableRet.next()){
             nameList.add(tableRet.getString("COLUMN_NAME"));
             typeList.add(tableRet.getString("TYPE_NAME"));
+            remarkList.add(tableRet.getString("REMARKS"));
         }
         int size = nameList.size();
         boolean haveDate = false;
         boolean haveBigDecimal = false;
         for(int i = 0 ; i<size ;i++){
-            NameAndType nameAndType = new NameAndType(nameList.get(i),typeList.get(i),tableName);
+            NameAndType nameAndType = new NameAndType(nameList.get(i),typeList.get(i),remarkList.get(i),tableName);
             if(nameAndType.haveDate){
                 haveDate = nameAndType.haveDate;
             }
@@ -88,11 +90,16 @@ public class MyTest {
         return doSb.toString();
     }
     public static String getMapperString(Table table){
-        StringBuffer mapperSb = new StringBuffer("import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;\n\n");
+        StringBuffer mapperSb = new StringBuffer("import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;\n");
 
         String mapperName = table.poTableName+"Mapper";
-                mapperSb.append("public interface "+mapperName+" extends BaseMysqlDAO<"+table.doTableName+"> {\n");
-        mapperSb.append("\n}");
+        mapperSb.append("import org.apache.ibatis.annotations.Param;\n" +
+                "import java.util.List;\n" +
+                "import java.util.Map;\n\n");
+        mapperSb.append("public interface "+mapperName+" extends BaseMysqlDAO<"+table.doTableName+"> {\n\n");
+        mapperSb.append("\tList<"+table.doTableName+"> listPage(@Param(\"maps\") Map<String, Object> paramMap);\n\n");
+        mapperSb.append("\tInteger listCount(@Param(\"maps\") Map<String, Object> paramMap);\n");
+        mapperSb.append("}");
         return mapperSb.toString();
     }
 
@@ -109,19 +116,54 @@ public class MyTest {
                 xmlSb.append("\t\t<result column=\""+nameAndType.sqlName+"\" jdbcType=\""+nameAndType.sqlType+"\" property=\""+nameAndType.trueDoName+"\" />\n");
             }
         }
-        xmlSb.append("\t</resultMap>\n");
+        xmlSb.append("\t</resultMap>\n\n");
         xmlSb.append("\t<sql id=\"column_List\">\n");
         xmlSb.append("\t\t"+getSimpleString(table,nameAndTypeList)+"\n");
         xmlSb.append("\t</sql>\n\n");
+
+        String[] ss = table.sqlTableName.split("_");
+        StringBuffer simpleSb = new StringBuffer();
+        for(String s : ss){
+            simpleSb.append(s.substring(0,1));
+        }
+        xmlSb.append("\t<select id=\"findById\" resultMap=\""+table.doTableName+"\" parameterType=\"java.lang.Integer\">\n");
+        xmlSb.append("\t\tselect <include refid=\"column_List\"/> from "+table.sqlTableName + " "+simpleSb.toString()+" \n");
+        xmlSb.append("\t\twhere "+simpleSb.toString()+".id = #{id, jdbcType=INTEGER} and data_status = 1 \n");
+        xmlSb.append("\t</select>\n\n");
+
+        xmlSb.append("\t<select id=\"listCount\" resultType=\"java.lang.Integer\" parameterType=\"map\">\n");
+        xmlSb.append("\t\tselect count("+simpleSb.toString()+".id) from "+table.sqlTableName+ " "+simpleSb.toString()+" \n");
+        xmlSb.append("\t\t<where>\n");
+        xmlSb.append("\t\t\t<if test=\"true\">\n");
+        xmlSb.append("\t\t\t\tand "+simpleSb.toString()+".data_status = 1\n");
+        xmlSb.append("\t\t\t</if>\n");
+        xmlSb.append("\t\t</where>\n");
+        xmlSb.append("\t</select>\n\n");
+
+        xmlSb.append("\t<select id=\"listPage\" resultMap=\""+table.doTableName+"\" parameterType=\"map\">\n");
+        xmlSb.append("\t\tselect <include refid=\"column_List\"/> from "+table.sqlTableName+ " "+simpleSb.toString()+" \n");
+        xmlSb.append("\t\t<where>\n");
+        xmlSb.append("\t\t\t<if test=\"true\">\n");
+        xmlSb.append("\t\t\t\tand "+simpleSb.toString()+".data_status = 1\n");
+        xmlSb.append("\t\t\t</if>\n");
+        xmlSb.append("\t\t</where>\n");
+        xmlSb.append("\t\tLIMIT #{maps.start},#{maps.pageSize}\n");
+        xmlSb.append("\t</select>\n\n");
+
+
+
         xmlSb.append("\t<sql id=\"set_column_sql\">\n");
         xmlSb.append("\t\t<set>\n");
         for(NameAndType nameAndType : nameAndTypeList){
+            if("id".equals(nameAndType.trueDoName)){
+                continue;
+            }
             xmlSb.append("\t\t\t<if test=\""+nameAndType.trueDoName+" != null\">\n");
             xmlSb.append("\t\t\t\t"+nameAndType.sqlName+" = #{"+nameAndType.trueDoName+",jdbcType="+nameAndType.sqlType+"},\n");
             xmlSb.append("\t\t\t</if>\n");
         }
         xmlSb.append("\t\t</set>\n");
-        xmlSb.append("\t</sql>\n");
+        xmlSb.append("\t</sql>\n\n");
         xmlSb.append("\t<insert id=\"save\" keyProperty=\"id\" useGeneratedKeys=\"true\" parameterType=\""+table.doTableName+"\">\n");
         xmlSb.append("\t\tinsert into "+table.sqlTableName+" <include refid=\"set_column_sql\"/>\n");
         xmlSb.append("\t</insert>\n");
@@ -174,16 +216,20 @@ public class MyTest {
         private String poName;
         private String type;
         private String sqlType;
+        private String remarks;
         private boolean haveDate = false;
         private boolean haveBigDecimal = false;
-        public NameAndType(String name, String type,String tableName) {
+        public NameAndType(String name, String type,String remarks,String tableName) {
             this.sqlTableName = tableName;
             this.sqlName = name;
             this.doName = convertDoName(name);
             this.trueDoName = convertTrueDoName(name);
             this.poName = convertPoName(name);
+            this.remarks = remarks;
             if("INT".equals(type)){
                 this.sqlType = "INTEGER";
+            }if("DATETIME".equals(type)){
+                this.sqlType = "TIMESTAMP";
             }else{
                 this.sqlType = type;
             }
@@ -224,6 +270,9 @@ public class MyTest {
             if("VARCHAR".equals(type)){
                 return "String";
             }
+            if("TEXT".equals(type)){
+                return "String";
+            }
             if("BIGINT".equals(type)){
                 return "Long";
             }
@@ -245,9 +294,9 @@ public class MyTest {
         return newName.toString();
     }
     public static void appendAllPOParam(List<NameAndType> nameAndTypeList , StringBuffer sb ){
-        sb.append("\n");
+        sb.append("\n\n");
         for(NameAndType nameAndType : nameAndTypeList){
-            String s = "\n\tprivate " + nameAndType.type +" " + nameAndType.poName+";";
+            String s = "\tprivate " + nameAndType.type +" " + nameAndType.poName+";   //"+nameAndType.remarks+"\n";
             sb.append(s);
         }
     }

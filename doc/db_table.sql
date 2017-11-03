@@ -104,7 +104,7 @@ CREATE TABLE `erp_department` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `department_name` varchar(20) NOT NULL DEFAULT '' COMMENT '功能名称',
   `department_type` int(20) NOT NULL COMMENT '部门类型，对应字典ID',
-  `parent_department_id` int(20) NOT NULL DEFAULT 0 COMMENT '上级部门ID',
+  `parent_department_id` int(20) NOT NULL DEFAULT 400000 COMMENT '上级部门ID',
   `sub_company_id` int(20) NOT NULL COMMENT '所属分公司',
   `data_order` int(11) NOT NULL DEFAULT '0' COMMENT '数据排序排序，越大排越前',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -114,7 +114,7 @@ CREATE TABLE `erp_department` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='部门表';
+) ENGINE=InnoDB AUTO_INCREMENT=400001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='部门表';
 
 DROP TABLE if exists `erp_sub_company`;
 CREATE TABLE `erp_sub_company` (
@@ -145,20 +145,6 @@ CREATE TABLE `erp_user_department` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='用户所属部门表';
-
-DROP TABLE if exists `erp_user_sub_company`;
-CREATE TABLE `erp_user_sub_company` (
-  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `user_id` int(20) NOT NULL COMMENT '用户ID',
-  `sub_company_id` int(20) NOT NULL COMMENT '分公司ID',
-  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
-  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
-  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='用户所属分公司表';
 
 DROP TABLE if exists `erp_role_user_final`;
 CREATE TABLE `erp_role_user_final` (

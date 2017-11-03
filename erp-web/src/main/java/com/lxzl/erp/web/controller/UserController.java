@@ -4,6 +4,8 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.company.pojo.Department;
+import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.user.LoginParam;
 import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RequestMapping("/user")
 @Controller

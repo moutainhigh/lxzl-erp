@@ -3,7 +3,9 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.company.SubCompanyQueryParam;
+import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
+import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -16,6 +18,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 @RequestMapping("/company")
 @Controller
@@ -35,6 +39,12 @@ public class CompanyController {
     @RequestMapping(value = "pageSubCompany", method = RequestMethod.POST)
     public Result pageSubCompany(@RequestBody SubCompanyQueryParam subCompanyQueryParam, BindingResult validResult) {
         ServiceResult<String, Page<SubCompany>> serviceResult = companyService.subCompanyPage(subCompanyQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "getDepartmentList", method = RequestMethod.POST)
+    public Result getDepartmentList(@RequestBody DepartmentQueryParam departmentQueryParam) {
+        ServiceResult<String, List<Department>> serviceResult = companyService.getDepartmentList(departmentQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

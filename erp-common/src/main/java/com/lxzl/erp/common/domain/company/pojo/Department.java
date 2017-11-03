@@ -4,29 +4,25 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Department implements Serializable {
+    private Integer departmentId;   //唯一标识
+    private String departmentName;   //功能名称
+    private Integer departmentType;   //部门类型，对应字典ID
+    private Integer parentDepartmentId;   //上级部门ID
+    private Integer subCompanyId;   //所属分公司
+    private Integer dataOrder;   //数据排序排序，越大排越前
+    private Integer dataStatus;   //状态：0不可用；1可用；2删除
+    private String remark;   //备注
+    private Date createTime;   //添加时间
+    private String createUser;   //添加人
+    private Date updateTime;   //添加时间
+    private String updateUser;   //修改人
+    private List<Department> children;
 
-    private Integer departmentId;
 
-    private String departmentName;
-
-    private Integer parentDepartmentId;
-
-    private Integer dataOrder;
-
-    private Integer dataStatus;
-
-    private String remark;
-
-    private Date createTime;
-
-    private String createUser;
-
-    private Date updateTime;
-
-    private String updateUser;
 
     public Integer getDepartmentId() {
         return departmentId;
@@ -106,5 +102,29 @@ public class Department implements Serializable {
 
     public void setUpdateUser(String updateUser) {
         this.updateUser = updateUser;
+    }
+
+    public List<Department> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Department> children) {
+        this.children = children;
+    }
+
+    public Integer getDepartmentType() {
+        return departmentType;
+    }
+
+    public void setDepartmentType(Integer departmentType) {
+        this.departmentType = departmentType;
+    }
+
+    public Integer getSubCompanyId() {
+        return subCompanyId;
+    }
+
+    public void setSubCompanyId(Integer subCompanyId) {
+        this.subCompanyId = subCompanyId;
     }
 }

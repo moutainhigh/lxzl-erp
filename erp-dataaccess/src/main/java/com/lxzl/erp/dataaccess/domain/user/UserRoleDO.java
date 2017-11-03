@@ -14,7 +14,11 @@ public class UserRoleDO extends BaseDO {
 
     private Integer userId;
 
+    private Integer isSuperAdmin;
+
     private Integer roleId;
+
+    private String roleName;
 
     private Integer dataStatus;
 
@@ -58,5 +62,21 @@ public class UserRoleDO extends BaseDO {
 
     public void setRemark(Integer remark) {
         this.remark = remark;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public Integer getIsSuperAdmin() {
+        return isSuperAdmin;
+    }
+
+    public void setIsSuperAdmin(Integer isSuperAdmin) {
+        this.isSuperAdmin = isSuperAdmin;
     }
 }

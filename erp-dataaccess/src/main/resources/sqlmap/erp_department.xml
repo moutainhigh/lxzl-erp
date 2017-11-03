@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper">
+
+	<resultMap id="DepartmentDO" type="com.lxzl.erp.dataaccess.domain.company.DepartmentDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="department_name" jdbcType="VARCHAR" property="departmentName" />
+		<result column="department_type" jdbcType="INTEGER" property="departmentType" />
+		<result column="parent_department_id" jdbcType="INTEGER" property="parentDepartmentId" />
+		<result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
+		<result column="data_order" jdbcType="INTEGER" property="dataOrder" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ed.id,ed.department_name,ed.department_type,ed.parent_department_id,ed.sub_company_id,ed.data_order,ed.data_status,ed.remark,ed.create_time,ed.create_user,ed.update_time,ed.update_user
+	</sql>
+
+	<select id="findById" resultMap="DepartmentDO" parameterType="java.lang.Integer">
+		select <include refid="column_List"/> from erp_department ed
+		where ed.id = #{id, jdbcType=INTEGER} and data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		select count(ed.id) from erp_department ed
+		<where>
+			<if test="maps.departmentQueryParam.departmentId != null &amp;&amp; maps.departmentQueryParam.departmentId != ''">
+				and ed.id = #{maps.departmentQueryParam.departmentId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.departmentQueryParam.departmentName != null &amp;&amp; maps.departmentQueryParam.departmentName != ''">
+				and ed.deparment_name like CONCAT('%','${maps.departmentQueryParam.departmentName}','%' )
+			</if>
+			<if test="true">
+				and ed.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="DepartmentDO" parameterType="map">
+		select <include refid="column_List"/> from erp_department ed
+		<where>
+			<if test="maps.departmentQueryParam.departmentId != null &amp;&amp; maps.departmentQueryParam.departmentId != ''">
+				and ed.id = #{maps.departmentQueryParam.departmentId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.departmentQueryParam.departmentName != null &amp;&amp; maps.departmentQueryParam.departmentName != ''">
+				and ed.deparment_name like CONCAT('%','${maps.departmentQueryParam.departmentName}','%' )
+			</if>
+			<if test="true">
+				and ed.data_status = 1
+			</if>
+		</where>
+		order by ed.parent_department_id,ed.data_order desc
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="departmentName != null">
+				department_name = #{departmentName,jdbcType=VARCHAR},
+			</if>
+			<if test="departmentType != null">
+				department_type = #{departmentType,jdbcType=INTEGER},
+			</if>
+			<if test="parentDepartmentId != null">
+				parent_department_id = #{parentDepartmentId,jdbcType=INTEGER},
+			</if>
+			<if test="subCompanyId != null">
+				sub_company_id = #{subCompanyId,jdbcType=INTEGER},
+			</if>
+			<if test="dataOrder != null">
+				data_order = #{dataOrder,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.company.DepartmentDO">
+		insert into erp_department <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.company.DepartmentDO">
+		update erp_department <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
