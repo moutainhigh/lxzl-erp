@@ -88,9 +88,12 @@ public class MyTest {
         return doSb.toString();
     }
     public static String getMapperString(Table table){
-        StringBuffer mapperSb = new StringBuffer("import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;\n\n");
+        StringBuffer mapperSb = new StringBuffer("import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;\n");
 
         String mapperName = table.poTableName+"Mapper";
+        mapperSb.append("import org.apache.ibatis.annotations.Param;\n" +
+                "import java.util.List;\n" +
+                "import java.util.Map;\n\n");
         mapperSb.append("public interface "+mapperName+" extends BaseMysqlDAO<"+table.doTableName+"> {\n\n");
         mapperSb.append("\tList<"+table.doTableName+"> listPage(@Param(\"maps\") Map<String, Object> paramMap);\n\n");
         mapperSb.append("\tInteger listCount(@Param(\"maps\") Map<String, Object> paramMap);\n");
