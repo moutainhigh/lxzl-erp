@@ -1,4 +1,4 @@
-<div class="col-xs-6 col-md-6 text-right pagerContainer">
+<div class="pagerContainer">
 </div>
 <script type="text/html" id="pagerTpl">
     {{#pager}}

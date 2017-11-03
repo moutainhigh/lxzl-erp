@@ -16,15 +16,15 @@
             <div class="panel mb25 mt5">
                 <form id="searchForm">
                     <div class="panel-heading">
-                        <span class="panel-title">用户查询</span>
+                        <span class="panel-title">角色名</span>
                     </div>
                     <div class="panel-body p25 pb5 admin-form">
                         <div class="section row">
                             <div class="col-md-12">
                                 <label for="username" class="field-label">姓名</label>
-                                <label for="firstname" class="field prepend-icon">
-                                    <input type="text" name="realName" id="realName" class="gui-input" placeholder="请输入用户名...">
-                                    <label for="firstname" class="field-icon"><i class="fa fa-user"></i>
+                                <label for="roleName" class="field prepend-icon">
+                                    <input type="text" name="roleName" id="roleName" class="gui-input" placeholder="请输入用户名...">
+                                    <label for="roleName" class="field-icon"><i class="fa fa-user"></i>
                                     </label>
                                 </label>
                             </div>
@@ -50,7 +50,9 @@
                             </script>
                             <div class="btn-group" id="actionCommonButtons"></div>
                         </div>
-                        <div class="col-md-6 text-right"></div>
+                        <div class="col-md-6 text-right">
+
+                        </div>
                     </div>
                 </div>
                 <div class="panel-body pn">
@@ -112,12 +114,11 @@
 </div>
     #parse("layout/footer.vm")
 
-    #parse("component/user/add.vm")
-    #parse("component/user/edit.vm")
-    #parse("component/user/view.vm")
+    #parse("component/user/addRole.vm")
+    #parse("component/user/editRole.vm")
 
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.role.js');
+        management_load_script('${staticManagement}/js','manage.role.js','manage.role.add.js');
     </script>
 
     <script type="text/javascript">

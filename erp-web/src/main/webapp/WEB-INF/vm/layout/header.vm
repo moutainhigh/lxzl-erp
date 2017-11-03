@@ -18,4 +18,5 @@
 
 <script type="text/javascript">
     common_load_css('${staticCommon}/rental/css','master.css');
+    management_load_css('${staticManagement}/css','master.css');
 </script>

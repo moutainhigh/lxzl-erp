@@ -13,7 +13,7 @@
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
             <section id="content" class="animated fadeIn">
-                <div class="panel mb25 mt5">
+               #* <div class="panel mb25 mt5">
                     <form id="searchForm">
                         <div class="panel-heading">
                             <span class="panel-title">用户查询</span>
@@ -35,36 +35,45 @@
                             <button type="reset" class="btn btn-sm"> 重置 </button>
                         </div>
                     </form>
-                </div>
+                </div>*#
                 <div class="panel">
                     <div class="panel-menu p12 admin-form theme-primary">
-                        <div class="row table-layout">
+                        <div class="row">
                             <div class="col-md-6">
                                 <script type="text/html" id="actionCommonButtonsTpl">
-                                    <button type="button" class="btn btn-sm btn-default light refreshButton"  title="刷新"><i class="fa fa-refresh"></i></button>
+                                    <button type="button" class="btn  btn-default light refreshButton"  title="刷新"><i class="fa fa-refresh"></i></button>
                                     {{#acitonCommonButtons}}
-                                    <button type="button" class="btn btn-sm btn-default light {{class}}" title="{{text}}">
+                                    <button type="button" class="btn  btn-default light {{class}}" title="{{text}}">
                                         <i class="{{iClass}}"></i> {{text}}
                                     </button>
                                     {{/acitonCommonButtons}}
                                 </script>
                                 <div class="btn-group" id="actionCommonButtons"></div>
                             </div>
-                            <div class="col-md-6 text-right"></div>
+                            <div class="col-md-6 text-right">
+                                <form id="searchForm" class="form-horizontal">
+                                    <div class="form-group pull-right mn" style="width: 220px;">
+                                        <div class="input-group">
+                                            <input type="text" id="maskedMoney" class="form-control money " maxlength="10" autocomplete="off" placeholder="输入姓名...">
+                                            <span class="input-group-addon"><i class="fa fa-search"></i> 查询</span>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <div class="panel-body pn">
                         <div class="table-responsive">
-                            <table class="table admin-form theme-warning tc-checkbox-1 fs13">
+                            <table class="table table-striped">
                             <thead>
                             <tr class="bg-light">
-                                <th width="6%" class="text-center">用户ID</th>
+                                <th width="10%">部门</th>
                                 <th width="10%" class="">姓名</th>
                                 <th width="10%" class="">用户名</th>
                                 <th width="10%" class="">邮箱</th>
                                 <th width="10%" class="">手机号</th>
-                                <th width="10%" class="">激活</th>
-                                <th width="10%" class="">禁用</th>
+                                <th width="8%" class="">激活</th>
+                                <th width="8%" class="">禁用</th>
                                 <th width="10%" class="">注册时间</th>
                                 <th width="10%" class="">最后登录时间</th>
                                 <th width="14%" class="text-right">操作</th>
@@ -73,8 +82,8 @@
                             <script type="text/html" id="userListTpl">
                                 {{#listData}}
                                     <tr>
-                                        <td class="text-center">
-                                            {{userId}}
+                                        <td>
+                                            #*{{userId}}*#
                                            #* <label class="option block mn">
                                                 <input type="checkbox" name="users" value="FR">
                                                 <span class="checkbox mn"></span>
@@ -92,7 +101,7 @@
                                             {{#acitonButtons}}
                                             <div class="btn-group text-right">
                                                 {{#acitons}}
-                                                <a href="${ctx}{{menuUrl}}" type="button" class="btn btn-default btn-xs {{class}}" data-userid="{{userId}}">{{text}}</a>
+                                                <a href="${ctx}{{menuUrl}}" class="{{class}}" data-userid="{{userId}}">{{text}}</a>
                                                 {{/acitons}}
                                             </div>
                                             {{/acitonButtons}}
@@ -110,9 +119,10 @@
                         </div>
                     </div>
                     <div class="panel-footer">
-                        <div class="row table-layout">
-                            <div class="col-xs-6 col-md-6 text-right"></div>
-                            #parse("component/pager.vm")
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                                #parse("component/pager.vm")
+                            </div>
                         </div>
                     </div>
 
