@@ -10,7 +10,7 @@ import java.util.List;
 public class MyTest {
 
     public static void main(String[] args) throws Exception {
-        test("erp_stock_order");
+        test("erp_purchase_order");
     }
 
     private static String URL = "jdbc:mysql://192.168.10.205:3306/lxzl_erp?useUnicode=true&amp;characterEncoding=UTF-8";
@@ -153,6 +153,9 @@ public class MyTest {
         xmlSb.append("\t<sql id=\"set_column_sql\">\n");
         xmlSb.append("\t\t<set>\n");
         for(NameAndType nameAndType : nameAndTypeList){
+            if("id".equals(nameAndType)){
+                continue;
+            }
             xmlSb.append("\t\t\t<if test=\""+nameAndType.trueDoName+" != null\">\n");
             xmlSb.append("\t\t\t\t"+nameAndType.sqlName+" = #{"+nameAndType.trueDoName+",jdbcType="+nameAndType.sqlType+"},\n");
             xmlSb.append("\t\t\t</if>\n");
