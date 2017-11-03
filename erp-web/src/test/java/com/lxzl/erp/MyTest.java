@@ -131,7 +131,7 @@ public class MyTest {
         xmlSb.append("\t\twhere "+simpleSb.toString()+".id = #{id, jdbcType=INTEGER} and data_status = 1 \n");
         xmlSb.append("\t</select>\n\n");
 
-        xmlSb.append("\t<select id=\"listCount\" resultMap=\"java.lang.Integer\" parameterType=\"map\">\n");
+        xmlSb.append("\t<select id=\"listCount\" resultType=\"java.lang.Integer\" parameterType=\"map\">\n");
         xmlSb.append("\t\tselect count("+simpleSb.toString()+".id) from "+table.sqlTableName+ " "+simpleSb.toString()+" \n");
         xmlSb.append("\t\t<where>\n");
         xmlSb.append("\t\t\t<if test=\"true\">\n");
