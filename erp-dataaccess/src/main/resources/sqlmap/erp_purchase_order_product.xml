@@ -7,7 +7,7 @@
 		<result column="purchase_order_id" jdbcType="INTEGER" property="purchaseOrderId" />
 		<result column="product_id" jdbcType="INTEGER" property="productId" />
 		<result column="product_name" jdbcType="VARCHAR" property="productName" />
-		<result column="product_mode_snapshot" jdbcType="VARCHAR" property="productModeSnapshot" />
+		<result column="product_snapshot" jdbcType="VARCHAR" property="productSnapshot" />
 		<result column="product_sku_id" jdbcType="INTEGER" property="productSkuId" />
 		<result column="product_count" jdbcType="INTEGER" property="productCount" />
 		<result column="product_amount" jdbcType="DECIMAL" property="productAmount" />
@@ -19,7 +19,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		epop.id,epop.purchase_order_id,epop.product_id,epop.product_name,epop.product_mode_snapshot,epop.product_sku_id,epop.product_count,epop.product_amount,epop.remark,epop.create_time,epop.create_user,epop.update_time,epop.update_user
+		epop.id,epop.purchase_order_id,epop.product_id,epop.product_name,epop.product_snapshot,epop.product_sku_id,epop.product_count,epop.product_amount,epop.remark,epop.create_time,epop.create_user,epop.update_time,epop.update_user
 	</sql>
 
 	<select id="findById" resultMap="PurchaseOrderProductDO" parameterType="java.lang.Integer">
@@ -62,8 +62,8 @@
 			<if test="productName != null">
 				product_name = #{productName,jdbcType=VARCHAR},
 			</if>
-			<if test="productModeSnapshot != null">
-				product_mode_snapshot = #{productModeSnapshot,jdbcType=VARCHAR},
+			<if test="productSnapshot != null">
+				product_snapshot = #{productSnapshot,jdbcType=VARCHAR},
 			</if>
 			<if test="productSkuId != null">
 				product_sku_id = #{productSkuId,jdbcType=INTEGER},

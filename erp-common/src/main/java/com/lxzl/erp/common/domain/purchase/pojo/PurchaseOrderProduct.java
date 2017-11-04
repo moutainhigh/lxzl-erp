@@ -10,9 +10,9 @@ public class PurchaseOrderProduct implements Serializable {
 
 	private Integer purchaseOrderProductId;   //唯一标识
 	private Integer purchaseOrderId;   //采购单ID
-	private Integer productId;   //商品ID，冗余
+	private Integer productId;   //商品ID冗余
 	private String productName;   //商品名称冗余
-	private String productModeSnapshot;   //商品冗余信息，防止商品修改留存快照
+	private String productSnapshot;   //商品冗余信息，防止商品修改留存快照
 	private Integer productSkuId;   //商品SKU ID
 	private Integer productCount;   //商品总数
 	private BigDecimal productAmount;   //商品单价
@@ -55,12 +55,12 @@ public class PurchaseOrderProduct implements Serializable {
 		this.productName = productName;
 	}
 
-	public String getProductModeSnapshot(){
-		return productModeSnapshot;
+	public String getProductSnapshot() {
+		return productSnapshot;
 	}
 
-	public void setProductModeSnapshot(String productModeSnapshot){
-		this.productModeSnapshot = productModeSnapshot;
+	public void setProductSnapshot(String productSnapshot) {
+		this.productSnapshot = productSnapshot;
 	}
 
 	public Integer getProductSkuId(){

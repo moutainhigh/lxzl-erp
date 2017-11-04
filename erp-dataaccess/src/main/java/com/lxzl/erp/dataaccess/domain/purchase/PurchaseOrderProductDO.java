@@ -1,7 +1,6 @@
 package com.lxzl.erp.dataaccess.domain.purchase;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import java.util.Date;
 import java.math.BigDecimal;
 
 public class PurchaseOrderProductDO  extends BaseDO {
@@ -10,7 +9,7 @@ public class PurchaseOrderProductDO  extends BaseDO {
 	private Integer purchaseOrderId;
 	private Integer productId;
 	private String productName;
-	private String productModeSnapshot;
+	private String productSnapshot;
 	private Integer productSkuId;
 	private Integer productCount;
 	private BigDecimal productAmount;
@@ -48,12 +47,12 @@ public class PurchaseOrderProductDO  extends BaseDO {
 		this.productName = productName;
 	}
 
-	public String getProductModeSnapshot(){
-		return productModeSnapshot;
+	public String getProductSnapshot() {
+		return productSnapshot;
 	}
 
-	public void setProductModeSnapshot(String productModeSnapshot){
-		this.productModeSnapshot = productModeSnapshot;
+	public void setProductSnapshot(String productSnapshot) {
+		this.productSnapshot = productSnapshot;
 	}
 
 	public Integer getProductSkuId(){

@@ -32,6 +32,8 @@ public class PurchaseOrder implements Serializable {
     @In(value = {CommonConstant.YES,CommonConstant.NO},message = ErrorCode.IS_INVOICE_VALUE_ERROR,groups = {AddGroup.class})
     private Integer isNew;   //是否全新机
     private BigDecimal purchaseOrderAmountTotal;   //采购单总价
+    private BigDecimal purchaseOrderAmountReal;   //采购单实收
+    private BigDecimal purchaseOrderAmountStatement;   //采购单结算金额
     private Integer purchaseOrderStatus;   //采购单状态，0待采购，1部分采购，2全部采购
     private Integer commitStatus;   //提交状态，0未提交，1已提交
     private Date deliveryTime;   //发货时间
@@ -111,6 +113,22 @@ public class PurchaseOrder implements Serializable {
 
     public void setPurchaseOrderAmountTotal(BigDecimal purchaseOrderAmountTotal){
         this.purchaseOrderAmountTotal = purchaseOrderAmountTotal;
+    }
+
+    public BigDecimal getPurchaseOrderAmountReal() {
+        return purchaseOrderAmountReal;
+    }
+
+    public void setPurchaseOrderAmountReal(BigDecimal purchaseOrderAmountReal) {
+        this.purchaseOrderAmountReal = purchaseOrderAmountReal;
+    }
+
+    public BigDecimal getPurchaseOrderAmountStatement() {
+        return purchaseOrderAmountStatement;
+    }
+
+    public void setPurchaseOrderAmountStatement(BigDecimal purchaseOrderAmountStatement) {
+        this.purchaseOrderAmountStatement = purchaseOrderAmountStatement;
     }
 
     public Integer getCommitStatus() {
