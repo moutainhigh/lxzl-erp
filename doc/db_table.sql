@@ -42,7 +42,7 @@ CREATE TABLE `erp_role` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='角色表';
+) ENGINE=InnoDB AUTO_INCREMENT=600001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='角色表';
 
 DROP TABLE if exists `erp_user_role`;
 CREATE TABLE `erp_user_role` (
@@ -732,8 +732,8 @@ CREATE TABLE `erp_purchase_order` (
   `is_invoice` int(11) NOT NULL COMMENT '是否有发票，0否1是',
   `is_new` int(11) NOT NULL COMMENT '是否全新机',
   `purchase_order_amount_total` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '采购单总价',
-  `purchase_order_amount_real` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '采购单实收',
-  `purchase_order_amount_statement` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '采购单结算金额',
+  `purchase_order_amount_real` decimal(10,2) COMMENT '采购单实收',
+  `purchase_order_amount_statement` decimal(10,2) COMMENT '采购单结算金额',
   `purchase_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '采购单状态，0待采购，1部分采购，2全部采购',
   `commit_status` int(11) NOT NULL DEFAULT '0' COMMENT '提交状态，0未提交，1已提交',
   `delivery_time` datetime DEFAULT NULL COMMENT '发货时间',
