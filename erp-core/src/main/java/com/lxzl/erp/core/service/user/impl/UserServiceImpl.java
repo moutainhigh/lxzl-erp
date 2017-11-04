@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.user.LoginParam;
+import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.core.service.user.UserRoleService;
@@ -52,9 +53,6 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     @Autowired
     private DepartmentMapper departmentMapper;
 
-    @Autowired
-    private UserDepartmentMapper userDepartmentMapper;
-
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, User> login(LoginParam loginParam, String ip) {
@@ -64,12 +62,11 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             result.setErrorCode(ErrorCode.USER_NAME_NOT_FOUND);
         } else if (userDO.getIsDisabled().equals(CommonConstant.COMMON_CONSTANT_YES)) {
             result.setErrorCode(ErrorCode.USER_DISABLE);
-        } else if (userDO.getIsActivated().equals(CommonConstant.COMMON_CONSTANT_YES)) {
+        } else if (userDO.getIsActivated().equals(CommonConstant.COMMON_CONSTANT_NO)) {
             result.setErrorCode(ErrorCode.USER_NOT_ACTIVATED);
         } else if (!userDO.getPassword().equals(generateMD5Password(userDO.getUserName(), loginParam.getPassword(), ApplicationConfig.authKey))) {
             result.setErrorCode(ErrorCode.USER_PASSWORD_ERROR);
         } else {
-            userDO.setRoleList(userRoleMapper.findRoleListByUserId(userDO.getId()));
             User user = UserConverter.convert(userDO);
             userDO.setLastLoginIp(ip);
             userDO.setLastLoginTime(new Date());
@@ -93,16 +90,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             return result;
         }
         userDO = UserConverter.convert(user);
-        List<Integer> roleIdList = user.getRoleList();
+        List<Role> roleList = user.getRoleList();
         Map<Integer, String> finalRoleIdMap = new HashMap<Integer, String>();
-        String validResult = validRoleIdList(roleIdList, finalRoleIdMap);
-        if (!ErrorCode.SUCCESS.equals(validResult)) {
-            result.setErrorCode(validResult);
-            return result;
-        }
-        List<Integer> departmentIdList = user.getDepartmentList();
-        Map<Integer, String> finalDepartmentIdMap = new HashMap<Integer, String>();
-        validResult = validDepartmentIdList(departmentIdList, finalDepartmentIdMap);
+        String validResult = validRoleIdList(roleList, finalRoleIdMap);
         if (!ErrorCode.SUCCESS.equals(validResult)) {
             result.setErrorCode(validResult);
             return result;
@@ -116,7 +106,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             userDO.setIsActivated(user.getIsActivated());
         }
         if (userDO.getIsDisabled() == null) {
-            userDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);
+            userDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
         } else {
             userDO.setIsDisabled(user.getIsDisabled());
         }
@@ -128,7 +118,6 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         userDO.setUpdateTime(currentTime);
         userMapper.save(userDO);
         saveRoleMap(userDO, finalRoleIdMap, currentTime, loginUser);
-        saveDepartmentMap(userDO, finalDepartmentIdMap, currentTime, loginUser);
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(userDO.getId());
@@ -153,27 +142,12 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         }
     }
 
-    private void saveDepartmentMap(UserDO userDO, Map<Integer, String> finalDepartmentIdMap, Date currentTime, User loginUser) {
-        for (Integer departmentId : finalDepartmentIdMap.keySet()) {
-            if (departmentId != null) {
-                UserDepartmentDO userDepartmentDO = new UserDepartmentDO();
-                userDepartmentDO.setUserId(userDO.getId());
-                userDepartmentDO.setDepartmentId(departmentId);
-                userDepartmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                userDepartmentDO.setCreateTime(currentTime);
-                userDepartmentDO.setUpdateTime(currentTime);
-                userDepartmentDO.setCreateUser(loginUser.getUserId().toString());
-                userDepartmentDO.setUpdateUser(loginUser.getUserId().toString());
-                userDepartmentMapper.save(userDepartmentDO);
-            }
-        }
-    }
-
-    private String validRoleIdList(List<Integer> roleIdList, Map<Integer, String> finalRoleIdMap) {
-        if (roleIdList == null || roleIdList.size() == 0) {
+    private String validRoleIdList(List<Role> roleList, Map<Integer, String> finalRoleIdMap) {
+        if (roleList == null || roleList.size() == 0) {
             return ErrorCode.USER_ROLE_NOT_NULL;
         }
-        for (Integer roleId : roleIdList) {
+        for (Role role : roleList) {
+            Integer roleId = role.getRoleId();
             if (roleId != null) {
                 RoleDO roleDO = roleMapper.findByMapId(roleId);
                 if (roleDO == null) {
@@ -223,16 +197,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         }
         userDO = UserConverter.convert(user);
 
-        List<Integer> roleIdList = user.getRoleList();
+        List<Role> roleList = user.getRoleList();
         Map<Integer, String> finalRoleIdMap = new HashMap<Integer, String>();
-        String validResult = validRoleIdList(roleIdList, finalRoleIdMap);
-        if (!ErrorCode.SUCCESS.equals(validResult)) {
-            result.setErrorCode(validResult);
-            return result;
-        }
-        List<Integer> departmentIdList = user.getDepartmentList();
-        Map<Integer, String> finalDepartmentIdMap = new HashMap<Integer, String>();
-        validResult = validDepartmentIdList(departmentIdList, finalDepartmentIdMap);
+        String validResult = validRoleIdList(roleList, finalRoleIdMap);
         if (!ErrorCode.SUCCESS.equals(validResult)) {
             result.setErrorCode(validResult);
             return result;
@@ -279,57 +246,13 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
                 //标记删除的做删除操作
                 if (CommonConstant.DATA_STATUS_DELETE.equals(modifyRoleIdMap.get(roleId))) {
                     userRoleDO = oldRoleIdMap.get(roleId);
+                    userRoleDO.setCreateUser(null);
+                    userRoleDO.setUpdateUser(loginUser.getUserId().toString());
                     userRoleDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                     userRoleMapper.update(userRoleDO);
                 }
             }
         }
-
-        Map<Integer, Integer> modifyDepartmentIdMap = new HashMap<Integer, Integer>();
-        List<UserDepartmentDO> oldUserDepartmentList = userDepartmentMapper.findListByUserId(user.getUserId());
-        Map<Integer, UserDepartmentDO> oldDepartmentIdMap = new HashMap<>();
-        for (UserDepartmentDO userDepartmentDO : oldUserDepartmentList) {
-            oldDepartmentIdMap.put(userDepartmentDO.getDepartmentId(), userDepartmentDO);
-        }
-        for (Integer oldDepartmentId : oldDepartmentIdMap.keySet()) {
-            //新的角色列表中找不到原角色列表中的某角色，则标记删除
-            if (finalDepartmentIdMap.get(oldDepartmentId) == null) {
-                modifyDepartmentIdMap.put(oldDepartmentId, CommonConstant.DATA_STATUS_DELETE);
-            }
-        }
-        for (Integer newDepartmentId : finalDepartmentIdMap.keySet()) {
-            //原角色列表中找不到新角色列表中的某角色，则标记新增
-            if (oldDepartmentIdMap.get(newDepartmentId) == null) {
-                modifyDepartmentIdMap.put(newDepartmentId, CommonConstant.DATA_STATUS_ENABLE);
-            }
-        }
-
-
-        for (Integer departmentId : modifyDepartmentIdMap.keySet()) {
-            UserDepartmentDO userDepartmentDO = null;
-            if (departmentId != null) {
-                //标记新增的做新增操作
-                if (CommonConstant.DATA_STATUS_ENABLE.equals(modifyDepartmentIdMap.get(departmentId))) {
-                    userDepartmentDO = new UserDepartmentDO();
-                    userDepartmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                    userDepartmentDO.setUserId(userDO.getId());
-                    userDepartmentDO.setDepartmentId(departmentId);
-                    userDepartmentDO.setCreateTime(currentTime);
-                    userDepartmentDO.setUpdateTime(currentTime);
-                    userDepartmentDO.setCreateUser(loginUser.getUserId().toString());
-                    userDepartmentDO.setUpdateUser(loginUser.getUserId().toString());
-                    userDepartmentMapper.save(userDepartmentDO);
-                }
-                //标记删除的做删除操作
-                if (CommonConstant.DATA_STATUS_DELETE.equals(modifyDepartmentIdMap.get(departmentId))) {
-                    userDepartmentDO = oldDepartmentIdMap.get(departmentId);
-                    userDepartmentDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                    userDepartmentMapper.update(userDepartmentDO);
-                }
-            }
-        }
-
-
 
         result.setResult(userDO.getId());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -370,11 +293,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             result.setErrorCode(ErrorCode.USER_NOT_EXISTS);
             return result;
         }
-        List<UserRoleDO> roleDOList = userRoleMapper.findListByUserId(userId);
-
-        List<UserDepartmentDO> userDepartmentDOList = userDepartmentMapper.findListByUserId(userId);
-        userDO.setUserRoleList(roleDOList);
-        userDO.setUserDepartmentList(userDepartmentDOList);
+        List<RoleDO> roleDOList = userRoleMapper.findRoleListByUserId(userId);
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(UserConverter.convert(userDO));

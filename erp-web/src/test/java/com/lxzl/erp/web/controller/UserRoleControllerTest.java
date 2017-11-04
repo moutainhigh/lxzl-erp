@@ -116,6 +116,7 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void getRoleMenuList() throws Exception {
+        TestResult result = getJsonTestResult("/menu/getMenu",null);
     }
 
     @Test

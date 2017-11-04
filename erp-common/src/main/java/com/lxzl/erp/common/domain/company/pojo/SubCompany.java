@@ -7,18 +7,18 @@ import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.io.Serializable;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SubCompany implements Serializable {
 
     private Integer subCompanyId;
-
     @NotEmpty(message = ErrorCode.SUB_COMPANY_NAME_NOT_NULL , groups = {AddGroup.class})
     private String subCompanyName;
-
     private Integer dataStatus;
-
     private String remark;
+
+    private List<Department> departmentList;
 
     public Integer getSubCompanyId() {
         return subCompanyId;
@@ -52,4 +52,11 @@ public class SubCompany implements Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
+    public List<Department> getDepartmentList() {
+        return departmentList;
+    }
+
+    public void setDepartmentList(List<Department> departmentList) {
+        this.departmentList = departmentList;
+    }
 }

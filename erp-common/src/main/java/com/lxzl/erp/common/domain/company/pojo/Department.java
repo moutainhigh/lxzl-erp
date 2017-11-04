@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.company.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.user.pojo.Role;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -21,8 +22,7 @@ public class Department implements Serializable {
     private Date updateTime;   //添加时间
     private String updateUser;   //修改人
     private List<Department> children;
-
-
+    private List<Role> roleList;
 
     public Integer getDepartmentId() {
         return departmentId;
@@ -126,5 +126,13 @@ public class Department implements Serializable {
 
     public void setSubCompanyId(Integer subCompanyId) {
         this.subCompanyId = subCompanyId;
+    }
+
+    public List<Role> getRoleList() {
+        return roleList;
+    }
+
+    public void setRoleList(List<Role> roleList) {
+        this.roleList = roleList;
     }
 }
