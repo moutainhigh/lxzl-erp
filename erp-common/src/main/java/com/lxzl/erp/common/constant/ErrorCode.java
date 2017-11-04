@@ -50,6 +50,11 @@ public class ErrorCode {
     public static final String PRODUCT_SKU_PRICE_ERROR = "J200010";
     public static final String PRODUCT_SKU_COUNT_ERROR = "J200011";
 
+    public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
+    public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
+    public static final String WORKFLOW_LINK_EXISTS = "J800003";
+    public static final String WORKFLOW_LINK_NOT_EXISTS = "J800004";
+
     public static final String REMARK_PATTERN = "J900001";
     public static final String ID_NOT_NULL = "J900002";
     public static final String MONEY_MORE_THAN_ZERO = "J900003";
@@ -119,6 +124,11 @@ public class ErrorCode {
         MAP.put(PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS,"商品SKU不存在或发生变更");
         MAP.put(PRODUCT_SKU_PRICE_ERROR,"商品SKU价格填写不正确");
         MAP.put(PRODUCT_SKU_COUNT_ERROR,"商品SKU数量填写不正确");
+
+        MAP.put(WORKFLOW_TYPE_NOT_EXISTS,"工作流类型不存在");
+        MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE,"此工作流模板没有节点");
+        MAP.put(WORKFLOW_LINK_EXISTS,"此单工作流已经存在");
+        MAP.put(WORKFLOW_LINK_NOT_EXISTS,"此单工作流已经存在");
 
         MAP.put(REMARK_PATTERN,"备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL,"ID不能为空");

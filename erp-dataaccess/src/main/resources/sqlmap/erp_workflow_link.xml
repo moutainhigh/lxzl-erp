@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper">
+
+	<resultMap id="WorkflowLinkDO" type="com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="workflow_type" jdbcType="INTEGER" property="workflowType" />
+		<result column="workflow_template_id" jdbcType="INTEGER" property="workflowTemplateId" />
+		<result column="workflow_refer_id" jdbcType="INTEGER" property="workflowReferId" />
+		<result column="workflow_step" jdbcType="INTEGER" property="workflowStep" />
+		<result column="workflow_last_step" jdbcType="INTEGER" property="workflowLastStep" />
+		<result column="workflow_current_node_id" jdbcType="INTEGER" property="workflowCurrentNodeId" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<collection property="workflowLinkDetailDOList" resultMap="WorkflowLinkDetailDO"/>
+	</resultMap>
+
+	<resultMap id="WorkflowLinkDetailDO" type="com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDetailDO">
+		<id column="detail_id" jdbcType="INTEGER" property="id" />
+		<result column="detail_workflow_link_id" jdbcType="INTEGER" property="workflowLinkId" />
+		<result column="detail_workflow_refer_id" jdbcType="INTEGER" property="workflowReferId" />
+		<result column="detail_workflow_step" jdbcType="INTEGER" property="workflowStep" />
+		<result column="detail_workflow_current_node_id" jdbcType="INTEGER" property="workflowCurrentNodeId" />
+		<result column="detail_workflow_previous_node_id" jdbcType="INTEGER" property="workflowPreviousNodeId" />
+		<result column="detail_workflow_next_node_id" jdbcType="INTEGER" property="workflowNextNodeId" />
+		<result column="detail_verify_user" jdbcType="INTEGER" property="verifyUser" />
+		<result column="detail_verify_time" jdbcType="TIMESTAMP" property="verifyTime" />
+		<result column="detail_verify_status" jdbcType="INTEGER" property="verifyStatus" />
+		<result column="detail_verify_opinion" jdbcType="VARCHAR" property="verifyOpinion" />
+		<result column="detail_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="detail_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="detail_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="detail_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="detail_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="detail_update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ewl.id,ewl.workflow_type,ewl.workflow_template_id,ewl.workflow_refer_id,ewl.workflow_step,ewl.workflow_last_step,ewl.workflow_current_node_id,ewl.data_status,ewl.remark,ewl.create_time,ewl.create_user,ewl.update_time,ewl.update_user
+	</sql>
+
+	<sql id="detail_column_List">
+		ewld.id as detail_id,ewld.workflow_link_id as detail_workflow_link_id,ewld.workflow_refer_id as detail_workflow_refer_id,ewld.workflow_step as detail_workflow_step,ewld.workflow_current_node_id as detail_workflow_current_node_id,ewld.workflow_previous_node_id as detail_workflow_previous_node_id,ewld.workflow_next_node_id as detail_workflow_next_node_id,ewld.verify_user as detail_verify_user,ewld.verify_time as detail_verify_time,ewld.verify_status as detail_verify_status,ewld.verify_opinion as detail_verify_opinion,ewld.data_status as detail_data_status,ewld.remark as detail_remark,ewld.create_time as detail_create_time,ewld.create_user as detail_create_user,ewld.update_time as detail_update_time,ewld.update_user as detail_update_user
+	</sql>
+
+	<select id="findById" resultMap="WorkflowLinkDO" parameterType="java.lang.Integer">
+		select <include refid="column_List"/> from erp_workflow_link ewl 
+		where ewl.id = #{id, jdbcType=INTEGER} and data_status = 1 
+	</select>
+
+	<select id="findByWorkflowTypeAndReferId" resultMap="WorkflowLinkDO" parameterType="map">
+		select link.*,<include refid="detail_column_List"/> from
+		(
+			select <include refid="column_List"/> from erp_workflow_link ewl
+			where ewl.workflow_type = #{workflowType, jdbcType=INTEGER} and ewl.workflow_refer_id = #{referId, jdbcType=INTEGER} and data_status = 1
+		) link left join erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
+		order by ewld.id
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		select count(ewl.id) from erp_workflow_link ewl 
+		<where>
+			<if test="true">
+				and ewl.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="WorkflowLinkDO" parameterType="map">
+		select <include refid="column_List"/> from erp_workflow_link ewl 
+		<where>
+			<if test="true">
+				and ewl.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="workflowType != null">
+				workflow_type = #{workflowType,jdbcType=INTEGER},
+			</if>
+			<if test="workflowTemplateId != null">
+				workflow_template_id = #{workflowTemplateId,jdbcType=INTEGER},
+			</if>
+			<if test="workflowReferId != null">
+				workflow_refer_id = #{workflowReferId,jdbcType=INTEGER},
+			</if>
+			<if test="workflowStep != null">
+				workflow_step = #{workflowStep,jdbcType=INTEGER},
+			</if>
+			<if test="workflowLastStep != null">
+				workflow_last_step = #{workflowLastStep,jdbcType=INTEGER},
+			</if>
+			<if test="workflowCurrentNodeId != null">
+				workflow_current_node_id = #{workflowCurrentNodeId,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO">
+		insert into erp_workflow_link <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO">
+		update erp_workflow_link <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
