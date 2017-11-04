@@ -9,6 +9,7 @@ import java.util.Map;
 public interface DepartmentMapper extends BaseMysqlDAO<DepartmentDO> {
 
 	List<DepartmentDO> listPage(@Param("maps") Map<String, Object> paramMap);
-
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+	List<DepartmentDO> getRoleList(@Param("maps") Map<String, Object> paramMap);
 }

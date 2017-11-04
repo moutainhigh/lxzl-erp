@@ -26,4 +26,11 @@ public class CompanyTest extends ERPUnTransactionalTest {
         DepartmentQueryParam departmentQueryParam = new DepartmentQueryParam();
         TestResult result = getJsonTestResult("/company/getDepartmentList",departmentQueryParam);
     }
+
+    @Test
+    public void getCompanyDepartmentTree() throws Exception {
+        DepartmentQueryParam departmentQueryParam = new DepartmentQueryParam();
+        departmentQueryParam.setSubCompanyId(1);
+        TestResult result = getJsonTestResult("/company/getCompanyDepartmentTree",departmentQueryParam);
+    }
 }

@@ -35,7 +35,7 @@ public class ErrorCode {
     public static final String USER_NOT_NULL = "J100016";
     public static final String ACTIVE_USER_ID_NOT_NULL = "J100017";
     public static final String SUB_COMPANY_NAME_NOT_NULL = "J100018";
-    public static final String USER_DEPARTMENT_NOT_NULL = "J100019";
+    public static final String DEPARTMENT_NOT_EXISTS = "J100019";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -105,7 +105,7 @@ public class ErrorCode {
         MAP.put(ROLE_NAME_NOT_NULL,"角色名称不能为空");
         MAP.put(ROLE_HAVE_USER,"角色包含用户");
         MAP.put(SUB_COMPANY_NAME_NOT_NULL,"子公司名称不能为空");
-        MAP.put(USER_DEPARTMENT_NOT_NULL,"用户部门不能为空");
+        MAP.put(DEPARTMENT_NOT_EXISTS,"部门不存在");
 
         MAP.put(PRODUCT_ID_NOT_NULL,"商品ID不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL,"商品名称不能为空");

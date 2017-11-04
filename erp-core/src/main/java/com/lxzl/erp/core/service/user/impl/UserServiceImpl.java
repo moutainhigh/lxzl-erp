@@ -163,26 +163,6 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         return ErrorCode.SUCCESS;
     }
 
-    private String validDepartmentIdList(List<Integer> departmentList, Map<Integer, String> finalDepartmentIdMap) {
-        if (departmentList == null || departmentList.size() == 0) {
-            return ErrorCode.USER_DEPARTMENT_NOT_NULL;
-        }
-        for (Integer departmentId : departmentList) {
-            if (departmentId != null) {
-                DepartmentDO departmentDO = departmentMapper.findById(departmentId);
-                if (departmentDO == null) {
-                    return ErrorCode.DEPARTMENT_NOT_NULL;
-                } else if (finalDepartmentIdMap.get(departmentId) == null) {
-                    finalDepartmentIdMap.put(departmentId, "");
-                }
-            }
-        }
-        if (finalDepartmentIdMap.size() == 0) {
-            return ErrorCode.USER_DEPARTMENT_NOT_NULL;
-        }
-        return ErrorCode.SUCCESS;
-    }
-
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> updateUser(User user) {

@@ -18,6 +18,7 @@ public class CompanyConverter {
         SubCompany subCompany = new SubCompany();
         BeanUtils.copyProperties(subCompanyDO,subCompany);
         subCompany.setSubCompanyId(subCompanyDO.getId());
+        subCompany.setDepartmentList(DepartmentConverter.convertDepartmentDOList(subCompanyDO.getDepartmentDOList()));
         return subCompany;
     }
     public static List<SubCompany> convertSubCompanyDOList(List<SubCompanyDO> subCompanyDOList){

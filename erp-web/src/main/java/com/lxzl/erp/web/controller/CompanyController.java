@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.company.SubCompanyQueryParam;
+import com.lxzl.erp.common.domain.company.pojo.CompanyDepartmentTree;
 import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
@@ -45,6 +46,12 @@ public class CompanyController {
     @RequestMapping(value = "getDepartmentList", method = RequestMethod.POST)
     public Result getDepartmentList(@RequestBody DepartmentQueryParam departmentQueryParam) {
         ServiceResult<String, List<Department>> serviceResult = companyService.getDepartmentList(departmentQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "getCompanyDepartmentTree", method = RequestMethod.POST)
+    public Result getCompanyDepartmentTree(@RequestBody DepartmentQueryParam departmentQueryParam) {
+        ServiceResult<String, CompanyDepartmentTree> serviceResult = companyService.getCompanyDepartmentTree(departmentQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

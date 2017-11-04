@@ -7,8 +7,9 @@ import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SubCompanyMapper extends BaseMysqlDAO<SubCompanyDO> {
-    List<SubCompanyDO> listPage(@Param("subCompanyQueryParam") SubCompanyQueryParam subCompanyQueryParam, @Param("pageQuery") PageQuery pageQuery);
-    Integer listCount(@Param("subCompanyQueryParam") SubCompanyQueryParam subCompanyQueryParam, @Param("pageQuery") PageQuery pageQuery);
+    List<SubCompanyDO> listPage(@Param("maps") Map<String, Object> paramMap);
+    Integer listCount(@Param("maps") Map<String, Object> paramMap);
 }

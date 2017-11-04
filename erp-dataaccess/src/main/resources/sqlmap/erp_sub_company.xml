@@ -5,6 +5,10 @@
     <resultMap id="SubCompanyDO" type="com.lxzl.erp.dataaccess.domain.company.SubCompanyDO">
         <id column="id" jdbcType="INTEGER" property="id" />
         <result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
+        <result column="province" jdbcType="INTEGER" property="province" />
+        <result column="city" jdbcType="INTEGER" property="city" />
+        <result column="district" jdbcType="INTEGER" property="district" />
+        <result column="data_order" jdbcType="INTEGER" property="dataOrder" />
         <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -14,14 +18,30 @@
     </resultMap>
 
     <sql id="column_List">
-        esc.id,esc.sub_company_name,esc.data_status,esc.remark,esc.create_time,esc.create_user,esc.update_time,esc.update_user
+        esc.id,esc.sub_company_name,esc.province,esc.city,esc.district,esc.data_order,esc.data_status,esc.remark,esc.create_time,esc.create_user,esc.update_time,esc.update_user
     </sql>
 
+    <select id="findById" resultMap="SubCompanyDO" parameterType="java.lang.Integer">
+        select <include refid="column_List"/> from erp_sub_company esc
+        where esc.id = #{id, jdbcType=INTEGER} and data_status = 1
+    </select>
 
     <sql id="set_column_sql">
         <set>
             <if test="subCompanyName != null">
                 sub_company_name = #{subCompanyName,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null">
+                province = #{province,jdbcType=INTEGER},
+            </if>
+            <if test="city != null">
+                city = #{city,jdbcType=INTEGER},
+            </if>
+            <if test="district != null">
+                district = #{district,jdbcType=INTEGER},
+            </if>
+            <if test="dataOrder != null">
+                data_order = #{dataOrder,jdbcType=INTEGER},
             </if>
             <if test="dataStatus != null">
                 data_status = #{dataStatus,jdbcType=INTEGER},
@@ -59,16 +79,27 @@
     <select id="listCount" resultType="java.lang.Integer" parameterType="map">
         select count(1) from erp_sub_company esc
         <where>
-            <if test="subCompanyQueryParam.subCompanyName!=null and subCompanyQueryParam.subCompanyName!=''">
-                and esc.sub_company_name like '%${subCompanyQueryParam.subCompanyName}%'
+            <if test="maps.subCompanyQueryParam != null &amp;&amp; maps.subCompanyQueryParam.subCompanyId != null &amp;&amp; maps.subCompanyQueryParam.subCompanyId != ''">
+                and esc.id = #{maps.departmentQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.subCompanyQueryParam != null &amp;&amp; maps.subCompanyQueryParam.subCompanyName!=null &amp;&amp; maps.subCompanyQueryParam.subCompanyName!=''">
+                and esc.sub_company_name like '%${maps.subCompanyQueryParam.subCompanyName}%'
             </if>
         </where>
 
     </select>
     <select id="listPage" resultMap="SubCompanyDO" parameterType="map">
         select <include refid="column_List"/> from erp_sub_company esc
+        <where>
+            <if test="maps.subCompanyQueryParam != null &amp;&amp; maps.subCompanyQueryParam.subCompanyId != null &amp;&amp; maps.subCompanyQueryParam.subCompanyId != ''">
+                and esc.id = #{maps.subCompanyQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.subCompanyQueryParam != null &amp;&amp; maps.subCompanyQueryParam.subCompanyName!=null &amp;&amp; maps.subCompanyQueryParam.subCompanyName!=''">
+                and esc.sub_company_name like '%${maps.subCompanyQueryParam.subCompanyName}%'
+            </if>
+        </where>
         order by esc.create_time desc
-        limit #{pageQuery.start},#{pageQuery.pageSize}
+        limit #{maps.start},#{maps.pageSize}
     </select>
 
 </mapper>
