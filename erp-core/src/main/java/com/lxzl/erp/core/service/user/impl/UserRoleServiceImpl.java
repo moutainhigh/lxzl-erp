@@ -12,6 +12,7 @@ import com.lxzl.erp.common.domain.user.RoleMenuQueryParam;
 import com.lxzl.erp.common.domain.user.RoleQueryParam;
 import com.lxzl.erp.common.domain.user.UserRoleQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.*;
+import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.company.impl.support.CompanyConverter;
 import com.lxzl.erp.core.service.company.impl.support.DepartmentConverter;
 import com.lxzl.erp.core.service.user.UserRoleService;
@@ -156,16 +157,14 @@ public class UserRoleServiceImpl implements UserRoleService {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         String verifyCode = verifyOpRole(role);
-        if(!ErrorCode.SUCCESS.equals(verifyCode)){
+        if (!ErrorCode.SUCCESS.equals(verifyCode)) {
             result.setErrorCode(verifyCode);
             return result;
         }
         RoleDO roleDO = UserRoleConverter.convertRole(role);
         roleDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        if (loginUser != null) {
-            roleDO.setCreateUser(loginUser.getUserId().toString());
-            roleDO.setUpdateUser(loginUser.getUserId().toString());
-        }
+        roleDO.setCreateUser(loginUser.getUserId().toString());
+        roleDO.setUpdateUser(loginUser.getUserId().toString());
         roleDO.setCreateTime(new Date());
         roleDO.setUpdateTime(new Date());
         roleMapper.save(roleDO);
@@ -183,7 +182,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         String verifyCode = verifyOpRole(role);
-        if(!ErrorCode.SUCCESS.equals(verifyCode)){
+        if (!ErrorCode.SUCCESS.equals(verifyCode)) {
             result.setErrorCode(verifyCode);
             return result;
         }
@@ -213,7 +212,7 @@ public class UserRoleServiceImpl implements UserRoleService {
             return result;
         }
         RoleDO managementRoleDO = roleMapper.findByMapId(id);
-        if(managementRoleDO == null){
+        if (managementRoleDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
@@ -257,11 +256,12 @@ public class UserRoleServiceImpl implements UserRoleService {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         // 超级管理员不用赋权限
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        List<Integer> dbRecordList = userRoleMapper.findRoleIdListByUserId(userRole.getUserId());
+        List<RoleDO> roleList = userRoleMapper.findRoleListByUserId(userRole.getUserId());
+        Map<Integer, RoleDO> dbRoleMap = new HashMap<>();
+        dbRoleMap = ListUtil.listToMap(roleList, "id");
         if (userRole.getRoleList() != null && userRole.getRoleList().size() > 0) {
-            List<Integer> thisRoleList = new ArrayList<>();
             for (Role role : userRole.getRoleList()) {
-                thisRoleList.add(role.getRoleId());
+                dbRoleMap.remove(role.getRoleId());
                 UserRoleDO dbRecord = userRoleMapper.findUserRole(userRole.getUserId(), role.getRoleId());
                 if (dbRecord != null) {
                     continue;
@@ -278,18 +278,17 @@ public class UserRoleServiceImpl implements UserRoleService {
                 userRoleDO.setUpdateTime(new Date());
                 userRoleMapper.save(userRoleDO);
             }
-            dbRecordList.removeAll(thisRoleList);
-
         }
-            for (Integer roleId : dbRecordList) {
-                UserRoleDO userRoleDO = userRoleMapper.findUserRole(userRole.getUserId(), roleId);
-                userRoleDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                if (loginUser != null) {
-                    userRoleDO.setUpdateUser(loginUser.getUserId().toString());
-                }
-                userRoleDO.setUpdateTime(new Date());
-                userRoleMapper.update(userRoleDO);
+
+        for (Map.Entry<Integer, RoleDO> entry : dbRoleMap.entrySet()) {
+            UserRoleDO userRoleDO = userRoleMapper.findUserRole(userRole.getUserId(), entry.getKey());
+            userRoleDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            if (loginUser != null) {
+                userRoleDO.setUpdateUser(loginUser.getUserId().toString());
             }
+            userRoleDO.setUpdateTime(new Date());
+            userRoleMapper.update(userRoleDO);
+        }
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(userRole.getUserId());
@@ -299,17 +298,10 @@ public class UserRoleServiceImpl implements UserRoleService {
     @Override
     public ServiceResult<String, UserRole> getUserRoleList(UserRoleQueryParam param) {
         ServiceResult<String, UserRole> result = new ServiceResult<>();
-        List<Role> roleList = new ArrayList<>();
-
-        List<Integer> roleIdList = userRoleMapper.findRoleIdListByUserId(param.getUserId());
-        for (Integer roleId : roleIdList) {
-            roleList.add(UserRoleConverter.convertRoleDO(roleMapper.findByMapId(roleId)));
-        }
-
+        List<RoleDO> roleDOList = userRoleMapper.findRoleListByUserId(param.getUserId());
         UserRole userRole = new UserRole();
         userRole.setUserId(param.getUserId());
-        userRole.setRoleList(roleList);
-
+        userRole.setRoleList(UserRoleConverter.convertRoleDOList(roleDOList));
         result.setResult(userRole);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -404,13 +396,13 @@ public class UserRoleServiceImpl implements UserRoleService {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         List<Department> departmentList = roleDepartmentData.getDepartmentList();
         List<RoleDepartmentDataDO> oldList = roleDepartmentDataMapper.getRoleDepartmentDataListByRoleId(roleDepartmentData.getRoleId());
-        if(departmentList==null || departmentList.size()==0){
-            if(oldList!=null&&oldList.size()>0){
-                for(RoleDepartmentDataDO roleDepartmentDataDO : oldList){
-                    roleDepartmentDataMapper.deleteByRoleAndDepartment(roleDepartmentData.getRoleId(),roleDepartmentDataDO.getDepartmentId());
+        if (departmentList == null || departmentList.size() == 0) {
+            if (oldList != null && oldList.size() > 0) {
+                for (RoleDepartmentDataDO roleDepartmentDataDO : oldList) {
+                    roleDepartmentDataMapper.deleteByRoleAndDepartment(roleDepartmentData.getRoleId(), roleDepartmentDataDO.getDepartmentId());
                 }
                 result.setErrorCode(ErrorCode.SUCCESS);
-            }else{
+            } else {
                 result.setErrorCode(ErrorCode.DEPARTMENT_NOT_NULL);
             }
             return result;
@@ -418,12 +410,12 @@ public class UserRoleServiceImpl implements UserRoleService {
 
 
         Map<Integer, RoleDepartmentDataDO> oldMap = new HashMap<>();
-        for(RoleDepartmentDataDO roleDepartmentDataDO : oldList){
-            oldMap.put(roleDepartmentDataDO.getDepartmentId(),roleDepartmentDataDO);
+        for (RoleDepartmentDataDO roleDepartmentDataDO : oldList) {
+            oldMap.put(roleDepartmentDataDO.getDepartmentId(), roleDepartmentDataDO);
         }
         Map<Integer, Department> newMap = new HashMap<>();
-        for(Department department : departmentList){
-            newMap.put(department.getDepartmentId(),department);
+        for (Department department : departmentList) {
+            newMap.put(department.getDepartmentId(), department);
         }
         RoleDepartmentDataDO roleDepartmentDataDO = new RoleDepartmentDataDO();
         roleDepartmentDataDO.setRoleId(roleDepartmentData.getRoleId());
@@ -432,19 +424,19 @@ public class UserRoleServiceImpl implements UserRoleService {
         roleDepartmentDataDO.setUpdateUser(loginUser.getUserId().toString());
         roleDepartmentDataDO.setCreateTime(new Date());
         roleDepartmentDataDO.setUpdateTime(new Date());
-        for(Department department : departmentList){
+        for (Department department : departmentList) {
             //当前部门不在旧部门列表中，新增部门，在旧列表中，不处理
-            if(oldMap.containsKey(department.getDepartmentId())){
+            if (oldMap.containsKey(department.getDepartmentId())) {
                 continue;
-            }else{
+            } else {
                 roleDepartmentDataDO.setDepartmentId(department.getDepartmentId());
                 roleDepartmentDataMapper.save(roleDepartmentDataDO);
             }
         }
-        for(RoleDepartmentDataDO departmentDataDO : oldList){
+        for (RoleDepartmentDataDO departmentDataDO : oldList) {
             //旧部门不在新部门列表中，删除
-            if(!newMap.containsKey(departmentDataDO.getDepartmentId())){
-                roleDepartmentDataMapper.deleteByRoleAndDepartment(roleDepartmentData.getRoleId(),departmentDataDO.getDepartmentId());
+            if (!newMap.containsKey(departmentDataDO.getDepartmentId())) {
+                roleDepartmentDataMapper.deleteByRoleAndDepartment(roleDepartmentData.getRoleId(), departmentDataDO.getDepartmentId());
             }
         }
         result.setResult(roleDepartmentData.getRoleId());
@@ -469,13 +461,13 @@ public class UserRoleServiceImpl implements UserRoleService {
         List<RoleUserDataDO> oldList = roleUserDataMapper.getRoleUserDataListByActiveId(roleUserData.getActiveUserId());
 
         List<User> passiveUserList = roleUserData.getPassiveUserList();
-        if(passiveUserList==null || passiveUserList.size()==0){
-            if(oldList!=null&&oldList.size()>0){
-                for(RoleUserDataDO roleUserDataDO : oldList){
-                    roleUserDataMapper.deleteByActiveAndPassive(roleUserData.getActiveUserId(),roleUserDataDO.getPassiveUserId());
+        if (passiveUserList == null || passiveUserList.size() == 0) {
+            if (oldList != null && oldList.size() > 0) {
+                for (RoleUserDataDO roleUserDataDO : oldList) {
+                    roleUserDataMapper.deleteByActiveAndPassive(roleUserData.getActiveUserId(), roleUserDataDO.getPassiveUserId());
                 }
                 result.setErrorCode(ErrorCode.SUCCESS);
-            }else {
+            } else {
                 result.setErrorCode(ErrorCode.USER_NOT_NULL);
             }
             return result;
@@ -483,12 +475,12 @@ public class UserRoleServiceImpl implements UserRoleService {
 
 
         Map<Integer, RoleUserDataDO> oldMap = new HashMap<>();
-        for(RoleUserDataDO roleDepartmentDataDO : oldList){
-            oldMap.put(roleDepartmentDataDO.getPassiveUserId(),roleDepartmentDataDO);
+        for (RoleUserDataDO roleDepartmentDataDO : oldList) {
+            oldMap.put(roleDepartmentDataDO.getPassiveUserId(), roleDepartmentDataDO);
         }
         Map<Integer, User> newMap = new HashMap<>();
-        for(User user : passiveUserList){
-            newMap.put(user.getUserId(),user);
+        for (User user : passiveUserList) {
+            newMap.put(user.getUserId(), user);
         }
         RoleUserDataDO roleUserDataDO = new RoleUserDataDO();
         roleUserDataDO.setActiveUserId(roleUserData.getActiveUserId());
@@ -497,17 +489,17 @@ public class UserRoleServiceImpl implements UserRoleService {
         roleUserDataDO.setUpdateUser(loginUser.getUserId().toString());
         roleUserDataDO.setCreateTime(new Date());
         roleUserDataDO.setUpdateTime(new Date());
-        for(User user : passiveUserList){
-            if(oldMap.containsKey(user.getUserId())){
+        for (User user : passiveUserList) {
+            if (oldMap.containsKey(user.getUserId())) {
                 continue;
-            }else{
+            } else {
                 roleUserDataDO.setPassiveUserId(user.getUserId());
                 roleUserDataMapper.save(roleUserDataDO);
             }
         }
-        for(RoleUserDataDO userDataDO : oldList){
-            if(!newMap.containsKey(userDataDO.getPassiveUserId())){
-                roleUserDataMapper.deleteByActiveAndPassive(roleUserData.getActiveUserId(),userDataDO.getPassiveUserId());
+        for (RoleUserDataDO userDataDO : oldList) {
+            if (!newMap.containsKey(userDataDO.getPassiveUserId())) {
+                roleUserDataMapper.deleteByActiveAndPassive(roleUserData.getActiveUserId(), userDataDO.getPassiveUserId());
             }
         }
         result.setResult(roleUserData.getActiveUserId());
@@ -530,16 +522,16 @@ public class UserRoleServiceImpl implements UserRoleService {
         ServiceResult<String, RoleUserFinal> result = new ServiceResult<>();
         //获取用户【旧的】最终可观察用户列表
         List<RoleUserFinalDO> roleUserFinalList = roleUserFinalMapper.getFinalRoleUserData(activeUserId);
-        Map<Integer,String> oldMap = new HashMap();
-        for(RoleUserFinalDO roleUserFinalDO : roleUserFinalList){
-            oldMap.put(roleUserFinalDO.getPassiveUserId(),"");
+        Map<Integer, String> oldMap = new HashMap();
+        for (RoleUserFinalDO roleUserFinalDO : roleUserFinalList) {
+            oldMap.put(roleUserFinalDO.getPassiveUserId(), "");
         }
 
         //获取用户最【新的】最终可观察用户列表
         List<UserDO> userDOList = userMapper.getPassiveUserByUser(activeUserId);
-        Map<Integer,String> newMap = new HashMap();
-        for(UserDO userDO : userDOList){
-            newMap.put(userDO.getId(),"");
+        Map<Integer, String> newMap = new HashMap();
+        for (UserDO userDO : userDOList) {
+            newMap.put(userDO.getId(), "");
         }
         RoleUserFinalDO roleUserFinalDO = new RoleUserFinalDO();
         roleUserFinalDO.setActiveUserId(activeUserId);
@@ -548,8 +540,8 @@ public class UserRoleServiceImpl implements UserRoleService {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         roleUserFinalDO.setUpdateUser(loginUser.getUserId().toString());
         //旧列表有，新列表没有，数据库删除该条权限
-        for(RoleUserFinalDO old : roleUserFinalList){
-            if(!newMap.containsKey(old.getPassiveUserId())){
+        for (RoleUserFinalDO old : roleUserFinalList) {
+            if (!newMap.containsKey(old.getPassiveUserId())) {
                 roleUserFinalDO.setPassiveUserId(old.getPassiveUserId());
                 roleUserFinalMapper.deleteByActiveUserAadPassiveUser(roleUserFinalDO);
             }
@@ -558,8 +550,8 @@ public class UserRoleServiceImpl implements UserRoleService {
         roleUserFinalDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         roleUserFinalDO.setCreateTime(now);
         roleUserFinalDO.setCreateUser(loginUser.getUserId().toString());
-        for(UserDO user : userDOList){
-            if(!oldMap.containsKey(user.getId())){
+        for (UserDO user : userDOList) {
+            if (!oldMap.containsKey(user.getId())) {
                 roleUserFinalDO.setPassiveUserId(user.getId());
                 roleUserFinalMapper.save(roleUserFinalDO);
             }
@@ -583,24 +575,31 @@ public class UserRoleServiceImpl implements UserRoleService {
         if (role == null || StringUtil.isBlank(role.getRoleName())) {
             return ErrorCode.ROLE_NAME_NOT_NULL;
         }
+        if (role.getDepartmentId() == null) {
+            return ErrorCode.DEPARTMENT_ID_NOT_NULL;
+        }
+        DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
+        if (departmentDO == null) {
+            return ErrorCode.DEPARTMENT_NOT_EXISTS;
+        }
         return ErrorCode.SUCCESS;
     }
 
     @Override
-    public ServiceResult<String, CompanyRoleTree> getCompanyRoleTree(UserRoleQueryParam param){
+    public ServiceResult<String, CompanyRoleTree> getCompanyRoleTree(UserRoleQueryParam param) {
         ServiceResult<String, CompanyRoleTree> result = new ServiceResult<>();
         CompanyRoleTree roleTree = new CompanyRoleTree();
         List<SubCompany> subCompanyList = new ArrayList<>();
 
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("start",0);
-        paramMap.put("pageSize",Integer.MAX_VALUE);
+        paramMap.put("start", 0);
+        paramMap.put("pageSize", Integer.MAX_VALUE);
         List<SubCompanyDO> subCompanyDOList = subCompanyMapper.listPage(paramMap);
-        if(subCompanyDOList != null && !subCompanyDOList.isEmpty()){
-            for(SubCompanyDO subCompanyDO : subCompanyDOList){
+        if (subCompanyDOList != null && !subCompanyDOList.isEmpty()) {
+            for (SubCompanyDO subCompanyDO : subCompanyDOList) {
                 DepartmentQueryParam departmentQueryParam = new DepartmentQueryParam();
                 departmentQueryParam.setSubCompanyId(subCompanyDO.getId());
-                paramMap.put("departmentQueryParam",departmentQueryParam);
+                paramMap.put("departmentQueryParam", departmentQueryParam);
                 List<DepartmentDO> departmentDOList = departmentMapper.getRoleList(paramMap);
                 List<DepartmentDO> nodeList = DepartmentConverter.convertTree(departmentDOList);
                 subCompanyDO.setDepartmentDOList(nodeList);

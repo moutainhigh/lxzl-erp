@@ -16,9 +16,10 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addRole() throws Exception {
         Role role = new Role();
-        role.setRoleName("采购员");
-        role.setRoleDesc("负责采购");
-        role.setRemark("采购员角色");
+        role.setRoleName("市场专员");
+        role.setRoleDesc("市场拓展");
+        role.setRemark("市场类角色");
+        role.setDepartmentId(400007);
         TestResult result = getJsonTestResult("/userRole/add",role);
     }
 
@@ -48,24 +49,25 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
     @Test
     public void saveUserRole() throws Exception {
         UserRole userRole = new UserRole();
-        userRole.setUserId(1);
+        userRole.setUserId(500001);
 
         List<Role> roleList = new ArrayList<>();
-//        Role role = new Role();
-//        role.setRoleId(4);
-//        roleList.add(role);
-
+        Role role = new Role();
+        role.setRoleId(600001);
+        roleList.add(role);
+        Role role2 = new Role();
+        role2.setRoleId(600002);
+        roleList.add(role2);
         userRole.setRoleList(roleList);
 
         TestResult result = getJsonTestResult("/userRole/saveUserRole",userRole);
-
     }
 
     @Test
     public void getUserRoleList() throws Exception {
 
         UserRoleQueryParam userRoleQueryParam = new UserRoleQueryParam();
-        userRoleQueryParam.setUserId(1);
+        userRoleQueryParam.setUserId(500001);
         userRoleQueryParam.setPageNo(1);
         userRoleQueryParam.setPageSize(10);
         TestResult result = getJsonTestResult("/userRole/getUserRoleList",userRoleQueryParam);
