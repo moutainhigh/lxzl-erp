@@ -17,7 +17,7 @@ import java.util.List;
  * Time: 13:54.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RoleTree implements Serializable {
+public class CompanyRoleTree implements Serializable {
 
     private List<SubCompany> subCompanyList;
 

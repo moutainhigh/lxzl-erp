@@ -7,16 +7,24 @@ import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SubCompany implements Serializable {
-
-    private Integer subCompanyId;
+    private Integer subCompanyId;   //唯一标识
     @NotEmpty(message = ErrorCode.SUB_COMPANY_NAME_NOT_NULL , groups = {AddGroup.class})
-    private String subCompanyName;
-    private Integer dataStatus;
-    private String remark;
+    private String subCompanyName;   //子公司名称
+    private Integer province;   //省份ID，对应字典ID
+    private Integer city;   //城市ID，对应字典ID
+    private Integer district;   //区ID，对应字典ID
+    private Integer dataOrder;   //数据排序排序，越大排越前
+    private Integer dataStatus;   //状态：0不可用；1可用；2删除
+    private String remark;   //备注
+    private Date createTime;   //添加时间
+    private String createUser;   //添加人
+    private Date updateTime;   //添加时间
+    private String updateUser;   //修改人
 
     private List<Department> departmentList;
 
@@ -58,5 +66,69 @@ public class SubCompany implements Serializable {
 
     public void setDepartmentList(List<Department> departmentList) {
         this.departmentList = departmentList;
+    }
+
+    public Integer getProvince() {
+        return province;
+    }
+
+    public void setProvince(Integer province) {
+        this.province = province;
+    }
+
+    public Integer getCity() {
+        return city;
+    }
+
+    public void setCity(Integer city) {
+        this.city = city;
+    }
+
+    public Integer getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(Integer district) {
+        this.district = district;
+    }
+
+    public Integer getDataOrder() {
+        return dataOrder;
+    }
+
+    public void setDataOrder(Integer dataOrder) {
+        this.dataOrder = dataOrder;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getCreateUser() {
+        return createUser;
+    }
+
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser;
     }
 }

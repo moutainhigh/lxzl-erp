@@ -7,6 +7,7 @@ public class DepartmentQueryParam extends BasePageParam {
 
     private Integer departmentId;
     private String departmentName;
+    private Integer subCompanyId;
 
     public Integer getDepartmentId() {
         return departmentId;
@@ -22,5 +23,13 @@ public class DepartmentQueryParam extends BasePageParam {
 
     public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
+    }
+
+    public Integer getSubCompanyId() {
+        return subCompanyId;
+    }
+
+    public void setSubCompanyId(Integer subCompanyId) {
+        this.subCompanyId = subCompanyId;
     }
 }

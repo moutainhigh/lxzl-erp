@@ -120,6 +120,11 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
     }
 
     @Test
+    public void getRoleTree() throws Exception {
+        TestResult result = getJsonTestResult("/userRole/getRoleTree",null);
+    }
+
+    @Test
     public void rebuildFinalRoleUserData() throws Exception {
         RoleUserData roleUserData = new RoleUserData();
         roleUserData.setActiveUserId(500001);

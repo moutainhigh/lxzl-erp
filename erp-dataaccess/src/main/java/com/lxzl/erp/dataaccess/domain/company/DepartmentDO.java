@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.domain.company;
 
+import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,8 @@ public class DepartmentDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 	private List<DepartmentDO> children;
+
+	private List<RoleDO> roleDOList;
 
 	public Integer getId(){
 		return id;
@@ -87,5 +90,13 @@ public class DepartmentDO  extends BaseDO {
 
 	public void setChildren(List<DepartmentDO> children) {
 		this.children = children;
+	}
+
+	public List<RoleDO> getRoleDOList() {
+		return roleDOList;
+	}
+
+	public void setRoleDOList(List<RoleDO> roleDOList) {
+		this.roleDOList = roleDOList;
 	}
 }
