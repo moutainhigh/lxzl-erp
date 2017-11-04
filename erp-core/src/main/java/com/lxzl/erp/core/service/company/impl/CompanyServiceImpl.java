@@ -5,6 +5,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.company.SubCompanyQueryParam;
+import com.lxzl.erp.common.domain.company.pojo.CompanyDepartmentTree;
 import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
@@ -70,8 +71,13 @@ public class CompanyServiceImpl implements CompanyService{
     public ServiceResult<String, Page<SubCompany>> subCompanyPage(SubCompanyQueryParam subCompanyQueryParam) {
         ServiceResult<String, Page<SubCompany>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(subCompanyQueryParam.getPageNo(), subCompanyQueryParam.getPageSize());
-        Integer totalCount = subCompanyMapper.listCount(subCompanyQueryParam, pageQuery);
-        List<SubCompanyDO> dolist = subCompanyMapper.listPage(subCompanyQueryParam, pageQuery);
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("start",subCompanyQueryParam.getStart());
+        paramMap.put("pageSize",subCompanyQueryParam.getPageSize());
+        paramMap.put("subCompanyQueryParam",subCompanyQueryParam);
+
+        Integer totalCount = subCompanyMapper.listCount(paramMap);
+        List<SubCompanyDO> dolist = subCompanyMapper.listPage(paramMap);
         List<SubCompany> list = CompanyConverter.convertSubCompanyDOList(dolist);
         Page<SubCompany> page = new Page<>(list, totalCount, subCompanyQueryParam.getPageNo(), subCompanyQueryParam.getPageSize());
         result.setResult(page);
@@ -95,6 +101,33 @@ public class CompanyServiceImpl implements CompanyService{
             resultList.add(DepartmentConverter.convertDepartmentDO(node1));
         }
         result.setResult(resultList);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String,CompanyDepartmentTree> getCompanyDepartmentTree(DepartmentQueryParam departmentQueryParam){
+        ServiceResult<String, CompanyDepartmentTree> result = new ServiceResult<>();
+        CompanyDepartmentTree companyDepartmentTree = new CompanyDepartmentTree();
+        List<SubCompany> subCompanyList = new ArrayList<>();
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("start",0);
+        paramMap.put("pageSize",Integer.MAX_VALUE);
+        List<SubCompanyDO> subCompanyDOList = subCompanyMapper.listPage(paramMap);
+        if(subCompanyDOList != null && !subCompanyDOList.isEmpty()){
+            for(SubCompanyDO subCompanyDO : subCompanyDOList){
+                departmentQueryParam.setSubCompanyId(subCompanyDO.getId());
+                paramMap.put("departmentQueryParam",departmentQueryParam);
+                List<DepartmentDO> departmentDOList = departmentMapper.listPage(paramMap);
+                List<DepartmentDO> nodeList = DepartmentConverter.convertTree(departmentDOList);
+                subCompanyDO.setDepartmentDOList(nodeList);
+                subCompanyList.add(CompanyConverter.convertSubCompany(subCompanyDO));
+            }
+        }
+        companyDepartmentTree.setSubCompanyList(subCompanyList);
+
+        result.setResult(companyDepartmentTree);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }

@@ -2,7 +2,10 @@ package com.lxzl.erp.core.service.company.impl.support;
 
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.domain.company.pojo.Department;
+import com.lxzl.erp.common.domain.user.pojo.Role;
+import com.lxzl.erp.core.service.user.impl.support.UserConverter;
 import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
+import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
@@ -27,7 +30,23 @@ public class DepartmentConverter {
             }
             department.setChildren(childList);
         }
+
+        if(departmentDO.getRoleDOList() != null && !departmentDO.getRoleDOList().isEmpty()){
+            department.setRoleList(UserConverter.convertUserRoleDOList(departmentDO.getRoleDOList()));
+        }
+
         return department;
+    }
+
+
+    public static List<Department> convertDepartmentDOList(List<DepartmentDO>  departmentDOList) {
+        List<Department> departmentList = new ArrayList<>();
+        if(departmentDOList != null && !departmentDOList.isEmpty()){
+            for(DepartmentDO departmentDO : departmentDOList){
+                departmentList.add(convertDepartmentDO(departmentDO));
+            }
+        }
+        return departmentList;
     }
 
 

@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.List;
-
 @RequestMapping("/userRole")
 @Controller
 @ControllerLog
@@ -63,9 +61,9 @@ public class UserRoleController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "getRoleTree", method = RequestMethod.POST)
-    public Result getRoleTree(@RequestBody @Validated({QueryGroup.class}) UserRoleQueryParam param, BindingResult validResult) {
-        ServiceResult<String, RoleTree> serviceResult = userRoleService.getRoleTree(param);
+    @RequestMapping(value = "getCompanyRoleTree", method = RequestMethod.POST)
+    public Result getCompanyRoleTree(@RequestBody @Validated({QueryGroup.class}) UserRoleQueryParam param, BindingResult validResult) {
+        ServiceResult<String, CompanyRoleTree> serviceResult = userRoleService.getCompanyRoleTree(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

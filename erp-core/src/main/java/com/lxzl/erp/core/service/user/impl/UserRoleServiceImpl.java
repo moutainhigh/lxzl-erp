@@ -5,15 +5,23 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.company.pojo.Department;
+import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.system.pojo.Menu;
+import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.user.RoleMenuQueryParam;
 import com.lxzl.erp.common.domain.user.RoleQueryParam;
 import com.lxzl.erp.common.domain.user.UserRoleQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.*;
+import com.lxzl.erp.core.service.company.impl.support.CompanyConverter;
+import com.lxzl.erp.core.service.company.impl.support.DepartmentConverter;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserRoleConverter;
+import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.SysMenuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.*;
+import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.system.SysMenuDO;
 import com.lxzl.erp.dataaccess.domain.user.*;
 import com.lxzl.se.common.util.StringUtil;
@@ -56,6 +64,12 @@ public class UserRoleServiceImpl implements UserRoleService {
     private RoleUserDataMapper roleUserDataMapper;
     @Autowired
     private RoleUserFinalMapper roleUserFinalMapper;
+
+    @Autowired
+    private SubCompanyMapper subCompanyMapper;
+
+    @Autowired
+    private DepartmentMapper departmentMapper;
 
     @Autowired(required = false)
     private HttpSession session;
@@ -573,12 +587,31 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
-    public ServiceResult<String, RoleTree> getRoleTree(UserRoleQueryParam param){
-        ServiceResult<String, RoleTree> result = new ServiceResult<>();
+    public ServiceResult<String, CompanyRoleTree> getCompanyRoleTree(UserRoleQueryParam param){
+        ServiceResult<String, CompanyRoleTree> result = new ServiceResult<>();
+        CompanyRoleTree roleTree = new CompanyRoleTree();
+        List<SubCompany> subCompanyList = new ArrayList<>();
 
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("start",0);
+        paramMap.put("pageSize",Integer.MAX_VALUE);
+        List<SubCompanyDO> subCompanyDOList = subCompanyMapper.listPage(paramMap);
+        if(subCompanyDOList != null && !subCompanyDOList.isEmpty()){
+            for(SubCompanyDO subCompanyDO : subCompanyDOList){
+                DepartmentQueryParam departmentQueryParam = new DepartmentQueryParam();
+                departmentQueryParam.setSubCompanyId(subCompanyDO.getId());
+                paramMap.put("departmentQueryParam",departmentQueryParam);
+                List<DepartmentDO> departmentDOList = departmentMapper.getRoleList(paramMap);
+                List<DepartmentDO> nodeList = DepartmentConverter.convertTree(departmentDOList);
+                subCompanyDO.setDepartmentDOList(nodeList);
+                subCompanyList.add(CompanyConverter.convertSubCompany(subCompanyDO));
+            }
+        }
+        roleTree.setSubCompanyList(subCompanyList);
 
+        result.setResult(roleTree);
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
-
     }
 
 }

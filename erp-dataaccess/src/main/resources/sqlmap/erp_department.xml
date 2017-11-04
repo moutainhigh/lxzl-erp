@@ -15,10 +15,29 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<collection property="roleDOList" resultMap="RoleDO"/>
+	</resultMap>
+
+	<resultMap id="RoleDO" type="com.lxzl.erp.dataaccess.domain.user.RoleDO">
+		<id column="role_id" jdbcType="INTEGER" property="id"/>
+		<result column="role_role_name" jdbcType="VARCHAR" property="roleName"/>
+		<result column="role_role_desc" jdbcType="VARCHAR" property="roleDesc"/>
+		<result column="role_parent_role_name" jdbcType="VARCHAR" property="parentRoleName"/>
+		<result column="role_is_super_admin" jdbcType="VARCHAR" property="isSuperAdmin"/>
+		<result column="role_data_status" jdbcType="INTEGER" property="dataStatus"/>
+		<result column="role_remark" jdbcType="VARCHAR" property="remark"/>
+		<result column="role_create_user" jdbcType="VARCHAR" property="createUser"/>
+		<result column="role_create_time" jdbcType="TIMESTAMP" property="createTime"/>
+		<result column="role_update_user" jdbcType="VARCHAR" property="updateUser"/>
+		<result column="role_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
 	</resultMap>
 
 	<sql id="column_List">
 		ed.id,ed.department_name,ed.department_type,ed.parent_department_id,ed.sub_company_id,ed.data_order,ed.data_status,ed.remark,ed.create_time,ed.create_user,ed.update_time,ed.update_user
+	</sql>
+
+	<sql id="role_column_List">
+		er.id as role_id,er.role_name as role_role_name,er.role_desc as role_role_desc,er.is_super_admin as role_is_super_admin,er.data_status as role_data_status,er.remark as role_remark,er.create_time as role_create_time,er.update_time as role_update_time
 	</sql>
 
 	<select id="findById" resultMap="DepartmentDO" parameterType="java.lang.Integer">
@@ -35,6 +54,9 @@
 			<if test="maps.departmentQueryParam.departmentName != null &amp;&amp; maps.departmentQueryParam.departmentName != ''">
 				and ed.deparment_name like CONCAT('%','${maps.departmentQueryParam.departmentName}','%' )
 			</if>
+			<if test="maps.departmentQueryParam.subCompanyId != null &amp;&amp; maps.departmentQueryParam.subCompanyId != ''">
+				and ed.sub_company_id = #{maps.departmentQueryParam.subCompanyId, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				and ed.data_status = 1
 			</if>
@@ -44,11 +66,14 @@
 	<select id="listPage" resultMap="DepartmentDO" parameterType="map">
 		select <include refid="column_List"/> from erp_department ed
 		<where>
-			<if test="maps.departmentQueryParam.departmentId != null &amp;&amp; maps.departmentQueryParam.departmentId != ''">
+			<if test="maps.departmentQueryParam != null &amp;&amp; maps.departmentQueryParam.departmentId != null &amp;&amp; maps.departmentQueryParam.departmentId != ''">
 				and ed.id = #{maps.departmentQueryParam.departmentId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.departmentQueryParam.departmentName != null &amp;&amp; maps.departmentQueryParam.departmentName != ''">
+			<if test="maps.departmentQueryParam != null &amp;&amp;maps.departmentQueryParam.departmentName != null &amp;&amp; maps.departmentQueryParam.departmentName != ''">
 				and ed.deparment_name like CONCAT('%','${maps.departmentQueryParam.departmentName}','%' )
+			</if>
+			<if test="maps.departmentQueryParam != null &amp;&amp;maps.departmentQueryParam.subCompanyId != null &amp;&amp; maps.departmentQueryParam.subCompanyId != ''">
+				and ed.sub_company_id = #{maps.departmentQueryParam.subCompanyId, jdbcType=INTEGER}
 			</if>
 			<if test="true">
 				and ed.data_status = 1
@@ -56,6 +81,29 @@
 		</where>
 		order by ed.parent_department_id,ed.data_order desc
 		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<select id="getRoleList" resultMap="DepartmentDO" parameterType="map">
+		select department.*,<include refid="role_column_List"/> from
+		(
+			select <include refid="column_List"/> from erp_department ed
+			<where>
+				<if test="maps.departmentQueryParam != null &amp;&amp; maps.departmentQueryParam.departmentId != null &amp;&amp; maps.departmentQueryParam.departmentId != ''">
+					and ed.id = #{maps.departmentQueryParam.departmentId, jdbcType=INTEGER}
+				</if>
+				<if test="maps.departmentQueryParam != null &amp;&amp;maps.departmentQueryParam.departmentName != null &amp;&amp; maps.departmentQueryParam.departmentName != ''">
+					and ed.deparment_name like CONCAT('%','${maps.departmentQueryParam.departmentName}','%' )
+				</if>
+				<if test="maps.departmentQueryParam != null &amp;&amp;maps.departmentQueryParam.subCompanyId != null &amp;&amp; maps.departmentQueryParam.subCompanyId != ''">
+					and ed.sub_company_id = #{maps.departmentQueryParam.subCompanyId, jdbcType=INTEGER}
+				</if>
+				<if test="true">
+					and ed.data_status = 1
+				</if>
+			</where>
+			order by ed.parent_department_id,ed.data_order desc
+		) department left join erp_role er on er.department_id = department.id and er.data_status = 1
+		order by er.data_order desc, er.create_time desc
 	</select>
 
 	<sql id="set_column_sql">
