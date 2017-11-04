@@ -7,7 +7,7 @@
 		<result column="purchase_order_id" jdbcType="INTEGER" property="purchaseOrderId" />
 		<result column="purchase_delivery_no" jdbcType="VARCHAR" property="purchaseDeliveryNo" />
 		<result column="warehouse_id" jdbcType="INTEGER" property="warehouseId" />
-		<result column="warehouse_snapshot" jdbcType="INTEGER" property="warehouseSnapshot" />
+		<result column="warehouse_snapshot" jdbcType="VARCHAR" property="warehouseSnapshot" />
 		<result column="is_invoice" jdbcType="INTEGER" property="isInvoice" />
 		<result column="is_new" jdbcType="INTEGER" property="isNew" />
 		<result column="purchase_order_amount_total" jdbcType="DECIMAL" property="purchaseOrderAmountTotal" />
@@ -62,7 +62,7 @@
 				warehouse_id = #{warehouseId,jdbcType=INTEGER},
 			</if>
 			<if test="warehouseSnapshot != null">
-				warehouse_snapshot = #{warehouseSnapshot,jdbcType=INTEGER},
+				warehouse_snapshot = #{warehouseSnapshot,jdbcType=VARCHAR},
 			</if>
 			<if test="isInvoice != null">
 				is_invoice = #{isInvoice,jdbcType=INTEGER},

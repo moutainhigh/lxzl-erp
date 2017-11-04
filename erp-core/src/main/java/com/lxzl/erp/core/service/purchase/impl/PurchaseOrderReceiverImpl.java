@@ -197,7 +197,7 @@ public class PurchaseOrderReceiverImpl implements PurchaseOrderReceiver {
         purchaseDeliveryOrderDO.setPurchaseOrderId(purchaseOrderDO.getId());
         purchaseDeliveryOrderDO.setPurchaseDeliveryNo(GenerateNoUtil.generatePurchaseDeliveryOrderNo(now, loginUser.getUserId()));
         purchaseDeliveryOrderDO.setWarehouseId(purchaseOrderDO.getWarehouseId());
-        purchaseDeliveryOrderDO.setWarehouseSnapshot();
+//        purchaseDeliveryOrderDO.setWarehouseSnapshot();
 //        private Integer warehouseSnapshot;   //收货方仓库快照，JSON格式
 //        private Integer isInvoice;   //是否有发票，0否1是
 //        private Integer isNew;   //是否全新机

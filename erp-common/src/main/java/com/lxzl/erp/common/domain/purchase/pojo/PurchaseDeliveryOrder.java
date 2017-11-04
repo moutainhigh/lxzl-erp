@@ -12,7 +12,7 @@ public class PurchaseDeliveryOrder implements Serializable {
 	private Integer purchaseOrderId;   //采购单ID
 	private String purchaseDeliveryNo;   //采购发货单编号
 	private Integer warehouseId;   //收货方仓库ID
-	private Integer warehouseSnapshot;   //收货方仓库快照，JSON格式
+	private String warehouseSnapshot;   //收货方仓库快照，JSON格式
 	private Integer isInvoice;   //是否有发票，0否1是
 	private Integer isNew;   //是否全新机
 	private BigDecimal purchaseOrderAmountTotal;   //采购发货单总价
@@ -59,11 +59,11 @@ public class PurchaseDeliveryOrder implements Serializable {
 		this.warehouseId = warehouseId;
 	}
 
-	public Integer getWarehouseSnapshot(){
+	public String getWarehouseSnapshot() {
 		return warehouseSnapshot;
 	}
 
-	public void setWarehouseSnapshot(Integer warehouseSnapshot){
+	public void setWarehouseSnapshot(String warehouseSnapshot) {
 		this.warehouseSnapshot = warehouseSnapshot;
 	}
 

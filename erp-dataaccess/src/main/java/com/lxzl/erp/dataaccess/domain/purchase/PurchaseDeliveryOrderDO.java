@@ -10,7 +10,7 @@ public class PurchaseDeliveryOrderDO  extends BaseDO {
 	private Integer purchaseOrderId;
 	private String purchaseDeliveryNo;
 	private Integer warehouseId;
-	private Integer warehouseSnapshot;
+	private String warehouseSnapshot;
 	private Integer isInvoice;
 	private Integer isNew;
 	private BigDecimal purchaseOrderAmountTotal;
@@ -52,11 +52,11 @@ public class PurchaseDeliveryOrderDO  extends BaseDO {
 		this.warehouseId = warehouseId;
 	}
 
-	public Integer getWarehouseSnapshot(){
+	public String getWarehouseSnapshot() {
 		return warehouseSnapshot;
 	}
 
-	public void setWarehouseSnapshot(Integer warehouseSnapshot){
+	public void setWarehouseSnapshot(String warehouseSnapshot) {
 		this.warehouseSnapshot = warehouseSnapshot;
 	}
 
