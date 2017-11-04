@@ -30,6 +30,10 @@ public class PageController extends BaseController {
     public String userManageList() {
         return "/userManage/userList";
     }
+    @RequestMapping("/user-manage/addUser")
+    public String userManageAddUser() {
+        return "/component/user/add";
+    }
     @RequestMapping("/user-manage/role")
     public String userManageRole() {
         return "/userManage/roleList";
