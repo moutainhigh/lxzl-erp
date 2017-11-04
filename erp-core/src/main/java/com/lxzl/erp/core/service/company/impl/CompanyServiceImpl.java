@@ -26,7 +26,7 @@ import java.util.*;
 
 
 @Service
-public class CompanyServiceImpl implements CompanyService{
+public class CompanyServiceImpl implements CompanyService {
 
     @Autowired(required = false)
     private HttpSession session;
@@ -72,9 +72,9 @@ public class CompanyServiceImpl implements CompanyService{
         ServiceResult<String, Page<SubCompany>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(subCompanyQueryParam.getPageNo(), subCompanyQueryParam.getPageSize());
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("start",subCompanyQueryParam.getStart());
-        paramMap.put("pageSize",subCompanyQueryParam.getPageSize());
-        paramMap.put("subCompanyQueryParam",subCompanyQueryParam);
+        paramMap.put("start", subCompanyQueryParam.getStart());
+        paramMap.put("pageSize", subCompanyQueryParam.getPageSize());
+        paramMap.put("subCompanyQueryParam", subCompanyQueryParam);
 
         Integer totalCount = subCompanyMapper.listCount(paramMap);
         List<SubCompanyDO> dolist = subCompanyMapper.listPage(paramMap);
@@ -86,12 +86,12 @@ public class CompanyServiceImpl implements CompanyService{
     }
 
     @Override
-    public ServiceResult<String,List<Department>> getDepartmentList(DepartmentQueryParam departmentQueryParam){
+    public ServiceResult<String, List<Department>> getDepartmentList(DepartmentQueryParam departmentQueryParam) {
         ServiceResult<String, List<Department>> result = new ServiceResult<>();
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("start",0);
-        paramMap.put("pageSize",Integer.MAX_VALUE);
-        paramMap.put("departmentQueryParam",departmentQueryParam);
+        paramMap.put("start", 0);
+        paramMap.put("pageSize", Integer.MAX_VALUE);
+        paramMap.put("departmentQueryParam", departmentQueryParam);
 
         List<DepartmentDO> departmentDOList = departmentMapper.listPage(paramMap);
         List<DepartmentDO> nodeList = DepartmentConverter.convertTree(departmentDOList);
@@ -106,19 +106,25 @@ public class CompanyServiceImpl implements CompanyService{
     }
 
     @Override
-    public ServiceResult<String,CompanyDepartmentTree> getCompanyDepartmentTree(DepartmentQueryParam departmentQueryParam){
+    public ServiceResult<String, CompanyDepartmentTree> getCompanyDepartmentTree(DepartmentQueryParam departmentQueryParam) {
         ServiceResult<String, CompanyDepartmentTree> result = new ServiceResult<>();
         CompanyDepartmentTree companyDepartmentTree = new CompanyDepartmentTree();
         List<SubCompany> subCompanyList = new ArrayList<>();
 
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("start",0);
-        paramMap.put("pageSize",Integer.MAX_VALUE);
+        paramMap.put("start", 0);
+        paramMap.put("pageSize", Integer.MAX_VALUE);
+        if (departmentQueryParam.getSubCompanyId() != null) {
+            SubCompanyQueryParam subCompanyQueryParam = new SubCompanyQueryParam();
+            subCompanyQueryParam.setSubCompanyId(departmentQueryParam.getSubCompanyId());
+            paramMap.put("subCompanyQueryParam", subCompanyQueryParam);
+        }
+
         List<SubCompanyDO> subCompanyDOList = subCompanyMapper.listPage(paramMap);
-        if(subCompanyDOList != null && !subCompanyDOList.isEmpty()){
-            for(SubCompanyDO subCompanyDO : subCompanyDOList){
+        if (subCompanyDOList != null && !subCompanyDOList.isEmpty()) {
+            for (SubCompanyDO subCompanyDO : subCompanyDOList) {
                 departmentQueryParam.setSubCompanyId(subCompanyDO.getId());
-                paramMap.put("departmentQueryParam",departmentQueryParam);
+                paramMap.put("departmentQueryParam", departmentQueryParam);
                 List<DepartmentDO> departmentDOList = departmentMapper.listPage(paramMap);
                 List<DepartmentDO> nodeList = DepartmentConverter.convertTree(departmentDOList);
                 subCompanyDO.setDepartmentDOList(nodeList);

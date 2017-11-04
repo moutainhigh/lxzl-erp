@@ -79,6 +79,9 @@
     <select id="listCount" resultType="java.lang.Integer" parameterType="map">
         select count(1) from erp_sub_company esc
         <where>
+            <if test="maps.subCompanyQueryParam != null &amp;&amp; maps.subCompanyQueryParam.subCompanyId != null &amp;&amp; maps.subCompanyQueryParam.subCompanyId != ''">
+                and esc.id = #{maps.departmentQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
             <if test="maps.subCompanyQueryParam != null &amp;&amp; maps.subCompanyQueryParam.subCompanyName!=null &amp;&amp; maps.subCompanyQueryParam.subCompanyName!=''">
                 and esc.sub_company_name like '%${maps.subCompanyQueryParam.subCompanyName}%'
             </if>
@@ -88,6 +91,9 @@
     <select id="listPage" resultMap="SubCompanyDO" parameterType="map">
         select <include refid="column_List"/> from erp_sub_company esc
         <where>
+            <if test="maps.subCompanyQueryParam != null &amp;&amp; maps.subCompanyQueryParam.subCompanyId != null &amp;&amp; maps.subCompanyQueryParam.subCompanyId != ''">
+                and esc.id = #{maps.subCompanyQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
             <if test="maps.subCompanyQueryParam != null &amp;&amp; maps.subCompanyQueryParam.subCompanyName!=null &amp;&amp; maps.subCompanyQueryParam.subCompanyName!=''">
                 and esc.sub_company_name like '%${maps.subCompanyQueryParam.subCompanyName}%'
             </if>
