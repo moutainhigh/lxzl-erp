@@ -108,12 +108,17 @@
         id = #{id}
     </update>
     <select id="findByUsername" resultMap="userResult" parameterType="java.lang.String">
-        select
-        <include refid="columnList" />
+        select a.*,tur.role_id as role_role_id,tr.role_name as role_role_name, tr.is_super_admin as role_is_super_admin,
+        ed.id as department_id, ed.department_name as department_name
         from
-        erp_user u
-        where
-        u.user_name = #{userName,jdbcType=INTEGER}
+        (select <include refid="columnList"/> from erp_user u
+         where u.user_name = #{userName,jdbcType=VARCHAR}
+        ) a
+        left join erp_user_role tur on tur.user_id = a.id and tur.data_status = 1
+        left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
+        left join erp_user_department eud on eud.user_id = a.id and eud.data_status = 1
+        left join erp_department ed on ed.id = eud.department_id and eud.data_status = 1
+
     </select>
     <select id="findByUserId" resultMap="userResult">
         select

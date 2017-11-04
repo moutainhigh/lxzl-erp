@@ -12,21 +12,18 @@
 		<result column="is_new" jdbcType="INTEGER" property="isNew" />
 		<result column="purchase_order_amount_total" jdbcType="DECIMAL" property="purchaseOrderAmountTotal" />
 		<result column="purchase_order_status" jdbcType="INTEGER" property="purchaseOrderStatus" />
-		<result column="delivery_time" jdbcType="DATETIME" property="deliveryTime" />
-		<result column="verify_status" jdbcType="INTEGER" property="verifyStatus" />
-		<result column="verify_user" jdbcType="VARCHAR" property="verifyUser" />
-		<result column="verify_time" jdbcType="DATETIME" property="verifyTime" />
+		<result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="owner" jdbcType="INTEGER" property="owner" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
-		<result column="create_time" jdbcType="DATETIME" property="createTime" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
-		<result column="update_time" jdbcType="DATETIME" property="updateTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 	</resultMap>
 
 	<sql id="column_List">
-		epo.id,epo.purchase_no,epo.product_supplier_id,epo.invoice_supplier_id,epo.warehouse_id,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_status,epo.delivery_time,epo.verify_status,epo.verify_user,epo.verify_time,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user
+		epo.id,epo.purchase_no,epo.product_supplier_id,epo.invoice_supplier_id,epo.warehouse_id,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_status,epo.delivery_time,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user
 	</sql>
 
 	<select id="findById" resultMap="PurchaseOrderDO" parameterType="java.lang.Integer">
@@ -34,7 +31,7 @@
 		where epo.id = #{id, jdbcType=INTEGER} and data_status = 1 
 	</select>
 
-	<select id="listCount" resultMap="java.lang.Integer" parameterType="map">
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(epo.id) from erp_purchase_order epo 
 		<where>
 			<if test="true">
@@ -80,16 +77,7 @@
 				purchase_order_status = #{purchaseOrderStatus,jdbcType=INTEGER},
 			</if>
 			<if test="deliveryTime != null">
-				delivery_time = #{deliveryTime,jdbcType=DATETIME},
-			</if>
-			<if test="verifyStatus != null">
-				verify_status = #{verifyStatus,jdbcType=INTEGER},
-			</if>
-			<if test="verifyUser != null">
-				verify_user = #{verifyUser,jdbcType=VARCHAR},
-			</if>
-			<if test="verifyTime != null">
-				verify_time = #{verifyTime,jdbcType=DATETIME},
+				delivery_time = #{deliveryTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
@@ -101,13 +89,13 @@
 				remark = #{remark,jdbcType=VARCHAR},
 			</if>
 			<if test="createTime != null">
-				create_time = #{createTime,jdbcType=DATETIME},
+				create_time = #{createTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="createUser != null">
 				create_user = #{createUser,jdbcType=VARCHAR},
 			</if>
 			<if test="updateTime != null">
-				update_time = #{updateTime,jdbcType=DATETIME},
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},

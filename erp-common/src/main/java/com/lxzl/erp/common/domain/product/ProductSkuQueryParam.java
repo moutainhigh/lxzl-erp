@@ -1,7 +1,7 @@
 package com.lxzl.erp.common.domain.product;
 
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 

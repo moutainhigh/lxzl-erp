@@ -1,13 +1,11 @@
 package com.lxzl.erp.dataaccess.domain.product;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductSkuDO extends BaseDO {
     private Integer id;
     private String skuName;
@@ -15,7 +13,7 @@ public class ProductSkuDO extends BaseDO {
     private Integer stock;
     private BigDecimal skuPrice;
     private BigDecimal originalPrice;
-    private BigDecimal salePrice;
+    private BigDecimal rentPrice;
     private String customCode;
     private String barCode;
     private String properties;
@@ -66,12 +64,12 @@ public class ProductSkuDO extends BaseDO {
         this.originalPrice = originalPrice;
     }
 
-    public BigDecimal getSalePrice() {
-        return salePrice;
+    public BigDecimal getRentPrice() {
+        return rentPrice;
     }
 
-    public void setSalePrice(BigDecimal salePrice) {
-        this.salePrice = salePrice;
+    public void setRentPrice(BigDecimal rentPrice) {
+        this.rentPrice = rentPrice;
     }
 
     public String getCustomCode() {

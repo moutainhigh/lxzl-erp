@@ -355,15 +355,15 @@ public class ProductServiceImpl implements ProductService {
         for (ProductSku productSku : product.getProductSkuList()) {
 
             if (productSku.getSkuPrice() == null || -1 != (zero.compareTo(productSku.getSkuPrice()))) {
-                return ErrorCode.PRODUCT_SKU_PRICE_EROR;
+                return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
             }
 
             if (productSku.getOriginalPrice() == null || -1 != (zero.compareTo(productSku.getOriginalPrice()))) {
-                return ErrorCode.PRODUCT_SKU_PRICE_EROR;
+                return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
             }
 
-            if (productSku.getSalePrice() == null || -1 != (zero.compareTo(productSku.getSalePrice()))) {
-                return ErrorCode.PRODUCT_SKU_PRICE_EROR;
+            if (productSku.getRentPrice() == null || -1 != (zero.compareTo(productSku.getRentPrice()))) {
+                return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
             }
 
             if (productSku.getProductSkuPropertyList() == null || productSku.getProductSkuPropertyList().isEmpty()) {

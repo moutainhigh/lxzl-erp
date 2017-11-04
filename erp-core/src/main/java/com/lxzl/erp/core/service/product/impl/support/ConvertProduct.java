@@ -34,8 +34,8 @@ public class ConvertProduct {
         if (product.getListPrice() != null) {
             productDO.setListPrice(product.getListPrice());
         }
-        if (product.getIsSale() != null) {
-            productDO.setIsSale(product.getIsSale());
+        if (product.getIsRent() != null) {
+            productDO.setIsRent(product.getIsRent());
         }
         if (product.getProductDesc() != null) {
             productDO.setProductDesc(product.getProductDesc());
@@ -73,8 +73,8 @@ public class ConvertProduct {
         if (productSku.getOriginalPrice() != null) {
             productSkuDO.setOriginalPrice(productSku.getOriginalPrice());
         }
-        if (productSku.getSalePrice() != null) {
-            productSkuDO.setSalePrice(productSku.getSalePrice());
+        if (productSku.getRentPrice() != null) {
+            productSkuDO.setRentPrice(productSku.getRentPrice());
         }
         if (productSku.getCustomCode() != null) {
             productSkuDO.setCustomCode(productSku.getCustomCode());
@@ -115,8 +115,8 @@ public class ConvertProduct {
         if (productSkuDO.getOriginalPrice() != null) {
             productSku.setOriginalPrice(productSkuDO.getOriginalPrice());
         }
-        if (productSkuDO.getSalePrice() != null) {
-            productSku.setSalePrice(productSkuDO.getSalePrice());
+        if (productSkuDO.getRentPrice() != null) {
+            productSku.setRentPrice(productSkuDO.getRentPrice());
         }
         if (productSkuDO.getCustomCode() != null) {
             productSku.setCustomCode(productSkuDO.getCustomCode());
@@ -261,8 +261,8 @@ public class ConvertProduct {
         if (productDO.getListPrice() != null) {
             product.setListPrice(productDO.getListPrice());
         }
-        if (productDO.getIsSale() != null) {
-            product.setIsSale(productDO.getIsSale());
+        if (productDO.getIsRent() != null) {
+            product.setIsRent(productDO.getIsRent());
         }
         if (productDO.getProductDesc() != null) {
             product.setProductDesc(productDO.getProductDesc());

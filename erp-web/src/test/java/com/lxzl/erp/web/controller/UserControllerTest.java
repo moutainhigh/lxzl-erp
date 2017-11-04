@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.domain.user.LoginParam;
 import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import org.junit.Test;
@@ -46,6 +47,10 @@ public class UserControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void login() throws Exception {
+        LoginParam loginParam = new LoginParam();
+        loginParam.setUserName("eddie");
+        loginParam.setPassword("eddie");
+        TestResult result = getJsonTestResult("/user/login",loginParam);
     }
 
     @Test

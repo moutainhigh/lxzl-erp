@@ -10,13 +10,12 @@ public class ErrorCode {
      */
     public static final String SUCCESS = "J000000";
 
+    public static final String USER_NOT_LOGIN = "J000995";
     public static final String CUSTOM_ERROR = "J000996";
     public static final String BUSINESS_EXCEPTION = "J000997";
     public static final String SYSTEM_EXCEPTION = "J000998";
     public static final String SYSTEM_ERROR = "J000999";
     public static final String RECORD_NOT_EXISTS = "J009999";
-    public static final String USER_NOT_LOGIN = "J000995";
-
 
     public static final String USER_NAME_NOT_NULL = "J100000";
     public static final String USER_PASSWORD_NOT_NULL = "J100001";
@@ -48,7 +47,8 @@ public class ErrorCode {
     public static final String PRODUCT_IMAGE_UPLOAD_ERROR = "J200007";
     public static final String PRODUCT_IS_NULL_OR_NOT_EXISTS = "J200008";
     public static final String PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS = "J200009";
-    public static final String PRODUCT_SKU_PRICE_EROR = "J200010";
+    public static final String PRODUCT_SKU_PRICE_ERROR = "J200010";
+    public static final String PRODUCT_SKU_COUNT_ERROR = "J200011";
 
     public static final String REMARK_PATTERN = "J900001";
     public static final String ID_NOT_NULL = "J900002";
@@ -68,7 +68,14 @@ public class ErrorCode {
     public static final String PARAM_IS_NOT_ENOUGH = "J900016";
     public static final String NO_DUPLICATE_COMMIT = "J900017";
 
-    public static final String PURCHASE_ORDER_ID_NOT_NULL = "J200000";
+    public static final String PURCHASE_ORDER_ID_NOT_NULL = "J300000";
+    public static final String PRODUCT_SUPPLIER_ID_NOT_NULL = "J300001";
+    public static final String WARE_HOUSE_ID_NOT_NULL = "J300002";
+    public static final String IS_INVOICE_NOT_NULL = "J300003";
+    public static final String IS_NEW_NOT_NULL = "J300004";
+    public static final String PURCHASE_ORDER_PRODUCT_LIST_NOT_NULL = "J300005";
+    public static final String IS_INVOICE_VALUE_ERROR = "J300006";
+    public static final String IS_NEW_VALUE_ERROR = "J300007";
 
     static
     {
@@ -110,8 +117,8 @@ public class ErrorCode {
         MAP.put(PRODUCT_IMAGE_UPLOAD_ERROR,"商品图片上传失败");
         MAP.put(PRODUCT_IS_NULL_OR_NOT_EXISTS,"商品不存在或发生变更");
         MAP.put(PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS,"商品SKU不存在或发生变更");
-        MAP.put(PRODUCT_SKU_PRICE_EROR,"商品SKU价格填写不正确");
-
+        MAP.put(PRODUCT_SKU_PRICE_ERROR,"商品SKU价格填写不正确");
+        MAP.put(PRODUCT_SKU_COUNT_ERROR,"商品SKU数量填写不正确");
 
         MAP.put(REMARK_PATTERN,"备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL,"ID不能为空");
@@ -132,6 +139,13 @@ public class ErrorCode {
         MAP.put(NO_DUPLICATE_COMMIT,"禁止重复提交");
 
         MAP.put(PURCHASE_ORDER_ID_NOT_NULL,"采购订单号不能为空");
+        MAP.put(PRODUCT_SUPPLIER_ID_NOT_NULL,"商品供应商ID不能为空");
+        MAP.put(WARE_HOUSE_ID_NOT_NULL,"仓库ID不能为空");
+        MAP.put(IS_INVOICE_NOT_NULL,"是否有发票字段必填");
+        MAP.put(IS_NEW_NOT_NULL,"是否是全新机字段必填");
+        MAP.put(PURCHASE_ORDER_PRODUCT_LIST_NOT_NULL,"采购订单商品项列表不能为空");
+        MAP.put(IS_INVOICE_VALUE_ERROR,"是否有发票参数错误");
+        MAP.put(IS_NEW_VALUE_ERROR,"是否是全新机参数错误");
     }
 
     public static String getMessage(String code)

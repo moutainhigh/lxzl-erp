@@ -1,6 +1,6 @@
 package com.lxzl.erp.common.domain.product.pojo;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -14,7 +14,7 @@ public class ProductSku implements Serializable {
     private Integer stock;
     private BigDecimal skuPrice;
     private BigDecimal originalPrice;
-    private BigDecimal salePrice;
+    private BigDecimal rentPrice;
     private String customCode;
     private String barCode;
     private String properties;
@@ -64,12 +64,12 @@ public class ProductSku implements Serializable {
         this.originalPrice = originalPrice;
     }
 
-    public BigDecimal getSalePrice() {
-        return salePrice;
+    public BigDecimal getRentPrice() {
+        return rentPrice;
     }
 
-    public void setSalePrice(BigDecimal salePrice) {
-        this.salePrice = salePrice;
+    public void setRentPrice(BigDecimal rentPrice) {
+        this.rentPrice = rentPrice;
     }
 
     public String getCustomCode() {
