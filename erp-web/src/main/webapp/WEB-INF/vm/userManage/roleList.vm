@@ -3,6 +3,7 @@
 <head>
     <title>凌雄ERP-用户管理-角色列表</title>
     #parse("layout/header.vm")
+    #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
