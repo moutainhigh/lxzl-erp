@@ -21,14 +21,14 @@
         <result column="last_login_time" property="lastLoginTime" />
         <result column="last_login_ip" property="lastLoginIp" />
         <result column="remark" property="remark" />
-
-        <collection property="userRoleList" resultMap="UserRoleDO"/>
-        <collection property="roleList" resultMap="UserRoleDO"/>
-        <collection property="userDepartmentList" resultMap="UserDepartmentDO"/>
+        <collection property="roleDOList" resultMap="RoleDO"/>
     </resultMap>
-    <resultMap id="UserRoleDO" type="com.lxzl.erp.dataaccess.domain.user.UserRoleDO">
-        <id column="role_role_id" jdbcType="INTEGER" property="roleId"/>
+
+    <resultMap id="RoleDO" type="com.lxzl.erp.dataaccess.domain.user.RoleDO">
+        <id column="role_role_id" jdbcType="INTEGER" property="id"/>
         <result column="role_role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="role_department_id" jdbcType="INTEGER" property="departmentId"/>
+        <result column="role_department_name" jdbcType="VARCHAR" property="departmentName"/>
         <result column="role_role_desc" jdbcType="VARCHAR" property="roleDesc"/>
         <result column="role_is_super_admin" jdbcType="VARCHAR" property="isSuperAdmin"/>
         <result column="role_data_status" jdbcType="INTEGER" property="dataStatus"/>
@@ -39,13 +39,13 @@
         <result column="role_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
 
-    <resultMap id="UserDepartmentDO" type="com.lxzl.erp.dataaccess.domain.user.UserDepartmentDO">
-        <result column="department_id" jdbcType="INTEGER" property="departmentId" />
-        <result column="department_name" jdbcType="INTEGER" property="departmentName" />
-    </resultMap>
-
     <sql id="columnList">
         u.id,u.user_type,u.user_name,u.real_name,u.password,u.email,u.email_verify_code,u.email_verify_time,u.phone,u.phone_verify_code,u.phone_verify_time,u.is_activated,u.is_disabled,u.register_time,u.last_login_time,u.last_login_ip,u.remark
+    </sql>
+
+    <sql id="role_columnList">
+        tr.id role_role_id,tr.role_name role_role_name,tr.role_desc role_role_desc,tr.is_super_admin role_is_super_admin,tr.data_status role_data_status
+        ,tr.remark role_remark,tr.create_time role_create_time,tr.update_time role_update_time,tr.create_user role_create_user,tr.update_user role_update_user
     </sql>
 
     <sql id="set_column_sql">
@@ -76,6 +76,12 @@
             </if>
             <if test="registerTime != null">
                 register_time = #{registerTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastLoginTime != null">
+                last_login_time = #{lastLoginTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastLoginIp != null">
+                last_login_ip = #{lastLoginIp, jdbcType=VARCHAR},
             </if>
             <if test="remark != null">
                 remark = #{remark, jdbcType=VARCHAR},
@@ -108,25 +114,32 @@
         id = #{id}
     </update>
     <select id="findByUsername" resultMap="userResult" parameterType="java.lang.String">
-        select a.*,tur.role_id as role_role_id,tr.role_name as role_role_name, tr.is_super_admin as role_is_super_admin,
-        ed.id as department_id, ed.department_name as department_name
+        select a.*,<include refid="role_columnList"/>,
+        ed.id as role_department_id, ed.department_name as role_department_name
         from
         (select <include refid="columnList"/> from erp_user u
          where u.user_name = #{userName,jdbcType=VARCHAR}
         ) a
         left join erp_user_role tur on tur.user_id = a.id and tur.data_status = 1
         left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
-        left join erp_user_department eud on eud.user_id = a.id and eud.data_status = 1
-        left join erp_department ed on ed.id = eud.department_id and eud.data_status = 1
+        left join erp_department ed on ed.id = tr.department_id and tr.data_status = 1
 
     </select>
     <select id="findByUserId" resultMap="userResult">
-        select
-        <include refid="columnList" />
+        select a.*,<include refid="role_columnList"/>,
+        ed.id as role_department_id, ed.department_name as role_department_name
         from
-        erp_user u
-        where
-        u.id = #{userId}
+        (
+            select
+            <include refid="columnList" />
+            from
+            erp_user u
+            where
+            u.id = #{userId}
+        ) a
+        left join erp_user_role tur on tur.user_id = a.id and tur.data_status = 1
+        left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
+        left join erp_department ed on ed.id = tr.department_id and tr.data_status = 1
     </select>
 
     <select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -139,8 +152,8 @@
 
     </select>
     <select id="listPage" resultMap="userResult" parameterType="map">
-        select a.*,tur.role_id as role_role_id,tr.role_name as role_role_name, tr.is_super_admin as role_is_super_admin,
-        ed.id as department_id, ed.department_name as department_name
+        select a.*,<include refid="role_columnList"/>,
+        ed.id as role_department_id, ed.department_name as role_department_name
         from
         (select <include refid="columnList"/> from erp_user u
         <where>
@@ -153,8 +166,7 @@
         ) a
         left join erp_user_role tur on tur.user_id = a.id and tur.data_status = 1
         left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
-        left join erp_user_department eud on eud.user_id = a.id and eud.data_status = 1
-        left join erp_department ed on ed.id = eud.department_id and eud.data_status = 1
+        left join erp_department ed on ed.id = tr.department_id and ed.data_status = 1
         order by a.register_time desc
     </select>
 

@@ -3,9 +3,8 @@ package com.lxzl.erp.core.service.user.impl.support;
 
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.domain.user.pojo.UserDepartment;
+import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
-import com.lxzl.erp.dataaccess.domain.user.UserDepartmentDO;
 import com.lxzl.erp.dataaccess.domain.user.UserRoleDO;
 import org.springframework.beans.BeanUtils;
 
@@ -17,41 +16,21 @@ public class UserConverter {
         User user = new User();
         user.setUserId(userDO.getId());
         BeanUtils.copyProperties(userDO, user);
-        user.setRoleList(userDO.getRoleList());
-        user.setUserDepartmentList(convertUserDepartmentDOList(userDO.getUserDepartmentList()));
-        user.setUserRoleList(convertUserRoleDOListToRoleList(userDO.getUserRoleList()));
-
+        user.setRoleList(convertUserRoleDOList(userDO.getRoleDOList()));
         return user;
     }
 
-    public static List<Role> convertUserRoleDOListToRoleList(List<UserRoleDO> userRoleDOList){
+    public static List<Role> convertUserRoleDOList(List<RoleDO> roleDOList){
         List<Role> roleList = new ArrayList<>();
-        if(userRoleDOList != null && !userRoleDOList.isEmpty()){
-            for(UserRoleDO userRoleDO : userRoleDOList){
-                Role role = new Role();
-                BeanUtils.copyProperties(userRoleDO, role);
+        if(roleDOList != null && !roleDOList.isEmpty()){
+            for(RoleDO roleDO : roleDOList){
+                Role role = new Role ();
+                role.setRoleId(roleDO.getId());
+                BeanUtils.copyProperties(roleDO, role);
                 roleList.add(role);
             }
         }
-
         return roleList;
-    }
-
-    public static List<UserDepartment> convertUserDepartmentDOList(List<UserDepartmentDO> userDepartmentDOList) {
-        List<UserDepartment> userDepartmentList = new ArrayList<>();
-        if (userDepartmentDOList != null && !userDepartmentDOList.isEmpty()) {
-            for (UserDepartmentDO userDepartmentDO : userDepartmentDOList) {
-                userDepartmentList.add(convertUserDepartmentDO(userDepartmentDO));
-            }
-        }
-
-        return userDepartmentList;
-    }
-
-    public static UserDepartment convertUserDepartmentDO(UserDepartmentDO userDepartmentDO) {
-        UserDepartment userDepartment = new UserDepartment();
-        BeanUtils.copyProperties(userDepartmentDO, userDepartment);
-        return userDepartment;
     }
 
     public static UserDO convert(User user) {
@@ -88,9 +67,6 @@ public class UserConverter {
         }
         if (user.getRemark() != null) {
             userDO.setRemark(user.getRemark());
-        }
-        if (user.getRoleList() != null) {
-            userDO.setRoleList(user.getRoleList());
         }
         return userDO;
     }

@@ -87,7 +87,7 @@ public class UserRoleServiceImpl implements UserRoleService {
             return result;
         }
 
-        List<Integer> userRoleList = userRoleMapper.findRoleListByUserId(userId);
+        List<Integer> userRoleList = userRoleMapper.findRoleIdListByUserId(userId);
         if (userRoleList == null || userRoleList.size() == 0) {
             result.setResult(false);
             return result;
@@ -243,7 +243,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         // 超级管理员不用赋权限
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        List<Integer> dbRecordList = userRoleMapper.findRoleListByUserId(userRole.getUserId());
+        List<Integer> dbRecordList = userRoleMapper.findRoleIdListByUserId(userRole.getUserId());
         if (userRole.getRoleList() != null && userRole.getRoleList().size() > 0) {
             List<Integer> thisRoleList = new ArrayList<>();
             for (Role role : userRole.getRoleList()) {
@@ -287,7 +287,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         ServiceResult<String, UserRole> result = new ServiceResult<>();
         List<Role> roleList = new ArrayList<>();
 
-        List<Integer> roleIdList = userRoleMapper.findRoleListByUserId(param.getUserId());
+        List<Integer> roleIdList = userRoleMapper.findRoleIdListByUserId(param.getUserId());
         for (Integer roleId : roleIdList) {
             roleList.add(UserRoleConverter.convertRoleDO(roleMapper.findByMapId(roleId)));
         }
@@ -570,6 +570,15 @@ public class UserRoleServiceImpl implements UserRoleService {
             return ErrorCode.ROLE_NAME_NOT_NULL;
         }
         return ErrorCode.SUCCESS;
+    }
+
+    @Override
+    public ServiceResult<String, RoleTree> getRoleTree(UserRoleQueryParam param){
+        ServiceResult<String, RoleTree> result = new ServiceResult<>();
+
+
+        return result;
+
     }
 
 }

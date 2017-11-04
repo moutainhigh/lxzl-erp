@@ -63,6 +63,12 @@ public class UserRoleController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "getRoleTree", method = RequestMethod.POST)
+    public Result getRoleTree(@RequestBody @Validated({QueryGroup.class}) UserRoleQueryParam param, BindingResult validResult) {
+        ServiceResult<String, RoleTree> serviceResult = userRoleService.getRoleTree(param);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "getUserRoleList", method = RequestMethod.POST)
     public Result getUserRoleList(@RequestBody @Validated({QueryGroup.class}) UserRoleQueryParam param, BindingResult validResult) {
         ServiceResult<String, UserRole> serviceResult = userRoleService.getUserRoleList(param);

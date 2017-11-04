@@ -16,6 +16,24 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
 
+    <resultMap id="RoleDO" type="com.lxzl.erp.dataaccess.domain.user.RoleDO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="role_desc" jdbcType="VARCHAR" property="roleDesc"/>
+        <result column="parent_role_name" jdbcType="VARCHAR" property="parentRoleName"/>
+        <result column="is_super_admin" jdbcType="VARCHAR" property="isSuperAdmin"/>
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <sql id="role_column_List">
+        er.id,er.role_name,er.role_desc,er.is_super_admin,er.data_status,er.remark,er.create_time,er.update_time
+    </sql>
+
     <sql id="column_List">
         tur.id,tur.user_id,tur.role_id,tur.data_status,tur.remark,tur.create_time,tur.update_time
     </sql>
@@ -78,7 +96,14 @@
         where tur.user_id = #{userId, jdbcType=INTEGER} and tur.role_id = #{roleId, jdbcType=INTEGER} and tur.data_status != 2
     </select>
 
-    <select id="findRoleListByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+    <select id="findRoleListByUserId" resultMap="RoleDO" parameterType="java.lang.Integer">
+        select  <include refid="role_column_List"/>
+        from erp_user_role tur
+        left join erp_role er on tur.role_id = er.id and er.data_status = 1
+        where tur.user_id = #{userId, jdbcType=INTEGER} and tur.data_status = 1
+    </select>
+
+    <select id="findRoleIdListByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
         select distinct tur.role_id
         from erp_user_role tur
         where tur.user_id = #{userId, jdbcType=INTEGER} and tur.data_status != 2

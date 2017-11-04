@@ -32,7 +32,7 @@ CREATE TABLE `erp_role` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '角色ID',
   `role_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '角色名称',
   `role_desc` varchar(500) COLLATE utf8_bin COMMENT '角色描述',
-  `parent_role_id` int(20) COMMENT '上级角色',
+  `department_id` int(20) NOT NULL COMMENT '部门ID',
   `is_super_admin` int(11) NOT NULL DEFAULT '0' COMMENT '是否是超级管理员，0不是，1是',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -131,20 +131,6 @@ CREATE TABLE `erp_sub_company` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='分公司表';
-
-DROP TABLE if exists `erp_user_department`;
-CREATE TABLE `erp_user_department` (
-  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `user_id` int(20) NOT NULL COMMENT '用户ID',
-  `department_id` int(20) NOT NULL COMMENT '部门ID',
-  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
-  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
-  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='用户所属部门表';
 
 DROP TABLE if exists `erp_role_user_final`;
 CREATE TABLE `erp_role_user_final` (
@@ -257,7 +243,8 @@ CREATE TABLE `erp_workflow_node` (
   `workflow_node_name` varchar(100) NOT NULL DEFAULT '' COMMENT '工作流子节点名称',
   `workflow_id` int(20) NOT NULL COMMENT '流程ID',
   `workflow_step` int(20) NOT NULL COMMENT '流程步骤',
-  `workflow_department` int(20) NOT NULL COMMENT '本步骤审批部门',
+  `workflow_department` int(20) NOT NULL COMMENT '本步骤可审批部门',
+  `workflow_user` int(20) NOT NULL COMMENT '本步骤可审批部门',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',

@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.lxzl.erp.common.domain.company.pojo.Department;
+import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 
 import java.util.Date;
@@ -23,10 +25,7 @@ public class UserDO extends BaseDO {
 	private Date lastLoginTime;
 	private String lastLoginIp;
 	private String remark;
-	private List<Integer> roleList;
-	private List<UserRoleDO> userRoleList;
-	private List<Integer> departmentList;
-	private List<UserDepartmentDO> userDepartmentList;
+	private List<RoleDO> roleDOList;
 
 	public Integer getId() {
 		return id;
@@ -132,35 +131,11 @@ public class UserDO extends BaseDO {
 		this.remark = remark;
 	}
 
-	public List<Integer> getRoleList() {
-		return roleList;
+	public List<RoleDO> getRoleDOList() {
+		return roleDOList;
 	}
 
-	public void setRoleList(List<Integer> roleList) {
-		this.roleList = roleList;
-	}
-
-	public List<UserRoleDO> getUserRoleList() {
-		return userRoleList;
-	}
-
-	public void setUserRoleList(List<UserRoleDO> userRoleList) {
-		this.userRoleList = userRoleList;
-	}
-
-	public List<Integer> getDepartmentList() {
-		return departmentList;
-	}
-
-	public void setDepartmentList(List<Integer> departmentList) {
-		this.departmentList = departmentList;
-	}
-
-	public List<UserDepartmentDO> getUserDepartmentList() {
-		return userDepartmentList;
-	}
-
-	public void setUserDepartmentList(List<UserDepartmentDO> userDepartmentList) {
-		this.userDepartmentList = userDepartmentList;
+	public void setRoleDOList(List<RoleDO> roleDOList) {
+		this.roleDOList = roleDOList;
 	}
 }
