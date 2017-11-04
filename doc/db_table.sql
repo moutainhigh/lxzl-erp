@@ -224,8 +224,8 @@ CREATE TABLE `erp_supplier` (
 
 -- ****************************************审批流程**************************************** --
 
-DROP TABLE if exists `erp_workflow`;
-CREATE TABLE `erp_workflow` (
+DROP TABLE if exists `erp_workflow_template`;
+CREATE TABLE `erp_workflow_template` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `workflow_name` varchar(100) NOT NULL DEFAULT '' COMMENT '工作流名称',
   `workflow_desc` varchar(500) COLLATE utf8_bin COMMENT '工作流描述',
@@ -237,16 +237,17 @@ CREATE TABLE `erp_workflow` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=800001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='工作流表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='工作流模板表';
 
 DROP TABLE if exists `erp_workflow_node`;
 CREATE TABLE `erp_workflow_node` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `workflow_node_name` varchar(100) NOT NULL DEFAULT '' COMMENT '工作流子节点名称',
-  `workflow_id` int(20) NOT NULL COMMENT '流程ID',
+  `workflow_template_id` int(20) NOT NULL COMMENT '流程模板ID',
   `workflow_step` int(20) NOT NULL COMMENT '流程步骤',
   `workflow_department` int(20) NOT NULL COMMENT '本步骤可审批部门',
-  `workflow_user` int(20) NOT NULL COMMENT '本步骤可审批部门',
+  `workflow_role` int(20) NOT NULL COMMENT '本步骤可审批角色',
+  `workflow_user` int(20) NOT NULL COMMENT '本步骤可审批人员',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -254,7 +255,47 @@ CREATE TABLE `erp_workflow_node` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=800001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='工作流节点表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='工作流节点表';
+
+DROP TABLE if exists `erp_workflow_link`;
+CREATE TABLE `erp_workflow_link` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `workflow_type` int(11) NOT NULL DEFAULT '0' COMMENT '工作流类型',
+  `workflow_template_id` int(20) NOT NULL COMMENT '工作流模板ID',
+  `workflow_refer_id` int(20) NOT NULL COMMENT '工作流关联ID',
+  `workflow_step` int(20) NOT NULL COMMENT '流程当前步骤',
+  `workflow_last_step` int(20) NOT NULL COMMENT '流程最后步骤',
+  `workflow_current_node_id` int(20) NOT NULL COMMENT '当前结点ID',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='工作流线表';
+
+DROP TABLE if exists `erp_workflow_link_detail`;
+CREATE TABLE `erp_workflow_link_detail` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `workflow_link_id` int(20) NOT NULL COMMENT '工作流线ID',
+  `workflow_refer_id` int(20) NOT NULL COMMENT '工作流关联ID',
+  `workflow_step` int(20) NOT NULL COMMENT '流程当前步骤',
+  `workflow_current_node_id` int(20) NOT NULL COMMENT '当前结点ID',
+  `workflow_previous_node_id` int(20) COMMENT '上节点ID',
+  `workflow_next_node_id` int(20) COMMENT '下节点ID',
+  `verify_user` int(20) COMMENT '审核人',
+  `verify_time` datetime COMMENT '审核时间',
+  `verify_status` int(20) COMMENT '审核状态',
+  `verify_opinion` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '审核意见',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='工作流线明细表';
 
 -- ****************************************商品模块**************************************** --
 
