@@ -4,6 +4,7 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.system.pojo.Menu;
+import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.core.service.system.MenuService;
 import com.lxzl.erp.core.service.system.impl.support.ConvertMenu;
@@ -11,6 +12,7 @@ import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.dataaccess.dao.mysql.system.SysMenuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMapper;
 import com.lxzl.erp.dataaccess.domain.system.SysMenuDO;
+import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.core.service.impl.BaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,10 +100,14 @@ public class MenuServiceImpl extends BaseServiceImpl implements MenuService {
         List<SysMenuDO> menuDOList = new ArrayList<>();
         Map<String, Object> maps = new HashMap<>();
 
-        List<Integer> roleList = userRoleMapper.findRoleListByUserId(user.getUserId());
+        List<RoleDO> roleList = userRoleMapper.findRoleListByUserId(user.getUserId());
+        List<Integer> roleIdList = new ArrayList<>();
         if (roleList != null && roleList.size() > 0) {
             if (!roleService.isSuperAdmin(user.getUserId())) {
-                maps.put("roleSet", roleList);
+                for(RoleDO roleDO : roleList){
+                    roleIdList.add(roleDO.getId());
+                }
+                maps.put("roleSet", roleIdList);
             }
             menuDOList = sysMenuMapper.findRoleMenu(maps);
         }
@@ -117,7 +123,7 @@ public class MenuServiceImpl extends BaseServiceImpl implements MenuService {
             Map<String, Object> maps = new HashMap<>();
             menuDOList = menuMysqlDAO.findAllMenu(maps);
         }else{
-            List<Integer> userRoleList = userRoleMysqlDAO.findRoleListByUserId(userResponse.getUserId());
+            List<Integer> userRoleList = userRoleMysqlDAO.findRoleIdListByUserId(userResponse.getUserId());
             if (userRoleList != null && userRoleList.size() != 0) {
                 Map<String, Object> maps = new HashMap<>();
                 maps.put("roleSet", userRoleList);

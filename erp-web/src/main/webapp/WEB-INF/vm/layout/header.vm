@@ -1,9 +1,6 @@
 #parse("layout/meta.vm")
 #parse("layout/common.vm")
 
-<link rel="stylesheet" type="text/css" href="${staticCommon}/assets/skin/default_skin/css/theme.css">
-<link rel="stylesheet" type="text/css" href="${staticCommon}/assets/admin-tools/admin-forms/css/admin-forms.css">
-<link rel="stylesheet" type="text/css" href="${staticCommon}/assets/admin-tools/admin-plugins/admin-modal/adminmodal.css">
 <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/magnific/magnific-popup.css">
 
 <link rel="shortcut icon" href="${staticCommon}/rental/img/favicon.png">
@@ -12,10 +9,3 @@
 <script src="${staticCommon}/html5Js/html5shiv.js"></script>
 <script src="${staticCommon}/html5Js/respond.min.js"></script>
 <![endif]-->
-
-<script type="text/javascript" src="${staticCommon}/rental/loader.js?v=$version"></script>
-<script type="text/javascript" src="${staticManagement}/loader.js?v=$version"></script>
-
-<script type="text/javascript">
-    common_load_css('${staticCommon}/rental/css','master.css');
-</script>

@@ -53,6 +53,11 @@
             </script>
             <ul class="dropdown-menu dropdown-hover dropdown-persist pn w350 bg-white animated animated-shorter fadeIn" role="menu" id="navbarMessageList"></ul>
         </li>
+        <li class="dropdown dropdown-item-slide" title="主题设置" id="navBarShowSkinToolbox">
+            <a class="dropdown-toggle pl10 pr10" data-toggle="dropdown" href="#">
+                <span class="fa fa-gear "></span>
+            </a>
+        </li>
         <li class="ph10 pv20 hidden-xs"> <i class="fa fa-circle text-tp fs8"></i>
         </li>
         <li class="dropdown">

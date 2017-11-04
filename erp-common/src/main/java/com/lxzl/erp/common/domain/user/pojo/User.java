@@ -3,9 +3,9 @@ package com.lxzl.erp.common.domain.user.pojo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
-
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
@@ -29,10 +29,8 @@ public class User implements Serializable {
     private Date lastLoginTime;
     private String lastLoginIp;
     private String remark;
-    private List<Integer> roleList;
-    private List<Integer> departmentList;
-    private List<UserDepartment> userDepartmentList;
-    private List<Role> userRoleList;
+
+    private List<Role> roleList;
 
     public Integer getUserId() {
         return userId;
@@ -138,35 +136,11 @@ public class User implements Serializable {
         this.remark = remark;
     }
 
-    public List<Integer> getRoleList() {
+    public List<Role> getRoleList() {
         return roleList;
     }
 
-    public void setRoleList(List<Integer> roleList) {
+    public void setRoleList(List<Role> roleList) {
         this.roleList = roleList;
-    }
-
-    public List<Integer> getDepartmentList() {
-        return departmentList;
-    }
-
-    public void setDepartmentList(List<Integer> departmentList) {
-        this.departmentList = departmentList;
-    }
-
-    public List<UserDepartment> getUserDepartmentList() {
-        return userDepartmentList;
-    }
-
-    public void setUserDepartmentList(List<UserDepartment> userDepartmentList) {
-        this.userDepartmentList = userDepartmentList;
-    }
-
-    public List<Role> getUserRoleList() {
-        return userRoleList;
-    }
-
-    public void setUserRoleList(List<Role> userRoleList) {
-        this.userRoleList = userRoleList;
     }
 }
