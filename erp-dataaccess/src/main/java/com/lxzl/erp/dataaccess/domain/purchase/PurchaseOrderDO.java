@@ -15,6 +15,8 @@ public class PurchaseOrderDO extends BaseDO {
     private Integer isInvoice;
     private Integer isNew;
     private BigDecimal purchaseOrderAmountTotal;
+    private BigDecimal purchaseOrderAmountReal;
+    private BigDecimal purchaseOrderAmountStatement;
     private Integer purchaseOrderStatus;
     private Integer commitStatus;
     private Date deliveryTime;
@@ -22,75 +24,91 @@ public class PurchaseOrderDO extends BaseDO {
     private Integer owner;
     private String remark;
 
-    public Integer getId(){
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id){
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getPurchaseNo(){
+    public String getPurchaseNo() {
         return purchaseNo;
     }
 
-    public void setPurchaseNo(String purchaseNo){
+    public void setPurchaseNo(String purchaseNo) {
         this.purchaseNo = purchaseNo;
     }
 
-    public Integer getProductSupplierId(){
+    public Integer getProductSupplierId() {
         return productSupplierId;
     }
 
-    public void setProductSupplierId(Integer productSupplierId){
+    public void setProductSupplierId(Integer productSupplierId) {
         this.productSupplierId = productSupplierId;
     }
 
-    public Integer getInvoiceSupplierId(){
+    public Integer getInvoiceSupplierId() {
         return invoiceSupplierId;
     }
 
-    public void setInvoiceSupplierId(Integer invoiceSupplierId){
+    public void setInvoiceSupplierId(Integer invoiceSupplierId) {
         this.invoiceSupplierId = invoiceSupplierId;
     }
 
-    public Integer getWarehouseId(){
+    public Integer getWarehouseId() {
         return warehouseId;
     }
 
-    public void setWarehouseId(Integer warehouseId){
+    public void setWarehouseId(Integer warehouseId) {
         this.warehouseId = warehouseId;
     }
 
-    public Integer getIsInvoice(){
+    public Integer getIsInvoice() {
         return isInvoice;
     }
 
-    public void setIsInvoice(Integer isInvoice){
+    public void setIsInvoice(Integer isInvoice) {
         this.isInvoice = isInvoice;
     }
 
-    public Integer getIsNew(){
+    public Integer getIsNew() {
         return isNew;
     }
 
-    public void setIsNew(Integer isNew){
+    public void setIsNew(Integer isNew) {
         this.isNew = isNew;
     }
 
-    public BigDecimal getPurchaseOrderAmountTotal(){
+    public BigDecimal getPurchaseOrderAmountTotal() {
         return purchaseOrderAmountTotal;
     }
 
-    public void setPurchaseOrderAmountTotal(BigDecimal purchaseOrderAmountTotal){
+    public void setPurchaseOrderAmountTotal(BigDecimal purchaseOrderAmountTotal) {
         this.purchaseOrderAmountTotal = purchaseOrderAmountTotal;
     }
 
-    public Integer getPurchaseOrderStatus(){
+    public BigDecimal getPurchaseOrderAmountReal() {
+        return purchaseOrderAmountReal;
+    }
+
+    public void setPurchaseOrderAmountReal(BigDecimal purchaseOrderAmountReal) {
+        this.purchaseOrderAmountReal = purchaseOrderAmountReal;
+    }
+
+    public BigDecimal getPurchaseOrderAmountStatement() {
+        return purchaseOrderAmountStatement;
+    }
+
+    public void setPurchaseOrderAmountStatement(BigDecimal purchaseOrderAmountStatement) {
+        this.purchaseOrderAmountStatement = purchaseOrderAmountStatement;
+    }
+
+    public Integer getPurchaseOrderStatus() {
         return purchaseOrderStatus;
     }
 
-    public void setPurchaseOrderStatus(Integer purchaseOrderStatus){
+    public void setPurchaseOrderStatus(Integer purchaseOrderStatus) {
         this.purchaseOrderStatus = purchaseOrderStatus;
     }
 
@@ -102,35 +120,35 @@ public class PurchaseOrderDO extends BaseDO {
         this.commitStatus = commitStatus;
     }
 
-    public Date getDeliveryTime(){
+    public Date getDeliveryTime() {
         return deliveryTime;
     }
 
-    public void setDeliveryTime(Date deliveryTime){
+    public void setDeliveryTime(Date deliveryTime) {
         this.deliveryTime = deliveryTime;
     }
 
-    public Integer getDataStatus(){
+    public Integer getDataStatus() {
         return dataStatus;
     }
 
-    public void setDataStatus(Integer dataStatus){
+    public void setDataStatus(Integer dataStatus) {
         this.dataStatus = dataStatus;
     }
 
-    public Integer getOwner(){
+    public Integer getOwner() {
         return owner;
     }
 
-    public void setOwner(Integer owner){
+    public void setOwner(Integer owner) {
         this.owner = owner;
     }
 
-    public String getRemark(){
+    public String getRemark() {
         return remark;
     }
 
-    public void setRemark(String remark){
+    public void setRemark(String remark) {
         this.remark = remark;
     }
 }

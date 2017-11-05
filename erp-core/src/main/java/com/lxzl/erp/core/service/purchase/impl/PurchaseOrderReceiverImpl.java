@@ -14,14 +14,18 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.product.ProductService;
-import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
+import com.lxzl.erp.core.service.purchase.PurchaseOrderReceiver;
 import com.lxzl.erp.core.service.purchase.impl.support.PurchaseOrderConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderProductMapper;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
+import com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderDO;
 import com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderDO;
 import com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderProductDO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -36,7 +40,9 @@ import java.util.List;
 
 
 @Service
-public class PurchaseOrderServiceImpl implements PurchaseOrderService {
+public class PurchaseOrderReceiverImpl implements PurchaseOrderReceiver {
+
+    private static final Logger log = LoggerFactory.getLogger(PurchaseOrderReceiverImpl.class);
 
     @Autowired(required = false)
     private HttpSession session;
@@ -88,7 +94,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             PurchaseOrderProductDO purchaseOrderProductDO = new PurchaseOrderProductDO();
             //保存采购订单商品项快照
             ServiceResult<String,Product> productResult = productService.queryProductById(productSkuDO.getProductId());
-            purchaseOrderProductDO.setProductModeSnapshot(JSON.toJSONString(productResult));
+            purchaseOrderProductDO.setProductSnapshot(JSON.toJSONString(productResult));
             purchaseOrderProductDO.setProductId(productSkuDO.getProductId());
             purchaseOrderProductDO.setProductName(productSkuDO.getProductName());
             purchaseOrderProductDO.setProductSkuId(productSkuDO.getId());
@@ -101,12 +107,17 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             purchaseOrderProductDO.setUpdateTime(now);
             purchaseOrderProductDOList.add(purchaseOrderProductDO);
         }
+
+        //保存采购单
         PurchaseOrderDO purchaseOrderDO = PurchaseOrderConverter.convertPurchaseOrder(purchaseOrder);
-        purchaseOrderDO.setPurchaseNo(GenerateNoUtil.generateOrderNo(now, loginUser.getUserId()));
+        purchaseOrderDO.setPurchaseNo(GenerateNoUtil.generatePurchaseOrderNo(now, loginUser.getUserId()));
         if(purchaseOrderDO.getInvoiceSupplierId()==null){
             purchaseOrderDO.setInvoiceSupplierId(purchaseOrderDO.getProductSupplierId());
         }
         purchaseOrderDO.setPurchaseOrderAmountTotal(totalAmount);
+        //创建采购单时，采购单实收金额和采购单结算金额为空
+        purchaseOrderDO.setPurchaseOrderAmountReal(null);
+        purchaseOrderDO.setPurchaseOrderAmountStatement(null);
         purchaseOrderDO.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PENDING);
         purchaseOrderDO.setDeliveryTime(null);
         purchaseOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -130,29 +141,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Override
     public ServiceResult<String, Integer> update(PurchaseOrder purchaseOrder) {
-//        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-//        Date currentTime = new Date();
-//        ServiceResult<String, Integer> result = new ServiceResult<>();
-//        if (!ErrorCode.SUCCESS.equals(verifyAddCode)) {
-//            result.setErrorCode(verifyAddCode);
-//            return result;
-//        }
-//        ProductDO productDO = ConvertProduct.convertProduct(product);
-//        productDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-//        if (loginUser != null) {
-//            productDO.setUpdateUser(loginUser.getUserId().toString());
-//        }
-//        productDO.setUpdateTime(currentTime);
-//        productMapper.update(productDO);
-//        Integer productId = productDO.getId();
-//        saveProductImage(product.getProductImgList(), 1, productId, loginUser, currentTime);
-//        saveProductImage(product.getProductDescImgList(), 2, productId, loginUser, currentTime);
-//        saveSkuAndProperties(product.getProductSkuList(), productId, loginUser, currentTime);
-//        saveProductProperties(product.getProductPropertyList(), productId, loginUser, currentTime);
-//
-//        result.setErrorCode(ErrorCode.SUCCESS);
-//        result.setResult(product.getProductId());
-//        return result;
         return null;
     }
 
@@ -164,5 +152,64 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     public ServiceResult<String, Page<PurchaseOrder>> page(PurchaseOrderQueryParam purchaseOrderQueryParam) {
         return null;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> commit(PurchaseOrder purchaseOrder) {
+        //todo 校验采购单是否存在
+        //todo 调用审核服务
+        return null;
+    }
+
+    /**
+     * 接收审核结果通知，审核通过生成发货单
+     * @param verifyResult
+     * @param businessId
+     */
+    @Override
+    public boolean receiveVerifyResult(boolean verifyResult, Integer businessId) {
+        try{
+            if(verifyResult){
+                PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findById(businessId);
+                if(purchaseOrderDO==null){
+                    throw new Exception();
+                }
+                createPurchaseDeliveryOrderDO(purchaseOrderDO);
+            }else{
+
+            }
+        }catch (Exception e){
+            log.error("【采购单审核后，业务处理异常，未生成发货单】",e);
+            return false;
+        }catch (Throwable t){
+            log.error("【采购单审核后，业务处理异常，未生成发货单】",t);
+            return false;
+        }
+        return false;
+    }
+
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public void createPurchaseDeliveryOrderDO(PurchaseOrderDO purchaseOrderDO){
+
+        Date now = new Date();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        PurchaseDeliveryOrderDO purchaseDeliveryOrderDO = new PurchaseDeliveryOrderDO();
+        purchaseDeliveryOrderDO.setPurchaseOrderId(purchaseOrderDO.getId());
+        purchaseDeliveryOrderDO.setPurchaseDeliveryNo(GenerateNoUtil.generatePurchaseDeliveryOrderNo(now, loginUser.getUserId()));
+        purchaseDeliveryOrderDO.setWarehouseId(purchaseOrderDO.getWarehouseId());
+//        purchaseDeliveryOrderDO.setWarehouseSnapshot();
+//        private Integer warehouseSnapshot;   //收货方仓库快照，JSON格式
+//        private Integer isInvoice;   //是否有发票，0否1是
+//        private Integer isNew;   //是否全新机
+//        private BigDecimal purchaseOrderAmountTotal;   //采购发货单总价
+//        private Integer purchaseDeliveryOrderStatus;   //采购发货单状态，0待发货，1已发货
+//        private Date deliveryTime;   //发货时间
+//        private Integer dataStatus;   //状态：0不可用；1可用；2删除
+//        private Integer ownerSupplierId;   //数据归属人
+//        private String remark;   //备注
+//        private Date createTime;   //添加时间
+//        private String createUser;   //添加人
+//        private Date updateTime;   //添加时间
+//        private String updateUser;   //修改人
     }
 }

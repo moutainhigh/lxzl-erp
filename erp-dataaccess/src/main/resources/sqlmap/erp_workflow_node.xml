@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowNodeMapper">
+
+	<resultMap id="WorkflowNodeDO" type="com.lxzl.erp.dataaccess.domain.workflow.WorkflowNodeDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="workflow_node_name" jdbcType="VARCHAR" property="workflowNodeName" />
+		<result column="workflow_template_id" jdbcType="INTEGER" property="workflowTemplateId" />
+		<result column="workflow_step" jdbcType="INTEGER" property="workflowStep" />
+		<result column="workflow_department" jdbcType="INTEGER" property="workflowDepartment" />
+		<result column="workflow_role" jdbcType="INTEGER" property="workflowRole" />
+		<result column="workflow_user" jdbcType="INTEGER" property="workflowUser" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ewn.id,ewn.workflow_node_name,ewn.workflow_template_id,ewn.workflow_step,ewn.workflow_department,ewn.workflow_role,ewn.workflow_user,ewn.data_status,ewn.remark,ewn.create_time,ewn.create_user,ewn.update_time,ewn.update_user
+	</sql>
+
+	<select id="findById" resultMap="WorkflowNodeDO" parameterType="java.lang.Integer">
+		select <include refid="column_List"/> from erp_workflow_node ewn 
+		where ewn.id = #{id, jdbcType=INTEGER} and data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		select count(ewn.id) from erp_workflow_node ewn 
+		<where>
+			<if test="true">
+				and ewn.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="WorkflowNodeDO" parameterType="map">
+		select <include refid="column_List"/> from erp_workflow_node ewn 
+		<where>
+			<if test="true">
+				and ewn.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="workflowNodeName != null">
+				workflow_node_name = #{workflowNodeName,jdbcType=VARCHAR},
+			</if>
+			<if test="workflowTemplateId != null">
+				workflow_template_id = #{workflowTemplateId,jdbcType=INTEGER},
+			</if>
+			<if test="workflowStep != null">
+				workflow_step = #{workflowStep,jdbcType=INTEGER},
+			</if>
+			<if test="workflowDepartment != null">
+				workflow_department = #{workflowDepartment,jdbcType=INTEGER},
+			</if>
+			<if test="workflowRole != null">
+				workflow_role = #{workflowRole,jdbcType=INTEGER},
+			</if>
+			<if test="workflowUser != null">
+				workflow_user = #{workflowUser,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.workflow.WorkflowNodeDO">
+		insert into erp_workflow_node <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.workflow.WorkflowNodeDO">
+		update erp_workflow_node <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

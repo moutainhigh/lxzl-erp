@@ -11,7 +11,10 @@
 		<result column="is_invoice" jdbcType="INTEGER" property="isInvoice" />
 		<result column="is_new" jdbcType="INTEGER" property="isNew" />
 		<result column="purchase_order_amount_total" jdbcType="DECIMAL" property="purchaseOrderAmountTotal" />
+		<result column="purchase_order_amount_real" jdbcType="DECIMAL" property="purchaseOrderAmountReal" />
+		<result column="purchase_order_amount_statement" jdbcType="DECIMAL" property="purchaseOrderAmountStatement" />
 		<result column="purchase_order_status" jdbcType="INTEGER" property="purchaseOrderStatus" />
+		<result column="commit_status" jdbcType="INTEGER" property="commitStatus" />
 		<result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="owner" jdbcType="INTEGER" property="owner" />
@@ -23,9 +26,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		epo.id,epo.purchase_no,epo.product_supplier_id,epo.invoice_supplier_id,epo.warehouse_id,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_status,epo.delivery_time,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user
-	</sql>
-
+		epo.id,epo.purchase_no,epo.product_supplier_id,epo.invoice_supplier_id,epo.warehouse_id,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_amount_real,epo.purchase_order_amount_statement,epo.purchase_order_status,epo.commit_status,epo.delivery_time,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user	</sql>
 	<select id="findById" resultMap="PurchaseOrderDO" parameterType="java.lang.Integer">
 		select <include refid="column_List"/> from erp_purchase_order epo 
 		where epo.id = #{id, jdbcType=INTEGER} and data_status = 1 
@@ -73,8 +74,17 @@
 			<if test="purchaseOrderAmountTotal != null">
 				purchase_order_amount_total = #{purchaseOrderAmountTotal,jdbcType=DECIMAL},
 			</if>
+			<if test="purchaseOrderAmountReal != null">
+				purchase_order_amount_real = #{purchaseOrderAmountReal,jdbcType=DECIMAL},
+			</if>
+			<if test="purchaseOrderAmountStatement != null">
+				purchase_order_amount_statement = #{purchaseOrderAmountStatement,jdbcType=DECIMAL},
+			</if>
 			<if test="purchaseOrderStatus != null">
 				purchase_order_status = #{purchaseOrderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="commitStatus != null">
+				commit_status = #{commitStatus,jdbcType=INTEGER},
 			</if>
 			<if test="deliveryTime != null">
 				delivery_time = #{deliveryTime,jdbcType=TIMESTAMP},

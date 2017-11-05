@@ -22,6 +22,8 @@ public class Role implements Serializable {
     private String roleName;
     private Integer departmentId;
     private String departmentName;
+    private Integer subCompanyId;
+    private String subCompanyName;
     private String roleDesc;
     private Integer isSuperAdmin;
     private Integer dataStatus;
@@ -89,5 +91,21 @@ public class Role implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Integer getSubCompanyId() {
+        return subCompanyId;
+    }
+
+    public void setSubCompanyId(Integer subCompanyId) {
+        this.subCompanyId = subCompanyId;
+    }
+
+    public String getSubCompanyName() {
+        return subCompanyName;
+    }
+
+    public void setSubCompanyName(String subCompanyName) {
+        this.subCompanyName = subCompanyName;
     }
 }

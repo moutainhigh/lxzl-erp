@@ -29,6 +29,8 @@
         <result column="role_role_name" jdbcType="VARCHAR" property="roleName"/>
         <result column="role_department_id" jdbcType="INTEGER" property="departmentId"/>
         <result column="role_department_name" jdbcType="VARCHAR" property="departmentName"/>
+        <result column="role_sub_company_id" jdbcType="INTEGER" property="subCompanyId"/>
+        <result column="role_sub_company_name" jdbcType="VARCHAR" property="subCompanyName"/>
         <result column="role_role_desc" jdbcType="VARCHAR" property="roleDesc"/>
         <result column="role_is_super_admin" jdbcType="VARCHAR" property="isSuperAdmin"/>
         <result column="role_data_status" jdbcType="INTEGER" property="dataStatus"/>
@@ -115,7 +117,8 @@
     </update>
     <select id="findByUsername" resultMap="userResult" parameterType="java.lang.String">
         select a.*,<include refid="role_columnList"/>,
-        ed.id as role_department_id, ed.department_name as role_department_name
+        ed.id as role_department_id, ed.department_name as role_department_name,
+        esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name
         from
         (select <include refid="columnList"/> from erp_user u
          where u.user_name = #{userName,jdbcType=VARCHAR}
@@ -123,11 +126,13 @@
         left join erp_user_role tur on tur.user_id = a.id and tur.data_status = 1
         left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
         left join erp_department ed on ed.id = tr.department_id and tr.data_status = 1
+        left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
 
     </select>
     <select id="findByUserId" resultMap="userResult">
         select a.*,<include refid="role_columnList"/>,
-        ed.id as role_department_id, ed.department_name as role_department_name
+        ed.id as role_department_id, ed.department_name as role_department_name,
+        esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name
         from
         (
             select
@@ -140,6 +145,7 @@
         left join erp_user_role tur on tur.user_id = a.id and tur.data_status = 1
         left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
         left join erp_department ed on ed.id = tr.department_id and tr.data_status = 1
+        left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
     </select>
 
     <select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -153,7 +159,8 @@
     </select>
     <select id="listPage" resultMap="userResult" parameterType="map">
         select a.*,<include refid="role_columnList"/>,
-        ed.id as role_department_id, ed.department_name as role_department_name
+        ed.id as role_department_id, ed.department_name as role_department_name,
+        esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name
         from
         (select <include refid="columnList"/> from erp_user u
         <where>
@@ -167,6 +174,7 @@
         left join erp_user_role tur on tur.user_id = a.id and tur.data_status = 1
         left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
         left join erp_department ed on ed.id = tr.department_id and ed.data_status = 1
+        left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
         order by a.register_time desc
     </select>
 

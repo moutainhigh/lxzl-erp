@@ -30,4 +30,9 @@ public class GenerateNoUtil {
         Random random = new Random();
         return "C" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + userId + (1000 + random.nextInt(900));
     }
+
+    public static String generatePurchaseDeliveryOrderNo(Date currentTime, Integer userId) {
+        Random random = new Random();
+        return "D" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + userId + (1000 + random.nextInt(900));
+    }
 }
