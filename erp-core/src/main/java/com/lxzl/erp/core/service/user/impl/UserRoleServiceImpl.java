@@ -235,12 +235,9 @@ public class UserRoleServiceImpl implements UserRoleService {
         ServiceResult<String, Page<Role>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(param.getPageNo(), param.getPageSize());
         Map<String, Object> params = new HashMap<>();
-
-        if (StringUtil.isNotBlank(param.getRoleName())) {
-            params.put("roleName", param.getRoleName());
-        }
         params.put("start", pageQuery.getStart());
         params.put("pageSize", pageQuery.getPageSize());
+        params.put("roleQueryParam", param);
         List<RoleDO> list = roleMapper.findList(params);
         Integer count = roleMapper.findListCount(params);
 
@@ -615,6 +612,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Override
     public ServiceResult<String, List<User>> getUserByRoleId(Integer roleId) {
+
         return null;
     }
 
