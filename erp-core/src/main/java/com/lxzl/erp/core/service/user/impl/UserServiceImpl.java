@@ -273,7 +273,6 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             result.setErrorCode(ErrorCode.USER_NOT_EXISTS);
             return result;
         }
-        List<RoleDO> roleDOList = userRoleMapper.findRoleListByUserId(userId);
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(UserConverter.convert(userDO));

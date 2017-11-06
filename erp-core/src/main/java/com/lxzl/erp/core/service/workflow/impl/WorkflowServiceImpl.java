@@ -12,7 +12,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowNodeMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowTemplateMapper;
-import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDetailDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowNodeDO;
