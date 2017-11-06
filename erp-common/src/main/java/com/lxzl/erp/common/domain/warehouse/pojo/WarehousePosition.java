@@ -7,7 +7,7 @@ import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WarehousePosition implements Serializable {
-    private Integer id;
+    private Integer warehousePositionId;
 
     private Integer warehouseId;
 
@@ -17,12 +17,12 @@ public class WarehousePosition implements Serializable {
 
     private String remark;
 
-    public Integer getId() {
-        return id;
+    public Integer getWarehousePositionId() {
+        return warehousePositionId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setWarehousePositionId(Integer warehousePositionId) {
+        this.warehousePositionId = warehousePositionId;
     }
 
     public Integer getWarehouseId() {

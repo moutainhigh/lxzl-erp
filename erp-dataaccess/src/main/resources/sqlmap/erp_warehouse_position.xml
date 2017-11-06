@@ -17,7 +17,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ewp.id,ewp.warehouse_id,ewp.warehouse_position_name,ewp.data_status,ewp.remark,ewp.create_time,ewp.create_user,ewp.update_time,ewp.update_user,
+		ewp.id,ewp.warehouse_id,ewp.warehouse_position_name,ewp.data_status,ewp.remark,ewp.create_time,ewp.create_user,ewp.update_time,ewp.update_user
 	</sql>
 
 	<select id="findById" resultMap="WarehousePositionDO" parameterType="java.lang.Integer">

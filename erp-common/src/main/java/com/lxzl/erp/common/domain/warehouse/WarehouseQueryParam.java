@@ -1,18 +1,19 @@
-package com.lxzl.erp.common.domain.warehouse.pojo;
+package com.lxzl.erp.common.domain.warehouse;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
  *
  * @author gaochao
- * @date 2017-11-02 15:45
+ * @date 2017-11-06 17:44
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Warehouse implements Serializable {
+public class WarehouseQueryParam extends PageQuery implements Serializable {
+
     private Integer warehouseId;
 
     private String warehouseNo;
@@ -22,14 +23,6 @@ public class Warehouse implements Serializable {
     private Integer subCompanyId;
 
     private String subCompanyName;
-
-    private Integer isHeaderCompany;
-
-    private Integer dataStatus;
-
-    private String remark;
-
-    private List<WarehousePosition> warehousePositionList;
 
     public Integer getWarehouseId() {
         return warehouseId;
@@ -61,38 +54,6 @@ public class Warehouse implements Serializable {
 
     public void setSubCompanyId(Integer subCompanyId) {
         this.subCompanyId = subCompanyId;
-    }
-
-    public Integer getDataStatus() {
-        return dataStatus;
-    }
-
-    public void setDataStatus(Integer dataStatus) {
-        this.dataStatus = dataStatus;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-
-    public List<WarehousePosition> getWarehousePositionList() {
-        return warehousePositionList;
-    }
-
-    public void setWarehousePositionList(List<WarehousePosition> warehousePositionList) {
-        this.warehousePositionList = warehousePositionList;
-    }
-
-    public Integer getIsHeaderCompany() {
-        return isHeaderCompany;
-    }
-
-    public void setIsHeaderCompany(Integer isHeaderCompany) {
-        this.isHeaderCompany = isHeaderCompany;
     }
 
     public String getSubCompanyName() {

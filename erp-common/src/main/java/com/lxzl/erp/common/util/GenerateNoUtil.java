@@ -43,4 +43,8 @@ public class GenerateNoUtil {
         Random random = new Random();
         return "A" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + purchaseOrderId + (1000 + random.nextInt(900));
     }
+
+    public static String generateEquipmentNo(Date currentTime, Integer warehouseId, int no) {
+        return "LX-52RENTAL-VIEWPAKER-" + warehouseId + "-" + new SimpleDateFormat("yyyyMMdd").format(currentTime) + (10000 + no);
+    }
 }

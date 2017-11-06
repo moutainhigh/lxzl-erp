@@ -13,6 +13,7 @@ import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.company.impl.support.CompanyConverter;
 import com.lxzl.erp.core.service.company.impl.support.DepartmentConverter;
 import com.lxzl.erp.core.service.user.UserRoleService;
+import com.lxzl.erp.core.service.user.impl.support.UserConverter;
 import com.lxzl.erp.core.service.user.impl.support.UserRoleConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
@@ -614,9 +615,8 @@ public class UserRoleServiceImpl implements UserRoleService {
         PageQuery pageQuery = new PageQuery();
         pageQuery.setPageNo(1);
         pageQuery.setPageSize(Integer.MAX_VALUE);
-
         List<UserDO> userDOList = userMapper.listPage(userQueryParam,pageQuery);
-
+        result.setResult(UserConverter.convertUserList(userDOList));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }

@@ -24,7 +24,7 @@ public class PurchaseOrder implements Serializable {
     @NotNull(message = ErrorCode.PRODUCT_SUPPLIER_ID_NOT_NULL , groups = {AddGroup.class,UpdateGroup.class})
     private Integer productSupplierId;   //商品供应商ID
     private Integer invoiceSupplierId;   //发票供应商ID
-    @NotNull(message = ErrorCode.WARE_HOUSE_ID_NOT_NULL , groups = {AddGroup.class,UpdateGroup.class})
+    @NotNull(message = ErrorCode.WAREHOUSE_ID_NOT_NULL, groups = {AddGroup.class,UpdateGroup.class})
     private Integer warehouseId;   //仓库ID
     private String warehouseSnapshot;   //仓库快照
     @NotNull(message = ErrorCode.IS_INVOICE_NOT_NULL , groups = {AddGroup.class,UpdateGroup.class})

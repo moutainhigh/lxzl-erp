@@ -80,7 +80,7 @@ public class ErrorCode {
 
     public static final String PURCHASE_ORDER_ID_NOT_NULL = "J300000";
     public static final String PRODUCT_SUPPLIER_ID_NOT_NULL = "J300001";
-    public static final String WARE_HOUSE_ID_NOT_NULL = "J300002";
+    public static final String WAREHOUSE_ID_NOT_NULL = "J300002";
     public static final String IS_INVOICE_NOT_NULL = "J300003";
     public static final String IS_NEW_NOT_NULL = "J300004";
     public static final String PURCHASE_ORDER_PRODUCT_LIST_NOT_NULL = "J300005";
@@ -90,6 +90,7 @@ public class ErrorCode {
     public static final String PURCHASE_ORDER_NOT_EXISTS = "J300009";
     public static final String PURCHASE_ORDER_COMMITTED_CAN_NOT_UPDATE = "J300010";
     public static final String PURCHASE_ORDER_CANNOT_CREATE_BY_NEW_AND_AMOUNT = "J300011";
+    public static final String WAREHOUSE_NOT_EXISTS = "J300012";
 
     static
     {
@@ -164,7 +165,7 @@ public class ErrorCode {
 
         MAP.put(PURCHASE_ORDER_ID_NOT_NULL,"采购订单ID不能为空");
         MAP.put(PRODUCT_SUPPLIER_ID_NOT_NULL,"商品供应商ID不能为空");
-        MAP.put(WARE_HOUSE_ID_NOT_NULL,"仓库ID不能为空");
+        MAP.put(WAREHOUSE_ID_NOT_NULL,"仓库ID不能为空");
         MAP.put(IS_INVOICE_NOT_NULL,"是否有发票字段必填");
         MAP.put(IS_NEW_NOT_NULL,"是否是全新机字段必填");
         MAP.put(PURCHASE_ORDER_PRODUCT_LIST_NOT_NULL,"采购订单商品项列表不能为空");
@@ -174,6 +175,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_ORDER_NOT_EXISTS,"采购订单不存在");
         MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_UPDATE,"待审核状态的采购单不允许修改");
         MAP.put(PURCHASE_ORDER_CANNOT_CREATE_BY_NEW_AND_AMOUNT,"拒绝创建该采购单，原因【分公司采购单不能为大于两万元的全新机】");
+        MAP.put(WAREHOUSE_NOT_EXISTS,"仓库不存在");
     }
 
     public static String getMessage(String code)
