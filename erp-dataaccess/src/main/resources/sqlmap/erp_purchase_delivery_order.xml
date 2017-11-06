@@ -10,7 +10,6 @@
 		<result column="warehouse_snapshot" jdbcType="VARCHAR" property="warehouseSnapshot" />
 		<result column="is_invoice" jdbcType="INTEGER" property="isInvoice" />
 		<result column="is_new" jdbcType="INTEGER" property="isNew" />
-		<result column="purchase_order_amount_total" jdbcType="DECIMAL" property="purchaseOrderAmountTotal" />
 		<result column="purchase_delivery_order_status" jdbcType="INTEGER" property="purchaseDeliveryOrderStatus" />
 		<result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -23,7 +22,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		epdo.id,epdo.purchase_order_id,epdo.purchase_delivery_no,epdo.warehouse_id,epdo.warehouse_snapshot,epdo.is_invoice,epdo.is_new,epdo.purchase_order_amount_total,epdo.purchase_delivery_order_status,epdo.delivery_time,epdo.data_status,epdo.owner_supplier_id,epdo.remark,epdo.create_time,epdo.create_user,epdo.update_time,epdo.update_user
+		epdo.id,epdo.purchase_order_id,epdo.purchase_delivery_no,epdo.warehouse_id,epdo.warehouse_snapshot,epdo.is_invoice,epdo.is_new,epdo.purchase_delivery_order_status,epdo.delivery_time,epdo.data_status,epdo.owner_supplier_id,epdo.remark,epdo.create_time,epdo.create_user,epdo.update_time,epdo.update_user
 	</sql>
 
 	<select id="findById" resultMap="PurchaseDeliveryOrderDO" parameterType="java.lang.Integer">
@@ -62,16 +61,13 @@
 				warehouse_id = #{warehouseId,jdbcType=INTEGER},
 			</if>
 			<if test="warehouseSnapshot != null">
-				warehouse_snapshot = #{warehouseSnapshot,jdbcType=VARCHAR},
+				warehouse_snapshot = #{warehouseSnapshot,jdbcType=INTEGER},
 			</if>
 			<if test="isInvoice != null">
 				is_invoice = #{isInvoice,jdbcType=INTEGER},
 			</if>
 			<if test="isNew != null">
 				is_new = #{isNew,jdbcType=INTEGER},
-			</if>
-			<if test="purchaseOrderAmountTotal != null">
-				purchase_order_amount_total = #{purchaseOrderAmountTotal,jdbcType=DECIMAL},
 			</if>
 			<if test="purchaseDeliveryOrderStatus != null">
 				purchase_delivery_order_status = #{purchaseDeliveryOrderStatus,jdbcType=INTEGER},

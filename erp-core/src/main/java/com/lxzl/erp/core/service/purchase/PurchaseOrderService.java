@@ -7,7 +7,7 @@ import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
 import com.lxzl.erp.core.service.VerifyReceiver;
 
 
-public interface PurchaseOrderReceiver extends VerifyReceiver {
+public interface PurchaseOrderService extends VerifyReceiver {
 
     ServiceResult<String,Integer> add(PurchaseOrder purchaseOrder);
     ServiceResult<String,Integer> update(PurchaseOrder purchaseOrder);

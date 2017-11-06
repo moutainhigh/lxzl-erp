@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseReceiveOrderMapper">
+
+	<resultMap id="PurchaseReceiveOrderDO" type="com.lxzl.erp.dataaccess.domain.purchase.PurchaseReceiveOrderDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="purchase_order_id" jdbcType="INTEGER" property="purchaseOrderId" />
+		<result column="purchase_delivery_order_id" jdbcType="INTEGER" property="purchaseDeliveryOrderId" />
+		<result column="purchase_receive_no" jdbcType="VARCHAR" property="purchaseReceiveNo" />
+		<result column="product_supplier_id" jdbcType="INTEGER" property="productSupplierId" />
+		<result column="invoice_supplier_id" jdbcType="INTEGER" property="invoiceSupplierId" />
+		<result column="warehouse_id" jdbcType="INTEGER" property="warehouseId" />
+		<result column="warehouse_snapshot" jdbcType="VARCHAR" property="warehouseSnapshot" />
+		<result column="is_invoice" jdbcType="INTEGER" property="isInvoice" />
+		<result column="auto_allot_status" jdbcType="INTEGER" property="autoAllotStatus" />
+		<result column="auto_allot_no" jdbcType="VARCHAR" property="autoAllotNo" />
+		<result column="is_new" jdbcType="INTEGER" property="isNew" />
+		<result column="purchase_receive_order_status" jdbcType="INTEGER" property="purchaseReceiveOrderStatus" />
+		<result column="confirm_time" jdbcType="TIMESTAMP" property="confirmTime" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="owner" jdbcType="INTEGER" property="owner" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		epro.id,epro.purchase_order_id,epro.purchase_delivery_order_id,epro.purchase_receive_no,epro.product_supplier_id,epro.invoice_supplier_id,epro.warehouse_id,epro.warehouse_snapshot,epro.is_invoice,epro.auto_allot_status,epro.auto_allot_no,epro.is_new,epro.purchase_receive_order_status,epro.confirm_time,epro.data_status,epro.owner,epro.remark,epro.create_time,epro.create_user,epro.update_time,epro.update_user
+	</sql>
+
+	<select id="findById" resultMap="PurchaseReceiveOrderDO" parameterType="java.lang.Integer">
+		select <include refid="column_List"/> from erp_purchase_receive_order epro 
+		where epro.id = #{id, jdbcType=INTEGER} and data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		select count(epro.id) from erp_purchase_receive_order epro 
+		<where>
+			<if test="true">
+				and epro.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="PurchaseReceiveOrderDO" parameterType="map">
+		select <include refid="column_List"/> from erp_purchase_receive_order epro 
+		<where>
+			<if test="true">
+				and epro.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="purchaseOrderId != null">
+				purchase_order_id = #{purchaseOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="purchaseDeliveryOrderId != null">
+				purchase_delivery_order_id = #{purchaseDeliveryOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="purchaseReceiveNo != null">
+				purchase_receive_no = #{purchaseReceiveNo,jdbcType=VARCHAR},
+			</if>
+			<if test="productSupplierId != null">
+				product_supplier_id = #{productSupplierId,jdbcType=INTEGER},
+			</if>
+			<if test="invoiceSupplierId != null">
+				invoice_supplier_id = #{invoiceSupplierId,jdbcType=INTEGER},
+			</if>
+			<if test="warehouseId != null">
+				warehouse_id = #{warehouseId,jdbcType=INTEGER},
+			</if>
+			<if test="warehouseSnapshot != null">
+				warehouse_snapshot = #{warehouseSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="isInvoice != null">
+				is_invoice = #{isInvoice,jdbcType=INTEGER},
+			</if>
+			<if test="autoAllotStatus != null">
+				auto_allot_status = #{autoAllotStatus,jdbcType=INTEGER},
+			</if>
+			<if test="autoAllotId != null">
+				auto_allot_no = #{autoAllotNo,jdbcType=VARCHAR},
+			</if>
+			<if test="isNew != null">
+				is_new = #{isNew,jdbcType=INTEGER},
+			</if>
+			<if test="purchaseReceiveOrderStatus != null">
+				purchase_receive_order_status = #{purchaseReceiveOrderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="confirmTime != null">
+				confirm_time = #{confirmTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="owner != null">
+				owner = #{owner,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseReceiveOrderDO">
+		insert into erp_purchase_receive_order <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseReceiveOrderDO">
+		update erp_purchase_receive_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

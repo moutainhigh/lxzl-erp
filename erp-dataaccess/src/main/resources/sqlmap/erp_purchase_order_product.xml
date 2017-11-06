@@ -12,6 +12,7 @@
 		<result column="product_count" jdbcType="INTEGER" property="productCount" />
 		<result column="product_amount" jdbcType="DECIMAL" property="productAmount" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -19,7 +20,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		epop.id,epop.purchase_order_id,epop.product_id,epop.product_name,epop.product_snapshot,epop.product_sku_id,epop.product_count,epop.product_amount,epop.remark,epop.create_time,epop.create_user,epop.update_time,epop.update_user
+		epop.id,epop.purchase_order_id,epop.product_id,epop.product_name,epop.product_snapshot,epop.product_sku_id,epop.product_count,epop.product_amount,epop.remark,epop.create_time,epop.create_user,epop.update_time,epop.update_user,epop.data_status
 	</sql>
 
 	<select id="findById" resultMap="PurchaseOrderProductDO" parameterType="java.lang.Integer">
@@ -88,6 +89,9 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
 			</if>
 		</set>
 	</sql>

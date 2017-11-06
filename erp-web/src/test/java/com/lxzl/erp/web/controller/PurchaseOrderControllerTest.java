@@ -4,7 +4,9 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrderProduct;
+import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,4 +31,11 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         TestResult result = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
     }
 
+    @Test
+    public void receiveVerifyResult(){
+        boolean flag = purchaseOrderService.receiveVerifyResult(true,6000001);
+    }
+
+    @Autowired
+    private PurchaseOrderService purchaseOrderService;
 }

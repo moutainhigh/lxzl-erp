@@ -31,8 +31,16 @@ public class GenerateNoUtil {
         return "C" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + userId + (1000 + random.nextInt(900));
     }
 
-    public static String generatePurchaseDeliveryOrderNo(Date currentTime, Integer userId) {
+    public static String generatePurchaseDeliveryOrderNo(Date currentTime, Integer purchaseOrderId) {
         Random random = new Random();
-        return "D" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + userId + (1000 + random.nextInt(900));
+        return "D" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + purchaseOrderId + (1000 + random.nextInt(900));
+    }
+    public static String generatePurchaseReceiveOrderNo(Date currentTime, Integer purchaseOrderId) {
+        Random random = new Random();
+        return "R" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + purchaseOrderId + (1000 + random.nextInt(900));
+    }
+    public static String generateAutoAllotStatusOrderNo(Date currentTime, Integer purchaseOrderId) {
+        Random random = new Random();
+        return "A" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + purchaseOrderId + (1000 + random.nextInt(900));
     }
 }
