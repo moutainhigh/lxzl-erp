@@ -5,8 +5,11 @@
     <resultMap id="RoleDO" type="com.lxzl.erp.dataaccess.domain.user.RoleDO">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="department_id" jdbcType="INTEGER" property="departmentId"/>
+        <result column="department_name" jdbcType="VARCHAR" property="departmentName"/>
+        <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId"/>
+        <result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName"/>
         <result column="role_desc" jdbcType="VARCHAR" property="roleDesc"/>
-        <result column="parent_role_name" jdbcType="VARCHAR" property="parentRoleName"/>
         <result column="is_super_admin" jdbcType="VARCHAR" property="isSuperAdmin"/>
         <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -22,10 +25,14 @@
 
     <select id="findList" resultMap="RoleDO" parameterType="map">
         select
-        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user,
+        ed.id as department_id, ed.department_name as department_name,
+        esc.id as sub_company_id, esc.sub_company_name as sub_company_name
         from erp_role tr
         left join erp_user tuc on tuc.id = tr.create_user
         left join erp_user tuu on tuu.id = tr.update_user
+        left join erp_department ed on ed.id = tr.department_id and tr.data_status = 1
+        left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
         <where>
             <if test="maps.roleName != null">
                 and tr.role_name like CONCAT('%','${maps.roleName}','%' )
@@ -59,20 +66,28 @@
 
     <select id="findByMapId" resultMap="RoleDO" parameterType="java.lang.Integer">
         select
-        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user,
+        ed.id as department_id, ed.department_name as department_name,
+        esc.id as sub_company_id, esc.sub_company_name as sub_company_name
         from erp_role tr
         left join erp_user tuc on tuc.id = tr.create_user
         left join erp_user tuu on tuu.id = tr.update_user
+        left join erp_department ed on ed.id = tr.department_id and tr.data_status = 1
+        left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
         where tr.id = #{roleId, jdbcType=INTEGER} and tr.data_status = 1
     </select>
 
     <select id="findByUserId" resultMap="RoleDO" parameterType="java.lang.Integer">
         select
-        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user,
+        ed.id as department_id, ed.department_name as department_name,
+        esc.id as sub_company_id, esc.sub_company_name as sub_company_name
         from erp_role tr
         inner join erp_user_role tur on tr.id = tur.role_id and tur.data_status = 1
         left join erp_user tuc on tuc.id = tr.create_user
         left join erp_user tuu on tuu.id = tr.update_user
+        left join erp_department ed on ed.id = tr.department_id and tr.data_status = 1
+        left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
         where tur.user_id = #{userId, jdbcType=INTEGER} and tr.data_status = 1
     </select>
 

@@ -613,4 +613,9 @@ public class UserRoleServiceImpl implements UserRoleService {
         return result;
     }
 
+    @Override
+    public ServiceResult<String, List<User>> getUserByRoleId(Integer roleId) {
+        return null;
+    }
+
 }
