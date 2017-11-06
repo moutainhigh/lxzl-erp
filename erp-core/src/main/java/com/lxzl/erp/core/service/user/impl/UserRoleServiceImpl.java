@@ -363,7 +363,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         roleSet.add(param.getRoleId());
         Map<String, Object> maps = new HashMap<>();
         maps.put("roleSet", roleSet);
-        List<SysMenuDO> menuDOList = sysMenuMapper.findAllMenu(maps);
+        List<SysMenuDO> menuDOList = sysMenuMapper.findRoleMenu(maps);
 
         List<SysMenuDO> nodeList = UserRoleConverter.convertTree(menuDOList);
         List<Menu> resultList = new ArrayList<>();
