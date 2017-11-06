@@ -41,8 +41,13 @@
 	</sql>
 
 	<select id="findById" resultMap="WorkflowTemplateDO" parameterType="java.lang.Integer">
-		select <include refid="column_List"/> from erp_workflow_template ewt 
-		where ewt.id = #{id, jdbcType=INTEGER} and data_status = 1
+		select template.*,<include refid="node_column_List"/> from
+		(
+			select <include refid="column_List"/> from erp_workflow_template ewt
+			where ewt.id = #{id, jdbcType=INTEGER} and data_status = 1
+		) template
+		left join erp_workflow_node ewn on ewn.workflow_template_id = template.id and ewn.data_status = 1
+		order by ewn.workflow_step
 	</select>
 
 	<select id="findByWorkflowType" resultMap="WorkflowTemplateDO" parameterType="java.lang.Integer">

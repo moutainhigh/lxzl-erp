@@ -54,6 +54,11 @@ public class ErrorCode {
     public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
     public static final String WORKFLOW_LINK_EXISTS = "J800003";
     public static final String WORKFLOW_LINK_NOT_EXISTS = "J800004";
+    public static final String WORKFLOW_LINK_HAVE_NO_DETAIL = "J800005";
+    public static final String WORKFLOW_LINK_VERIFY_ALREADY_OVER = "J800006";
+    public static final String WORKFLOW_NOT_BELONG_TO_YOU = "J800007";
+    public static final String WORKFLOW_NOT_EXISTS_CLOSED = "J800008";
+    public static final String WORKFLOW_NODE_NOT_EXISTS = "J800009";
 
     public static final String REMARK_PATTERN = "J900001";
     public static final String ID_NOT_NULL = "J900002";
@@ -128,7 +133,12 @@ public class ErrorCode {
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS,"工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE,"此工作流模板没有节点");
         MAP.put(WORKFLOW_LINK_EXISTS,"此单工作流已经存在");
-        MAP.put(WORKFLOW_LINK_NOT_EXISTS,"此单工作流已经存在");
+        MAP.put(WORKFLOW_LINK_NOT_EXISTS,"此单工作流不存在");
+        MAP.put(WORKFLOW_LINK_HAVE_NO_DETAIL,"此单工作流没有明细");
+        MAP.put(WORKFLOW_LINK_VERIFY_ALREADY_OVER,"此单工作流已经结束");
+        MAP.put(WORKFLOW_NOT_BELONG_TO_YOU,"此单工作流还不该您审核");
+        MAP.put(WORKFLOW_NOT_EXISTS_CLOSED,"此工作流不存在或已经关闭");
+        MAP.put(WORKFLOW_NODE_NOT_EXISTS,"此工作流节点不存在");
 
         MAP.put(REMARK_PATTERN,"备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL,"ID不能为空");

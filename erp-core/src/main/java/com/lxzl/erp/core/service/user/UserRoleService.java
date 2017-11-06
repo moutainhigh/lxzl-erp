@@ -9,6 +9,8 @@ import com.lxzl.erp.common.domain.user.UserRoleQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.*;
 import com.lxzl.se.core.service.BaseService;
 
+import java.util.List;
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,4 +39,5 @@ public interface UserRoleService extends BaseService {
     ServiceResult<String, RoleUserFinal> rebuildFinalRoleUserData(Integer activeUserId);
     ServiceResult<String, RoleUserFinal> getFinalRoleUserData(Integer activeUserId);
     ServiceResult<String, CompanyRoleTree> getCompanyRoleTree(UserRoleQueryParam param);
+    ServiceResult<String,List<User>> getUserByRoleId(Integer roleId);
 }

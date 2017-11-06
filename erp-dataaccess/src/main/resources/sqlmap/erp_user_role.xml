@@ -20,7 +20,6 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
         <result column="role_desc" jdbcType="VARCHAR" property="roleDesc"/>
-        <result column="parent_role_name" jdbcType="VARCHAR" property="parentRoleName"/>
         <result column="is_super_admin" jdbcType="VARCHAR" property="isSuperAdmin"/>
         <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
