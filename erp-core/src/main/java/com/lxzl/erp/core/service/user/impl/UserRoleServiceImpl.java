@@ -7,10 +7,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.system.pojo.Menu;
-import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
-import com.lxzl.erp.common.domain.user.RoleMenuQueryParam;
-import com.lxzl.erp.common.domain.user.RoleQueryParam;
-import com.lxzl.erp.common.domain.user.UserRoleQueryParam;
+import com.lxzl.erp.common.domain.user.*;
 import com.lxzl.erp.common.domain.user.pojo.*;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.company.impl.support.CompanyConverter;
@@ -612,8 +609,16 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Override
     public ServiceResult<String, List<User>> getUserByRoleId(Integer roleId) {
+        ServiceResult<String, List<User>> result = new ServiceResult<>();
+        UserQueryParam userQueryParam = new UserQueryParam();
+        PageQuery pageQuery = new PageQuery();
+        pageQuery.setPageNo(1);
+        pageQuery.setPageSize(Integer.MAX_VALUE);
 
-        return null;
+        List<UserDO> userDOList = userMapper.listPage(userQueryParam,pageQuery);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
 }

@@ -94,7 +94,7 @@ public class MenuServiceImpl extends BaseServiceImpl implements MenuService {
     }
 
     @Override
-    public ServiceResult<String, List<Menu>> findAllMenu() {
+    public ServiceResult<String, List<Menu>> findRoleMenu() {
         ServiceResult<String, List<Menu>> result = new ServiceResult<>();
         User user = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         List<SysMenuDO> menuDOList = new ArrayList<>();
@@ -162,6 +162,28 @@ public class MenuServiceImpl extends BaseServiceImpl implements MenuService {
                 nodeList.add(node1);
             }
         }*/
+
+
+        /* 实现方式二 */
+        List<SysMenuDO> nodeList = ConvertMenu.convertTree(menuDOList);
+
+        List<Menu> resultList = new ArrayList<>();
+        for (SysMenuDO node1 : nodeList) {
+            resultList.add(ConvertMenu.convert(node1));
+        }
+
+        result.setResult(resultList);
+        result.setErrorCode(ErrorCode.SUCCESS);
+
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, List<Menu>> findAllMenu() {
+        ServiceResult<String, List<Menu>> result = new ServiceResult<>();
+        User user = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Map<String, Object> maps = new HashMap<>();
+        List<SysMenuDO> menuDOList = sysMenuMapper.findRoleMenu(maps);
 
 
         /* 实现方式二 */

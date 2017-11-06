@@ -14,6 +14,8 @@ import java.util.List;
  */
 public interface MenuService extends BaseService {
 
+    ServiceResult<String, List<Menu>> findRoleMenu();
+
     ServiceResult<String, List<Menu>> findAllMenu();
 
     ServiceResult<String, List<Menu>> getHomeMenu();

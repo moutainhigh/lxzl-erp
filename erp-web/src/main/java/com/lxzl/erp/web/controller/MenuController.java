@@ -27,6 +27,12 @@ public class MenuController extends BaseController {
 
     @RequestMapping(value = "getMenu", method = RequestMethod.POST)
     public Result getMenu(HttpServletRequest request, HttpServletResponse response, Model model) {
+        ServiceResult<String, List<Menu>> serviceResult = menuService.findRoleMenu();
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "getAllMenu", method = RequestMethod.POST)
+    public Result getAllMenu(HttpServletRequest request, HttpServletResponse response, Model model) {
         ServiceResult<String, List<Menu>> serviceResult = menuService.findAllMenu();
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
