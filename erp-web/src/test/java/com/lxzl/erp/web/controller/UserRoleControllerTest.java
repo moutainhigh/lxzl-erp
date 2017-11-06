@@ -4,6 +4,7 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.domain.company.pojo.Department;
+import com.lxzl.erp.common.domain.user.RoleMenuQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.*;
 import com.lxzl.erp.common.domain.user.RoleQueryParam;
 import com.lxzl.erp.common.domain.user.UserRoleQueryParam;
@@ -119,9 +120,10 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void getRoleMenuList() throws Exception {
-        TestResult result = getJsonTestResult("/menu/getMenu",null);
+        RoleMenuQueryParam param = new RoleMenuQueryParam();
+        param.setRoleId(600001);
+        TestResult result = getJsonTestResult("/userRole/getRoleMenuList",param);
     }
-
     @Test
     public void getRoleTree() throws Exception {
         TestResult result = getJsonTestResult("/userRole/getRoleTree",null);
