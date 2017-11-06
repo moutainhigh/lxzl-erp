@@ -34,6 +34,9 @@
         left join erp_department ed on ed.id = tr.department_id and tr.data_status = 1
         left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
         <where>
+            <if test="maps.roleId != null">
+                and tr.id = #{maps.roleId, jdbcType=INTEGER}
+            </if>
             <if test="maps.roleName != null">
                 and tr.role_name like CONCAT('%','${maps.roleName}','%' )
             </if>
@@ -52,6 +55,9 @@
         select count(1)
         from erp_role tr
         <where>
+            <if test="maps.roleId != null">
+                and tr.id = #{maps.roleId, jdbcType=INTEGER}
+            </if>
             <if test="maps.roleName != null">
                 and tr.role_name like CONCAT('%','${maps.roleName}','%' )
             </if>
