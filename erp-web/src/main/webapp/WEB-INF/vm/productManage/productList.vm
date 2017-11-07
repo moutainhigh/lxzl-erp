@@ -14,7 +14,6 @@
         #parse("layout/navbar.vm")
         #parse("layout/sidebar.vm")
 
-
         <section id="content_wrapper">
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
@@ -54,7 +53,7 @@
                                             <input type="text" name="productId" id="productId" class="form-control input-sm bradius" autocomplete="off" placeholder="输入商品ID">
                                         </div>
                                     </div>
-                                    <select name="isRent" id="isRentMultiselect">
+                                    <select name="isRent" id="isRentMultiselect" class="hide">
                                         <option value="">全部（在租状态）</option>
                                         <option value="1">在租</option>
                                         <option value="0">下架</option>
@@ -129,6 +128,7 @@
                     </div>
 
                 </div>
+
             </section>
         </section>
 

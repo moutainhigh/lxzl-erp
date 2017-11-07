@@ -152,14 +152,14 @@
                     </div>
                     {{/properties}}
                 </script>
-                <div class="section" id="skuPropertiesContainer"></div>
+                <div class="section row" id="skuPropertiesContainer"></div>
 
                 <script type="text/html" id="skuTableTpl">
                     <table class="table admin-form theme-warning tc-checkbox-1 fs13 atl-tabl">
                         <thead>
                         <tr class="bg-light">
                             {{#ths}}
-                            <th>{{propertyName}}</th>
+                            <th class="text-nowrap">{{propertyName}}</th>
                             {{/ths}}
                             <th>SKU名称</th>
                             <th>商品价值</th>
