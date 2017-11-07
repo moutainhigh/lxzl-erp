@@ -4,10 +4,11 @@ import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import java.util.Date;
 
 
-public class ProductEquipmentMaterialDO  extends BaseDO {
+public class ProductMaterialDO  extends BaseDO {
 
 	private Integer id;
-	private Integer equipmentId;
+	private Integer productId;
+	private Integer productSkuId;
 	private Integer materialId;
 	private Integer materialCount;
 	private Integer dataStatus;
@@ -21,12 +22,20 @@ public class ProductEquipmentMaterialDO  extends BaseDO {
 		this.id = id;
 	}
 
-	public Integer getEquipmentId(){
-		return equipmentId;
+	public Integer getProductId(){
+		return productId;
 	}
 
-	public void setEquipmentId(Integer equipmentId){
-		this.equipmentId = equipmentId;
+	public void setProductId(Integer productId){
+		this.productId = productId;
+	}
+
+	public Integer getProductSkuId(){
+		return productSkuId;
+	}
+
+	public void setProductSkuId(Integer productSkuId){
+		this.productSkuId = productSkuId;
 	}
 
 	public Integer getMaterialId(){

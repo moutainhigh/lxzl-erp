@@ -31,7 +31,13 @@ public class WarehouseTest extends ERPUnTransactionalTest {
     @Test
     public void getWarehouseByCurrentCompany() throws Exception{
         WarehouseQueryParam warehouseQueryParam = new WarehouseQueryParam();
-        warehouseQueryParam.setSubCompanyId(2);
         TestResult result = getJsonTestResult("/warehouse/getWarehouseByCurrentCompany",warehouseQueryParam);
+    }
+
+    @Test
+    public void getWarehouseById() throws Exception{
+        WarehouseQueryParam warehouseQueryParam = new WarehouseQueryParam();
+        warehouseQueryParam.setWarehouseId(4000001);
+        TestResult result = getJsonTestResult("/warehouse/getWarehouseById",warehouseQueryParam);
     }
 }

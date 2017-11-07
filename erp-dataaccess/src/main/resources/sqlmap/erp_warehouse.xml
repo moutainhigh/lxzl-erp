@@ -46,8 +46,9 @@
 		(
 			select
 			<include refid="column_List"/>,esc.sub_company_name,esc.sub_company_type
-			from erp_warehouse ew where em.id = #{id, jdbcType=INTEGER} and data_status = 1
-			left join erp_sub_company esc on esc.id = ew.sub_company_id and esc.data_status = 1
+			from erp_warehouse ew
+			left join erp_sub_company esc on esc.id = ew.sub_company_id
+			where ew.id = #{id, jdbcType=INTEGER} and ew.data_status = 1  and esc.data_status = 1
 		) warehouse left join erp_warehouse_position ewp on ewp.warehouse_id = warehouse.id
 	</select>
 
@@ -69,6 +70,9 @@
 			</if>
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.subCompanyId != null">
 				and ew.sub_company_id = #{maps.warehouseQueryParam.subCompanyId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.subCompanyIdList != null &amp;&amp; maps.warehouseQueryParam.subCompanyIdList.size > 0">
+				and ew.sub_company_id in <foreach collection="maps.warehouseQueryParam.subCompanyIdList" open="(" close=")" separator="," item="subCompanyId">#{subCompanyId}</foreach>
 			</if>
 			<if test="true">
 				and ew.data_status = 1
@@ -98,7 +102,7 @@
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.subCompanyId != null">
 				and ew.sub_company_id = #{maps.warehouseQueryParam.subCompanyId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.subCompanyIdList != null">
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.subCompanyIdList != null &amp;&amp; maps.warehouseQueryParam.subCompanyIdList.size > 0">
 				and ew.sub_company_id in <foreach collection="maps.warehouseQueryParam.subCompanyIdList" open="(" close=")" separator="," item="subCompanyId">#{subCompanyId}</foreach>
 			</if>
 			<if test="true">
