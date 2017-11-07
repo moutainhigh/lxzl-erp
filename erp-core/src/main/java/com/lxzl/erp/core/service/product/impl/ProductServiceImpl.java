@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.product.*;
 import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.FileUtil;
+import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.product.ProductService;
@@ -153,6 +154,7 @@ public class ProductServiceImpl implements ProductService {
             return result;
         }
         ProductDO productDO = ConvertProduct.convertProduct(product);
+        productDO.setProductNo(GenerateNoUtil.generateProductNo(currentTime));
         productDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         if (loginUser != null) {
             productDO.setCreateUser(loginUser.getUserId().toString());
@@ -596,10 +598,6 @@ public class ProductServiceImpl implements ProductService {
         }
         productSkuPropertyDO.setUpdateTime(currentTime);
         productSkuPropertyMapper.update(productSkuPropertyDO);
-    }
-
-    private String generateEquipmentNo(Date currentTime, Integer warehouseId, int no) {
-        return "LX-52RENTAL-VIEWPAKER-" + warehouseId + "-" + new SimpleDateFormat("yyyyMMdd").format(currentTime) + (10000 + no);
     }
 
     @Autowired(required = false)

@@ -6,6 +6,7 @@ import java.util.List;
 
 public class ProductDO extends BaseDO {
     private Integer id;
+    private String productNo;
     private String productName;
     private Integer brandId;
     private Integer categoryId;
@@ -30,6 +31,14 @@ public class ProductDO extends BaseDO {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getProductNo() {
+        return productNo;
+    }
+
+    public void setProductNo(String productNo) {
+        this.productNo = productNo;
     }
 
     public String getProductName() {

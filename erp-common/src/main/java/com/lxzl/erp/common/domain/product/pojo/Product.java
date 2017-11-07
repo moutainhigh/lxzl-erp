@@ -9,6 +9,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Product implements Serializable {
     private Integer productId;
+    private String productNo;
     private String productName;
     private Integer brandId;
     private Integer categoryId;
@@ -35,6 +36,14 @@ public class Product implements Serializable {
 
     public void setProductId(Integer productId) {
         this.productId = productId;
+    }
+
+    public String getProductNo() {
+        return productNo;
+    }
+
+    public void setProductNo(String productNo) {
+        this.productNo = productNo;
     }
 
     public String getProductName() {

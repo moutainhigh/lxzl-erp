@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO;
+import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,39 +17,7 @@ public class ConvertProduct {
         if (product.getProductId() != null) {
             productDO.setId(product.getProductId());
         }
-        if (product.getProductName() != null) {
-            productDO.setProductName(product.getProductName());
-        }
-        if (product.getCategoryId() != null) {
-            productDO.setCategoryId(product.getCategoryId());
-        }
-        if (product.getBrandId() != null) {
-            productDO.setBrandId(product.getBrandId());
-        }
-        if (product.getSubtitle() != null) {
-            productDO.setSubtitle(product.getSubtitle());
-        }
-        if (product.getUnit() != null) {
-            productDO.setUnit(product.getUnit());
-        }
-        if (product.getListPrice() != null) {
-            productDO.setListPrice(product.getListPrice());
-        }
-        if (product.getIsRent() != null) {
-            productDO.setIsRent(product.getIsRent());
-        }
-        if (product.getProductDesc() != null) {
-            productDO.setProductDesc(product.getProductDesc());
-        }
-        if (product.getKeyword() != null) {
-            productDO.setKeyword(product.getKeyword());
-        }
-        if (product.getRemark() != null) {
-            productDO.setRemark(product.getRemark());
-        }
-        if (product.getDataStatus() != null) {
-            productDO.setDataStatus(product.getDataStatus());
-        }
+        BeanUtils.copyProperties(product, productDO);
         return productDO;
     }
 
@@ -242,6 +211,9 @@ public class ConvertProduct {
         Product product = new Product();
         if (productDO.getId() != null) {
             product.setProductId(productDO.getId());
+        }
+        if (productDO.getProductNo() != null) {
+            product.setProductNo(productDO.getProductNo());
         }
         if (productDO.getProductName() != null) {
             product.setProductName(productDO.getProductName());

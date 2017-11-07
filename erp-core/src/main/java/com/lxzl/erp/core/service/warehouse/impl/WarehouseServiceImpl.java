@@ -22,6 +22,9 @@ import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.util.Date;
@@ -98,6 +101,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> productInStock(List<ProductSku> productSkuList, Integer warehouseId, Integer productCount) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         String errorCode = verifyProductInfo(productSkuList);
