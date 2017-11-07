@@ -8,12 +8,14 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.company.pojo.CompanyDepartmentTree;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.core.service.workflow.impl.support.WorkflowConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowNodeMapper;
@@ -75,6 +77,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> commitWorkFlow(Integer workflowType, Integer workflowReferId, Integer verifyUser) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
+        Date currentTime = new Date();
 
         WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
         if (workflowTemplateDO == null) {
@@ -95,7 +98,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_ERROR);
                 return result;
             }
-            workflowLinkId = generateWorkflowLink(workflowTemplateDO, workflowReferId, verifyUser);
+            workflowLinkId = generateWorkflowLink(workflowTemplateDO, workflowReferId, verifyUser,currentTime);
         } else {
             List<WorkflowLinkDetailDO> workflowLinkDetailDOList = workflowLinkDO.getWorkflowLinkDetailDOList();
             WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(workflowLinkDetailDOList.size() - 1);
@@ -104,7 +107,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_ERROR);
                 return result;
             }
-            workflowLinkId = continueWorkflowLink(workflowLinkDO, verifyUser);
+            workflowLinkId = continueWorkflowLink(workflowLinkDO, verifyUser, currentTime);
         }
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -136,6 +139,24 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(userList);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, WorkflowLink> getWorkflowLink(Integer workflowType, Integer workflowReferId) {
+        ServiceResult<String, WorkflowLink> result = new ServiceResult<>();
+        if(workflowType == null || workflowReferId == null){
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
+            return result;
+        }
+
+        WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferId(workflowType, workflowReferId);
+        if(workflowLinkDO == null){
+            result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+            return result;
+        }
+        result.setResult(WorkflowConverter.convertWorkflowLinkDO(workflowLinkDO));
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 
@@ -181,6 +202,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         lastWorkflowLinkDetailDO.setVerifyStatus(verifyStatus);
         lastWorkflowLinkDetailDO.setVerifyTime(currentTime);
         lastWorkflowLinkDetailDO.setVerifyOpinion(verifyOpinion);
+        lastWorkflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
+        lastWorkflowLinkDetailDO.setUpdateTime(currentTime);
         workflowLinkDetailMapper.update(lastWorkflowLinkDetailDO);
 
         boolean thisWorkflowStep = false;           // 是否是当前步骤
@@ -206,6 +229,11 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkDetailDO.setWorkflowCurrentNodeId(thisWorkflowNodeDO.getId());
             workflowLinkDetailDO.setWorkflowNextNodeId(nextWorkflowNodeDO.getId());
             workflowLinkDetailDO.setVerifyUser(nextVerifyUser);
+            workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            workflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
+            workflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
+            workflowLinkDetailDO.setUpdateTime(currentTime);
+            workflowLinkDetailDO.setCreateTime(currentTime);
             workflowLinkDetailMapper.save(workflowLinkDetailDO);
         }
 
@@ -227,7 +255,8 @@ public class WorkflowServiceImpl implements WorkflowService {
     /**
      * 生成工作流线，只适用于首次创建
      */
-    private Integer generateWorkflowLink(WorkflowTemplateDO workflowTemplateDO, Integer workflowReferId, Integer verifyUser) {
+    private Integer generateWorkflowLink(WorkflowTemplateDO workflowTemplateDO, Integer workflowReferId, Integer verifyUser,Date currentTime) {
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         if (workflowTemplateDO == null) {
             return null;
         }
@@ -245,6 +274,11 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowLinkDO.setWorkflowStep(thisWorkflowNodeDO.getWorkflowStep());
         workflowLinkDO.setWorkflowLastStep(lastWorkflowNodeDO.getWorkflowStep());
         workflowLinkDO.setWorkflowCurrentNodeId(thisWorkflowNodeDO.getId());
+        workflowLinkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        workflowLinkDO.setUpdateUser(loginUser.getUserId().toString());
+        workflowLinkDO.setCreateUser(loginUser.getUserId().toString());
+        workflowLinkDO.setUpdateTime(currentTime);
+        workflowLinkDO.setCreateTime(currentTime);
         workflowLinkMapper.save(workflowLinkDO);
 
         WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
@@ -257,6 +291,11 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkDetailDO.setWorkflowNextNodeId(nextWorkflowNodeDO.getId());
         }
         workflowLinkDetailDO.setVerifyUser(verifyUser);
+        workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        workflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
+        workflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
+        workflowLinkDetailDO.setUpdateTime(currentTime);
+        workflowLinkDetailDO.setCreateTime(currentTime);
         workflowLinkDetailMapper.save(workflowLinkDetailDO);
 
         return workflowLinkDO.getId();
@@ -265,7 +304,8 @@ public class WorkflowServiceImpl implements WorkflowService {
     /**
      * 继续工作流
      */
-    private Integer continueWorkflowLink(WorkflowLinkDO oldWorkflowLinkDO, Integer verifyUser) {
+    private Integer continueWorkflowLink(WorkflowLinkDO oldWorkflowLinkDO, Integer verifyUser,Date currentTime) {
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         if (oldWorkflowLinkDO == null) {
             return null;
         }
@@ -295,6 +335,11 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowLinkDO.setWorkflowStep(oldWorkflowLinkDO.getWorkflowStep());
         workflowLinkDO.setWorkflowLastStep(oldWorkflowLinkDO.getWorkflowLastStep());
         workflowLinkDO.setWorkflowCurrentNodeId(oldWorkflowLinkDO.getWorkflowCurrentNodeId());
+        workflowLinkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        workflowLinkDO.setUpdateUser(loginUser.getUserId().toString());
+        workflowLinkDO.setCreateUser(loginUser.getUserId().toString());
+        workflowLinkDO.setUpdateTime(currentTime);
+        workflowLinkDO.setCreateTime(currentTime);
         workflowLinkMapper.save(workflowLinkDO);
 
         WorkflowNodeDO thisWorkflowNodeDO = workflowNodeDOList.get(0);
@@ -307,6 +352,11 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkDetailDO.setWorkflowNextNodeId(workflowNodeDOList.get(1).getId());
         }
         workflowLinkDetailDO.setVerifyUser(verifyUser);
+        workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        workflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
+        workflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
+        workflowLinkDetailDO.setUpdateTime(currentTime);
+        workflowLinkDetailDO.setCreateTime(currentTime);
         workflowLinkDetailMapper.save(workflowLinkDetailDO);
 
         return workflowLinkDO.getId();

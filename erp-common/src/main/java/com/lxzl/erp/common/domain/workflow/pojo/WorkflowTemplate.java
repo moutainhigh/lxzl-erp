@@ -1,4 +1,4 @@
-package com.lxzl.erp.common.domain.workflow;
+package com.lxzl.erp.common.domain.workflow.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
@@ -6,15 +6,12 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WorkflowLink implements Serializable {
+public class WorkflowTemplate implements Serializable {
 
-	private Integer workflowLinkId;   //唯一标识
+	private Integer workflowTemplateId;   //唯一标识
+	private String workflowName;   //工作流名称
+	private String workflowDesc;   //工作流描述
 	private Integer workflowType;   //工作流类型
-	private Integer workflowTemplateId;   //工作流模板ID
-	private Integer workflowReferId;   //工作流关联ID
-	private Integer workflowStep;   //流程当前步骤
-	private Integer workflowLastStep;   //流程最后步骤
-	private Integer workflowCurrentNodeId;   //当前结点ID
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -22,22 +19,6 @@ public class WorkflowLink implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
-
-	public Integer getWorkflowLinkId(){
-		return workflowLinkId;
-	}
-
-	public void setWorkflowLinkId(Integer workflowLinkId){
-		this.workflowLinkId = workflowLinkId;
-	}
-
-	public Integer getWorkflowType(){
-		return workflowType;
-	}
-
-	public void setWorkflowType(Integer workflowType){
-		this.workflowType = workflowType;
-	}
 
 	public Integer getWorkflowTemplateId(){
 		return workflowTemplateId;
@@ -47,36 +28,28 @@ public class WorkflowLink implements Serializable {
 		this.workflowTemplateId = workflowTemplateId;
 	}
 
-	public Integer getWorkflowReferId(){
-		return workflowReferId;
+	public String getWorkflowName(){
+		return workflowName;
 	}
 
-	public void setWorkflowReferId(Integer workflowReferId){
-		this.workflowReferId = workflowReferId;
+	public void setWorkflowName(String workflowName){
+		this.workflowName = workflowName;
 	}
 
-	public Integer getWorkflowStep(){
-		return workflowStep;
+	public String getWorkflowDesc(){
+		return workflowDesc;
 	}
 
-	public void setWorkflowStep(Integer workflowStep){
-		this.workflowStep = workflowStep;
+	public void setWorkflowDesc(String workflowDesc){
+		this.workflowDesc = workflowDesc;
 	}
 
-	public Integer getWorkflowLastStep(){
-		return workflowLastStep;
+	public Integer getWorkflowType(){
+		return workflowType;
 	}
 
-	public void setWorkflowLastStep(Integer workflowLastStep){
-		this.workflowLastStep = workflowLastStep;
-	}
-
-	public Integer getWorkflowCurrentNodeId(){
-		return workflowCurrentNodeId;
-	}
-
-	public void setWorkflowCurrentNodeId(Integer workflowCurrentNodeId){
-		this.workflowCurrentNodeId = workflowCurrentNodeId;
+	public void setWorkflowType(Integer workflowType){
+		this.workflowType = workflowType;
 	}
 
 	public Integer getDataStatus(){

@@ -4,6 +4,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.WarehouseQueryParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.core.annotation.ControllerLog;
@@ -59,6 +60,12 @@ public class WarehouseController extends BaseController {
     @RequestMapping(value = "getWarehouseById", method = RequestMethod.POST)
     public Result getWarehouseById(@RequestBody WarehouseQueryParam warehouseQueryParam) {
         ServiceResult<String, Warehouse> serviceResult = warehouseService.getWarehouseById(warehouseQueryParam.getWarehouseId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "productInStock", method = RequestMethod.POST)
+    public Result productInStock(@RequestBody ProductInStockParam productInStockParam) {
+        ServiceResult<String, Integer> serviceResult = warehouseService.productInStock(productInStockParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }
