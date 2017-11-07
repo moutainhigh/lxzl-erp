@@ -82,8 +82,9 @@
 	<insert id="saveList" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.ArrayList">
 		insert into erp_stock_order_equipment (stock_order_no, equipment_id, equipment_no, data_status, remark, create_time, create_user, update_time, update_user) values
 		<foreach item="stockOrderEquipmentDO" collection="stockOrderEquipmentDOList" open="" separator="," close="">
-			(#{stockOrderEquipmentDO.stockOrderNo},#{stockOrderEquipmentDO.equipmentId},#{stockOrderEquipmentDO.equipmentNo},#{stockOrderEquipmentDO.dataStatus},#{stockOrderEquipmentDO.remark},
-			#{stockOrderEquipmentDO.createTime},#{stockOrderEquipmentDO.createUser},#{stockOrderEquipmentDO.updateTime},#{stockOrderEquipmentDO.updateUser})
+			SELECT #{stockOrderEquipmentDO.stockOrderNo},epe.id,#{stockOrderEquipmentDO.equipmentNo},#{stockOrderEquipmentDO.dataStatus},#{stockOrderEquipmentDO.remark},
+			#{stockOrderEquipmentDO.createTime},#{stockOrderEquipmentDO.createUser},#{stockOrderEquipmentDO.updateTime},#{stockOrderEquipmentDO.updateUser}
+			FROM erp_product_equipment epe WHERE epe.equipment_no = #{stockOrderEquipmentDO.equipmentNo}
 		</foreach>
 	</insert>
 

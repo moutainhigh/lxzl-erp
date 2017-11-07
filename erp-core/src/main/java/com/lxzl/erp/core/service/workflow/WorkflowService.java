@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.workflow;
 
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.se.core.service.BaseService;
 
 import java.util.List;
@@ -28,6 +29,13 @@ public interface WorkflowService extends BaseService {
      * @return 错误代码，可审核人
      */
     ServiceResult<String, List<User>> getNextVerifyUsers(Integer workflowType, Integer workflowReferId);
+
+    /**
+     * @param workflowType      工作流类型，详见WorkflowType
+     * @param workflowReferId   工作流关联ID，业务ID
+     * @return 错误代码，工作流记录
+     */
+    ServiceResult<String, WorkflowLink> getWorkflowLink(Integer workflowType, Integer workflowReferId);
 
     /**
      * @param workflowLinkId    工作流ID

@@ -2,8 +2,14 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.constant.StockCauseType;
+import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
+import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.WarehouseQueryParam;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -39,5 +45,22 @@ public class WarehouseTest extends ERPUnTransactionalTest {
         WarehouseQueryParam warehouseQueryParam = new WarehouseQueryParam();
         warehouseQueryParam.setWarehouseId(4000001);
         TestResult result = getJsonTestResult("/warehouse/getWarehouseById",warehouseQueryParam);
+    }
+
+    @Test
+    public void productInStock() throws Exception{
+        ProductInStockParam productInStockParam = new ProductInStockParam();
+        List<ProductInStorage> productInStorageList = new ArrayList<>();
+        ProductInStorage productInStorage = new ProductInStorage();
+        productInStorage.setProductId(2000001);
+        productInStorage.setProductSkuId(2);
+        productInStorage.setProductCount(100);
+        productInStorageList.add(productInStorage);
+        productInStockParam.setProductInStorageList(productInStorageList);
+        productInStockParam.setTargetWarehouseId(4000001);
+        productInStockParam.setTargetWarehouseId(4000001);
+        productInStockParam.setReferNo("C201711071720430655000051081");
+        productInStockParam.setCauseType(StockCauseType.STORCK_CAUSE_TYPE_IN_PURCHASE);
+        TestResult result = getJsonTestResult("/warehouse/productInStock",productInStockParam);
     }
 }

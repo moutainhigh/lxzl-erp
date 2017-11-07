@@ -8,12 +8,14 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.company.pojo.CompanyDepartmentTree;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.core.service.workflow.impl.support.WorkflowConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowNodeMapper;
@@ -137,6 +139,24 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(userList);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, WorkflowLink> getWorkflowLink(Integer workflowType, Integer workflowReferId) {
+        ServiceResult<String, WorkflowLink> result = new ServiceResult<>();
+        if(workflowType == null || workflowReferId == null){
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
+            return result;
+        }
+
+        WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferId(workflowType, workflowReferId);
+        if(workflowLinkDO == null){
+            result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+            return result;
+        }
+        result.setResult(WorkflowConverter.convertWorkflowLinkDO(workflowLinkDO));
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 

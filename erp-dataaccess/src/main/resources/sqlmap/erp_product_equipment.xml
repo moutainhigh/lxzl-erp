@@ -198,10 +198,11 @@
 
 
     <insert id="saveList" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.ArrayList">
-        insert into erp_product_equipment (stock_order_no, equipment_id, equipment_no, data_status, remark, create_time, create_user, update_time, update_user) values
-        <foreach item="stockOrderEquipmentDO" collection="stockOrderEquipmentDOList" open="" separator="," close="">
-            (#{stockOrderEquipmentDO.stockOrderNo},#{stockOrderEquipmentDO.equipmentId},#{stockOrderEquipmentDO.equipmentNo},#{stockOrderEquipmentDO.dataStatus},#{stockOrderEquipmentDO.remark},
-            #{stockOrderEquipmentDO.createTime},#{stockOrderEquipmentDO.createUser},#{stockOrderEquipmentDO.updateTime},#{stockOrderEquipmentDO.updateUser})
+        insert into erp_product_equipment (equipment_no,product_id,sku_id,warehouse_id,warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,equipment_price,equipment_status,data_status,remark,create_time,create_user,update_time,update_user) values
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList" open="" separator="," close="">
+            #{productEquipmentDO.equipmentNo},#{productEquipmentDO.productId},#{productEquipmentDO.skuId},#{productEquipmentDO.warehouseId},#{productEquipmentDO.warehousePositionId},#{productEquipmentDO.ownerWarehouseId},
+            #{productEquipmentDO.ownerWarehousePositionId},#{productEquipmentDO.equipmentPrice},#{productEquipmentDO.equipmentStatus},#{productEquipmentDO.dataStatus},#{productEquipmentDO.remark},
+            #{productEquipmentDO.createTime},#{productEquipmentDO.createUser},#{productEquipmentDO.updateTime},#{productEquipmentDO.updateUser}
         </foreach>
     </insert>
 

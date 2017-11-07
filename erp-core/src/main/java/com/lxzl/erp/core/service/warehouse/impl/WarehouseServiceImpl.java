@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.WarehouseQueryParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.GenerateNoUtil;
@@ -144,7 +145,12 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, Integer> productInStock(List<ProductInStorage> productInStorageList, Integer srcWarehouseId, Integer targetWarehouseId, Integer causeType, String referNo) {
+    public ServiceResult<String, Integer> productInStock(ProductInStockParam productInStockParam) {
+        List<ProductInStorage> productInStorageList = productInStockParam.getProductInStorageList();
+        Integer srcWarehouseId = productInStockParam.getSrcWarehouseId();
+        Integer targetWarehouseId = productInStockParam.getTargetWarehouseId();
+        Integer causeType = productInStockParam.getCauseType();
+        String referNo = productInStockParam.getReferNo();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         ServiceResult<String, Integer> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -261,7 +267,6 @@ public class WarehouseServiceImpl implements WarehouseService {
 
             StockOrderEquipmentDO stockOrderEquipmentDO = new StockOrderEquipmentDO();
             stockOrderEquipmentDO.setStockOrderNo(stockOrderNo);
-            stockOrderEquipmentDO.setEquipmentId(productEquipmentDO.getId());
             stockOrderEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
             stockOrderEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             stockOrderEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
@@ -273,7 +278,6 @@ public class WarehouseServiceImpl implements WarehouseService {
             if (productInStorage.getProductMaterialList() != null && !productInStorage.getProductMaterialList().isEmpty()) {
                 for (ProductMaterial productMaterial : productInStorage.getProductMaterialList()) {
                     ProductEquipmentMaterialDO productEquipmentMaterialDO = new ProductEquipmentMaterialDO();
-                    productEquipmentMaterialDO.setEquipmentId(productEquipmentDO.getId());
                     productEquipmentMaterialDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
                     productEquipmentMaterialDO.setMaterialId(productMaterial.getMaterialId());
                     productEquipmentMaterialDO.setMaterialCount(productMaterial.getMaterialCount());

@@ -3,6 +3,7 @@ package com.lxzl.erp.common.domain.workflow.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,6 +22,8 @@ public class WorkflowLink implements Serializable {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+
+	private List<WorkflowLinkDetail> workflowLinkDetailList;
 
 
 	public Integer getWorkflowLinkId(){
@@ -127,4 +130,11 @@ public class WorkflowLink implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public List<WorkflowLinkDetail> getWorkflowLinkDetailList() {
+		return workflowLinkDetailList;
+	}
+
+	public void setWorkflowLinkDetailList(List<WorkflowLinkDetail> workflowLinkDetailList) {
+		this.workflowLinkDetailList = workflowLinkDetailList;
+	}
 }
