@@ -147,6 +147,17 @@
         left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
         left join erp_department ed on ed.id = tr.department_id and tr.data_status = 1
         left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
+        <where>
+            <if test="userQueryParam.departmentId != null &amp;&amp; userQueryParam.departmentId != ''">
+                and ed.id = #{userQueryParam.departmentId, jdbcType=INTEGER}
+            </if>
+            <if test="userQueryParam.roleId != null &amp;&amp; userQueryParam.roleId != ''">
+                and tr.id = #{userQueryParam.roleId, jdbcType=INTEGER}
+            </if>
+            <if test="userQueryParam.subCompanyId != null &amp;&amp; userQueryParam.subCompanyId != ''">
+                and esc.id = #{userQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
+        </where>
     </select>
 
     <select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -165,7 +176,7 @@
         from
         (select <include refid="columnList"/> from erp_user u
         <where>
-            <if test="userQueryParam.realName!=null and userQueryParam.realName!=''">
+            <if test="userQueryParam.realName != null &amp;&amp; userQueryParam.realName != ''">
                 and u.real_name like '%${userQueryParam.realName}%'
             </if>
         </where>
@@ -176,6 +187,17 @@
         left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
         left join erp_department ed on ed.id = tr.department_id and ed.data_status = 1
         left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
+        <where>
+            <if test="userQueryParam.departmentId != null &amp;&amp; userQueryParam.departmentId != ''">
+                and ed.id = #{userQueryParam.departmentId, jdbcType=INTEGER}
+            </if>
+            <if test="userQueryParam.roleId != null &amp;&amp; userQueryParam.roleId != ''">
+                and tr.id = #{userQueryParam.roleId, jdbcType=INTEGER}
+            </if>
+            <if test="userQueryParam.subCompanyId != null &amp;&amp; userQueryParam.subCompanyId != ''">
+                and esc.id = #{userQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
+        </where>
         order by a.register_time desc
     </select>
 

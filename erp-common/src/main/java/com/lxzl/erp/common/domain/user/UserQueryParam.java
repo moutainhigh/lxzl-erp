@@ -10,6 +10,9 @@ public class UserQueryParam extends BasePageParam {
     private Integer userId;
     private String realName;
     private List<Integer> userIdList;
+    private Integer roleId;
+    private Integer departmentId;
+    private Integer subCompanyId;
 
     public Integer getUserId() {
         return userId;
@@ -27,4 +30,35 @@ public class UserQueryParam extends BasePageParam {
         this.realName = realName;
     }
 
+    public List<Integer> getUserIdList() {
+        return userIdList;
+    }
+
+    public void setUserIdList(List<Integer> userIdList) {
+        this.userIdList = userIdList;
+    }
+
+    public Integer getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
+    }
+
+    public Integer getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public Integer getSubCompanyId() {
+        return subCompanyId;
+    }
+
+    public void setSubCompanyId(Integer subCompanyId) {
+        this.subCompanyId = subCompanyId;
+    }
 }

@@ -109,7 +109,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
         // TODO
         List<Integer> subCompanyIdList = new ArrayList<>();
-        for(Role role : loginUser.getRoleList()){
+        for (Role role : loginUser.getRoleList()) {
             subCompanyIdList.add(role.getSubCompanyId());
         }
         param.setSubCompanyIdList(subCompanyIdList);
@@ -134,12 +134,17 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, Integer> productInStock(List<ProductInStorage> productInStorageList, Integer srcWarehouseId, Integer targetWarehouseId, String referNo) {
+    public ServiceResult<String, Integer> productInStock(List<ProductInStorage> productInStorageList, Integer srcWarehouseId, Integer targetWarehouseId, Integer causeType, String referNo) {
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         ServiceResult<String, Integer> result = new ServiceResult<>();
         Date currentTime = new Date();
         String errorCode = verifyProductInfo(productInStorageList);
         if (!ErrorCode.SUCCESS.equals(errorCode)) {
             result.setErrorCode(errorCode);
+            return result;
+        }
+        if (targetWarehouseId == null || causeType == null || referNo == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
 
@@ -151,26 +156,33 @@ public class WarehouseServiceImpl implements WarehouseService {
             }
         }
 
-        if (targetWarehouseId != null) {
-            WarehouseDO targetWarehouseDO = warehouseMapper.findById(targetWarehouseId);
-            if (targetWarehouseDO == null) {
-                result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
-                return result;
-            }
+        WarehouseDO targetWarehouseDO = warehouseMapper.findById(targetWarehouseId);
+        if (targetWarehouseDO == null) {
+            result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
+            return result;
         }
 
         StockOrderDO stockOrderDO = new StockOrderDO();
         stockOrderDO.setOperationType(StockOperationType.STORCK_OPERATION_TYPE_IN);
-        stockOrderDO.setCauseType(StockCauseType.STORCK_CAUSE_TYPE_IN);
+        stockOrderDO.setCauseType(causeType);
         stockOrderDO.setReferNo(referNo);
         stockOrderDO.setSrcWarehouseId(srcWarehouseId);
         stockOrderDO.setTargetWarehouseId(targetWarehouseId);
+        stockOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        stockOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        stockOrderDO.setCreateUser(loginUser.getUserId().toString());
+        stockOrderDO.setUpdateTime(currentTime);
+        stockOrderDO.setCreateTime(currentTime);
         stockOrderMapper.save(stockOrderDO);
 
         for (ProductInStorage productInStorage : productInStorageList) {
             saveProductEquipment(stockOrderDO.getStockOrderNo(), targetWarehouseId, productInStorage.getProductId(), productInStorage.getProductSkuId(), productInStorage.getProductCount(), currentTime);
+            ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
+            productSkuDO.setStock(productSkuDO.getStock() + productInStorage.getProductCount());
+            productSkuDO.setUpdateUser(loginUser.getUserId().toString());
+            productSkuDO.setUpdateTime(currentTime);
+            productSkuMapper.update(productSkuDO);
         }
-
         return result;
     }
 
