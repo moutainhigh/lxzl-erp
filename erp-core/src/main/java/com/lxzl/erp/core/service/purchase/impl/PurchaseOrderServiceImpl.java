@@ -447,8 +447,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         purchaseReceiveOrderDO.setWarehouseSnapshot(purchaseDeliveryOrderDO.getWarehouseSnapshot());
         if(AutoAllotStatus.AUTO_ALLOT_STATUS_YES.equals(autoAllotStatus)){
             // todo 查询总公司仓库ID，保存快照
-            warehouseService.
-            purchaseReceiveOrderDO.setWarehouseId(2);
+//            warehouseService.
+//            purchaseReceiveOrderDO.setWarehouseId(2);
             purchaseReceiveOrderDO.setWarehouseSnapshot("{\"warehouseId\":2,\"warehouseName\":\"总公司\"}");
             purchaseReceiveOrderDO.setAutoAllotStatus(AutoAllotStatus.AUTO_ALLOT_STATUS_YES);
             purchaseReceiveOrderDO.setAutoAllotNo(GenerateNoUtil.generateAutoAllotStatusOrderNo(now,purchaseDeliveryOrderDO.getPurchaseOrderId()));
