@@ -121,7 +121,7 @@ DROP TABLE if exists `erp_sub_company`;
 CREATE TABLE `erp_sub_company` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `sub_company_name` varchar(20) NOT NULL DEFAULT '' COMMENT '子公司名称',
-  `sub_company_type` int(11) NOT NULL COMMENT '公司类型1为总公司',
+  `sub_company_type` int(11) NOT NULL COMMENT '公司类型:1-总公司2-分公司3-供应商',
   `province` int(20) DEFAULT NULL COMMENT '省份ID，对应字典ID',
   `city` int(20) DEFAULT NULL COMMENT '城市ID，对应字典ID',
   `district` int(20) DEFAULT NULL COMMENT '区ID，对应字典ID',

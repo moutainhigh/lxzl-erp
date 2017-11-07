@@ -19,7 +19,7 @@ import java.util.List;
 public class PurchaseOrder implements Serializable {
 
     private Integer purchaseOrderId;   //唯一标识
-    @NotNull(message = ErrorCode.PURCHASE_ORDER_ID_NOT_NULL , groups = {UpdateGroup.class,IdGroup.class})
+    @NotNull(message = ErrorCode.PURCHASE_ORDER_NO_NOT_NULL , groups = {UpdateGroup.class,IdGroup.class})
     private String purchaseNo;   //采购单编号
     @NotNull(message = ErrorCode.PRODUCT_SUPPLIER_ID_NOT_NULL , groups = {AddGroup.class,UpdateGroup.class})
     private Integer productSupplierId;   //商品供应商ID

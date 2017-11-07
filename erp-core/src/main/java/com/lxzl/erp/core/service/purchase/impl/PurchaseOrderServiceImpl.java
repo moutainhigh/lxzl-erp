@@ -5,9 +5,11 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.pojo.Product;
+import com.lxzl.erp.common.domain.purchase.PurchaseOrderCommitParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrderProduct;
+import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.product.ProductService;
@@ -16,6 +18,8 @@ import com.lxzl.erp.core.service.purchase.impl.support.PurchaseOrderConverter;
 import com.lxzl.erp.core.service.purchase.impl.support.PurchaseOrderSupport;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.core.service.warehouse.WarehouseService;
+import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
@@ -59,6 +63,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private PurchaseReceiveOrderProductMapper purchaseReceiveOrderProductMapper;
     @Autowired
     private PurchaseOrderSupport purchaseOrderSupport;
+    @Autowired
+    private WarehouseService warehouseService;
+    @Autowired
+    private WorkflowService workflowService;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
@@ -66,10 +74,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         Date now = new Date();
         List<PurchaseOrderProduct> purchaseOrderProductList = purchaseOrder.getPurchaseOrderProductList();
-        //todo 判断该笔采购单是总公司发起还是分公司发起，分公司表要加一个字段代表是否是总公司,这里取的用户是session中的user
-        boolean isHead = false;
-        //todo 判断操作人是否可以选择该仓库
-
+        //判断操作人是否可以选择该仓库
+        boolean warehouseOp = userSupport.checkCurrentUserWarehouse(purchaseOrder.getWarehouseId());
+        if(!warehouseOp){
+            result.setErrorCode(ErrorCode.USER_CAN_NOT_OP_WAREHOUSE);
+            return result;
+        }
+        //判断该笔采购单是总公司发起还是分公司发起，分公司表要加一个字段代表是否是总公司,这里取的用户是session中的user
+        boolean isHead = userSupport.isHeadUser();
         //校验采购订单商品项
         ServiceResult<String, PurchaseOrderDetail> checkResult = checkPurchaseOrderProductList(purchaseOrderProductList,userSupport.getCurrentUserId().toString(),now,purchaseOrder.getIsNew(),isHead);
         if(!ErrorCode.SUCCESS.equals(checkResult.getErrorCode())){
@@ -97,8 +109,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         if(purchaseOrderDO.getInvoiceSupplierId()==null){
             purchaseOrderDO.setInvoiceSupplierId(purchaseOrderDO.getProductSupplierId());
         }
-        // todo 查询库房信息并保存库房快照
-        purchaseOrderDO.setWarehouseSnapshot("{warehouseId:1,setWarehouseName:\"深圳总公司仓库1\"}");
+        //查询库房信息并保存库房快照
+        ServiceResult<String,Warehouse> warehouseResult =  warehouseService.getWarehouseById(purchaseOrder.getWarehouseId());
+        purchaseOrderDO.setWarehouseSnapshot(JSON.toJSONString(warehouseResult.getResult()));
         purchaseOrderDO.setPurchaseOrderAmountTotal(purchaseOrderDetail.totalAmount);
         //创建采购单时，采购单实收金额和采购单结算金额为空
         purchaseOrderDO.setPurchaseOrderAmountReal(null);
@@ -128,8 +141,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return result;
         }
 
-        //todo 判断该笔采购单是总公司发起还是分公司发起，分公司表要加一个字段代表是否是总公司,这里取的用户是createUser
-        boolean isHead = false;
+        //判断该笔采购单是总公司发起还是分公司发起，这里取的用户是createUser
+        boolean isHead = userSupport.isHeadUser(Integer.valueOf(purchaseOrderDO.getCreateUser()));
         Date now = new Date();
         List<PurchaseOrderProduct> purchaseOrderProductList = purchaseOrder.getPurchaseOrderProductList();
         //校验采购订单商品项
@@ -273,10 +286,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
-    public ServiceResult<String, Integer> commit(PurchaseOrder purchaseOrder) {
+    public ServiceResult<String, Integer> commit(PurchaseOrderCommitParam purchaseOrderCommitParam) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         //校验采购单是否存在
-        PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findByPurchaseNo(purchaseOrder.getPurchaseNo());
+        PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findByPurchaseNo(purchaseOrderCommitParam.getPurchaseOrderNo());
         if(purchaseOrderDO==null){
             result.setErrorCode(ErrorCode.PURCHASE_ORDER_NOT_EXISTS);
             return result;
@@ -284,9 +297,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             result.setErrorCode(ErrorCode.PURCHASE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN);
             return result;
         }
-        //todo 调用审核服务 return ServiceResult
-        ServiceResult<String, Integer> verifyResult = new ServiceResult<>();
-        verifyResult.setErrorCode(ErrorCode.SUCCESS);
+        //调用审核服务
+        ServiceResult<String ,Integer > verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE,purchaseOrderDO.getId(),purchaseOrderCommitParam.getVerifyUserId());
         //修改提交审核状态
         if(ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())){
             purchaseOrderDO.setCommitStatus(CommonConstant.COMMON_CONSTANT_YES);
@@ -337,8 +349,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             //直接生成收料通知单
             createReceiveDetail(purchaseDeliveryOrderDO,AutoAllotStatus.AUTO_ALLOT_STATUS_NO,null);
         }else if(CommonConstant.COMMON_CONSTANT_NO.equals(purchaseOrderDO.getIsInvoice())){//如果没有发票
-            //todo 解析采购单库房快照，是否为总公司库
-            boolean isHead  = false;
+            //解析采购单库房快照，是否为总公司库
+            Warehouse warehouse = JSON.parseObject(purchaseOrderDO.getWarehouseSnapshot(),Warehouse.class);
+            boolean isHead  = SubCompanyType.SUB_COMPANY_TYPE_HEADER.equals(warehouse.getSubCompanyType())?true:false;
             if(isHead){//如果是总公司仓库
                 //直接生成收料通知单
                 createReceiveDetail(purchaseDeliveryOrderDO,AutoAllotStatus.AUTO_ALLOT_STATUS_NO,null);
@@ -424,7 +437,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         purchaseReceiveOrderDO.setConfirmTime(null);
         purchaseReceiveOrderDO.setProductSupplierId(purchaseDeliveryOrderDO.getOwnerSupplierId());
         purchaseReceiveOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        //todo 收货单的owner存什么
+        //收货单的owner暂时不存
 //        purchaseReceiveOrderDO.setOwner(purchaseOrderDO.getProductSupplierId());
         purchaseReceiveOrderDO.setCreateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
         purchaseReceiveOrderDO.setUpdateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
@@ -434,6 +447,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         purchaseReceiveOrderDO.setWarehouseSnapshot(purchaseDeliveryOrderDO.getWarehouseSnapshot());
         if(AutoAllotStatus.AUTO_ALLOT_STATUS_YES.equals(autoAllotStatus)){
             // todo 查询总公司仓库ID，保存快照
+            warehouseService.
             purchaseReceiveOrderDO.setWarehouseId(2);
             purchaseReceiveOrderDO.setWarehouseSnapshot("{\"warehouseId\":2,\"warehouseName\":\"总公司\"}");
             purchaseReceiveOrderDO.setAutoAllotStatus(AutoAllotStatus.AUTO_ALLOT_STATUS_YES);

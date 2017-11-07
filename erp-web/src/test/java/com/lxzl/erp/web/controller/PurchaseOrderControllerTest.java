@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
+ MAP.put(USER_CAN_NOT_OP_WAREHOUSE,"您没有该仓库的操作权限");
+         MAP.put(VERIFY_USER_NOT_NULL,"审核人不能为空");
 public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addPurchaseOrder() throws Exception {
