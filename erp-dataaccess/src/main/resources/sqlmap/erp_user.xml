@@ -31,6 +31,7 @@
         <result column="role_department_name" jdbcType="VARCHAR" property="departmentName"/>
         <result column="role_sub_company_id" jdbcType="INTEGER" property="subCompanyId"/>
         <result column="role_sub_company_name" jdbcType="VARCHAR" property="subCompanyName"/>
+        <result column="role_sub_company_type" jdbcType="VARCHAR" property="subCompanyType"/>
         <result column="role_role_desc" jdbcType="VARCHAR" property="roleDesc"/>
         <result column="role_is_super_admin" jdbcType="VARCHAR" property="isSuperAdmin"/>
         <result column="role_data_status" jdbcType="INTEGER" property="dataStatus"/>
@@ -118,7 +119,7 @@
     <select id="findByUsername" resultMap="userResult" parameterType="java.lang.String">
         select a.*,<include refid="role_columnList"/>,
         ed.id as role_department_id, ed.department_name as role_department_name,
-        esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name
+        esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name, esc.sub_company_type as role_sub_company_type
         from
         (select <include refid="columnList"/> from erp_user u
          where u.user_name = #{userName,jdbcType=VARCHAR}
@@ -132,7 +133,7 @@
     <select id="findByUserId" resultMap="userResult">
         select a.*,<include refid="role_columnList"/>,
         ed.id as role_department_id, ed.department_name as role_department_name,
-        esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name
+        esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name, esc.sub_company_type as role_sub_company_type
         from
         (
             select
@@ -160,7 +161,7 @@
     <select id="listPage" resultMap="userResult" parameterType="map">
         select a.*,<include refid="role_columnList"/>,
         ed.id as role_department_id, ed.department_name as role_department_name,
-        esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name
+        esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name, esc.sub_company_type as role_sub_company_type
         from
         (select <include refid="columnList"/> from erp_user u
         <where>

@@ -16,6 +16,7 @@ public class RoleDO extends BaseDO {
     private String departmentName;
     private Integer subCompanyId;
     private String subCompanyName;
+    private Integer subCompanyType;
     private String roleDesc;
     private Integer isSuperAdmin;
     private Integer dataStatus;
@@ -100,5 +101,13 @@ public class RoleDO extends BaseDO {
 
     public void setSubCompanyName(String subCompanyName) {
         this.subCompanyName = subCompanyName;
+    }
+
+    public Integer getSubCompanyType() {
+        return subCompanyType;
+    }
+
+    public void setSubCompanyType(Integer subCompanyType) {
+        this.subCompanyType = subCompanyType;
     }
 }

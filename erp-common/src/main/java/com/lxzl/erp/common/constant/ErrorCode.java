@@ -93,6 +93,7 @@ public class ErrorCode {
     public static final String WAREHOUSE_NOT_EXISTS = "J300012";
     public static final String PURCHASE_ORDER_PRODUCT_CAN_NOT_REPEAT = "J300013";
     public static final String PURCHASE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN = "J300014";
+    public static final String WAREHOUSE_IN_STORAGE_LIST_NOT_NULL = "J300015";
 
     static
     {
@@ -180,6 +181,7 @@ public class ErrorCode {
         MAP.put(WAREHOUSE_NOT_EXISTS,"仓库不存在");
         MAP.put(PURCHASE_ORDER_PRODUCT_CAN_NOT_REPEAT,"采购订单项重复");
         MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN,"已提交的采购单不能再次提交");
+        MAP.put(WAREHOUSE_IN_STORAGE_LIST_NOT_NULL,"商品入仓数据不能为空");
     }
 
     public static String getMessage(String code)
