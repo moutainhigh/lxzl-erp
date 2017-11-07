@@ -14,6 +14,7 @@ import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.core.service.purchase.impl.support.PurchaseOrderConverter;
 import com.lxzl.erp.core.service.purchase.impl.support.PurchaseOrderSupport;
+import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.*;
@@ -36,6 +37,8 @@ import java.util.*;
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     private static final Logger log = LoggerFactory.getLogger(PurchaseOrderServiceImpl.class);
+    @Autowired
+    private UserService userService;
     @Autowired
     private UserSupport userSupport;
     @Autowired

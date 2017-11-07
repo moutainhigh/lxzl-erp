@@ -91,6 +91,8 @@ public class ErrorCode {
     public static final String PURCHASE_ORDER_COMMITTED_CAN_NOT_UPDATE = "J300010";
     public static final String PURCHASE_ORDER_CANNOT_CREATE_BY_NEW_AND_AMOUNT = "J300011";
     public static final String WAREHOUSE_NOT_EXISTS = "J300012";
+    public static final String PURCHASE_ORDER_PRODUCT_CAN_NOT_REPEAT = "J300013";
+    public static final String PURCHASE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN = "J300014";
 
     static
     {
@@ -176,6 +178,8 @@ public class ErrorCode {
         MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_UPDATE,"待审核状态的采购单不允许修改");
         MAP.put(PURCHASE_ORDER_CANNOT_CREATE_BY_NEW_AND_AMOUNT,"拒绝创建该采购单，原因【分公司采购单不能为大于两万元的全新机】");
         MAP.put(WAREHOUSE_NOT_EXISTS,"仓库不存在");
+        MAP.put(PURCHASE_ORDER_PRODUCT_CAN_NOT_REPEAT,"采购订单项重复");
+        MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN,"已提交的采购单不能再次提交");
     }
 
     public static String getMessage(String code)
