@@ -16,6 +16,7 @@
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<collection property="roleDOList" resultMap="RoleDO"/>
+		<collection property="userDOList" resultMap="UserDO"/>
 	</resultMap>
 
 	<resultMap id="RoleDO" type="com.lxzl.erp.dataaccess.domain.user.RoleDO">
@@ -32,8 +33,32 @@
 		<result column="role_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
 	</resultMap>
 
+	<resultMap type="com.lxzl.erp.dataaccess.domain.user.UserDO" id="UserDO">
+		<id column="user_id" property="id" />
+		<result column="user_user_type" property="userType" />
+		<result column="user_user_name" property="userName" />
+		<result column="user_real_name" property="realName" />
+		<result column="user_password" property="password" />
+		<result column="user_email" property="email" />
+		<result column="user_email_verify_code" property="emailVerifyCode" />
+		<result column="user_email_verify_time" property="emailVerifyTime" />
+		<result column="user_phone" property="phone" />
+		<result column="user_phone_verify_code" property="phoneVerifyCode" />
+		<result column="user_phone_verify_time" property="phoneVerifyTime" />
+		<result column="user_is_activated" property="isActivated" />
+		<result column="user_is_disabled" property="isDisabled" />
+		<result column="user_register_time" property="registerTime" />
+		<result column="user_last_login_time" property="lastLoginTime" />
+		<result column="user_last_login_ip" property="lastLoginIp" />
+		<result column="user_remark" property="remark" />
+	</resultMap>
+
 	<sql id="column_List">
 		ed.id,ed.department_name,ed.department_type,ed.parent_department_id,ed.sub_company_id,ed.data_order,ed.data_status,ed.remark,ed.create_time,ed.create_user,ed.update_time,ed.update_user
+	</sql>
+
+	<sql id="user_column_List">
+		eu.id as user_id,eu.user_type as user_user_type,eu.user_name as user_user_name,eu.real_name as user_real_name,eu.password as user_password,eu.email as user_email,eu.email_verify_code as user_email_verify_code,eu.email_verify_time as user_email_verify_time,eu.phone as user_phone,eu.phone_verify_code as user_phone_verify_code,eu.phone_verify_time as user_phone_verify_time,eu.is_activated as user_is_activated,eu.is_disabled as user_is_disabled,eu.register_time as user_register_time,eu.last_login_time as user_last_login_time,eu.last_login_ip as user_last_login_ip,eu.remark as user_remark
 	</sql>
 
 	<sql id="role_column_List">
@@ -103,6 +128,31 @@
 			</where>
 			order by ed.parent_department_id,ed.data_order desc
 		) department left join erp_role er on er.department_id = department.id and er.data_status = 1
+		order by er.data_order desc, er.create_time desc
+	</select>
+
+	<select id="getUserList" resultMap="DepartmentDO" parameterType="map">
+		select department.*,<include refid="user_column_List"/> from
+		(
+			select <include refid="column_List"/> from erp_department ed
+			<where>
+				<if test="maps.departmentQueryParam != null &amp;&amp; maps.departmentQueryParam.departmentId != null &amp;&amp; maps.departmentQueryParam.departmentId != ''">
+					and ed.id = #{maps.departmentQueryParam.departmentId, jdbcType=INTEGER}
+				</if>
+				<if test="maps.departmentQueryParam != null &amp;&amp;maps.departmentQueryParam.departmentName != null &amp;&amp; maps.departmentQueryParam.departmentName != ''">
+					and ed.deparment_name like CONCAT('%','${maps.departmentQueryParam.departmentName}','%' )
+				</if>
+				<if test="maps.departmentQueryParam != null &amp;&amp;maps.departmentQueryParam.subCompanyId != null &amp;&amp; maps.departmentQueryParam.subCompanyId != ''">
+					and ed.sub_company_id = #{maps.departmentQueryParam.subCompanyId, jdbcType=INTEGER}
+				</if>
+				<if test="true">
+					and ed.data_status = 1
+				</if>
+			</where>
+			order by ed.parent_department_id,ed.data_order desc
+		) department left join erp_role er on er.department_id = department.id and er.data_status = 1
+		left join erp_user_role eur on eur.role_id = er.id and eur.data_status = 1
+		left join erp_user eu on eu.id = eur.user_id
 		order by er.data_order desc, er.create_time desc
 	</select>
 

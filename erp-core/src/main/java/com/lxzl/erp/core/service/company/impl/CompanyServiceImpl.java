@@ -137,4 +137,37 @@ public class CompanyServiceImpl implements CompanyService {
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
+
+    @Override
+    public ServiceResult<String, CompanyDepartmentTree> getCompanyDepartmentUserTree(DepartmentQueryParam departmentQueryParam) {
+        ServiceResult<String, CompanyDepartmentTree> result = new ServiceResult<>();
+        CompanyDepartmentTree companyDepartmentTree = new CompanyDepartmentTree();
+        List<SubCompany> subCompanyList = new ArrayList<>();
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("start", 0);
+        paramMap.put("pageSize", Integer.MAX_VALUE);
+        if (departmentQueryParam.getSubCompanyId() != null) {
+            SubCompanyQueryParam subCompanyQueryParam = new SubCompanyQueryParam();
+            subCompanyQueryParam.setSubCompanyId(departmentQueryParam.getSubCompanyId());
+            paramMap.put("subCompanyQueryParam", subCompanyQueryParam);
+        }
+
+        List<SubCompanyDO> subCompanyDOList = subCompanyMapper.listPage(paramMap);
+        if (subCompanyDOList != null && !subCompanyDOList.isEmpty()) {
+            for (SubCompanyDO subCompanyDO : subCompanyDOList) {
+                departmentQueryParam.setSubCompanyId(subCompanyDO.getId());
+                paramMap.put("departmentQueryParam", departmentQueryParam);
+                List<DepartmentDO> departmentDOList = departmentMapper.getUserList(paramMap);
+                List<DepartmentDO> nodeList = DepartmentConverter.convertTree(departmentDOList);
+                subCompanyDO.setDepartmentDOList(nodeList);
+                subCompanyList.add(CompanyConverter.convertSubCompany(subCompanyDO));
+            }
+        }
+        companyDepartmentTree.setSubCompanyList(subCompanyList);
+
+        result.setResult(companyDepartmentTree);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
 }

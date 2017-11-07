@@ -35,6 +35,10 @@ public class DepartmentConverter {
             department.setRoleList(UserConverter.convertUserRoleDOList(departmentDO.getRoleDOList()));
         }
 
+        if(departmentDO.getUserDOList() != null && !departmentDO.getUserDOList().isEmpty()){
+            department.setUserList(UserConverter.convertUserList(departmentDO.getUserDOList()));
+        }
+
         return department;
     }
 

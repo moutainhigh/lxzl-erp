@@ -12,4 +12,5 @@ public interface DepartmentMapper extends BaseMysqlDAO<DepartmentDO> {
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	List<DepartmentDO> getRoleList(@Param("maps") Map<String, Object> paramMap);
+	List<DepartmentDO> getUserList(@Param("maps") Map<String, Object> paramMap);
 }

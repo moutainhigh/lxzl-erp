@@ -55,4 +55,10 @@ public class CompanyController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "getCompanyDepartmentUserTree", method = RequestMethod.POST)
+    public Result getCompanyDepartmentUserTree(@RequestBody DepartmentQueryParam departmentQueryParam) {
+        ServiceResult<String, CompanyDepartmentTree> serviceResult = companyService.getCompanyDepartmentUserTree(departmentQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 }
