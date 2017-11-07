@@ -8,6 +8,7 @@ public class ProductEquipmentMaterialDO  extends BaseDO {
 
 	private Integer id;
 	private Integer equipmentId;
+	private String equipmentNo;
 	private Integer materialId;
 	private Integer materialCount;
 	private Integer dataStatus;
@@ -61,4 +62,11 @@ public class ProductEquipmentMaterialDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public String getEquipmentNo() {
+		return equipmentNo;
+	}
+
+	public void setEquipmentNo(String equipmentNo) {
+		this.equipmentNo = equipmentNo;
+	}
 }

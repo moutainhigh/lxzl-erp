@@ -5,6 +5,7 @@
 	<resultMap id="ProductEquipmentMaterialDO" type="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterialDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
+		<result column="equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
 		<result column="material_id" jdbcType="INTEGER" property="materialId" />
 		<result column="material_count" jdbcType="INTEGER" property="materialCount" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -16,7 +17,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		epem.id,epem.equipment_id,epem.material_id,epem.material_count,epem.data_status,epem.remark,epem.create_time,epem.create_user,epem.update_time,epem.update_user
+		epem.id,epem.equipment_id,epem.equipment_no,epem.material_id,epem.material_count,epem.data_status,epem.remark,epem.create_time,epem.create_user,epem.update_time,epem.update_user
 	</sql>
 
 	<select id="findById" resultMap="ProductEquipmentMaterialDO" parameterType="java.lang.Integer">
@@ -48,6 +49,9 @@
 			<if test="equipmentId != null">
 				equipment_id = #{equipmentId,jdbcType=INTEGER},
 			</if>
+			<if test="equipmentNo != null">
+				equipment_no = #{equipmentNo,jdbcType=VARCHAR},
+			</if>
 			<if test="materialId != null">
 				material_id = #{materialId,jdbcType=INTEGER},
 			</if>
@@ -77,6 +81,14 @@
 
 	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterialDO">
 		insert into erp_product_equipment_material <include refid="set_column_sql"/>
+	</insert>
+
+	<insert id="saveList" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.ArrayList">
+		insert into erp_product_equipment_material (equipment_id, equipment_no, material_id, material_count, data_status, remark, create_time, create_user, update_time, update_user) values
+		<foreach item="productEquipmentMaterialDO" collection="productEquipmentMaterialDOList" open="" separator="," close="">
+			(#{productEquipmentMaterialDO.equipmentId},#{productEquipmentMaterialDO.equipmentNo},#{productEquipmentMaterialDO.materialId},#{productEquipmentMaterialDO.materialCount},,#{productEquipmentMaterialDO.dataStatus},#{productEquipmentMaterialDO.remark},
+			#{productEquipmentMaterialDO.createTime},#{productEquipmentMaterialDO.createUser},#{productEquipmentMaterialDO.updateTime},#{productEquipmentMaterialDO.updateUser})
+		</foreach>
 	</insert>
 
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterialDO">

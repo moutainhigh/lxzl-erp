@@ -10,6 +10,7 @@ public class ProductEquipmentMaterial implements Serializable {
 
 	private Integer productEquipmentMaterialId;   //唯一标识
 	private Integer equipmentId;   //设备ID
+	private String equipmentNo;
 	private Integer materialId;   //物料ID
 	private Integer materialCount;   //物料总数
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -100,4 +101,11 @@ public class ProductEquipmentMaterial implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public String getEquipmentNo() {
+		return equipmentNo;
+	}
+
+	public void setEquipmentNo(String equipmentNo) {
+		this.equipmentNo = equipmentNo;
+	}
 }

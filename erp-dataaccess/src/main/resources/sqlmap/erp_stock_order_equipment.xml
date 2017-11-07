@@ -79,6 +79,14 @@
 		insert into erp_stock_order_equipment <include refid="set_column_sql"/>
 	</insert>
 
+	<insert id="saveList" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.ArrayList">
+		insert into erp_stock_order_equipment (stock_order_no, equipment_id, equipment_no, data_status, remark, create_time, create_user, update_time, update_user) values
+		<foreach item="stockOrderEquipmentDO" collection="stockOrderEquipmentDOList" open="" separator="," close="">
+			(#{stockOrderEquipmentDO.stockOrderNo},#{stockOrderEquipmentDO.equipmentId},#{stockOrderEquipmentDO.equipmentNo},#{stockOrderEquipmentDO.dataStatus},#{stockOrderEquipmentDO.remark},
+			#{stockOrderEquipmentDO.createTime},#{stockOrderEquipmentDO.createUser},#{stockOrderEquipmentDO.updateTime},#{stockOrderEquipmentDO.updateUser})
+		</foreach>
+	</insert>
+
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO">
 		update erp_stock_order_equipment <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
