@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.company.impl;
 
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.SubCompanyType;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.company.SubCompanyQueryParam;
@@ -167,6 +168,26 @@ public class CompanyServiceImpl implements CompanyService {
         companyDepartmentTree.setSubCompanyList(subCompanyList);
 
         result.setResult(companyDepartmentTree);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, SubCompany> getHeaderCompany() {
+        ServiceResult<String, SubCompany> result = new ServiceResult<>();
+        Map<String, Object> paramMap = new HashMap<>();
+        SubCompanyQueryParam subCompanyQueryParam = new SubCompanyQueryParam();
+        subCompanyQueryParam.setSubCompanyType(SubCompanyType.SUB_COMPANY_TYPE_HEADER);
+        paramMap.put("start", 0);
+        paramMap.put("pageSize", Integer.MAX_VALUE);
+        paramMap.put("subCompanyQueryParam", subCompanyQueryParam);
+        List<SubCompanyDO> subCompanyDOList = subCompanyMapper.listPage(paramMap);
+
+        if(subCompanyDOList == null || subCompanyDOList.isEmpty()){
+            return result;
+        }
+
+        result.setResult(CompanyConverter.convertSubCompany(subCompanyDOList.get(0)));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
