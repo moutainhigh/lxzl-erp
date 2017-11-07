@@ -59,6 +59,10 @@ public class PageController extends BaseController {
     public String roleAccessFunction() {
         return "/component/user/roleAccessFunction";
     }
+    @RequestMapping("/user-manage/roleAccessData")
+    public String roleAccessData() {
+        return "/component/user/roleAccessData";
+    }
 
     //商品管理
     @RequestMapping("/product-manage/list")

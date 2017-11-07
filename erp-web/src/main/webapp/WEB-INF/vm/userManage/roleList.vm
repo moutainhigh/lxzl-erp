@@ -20,8 +20,8 @@
 
             <div class="panel panel-primary panel-border top">
                 <div class="panel-menu p12">
-                    <div class="row table-layout">
-                        <div class="col-md-6 pn">
+                    <div class="row">
+                        <div class="col-md-6">
                             <script type="text/html" id="actionCommonButtonsTpl">
                                 <button type="button" class="btn btn-primary btn-sm light refreshButton"  title="刷新"><i class="fa fa-refresh"></i></button>
                                 {{#acitonCommonButtons}}
@@ -32,7 +32,7 @@
                             </script>
                             <div class="btn-group" id="actionCommonButtons"></div>
                         </div>
-                        <div class="col-md-6 text-right pn">
+                        <div class="col-md-6 text-right">
                             <form id="searchForm" class="form-horizontal">
                                 <div class="form-group pull-right mn" style="width: 220px;">
                                     <div class="input-group">
@@ -117,7 +117,7 @@
 
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/fancytree2/jquery.fancytree-all.min.js"></script>
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.role.js','manage.role.add.js','manage.role.edit.js','manage.role.access.function.js');
+        management_load_script('${staticManagement}/js','manage.role.js','manage.role.add.js','manage.role.edit.js','manage.role.access.function.js','manage.role.access.data.js');
     </script>
 
     <script type="text/javascript">
