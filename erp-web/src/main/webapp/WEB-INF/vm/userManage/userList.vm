@@ -3,7 +3,7 @@
 <head>
     <title>凌雄ERP-用户管理-用户列表</title>
     #parse("layout/header.vm")
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/fancytree/skin-win8/ui.fancytree.min.css">
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/fancytree2/skin-win8/ui.fancytree.min.css">
     #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
@@ -15,14 +15,17 @@
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
             <section id="content" class="animated fadeIn">
-                <div class="panel panel-default panel-border top">
+
+                #parse("component/loading.vm")
+
+                <div class="panel panel-primary panel-border top">
                     <div class="panel-menu p12">
                         <div class="row">
                             <div class="col-md-6">
                                 <script type="text/html" id="actionCommonButtonsTpl">
-                                    <button type="button" class="btn  btn-default light refreshButton"  title="刷新"><i class="fa fa-refresh"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary refreshButton"  title="刷新"><i class="fa fa-refresh"></i></button>
                                     {{#acitonCommonButtons}}
-                                    <button type="button" class="btn  btn-default light {{class}}" title="{{text}}">
+                                    <button type="button" class="btn btn-sm btn-primary {{class}}" title="{{text}}">
                                         <i class="{{iClass}}"></i> {{text}}
                                     </button>
                                     {{/acitonCommonButtons}}
@@ -33,8 +36,8 @@
                                 <form id="searchForm" class="form-horizontal">
                                     <div class="form-group pull-right mn" style="width: 220px;">
                                         <div class="input-group">
-                                            <input type="text" name="realName" id="realName" class="form-control money " autocomplete="off" placeholder="输入姓名...">
-                                            <span class="input-group-addon btn-search" id="submitSearchForm"><i class="fa fa-search"></i> 查询</span>
+                                            <input type="text" name="realName" id="realName" class="form-control input-sm bradiusL" autocomplete="off" placeholder="输入姓名...">
+                                            <span class="input-group-addon btn-search input-sm bradiusR" id="submitSearchForm"><i class="fa fa-search"></i> 查询</span>
                                         </div>
                                     </div>
                                 </form>
@@ -62,10 +65,10 @@
                             <script type="text/html" id="userListTpl">
                                 {{#listData}}
                                     <tr>
-                                        <td></td>
+                                        <td>{{department}}</td>
                                         <td class="">{{realName}}</td>
                                         <td class="">{{userName}}</td>
-                                        <td class=""></td>
+                                        <td class="">{{role}}</td>
                                         <td class="">{{email}}</td>
                                         <td class="">{{phone}}</td>
                                         <td class="">{{isActivatedStr}}</td>
@@ -76,7 +79,7 @@
                                             {{#acitonButtons}}
                                             <div class="btn-group text-right">
                                                 {{#acitons}}
-                                                <a href="${ctx}{{menuUrl}}" class="{{class}}" data-userid="{{userId}}">{{text}}</a>
+                                                <a href="${ctx}{{menuUrl}}" class="btn btn-default btn-xs {{class}}" data-userid="{{userId}}">{{text}}</a>
                                                 {{/acitons}}
                                             </div>
                                             {{/acitonButtons}}
@@ -113,12 +116,12 @@
     </div>
     #parse("layout/footer.vm")
 
-    #parse("component/user/add.vm")
-    #parse("component/user/edit.vm")
-    ##parse("component/user/password.vm")
+##    #parse("component/user/add.vm")
+##    #parse("component/user/edit.vm")
+##    #parse("component/user/password.vm")
     #parse("component/user/view.vm")
 
-    <script type="text/javascript" src="${staticCommon}/vendor/plugins/fancytree/jquery.fancytree-all.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/fancytree2/jquery.fancytree-all.min.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js','manage.user.js','manage.user.add.js','manage.user.edit.js','manage.user.view.js');
     </script>

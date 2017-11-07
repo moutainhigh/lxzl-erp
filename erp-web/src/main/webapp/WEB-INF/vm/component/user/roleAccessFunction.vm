@@ -1,0 +1,72 @@
+<div id="editRoleModal" class="popup-basic admin-form popup-lg mfp-with-anim">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-shield"></i>功能授权</span>
+        </div>
+
+        <form class="form-horizontal" id="roleAccessFunctionForm">
+            <input type="hidden" name="roleId" value="">
+            <div class="panel-body p25">
+                <script type="text/html" id="roleAccessFuncInfoTpl">
+                    {{#role}}
+                    <div class="form-group mb5">
+                        <label class="col-md-2 control-label">角色名称</label>
+                        <div class="col-md-10">
+                            <p class="form-control-static text-muted">{{roleName}}</p>
+                        </div>
+                    </div>
+                    <div class="form-group mb5">
+                        <label class="col-md-2 control-label">公司</label>
+                        <div class="col-md-10">
+                            <p class="form-control-static text-muted">{{subCompanyName}}</p>
+                        </div>
+                    </div>
+                    <div class="form-group mb5">
+                        <label class="col-md-2 control-label">部门</label>
+                        <div class="col-md-10">
+                            <p class="form-control-static text-muted">{{departmentName}}</p>
+                        </div>
+                    </div>
+                    {{/role}}
+                </script>
+                <div class="section row mn" id="roleAccessFuncInfo">
+                    <div class="form-group mb5">
+                        <label class="col-md-2 control-label">角色名称</label>
+                        <div class="col-md-10">
+                            <p class="form-control-static text-muted">&nbsp;</p>
+                        </div>
+                    </div>
+                    <div class="form-group mb5">
+                        <label class="col-md-2 control-label">公司</label>
+                        <div class="col-md-10">
+                            <p class="form-control-static text-muted">&nbsp;</p>
+                        </div>
+                    </div>
+                    <div class="form-group mb5">
+                        <label class="col-md-2 control-label">部门</label>
+                        <div class="col-md-10">
+                            <p class="form-control-static text-muted">&nbsp;</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb5">
+                    <label class="col-md-2 control-label">功能权限</label>
+                    <div class="col-md-10">
+                        <div class="panel mb30 mt15" id="p3">
+                            <div class="panel-body nano nano-default affix rtlnao" style="height: 300px">
+                                <div class="nano-content">
+                                    <div id="roleFunctionTree" style="padding: 15px 25px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-footer text-right">
+                <button type="button" class="button btn-default" id="cancelRoleAccessFuncBtn">取消</button>
+                <button type="button" class="button btn-primary" id="roleAcccessFuncBtn">确定</button>
+            </div>
+        </form>
+    </div>
+</div>

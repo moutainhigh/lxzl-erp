@@ -6,6 +6,7 @@
     #*<link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">*#
    #* <link rel="stylesheet" href="${staticCommon}/vendor/plugins/dropzone/css/dropzone.css">*#
+    #parse("layout/theme.vm")
     <script type="text/javascript">
         common_load_css('${staticCommon}/rental/css','dropzone.css');
     </script>

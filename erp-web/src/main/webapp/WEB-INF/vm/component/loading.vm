@@ -1,0 +1,5 @@
+<div class="bg-loading hide listLoading">
+    <div class="box-loading">
+        <div class="loading"><i></i><span>数据加载中,请稍候...</span></div>
+    </div>
+</div>

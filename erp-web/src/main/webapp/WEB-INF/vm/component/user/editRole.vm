@@ -1,10 +1,11 @@
-<div id="addRoleModal" class="popup-basic popup-lg admin-form mfp-with-anim mfp-hide">
+<div id="editRoleModal" class="popup-basic popup-lg admin-form mfp-with-anim">
     <div class="panel">
         <div class="panel-heading">
-            <span class="panel-title"><i class="fa fa-pencil"></i>添加角色</span>
+            <span class="panel-title"><i class="fa fa-pencil"></i>编辑角色</span>
         </div>
 
-        <form method="post" action="$ctx/userRole/add" id="addRoleForm" callback-func="AddRole.callBackFunc" description="添加角色">
+        <form method="post" id="editRoleForm" description="编辑角色">
+            <input type="hidden" name="roleId" value="">
             <div class="panel-body p25">
                 <div class="section row">
                     <div class="col-md-6">
@@ -13,31 +14,6 @@
                             <input type="text" name="roleName" id="roleName" class="gui-input required" placeholder="角色名称..." maxlength="20">
                             <label for="roleName" class="field-icon"><i class="fa fa-user"></i>
                             </label>
-                        </label>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="realName" class="field-label">上级角色</label>
-                        <label class="field select">
-                            <select id="parentRoleId" name="parentRoleId">
-                                <option value="">选择</option>
-                                <option value="0"></option>
-                            </select>
-                            <i class="arrow double"></i>
-                        </label>
-                    </div>
-
-                </div>
-
-                <div class="section row">
-                    <div class="col-md-6">
-                        <label for="isSuperAdmin" class="field-label">超级管理员</label>
-                        <label class="field select">
-                            <select id="isSuperAdmin" name="isSuperAdmin">
-                                <option value="0">否</option>
-                                <option value="1">是</option>
-                            </select>
-                            <i class="arrow double"></i>
                         </label>
                     </div>
 
@@ -51,19 +27,32 @@
                     </div>
 
                 </div>
-
-                <div class="section">
-                    <label for="username" class="field-label">备注</label>
-                    <label for="remark" class="field prepend-icon">
-                        <textarea class="gui-textarea" id="remark" name="remark" placeholder="请输入备注"></textarea>
-                        <label for="remark" class="field-icon"><i class="fa fa-comments"></i>
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="username" class="field-label">备注</label>
+                        <label for="remark" class="field prepend-icon">
+                            <textarea class="gui-textarea" id="remark" name="remark" placeholder="请输入备注"></textarea>
+                            <label for="remark" class="field-icon"><i class="fa fa-comments"></i>
+                            </label>
                         </label>
-                    </label>
+                    </div>
                 </div>
-
+                <div class="section row">
+                    <div class="col-md-12">
+                        <div class="panel mb30" id="p3">
+                            <div class="panel-heading pn ph8">部门</div>
+                            <div class="panel-body nano nano-default affix rtlnao" style="height: 250px">
+                                <div class="nano-content">
+                                    <div id="companyDepartmentTree" style="padding: 15px 25px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="panel-footer text-right">
+                <button type="button" class="button btn-default" id="cancelEditRoleBtn">取消</button>
                 <button type="submit" class="button btn-primary">确定</button>
             </div>
         </form>
