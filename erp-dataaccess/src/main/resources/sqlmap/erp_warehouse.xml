@@ -46,8 +46,9 @@
 		(
 			select
 			<include refid="column_List"/>,esc.sub_company_name,esc.sub_company_type
-			from erp_warehouse ew where em.id = #{id, jdbcType=INTEGER} and data_status = 1
-			left join erp_sub_company esc on esc.id = ew.sub_company_id and esc.data_status = 1
+			from erp_warehouse ew
+			left join erp_sub_company esc on esc.id = ew.sub_company_id
+			where ew.id = #{id, jdbcType=INTEGER} and ew.data_status = 1  and esc.data_status = 1
 		) warehouse left join erp_warehouse_position ewp on ewp.warehouse_id = warehouse.id
 	</select>
 

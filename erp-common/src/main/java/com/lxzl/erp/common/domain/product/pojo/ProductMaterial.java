@@ -6,10 +6,11 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProductEquipmentMaterial implements Serializable {
+public class ProductMaterial implements Serializable {
 
-	private Integer productEquipmentMaterialId;   //唯一标识
-	private Integer equipmentId;   //设备ID
+	private Integer productMaterialId;   //唯一标识
+	private Integer productId;   //商品ID
+	private Integer productSkuId;   //商品SKU ID
 	private Integer materialId;   //物料ID
 	private Integer materialCount;   //物料总数
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -20,20 +21,28 @@ public class ProductEquipmentMaterial implements Serializable {
 	private String updateUser;   //修改人
 
 
-	public Integer getProductEquipmentMaterialId(){
-		return productEquipmentMaterialId;
+	public Integer getProductMaterialId(){
+		return productMaterialId;
 	}
 
-	public void setProductEquipmentMaterialId(Integer productEquipmentMaterialId){
-		this.productEquipmentMaterialId = productEquipmentMaterialId;
+	public void setProductMaterialId(Integer productMaterialId){
+		this.productMaterialId = productMaterialId;
 	}
 
-	public Integer getEquipmentId(){
-		return equipmentId;
+	public Integer getProductId(){
+		return productId;
 	}
 
-	public void setEquipmentId(Integer equipmentId){
-		this.equipmentId = equipmentId;
+	public void setProductId(Integer productId){
+		this.productId = productId;
+	}
+
+	public Integer getProductSkuId(){
+		return productSkuId;
+	}
+
+	public void setProductSkuId(Integer productSkuId){
+		this.productSkuId = productSkuId;
 	}
 
 	public Integer getMaterialId(){

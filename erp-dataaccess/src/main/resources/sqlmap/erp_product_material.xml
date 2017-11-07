@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMaterialMapper">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.product.ProductMaterialMapper">
 
-	<resultMap id="ProductEquipmentMaterialDO" type="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterialDO">
+	<resultMap id="ProductMaterialDO" type="com.lxzl.erp.dataaccess.domain.product.ProductMaterialDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
-		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
+		<result column="product_id" jdbcType="INTEGER" property="productId" />
+		<result column="product_sku_id" jdbcType="INTEGER" property="productSkuId" />
 		<result column="material_id" jdbcType="INTEGER" property="materialId" />
 		<result column="material_count" jdbcType="INTEGER" property="materialCount" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -16,28 +17,28 @@
 	</resultMap>
 
 	<sql id="column_List">
-		epem.id,epem.equipment_id,epem.material_id,epem.material_count,epem.data_status,epem.remark,epem.create_time,epem.create_user,epem.update_time,epem.update_user
+		epm.id,epm.product_id,epm.product_sku_id,epm.material_id,epm.material_count,epm.data_status,epm.remark,epm.create_time,epm.create_user,epm.update_time,epm.update_user
 	</sql>
 
-	<select id="findById" resultMap="ProductEquipmentMaterialDO" parameterType="java.lang.Integer">
-		select <include refid="column_List"/> from erp_product_equipment_material epem 
-		where epem.id = #{id, jdbcType=INTEGER} and data_status = 1 
+	<select id="findById" resultMap="ProductMaterialDO" parameterType="java.lang.Integer">
+		select <include refid="column_List"/> from erp_product_material epm 
+		where epm.id = #{id, jdbcType=INTEGER} and data_status = 1 
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		select count(epem.id) from erp_product_equipment_material epem 
+		select count(epm.id) from erp_product_material epm 
 		<where>
 			<if test="true">
-				and epem.data_status = 1
+				and epm.data_status = 1
 			</if>
 		</where>
 	</select>
 
-	<select id="listPage" resultMap="ProductEquipmentMaterialDO" parameterType="map">
-		select <include refid="column_List"/> from erp_product_equipment_material epem 
+	<select id="listPage" resultMap="ProductMaterialDO" parameterType="map">
+		select <include refid="column_List"/> from erp_product_material epm 
 		<where>
 			<if test="true">
-				and epem.data_status = 1
+				and epm.data_status = 1
 			</if>
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}
@@ -45,8 +46,11 @@
 
 	<sql id="set_column_sql">
 		<set>
-			<if test="equipmentId != null">
-				equipment_id = #{equipmentId,jdbcType=INTEGER},
+			<if test="productId != null">
+				product_id = #{productId,jdbcType=INTEGER},
+			</if>
+			<if test="productSkuId != null">
+				product_sku_id = #{productSkuId,jdbcType=INTEGER},
 			</if>
 			<if test="materialId != null">
 				material_id = #{materialId,jdbcType=INTEGER},
@@ -75,11 +79,11 @@
 		</set>
 	</sql>
 
-	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterialDO">
-		insert into erp_product_equipment_material <include refid="set_column_sql"/>
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductMaterialDO">
+		insert into erp_product_material <include refid="set_column_sql"/>
 	</insert>
 
-	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterialDO">
-		update erp_product_equipment_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductMaterialDO">
+		update erp_product_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
 </mapper>
