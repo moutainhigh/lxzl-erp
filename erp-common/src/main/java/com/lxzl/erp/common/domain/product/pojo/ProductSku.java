@@ -21,6 +21,7 @@ public class ProductSku implements Serializable {
     private String remark;
     private Integer dataStatus;
     private List<ProductSkuProperty> productSkuPropertyList;
+    private List<ProductMaterial> productMaterialList;
 
     private String productName;
 
@@ -136,4 +137,11 @@ public class ProductSku implements Serializable {
         this.productName = productName;
     }
 
+    public List<ProductMaterial> getProductMaterialList() {
+        return productMaterialList;
+    }
+
+    public void setProductMaterialList(List<ProductMaterial> productMaterialList) {
+        this.productMaterialList = productMaterialList;
+    }
 }

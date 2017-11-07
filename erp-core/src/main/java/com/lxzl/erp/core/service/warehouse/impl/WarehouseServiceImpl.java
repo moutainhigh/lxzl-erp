@@ -107,9 +107,12 @@ public class WarehouseServiceImpl implements WarehouseService {
         WarehouseQueryParam param = new WarehouseQueryParam();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
 
-        // TODO
         List<Integer> subCompanyIdList = new ArrayList<>();
         for (Role role : loginUser.getRoleList()) {
+            if(SubCompanyType.SUB_COMPANY_TYPE_HEADER.equals(role.getSubCompanyType())){
+                subCompanyIdList.clear();
+                break;
+            }
             subCompanyIdList.add(role.getSubCompanyId());
         }
         param.setSubCompanyIdList(subCompanyIdList);

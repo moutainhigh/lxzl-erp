@@ -71,6 +71,9 @@
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.subCompanyId != null">
 				and ew.sub_company_id = #{maps.warehouseQueryParam.subCompanyId, jdbcType=INTEGER}
 			</if>
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.subCompanyIdList != null &amp;&amp; maps.warehouseQueryParam.subCompanyIdList.size > 0">
+				and ew.sub_company_id in <foreach collection="maps.warehouseQueryParam.subCompanyIdList" open="(" close=")" separator="," item="subCompanyId">#{subCompanyId}</foreach>
+			</if>
 			<if test="true">
 				and ew.data_status = 1
 			</if>
@@ -99,7 +102,7 @@
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.subCompanyId != null">
 				and ew.sub_company_id = #{maps.warehouseQueryParam.subCompanyId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.subCompanyIdList != null">
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.subCompanyIdList != null &amp;&amp; maps.warehouseQueryParam.subCompanyIdList.size > 0">
 				and ew.sub_company_id in <foreach collection="maps.warehouseQueryParam.subCompanyIdList" open="(" close=")" separator="," item="subCompanyId">#{subCompanyId}</foreach>
 			</if>
 			<if test="true">
