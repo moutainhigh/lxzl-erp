@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
+import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -179,7 +180,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         stockOrderMapper.save(stockOrderDO);
 
         for (ProductInStorage productInStorage : productInStorageList) {
-            saveProductEquipment(stockOrderDO.getStockOrderNo(), targetWarehouseId, productInStorage.getProductId(), productInStorage.getProductSkuId(), productInStorage.getProductCount(), currentTime);
+            saveProductEquipment(stockOrderDO.getStockOrderNo(), targetWarehouseId, productInStorage, currentTime);
             ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
             productSkuDO.setStock(productSkuDO.getStock() + productInStorage.getProductCount());
             productSkuDO.setUpdateUser(loginUser.getUserId().toString());
@@ -212,7 +213,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
 
-    private void saveProductEquipment(String stockOrderNo, Integer warehouseId, Integer productId, Integer productSkuId, Integer productCount, Date currentTime) {
+    private void saveProductEquipment(String stockOrderNo, Integer warehouseId, ProductInStorage productInStorage, Date currentTime) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         ProductEquipmentQueryParam param = new ProductEquipmentQueryParam();
         param.setCreateStartTime(DateUtil.getBeginOfDay(currentTime));
@@ -224,11 +225,11 @@ public class WarehouseServiceImpl implements WarehouseService {
         Integer oldCount = productEquipmentMapper.findProductEquipmentCountByParams(maps);
         oldCount = oldCount == null ? 0 : oldCount;
 
-        for (int i = 0; i < productCount; i++) {
+        for (int i = 0; i < productInStorage.getProductCount(); i++) {
             ProductEquipmentDO productEquipmentDO = new ProductEquipmentDO();
             productEquipmentDO.setEquipmentNo(GenerateNoUtil.generateEquipmentNo(currentTime, warehouseId, (oldCount + i + 1)));
-            productEquipmentDO.setProductId(productId);
-            productEquipmentDO.setSkuId(productSkuId);
+            productEquipmentDO.setProductId(productInStorage.getProductId());
+            productEquipmentDO.setSkuId(productInStorage.getProductSkuId());
             productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
             productEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             productEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
@@ -247,6 +248,12 @@ public class WarehouseServiceImpl implements WarehouseService {
             stockOrderEquipmentDO.setUpdateTime(currentTime);
             stockOrderEquipmentDO.setCreateTime(currentTime);
             stockOrderEquipmentMapper.save(stockOrderEquipmentDO);
+
+            if(productInStorage.getProductMaterialList() != null && !productInStorage.getProductMaterialList().isEmpty()){
+                for(ProductMaterial productMaterial : productInStorage.getProductMaterialList()){
+
+                }
+            }
         }
     }
 }

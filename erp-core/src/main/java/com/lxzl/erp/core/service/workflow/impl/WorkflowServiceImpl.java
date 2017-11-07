@@ -236,12 +236,14 @@ public class WorkflowServiceImpl implements WorkflowService {
             return null;
         }
         WorkflowNodeDO thisWorkflowNodeDO = workflowNodeDOList.get(0);
+        WorkflowNodeDO lastWorkflowNodeDO = workflowNodeDOList.get(workflowNodeDOList.size() - 1);
 
         WorkflowLinkDO workflowLinkDO = new WorkflowLinkDO();
         workflowLinkDO.setWorkflowType(workflowTemplateDO.getWorkflowType());
         workflowLinkDO.setWorkflowTemplateId(workflowTemplateDO.getId());
         workflowLinkDO.setWorkflowReferId(workflowReferId);
         workflowLinkDO.setWorkflowStep(thisWorkflowNodeDO.getWorkflowStep());
+        workflowLinkDO.setWorkflowLastStep(lastWorkflowNodeDO.getWorkflowStep());
         workflowLinkDO.setWorkflowCurrentNodeId(thisWorkflowNodeDO.getId());
         workflowLinkMapper.save(workflowLinkDO);
 
@@ -291,6 +293,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowLinkDO.setWorkflowTemplateId(oldWorkflowLinkDO.getWorkflowTemplateId());
         workflowLinkDO.setWorkflowReferId(oldWorkflowLinkDO.getWorkflowReferId());
         workflowLinkDO.setWorkflowStep(oldWorkflowLinkDO.getWorkflowStep());
+        workflowLinkDO.setWorkflowLastStep(oldWorkflowLinkDO.getWorkflowLastStep());
         workflowLinkDO.setWorkflowCurrentNodeId(oldWorkflowLinkDO.getWorkflowCurrentNodeId());
         workflowLinkMapper.save(workflowLinkDO);
 
