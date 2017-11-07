@@ -11,7 +11,6 @@ public class PurchaseReceiveOrderDO  extends BaseDO {
 	private Integer purchaseDeliveryOrderId;
 	private String purchaseReceiveNo;
 	private Integer productSupplierId;
-	private Integer invoiceSupplierId;
 	private Integer warehouseId;
 	private String warehouseSnapshot;
 	private Integer isInvoice;
@@ -62,14 +61,6 @@ public class PurchaseReceiveOrderDO  extends BaseDO {
 
 	public void setProductSupplierId(Integer productSupplierId){
 		this.productSupplierId = productSupplierId;
-	}
-
-	public Integer getInvoiceSupplierId(){
-		return invoiceSupplierId;
-	}
-
-	public void setInvoiceSupplierId(Integer invoiceSupplierId){
-		this.invoiceSupplierId = invoiceSupplierId;
 	}
 
 	public Integer getWarehouseId(){

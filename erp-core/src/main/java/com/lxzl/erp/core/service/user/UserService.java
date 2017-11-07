@@ -20,4 +20,7 @@ public interface UserService extends BaseService {
     ServiceResult<String, Integer> updateUserPassword(User user);
     ServiceResult<String,User> getUserById(Integer userId);
     ServiceResult<String,Page<User>> userPage(UserQueryParam userQueryParam);
+    ServiceResult<String,List<User>> getUserByDepartmentId(Integer departmentId);
+    ServiceResult<String,List<User>> getUserByRoleId(Integer departmentId);
+    ServiceResult<String,List<User>> getUserBySubCompanyId(Integer departmentId);
 }

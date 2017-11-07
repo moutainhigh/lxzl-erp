@@ -59,6 +59,7 @@ public class ErrorCode {
     public static final String WORKFLOW_NOT_BELONG_TO_YOU = "J800007";
     public static final String WORKFLOW_NOT_EXISTS_CLOSED = "J800008";
     public static final String WORKFLOW_NODE_NOT_EXISTS = "J800009";
+    public static final String WORKFLOW_VERIFY_USER_ERROR = "J800010";
 
     public static final String REMARK_PATTERN = "J900001";
     public static final String ID_NOT_NULL = "J900002";
@@ -91,6 +92,11 @@ public class ErrorCode {
     public static final String PURCHASE_ORDER_COMMITTED_CAN_NOT_UPDATE = "J300010";
     public static final String PURCHASE_ORDER_CANNOT_CREATE_BY_NEW_AND_AMOUNT = "J300011";
     public static final String WAREHOUSE_NOT_EXISTS = "J300012";
+    public static final String PURCHASE_ORDER_PRODUCT_CAN_NOT_REPEAT = "J300013";
+    public static final String PURCHASE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN = "J300014";
+    public static final String WAREHOUSE_IN_STORAGE_LIST_NOT_NULL = "J300015";
+    public static final String USER_CAN_NOT_OP_WAREHOUSE = "J300016";
+    public static final String VERIFY_USER_NOT_NULL = "J300017";
 
     static
     {
@@ -144,6 +150,7 @@ public class ErrorCode {
         MAP.put(WORKFLOW_NOT_BELONG_TO_YOU,"此单工作流还不该您审核");
         MAP.put(WORKFLOW_NOT_EXISTS_CLOSED,"此工作流不存在或已经关闭");
         MAP.put(WORKFLOW_NODE_NOT_EXISTS,"此工作流节点不存在");
+        MAP.put(WORKFLOW_VERIFY_USER_ERROR,"此工作流审核人员有误");
 
         MAP.put(REMARK_PATTERN,"备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL,"ID不能为空");
@@ -176,6 +183,11 @@ public class ErrorCode {
         MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_UPDATE,"待审核状态的采购单不允许修改");
         MAP.put(PURCHASE_ORDER_CANNOT_CREATE_BY_NEW_AND_AMOUNT,"拒绝创建该采购单，原因【分公司采购单不能为大于两万元的全新机】");
         MAP.put(WAREHOUSE_NOT_EXISTS,"仓库不存在");
+        MAP.put(PURCHASE_ORDER_PRODUCT_CAN_NOT_REPEAT,"采购订单项重复");
+        MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN,"已提交的采购单不能再次提交");
+        MAP.put(WAREHOUSE_IN_STORAGE_LIST_NOT_NULL,"商品入仓数据不能为空");
+        MAP.put(USER_CAN_NOT_OP_WAREHOUSE,"您没有该仓库的操作权限");
+        MAP.put(VERIFY_USER_NOT_NULL,"审核人不能为空");
     }
 
     public static String getMessage(String code)

@@ -8,6 +8,7 @@ public class SubCompanyQueryParam extends BasePageParam {
 
     private Integer subCompanyId;
     private String subCompanyName;
+    private Integer subCompanyType;
 
     public Integer getSubCompanyId() {
         return subCompanyId;
@@ -23,5 +24,13 @@ public class SubCompanyQueryParam extends BasePageParam {
 
     public void setSubCompanyName(String subCompanyName) {
         this.subCompanyName = subCompanyName;
+    }
+
+    public Integer getSubCompanyType() {
+        return subCompanyType;
+    }
+
+    public void setSubCompanyType(Integer subCompanyType) {
+        this.subCompanyType = subCompanyType;
     }
 }

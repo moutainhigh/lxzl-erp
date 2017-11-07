@@ -13,7 +13,6 @@ public class PurchaseReceiveOrder implements Serializable {
 	private Integer purchaseDeliveryOrderId;   //采购发货单ID
 	private String purchaseReceiveNo;   //采购收货单编号
 	private Integer productSupplierId;   //商品供应商ID
-	private Integer invoiceSupplierId;   //发票供应商ID
 	private Integer warehouseId;   //仓库ID
 	private String warehouseSnapshot;   //收货方仓库快照，JSON格式
 	private Integer isInvoice;   //是否有发票，0否1是
@@ -69,14 +68,6 @@ public class PurchaseReceiveOrder implements Serializable {
 
 	public void setProductSupplierId(Integer productSupplierId){
 		this.productSupplierId = productSupplierId;
-	}
-
-	public Integer getInvoiceSupplierId(){
-		return invoiceSupplierId;
-	}
-
-	public void setInvoiceSupplierId(Integer invoiceSupplierId){
-		this.invoiceSupplierId = invoiceSupplierId;
 	}
 
 	public Integer getWarehouseId(){

@@ -230,7 +230,7 @@ public class ProductTest extends BaseUnTransactionalTest {
         ProductQueryParam param = new ProductQueryParam();
         param.setPageNo(1);
         param.setPageSize(10);
-        param.setProductId(2000001);
+//        param.setProductId(2000001);
 //        param.setProductName("一体机");
 //        param.setIsSale(0);
         ServiceResult<String, Page<Product>> result = productService.queryAllProduct(param);

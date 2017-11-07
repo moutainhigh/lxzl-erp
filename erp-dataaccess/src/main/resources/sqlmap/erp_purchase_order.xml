@@ -27,14 +27,14 @@
 	</resultMap>
 
 	<sql id="column_List">
-		epo.id,epo.purchase_no,epo.product_supplier_id,epo.invoice_supplier_id,epo.warehouse_id,epowarehouse_snapshot,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_amount_real,epo.purchase_order_amount_statement,epo.purchase_order_status,epo.commit_status,epo.delivery_time,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user	</sql>
+		epo.id,epo.purchase_no,epo.product_supplier_id,epo.invoice_supplier_id,epo.warehouse_id,epo.warehouse_snapshot,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_amount_real,epo.purchase_order_amount_statement,epo.purchase_order_status,epo.commit_status,epo.delivery_time,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user	</sql>
 	<select id="findById" resultMap="PurchaseOrderDO" parameterType="java.lang.Integer">
 		select <include refid="column_List"/> from erp_purchase_order epo 
 		where epo.id = #{id, jdbcType=INTEGER} and data_status = 1 
 	</select>
 	<select id="findByPurchaseNo" resultMap="PurchaseOrderDO" parameterType="java.lang.String">
 		select <include refid="column_List"/> from erp_purchase_order epo
-		where epo.purchaseNo = #{purchaseNo, jdbcType=VARCHAR} and data_status = 1
+		where epo.purchase_no = #{purchaseNo, jdbcType=VARCHAR} and data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">

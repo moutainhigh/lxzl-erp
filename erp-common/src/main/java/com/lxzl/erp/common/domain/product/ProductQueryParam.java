@@ -10,7 +10,7 @@ public class ProductQueryParam extends PageQuery implements Serializable {
 
     private Integer productId;
     private String productName;
-    private Integer isSale;
+    private Integer isRent;
 
     public Integer getProductId() {
         return productId;
@@ -28,11 +28,11 @@ public class ProductQueryParam extends PageQuery implements Serializable {
         this.productName = productName;
     }
 
-    public Integer getIsSale() {
-        return isSale;
+    public Integer getIsRent() {
+        return isRent;
     }
 
-    public void setIsSale(Integer isSale) {
-        this.isSale = isSale;
+    public void setIsRent(Integer isRent) {
+        this.isRent = isRent;
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -23,6 +24,8 @@ public class WarehouseQueryParam extends PageQuery implements Serializable {
     private Integer subCompanyId;
 
     private String subCompanyName;
+
+    private List<Integer> subCompanyIdList;
 
     public Integer getWarehouseId() {
         return warehouseId;
@@ -62,5 +65,13 @@ public class WarehouseQueryParam extends PageQuery implements Serializable {
 
     public void setSubCompanyName(String subCompanyName) {
         this.subCompanyName = subCompanyName;
+    }
+
+    public List<Integer> getSubCompanyIdList() {
+        return subCompanyIdList;
+    }
+
+    public void setSubCompanyIdList(List<Integer> subCompanyIdList) {
+        this.subCompanyIdList = subCompanyIdList;
     }
 }

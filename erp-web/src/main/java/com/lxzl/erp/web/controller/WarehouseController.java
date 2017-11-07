@@ -49,4 +49,10 @@ public class WarehouseController extends BaseController {
         ServiceResult<String, List<Warehouse>> serviceResult = warehouseService.getWarehouseByCompany(warehouseQueryParam.getSubCompanyId());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    @RequestMapping(value = "getWarehouseByCurrentCompany", method = RequestMethod.POST)
+    public Result getWarehouseByCurrentCompany(@RequestBody WarehouseQueryParam warehouseQueryParam) {
+        ServiceResult<String, List<Warehouse>> serviceResult = warehouseService.getWarehouseByCurrentCompany();
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }

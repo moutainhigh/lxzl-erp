@@ -1,8 +1,10 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.purchase.PurchaseOrderCommitParam;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
@@ -51,13 +53,13 @@ public class PurchaseOrderController {
     }
     /**
      * 采购单提交审核
-     * @param purchaseOrder
+     * @param purchaseOrderCommitParam
      * @param validResult
      * @return
      */
     @RequestMapping(value = "commit", method = RequestMethod.POST)
-    public Result commit(@RequestBody @Validated(IdGroup.class) PurchaseOrder purchaseOrder, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = purchaseOrderService.commit(purchaseOrder);
+    public Result commit(@RequestBody @Validated(ExtendGroup.class) PurchaseOrderCommitParam purchaseOrderCommitParam, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = purchaseOrderService.commit(purchaseOrderCommitParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }
