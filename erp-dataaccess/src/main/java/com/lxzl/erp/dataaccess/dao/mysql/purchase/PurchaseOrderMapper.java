@@ -8,6 +8,8 @@ import java.util.Map;
 
 public interface PurchaseOrderMapper extends BaseMysqlDAO<PurchaseOrderDO> {
 
+	PurchaseOrderDO findByPurchaseNo(@Param("purchaseNo") String purchaseNo);
+
 	List<PurchaseOrderDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);

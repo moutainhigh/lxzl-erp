@@ -13,8 +13,9 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SubCompany implements Serializable {
     private Integer subCompanyId;   //唯一标识
-    @NotEmpty(message = ErrorCode.SUB_COMPANY_NAME_NOT_NULL , groups = {AddGroup.class})
+    @NotEmpty(message = ErrorCode.SUB_COMPANY_NAME_NOT_NULL, groups = {AddGroup.class})
     private String subCompanyName;   //子公司名称
+    private Integer isHeaderCompany;   //是否是总公司 0否1是
     private Integer province;   //省份ID，对应字典ID
     private Integer city;   //城市ID，对应字典ID
     private Integer district;   //区ID，对应字典ID
@@ -130,5 +131,13 @@ public class SubCompany implements Serializable {
 
     public void setUpdateUser(String updateUser) {
         this.updateUser = updateUser;
+    }
+
+    public Integer getIsHeaderCompany() {
+        return isHeaderCompany;
+    }
+
+    public void setIsHeaderCompany(Integer isHeaderCompany) {
+        this.isHeaderCompany = isHeaderCompany;
     }
 }

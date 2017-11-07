@@ -5,6 +5,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
 import com.lxzl.erp.common.util.validate.constraints.In;
 
@@ -17,19 +18,20 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PurchaseOrder implements Serializable {
 
-    @NotNull(message = ErrorCode.PURCHASE_ORDER_ID_NOT_NULL , groups = {IdGroup.class})
     private Integer purchaseOrderId;   //唯一标识
+    @NotNull(message = ErrorCode.PURCHASE_ORDER_ID_NOT_NULL , groups = {UpdateGroup.class,IdGroup.class})
     private String purchaseNo;   //采购单编号
-    @NotNull(message = ErrorCode.PRODUCT_SUPPLIER_ID_NOT_NULL , groups = {AddGroup.class})
+    @NotNull(message = ErrorCode.PRODUCT_SUPPLIER_ID_NOT_NULL , groups = {AddGroup.class,UpdateGroup.class})
     private Integer productSupplierId;   //商品供应商ID
     private Integer invoiceSupplierId;   //发票供应商ID
-    @NotNull(message = ErrorCode.WARE_HOUSE_ID_NOT_NULL , groups = {AddGroup.class})
+    @NotNull(message = ErrorCode.WAREHOUSE_ID_NOT_NULL, groups = {AddGroup.class,UpdateGroup.class})
     private Integer warehouseId;   //仓库ID
-    @NotNull(message = ErrorCode.IS_INVOICE_NOT_NULL , groups = {AddGroup.class})
-    @In(value = {CommonConstant.YES,CommonConstant.NO},message = ErrorCode.IS_NEW_VALUE_ERROR,groups = {AddGroup.class})
+    private String warehouseSnapshot;   //仓库快照
+    @NotNull(message = ErrorCode.IS_INVOICE_NOT_NULL , groups = {AddGroup.class,UpdateGroup.class})
+    @In(value = {CommonConstant.YES,CommonConstant.NO},message = ErrorCode.IS_NEW_VALUE_ERROR,groups = {AddGroup.class,UpdateGroup.class})
     private Integer isInvoice;   //是否有发票，0否1是
-    @NotNull(message = ErrorCode.IS_NEW_NOT_NULL , groups = {AddGroup.class})
-    @In(value = {CommonConstant.YES,CommonConstant.NO},message = ErrorCode.IS_INVOICE_VALUE_ERROR,groups = {AddGroup.class})
+    @NotNull(message = ErrorCode.IS_NEW_NOT_NULL , groups = {AddGroup.class,UpdateGroup.class})
+    @In(value = {CommonConstant.YES,CommonConstant.NO},message = ErrorCode.IS_INVOICE_VALUE_ERROR,groups = {AddGroup.class,UpdateGroup.class})
     private Integer isNew;   //是否全新机
     private BigDecimal purchaseOrderAmountTotal;   //采购单总价
     private BigDecimal purchaseOrderAmountReal;   //采购单实收
@@ -48,7 +50,7 @@ public class PurchaseOrder implements Serializable {
 
     private String verifyUser;   //审核人
 
-    @CollectionNotNull(message = ErrorCode.PURCHASE_ORDER_PRODUCT_LIST_NOT_NULL , groups = {AddGroup.class})
+    @CollectionNotNull(message = ErrorCode.PURCHASE_ORDER_PRODUCT_LIST_NOT_NULL , groups = {AddGroup.class,UpdateGroup.class})
     private List<PurchaseOrderProduct> purchaseOrderProductList;
 
     public Integer getPurchaseOrderId(){
@@ -89,6 +91,14 @@ public class PurchaseOrder implements Serializable {
 
     public void setWarehouseId(Integer warehouseId){
         this.warehouseId = warehouseId;
+    }
+
+    public String getWarehouseSnapshot() {
+        return warehouseSnapshot;
+    }
+
+    public void setWarehouseSnapshot(String warehouseSnapshot) {
+        this.warehouseSnapshot = warehouseSnapshot;
     }
 
     public Integer getIsInvoice(){

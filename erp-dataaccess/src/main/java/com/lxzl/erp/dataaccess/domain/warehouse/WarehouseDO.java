@@ -4,6 +4,7 @@ import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -21,9 +22,15 @@ public class WarehouseDO extends BaseDO {
 
     private Integer subCompanyId;
 
+    private String subCompanyName;
+
+    private Integer isHeaderCompany;
+
     private Integer dataStatus;
 
     private String remark;
+
+    private List<WarehousePositionDO> warehousePositionDOList;
 
     public Integer getId() {
         return id;
@@ -71,5 +78,29 @@ public class WarehouseDO extends BaseDO {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public List<WarehousePositionDO> getWarehousePositionDOList() {
+        return warehousePositionDOList;
+    }
+
+    public void setWarehousePositionDOList(List<WarehousePositionDO> warehousePositionDOList) {
+        this.warehousePositionDOList = warehousePositionDOList;
+    }
+
+    public String getSubCompanyName() {
+        return subCompanyName;
+    }
+
+    public void setSubCompanyName(String subCompanyName) {
+        this.subCompanyName = subCompanyName;
+    }
+
+    public Integer getIsHeaderCompany() {
+        return isHeaderCompany;
+    }
+
+    public void setIsHeaderCompany(Integer isHeaderCompany) {
+        this.isHeaderCompany = isHeaderCompany;
     }
 }

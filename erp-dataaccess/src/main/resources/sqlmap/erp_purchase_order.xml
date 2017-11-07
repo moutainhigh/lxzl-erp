@@ -8,6 +8,7 @@
 		<result column="product_supplier_id" jdbcType="INTEGER" property="productSupplierId" />
 		<result column="invoice_supplier_id" jdbcType="INTEGER" property="invoiceSupplierId" />
 		<result column="warehouse_id" jdbcType="INTEGER" property="warehouseId" />
+		<result column="warehouse_snapshot" jdbcType="VARCHAR" property="warehouseSnapshot" />
 		<result column="is_invoice" jdbcType="INTEGER" property="isInvoice" />
 		<result column="is_new" jdbcType="INTEGER" property="isNew" />
 		<result column="purchase_order_amount_total" jdbcType="DECIMAL" property="purchaseOrderAmountTotal" />
@@ -26,10 +27,14 @@
 	</resultMap>
 
 	<sql id="column_List">
-		epo.id,epo.purchase_no,epo.product_supplier_id,epo.invoice_supplier_id,epo.warehouse_id,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_amount_real,epo.purchase_order_amount_statement,epo.purchase_order_status,epo.commit_status,epo.delivery_time,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user	</sql>
+		epo.id,epo.purchase_no,epo.product_supplier_id,epo.invoice_supplier_id,epo.warehouse_id,epowarehouse_snapshot,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_amount_real,epo.purchase_order_amount_statement,epo.purchase_order_status,epo.commit_status,epo.delivery_time,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user	</sql>
 	<select id="findById" resultMap="PurchaseOrderDO" parameterType="java.lang.Integer">
 		select <include refid="column_List"/> from erp_purchase_order epo 
 		where epo.id = #{id, jdbcType=INTEGER} and data_status = 1 
+	</select>
+	<select id="findByPurchaseNo" resultMap="PurchaseOrderDO" parameterType="java.lang.String">
+		select <include refid="column_List"/> from erp_purchase_order epo
+		where epo.purchaseNo = #{purchaseNo, jdbcType=VARCHAR} and data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -64,6 +69,9 @@
 			</if>
 			<if test="warehouseId != null">
 				warehouse_id = #{warehouseId,jdbcType=INTEGER},
+			</if>
+			<if test="warehouseSnapshot != null">
+				warehouse_snapshot = #{warehouseSnapshot,jdbcType=VARCHAR},
 			</if>
 			<if test="isInvoice != null">
 				is_invoice = #{isInvoice,jdbcType=INTEGER},

@@ -13,7 +13,6 @@ public class PurchaseDeliveryOrderDO  extends BaseDO {
 	private String warehouseSnapshot;
 	private Integer isInvoice;
 	private Integer isNew;
-	private BigDecimal purchaseOrderAmountTotal;
 	private Integer purchaseDeliveryOrderStatus;
 	private Date deliveryTime;
 	private Integer dataStatus;
@@ -74,14 +73,6 @@ public class PurchaseDeliveryOrderDO  extends BaseDO {
 
 	public void setIsNew(Integer isNew){
 		this.isNew = isNew;
-	}
-
-	public BigDecimal getPurchaseOrderAmountTotal(){
-		return purchaseOrderAmountTotal;
-	}
-
-	public void setPurchaseOrderAmountTotal(BigDecimal purchaseOrderAmountTotal){
-		this.purchaseOrderAmountTotal = purchaseOrderAmountTotal;
 	}
 
 	public Integer getPurchaseDeliveryOrderStatus(){

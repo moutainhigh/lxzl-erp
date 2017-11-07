@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.product.*;
 import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.FileUtil;
+import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.product.ProductService;
@@ -153,6 +154,7 @@ public class ProductServiceImpl implements ProductService {
             return result;
         }
         ProductDO productDO = ConvertProduct.convertProduct(product);
+        productDO.setProductNo(GenerateNoUtil.generateProductNo(currentTime));
         productDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         if (loginUser != null) {
             productDO.setCreateUser(loginUser.getUserId().toString());
@@ -267,7 +269,6 @@ public class ProductServiceImpl implements ProductService {
         productSkuDO.setUpdateUser(loginUser.getUserId().toString());
         productSkuDO.setUpdateTime(currentTime);
         productSkuMapper.update(productSkuDO);
-        saveProductEquipment(productInStorage, loginUser, currentTime);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -288,33 +289,6 @@ public class ProductServiceImpl implements ProductService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
-    }
-
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    void saveProductEquipment(ProductInStorage productInStorage, User loginUser, Date currentTime) {
-        ProductEquipmentQueryParam param = new ProductEquipmentQueryParam();
-        param.setCreateStartTime(DateUtil.getBeginOfDay(currentTime));
-        param.setCreateEndTime(DateUtil.getEndOfDay(currentTime));
-        Map<String, Object> maps = new HashMap<>();
-        maps.put("start", 1);
-        maps.put("pageSize", Integer.MAX_VALUE);
-        maps.put("productEquipmentQueryParam", param);
-        Integer oldCount = productEquipmentMapper.findProductEquipmentCountByParams(maps);
-        oldCount = oldCount == null ? 0 : oldCount;
-
-        for (int i = 0; i < productInStorage.getProductCount(); i++) {
-            ProductEquipmentDO productEquipmentDO = new ProductEquipmentDO();
-            productEquipmentDO.setEquipmentNo(generateEquipmentNo(currentTime, productInStorage.getWarehouseId(), (oldCount + i + 1)));
-            productEquipmentDO.setProductId(productInStorage.getProductId());
-            productEquipmentDO.setSkuId(productInStorage.getProductSkuId());
-            productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
-            productEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            productEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
-            productEquipmentDO.setCreateUser(loginUser.getUserId().toString());
-            productEquipmentDO.setUpdateTime(currentTime);
-            productEquipmentDO.setCreateTime(currentTime);
-            productEquipmentMapper.save(productEquipmentDO);
-        }
     }
 
     @Override
@@ -624,10 +598,6 @@ public class ProductServiceImpl implements ProductService {
         }
         productSkuPropertyDO.setUpdateTime(currentTime);
         productSkuPropertyMapper.update(productSkuPropertyDO);
-    }
-
-    private String generateEquipmentNo(Date currentTime, Integer warehouseId, int no) {
-        return "LX-52RENTAL-VIEWPAKER-" + warehouseId + "-" + new SimpleDateFormat("yyyyMMdd").format(currentTime) + (10000 + no);
     }
 
     @Autowired(required = false)

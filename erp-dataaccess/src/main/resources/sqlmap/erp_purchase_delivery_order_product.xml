@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseDeliveryOrderProductMapper">
+
+	<resultMap id="PurchaseDeliveryOrderProductDO" type="com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderProductDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="purchase_delivery_order_id" jdbcType="INTEGER" property="purchaseDeliveryOrderId" />
+		<result column="purchase_order_product_id" jdbcType="INTEGER" property="purchaseOrderProductId" />
+		<result column="product_id" jdbcType="INTEGER" property="productId" />
+		<result column="product_name" jdbcType="VARCHAR" property="productName" />
+		<result column="product_sku_id" jdbcType="INTEGER" property="productSkuId" />
+		<result column="product_snapshot" jdbcType="VARCHAR" property="productSnapshot" />
+		<result column="product_count" jdbcType="INTEGER" property="productCount" />
+		<result column="real_product_id" jdbcType="INTEGER" property="realProductId" />
+		<result column="real_product_name" jdbcType="VARCHAR" property="realProductName" />
+		<result column="real_product_sku_id" jdbcType="INTEGER" property="realProductSkuId" />
+		<result column="real_product_snapshot" jdbcType="VARCHAR" property="realProductSnapshot" />
+		<result column="real_product_count" jdbcType="INTEGER" property="realProductCount" />
+		<result column="product_amount" jdbcType="DECIMAL" property="productAmount" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		epdop.id,epdop.purchase_delivery_order_id,epdop.purchase_order_product_id,epdop.product_id,epdop.product_name,epdop.product_sku_id,epdop.product_snapshot,epdop.product_count,epdop.real_product_id,epdop.real_product_name,epdop.real_product_sku_id,epdop.real_product_snapshot,epdop.real_product_count,epdop.product_amount,epdop.remark,epdop.create_time,epdop.create_user,epdop.update_time,epdop.update_user
+	</sql>
+
+	<select id="findById" resultMap="PurchaseDeliveryOrderProductDO" parameterType="java.lang.Integer">
+		select <include refid="column_List"/> from erp_purchase_delivery_order_product epdop 
+		where epdop.id = #{id, jdbcType=INTEGER} and data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		select count(epdop.id) from erp_purchase_delivery_order_product epdop 
+		<where>
+			<if test="true">
+				and epdop.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="PurchaseDeliveryOrderProductDO" parameterType="map">
+		select <include refid="column_List"/> from erp_purchase_delivery_order_product epdop 
+		<where>
+			<if test="true">
+				and epdop.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="purchaseDeliveryOrderId != null">
+				purchase_delivery_order_id = #{purchaseDeliveryOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="purchaseOrderProductId != null">
+				purchase_order_product_id = #{purchaseOrderProductId,jdbcType=INTEGER},
+			</if>
+			<if test="productId != null">
+				product_id = #{productId,jdbcType=INTEGER},
+			</if>
+			<if test="productName != null">
+				product_name = #{productName,jdbcType=VARCHAR},
+			</if>
+			<if test="productSkuId != null">
+				product_sku_id = #{productSkuId,jdbcType=INTEGER},
+			</if>
+			<if test="productSnapshot != null">
+				product_snapshot = #{productSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="productCount != null">
+				product_count = #{productCount,jdbcType=INTEGER},
+			</if>
+			<if test="realProductId != null">
+				real_product_id = #{realProductId,jdbcType=INTEGER},
+			</if>
+			<if test="realProductName != null">
+				real_product_name = #{realProductName,jdbcType=VARCHAR},
+			</if>
+			<if test="realProductSkuId != null">
+				real_product_sku_id = #{realProductSkuId,jdbcType=INTEGER},
+			</if>
+			<if test="realProductSnapshot != null">
+				real_product_snapshot = #{realProductSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="realProductCount != null">
+				real_product_count = #{realProductCount,jdbcType=INTEGER},
+			</if>
+			<if test="productAmount != null">
+				product_amount = #{productAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderProductDO">
+		insert into erp_purchase_delivery_order_product <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderProductDO">
+		update erp_purchase_delivery_order_product <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

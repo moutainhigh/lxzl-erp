@@ -3,6 +3,7 @@ package com.lxzl.erp.common.domain.warehouse.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -25,6 +26,8 @@ public class StockOrder implements Serializable {
 	private String createUser;
 	private Date updateTime;
 	private String updateUser;
+
+	private List<StockOrderEquipment> stockOrderEquipmentList;
 
 	public Integer getStockOrderId(){
 		return stockOrderId;
@@ -162,4 +165,11 @@ public class StockOrder implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public List<StockOrderEquipment> getStockOrderEquipmentList() {
+		return stockOrderEquipmentList;
+	}
+
+	public void setStockOrderEquipmentList(List<StockOrderEquipment> stockOrderEquipmentList) {
+		this.stockOrderEquipmentList = stockOrderEquipmentList;
+	}
 }

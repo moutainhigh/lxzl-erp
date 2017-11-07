@@ -15,7 +15,6 @@ public class PurchaseDeliveryOrder implements Serializable {
 	private String warehouseSnapshot;   //收货方仓库快照，JSON格式
 	private Integer isInvoice;   //是否有发票，0否1是
 	private Integer isNew;   //是否全新机
-	private BigDecimal purchaseOrderAmountTotal;   //采购发货单总价
 	private Integer purchaseDeliveryOrderStatus;   //采购发货单状态，0待发货，1已发货
 	private Date deliveryTime;   //发货时间
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -81,14 +80,6 @@ public class PurchaseDeliveryOrder implements Serializable {
 
 	public void setIsNew(Integer isNew){
 		this.isNew = isNew;
-	}
-
-	public BigDecimal getPurchaseOrderAmountTotal(){
-		return purchaseOrderAmountTotal;
-	}
-
-	public void setPurchaseOrderAmountTotal(BigDecimal purchaseOrderAmountTotal){
-		this.purchaseOrderAmountTotal = purchaseOrderAmountTotal;
 	}
 
 	public Integer getPurchaseDeliveryOrderStatus(){

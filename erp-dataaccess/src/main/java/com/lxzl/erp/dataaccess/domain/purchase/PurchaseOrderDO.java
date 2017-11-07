@@ -12,6 +12,7 @@ public class PurchaseOrderDO extends BaseDO {
     private Integer productSupplierId;
     private Integer invoiceSupplierId;
     private Integer warehouseId;
+    private String warehouseSnapshot;
     private Integer isInvoice;
     private Integer isNew;
     private BigDecimal purchaseOrderAmountTotal;
@@ -62,6 +63,14 @@ public class PurchaseOrderDO extends BaseDO {
 
     public void setWarehouseId(Integer warehouseId) {
         this.warehouseId = warehouseId;
+    }
+
+    public String getWarehouseSnapshot() {
+        return warehouseSnapshot;
+    }
+
+    public void setWarehouseSnapshot(String warehouseSnapshot) {
+        this.warehouseSnapshot = warehouseSnapshot;
     }
 
     public Integer getIsInvoice() {

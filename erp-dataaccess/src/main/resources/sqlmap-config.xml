@@ -32,6 +32,7 @@
         <mapper resource="sqlmap/erp_role_user_data.xml" />
         <mapper resource="sqlmap/erp_role_user_final.xml" />
         <mapper resource="sqlmap/erp_warehouse.xml" />
+        <mapper resource="sqlmap/erp_warehouse_position.xml" />
         <mapper resource="sqlmap/erp_department.xml" />
         <mapper resource="sqlmap/erp_stock_order.xml" />
         <mapper resource="sqlmap/erp_purchase_order.xml" />
@@ -40,6 +41,11 @@
         <mapper resource="sqlmap/erp_workflow_link_detail.xml" />
         <mapper resource="sqlmap/erp_workflow_node.xml" />
         <mapper resource="sqlmap/erp_workflow_template.xml" />
+        <mapper resource="sqlmap/erp_purchase_delivery_order.xml" />
+        <mapper resource="sqlmap/erp_purchase_delivery_order_product.xml" />
+        <mapper resource="sqlmap/erp_purchase_receive_order.xml" />
+        <mapper resource="sqlmap/erp_purchase_receive_order_product.xml" />
+        <mapper resource="sqlmap/erp_stock_order_equipment.xml" />
     </mappers>
 
 </configuration>

@@ -3,6 +3,7 @@ package com.lxzl.erp.common.domain.warehouse.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -12,7 +13,7 @@ import java.io.Serializable;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Warehouse implements Serializable {
-    private Integer id;
+    private Integer warehouseId;
 
     private String warehouseNo;
 
@@ -20,16 +21,22 @@ public class Warehouse implements Serializable {
 
     private Integer subCompanyId;
 
+    private String subCompanyName;
+
+    private Integer isHeaderCompany;
+
     private Integer dataStatus;
 
     private String remark;
 
-    public Integer getId() {
-        return id;
+    private List<WarehousePosition> warehousePositionList;
+
+    public Integer getWarehouseId() {
+        return warehouseId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setWarehouseId(Integer warehouseId) {
+        this.warehouseId = warehouseId;
     }
 
     public String getWarehouseNo() {
@@ -70,5 +77,29 @@ public class Warehouse implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public List<WarehousePosition> getWarehousePositionList() {
+        return warehousePositionList;
+    }
+
+    public void setWarehousePositionList(List<WarehousePosition> warehousePositionList) {
+        this.warehousePositionList = warehousePositionList;
+    }
+
+    public Integer getIsHeaderCompany() {
+        return isHeaderCompany;
+    }
+
+    public void setIsHeaderCompany(Integer isHeaderCompany) {
+        this.isHeaderCompany = isHeaderCompany;
+    }
+
+    public String getSubCompanyName() {
+        return subCompanyName;
+    }
+
+    public void setSubCompanyName(String subCompanyName) {
+        this.subCompanyName = subCompanyName;
     }
 }

@@ -9,24 +9,102 @@
 		<result column="warehouse_no" jdbcType="VARCHAR" property="warehouseNo" />
 		<result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
 		<result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
+		<result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
+		<result column="is_header_company" jdbcType="INTEGER" property="isHeaderCompany" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<collection property="warehousePositionDOList" resultMap="WarehousePositionDO"/>
+	</resultMap>
+
+	<resultMap type="com.lxzl.erp.dataaccess.domain.warehouse.WarehousePositionDO" id="WarehousePositionDO">
+		<id column="position_id" jdbcType="INTEGER" property="id" />
+		<result column="position_warehouse_id" jdbcType="INTEGER" property="warehouseId" />
+		<result column="position_warehouse_position_name" jdbcType="VARCHAR" property="warehousePositionName" />
+		<result column="position_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="position_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="position_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="position_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="position_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="position_update_user" jdbcType="VARCHAR" property="updateUser" />
 	</resultMap>
 
 	<sql id="column_List">
 		ew.id,ew.warehouse_no,ew.warehouse_name,ew.sub_company_id,ew.data_status,ew.remark,ew.create_time,ew.create_user,ew.update_time,ew.update_user
 	</sql>
 
+	<sql id="position_column_List">
+		ewp.id as position_id,ewp.warehouse_id as position_warehouse_id,ewp.warehouse_position_name as position_warehouse_position_name,ewp.data_status as position_data_status,ewp.remark as position_remark,ewp.create_time as position_create_time,ewp.create_user as position_create_user,ewp.update_time as position_update_time,ewp.update_user as position_update_user
+	</sql>
+
 	<select id="findById" resultMap="WarehouseDO" parameterType="java.lang.Integer">
-		select
-		<include refid="column_List"/>
-		from erp_warehouse ew where em.id = #{id, jdbcType=INTEGER} and data_status = 1
+		select warehouse.*,<include refid="position_column_List"/>
+		from
+		(
+			select
+			<include refid="column_List"/>,esc.sub_company_name,esc.is_header_company
+			from erp_warehouse ew where em.id = #{id, jdbcType=INTEGER} and data_status = 1
+			left join erp_sub_company esc on esc.id = ew.sub_company_id and esc.data_status = 1
+		) warehouse left join erp_warehouse_position ewp on ewp.warehouse_id = warehouse.id
 	</select>
 
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		select count(ew.id) from erp_warehouse ew
+		left join erp_sub_company esc on esc.id = ew.sub_company_id and esc.data_status = 1
+		<where>
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseId != null">
+				and ew.id = #{maps.warehouseQueryParam.warehouseId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.warehouseNo != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != null">
+				and ew.warehouse_no = #{maps.warehouseQueryParam.warehouseNo, jdbcType=INTEGER}
+			</if>
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseName != null &amp;&amp; maps.warehouseQueryParam.warehouseName != ''">
+				and ew.warehouse_name like CONCAT('%','${maps.warehouseQueryParam.warehouseName}','%' )
+			</if>
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.subCompanyName != null &amp;&amp; maps.warehouseQueryParam.subCompanyName != ''">
+				and esc.sub_company_name like CONCAT('%','${maps.warehouseQueryParam.subCompanyName}','%' )
+			</if>
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.subCompanyId != null">
+				and ew.sub_company_id = #{maps.warehouseQueryParam.subCompanyId, jdbcType=INTEGER}
+			</if>
+			<if test="true">
+				and ew.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="WarehouseDO" parameterType="map">
+		select warehouse.*,<include refid="position_column_List"/>
+		from
+		(
+		select <include refid="column_List"/>,esc.sub_company_name,esc.is_header_company from erp_warehouse ew
+		left join erp_sub_company esc on esc.id = ew.sub_company_id and esc.data_status = 1
+		<where>
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseId != null">
+				and ew.id = #{maps.warehouseQueryParam.warehouseId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.warehouseNo != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != null">
+				and ew.warehouse_no = #{maps.warehouseQueryParam.warehouseNo, jdbcType=INTEGER}
+			</if>
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseName != null &amp;&amp; maps.warehouseQueryParam.warehouseName != ''">
+				and ew.warehouse_name like CONCAT('%','${maps.warehouseQueryParam.warehouseName}','%' )
+			</if>
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.subCompanyName != null &amp;&amp; maps.warehouseQueryParam.subCompanyName != ''">
+				and esc.sub_company_name like CONCAT('%','${maps.warehouseQueryParam.subCompanyName}','%' )
+			</if>
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.subCompanyId != null">
+				and ew.sub_company_id = #{maps.warehouseQueryParam.subCompanyId, jdbcType=INTEGER}
+			</if>
+			<if test="true">
+				and ew.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+		) warehouse left join erp_warehouse_position ewp on ewp.warehouse_id = warehouse.id
+	</select>
 
 	<sql id="set_column_sql">
 		<set>
