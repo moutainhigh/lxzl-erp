@@ -23,7 +23,7 @@ public class Warehouse implements Serializable {
 
     private String subCompanyName;
 
-    private Integer isHeaderCompany;
+    private Integer subCompanyType;
 
     private Integer dataStatus;
 
@@ -87,12 +87,12 @@ public class Warehouse implements Serializable {
         this.warehousePositionList = warehousePositionList;
     }
 
-    public Integer getIsHeaderCompany() {
-        return isHeaderCompany;
+    public Integer getSubCompanyType() {
+        return subCompanyType;
     }
 
-    public void setIsHeaderCompany(Integer isHeaderCompany) {
-        this.isHeaderCompany = isHeaderCompany;
+    public void setSubCompanyType(Integer subCompanyType) {
+        this.subCompanyType = subCompanyType;
     }
 
     public String getSubCompanyName() {

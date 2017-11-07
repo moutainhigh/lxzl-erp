@@ -24,7 +24,7 @@ public class WarehouseDO extends BaseDO {
 
     private String subCompanyName;
 
-    private Integer isHeaderCompany;
+    private Integer subCompanyType;
 
     private Integer dataStatus;
 
@@ -96,11 +96,11 @@ public class WarehouseDO extends BaseDO {
         this.subCompanyName = subCompanyName;
     }
 
-    public Integer getIsHeaderCompany() {
-        return isHeaderCompany;
+    public Integer getSubCompanyType() {
+        return subCompanyType;
     }
 
-    public void setIsHeaderCompany(Integer isHeaderCompany) {
-        this.isHeaderCompany = isHeaderCompany;
+    public void setSubCompanyType(Integer subCompanyType) {
+        this.subCompanyType = subCompanyType;
     }
 }

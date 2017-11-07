@@ -6,6 +6,7 @@ import com.lxzl.erp.common.constant.ProductEquipmentStatus;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
+import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.warehouse.WarehouseQueryParam;
@@ -14,9 +15,12 @@ import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehousePositionMapper;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
@@ -51,6 +55,12 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Autowired
     private ProductEquipmentMapper productEquipmentMapper;
+
+    @Autowired
+    private ProductMapper productMapper;
+
+    @Autowired
+    private ProductSkuMapper productSkuMapper;
 
     @Override
     public ServiceResult<String, Page<Warehouse>> getWarehousePage(WarehouseQueryParam param) {
@@ -94,32 +104,36 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    public ServiceResult<String, Integer> productOutStock(List<ProductSku> productSkuList, Integer warehouseId, Integer productCount) {
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, Integer> productInStock(List<ProductInStorage> productInStorageList, Integer productCount) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
+        String errorCode = verifyProductInfo(productInStorageList);
+        if (!ErrorCode.SUCCESS.equals(errorCode)) {
+            result.setErrorCode(errorCode);
+            return result;
+        }
 
         return result;
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, Integer> productInStock(List<ProductSku> productSkuList, Integer warehouseId, Integer productCount) {
+    public ServiceResult<String, Integer> productOutStock(List<ProductInStorage> productInStorageList, Integer productCount) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        String errorCode = verifyProductInfo(productSkuList);
-        if (!ErrorCode.SUCCESS.equals(errorCode)) {
-            result.setErrorCode(errorCode);
-            return result;
-        }
-        WarehouseDO warehouseDO = warehouseMapper.findById(warehouseId);
-        if (warehouseDO == null) {
-            result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
-        }
-
 
         return result;
     }
 
-    public String verifyProductInfo(List<ProductSku> productSkuList) {
+    public String verifyProductInfo(List<ProductInStorage> productInStorageList) {
 
+        if (productInStorageList == null || productInStorageList.isEmpty()) {
+            return "";
+        }
+        for (ProductInStorage productInStorage : productInStorageList) {
+            ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
+            if(productSkuDO == null || !productInStorage.getProductId().equals(productSkuDO.getProductId())){
+                
+            }
+        }
         return ErrorCode.SUCCESS;
     }
 

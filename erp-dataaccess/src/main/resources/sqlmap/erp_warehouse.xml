@@ -10,7 +10,7 @@
 		<result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
 		<result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
 		<result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
-		<result column="is_header_company" jdbcType="INTEGER" property="isHeaderCompany" />
+		<result column="sub_company_type" jdbcType="INTEGER" property="subCompanyType" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -45,7 +45,7 @@
 		from
 		(
 			select
-			<include refid="column_List"/>,esc.sub_company_name,esc.is_header_company
+			<include refid="column_List"/>,esc.sub_company_name,esc.sub_company_type
 			from erp_warehouse ew where em.id = #{id, jdbcType=INTEGER} and data_status = 1
 			left join erp_sub_company esc on esc.id = ew.sub_company_id and esc.data_status = 1
 		) warehouse left join erp_warehouse_position ewp on ewp.warehouse_id = warehouse.id
@@ -80,7 +80,7 @@
 		select warehouse.*,<include refid="position_column_List"/>
 		from
 		(
-		select <include refid="column_List"/>,esc.sub_company_name,esc.is_header_company from erp_warehouse ew
+		select <include refid="column_List"/>,esc.sub_company_name,esc.sub_company_type from erp_warehouse ew
 		left join erp_sub_company esc on esc.id = ew.sub_company_id and esc.data_status = 1
 		<where>
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseId != null">

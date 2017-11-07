@@ -8,7 +8,7 @@ public class SubCompanyDO extends BaseDO{
 
     private Integer id;
     private String subCompanyName;
-    private Integer isHeaderCompany;
+    private Integer subCompanyType;
     private Integer province;
     private Integer city;
     private Integer district;
@@ -89,11 +89,11 @@ public class SubCompanyDO extends BaseDO{
         this.departmentDOList = departmentDOList;
     }
 
-    public Integer getIsHeaderCompany() {
-        return isHeaderCompany;
+    public Integer getSubCompanyType() {
+        return subCompanyType;
     }
 
-    public void setIsHeaderCompany(Integer isHeaderCompany) {
-        this.isHeaderCompany = isHeaderCompany;
+    public void setSubCompanyType(Integer subCompanyType) {
+        this.subCompanyType = subCompanyType;
     }
 }
