@@ -1,0 +1,64 @@
+<div id="userAccessDataModal" class="popup-basic admin-form popup-lg mfp-with-anim">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-shield"></i>数据授权</span>
+        </div>
+
+        <form class="form-horizontal" id="userAccessDataForm">
+            <input type="hidden" name="roleId" value="">
+            <div class="panel-body p25">
+                <script type="text/html" id="userAccessInfoTpl">
+                    {{#user}}
+                    <div class="form-group mb5">
+                        <label class="col-md-2 control-label">姓名</label>
+                        <div class="col-md-10">
+                            <p class="form-control-static text-muted">{{realName}}</p>
+                        </div>
+                    </div>
+                    <div class="form-group mb5">
+                        <label class="col-md-2 control-label">职位</label>
+                        <div class="col-md-10">
+                            <div class="form-control-static text-muted">
+                                {{#roleListData}}
+                                <p>{{role}}</p>
+                                {{/roleListData}}
+                            </div>
+                        </div>
+                    </div>
+                    {{/user}}
+                </script>
+                <div class="section row mn" id="userAccessInfo">
+                    <div class="form-group mb5">
+                        <label class="col-md-2 control-label">姓名</label>
+                        <div class="col-md-10">
+                            <p class="form-control-static text-muted">&nbsp;</p>
+                        </div>
+                    </div>
+                    <div class="form-group mb5">
+                        <label class="col-md-2 control-label">职位</label>
+                        <div class="col-md-10">
+                            <p class="form-control-static text-muted">&nbsp;</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb5">
+                    <label class="col-md-2 control-label">查看用户</label>
+                    <div class="col-md-10">
+                        <div class="panel mb30 mt15" id="p3">
+                            <div class="panel-body nano nano-default affix rtlnao" style="height: 300px">
+                                <div class="nano-content">
+                                    <div id="companyDepartmentUserTree" style="padding: 15px 25px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-footer text-right">
+                <button type="button" class="button btn-default" id="cancelUserAccessDataBtn">取消</button>
+                <button type="button" class="button btn-primary" id="userAcccessDataBtn">确定</button>
+            </div>
+        </form>
+    </div>
+</div>
