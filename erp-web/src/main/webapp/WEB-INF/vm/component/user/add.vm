@@ -1,4 +1,4 @@
-<div id="addUserModal" class="popup-basic popup-lg admin-form mfp-with-anim mfp-hide">
+<div id="addUserModal" class="popup-basic popup-lg admin-form mfp-with-anim "> ##mfp-hide
     <div class="panel">
         <div class="panel-heading">
             <span class="panel-title"><i class="fa fa-pencil"></i>添加用户</span>
@@ -56,8 +56,8 @@
                         <label for="isDisabled" class="field-label">禁用</label>
                         <label class="field select">
                             <select id="isDisabled" name="isDisabled">
-                                <option value="1">否</option>
-                                <option value="0">是</option>
+                                <option value="0">否</option>
+                                <option value="1">是</option>
                             </select>
                             <i class="arrow"></i>
                         </label>
@@ -97,12 +97,11 @@
                 </div>
                 <div class="section row">
                     <div class="col-md-12">
-                        #*<label for="username" class="field-label">职位</label>*#
                         <div class="panel mb30" id="p3">
-                            <div class="panel-heading">职位</div>
+                            <div class="panel-heading pn ph8">职位</div>
                             <div class="panel-body nano nano-default affix rtlnao" style="height: 250px">
                                 <div class="nano-content">
-                                    <div id="departmentTree" style="padding: 15px 25px;"></div>
+                                    <div id="companyRoleTree" style="padding: 15px 25px;"></div>
                                 </div>
                             </div>
                         </div>
@@ -110,6 +109,7 @@
                 </div>
             </div>
             <div class="panel-footer text-right">
+                <button type="button" class="button btn-default" id="cancelAddUserBtn">取消</button>
                 <button type="submit" class="button btn-primary">确定</button>
             </div>
         </form>

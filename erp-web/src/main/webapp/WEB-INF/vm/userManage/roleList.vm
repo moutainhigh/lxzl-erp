@@ -3,6 +3,7 @@
 <head>
     <title>凌雄ERP-用户管理-角色列表</title>
     #parse("layout/header.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/fancytree2/skin-win8/ui.fancytree.min.css">
     #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
@@ -14,37 +15,17 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
-            <div class="panel mb25 mt5">
-                <form id="searchForm">
-                    <div class="panel-heading">
-                        <span class="panel-title">角色名</span>
-                    </div>
-                    <div class="panel-body p25 pb5 admin-form">
-                        <div class="section row">
-                            <div class="col-md-12">
-                                <label for="username" class="field-label">姓名</label>
-                                <label for="roleName" class="field prepend-icon">
-                                    <input type="text" name="roleName" id="roleName" class="gui-input" placeholder="请输入用户名...">
-                                    <label for="roleName" class="field-icon"><i class="fa fa-user"></i>
-                                    </label>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel-footer text-right admin-form">
-                        <button type="submit" class="btn btn-sm btn-primary"> 查询 </button>
-                        <button type="reset" class="btn btn-sm"> 重置 </button>
-                    </div>
-                </form>
-            </div>
-            <div class="panel">
-                <div class="panel-menu p12 admin-form theme-primary">
-                    <div class="row table-layout">
+
+            #parse("component/loading.vm")
+
+            <div class="panel panel-primary panel-border top">
+                <div class="panel-menu p12">
+                    <div class="row">
                         <div class="col-md-6">
                             <script type="text/html" id="actionCommonButtonsTpl">
-                                <button type="button" class="btn btn-sm btn-default light refreshButton"  title="刷新"><i class="fa fa-refresh"></i></button>
+                                <button type="button" class="btn btn-primary btn-sm light refreshButton"  title="刷新"><i class="fa fa-refresh"></i></button>
                                 {{#acitonCommonButtons}}
-                                <button type="button" class="btn btn-sm btn-default light {{class}}" title="{{text}}">
+                                <button type="button" class="btn btn-primary btn-sm light {{class}}" title="{{text}}">
                                     <i class="{{iClass}}"></i> {{text}}
                                 </button>
                                 {{/acitonCommonButtons}}
@@ -52,38 +33,53 @@
                             <div class="btn-group" id="actionCommonButtons"></div>
                         </div>
                         <div class="col-md-6 text-right">
-
+                            <form id="searchForm" class="form-horizontal">
+                                <div class="form-group pull-right mn" style="width: 220px;">
+                                    <div class="input-group">
+                                        <input type="text" name="roleName" id="roleName" class="form-control input-sm bradiusL" autocomplete="off" placeholder="输入角色名...">
+                                        <span class="input-group-addon btn-search  input-sm bradiusR" id="submitSearchForm"><i class="fa fa-search"></i> 查询</span>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
                 <div class="panel-body pn">
                     <div class="table-responsive">
-                        <table class="table admin-form theme-warning tc-checkbox-1 fs13">
+                        <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13">
                             <thead>
-                            <tr class="bg-light">
-                                <th width="10%" class="text-center">角色ID</th>
-                                <th width="20%" class="">角色名称</th>
-                                <th width="16%" class="">超级角色</th>
-                                <th width="20%" class="">角色描述</th>
-                                <th width="20%" class="">备注</th>
-                                <th width="14%" class="text-right">操作</th>
+                            <tr>
+                                <th>
+                                    <label class="option block mn">
+                                        <input type="checkbox" name="checkAll" value="">
+                                        <span class="checkbox mn"></span>
+                                    </label>
+                                </th>
+                                <th class="">角色名称</th>
+                                <th class="">部门</th>
+                                <th class="">角色描述</th>
+                                <th class="">备注</th>
+                                <th class="text-right">操作</th>
                             </tr>
                             </thead>
                             <script type="text/html" id="roleListTpl">
                                 {{#listData}}
                                 <tr>
-                                    <td class="text-center">
-                                        {{roleId}}
+                                    <td>
+                                        <label class="option block mn">
+                                            <input type="checkbox" name="checkItem" value="{{roleId}}">
+                                            <span class="checkbox mn"></span>
+                                        </label>
                                     </td>
                                     <td class="">{{roleName}}</td>
-                                    <td class="">{{isSuperAdminStr}}</td>
+                                    <td class="">{{department}}</td>
                                     <td class="">{{roleDesc}}</td>
                                     <td class="">{{remark}}</td>
                                     <td class="text-right">
                                         {{#acitonButtons}}
                                         <div class="btn-group text-right">
                                             {{#acitons}}
-                                            <a href="${ctx}{{menuUrl}}" type="button" class="btn btn-default btn-xs {{class}}" data-userid="{{userId}}">{{text}}</a>
+                                            <a href="${ctx}{{menuUrl}}" type="button" class="btn btn-default btn-xs {{class}}" data-roleId="{{roleId}}">{{text}}</a>
                                             {{/acitons}}
                                         </div>
                                         {{/acitonButtons}}
@@ -92,7 +88,7 @@
                                 {{/listData}}
                                 {{^listData}}
                                 <tr>
-                                    <td valign="top" colspan="10">没有查询角色信息</td>
+                                    <td valign="top" colspan="5" class="text-center">没有查询到角色信息</td>
                                 </tr>
                                 {{/listData}}
                             </script>
@@ -101,9 +97,10 @@
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <div class="row table-layout">
-                        <div class="col-xs-6 col-md-6 text-right"></div>
-                        #parse("component/pager.vm")
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                            #parse("component/pager.vm")
+                        </div>
                     </div>
                 </div>
 
@@ -115,11 +112,12 @@
 </div>
     #parse("layout/footer.vm")
 
-    #parse("component/user/addRole.vm")
-    #parse("component/user/editRole.vm")
+##    #parse("component/user/addRole.vm")
+##    #parse("component/user/editRole.vm")
 
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/fancytree2/jquery.fancytree-all.min.js"></script>
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.role.js','manage.role.add.js');
+        management_load_script('${staticManagement}/js','manage.role.js','manage.role.add.js','manage.role.edit.js','manage.role.access.function.js','manage.role.access.data.js');
     </script>
 
     <script type="text/javascript">

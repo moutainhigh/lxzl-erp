@@ -9,7 +9,7 @@
     var SitePath = {
         base: '$!constantConfig.getBaseDomain()',
         service:'$!constantConfig.getServiceDomain()',
-        staticCommon:'$!constantConfig.getStaticCommonDomain())',
+        staticCommon:'$!constantConfig.getStaticCommonDomain()',
         staticManagement:'$!constantConfig.getStaticDomain()'
     };
 </script>

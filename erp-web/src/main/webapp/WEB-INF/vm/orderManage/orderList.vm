@@ -5,6 +5,7 @@
     #parse("layout/header.vm")
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
+    #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
@@ -88,12 +89,20 @@
                 <div class="panel">
                     <div class="panel-menu p12 theme-primary">
 
-                        <div class="row table-layout">
+                        <div class="row">
                             <div class="col-md-6">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default light" id="btnRefresh"><i class="fa fa-refresh"></i>
+                                <div class="btn-group" id="actionCommonButtons">
+                                    <button type="button" class="btn btn-sm btn-primary" id="btnRefresh"><i class="fa fa-refresh"></i>
                                     </button>
                                     #*<button type="button" class="btn btn-default light"><i class="fa fa-trash"></i></button>*#
+                                    <select id="multiselect1">
+                                        <option value="cheese">全部</option>
+                                        <option value="tomatoes">未支付</option>
+                                        <option value="mozarella" selected>支付中</option>
+                                        <option value="mushrooms">已付款</option>
+                                        <option value="pepperoni">已发货</option>
+                                        <option value="onions">租赁中</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-6 text-right">

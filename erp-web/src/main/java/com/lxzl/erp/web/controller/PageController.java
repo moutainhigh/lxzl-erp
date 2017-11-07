@@ -25,19 +25,43 @@ public class PageController extends BaseController {
         return "/home";
     }
 
+    @RequestMapping("/user-manage/password")
+    public String userManagePassword() {
+        return "/component/user/password";
+    }
 
     @RequestMapping("/user-manage/list")
     public String userManageList() {
         return "/userManage/userList";
     }
+    @RequestMapping("/user-manage/addUser")
+    public String userManageAddUser() {
+        return "/component/user/add";
+    }
+    @RequestMapping("/user-manage/editUser")
+    public String userManageEditUser() {
+        return "/component/user/edit";
+    }
+
     @RequestMapping("/user-manage/role")
     public String userManageRole() {
         return "/userManage/roleList";
     }
-
-    @RequestMapping("/user-manage/password")
-    public String userManagePassword() {
-        return "/component/user/password";
+    @RequestMapping("/user-manage/addRole")
+    public String userManageAddRole() {
+        return "/component/user/addRole";
+    }
+    @RequestMapping("/user-manage/editRole")
+    public String userManageEditRole() {
+        return "/component/user/editRole";
+    }
+    @RequestMapping("/user-manage/roleAccessFunction")
+    public String roleAccessFunction() {
+        return "/component/user/roleAccessFunction";
+    }
+    @RequestMapping("/user-manage/roleAccessData")
+    public String roleAccessData() {
+        return "/component/user/roleAccessData";
     }
 
     //商品管理
