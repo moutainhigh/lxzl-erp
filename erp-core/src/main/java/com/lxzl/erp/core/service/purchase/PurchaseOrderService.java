@@ -14,5 +14,4 @@ public interface PurchaseOrderService extends VerifyReceiver {
     ServiceResult<String,PurchaseOrder> getById(Integer purchaseId);
     ServiceResult<String,Page<PurchaseOrder>> page(PurchaseOrderQueryParam purchaseOrderQueryParam);
     ServiceResult<String,Integer> commit(PurchaseOrder purchaseOrder);
-
 }

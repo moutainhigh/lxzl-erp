@@ -88,11 +88,11 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
         TestResult result = getJsonTestResult("/userRole/updateRoleDepartmentData",roleDepartmentData);
     }
     @Test
-    public void getRoleDepartmentDataListByRoleId() throws Exception {
+    public void getRoleDepartmentDataListByRole() throws Exception {
 
         Role role = new Role();
         role.setRoleId(1);
-        TestResult result = getJsonTestResult("/userRole/getRoleDepartmentDataListByRoleId",role);
+        TestResult result = getJsonTestResult("/userRole/getRoleDepartmentDataListByRole",role);
     }
 
     @Test
