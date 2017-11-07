@@ -25,7 +25,7 @@ public interface WarehouseService extends BaseService {
 
     ServiceResult<String, Warehouse> getWarehouseById(Integer warehouseId);
 
-    ServiceResult<String, Integer> productInStock(List<ProductInStorage> productInStorageList, Integer srcWarehouseId, Integer targetWarehouseId, String referNo);
+    ServiceResult<String, Integer> productInStock(List<ProductInStorage> productInStorageList, Integer srcWarehouseId, Integer targetWarehouseId, Integer causeType, String referNo);
 
     ServiceResult<String, Integer> productOutStock(List<ProductInStorage> productInStorageList);
 }
