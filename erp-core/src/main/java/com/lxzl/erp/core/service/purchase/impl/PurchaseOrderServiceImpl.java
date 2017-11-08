@@ -5,6 +5,7 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.pojo.Product;
+import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderCommitParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
@@ -24,6 +25,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.purchase.*;
+import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,6 +137,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             result.setErrorCode(ErrorCode.PURCHASE_ORDER_NOT_EXISTS);
             return result;
         }
+        //判断操作人是否可以选择该仓库
+        boolean warehouseOp = userSupport.checkCurrentUserWarehouse(purchaseOrder.getWarehouseId());
+        if(!warehouseOp){
+            result.setErrorCode(ErrorCode.USER_CAN_NOT_OP_WAREHOUSE);
+            return result;
+        }
         //待审核状态的采购单不允许修改
         if(CommonConstant.COMMON_CONSTANT_YES.equals(purchaseOrderDO.getCommitStatus())){
             result.setErrorCode(ErrorCode.PURCHASE_ORDER_COMMITTED_CAN_NOT_UPDATE);
@@ -187,12 +195,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 purchaseOrderProductMapper.update(newDO);
             }else{ //如果原列表没有新列表有，则添加
                 PurchaseOrderProductDO newDO = newMap.get(skuId);
+                newDO.setPurchaseOrderId(purchaseOrderDOId);
                 purchaseOrderProductMapper.save(newDO);
             }
         }
         for(Integer skuId : oldMap.keySet()){
             if(!newMap.containsKey(skuId)){//如果原列表有新列表没有，则删除
-                purchaseOrderProductMapper.delete(skuId);
+                purchaseOrderProductMapper.delete(oldMap.get(skuId).getId());
             }
         }
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -247,7 +256,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             PurchaseOrderProductDO purchaseOrderProductDO = new PurchaseOrderProductDO();
             //保存采购订单商品项快照
             ServiceResult<String,Product> productResult = productService.queryProductById(productSkuDO.getProductId());
-            purchaseOrderProductDO.setProductSnapshot(JSON.toJSONString(productResult.getResult()));
+            purchaseOrderProductDO.setProductSnapshot(JSON.toJSONString(getProductBySkuId(productResult.getResult(),productSkuDO.getId())));
             purchaseOrderProductDO.setProductId(productSkuDO.getProductId());
             purchaseOrderProductDO.setProductName(productSkuDO.getProductName());
             purchaseOrderProductDO.setProductSkuId(productSkuDO.getId());
@@ -275,14 +284,48 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         result.setResult(purchaseOrderDetail);
         return result;
     }
+    private Product getProductBySkuId(Product product , Integer productSkuId){
+        List<ProductSku> productSkuList = product.getProductSkuList();
+        List<ProductSku> list = new ArrayList<>();
+        for(ProductSku productSku : productSkuList){
+            if(productSkuId!=null&&productSkuId.equals(productSku.getSkuId())){
+                list.add(productSku);
+            }
+        }
+        product.setProductSkuList(list);
+        return product;
+    }
     @Override
-    public ServiceResult<String, PurchaseOrder> getById(Integer purchaseId) {
-        return null;
+    public ServiceResult<String, PurchaseOrder> queryPurchaseOrderByNo(String purchaseNo) {
+        ServiceResult<String, PurchaseOrder> serviceResult = new ServiceResult<>();
+        PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findDetailByPurchaseNo(purchaseNo);
+        if(purchaseOrderDO==null){
+            serviceResult.setErrorCode(ErrorCode.PURCHASE_ORDER_NOT_EXISTS);
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        PurchaseOrder purchaseOrder = PurchaseOrderConverter.convertPurchaseOrderDO(purchaseOrderDO);
+        List<Product> productList = new ArrayList<>();
+        serviceResult.setResult(purchaseOrder);
+        return serviceResult;
     }
 
     @Override
     public ServiceResult<String, Page<PurchaseOrder>> page(PurchaseOrderQueryParam purchaseOrderQueryParam) {
-        return null;
+        ServiceResult<String, Page<PurchaseOrder>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(purchaseOrderQueryParam.getPageNo(), purchaseOrderQueryParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("queryParam", purchaseOrderQueryParam);
+
+        Integer totalCount = purchaseOrderMapper.findPurchaseOrderCountByParams(maps);
+        List<PurchaseOrderDO> purchaseOrderDOList = purchaseOrderMapper.findPurchaseOrderByParams(maps);
+        List<PurchaseOrder> purchaseOrderList = PurchaseOrderConverter.convertPurchaseOrderDOList(purchaseOrderDOList);
+        Page<PurchaseOrder> page = new Page<>(purchaseOrderList, totalCount, purchaseOrderQueryParam.getPageNo(), purchaseOrderQueryParam.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
     }
 
     @Override
@@ -306,6 +349,26 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
         return verifyResult;
     }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, Integer> delete(PurchaseOrder purchaseOrder) {
+        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
+        PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findByPurchaseNo(purchaseOrder.getPurchaseNo());
+        if(purchaseOrderDO==null){
+            serviceResult.setErrorCode(ErrorCode.PURCHASE_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(purchaseOrderDO.getCommitStatus())){
+            serviceResult.setErrorCode(ErrorCode.PURCHASE_ORDER_COMMITTED_CAN_NOT_DELETE);
+            return serviceResult;
+        }
+        purchaseOrderMapper.deleteByPurchaseNo(purchaseOrderDO.getPurchaseNo());
+        purchaseOrderProductMapper.deleteByPurchaseOrderId(purchaseOrderDO.getId());
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
     /**
      * 接收审核结果通知，审核通过生成发货单
      * @param verifyResult
@@ -447,8 +510,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         purchaseReceiveOrderDO.setWarehouseSnapshot(purchaseDeliveryOrderDO.getWarehouseSnapshot());
         if(AutoAllotStatus.AUTO_ALLOT_STATUS_YES.equals(autoAllotStatus)){
             // todo 查询总公司仓库ID，保存快照
-//            warehouseService.
-//            purchaseReceiveOrderDO.setWarehouseId(2);
+            purchaseReceiveOrderDO.setWarehouseId(2);
             purchaseReceiveOrderDO.setWarehouseSnapshot("{\"warehouseId\":2,\"warehouseName\":\"总公司\"}");
             purchaseReceiveOrderDO.setAutoAllotStatus(AutoAllotStatus.AUTO_ALLOT_STATUS_YES);
             purchaseReceiveOrderDO.setAutoAllotNo(GenerateNoUtil.generateAutoAllotStatusOrderNo(now,purchaseDeliveryOrderDO.getPurchaseOrderId()));
