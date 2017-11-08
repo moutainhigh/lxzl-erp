@@ -16,6 +16,8 @@ public class WorkflowLink implements Serializable {
 	private Integer workflowStep;   //流程当前步骤
 	private Integer workflowLastStep;   //流程最后步骤
 	private Integer workflowCurrentNodeId;   //当前结点ID
+	private Integer currentVerifyUser;
+	private Integer currentVerifyStatus;
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -136,5 +138,21 @@ public class WorkflowLink implements Serializable {
 
 	public void setWorkflowLinkDetailList(List<WorkflowLinkDetail> workflowLinkDetailList) {
 		this.workflowLinkDetailList = workflowLinkDetailList;
+	}
+
+	public Integer getCurrentVerifyUser() {
+		return currentVerifyUser;
+	}
+
+	public void setCurrentVerifyUser(Integer currentVerifyUser) {
+		this.currentVerifyUser = currentVerifyUser;
+	}
+
+	public Integer getCurrentVerifyStatus() {
+		return currentVerifyStatus;
+	}
+
+	public void setCurrentVerifyStatus(Integer currentVerifyStatus) {
+		this.currentVerifyStatus = currentVerifyStatus;
 	}
 }
