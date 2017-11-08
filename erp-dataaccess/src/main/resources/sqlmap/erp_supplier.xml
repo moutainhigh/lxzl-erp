@@ -34,7 +34,7 @@
 		LEFT JOIN erp_data_dictionary eddp ON eddp.id = es.province
 		LEFT JOIN erp_data_dictionary eddc ON eddc.id = es.city
 		LEFT JOIN erp_data_dictionary eddd ON eddd.id = es.district
-		where es.id = #{id, jdbcType=INTEGER} and data_status = 1 
+		where es.id = #{id, jdbcType=INTEGER} and es.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
