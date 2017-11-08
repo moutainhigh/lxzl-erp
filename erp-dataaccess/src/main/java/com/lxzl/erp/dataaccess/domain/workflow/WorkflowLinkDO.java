@@ -14,6 +14,8 @@ public class WorkflowLinkDO  extends BaseDO {
 	private Integer workflowStep;
 	private Integer workflowLastStep;
 	private Integer workflowCurrentNodeId;
+	private Integer currentVerifyUser;
+	private Integer currentVerifyStatus;
 	private Integer dataStatus;
 	private String remark;
 
@@ -97,5 +99,21 @@ public class WorkflowLinkDO  extends BaseDO {
 
 	public void setWorkflowLinkDetailDOList(List<WorkflowLinkDetailDO> workflowLinkDetailDOList) {
 		this.workflowLinkDetailDOList = workflowLinkDetailDOList;
+	}
+
+	public Integer getCurrentVerifyUser() {
+		return currentVerifyUser;
+	}
+
+	public void setCurrentVerifyUser(Integer currentVerifyUser) {
+		this.currentVerifyUser = currentVerifyUser;
+	}
+
+	public Integer getCurrentVerifyStatus() {
+		return currentVerifyStatus;
+	}
+
+	public void setCurrentVerifyStatus(Integer currentVerifyStatus) {
+		this.currentVerifyStatus = currentVerifyStatus;
 	}
 }

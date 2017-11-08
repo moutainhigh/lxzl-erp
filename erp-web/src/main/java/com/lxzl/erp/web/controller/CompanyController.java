@@ -37,6 +37,7 @@ public class CompanyController {
         ServiceResult<String, Integer> serviceResult = companyService.addSubCompany(subCompany);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     @RequestMapping(value = "pageSubCompany", method = RequestMethod.POST)
     public Result pageSubCompany(@RequestBody SubCompanyQueryParam subCompanyQueryParam, BindingResult validResult) {
         ServiceResult<String, Page<SubCompany>> serviceResult = companyService.subCompanyPage(subCompanyQueryParam);

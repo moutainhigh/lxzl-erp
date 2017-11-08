@@ -23,7 +23,13 @@
 	<select id="findById" resultMap="WarehousePositionDO" parameterType="java.lang.Integer">
 		select
 		<include refid="column_List"/>
-		from erp_warehouse_position_position ewp where em.id = #{id, jdbcType=INTEGER} and data_status = 1
+		from erp_warehouse_position ewp where ewp.id = #{id, jdbcType=INTEGER} and data_status = 1
+	</select>
+
+	<select id="findByWarehouseId" resultMap="WarehousePositionDO" parameterType="java.lang.Integer">
+		select
+		<include refid="column_List"/>
+		from erp_warehouse_position ewp where ewp.warehouse_id = #{warehouseId, jdbcType=INTEGER} and data_status = 1
 	</select>
 
 	<sql id="set_column_sql">

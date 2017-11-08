@@ -210,7 +210,7 @@ CREATE TABLE `erp_supplier` (
   `city` int(20) COMMENT '城市ID，对应字典ID',
   `district` int(20) COMMENT '区ID，对应字典ID',
   `address` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
-  `tel` varchar(100) NOT NULL COMMENT '电话号码',
+  `tel` varchar(100) COMMENT '电话号码',
   `contactName` varchar(100) COMMENT '联系人姓名',
   `contactPhone` varchar(20) COMMENT '联系手机号',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -498,6 +498,7 @@ DROP TABLE if exists `erp_product_equipment_material`;
 CREATE TABLE `erp_product_equipment_material` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `equipment_id` int(20) NOT NULL COMMENT '设备ID',
+  `equipment_no` varchar(100) NOT NULL COMMENT '设备编号唯一',
   `material_id` int(20) NOT NULL COMMENT '物料ID',
   `material_count` int(11) NOT NULL DEFAULT '1' COMMENT '物料总数',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',

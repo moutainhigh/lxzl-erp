@@ -83,12 +83,12 @@
 		insert into erp_product_equipment_material <include refid="set_column_sql"/>
 	</insert>
 
-	<insert id="saveList" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.ArrayList">
-		insert into erp_product_equipment_material (equipment_id, equipment_no, material_id, material_count, data_status, remark, create_time, create_user, update_time, update_user) values
-		<foreach item="productEquipmentMaterialDO" collection="productEquipmentMaterialDOList" open="" separator="," close="">
-			SELECT epe.id,#{stockOrderEquipmentDO.equipmentNo},#{stockOrderEquipmentDO.materialId},#{stockOrderEquipmentDO.materialCount},#{stockOrderEquipmentDO.dataStatus},#{stockOrderEquipmentDO.remark},
-					#{stockOrderEquipmentDO.createTime},#{stockOrderEquipmentDO.createUser},#{stockOrderEquipmentDO.updateTime},#{stockOrderEquipmentDO.updateUser}
-			FROM erp_product_equipment epe WHERE epe.equipment_no = #{stockOrderEquipmentDO.equipmentNo}
+	<insert id="saveList" parameterType="java.util.ArrayList">
+		insert into erp_product_equipment_material (equipment_id, equipment_no, material_id, material_count, data_status, remark, create_time, create_user, update_time, update_user)
+		<foreach item="productEquipmentMaterialDO" collection="productEquipmentMaterialDOList" separator="UNION ALL">
+			SELECT epe.id,#{productEquipmentMaterialDO.equipmentNo},#{productEquipmentMaterialDO.materialId},#{productEquipmentMaterialDO.materialCount},#{productEquipmentMaterialDO.dataStatus},#{productEquipmentMaterialDO.remark},
+					#{productEquipmentMaterialDO.createTime},#{productEquipmentMaterialDO.createUser},#{productEquipmentMaterialDO.updateTime},#{productEquipmentMaterialDO.updateUser}
+			FROM erp_product_equipment epe WHERE epe.equipment_no = #{productEquipmentMaterialDO.equipmentNo}
 		</foreach>
 	</insert>
 

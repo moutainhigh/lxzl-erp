@@ -99,6 +99,23 @@ public class ErrorCode {
     public static final String VERIFY_USER_NOT_NULL = "J300017";
     public static final String PURCHASE_ORDER_COMMITTED_CAN_NOT_DELETE = "J300018";
 
+    public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
+    public static final String ORDER_USER_CONSIGN_NOT_NULL = "J400001";
+    public static final String ORDER_PRODUCT_STOCK_INSUFFICIENT = "J400002";
+    public static final String ORDER_NOT_EXISTS = "J400004";
+    public static final String ORDER_PRODUCT_EQUIPMENT_NOT_NULL = "J400005";
+    public static final String ORDER_PRODUCT_EQUIPMENT_STATUS_ERROR = "J400006";
+    public static final String ORDER_PRODUCT_EQUIPMENT_SKU_NOT_SAME = "J400007";
+    public static final String ORDER_PRODUCT_EQUIPMENT_IS_NULL = "J400008";
+    public static final String ORDER_STATUS_ERROR = "J400009";
+    public static final String ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR = "J400010";
+    public static final String ORDER_RENT_TYPE_OR_LENGTH_ERROR = "J400011";
+    public static final String ORDER_PAY_MODE_NOT_NULL = "J400012";
+    public static final String ORDER_PAY_STATUS_ERROR = "J400013";
+    public static final String ORDER_REFUND_STATUS_ERROR = "J400014";
+    public static final String ORDER_PAY_RECORD_NOT_EXISTS = "J400015";
+
+
     static
     {
         MAP.put(SUCCESS,"成功");
@@ -190,6 +207,22 @@ public class ErrorCode {
         MAP.put(USER_CAN_NOT_OP_WAREHOUSE,"您没有该仓库的操作权限");
         MAP.put(VERIFY_USER_NOT_NULL,"审核人不能为空");
         MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_DELETE,"已提交的采购单不能删除");
+
+        MAP.put(ORDER_PRODUCT_LIST_NOT_NULL,"订单商品不能为空");
+        MAP.put(ORDER_USER_CONSIGN_NOT_NULL,"订单没有选择地址");
+        MAP.put(ORDER_PRODUCT_STOCK_INSUFFICIENT,"库存不足");
+        MAP.put(ORDER_NOT_EXISTS,"订单不存在");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_NOT_NULL,"订单商品项设备编号不能为空");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_STATUS_ERROR,"该设备不存在或者该设备状态异常，请仔细检查");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_SKU_NOT_SAME,"该用户购买的商品不是这个型号的，请仔细检查");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_IS_NULL,"订单商品项设备编号为空");
+        MAP.put(ORDER_STATUS_ERROR,"订单状态不正确，请仔细检查");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR,"订单商品设备数不正确，请仔细检查");
+        MAP.put(ORDER_RENT_TYPE_OR_LENGTH_ERROR,"订单租赁方式或时长有误");
+        MAP.put(ORDER_PAY_MODE_NOT_NULL,"订单支付方式不能为空");
+        MAP.put(ORDER_PAY_STATUS_ERROR,"付款单状态异常，请检查");
+        MAP.put(ORDER_REFUND_STATUS_ERROR,"退款单状态异常，请检查");
+        MAP.put(ORDER_PAY_RECORD_NOT_EXISTS,"支付记录不存在");
     }
 
     public static String getMessage(String code)
