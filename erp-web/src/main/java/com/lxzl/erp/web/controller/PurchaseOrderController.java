@@ -2,9 +2,12 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderCommitParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
+import com.lxzl.erp.common.domain.purchase.pojo.PurchaseDeliveryOrder;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
+import com.lxzl.erp.common.domain.purchase.pojo.PurchaseReceiveOrder;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
@@ -39,7 +42,7 @@ public class PurchaseOrderController {
      */
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public Result addPurchaseOrder(@RequestBody @Validated(AddGroup.class) PurchaseOrder purchaseOrder, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = purchaseOrderService.add(purchaseOrder);
+        ServiceResult<String, String> serviceResult = purchaseOrderService.add(purchaseOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
     /**
@@ -50,7 +53,7 @@ public class PurchaseOrderController {
      */
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public Result updatePurchaseOrder(@RequestBody @Validated(UpdateGroup.class) PurchaseOrder purchaseOrder, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = purchaseOrderService.update(purchaseOrder);
+        ServiceResult<String, String> serviceResult = purchaseOrderService.update(purchaseOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -62,8 +65,8 @@ public class PurchaseOrderController {
      */
     @RequestMapping(value = "delete", method = RequestMethod.POST)
     public Result deletePurchaseOrder(@RequestBody @Validated(IdGroup.class) PurchaseOrder purchaseOrder, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = purchaseOrderService.delete(purchaseOrder);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        String errorCode = purchaseOrderService.delete(purchaseOrder);
+        return resultGenerator.generate(errorCode);
     }
     /**
      * 采购单提交审核
@@ -103,13 +106,38 @@ public class PurchaseOrderController {
 
     /**
      * 发货通知单分页
-     * @param purchaseOrderQueryParam
+     * @param purchaseDeliveryOrderQueryParam
      * @param validResult
      * @return
      */
-    @RequestMapping(value = "purchaseDeliveryPage", method = RequestMethod.POST)
-    public Result purchaseDeliveryPage(@RequestBody PurchaseOrderQueryParam purchaseOrderQueryParam, BindingResult validResult) {
-        ServiceResult<String, Page<PurchaseOrder>> serviceResult = purchaseOrderService.page(purchaseOrderQueryParam);
+    @RequestMapping(value = "pagePurchaseDelivery", method = RequestMethod.POST)
+    public Result pagePurchaseDelivery(@RequestBody PurchaseDeliveryOrderQueryParam purchaseDeliveryOrderQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<PurchaseDeliveryOrder>> serviceResult = purchaseOrderService.pagePurchaseDelivery(purchaseDeliveryOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    /**
+     * 发货通知单详情
+     * @param purchaseDeliveryOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "queryPurchaseDeliveryOrderByNo", method = RequestMethod.POST)
+    public Result queryPurchaseDeliveryOrderByNo(@RequestBody @Validated(IdGroup.class)PurchaseDeliveryOrder purchaseDeliveryOrder, BindingResult validResult) {
+        ServiceResult<String, PurchaseDeliveryOrder> serviceResult = purchaseOrderService.queryPurchaseDeliveryOrderByNo(purchaseDeliveryOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 修改收货单
+     * @param purchaseReceiveOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "updatePurchaseReceiveOrder", method = RequestMethod.POST)
+    public Result updatePurchaseReceiveOrder(@RequestBody @Validated(UpdateGroup.class) PurchaseReceiveOrder purchaseReceiveOrder, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = purchaseOrderService.updatePurchaseReceiveOrder(purchaseReceiveOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 }
