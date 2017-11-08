@@ -14,6 +14,9 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
+
+            #parse("component/loading.vm")
+
            #* <div class="panel mb25 mt5">
                 <form id="searchForm">
                     <div class="panel-heading">
@@ -111,7 +114,6 @@
                                 <div class="form-group pull-right mn mr10" style="width: 120px;">
                                     <div class="input-group">
                                         <input type="text" name="productName" id="productName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入商品名称">
-                                    #*<span class="input-group-addon btn-search  input-sm bradiusR" id="submitSearchForm"><i class="fa fa-search"></i> 查询</span>*#
                                     </div>
                                 </div>
                                 <script type="text/html" id="equipmentStatusSelectTpl">
@@ -127,70 +129,95 @@
                 </div>
                 <div class="panel-body pn">
                     <div class="table-responsive">
-                        <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13">
+                        <script type="text/html" id="skuListTpl">
                             <thead>
-                            <tr>
-                                <th>
-                                    <label class="option block mn">
-                                        <input type="checkbox" name="orders" value="">
-                                        <span class="checkbox mn"></span>
-                                    </label>
-                                </th>
-                                <th>设备ID</th>
-                                <th>设备编号</th>
-                                <th>商品ID</th>
-                                <th>SKUID</th>
-                                <th>设备状态</th>
-                                <th>可用状态</th>
-                                <th>备注</th>
-                                <th class="text-right">操作</th>
-                            </tr>
-                            </thead>
-                            <script type="text/html" id="skuListTpl">
-                                {{#listData}}
                                 <tr>
-                                    <td>
+                                    <th>
                                         <label class="option block mn">
-                                            <input type="checkbox" name="mobileos" value="FR">
+                                            <input type="checkbox" name="orders" value="">
                                             <span class="checkbox mn"></span>
                                         </label>
-                                    </td>
-                                    <td>{{productEquipmentId}}</td>
-                                    <td>{{equipmentNo}}</td>
-                                    <td>{{productId}}</td>
-                                    <td>{{skuId}}</td>
-                                    <td>{{equipmentStatusStr}}</td>
-                                    <td>{{dataStatusStr}}</td>
-                                    <td>{{remark}}</td>
-                                    <td class="text-right">
-                                        <div class="btn-group text-right">
-                                            {{#acitonButtons}}
-                                            {{#acitons}}
-                                            <button type="button" class="btn btn-default btn-xs {{class}}" data-productid="{{productId}}" data-skuid="{{skuId}}"> <i class="{{iClass}}"></i>{{text}} </button>
-                                            {{/acitons}}
-                                            {{/acitonButtons}}
-                                        </div>
-                                    </td>
+                                    </th>
+                                    #*<th>设备ID</th>*#
+                                    <th>设备编号</th>
+                                    <th>商品ID</th>
+                                    <th>SKUID</th>
+                                    <th>设备状态</th>
+                                    <th>可用状态</th>
+                                    <th>备注</th>
+                                    {{#hasRowActionButtons}}
+                                    <th class="text-right">操作</th>
+                                    {{/hasRowActionButtons}}
                                 </tr>
-                                {{/listData}}
-                                {{^listData}}
+                            </thead>
+                            <tbody>
+                                {{#dataSource}}
+                                    {{#listData}}
+                                    <tr>
+                                        <td>
+                                            <label class="option block mn">
+                                                <input type="checkbox" name="mobileos" value="FR">
+                                                <span class="checkbox mn"></span>
+                                            </label>
+                                        </td>
+                                        #*<td>{{productEquipmentId}}</td>*#
+                                        <td>{{equipmentNo}}</td>
+                                        <td>{{productId}}</td>
+                                        <td>{{skuId}}</td>
+                                        <td>{{equipmentStatusStr}}</td>
+                                        <td>{{dataStatusStr}}</td>
+                                        <td>{{remark}}</td>
+                                        {{#acitonButtons}}
+                                        <td class="text-right">
+                                            <div class="btn-group text-right">
+                                                {{#acitons}}
+                                                <button type="button" class="btn btn-default btn-xs {{class}}" data-productid="{{productId}}" data-skuid="{{skuId}}"> <i class="{{iClass}}"></i>{{text}} </button>
+                                                {{/acitons}}
+                                            </div>
+                                        </td>
+                                        {{/acitonButtons}}
+                                    </tr>
+                                    {{/listData}}
+                                    {{^listData}}
+                                    <tr>
+                                        <td valign="top" colspan="8" class="text-center">没有查询到设备</td>
+                                    </tr>
+                                    {{/listData}}
+                                {{/dataSource}}
+                            </tbody>
+                        </script>
+                        <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="skuListTbody">
+                            <thead>
                                 <tr>
-                                    <td valign="top" colspan="9" class="text-center">没有查询到设备</td>
+                                    <th>
+                                        <label class="option block mn">
+                                            <input type="checkbox" name="orders" value="">
+                                            <span class="checkbox mn"></span>
+                                        </label>
+                                    </th>
+                                    #*<th>设备ID</th>*#
+                                    <th>设备编号</th>
+                                    <th>商品ID</th>
+                                    <th>SKUID</th>
+                                    <th>设备状态</th>
+                                    <th>可用状态</th>
+                                    <th>备注</th>
+                                    <th class="text-right">操作</th>
                                 </tr>
-                                {{/listData}}
-                            </script>
-                            <tbody id="skuListTbody">
+                            </thead>
+                            <tbody>
                                 <tr>
-                                    <td valign="top" colspan="9" class="text-center">没有查询到设备</td>
+                                    <td valign="top" colspan="8" class="text-center">没有查询到设备</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <div class="row table-layout">
-                        <div class="col-xs-6 col-md-6 text-right"></div>
-                        #parse("component/pager.vm")
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                            #parse("component/pager.vm")
+                        </div>
                     </div>
                 </div>
 

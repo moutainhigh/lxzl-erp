@@ -120,7 +120,7 @@
                         </div>
                     </div>
                     <div class="panel-footer">
-                        <div class="row table-layout">
+                        <div class="row">
                             <div class="col-xs-12 col-md-12 text-right mt10 mb10">
                                 #parse("component/pager.vm")
                             </div>

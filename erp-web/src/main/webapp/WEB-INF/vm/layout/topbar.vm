@@ -12,14 +12,16 @@
                 </a>
             </li>
             {{#breadcrumb}}
-                {{#isLink}}
-                    <li class="crumb-link">
-                        <a href="${ctx}{{menuUrl}}">{{menuName}}</a>
-                    </li>
-                {{/isLink}}
-                {{^isLink}}
-                    <li class="crumb-trail">{{menuName}}</li>
-                {{/isLink}}
+                {{#links}}
+                    {{#isLink}}
+                        <li class="crumb-link">
+                            <a href="${ctx}{{menuUrl}}">{{menuName}}</a>
+                        </li>
+                    {{/isLink}}
+                    {{^isLink}}
+                        <li class="crumb-trail">{{menuName}}</li>
+                    {{/isLink}}
+                {{/links}}
             {{/breadcrumb}}
         </script>
         <ol class="breadcrumb" id="breadcrumb"></ol>
