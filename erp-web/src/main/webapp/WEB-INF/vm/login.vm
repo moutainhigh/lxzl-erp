@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>登录-爱租-首家大学生租赁平台</title>
+        <title>登录-凌雄-中国领先的IT设备租赁服务商</title>
         #parse("layout/header.vm")
         #parse("layout/theme.vm")
     </head>
