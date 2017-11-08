@@ -46,54 +46,62 @@
                 </div>
                 <div class="panel-body pn">
                     <div class="table-responsive">
-                        <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13">
+                        <script type="text/html" id="dataListTpl">
                             <thead>
-                            <tr>
-                                <th>
-                                    <label class="option block mn">
-                                        <input type="checkbox" name="checkAll" value="">
-                                        <span class="checkbox mn"></span>
-                                    </label>
-                                </th>
-                                <th class="">角色名称</th>
-                                <th class="">部门</th>
-                                <th class="">角色描述</th>
-                                <th class="">备注</th>
-                                <th class="text-right">操作</th>
-                            </tr>
-                            </thead>
-                            <script type="text/html" id="roleListTpl">
-                                {{#listData}}
                                 <tr>
-                                    <td>
+                                    {{#hasCommonActionButtons}}
+                                    <th>
                                         <label class="option block mn">
-                                            <input type="checkbox" name="checkItem" value="{{roleId}}">
+                                            <input type="checkbox" name="checkAll" value="">
                                             <span class="checkbox mn"></span>
                                         </label>
-                                    </td>
-                                    <td class="">{{roleName}}</td>
-                                    <td class="">{{department}}</td>
-                                    <td class="">{{roleDesc}}</td>
-                                    <td class="">{{remark}}</td>
-                                    <td class="text-right">
-                                        {{#acitonButtons}}
-                                        <div class="btn-group text-right">
-                                            {{#acitons}}
-                                            <a href="${ctx}{{menuUrl}}" type="button" class="btn btn-default btn-xs {{class}}" data-roleId="{{roleId}}">{{text}}</a>
-                                            {{/acitons}}
-                                        </div>
-                                        {{/acitonButtons}}
-                                    </td>
+                                    </th>
+                                    {{/hasCommonActionButtons}}
+                                    <th class="">角色名称</th>
+                                    <th class="">部门</th>
+                                    <th class="">角色描述</th>
+                                    <th class="">备注</th>
+                                    {{#hasRowActionButtons}}
+                                    <th class="text-right">操作</th>
+                                    {{/hasRowActionButtons}}
                                 </tr>
-                                {{/listData}}
-                                {{^listData}}
-                                <tr>
-                                    <td valign="top" colspan="5" class="text-center">没有查询到角色信息</td>
-                                </tr>
-                                {{/listData}}
-                            </script>
-                            <tbody id="roleListTbody"></tbody>
-                        </table>
+                            </thead>
+                            <tbody>
+                                {{#dataSource}}
+                                    {{#listData}}
+                                    <tr>
+                                        {{#hasCommonActionButtons}}
+                                        <td>
+                                            <label class="option block mn">
+                                                <input type="checkbox" name="checkItem" value="{{roleId}}">
+                                                <span class="checkbox mn"></span>
+                                            </label>
+                                        </td>
+                                        {{/hasCommonActionButtons}}
+                                        <td class="">{{roleName}}</td>
+                                        <td class="">{{department}}</td>
+                                        <td class="">{{roleDesc}}</td>
+                                        <td class="">{{remark}}</td>
+                                        {{#hasRowActionButtons}}
+                                        <td class="text-right">
+                                            <div class="btn-group text-right">
+                                                {{#rowActionButtons}}
+                                                <a href="${ctx}{{menuUrl}}" type="button" class="btn btn-default btn-xs {{class}}" data-roleId="{{roleId}}">{{text}}</a>
+                                                {{/rowActionButtons}}
+                                            </div>
+                                        </td>
+                                        {{/hasRowActionButtons}}
+                                    </tr>
+                                    {{/listData}}
+                                    {{^listData}}
+                                    <tr>
+                                        <td valign="top" colspan="5" class="text-center">没有查询到角色信息</td>
+                                    </tr>
+                                    {{/listData}}
+                                {{/dataSource}}
+                            </tbody>
+                        </script>
+                        <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                     </div>
                 </div>
                 <div class="panel-footer">

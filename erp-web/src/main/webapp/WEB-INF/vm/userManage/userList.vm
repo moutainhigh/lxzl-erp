@@ -46,75 +46,73 @@
                     </div>
                     <div class="panel-body pn">
                         <div class="table-responsive">
-                            <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13">
-                            <thead>
-                            <tr>
-                                <th>
-                                    <label class="option block mn">
-                                        <input type="checkbox" name="checkAll" value="">
-                                        <span class="checkbox mn"></span>
-                                    </label>
-                                </th>
-                                <th>公司部门角色</th>
-                                <th>姓名</th>
-                                <th>用户名</th>
-                                #*<th>角色</th>*#
-                                <th>邮箱</th>
-                                <th>手机号</th>
-                                <th>激活</th>
-                                <th>禁用</th>
-##                                <th width="10%" class="">注册时间</th>
-##                                <th width="10%" class="">最后登录时间</th>
-                                <th width="16%" class="text-right">操作</th>
-                            </tr>
-                            </thead>
-                            <script type="text/html" id="userListTpl">
-                                {{#listData}}
+                            <script type="text/html" id="dataListTpl">
+                                <thead>
                                     <tr>
-                                        <td>
+                                        {{#hasCommonActionButtons}}
+                                        <th>
                                             <label class="option block mn">
-                                                <input type="checkbox" name="checkItem" value="{{userId}}">
+                                                <input type="checkbox" name="checkAll" value="">
                                                 <span class="checkbox mn"></span>
                                             </label>
-                                        </td>
-                                        <td>
-                                            {{#roleListData}}
+                                        </th>
+                                        {{/hasCommonActionButtons}}
+                                        <th>公司部门角色</th>
+                                        <th>姓名</th>
+                                        <th>用户名</th>
+                                        <th>邮箱</th>
+                                        <th>手机号</th>
+                                        <th>激活</th>
+                                        <th>禁用</th>
+                                        {{#hasRowActionButtons}}
+                                        <th width="16%" class="text-right">操作</th>
+                                        {{/hasRowActionButtons}}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#dataSource}}
+                                        {{#listData}}
+                                        <tr>
+                                            {{#hasCommonActionButtons}}
+                                            <td>
+                                                <label class="option block mn">
+                                                    <input type="checkbox" name="checkItem" value="{{userId}}">
+                                                    <span class="checkbox mn"></span>
+                                                </label>
+                                            </td>
+                                            {{/hasCommonActionButtons}}
+                                            <td>
+                                                {{#roleListData}}
                                                 {{role}}
                                                 <br />
-                                            {{/roleListData}}
-                                        </td>
-                                        <td class="">{{realName}}</td>
-                                        <td class="">{{userName}}</td>
-                                        #*<td class="">{{role}}</td>*#
-                                        <td class="">{{email}}</td>
-                                        <td class="">{{phone}}</td>
-                                        <td class="">{{isActivatedStr}}</td>
-                                        <td class="">{{isDisabledStr}}</td>
-##                                        <td class="">{{registerTimeFormat}}</td>
-##                                        <td class="">{{lastLoginTimeFormat}}</td>
-                                        <td class="text-right">
-                                            {{#acitonButtons}}
-                                            <div class="btn-group text-right">
-                                                {{#acitons}}
-                                                <a href="${ctx}{{menuUrl}}" class="btn btn-default btn-xs {{class}}" data-userid="{{userId}}">{{text}}</a>
-                                                {{/acitons}}
-                                            </div>
-                                            {{/acitonButtons}}
-                                        </td>
-                                    </tr>
-                                {{/listData}}
-                                {{^listData}}
-                                <tr>
-                                    <td valign="top" colspan="9" class="text-center">没有查询到用户</td>
-                                </tr>
-                                {{/listData}}
+                                                {{/roleListData}}
+                                            </td>
+                                            <td class="">{{realName}}</td>
+                                            <td class="">{{userName}}</td>
+                                            <td class="">{{email}}</td>
+                                            <td class="">{{phone}}</td>
+                                            <td class="">{{isActivatedStr}}</td>
+                                            <td class="">{{isDisabledStr}}</td>
+                                            {{#hasRowActionButtons}}
+                                                <td class="text-right">
+                                                    <div class="btn-group text-right">
+                                                        {{#rowActionButtons}}
+                                                        <a href="${ctx}{{menuUrl}}" class="btn btn-default btn-xs {{class}}" data-userid="{{userId}}">{{text}}</a>
+                                                        {{/rowActionButtons}}
+                                                    </div>
+                                                </td>
+                                            {{/hasRowActionButtons}}
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="9" class="text-center">没有查询到用户</td>
+                                        </tr>
+                                        {{/listData}}
+                                    {{/dataSource}}
+                                </tbody>
                             </script>
-                            <tbody id="userListTbody">
-                            <tr>
-                                <td valign="top" colspan="9" class="text-center">没有查询到用户</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                            <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                         </div>
                     </div>
                     <div class="panel-footer">
@@ -132,11 +130,6 @@
 
     </div>
     #parse("layout/footer.vm")
-
-##    #parse("component/user/add.vm")
-##    #parse("component/user/edit.vm")
-##    #parse("component/user/password.vm")
-    #parse("component/user/view.vm")
 
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/fancytree2/jquery.fancytree-all.min.js"></script>
     <script type="text/javascript">

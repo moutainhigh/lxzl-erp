@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>爱租-运营管理系统-订单管理-订单列表</title>
+    <title>凌雄ERP-订单管理-订单列表</title>
     #parse("layout/header.vm")
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
@@ -13,12 +13,14 @@
         #parse("layout/navbar.vm")
         #parse("layout/sidebar.vm")
 
-
         <section id="content_wrapper">
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
             <section id="content" class="animated fadeIn">
-                <div class="panel mb25 mt5">
+
+                #parse("component/loading.vm")
+
+                #*<div class="panel mb25 mt5">
                     <form id="searchForm">
                         <input type="hidden" name="orderStatus" />
                         <div class="panel-heading">
@@ -85,128 +87,145 @@
                             <button type="reset" class="btn"> 重置 </button>
                         </div>
                     </form>
-                </div>
-                <div class="panel">
-                    <div class="panel-menu p12 theme-primary">
+                </div>*#
 
+                <div class="panel panel-primary panel-border top">
+                    <div class="panel-menu p12">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <div class="btn-group" id="actionCommonButtons">
-                                    <button type="button" class="btn btn-sm btn-primary" id="btnRefresh"><i class="fa fa-refresh"></i>
-                                    </button>
-                                    #*<button type="button" class="btn btn-default light"><i class="fa fa-trash"></i></button>*#
-                                    <select id="multiselect1">
-                                        <option value="cheese">全部</option>
-                                        <option value="tomatoes">未支付</option>
-                                        <option value="mozarella" selected>支付中</option>
-                                        <option value="mushrooms">已付款</option>
-                                        <option value="pepperoni">已发货</option>
-                                        <option value="onions">租赁中</option>
-                                    </select>
+                                    <button type="button" class="btn btn-sm btn-primary" id="btnRefresh"><i class="fa fa-refresh"></i></button>
                                 </div>
                             </div>
-                            <div class="col-md-6 text-right">
-                                <script type="text/html" id="osfBtnGroupTpl">
-                                    <button type="button" class="btn btn-default dark"><i class="fa fa-filter"></i></button>
-                                    {{#btnGroup}}
-                                    <button type="button" class="btn btn-default orderFilterBtn {{activeClass}}" data-status={{status}}>{{value}}</button>
-                                    {{/btnGroup}}
-                                </script>
-                                <div class="btn-group" id="osfBtnGroup"></div>
+                            <div class="col-md-9 text-right">
+                                <form id="searchForm" class="form-horizontal">
+                                    <div class="pull-right">
+                                        <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                        <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                    </div>
+                                    <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                        <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
+                                    </div>
+
+                                    <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                        <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
+                                    </div>
+                                    <div class="form-group pull-right mn mr10" style="width: 210px;">
+                                        <input type="hidden" name="createStartTime" id="createStartTime" />
+                                        <input type="hidden" name="createEndTime" id="createEndTime" />
+                                        <div class="input-group date" id="createTimePicker">
+                                            <input type="text" name="createTimePicker" id="createTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择下单时间">
+                                            <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <script type="text/html" id="orderStatusSelectTpl">
+                                        <option value="">全部</option>
+                                        {{#orderStatus}}
+                                        <option value={{num}}>{{value}}</option>
+                                        {{/orderStatus}}
+                                    </script>
+                                    <select name="orderStatus" id="orderStatus" class="hide"></select>
+                                </form>
                             </div>
                         </div>
 
                     </div>
                     <div class="panel-body pn">
                         <div class="table-responsive">
-                            <table class="table admin-form theme-warning tc-checkbox-1 fs13">
-                            <thead>
-                            <tr class="bg-light">
-                                <th class="text-center">
-                                    <label class="option block mn">
-                                        <input type="checkbox" name="orders" value="">
-                                        <span class="checkbox mn"></span>
-                                    </label>
-                                </th>
-                                <th class="">订单ID</th>
-                                <th class="">订单编号</th>
-                                <th class="">状态</th>
-                                <th class="">客户</th>
-                                <th class="">租赁方式</th>
-                                <th class="">租期</th>
-                                #*<th class="">商品总数</th>*#
-                                <th class="">商品总价</th>
-                                <th class="">订单总价</th>
-                                <th class="">优惠金额</th>
-                                #*<th class="">运费</th>*#
-                                <th class="">支付时间</th>
-                                <th class="">发货时间</th>
-                                <th class="">确认收货时间</th>
-                                #*<th class="">预计归还时间</th>
-                                <th class="">实际归还时间</th>*#
-                                <th class="">购买人备注</th>
-                                <th class="">订单备注</th>
-                                <th class="text-right">操作</th>
-                            </tr>
-                            </thead>
-                            <script type="text/html" id="orderListTpl">
-                                {{#listData}}
-                                <tr>
-                                    <td class="text-center">
-                                        <label class="option block mn">
-                                            <input type="checkbox" name="mobileos" value="FR">
-                                            <span class="checkbox mn"></span>
-                                        </label>
-                                    </td>
-                                    <td class="">{{orderId}}</td>
-                                    <td class="">{{orderNo}}</td>
-                                    <td class="">{{orderStatusStr}}</td>
-                                    <td class="">{{buyerRealName}}</td>
-                                    <td class="">{{rentTypeStr}}</td>
-                                    <td class="">{{rentTimeLength}}</td>
-                                    #*<td class="">商品总数</td>*#
-                                    <td class="">{{productAmountTotalFixed}}</td>
-                                    <td class="">{{orderAmountTotalFixed}}</td>
-                                    <td class="">{{discountAmountTotalFixed}}</td>
-                                    #*<td class="">运费</td>*#
-                                    <td class="">{{payTimeFormat}}</td>
-                                    <td class="">{{deliveryTimeFormat}}</td>
-                                    <td class="">{{confirmDeliveryTimeFormat}}</td>
-                                    #*<td class="">预计归还时间</td>
-                                    <td class="">实际归还时间</td>*#
-                                    <td class="">{{buyerRemark}}</td>
-                                    <td class="">{{remark}}</td>
-                                    <td class="text-right">
-                                        {{#acitonButtons}}
-                                        <div class="btn-group text-right">
-                                            {{#acitons}}
-                                            <a href="${ctx}{{menuUrl}}?orderNo={{orderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-productId="{{productId}}"> <i class="{{iClass}}"></i> </a>
-                                            {{/acitons}}
-                                        </div>
-                                        {{/acitonButtons}}
-                                    </td>
-                                </tr>
-                                {{/listData}}
-                                {{^listData}}
-                                <tr>
-                                    <td valign="top" colspan="14">没有查询到订单</td>
-                                </tr>
-                                {{/listData}}
+                            <script type="text/html" id="dataListTpl">
+                                <thead>
+                                    <tr class="bg-light">
+                                        {{#hasCommonActionButtons}}
+                                        <th class="text-center">
+                                            <label class="option block mn">
+                                                <input type="checkbox" name="orders" value="">
+                                                <span class="checkbox mn"></span>
+                                            </label>
+                                        </th>
+                                        {{/hasCommonActionButtons}}
+                                        #*<th class="">订单ID</th>*#
+                                        <th class="">订单编号</th>
+                                        <th class="">状态</th>
+                                        <th class="">客户</th>
+                                        <th class="">租赁方式</th>
+                                        <th class="">租期</th>
+                                        #*<th class="">商品总数</th>*#
+                                        <th class="">商品总价</th>
+                                        <th class="">订单总价</th>
+                                        <th class="">优惠金额</th>
+                                        #*<th class="">运费</th>*#
+                                        <th class="">支付时间</th>
+                                        <th class="">发货时间</th>
+                                        <th class="">确认收货时间</th>
+                                        #*<th class="">预计归还时间</th>
+                                        <th class="">实际归还时间</th>*#
+                                        <th class="">购买人备注</th>
+                                        <th class="">订单备注</th>
+                                        {{#hasRowActionButtons}}
+                                        <th class="text-right">操作</th>
+                                        {{/hasRowActionButtons}}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#dataSource}}
+                                        {{#listData}}
+                                        <tr>
+                                            {{#hasCommonActionButtons}}
+                                            <td class="text-center">
+                                                <label class="option block mn">
+                                                    <input type="checkbox" name="mobileos" value="FR">
+                                                    <span class="checkbox mn"></span>
+                                                </label>
+                                            </td>
+                                            {{/hasCommonActionButtons}}
+                                            #*<td class="">{{orderId}}</td>*#
+                                            <td class="">{{orderNo}}</td>
+                                            <td class="">{{orderStatusStr}}</td>
+                                            <td class="">{{buyerRealName}}</td>
+                                            <td class="">{{rentTypeStr}}</td>
+                                            <td class="">{{rentTimeLength}}</td>
+                                            #*<td class="">商品总数</td>*#
+                                            <td class="">{{productAmountTotalFixed}}</td>
+                                            <td class="">{{orderAmountTotalFixed}}</td>
+                                            <td class="">{{discountAmountTotalFixed}}</td>
+                                            #*<td class="">运费</td>*#
+                                            <td class="">{{payTimeFormat}}</td>
+                                            <td class="">{{deliveryTimeFormat}}</td>
+                                            <td class="">{{confirmDeliveryTimeFormat}}</td>
+                                            #*<td class="">预计归还时间</td>
+                                            <td class="">实际归还时间</td>*#
+                                            <td class="">{{buyerRemark}}</td>
+                                            <td class="">{{remark}}</td>
+                                            {{#hasRowActionButtons}}
+                                            <td class="text-right">
+                                                <div class="btn-group text-right">
+                                                    {{#rowActionButtons}}
+                                                    <a href="${ctx}{{menuUrl}}?orderNo={{orderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-productId="{{productId}}"> <i class="{{iClass}}"></i> </a>
+                                                    {{/rowActionButtons}}
+                                                </div>
+                                            </td>
+                                            {{/hasRowActionButtons}}
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14">没有查询到订单</td>
+                                        </tr>
+                                        {{/listData}}
+                                    {{/dataSource}}
+                                </tbody>
                             </script>
-                            <tbody id="orderListTbody">
-                            </tbody>
-                        </table>
+                            <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                         </div>
                     </div>
                     <div class="panel-footer">
-                        <div class="row table-layout">
-                            <div class="col-xs-6 col-md-6 text-right">
-
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                                #parse("component/pager.vm")
                             </div>
-                            #parse("component/pager.vm")
                         </div>
                     </div>
-
                 </div>
             </section>
         </section>

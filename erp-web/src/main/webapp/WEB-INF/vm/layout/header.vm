@@ -3,7 +3,7 @@
 
 <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/magnific/magnific-popup.css">
 
-<link rel="shortcut icon" href="${staticCommon}/rental/img/favicon.png">
+<link rel="shortcut icon" href="${staticCommon}/rental/img/lxzl-favicon.png">
 
 <!--[if lt IE 9]>
 <script src="${staticCommon}/html5Js/html5shiv.js"></script>
