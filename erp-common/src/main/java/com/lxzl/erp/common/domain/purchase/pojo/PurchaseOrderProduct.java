@@ -1,9 +1,12 @@
 package com.lxzl.erp.common.domain.purchase.pojo;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.product.pojo.Product;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.math.BigDecimal;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PurchaseOrderProduct implements Serializable {
@@ -22,6 +25,8 @@ public class PurchaseOrderProduct implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
+
+	private Product product ;
 
 	public Integer getPurchaseOrderProductId(){
 		return purchaseOrderProductId;
@@ -133,5 +138,13 @@ public class PurchaseOrderProduct implements Serializable {
 
 	public void setDataStatus(Integer dataStatus) {
 		this.dataStatus = dataStatus;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
 	}
 }

@@ -24,10 +24,34 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<collection property="purchaseOrderProductDOList" resultMap="PurchaseOrderProductDO" />
+	</resultMap>
+
+	<resultMap id="PurchaseOrderProductDO" type="com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderProductDO">
+		<id column="id" jdbcType="INTEGER" property="id"/>
+		<result column="epop_purchaseOrderId" jdbcType="INTEGER" property="purchaseOrderId"/>
+		<result column="epop_productId" jdbcType="INTEGER" property="productId"/>
+		<result column="epop_productName" jdbcType="VARCHAR" property="productName"/>
+		<result column="epop_productSnapshot" jdbcType="VARCHAR" property="productSnapshot"/>
+		<result column="epop_productSkuId" jdbcType="INTEGER" property="productSkuId"/>
+		<result column="epop_productCount" jdbcType="INTEGER" property="productCount"/>
+		<result column="epop_productAmount" jdbcType="DECIMAL" property="productAmount"/>
+		<result column="epop_dataStatus" jdbcType="INTEGER" property="dataStatus"/>
+		<result column="epop_remark" jdbcType="VARCHAR" property="remark"/>
+		<result column="epop_createTime" jdbcType="TIMESTAMP" property="createTime"/>
+		<result column="epop_createUser" jdbcType="VARCHAR" property="createUser"/>
+		<result column="epop_updateTime" jdbcType="TIMESTAMP" property="updateTime"/>
+		<result column="epop_update_user" jdbcType="VARCHAR" property="update_user"/>
 	</resultMap>
 
 	<sql id="column_List">
-		epo.id,epo.purchase_no,epo.product_supplier_id,epo.invoice_supplier_id,epo.warehouse_id,epo.warehouse_snapshot,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_amount_real,epo.purchase_order_amount_statement,epo.purchase_order_status,epo.commit_status,epo.delivery_time,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user	</sql>
+		epo.id,epo.purchase_no,epo.product_supplier_id,epo.invoice_supplier_id,epo.warehouse_id,epo.warehouse_snapshot,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_amount_real,epo.purchase_order_amount_statement,epo.purchase_order_status,epo.commit_status,epo.delivery_time,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user
+	</sql>
+
+	<sql id="product_column_List">
+		epop.id as epop_id,epop.purchase_order_id as epop_purchaseOrderId,epop.product_id as epop_productId,epop.product_name as epop_productName,epop.product_snapshot as epop_productSnapshot,epop.product_sku_id as epop_productSkuId,epop.product_count as epop_productCount,epop.product_amount as epop_productAmount,epop.data_status as epop_dataStatus,epop.remark as epop_remark,epop.create_time as epop_createTime,epop.create_user as epop_createUser,epop.update_time as epop_updateTime,epop.update_user as epop_updateUser
+    </sql>
 	<select id="findById" resultMap="PurchaseOrderDO" parameterType="java.lang.Integer">
 		select <include refid="column_List"/> from erp_purchase_order epo 
 		where epo.id = #{id, jdbcType=INTEGER} and data_status = 1 
@@ -35,6 +59,13 @@
 	<select id="findByPurchaseNo" resultMap="PurchaseOrderDO" parameterType="java.lang.String">
 		select <include refid="column_List"/> from erp_purchase_order epo
 		where epo.purchase_no = #{purchaseNo, jdbcType=VARCHAR} and data_status = 1
+	</select>
+
+	<select id="findDetailByPurchaseNo" resultMap="PurchaseOrderDO" parameterType="java.lang.String">
+		select <include refid="column_List"/>,<include refid="product_column_List"/> from (
+		select <include refid="column_List"/> from erp_purchase_order epo
+		where epo.purchase_no = #{purchaseNo, jdbcType=VARCHAR} and data_status = 1
+		) epo left join erp_purchase_order_product epop on epop.purchase_order_id = epo.id and epop.data_status=1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -128,4 +159,86 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderDO">
 		update erp_purchase_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<update id="deleteByPurchaseNo" parameterType="java.lang.String">
+		update erp_purchase_order set data_status=2 WHERE purchase_no = #{purchaseNo, jdbcType=VARCHAR}
+	</update>
+	<select id="findPurchaseOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(id)
+		FROM erp_purchase_order epo
+		<where>
+			<if test="maps.queryParam.purchaseNo != null &amp;&amp; maps.queryParam.purchaseNo != ''">
+				and epo.purchase_no = #{maps.queryParam.purchaseNo, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.productSupplierId != null">
+				and epo.product_supplier_id = #{maps.queryParam.productSupplierId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.invoiceSupplierId != null">
+				and epo.invoice_supplier_id = #{maps.queryParam.invoiceSupplierId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.warehouseId != null">
+				and epo.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.isInvoice != null">
+				and epo.is_invoice = #{maps.queryParam.isInvoice, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.isNew != null">
+				and epo.is_new = #{maps.queryParam.isNew, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.purchaseOrderStatus != null">
+				and epo.purchase_order_status = #{maps.queryParam.purchaseOrderStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.commitStatus != null">
+				and epo.commit_status = #{maps.queryParam.commitStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+				<![CDATA[ AND epo.create_time >= #{maps.queryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+				<![CDATA[ AND epo.create_time <= #{maps.queryParam.createEndTime} ]]>
+			</if>
+			<if test="true">
+				and epo.data_status = 1
+			</if>
+		</where>
+	</select>
+	<select id="findPurchaseOrderByParams" resultMap="PurchaseOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/>
+		FROM erp_purchase_order epo
+		<where>
+			<if test="maps.queryParam.purchaseNo != null &amp;&amp; maps.queryParam.purchaseNo != ''">
+				and epo.purchase_no = #{maps.queryParam.purchaseNo, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.productSupplierId != null">
+				and epo.product_supplier_id = #{maps.queryParam.productSupplierId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.invoiceSupplierId != null">
+				and epo.invoice_supplier_id = #{maps.queryParam.invoiceSupplierId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.warehouseId != null">
+				and epo.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.isInvoice != null">
+				and epo.is_invoice = #{maps.queryParam.isInvoice, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.isNew != null">
+				and epo.is_new = #{maps.queryParam.isNew, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.purchaseOrderStatus != null">
+				and epo.purchase_order_status = #{maps.queryParam.purchaseOrderStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.commitStatus != null">
+				and epo.commit_status = #{maps.queryParam.commitStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+				<![CDATA[ AND epo.create_time >= #{maps.queryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+				<![CDATA[ AND epo.create_time <= #{maps.queryParam.createEndTime} ]]>
+			</if>
+			<if test="true">
+				and epo.data_status = 1
+			</if>
+		</where>
+	</select>
 </mapper>

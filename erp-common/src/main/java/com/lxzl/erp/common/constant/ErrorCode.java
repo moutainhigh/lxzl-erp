@@ -97,6 +97,7 @@ public class ErrorCode {
     public static final String WAREHOUSE_IN_STORAGE_LIST_NOT_NULL = "J300015";
     public static final String USER_CAN_NOT_OP_WAREHOUSE = "J300016";
     public static final String VERIFY_USER_NOT_NULL = "J300017";
+    public static final String PURCHASE_ORDER_COMMITTED_CAN_NOT_DELETE = "J300018";
 
     static
     {
@@ -188,6 +189,7 @@ public class ErrorCode {
         MAP.put(WAREHOUSE_IN_STORAGE_LIST_NOT_NULL,"商品入仓数据不能为空");
         MAP.put(USER_CAN_NOT_OP_WAREHOUSE,"您没有该仓库的操作权限");
         MAP.put(VERIFY_USER_NOT_NULL,"审核人不能为空");
+        MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_DELETE,"已提交的采购单不能删除");
     }
 
     public static String getMessage(String code)

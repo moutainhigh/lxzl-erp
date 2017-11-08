@@ -1,7 +1,9 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderCommitParam;
+import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
@@ -51,6 +53,18 @@ public class PurchaseOrderController {
         ServiceResult<String, Integer> serviceResult = purchaseOrderService.update(purchaseOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    /**
+     * 删除采购单
+     * @param purchaseOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "delete", method = RequestMethod.POST)
+    public Result deletePurchaseOrder(@RequestBody @Validated(IdGroup.class) PurchaseOrder purchaseOrder, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = purchaseOrderService.delete(purchaseOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
     /**
      * 采购单提交审核
      * @param purchaseOrderCommitParam
@@ -60,6 +74,42 @@ public class PurchaseOrderController {
     @RequestMapping(value = "commit", method = RequestMethod.POST)
     public Result commit(@RequestBody @Validated(ExtendGroup.class) PurchaseOrderCommitParam purchaseOrderCommitParam, BindingResult validResult) {
         ServiceResult<String, Integer> serviceResult = purchaseOrderService.commit(purchaseOrderCommitParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 采购单分页
+     * @param purchaseOrderQueryParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "page", method = RequestMethod.POST)
+    public Result pagePurchaseOrder(@RequestBody PurchaseOrderQueryParam purchaseOrderQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<PurchaseOrder>> serviceResult = purchaseOrderService.page(purchaseOrderQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 采购单详情
+     * @param purchaseOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "queryPurchaseOrderByNo", method = RequestMethod.POST)
+    public Result queryPurchaseOrderByNo(@RequestBody @Validated(IdGroup.class)PurchaseOrder purchaseOrder, BindingResult validResult) {
+        ServiceResult<String, PurchaseOrder> serviceResult = purchaseOrderService.queryPurchaseOrderByNo(purchaseOrder.getPurchaseNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 发货通知单分页
+     * @param purchaseOrderQueryParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "purchaseDeliveryPage", method = RequestMethod.POST)
+    public Result purchaseDeliveryPage(@RequestBody PurchaseOrderQueryParam purchaseOrderQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<PurchaseOrder>> serviceResult = purchaseOrderService.page(purchaseOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }

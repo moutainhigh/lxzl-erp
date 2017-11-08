@@ -10,7 +10,16 @@ public interface PurchaseOrderMapper extends BaseMysqlDAO<PurchaseOrderDO> {
 
 	PurchaseOrderDO findByPurchaseNo(@Param("purchaseNo") String purchaseNo);
 
+	PurchaseOrderDO findDetailByPurchaseNo(@Param("purchaseNo") String purchaseNo);
+
 	List<PurchaseOrderDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+	Integer deleteByPurchaseNo(@Param("purchaseNo") String purchaseNo);
+
+	List<PurchaseOrderDO> findPurchaseOrderByParams(@Param("maps") Map<String, Object> paramMap);
+
+	Integer findPurchaseOrderCountByParams(@Param("maps") Map<String, Object> paramMap);
+
 }
