@@ -21,6 +21,7 @@ public class PurchaseDeliveryOrderProductDO  extends BaseDO {
 	private Integer realProductCount;
 	private BigDecimal productAmount;
 	private String remark;
+	private Integer dataStatus;
 
 	public Integer getId(){
 		return id;
@@ -142,4 +143,11 @@ public class PurchaseDeliveryOrderProductDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public Integer getDataStatus() {
+		return dataStatus;
+	}
+
+	public void setDataStatus(Integer dataStatus) {
+		this.dataStatus = dataStatus;
+	}
 }

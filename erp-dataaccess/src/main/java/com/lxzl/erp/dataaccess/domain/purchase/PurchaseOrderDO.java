@@ -21,7 +21,6 @@ public class PurchaseOrderDO extends BaseDO {
     private BigDecimal purchaseOrderAmountReal;
     private BigDecimal purchaseOrderAmountStatement;
     private Integer purchaseOrderStatus;
-    private Integer commitStatus;
     private Date deliveryTime;
     private Integer dataStatus;
     private Integer owner;
@@ -124,14 +123,6 @@ public class PurchaseOrderDO extends BaseDO {
 
     public void setPurchaseOrderStatus(Integer purchaseOrderStatus) {
         this.purchaseOrderStatus = purchaseOrderStatus;
-    }
-
-    public Integer getCommitStatus() {
-        return commitStatus;
-    }
-
-    public void setCommitStatus(Integer commitStatus) {
-        this.commitStatus = commitStatus;
     }
 
     public Date getDeliveryTime() {

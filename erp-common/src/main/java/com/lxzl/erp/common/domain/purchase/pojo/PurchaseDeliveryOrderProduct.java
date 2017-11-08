@@ -23,6 +23,7 @@ public class PurchaseDeliveryOrderProduct implements Serializable {
 	private Integer realProductCount;   //实际商品总数
 	private BigDecimal productAmount;   //商品单价
 	private String remark;   //备注
+	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private Date createTime;   //添加时间
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
@@ -147,6 +148,14 @@ public class PurchaseDeliveryOrderProduct implements Serializable {
 
 	public void setRemark(String remark){
 		this.remark = remark;
+	}
+
+	public Integer getDataStatus() {
+		return dataStatus;
+	}
+
+	public void setDataStatus(Integer dataStatus) {
+		this.dataStatus = dataStatus;
 	}
 
 	public Date getCreateTime(){

@@ -3,6 +3,7 @@ package com.lxzl.erp.common.domain.purchase.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -29,6 +30,7 @@ public class PurchaseReceiveOrder implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
+	List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList ;
 
 	public Integer getPurchaseReceiveOrderId(){
 		return purchaseReceiveOrderId;
@@ -190,4 +192,11 @@ public class PurchaseReceiveOrder implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public List<PurchaseReceiveOrderProduct> getPurchaseReceiveOrderProductList() {
+		return purchaseReceiveOrderProductList;
+	}
+
+	public void setPurchaseReceiveOrderProductList(List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList) {
+		this.purchaseReceiveOrderProductList = purchaseReceiveOrderProductList;
+	}
 }

@@ -22,6 +22,8 @@ public class PurchaseReceiveOrderProduct implements Serializable {
 	private Integer realProductSkuId;   //商品SKU ID
 	private String realProductSnapshot;   //商品冗余信息，防止商品修改留存快照，可修改
 	private Integer realProductCount;   //实际商品总数
+	private Integer isSrc;   //原单项标志，查原单时此标志要传入0，0-收货新添项，1-原单项
+	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
 	private String createUser;   //添加人
@@ -139,6 +141,22 @@ public class PurchaseReceiveOrderProduct implements Serializable {
 
 	public void setRealProductCount(Integer realProductCount){
 		this.realProductCount = realProductCount;
+	}
+
+	public Integer getIsSrc(){
+		return isSrc;
+	}
+
+	public void setIsSrc(Integer isSrc){
+		this.isSrc = isSrc;
+	}
+
+	public Integer getDataStatus(){
+		return dataStatus;
+	}
+
+	public void setDataStatus(Integer dataStatus){
+		this.dataStatus = dataStatus;
 	}
 
 	public String getRemark(){

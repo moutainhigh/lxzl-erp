@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
@@ -104,7 +103,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
 //        purchaseOrderQueryParam.setIsInvoice(1);
 //        purchaseOrderQueryParam.setIsNew(1);
 //        purchaseOrderQueryParam.setCreateStartTime(new Date());
-        purchaseOrderQueryParam.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PENDING);
+        purchaseOrderQueryParam.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_WAIT_COMMIT);
         purchaseOrderQueryParam.setCommitStatus(CommonConstant.COMMON_CONSTANT_YES);
         TestResult result = getJsonTestResult("/purchaseOrder/page",purchaseOrderQueryParam);
     }

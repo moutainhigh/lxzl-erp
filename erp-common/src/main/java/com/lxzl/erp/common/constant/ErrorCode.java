@@ -98,6 +98,10 @@ public class ErrorCode {
     public static final String USER_CAN_NOT_OP_WAREHOUSE = "J300016";
     public static final String VERIFY_USER_NOT_NULL = "J300017";
     public static final String PURCHASE_ORDER_COMMITTED_CAN_NOT_DELETE = "J300018";
+    public static final String PURCHASE_DELIVERY_ORDER_NO_NOT_NULL = "J300019";
+    public static final String PURCHASE_DELIVERY_ORDER_NOT_EXISTS = "J300020";
+    public static final String WAREHOUSE_NO_NOT_NULL = "J300021";
+    public static final String SUPPLIER_NOT_EXISTS = "J300022";
 
     static
     {
@@ -190,6 +194,10 @@ public class ErrorCode {
         MAP.put(USER_CAN_NOT_OP_WAREHOUSE,"您没有该仓库的操作权限");
         MAP.put(VERIFY_USER_NOT_NULL,"审核人不能为空");
         MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_DELETE,"已提交的采购单不能删除");
+        MAP.put(PURCHASE_DELIVERY_ORDER_NO_NOT_NULL,"采购发货单编号不能为空");
+        MAP.put(PURCHASE_DELIVERY_ORDER_NOT_EXISTS,"采购发货单不存在");
+        MAP.put(WAREHOUSE_NO_NOT_NULL,"仓库编号不能为空");
+        MAP.put(SUPPLIER_NOT_EXISTS,"供应商不存在");
     }
 
     public static String getMessage(String code)

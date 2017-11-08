@@ -14,4 +14,6 @@ public interface WarehouseMapper extends BaseMysqlDAO<WarehouseDO>{
 
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
+    WarehouseDO finByNo(@Param("warehouseNo") String warehouseNo);
+
 }

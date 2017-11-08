@@ -1,15 +1,21 @@
 package com.lxzl.erp.common.domain.purchase.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
-import java.math.BigDecimal;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PurchaseDeliveryOrder implements Serializable {
 
 	private Integer purchaseDeliveryOrderId;   //唯一标识
 	private Integer purchaseOrderId;   //采购单ID
+	@NotNull(message = ErrorCode.PURCHASE_DELIVERY_ORDER_NO_NOT_NULL , groups = {IdGroup.class})
 	private String purchaseDeliveryNo;   //采购发货单编号
 	private Integer warehouseId;   //收货方仓库ID
 	private String warehouseSnapshot;   //收货方仓库快照，JSON格式
@@ -24,6 +30,8 @@ public class PurchaseDeliveryOrder implements Serializable {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+
+	private List<PurchaseDeliveryOrderProduct> purchaseDeliveryOrderProductList;
 
 
 	public Integer getPurchaseDeliveryOrderId(){
@@ -154,4 +162,11 @@ public class PurchaseDeliveryOrder implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public List<PurchaseDeliveryOrderProduct> getPurchaseDeliveryOrderProductList() {
+		return purchaseDeliveryOrderProductList;
+	}
+
+	public void setPurchaseDeliveryOrderProductList(List<PurchaseDeliveryOrderProduct> purchaseDeliveryOrderProductList) {
+		this.purchaseDeliveryOrderProductList = purchaseDeliveryOrderProductList;
+	}
 }

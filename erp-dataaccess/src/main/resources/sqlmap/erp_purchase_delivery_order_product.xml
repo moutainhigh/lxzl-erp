@@ -22,10 +22,11 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 	</resultMap>
 
 	<sql id="column_List">
-		epdop.id,epdop.purchase_delivery_order_id,epdop.purchase_order_product_id,epdop.product_id,epdop.product_name,epdop.product_sku_id,epdop.product_snapshot,epdop.product_count,epdop.real_product_id,epdop.real_product_name,epdop.real_product_sku_id,epdop.real_product_snapshot,epdop.real_product_count,epdop.product_amount,epdop.remark,epdop.create_time,epdop.create_user,epdop.update_time,epdop.update_user
+		epdop.id,epdop.purchase_delivery_order_id,epdop.purchase_order_product_id,epdop.product_id,epdop.product_name,epdop.product_sku_id,epdop.product_snapshot,epdop.product_count,epdop.real_product_id,epdop.real_product_name,epdop.real_product_sku_id,epdop.real_product_snapshot,epdop.real_product_count,epdop.product_amount,epdop.remark,epdop.create_time,epdop.create_user,epdop.update_time,epdop.update_user,epdop.data_status
 	</sql>
 
 	<select id="findById" resultMap="PurchaseDeliveryOrderProductDO" parameterType="java.lang.Integer">
@@ -36,6 +37,9 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(epdop.id) from erp_purchase_delivery_order_product epdop 
 		<where>
+			<if test="maps.purchaseOrderId != null">
+				and epdop.purchase_order_id = #{maps.purchaseOrderId, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				and epdop.data_status = 1
 			</if>
@@ -45,6 +49,9 @@
 	<select id="listPage" resultMap="PurchaseDeliveryOrderProductDO" parameterType="map">
 		select <include refid="column_List"/> from erp_purchase_delivery_order_product epdop 
 		<where>
+			<if test="maps.purchaseOrderId != null">
+				and epdop.purchase_order_id = #{maps.purchaseOrderId, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				and epdop.data_status = 1
 			</if>
@@ -107,6 +114,9 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
 			</if>
 		</set>
 	</sql>

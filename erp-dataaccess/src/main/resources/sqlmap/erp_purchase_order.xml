@@ -15,7 +15,6 @@
 		<result column="purchase_order_amount_real" jdbcType="DECIMAL" property="purchaseOrderAmountReal" />
 		<result column="purchase_order_amount_statement" jdbcType="DECIMAL" property="purchaseOrderAmountStatement" />
 		<result column="purchase_order_status" jdbcType="INTEGER" property="purchaseOrderStatus" />
-		<result column="commit_status" jdbcType="INTEGER" property="commitStatus" />
 		<result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="owner" jdbcType="INTEGER" property="owner" />
@@ -46,7 +45,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		epo.id,epo.purchase_no,epo.product_supplier_id,epo.invoice_supplier_id,epo.warehouse_id,epo.warehouse_snapshot,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_amount_real,epo.purchase_order_amount_statement,epo.purchase_order_status,epo.commit_status,epo.delivery_time,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user
+		epo.id,epo.purchase_no,epo.product_supplier_id,epo.invoice_supplier_id,epo.warehouse_id,epo.warehouse_snapshot,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_amount_real,epo.purchase_order_amount_statement,epo.purchase_order_status,epo.delivery_time,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user
 	</sql>
 
 	<sql id="product_column_List">
@@ -69,7 +68,7 @@
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		select count(epo.id) from erp_purchase_order epo 
+		select count(epo.id) from erp_purchase_order epo
 		<where>
 			<if test="true">
 				and epo.data_status = 1
@@ -122,9 +121,7 @@
 			<if test="purchaseOrderStatus != null">
 				purchase_order_status = #{purchaseOrderStatus,jdbcType=INTEGER},
 			</if>
-			<if test="commitStatus != null">
-				commit_status = #{commitStatus,jdbcType=INTEGER},
-			</if>
+
 			<if test="deliveryTime != null">
 				delivery_time = #{deliveryTime,jdbcType=TIMESTAMP},
 			</if>
@@ -188,9 +185,7 @@
 			<if test="maps.queryParam.purchaseOrderStatus != null">
 				and epo.purchase_order_status = #{maps.queryParam.purchaseOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.commitStatus != null">
-				and epo.commit_status = #{maps.queryParam.commitStatus, jdbcType=INTEGER}
-			</if>
+
 			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
 				<![CDATA[ AND epo.create_time >= #{maps.queryParam.createStartTime} ]]>
 			</if>
@@ -226,9 +221,6 @@
 			</if>
 			<if test="maps.queryParam.purchaseOrderStatus != null">
 				and epo.purchase_order_status = #{maps.queryParam.purchaseOrderStatus, jdbcType=INTEGER}
-			</if>
-			<if test="maps.queryParam.commitStatus != null">
-				and epo.commit_status = #{maps.queryParam.commitStatus, jdbcType=INTEGER}
 			</if>
 			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
 				<![CDATA[ AND epo.create_time >= #{maps.queryParam.createStartTime} ]]>

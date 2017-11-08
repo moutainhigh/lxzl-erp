@@ -51,6 +51,17 @@
 			where ew.id = #{id, jdbcType=INTEGER} and ew.data_status = 1  and esc.data_status = 1
 		) warehouse left join erp_warehouse_position ewp on ewp.warehouse_id = warehouse.id
 	</select>
+	<select id="finByNo" resultMap="WarehouseDO" parameterType="java.lang.String">
+		select warehouse.*,<include refid="position_column_List"/>
+		from
+		(
+			select
+			<include refid="column_List"/>,esc.sub_company_name,esc.sub_company_type
+			from erp_warehouse ew
+			left join erp_sub_company esc on esc.id = ew.sub_company_id
+			where ew.warehouse_no = #{warehouseNo, jdbcType=INTEGER} and ew.data_status = 1  and esc.data_status = 1
+		) warehouse left join erp_warehouse_position ewp on ewp.warehouse_id = warehouse.id
+	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(ew.id) from erp_warehouse ew

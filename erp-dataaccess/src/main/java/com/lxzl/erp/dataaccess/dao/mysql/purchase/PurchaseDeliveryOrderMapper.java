@@ -11,4 +11,10 @@ public interface PurchaseDeliveryOrderMapper extends BaseMysqlDAO<PurchaseDelive
 	List<PurchaseDeliveryOrderDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+	List<PurchaseDeliveryOrderDO> findPurchaseDeliveryOrderByParams(@Param("maps") Map<String, Object> paramMap);
+
+	Integer findPurchaseDeliveryOrderCountByParams(@Param("maps") Map<String, Object> paramMap);
+
+	PurchaseDeliveryOrderDO findByNo(@Param("purchaseDeliveryNo") String purchaseDeliveryNo);
 }

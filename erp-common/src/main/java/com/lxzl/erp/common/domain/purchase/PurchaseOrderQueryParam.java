@@ -10,6 +10,7 @@ public class PurchaseOrderQueryParam extends BasePageParam {
     private String purchaseNo ;//采购单编号
     private Integer productSupplierId ;//商品供应商ID
     private Integer invoiceSupplierId ;//发票供应商ID
+    private String warehouseNo ;//仓库ID
     private Integer warehouseId ;//仓库ID
     private Integer isInvoice ;//是否有发票，0否1是
     private Integer isNew ;//是否全新机
@@ -42,12 +43,12 @@ public class PurchaseOrderQueryParam extends BasePageParam {
         this.invoiceSupplierId = invoiceSupplierId;
     }
 
-    public Integer getWarehouseId() {
-        return warehouseId;
+    public String getWarehouseNo() {
+        return warehouseNo;
     }
 
-    public void setWarehouseId(Integer warehouseId) {
-        this.warehouseId = warehouseId;
+    public void setWarehouseNo(String warehouseNo) {
+        this.warehouseNo = warehouseNo;
     }
 
     public Integer getIsInvoice() {
@@ -96,5 +97,13 @@ public class PurchaseOrderQueryParam extends BasePageParam {
 
     public void setCreateEndTime(Date createEndTime) {
         this.createEndTime = createEndTime;
+    }
+
+    public Integer getWarehouseId() {
+        return warehouseId;
+    }
+
+    public void setWarehouseId(Integer warehouseId) {
+        this.warehouseId = warehouseId;
     }
 }

@@ -19,17 +19,46 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
-	</resultMap>
 
+		<collection property="purchaseDeliveryOrderProductDOList" resultMap="PurchaseDeliveryOrderProductDO" />
+	</resultMap>
+	<resultMap id="PurchaseDeliveryOrderProductDO" type="com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderProductDO">
+		<id column="epdop_id" jdbcType="INTEGER" property="id" />
+		<result column="epdop_purchase_delivery_order_id" jdbcType="INTEGER" property="purchaseDeliveryOrderId" />
+		<result column="epdop_purchase_order_product_id" jdbcType="INTEGER" property="purchaseOrderProductId" />
+		<result column="epdop_product_id" jdbcType="INTEGER" property="productId" />
+		<result column="epdop_product_name" jdbcType="VARCHAR" property="productName" />
+		<result column="epdop_product_sku_id" jdbcType="INTEGER" property="productSkuId" />
+		<result column="epdop_product_snapshot" jdbcType="VARCHAR" property="productSnapshot" />
+		<result column="epdop_product_count" jdbcType="INTEGER" property="productCount" />
+		<result column="epdop_real_product_id" jdbcType="INTEGER" property="realProductId" />
+		<result column="epdop_real_product_name" jdbcType="VARCHAR" property="realProductName" />
+		<result column="epdop_real_product_sku_id" jdbcType="INTEGER" property="realProductSkuId" />
+		<result column="epdop_real_product_snapshot" jdbcType="VARCHAR" property="realProductSnapshot" />
+		<result column="epdop_real_product_count" jdbcType="INTEGER" property="realProductCount" />
+		<result column="epdop_product_amount" jdbcType="DECIMAL" property="productAmount" />
+		<result column="epdop_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="epdop_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="epdop_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="epdop_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="epdop_update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
 	<sql id="column_List">
 		epdo.id,epdo.purchase_order_id,epdo.purchase_delivery_no,epdo.warehouse_id,epdo.warehouse_snapshot,epdo.is_invoice,epdo.is_new,epdo.purchase_delivery_order_status,epdo.delivery_time,epdo.data_status,epdo.owner_supplier_id,epdo.remark,epdo.create_time,epdo.create_user,epdo.update_time,epdo.update_user
 	</sql>
-
+	<sql id="product_column_List">
+		epdop.id as epdop_id,epdop.purchase_delivery_order_id as epdop_purchase_delivery_order_id,epdop.purchase_order_product_id as epdop_purchase_order_product_id,epdop.product_id as epdop_product_id,epdop.product_name as epdop_product_name,epdop.product_sku_id as epdop_product_sku_id,epdop.product_snapshot as epdop_product_snapshot,epdop.product_count as epdop_product_count,epdop.real_product_id as epdop_real_product_id,epdop.real_product_name as epdop_real_product_name,epdop.real_product_sku_id as epdop_real_product_sku_id,epdop.real_product_snapshot as epdop_real_product_snapshot,epdop.real_product_count as epdop_real_product_count,epdop.product_amount as epdop_product_amount,epdop.remark as epdop_remark,epdop.create_time as epdop_create_time,epdop.create_user as epdop_create_user,epdop.update_time as epdop_update_time,epdop.update_user as epdop_update_user
+	</sql>
 	<select id="findById" resultMap="PurchaseDeliveryOrderDO" parameterType="java.lang.Integer">
 		select <include refid="column_List"/> from erp_purchase_delivery_order epdo 
 		where epdo.id = #{id, jdbcType=INTEGER} and data_status = 1 
 	</select>
-
+	<select id="findByNo" resultMap="PurchaseDeliveryOrderDO" parameterType="java.lang.String">
+		select <include refid="column_List"/>,<include refid="product_column_List"/> from (
+		select <include refid="column_List"/> from erp_purchase_delivery_order epdo
+		where epdo.purchase_delivery_no = #{purchaseDeliveryNo, jdbcType=VARCHAR} and data_status = 1
+		) epdo left join erp_purchase_delivery_order_product epdop on epdo.id = epdop.purchase_delivery_order_id and epdop.data_status=1
+	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(epdo.id) from erp_purchase_delivery_order epdo 
 		<where>
@@ -98,7 +127,78 @@
 			</if>
 		</set>
 	</sql>
-
+	<select id="findPurchaseDeliveryOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(id)
+		FROM erp_purchase_delivery_order epdo
+		<where>
+			<if test="maps.queryParam.purchaseNo != null &amp;&amp; maps.queryParam.purchaseNo != ''">
+				and epdo.purchase_no = #{maps.queryParam.purchaseNo, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.productSupplierId != null">
+				and epdo.product_supplier_id = #{maps.queryParam.productSupplierId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.invoiceSupplierId != null">
+				and epdo.invoice_supplier_id = #{maps.queryParam.invoiceSupplierId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.warehouseId != null">
+				and epdo.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.isInvoice != null">
+				and epdo.is_invoice = #{maps.queryParam.isInvoice, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.isNew != null">
+				and epdo.is_new = #{maps.queryParam.isNew, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.purchaseDeliveryOrderStatus != null">
+				and epdo.purchase_delivery_order_status = #{maps.queryParam.purchaseDeliveryOrderStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+				<![CDATA[ AND epdo.create_time >= #{maps.queryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+				<![CDATA[ AND epdo.create_time <= #{maps.queryParam.createEndTime} ]]>
+			</if>
+			<if test="true">
+				and epdo.data_status = 1
+			</if>
+		</where>
+	</select>
+	<select id="findPurchaseDeliveryOrderByParams" resultMap="PurchaseDeliveryOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/>
+		FROM erp_purchase_delivery_order epdo
+		<where>
+			<if test="maps.queryParam.purchaseNo != null &amp;&amp; maps.queryParam.purchaseNo != ''">
+				and epdo.purchase_no = #{maps.queryParam.purchaseNo, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.productSupplierId != null">
+				and epdo.product_supplier_id = #{maps.queryParam.productSupplierId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.invoiceSupplierId != null">
+				and epdo.invoice_supplier_id = #{maps.queryParam.invoiceSupplierId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.warehouseId != null">
+				and epdo.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.isInvoice != null">
+				and epdo.is_invoice = #{maps.queryParam.isInvoice, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.isNew != null">
+				and epdo.is_new = #{maps.queryParam.isNew, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.purchaseDeliveryOrderStatus != null">
+				and epdo.purchase_delivery_order_status = #{maps.queryParam.purchaseDeliveryOrderStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+				<![CDATA[ AND epdo.create_time >= #{maps.queryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+				<![CDATA[ AND epdo.create_time <= #{maps.queryParam.createEndTime} ]]>
+			</if>
+			<if test="true">
+				and epdo.data_status = 1
+			</if>
+		</where>
+	</select>
 	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderDO">
 		insert into erp_purchase_delivery_order <include refid="set_column_sql"/>
 	</insert>

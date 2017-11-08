@@ -36,6 +36,9 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(epop.id) from erp_purchase_order_product epop 
 		<where>
+			<if test="maps.purchaseOrderId != null">
+				and epop.purchase_order_id = #{maps.purchaseOrderId, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				and epop.data_status = 1
 			</if>
@@ -45,6 +48,9 @@
 	<select id="listPage" resultMap="PurchaseOrderProductDO" parameterType="map">
 		select <include refid="column_List"/> from erp_purchase_order_product epop 
 		<where>
+			<if test="maps.purchaseOrderId != null">
+				and epop.purchase_order_id = #{maps.purchaseOrderId, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				and epop.data_status = 1
 			</if>

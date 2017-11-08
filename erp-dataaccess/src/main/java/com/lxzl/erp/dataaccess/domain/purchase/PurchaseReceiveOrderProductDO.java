@@ -20,6 +20,8 @@ public class PurchaseReceiveOrderProductDO  extends BaseDO {
 	private Integer realProductSkuId;
 	private String realProductSnapshot;
 	private Integer realProductCount;
+	private Integer isSrc;
+	private Integer dataStatus;
 	private String remark;
 
 	public Integer getId(){
@@ -132,6 +134,22 @@ public class PurchaseReceiveOrderProductDO  extends BaseDO {
 
 	public void setRealProductCount(Integer realProductCount){
 		this.realProductCount = realProductCount;
+	}
+
+	public Integer getIsSrc(){
+		return isSrc;
+	}
+
+	public void setIsSrc(Integer isSrc){
+		this.isSrc = isSrc;
+	}
+
+	public Integer getDataStatus(){
+		return dataStatus;
+	}
+
+	public void setDataStatus(Integer dataStatus){
+		this.dataStatus = dataStatus;
 	}
 
 	public String getRemark(){

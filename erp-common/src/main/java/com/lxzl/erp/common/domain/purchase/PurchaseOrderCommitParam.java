@@ -9,16 +9,16 @@ import javax.validation.constraints.NotNull;
 public class PurchaseOrderCommitParam {
 
     @NotEmpty(message = ErrorCode.PURCHASE_ORDER_NO_NOT_NULL , groups = {ExtendGroup.class})
-    private String purchaseOrderNo;
+    private String purchaseNo;
     @NotNull(message = ErrorCode.VERIFY_USER_NOT_NULL , groups = {ExtendGroup.class})
     private Integer verifyUserId;
 
-    public String getPurchaseOrderNo() {
-        return purchaseOrderNo;
+    public String getPurchaseNo() {
+        return purchaseNo;
     }
 
-    public void setPurchaseOrderNo(String purchaseOrderNo) {
-        this.purchaseOrderNo = purchaseOrderNo;
+    public void setPurchaseNo(String purchaseNo) {
+        this.purchaseNo = purchaseNo;
     }
 
     public Integer getVerifyUserId() {

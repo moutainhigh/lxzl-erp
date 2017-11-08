@@ -4,9 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
+import com.lxzl.erp.common.domain.purchase.pojo.PurchaseDeliveryOrder;
+import com.lxzl.erp.common.domain.purchase.pojo.PurchaseDeliveryOrderProduct;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrderProduct;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderDO;
+import com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderProductDO;
 import com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderDO;
 import com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderProductDO;
 import org.springframework.beans.BeanUtils;
@@ -43,6 +47,23 @@ public class PurchaseOrderConverter {
         }
         return purchaseOrder;
     }
+    public static PurchaseDeliveryOrder convertPurchaseDeliveryOrderDO(PurchaseDeliveryOrderDO purchaseDeliveryOrderDO){
+        PurchaseDeliveryOrder purchaseDeliveryOrder = new PurchaseDeliveryOrder();
+        BeanUtils.copyProperties(purchaseDeliveryOrderDO,purchaseDeliveryOrder);
+        purchaseDeliveryOrder.setPurchaseOrderId(purchaseDeliveryOrderDO.getId());
+        if(purchaseDeliveryOrderDO!=null&&purchaseDeliveryOrderDO.getPurchaseDeliveryOrderProductDOList()!=null&&purchaseDeliveryOrderDO.getPurchaseDeliveryOrderProductDOList().size()>0){
+            List<PurchaseDeliveryOrderProduct> purchaseDeliveryOrderProductList = new ArrayList<>();
+            List<PurchaseDeliveryOrderProductDO> purchaseDeliveryOrderProductDOList = purchaseDeliveryOrderDO.getPurchaseDeliveryOrderProductDOList();
+            for(PurchaseDeliveryOrderProductDO purchaseDeliveryOrderProductDO : purchaseDeliveryOrderProductDOList){
+                PurchaseDeliveryOrderProduct purchaseDeliveryOrderProduct = new PurchaseDeliveryOrderProduct();
+                BeanUtils.copyProperties(purchaseDeliveryOrderProductDO,purchaseDeliveryOrderProduct);
+                purchaseDeliveryOrderProduct.setPurchaseDeliveryOrderProductId(purchaseDeliveryOrderProductDO.getId());
+                purchaseDeliveryOrderProductList.add(purchaseDeliveryOrderProduct);
+            }
+            purchaseDeliveryOrder.setPurchaseDeliveryOrderProductList(purchaseDeliveryOrderProductList);
+        }
+        return purchaseDeliveryOrder;
+    }
     public static List<PurchaseOrder> convertPurchaseOrderDOList(List<PurchaseOrderDO> purchaseOrderDOList){
         List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
         if (purchaseOrderDOList != null && purchaseOrderDOList.size() > 0) {
@@ -51,5 +72,14 @@ public class PurchaseOrderConverter {
             }
         }
         return purchaseOrderList;
+    }
+    public static List<PurchaseDeliveryOrder> convertPurchaseDeliveryOrderDOList(List<PurchaseDeliveryOrderDO> purchaseDeliveryOrderDOList){
+        List<PurchaseDeliveryOrder> purchaseDeliveryOrderList = new ArrayList<>();
+        if (purchaseDeliveryOrderDOList != null && purchaseDeliveryOrderDOList.size() > 0) {
+            for (PurchaseDeliveryOrderDO purchaseDeliveryOrderDO : purchaseDeliveryOrderDOList) {
+                purchaseDeliveryOrderList.add(convertPurchaseDeliveryOrderDO(purchaseDeliveryOrderDO));
+            }
+        }
+        return purchaseDeliveryOrderList;
     }
 }

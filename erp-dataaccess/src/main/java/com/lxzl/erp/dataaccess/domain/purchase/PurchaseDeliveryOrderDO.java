@@ -1,8 +1,11 @@
 package com.lxzl.erp.dataaccess.domain.purchase;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 import java.math.BigDecimal;
+import java.util.List;
 
 public class PurchaseDeliveryOrderDO  extends BaseDO {
 
@@ -18,6 +21,9 @@ public class PurchaseDeliveryOrderDO  extends BaseDO {
 	private Integer dataStatus;
 	private Integer ownerSupplierId;
 	private String remark;
+
+	@Transient
+	private List<PurchaseDeliveryOrderProductDO> purchaseDeliveryOrderProductDOList;
 
 	public Integer getId(){
 		return id;
@@ -115,4 +121,11 @@ public class PurchaseDeliveryOrderDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public List<PurchaseDeliveryOrderProductDO> getPurchaseDeliveryOrderProductDOList() {
+		return purchaseDeliveryOrderProductDOList;
+	}
+
+	public void setPurchaseDeliveryOrderProductDOList(List<PurchaseDeliveryOrderProductDO> purchaseDeliveryOrderProductDOList) {
+		this.purchaseDeliveryOrderProductDOList = purchaseDeliveryOrderProductDOList;
+	}
 }
