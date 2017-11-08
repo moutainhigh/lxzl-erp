@@ -67,11 +67,11 @@
                         </label>
                     </div>
                     <div class="col-md-4">
-                        <label for="isSale" class="field-label">是否销售</label>
+                        <label for="isRent" class="field-label">是否在租</label>
                         <label class="field select">
-                            <select id="isSale" name="isSale">
-                                <option value="1">是</option>
-                                <option value="0">否</option>
+                            <select id="isRent" name="isRent">
+                                <option value="1">在租</option>
+                                <option value="0">下架</option>
                             </select>
                             <i class="arrow"></i>
                         </label>
@@ -207,7 +207,7 @@
                                 <label class="field prepend-icon"><input type="text" name="originalPrice-{{rowKey}}" value="{{originalPrice}}" class="originalPrice form-control required moneyNumber" /></label>
                             </td>
                             <td>
-                                <label class="field prepend-icon"><input type="text" name="salePrice-{{rowKey}}" value="{{salePrice}}" class="salePrice form-control required moneyNumber" /></label>
+                                <label class="field prepend-icon"><input type="text" name="salePrice-{{rowKey}}" value="{{rentPrice}}" class="rentPrice form-control required moneyNumber" /></label>
                             </td>
                         </tr>
                         {{/list}}
@@ -221,6 +221,7 @@
             </div>
 
             <div class="panel-footer text-right">
+                <button type="button" class="button btn-default" id="cancelEditProductBtn">取消</button>
                 <button type="submit" class="button btn-primary" id="createProductBtn">确定</button>
             </div>
         </div>

@@ -26,7 +26,6 @@
 		from erp_warehouse_position_position ewp where em.id = #{id, jdbcType=INTEGER} and data_status = 1
 	</select>
 
-
 	<sql id="set_column_sql">
 		<set>
 			<if test="warehouseNo != null">

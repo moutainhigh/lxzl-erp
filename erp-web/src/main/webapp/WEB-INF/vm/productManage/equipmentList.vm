@@ -3,6 +3,7 @@
 <head>
     <title>爱租-运营管理系统-商品管理-SKU列表</title>
     #parse("layout/header.vm")
+    #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
@@ -13,7 +14,7 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
-            <div class="panel mb25 mt5">
+           #* <div class="panel mb25 mt5">
                 <form id="searchForm">
                     <div class="panel-heading">
                         <span class="panel-title">SKU查询</span>
@@ -87,33 +88,49 @@
                         <button type="reset" class="btn"> 重置 </button>
                     </div>
                 </form>
-            </div>
-            <div class="panel">
-                <div class="panel-menu p12 theme-primary">
-                    <div class="row table-layout">
-                        <div class="col-md-6">
-                            <script type="text/html" id="actionButtonsTpl">
-                                {{#acitonButtons}}
-                                <button type="button" class="btn btn-default light" id="{{id}}" title="{{menuName}}"><i class="{{iClass}}"></i></button>
-                                {{/acitonButtons}}
-                            </script>
-
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default light" id="btnRefresh" title="刷新"><i class="fa fa-refresh"></i>
-                                </button>
-                                <span id="acitonButtons"></span>
+            </div>*#
+            <div class="panel panel-primary panel-border top">
+                <div class="panel-menu p12">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="btn-group" id="actionCommonButtons">
+                                <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
                             </div>
                         </div>
-                        <div class="col-md-6 text-right">
+                        <div class="col-md-8 text-right">
+                            <form id="searchForm" class="form-horizontal">
+                                <div class="pull-right">
+                                    <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                    <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                </div>
+                                <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                    <div class="input-group">
+                                        <input type="text" name="equipmentNo" id="equipmentNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入设备号">
+                                    </div>
+                                </div>
+                                <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                    <div class="input-group">
+                                        <input type="text" name="productName" id="productName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入商品名称">
+                                    #*<span class="input-group-addon btn-search  input-sm bradiusR" id="submitSearchForm"><i class="fa fa-search"></i> 查询</span>*#
+                                    </div>
+                                </div>
+                                <script type="text/html" id="equipmentStatusSelectTpl">
+                                    <option value="">全部</option>
+                                    {{#equipmentStatus}}
+                                    <option value={{num}}>{{value}}</option>
+                                    {{/equipmentStatus}}
+                                </script>
+                                <select name="equipmentStatus" id="equipmentStatus" class="hide"></select>
+                            </form>
                         </div>
                     </div>
                 </div>
                 <div class="panel-body pn">
                     <div class="table-responsive">
-                        <table class="table admin-form theme-warning tc-checkbox-1 fs13">
+                        <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13">
                             <thead>
-                            <tr class="bg-light">
-                                <th class="text-center">
+                            <tr>
+                                <th>
                                     <label class="option block mn">
                                         <input type="checkbox" name="orders" value="">
                                         <span class="checkbox mn"></span>
@@ -132,7 +149,7 @@
                             <script type="text/html" id="skuListTpl">
                                 {{#listData}}
                                 <tr>
-                                    <td class="text-center">
+                                    <td>
                                         <label class="option block mn">
                                             <input type="checkbox" name="mobileos" value="FR">
                                             <span class="checkbox mn"></span>
@@ -158,13 +175,13 @@
                                 {{/listData}}
                                 {{^listData}}
                                 <tr>
-                                    <td valign="top" colspan="9">没有查询到设备</td>
+                                    <td valign="top" colspan="9" class="text-center">没有查询到设备</td>
                                 </tr>
                                 {{/listData}}
                             </script>
                             <tbody id="skuListTbody">
                                 <tr>
-                                    <td valign="top" colspan="9">无记录</td>
+                                    <td valign="top" colspan="9" class="text-center">没有查询到设备</td>
                                 </tr>
                             </tbody>
                         </table>

@@ -42,6 +42,10 @@ public class PageController extends BaseController {
     public String userManageEditUser() {
         return "/component/user/edit";
     }
+    @RequestMapping("/user-manage/userAccessData")
+    public String userManageUserAccessData() {
+        return "/component/user/userAccessData";
+    }
 
     @RequestMapping("/user-manage/role")
     public String userManageRole() {

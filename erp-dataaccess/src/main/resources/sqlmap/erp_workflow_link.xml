@@ -48,8 +48,12 @@
 	</sql>
 
 	<select id="findById" resultMap="WorkflowLinkDO" parameterType="java.lang.Integer">
-		select <include refid="column_List"/> from erp_workflow_link ewl 
-		where ewl.id = #{id, jdbcType=INTEGER} and data_status = 1 
+		select link.*,<include refid="detail_column_List"/> from
+		(
+			select <include refid="column_List"/> from erp_workflow_link ewl
+			where ewl.id = #{id, jdbcType=INTEGER} and data_status = 1
+		) link left join erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
+		order by ewld.id
 	</select>
 
 	<select id="findByWorkflowTypeAndReferId" resultMap="WorkflowLinkDO" parameterType="map">

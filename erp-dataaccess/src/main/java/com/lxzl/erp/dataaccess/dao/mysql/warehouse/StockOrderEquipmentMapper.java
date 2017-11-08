@@ -8,6 +8,8 @@ import java.util.Map;
 
 public interface StockOrderEquipmentMapper extends BaseMysqlDAO<StockOrderEquipmentDO> {
 
+	Integer saveList(@Param("stockOrderEquipmentDOList")List<StockOrderEquipmentDO> stockOrderEquipmentDOList);
+
 	List<StockOrderEquipmentDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);

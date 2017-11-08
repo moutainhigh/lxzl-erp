@@ -196,6 +196,16 @@
         </set>
     </sql>
 
+
+    <insert id="saveList" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.ArrayList">
+        insert into erp_product_equipment (equipment_no,product_id,sku_id,warehouse_id,warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,equipment_price,equipment_status,data_status,remark,create_time,create_user,update_time,update_user) values
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList" open="" separator="," close="">
+            #{productEquipmentDO.equipmentNo},#{productEquipmentDO.productId},#{productEquipmentDO.skuId},#{productEquipmentDO.warehouseId},#{productEquipmentDO.warehousePositionId},#{productEquipmentDO.ownerWarehouseId},
+            #{productEquipmentDO.ownerWarehousePositionId},#{productEquipmentDO.equipmentPrice},#{productEquipmentDO.equipmentStatus},#{productEquipmentDO.dataStatus},#{productEquipmentDO.remark},
+            #{productEquipmentDO.createTime},#{productEquipmentDO.createUser},#{productEquipmentDO.updateTime},#{productEquipmentDO.updateUser}
+        </foreach>
+    </insert>
+
     <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO">
         update erp_product_equipment
         <include refid="set_column_sql"/>

@@ -1,4 +1,4 @@
-package com.lxzl.erp.common.domain.workflow;
+package com.lxzl.erp.common.domain.workflow.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
