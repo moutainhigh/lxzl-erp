@@ -7,7 +7,7 @@
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
-<div id="main">
+    <div id="main">
     #parse("layout/navbar.vm")
     #parse("layout/sidebar.vm")
     <section id="content_wrapper">
@@ -129,18 +129,22 @@
                 </div>
                 <div class="panel-body pn">
                     <div class="table-responsive">
-                        <script type="text/html" id="skuListTpl">
+                        <script type="text/html" id="dataListTpl">
                             <thead>
                                 <tr>
+                                    {{#hasCommonActionButtons}}
                                     <th>
                                         <label class="option block mn">
-                                            <input type="checkbox" name="orders" value="">
+                                            <input type="checkbox" name="checkAll" value="">
                                             <span class="checkbox mn"></span>
                                         </label>
                                     </th>
+                                    {{/hasCommonActionButtons}}
                                     #*<th>设备ID</th>*#
                                     <th>设备编号</th>
                                     <th>商品ID</th>
+                                    <th>商品名</th>
+                                    <th>商品图</th>
                                     <th>SKUID</th>
                                     <th>设备状态</th>
                                     <th>可用状态</th>
@@ -154,28 +158,32 @@
                                 {{#dataSource}}
                                     {{#listData}}
                                     <tr>
+                                        {{#hasCommonActionButtons}}
                                         <td>
                                             <label class="option block mn">
-                                                <input type="checkbox" name="mobileos" value="FR">
+                                                <input type="checkbox" name="checkItem" value="FR">
                                                 <span class="checkbox mn"></span>
                                             </label>
                                         </td>
+                                        {{/hasCommonActionButtons}}
                                         #*<td>{{productEquipmentId}}</td>*#
                                         <td>{{equipmentNo}}</td>
                                         <td>{{productId}}</td>
+                                        <td>{{productName}}</td>
+                                        <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                         <td>{{skuId}}</td>
                                         <td>{{equipmentStatusStr}}</td>
                                         <td>{{dataStatusStr}}</td>
                                         <td>{{remark}}</td>
-                                        {{#acitonButtons}}
+                                        {{#hasRowActionButtons}}
                                         <td class="text-right">
                                             <div class="btn-group text-right">
-                                                {{#acitons}}
+                                                {{#rowActionButtons}}
                                                 <button type="button" class="btn btn-default btn-xs {{class}}" data-productid="{{productId}}" data-skuid="{{skuId}}"> <i class="{{iClass}}"></i>{{text}} </button>
-                                                {{/acitons}}
+                                                {{/rowActionButtons}}
                                             </div>
                                         </td>
-                                        {{/acitonButtons}}
+                                        {{/hasRowActionButtons}}
                                     </tr>
                                     {{/listData}}
                                     {{^listData}}
@@ -186,31 +194,7 @@
                                 {{/dataSource}}
                             </tbody>
                         </script>
-                        <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="skuListTbody">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <label class="option block mn">
-                                            <input type="checkbox" name="orders" value="">
-                                            <span class="checkbox mn"></span>
-                                        </label>
-                                    </th>
-                                    #*<th>设备ID</th>*#
-                                    <th>设备编号</th>
-                                    <th>商品ID</th>
-                                    <th>SKUID</th>
-                                    <th>设备状态</th>
-                                    <th>可用状态</th>
-                                    <th>备注</th>
-                                    <th class="text-right">操作</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td valign="top" colspan="8" class="text-center">没有查询到设备</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                     </div>
                 </div>
                 <div class="panel-footer">
@@ -227,25 +211,21 @@
 
     #parse("layout/sidebarRight.vm")
 </div>
-
     #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/dropzone/dropzone.min.js"></script>
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js','manage.product.equipment.list.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        EquipmentManage.init();
 
+        //UI效果初始化
+        Core.init();
+        Demo.init();
 
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/dropzone/dropzone.min.js"></script>
-<script type="text/javascript">
-    management_load_script('${staticManagement}/js','manage.product.equipment.list.js');
-</script>
-<script type="text/javascript">
-    //功能事件初始化
-    Rental.init();
-    Layout.init();
-    EquipmentManage.init();
-
-    //UI效果初始化
-    Core.init();
-    Demo.init();
-
-</script>
-
+    </script>
 </body>
 </html>
