@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper">
+
+    <resultMap type="com.lxzl.erp.dataaccess.domain.order.OrderProductDO" id="OrderProductDO">
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="product_id" property="productId"/>
+        <result column="product_name" property="productName"/>
+        <result column="product_sku_id" property="productSkuId"/>
+        <result column="product_sku_name" property="productSkuName"/>
+        <result column="product_count" property="productCount"/>
+        <result column="product_unit_amount" property="productUnitAmount"/>
+        <result column="product_amount" property="productAmount"/>
+        <result column="product_mode_params" property="productModeParams"/>
+        <result column="data_status" property="dataStatus"/>
+        <result column="remark" property="remark"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <collection property="equipmentNoList" resultMap="ProductEquipmentDO"  />
+    </resultMap>
+
+    <resultMap id="ProductEquipmentDO" type="java.lang.String">
+        <result column="product_sku_equipment_no" property="equipmentNo"/>
+    </resultMap>
+
+    <sql id="column_List">
+        mop.id as id,mop.order_id as order_id,mop.product_id as product_id,mop.product_name as product_name,mop.product_sku_id as product_sku_id,mop.product_sku_name as product_sku_name,mop.product_count as product_count,mop.product_unit_amount as product_unit_amount,mop.product_amount as product_amount,mop.product_mode_params as product_mode_params,mop.data_status as data_status,mop.remark as remark,mop.create_time as create_time,mop.create_user as create_user,mop.update_time as update_time,mop.update_user as update_user
+    </sql>
+
+    <select id="findById" resultMap="OrderProductDO" parameterType="java.lang.Integer">
+        SELECT main_order_product.*
+        ,esr.equipment_no AS product_sku_equipment_no
+        FROM (
+        select
+        <include refid="column_List"/>from erp_order_product as mop where id = #{id, jdbcType=INTEGER}
+        ) main_order_product
+        LEFT JOIN erp_product_equipment_storage_record esr ON esr.order_product_id = main_order_product.id
+    </select>
+
+    <sql id="set_column_sql">
+        <set>
+            <if test="orderId != null">
+                order_id = #{orderId, jdbcType=INTEGER},
+            </if>
+            <if test="productId != null">
+                product_id = #{productId, jdbcType=INTEGER},
+            </if>
+            <if test="productName != null">
+                product_name = #{productName, jdbcType=VARCHAR},
+            </if>
+            <if test="productSkuId != null">
+                product_sku_id = #{productSkuId, jdbcType=INTEGER},
+            </if>
+            <if test="productSkuName != null">
+                product_sku_name = #{productSkuName, jdbcType=VARCHAR},
+            </if>
+            <if test="productCount != null">
+                product_count = #{productCount, jdbcType=INTEGER},
+            </if>
+            <if test="productUnitAmount != null">
+                product_unit_amount = #{productUnitAmount, jdbcType=DECIMAL},
+            </if>
+            <if test="productAmount != null">
+                product_amount = #{productAmount, jdbcType=DECIMAL},
+            </if>
+            <if test="productModeParams != null">
+                product_mode_params = #{productModeParams, jdbcType=VARCHAR},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus, jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+    </sql>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.order.OrderProductDO">
+        update erp_order_product
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.order.OrderProductDO">
+        INSERT INTO erp_order_product
+        <include refid="set_column_sql"/>
+    </insert>
+    <select id="findOrderProductCountByParams" resultType="java.lang.Integer" parameterType="map">
+        select count(mop.id)
+        from erp_order_product mop
+        <where>
+            <if test="maps.queryProductParam.orderId != null">
+                and mop.order_id = #{maps.queryProductParam.orderId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.queryProductParam.productId != null">
+                and mop.product_id = #{maps.queryProductParam.productId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.queryProductParam.productName != null &amp;&amp; maps.queryProductParam.productName != ''">
+                and mop.product_name like CONCAT('%','${maps.queryProductParam.productName}','%' )
+            </if>
+            <if test="maps.queryProductParam.productSkuId != null">
+                and mop.product_sku_id = #{maps.queryProductParam.productSkuId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.queryProductParam.productSkuName != null &amp;&amp; maps.queryProductParam.productSkuName != ''">
+                and mop.product_sku_name like CONCAT('%','${maps.queryProductParam.productSkuName}','%' )
+            </if>
+            <if test="true">
+                and mop.data_status = 1
+            </if>
+        </where>
+    </select>
+    <select id="findOrderProductByParams" resultMap="OrderProductDO" parameterType="map">
+        SELECT <include refid="column_List"/>
+        ,esr.equipment_no AS product_sku_equipment_no
+        FROM
+        (
+        select
+        <include refid="column_List"/>
+        from erp_order_product mop left join erp_order mo on mo.id=mop.order_id
+        <where>
+            <if test="maps.queryProductParam.orderId != null">
+                and mop.order_id = #{maps.queryProductParam.orderId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.queryProductParam.productId != null">
+                and mop.product_id = #{maps.queryProductParam.productId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.queryProductParam.productName != null &amp;&amp; maps.queryProductParam.productName != ''">
+                and mop.product_name like CONCAT('%','${maps.queryProductParam.productName}','%' )
+            </if>
+            <if test="maps.queryProductParam.productSkuId != null">
+                and mop.product_sku_id = #{maps.queryProductParam.productSkuId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.queryProductParam.productSkuName != null &amp;&amp; maps.queryProductParam.productSkuName != ''">
+                and mop.product_sku_name like CONCAT('%','${maps.queryProductParam.productSkuName}','%' )
+            </if>
+            <if test="true">
+                and mop.data_status = 1
+            </if>
+            <if test="maps.queryProductParam.orderStatus != null">
+                and mo.order_status = #{maps.queryProductParam.orderStatus, jdbcType=INTEGER}
+            </if>
+        </where>
+        LIMIT #{maps.start},#{maps.pageSize}
+        ) mop
+        LEFT JOIN erp_product_equipment_storage_record esr ON esr.order_product_id = mop.id
+        ORDER BY mop.create_time DESC
+    </select>
+</mapper>

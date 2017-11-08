@@ -42,7 +42,7 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
     public void setup(){
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
         try {
-            sessionResult = getLoginSession("maotao","123456");
+            sessionResult = getLoginSession("weblee","123456");
             this.session = sessionResult.mockHttpSession;
         } catch (Exception e) {
             e.printStackTrace();

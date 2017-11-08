@@ -6,8 +6,11 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
 		<result column="province" jdbcType="INTEGER" property="province" />
+		<result column="province_name" jdbcType="VARCHAR" property="provinceName" />
 		<result column="city" jdbcType="INTEGER" property="city" />
+		<result column="city_name" jdbcType="VARCHAR" property="cityName" />
 		<result column="district" jdbcType="INTEGER" property="district" />
+		<result column="district_name" jdbcType="VARCHAR" property="districtName" />
 		<result column="address" jdbcType="VARCHAR" property="address" />
 		<result column="tel" jdbcType="VARCHAR" property="tel" />
 		<result column="contactName" jdbcType="VARCHAR" property="contactName" />
@@ -25,13 +28,24 @@
 	</sql>
 
 	<select id="findById" resultMap="SupplierDO" parameterType="java.lang.Integer">
-		select <include refid="column_List"/> from erp_supplier es 
+		select <include refid="column_List"/>
+		,eddp.data_name AS province_name,eddc.data_name AS city_name,eddd.data_name AS district_name
+		from erp_supplier es
+		LEFT JOIN erp_data_dictionary eddp ON eddp.id = es.province
+		LEFT JOIN erp_data_dictionary eddc ON eddc.id = es.city
+		LEFT JOIN erp_data_dictionary eddd ON eddd.id = es.district
 		where es.id = #{id, jdbcType=INTEGER} and data_status = 1 
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(es.id) from erp_supplier es 
 		<where>
+			<if test="maps.supplierQueryParam != null &amp;&amp; maps.supplierQueryParam.supplierId != null">
+				and es.id = #{maps.supplierQueryParam.supplierId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.supplierQueryParam != null &amp;&amp; maps.supplierQueryParam.supplierName != null &amp;&amp; maps.supplierQueryParam.supplierName != ''">
+				and es.supplier_name like CONCAT('%','${maps.supplierQueryParam.supplierName}','%' )
+			</if>
 			<if test="true">
 				and es.data_status = 1
 			</if>
@@ -39,10 +53,21 @@
 	</select>
 
 	<select id="listPage" resultMap="SupplierDO" parameterType="map">
-		select <include refid="column_List"/> from erp_supplier es 
+		SELECT <include refid="column_List"/>
+		,eddp.data_name AS province_name,eddc.data_name AS city_name,eddd.data_name AS district_name
+		FROM erp_supplier es
+		LEFT JOIN erp_data_dictionary eddp ON eddp.id = es.province
+		LEFT JOIN erp_data_dictionary eddc ON eddc.id = es.city
+		LEFT JOIN erp_data_dictionary eddd ON eddd.id = es.district
 		<where>
+			<if test="maps.supplierQueryParam != null &amp;&amp; maps.supplierQueryParam.supplierId != null">
+				AND es.id = #{maps.supplierQueryParam.supplierId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.supplierQueryParam != null &amp;&amp; maps.supplierQueryParam.supplierName != null &amp;&amp; maps.supplierQueryParam.supplierName != ''">
+				AND es.supplier_name LIKE CONCAT('%','${maps.supplierQueryParam.supplierName}','%' )
+			</if>
 			<if test="true">
-				and es.data_status = 1
+				AND es.data_status = 1
 			</if>
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}

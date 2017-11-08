@@ -185,6 +185,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
         StockOrderDO stockOrderDO = new StockOrderDO();
         stockOrderDO.setOperationType(StockOperationType.STORCK_OPERATION_TYPE_IN);
+        stockOrderDO.setStockOrderNo(GenerateNoUtil.generateStockOrderNo(currentTime));
         stockOrderDO.setCauseType(causeType);
         stockOrderDO.setReferNo(referNo);
         stockOrderDO.setSrcWarehouseId(srcWarehouseId);
@@ -291,8 +292,14 @@ public class WarehouseServiceImpl implements WarehouseService {
             }
         }
 
-        productEquipmentMapper.saveList(allProductEquipmentDOList);
-        stockOrderEquipmentMapper.saveList(allStockOrderEquipmentDOList);
-        productEquipmentMaterialMapper.saveList(allProductEquipmentMaterialDOList);
+        if(!allProductEquipmentDOList.isEmpty()){
+            productEquipmentMapper.saveList(allProductEquipmentDOList);
+        }
+        if(!allStockOrderEquipmentDOList.isEmpty()){
+            stockOrderEquipmentMapper.saveList(allStockOrderEquipmentDOList);
+        }
+        if(!allProductEquipmentMaterialDOList.isEmpty()){
+            productEquipmentMaterialMapper.saveList(allProductEquipmentMaterialDOList);
+        }
     }
 }

@@ -9,8 +9,11 @@ public class SupplierDO  extends BaseDO {
 	private Integer id;
 	private String supplierName;
 	private Integer province;
+	private String provinceName;
 	private Integer city;
+	private String cityName;
 	private Integer district;
+	private String districtName;
 	private String address;
 	private String tel;
 	private String contactName;
@@ -106,4 +109,27 @@ public class SupplierDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public String getProvinceName() {
+		return provinceName;
+	}
+
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getDistrictName() {
+		return districtName;
+	}
+
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
+	}
 }

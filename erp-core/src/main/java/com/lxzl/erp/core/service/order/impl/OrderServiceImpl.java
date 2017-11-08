@@ -1,0 +1,527 @@
+package com.lxzl.erp.core.service.order.impl;
+
+import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.Page;
+import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.order.*;
+import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
+import com.lxzl.erp.common.domain.product.*;
+import com.lxzl.erp.common.domain.product.pojo.Product;
+import com.lxzl.erp.common.domain.product.pojo.ProductSku;
+import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
+import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.util.BigDemicalUtil;
+import com.lxzl.erp.common.util.FastJsonUtil;
+import com.lxzl.erp.common.util.GenerateNoUtil;
+import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.core.service.order.OrderService;
+import com.lxzl.erp.core.service.order.impl.support.ConvertOrder;
+import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.dataaccess.dao.mysql.order.*;
+import com.lxzl.erp.dataaccess.dao.mysql.product.*;
+import com.lxzl.erp.dataaccess.domain.order.*;
+import com.lxzl.erp.dataaccess.domain.product.*;
+import com.lxzl.se.common.util.StringUtil;
+import com.lxzl.se.common.util.date.DateUtil;
+import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
+import java.util.*;
+
+@Service("orderService")
+public class OrderServiceImpl implements OrderService {
+    private static Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> createOrder(Order order) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+        String verifyCreateOrderCode = verifyCreateOrder(order, loginUser);
+        if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
+            result.setErrorCode(verifyCreateOrderCode);
+            return result;
+        }
+
+        List<OrderProductDO> orderProductDOList = ConvertOrder.convertOrderProductList(order.getOrderProductList());
+        OrderDO orderDO = ConvertOrder.convertOrder(order);
+        calculateOrderProductInfo(orderProductDOList, orderDO);
+
+        orderDO.setBuyerUserId(loginUser.getUserId());
+        orderDO.setBuyerRealName(loginUser.getRealName());
+        orderDO.setOrderNo(GenerateNoUtil.generateOrderNo(currentTime, loginUser.getUserId()));
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_INIT);
+        orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        orderDO.setCreateUser(loginUser.getUserId().toString());
+        orderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderDO.setCreateTime(currentTime);
+        orderDO.setUpdateTime(currentTime);
+        orderMapper.save(orderDO);
+        saveOrderProductInfo(orderProductDOList, orderDO.getId(), loginUser, currentTime);
+        // TODO保存收货地址
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(orderDO.getOrderNo());
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Order> queryOrderByNo(String orderNo) {
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        ServiceResult<String, Order> result = new ServiceResult<>();
+        if (orderNo == null) {
+            result.setErrorCode(ErrorCode.ID_NOT_NULL);
+            return result;
+        }
+        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        if (loginUser != null && !orderDO.getBuyerUserId().equals(loginUser.getUserId())) {
+            result.setErrorCode(ErrorCode.OPERATOR_IS_NOT_YOURSELF);
+            return result;
+        }
+        if(orderDO == null){
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        Order order = ConvertOrder.convertOrderDO(orderDO);
+
+        for (OrderProduct orderProduct : order.getOrderProductList()) {
+            Product product = FastJsonUtil.toBean(orderProduct.getProductSnapshot(), Product.class);
+            for (ProductSku productSku : product.getProductSkuList()) {
+                if(orderProduct.getProductSkuId().equals(productSku.getSkuId())){
+                    orderProduct.setProductSkuPropertyList(productSku.getProductSkuPropertyList());
+                    break;
+                }
+            }
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(order);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> cancelOrder(String orderNo) {
+        Date currentTime = new Date();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        if (orderNo == null) {
+            result.setErrorCode(ErrorCode.ID_NOT_NULL);
+            return result;
+        }
+        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        if (loginUser != null && !orderDO.getBuyerUserId().equals(loginUser.getUserId())) {
+            result.setErrorCode(ErrorCode.OPERATOR_IS_NOT_YOURSELF);
+            return result;
+        }
+        if (orderDO.getOrderStatus() == null || !OrderStatus.ORDER_STATUS_INIT.equals(orderDO.getOrderStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
+        orderDO.setUpdateTime(currentTime);
+        if (loginUser != null) {
+            orderDO.setUpdateUser(loginUser.getUserId().toString());
+        }
+        orderMapper.update(orderDO);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(orderDO.getId());
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Page<Order>> queryAllOrder(OrderQueryParam orderQueryParam) {
+        ServiceResult<String, Page<Order>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("oderQueryParam", orderQueryParam);
+
+        Integer totalCount = orderMapper.findOrderCountByParams(maps);
+        List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
+        List<Order> orderList = ConvertOrder.convertOrderDOList(orderDOList);
+        Page<Order> page = new Page<>(orderList, totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Page<Order>> queryOrderByUserId(OrderQueryParam orderQueryParam) {
+        ServiceResult<String, Page<Order>> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+
+        orderQueryParam.setBuyerUserId(loginUser.getUserId());
+        maps.put("oderQueryParam", orderQueryParam);
+
+        Integer totalCount = orderMapper.findOrderCountByParams(maps);
+        List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
+        Page<Order> page = new Page<>(ConvertOrder.convertOrderDOList(orderDOList), totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, Integer> deliveryOrder(Order order) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+        OrderDO dbRecordOrder = orderMapper.findByOrderId(order.getOrderId());
+        if (dbRecordOrder == null) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        if (!OrderStatus.ORDER_STATUS_PAID.equals(dbRecordOrder.getOrderStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
+        Map<Integer, OrderProduct> orderProductMap = ListUtil.listToMap(order.getOrderProductList(), "orderProductId");
+
+        for (OrderProductDO orderProductDO : dbRecordOrder.getOrderProductDOList()) {
+            if (orderProductDO.getEquipmentNoList() == null || orderProductDO.getEquipmentNoList().size() < orderProductDO.getProductCount()) {
+                OrderProduct orderProduct = orderProductMap.get(orderProductDO.getId());
+                if (orderProduct.getEquipmentNoList() == null || orderProduct.getEquipmentNoList().size() == 0) {
+                    result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_NOT_NULL);
+                    return result;
+                }
+
+                // 判断该订单项还有几个设备没录入
+                if ((orderProductDO.getEquipmentNoList().size() + orderProduct.getEquipmentNoList().size()) != orderProductDO.getProductCount()) {
+                    result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR);
+                    return result;
+                }
+
+                //TODO 发货设备
+            }
+            orderProductMap.remove(orderProductDO.getId());
+        }
+
+        dbRecordOrder.setDeliveryTime(currentTime);
+        dbRecordOrder.setOrderStatus(OrderStatus.ORDER_STATUS_DELIVERED);
+        dbRecordOrder.setUpdateUser(loginUser.getUserId().toString());
+        dbRecordOrder.setUpdateTime(currentTime);
+        orderMapper.update(dbRecordOrder);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(order.getOrderId());
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> confirmOrder(String orderNo) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+
+        Date currentTime = new Date();
+        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        if (orderDO == null) {
+            logger.info("未查询到交易订单{}相关信息", orderNo);
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+
+        // 判断订单状态，如果状态已经终结，就不用再继续了
+        Integer orderState = orderDO.getOrderStatus();
+        if (orderState == null || !OrderStatus.ORDER_STATUS_DELIVERED.equals(orderState)) {
+            logger.error("交易订单{}状态为{}，不能确认收货", orderNo, orderState);
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
+
+        orderDO.setConfirmDeliveryTime(currentTime);
+        if (OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())) {
+            orderDO.setExpectReturnTime(DateUtil.monthInterval(currentTime, orderDO.getRentTimeLength()));
+        }
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
+        orderDO.setUpdateTime(currentTime);
+        orderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderMapper.update(orderDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(orderDO.getId());
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, Integer> outOrderProductEquipment(OrderProduct orderProduct) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+        if (orderProduct.getEquipmentNoList() == null || orderProduct.getEquipmentNoList().size() == 0) {
+            result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_NOT_NULL);
+            return result;
+        }
+
+        OrderProductDO orderProductDO = orderProductMapper.findById(orderProduct.getOrderProductId());
+        if (orderProductDO == null) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        OrderDO dbRecordOrder = orderMapper.findByOrderId(orderProductDO.getOrderId());
+        if (dbRecordOrder == null) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        if (!OrderStatus.ORDER_STATUS_PAID.equals(dbRecordOrder.getOrderStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
+
+        // 判断该订单项是不是录入多了
+        if ((orderProductDO.getEquipmentNoList().size() + orderProduct.getEquipmentNoList().size()) > orderProductDO.getProductCount()) {
+            result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR);
+            return result;
+        }
+
+        for (String equipmentNo : orderProduct.getEquipmentNoList()) {
+            ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(equipmentNo);
+            if (productEquipmentDO == null || !ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE.equals(productEquipmentDO.getEquipmentStatus())) {
+                result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_STATUS_ERROR);
+                return result;
+            }
+            if (!orderProductDO.getProductSkuId().equals(productEquipmentDO.getSkuId())) {
+                result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_SKU_NOT_SAME);
+                return result;
+            }
+
+            // 操作设备
+            productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY);
+            productEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+            productEquipmentDO.setUpdateTime(currentTime);
+            productEquipmentMapper.update(productEquipmentDO);
+            // 商品出入库
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(orderProductDO.getId());
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, Integer> returnOrderProductEquipment(OrderProduct orderProduct) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+
+        OrderProductDO orderProductDO = orderProductMapper.findById(orderProduct.getOrderProductId());
+        if (orderProductDO == null) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        if (orderProductDO.getEquipmentNoList() == null || orderProductDO.getEquipmentNoList().size() == 0) {
+            result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_IS_NULL);
+            return result;
+        }
+
+        for (String equipmentNo : orderProduct.getEquipmentNoList()) {
+            ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(equipmentNo);
+            if (productEquipmentDO == null || !ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY.equals(productEquipmentDO.getEquipmentStatus())) {
+                result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_STATUS_ERROR);
+                return result;
+            }
+            // 操作设备
+            productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
+            productEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+            productEquipmentDO.setUpdateTime(currentTime);
+            productEquipmentMapper.update(productEquipmentDO);
+            // TODO 商品出入库
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(orderProductDO.getId());
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, Integer> updateOrderProductEquipment(OrderProduct orderProduct) {
+        // 变更设备就是先归还，然后再出库
+        ServiceResult<String, Integer> result = returnOrderProductEquipment(orderProduct);
+        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+            result.setErrorCode(result.getErrorCode());
+            return result;
+        }
+        return outOrderProductEquipment(orderProduct);
+    }
+
+    @Override
+    public ServiceResult<String, Page<OrderProduct>> queryOrderProductInfo(OrderQueryProductParam queryProductParam) {
+        ServiceResult<String, Page<OrderProduct>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(queryProductParam.getPageNo(), queryProductParam.getPageSize());
+        //根据orderNo获取orderId
+        if(StringUtil.isNotEmpty(queryProductParam.getOrderNo())){
+            OrderDO orderDO = orderMapper.findByOrderNo(queryProductParam.getOrderNo());
+            if(orderDO==null){
+                result.setErrorCode(ErrorCode.SUCCESS);
+                result.setResult(new Page<OrderProduct>());
+                return result;
+            }else{
+                queryProductParam.setOrderId(orderDO.getId());
+            }
+        }
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("queryProductParam", queryProductParam);
+
+        Integer totalCount = orderProductMapper.findOrderProductCountByParams(maps);
+        List<OrderProductDO> orderProductDOList = orderProductMapper.findOrderProductByParams(maps);
+        List<OrderProduct> productSkuList = ConvertOrder.convertOrderProductDOList(orderProductDOList);
+        for (OrderProduct orderProduct : productSkuList) {
+            Product product = FastJsonUtil.toBean(orderProduct.getProductSnapshot(), Product.class);
+            for (ProductSku productSku : product.getProductSkuList()) {
+                if(orderProduct.getProductSkuId().equals(productSku.getSkuId())){
+                    orderProduct.setProductSkuPropertyList(productSku.getProductSkuPropertyList());
+                    break;
+                }
+            }
+        }
+        Page<OrderProduct> page = new Page<>(productSkuList, totalCount, queryProductParam.getPageNo(), queryProductParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
+    private void saveOrderProductInfo(List<OrderProductDO> orderProductDOList, Integer orderId, User loginUser, Date currentTime) {
+        if (orderProductDOList != null && !orderProductDOList.isEmpty()) {
+            for (OrderProductDO orderProductDO : orderProductDOList) {
+                orderProductDO.setOrderId(orderId);
+                orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                orderProductDO.setCreateUser(loginUser.getUserId().toString());
+                orderProductDO.setUpdateUser(loginUser.getUserId().toString());
+                orderProductDO.setCreateTime(currentTime);
+                orderProductDO.setUpdateTime(currentTime);
+                orderProductMapper.save(orderProductDO);
+
+                // 减库存
+                ProductSkuDO productSkuDO = productSkuMapper.findById(orderProductDO.getProductSkuId());
+                productSkuDO.setStock(productSkuDO.getStock() - orderProductDO.getProductCount());
+                productSkuMapper.update(productSkuDO);
+
+            }
+        }
+    }
+    private void calculateOrderProductInfo(List<OrderProductDO> orderProductDOList, OrderDO orderDO) {
+        if (orderProductDOList != null && !orderProductDOList.isEmpty()) {
+            int productCount = 0;
+            BigDecimal productAmountTotal = new BigDecimal(0.0);
+            for (OrderProductDO orderProductDO : orderProductDOList) {
+                ServiceResult<String, Product> productServiceResult = productService.queryProductById(orderProductDO.getProductId());
+                Product product = productServiceResult.getResult();
+                orderProductDO.setProductName(product.getProductName());
+                ProductSkuDO productSkuDO = productSkuMapper.findById(orderProductDO.getProductSkuId());
+                orderProductDO.setProductSkuName(productSkuDO.getSkuName());
+                orderProductDO.setProductUnitAmount(productSkuDO.getRentPrice());
+                orderProductDO.setProductAmount(BigDemicalUtil.mul(productSkuDO.getRentPrice(), new BigDecimal(orderProductDO.getProductCount())));
+                orderProductDO.setProductSnapshot(FastJsonUtil.toJSONString(product));
+                productCount += orderProductDO.getProductCount();
+                productAmountTotal = BigDemicalUtil.add(productAmountTotal, orderProductDO.getProductAmount());
+            }
+
+            orderDO.setProductCountTotal(productCount);
+            orderDO.setProductAmountTotal(BigDemicalUtil.mul(productAmountTotal, new BigDecimal(orderDO.getRentTimeLength())));
+            orderDO.setOrderAmountTotal(BigDemicalUtil.sub(BigDemicalUtil.add(orderDO.getProductAmountTotal(), orderDO.getLogisticsAmount()), orderDO.getDiscountAmountTotal()));
+        }
+    }
+
+    private String verifyCreateOrder(Order order, User loginUser) {
+        if (order == null) {
+            return ErrorCode.PARAM_IS_NOT_NULL;
+        }
+        if (order.getOrderProductList() == null || order.getOrderProductList().isEmpty()) {
+            return ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL;
+        }
+        if (order.getUserConsignId() == null) {
+            return ErrorCode.ORDER_USER_CONSIGN_NOT_NULL;
+        }
+        if (order.getPayMode() == null) {
+            return ErrorCode.ORDER_PAY_MODE_NOT_NULL;
+        }
+        if (order.getRentType() == null || order.getRentTimeLength() == null || order.getRentTimeLength() <= 0) {
+            return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
+        }
+        for (OrderProduct orderProduct : order.getOrderProductList()) {
+            if (orderProduct.getProductSkuPropertyList() == null || orderProduct.getProductSkuPropertyList().isEmpty()) {
+                return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
+            }
+            List<Integer> propertyValueIdList = new ArrayList<>();
+            for (ProductSkuProperty productSkuProperty : orderProduct.getProductSkuPropertyList()) {
+                propertyValueIdList.add(productSkuProperty.getPropertyValueId());
+            }
+            if (propertyValueIdList.size() == 0) {
+                return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
+            }
+            if (orderProduct.getProductCount() == null || orderProduct.getProductCount() <= 0) {
+                return ErrorCode.PARAM_IS_NOT_NULL;
+            }
+
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("productId", orderProduct.getProductId());
+            maps.put("isSku", CommonConstant.COMMON_CONSTANT_YES);
+            maps.put("propertyValueIdList", propertyValueIdList);
+            maps.put("propertyValueIdCount", propertyValueIdList.size());
+            Integer skuId = productSkuPropertyMapper.findSkuIdByParams(maps);
+            if (skuId == null) {
+                return ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS;
+            }
+
+            orderProduct.setProductSkuId(skuId);
+            ServiceResult<String, Product> productServiceResult = productService.queryProductById(orderProduct.getProductId());
+            ProductSkuDO productSkuDO = productSkuMapper.findById(orderProduct.getProductSkuId());
+            if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode()) || productServiceResult.getResult() == null || productSkuDO == null) {
+                return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
+            }
+            if (productSkuDO.getStock() == null || productSkuDO.getStock() <= 0 || (productSkuDO.getStock() - orderProduct.getProductCount()) < 0) {
+                return ErrorCode.ORDER_PRODUCT_STOCK_INSUFFICIENT;
+            }
+        }
+        return ErrorCode.SUCCESS;
+    }
+
+
+    @Autowired(required = false)
+    private HttpSession session;
+
+    @Autowired
+    private OrderMapper orderMapper;
+
+    @Autowired
+    private OrderProductMapper orderProductMapper;
+
+    @Autowired
+    private OrderConsignInfoMapper orderConsignInfoMapper;
+
+    @Autowired
+    private ProductSkuPropertyMapper productSkuPropertyMapper;
+
+
+    @Autowired
+    private ProductSkuMapper productSkuMapper;
+
+    @Autowired
+    private ProductEquipmentMapper productEquipmentMapper;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private ProductEquipmentRepairRecordMapper productEquipmentRepairRecordMapper;
+}

@@ -79,9 +79,9 @@
 		insert into erp_stock_order_equipment <include refid="set_column_sql"/>
 	</insert>
 
-	<insert id="saveList" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.ArrayList">
-		insert into erp_stock_order_equipment (stock_order_no, equipment_id, equipment_no, data_status, remark, create_time, create_user, update_time, update_user) values
-		<foreach item="stockOrderEquipmentDO" collection="stockOrderEquipmentDOList" open="" separator="," close="">
+	<insert id="saveList" parameterType="java.util.ArrayList">
+		insert into erp_stock_order_equipment (stock_order_no, equipment_id, equipment_no, data_status, remark, create_time, create_user, update_time, update_user)
+		<foreach item="stockOrderEquipmentDO" collection="stockOrderEquipmentDOList" separator="UNION ALL">
 			SELECT #{stockOrderEquipmentDO.stockOrderNo},epe.id,#{stockOrderEquipmentDO.equipmentNo},#{stockOrderEquipmentDO.dataStatus},#{stockOrderEquipmentDO.remark},
 			#{stockOrderEquipmentDO.createTime},#{stockOrderEquipmentDO.createUser},#{stockOrderEquipmentDO.updateTime},#{stockOrderEquipmentDO.updateUser}
 			FROM erp_product_equipment epe WHERE epe.equipment_no = #{stockOrderEquipmentDO.equipmentNo}
