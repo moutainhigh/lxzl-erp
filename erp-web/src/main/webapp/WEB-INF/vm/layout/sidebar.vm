@@ -44,7 +44,7 @@
         <ul class="nav sidebar-menu">
             #*<li class="sidebar-label pt20">菜单</li>*#
             <li>
-                <a href="${ctx}/home" data-authorurl="/home" class="authorLink">
+                <a href="${ctx}home" data-authorurl="home" class="authorLink">
                     <span class="glyphicons glyphicons-home"></span>
                     <span class="sidebar-title">首页</span>
                 </a>
@@ -62,7 +62,7 @@
                     <ul class="nav sub-nav">
                         {{#children}}
                         <li>
-                            <a href=${ctx}{{menuUrl}} data-authorurl={{menuUrl}} class="authorLink">
+                            <a href=${ctx}{{menuUrl}} data-authorurl={{menuUrl}} author="{{menuId}}" class="authorLink">
                                 <span class="glyphicons glyphicons-table"></span>{{menuName}}
                             </a>
                         </li>

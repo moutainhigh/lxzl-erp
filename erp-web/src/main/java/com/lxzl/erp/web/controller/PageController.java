@@ -142,4 +142,22 @@ public class PageController extends BaseController {
         return "/customerManage/customerInfo";
     }
 
+    //采购管理
+    @RequestMapping("/purchase-manage/list")
+    public String purchaseManageList() {
+        return "/purchaseManage/purchaseList";
+    }
+    @RequestMapping("/purchase-manage/add")
+    public String purchaseManageAdd() {
+        return "/purchaseManage/purchaseAdd";
+    }
+    @RequestMapping("/purchase-manage/edit")
+    public String purchaseManageEdit() {
+        return "/purchaseManage/purchaseEdit";
+    }
+    @RequestMapping("/purchase-manage/detail")
+    public String purchaseManageDetail() {
+        return "/purchaseManage/purchaseDetail";
+    }
+
 }
