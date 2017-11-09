@@ -226,6 +226,12 @@ public class ProductTest extends BaseUnTransactionalTest {
     }
 
     @Test
+    public void queryProductDetailById() {
+        Integer productId = 2000001;
+        ServiceResult<String, Product> result = productService.queryProductDetailById(productId);
+    }
+
+    @Test
     public void testQueryProduct() {
         ProductQueryParam param = new ProductQueryParam();
         param.setPageNo(1);

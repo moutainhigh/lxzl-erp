@@ -26,6 +26,11 @@ public interface WarehouseService extends BaseService {
 
     ServiceResult<String, Warehouse> getWarehouseById(Integer warehouseId);
 
+    /**
+     * @description 商品入库，只支持采购首次入库
+     * @param productInStockParam 商品入库基本信息
+     * @return
+     */
     ServiceResult<String, Integer> productInStock(ProductInStockParam productInStockParam);
 
     ServiceResult<String, Integer> productOutStock(List<ProductInStorage> productInStorageList);

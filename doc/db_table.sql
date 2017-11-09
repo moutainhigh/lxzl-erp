@@ -614,7 +614,7 @@ DROP TABLE if exists `erp_warehouse_position`;
 CREATE TABLE `erp_warehouse_position` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `warehouse_id` int(20) NOT NULL COMMENT '仓库ID',
-  `warehouse_position_name` varchar(100) COLLATE utf8_bin COMMENT '仓库名称',
+  `warehouse_position_name` varchar(100) COLLATE utf8_bin COMMENT '仓位名称',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -622,7 +622,7 @@ CREATE TABLE `erp_warehouse_position` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='仓库表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='仓位表';
 
 DROP TABLE if exists `erp_stock_order`;
 CREATE TABLE `erp_stock_order` (
@@ -981,18 +981,18 @@ DROP TABLE if exists `erp_purchase_receive_order_product`;
 CREATE TABLE `erp_purchase_receive_order_product` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `purchase_receive_order_id` int(20) NOT NULL COMMENT '采购单ID',
-  `purchase_order_product_id` int(20) NOT NULL COMMENT '采购单项ID',
-  `purchase_delivery_order_product_id` int(20) NOT NULL COMMENT '采购发货单项ID',
-  `product_id` int(20) NOT NULL COMMENT '商品ID，来源（采购发货单），不可变更',
-  `product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID 不可变更',
-  `product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称冗余，不可修改',
-  `product_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照，不可修改',
-  `product_count` int(11) NOT NULL DEFAULT '1' COMMENT '商品总数，来源（采购发货单），不可变更',
-  `real_product_id` int(20) NOT NULL COMMENT '实际商品ID',
-  `real_product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称冗余，可修改',
-  `real_product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID',
-  `real_product_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照，可修改',
-  `real_product_count` int(11) NOT NULL DEFAULT '1' COMMENT '实际商品总数',
+  `purchase_order_product_id` int(20) DEFAULT NULL COMMENT '采购单项ID',
+  `purchase_delivery_order_product_id` int(20) DEFAULT NULL COMMENT '采购发货单项ID',
+  `product_id` int(20) DEFAULT NULL COMMENT '商品ID，来源（采购发货单），不可变更',
+  `product_sku_id` int(20) DEFAULT NULL COMMENT '商品SKU ID 不可变更',
+  `product_name` varchar(100) DEFAULT NULL COLLATE utf8_bin COMMENT '商品名称冗余，不可修改',
+  `product_snapshot` text DEFAULT NULL COMMENT '商品冗余信息，防止商品修改留存快照，不可修改',
+  `product_count` int(11) DEFAULT '1' COMMENT '商品总数，来源（采购发货单），不可变更',
+  `real_product_id` int(20) DEFAULT NULL COMMENT '实际商品ID',
+  `real_product_name` varchar(100) DEFAULT NULL  COLLATE utf8_bin COMMENT '商品名称冗余，可修改',
+  `real_product_sku_id` int(20) DEFAULT NULL COMMENT '商品SKU ID',
+  `real_product_snapshot` text DEFAULT NULL COMMENT '商品冗余信息，防止商品修改留存快照，可修改',
+  `real_product_count` int(11) DEFAULT '1' COMMENT '实际商品总数',
   `is_src` int(11) NOT NULL DEFAULT '1' COMMENT '原单项标志，查原单时此标志要传入0，0-收货新添项，1-原单项',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',

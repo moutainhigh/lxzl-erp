@@ -34,6 +34,12 @@ public interface ProductService extends BaseService {
     // 根据商品ID查询商品
     ServiceResult<String, Product> queryProductById(Integer productId);
 
+    /**
+     * @param productId 商品ID
+     * @return  商品详情（带物料信息）
+     */
+    ServiceResult<String, Product> queryProductDetailById(Integer productId);
+
     // 根据参数查询商品
     ServiceResult<String, Page<Product>> queryAllProduct(ProductQueryParam param);
 

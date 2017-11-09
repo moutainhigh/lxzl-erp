@@ -128,7 +128,7 @@ public class MyTest {
         }
         xmlSb.append("\t<select id=\"findById\" resultMap=\""+table.doTableName+"\" parameterType=\"java.lang.Integer\">\n");
         xmlSb.append("\t\tSELECT <include refid=\"column_List\"/> FROM "+table.sqlTableName + " "+simpleSb.toString()+" \n");
-        xmlSb.append("\t\tWHERE "+simpleSb.toString()+".id = #{id, jdbcType=INTEGER} AND data_status = 1 \n");
+        xmlSb.append("\t\tWHERE "+simpleSb.toString()+".id = #{id, jdbcType=INTEGER} AND "+simpleSb.toString()+".data_status = 1 \n");
         xmlSb.append("\t</select>\n\n");
 
         xmlSb.append("\t<select id=\"listCount\" resultType=\"java.lang.Integer\" parameterType=\"map\">\n");
