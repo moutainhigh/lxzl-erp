@@ -15,6 +15,7 @@
 		<result column="material_price" jdbcType="DECIMAL" property="materialPrice" />
 		<result column="original_price" jdbcType="DECIMAL" property="originalPrice" />
 		<result column="rent_price" jdbcType="DECIMAL" property="rentPrice" />
+		<result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />

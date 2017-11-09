@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.*;
 import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.util.AlgorithmUtil;
+import com.lxzl.erp.core.service.product.ProductCategoryService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.se.unit.test.BaseUnTransactionalTest;
 import org.junit.Test;
@@ -22,19 +23,29 @@ public class ProductTest extends BaseUnTransactionalTest {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private ProductCategoryService productCategoryService;
+
     @Test
     public void testQueryAllProductCategory() {
-        ServiceResult<String, List<ProductCategory>> result = productService.queryAllProductCategory();
+        ServiceResult<String, List<ProductCategory>> result = productCategoryService.queryAllProductCategory();
     }
 
     @Test
     public void testQueryProductCategoryPropertyListByCategoryId() {
-        ServiceResult<String, List<ProductCategoryProperty>> result = productService.queryProductCategoryPropertyListByCategoryId(800002);
+        ServiceResult<String, List<ProductCategoryProperty>> result = productCategoryService.queryProductCategoryPropertyListByCategoryId(800002);
     }
 
     @Test
     public void testQueryPropertiesByProductId() {
-        ServiceResult<String, List<ProductCategoryProperty>> result = productService.queryPropertiesByProductId(2000001);
+        ServiceResult<String, List<ProductCategoryProperty>> result = productCategoryService.queryPropertiesByProductId(2000001);
+    }
+    @Test
+    public void addProductCategoryPropertyValue() {
+        ProductCategoryPropertyValue productCategoryPropertyValue = new ProductCategoryPropertyValue();
+        productCategoryPropertyValue.setPropertyId(2);
+        productCategoryPropertyValue.setPropertyValueName("DDR4  16G");
+        ServiceResult<String, Integer> result = productCategoryService.addProductCategoryPropertyValue(productCategoryPropertyValue);
     }
 
     @Test
