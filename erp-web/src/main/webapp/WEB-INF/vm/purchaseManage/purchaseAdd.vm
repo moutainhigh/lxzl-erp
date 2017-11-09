@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-采购管理-添加采购单</title>
+    #parse("layout/header.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
+    #parse("layout/theme.vm")
+    <script type="text/javascript">
+        common_load_css('${staticCommon}/rental/css','dropzone.css');
+    </script>
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
+
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+
+
+            </section>
+        </section>
+
+        #parse("layout/sidebarRight.vm")
+    </div>
+        #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js','manage.purchase.add.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        AddPurchase.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+
+    </script>
+</body>
+</html>
