@@ -131,7 +131,32 @@
 
                 <script type="text/html" id="productPropertiesTpl">
                     <div class="section-divider mv40"><span> 商品属性  </span></div>
+
                     {{#properties}}
+                    <div class="col-md-3 pad-r40 border-right">
+                        <div class="panel">
+                            <div class="panel-heading pn ph8">
+                                <span>{{propertyName}}</span>
+                            </div>
+                            <div class="panel-body nano nano-default affix rtlnao" style="height: 200px">
+                                <div class="nano-content">
+                                    <div class="option-group field p10">
+                                        {{#propertyValueList}}
+                                        {{#list}}
+                                        <label class="option option-primary mb10 block">
+                                            <input type="radio" name="productPropertyRido-{{propertyId}}" class="productPropertyRido" value="{{categoryPropertyValueId}}" data-property="{{property}}" {{#checked}}checked{{/checked}} />
+                                            <span class="radio"></span> {{propertyValueName}}
+                                        </label>
+                                        {{/list}}
+                                        {{/propertyValueList}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{/properties}}
+
+                    #*{{#properties}}
                     <div class="col-md-3 pad-r40 border-right">
                         <div id="widget1" class="section-divider mb30">
                             <span>{{propertyName}}</span>
@@ -147,17 +172,40 @@
                             {{/propertyValueList}}
                         </div>
                     </div>
-                    {{/properties}}
+                    {{/properties}}*#
                 </script>
 
 
-                <div class="section row" id="productPropertiesContainer">
-                </div>
+                <div class="section row"><div class="col-md-12" id="productPropertiesContainer"></div></div>
 
 
                 <script type="text/html" id="skuPropertiesTpl">
                     <div class="section-divider mv40"><span> 销售属性  </span></div>
                     {{#properties}}
+                    <div class="col-md-3">
+                        <div class="panel">
+                            <div class="panel-heading pn ph8">
+                                <span>{{propertyName}}</span>
+                            </div>
+                            <div class="panel-body nano nano-default affix rtlnao" style="height: 200px">
+                                <div class="nano-content">
+                                    <div class="option-group field p10">
+                                        {{#propertyValueList}}
+                                        {{#list}}
+                                        <label class="option block option-primary mb10">
+                                            <input type="checkbox" name="property-{{propertyId}}" value="{{categoryPropertyValueId}}" data-property="{{property}}" {{#checked}}checked{{/checked}} >
+                                            <span class="checkbox"></span> {{propertyValueName}}
+                                        </label>
+                                        {{/list}}
+                                        {{/propertyValueList}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{/properties}}
+
+                    #*{{#properties}}
                     <div class="col-md-3">
                         <div class="option-group field">
                             <div id="widget1" class="section-divider mb30">
@@ -173,7 +221,7 @@
                             {{/propertyValueList}}
                         </div>
                     </div>
-                    {{/properties}}
+                    {{/properties}}*#
                 </script>
                 <div class="section" id="skuPropertiesContainer"></div>
 
