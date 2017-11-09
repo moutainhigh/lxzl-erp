@@ -10,7 +10,7 @@ import java.util.List;
 public class MyTest {
 
     public static void main(String[] args) throws Exception {
-        test("erp_warehouse_position");
+        test("erp_bulk_material");
     }
 
     private static String URL = "jdbc:mysql://192.168.10.205:3306/lxzl_erp?useUnicode=true&amp;characterEncoding=UTF-8";
@@ -127,24 +127,24 @@ public class MyTest {
             simpleSb.append(s.substring(0,1));
         }
         xmlSb.append("\t<select id=\"findById\" resultMap=\""+table.doTableName+"\" parameterType=\"java.lang.Integer\">\n");
-        xmlSb.append("\t\tselect <include refid=\"column_List\"/> from "+table.sqlTableName + " "+simpleSb.toString()+" \n");
-        xmlSb.append("\t\twhere "+simpleSb.toString()+".id = #{id, jdbcType=INTEGER} and data_status = 1 \n");
+        xmlSb.append("\t\tSELECT <include refid=\"column_List\"/> FROM "+table.sqlTableName + " "+simpleSb.toString()+" \n");
+        xmlSb.append("\t\tWHERE "+simpleSb.toString()+".id = #{id, jdbcType=INTEGER} AND data_status = 1 \n");
         xmlSb.append("\t</select>\n\n");
 
         xmlSb.append("\t<select id=\"listCount\" resultType=\"java.lang.Integer\" parameterType=\"map\">\n");
-        xmlSb.append("\t\tselect count("+simpleSb.toString()+".id) from "+table.sqlTableName+ " "+simpleSb.toString()+" \n");
+        xmlSb.append("\t\tSELECT count("+simpleSb.toString()+".id) FROM "+table.sqlTableName+ " "+simpleSb.toString()+" \n");
         xmlSb.append("\t\t<where>\n");
         xmlSb.append("\t\t\t<if test=\"true\">\n");
-        xmlSb.append("\t\t\t\tand "+simpleSb.toString()+".data_status = 1\n");
+        xmlSb.append("\t\t\t\tAND "+simpleSb.toString()+".data_status = 1\n");
         xmlSb.append("\t\t\t</if>\n");
         xmlSb.append("\t\t</where>\n");
         xmlSb.append("\t</select>\n\n");
 
         xmlSb.append("\t<select id=\"listPage\" resultMap=\""+table.doTableName+"\" parameterType=\"map\">\n");
-        xmlSb.append("\t\tselect <include refid=\"column_List\"/> from "+table.sqlTableName+ " "+simpleSb.toString()+" \n");
+        xmlSb.append("\t\tSELECT <include refid=\"column_List\"/> FROM "+table.sqlTableName+ " "+simpleSb.toString()+" \n");
         xmlSb.append("\t\t<where>\n");
         xmlSb.append("\t\t\t<if test=\"true\">\n");
-        xmlSb.append("\t\t\t\tand "+simpleSb.toString()+".data_status = 1\n");
+        xmlSb.append("\t\t\t\tAND "+simpleSb.toString()+".data_status = 1\n");
         xmlSb.append("\t\t\t</if>\n");
         xmlSb.append("\t\t</where>\n");
         xmlSb.append("\t\tLIMIT #{maps.start},#{maps.pageSize}\n");
@@ -165,11 +165,11 @@ public class MyTest {
         xmlSb.append("\t\t</set>\n");
         xmlSb.append("\t</sql>\n\n");
         xmlSb.append("\t<insert id=\"save\" keyProperty=\"id\" useGeneratedKeys=\"true\" parameterType=\""+table.doTableName+"\">\n");
-        xmlSb.append("\t\tinsert into "+table.sqlTableName+" <include refid=\"set_column_sql\"/>\n");
+        xmlSb.append("\t\tINSERT INTO "+table.sqlTableName+" <include refid=\"set_column_sql\"/>\n");
         xmlSb.append("\t</insert>\n");
         xmlSb.append("\n");
         xmlSb.append("\t<update id=\"update\" parameterType=\""+table.doTableName+"\">\n");
-        xmlSb.append("\t\tupdate "+table.sqlTableName+" <include refid=\"set_column_sql\"/> WHERE id = #{id, jdbcType=INTEGER}\n");
+        xmlSb.append("\t\tUPDATE "+table.sqlTableName+" <include refid=\"set_column_sql\"/> WHERE id = #{id, jdbcType=INTEGER}\n");
         xmlSb.append("\t</update>\n");
         xmlSb.append("</mapper>");
         return xmlSb.toString();

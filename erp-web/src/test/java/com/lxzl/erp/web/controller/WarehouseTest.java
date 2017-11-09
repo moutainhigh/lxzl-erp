@@ -20,35 +20,35 @@ import java.util.List;
 public class WarehouseTest extends ERPUnTransactionalTest {
 
     @Test
-    public void getWarehousePage() throws Exception{
+    public void getWarehousePage() throws Exception {
         WarehouseQueryParam warehouseQueryParam = new WarehouseQueryParam();
         warehouseQueryParam.setPageNo(1);
         warehouseQueryParam.setPageSize(20);
-        TestResult result = getJsonTestResult("/warehouse/getWarehousePage",warehouseQueryParam);
+        TestResult result = getJsonTestResult("/warehouse/getWarehousePage", warehouseQueryParam);
     }
 
     @Test
-    public void getWarehouseByCompany() throws Exception{
+    public void getWarehouseByCompany() throws Exception {
         WarehouseQueryParam warehouseQueryParam = new WarehouseQueryParam();
         warehouseQueryParam.setSubCompanyId(2);
-        TestResult result = getJsonTestResult("/warehouse/getWarehouseByCompany",warehouseQueryParam);
+        TestResult result = getJsonTestResult("/warehouse/getWarehouseByCompany", warehouseQueryParam);
     }
 
     @Test
-    public void getWarehouseByCurrentCompany() throws Exception{
+    public void getWarehouseByCurrentCompany() throws Exception {
         WarehouseQueryParam warehouseQueryParam = new WarehouseQueryParam();
-        TestResult result = getJsonTestResult("/warehouse/getWarehouseByCurrentCompany",warehouseQueryParam);
+        TestResult result = getJsonTestResult("/warehouse/getWarehouseByCurrentCompany", warehouseQueryParam);
     }
 
     @Test
-    public void getWarehouseById() throws Exception{
+    public void getWarehouseById() throws Exception {
         WarehouseQueryParam warehouseQueryParam = new WarehouseQueryParam();
         warehouseQueryParam.setWarehouseId(4000001);
-        TestResult result = getJsonTestResult("/warehouse/getWarehouseById",warehouseQueryParam);
+        TestResult result = getJsonTestResult("/warehouse/getWarehouseById", warehouseQueryParam);
     }
 
     @Test
-    public void productInStock() throws Exception{
+    public void productInStock() throws Exception {
         ProductInStockParam productInStockParam = new ProductInStockParam();
         List<ProductInStorage> productInStorageList = new ArrayList<>();
         ProductInStorage productInStorage = new ProductInStorage();
@@ -61,6 +61,6 @@ public class WarehouseTest extends ERPUnTransactionalTest {
         productInStockParam.setTargetWarehouseId(4000001);
         productInStockParam.setReferNo("C201711071720430655000051081");
         productInStockParam.setCauseType(StockCauseType.STORCK_CAUSE_TYPE_IN_PURCHASE);
-        TestResult result = getJsonTestResult("/warehouse/productInStock",productInStockParam);
+        TestResult result = getJsonTestResult("/warehouse/productInStock", productInStockParam);
     }
 }
