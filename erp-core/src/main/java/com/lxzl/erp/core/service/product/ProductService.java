@@ -10,14 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface ProductService extends BaseService {
-    // 查询商品所有的类目
-    ServiceResult<String, List<ProductCategory>> queryAllProductCategory();
-
-    // 根据类目ID，查询类目下所有的属性
-    ServiceResult<String, List<ProductCategoryProperty>> queryProductCategoryPropertyListByCategoryId(Integer categoryId);
-
-    // 查询该商品下该有的类目
-    ServiceResult<String, List<ProductCategoryProperty>> queryPropertiesByProductId(Integer productId);
 
     // 上传商品图片
     ServiceResult<String, List<ProductImg>> uploadImage(MultipartFile[] files);

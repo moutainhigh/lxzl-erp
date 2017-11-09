@@ -42,43 +42,7 @@ import java.util.*;
  */
 @Service("productService")
 public class ProductServiceImpl implements ProductService {
-
     private static Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
-
-    @Override
-    public ServiceResult<String, List<ProductCategory>> queryAllProductCategory() {
-        ServiceResult<String, List<ProductCategory>> result = new ServiceResult<>();
-
-        Map<String, Object> maps = new HashMap<>();
-        List<ProductCategoryDO> productCategoryDOList = productCategoryMapper.findAllCategory(maps);
-        List<ProductCategory> nodeList = ConvertProductCategory.convertProductCategoryTree(ConvertProductCategory.convertProductCategoryDOList(productCategoryDOList));
-        result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(nodeList);
-        return result;
-    }
-
-    @Override
-    public ServiceResult<String, List<ProductCategoryProperty>> queryProductCategoryPropertyListByCategoryId(Integer categoryId) {
-        ServiceResult<String, List<ProductCategoryProperty>> result = new ServiceResult<>();
-        Map<String, Object> maps = new HashMap<>();
-        maps.put("categoryId", categoryId);
-        List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findProductCategoryPropertyListByCategoryId(maps);
-        result.setResult(ConvertProductCategoryProperty.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
-    }
-
-    @Override
-    public ServiceResult<String, List<ProductCategoryProperty>> queryPropertiesByProductId(Integer productId) {
-        ServiceResult<String, List<ProductCategoryProperty>> result = new ServiceResult<>();
-        Map<String, Object> maps = new HashMap<>();
-        maps.put("productId", productId);
-        List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findProductCategoryPropertyListByProductId(maps);
-        result.setResult(ConvertProductCategoryProperty.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
-    }
-
     @Override
     public ServiceResult<String, List<ProductImg>> uploadImage(MultipartFile[] files) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -628,9 +592,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private FileService fileService;
-
-    @Autowired
-    private ProductCategoryMapper productCategoryMapper;
 
     @Autowired
     private ProductCategoryPropertyMapper productCategoryPropertyMapper;
