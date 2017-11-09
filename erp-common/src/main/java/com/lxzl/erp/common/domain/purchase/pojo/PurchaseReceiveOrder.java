@@ -22,7 +22,7 @@ public class PurchaseReceiveOrder implements Serializable {
 	private Integer purchaseReceiveOrderId;   //唯一标识
 	private Integer purchaseOrderId;   //采购单ID
 	private Integer purchaseDeliveryOrderId;   //采购发货单ID
-	@NotEmpty(message = ErrorCode.PURCHASE_RECEIVE_ORDER_NO_NOT_NULL , groups = {UpdateGroup.class})
+	@NotEmpty(message = ErrorCode.PURCHASE_RECEIVE_ORDER_NO_NOT_NULL , groups = {IdGroup.class,UpdateGroup.class})
 	private String purchaseReceiveNo;   //采购收货单编号
 	private Integer productSupplierId;   //商品供应商ID
 	private Integer warehouseId;   //仓库ID

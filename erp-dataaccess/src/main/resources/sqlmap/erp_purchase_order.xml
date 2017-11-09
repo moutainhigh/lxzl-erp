@@ -69,7 +69,12 @@
 		where epo.purchase_no = #{purchaseNo, jdbcType=VARCHAR} and data_status = 1
 		) epo left join erp_purchase_order_product epop on epop.purchase_order_id = epo.id and epop.data_status=1
 	</select>
-
+	<select id="findDetailById" resultMap="PurchaseOrderDO" parameterType="java.lang.Integer">
+		select <include refid="column_List"/>,<include refid="product_column_List"/> from (
+		select <include refid="column_List"/> from erp_purchase_order epo
+		where epo.id = #{id, jdbcType=INTEGER} and data_status = 1
+		) epo left join erp_purchase_order_product epop on epop.purchase_order_id = epo.id and epop.data_status=1
+	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(epo.id) from erp_purchase_order epo
 		<where>

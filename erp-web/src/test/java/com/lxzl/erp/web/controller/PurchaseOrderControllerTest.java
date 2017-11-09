@@ -162,6 +162,13 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseReceiveOrder.setPurchaseReceiveOrderProductList(purchaseOrderProductList);
         TestResult result = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder",purchaseReceiveOrder);
     }
+
+    @Test
+    public void commitPurchaseReceiveOrder() throws Exception {
+        PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
+        purchaseReceiveOrder.setPurchaseReceiveNo("R2017110915515804260000061341");
+        TestResult result = getJsonTestResult("/purchaseOrder/commitPurchaseReceiveOrder",purchaseReceiveOrder);
+    }
     @Autowired
     private PurchaseOrderService purchaseOrderService;
 }
