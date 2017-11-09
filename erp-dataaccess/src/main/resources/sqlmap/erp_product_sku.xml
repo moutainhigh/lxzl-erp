@@ -23,6 +23,7 @@
         <result column="update_user" property="updateUser"/>
         <result column="update_time" property="updateTime"/>
         <collection property="productSkuPropertyDOList" resultMap="ProductSkuPropertyDO" />
+        <collection property="productMaterialDOList" resultMap="ProductMaterialDO" />
     </resultMap>
 
     <resultMap type="com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO" id="ProductSkuPropertyDO">
@@ -42,12 +43,31 @@
         <result column="sku_property_update_time" property="updateTime"/>
     </resultMap>
 
+
+    <resultMap id="ProductMaterialDO" type="com.lxzl.erp.dataaccess.domain.product.ProductMaterialDO">
+        <id column="product_material_id" jdbcType="INTEGER" property="id" />
+        <result column="product_material_product_id" jdbcType="INTEGER" property="productId" />
+        <result column="product_material_product_sku_id" jdbcType="INTEGER" property="productSkuId" />
+        <result column="product_material_material_id" jdbcType="INTEGER" property="materialId" />
+        <result column="product_material_material_count" jdbcType="INTEGER" property="materialCount" />
+        <result column="product_material_data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="product_material_remark" jdbcType="VARCHAR" property="remark" />
+        <result column="product_material_create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="product_material_create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="product_material_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="product_material_update_user" jdbcType="VARCHAR" property="updateUser" />
+    </resultMap>
+
     <sql id="column_List">
 		eps.id as id,eps.sku_name as sku_name,eps.product_id as product_id,eps.stock as stock,eps.original_price as original_price,eps.sku_price as sku_price,eps.rent_price as rent_price,eps.custom_code as custom_code,eps.bar_code as bar_code,eps.properties as properties,eps.remark as remark,eps.data_status as data_status,eps.create_time as create_time,eps.create_user as create_user,eps.update_time as update_time,eps.update_user as update_user
 	</sql>
 
     <sql id="sku_property_column_List">
         epsps.id AS sku_property_id,epsps.product_id AS sku_property_product_id,epsps.property_id AS sku_property_property_id,epsps.property_value_id AS sku_property_property_value_id,epsps.is_sku AS sku_property_is_sku,epsps.sku_id AS sku_property_sku_id,epsps.remark AS sku_property_remark,epsps.data_status AS sku_property_data_status,epsps.create_time AS sku_property_create_time,epsps.create_user AS sku_property_create_user,epsps.update_time AS sku_property_update_time,epsps.update_user AS sku_property_update_user
+    </sql>
+
+    <sql id="product_material_column_List">
+        epm.id AS product_material_id,epm.product_id AS product_material_product_id,epm.product_sku_id AS product_material_product_sku_id,epm.material_id AS product_material_material_id,epm.material_count AS product_material_material_count,epm.data_status AS product_material_data_status,epm.remark AS product_material_remark,epm.create_time AS product_material_create_time,epm.create_user AS product_material_create_user,epm.update_time AS product_material_update_time,epm.update_user AS product_material_update_user
     </sql>
 
 
@@ -72,6 +92,26 @@
         LEFT JOIN erp_product_sku_property epsps ON epsps.sku_id = sku_main.id AND epsps.data_status = 1 AND epsps.is_sku = 1
         LEFT JOIN erp_product_category_property mpcp ON epsps.property_id = mpcp.id
         LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id
+    </select>
+
+    <select id="findDetailByProductId" resultMap="ProductSkuDO" parameterType="java.lang.Integer">
+        SELECT sku_main.*
+        <trim prefix=",">
+            <include refid="sku_property_column_List" />
+        </trim>
+        <trim prefix=",">
+            <include refid="product_material_column_List" />
+        </trim>
+        ,mpcp.property_name AS sku_property_property_name,mpcpv.property_value_name AS sku_property_property_value_Name
+        FROM (
+            SELECT
+            <include refid="column_List"/>
+            FROM erp_product_sku eps WHERE eps.product_id = #{productId, jdbcType=INTEGER} AND eps.data_status = 1
+        ) sku_main
+        LEFT JOIN erp_product_sku_property epsps ON epsps.sku_id = sku_main.id AND epsps.data_status = 1 AND epsps.is_sku = 1
+        LEFT JOIN erp_product_category_property mpcp ON epsps.property_id = mpcp.id
+        LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id
+        LEFT JOIN erp_product_material epm ON epm.product_sku_id = sku_main.id AND epm.data_status = 1
     </select>
 
 

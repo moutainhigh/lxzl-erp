@@ -52,6 +52,10 @@ public class GenerateNoUtil {
         Random random = new Random();
         return "S" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
     }
+    public static String generateBulkMaterialNo(Date currentTime) {
+        Random random = new Random();
+        return "BM" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
+    }
 
     public static String generateEquipmentNo(Date currentTime, Integer warehouseId, int no) {
         return "LX-EQUIPMENT-" + warehouseId + "-" + new SimpleDateFormat("yyyyMMdd").format(currentTime) + (10000 + no);

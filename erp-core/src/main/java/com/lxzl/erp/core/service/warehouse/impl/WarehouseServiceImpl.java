@@ -4,6 +4,7 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
+import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
@@ -15,14 +16,14 @@ import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseConverter;
-import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.*;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehousePositionMapper;
+import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentBulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
@@ -75,6 +76,12 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Autowired
     private ProductEquipmentMaterialMapper productEquipmentMaterialMapper;
+
+    @Autowired
+    private BulkMaterialMapper bulkMaterialMapper;
+
+    @Autowired
+    private ProductEquipmentBulkMaterialMapper productEquipmentBulkMaterialMapper;
 
     @Override
     public ServiceResult<String, Page<Warehouse>> getWarehousePage(WarehouseQueryParam param) {
@@ -180,7 +187,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
         Integer warehousePositionId = 0;
         List<WarehousePositionDO> warehousePositionDOList = warehousePositionMapper.findByWarehouseId(targetWarehouseId);
-        if(warehousePositionDOList != null && !warehousePositionDOList.isEmpty()){
+        if (warehousePositionDOList != null && !warehousePositionDOList.isEmpty()) {
             warehousePositionId = warehousePositionDOList.get(0).getId();
         }
         StockOrderDO stockOrderDO = new StockOrderDO();
@@ -245,9 +252,16 @@ public class WarehouseServiceImpl implements WarehouseService {
         Integer oldCount = productEquipmentMapper.findProductEquipmentCountByParams(maps);
         oldCount = oldCount == null ? 0 : oldCount;
 
+        // 入库设备
         List<ProductEquipmentDO> allProductEquipmentDOList = new ArrayList<>();
+        // 入库设备记录
         List<StockOrderEquipmentDO> allStockOrderEquipmentDOList = new ArrayList<>();
+        // 入库设备物料
         List<ProductEquipmentMaterialDO> allProductEquipmentMaterialDOList = new ArrayList<>();
+        // 入库散料（由物料产生散料）
+        List<BulkMaterialDO> allBulkMaterialDOList = new ArrayList<>();
+        // 设备散料
+        List<ProductEquipmentBulkMaterialDO> allProductEquipmentBulkMaterialDOList = new ArrayList<>();
 
         for (int i = 0; i < productInStorage.getProductCount(); i++) {
             ProductEquipmentDO productEquipmentDO = new ProductEquipmentDO();
@@ -288,18 +302,50 @@ public class WarehouseServiceImpl implements WarehouseService {
                     productEquipmentMaterialDO.setUpdateTime(currentTime);
                     productEquipmentMaterialDO.setCreateTime(currentTime);
                     allProductEquipmentMaterialDOList.add(productEquipmentMaterialDO);
+                    for (int j = 0; j < productMaterial.getMaterialCount(); j++) {
+                        BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
+                        bulkMaterialDO.setBulkMaterialNo(GenerateNoUtil.generateBulkMaterialNo(currentTime));
+                        bulkMaterialDO.setMaterialId(productMaterial.getMaterialId());
+                        bulkMaterialDO.setWarehouseId(warehouseId);
+                        bulkMaterialDO.setWarehousePositionId(warehousePositionId);
+                        bulkMaterialDO.setOwnerWarehouseId(warehouseId);
+                        bulkMaterialDO.setOwnerWarehousePositionId(warehousePositionId);
+                        bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+                        bulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                        bulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+                        bulkMaterialDO.setCreateUser(loginUser.getUserId().toString());
+                        bulkMaterialDO.setUpdateTime(currentTime);
+                        bulkMaterialDO.setCreateTime(currentTime);
+                        allBulkMaterialDOList.add(bulkMaterialDO);
+
+                        ProductEquipmentBulkMaterialDO productEquipmentBulkMaterialDO = new ProductEquipmentBulkMaterialDO();
+                        productEquipmentBulkMaterialDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
+                        productEquipmentBulkMaterialDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
+                        productEquipmentBulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                        productEquipmentBulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+                        productEquipmentBulkMaterialDO.setCreateUser(loginUser.getUserId().toString());
+                        productEquipmentBulkMaterialDO.setUpdateTime(currentTime);
+                        productEquipmentBulkMaterialDO.setCreateTime(currentTime);
+                        allProductEquipmentBulkMaterialDOList.add(productEquipmentBulkMaterialDO);
+                    }
                 }
             }
         }
 
-        if(!allProductEquipmentDOList.isEmpty()){
+        if (!allProductEquipmentDOList.isEmpty()) {
             productEquipmentMapper.saveList(allProductEquipmentDOList);
         }
-        if(!allStockOrderEquipmentDOList.isEmpty()){
+        if (!allStockOrderEquipmentDOList.isEmpty()) {
             stockOrderEquipmentMapper.saveList(allStockOrderEquipmentDOList);
         }
-        if(!allProductEquipmentMaterialDOList.isEmpty()){
+        if (!allProductEquipmentMaterialDOList.isEmpty()) {
             productEquipmentMaterialMapper.saveList(allProductEquipmentMaterialDOList);
+        }
+        if (!allBulkMaterialDOList.isEmpty()) {
+            bulkMaterialMapper.saveList(allBulkMaterialDOList);
+        }
+        if (!allProductEquipmentBulkMaterialDOList.isEmpty()) {
+            productEquipmentBulkMaterialMapper.saveList(allProductEquipmentBulkMaterialDOList);
         }
     }
 }

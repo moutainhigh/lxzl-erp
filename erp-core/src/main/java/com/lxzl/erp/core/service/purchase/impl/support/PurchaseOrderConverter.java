@@ -36,11 +36,6 @@ public class PurchaseOrderConverter {
                 PurchaseOrderProduct purchaseOrderProduct = new PurchaseOrderProduct();
                 BeanUtils.copyProperties(purchaseOrderProductDO,purchaseOrderProduct);
                 purchaseOrderProduct.setPurchaseOrderProductId(purchaseOrderProductDO.getId());
-
-                if(purchaseOrderProductDO.getProductSnapshot()!=null){
-                    Product product = JSON.parseObject(purchaseOrderProductDO.getProductSnapshot(),Product.class);
-                    purchaseOrderProduct.setProduct(product);
-                }
                 purchaseOrderProductList.add(purchaseOrderProduct);
             }
             purchaseOrder.setPurchaseOrderProductList(purchaseOrderProductList);

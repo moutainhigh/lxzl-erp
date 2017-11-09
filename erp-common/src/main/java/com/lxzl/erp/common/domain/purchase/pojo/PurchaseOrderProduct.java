@@ -26,8 +26,6 @@ public class PurchaseOrderProduct implements Serializable {
 	private String updateUser;   //修改人
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 
-	private Product product ;
-
 	public Integer getPurchaseOrderProductId(){
 		return purchaseOrderProductId;
 	}
@@ -140,11 +138,4 @@ public class PurchaseOrderProduct implements Serializable {
 		this.dataStatus = dataStatus;
 	}
 
-	public Product getProduct() {
-		return product;
-	}
-
-	public void setProduct(Product product) {
-		this.product = product;
-	}
 }

@@ -9,7 +9,18 @@ import java.util.Map;
 
 public interface ProductSkuMapper extends BaseMysqlDAO<ProductSkuDO> {
 
+    /**
+     * @param productId 商品ID
+     * @return SKU集合（不带物料信息）
+     */
     List<ProductSkuDO> findByProductId(@Param("productId") Integer productId);
+
+    /**
+     * @param productId 商品ID
+     * @return SKU集合（带物料信息）
+     */
+    List<ProductSkuDO> findDetailByProductId(@Param("productId") Integer productId);
+
     Integer findProductSkuCountByParams(@Param("maps") Map<String, Object> paramMap);
     List<ProductSkuDO> findProductSkuByParams(@Param("maps") Map<String, Object> paramMap);
 }

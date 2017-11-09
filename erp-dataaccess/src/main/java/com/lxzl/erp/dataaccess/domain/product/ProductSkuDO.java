@@ -20,6 +20,7 @@ public class ProductSkuDO extends BaseDO {
     private String remark;
     private Integer dataStatus;
     private List<ProductSkuPropertyDO> productSkuPropertyDOList;
+    private List<ProductMaterialDO> productMaterialDOList;
 
     @Transient
     private String productName;
@@ -134,5 +135,13 @@ public class ProductSkuDO extends BaseDO {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public List<ProductMaterialDO> getProductMaterialDOList() {
+        return productMaterialDOList;
+    }
+
+    public void setProductMaterialDOList(List<ProductMaterialDO> productMaterialDOList) {
+        this.productMaterialDOList = productMaterialDOList;
     }
 }

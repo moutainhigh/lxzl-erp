@@ -8,6 +8,8 @@ import java.util.Map;
 
 public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
 
+	Integer saveList(@Param("bulkMaterialDOList")List<BulkMaterialDO> bulkMaterialDOList);
+
 	List<BulkMaterialDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);

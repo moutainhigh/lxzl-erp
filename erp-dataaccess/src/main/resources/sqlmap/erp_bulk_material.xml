@@ -123,6 +123,17 @@
 		</set>
 	</sql>
 
+
+	<insert id="saveList" parameterType="java.util.ArrayList">
+		insert into erp_bulk_material (bulk_material_no,material_id,material_no,warehouse_id,warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,brand_id,category_id,property_id,property_value_id,bulk_material_price,original_price,rent_price,bulk_material_status,data_status,remark,create_time,create_user,update_time,update_user)
+		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList" separator="UNION ALL">
+			SELECT #{bulkMaterialDO.bulkMaterialNo},#{bulkMaterialDO.materialId},em.materialNo,#{bulkMaterialDO.warehouseId},#{bulkMaterialDO.warehousePositionId},#{bulkMaterialDO.ownerWarehouseId},#{bulkMaterialDO.ownerWarehousePositionId},
+			em.brand_id,em.category_id,em.property_id,em.property_value_id,em.material_price,em.original_price,em.rent_price, #{bulkMaterialDO.bulkMaterialStatus},#{bulkMaterialDO.dataStatus},#{bulkMaterialDO.remark},
+			#{bulkMaterialDO.createTime},#{bulkMaterialDO.createUser},#{bulkMaterialDO.updateTime},#{bulkMaterialDO.updateUser}
+			FROM erp_material em WHERE em.material_id = #{bulkMaterialDO.materialId}
+		</foreach>
+	</insert>
+
 	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO">
 		INSERT INTO erp_bulk_material <include refid="set_column_sql"/>
 	</insert>
