@@ -244,11 +244,11 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkDO.setCurrentVerifyUser(nextVerifyUser);
         } else {
             workflowLinkDO.setCurrentVerifyUser(null);
-            workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_PENDING);
+            workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
         }
 
         // 拒绝或者最后一步，发通知
-        if(VerifyStatus.VERIFY_STATUS_BACK.equals(verifyStatus) || VerifyStatus.VERIFY_STATUS_PASS.equals(workflowLinkDO.getCurrentVerifyStatus())){
+        if (VerifyStatus.VERIFY_STATUS_BACK.equals(workflowLinkDO.getCurrentVerifyStatus()) || VerifyStatus.VERIFY_STATUS_PASS.equals(workflowLinkDO.getCurrentVerifyStatus())) {
             // 根据不同业务，回调业务系统
             if (WorkflowType.WORKFLOW_TYPE_PURCHASE.equals(workflowLinkDO.getWorkflowType())) {
                 boolean receiveResult = purchaseOrderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferId());

@@ -345,7 +345,7 @@ CREATE TABLE `erp_product_category_property` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `property_name` varchar(64) NOT NULL DEFAULT '' COMMENT '属性名称(大名称)',
   `category_id` int(20) NOT NULL COMMENT '所属类目ID',
-  `property_type` int(11) COMMENT '属性类型，1为销售属性，2为商品属性',
+  `property_type` int(11) COMMENT '属性类型，1为租赁属性，2为商品属性',
   `is_input` int(11) NOT NULL DEFAULT '0' COMMENT '是否是输入属性：0否1是',
   `is_checkbox` int(11) NOT NULL DEFAULT '0' COMMENT '是否为多选，0否1是',
   `is_required` int(11) NOT NULL DEFAULT '0' COMMENT '是否为必选，0否1是',
@@ -406,7 +406,7 @@ CREATE TABLE `erp_product_sku` (
   `stock` int(11) NOT NULL DEFAULT '0' COMMENT '库存',
   `sku_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品本身的价值',
   `original_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '原价',
-  `rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '销售价格',
+  `rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '租赁价格',
   `custom_code` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '自定义编码',
   `bar_code` varchar(60) COMMENT '商品条形码',
   `properties` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '属性字符串，按照;分隔',
@@ -436,9 +436,10 @@ CREATE TABLE `erp_product_sku_property` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='商品SKU基本属性表';
 
+
 DROP TABLE if exists `erp_material`;
 CREATE TABLE `erp_material` (
-  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '设备ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '物料ID',
   `material_no` varchar(100) NOT NULL COMMENT '物料唯一编号',
   `material_name` varchar(100) COLLATE utf8_bin COMMENT '物料名称，取属性与属性值全称',
   `brand_id` int(20) COMMENT '所属品牌ID',
@@ -447,7 +448,7 @@ CREATE TABLE `erp_material` (
   `property_value_id` int(20) NOT NULL COMMENT '属性值ID',
   `material_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '物料本身的价值(单价)',
   `original_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '原价',
-  `rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '销售价格',
+  `rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '租赁价格',
   `material_desc` text COLLATE utf8_bin COMMENT '物料描述',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -511,6 +512,51 @@ CREATE TABLE `erp_product_equipment_material` (
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备物料表';
+
+DROP TABLE if exists `erp_bulk_material`;
+CREATE TABLE `erp_bulk_material` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '散料ID',
+  `bulk_material_no` varchar(100) NOT NULL COMMENT '散料唯一编号',
+  `material_id` int(20) NOT NULL COMMENT '物料ID，从哪个物料生成的',
+  `material_no` varchar(100) NOT NULL COMMENT '物料编号，从哪个物料生成的',
+  `warehouse_id` int(20) NOT NULL COMMENT '目前仓库ID',
+  `warehouse_position_id` int(20) NOT NULL COMMENT '目前仓位ID',
+  `owner_warehouse_id` int(20) NOT NULL COMMENT '归属仓库ID',
+  `owner_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '归属目前仓位ID',
+  `brand_id` int(20) COMMENT '所属品牌ID',
+  `category_id` int(20) NOT NULL COMMENT '所属类目ID',
+  `property_id` int(20) NOT NULL COMMENT '属性ID',
+  `property_value_id` int(20) NOT NULL COMMENT '属性值ID',
+  `bulk_material_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '散料本身的价值(单价)',
+  `original_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '原价',
+  `rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '租赁价格',
+  `bulk_material_status` int(11) NOT NULL DEFAULT '0' COMMENT '散料状态，0闲置，1租赁中，2报废',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='散料表';
+
+DROP TABLE if exists `erp_product_equipment_bulk_material`;
+CREATE TABLE `erp_product_equipment_bulk_material` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `equipment_id` int(20) COMMENT '设备ID',
+  `equipment_no` varchar(100) COMMENT '设备编号',
+  `bulk_material_id` int(20) COMMENT '散料ID',
+  `bulk_material_no` varchar(100) COMMENT '散料编号',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_equipment_bulk_material` (`equipment_id`,`bulk_material_id`),
+  UNIQUE KEY `index_equipment_bulk_material_no` (`equipment_no`,`bulk_material_no`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备散料表';
 
 DROP TABLE if exists `erp_product_img`;
 CREATE TABLE `erp_product_img` (
