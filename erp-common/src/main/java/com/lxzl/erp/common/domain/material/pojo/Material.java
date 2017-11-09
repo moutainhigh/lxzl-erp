@@ -22,6 +22,7 @@ public class Material implements Serializable {
     private BigDecimal materialPrice;
     private BigDecimal originalPrice;
     private BigDecimal rentPrice;
+    private String materialDesc;
     private Integer dataStatus;
     private String remark;
 
@@ -120,5 +121,13 @@ public class Material implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getMaterialDesc() {
+        return materialDesc;
+    }
+
+    public void setMaterialDesc(String materialDesc) {
+        this.materialDesc = materialDesc;
     }
 }

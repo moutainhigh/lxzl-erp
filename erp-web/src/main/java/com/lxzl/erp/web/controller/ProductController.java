@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
+import com.lxzl.erp.core.service.product.ProductCategoryService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
@@ -85,18 +86,24 @@ public class ProductController extends BaseController {
 
     @RequestMapping(value = "queryPropertiesByCategoryId", method = RequestMethod.POST)
     public Result queryPropertiesByCategoryId(@RequestBody ProductCategory productCategory, BindingResult validResult) {
-        ServiceResult<String, List<ProductCategoryProperty>> serviceResult = productService.queryProductCategoryPropertyListByCategoryId(productCategory.getCategoryId());
+        ServiceResult<String, List<ProductCategoryProperty>> serviceResult = productCategoryService.queryProductCategoryPropertyListByCategoryId(productCategory.getCategoryId());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     @RequestMapping(value = "queryAllProductCategory", method = RequestMethod.POST)
     public Result queryAllProductCategory(@RequestBody ProductCategory productCategory, BindingResult validResult) {
-        ServiceResult<String, List<ProductCategory>> serviceResult = productService.queryAllProductCategory();
+        ServiceResult<String, List<ProductCategory>> serviceResult = productCategoryService.queryAllProductCategory();
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
     @RequestMapping(value = "queryProductSkuList", method = RequestMethod.POST)
     public Result queryProductSkuList(@RequestBody ProductSkuQueryParam productSkuQueryParam, BindingResult validResult) {
         ServiceResult<String, Page<ProductSku>> serviceResult = productService.queryProductSkuList(productSkuQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "addProductCategoryPropertyValue", method = RequestMethod.POST)
+    public Result addProductCategoryPropertyValue(@RequestBody ProductCategoryPropertyValue productCategoryPropertyValue, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = productCategoryService.addProductCategoryPropertyValue(productCategoryPropertyValue);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
     @Autowired
@@ -107,6 +114,9 @@ public class ProductController extends BaseController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductCategoryService productCategoryService;
 
     @Autowired
     private ResultGenerator resultGenerator;

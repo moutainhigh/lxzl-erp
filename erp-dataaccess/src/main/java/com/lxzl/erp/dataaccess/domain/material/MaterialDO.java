@@ -21,6 +21,7 @@ public class MaterialDO extends BaseDO {
     private BigDecimal materialPrice;
     private BigDecimal originalPrice;
     private BigDecimal rentPrice;
+    private String materialDesc;
     private Integer dataStatus;
     private String remark;
 
@@ -118,5 +119,13 @@ public class MaterialDO extends BaseDO {
 
     public void setRentPrice(BigDecimal rentPrice) {
         this.rentPrice = rentPrice;
+    }
+
+    public String getMaterialDesc() {
+        return materialDesc;
+    }
+
+    public void setMaterialDesc(String materialDesc) {
+        this.materialDesc = materialDesc;
     }
 }

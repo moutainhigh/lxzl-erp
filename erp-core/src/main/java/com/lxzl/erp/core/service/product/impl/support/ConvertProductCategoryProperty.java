@@ -4,6 +4,7 @@ import com.lxzl.erp.common.domain.product.pojo.ProductCategoryProperty;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategoryPropertyValue;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
+import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +84,15 @@ public class ConvertProductCategoryProperty {
             productCategoryPropertyValue.setRemark(productCategoryPropertyValueDO.getRemark());
         }
         return productCategoryPropertyValue;
+    }
+
+    public static ProductCategoryPropertyValueDO convertProductCategoryPropertyValue(ProductCategoryPropertyValue productCategoryPropertyValue) {
+        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = new ProductCategoryPropertyValueDO();
+        if(productCategoryPropertyValue.getCategoryPropertyValueId() != null){
+            productCategoryPropertyValueDO.setId(productCategoryPropertyValue.getCategoryPropertyValueId());
+        }
+        BeanUtils.copyProperties(productCategoryPropertyValue, productCategoryPropertyValueDO);
+        return productCategoryPropertyValueDO;
     }
 
 
