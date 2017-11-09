@@ -1,6 +1,16 @@
 package com.lxzl.erp.common.domain.purchase.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
+import com.lxzl.erp.common.util.validate.constraints.In;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +22,7 @@ public class PurchaseReceiveOrder implements Serializable {
 	private Integer purchaseReceiveOrderId;   //唯一标识
 	private Integer purchaseOrderId;   //采购单ID
 	private Integer purchaseDeliveryOrderId;   //采购发货单ID
+	@NotEmpty(message = ErrorCode.PURCHASE_RECEIVE_ORDER_NO_NOT_NULL , groups = {UpdateGroup.class})
 	private String purchaseReceiveNo;   //采购收货单编号
 	private Integer productSupplierId;   //商品供应商ID
 	private Integer warehouseId;   //仓库ID
@@ -19,7 +30,9 @@ public class PurchaseReceiveOrder implements Serializable {
 	private Integer isInvoice;   //是否有发票，0否1是
 	private Integer autoAllotStatus;   //分拨情况，0-未分拨，1-已分拨，2-被分拨，没发票的分公司仓库单，将生成一个总公司收货单，并生成分拨单号，自动分拨到分公司仓库
 	private String autoAllotNo;   //分拨单号，仅在is_auto_allot字段为1时有值
-	private Integer isNew;   //是否全新机
+	@NotNull(message = ErrorCode.IS_NEW_NOT_NULL , groups = {AddGroup.class,UpdateGroup.class})
+	@In(value = {CommonConstant.YES,CommonConstant.NO},message = ErrorCode.IS_INVOICE_VALUE_ERROR,groups = {UpdateGroup.class})
+	private Integer isNew;   //是否全新机，0否1是
 	private Integer purchaseReceiveOrderStatus;   //采购单收货状态，0待收货，1已签单
 	private Date confirmTime;   //签单时间
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -30,6 +43,7 @@ public class PurchaseReceiveOrder implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
+	@CollectionNotNull(message = ErrorCode.PURCHASE_RECEIVE_ORDER_PRODUCT_LIST_NOT_NULL , groups = {UpdateGroup.class})
 	List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList ;
 
 	public Integer getPurchaseReceiveOrderId(){

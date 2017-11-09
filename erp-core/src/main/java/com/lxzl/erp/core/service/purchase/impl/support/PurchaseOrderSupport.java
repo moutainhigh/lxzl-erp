@@ -33,7 +33,7 @@ public class PurchaseOrderSupport {
         Map<String,Object> map  = new HashMap<>();
         map.put("start",0);
         map.put("pageSize",Integer.MAX_VALUE);
-        map.put("purchaseOrderId",purchaseDeliveryOrderId);
+        map.put("purchaseDeliveryOrderId",purchaseDeliveryOrderId);
         return  purchaseDeliveryOrderProductMapper.listPage(map);
     }
 }

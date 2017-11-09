@@ -7,15 +7,23 @@ import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PurchaseDeliveryOrderQueryParam extends BasePageParam {
+    private Integer purchaseOrderId ;
     private String purchaseNo ;//采购单编号
-    private Integer productSupplierId ;//商品供应商ID
-    private Integer invoiceSupplierId ;//发票供应商ID
-    private Integer warehouseId ;//仓库ID
+    private Integer warehouseId ;
+    private String warehouseNo ; //仓库编号
     private Integer isInvoice ;//是否有发票，0否1是
     private Integer isNew ;//是否全新机
     private Integer purchaseDeliveryOrderStatus ;//采购发货单状态，0待发货，1已发货
     private Date createStartTime;
     private Date createEndTime;
+
+    public Integer getPurchaseOrderId() {
+        return purchaseOrderId;
+    }
+
+    public void setPurchaseOrderId(Integer purchaseOrderId) {
+        this.purchaseOrderId = purchaseOrderId;
+    }
 
     public String getPurchaseNo() {
         return purchaseNo;
@@ -25,28 +33,20 @@ public class PurchaseDeliveryOrderQueryParam extends BasePageParam {
         this.purchaseNo = purchaseNo;
     }
 
-    public Integer getProductSupplierId() {
-        return productSupplierId;
-    }
-
-    public void setProductSupplierId(Integer productSupplierId) {
-        this.productSupplierId = productSupplierId;
-    }
-
-    public Integer getInvoiceSupplierId() {
-        return invoiceSupplierId;
-    }
-
-    public void setInvoiceSupplierId(Integer invoiceSupplierId) {
-        this.invoiceSupplierId = invoiceSupplierId;
-    }
-
     public Integer getWarehouseId() {
         return warehouseId;
     }
 
     public void setWarehouseId(Integer warehouseId) {
         this.warehouseId = warehouseId;
+    }
+
+    public String getWarehouseNo() {
+        return warehouseNo;
+    }
+
+    public void setWarehouseNo(String warehouseNo) {
+        this.warehouseNo = warehouseNo;
     }
 
     public Integer getIsInvoice() {

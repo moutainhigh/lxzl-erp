@@ -129,14 +129,14 @@ public class PurchaseOrderController {
     }
 
     /**
-     * 修改收货单
+     * 修改采购收货单
      * @param purchaseReceiveOrder
      * @param validResult
      * @return
      */
     @RequestMapping(value = "updatePurchaseReceiveOrder", method = RequestMethod.POST)
     public Result updatePurchaseReceiveOrder(@RequestBody @Validated(UpdateGroup.class) PurchaseReceiveOrder purchaseReceiveOrder, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = purchaseOrderService.updatePurchaseReceiveOrder(purchaseReceiveOrder);
+        ServiceResult<String, String> serviceResult = purchaseOrderService.updatePurchaseReceiveOrder(purchaseReceiveOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

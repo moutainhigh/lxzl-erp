@@ -24,6 +24,9 @@
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 
+		<result column="ownerName" jdbcType="VARCHAR" property="ownerName" />
+		<result column="productSupplierName" jdbcType="VARCHAR" property="productSupplierName" />
+		<result column="invoiceSupplierName" jdbcType="VARCHAR" property="invoiceSupplierName" />
 		<collection property="purchaseOrderProductDOList" resultMap="PurchaseOrderProductDO" />
 	</resultMap>
 
@@ -41,7 +44,7 @@
 		<result column="epop_createTime" jdbcType="TIMESTAMP" property="createTime"/>
 		<result column="epop_createUser" jdbcType="VARCHAR" property="createUser"/>
 		<result column="epop_updateTime" jdbcType="TIMESTAMP" property="updateTime"/>
-		<result column="epop_update_user" jdbcType="VARCHAR" property="update_user"/>
+		<result column="epop_updateUser" jdbcType="VARCHAR" property="updateUser"/>
 	</resultMap>
 
 	<sql id="column_List">
@@ -77,6 +80,7 @@
 	</select>
 
 	<select id="listPage" resultMap="PurchaseOrderDO" parameterType="map">
+
 		select <include refid="column_List"/> from erp_purchase_order epo 
 		<where>
 			<if test="true">
@@ -198,6 +202,9 @@
 		</where>
 	</select>
 	<select id="findPurchaseOrderByParams" resultMap="PurchaseOrderDO" parameterType="map">
+		select <include refid="column_List"/>,<include refid="product_column_List"/> ,eu.real_name as ownerName,es1.supplier_name as productSupplierName
+		,es2.supplier_name as invoiceSupplierName
+		from (
 		SELECT <include refid="column_List"/>
 		FROM erp_purchase_order epo
 		<where>
@@ -232,5 +239,10 @@
 				and epo.data_status = 1
 			</if>
 		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+		) epo left join erp_purchase_order_product epop on epop.purchase_order_id = epo.id and epop.data_status=1
+		left join erp_user eu on epo.owner = eu.id
+		left join erp_supplier es1 on epo.product_supplier_id = es1.id
+		left join erp_supplier es2 on epo.invoice_supplier_id = es2.id
 	</select>
 </mapper>

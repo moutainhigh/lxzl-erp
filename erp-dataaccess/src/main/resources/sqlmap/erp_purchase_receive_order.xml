@@ -23,17 +23,56 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<collection property="purchaseReceiveOrderProductDOList" resultMap="PurchaseReceiveOrderProductDO" />
 	</resultMap>
 
+
+	<resultMap id="PurchaseReceiveOrderProductDO" type="com.lxzl.erp.dataaccess.domain.purchase.PurchaseReceiveOrderProductDO">
+		<id column="eprop_id" jdbcType="INTEGER" property="id" />
+		<result column="eprop_purchaseReceiveOrderId" jdbcType="INTEGER" property="purchaseReceiveOrderId" />
+		<result column="eprop_purchaseOrderProductId" jdbcType="INTEGER" property="purchaseOrderProductId" />
+		<result column="eprop_purchaseDeliveryOrderProductId" jdbcType="INTEGER" property="purchaseDeliveryOrderProductId" />
+		<result column="eprop_productId" jdbcType="INTEGER" property="productId" />
+		<result column="eprop_productSkuId" jdbcType="INTEGER" property="productSkuId" />
+		<result column="eprop_productName" jdbcType="VARCHAR" property="productName" />
+		<result column="eprop_productSnapshot" jdbcType="VARCHAR" property="productSnapshot" />
+		<result column="eprop_productCount" jdbcType="INTEGER" property="productCount" />
+		<result column="eprop_realProductId" jdbcType="INTEGER" property="realProductId" />
+		<result column="eprop_realProductName" jdbcType="VARCHAR" property="realProductName" />
+		<result column="eprop_realProductSkuId" jdbcType="INTEGER" property="realProductSkuId" />
+		<result column="eprop_realProductSnapshot" jdbcType="VARCHAR" property="realProductSnapshot" />
+		<result column="eprop_realProductCount" jdbcType="INTEGER" property="realProductCount" />
+		<result column="eprop_isSrc" jdbcType="INTEGER" property="isSrc" />
+		<result column="eprop_dataStatus" jdbcType="INTEGER" property="dataStatus" />
+		<result column="eprop_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="eprop_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="eprop_createUser" jdbcType="VARCHAR" property="createUser" />
+		<result column="eprop_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="eprop_updateUser" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
 	<sql id="column_List">
 		epro.id,epro.purchase_order_id,epro.purchase_delivery_order_id,epro.purchase_receive_no,epro.product_supplier_id,epro.warehouse_id,epro.warehouse_snapshot,epro.is_invoice,epro.auto_allot_status,epro.auto_allot_no,epro.is_new,epro.purchase_receive_order_status,epro.confirm_time,epro.data_status,epro.owner,epro.remark,epro.create_time,epro.create_user,epro.update_time,epro.update_user
 	</sql>
-
+	<sql id="product_column_List">
+		eprop.id as eprop_id,eprop.purchase_receive_order_id as eprop_purchaseReceiveOrderId,eprop.purchase_order_product_id as eprop_purchaseOrderProductId,eprop.purchase_delivery_order_product_id as eprop_purchaseDeliveryOrderProductId,eprop.product_id as eprop_productId,eprop.product_sku_id as eprop_productSkuId,eprop.product_name as eprop_productName,eprop.product_snapshot as eprop_productSnapshot,eprop.product_count as eprop_productCount,eprop.real_product_id as eprop_realProductId,eprop.real_product_name as eprop_realProductName,eprop.real_product_sku_id as eprop_realProductSkuId,eprop.real_product_snapshot as eprop_realProductSnapshot,eprop.real_product_count as eprop_realProductCount,eprop.is_src as eprop_isSrc,eprop.data_status as eprop_dataStatus,eprop.remark as eprop_remark,eprop.create_time as eprop_createTime,eprop.create_user as eprop_createUser,eprop.update_time as eprop_updateUser,eprop.update_user as eprop_updateTime
+	</sql>
 	<select id="findById" resultMap="PurchaseReceiveOrderDO" parameterType="java.lang.Integer">
 		select <include refid="column_List"/> from erp_purchase_receive_order epro 
-		where epro.id = #{id, jdbcType=INTEGER} and data_status = 1 
+		where epro.id = #{id, jdbcType=INTEGER} and epro.data_status = 1
 	</select>
-
+	<select id="findByNo" resultMap="PurchaseReceiveOrderDO" parameterType="java.lang.String">
+		select <include refid="column_List"/>,<include refid="product_column_List"/> from (
+		select <include refid="column_List"/> from erp_purchase_receive_order epro
+		where epro.purchase_receive_no = #{purchaseReceiveNo, jdbcType=VARCHAR} and epro.data_status = 1
+		) epro left join erp_purchase_receive_order_product eprop on eprop.purchase_receive_order_id = epro.id and eprop.data_status = 1
+	</select>
+	<select id="findAllByNo" resultMap="PurchaseReceiveOrderDO" parameterType="java.lang.String">
+		select <include refid="column_List"/>,<include refid="product_column_List"/> from (
+		select <include refid="column_List"/> from erp_purchase_receive_order epro
+		where epro.purchase_receive_no = #{purchaseReceiveNo, jdbcType=VARCHAR} and epro.data_status = 1
+		) epro left join erp_purchase_receive_order_product eprop on eprop.purchase_receive_order_id = epro.id
+	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(epro.id) from erp_purchase_receive_order epro 
 		<where>

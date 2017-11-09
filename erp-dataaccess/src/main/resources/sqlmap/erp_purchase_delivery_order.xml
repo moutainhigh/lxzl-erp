@@ -131,14 +131,8 @@
 		SELECT count(id)
 		FROM erp_purchase_delivery_order epdo
 		<where>
-			<if test="maps.queryParam.purchaseNo != null &amp;&amp; maps.queryParam.purchaseNo != ''">
-				and epdo.purchase_no = #{maps.queryParam.purchaseNo, jdbcType=VARCHAR}
-			</if>
-			<if test="maps.queryParam.productSupplierId != null">
-				and epdo.product_supplier_id = #{maps.queryParam.productSupplierId, jdbcType=INTEGER}
-			</if>
-			<if test="maps.queryParam.invoiceSupplierId != null">
-				and epdo.invoice_supplier_id = #{maps.queryParam.invoiceSupplierId, jdbcType=INTEGER}
+			<if test="maps.queryParam.purchaseOrderId != null">
+				and epdo.purchase_order_id = #{maps.queryParam.purchaseOrderId, jdbcType=INTEGER}
 			</if>
 			<if test="maps.queryParam.warehouseId != null">
 				and epdo.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
@@ -164,17 +158,13 @@
 		</where>
 	</select>
 	<select id="findPurchaseDeliveryOrderByParams" resultMap="PurchaseDeliveryOrderDO" parameterType="map">
+
+		select <include refid="column_List"/>,<include refid="product_column_List"/> from (
 		SELECT <include refid="column_List"/>
 		FROM erp_purchase_delivery_order epdo
 		<where>
-			<if test="maps.queryParam.purchaseNo != null &amp;&amp; maps.queryParam.purchaseNo != ''">
-				and epdo.purchase_no = #{maps.queryParam.purchaseNo, jdbcType=VARCHAR}
-			</if>
-			<if test="maps.queryParam.productSupplierId != null">
-				and epdo.product_supplier_id = #{maps.queryParam.productSupplierId, jdbcType=INTEGER}
-			</if>
-			<if test="maps.queryParam.invoiceSupplierId != null">
-				and epdo.invoice_supplier_id = #{maps.queryParam.invoiceSupplierId, jdbcType=INTEGER}
+			<if test="maps.queryParam.purchaseOrderId != null">
+				and epdo.purchase_order_id = #{maps.queryParam.purchaseOrderId, jdbcType=INTEGER}
 			</if>
 			<if test="maps.queryParam.warehouseId != null">
 				and epdo.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
@@ -198,6 +188,8 @@
 				and epdo.data_status = 1
 			</if>
 		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+		) epdo left join erp_purchase_delivery_order_product epdop on epdo.id = epdop.purchase_delivery_order_id and epdop.data_status=1
 	</select>
 	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderDO">
 		insert into erp_purchase_delivery_order <include refid="set_column_sql"/>

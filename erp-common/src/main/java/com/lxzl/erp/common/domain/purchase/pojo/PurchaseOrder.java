@@ -49,8 +49,10 @@ public class PurchaseOrder implements Serializable {
     private Date updateTime;   //添加时间
     private String updateUser;   //修改人
 
+    private String productSupplierName;//商品供应商名称
+    private String invoiceSupplierName;//发票供应商名称
+    private String ownerName;//采购员名称
 
-    private String verifyUser;   //审核人
 
     @CollectionNotNull(message = ErrorCode.PURCHASE_ORDER_PRODUCT_LIST_NOT_NULL , groups = {AddGroup.class,UpdateGroup.class})
     private List<PurchaseOrderProduct> purchaseOrderProductList;
@@ -167,14 +169,6 @@ public class PurchaseOrder implements Serializable {
         this.deliveryTime = deliveryTime;
     }
 
-    public String getVerifyUser(){
-        return verifyUser;
-    }
-
-    public void setVerifyUser(String verifyUser){
-        this.verifyUser = verifyUser;
-    }
-
     public Integer getDataStatus(){
         return dataStatus;
     }
@@ -237,5 +231,29 @@ public class PurchaseOrder implements Serializable {
 
     public void setPurchaseOrderProductList(List<PurchaseOrderProduct> purchaseOrderProductList) {
         this.purchaseOrderProductList = purchaseOrderProductList;
+    }
+
+    public String getProductSupplierName() {
+        return productSupplierName;
+    }
+
+    public void setProductSupplierName(String productSupplierName) {
+        this.productSupplierName = productSupplierName;
+    }
+
+    public String getInvoiceSupplierName() {
+        return invoiceSupplierName;
+    }
+
+    public void setInvoiceSupplierName(String invoiceSupplierName) {
+        this.invoiceSupplierName = invoiceSupplierName;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 }

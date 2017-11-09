@@ -3,19 +3,17 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.PurchaseOrderStatus;
 import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderCommitParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseDeliveryOrder;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrderProduct;
+import com.lxzl.erp.common.domain.purchase.pojo.*;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
@@ -83,7 +81,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void commit() throws Exception {
         PurchaseOrderCommitParam purchaseOrderCommitParam = new PurchaseOrderCommitParam();
-        purchaseOrderCommitParam.setPurchaseNo("C201711081912590045000051527");
+        purchaseOrderCommitParam.setPurchaseNo("C201711091550440665000051897");
         purchaseOrderCommitParam.setVerifyUserId(500006);
         TestResult result = getJsonTestResult("/purchaseOrder/commit",purchaseOrderCommitParam);
     }
@@ -99,12 +97,13 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
 //        purchaseOrderQueryParam.setPurchaseNo("C201711071624559555000051509");
 //        purchaseOrderQueryParam.setProductSupplierId(1);
 //        purchaseOrderQueryParam.setInvoiceSupplierId(1);
-//        purchaseOrderQueryParam.setWarehouseId(4000001);
+        purchaseOrderQueryParam.setWarehouseNo("W201708081508");
 //        purchaseOrderQueryParam.setIsInvoice(1);
 //        purchaseOrderQueryParam.setIsNew(1);
 //        purchaseOrderQueryParam.setCreateStartTime(new Date());
-        purchaseOrderQueryParam.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_WAIT_COMMIT);
-        purchaseOrderQueryParam.setCommitStatus(CommonConstant.COMMON_CONSTANT_YES);
+//        purchaseOrderQueryParam.setCreateEndTime(new Date());
+//        purchaseOrderQueryParam.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_WAIT_COMMIT);
+//        purchaseOrderQueryParam.setCommitStatus(CommonConstant.COMMON_CONSTANT_YES);
         TestResult result = getJsonTestResult("/purchaseOrder/page",purchaseOrderQueryParam);
     }
     @Test
@@ -119,15 +118,15 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     }
 
     @Test
-    public void purchaseDeliveryPage() throws Exception {
+    public void pagePurchaseDelivery() throws Exception {
         PurchaseDeliveryOrderQueryParam purchaseOrderDeliveryQueryParam = new PurchaseDeliveryOrderQueryParam();
-//        purchaseOrderQueryParam.setPurchaseNo("C201711071624559555000051509");
-//        purchaseOrderQueryParam.setProductSupplierId(1);
-//        purchaseOrderQueryParam.setInvoiceSupplierId(1);
-//        purchaseOrderQueryParam.setWarehouseId(4000001);
-//        purchaseOrderQueryParam.setIsInvoice(1);
-        purchaseOrderDeliveryQueryParam.setIsNew(1);
-        purchaseOrderDeliveryQueryParam.setPurchaseDeliveryOrderStatus(0);
+        purchaseOrderDeliveryQueryParam.setPurchaseNo("C201711091550440665000051897");
+//        purchaseOrderDeliveryQueryParam.setWarehouseId(4000001);
+//        purchaseOrderDeliveryQueryParam.setIsInvoice(1);
+//        purchaseOrderDeliveryQueryParam.setIsNew(1);
+//        purchaseOrderDeliveryQueryParam.setCreateEndTime(new Date());
+//        purchaseOrderDeliveryQueryParam.setCreateStartTime(new Date());
+//        purchaseOrderDeliveryQueryParam.setPurchaseDeliveryOrderStatus(0);
         TestResult result = getJsonTestResult("/purchaseOrder/pagePurchaseDelivery",purchaseOrderDeliveryQueryParam);
     }
 
@@ -136,6 +135,32 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         PurchaseDeliveryOrder purchaseDeliveryOrder = new PurchaseDeliveryOrder();
         purchaseDeliveryOrder.setPurchaseDeliveryNo("D2017110813565090960000051745");
         TestResult result = getJsonTestResult("/purchaseOrder/queryPurchaseDeliveryOrderByNo",purchaseDeliveryOrder);
+    }
+
+    @Test
+    public void updatePurchaseReceiveOrder() throws Exception {
+        PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
+        purchaseReceiveOrder.setPurchaseReceiveNo("R2017110915515804260000061341");
+        purchaseReceiveOrder.setIsNew(CommonConstant.COMMON_CONSTANT_NO);
+
+        List<PurchaseReceiveOrderProduct> purchaseOrderProductList = new ArrayList<>();//采购单商品项列表不能为空
+
+//        PurchaseReceiveOrderProduct purchaseReceiveOrderProduct = new PurchaseReceiveOrderProduct();
+//        purchaseReceiveOrderProduct.setRealProductSkuId(1); //采购单商品项SKU ID 不能为空
+//        purchaseReceiveOrderProduct.setRealProductCount(5);//采购单商品数量不能为空且大于0
+//        purchaseOrderProductList.add(purchaseReceiveOrderProduct);
+
+        PurchaseReceiveOrderProduct purchaseReceiveOrderProduct = new PurchaseReceiveOrderProduct();
+        purchaseReceiveOrderProduct.setRealProductSkuId(2); //采购单商品项SKU ID 不能为空
+        purchaseReceiveOrderProduct.setRealProductCount(5);//采购单商品数量不能为空且大于0
+        purchaseOrderProductList.add(purchaseReceiveOrderProduct);
+
+        PurchaseReceiveOrderProduct purchaseReceiveOrderProduct2 = new PurchaseReceiveOrderProduct();
+        purchaseReceiveOrderProduct2.setRealProductSkuId(3); //采购单商品项SKU ID 不能为空
+        purchaseReceiveOrderProduct2.setRealProductCount(10);//采购单商品数量不能为空且大于0
+        purchaseOrderProductList.add(purchaseReceiveOrderProduct2);
+        purchaseReceiveOrder.setPurchaseReceiveOrderProductList(purchaseOrderProductList);
+        TestResult result = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder",purchaseReceiveOrder);
     }
     @Autowired
     private PurchaseOrderService purchaseOrderService;
