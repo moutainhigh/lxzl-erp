@@ -9,13 +9,8 @@
                 <div class="section row">
                     <div class="col-md-4">
                         <label for="categoryId" class="field-label">类别</label>
-                    #*<label for="categoryId" class="field prepend-icon">
-                        <input type="text" name="categoryId" id="categoryId" class="gui-input required letterOrChinese" />
-                        <label for="categoryId" class="field-icon"><i class="fa fa-user"></i>
-                        </label>
-                    </label>*#
                         <label for="categoryId" class="field select">
-                            <script type="text/html" id="categoryIdTpl">
+                            #*<script type="text/html" id="categoryIdTpl">
                                 <option value="">请选择</option>
                                 {{#categoryList}}
                                 <option value="{{categoryId}}">{{categoryName}}</option>
@@ -26,7 +21,7 @@
                                 {{/children}}
                                 {{/children}}
                                 {{/categoryList}}
-                            </script>
+                            </script>*#
                             <select id="categoryId" name="categoryId" class="required">
                                 <option value="">请选择</option>
                             </select>
@@ -155,24 +150,6 @@
                         </div>
                     </div>
                     {{/properties}}
-
-                    #*{{#properties}}
-                    <div class="col-md-3 pad-r40 border-right">
-                        <div id="widget1" class="section-divider mb30">
-                            <span>{{propertyName}}</span>
-                        </div>
-                        <div class="option-group field">
-                            {{#propertyValueList}}
-                            {{#list}}
-                            <label class="option option-primary mb10 block">
-                                <input type="radio" name="productPropertyRido-{{propertyId}}" class="productPropertyRido" value="{{categoryPropertyValueId}}" data-property="{{property}}" {{#checked}}checked{{/checked}} />
-                                <span class="radio"></span> {{propertyValueName}}
-                            </label>
-                            {{/list}}
-                            {{/propertyValueList}}
-                        </div>
-                    </div>
-                    {{/properties}}*#
                 </script>
 
 
@@ -205,25 +182,8 @@
                     </div>
                     {{/properties}}
 
-                    #*{{#properties}}
-                    <div class="col-md-3">
-                        <div class="option-group field">
-                            <div id="widget1" class="section-divider mb30">
-                                <span>{{propertyName}}</span>
-                            </div>
-                            {{#propertyValueList}}
-                            {{#list}}
-                            <label class="option block option-primary mb10">
-                                <input type="checkbox" name="property-{{propertyId}}" value="{{categoryPropertyValueId}}" data-property="{{property}}" {{#checked}}checked{{/checked}} >
-                                <span class="checkbox"></span> {{propertyValueName}}
-                            </label>
-                            {{/list}}
-                            {{/propertyValueList}}
-                        </div>
-                    </div>
-                    {{/properties}}*#
                 </script>
-                <div class="section" id="skuPropertiesContainer"></div>
+                <div class="section"><div class="col-md-12" id="skuPropertiesContainer"></div></div>
 
                 <script type="text/html" id="skuTableTpl">
                     <table class="table admin-form theme-warning tc-checkbox-1 fs13 atl-tabl">
