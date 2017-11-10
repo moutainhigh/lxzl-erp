@@ -28,6 +28,12 @@ public class PurchaseReceiveOrderDO  extends BaseDO {
 
 	@Transient
 	private List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList;
+	@Transient
+	private String ownerName;
+	@Transient
+	private String productSupplierName;
+	@Transient
+	private String invoiceSupplierName;
 
 	public Integer getId(){
 		return id;
@@ -163,5 +169,29 @@ public class PurchaseReceiveOrderDO  extends BaseDO {
 
 	public void setPurchaseReceiveOrderProductDOList(List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList) {
 		this.purchaseReceiveOrderProductDOList = purchaseReceiveOrderProductDOList;
+	}
+
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+
+	public String getProductSupplierName() {
+		return productSupplierName;
+	}
+
+	public void setProductSupplierName(String productSupplierName) {
+		this.productSupplierName = productSupplierName;
+	}
+
+	public String getInvoiceSupplierName() {
+		return invoiceSupplierName;
+	}
+
+	public void setInvoiceSupplierName(String invoiceSupplierName) {
+		this.invoiceSupplierName = invoiceSupplierName;
 	}
 }

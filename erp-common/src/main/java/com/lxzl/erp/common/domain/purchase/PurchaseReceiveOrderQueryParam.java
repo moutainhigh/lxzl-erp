@@ -17,7 +17,7 @@ public class PurchaseReceiveOrderQueryParam extends BasePageParam {
     private String warehouseNo ; //仓库编号
     private Integer productSupplierId;//商品供应商ID
     private Integer autoAllotStatus;//分拨情况，0-未分拨，1-已分拨，2-被分拨，没发票的分公司仓库单，将生成一个总公司收货单，并生成分拨单号，自动分拨到分公司仓库
-    private Integer owner;//签单人
+//    private Integer owner;//签单人
     private Integer isInvoice ;//是否有发票，0否1是
     private Integer isNew ;//是否全新机
     private Integer purchaseReceiveOrderStatus ;//采购单收货状态，0待收货，1已签单
@@ -100,13 +100,13 @@ public class PurchaseReceiveOrderQueryParam extends BasePageParam {
         this.autoAllotStatus = autoAllotStatus;
     }
 
-    public Integer getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Integer owner) {
-        this.owner = owner;
-    }
+//    public Integer getOwner() {
+//        return owner;
+//    }
+//
+//    public void setOwner(Integer owner) {
+//        this.owner = owner;
+//    }
 
     public Integer getIsInvoice() {
         return isInvoice;

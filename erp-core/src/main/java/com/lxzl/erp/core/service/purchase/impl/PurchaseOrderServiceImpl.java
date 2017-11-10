@@ -721,7 +721,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
-        //todo mapper查询
     }
 
     /**

@@ -152,7 +152,7 @@ public class PurchaseOrderController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
     /**
-     * 采购收货单签单
+     * 采购收货单分页
      * @param purchaseReceiveOrderQueryParam
      * @param validResult
      * @return

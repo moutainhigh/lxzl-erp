@@ -6,6 +6,7 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderCommitParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
+import com.lxzl.erp.common.domain.purchase.PurchaseReceiveOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.pojo.*;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import org.junit.Test;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
@@ -168,6 +168,13 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
         purchaseReceiveOrder.setPurchaseReceiveNo("R2017110915515804260000061341");
         TestResult result = getJsonTestResult("/purchaseOrder/commitPurchaseReceiveOrder",purchaseReceiveOrder);
+    }
+
+
+    @Test
+    public void pagePurchaseReceive() throws Exception {
+        PurchaseReceiveOrderQueryParam purchaseReceiveOrderQueryParam = new PurchaseReceiveOrderQueryParam();
+        TestResult result = getJsonTestResult("/purchaseOrder/pagePurchaseReceive",purchaseReceiveOrderQueryParam);
     }
     @Autowired
     private PurchaseOrderService purchaseOrderService;

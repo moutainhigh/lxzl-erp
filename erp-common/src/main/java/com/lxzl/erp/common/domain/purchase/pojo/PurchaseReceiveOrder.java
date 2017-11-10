@@ -46,6 +46,10 @@ public class PurchaseReceiveOrder implements Serializable {
 	@CollectionNotNull(message = ErrorCode.PURCHASE_RECEIVE_ORDER_PRODUCT_LIST_NOT_NULL , groups = {UpdateGroup.class})
 	List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList ;
 
+	private String ownerName;
+	private String productSupplierName;
+	private String invoiceSupplierName;
+
 	public Integer getPurchaseReceiveOrderId(){
 		return purchaseReceiveOrderId;
 	}
@@ -212,5 +216,29 @@ public class PurchaseReceiveOrder implements Serializable {
 
 	public void setPurchaseReceiveOrderProductList(List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList) {
 		this.purchaseReceiveOrderProductList = purchaseReceiveOrderProductList;
+	}
+
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+
+	public String getProductSupplierName() {
+		return productSupplierName;
+	}
+
+	public void setProductSupplierName(String productSupplierName) {
+		this.productSupplierName = productSupplierName;
+	}
+
+	public String getInvoiceSupplierName() {
+		return invoiceSupplierName;
+	}
+
+	public void setInvoiceSupplierName(String invoiceSupplierName) {
+		this.invoiceSupplierName = invoiceSupplierName;
 	}
 }
