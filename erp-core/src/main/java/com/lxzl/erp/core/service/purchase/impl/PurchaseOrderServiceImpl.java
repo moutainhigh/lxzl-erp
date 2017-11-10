@@ -6,11 +6,14 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.product.pojo.Product;
+import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderCommitParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
+import com.lxzl.erp.common.domain.purchase.PurchaseReceiveOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.pojo.*;
+import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
@@ -288,7 +291,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
             PurchaseOrderProductDO purchaseOrderProductDO = new PurchaseOrderProductDO();
             //保存采购订单商品项快照
-            ServiceResult<String,Product> productResult = productService.queryProductById(productSkuDO.getProductId());
+            ServiceResult<String,Product> productResult = productService.queryProductDetailById(productSkuDO.getProductId());
             purchaseOrderProductDO.setProductSnapshot(JSON.toJSONString(getProductBySkuId(productResult.getResult(),productSkuDO.getId())));
             purchaseOrderProductDO.setProductId(productSkuDO.getProductId());
             purchaseOrderProductDO.setProductName(productSkuDO.getProductName());
@@ -343,7 +346,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             }
             PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO = new PurchaseReceiveOrderProductDO();
             //保存采购订单商品项快照
-            ServiceResult<String,Product> productResult = productService.queryProductById(productSkuDO.getProductId());
+            ServiceResult<String,Product> productResult = productService.queryProductDetailById(productSkuDO.getProductId());
             purchaseReceiveOrderProductDO.setRealProductSnapshot(JSON.toJSONString(getProductBySkuId(productResult.getResult(),productSkuDO.getId())));
             purchaseReceiveOrderProductDO.setRealProductId(productSkuDO.getProductId());
             purchaseReceiveOrderProductDO.setRealProductName(productSkuDO.getProductName());
@@ -587,6 +590,138 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(purchaseReceiveOrderDO.getPurchaseReceiveNo());
         return serviceResult;
+    }
+
+    /**
+     * 采购收货单确认签单
+     * 调用入库接口，改变采购收货单状态，改变采购收货单状态
+     * @param purchaseReceiveOrder
+     * @return
+     */
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Override
+    public ServiceResult<String, String> commitPurchaseReceiveOrder(PurchaseReceiveOrder purchaseReceiveOrder) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        PurchaseReceiveOrderDO purchaseReceiveOrderDO = purchaseReceiveOrderMapper.findByNo(purchaseReceiveOrder.getPurchaseReceiveNo());
+        if(purchaseReceiveOrderDO==null){
+            serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_NO_EXISTS);
+            return serviceResult;
+        }
+
+        //调用入库接口
+        ProductInStockParam productInStockParam = new ProductInStockParam();
+        productInStockParam.setTargetWarehouseId(purchaseReceiveOrderDO.getWarehouseId());
+        productInStockParam.setCauseType(StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE);
+        productInStockParam.setReferNo(purchaseReceiveOrderDO.getPurchaseReceiveNo());
+        List<ProductInStorage> productInStorageList = new ArrayList<>();
+        List<PurchaseReceiveOrderProductDO> list = purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList();
+        //用来保存实际采购的sku及数量
+        Map<Integer,PurchaseReceiveOrderProductDO> realSkuMap = new HashMap<>();
+        //构建入库参数的同时，将数据保存到map一份，方便后面匹配采购单商品项
+        for(PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO : list){
+            ProductInStorage productInStorage = new ProductInStorage();
+            productInStorage.setProductId(purchaseReceiveOrderProductDO.getRealProductId());
+            productInStorage.setProductSkuId(purchaseReceiveOrderProductDO.getRealProductSkuId());
+            productInStorage.setProductCount(purchaseReceiveOrderProductDO.getRealProductCount());
+            String realProductSnapshot = purchaseReceiveOrderProductDO.getRealProductSnapshot();
+            Product product = JSON.parseObject(realProductSnapshot,Product.class);
+            productInStorage.setProductMaterialList(product.getProductSkuList().get(0).getProductMaterialList());
+            productInStorageList.add(productInStorage);
+            realSkuMap.put(purchaseReceiveOrderProductDO.getRealProductSkuId(),purchaseReceiveOrderProductDO);
+        }
+        productInStockParam.setProductInStorageList(productInStorageList);
+        ServiceResult<String, Integer> inStockResult = warehouseService.productInStock(productInStockParam);
+        if(!ErrorCode.SUCCESS.equals(inStockResult.getErrorCode())){
+            serviceResult.setErrorCode(inStockResult.getErrorCode());
+            return serviceResult;
+        }
+
+        Date now  = new Date();
+        //更新采购收货单状态
+        purchaseReceiveOrderDO.setPurchaseReceiveOrderStatus(PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_YET);
+        purchaseReceiveOrderDO.setConfirmTime(now);
+        purchaseReceiveOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        purchaseReceiveOrderDO.setUpdateTime(now);
+        purchaseReceiveOrderMapper.update(purchaseReceiveOrderDO);
+        //判断采购单是否全部采购，更新采购单状态
+        PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findDetailById(purchaseReceiveOrderDO.getPurchaseOrderId());
+        List<PurchaseOrderProductDO> purchaseOrderProductDOList = purchaseOrderDO.getPurchaseOrderProductDOList();
+        //循环中临时记录循环的前面所有项的综合采购状态
+        Integer lastPurchaseOrderStatus = PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PURCHASING;
+        for(PurchaseOrderProductDO purchaseOrderProductDO : purchaseOrderProductDOList){
+
+            PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO = realSkuMap.get(purchaseOrderProductDO.getProductSkuId());
+            //如果待采购商品项 在 已采购商品列表中
+            if(purchaseReceiveOrderProductDO!=null){
+                //如果实际采购商品数小于采购单商品项的商品数
+                if(purchaseReceiveOrderProductDO.getRealProductCount()<purchaseOrderProductDO.getProductCount()){
+                    lastPurchaseOrderStatus = PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PART;
+                }else if(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PURCHASING.equals(lastPurchaseOrderStatus)){
+                    //如果实际采购商品数大于等于采购单商品项的商品数
+                    //并且目前采购单状态为待采购状态，则更新采购状态为全部采购,如果是全部采购状态，不需要处理
+                    lastPurchaseOrderStatus = PurchaseOrderStatus.PURCHASE_ORDER_STATUS_ALL;
+                }
+            }
+        }
+        purchaseOrderDO.setPurchaseOrderStatus(lastPurchaseOrderStatus);
+        purchaseOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        purchaseOrderDO.setUpdateTime(now);
+        purchaseOrderMapper.update(purchaseOrderDO);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(purchaseReceiveOrder.getPurchaseReceiveNo());
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, Page<PurchaseReceiveOrder>> pagePurchaseReceive(PurchaseReceiveOrderQueryParam purchaseReceiveOrderQueryParam) {
+        ServiceResult<String, Page<PurchaseReceiveOrder>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(purchaseReceiveOrderQueryParam.getPageNo(), purchaseReceiveOrderQueryParam.getPageSize());
+        //将3个ID的参数转为No
+        purchaseReceiveOrderQueryParam.setPurchaseOrderId(null);
+        purchaseReceiveOrderQueryParam.setWarehouseId(null);
+        purchaseReceiveOrderQueryParam.setPurchaseDeliveryOrderId(null);
+        Page<PurchaseReceiveOrder> nullPage = new Page<>(new ArrayList<PurchaseReceiveOrder>(), 0, purchaseReceiveOrderQueryParam.getPageNo(), purchaseReceiveOrderQueryParam.getPageSize());
+        if(StringUtil.isNotEmpty(purchaseReceiveOrderQueryParam.getPurchaseNo())){
+            PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findByPurchaseNo(purchaseReceiveOrderQueryParam.getPurchaseNo());
+            if(purchaseOrderDO==null){
+                result.setErrorCode(ErrorCode.SUCCESS);
+                result.setResult(nullPage);
+                return result;
+            }
+            purchaseReceiveOrderQueryParam.setPurchaseOrderId(purchaseOrderDO.getId());
+        }
+        if(StringUtil.isNotEmpty(purchaseReceiveOrderQueryParam.getWarehouseNo())){
+            WarehouseDO warehouseDO = warehouseMapper.finByNo(purchaseReceiveOrderQueryParam.getWarehouseNo());
+            if(warehouseDO==null){
+                result.setErrorCode(ErrorCode.SUCCESS);
+                result.setResult(nullPage);
+                return result;
+            }
+            purchaseReceiveOrderQueryParam.setWarehouseId(warehouseDO.getId());
+        }
+        if(StringUtil.isNotEmpty(purchaseReceiveOrderQueryParam.getPurchaseDeliveryNo())){
+            PurchaseDeliveryOrderDO purchaseDeliveryOrderDO = purchaseDeliveryOrderMapper.findByNo(purchaseReceiveOrderQueryParam.getPurchaseDeliveryNo());
+            if(purchaseDeliveryOrderDO==null){
+                result.setErrorCode(ErrorCode.SUCCESS);
+                result.setResult(nullPage);
+                return result;
+            }
+            purchaseReceiveOrderQueryParam.setPurchaseDeliveryOrderId(purchaseDeliveryOrderDO.getId());
+        }
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("queryParam", purchaseReceiveOrderQueryParam);
+
+        Integer totalCount = purchaseReceiveOrderMapper.findPurchaseReceiveOrderCountByParams(maps);
+        List<PurchaseReceiveOrderDO> purchaseReceiveOrderDOList = purchaseReceiveOrderMapper.findPurchaseReceiveOrderByParams(maps);
+        List<PurchaseReceiveOrder> purchaseReceiveOrderList = PurchaseOrderConverter.convertPurchaseReceiveOrderDOList(purchaseReceiveOrderDOList);
+        Page<PurchaseReceiveOrder> page = new Page<>(purchaseReceiveOrderList, totalCount, purchaseReceiveOrderQueryParam.getPageNo(), purchaseReceiveOrderQueryParam.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+        //todo mapper查询
     }
 
     /**

@@ -4,15 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseDeliveryOrder;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseDeliveryOrderProduct;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrderProduct;
+import com.lxzl.erp.common.domain.purchase.pojo.*;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
-import com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderDO;
-import com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderProductDO;
-import com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderDO;
-import com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderProductDO;
+import com.lxzl.erp.dataaccess.domain.purchase.*;
 import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
@@ -59,6 +53,24 @@ public class PurchaseOrderConverter {
         }
         return purchaseDeliveryOrder;
     }
+
+    public static PurchaseReceiveOrder convertPurchaseReceiveOrderDO(PurchaseReceiveOrderDO purchaseReceiveOrderDO){
+        PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
+        BeanUtils.copyProperties(purchaseReceiveOrderDO,purchaseReceiveOrder);
+        purchaseReceiveOrder.setPurchaseReceiveOrderId(purchaseReceiveOrderDO.getId());
+        if(purchaseReceiveOrderDO!=null&&purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList()!=null&&purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList().size()>0){
+            List<PurchaseReceiveOrderProduct> purchaseDeliveryOrderProductList = new ArrayList<>();
+            List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList();
+            for(PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO : purchaseReceiveOrderProductDOList){
+                PurchaseReceiveOrderProduct purchaseReceiveOrderProduct = new PurchaseReceiveOrderProduct();
+                BeanUtils.copyProperties(purchaseReceiveOrderProductDO,purchaseReceiveOrderProduct);
+                purchaseReceiveOrderProduct.setPurchaseReceiveOrderProductId(purchaseReceiveOrderProductDO.getId());
+                purchaseDeliveryOrderProductList.add(purchaseReceiveOrderProduct);
+            }
+            purchaseReceiveOrder.setPurchaseReceiveOrderProductList(purchaseDeliveryOrderProductList);
+        }
+        return purchaseReceiveOrder;
+    }
     public static List<PurchaseOrder> convertPurchaseOrderDOList(List<PurchaseOrderDO> purchaseOrderDOList){
         List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
         if (purchaseOrderDOList != null && purchaseOrderDOList.size() > 0) {
@@ -76,5 +88,14 @@ public class PurchaseOrderConverter {
             }
         }
         return purchaseDeliveryOrderList;
+    }
+    public static List<PurchaseReceiveOrder> convertPurchaseReceiveOrderDOList(List<PurchaseReceiveOrderDO> purchaseReceiveOrderDOList){
+        List<PurchaseReceiveOrder> purchaseReceiveOrderList = new ArrayList<>();
+        if (purchaseReceiveOrderDOList != null && purchaseReceiveOrderDOList.size() > 0) {
+            for (PurchaseReceiveOrderDO purchaseReceiveOrderDO : purchaseReceiveOrderDOList) {
+                purchaseReceiveOrderList.add(convertPurchaseReceiveOrderDO(purchaseReceiveOrderDO));
+            }
+        }
+        return purchaseReceiveOrderList;
     }
 }

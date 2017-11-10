@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderCommitParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
+import com.lxzl.erp.common.domain.purchase.PurchaseReceiveOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseDeliveryOrder;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseReceiveOrder;
@@ -139,5 +140,26 @@ public class PurchaseOrderController {
         ServiceResult<String, String> serviceResult = purchaseOrderService.updatePurchaseReceiveOrder(purchaseReceiveOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
-
+    /**
+     * 采购收货单签单
+     * @param purchaseReceiveOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "commitPurchaseReceiveOrder", method = RequestMethod.POST)
+    public Result commitPurchaseReceiveOrder(@RequestBody @Validated(IdGroup.class) PurchaseReceiveOrder purchaseReceiveOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = purchaseOrderService.commitPurchaseReceiveOrder(purchaseReceiveOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+    /**
+     * 采购收货单签单
+     * @param purchaseReceiveOrderQueryParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "pagePurchaseReceive", method = RequestMethod.POST)
+    public Result pagePurchaseReceive(@RequestBody @Validated(IdGroup.class) PurchaseReceiveOrderQueryParam purchaseReceiveOrderQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<PurchaseReceiveOrder>> serviceResult = purchaseOrderService.pagePurchaseReceive(purchaseReceiveOrderQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }

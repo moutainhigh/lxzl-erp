@@ -20,4 +20,8 @@ public interface PurchaseReceiveOrderMapper extends BaseMysqlDAO<PurchaseReceive
 	 * @return
 	 */
 	PurchaseReceiveOrderDO findAllByNo(@Param("purchaseReceiveNo") String purchaseReceiveNo);
+
+	List<PurchaseReceiveOrderDO> findPurchaseReceiveOrderByParams(@Param("maps") Map<String, Object> paramMap);
+
+	Integer findPurchaseReceiveOrderCountByParams(@Param("maps") Map<String, Object> paramMap);
 }
