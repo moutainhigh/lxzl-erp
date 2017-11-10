@@ -99,10 +99,10 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
 
         if(CommonConstant.COMMON_CONSTANT_YES.equals(productCategoryPropertyDO.getIsMaterial())){
-
             MaterialDO materialDO = new MaterialDO();
             materialDO.setMaterialName(productCategoryPropertyDO.getPropertyName() + "&" + productCategoryPropertyValueDO.getPropertyValueName());
             materialDO.setMaterialNo(GenerateNoUtil.generateMaterialNo(currentTime));
+            materialDO.setMaterialType(productCategoryPropertyDO.getMaterialType());
             materialDO.setCategoryId(productCategoryPropertyDO.getCategoryId());
             materialDO.setPropertyId(productCategoryPropertyDO.getId());
             materialDO.setPropertyValueId(productCategoryPropertyValueDO.getId());

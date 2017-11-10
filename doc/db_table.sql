@@ -442,6 +442,7 @@ CREATE TABLE `erp_material` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '物料ID',
   `material_no` varchar(100) NOT NULL COMMENT '物料唯一编号',
   `material_name` varchar(100) COLLATE utf8_bin COMMENT '物料名称，取属性与属性值全称',
+  `material_type` int(20) NOT NULL COMMENT '物料类型',
   `brand_id` int(20) COMMENT '所属品牌ID',
   `category_id` int(20) NOT NULL COMMENT '所属类目ID',
   `property_id` int(20) NOT NULL COMMENT '属性ID',
@@ -473,7 +474,8 @@ CREATE TABLE `erp_product_material` (
   `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_product_material` (`product_sku_id`,`material_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='商品物料表';
 
 DROP TABLE if exists `erp_product_equipment`;
@@ -517,6 +519,7 @@ DROP TABLE if exists `erp_bulk_material`;
 CREATE TABLE `erp_bulk_material` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '散料ID',
   `bulk_material_no` varchar(100) NOT NULL COMMENT '散料唯一编号',
+  `bulk_material_type` int(20) NOT NULL COMMENT '散料类型',
   `material_id` int(20) NOT NULL COMMENT '物料ID，从哪个物料生成的',
   `material_no` varchar(100) NOT NULL COMMENT '物料编号，从哪个物料生成的',
   `warehouse_id` int(20) NOT NULL COMMENT '目前仓库ID',

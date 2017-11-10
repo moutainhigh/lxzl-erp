@@ -15,6 +15,7 @@ public class Material implements Serializable {
     private Integer id;
     private String materialNo;
     private String materialName;
+    private Integer materialType;
     private Integer brandId;
     private Integer categoryId;
     private Integer propertyId;
@@ -129,5 +130,13 @@ public class Material implements Serializable {
 
     public void setMaterialDesc(String materialDesc) {
         this.materialDesc = materialDesc;
+    }
+
+    public Integer getMaterialType() {
+        return materialType;
+    }
+
+    public void setMaterialType(Integer materialType) {
+        this.materialType = materialType;
     }
 }
