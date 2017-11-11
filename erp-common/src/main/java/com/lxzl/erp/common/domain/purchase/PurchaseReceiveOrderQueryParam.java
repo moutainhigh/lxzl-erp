@@ -13,7 +13,7 @@ public class PurchaseReceiveOrderQueryParam extends BasePageParam {
 
     private String purchaseNo ;//采购单编号
     private String purchaseDeliveryNo ;//发货单编号
-    private String purchaseReceiveMo ; //采购收货单编号
+    private String purchaseReceiveNo ; //采购收货单编号
     private String warehouseNo ; //仓库编号
     private Integer productSupplierId;//商品供应商ID
     private Integer autoAllotStatus;//分拨情况，0-未分拨，1-已分拨，2-被分拨，没发票的分公司仓库单，将生成一个总公司收货单，并生成分拨单号，自动分拨到分公司仓库
@@ -66,12 +66,12 @@ public class PurchaseReceiveOrderQueryParam extends BasePageParam {
         this.purchaseDeliveryNo = purchaseDeliveryNo;
     }
 
-    public String getPurchaseReceiveMo() {
-        return purchaseReceiveMo;
+    public String getpurchaseReceiveNo() {
+        return purchaseReceiveNo;
     }
 
-    public void setPurchaseReceiveMo(String purchaseReceiveMo) {
-        this.purchaseReceiveMo = purchaseReceiveMo;
+    public void setpurchaseReceiveNo(String purchaseReceiveNo) {
+        this.purchaseReceiveNo = purchaseReceiveNo;
     }
 
     public String getWarehouseNo() {
