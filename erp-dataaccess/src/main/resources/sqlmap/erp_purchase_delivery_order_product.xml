@@ -49,7 +49,7 @@
 	<select id="listPage" resultMap="PurchaseDeliveryOrderProductDO" parameterType="map">
 		select <include refid="column_List"/> from erp_purchase_delivery_order_product epdop 
 		<where>
-			<if test="maps.purchaseOrderId != null">
+			<if test="maps.purchaseDeliveryOrderId != null">
 				and epdop.purchase_delivery_order_id = #{maps.purchaseDeliveryOrderId, jdbcType=INTEGER}
 			</if>
 			<if test="true">

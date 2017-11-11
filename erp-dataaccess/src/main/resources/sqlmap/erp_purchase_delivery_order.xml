@@ -59,6 +59,12 @@
 		where epdo.purchase_delivery_no = #{purchaseDeliveryNo, jdbcType=VARCHAR} and data_status = 1
 		) epdo left join erp_purchase_delivery_order_product epdop on epdo.id = epdop.purchase_delivery_order_id and epdop.data_status=1
 	</select>
+	<select id="findListByPurchaseId" resultMap="PurchaseDeliveryOrderDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/>,<include refid="product_column_List"/> FROM (
+		SELECT <include refid="column_List"/> FROM erp_purchase_delivery_order epdo
+		WHERE epdo.purchase_order_id = #{purchaseOrderId, jdbcType=INTEGER} AND epdo.data_status = 1
+		) epdo LEFT JOIN erp_purchase_delivery_order_product epdop ON epdop.purchase_delivery_order_id = epdo.id AND epdop.data_status = 1
+	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(epdo.id) from erp_purchase_delivery_order epdo 
 		<where>

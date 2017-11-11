@@ -26,8 +26,6 @@ public class PurchaseReceiveOrderQueryParam extends BasePageParam {
     private Date confirmStartTime;//确认签单起始时间
     private Date confirmEndTime;//确认签单结束时间
 
-    private String ownerString;//签单人真实姓名
-
     public Integer getPurchaseOrderId() {
         return purchaseOrderId;
     }
@@ -122,14 +120,6 @@ public class PurchaseReceiveOrderQueryParam extends BasePageParam {
 
     public void setIsNew(Integer isNew) {
         this.isNew = isNew;
-    }
-
-    public String getOwnerString() {
-        return ownerString;
-    }
-
-    public void setOwnerString(String ownerString) {
-        this.ownerString = ownerString;
     }
 
     public Integer getPurchaseReceiveOrderStatus() {

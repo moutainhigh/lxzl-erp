@@ -57,6 +57,9 @@ public class PurchaseOrder implements Serializable {
     @CollectionNotNull(message = ErrorCode.PURCHASE_ORDER_PRODUCT_LIST_NOT_NULL , groups = {AddGroup.class,UpdateGroup.class})
     private List<PurchaseOrderProduct> purchaseOrderProductList;
 
+    private List<PurchaseDeliveryOrder> purchaseDeliveryOrderList;
+    private List<PurchaseReceiveOrder> purchaseReceiveOrderList;
+
     public Integer getPurchaseOrderId(){
         return purchaseOrderId;
     }
@@ -255,5 +258,21 @@ public class PurchaseOrder implements Serializable {
 
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
+    }
+
+    public List<PurchaseDeliveryOrder> getPurchaseDeliveryOrderList() {
+        return purchaseDeliveryOrderList;
+    }
+
+    public void setPurchaseDeliveryOrderList(List<PurchaseDeliveryOrder> purchaseDeliveryOrderList) {
+        this.purchaseDeliveryOrderList = purchaseDeliveryOrderList;
+    }
+
+    public List<PurchaseReceiveOrder> getPurchaseReceiveOrderList() {
+        return purchaseReceiveOrderList;
+    }
+
+    public void setPurchaseReceiveOrderList(List<PurchaseReceiveOrder> purchaseReceiveOrderList) {
+        this.purchaseReceiveOrderList = purchaseReceiveOrderList;
     }
 }

@@ -24,4 +24,13 @@ public interface PurchaseReceiveOrderMapper extends BaseMysqlDAO<PurchaseReceive
 	List<PurchaseReceiveOrderDO> findPurchaseReceiveOrderByParams(@Param("maps") Map<String, Object> paramMap);
 
 	Integer findPurchaseReceiveOrderCountByParams(@Param("maps") Map<String, Object> paramMap);
+
+	List<PurchaseReceiveOrderDO> findListByPurchaseId(@Param("purchaseOrderId") Integer purchaseId);
+
+	/**
+	 * 查询被分拨的采购收货单的分拨单
+	 * @param autoAllotNo
+	 * @return
+	 */
+	PurchaseReceiveOrderDO findAutoAllotReceiveOrder(@Param("autoAllotNo") String autoAllotNo);
 }

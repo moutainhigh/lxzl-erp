@@ -108,13 +108,16 @@ public class ErrorCode {
     public static final String WAREHOUSE_NO_NOT_NULL = "J300021";
     public static final String SUPPLIER_NOT_EXISTS = "J300022";
     public static final String PURCHASE_RECEIVE_ORDER_NO_NOT_NULL = "J300023";
-    public static final String PURCHASE_RECEIVE_ORDER_NO_EXISTS = "J300024";
+    public static final String PURCHASE_RECEIVE_ORDER_NOT_EXISTS = "J300024";
     public static final String PURCHASE_RECEIVE_ORDER_AUTO_ALLOT_YES_CAN_NOT_UPDATE = "J300025";
     public static final String PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_UPDATE = "J300026";
     public static final String PURCHASE_RECEIVE_ORDER_PRODUCT_LIST_NOT_NULL = "J300027";
     public static final String PURCHASE_RECEIVE_ORDER_PRODUCT_REAL_COUNT_NOT_NULL = "J300028";
     public static final String PURCHASE_RECEIVE_ORDER_PRODUCT_SKU_ID_NOT_NULL = "J300029";
     public static final String STOCK_ORDER_ALREADY_EXISTS = "J300030";
+    public static final String PURCHASE_ORDER_STATUS_CAN_NOT_END = "J300031";
+    public static final String PURCHASE_ORDER_STATUS_CAN_NOT_CONTINUE = "J300032";
+    public static final String PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_IN_AGAIN = "J300033";
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
     public static final String ORDER_USER_CONSIGN_NOT_NULL = "J400001";
@@ -232,13 +235,16 @@ public class ErrorCode {
         MAP.put(WAREHOUSE_NO_NOT_NULL,"仓库编号不能为空");
         MAP.put(SUPPLIER_NOT_EXISTS,"供应商不存在");
         MAP.put(PURCHASE_RECEIVE_ORDER_NO_NOT_NULL,"采购收货单编号不能为空");
-        MAP.put(PURCHASE_RECEIVE_ORDER_NO_EXISTS,"采购收货单不存在");
+        MAP.put(PURCHASE_RECEIVE_ORDER_NOT_EXISTS,"采购收货单不存在");
         MAP.put(PURCHASE_RECEIVE_ORDER_AUTO_ALLOT_YES_CAN_NOT_UPDATE,"自动流转到总仓的采购发货单不能修改");
         MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_UPDATE,"已签单的采购发货单不能修改");
         MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_LIST_NOT_NULL,"采购收货单商品项列表不能为空");
         MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_REAL_COUNT_NOT_NULL,"商品SKU实际数量填写不正确");
         MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_SKU_ID_NOT_NULL,"采购收货单商品项商品SKU_ID不能为空");
         MAP.put(STOCK_ORDER_ALREADY_EXISTS,"入库单已经存在，不能入库");
+        MAP.put(PURCHASE_ORDER_STATUS_CAN_NOT_END,"当前采购单状态不允许结束");
+        MAP.put(PURCHASE_ORDER_STATUS_CAN_NOT_CONTINUE,"当前采购单状态不允许继续采购");
+        MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_IN_AGAIN,"已入库的采购收货单不允许再次入库");
 
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL,"订单商品不能为空");

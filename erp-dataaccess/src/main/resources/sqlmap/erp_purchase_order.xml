@@ -31,7 +31,7 @@
 	</resultMap>
 
 	<resultMap id="PurchaseOrderProductDO" type="com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderProductDO">
-		<id column="id" jdbcType="INTEGER" property="id"/>
+		<id column="epop_id" jdbcType="INTEGER" property="id"/>
 		<result column="epop_purchaseOrderId" jdbcType="INTEGER" property="purchaseOrderId"/>
 		<result column="epop_productId" jdbcType="INTEGER" property="productId"/>
 		<result column="epop_productName" jdbcType="VARCHAR" property="productName"/>
