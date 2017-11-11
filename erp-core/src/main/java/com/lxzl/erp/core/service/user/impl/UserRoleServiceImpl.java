@@ -185,9 +185,7 @@ public class UserRoleServiceImpl implements UserRoleService {
             return result;
         }
         RoleDO roleDO = UserRoleConverter.convertRole(role);
-        if (loginUser != null) {
-            roleDO.setUpdateUser(loginUser.getUserId().toString());
-        }
+        roleDO.setUpdateUser(loginUser.getUserId().toString());
         roleDO.setUpdateTime(new Date());
         roleMapper.update(roleDO);
 
@@ -217,9 +215,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         RoleDO roleDO = new RoleDO();
         roleDO.setId(id);
-        if (loginUser != null) {
-            roleDO.setUpdateUser(loginUser.getUserId().toString());
-        }
+        roleDO.setUpdateUser(loginUser.getUserId().toString());
         roleDO.setUpdateTime(new Date());
         roleDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
         roleMapper.update(roleDO);
@@ -265,10 +261,8 @@ public class UserRoleServiceImpl implements UserRoleService {
                 UserRoleDO userRoleDO = UserRoleConverter.convertUserRole(userRole);
                 userRoleDO.setRoleId(role.getRoleId());
                 userRoleDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                if (loginUser != null) {
-                    userRoleDO.setCreateUser(loginUser.getUserId().toString());
-                    userRoleDO.setUpdateUser(loginUser.getUserId().toString());
-                }
+                userRoleDO.setCreateUser(loginUser.getUserId().toString());
+                userRoleDO.setUpdateUser(loginUser.getUserId().toString());
                 userRoleDO.setCreateTime(new Date());
                 userRoleDO.setUpdateTime(new Date());
                 userRoleMapper.save(userRoleDO);
@@ -278,9 +272,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         for (Map.Entry<Integer, RoleDO> entry : dbRoleMap.entrySet()) {
             UserRoleDO userRoleDO = userRoleMapper.findUserRole(userRole.getUserId(), entry.getKey());
             userRoleDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-            if (loginUser != null) {
-                userRoleDO.setUpdateUser(loginUser.getUserId().toString());
-            }
+            userRoleDO.setUpdateUser(loginUser.getUserId().toString());
             userRoleDO.setUpdateTime(new Date());
             userRoleMapper.update(userRoleDO);
         }
@@ -319,10 +311,8 @@ public class UserRoleServiceImpl implements UserRoleService {
 
                 roleMenuDO.setMenuId(menu.getMenuId());
                 roleMenuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                if (loginUser != null) {
-                    roleMenuDO.setCreateUser(loginUser.getUserId().toString());
-                    roleMenuDO.setUpdateUser(loginUser.getUserId().toString());
-                }
+                roleMenuDO.setCreateUser(loginUser.getUserId().toString());
+                roleMenuDO.setUpdateUser(loginUser.getUserId().toString());
                 roleMenuDO.setCreateTime(new Date());
                 roleMenuDO.setUpdateTime(new Date());
                 roleMenuMapper.save(roleMenuDO);
@@ -345,10 +335,8 @@ public class UserRoleServiceImpl implements UserRoleService {
                 roleMenuDO.setMenuId(sysMenuDO.getParentMenuId());
 
                 roleMenuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                if (loginUser != null) {
-                    roleMenuDO.setCreateUser(loginUser.getUserId().toString());
-                    roleMenuDO.setUpdateUser(loginUser.getUserId().toString());
-                }
+                roleMenuDO.setCreateUser(loginUser.getUserId().toString());
+                roleMenuDO.setUpdateUser(loginUser.getUserId().toString());
                 roleMenuDO.setCreateTime(new Date());
                 roleMenuDO.setUpdateTime(new Date());
                 roleMenuMapper.save(roleMenuDO);
@@ -615,7 +603,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         PageQuery pageQuery = new PageQuery();
         pageQuery.setPageNo(1);
         pageQuery.setPageSize(Integer.MAX_VALUE);
-        List<UserDO> userDOList = userMapper.listPage(userQueryParam,pageQuery);
+        List<UserDO> userDOList = userMapper.listPage(userQueryParam, pageQuery);
         result.setResult(UserConverter.convertUserList(userDOList));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;

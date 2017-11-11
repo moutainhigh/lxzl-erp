@@ -8,6 +8,7 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="material_no" jdbcType="VARCHAR" property="materialNo" />
 		<result column="material_name" jdbcType="VARCHAR" property="materialName" />
+		<result column="material_type" jdbcType="INTEGER" property="materialType" />
 		<result column="brand_id" jdbcType="INTEGER" property="brandId" />
 		<result column="category_id" jdbcType="INTEGER" property="categoryId" />
 		<result column="property_id" jdbcType="INTEGER" property="propertyId" />
@@ -25,13 +26,19 @@
 	</resultMap>
 
 	<sql id="column_List">
-		em.id,em.ateriel_no,em.ateriel_name,em.rand_id,em.ategory_id,em.roperty_id,em.roperty_value_id,em.material_price,em.riginal_price,em.ent_price,em.ata_status,em.emark,em.reate_time,em.reate_user,em.update_time,em.pdate_user
+		em.id,em.material_no,em.material_name,em.material_type,em.brand_id,em.category_id,em.property_id,em.property_value_id,em.material_price,em.original_price,em.rent_price,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
 	</sql>
 
 	<select id="findById" resultMap="MaterialDO" parameterType="java.lang.Integer">
 		select
 		<include refid="column_List"/>
 		from erp_material em where em.id = #{id, jdbcType=INTEGER} and data_status = 1
+	</select>
+
+	<select id="findByPropertyAndValueId" resultMap="MaterialDO" parameterType="java.lang.Integer">
+		select
+		<include refid="column_List"/>
+		from erp_material em where em.property_id = #{propertyId, jdbcType=INTEGER} and em.property_value_id = #{propertyValueId, jdbcType=INTEGER} and data_status = 1
 	</select>
 
 
@@ -42,6 +49,9 @@
 			</if>
 			<if test="materialName != null">
 				material_name = #{materialName,jdbcType=VARCHAR},
+			</if>
+			<if test="materialType != null">
+				material_type = #{materialType,jdbcType=INTEGER},
 			</if>
 			<if test="brandId != null">
 				brand_id = #{brandId,jdbcType=INTEGER},

@@ -21,8 +21,36 @@
         <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <collection property="productImgDOList" resultMap="ProductImgDO" />
+        <collection property="bulkMaterialDOList" resultMap="BulkMaterialDO" />
     </resultMap>
 
+
+    <resultMap id="BulkMaterialDO" type="com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO">
+        <id column="bulk_id" jdbcType="INTEGER" property="id" />
+        <result column="bulk_bulk_material_no" jdbcType="VARCHAR" property="bulkMaterialNo" />
+        <result column="bulk_bulk_material_type" jdbcType="INTEGER" property="bulkMaterialType" />
+        <result column="bulk_bulk_material_name" jdbcType="VARCHAR" property="bulkMaterialName" />
+        <result column="bulk_material_id" jdbcType="INTEGER" property="materialId" />
+        <result column="bulk_material_no" jdbcType="VARCHAR" property="materialNo" />
+        <result column="bulk_warehouse_id" jdbcType="INTEGER" property="warehouseId" />
+        <result column="bulk_warehouse_position_id" jdbcType="INTEGER" property="warehousePositionId" />
+        <result column="bulk_owner_warehouse_id" jdbcType="INTEGER" property="ownerWarehouseId" />
+        <result column="bulk_owner_warehouse_position_id" jdbcType="INTEGER" property="ownerWarehousePositionId" />
+        <result column="bulk_brand_id" jdbcType="INTEGER" property="brandId" />
+        <result column="bulk_category_id" jdbcType="INTEGER" property="categoryId" />
+        <result column="bulk_property_id" jdbcType="INTEGER" property="propertyId" />
+        <result column="bulk_property_value_id" jdbcType="INTEGER" property="propertyValueId" />
+        <result column="bulk_bulk_material_price" jdbcType="DECIMAL" property="bulkMaterialPrice" />
+        <result column="bulk_original_price" jdbcType="DECIMAL" property="originalPrice" />
+        <result column="bulk_rent_price" jdbcType="DECIMAL" property="rentPrice" />
+        <result column="bulk_bulk_material_status" jdbcType="INTEGER" property="bulkMaterialStatus" />
+        <result column="bulk_data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="bulk_remark" jdbcType="VARCHAR" property="remark" />
+        <result column="bulk_create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="bulk_create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="bulk_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="bulk_update_user" jdbcType="VARCHAR" property="updateUser" />
+    </resultMap>
 
     <resultMap id="ProductImgDO" type="com.lxzl.erp.dataaccess.domain.product.ProductImgDO">
         <id column="img_id" jdbcType="INTEGER" property="id"/>
@@ -46,19 +74,47 @@
         epi.id as img_id,epi.img_type as img_img_type,epi.original_name as img_original_name,epi.product_id as img_product_id,epi.img_url as img_img_url,epi.data_status as img_data_status,epi.remark as img_remark,epi.is_main as img_is_main,epi.img_order as img_img_order,epi.create_user as img_create_user,epi.create_time as img_create_time,epi.update_user as img_update_user,epi.update_time as img_update_time
     </sql>
 
+    <sql id="bulk_material_column_List">
+        ebm.id AS bulk_id,ebm.bulk_material_no AS bulk_bulk_material_no,ebm.bulk_material_type AS bulk_bulk_material_type,ebm.bulk_material_name AS bulk_bulk_material_name,ebm.material_id AS bulk_material_id,ebm.material_no AS bulk_material_no,ebm.warehouse_id AS bulk_warehouse_id,ebm.warehouse_position_id AS bulk_warehouse_position_id,ebm.owner_warehouse_id AS bulk_owner_warehouse_id,ebm.owner_warehouse_position_id AS bulk_owner_warehouse_position_id,ebm.brand_id AS bulk_brand_id,ebm.category_id AS bulk_category_id,ebm.property_id AS bulk_property_id,ebm.property_value_id AS bulk_property_value_id,ebm.bulk_material_price AS bulk_bulk_material_price,ebm.original_price AS bulk_original_price,ebm.rent_price AS bulk_rent_price,ebm.bulk_material_status AS bulk_bulk_material_status,ebm.data_status AS bulk_data_status,ebm.remark AS bulk_remark,ebm.create_time AS bulk_create_time,ebm.create_user AS bulk_create_user,ebm.update_time AS bulk_update_time,ebm.update_user AS bulk_update_user
+    </sql>
+
     <select id="findById" resultMap="ProductEquipmentDO" parameterType="java.lang.Integer">
-        select
-        <include refid="column_List"/>
-        from erp_product_equipment epe where id = #{id, jdbcType=INTEGER} and data_status = 1
+        SELECT equipment_main.*
+            <trim prefix=",">
+                <include refid="bulk_material_column_List" />
+            </trim>
+            <trim prefix=",">
+                <include refid="img_column_List" />
+            </trim>
+        FROM
+        (
+            SELECT <include refid="column_List"/>
+            FROM erp_product_equipment epe
+            INNER JOIN erp_product mp ON epe.product_id = mp.id
+            where epe.id = #{id, jdbcType=INTEGER} and epe.data_status = 1
+        ) equipment_main LEFT JOIN erp_product_equipment_bulk_material epebm ON equipment_main.id = epebm.equipment_id and epebm.data_status = 1
+        LEFT JOIN erp_bulk_material ebm ON epebm.bulk_material_id = ebm.id AND ebm.data_status = 1
+        LEFT JOIN erp_product_img epi ON epi.product_id = equipment_main.product_id AND epi.data_status = 1 AND epi.img_type = 1
     </select>
 
     <select id="findByEquipmentNo" resultMap="ProductEquipmentDO" parameterType="java.lang.String">
-        select
-        <include refid="column_List"/>
-        from erp_product_equipment epe where equipment_no = #{equipmentNo, jdbcType=INTEGER} and data_status = 1
+        SELECT equipment_main.*
+        <trim prefix=",">
+            <include refid="bulk_material_column_List" />
+        </trim>
+        <trim prefix=",">
+            <include refid="img_column_List" />
+        </trim>
+        FROM
+        (
+            SELECT <include refid="column_List"/>
+            FROM erp_product_equipment epe
+            INNER JOIN erp_product mp ON epe.product_id = mp.id
+            where epe.equipment_no = #{equipmentNo, jdbcType=INTEGER} and epe.data_status = 1
+        ) equipment_main LEFT JOIN erp_product_equipment_bulk_material epebm ON equipment_main.id = epebm.equipment_id and epebm.data_status = 1
+        LEFT JOIN erp_bulk_material ebm ON epebm.bulk_material_id = ebm.id AND ebm.data_status = 1
+        LEFT JOIN erp_product_img epi ON epi.product_id = equipment_main.product_id AND epi.data_status = 1 AND epi.img_type = 1
     </select>
-
-
 
     <select id="findProductEquipmentByParams" resultMap="ProductEquipmentDO" parameterType="map">
         SELECT product_equipment.*

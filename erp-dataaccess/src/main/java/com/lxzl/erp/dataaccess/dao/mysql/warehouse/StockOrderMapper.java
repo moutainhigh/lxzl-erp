@@ -11,4 +11,7 @@ public interface StockOrderMapper extends BaseMysqlDAO<StockOrderDO> {
 
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
+    StockOrderDO findOrderByTypeAndRefer(@Param("causeType") Integer causeType,
+                                         @Param("referNo") String referNo);
+
 }

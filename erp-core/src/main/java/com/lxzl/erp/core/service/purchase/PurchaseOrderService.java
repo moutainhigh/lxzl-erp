@@ -19,10 +19,13 @@ public interface PurchaseOrderService extends VerifyReceiver {
     ServiceResult<String,PurchaseOrder> queryPurchaseOrderByNo(String purchaseNo);
     ServiceResult<String,Page<PurchaseOrder>> page(PurchaseOrderQueryParam purchaseOrderQueryParam);
     ServiceResult<String,Integer> commit(PurchaseOrderCommitParam purchaseOrderCommitParam);
-    String  delete(PurchaseOrder purchaseOrder);
+    String delete(PurchaseOrder purchaseOrder);
     ServiceResult<String,Page<PurchaseDeliveryOrder>> pagePurchaseDelivery(PurchaseDeliveryOrderQueryParam purchaseDeliveryOrderQueryParam);
     ServiceResult<String,PurchaseDeliveryOrder> queryPurchaseDeliveryOrderByNo(PurchaseDeliveryOrder purchaseDeliveryOrder);
     ServiceResult<String,String> updatePurchaseReceiveOrder(PurchaseReceiveOrder purchaseReceiveOrder);
     ServiceResult<String,String> commitPurchaseReceiveOrder(PurchaseReceiveOrder purchaseReceiveOrder);
     ServiceResult<String,Page<PurchaseReceiveOrder>> pagePurchaseReceive(PurchaseReceiveOrderQueryParam purchaseReceiveOrderQueryParam);
+    ServiceResult<String,PurchaseReceiveOrder> queryPurchaseReceiveOrderByNo(PurchaseReceiveOrder purchaseReceiveOrder);
+    ServiceResult<String,String> endPurchaseOrder(PurchaseOrder purchaseOrder);
+    ServiceResult<String,String> continuePurchaseOrder(PurchaseOrder purchaseOrder);
 }

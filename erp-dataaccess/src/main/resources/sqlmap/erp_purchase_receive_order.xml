@@ -69,10 +69,22 @@
 		WHERE epro.purchase_receive_no = #{purchaseReceiveNo, jdbcType=VARCHAR} AND epro.data_status = 1
 		) epro LEFT JOIN erp_purchase_receive_order_product eprop ON eprop.purchase_receive_order_id = epro.id AND eprop.data_status = 1
 	</select>
+	<select id="findListByPurchaseId" resultMap="PurchaseReceiveOrderDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/>,<include refid="product_column_List"/> FROM (
+		SELECT <include refid="column_List"/> FROM erp_purchase_receive_order epro
+		WHERE epro.purchase_order_id = #{purchaseOrderId, jdbcType=INTEGER} AND epro.data_status = 1
+		) epro LEFT JOIN erp_purchase_receive_order_product eprop ON eprop.purchase_receive_order_id = epro.id AND eprop.data_status = 1
+	</select>
 	<select id="findAllByNo" resultMap="PurchaseReceiveOrderDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/>,<include refid="product_column_List"/> FROM (
 		SELECT <include refid="column_List"/> FROM erp_purchase_receive_order epro
 		WHERE epro.purchase_receive_no = #{purchaseReceiveNo, jdbcType=VARCHAR} AND epro.data_status = 1
+		) epro LEFT JOIN erp_purchase_receive_order_product eprop ON eprop.purchase_receive_order_id = epro.id
+	</select>
+	<select id="findAutoAllotReceiveOrder" resultMap="PurchaseReceiveOrderDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/>,<include refid="product_column_List"/> FROM (
+		SELECT <include refid="column_List"/> FROM erp_purchase_receive_order epro
+		WHERE epro.auto_allot_no = #{autoAllotNo, jdbcType=VARCHAR} AND epro.data_status = 1 AND auto_allot_status=1
 		) epro LEFT JOIN erp_purchase_receive_order_product eprop ON eprop.purchase_receive_order_id = epro.id
 	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">

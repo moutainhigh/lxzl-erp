@@ -10,6 +10,8 @@ public class BulkMaterial implements Serializable {
 
 	private Integer bulkMaterialId;   //散料ID
 	private String bulkMaterialNo;   //散料唯一编号
+	private Integer bulkMaterialType;	// 散料类型，来自于物料类型
+	private String bulkMaterialName;   //散料名称
 	private Integer materialId;   //物料ID，从哪个物料生成的
 	private String materialNo;   //物料编号，从哪个物料生成的
 	private Integer warehouseId;   //目前仓库ID
@@ -208,4 +210,19 @@ public class BulkMaterial implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public Integer getBulkMaterialType() {
+		return bulkMaterialType;
+	}
+
+	public void setBulkMaterialType(Integer bulkMaterialType) {
+		this.bulkMaterialType = bulkMaterialType;
+	}
+
+	public String getBulkMaterialName() {
+		return bulkMaterialName;
+	}
+
+	public void setBulkMaterialName(String bulkMaterialName) {
+		this.bulkMaterialName = bulkMaterialName;
+	}
 }

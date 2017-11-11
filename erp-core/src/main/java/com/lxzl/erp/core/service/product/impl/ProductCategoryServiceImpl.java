@@ -9,8 +9,8 @@ import com.lxzl.erp.common.domain.product.pojo.ProductCategoryPropertyValue;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.product.ProductCategoryService;
-import com.lxzl.erp.core.service.product.impl.support.ConvertProductCategory;
-import com.lxzl.erp.core.service.product.impl.support.ConvertProductCategoryProperty;
+import com.lxzl.erp.core.service.product.impl.support.ProductCategoryConverter;
+import com.lxzl.erp.core.service.product.impl.support.ProductCategoryPropertyConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyMapper;
@@ -50,7 +50,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
         Map<String, Object> maps = new HashMap<>();
         List<ProductCategoryDO> productCategoryDOList = productCategoryMapper.findAllCategory(maps);
-        List<ProductCategory> nodeList = ConvertProductCategory.convertProductCategoryTree(ConvertProductCategory.convertProductCategoryDOList(productCategoryDOList));
+        List<ProductCategory> nodeList = ProductCategoryConverter.convertProductCategoryTree(ProductCategoryConverter.convertProductCategoryDOList(productCategoryDOList));
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(nodeList);
         return result;
@@ -62,7 +62,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("categoryId", categoryId);
         List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findProductCategoryPropertyListByCategoryId(maps);
-        result.setResult(ConvertProductCategoryProperty.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
+        result.setResult(ProductCategoryPropertyConverter.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -73,7 +73,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("productId", productId);
         List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findProductCategoryPropertyListByProductId(maps);
-        result.setResult(ConvertProductCategoryProperty.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
+        result.setResult(ProductCategoryPropertyConverter.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -84,7 +84,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
-        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = ConvertProductCategoryProperty.convertProductCategoryPropertyValue(productCategoryPropertyValue);
+        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = ProductCategoryPropertyConverter.convertProductCategoryPropertyValue(productCategoryPropertyValue);
         ProductCategoryPropertyDO productCategoryPropertyDO = productCategoryPropertyMapper.findById(productCategoryPropertyValueDO.getPropertyId());
         if(productCategoryPropertyDO == null){
             result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS);
@@ -99,10 +99,10 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
 
         if(CommonConstant.COMMON_CONSTANT_YES.equals(productCategoryPropertyDO.getIsMaterial())){
-
             MaterialDO materialDO = new MaterialDO();
             materialDO.setMaterialName(productCategoryPropertyDO.getPropertyName() + "&" + productCategoryPropertyValueDO.getPropertyValueName());
             materialDO.setMaterialNo(GenerateNoUtil.generateMaterialNo(currentTime));
+            materialDO.setMaterialType(productCategoryPropertyDO.getMaterialType());
             materialDO.setCategoryId(productCategoryPropertyDO.getCategoryId());
             materialDO.setPropertyId(productCategoryPropertyDO.getId());
             materialDO.setPropertyValueId(productCategoryPropertyValueDO.getId());

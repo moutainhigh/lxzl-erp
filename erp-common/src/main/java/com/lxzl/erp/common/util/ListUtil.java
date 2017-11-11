@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.util;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,4 +37,16 @@ public class ListUtil {
         }
         return null;
     }
+
+
+    public static <K, V> List<V> mapToList( Map<K, V> kvMap) {
+        List<V> list = new ArrayList<>();
+        if(kvMap != null && kvMap.size() > 0){
+            for (Map.Entry<K, V> entry : kvMap.entrySet()) {
+                list.add(entry.getValue());
+            }
+        }
+        return list;
+    }
+
 }

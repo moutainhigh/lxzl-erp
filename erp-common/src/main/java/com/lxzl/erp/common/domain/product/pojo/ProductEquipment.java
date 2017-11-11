@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.product.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ public class ProductEquipment implements Serializable {
     private Integer dataStatus;
     private String remark;
     private List<ProductImg> productImgList;           // 商品图片
+    private List<BulkMaterial> bulkMaterialList;        // 设备散料
 
     public Integer getProductEquipmentId() {
         return productEquipmentId;
@@ -133,5 +135,13 @@ public class ProductEquipment implements Serializable {
 
     public void setEquipmentPrice(BigDecimal equipmentPrice) {
         this.equipmentPrice = equipmentPrice;
+    }
+
+    public List<BulkMaterial> getBulkMaterialList() {
+        return bulkMaterialList;
+    }
+
+    public void setBulkMaterialList(List<BulkMaterial> bulkMaterialList) {
+        this.bulkMaterialList = bulkMaterialList;
     }
 }

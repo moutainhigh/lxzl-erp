@@ -2,7 +2,6 @@ package com.lxzl.erp.core.service.product.impl;
 
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.ProductEquipmentStatus;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.*;
@@ -14,10 +13,11 @@ import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.*;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
+import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.*;
 import com.lxzl.se.common.util.StringUtil;
-import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +26,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -43,6 +43,7 @@ import java.util.*;
 @Service("productService")
 public class ProductServiceImpl implements ProductService {
     private static Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+
     @Override
     public ServiceResult<String, List<ProductImg>> uploadImage(MultipartFile[] files) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -61,16 +62,13 @@ public class ProductServiceImpl implements ProductService {
                 productImgDO.setOriginalName(file.getOriginalFilename());
                 productImgDO.setImgUrl(fileId);
                 productImgDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                if (loginUser != null) {
-                    productImgDO.setCreateUser(loginUser.getUserId().toString());
-                    productImgDO.setUpdateUser(loginUser.getUserId().toString());
-                }
-
+                productImgDO.setCreateUser(loginUser.getUserId().toString());
+                productImgDO.setUpdateUser(loginUser.getUserId().toString());
                 productImgDO.setCreateTime(new Date());
                 productImgDO.setUpdateTime(new Date());
                 productImgMapper.save(productImgDO);
 
-                imgList.add(ConvertProductImage.convertProductImgDO(productImgDO));
+                imgList.add(ProductImageConverter.convertProductImgDO(productImgDO));
                 FileUtil.deleteFile(filePath);
             }
         } catch (Exception e) {
@@ -96,9 +94,7 @@ public class ProductServiceImpl implements ProductService {
         ProductImgDO productImgDO = new ProductImgDO();
         productImgDO.setId(imgId);
         productImgDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-        if (loginUser != null) {
-            productImgDO.setUpdateUser(loginUser.getUserId().toString());
-        }
+        productImgDO.setUpdateUser(loginUser.getUserId().toString());
         productImgDO.setUpdateTime(new Date());
         Integer returnCode = productImgMapper.update(productImgDO);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -117,21 +113,29 @@ public class ProductServiceImpl implements ProductService {
             result.setErrorCode(verifyAddCode);
             return result;
         }
-        ProductDO productDO = ConvertProduct.convertProduct(product);
+        ProductDO productDO = ProductConverter.convertProduct(product);
         productDO.setProductNo(GenerateNoUtil.generateProductNo(currentTime));
         productDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        if (loginUser != null) {
-            productDO.setCreateUser(loginUser.getUserId().toString());
-            productDO.setUpdateUser(loginUser.getUserId().toString());
-        }
+        productDO.setCreateUser(loginUser.getUserId().toString());
+        productDO.setUpdateUser(loginUser.getUserId().toString());
         productDO.setCreateTime(currentTime);
         productDO.setUpdateTime(currentTime);
         productMapper.save(productDO);
         Integer productId = productDO.getId();
         saveProductImage(product.getProductImgList(), 1, productId, loginUser, currentTime);
         saveProductImage(product.getProductDescImgList(), 2, productId, loginUser, currentTime);
-        saveSkuAndProperties(product.getProductSkuList(), productId, loginUser, currentTime);
-        saveProductProperties(product.getProductPropertyList(), productId, loginUser, currentTime);
+        String errorCode = saveSkuAndProperties(product.getProductSkuList(), productId, loginUser, currentTime);
+        if (!ErrorCode.SUCCESS.equals(errorCode)) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // SKU 未保存成功回滚
+            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+            return result;
+        }
+        errorCode = saveProductProperties(product.getProductPropertyList(), productId, loginUser, currentTime);
+        if (!ErrorCode.SUCCESS.equals(errorCode)) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 商品属性未保存成功回滚
+            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+            return result;
+        }
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(productId);
@@ -150,18 +154,26 @@ public class ProductServiceImpl implements ProductService {
             result.setErrorCode(verifyAddCode);
             return result;
         }
-        ProductDO productDO = ConvertProduct.convertProduct(product);
+        ProductDO productDO = ProductConverter.convertProduct(product);
         productDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        if (loginUser != null) {
-            productDO.setUpdateUser(loginUser.getUserId().toString());
-        }
+        productDO.setUpdateUser(loginUser.getUserId().toString());
         productDO.setUpdateTime(currentTime);
         productMapper.update(productDO);
         Integer productId = productDO.getId();
         saveProductImage(product.getProductImgList(), 1, productId, loginUser, currentTime);
         saveProductImage(product.getProductDescImgList(), 2, productId, loginUser, currentTime);
-        saveSkuAndProperties(product.getProductSkuList(), productId, loginUser, currentTime);
-        saveProductProperties(product.getProductPropertyList(), productId, loginUser, currentTime);
+        String errorCode = saveSkuAndProperties(product.getProductSkuList(), productId, loginUser, currentTime);
+        if (!ErrorCode.SUCCESS.equals(errorCode)) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // SKU 未保存成功回滚
+            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+            return result;
+        }
+        errorCode = saveProductProperties(product.getProductPropertyList(), productId, loginUser, currentTime);
+        if (!ErrorCode.SUCCESS.equals(errorCode)) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 商品属性未保存成功回滚
+            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+            return result;
+        }
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(product.getProductId());
@@ -180,11 +192,11 @@ public class ProductServiceImpl implements ProductService {
 
         List<ProductSkuDO> productSkuDOList = productSkuMapper.findByProductId(productId);
         productDO.setProductSkuDOList(productSkuDOList);
-        Product product = ConvertProduct.convertProductDO(productDO);
+        Product product = ProductConverter.convertProductDO(productDO);
         Map<String, Object> maps = new HashMap<>();
         maps.put("productId", productId);
         List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findProductCategoryPropertyListByProductId(maps);
-        product.setProductCategoryPropertyList(ConvertProductCategoryProperty.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
+        product.setProductCategoryPropertyList(ProductCategoryPropertyConverter.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(product);
@@ -203,11 +215,11 @@ public class ProductServiceImpl implements ProductService {
 
         List<ProductSkuDO> productSkuDOList = productSkuMapper.findDetailByProductId(productId);
         productDO.setProductSkuDOList(productSkuDOList);
-        Product product = ConvertProduct.convertProductDO(productDO);
+        Product product = ProductConverter.convertProductDO(productDO);
         Map<String, Object> maps = new HashMap<>();
         maps.put("productId", productId);
         List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findProductCategoryPropertyListByProductId(maps);
-        product.setProductCategoryPropertyList(ConvertProductCategoryProperty.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
+        product.setProductCategoryPropertyList(ProductCategoryPropertyConverter.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(product);
@@ -226,7 +238,7 @@ public class ProductServiceImpl implements ProductService {
 
         Integer totalCount = productMapper.findProductCountByParams(maps);
         List<ProductDO> productDOList = productMapper.findProductByParams(maps);
-        List<Product> productList = ConvertProduct.convertProductDOList(productDOList);
+        List<Product> productList = ProductConverter.convertProductDOList(productDOList);
         Page<Product> page = new Page<>(productList, totalCount, productQueryParam.getPageNo(), productQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -271,10 +283,23 @@ public class ProductServiceImpl implements ProductService {
 
         Integer totalCount = productEquipmentMapper.findProductEquipmentCountByParams(maps);
         List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.findProductEquipmentByParams(maps);
-        List<ProductEquipment> productEquipmentList = ConvertProductEquipment.convertProductEquipmentDOList(productEquipmentDOList);
+        List<ProductEquipment> productEquipmentList = ProductEquipmentConverter.convertProductEquipmentDOList(productEquipmentDOList);
         Page<ProductEquipment> page = new Page<>(productEquipmentList, totalCount, productEquipmentQueryParam.getPageNo(), productEquipmentQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String,ProductEquipment> queryProductEquipmentDetail(String equipmentNo){
+        ServiceResult<String, ProductEquipment> result = new ServiceResult<>();
+        ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(equipmentNo);
+        if(productEquipmentDO == null){
+            result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_EXISTS);
+            return result;
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(ProductEquipmentConverter.convertProductEquipmentDO(productEquipmentDO));
         return result;
     }
 
@@ -289,7 +314,7 @@ public class ProductServiceImpl implements ProductService {
 
         Integer totalCount = productSkuMapper.findProductSkuCountByParams(maps);
         List<ProductSkuDO> productSkuDOList = productSkuMapper.findProductSkuByParams(maps);
-        List<ProductSku> productSkuList = ConvertProduct.convertProductSkuDOList(productSkuDOList);
+        List<ProductSku> productSkuList = ProductConverter.convertProductSkuDOList(productSkuDOList);
         Page<ProductSku> page = new Page<>(productSkuList, totalCount, productSkuQueryParam.getPageNo(), productSkuQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
@@ -343,10 +368,14 @@ public class ProductServiceImpl implements ProductService {
         if (product.getProductId() == null) {
             return ErrorCode.PRODUCT_ID_NOT_NULL;
         }
+
+        ProductDO dbProductDO = productMapper.findByProductId(product.getProductId());
+        if(dbProductDO == null){
+            return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
+        }
         return verifyAddProduct(product);
     }
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     void saveProductImage(List<ProductImg> productImgList, Integer type, Integer productId, User loginUser, Date currentTime) {
 
         List<ProductImg> updateProductImgList = new ArrayList<>();
@@ -367,13 +396,11 @@ public class ProductServiceImpl implements ProductService {
 
         if (!updateProductImgList.isEmpty()) {
             for (ProductImg productImg : updateProductImgList) {
-                ProductImgDO productImgDO = ConvertProductImage.convertProductImg(productImg);
+                ProductImgDO productImgDO = ProductImageConverter.convertProductImg(productImg);
                 productImgDO.setProductId(productId);
                 productImgDO.setImgType(type);
                 productImgDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                if (loginUser != null) {
-                    productImgDO.setUpdateUser(loginUser.getUserId().toString());
-                }
+                productImgDO.setUpdateUser(loginUser.getUserId().toString());
                 productImgDO.setUpdateTime(currentTime);
                 productImgMapper.update(productImgDO);
             }
@@ -382,60 +409,41 @@ public class ProductServiceImpl implements ProductService {
             for (Map.Entry<Integer, ProductImgDO> entry : dbProductImgRecordMap.entrySet()) {
                 ProductImgDO productImgDO = entry.getValue();
                 productImgDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                if (loginUser != null) {
-                    productImgDO.setUpdateUser(loginUser.getUserId().toString());
-                }
+                productImgDO.setUpdateUser(loginUser.getUserId().toString());
                 productImgDO.setUpdateTime(currentTime);
                 productImgMapper.update(productImgDO);
             }
         }
     }
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    void saveSkuAndProperties(List<ProductSku> productSkuList, Integer productId, User loginUser, Date currentTime) {
+    String saveSkuAndProperties(List<ProductSku> productSkuList, Integer productId, User loginUser, Date currentTime) {
         // 根据商品查询SKU，然后与传入的SKU集合对比，交集修改，原多余部分删除，传入多余部分增加
         if (productSkuList == null || productSkuList.isEmpty()) {
-            return;
+            return ErrorCode.PRODUCT_SKU_NOT_NULL;
         }
-
         List<ProductSku> saveProductSkuList = new ArrayList<>();
         List<ProductSku> updateProductSkuList = new ArrayList<>();
         List<ProductSkuDO> dbSkuRecord = productSkuMapper.findByProductId(productId);
         Map<Integer, ProductSkuDO> dbSkuRecordMap = ListUtil.listToMap(dbSkuRecord, "id");
         for (ProductSku productSku : productSkuList) {
-            List<Integer> propertyValueIdList = new ArrayList<>();
             if (productSku.getProductSkuPropertyList() == null || productSku.getProductSkuPropertyList().isEmpty()) {
-                continue;
+                return ErrorCode.PRODUCT_SKU_PROPERTY_NOT_NULL;
             }
-            for (ProductSkuProperty productSkuProperty : productSku.getProductSkuPropertyList()) {
-                propertyValueIdList.add(productSkuProperty.getPropertyValueId());
-            }
-
-            Map<String, Object> maps = new HashMap<>();
-            maps.put("productId", productId);
-            maps.put("isSku", CommonConstant.COMMON_CONSTANT_YES);
-            maps.put("propertyValueIdList", propertyValueIdList);
-            maps.put("propertyValueIdCount", propertyValueIdList.size());
-            Integer skuId = productSkuPropertyMapper.findSkuIdByParams(maps);
-            if (skuId != null) {
-                productSku.setSkuId(skuId);
+            if (productSku.getSkuId() != null) {
                 updateProductSkuList.add(productSku);
-                dbSkuRecordMap.remove(skuId);
+                dbSkuRecordMap.remove(productSku.getSkuId());
             } else {
                 saveProductSkuList.add(productSku);
             }
         }
 
-
         if (!saveProductSkuList.isEmpty()) {
             for (ProductSku productSku : saveProductSkuList) {
-                ProductSkuDO productSkuDO = ConvertProduct.convertProductSku(productSku);
+                ProductSkuDO productSkuDO = ProductConverter.convertProductSku(productSku);
                 productSkuDO.setProductId(productId);
                 productSkuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                if (loginUser != null) {
-                    productSkuDO.setCreateUser(loginUser.getUserId().toString());
-                    productSkuDO.setUpdateUser(loginUser.getUserId().toString());
-                }
+                productSkuDO.setCreateUser(loginUser.getUserId().toString());
+                productSkuDO.setUpdateUser(loginUser.getUserId().toString());
                 productSkuDO.setCreateTime(currentTime);
                 productSkuDO.setUpdateTime(currentTime);
                 productSkuMapper.save(productSkuDO);
@@ -445,37 +453,49 @@ public class ProductServiceImpl implements ProductService {
         }
         if (!updateProductSkuList.isEmpty()) {
             for (ProductSku productSku : updateProductSkuList) {
-                ProductSkuDO productSkuDO = ConvertProduct.convertProductSku(productSku);
+                List<ProductSkuPropertyDO> productSkuPropertyDOList = productSkuPropertyMapper.findSkuProperties(productSku.getSkuId());
+                Map<Integer, ProductSkuPropertyDO> dbSkuPropertyMap = ListUtil.listToMap(productSkuPropertyDOList, "propertyValueId");
+                List<ProductSkuProperty> addProductSkuPropertyList = productSku.getProductSkuPropertyList();
+
+                // 判断sku属性的增加与删除
+                for (ProductSkuProperty productSkuProperty : addProductSkuPropertyList) {
+                    if (dbSkuPropertyMap.get(productSkuProperty.getPropertyValueId()) != null) {
+                        addProductSkuPropertyList.remove(productSkuProperty);
+                        dbSkuPropertyMap.remove(productSkuProperty.getPropertyValueId());
+                    }
+                }
+                productSku.setProductSkuPropertyList(addProductSkuPropertyList);
+
+                ProductSkuDO productSkuDO = ProductConverter.convertProductSku(productSku);
                 productSkuDO.setProductId(productId);
                 productSkuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                if (loginUser != null) {
-                    productSkuDO.setUpdateUser(loginUser.getUserId().toString());
-                }
+                productSkuDO.setUpdateUser(loginUser.getUserId().toString());
                 productSkuDO.setUpdateTime(currentTime);
                 productSkuMapper.update(productSkuDO);
                 Integer skuId = productSkuDO.getId();
-                saveSkuProperties(productSku.getProductSkuPropertyList(), productId, skuId, CommonConstant.COMMON_DATA_OPERATION_TYPE_UPDATE, loginUser, currentTime);
+                saveSkuProperties(productSku.getProductSkuPropertyList(), productId, skuId, CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD, loginUser, currentTime);
+                List<ProductSkuPropertyDO> deleteProductSkuPropertyList = ListUtil.mapToList(dbSkuPropertyMap);
+                saveSkuProperties(ProductConverter.convertProductSkuPropertyDOList(deleteProductSkuPropertyList), productId, skuId, CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE, loginUser, currentTime);
             }
         }
         if (!dbSkuRecordMap.isEmpty()) {
             for (Map.Entry<Integer, ProductSkuDO> entry : dbSkuRecordMap.entrySet()) {
                 ProductSkuDO productSkuDO = entry.getValue();
                 productSkuDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                if (loginUser != null) {
-                    productSkuDO.setUpdateUser(loginUser.getUserId().toString());
-                }
+                productSkuDO.setUpdateUser(loginUser.getUserId().toString());
                 productSkuDO.setUpdateTime(currentTime);
                 productSkuMapper.update(productSkuDO);
                 saveSkuProperties(null, productId, productSkuDO.getId(), CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE, loginUser, currentTime);
             }
         }
+
+        return ErrorCode.SUCCESS;
     }
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    void saveProductProperties(List<ProductSkuProperty> productSkuPropertyList, Integer productId, User loginUser, Date currentTime) {
+    String saveProductProperties(List<ProductSkuProperty> productSkuPropertyList, Integer productId, User loginUser, Date currentTime) {
 
         if (productSkuPropertyList == null || productSkuPropertyList.isEmpty()) {
-            return;
+            return ErrorCode.PRODUCT_PROPERTY_NOT_NULL;
         }
 
         List<ProductSkuProperty> saveProductSkuPropertyList = new ArrayList<>();
@@ -495,7 +515,7 @@ public class ProductServiceImpl implements ProductService {
         }
         for (ProductSkuProperty productSkuProperty : saveProductSkuPropertyList) {
 
-            ProductSkuPropertyDO productSkuPropertyDO = ConvertProduct.convertProductSkuProperty(productSkuProperty);
+            ProductSkuPropertyDO productSkuPropertyDO = ProductConverter.convertProductSkuProperty(productSkuProperty);
             ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productSkuPropertyDO.getPropertyValueId());
             if (productCategoryPropertyValueDO == null) {
                 continue;
@@ -504,16 +524,14 @@ public class ProductServiceImpl implements ProductService {
             productSkuPropertyDO.setProductId(productId);
             productSkuPropertyDO.setIsSku(CommonConstant.COMMON_CONSTANT_NO);
             productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            if (loginUser != null) {
-                productSkuPropertyDO.setCreateUser(loginUser.getUserId().toString());
-                productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
-            }
+            productSkuPropertyDO.setCreateUser(loginUser.getUserId().toString());
+            productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
             productSkuPropertyDO.setCreateTime(currentTime);
             productSkuPropertyDO.setUpdateTime(currentTime);
             productSkuPropertyMapper.save(productSkuPropertyDO);
         }
         for (ProductSkuProperty productSkuProperty : updateProductSkuPropertyList) {
-            ProductSkuPropertyDO productSkuPropertyDO = ConvertProduct.convertProductSkuProperty(productSkuProperty);
+            ProductSkuPropertyDO productSkuPropertyDO = ProductConverter.convertProductSkuProperty(productSkuProperty);
             ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productSkuPropertyDO.getPropertyValueId());
             if (productCategoryPropertyValueDO == null) {
                 continue;
@@ -522,9 +540,7 @@ public class ProductServiceImpl implements ProductService {
             productSkuPropertyDO.setProductId(productId);
             productSkuPropertyDO.setIsSku(CommonConstant.COMMON_CONSTANT_NO);
             productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            if (loginUser != null) {
-                productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
-            }
+            productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
             productSkuPropertyDO.setUpdateTime(currentTime);
             productSkuPropertyMapper.update(productSkuPropertyDO);
         }
@@ -533,13 +549,13 @@ public class ProductServiceImpl implements ProductService {
             ProductSkuPropertyDO productSkuPropertyDO = entry.getValue();
             deleteProductSkuPropertyDO(productSkuPropertyDO, loginUser, currentTime);
         }
+        return ErrorCode.SUCCESS;
     }
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     void saveSkuProperties(List<ProductSkuProperty> productSkuPropertyList, Integer productId, Integer skuId, Integer operationType, User loginUser, Date currentTime) {
         if (productSkuPropertyList != null && !productSkuPropertyList.isEmpty()) {
             for (ProductSkuProperty productSkuProperty : productSkuPropertyList) {
-                ProductSkuPropertyDO productSkuPropertyDO = ConvertProduct.convertProductSkuProperty(productSkuProperty);
+                ProductSkuPropertyDO productSkuPropertyDO = ProductConverter.convertProductSkuProperty(productSkuProperty);
                 ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productSkuPropertyDO.getPropertyValueId());
                 if (productCategoryPropertyValueDO == null) {
                     continue;
@@ -550,22 +566,21 @@ public class ProductServiceImpl implements ProductService {
                     productSkuPropertyDO.setIsSku(CommonConstant.COMMON_CONSTANT_YES);
                     productSkuPropertyDO.setSkuId(skuId);
                     productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                    if (loginUser != null) {
-                        productSkuPropertyDO.setCreateUser(loginUser.getUserId().toString());
-                        productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
-                    }
+                    productSkuPropertyDO.setCreateUser(loginUser.getUserId().toString());
+                    productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
                     productSkuPropertyDO.setCreateTime(currentTime);
                     productSkuPropertyDO.setUpdateTime(currentTime);
                     productSkuPropertyMapper.save(productSkuPropertyDO);
-                } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(operationType)) {
+                    saveProductMaterial(productId, skuId, productSkuPropertyDO.getPropertyId(), productSkuPropertyDO.getPropertyValueId(),loginUser,currentTime);
+                } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_UPDATE.equals(operationType)) {
                     productSkuPropertyDO.setIsSku(CommonConstant.COMMON_CONSTANT_YES);
                     productSkuPropertyDO.setSkuId(skuId);
                     productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                    if (loginUser != null) {
-                        productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
-                    }
+                    productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
                     productSkuPropertyDO.setUpdateTime(currentTime);
                     productSkuPropertyMapper.update(productSkuPropertyDO);
+                } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(operationType)) {
+                    deleteProductSkuPropertyDO(productSkuPropertyDO, loginUser, currentTime);
                 }
             }
         } else {
@@ -577,12 +592,29 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    void saveProductMaterial(Integer productId, Integer skuId, Integer propertyId, Integer propertyValueId, User loginUser, Date currentTime) {
+        MaterialDO materialDO = materialMapper.findByPropertyAndValueId(propertyId, propertyValueId);
+        if (materialDO != null) {
+            ProductMaterialDO dbProductMaterialDO = productMaterialMapper.findBySkuAndMaterial(skuId, materialDO.getId());
+            if (dbProductMaterialDO == null) {
+                ProductMaterialDO productMaterialDO = new ProductMaterialDO();
+                productMaterialDO.setProductId(productId);
+                productMaterialDO.setProductSkuId(skuId);
+                productMaterialDO.setMaterialId(materialDO.getId());
+                productMaterialDO.setMaterialCount(1);
+                productMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                productMaterialDO.setCreateUser(loginUser.getUserId().toString());
+                productMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+                productMaterialDO.setCreateTime(currentTime);
+                productMaterialDO.setUpdateTime(currentTime);
+                productMaterialMapper.save(productMaterialDO);
+            }
+        }
+    }
+
     void deleteProductSkuPropertyDO(ProductSkuPropertyDO productSkuPropertyDO, User loginUser, Date currentTime) {
         productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-        if (loginUser != null) {
-            productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
-        }
+        productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
         productSkuPropertyDO.setUpdateTime(currentTime);
         productSkuPropertyMapper.update(productSkuPropertyDO);
     }
@@ -613,4 +645,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductEquipmentMapper productEquipmentMapper;
+
+    @Autowired
+    private MaterialMapper materialMapper;
+
+    @Autowired
+    private ProductMaterialMapper productMaterialMapper;
 }

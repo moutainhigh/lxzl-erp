@@ -158,8 +158,43 @@ public class PurchaseOrderController {
      * @return
      */
     @RequestMapping(value = "pagePurchaseReceive", method = RequestMethod.POST)
-    public Result pagePurchaseReceive(@RequestBody @Validated(IdGroup.class) PurchaseReceiveOrderQueryParam purchaseReceiveOrderQueryParam, BindingResult validResult) {
+    public Result pagePurchaseReceive(@RequestBody PurchaseReceiveOrderQueryParam purchaseReceiveOrderQueryParam, BindingResult validResult) {
         ServiceResult<String, Page<PurchaseReceiveOrder>> serviceResult = purchaseOrderService.pagePurchaseReceive(purchaseReceiveOrderQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+    /**
+     * 采购收货单详情
+     * @param purchaseReceiveOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "queryPurchaseReceiveOrderByNo", method = RequestMethod.POST)
+    public Result queryPurchaseReceiveOrderByNo(@RequestBody @Validated(IdGroup.class) PurchaseReceiveOrder purchaseReceiveOrder, BindingResult validResult) {
+        ServiceResult<String, PurchaseReceiveOrder> serviceResult = purchaseOrderService.queryPurchaseReceiveOrderByNo(purchaseReceiveOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 采购单结束
+     * @param purchaseOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "endPurchaseOrder", method = RequestMethod.POST)
+    public Result endPurchaseOrder(@RequestBody @Validated(IdGroup.class) PurchaseOrder purchaseOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = purchaseOrderService.endPurchaseOrder(purchaseOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 采购单继续采购
+     * @param purchaseOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "continuePurchaseOrder", method = RequestMethod.POST)
+    public Result continuePurchaseOrder(@RequestBody @Validated(IdGroup.class) PurchaseOrder purchaseOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = purchaseOrderService.continuePurchaseOrder(purchaseOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }

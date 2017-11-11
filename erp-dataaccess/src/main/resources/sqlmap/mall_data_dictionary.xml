@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMysqlMapper">
+
+    <resultMap id="DataDictionaryDO" type="com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="data_name" jdbcType="VARCHAR" property="dataName"/>
+        <result column="parent_dictionary_id" jdbcType="INTEGER" property="parentDictionaryId"/>
+        <result column="data_order" jdbcType="INTEGER" property="dataOrder"/>
+        <result column="data_type" jdbcType="INTEGER" property="dataType"/>
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <sql id="column_List">
+        td.id,td.data_name,td.parent_dictionary_id,td.data_order,td.data_type,td.data_status,td.remark,td.create_time,td.update_time
+    </sql>
+
+    <select id="findByDictionaryId" resultMap="DataDictionaryDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        from erp_data_dictionary td
+        left join erp_user tuc on tuc.id = td.create_user
+        left join erp_user tuu on tuu.id = td.update_user
+        <where>
+            <if test="dictionaryId != null">
+                and td.id = #{dictionaryId, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and td.data_status != 2
+            </if>
+        </where>
+    </select>
+
+    <select id="findByParentId" resultMap="DataDictionaryDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        from erp_data_dictionary td
+        left join erp_user tuc on tuc.id = td.create_user
+        left join erp_user tuu on tuu.id = td.update_user
+        <where>
+            <if test="parentDictionaryId != null">
+                and td.parent_dictionary_id = #{parentDictionaryId, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and td.data_status != 2
+            </if>
+        </where>
+        order by data_order,create_time
+    </select>
+
+    <select id="findDataByType" resultMap="DataDictionaryDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        from erp_data_dictionary td
+        left join erp_user tuc on tuc.id = td.create_user
+        left join erp_user tuu on tuu.id = td.update_user
+        <where>
+            <if test="dataType != null">
+                and td.data_type = #{dataType, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and td.data_status != 2
+            </if>
+        </where>
+        order by id,data_order,create_time
+    </select>
+
+    <select id="findAllData" resultMap="DataDictionaryDO" parameterType="map">
+        select
+        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        from erp_data_dictionary td
+        left join erp_user tuc on tuc.id = td.create_user
+        left join erp_user tuu on tuu.id = td.update_user
+        <where>
+            <if test="maps.dictionaryId != null &amp;&amp; maps.dictionaryId != ''">
+                and (td.id = #{maps.dictionaryId, jdbcType=INTEGER} or td.parent_dictionary_id = #{maps.dictionaryId, jdbcType=INTEGER})
+            </if>
+            <if test="maps.dataStatus != null &amp;&amp; maps.dataStatus != ''">
+                and td.data_status = #{maps.dataStatus, jdbcType=INTEGER}
+            </if>
+            <if test="maps.dataName != null &amp;&amp; maps.dataName != ''">
+                and td.data_name like CONCAT('%','${maps.dataName}','%' )
+            </if>
+            <if test="maps.dataType != null &amp;&amp; maps.dataType != ''">
+                and td.data_type = #{maps.dataType, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and td.data_status != 2
+            </if>
+        </where>
+        order by id,data_order,create_time
+        limit #{maps.start},#{maps.pageSize}
+    </select>
+
+    <select id="findAllDataCount" resultType="java.lang.Integer" parameterType="map">
+        select count(1)
+        from erp_data_dictionary td
+        <where>
+            <if test="maps.dictionaryId != null &amp;&amp; maps.dictionaryId != ''">
+                and (td.id = #{maps.dictionaryId, jdbcType=INTEGER} or td.parent_dictionary_id = #{maps.dictionaryId, jdbcType=INTEGER})
+            </if>
+            <if test="maps.dataStatus != null &amp;&amp; maps.dataStatus != ''">
+                and td.data_status = #{maps.dataStatus, jdbcType=INTEGER}
+            </if>
+            <if test="maps.dataName != null &amp;&amp; maps.dataName != ''">
+                and td.data_name like CONCAT('%','${maps.dataName}','%' )
+            </if>
+            <if test="maps.dataType != null &amp;&amp; maps.dataType != ''">
+                and td.data_type = #{maps.dataType, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and td.data_status != 2
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO">
+        INSERT INTO erp_data_dictionary
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="dataName != null">
+                data_name,
+            </if>
+            <if test="parentDictionaryId != null">
+                parent_dictionary_id,
+            </if>
+            <if test="dataOrder != null">
+                data_order,
+            </if>
+            <if test="dataType != null">
+                data_type,
+            </if>
+            <if test="dataStatus != null">
+                data_status,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="createUser != null">
+                create_user,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateUser != null">
+                update_user,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="dataName != null">
+                #{dataName, jdbcType=VARCHAR},
+            </if>
+            <if test="parentDictionaryId != null">
+                #{parentDictionaryId, jdbcType=INTEGER},
+            </if>
+            <if test="dataOrder != null">
+                #{dataOrder, jdbcType=INTEGER},
+            </if>
+            <if test="dataType != null">
+                #{dataType, jdbcType=INTEGER},
+            </if>
+            <if test="dataStatus != null">
+                #{dataStatus, jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO">
+        update erp_data_dictionary
+        <set>
+            <if test="dataName != null">
+                data_name = #{dataName, jdbcType=VARCHAR},
+            </if>
+            <if test="parentDictionaryId != null">
+                parent_dictionary_id = #{parentDictionaryId, jdbcType=INTEGER},
+            </if>
+            <if test="dataOrder != null">
+                data_order = #{dataOrder, jdbcType=INTEGER},
+            </if>
+            <if test="dataType != null">
+                data_type = #{dataType, jdbcType=INTEGER},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus, jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+</mapper>

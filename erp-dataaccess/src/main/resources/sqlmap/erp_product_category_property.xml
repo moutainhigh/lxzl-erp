@@ -10,6 +10,7 @@
         <result column="category_id" property="categoryId"/>
         <result column="property_type" property="propertyType"/>
         <result column="is_material" property="isMaterial"/>
+        <result column="material_type" property="materialType"/>
         <result column="is_input" property="isInput"/>
         <result column="is_checkbox" property="isCheckbox"/>
         <result column="is_required" property="isRequired"/>
@@ -37,7 +38,7 @@
         <result column="value_update_time" property="updateTime"/>
     </resultMap>
     <sql id="column_List">
-		epcp.id as id,epcp.property_name as property_name,epcp.category_id as category_id,epcp.property_type as property_type,epcp.is_material as is_material,epcp.is_input as is_input,epcp.is_checkbox as is_checkbox,epcp.is_required as is_required,epcp.data_order as data_order,epcp.data_status as data_status,epcp.remark as remark,epcp.create_time as create_time,epcp.create_user as create_user,epcp.update_time as update_time,epcp.update_user as update_user
+		epcp.id as id,epcp.property_name as property_name,epcp.category_id as category_id,epcp.property_type as property_type,epcp.is_material as is_material,epcp.material_type as material_type,epcp.is_input as is_input,epcp.is_checkbox as is_checkbox,epcp.is_required as is_required,epcp.data_order as data_order,epcp.data_status as data_status,epcp.remark as remark,epcp.create_time as create_time,epcp.create_user as create_user,epcp.update_time as update_time,epcp.update_user as update_user
 	</sql>
     <sql id="value_column_List">
         epcpv.id as value_id,epcpv.property_value_name as value_property_value_name,epcpv.property_id as value_property_id,epcpv.category_id as value_category_id,epcpv.data_order as value_data_order,epcpv.data_status as value_data_status,epcpv.remark as value_remark,epcpv.create_time as value_create_time,epcpv.create_user as value_create_user,epcpv.update_time as value_update_time,epcpv.update_user as value_update_user
@@ -126,6 +127,9 @@
             </if>
             <if test="isMaterial != null">
                 is_material = #{isMaterial, jdbcType=INTEGER},
+            </if>
+            <if test="materialType != null">
+                material_type = #{materialType, jdbcType=INTEGER},
             </if>
             <if test="isInput != null">
                 is_input = #{isInput, jdbcType=INTEGER},

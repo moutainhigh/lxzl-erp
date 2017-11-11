@@ -9,7 +9,7 @@ import org.springframework.beans.BeanUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConvertProductCategoryProperty {
+public class ProductCategoryPropertyConverter {
 
     public static ProductCategoryProperty convertProductCategoryPropertyDO(ProductCategoryPropertyDO productCategoryPropertyDO) {
         ProductCategoryProperty productCategoryProperty = new ProductCategoryProperty();

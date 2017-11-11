@@ -4,6 +4,7 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.StockCauseType;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
+import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.WarehouseQueryParam;
 import org.junit.Test;
@@ -52,13 +53,21 @@ public class WarehouseTest extends ERPUnTransactionalTest {
         ProductInStockParam productInStockParam = new ProductInStockParam();
         List<ProductInStorage> productInStorageList = new ArrayList<>();
         ProductInStorage productInStorage = new ProductInStorage();
-        productInStorage.setProductId(2000001);
-        productInStorage.setProductSkuId(2);
-        productInStorage.setProductCount(100);
+        productInStorage.setProductId(2000007);
+        productInStorage.setProductSkuId(16);
+        productInStorage.setProductCount(10);
+
+        List<ProductMaterial> productMaterialList = new ArrayList<>();
+        ProductMaterial productMaterial = new ProductMaterial();
+        productMaterial.setMaterialId(2);
+        productMaterial.setMaterialCount(1);
+        productMaterialList.add(productMaterial);
+        productInStorage.setProductMaterialList(productMaterialList);
+
         productInStorageList.add(productInStorage);
         productInStockParam.setProductInStorageList(productInStorageList);
         productInStockParam.setTargetWarehouseId(4000001);
-        productInStockParam.setReferNo("C201711071720430655000051081");
+        productInStockParam.setReferNo("C201711071720430655000051083");
         productInStockParam.setCauseType(StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE);
         TestResult result = getJsonTestResult("/warehouse/productInStock", productInStockParam);
     }

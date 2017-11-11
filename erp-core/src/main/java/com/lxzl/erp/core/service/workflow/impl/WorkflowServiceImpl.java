@@ -384,7 +384,6 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     private boolean verifyVerifyUsers(WorkflowNodeDO workflowNodeDO, Integer userId) {
         List<User> userList = getUserListByNode(workflowNodeDO);
-
         if (userList != null && !userList.isEmpty()) {
             Map<Integer, User> userMap = ListUtil.listToMap(userList, "userId");
             if (userMap.containsKey(userId)) {
@@ -396,6 +395,9 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     private List<User> getUserListByNode(WorkflowNodeDO workflowNodeDO) {
         List<User> userList = new ArrayList<>();
+        if (workflowNodeDO == null) {
+            return userList;
+        }
         if (workflowNodeDO.getWorkflowUser() != null) {
             ServiceResult<String, User> userResult = userService.getUserById(workflowNodeDO.getWorkflowUser());
             if (ErrorCode.SUCCESS.equals(userResult.getErrorCode())) {

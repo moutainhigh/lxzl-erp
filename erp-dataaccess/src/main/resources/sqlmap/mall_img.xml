@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper">
+
+    <resultMap id="ImageDO" type="com.lxzl.erp.dataaccess.domain.system.ImageDO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="img_type" jdbcType="INTEGER" property="imgType"/>
+        <result column="original_name" jdbcType="VARCHAR" property="originalName"/>
+        <result column="ref_id" jdbcType="VARCHAR" property="refId"/>
+        <result column="img_url" jdbcType="VARCHAR" property="imgUrl"/>
+        <result column="img_order" jdbcType="INTEGER" property="imgOrder"/>
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <sql id="column_List">
+        id,img_type,original_name,ref_id,img_url,img_order,data_status,remark,create_user,create_time,update_user,update_time
+    </sql>
+
+    <select id="findById" resultMap="ImageDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>
+        from erp_img
+        <where>
+            <if test="id != null">
+                and id = #{id, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and data_status = 1
+            </if>
+        </where>
+    </select>
+
+    <select id="findByRefId" resultMap="ImageDO" parameterType="java.lang.String">
+        select
+        <include refid="column_List"/>
+        from erp_img
+        where ref_id = #{refId, jdbcType=VARCHAR} and data_status = 1
+    </select>
+
+    <select id="findByImgId" resultMap="ImageDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>
+        from erp_img
+        where id = #{id, jdbcType=VARCHAR} and data_status = 1
+    </select>
+
+    <select id="findByRefIdAndType" resultMap="ImageDO" parameterType="map">
+        select
+        <include refid="column_List"/>
+        from erp_img
+        where ref_id = #{refId, jdbcType=VARCHAR} and img_type = #{imgType, jdbcType=INTEGER} and data_status = 1
+    </select>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.system.ImageDO">
+        INSERT INTO erp_img
+        <include refid="set_column_sql"/>
+    </insert>
+    <sql id="set_column_sql">
+        <set>
+            <if test="imgType != null">
+                img_type = #{imgType, jdbcType=VARCHAR},
+            </if>
+            <if test="originalName != null">
+                original_name = #{originalName, jdbcType=VARCHAR},
+            </if>
+            <if test="refId != null">
+                ref_id = #{refId, jdbcType=VARCHAR},
+            </if>
+            <if test="imgUrl != null">
+                img_url = #{imgUrl, jdbcType=VARCHAR},
+            </if>
+            <if test="imgOrder != null">
+                img_order = #{imgOrder, jdbcType=INTEGER},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus, jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+    </sql>
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.system.ImageDO">
+        update erp_img
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+</mapper>
