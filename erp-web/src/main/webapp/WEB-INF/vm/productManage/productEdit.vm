@@ -192,7 +192,7 @@
                             {{#ths}}
                             <th>{{propertyName}}</th>
                             {{/ths}}
-                            <th>SKU名称</th>
+                            #*<th>SKU名称</th>*#
                             <th>商品价值</th>
                             <th>原价</th>
                             <th>销售价</th>
@@ -205,10 +205,11 @@
                             {{#property}}
                             <td>{{propertyValueName}}</td>
                             {{/property}}
-                            <td>
+                            #*<td>
                                 <label class="field prepend-icon"><input type="text" name="skuName-{{rowKey}}" value="{{skuName}}" class="skuName form-control" /></label>
-                            </td>
+                            </td>*#
                             <td>
+                                <input type="hidden" name="skuId" value="{{skuId}}" />
                                 <label class="field prepend-icon"><input type="text" name="skuPrice-{{rowKey}}" value="{{skuPrice}}" class="skuPrice form-control required moneyNumber" /></label>
                             </td>
                             <td>
