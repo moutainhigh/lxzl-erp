@@ -28,7 +28,12 @@
 
 	<select id="findById" resultMap="StockOrderDO" parameterType="java.lang.Integer">
 		select <include refid="column_List"/> from erp_stock_order eso
-		where eso.id = #{id, jdbcType=INTEGER} and data_status = 1
+		where eso.id = #{id, jdbcType=INTEGER} and eso.data_status = 1
+	</select>
+
+	<select id="findOrderByTypeAndRefer" resultMap="StockOrderDO" parameterType="map">
+		select <include refid="column_List"/> from erp_stock_order eso
+		where eso.cause_type = #{causeType, jdbcType=INTEGER} and eso.refer_no = #{referNo, jdbcType=INTEGER} and eso.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">

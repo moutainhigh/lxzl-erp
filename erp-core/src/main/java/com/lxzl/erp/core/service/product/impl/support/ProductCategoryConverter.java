@@ -7,7 +7,7 @@ import com.lxzl.erp.dataaccess.domain.product.ProductCategoryDO;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConvertProductCategory {
+public class ProductCategoryConverter {
 
     public static ProductCategory convertProductCategoryDO(ProductCategoryDO productCategoryDO){
         ProductCategory productCategory = new ProductCategory();

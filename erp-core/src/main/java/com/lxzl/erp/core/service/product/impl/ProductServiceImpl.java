@@ -2,7 +2,6 @@ package com.lxzl.erp.core.service.product.impl;
 
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.ProductEquipmentStatus;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.*;
@@ -19,7 +18,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.*;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.*;
 import com.lxzl.se.common.util.StringUtil;
-import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +32,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpSession;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -71,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
                 productImgDO.setUpdateTime(new Date());
                 productImgMapper.save(productImgDO);
 
-                imgList.add(ConvertProductImage.convertProductImgDO(productImgDO));
+                imgList.add(ProductImageConverter.convertProductImgDO(productImgDO));
                 FileUtil.deleteFile(filePath);
             }
         } catch (Exception e) {
@@ -116,7 +113,7 @@ public class ProductServiceImpl implements ProductService {
             result.setErrorCode(verifyAddCode);
             return result;
         }
-        ProductDO productDO = ConvertProduct.convertProduct(product);
+        ProductDO productDO = ProductConverter.convertProduct(product);
         productDO.setProductNo(GenerateNoUtil.generateProductNo(currentTime));
         productDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         productDO.setCreateUser(loginUser.getUserId().toString());
@@ -157,7 +154,7 @@ public class ProductServiceImpl implements ProductService {
             result.setErrorCode(verifyAddCode);
             return result;
         }
-        ProductDO productDO = ConvertProduct.convertProduct(product);
+        ProductDO productDO = ProductConverter.convertProduct(product);
         productDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         productDO.setUpdateUser(loginUser.getUserId().toString());
         productDO.setUpdateTime(currentTime);
@@ -195,11 +192,11 @@ public class ProductServiceImpl implements ProductService {
 
         List<ProductSkuDO> productSkuDOList = productSkuMapper.findByProductId(productId);
         productDO.setProductSkuDOList(productSkuDOList);
-        Product product = ConvertProduct.convertProductDO(productDO);
+        Product product = ProductConverter.convertProductDO(productDO);
         Map<String, Object> maps = new HashMap<>();
         maps.put("productId", productId);
         List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findProductCategoryPropertyListByProductId(maps);
-        product.setProductCategoryPropertyList(ConvertProductCategoryProperty.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
+        product.setProductCategoryPropertyList(ProductCategoryPropertyConverter.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(product);
@@ -218,11 +215,11 @@ public class ProductServiceImpl implements ProductService {
 
         List<ProductSkuDO> productSkuDOList = productSkuMapper.findDetailByProductId(productId);
         productDO.setProductSkuDOList(productSkuDOList);
-        Product product = ConvertProduct.convertProductDO(productDO);
+        Product product = ProductConverter.convertProductDO(productDO);
         Map<String, Object> maps = new HashMap<>();
         maps.put("productId", productId);
         List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findProductCategoryPropertyListByProductId(maps);
-        product.setProductCategoryPropertyList(ConvertProductCategoryProperty.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
+        product.setProductCategoryPropertyList(ProductCategoryPropertyConverter.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(product);
@@ -241,7 +238,7 @@ public class ProductServiceImpl implements ProductService {
 
         Integer totalCount = productMapper.findProductCountByParams(maps);
         List<ProductDO> productDOList = productMapper.findProductByParams(maps);
-        List<Product> productList = ConvertProduct.convertProductDOList(productDOList);
+        List<Product> productList = ProductConverter.convertProductDOList(productDOList);
         Page<Product> page = new Page<>(productList, totalCount, productQueryParam.getPageNo(), productQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -286,10 +283,23 @@ public class ProductServiceImpl implements ProductService {
 
         Integer totalCount = productEquipmentMapper.findProductEquipmentCountByParams(maps);
         List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.findProductEquipmentByParams(maps);
-        List<ProductEquipment> productEquipmentList = ConvertProductEquipment.convertProductEquipmentDOList(productEquipmentDOList);
+        List<ProductEquipment> productEquipmentList = ProductEquipmentConverter.convertProductEquipmentDOList(productEquipmentDOList);
         Page<ProductEquipment> page = new Page<>(productEquipmentList, totalCount, productEquipmentQueryParam.getPageNo(), productEquipmentQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String,ProductEquipment> queryProductEquipmentDetail(String equipmentNo){
+        ServiceResult<String, ProductEquipment> result = new ServiceResult<>();
+        ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(equipmentNo);
+        if(productEquipmentDO == null){
+            result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_EXISTS);
+            return result;
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(ProductEquipmentConverter.convertProductEquipmentDO(productEquipmentDO));
         return result;
     }
 
@@ -304,7 +314,7 @@ public class ProductServiceImpl implements ProductService {
 
         Integer totalCount = productSkuMapper.findProductSkuCountByParams(maps);
         List<ProductSkuDO> productSkuDOList = productSkuMapper.findProductSkuByParams(maps);
-        List<ProductSku> productSkuList = ConvertProduct.convertProductSkuDOList(productSkuDOList);
+        List<ProductSku> productSkuList = ProductConverter.convertProductSkuDOList(productSkuDOList);
         Page<ProductSku> page = new Page<>(productSkuList, totalCount, productSkuQueryParam.getPageNo(), productSkuQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
@@ -386,7 +396,7 @@ public class ProductServiceImpl implements ProductService {
 
         if (!updateProductImgList.isEmpty()) {
             for (ProductImg productImg : updateProductImgList) {
-                ProductImgDO productImgDO = ConvertProductImage.convertProductImg(productImg);
+                ProductImgDO productImgDO = ProductImageConverter.convertProductImg(productImg);
                 productImgDO.setProductId(productId);
                 productImgDO.setImgType(type);
                 productImgDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -429,7 +439,7 @@ public class ProductServiceImpl implements ProductService {
 
         if (!saveProductSkuList.isEmpty()) {
             for (ProductSku productSku : saveProductSkuList) {
-                ProductSkuDO productSkuDO = ConvertProduct.convertProductSku(productSku);
+                ProductSkuDO productSkuDO = ProductConverter.convertProductSku(productSku);
                 productSkuDO.setProductId(productId);
                 productSkuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 productSkuDO.setCreateUser(loginUser.getUserId().toString());
@@ -456,7 +466,7 @@ public class ProductServiceImpl implements ProductService {
                 }
                 productSku.setProductSkuPropertyList(addProductSkuPropertyList);
 
-                ProductSkuDO productSkuDO = ConvertProduct.convertProductSku(productSku);
+                ProductSkuDO productSkuDO = ProductConverter.convertProductSku(productSku);
                 productSkuDO.setProductId(productId);
                 productSkuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 productSkuDO.setUpdateUser(loginUser.getUserId().toString());
@@ -465,7 +475,7 @@ public class ProductServiceImpl implements ProductService {
                 Integer skuId = productSkuDO.getId();
                 saveSkuProperties(productSku.getProductSkuPropertyList(), productId, skuId, CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD, loginUser, currentTime);
                 List<ProductSkuPropertyDO> deleteProductSkuPropertyList = ListUtil.mapToList(dbSkuPropertyMap);
-                saveSkuProperties(ConvertProduct.convertProductSkuPropertyDOList(deleteProductSkuPropertyList), productId, skuId, CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE, loginUser, currentTime);
+                saveSkuProperties(ProductConverter.convertProductSkuPropertyDOList(deleteProductSkuPropertyList), productId, skuId, CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE, loginUser, currentTime);
             }
         }
         if (!dbSkuRecordMap.isEmpty()) {
@@ -505,7 +515,7 @@ public class ProductServiceImpl implements ProductService {
         }
         for (ProductSkuProperty productSkuProperty : saveProductSkuPropertyList) {
 
-            ProductSkuPropertyDO productSkuPropertyDO = ConvertProduct.convertProductSkuProperty(productSkuProperty);
+            ProductSkuPropertyDO productSkuPropertyDO = ProductConverter.convertProductSkuProperty(productSkuProperty);
             ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productSkuPropertyDO.getPropertyValueId());
             if (productCategoryPropertyValueDO == null) {
                 continue;
@@ -521,7 +531,7 @@ public class ProductServiceImpl implements ProductService {
             productSkuPropertyMapper.save(productSkuPropertyDO);
         }
         for (ProductSkuProperty productSkuProperty : updateProductSkuPropertyList) {
-            ProductSkuPropertyDO productSkuPropertyDO = ConvertProduct.convertProductSkuProperty(productSkuProperty);
+            ProductSkuPropertyDO productSkuPropertyDO = ProductConverter.convertProductSkuProperty(productSkuProperty);
             ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productSkuPropertyDO.getPropertyValueId());
             if (productCategoryPropertyValueDO == null) {
                 continue;
@@ -545,7 +555,7 @@ public class ProductServiceImpl implements ProductService {
     void saveSkuProperties(List<ProductSkuProperty> productSkuPropertyList, Integer productId, Integer skuId, Integer operationType, User loginUser, Date currentTime) {
         if (productSkuPropertyList != null && !productSkuPropertyList.isEmpty()) {
             for (ProductSkuProperty productSkuProperty : productSkuPropertyList) {
-                ProductSkuPropertyDO productSkuPropertyDO = ConvertProduct.convertProductSkuProperty(productSkuProperty);
+                ProductSkuPropertyDO productSkuPropertyDO = ProductConverter.convertProductSkuProperty(productSkuProperty);
                 ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productSkuPropertyDO.getPropertyValueId());
                 if (productCategoryPropertyValueDO == null) {
                     continue;

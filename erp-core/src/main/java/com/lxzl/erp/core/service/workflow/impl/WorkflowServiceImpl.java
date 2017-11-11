@@ -395,7 +395,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     private List<User> getUserListByNode(WorkflowNodeDO workflowNodeDO) {
         List<User> userList = new ArrayList<>();
-        if(workflowNodeDO == null){
+        if (workflowNodeDO == null) {
             return userList;
         }
         if (workflowNodeDO.getWorkflowUser() != null) {

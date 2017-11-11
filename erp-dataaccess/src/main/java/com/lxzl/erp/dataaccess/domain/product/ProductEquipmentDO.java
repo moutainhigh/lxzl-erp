@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.domain.product;
 
+import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -22,6 +23,8 @@ public class ProductEquipmentDO extends BaseDO {
     private Integer dataStatus;
     private String remark;
     private List<ProductImgDO> productImgDOList;           // 商品图片
+
+    private List<BulkMaterialDO> bulkMaterialDOList;        // 设备散料
 
     public Integer getId() {
         return id;
@@ -133,5 +136,13 @@ public class ProductEquipmentDO extends BaseDO {
 
     public void setEquipmentPrice(BigDecimal equipmentPrice) {
         this.equipmentPrice = equipmentPrice;
+    }
+
+    public List<BulkMaterialDO> getBulkMaterialDOList() {
+        return bulkMaterialDOList;
+    }
+
+    public void setBulkMaterialDOList(List<BulkMaterialDO> bulkMaterialDOList) {
+        this.bulkMaterialDOList = bulkMaterialDOList;
     }
 }

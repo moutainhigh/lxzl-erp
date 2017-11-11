@@ -41,6 +41,13 @@ public interface ProductService extends BaseService {
     // 查询设备列表
     ServiceResult<String, Page<ProductEquipment>> queryAllProductEquipment(ProductEquipmentQueryParam productEquipmentQueryParam);
 
+
+    /**
+     * @param equipmentNo 设备编号
+     * @return 设备明细
+     */
+    ServiceResult<String, ProductEquipment> queryProductEquipmentDetail(String equipmentNo);
+
     // 查询商品sku列表
     ServiceResult<String, Page<ProductSku>> queryProductSkuList(ProductSkuQueryParam productSkuQueryParam);
 }

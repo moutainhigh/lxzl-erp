@@ -7,7 +7,7 @@ import com.lxzl.erp.dataaccess.domain.product.ProductImgDO;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConvertProductImage {
+public class ProductImageConverter {
     public static ProductImg convertProductImgDO(ProductImgDO productImgDO) {
         ProductImg productImg = new ProductImg();
         if (productImgDO.getId() != null) {

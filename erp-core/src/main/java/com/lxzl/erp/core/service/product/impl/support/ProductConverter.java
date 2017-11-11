@@ -11,7 +11,7 @@ import org.springframework.beans.BeanUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConvertProduct {
+public class ProductConverter {
     public static ProductDO convertProduct(Product product) {
         ProductDO productDO = new ProductDO();
         if (product.getProductId() != null) {
@@ -249,10 +249,10 @@ public class ConvertProduct {
             product.setDataStatus(productDO.getDataStatus());
         }
         if (productDO.getProductImgDOList() != null && !productDO.getProductImgDOList().isEmpty()) {
-            product.setProductImgList(ConvertProductImage.convertProductImgDOList(productDO.getProductImgDOList()));
+            product.setProductImgList(ProductImageConverter.convertProductImgDOList(productDO.getProductImgDOList()));
         }
         if (productDO.getProductDescImgDOList() != null && !productDO.getProductDescImgDOList().isEmpty()) {
-            product.setProductDescImgList(ConvertProductImage.convertProductImgDOList(productDO.getProductDescImgDOList()));
+            product.setProductDescImgList(ProductImageConverter.convertProductImgDOList(productDO.getProductDescImgDOList()));
         }
         if (productDO.getProductSkuDOList() != null && !productDO.getProductSkuDOList().isEmpty()) {
             product.setProductSkuList(convertProductSkuDOList(productDO.getProductSkuDOList()));

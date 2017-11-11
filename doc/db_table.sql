@@ -520,8 +520,9 @@ CREATE TABLE `erp_bulk_material` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '散料ID',
   `bulk_material_no` varchar(100) NOT NULL COMMENT '散料唯一编号',
   `bulk_material_type` int(20) NOT NULL COMMENT '散料类型',
-  `material_id` int(20) NOT NULL COMMENT '物料ID，从哪个物料生成的',
-  `material_no` varchar(100) NOT NULL COMMENT '物料编号，从哪个物料生成的',
+  `bulk_material_name` varchar(100) COLLATE utf8_bin COMMENT '散料名称，从物料生成',
+  `material_id` int(20) NOT NULL COMMENT '物料ID，从物料生成的',
+  `material_no` varchar(100) NOT NULL COMMENT '物料编号，从物料生成的',
   `warehouse_id` int(20) NOT NULL COMMENT '目前仓库ID',
   `warehouse_position_id` int(20) NOT NULL COMMENT '目前仓位ID',
   `owner_warehouse_id` int(20) NOT NULL COMMENT '归属仓库ID',
@@ -556,9 +557,7 @@ CREATE TABLE `erp_product_equipment_bulk_material` (
   `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `index_equipment_bulk_material` (`equipment_id`,`bulk_material_id`),
-  UNIQUE KEY `index_equipment_bulk_material_no` (`equipment_no`,`bulk_material_no`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备散料表';
 
 DROP TABLE if exists `erp_product_img`;
@@ -633,8 +632,8 @@ CREATE TABLE `erp_stock_order` (
   `stock_order_no` varchar(100) NOT NULL COMMENT '出入库单编号',
   `operation_type` int(11) NOT NULL COMMENT '操作类型，1入库，2出库',
   `cause_type` int(11) NOT NULL COMMENT '起因类型，1采购入库，2退货回库，3维修回库，4用户租赁',
-  `refer_no` varchar(100) COMMENT '关联单号',
-  `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '出入库单状态，0未出库，1已出库',
+  `refer_no` varchar(100) NOT NULL COMMENT '关联单号',
+  `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '出入库单状态，1未出库，2已出库',
   `src_warehouse_id` int(20) COMMENT '源仓库ID',
   `src_warehouse_position_id` int(20) COMMENT '源仓位ID',
   `target_warehouse_id` int(20) NOT NULL COMMENT '目标仓库ID',
@@ -646,7 +645,8 @@ CREATE TABLE `erp_stock_order` (
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_stock_type_refer` (`cause_type`,`refer_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备出入库单';
 
 DROP TABLE if exists `erp_stock_order_equipment`;

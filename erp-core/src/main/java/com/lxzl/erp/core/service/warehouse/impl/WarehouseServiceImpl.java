@@ -4,10 +4,8 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
-import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
-import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
@@ -190,6 +188,13 @@ public class WarehouseServiceImpl implements WarehouseService {
         if (warehousePositionDOList != null && !warehousePositionDOList.isEmpty()) {
             warehousePositionId = warehousePositionDOList.get(0).getId();
         }
+
+        StockOrderDO dbOrder = stockOrderMapper.findOrderByTypeAndRefer(causeType, referNo);
+        if (dbOrder != null) {
+            result.setErrorCode(ErrorCode.STOCK_ORDER_ALREADY_EXISTS);
+            return result;
+        }
+
         StockOrderDO stockOrderDO = new StockOrderDO();
         stockOrderDO.setOperationType(StockOperationType.STORCK_OPERATION_TYPE_IN);
         stockOrderDO.setStockOrderNo(GenerateNoUtil.generateStockOrderNo(currentTime));
@@ -199,6 +204,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         stockOrderDO.setSrcWarehousePositionId(warehousePositionId);
         stockOrderDO.setTargetWarehouseId(targetWarehouseId);
         stockOrderDO.setTargetWarehousePositionId(warehousePositionId);
+        stockOrderDO.setOrderStatus(StockOrderStatus.STOCK_ORDER_STATUS_OVER);
         stockOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         stockOrderDO.setUpdateUser(loginUser.getUserId().toString());
         stockOrderDO.setCreateUser(loginUser.getUserId().toString());

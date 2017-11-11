@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.product.ProductQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategoryPropertyValue;
@@ -23,11 +24,11 @@ import java.util.List;
 public class ProductTest extends ERPUnTransactionalTest {
 
     @Test
-    public void queryAllProduct() throws Exception{
+    public void queryAllProduct() throws Exception {
         ProductQueryParam productQueryParam = new ProductQueryParam();
         productQueryParam.setPageNo(1);
         productQueryParam.setPageSize(15);
-        TestResult result = getJsonTestResult("/product/queryAllProduct",productQueryParam);
+        TestResult result = getJsonTestResult("/product/queryAllProduct", productQueryParam);
     }
 
 
@@ -36,7 +37,7 @@ public class ProductTest extends ERPUnTransactionalTest {
         ProductCategoryPropertyValue productCategoryPropertyValue = new ProductCategoryPropertyValue();
         productCategoryPropertyValue.setPropertyId(11);
         productCategoryPropertyValue.setPropertyValueName("普通机箱");
-        TestResult result = getJsonTestResult("/product/addProductCategoryPropertyValue",productCategoryPropertyValue);
+        TestResult result = getJsonTestResult("/product/addProductCategoryPropertyValue", productCategoryPropertyValue);
     }
 
 
@@ -76,7 +77,7 @@ public class ProductTest extends ERPUnTransactionalTest {
         productProperty.setPropertyValueId(1);
         productPropertyList.add(productProperty);
         product.setProductPropertyList(productPropertyList);
-        TestResult result = getJsonTestResult("/product/add",product);
+        TestResult result = getJsonTestResult("/product/add", product);
     }
 
     @Test
@@ -116,6 +117,13 @@ public class ProductTest extends ERPUnTransactionalTest {
         productProperty.setPropertyValueId(1);
         productPropertyList.add(productProperty);
         product.setProductPropertyList(productPropertyList);
-        TestResult result = getJsonTestResult("/product/update",product);
+        TestResult result = getJsonTestResult("/product/update", product);
+    }
+
+    @Test
+    public void testQueryProductEquipmentDetail() throws Exception {
+        ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
+        productEquipmentQueryParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017111110130");
+        TestResult result = getJsonTestResult("/product/queryProductEquipmentDetail", productEquipmentQueryParam);
     }
 }

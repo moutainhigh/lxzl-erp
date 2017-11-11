@@ -5,6 +5,8 @@
 	<resultMap id="BulkMaterialDO" type="com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="bulk_material_no" jdbcType="VARCHAR" property="bulkMaterialNo" />
+		<result column="bulk_material_type" jdbcType="INTEGER" property="bulkMaterialType" />
+		<result column="bulk_material_name" jdbcType="VARCHAR" property="bulkMaterialName" />
 		<result column="material_id" jdbcType="INTEGER" property="materialId" />
 		<result column="material_no" jdbcType="VARCHAR" property="materialNo" />
 		<result column="warehouse_id" jdbcType="INTEGER" property="warehouseId" />
@@ -28,7 +30,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ebm.id,ebm.bulk_material_no,ebm.material_id,ebm.material_no,ebm.warehouse_id,ebm.warehouse_position_id,ebm.owner_warehouse_id,ebm.owner_warehouse_position_id,ebm.brand_id,ebm.category_id,ebm.property_id,ebm.property_value_id,ebm.bulk_material_price,ebm.original_price,ebm.rent_price,ebm.bulk_material_status,ebm.data_status,ebm.remark,ebm.create_time,ebm.create_user,ebm.update_time,ebm.update_user
+		ebm.id,ebm.bulk_material_no,ebm.bulk_material_type,ebm.bulk_material_name,ebm.material_id,ebm.material_no,ebm.warehouse_id,ebm.warehouse_position_id,ebm.owner_warehouse_id,ebm.owner_warehouse_position_id,ebm.brand_id,ebm.category_id,ebm.property_id,ebm.property_value_id,ebm.bulk_material_price,ebm.original_price,ebm.rent_price,ebm.bulk_material_status,ebm.data_status,ebm.remark,ebm.create_time,ebm.create_user,ebm.update_time,ebm.update_user
 	</sql>
 
 	<select id="findById" resultMap="BulkMaterialDO" parameterType="java.lang.Integer">
@@ -59,6 +61,12 @@
 		<set>
 			<if test="bulkMaterialNo != null">
 				bulk_material_no = #{bulkMaterialNo,jdbcType=VARCHAR},
+			</if>
+			<if test="bulkMaterialType != null">
+				bulk_material_type = #{bulkMaterialType,jdbcType=INTEGER},
+			</if>
+			<if test="bulkMaterialName != null">
+				bulk_material_name = #{bulkMaterialName,jdbcType=VARCHAR},
 			</if>
 			<if test="materialId != null">
 				material_id = #{materialId,jdbcType=INTEGER},
@@ -125,12 +133,12 @@
 
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_bulk_material (bulk_material_no,material_id,material_no,warehouse_id,warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,brand_id,category_id,property_id,property_value_id,bulk_material_price,original_price,rent_price,bulk_material_status,data_status,remark,create_time,create_user,update_time,update_user)
+		insert into erp_bulk_material (bulk_material_no,bulk_material_type,bulk_material_name,material_id,material_no,warehouse_id,warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,brand_id,category_id,property_id,property_value_id,bulk_material_price,original_price,rent_price,bulk_material_status,data_status,remark,create_time,create_user,update_time,update_user)
 		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList" separator="UNION ALL">
-			SELECT #{bulkMaterialDO.bulkMaterialNo},#{bulkMaterialDO.materialId},em.materialNo,#{bulkMaterialDO.warehouseId},#{bulkMaterialDO.warehousePositionId},#{bulkMaterialDO.ownerWarehouseId},#{bulkMaterialDO.ownerWarehousePositionId},
+			SELECT #{bulkMaterialDO.bulkMaterialNo},em.material_type, em.material_name ,#{bulkMaterialDO.materialId},em.material_no,#{bulkMaterialDO.warehouseId},#{bulkMaterialDO.warehousePositionId},#{bulkMaterialDO.ownerWarehouseId},#{bulkMaterialDO.ownerWarehousePositionId},
 			em.brand_id,em.category_id,em.property_id,em.property_value_id,em.material_price,em.original_price,em.rent_price, #{bulkMaterialDO.bulkMaterialStatus},#{bulkMaterialDO.dataStatus},#{bulkMaterialDO.remark},
 			#{bulkMaterialDO.createTime},#{bulkMaterialDO.createUser},#{bulkMaterialDO.updateTime},#{bulkMaterialDO.updateUser}
-			FROM erp_material em WHERE em.material_id = #{bulkMaterialDO.materialId}
+			FROM erp_material em WHERE em.id = #{bulkMaterialDO.materialId}
 		</foreach>
 	</insert>
 
