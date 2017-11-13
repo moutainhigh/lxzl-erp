@@ -54,7 +54,7 @@
                                             <div class="input-group">
                                                 <input type="hidden" name="warehouseNo" class="form-control" />
                                                 <input id="inputDefault" class="form-control" type="text" />
-                                                <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                                                <span class="input-group-addon cursor" id="chooseWarehouse"><i class="fa fa-search"></i></span>
                                             </div>
                                         </div>
                                     </div>
@@ -91,7 +91,7 @@
                                             <i class="fa fa-plus"></i> 选择商品
                                         </button>
                                         <button type="button" class="btn btn-primary btn-sm " title="选择商品">
-                                            <i class="fa fa-plus"></i> 删除
+                                            <i class="fa fa-trash-o"></i> 删除
                                         </button>
                                     </div>
                                 </div>
@@ -111,7 +111,7 @@
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.purchase.add.js');
+        management_load_script('${staticManagement}/js','manage.purchase.add.js','modal.choose.warehouse.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

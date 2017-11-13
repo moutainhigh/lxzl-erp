@@ -160,4 +160,10 @@ public class PageController extends BaseController {
         return "/purchaseManage/purchaseDetail";
     }
 
+    //选择仓库Modal
+    @RequestMapping("/warehouse/choose")
+    public String warehouseChoose() {
+        return "/component/warehouse/chooseModal";
+    }
+
 }
