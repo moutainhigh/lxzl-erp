@@ -41,6 +41,18 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ebm.id) FROM erp_bulk_material ebm 
 		<where>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.materialId != null &amp;&amp; maps.bulkMaterialQueryParam.materialId != ''">
+				AND ebm.material_id = #{maps.bulkMaterialQueryParam.materialId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialType != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialType != ''">
+				AND ebm.bulk_material_type = #{maps.bulkMaterialQueryParam.bulkMaterialType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialNo != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialNo != ''">
+				AND ebm.bulk_material_no like CONCAT('%','${maps.bulkMaterialQueryParam.bulkMaterialNo}','%' )
+			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != ''">
+				AND ebm.bulk_material_name like CONCAT('%','${maps.bulkMaterialQueryParam.bulkMaterialName}','%' )
+			</if>
 			<if test="true">
 				AND ebm.data_status = 1
 			</if>
@@ -50,6 +62,18 @@
 	<select id="listPage" resultMap="BulkMaterialDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm 
 		<where>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.materialId != null &amp;&amp; maps.bulkMaterialQueryParam.materialId != ''">
+				AND ebm.material_id = #{maps.bulkMaterialQueryParam.materialId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialType != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialType != ''">
+				AND ebm.bulk_material_type = #{maps.bulkMaterialQueryParam.bulkMaterialType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialNo != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialNo != ''">
+				AND ebm.bulk_material_no like CONCAT('%','${maps.bulkMaterialQueryParam.bulkMaterialNo}','%' )
+			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != ''">
+				AND ebm.bulk_material_name like CONCAT('%','${maps.bulkMaterialQueryParam.bulkMaterialName}','%' )
+			</if>
 			<if test="true">
 				AND ebm.data_status = 1
 			</if>

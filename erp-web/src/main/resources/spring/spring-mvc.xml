@@ -37,7 +37,14 @@
 
 	<!-- 配置文件上传支持 -->
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
-		p:defaultEncoding="utf-8" />
+		  p:defaultEncoding="utf-8" >
+		<property name="maxUploadSize">
+			<value>102400000</value>
+		</property>
+		<property name="maxInMemorySize">
+			<value>10240000</value>
+		</property>
+	</bean>
 
 	<!-- velocity视图解析配置 -->
 	<bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">

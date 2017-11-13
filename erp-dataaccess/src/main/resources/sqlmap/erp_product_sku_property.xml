@@ -9,6 +9,8 @@
         <result column="product_id" property="productId"/>
         <result column="property_id" property="propertyId"/>
         <result column="property_value_id" property="propertyValueId"/>
+        <result column="property_name" property="propertyName"/>
+        <result column="property_value_name" property="propertyValueName"/>
         <result column="is_sku" property="isSku"/>
         <result column="sku_id" property="skuId"/>
         <result column="remark" property="remark"/>
@@ -20,7 +22,7 @@
     </resultMap>
 
     <sql id="column_List">
-		id,product_id,property_id,property_value_id,is_sku,sku_id,remark,data_status,create_time,create_user,update_time,update_user
+		epsp.id,epsp.product_id,epsp.property_id,epsp.property_value_id,epsp.is_sku,epsp.sku_id,epsp.remark,epsp.data_status,epsp.create_time,epsp.create_user,epsp.update_time,epsp.update_user
 	</sql>
 
     <select id="findById" resultMap="ProductSkuPropertyDO" parameterType="java.lang.Integer">
@@ -43,20 +45,26 @@
 
     <select id="findSkuProperties" resultMap="ProductSkuPropertyDO" parameterType="java.lang.Integer">
         select
-        <include refid="column_List"/>
-        from erp_product_sku_property where sku_id = #{skuId, jdbcType=INTEGER}  and data_status = 1 and is_sku = 1
+        <include refid="column_List"/>,epcp.property_name,epcpv.property_value_name
+        from erp_product_sku_property epsp
+        INNER JOIN erp_product_category_property epcp on epcp.id = epsp.property_id and epcp.data_status = 1
+        INNER JOIN erp_product_category_property_value epcpv on epcpv.id = epsp.property_value_id and epcpv.data_status = 1
+        where epsp.sku_id = #{skuId, jdbcType=INTEGER} and epsp.data_status = 1 and epsp.is_sku = 1
     </select>
 
     <select id="findProductProperties" resultMap="ProductSkuPropertyDO" parameterType="java.lang.Integer">
         select
-        <include refid="column_List"/>
-        from erp_product_sku_property where product_id = #{productId, jdbcType=INTEGER}  and data_status = 1 and is_sku = 0
+        <include refid="column_List"/>,epcp.property_name,epcpv.property_value_name
+        from erp_product_sku_property epsp
+        INNER JOIN erp_product_category_property epcp on epcp.id = epsp.property_id and epcp.data_status = 1
+        INNER JOIN erp_product_category_property_value epcpv on epcpv.id = epsp.property_value_id and epcpv.data_status = 1
+        where epsp.product_id = #{productId, jdbcType=INTEGER}  and epsp.data_status = 1 and epsp.is_sku = 0
     </select>
 
     <select id="findByProductIdAndPropertyValue" resultMap="ProductSkuPropertyDO" parameterType="map">
         select
         <include refid="column_List"/>
-        from erp_product_sku_property where product_id = #{productId, jdbcType=INTEGER} and property_value_id =  #{propertyValueId, jdbcType=INTEGER} and data_status = 1 and is_sku = 0
+        from erp_product_sku_property epsp where epsp.product_id = #{productId, jdbcType=INTEGER} and epsp.property_value_id =  #{propertyValueId, jdbcType=INTEGER} and epsp.data_status = 1 and epsp.is_sku = 0
     </select>
 
     <sql id="set_column_sql">

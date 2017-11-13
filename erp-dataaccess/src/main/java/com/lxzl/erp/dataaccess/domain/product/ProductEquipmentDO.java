@@ -3,6 +3,7 @@ package com.lxzl.erp.dataaccess.domain.product;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,7 +13,6 @@ public class ProductEquipmentDO extends BaseDO {
     private Integer id;
     private String equipmentNo;
     private Integer productId;
-    private String productName;
     private Integer skuId;
     private Integer warehouseId;
     private Integer warehousePositionId;
@@ -25,6 +25,9 @@ public class ProductEquipmentDO extends BaseDO {
     private List<ProductImgDO> productImgDOList;           // 商品图片
 
     private List<BulkMaterialDO> bulkMaterialDOList;        // 设备散料
+
+    @Transient
+    private String productName;
 
     public Integer getId() {
         return id;

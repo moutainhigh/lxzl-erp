@@ -42,6 +42,44 @@
 	</select>
 
 
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(em.id) FROM erp_material em
+		<where>
+			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialType != null &amp;&amp; maps.materialQueryParam.materialType != ''">
+				and em.material_type = #{maps.materialQueryParam.materialType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialNo != null &amp;&amp; maps.materialQueryParam.materialNo != ''">
+				and em.material_no like CONCAT('%','${maps.materialQueryParam.materialNo}','%' )
+			</if>
+			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialName != null &amp;&amp; maps.materialQueryParam.materialName != ''">
+				and em.material_name like CONCAT('%','${maps.materialQueryParam.materialName}','%' )
+			</if>
+			<if test="true">
+				AND em.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="MaterialDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_material em
+		<where>
+			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialType != null &amp;&amp; maps.materialQueryParam.materialType != ''">
+				and em.material_type = #{maps.materialQueryParam.materialType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialNo != null &amp;&amp; maps.materialQueryParam.materialNo != ''">
+				and em.material_no like CONCAT('%','${maps.materialQueryParam.materialNo}','%' )
+			</if>
+			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialName != null &amp;&amp; maps.materialQueryParam.materialName != ''">
+				and em.material_name like CONCAT('%','${maps.materialQueryParam.materialName}','%' )
+			</if>
+			<if test="true">
+				AND em.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+
 	<sql id="set_column_sql">
 		<set>
 			<if test="materialNo != null">

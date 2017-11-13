@@ -3,9 +3,8 @@ package com.lxzl.erp.common.domain.purchase.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
-import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +14,7 @@ public class PurchaseDeliveryOrder implements Serializable {
 
 	private Integer purchaseDeliveryOrderId;   //唯一标识
 	private Integer purchaseOrderId;   //采购单ID
-	@NotNull(message = ErrorCode.PURCHASE_DELIVERY_ORDER_NO_NOT_NULL , groups = {IdGroup.class})
+	@NotEmpty(message = ErrorCode.PURCHASE_DELIVERY_ORDER_NO_NOT_NULL , groups = {IdGroup.class})
 	private String purchaseDeliveryNo;   //采购发货单编号
 	private Integer warehouseId;   //收货方仓库ID
 	private String warehouseSnapshot;   //收货方仓库快照，JSON格式

@@ -1,7 +1,9 @@
 package com.lxzl.erp.core.service.product.impl.support;
 
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
+import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
@@ -32,5 +34,24 @@ public class MaterialConverter {
         }
         BeanUtils.copyProperties(bulkMaterialDO, bulkMaterial);
         return bulkMaterial;
+    }
+
+    public static Material convertMaterialDO(MaterialDO materialDO){
+        Material material = new Material();
+        if(materialDO.getId() != null){
+            material.setMaterialId(materialDO.getId());
+        }
+        BeanUtils.copyProperties(materialDO,material);
+        return material;
+    }
+
+    public static List<Material> convertMaterialDOList(List<MaterialDO> materialDOList){
+        List<Material> materialList = new ArrayList<>();
+        if(materialDOList != null && !materialDOList.isEmpty()){
+            for(MaterialDO materialDO : materialDOList){
+                materialList.add(convertMaterialDO(materialDO));
+            }
+        }
+        return materialList;
     }
 }

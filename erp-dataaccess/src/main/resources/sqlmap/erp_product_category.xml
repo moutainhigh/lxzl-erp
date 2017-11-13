@@ -37,7 +37,7 @@
                 and epc.data_status = 1
             </if>
         </where>
-        order by id,data_order
+        ORDER BY id,data_order DESC
     </select>
 
     <sql id="set_column_sql">

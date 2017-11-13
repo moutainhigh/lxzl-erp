@@ -12,7 +12,6 @@ public class ProductEquipment implements Serializable {
     private Integer productEquipmentId;
     private String equipmentNo;
     private Integer productId;
-    private String productName;
     private Integer skuId;
     private Integer warehouseId;
     private Integer warehousePositionId;
@@ -24,6 +23,8 @@ public class ProductEquipment implements Serializable {
     private String remark;
     private List<ProductImg> productImgList;           // 商品图片
     private List<BulkMaterial> bulkMaterialList;        // 设备散料
+
+    private String productName;
 
     public Integer getProductEquipmentId() {
         return productEquipmentId;
