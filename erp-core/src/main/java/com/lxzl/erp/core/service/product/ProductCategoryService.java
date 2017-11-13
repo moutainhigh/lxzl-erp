@@ -26,4 +26,10 @@ public interface ProductCategoryService extends BaseService {
     ServiceResult<String, List<ProductCategoryProperty>> queryPropertiesByProductId(Integer productId);
 
     ServiceResult<String, Integer> addProductCategoryPropertyValue(ProductCategoryPropertyValue productCategoryPropertyValue);
+
+    /**
+     * @param productCategoryPropertyValue 分类属性值
+     * @return  修改ID
+     */
+    ServiceResult<String, Integer> updateProductCategoryPropertyValue(ProductCategoryPropertyValue productCategoryPropertyValue);
 }

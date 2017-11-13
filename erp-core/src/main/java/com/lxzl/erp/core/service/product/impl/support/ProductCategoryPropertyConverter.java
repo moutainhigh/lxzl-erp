@@ -16,33 +16,7 @@ public class ProductCategoryPropertyConverter {
         if (productCategoryPropertyDO.getId() != null) {
             productCategoryProperty.setCategoryPropertyId(productCategoryPropertyDO.getId());
         }
-        if (productCategoryPropertyDO.getPropertyName() != null) {
-            productCategoryProperty.setPropertyName(productCategoryPropertyDO.getPropertyName());
-        }
-        if (productCategoryPropertyDO.getCategoryId() != null) {
-            productCategoryProperty.setCategoryId(productCategoryPropertyDO.getCategoryId());
-        }
-        if (productCategoryPropertyDO.getPropertyType() != null) {
-            productCategoryProperty.setPropertyType(productCategoryPropertyDO.getPropertyType());
-        }
-        if (productCategoryPropertyDO.getIsInput() != null) {
-            productCategoryProperty.setIsInput(productCategoryPropertyDO.getIsInput());
-        }
-        if (productCategoryPropertyDO.getIsCheckbox() != null) {
-            productCategoryProperty.setIsCheckbox(productCategoryPropertyDO.getIsCheckbox());
-        }
-        if (productCategoryPropertyDO.getIsRequired() != null) {
-            productCategoryProperty.setIsRequired(productCategoryPropertyDO.getIsRequired());
-        }
-        if (productCategoryPropertyDO.getDataOrder() != null) {
-            productCategoryProperty.setDataOrder(productCategoryPropertyDO.getDataOrder());
-        }
-        if (productCategoryPropertyDO.getDataStatus() != null) {
-            productCategoryProperty.setDataStatus(productCategoryPropertyDO.getDataStatus());
-        }
-        if (productCategoryPropertyDO.getRemark() != null) {
-            productCategoryProperty.setRemark(productCategoryPropertyDO.getRemark());
-        }
+        BeanUtils.copyProperties(productCategoryPropertyDO,productCategoryProperty);
         if (productCategoryPropertyDO.getProductCategoryPropertyValueDOList() != null && productCategoryPropertyDO.getProductCategoryPropertyValueDOList().size() > 0) {
             productCategoryProperty.setProductCategoryPropertyValueList(convertProductCategoryPropertyValueDOList(productCategoryPropertyDO.getProductCategoryPropertyValueDOList()));
         }
@@ -65,24 +39,7 @@ public class ProductCategoryPropertyConverter {
         if(productCategoryPropertyValueDO.getId() != null){
             productCategoryPropertyValue.setCategoryPropertyValueId(productCategoryPropertyValueDO.getId());
         }
-        if(productCategoryPropertyValueDO.getPropertyValueName() != null){
-            productCategoryPropertyValue.setPropertyValueName(productCategoryPropertyValueDO.getPropertyValueName());
-        }
-        if(productCategoryPropertyValueDO.getPropertyId() != null){
-            productCategoryPropertyValue.setPropertyId(productCategoryPropertyValueDO.getPropertyId());
-        }
-        if(productCategoryPropertyValueDO.getCategoryId() != null){
-            productCategoryPropertyValue.setCategoryId(productCategoryPropertyValueDO.getCategoryId());
-        }
-        if(productCategoryPropertyValueDO.getDataOrder() != null){
-            productCategoryPropertyValue.setDataOrder(productCategoryPropertyValueDO.getDataOrder());
-        }
-        if(productCategoryPropertyValueDO.getDataStatus() != null){
-            productCategoryPropertyValue.setDataStatus(productCategoryPropertyValueDO.getDataStatus());
-        }
-        if(productCategoryPropertyValueDO.getRemark() != null){
-            productCategoryPropertyValue.setRemark(productCategoryPropertyValueDO.getRemark());
-        }
+        BeanUtils.copyProperties(productCategoryPropertyValueDO,productCategoryPropertyValue);
         return productCategoryPropertyValue;
     }
 

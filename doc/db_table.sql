@@ -309,7 +309,7 @@ CREATE TABLE `erp_product_category` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `category_name` varchar(20) NOT NULL DEFAULT '' COMMENT '分类名称',
   `parent_category_id` int(20) NOT NULL DEFAULT 800000 COMMENT '父ID',
-  `category_type` int(11) NOT NULL DEFAULT '0' COMMENT '分类类型',
+  `category_type` int(11) NOT NULL DEFAULT '0' COMMENT '分类类型，1组装机，2物料',
   `data_order` int(11) NOT NULL DEFAULT '0' COMMENT '数据排序排序，越大排越前',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',

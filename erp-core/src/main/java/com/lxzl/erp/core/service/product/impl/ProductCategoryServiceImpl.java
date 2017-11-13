@@ -86,7 +86,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         Date currentTime = new Date();
         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = ProductCategoryPropertyConverter.convertProductCategoryPropertyValue(productCategoryPropertyValue);
         ProductCategoryPropertyDO productCategoryPropertyDO = productCategoryPropertyMapper.findById(productCategoryPropertyValueDO.getPropertyId());
-        if(productCategoryPropertyDO == null){
+        if (productCategoryPropertyDO == null) {
             result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS);
             return result;
         }
@@ -98,7 +98,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         productCategoryPropertyValueDO.setUpdateTime(currentTime);
         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
 
-        if(CommonConstant.COMMON_CONSTANT_YES.equals(productCategoryPropertyDO.getIsMaterial())){
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(productCategoryPropertyDO.getIsMaterial())) {
             MaterialDO materialDO = new MaterialDO();
             materialDO.setMaterialName(productCategoryPropertyDO.getPropertyName() + "&" + productCategoryPropertyValueDO.getPropertyValueName());
             materialDO.setMaterialNo(GenerateNoUtil.generateMaterialNo(currentTime));
@@ -114,6 +114,60 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             materialMapper.save(materialDO);
         }
 
+
+        result.setResult(productCategoryPropertyValueDO.getId());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, Integer> updateProductCategoryPropertyValue(ProductCategoryPropertyValue productCategoryPropertyValue) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+        ProductCategoryPropertyValueDO dbProductCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productCategoryPropertyValue.getCategoryPropertyValueId());
+        if (dbProductCategoryPropertyValueDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = ProductCategoryPropertyConverter.convertProductCategoryPropertyValue(productCategoryPropertyValue);
+        ProductCategoryPropertyDO productCategoryPropertyDO = productCategoryPropertyMapper.findById(productCategoryPropertyValueDO.getPropertyId());
+        if (productCategoryPropertyDO == null) {
+            result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS);
+            return result;
+        }
+        productCategoryPropertyValueDO.setCategoryId(productCategoryPropertyDO.getCategoryId());
+        productCategoryPropertyValueDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        productCategoryPropertyValueDO.setCreateUser(loginUser.getUserId().toString());
+        productCategoryPropertyValueDO.setUpdateUser(loginUser.getUserId().toString());
+        productCategoryPropertyValueDO.setCreateTime(currentTime);
+        productCategoryPropertyValueDO.setUpdateTime(currentTime);
+        productCategoryPropertyValueMapper.update(productCategoryPropertyValueDO);
+
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(productCategoryPropertyDO.getIsMaterial())) {
+            MaterialDO dbMaterialDO = materialMapper.findByPropertyAndValueId(productCategoryPropertyDO.getId(), productCategoryPropertyValueDO.getId());
+            if (dbMaterialDO == null) {
+                MaterialDO materialDO = new MaterialDO();
+                materialDO.setMaterialName(productCategoryPropertyDO.getPropertyName() + "&" + productCategoryPropertyValueDO.getPropertyValueName());
+                materialDO.setMaterialNo(GenerateNoUtil.generateMaterialNo(currentTime));
+                materialDO.setMaterialType(productCategoryPropertyDO.getMaterialType());
+                materialDO.setCategoryId(productCategoryPropertyDO.getCategoryId());
+                materialDO.setPropertyId(productCategoryPropertyDO.getId());
+                materialDO.setPropertyValueId(productCategoryPropertyValueDO.getId());
+                materialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                materialDO.setCreateUser(loginUser.getUserId().toString());
+                materialDO.setUpdateUser(loginUser.getUserId().toString());
+                materialDO.setCreateTime(currentTime);
+                materialDO.setUpdateTime(currentTime);
+                materialMapper.save(materialDO);
+            } else {
+                dbMaterialDO.setMaterialName(productCategoryPropertyDO.getPropertyName() + "&" + productCategoryPropertyValueDO.getPropertyValueName());
+                dbMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+                dbMaterialDO.setUpdateTime(currentTime);
+                materialMapper.update(dbMaterialDO);
+            }
+        }
 
         result.setResult(productCategoryPropertyValueDO.getId());
         result.setErrorCode(ErrorCode.SUCCESS);

@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class Material implements Serializable {
 
-    private Integer id;
+    private Integer materialId;
     private String materialNo;
     private String materialName;
     private Integer materialType;
@@ -27,14 +27,13 @@ public class Material implements Serializable {
     private Integer dataStatus;
     private String remark;
 
-    public Integer getId() {
-        return id;
+    public Integer getMaterialId() {
+        return materialId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setMaterialId(Integer materialId) {
+        this.materialId = materialId;
     }
-
 
     public String getMaterialNo() {
         return materialNo;
