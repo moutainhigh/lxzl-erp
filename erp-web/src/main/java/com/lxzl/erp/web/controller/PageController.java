@@ -165,5 +165,15 @@ public class PageController extends BaseController {
     public String warehouseChoose() {
         return "/component/warehouse/chooseModal";
     }
+    //选择供应商Modal
+    @RequestMapping("/supplier/choose")
+    public String supplierChoose() {
+        return "/component/supplier/chooseModal";
+    }
+    //选择商品Modal
+    @RequestMapping("/product/choose")
+    public String productChoose() {
+        return "/component/product/chooseModal";
+    }
 
 }
