@@ -2,6 +2,7 @@ package com.lxzl.erp.dataaccess.domain.product;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.annotation.Transient;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductCategoryPropertyValueDO extends BaseDO {
@@ -13,6 +14,9 @@ public class ProductCategoryPropertyValueDO extends BaseDO {
     private Integer dataOrder;
     private Integer dataStatus;
     private String remark;
+
+    @Transient
+    private String propertyName;
 
     public Integer getId() {
         return id;
@@ -68,5 +72,13 @@ public class ProductCategoryPropertyValueDO extends BaseDO {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
     }
 }

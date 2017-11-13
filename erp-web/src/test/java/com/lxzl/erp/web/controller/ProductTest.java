@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategoryPropertyValue;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
+import com.lxzl.erp.common.util.FastJsonUtil;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -118,6 +119,12 @@ public class ProductTest extends ERPUnTransactionalTest {
         productPropertyList.add(productProperty);
         product.setProductPropertyList(productPropertyList);
         TestResult result = getJsonTestResult("/product/update", product);
+    }
+
+    @Test
+    public void updateProductJson() throws Exception{
+        String productJson = "{\"productImgList\":[{\"imgId\":108}],\"productDescImgList\":[{\"imgId\":109}],\"productSkuList\":[{\"productSkuPropertyList\":[{\"propertyId\":10,\"propertyValueId\":21,\"propertyValueName\":\"256G SSD\",\"propertyName\":\"固态硬盘\",\"skuPropertyId\":207,\"isSku\":1,\"skuId\":35,\"remark\":\"\"},{\"propertyId\":7,\"propertyValueId\":14,\"propertyValueName\":\"集成\",\"propertyName\":\"显卡\",\"skuPropertyId\":209,\"isSku\":1,\"skuId\":35,\"remark\":\"\"},{\"propertyId\":6,\"propertyValueId\":12,\"propertyValueName\":\"1T HDD\",\"propertyName\":\"机械硬盘\",\"skuPropertyId\":210,\"isSku\":1,\"skuId\":35,\"remark\":\"\"},{\"propertyId\":2,\"propertyValueId\":4,\"propertyValueName\":\"4G\",\"propertyName\":\"内存\",\"skuPropertyId\":211,\"isSku\":1,\"skuId\":35,\"remark\":\"\"},{\"propertyId\":1,\"propertyValueId\":2,\"propertyValueName\":\"白色\",\"propertyName\":\"颜色\",\"skuPropertyId\":212,\"isSku\":1,\"skuId\":35,\"remark\":\"\"}],\"skuId\":\"35\",\"skuPrice\":\"4000\",\"originalPrice\":\"5000\",\"rentPrice\":\"8000\"},{\"productSkuPropertyList\":[{\"propertyId\":10,\"propertyValueId\":21,\"propertyValueName\":\"256G SSD\",\"propertyName\":\"固态硬盘\",\"skuPropertyId\":201,\"isSku\":1,\"skuId\":34,\"remark\":\"\"},{\"propertyId\":7,\"propertyValueId\":14,\"propertyValueName\":\"集成\",\"propertyName\":\"显卡\",\"skuPropertyId\":203,\"isSku\":1,\"skuId\":34,\"remark\":\"\"},{\"propertyId\":6,\"propertyValueId\":12,\"propertyValueName\":\"1T HDD\",\"propertyName\":\"机械硬盘\",\"skuPropertyId\":204,\"isSku\":1,\"skuId\":34,\"remark\":\"\"},{\"propertyId\":2,\"propertyValueId\":4,\"propertyValueName\":\"4G\",\"propertyName\":\"内存\",\"skuPropertyId\":205,\"isSku\":1,\"skuId\":34,\"remark\":\"\"},{\"propertyId\":1,\"propertyValueId\":1,\"propertyValueName\":\"黑色\",\"propertyName\":\"颜色\",\"skuPropertyId\":206,\"isSku\":1,\"skuId\":34,\"remark\":\"\"}],\"skuId\":\"34\",\"skuPrice\":\"5000\",\"originalPrice\":\"1000\",\"rentPrice\":\"100\"}],\"productPropertyList\":[{\"propertyId\":8,\"propertyValueId\":17,\"isSku\":1,\"remark\":\"\"},{\"propertyId\":9,\"propertyValueId\":19,\"isSku\":1,\"remark\":\"\"},{\"propertyId\":3,\"propertyValueId\":6,\"isSku\":1,\"remark\":\"\"},{\"propertyId\":11,\"propertyValueId\":23,\"isSku\":1,\"remark\":\"\"},{\"propertyId\":4,\"propertyValueId\":8,\"isSku\":1,\"remark\":\"\"}],\"productName\":\"mac0002\",\"categoryId\":\"800003\",\"subtitle\":\"mac0002\",\"unit\":\"303719\",\"listPrice\":\"10\",\"isRent\":\"1\",\"productDesc\":\"100\",\"productId\":\"2000009\"}";
+        TestResult result = getJsonTestResult("/product/update", FastJsonUtil.toBean(productJson,Product.class));
     }
 
     @Test

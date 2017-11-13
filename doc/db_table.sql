@@ -602,6 +602,7 @@ CREATE TABLE `erp_warehouse` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `warehouse_no` varchar(100) NOT NULL COMMENT '仓库编码',
   `warehouse_name` varchar(100) COLLATE utf8_bin COMMENT '仓库名称',
+  `warehouse_type` int(11) NOT NULL COMMENT '仓库类型,详见WarehouseType',
   `sub_company_id` int(20) NOT NULL COMMENT '分公司ID',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -1092,3 +1093,15 @@ CREATE TABLE `erp_purchase_back_order_product_material` (
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购退货单商品物料表';
+
+DROP TABLE if exists `erp_message`;
+CREATE TABLE `erp_message` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `sender_user_id` int(20) NOT NULL COMMENT '发送人ID',
+  `receiver_user_id` int(20) NOT NULL COMMENT '接收人ID',
+  `purchase_order_product_id` int(20) NOT NULL COMMENT '采购单项ID',
+  `send_time` datetime NOT NULL COMMENT '发送时间',
+  `read_time` datetime NOT NULL COMMENT '读取时间',
+  `message_text` text COMMENT '发送内容',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='站内信表';

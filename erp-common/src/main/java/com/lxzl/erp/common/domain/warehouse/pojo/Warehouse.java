@@ -19,6 +19,8 @@ public class Warehouse implements Serializable {
 
     private String warehouseName;
 
+    private Integer warehouseType;
+
     private Integer subCompanyId;
 
     private String subCompanyName;
@@ -101,5 +103,13 @@ public class Warehouse implements Serializable {
 
     public void setSubCompanyName(String subCompanyName) {
         this.subCompanyName = subCompanyName;
+    }
+
+    public Integer getWarehouseType() {
+        return warehouseType;
+    }
+
+    public void setWarehouseType(Integer warehouseType) {
+        this.warehouseType = warehouseType;
     }
 }

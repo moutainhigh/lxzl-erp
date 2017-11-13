@@ -20,6 +20,8 @@ public class WarehouseDO extends BaseDO {
 
     private String warehouseName;
 
+    private Integer warehouseType;
+
     private Integer subCompanyId;
 
     private String subCompanyName;
@@ -102,5 +104,13 @@ public class WarehouseDO extends BaseDO {
 
     public void setSubCompanyType(Integer subCompanyType) {
         this.subCompanyType = subCompanyType;
+    }
+
+    public Integer getWarehouseType() {
+        return warehouseType;
+    }
+
+    public void setWarehouseType(Integer warehouseType) {
+        this.warehouseType = warehouseType;
     }
 }

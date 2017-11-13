@@ -67,7 +67,7 @@
                     and data_status = 1
                 </if>
             </where>
-            ORDER BY data_order
+            ORDER BY data_order DESC
         ) category_main
         LEFT JOIN erp_product_category_property_value epcpv on category_main.id = epcpv.property_id
         <where>
@@ -78,7 +78,7 @@
                 and epcpv.data_status = 1
             </if>
         </where>
-        order by category_main.data_order,epcpv.data_order
+        order by category_main.data_order DESC,epcpv.data_order DESC
     </select>
 
     <select id="findProductCategoryPropertyListByProductId" resultMap="ProductCategoryPropertyDO" parameterType="map">

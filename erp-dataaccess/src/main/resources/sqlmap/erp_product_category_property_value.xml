@@ -7,6 +7,7 @@
     <resultMap type="com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO" id="ProductCategoryPropertyValueDO">
         <id column="id" property="id"/>
         <result column="property_value_name" property="propertyValueName"/>
+        <result column="property_name" property="propertyName"/>
         <result column="property_id" property="propertyId"/>
         <result column="category_id" property="categoryId"/>
         <result column="data_order" property="dataOrder"/>
@@ -19,13 +20,15 @@
     </resultMap>
 
     <sql id="column_List">
-		id,property_value_name,property_id,category_id,data_order,data_status,remark,create_time,create_user,update_time,update_user
+		epcpv.id,epcpv.property_value_name,epcpv.property_id,epcpv.category_id,epcpv.data_order,epcpv.data_status,epcpv.remark,epcpv.create_time,epcpv.create_user,epcpv.update_time,epcpv.update_user
 	</sql>
 
     <select id="findById" resultMap="ProductCategoryPropertyValueDO" parameterType="java.lang.Integer">
         select
-        <include refid="column_List"/>
-        from erp_product_category_property_value where id = #{id, jdbcType=INTEGER}
+        <include refid="column_List"/>, epcp.property_name
+        from erp_product_category_property_value epcpv
+        INNER JOIN erp_product_category_property epcp on epcp.id = epcpv.property_id and epcp.data_status = 1
+        where epcpv.id = #{id, jdbcType=INTEGER} and epcpv.data_status = 1
     </select>
 
     <sql id="set_column_sql">

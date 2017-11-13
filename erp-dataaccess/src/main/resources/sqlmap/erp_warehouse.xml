@@ -8,6 +8,7 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="warehouse_no" jdbcType="VARCHAR" property="warehouseNo" />
 		<result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+		<result column="warehouse_type" jdbcType="INTEGER" property="warehouseType" />
 		<result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
 		<result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
 		<result column="sub_company_type" jdbcType="INTEGER" property="subCompanyType" />
@@ -33,7 +34,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ew.id,ew.warehouse_no,ew.warehouse_name,ew.sub_company_id,ew.data_status,ew.remark,ew.create_time,ew.create_user,ew.update_time,ew.update_user
+		ew.id,ew.warehouse_no,ew.warehouse_name,ew.warehouse_type,ew.sub_company_id,ew.data_status,ew.remark,ew.create_time,ew.create_user,ew.update_time,ew.update_user
 	</sql>
 
 	<sql id="position_column_List">
@@ -70,8 +71,11 @@
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseId != null">
 				and ew.id = #{maps.warehouseQueryParam.warehouseId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.warehouseNo != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != null">
+			<if test="maps.warehouseQueryParam.warehouseNo != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != null">
 				and ew.warehouse_no = #{maps.warehouseQueryParam.warehouseNo, jdbcType=INTEGER}
+			</if>
+			<if test="maps.warehouseQueryParam.warehouseType != null &amp;&amp; maps.warehouseQueryParam.warehouseType != null">
+				and ew.warehouse_type = #{maps.warehouseQueryParam.warehouseType, jdbcType=INTEGER}
 			</if>
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseName != null &amp;&amp; maps.warehouseQueryParam.warehouseName != ''">
 				and ew.warehouse_name like CONCAT('%','${maps.warehouseQueryParam.warehouseName}','%' )
@@ -101,8 +105,11 @@
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseId != null">
 				and ew.id = #{maps.warehouseQueryParam.warehouseId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.warehouseNo != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != null">
+			<if test="maps.warehouseQueryParam.warehouseNo != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != null">
 				and ew.warehouse_no = #{maps.warehouseQueryParam.warehouseNo, jdbcType=INTEGER}
+			</if>
+			<if test="maps.warehouseQueryParam.warehouseType != null &amp;&amp; maps.warehouseQueryParam.warehouseType != null">
+				and ew.warehouse_type = #{maps.warehouseQueryParam.warehouseType, jdbcType=INTEGER}
 			</if>
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseName != null &amp;&amp; maps.warehouseQueryParam.warehouseName != ''">
 				and ew.warehouse_name like CONCAT('%','${maps.warehouseQueryParam.warehouseName}','%' )
@@ -131,6 +138,9 @@
 			</if>
 			<if test="warehouseName != null">
 				warehouse_name = #{warehouseName,jdbcType=VARCHAR},
+			</if>
+			<if test="warehouseType != null">
+				warehouse_type = #{warehouseType,jdbcType=INTEGER},
 			</if>
 			<if test="subCompanyId != null">
 				sub_company_id = #{subCompanyId,jdbcType=INTEGER},

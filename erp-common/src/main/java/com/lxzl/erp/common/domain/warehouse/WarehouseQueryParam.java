@@ -21,6 +21,8 @@ public class WarehouseQueryParam extends PageQuery implements Serializable {
 
     private String warehouseName;
 
+    private Integer warehouseType;
+
     private Integer subCompanyId;
 
     private String subCompanyName;
@@ -73,5 +75,13 @@ public class WarehouseQueryParam extends PageQuery implements Serializable {
 
     public void setSubCompanyIdList(List<Integer> subCompanyIdList) {
         this.subCompanyIdList = subCompanyIdList;
+    }
+
+    public Integer getWarehouseType() {
+        return warehouseType;
+    }
+
+    public void setWarehouseType(Integer warehouseType) {
+        this.warehouseType = warehouseType;
     }
 }
