@@ -20,47 +20,47 @@
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
             <section id="content" class="animated fadeIn">
-                <form class="form-horizontal" id="addPurchaseForm">
+                <form class="" id="addPurchaseForm">
                     <div class="panel panel-primary panel-border top mb35">
                         <div class="panel-heading">
                             <span class="panel-title">基本信息</span>
                         </div>
-                        <div class="panel-body bg-light dark">
+                        <div class="form-horizontal panel-body bg-light dark">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <div class="form-group">
+                                    <div class="form-group field">
                                         <label class="col-md-3 control-label">供应商</label>
                                         <div class="col-md-9">
                                             <div class="input-group bringContainer">
                                                 <input type="hidden" name="productSupplierId" class="form-control" bringFiled="supplierId" />
-                                                <input id="warehouseName" name="supplierName" bringFiled="supplierName" class="form-control" type="text" readonly />
+                                                <input id="supplierName" name="supplierName" bringFiled="supplierName" class="form-control required" type="text" readonly />
                                                 <span class="input-group-addon cursor chooseSupplier"><i class="fa fa-search"></i></span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="form-group">
+                                    <div class="form-group field">
                                         <label class="col-md-3 control-label">仓库</label>
                                         <div class="col-md-9">
                                             <div class="input-group bringContainer">
                                                 <input type="hidden" name="warehouseNo" class="form-control" bringFiled="warehouseNo" />
-                                                <input id="warehouseName" name="warehouseName" bringFiled="warehouseName" class="form-control" type="text" readonly />
+                                                <input id="warehouseName" name="warehouseName" bringFiled="warehouseName" class="form-control required" type="text" readonly />
                                                 <span class="input-group-addon cursor" id="chooseWarehouse"><i class="fa fa-search"></i></span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="form-group">
+                                    <div class="form-group field">
                                         <label class="col-md-3 control-label">全新机器</label>
                                         <div class="col-md-9">
                                             <div class="radio-custom mt10 mr15 pull-left">
-                                                <input type="radio" id="isNew1" name="isNew" value="1" />
+                                                <input type="radio" id="isNew1" name="isNew" value="1" class="required" />
                                                 <label for="isNew1">是</label>
                                             </div>
                                             <div class="radio-custom mt10 pull-left">
-                                                <input type="radio" id="isNew2" name="isNew" value="0" />
+                                                <input type="radio" id="isNew2" name="isNew" value="0" class="required" />
                                                 <label for="isNew2">否</label>
                                             </div>
                                         </div>
@@ -69,7 +69,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-4">
-                                    <div class="form-group">
+                                    <div class="form-group field">
                                         <label class="col-md-3 control-label">发票</label>
                                         <div class="col-md-9">
                                             <div class="radio-custom mt10 mr15 pull-left">
@@ -84,7 +84,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="form-group">
+                                    <div class="form-group field">
                                         <label class="col-md-3 control-label">发票供应商</label>
                                         <div class="col-md-9">
                                             <div class="input-group bringContainer">
@@ -111,8 +111,81 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="panel-body bg-light dark">
-
+                        <div class="panel-body dark pn">
+                            <div class="table-responsive">
+                                <script type="text/html" id="dataListTpl">
+                                    <thead>
+                                    <tr class="bg-light">
+                                        <th>
+                                            <label class="option block mn">
+                                                <input type="checkbox" name="checkAll" value="">
+                                                <span class="checkbox mn"></span>
+                                            </label>
+                                        </th>
+                                        <th>商品ID</th>
+                                        <th>图片</th>
+                                        <th>商品名称</th>
+                                        <th>列表价格</th>
+                                        #*<th>是否在租</th>*#
+                                        <th>SKU属性</th>
+                                       #* <th>采购价格</th>
+                                        <th class="text-right">操作</th>*#
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {{#dataSource}}
+                                    {{#listData}}
+                                    <tr class="productRow" productRowKey="{{productId}}">
+                                        <td>
+                                            <label class="option block mn">
+                                                <input type="checkbox" name="checkItem" value="{{productId}}">
+                                                <span class="checkbox mn"></span>
+                                            </label>
+                                        </td>
+                                        <td>{{productId}}</td>
+                                        <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                                        <td>{{productName}}</td>
+                                        <td class="br-r">{{listPriceFixed}}</td>
+                                        #*<td>{{isRentStr}}</td>*#
+                                        <td class="pn">
+                                            <table class="table">
+                                                {{#chooseSkuList}}
+                                                {{#skuList}}
+                                                <tr class="skuRow">
+                                                    <td style="width: 40%">{{propertiesToStr}}</td>
+                                                    <td style="width: 25%">
+                                                        <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+                                                        <label class="field prepend-icon mw200">
+                                                            <input type="text" name="productAmount-{{skuId}}-{{rowKey}}" value="" class="productAmount form-control required moneyNumber" placeholder="输入采购价格" />
+                                                        </label>
+                                                    </td>
+                                                    <td style="width: 25%">
+                                                        <label class="field prepend-icon mw200">
+                                                            <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="" class="productCount form-control required number" placeholder="输入采购数量" />
+                                                        </label>
+                                                    </td>
+                                                    <td style="width:10%" class="text-right">
+                                                        <div class="btn-group text-right">
+                                                            <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                {{/skuList}}
+                                                {{/chooseSkuList}}
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    {{/listData}}
+                                    {{^listData}}
+                                    <tr>
+                                        <td valign="top" colspan="14" class="text-center">还没有选择商品</td>
+                                    </tr>
+                                    {{/listData}}
+                                    {{/dataSource}}
+                                    </tbody>
+                                </script>
+                                <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                            </div>
                         </div>
                         <div class="panel-footer clearfix">
                             <button class="btn btn-default pull-right ml15 goback">返回</button>
