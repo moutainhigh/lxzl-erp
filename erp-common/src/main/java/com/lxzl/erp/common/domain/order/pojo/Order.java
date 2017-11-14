@@ -12,9 +12,7 @@ public class Order implements Serializable {
 
     private Integer orderId;
     private String orderNo;
-    private Integer orderStatus;
-    private Integer buyerUserId;
-    private String buyerRealName;
+    private Integer buyerCustomerId;
     private Integer rentType;
     private Integer rentTimeLength;
     private Integer payMode;
@@ -23,6 +21,8 @@ public class Order implements Serializable {
     private BigDecimal orderAmountTotal;
     private BigDecimal discountAmountTotal;
     private BigDecimal logisticsAmount;
+    private Integer orderStatus;
+    private Integer payStatus;
     private Date payTime;
     private Date deliveryTime;
     private Date confirmDeliveryTime;
@@ -79,14 +79,6 @@ public class Order implements Serializable {
         this.orderStatus = orderStatus;
     }
 
-    public Integer getBuyerUserId() {
-        return buyerUserId;
-    }
-
-    public void setBuyerUserId(Integer buyerUserId) {
-        this.buyerUserId = buyerUserId;
-    }
-
     public Integer getRentType() {
         return rentType;
     }
@@ -133,6 +125,14 @@ public class Order implements Serializable {
 
     public void setLogisticsAmount(BigDecimal logisticsAmount) {
         this.logisticsAmount = logisticsAmount;
+    }
+
+    public Integer getPayStatus() {
+        return payStatus;
+    }
+
+    public void setPayStatus(Integer payStatus) {
+        this.payStatus = payStatus;
     }
 
     public Date getPayTime() {
@@ -215,12 +215,12 @@ public class Order implements Serializable {
         this.confirmDeliveryTime = confirmDeliveryTime;
     }
 
-    public String getBuyerRealName() {
-        return buyerRealName;
+    public Integer getBuyerCustomerId() {
+        return buyerCustomerId;
     }
 
-    public void setBuyerRealName(String buyerRealName) {
-        this.buyerRealName = buyerRealName;
+    public void setBuyerCustomerId(Integer buyerCustomerId) {
+        this.buyerCustomerId = buyerCustomerId;
     }
 
     public Integer getPayMode() {

@@ -224,20 +224,20 @@ CREATE TABLE `erp_supplier` (
 
 -- ****************************************地区表**************************************** --
 
-DROP TABLE if exists `erp_province`;
-CREATE TABLE `erp_provinces` (
+DROP TABLE if exists `erp_area_province`;
+CREATE TABLE `erp_area_province` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `province_name` varchar(64) NOT NULL COMMENT '地区名称',
   `area_type` int(11) COMMENT '区域类型，1-华东，2-华南，3-华中，4-华北，5-西北，6-西南，7-东北，8-港澳台',
-  `abb_cn` varchar(64) NOT NULL COMMENT '中文简称',
-  `abb_en` varchar(64) NOT NULL COMMENT '英文简称',
+  `abb_cn` varchar(64) COMMENT '中文简称',
+  `abb_en` varchar(64) COMMENT '英文简称',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='地区省份表';
 
-DROP TABLE if exists `erp_city`;
-CREATE TABLE `erp_city` (
+DROP TABLE if exists `erp_area_city`;
+CREATE TABLE `erp_area_city` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `province_id` int(20) NOT NULL COMMENT '地区省份ID',
   `city_name` varchar(64) NOT NULL COMMENT '地区名称',
@@ -250,8 +250,8 @@ CREATE TABLE `erp_city` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='地区城市表';
 
-DROP TABLE if exists `erp_district`;
-CREATE TABLE `erp_district` (
+DROP TABLE if exists `erp_area_district`;
+CREATE TABLE `erp_area_district` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `province_id` int(20) NOT NULL COMMENT '地区省份ID',
   `city_id` int(20) NOT NULL COMMENT '地区省份ID',
@@ -582,8 +582,8 @@ CREATE TABLE `erp_product_equipment` (
   `equipment_no` varchar(100) NOT NULL COMMENT '设备编号唯一',
   `product_id` int(20) NOT NULL COMMENT '所属产品ID',
   `sku_id` int(20) NOT NULL COMMENT '所属SKU ID',
-  `warehouse_id` int(20) NOT NULL COMMENT '目前仓库ID',
-  `warehouse_position_id` int(20) NOT NULL COMMENT '目前仓位ID',
+  `current_warehouse_id` int(20) NOT NULL COMMENT '目前仓库ID',
+  `current_warehouse_position_id` int(20) NOT NULL COMMENT '目前仓位ID',
   `owner_warehouse_id` int(20) NOT NULL COMMENT '归属仓库ID',
   `owner_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '归属目前仓位ID',
   `equipment_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '设备本身价值',
@@ -621,10 +621,10 @@ CREATE TABLE `erp_bulk_material` (
   `bulk_material_name` varchar(100) COLLATE utf8_bin COMMENT '散料名称，从物料生成',
   `material_id` int(20) NOT NULL COMMENT '物料ID，从物料生成的',
   `material_no` varchar(100) NOT NULL COMMENT '物料编号，从物料生成的',
-  `warehouse_id` int(20) NOT NULL COMMENT '目前仓库ID',
-  `warehouse_position_id` int(20) NOT NULL COMMENT '目前仓位ID',
+  `current_warehouse_id` int(20) NOT NULL COMMENT '目前仓库ID',
+  `current_warehouse_position_id` int(20) NOT NULL COMMENT '目前仓位ID',
   `owner_warehouse_id` int(20) NOT NULL COMMENT '归属仓库ID',
-  `owner_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '归属目前仓位ID',
+  `owner_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '归属仓位ID',
   `brand_id` int(20) COMMENT '所属品牌ID',
   `category_id` int(20) NOT NULL COMMENT '所属类目ID',
   `property_id` int(20) NOT NULL COMMENT '属性ID',
@@ -632,6 +632,8 @@ CREATE TABLE `erp_bulk_material` (
   `bulk_material_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '散料本身的价值(单价)',
   `original_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '原价',
   `rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '租赁价格',
+  `current_equipment_id` int(20) COMMENT '当前设备ID',
+  `current_equipment_no` varchar(100) COMMENT '当前设备编号',
   `bulk_material_status` int(11) NOT NULL DEFAULT '0' COMMENT '散料状态，0闲置，1租赁中，2报废',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -769,9 +771,7 @@ DROP TABLE if exists `erp_order`;
 CREATE TABLE `erp_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `order_no` varchar(100) NOT NULL COMMENT '订单编号',
-  `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '订单状态，未付款,支付中,已付款,已发货,租赁中,逾期中,退租,取消交易',
-  `buyer_user_id` int(20) NOT NULL COMMENT '购买人ID',
-  `buyer_real_name` varchar(64) COLLATE utf8_bin COMMENT '真实姓名',
+  `buyer_customer_id` int(20) NOT NULL COMMENT '购买人ID',
   `rent_type` int(11) NOT NULL DEFAULT '0' COMMENT '租赁方式，1按月租',
   `rent_time_length` int(11) NOT NULL DEFAULT '0' COMMENT '租赁期限',
   `pay_mode` int(11) NOT NULL DEFAULT '0' COMMENT '支付方式：根据支付方式，生成付款计划,1全部付款，2按月付款',
@@ -780,11 +780,13 @@ CREATE TABLE `erp_order` (
   `order_amount_total` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '订单总价，实际支付价格',
   `discount_amount_total` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '共计优惠金额',
   `logistics_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '运费',
+  `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '订单状态，未付款,支付中,已付款,已发货,租赁中,逾期中,退租,取消交易',
+  `pay_status` int(11) NOT NULL DEFAULT '0' COMMENT '支付状态，0未支付，1已支付，2已退款',
   `pay_time` datetime DEFAULT NULL COMMENT '支付时间',
   `delivery_time` datetime DEFAULT NULL COMMENT '发货时间',
   `confirm_delivery_time` datetime DEFAULT NULL COMMENT '确认收货时间',
   `expect_return_time` datetime DEFAULT NULL COMMENT '预计归还时间',
-  `actual_return_time` datetime DEFAULT NULL COMMENT '实际归还时间',
+  `actual_return_time` datetime DEFAULT NULL COMMENT '实际归还时间，最后一件设备归还的时间',
   `buyer_remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '购买人备注',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -817,6 +819,28 @@ CREATE TABLE `erp_order_product` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单商品项表';
+
+
+DROP TABLE if exists `erp_order_product_equipment`;
+CREATE TABLE `erp_order_product_equipment` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `order_product_id` int(20) NOT NULL COMMENT '订单项ID',
+  `equipment_id` int(20) NOT NULL COMMENT '设备ID',
+  `equipment_no` varchar(100) NOT NULL COMMENT '设备编号唯一',
+  `expect_return_time` datetime DEFAULT NULL COMMENT '预计归还时间',
+  `actual_return_time` datetime DEFAULT NULL COMMENT '实际归还时间',
+  `expect_rent_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '预计租金',
+  `actual_rent_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '实际租金',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单商品设备表';
+
 
 
 DROP TABLE if exists `erp_order_consign_info`;

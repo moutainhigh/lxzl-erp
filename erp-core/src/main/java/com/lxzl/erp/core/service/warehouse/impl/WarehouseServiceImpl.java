@@ -274,8 +274,8 @@ public class WarehouseServiceImpl implements WarehouseService {
             productEquipmentDO.setEquipmentNo(GenerateNoUtil.generateEquipmentNo(currentTime, warehouseId, (oldCount + i + 1)));
             productEquipmentDO.setProductId(productInStorage.getProductId());
             productEquipmentDO.setSkuId(productInStorage.getProductSkuId());
-            productEquipmentDO.setWarehouseId(warehouseId);
-            productEquipmentDO.setWarehousePositionId(warehousePositionId);
+            productEquipmentDO.setCurrentWarehouseId(warehouseId);
+            productEquipmentDO.setCurrentWarehousePositionId(warehousePositionId);
             productEquipmentDO.setOwnerWarehouseId(warehouseId);
             productEquipmentDO.setOwnerWarehousePositionId(warehousePositionId);
             productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
@@ -312,8 +312,8 @@ public class WarehouseServiceImpl implements WarehouseService {
                         BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
                         bulkMaterialDO.setBulkMaterialNo(GenerateNoUtil.generateBulkMaterialNo(currentTime));
                         bulkMaterialDO.setMaterialId(productMaterial.getMaterialId());
-                        bulkMaterialDO.setWarehouseId(warehouseId);
-                        bulkMaterialDO.setWarehousePositionId(warehousePositionId);
+                        bulkMaterialDO.setCurrentWarehouseId(warehouseId);
+                        bulkMaterialDO.setCurrentWarehousePositionId(warehousePositionId);
                         bulkMaterialDO.setOwnerWarehouseId(warehouseId);
                         bulkMaterialDO.setOwnerWarehousePositionId(warehousePositionId);
                         bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);

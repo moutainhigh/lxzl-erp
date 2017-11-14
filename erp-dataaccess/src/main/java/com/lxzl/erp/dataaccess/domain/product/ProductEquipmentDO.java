@@ -14,8 +14,8 @@ public class ProductEquipmentDO extends BaseDO {
     private String equipmentNo;
     private Integer productId;
     private Integer skuId;
-    private Integer warehouseId;
-    private Integer warehousePositionId;
+    private Integer currentWarehouseId;
+    private Integer currentWarehousePositionId;
     private Integer ownerWarehouseId;
     private Integer ownerWarehousePositionId;
     private BigDecimal equipmentPrice;
@@ -101,20 +101,20 @@ public class ProductEquipmentDO extends BaseDO {
         this.productImgDOList = productImgDOList;
     }
 
-    public Integer getWarehouseId() {
-        return warehouseId;
+    public Integer getCurrentWarehouseId() {
+        return currentWarehouseId;
     }
 
-    public void setWarehouseId(Integer warehouseId) {
-        this.warehouseId = warehouseId;
+    public void setCurrentWarehouseId(Integer currentWarehouseId) {
+        this.currentWarehouseId = currentWarehouseId;
     }
 
-    public Integer getWarehousePositionId() {
-        return warehousePositionId;
+    public Integer getCurrentWarehousePositionId() {
+        return currentWarehousePositionId;
     }
 
-    public void setWarehousePositionId(Integer warehousePositionId) {
-        this.warehousePositionId = warehousePositionId;
+    public void setCurrentWarehousePositionId(Integer currentWarehousePositionId) {
+        this.currentWarehousePositionId = currentWarehousePositionId;
     }
 
     public Integer getOwnerWarehouseId() {
