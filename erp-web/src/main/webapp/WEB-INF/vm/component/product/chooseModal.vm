@@ -74,8 +74,9 @@
                             </div>
                         </td>
                     </tr>
-                    <tr class="bg-light hide">
-                        <td colspan="7" ></td>
+                    <div class="detail">测试容器</div>
+                    <tr class="bg-light br-n" style="height: 0">
+                        <td colspan="7" class="pn mn br-n" style="height: 0"></td>
                     </tr>
                     {{/listData}}
                     {{^listData}}
@@ -88,23 +89,24 @@
                 </script>
                 <script type="text/html"  id="chooseProductModalDetialTpl">
                     {{#product}}
-                        <div  class="row p15" data-product="{{productJSONString}}">
-                            {{#skuListSource}}
-                                <div class="col-md-12">
-                                    <label class="col-md-2 control-label text-right">选择SKU</label>
-                                    <div class="form-group col-md-10 mn">
-                                        <div class="option-group field">
-                                            {{#skuList}}
-                                            <label class="option block option-primary mb15">
-                                                <input type="checkbox" name="languages" value="FR">
-                                                <span class="checkbox"></span> {{propertiesToStr}}
-                                            </label>
-                                            {{/skuList}}
-                                        </div>
+                    <div class="productDetial row p15" data-product="{{productJSONString}}">
+                        {{#skuListSource}}
+                        <div class="row ph15">
+                            <div class="col-md-12">
+                                <label class="col-md-2 control-label text-right">选择SKU</label>
+                                <div class="form-group col-md-10 mn">
+                                    <div class="option-group field">
+                                        {{#skuList}}
+                                        <label class="option block option-primary mb15">
+                                            <input type="checkbox" name="languages" value="{{skuId}}">
+                                            <span class="checkbox"></span> {{propertiesToStr}}
+                                        </label>
+                                        {{/skuList}}
                                     </div>
                                 </div>
-                            {{/skuListSource}}
+                            </div>
                         </div>
+                        {{/skuListSource}}
                         <div class="section-divider mtn mb15"></div>
                         <div class="row ph15">
                             <div class="col-md-12">
@@ -116,6 +118,7 @@
                             </div>
 
                         </div>
+                    </div>
                     {{/product}}
                 </script>
                 <table class="table  admin-form theme-warning tc-checkbox-1 fs13" id="chooseProductDataListTable"></table>
