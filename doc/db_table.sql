@@ -122,9 +122,9 @@ CREATE TABLE `erp_sub_company` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `sub_company_name` varchar(20) NOT NULL DEFAULT '' COMMENT '子公司名称',
   `sub_company_type` int(11) NOT NULL COMMENT '公司类型:1-总公司2-分公司3-供应商',
-  `province` int(20) DEFAULT NULL COMMENT '省份ID，对应字典ID',
-  `city` int(20) DEFAULT NULL COMMENT '城市ID，对应字典ID',
-  `district` int(20) DEFAULT NULL COMMENT '区ID，对应字典ID',
+  `province` int(20) DEFAULT NULL COMMENT '省份ID，省份ID',
+  `city` int(20) DEFAULT NULL COMMENT '城市ID，对应城市ID',
+  `district` int(20) DEFAULT NULL COMMENT '区ID，对应区ID',
   `data_order` int(11) NOT NULL DEFAULT '0' COMMENT '数据排序排序，越大排越前',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -206,9 +206,9 @@ DROP TABLE if exists `erp_supplier`;
 CREATE TABLE `erp_supplier` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '字典ID，唯一',
   `supplier_name` varchar(100) NOT NULL DEFAULT '' COMMENT '供应商名称',
-  `province` int(20) COMMENT '省份ID，对应字典ID',
-  `city` int(20) COMMENT '城市ID，对应字典ID',
-  `district` int(20) COMMENT '区ID，对应字典ID',
+  `province` int(20) COMMENT '省份ID，省份ID',
+  `city` int(20) COMMENT '城市ID，对应城市ID',
+  `district` int(20) COMMENT '区ID，对应区ID',
   `address` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
   `tel` varchar(100) COMMENT '电话号码',
   `contactName` varchar(100) COMMENT '联系人姓名',
@@ -222,6 +222,104 @@ CREATE TABLE `erp_supplier` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='供应商表';
 
+-- ****************************************地区表**************************************** --
+
+DROP TABLE if exists `erp_province`;
+CREATE TABLE `erp_provinces` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `province_name` varchar(64) NOT NULL COMMENT '地区名称',
+  `area_type` int(11) COMMENT '区域类型，1-华东，2-华南，3-华中，4-华北，5-西北，6-西南，7-东北，8-港澳台',
+  `abb_cn` varchar(64) NOT NULL COMMENT '中文简称',
+  `abb_en` varchar(64) NOT NULL COMMENT '英文简称',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='地区省份表';
+
+DROP TABLE if exists `erp_city`;
+CREATE TABLE `erp_city` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `province_id` int(20) NOT NULL COMMENT '地区省份ID',
+  `city_name` varchar(64) NOT NULL COMMENT '地区名称',
+  `city_code` varchar(64) COMMENT '城市区号',
+  `post_code` varchar(64) COMMENT '邮政编码',
+  `abb_cn` varchar(64) COMMENT '中文简称',
+  `abb_en` varchar(64) COMMENT '英文简称',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='地区城市表';
+
+DROP TABLE if exists `erp_district`;
+CREATE TABLE `erp_district` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `province_id` int(20) NOT NULL COMMENT '地区省份ID',
+  `city_id` int(20) NOT NULL COMMENT '地区省份ID',
+  `district_name` varchar(64) NOT NULL COMMENT '地区名称',
+  `post_code` varchar(64) COMMENT '邮政编码',
+  `abb_cn` varchar(64) COMMENT '中文简称',
+  `abb_en` varchar(64) COMMENT '英文简称',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='地区行政区表';
+
+-- ****************************************客户表**************************************** --
+DROP TABLE if exists `erp_customer`;
+CREATE TABLE `erp_customer` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `customer_type` int(11) DEFAULT NULL COMMENT '用户类型,1为企业用户，2为个人用户',
+  `customer_no` varchar(100) NOT NULL COMMENT '客戶编码',
+  `is_disabled` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否禁用，0不可用；1可用',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=700001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户表';
+
+DROP TABLE if exists `erp_customer_person`;
+CREATE TABLE `erp_customer_person` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `customer_id` int(20) NOT NULL COMMENT '客户ID',
+  `real_name` varchar(64) NOT NULL COMMENT '联系人',
+  `email` varchar(128) CHARACTER SET ascii DEFAULT NULL COMMENT 'email',
+  `phone` varchar(24) CHARACTER SET ascii DEFAULT NULL COMMENT '手机号',
+  `province` int(20) DEFAULT NULL COMMENT '省份ID，省份ID',
+  `city` int(20) DEFAULT NULL COMMENT '城市ID，对应城市ID',
+  `district` int(20) DEFAULT NULL COMMENT '区ID，对应区ID',
+  `address` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='个人客户表';
+
+DROP TABLE if exists `erp_customer_company`;
+CREATE TABLE `erp_customer_company` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `customer_id` int(20) NOT NULL COMMENT '客户ID',
+  `company_name` varchar(64) NOT NULL COMMENT '公司名称',
+  `province` int(20) DEFAULT NULL COMMENT '省份ID，省份ID',
+  `city` int(20) DEFAULT NULL COMMENT '城市ID，对应城市ID',
+  `district` int(20) DEFAULT NULL COMMENT '区ID，对应区ID',
+  `address` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
+  `legal_person` varchar(64) COMMENT '法人姓名',
+  `legal_person_no` varchar(64) COMMENT '法人身份证号',
+  `business_license_no` varchar(64) COMMENT '营业执照号',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='公司客户表';
 
 -- ****************************************审批流程**************************************** --
 
@@ -727,9 +825,9 @@ CREATE TABLE `erp_order_consign_info` (
   `order_id` int(20) NOT NULL COMMENT '订单ID',
   `consignee_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '收货人姓名',
   `consignee_phone` varchar(24) CHARACTER SET ascii DEFAULT NULL COMMENT '收货人手机号',
-  `province` int(20) DEFAULT NULL COMMENT '省份ID，对应字典ID',
-  `city` int(20) DEFAULT NULL COMMENT '城市ID，对应字典ID',
-  `district` int(20) DEFAULT NULL COMMENT '区ID，对应字典ID',
+  `province` int(20) DEFAULT NULL COMMENT '省份ID，省份ID',
+  `city` int(20) DEFAULT NULL COMMENT '城市ID，对应城市ID',
+  `district` int(20) DEFAULT NULL COMMENT '区ID，对应区ID',
   `address` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
