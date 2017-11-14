@@ -12,9 +12,7 @@ public class OrderDO extends BaseDO {
 
     private Integer id;
     private String orderNo;
-    private Integer orderStatus;
-    private Integer buyerUserId;
-    private String buyerRealName;
+    private Integer buyerCustomerId;
     private Integer rentType;
     private Integer rentTimeLength;
     private Integer payMode;
@@ -23,6 +21,8 @@ public class OrderDO extends BaseDO {
     private BigDecimal orderAmountTotal;
     private BigDecimal discountAmountTotal;
     private BigDecimal logisticsAmount;
+    private Integer orderStatus;
+    private Integer payStatus;
     private Date payTime;
     private Date deliveryTime;
     private Date confirmDeliveryTime;
@@ -59,12 +59,12 @@ public class OrderDO extends BaseDO {
         this.orderStatus = orderStatus;
     }
 
-    public Integer getBuyerUserId() {
-        return buyerUserId;
+    public Integer getBuyerCustomerId() {
+        return buyerCustomerId;
     }
 
-    public void setBuyerUserId(Integer buyerUserId) {
-        this.buyerUserId = buyerUserId;
+    public void setBuyerCustomerId(Integer buyerCustomerId) {
+        this.buyerCustomerId = buyerCustomerId;
     }
 
     public Integer getRentType() {
@@ -113,6 +113,14 @@ public class OrderDO extends BaseDO {
 
     public void setLogisticsAmount(BigDecimal logisticsAmount) {
         this.logisticsAmount = logisticsAmount;
+    }
+
+    public Integer getPayStatus() {
+        return payStatus;
+    }
+
+    public void setPayStatus(Integer payStatus) {
+        this.payStatus = payStatus;
     }
 
     public Date getPayTime() {
@@ -201,14 +209,6 @@ public class OrderDO extends BaseDO {
 
     public void setConfirmDeliveryTime(Date confirmDeliveryTime) {
         this.confirmDeliveryTime = confirmDeliveryTime;
-    }
-
-    public String getBuyerRealName() {
-        return buyerRealName;
-    }
-
-    public void setBuyerRealName(String buyerRealName) {
-        this.buyerRealName = buyerRealName;
     }
 
     public Integer getPayMode() {

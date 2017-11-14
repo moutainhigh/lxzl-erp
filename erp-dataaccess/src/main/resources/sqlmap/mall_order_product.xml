@@ -36,8 +36,8 @@
         SELECT main_order_product.*
         ,esr.equipment_no AS product_sku_equipment_no
         FROM (
-        select
-        <include refid="column_List"/>from erp_order_product as mop where id = #{id, jdbcType=INTEGER}
+            select
+            <include refid="column_List"/>from erp_order_product as mop where id = #{id, jdbcType=INTEGER}
         ) main_order_product
         LEFT JOIN erp_product_equipment_storage_record esr ON esr.order_product_id = main_order_product.id
     </select>

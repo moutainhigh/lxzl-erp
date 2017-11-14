@@ -12,8 +12,8 @@ public class BulkMaterialDO  extends BaseDO {
 	private String bulkMaterialName;
 	private Integer materialId;
 	private String materialNo;
-	private Integer warehouseId;
-	private Integer warehousePositionId;
+	private Integer currentWarehouseId;
+	private Integer currentWarehousePositionId;
 	private Integer ownerWarehouseId;
 	private Integer ownerWarehousePositionId;
 	private Integer brandId;
@@ -23,6 +23,8 @@ public class BulkMaterialDO  extends BaseDO {
 	private BigDecimal bulkMaterialPrice;
 	private BigDecimal originalPrice;
 	private BigDecimal rentPrice;
+	private Integer currentEquipmentId;
+	private String currentEquipmentNo;
 	private Integer bulkMaterialStatus;
 	private Integer dataStatus;
 	private String remark;
@@ -59,20 +61,20 @@ public class BulkMaterialDO  extends BaseDO {
 		this.materialNo = materialNo;
 	}
 
-	public Integer getWarehouseId(){
-		return warehouseId;
+	public Integer getCurrentWarehouseId() {
+		return currentWarehouseId;
 	}
 
-	public void setWarehouseId(Integer warehouseId){
-		this.warehouseId = warehouseId;
+	public void setCurrentWarehouseId(Integer currentWarehouseId) {
+		this.currentWarehouseId = currentWarehouseId;
 	}
 
-	public Integer getWarehousePositionId(){
-		return warehousePositionId;
+	public Integer getCurrentWarehousePositionId() {
+		return currentWarehousePositionId;
 	}
 
-	public void setWarehousePositionId(Integer warehousePositionId){
-		this.warehousePositionId = warehousePositionId;
+	public void setCurrentWarehousePositionId(Integer currentWarehousePositionId) {
+		this.currentWarehousePositionId = currentWarehousePositionId;
 	}
 
 	public Integer getOwnerWarehouseId(){
@@ -161,6 +163,22 @@ public class BulkMaterialDO  extends BaseDO {
 
 	public void setDataStatus(Integer dataStatus){
 		this.dataStatus = dataStatus;
+	}
+
+	public Integer getCurrentEquipmentId() {
+		return currentEquipmentId;
+	}
+
+	public void setCurrentEquipmentId(Integer currentEquipmentId) {
+		this.currentEquipmentId = currentEquipmentId;
+	}
+
+	public String getCurrentEquipmentNo() {
+		return currentEquipmentNo;
+	}
+
+	public void setCurrentEquipmentNo(String currentEquipmentNo) {
+		this.currentEquipmentNo = currentEquipmentNo;
 	}
 
 	public String getRemark(){

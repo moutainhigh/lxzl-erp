@@ -6,7 +6,6 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
-import com.lxzl.erp.common.domain.product.*;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
@@ -16,7 +15,7 @@ import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.order.OrderService;
-import com.lxzl.erp.core.service.order.impl.support.ConvertOrder;
+import com.lxzl.erp.core.service.order.impl.support.OrderConverter;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
@@ -27,7 +26,6 @@ import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -54,12 +52,10 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
-        List<OrderProductDO> orderProductDOList = ConvertOrder.convertOrderProductList(order.getOrderProductList());
-        OrderDO orderDO = ConvertOrder.convertOrder(order);
+        List<OrderProductDO> orderProductDOList = OrderConverter.convertOrderProductList(order.getOrderProductList());
+        OrderDO orderDO = OrderConverter.convertOrder(order);
         calculateOrderProductInfo(orderProductDOList, orderDO);
 
-        orderDO.setBuyerUserId(loginUser.getUserId());
-        orderDO.setBuyerRealName(loginUser.getRealName());
         orderDO.setOrderNo(GenerateNoUtil.generateOrderNo(currentTime, loginUser.getUserId()));
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_INIT);
         orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -85,7 +81,7 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
-        if (loginUser != null && !orderDO.getBuyerUserId().equals(loginUser.getUserId())) {
+        if (loginUser != null && !orderDO.getBuyerCustomerId().equals(loginUser.getUserId())) {
             result.setErrorCode(ErrorCode.OPERATOR_IS_NOT_YOURSELF);
             return result;
         }
@@ -93,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        Order order = ConvertOrder.convertOrderDO(orderDO);
+        Order order = OrderConverter.convertOrderDO(orderDO);
 
         for (OrderProduct orderProduct : order.getOrderProductList()) {
             Product product = FastJsonUtil.toBean(orderProduct.getProductSnapshot(), Product.class);
@@ -120,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
-        if (loginUser != null && !orderDO.getBuyerUserId().equals(loginUser.getUserId())) {
+        if (loginUser != null && !orderDO.getBuyerCustomerId().equals(loginUser.getUserId())) {
             result.setErrorCode(ErrorCode.OPERATOR_IS_NOT_YOURSELF);
             return result;
         }
@@ -151,7 +147,7 @@ public class OrderServiceImpl implements OrderService {
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
-        List<Order> orderList = ConvertOrder.convertOrderDOList(orderDOList);
+        List<Order> orderList = OrderConverter.convertOrderDOList(orderDOList);
         Page<Order> page = new Page<>(orderList, totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
@@ -172,14 +168,14 @@ public class OrderServiceImpl implements OrderService {
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
-        Page<Order> page = new Page<>(ConvertOrder.convertOrderDOList(orderDOList), totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+        Page<Order> page = new Page<>(OrderConverter.convertOrderDOList(orderDOList), totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> deliveryOrder(Order order) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -260,7 +256,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> outOrderProductEquipment(OrderProduct orderProduct) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -384,7 +380,7 @@ public class OrderServiceImpl implements OrderService {
 
         Integer totalCount = orderProductMapper.findOrderProductCountByParams(maps);
         List<OrderProductDO> orderProductDOList = orderProductMapper.findOrderProductByParams(maps);
-        List<OrderProduct> productSkuList = ConvertOrder.convertOrderProductDOList(orderProductDOList);
+        List<OrderProduct> productSkuList = OrderConverter.convertOrderProductDOList(orderProductDOList);
         for (OrderProduct orderProduct : productSkuList) {
             Product product = FastJsonUtil.toBean(orderProduct.getProductSnapshot(), Product.class);
             for (ProductSku productSku : product.getProductSkuList()) {

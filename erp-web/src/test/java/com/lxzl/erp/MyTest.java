@@ -10,7 +10,7 @@ import java.util.List;
 public class MyTest {
 
     public static void main(String[] args) throws Exception {
-        test("erp_material");
+        test("erp_product_equipment");
     }
 
     private static String URL = "jdbc:mysql://192.168.10.205:3306/lxzl_erp?useUnicode=true&amp;characterEncoding=UTF-8";

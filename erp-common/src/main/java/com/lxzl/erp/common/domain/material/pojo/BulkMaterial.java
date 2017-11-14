@@ -14,8 +14,8 @@ public class BulkMaterial implements Serializable {
 	private String bulkMaterialName;   //散料名称
 	private Integer materialId;   //物料ID，从哪个物料生成的
 	private String materialNo;   //物料编号，从哪个物料生成的
-	private Integer warehouseId;   //目前仓库ID
-	private Integer warehousePositionId;   //目前仓位ID
+	private Integer currentWarehouseId;   //目前仓库ID
+	private Integer currentWarehousePositionId;   //目前仓位ID
 	private Integer ownerWarehouseId;   //归属仓库ID
 	private Integer ownerWarehousePositionId;   //归属目前仓位ID
 	private Integer brandId;   //所属品牌ID
@@ -25,6 +25,8 @@ public class BulkMaterial implements Serializable {
 	private BigDecimal bulkMaterialPrice;   //散料本身的价值(单价)
 	private BigDecimal originalPrice;   //原价
 	private BigDecimal rentPrice;   //租赁价格
+	private Integer currentEquipmentId;	// 当前设备ID
+	private String currentEquipmentNo;	// 当前设备编号
 	private Integer bulkMaterialStatus;   //散料状态，0闲置，1租赁中，2报废
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -66,20 +68,20 @@ public class BulkMaterial implements Serializable {
 		this.materialNo = materialNo;
 	}
 
-	public Integer getWarehouseId(){
-		return warehouseId;
+	public Integer getCurrentWarehouseId() {
+		return currentWarehouseId;
 	}
 
-	public void setWarehouseId(Integer warehouseId){
-		this.warehouseId = warehouseId;
+	public void setCurrentWarehouseId(Integer currentWarehouseId) {
+		this.currentWarehouseId = currentWarehouseId;
 	}
 
-	public Integer getWarehousePositionId(){
-		return warehousePositionId;
+	public Integer getCurrentWarehousePositionId() {
+		return currentWarehousePositionId;
 	}
 
-	public void setWarehousePositionId(Integer warehousePositionId){
-		this.warehousePositionId = warehousePositionId;
+	public void setCurrentWarehousePositionId(Integer currentWarehousePositionId) {
+		this.currentWarehousePositionId = currentWarehousePositionId;
 	}
 
 	public Integer getOwnerWarehouseId(){
@@ -224,5 +226,21 @@ public class BulkMaterial implements Serializable {
 
 	public void setBulkMaterialName(String bulkMaterialName) {
 		this.bulkMaterialName = bulkMaterialName;
+	}
+
+	public Integer getCurrentEquipmentId() {
+		return currentEquipmentId;
+	}
+
+	public void setCurrentEquipmentId(Integer currentEquipmentId) {
+		this.currentEquipmentId = currentEquipmentId;
+	}
+
+	public String getCurrentEquipmentNo() {
+		return currentEquipmentNo;
+	}
+
+	public void setCurrentEquipmentNo(String currentEquipmentNo) {
+		this.currentEquipmentNo = currentEquipmentNo;
 	}
 }

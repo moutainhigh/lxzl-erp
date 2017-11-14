@@ -29,11 +29,11 @@
 
 	<select id="findById" resultMap="SupplierDO" parameterType="java.lang.Integer">
 		select <include refid="column_List"/>
-		,eddp.data_name AS province_name,eddc.data_name AS city_name,eddd.data_name AS district_name
+		,ep.province_name AS province_name,ec.city_name AS city_name,ed.district_name AS district_name
 		from erp_supplier es
-		LEFT JOIN erp_data_dictionary eddp ON eddp.id = es.province
-		LEFT JOIN erp_data_dictionary eddc ON eddc.id = es.city
-		LEFT JOIN erp_data_dictionary eddd ON eddd.id = es.district
+		LEFT JOIN erp_province ep ON ep.id = es.province
+		LEFT JOIN erp_city ec ON ec.id = es.city
+		LEFT JOIN erp_district ed ON ed.id = es.district
 		where es.id = #{id, jdbcType=INTEGER} and es.data_status = 1
 	</select>
 
@@ -54,11 +54,11 @@
 
 	<select id="listPage" resultMap="SupplierDO" parameterType="map">
 		SELECT <include refid="column_List"/>
-		,eddp.data_name AS province_name,eddc.data_name AS city_name,eddd.data_name AS district_name
+		,ep.province_name AS province_name,ec.city_name AS city_name,ed.district_name AS district_name
 		FROM erp_supplier es
-		LEFT JOIN erp_data_dictionary eddp ON eddp.id = es.province
-		LEFT JOIN erp_data_dictionary eddc ON eddc.id = es.city
-		LEFT JOIN erp_data_dictionary eddd ON eddd.id = es.district
+		LEFT JOIN erp_province ep ON ep.id = es.province
+		LEFT JOIN erp_city ec ON ec.id = es.city
+		LEFT JOIN erp_district ed ON ed.id = es.district
 		<where>
 			<if test="maps.supplierQueryParam != null &amp;&amp; maps.supplierQueryParam.supplierId != null">
 				AND es.id = #{maps.supplierQueryParam.supplierId, jdbcType=INTEGER}

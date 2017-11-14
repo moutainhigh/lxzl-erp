@@ -8,8 +8,8 @@
         <result column="product_id" jdbcType="INTEGER" property="productId" />
         <result column="product_name" jdbcType="VARCHAR" property="productName"/>
         <result column="sku_id" jdbcType="INTEGER" property="skuId" />
-        <result column="warehouse_id" jdbcType="INTEGER" property="warehouseId" />
-        <result column="warehouse_position_id" jdbcType="INTEGER" property="warehousePositionId" />
+        <result column="current_warehouse_id" jdbcType="INTEGER" property="currentWarehouseId" />
+        <result column="current_warehouse_position_id" jdbcType="INTEGER" property="currentWarehousePositionId" />
         <result column="owner_warehouse_id" jdbcType="INTEGER" property="ownerWarehouseId" />
         <result column="owner_warehouse_position_id" jdbcType="INTEGER" property="ownerWarehousePositionId" />
         <result column="equipment_price" jdbcType="DECIMAL" property="equipmentPrice" />
@@ -32,8 +32,8 @@
         <result column="bulk_bulk_material_name" jdbcType="VARCHAR" property="bulkMaterialName" />
         <result column="bulk_material_id" jdbcType="INTEGER" property="materialId" />
         <result column="bulk_material_no" jdbcType="VARCHAR" property="materialNo" />
-        <result column="bulk_warehouse_id" jdbcType="INTEGER" property="warehouseId" />
-        <result column="bulk_warehouse_position_id" jdbcType="INTEGER" property="warehousePositionId" />
+        <result column="bulk_current_warehouse_id" jdbcType="INTEGER" property="currentWarehouseId" />
+        <result column="bulk_current_warehouse_position_id" jdbcType="INTEGER" property="currentWarehousePositionId" />
         <result column="bulk_owner_warehouse_id" jdbcType="INTEGER" property="ownerWarehouseId" />
         <result column="bulk_owner_warehouse_position_id" jdbcType="INTEGER" property="ownerWarehousePositionId" />
         <result column="bulk_brand_id" jdbcType="INTEGER" property="brandId" />
@@ -43,6 +43,8 @@
         <result column="bulk_bulk_material_price" jdbcType="DECIMAL" property="bulkMaterialPrice" />
         <result column="bulk_original_price" jdbcType="DECIMAL" property="originalPrice" />
         <result column="bulk_rent_price" jdbcType="DECIMAL" property="rentPrice" />
+        <result column="bulk_current_equipment_id" jdbcType="INTEGER" property="currentEquipmentId" />
+        <result column="bulk_current_equipment_no" jdbcType="VARCHAR" property="currentEquipmentNo" />
         <result column="bulk_bulk_material_status" jdbcType="INTEGER" property="bulkMaterialStatus" />
         <result column="bulk_data_status" jdbcType="INTEGER" property="dataStatus" />
         <result column="bulk_remark" jdbcType="VARCHAR" property="remark" />
@@ -68,14 +70,14 @@
         <result column="img_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
     <sql id="column_List">
-        epe.id,epe.equipment_no,epe.product_id,epe.sku_id,epe.warehouse_id,epe.warehouse_position_id,epe.owner_warehouse_id,epe.owner_warehouse_position_id,epe.equipment_price,epe.equipment_status,epe.data_status,epe.remark,epe.create_user,epe.create_time,epe.update_user,epe.update_time
+        epe.id,epe.equipment_no,epe.product_id,epe.sku_id,epe.current_warehouse_id,epe.current_warehouse_position_id,epe.owner_warehouse_id,epe.owner_warehouse_position_id,epe.equipment_price,epe.equipment_status,epe.data_status,epe.remark,epe.create_user,epe.create_time,epe.update_user,epe.update_time
     </sql>
     <sql id="img_column_List">
         epi.id as img_id,epi.img_type as img_img_type,epi.original_name as img_original_name,epi.product_id as img_product_id,epi.img_url as img_img_url,epi.data_status as img_data_status,epi.remark as img_remark,epi.is_main as img_is_main,epi.img_order as img_img_order,epi.create_user as img_create_user,epi.create_time as img_create_time,epi.update_user as img_update_user,epi.update_time as img_update_time
     </sql>
 
     <sql id="bulk_material_column_List">
-        ebm.id AS bulk_id,ebm.bulk_material_no AS bulk_bulk_material_no,ebm.bulk_material_type AS bulk_bulk_material_type,ebm.bulk_material_name AS bulk_bulk_material_name,ebm.material_id AS bulk_material_id,ebm.material_no AS bulk_material_no,ebm.warehouse_id AS bulk_warehouse_id,ebm.warehouse_position_id AS bulk_warehouse_position_id,ebm.owner_warehouse_id AS bulk_owner_warehouse_id,ebm.owner_warehouse_position_id AS bulk_owner_warehouse_position_id,ebm.brand_id AS bulk_brand_id,ebm.category_id AS bulk_category_id,ebm.property_id AS bulk_property_id,ebm.property_value_id AS bulk_property_value_id,ebm.bulk_material_price AS bulk_bulk_material_price,ebm.original_price AS bulk_original_price,ebm.rent_price AS bulk_rent_price,ebm.bulk_material_status AS bulk_bulk_material_status,ebm.data_status AS bulk_data_status,ebm.remark AS bulk_remark,ebm.create_time AS bulk_create_time,ebm.create_user AS bulk_create_user,ebm.update_time AS bulk_update_time,ebm.update_user AS bulk_update_user
+        ebm.id AS bulk_id,ebm.bulk_material_no AS bulk_bulk_material_no,ebm.bulk_material_type AS bulk_bulk_material_type,ebm.bulk_material_name AS bulk_bulk_material_name,ebm.material_id AS bulk_material_id,ebm.material_no AS bulk_material_no,ebm.warehouse_id AS bulk_current_warehouse_id,ebm.warehouse_position_id AS bulk_current_warehouse_position_id,ebm.owner_warehouse_id AS bulk_owner_warehouse_id,ebm.owner_warehouse_position_id AS bulk_owner_warehouse_position_id,ebm.brand_id AS bulk_brand_id,ebm.category_id AS bulk_category_id,ebm.property_id AS bulk_property_id,ebm.property_value_id AS bulk_property_value_id,ebm.bulk_material_price AS bulk_bulk_material_price,ebm.original_price AS bulk_original_price,ebm.rent_price AS bulk_rent_price,ebm.bulk_material_status AS bulk_bulk_material_status,ebm.data_status AS bulk_data_status,ebm.remark AS bulk_remark,ebm.create_time AS bulk_create_time,ebm.create_user AS bulk_create_user,ebm.update_time AS bulk_update_time,ebm.update_user AS bulk_update_user
     </sql>
 
     <select id="findById" resultMap="ProductEquipmentDO" parameterType="java.lang.Integer">
@@ -201,32 +203,32 @@
 
     <sql id="set_column_sql">
         <set>
-            <if test="materialNo != null">
-                material_no = #{materialNo,jdbcType=VARCHAR},
+            <if test="equipmentNo != null">
+                equipment_no = #{equipmentNo,jdbcType=VARCHAR},
             </if>
-            <if test="materialName != null">
-                material_name = #{materialName,jdbcType=VARCHAR},
+            <if test="productId != null">
+                product_id = #{productId,jdbcType=INTEGER},
             </if>
-            <if test="brandId != null">
-                brand_id = #{brandId,jdbcType=INTEGER},
+            <if test="skuId != null">
+                sku_id = #{skuId,jdbcType=INTEGER},
             </if>
-            <if test="categoryId != null">
-                category_id = #{categoryId,jdbcType=INTEGER},
+            <if test="currentWarehouseId != null">
+                current_warehouse_id = #{currentWarehouseId,jdbcType=INTEGER},
             </if>
-            <if test="propertyId != null">
-                property_id = #{propertyId,jdbcType=INTEGER},
+            <if test="currentWarehousePositionId != null">
+                current_warehouse_position_id = #{currentWarehousePositionId,jdbcType=INTEGER},
             </if>
-            <if test="propertyValueId != null">
-                property_value_id = #{propertyValueId,jdbcType=INTEGER},
+            <if test="ownerWarehouseId != null">
+                owner_warehouse_id = #{ownerWarehouseId,jdbcType=INTEGER},
             </if>
-            <if test="materialPrice != null">
-                material_price = #{materialPrice,jdbcType=DECIMAL},
+            <if test="ownerWarehousePositionId != null">
+                owner_warehouse_position_id = #{ownerWarehousePositionId,jdbcType=INTEGER},
             </if>
-            <if test="originalPrice != null">
-                original_price = #{originalPrice,jdbcType=DECIMAL},
+            <if test="equipmentPrice != null">
+                equipment_price = #{equipmentPrice,jdbcType=DECIMAL},
             </if>
-            <if test="rentPrice != null">
-                rent_price = #{rentPrice,jdbcType=DECIMAL},
+            <if test="equipmentStatus != null">
+                equipment_status = #{equipmentStatus,jdbcType=INTEGER},
             </if>
             <if test="dataStatus != null">
                 data_status = #{dataStatus,jdbcType=INTEGER},
@@ -246,17 +248,14 @@
             <if test="updateUser != null">
                 update_user = #{updateUser,jdbcType=VARCHAR},
             </if>
-            <if test="materialDesc != null">
-                material_desc = #{materialDesc,jdbcType=LONGVARCHAR},
-            </if>
         </set>
     </sql>
 
 
     <insert id="saveList" parameterType="java.util.ArrayList">
-        insert into erp_product_equipment (equipment_no,product_id,sku_id,warehouse_id,warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,equipment_price,equipment_status,data_status,remark,create_time,create_user,update_time,update_user)
+        insert into erp_product_equipment (equipment_no,product_id,sku_id,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,equipment_price,equipment_status,data_status,remark,create_time,create_user,update_time,update_user)
         <foreach item="productEquipmentDO" collection="productEquipmentDOList" separator="UNION ALL">
-            SELECT #{productEquipmentDO.equipmentNo},#{productEquipmentDO.productId},#{productEquipmentDO.skuId},#{productEquipmentDO.warehouseId},#{productEquipmentDO.warehousePositionId},#{productEquipmentDO.ownerWarehouseId},
+            SELECT #{productEquipmentDO.equipmentNo},#{productEquipmentDO.productId},#{productEquipmentDO.skuId},#{productEquipmentDO.currentWarehouseId},#{productEquipmentDO.currentWarehousePositionId},#{productEquipmentDO.ownerWarehouseId},
             #{productEquipmentDO.ownerWarehousePositionId},eps.rent_price,#{productEquipmentDO.equipmentStatus},#{productEquipmentDO.dataStatus},#{productEquipmentDO.remark},
             #{productEquipmentDO.createTime},#{productEquipmentDO.createUser},#{productEquipmentDO.updateTime},#{productEquipmentDO.updateUser}
             FROM erp_product_sku eps WHERE eps.id = #{productEquipmentDO.skuId}
@@ -271,7 +270,7 @@
 
     <insert id="save" keyProperty="id" useGeneratedKeys="true"
             parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO">
-        INSERT INTO mall_product_equipment
+        INSERT INTO erp_product_equipment
         <include refid="set_column_sql"/>
     </insert>
 </mapper>
