@@ -16,10 +16,10 @@ public class OrderDO extends BaseDO {
     private Integer rentType;
     private Integer rentTimeLength;
     private Integer payMode;
-    private Integer productCountTotal;
-    private BigDecimal productAmountTotal;
-    private BigDecimal orderAmountTotal;
-    private BigDecimal discountAmountTotal;
+    private Integer totalProductCount;
+    private BigDecimal totalProductAmount;
+    private BigDecimal totalOrderAmount;
+    private BigDecimal totalDiscountAmount;
     private BigDecimal logisticsAmount;
     private Integer orderStatus;
     private Integer payStatus;
@@ -75,36 +75,36 @@ public class OrderDO extends BaseDO {
         this.rentType = rentType;
     }
 
-    public Integer getProductCountTotal() {
-        return productCountTotal;
+    public Integer getTotalProductCount() {
+        return totalProductCount;
     }
 
-    public void setProductCountTotal(Integer productCountTotal) {
-        this.productCountTotal = productCountTotal;
+    public void setTotalProductCount(Integer totalProductCount) {
+        this.totalProductCount = totalProductCount;
     }
 
-    public BigDecimal getProductAmountTotal() {
-        return productAmountTotal;
+    public BigDecimal getTotalProductAmount() {
+        return totalProductAmount;
     }
 
-    public void setProductAmountTotal(BigDecimal productAmountTotal) {
-        this.productAmountTotal = productAmountTotal;
+    public void setTotalProductAmount(BigDecimal totalProductAmount) {
+        this.totalProductAmount = totalProductAmount;
     }
 
-    public BigDecimal getOrderAmountTotal() {
-        return orderAmountTotal;
+    public BigDecimal getTotalOrderAmount() {
+        return totalOrderAmount;
     }
 
-    public void setOrderAmountTotal(BigDecimal orderAmountTotal) {
-        this.orderAmountTotal = orderAmountTotal;
+    public void setTotalOrderAmount(BigDecimal totalOrderAmount) {
+        this.totalOrderAmount = totalOrderAmount;
     }
 
-    public BigDecimal getDiscountAmountTotal() {
-        return discountAmountTotal;
+    public BigDecimal getTotalDiscountAmount() {
+        return totalDiscountAmount;
     }
 
-    public void setDiscountAmountTotal(BigDecimal discountAmountTotal) {
-        this.discountAmountTotal = discountAmountTotal;
+    public void setTotalDiscountAmount(BigDecimal totalDiscountAmount) {
+        this.totalDiscountAmount = totalDiscountAmount;
     }
 
     public BigDecimal getLogisticsAmount() {

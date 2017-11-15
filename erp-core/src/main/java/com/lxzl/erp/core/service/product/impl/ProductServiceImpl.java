@@ -344,11 +344,15 @@ public class ProductServiceImpl implements ProductService {
                 return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
             }
 
-            if (productSku.getOriginalPrice() == null || -1 != (zero.compareTo(productSku.getOriginalPrice()))) {
+            if (productSku.getTimeRentPrice() == null || -1 != (zero.compareTo(productSku.getTimeRentPrice()))) {
                 return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
             }
 
-            if (productSku.getRentPrice() == null || -1 != (zero.compareTo(productSku.getRentPrice()))) {
+            if (productSku.getDayRentPrice() == null || -1 != (zero.compareTo(productSku.getDayRentPrice()))) {
+                return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
+            }
+
+            if (productSku.getMonthRentPrice() == null || -1 != (zero.compareTo(productSku.getMonthRentPrice()))) {
                 return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
             }
 

@@ -12,8 +12,9 @@ public class ProductSkuDO extends BaseDO {
     private Integer productId;
     private Integer stock;
     private BigDecimal skuPrice;
-    private BigDecimal originalPrice;
-    private BigDecimal rentPrice;
+    private BigDecimal timeRentPrice;
+    private BigDecimal dayRentPrice;
+    private BigDecimal monthRentPrice;
     private String customCode;
     private String barCode;
     private String properties;
@@ -57,20 +58,28 @@ public class ProductSkuDO extends BaseDO {
         this.stock = stock;
     }
 
-    public BigDecimal getOriginalPrice() {
-        return originalPrice;
+    public BigDecimal getTimeRentPrice() {
+        return timeRentPrice;
     }
 
-    public void setOriginalPrice(BigDecimal originalPrice) {
-        this.originalPrice = originalPrice;
+    public void setTimeRentPrice(BigDecimal timeRentPrice) {
+        this.timeRentPrice = timeRentPrice;
     }
 
-    public BigDecimal getRentPrice() {
-        return rentPrice;
+    public BigDecimal getDayRentPrice() {
+        return dayRentPrice;
     }
 
-    public void setRentPrice(BigDecimal rentPrice) {
-        this.rentPrice = rentPrice;
+    public void setDayRentPrice(BigDecimal dayRentPrice) {
+        this.dayRentPrice = dayRentPrice;
+    }
+
+    public BigDecimal getMonthRentPrice() {
+        return monthRentPrice;
+    }
+
+    public void setMonthRentPrice(BigDecimal monthRentPrice) {
+        this.monthRentPrice = monthRentPrice;
     }
 
     public String getCustomCode() {
