@@ -98,7 +98,7 @@
                                     <div class="option-group field">
                                         {{#skuList}}
                                         <label class="option block option-primary mb15">
-                                            <input type="checkbox" name="languages" value="{{skuId}}">
+                                            <input type="checkbox" name="sku" value="{{skuId}}">
                                             <span class="checkbox"></span> {{propertiesToStr}}
                                         </label>
                                         {{/skuList}}
