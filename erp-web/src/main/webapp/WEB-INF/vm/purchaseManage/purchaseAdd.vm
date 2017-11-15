@@ -156,14 +156,15 @@
                                                 <tr class="skuRow">
                                                     <td style="width: 40%">{{propertiesToStr}}</td>
                                                     <td style="width: 25%">
+                                                        <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
                                                         <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
                                                         <label class="field prepend-icon mw200">
-                                                            <input type="text" name="productAmount-{{skuId}}-{{rowKey}}" value="" class="productAmount form-control required moneyNumber" placeholder="输入采购价格" />
+                                                            <input type="text" name="productAmount-{{skuId}}-{{rowKey}}" value="{{productAmount}}" class="productAmount form-control required moneyNumber" placeholder="输入采购价格" />
                                                         </label>
                                                     </td>
                                                     <td style="width: 25%">
                                                         <label class="field prepend-icon mw200">
-                                                            <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="" class="productCount form-control required number" placeholder="输入采购数量" />
+                                                            <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number" placeholder="输入采购数量" />
                                                         </label>
                                                     </td>
                                                     <td style="width:10%" class="text-right">
