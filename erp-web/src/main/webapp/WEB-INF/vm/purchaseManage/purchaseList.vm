@@ -122,7 +122,7 @@
                                     <td class="text-right">
                                         <div class="btn-group text-right">
                                             {{#rowActionButtons}}
-                                            <a href="${ctx}{{menuUrl}}" type="button" class="btn btn-default btn-xs {{class}}" data-productId="{{productId}}">{{text}}</a>
+                                            <a href="${ctx}{{menuUrl}}?no={{purchaseNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-productId="{{productId}}">{{text}}</a>
                                             {{/rowActionButtons}}
                                         </div>
                                     </td>
