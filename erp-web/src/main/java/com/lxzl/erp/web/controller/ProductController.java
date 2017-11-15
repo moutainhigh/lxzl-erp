@@ -72,12 +72,6 @@ public class ProductController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "productInStorage", method = RequestMethod.POST)
-    public Result productInStorage(@RequestBody ProductInStorage productInStorage, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = productService.productInStorage(productInStorage);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
-
     @RequestMapping(value = "queryAllProductEquipment", method = RequestMethod.POST)
     public Result queryAllProductEquipment(@RequestBody ProductEquipmentQueryParam productEquipmentQueryParam, BindingResult validResult) {
         ServiceResult<String, Page<ProductEquipment>> serviceResult = productService.queryAllProductEquipment(productEquipmentQueryParam);

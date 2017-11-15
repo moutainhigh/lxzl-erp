@@ -247,32 +247,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, Integer> productInStorage(ProductInStorage productInStorage) {
-        ServiceResult<String, Integer> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        Date currentTime = new Date();
-        if (productInStorage == null || productInStorage.getProductId() == null || productInStorage.getProductSkuId() == null
-                || productInStorage.getProductCount() <= 0) {
-            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
-            return result;
-        }
-        ProductDO productDO = productMapper.findByProductId(productInStorage.getProductId());
-        ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
-        if (productDO == null || productSkuDO == null || !productDO.getId().equals(productSkuDO.getProductId())) {
-            result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
-            return result;
-        }
-
-        productSkuDO.setStock(productSkuDO.getStock() + productInStorage.getProductCount());
-        productSkuDO.setUpdateUser(loginUser.getUserId().toString());
-        productSkuDO.setUpdateTime(currentTime);
-        productSkuMapper.update(productSkuDO);
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
-    }
-
-    @Override
     public ServiceResult<String, Page<ProductEquipment>> queryAllProductEquipment(ProductEquipmentQueryParam productEquipmentQueryParam) {
         ServiceResult<String, Page<ProductEquipment>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(productEquipmentQueryParam.getPageNo(), productEquipmentQueryParam.getPageSize());

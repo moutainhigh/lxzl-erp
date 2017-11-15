@@ -6,8 +6,8 @@ import java.util.Date;
 
 public class CustomerConsignInfoDO  extends BaseDO {
 
-	private Long id;
-	private Long customerId;
+	private Integer id;
+	private Integer customerId;
 	private String consigneeName;
 	private String consigneePhone;
 	private Integer province;
@@ -18,19 +18,19 @@ public class CustomerConsignInfoDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
-	public Long getId(){
+	public Integer getId(){
 		return id;
 	}
 
-	public void setId(Long id){
+	public void setId(Integer id){
 		this.id = id;
 	}
 
-	public Long getCustomerId(){
+	public Integer getCustomerId(){
 		return customerId;
 	}
 
-	public void setCustomerId(Long customerId){
+	public void setCustomerId(Integer customerId){
 		this.customerId = customerId;
 	}
 

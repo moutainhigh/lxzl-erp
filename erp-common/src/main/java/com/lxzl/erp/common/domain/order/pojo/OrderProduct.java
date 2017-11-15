@@ -18,7 +18,10 @@ public class OrderProduct implements Serializable {
     private Integer productCount;
     private BigDecimal productUnitAmount;
     private BigDecimal productAmount;
-    private String productSnapshot;
+    private BigDecimal depositAmount;
+    private BigDecimal creditDepositAmount;
+    private BigDecimal insuranceAmount;
+    private String productSkuSnapshot;
     private List<String> equipmentNoList;
     private Integer dataStatus;
     private String remark;
@@ -96,12 +99,12 @@ public class OrderProduct implements Serializable {
         this.productAmount = productAmount;
     }
 
-    public String getProductSnapshot() {
-        return productSnapshot;
+    public String getProductSkuSnapshot() {
+        return productSkuSnapshot;
     }
 
-    public void setProductSnapshot(String productSnapshot) {
-        this.productSnapshot = productSnapshot;
+    public void setProductSkuSnapshot(String productSkuSnapshot) {
+        this.productSkuSnapshot = productSkuSnapshot;
     }
 
     public Integer getDataStatus() {
@@ -134,5 +137,29 @@ public class OrderProduct implements Serializable {
 
     public void setProductSkuPropertyList(List<ProductSkuProperty> productSkuPropertyList) {
         this.productSkuPropertyList = productSkuPropertyList;
+    }
+
+    public BigDecimal getDepositAmount() {
+        return depositAmount;
+    }
+
+    public void setDepositAmount(BigDecimal depositAmount) {
+        this.depositAmount = depositAmount;
+    }
+
+    public BigDecimal getCreditDepositAmount() {
+        return creditDepositAmount;
+    }
+
+    public void setCreditDepositAmount(BigDecimal creditDepositAmount) {
+        this.creditDepositAmount = creditDepositAmount;
+    }
+
+    public BigDecimal getInsuranceAmount() {
+        return insuranceAmount;
+    }
+
+    public void setInsuranceAmount(BigDecimal insuranceAmount) {
+        this.insuranceAmount = insuranceAmount;
     }
 }

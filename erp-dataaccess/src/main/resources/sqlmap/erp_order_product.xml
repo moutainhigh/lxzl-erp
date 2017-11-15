@@ -14,7 +14,7 @@
         <result column="product_count" property="productCount"/>
         <result column="product_unit_amount" property="productUnitAmount"/>
         <result column="product_amount" property="productAmount"/>
-        <result column="product_mode_params" property="productModeParams"/>
+        <result column="product_sku_snapshot" property="productSkuSnapshot"/>
         <result column="data_status" property="dataStatus"/>
         <result column="remark" property="remark"/>
         <result column="create_user" property="createUser"/>
@@ -29,7 +29,7 @@
     </resultMap>
 
     <sql id="column_List">
-        mop.id as id,mop.order_id as order_id,mop.product_id as product_id,mop.product_name as product_name,mop.product_sku_id as product_sku_id,mop.product_sku_name as product_sku_name,mop.product_count as product_count,mop.product_unit_amount as product_unit_amount,mop.product_amount as product_amount,mop.product_mode_params as product_mode_params,mop.data_status as data_status,mop.remark as remark,mop.create_time as create_time,mop.create_user as create_user,mop.update_time as update_time,mop.update_user as update_user
+        mop.id as id,mop.order_id as order_id,mop.product_id as product_id,mop.product_name as product_name,mop.product_sku_id as product_sku_id,mop.product_sku_name as product_sku_name,mop.product_count as product_count,mop.product_unit_amount as product_unit_amount,mop.product_amount as product_amount,mop.product_sku_snapshot as product_sku_snapshot,mop.data_status as data_status,mop.remark as remark,mop.create_time as create_time,mop.create_user as create_user,mop.update_time as update_time,mop.update_user as update_user
     </sql>
 
     <select id="findById" resultMap="OrderProductDO" parameterType="java.lang.Integer">
@@ -68,8 +68,8 @@
             <if test="productAmount != null">
                 product_amount = #{productAmount, jdbcType=DECIMAL},
             </if>
-            <if test="productModeParams != null">
-                product_mode_params = #{productModeParams, jdbcType=VARCHAR},
+            <if test="productSkuSnapshot != null">
+                product_sku_snapshot = #{productSkuSnapshot, jdbcType=VARCHAR},
             </if>
             <if test="dataStatus != null">
                 data_status = #{dataStatus, jdbcType=INTEGER},

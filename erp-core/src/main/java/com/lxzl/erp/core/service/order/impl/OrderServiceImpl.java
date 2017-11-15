@@ -10,25 +10,26 @@ import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.BigDemicalUtil;
-import com.lxzl.erp.common.util.FastJsonUtil;
-import com.lxzl.erp.common.util.GenerateNoUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderConverter;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.*;
+import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -88,16 +89,16 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.OPERATOR_IS_NOT_YOURSELF);
             return result;
         }
-        if(orderDO == null){
+        if (orderDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
         Order order = OrderConverter.convertOrderDO(orderDO);
 
         for (OrderProduct orderProduct : order.getOrderProductList()) {
-            Product product = FastJsonUtil.toBean(orderProduct.getProductSnapshot(), Product.class);
+            Product product = FastJsonUtil.toBean(orderProduct.getProductSkuSnapshot(), Product.class);
             for (ProductSku productSku : product.getProductSkuList()) {
-                if(orderProduct.getProductSkuId().equals(productSku.getSkuId())){
+                if (orderProduct.getProductSkuId().equals(productSku.getSkuId())) {
                     orderProduct.setProductSkuPropertyList(productSku.getProductSkuPropertyList());
                     break;
                 }
@@ -366,13 +367,13 @@ public class OrderServiceImpl implements OrderService {
         ServiceResult<String, Page<OrderProduct>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(queryProductParam.getPageNo(), queryProductParam.getPageSize());
         //根据orderNo获取orderId
-        if(StringUtil.isNotEmpty(queryProductParam.getOrderNo())){
+        if (StringUtil.isNotEmpty(queryProductParam.getOrderNo())) {
             OrderDO orderDO = orderMapper.findByOrderNo(queryProductParam.getOrderNo());
-            if(orderDO==null){
+            if (orderDO == null) {
                 result.setErrorCode(ErrorCode.SUCCESS);
                 result.setResult(new Page<OrderProduct>());
                 return result;
-            }else{
+            } else {
                 queryProductParam.setOrderId(orderDO.getId());
             }
         }
@@ -385,9 +386,9 @@ public class OrderServiceImpl implements OrderService {
         List<OrderProductDO> orderProductDOList = orderProductMapper.findOrderProductByParams(maps);
         List<OrderProduct> productSkuList = OrderConverter.convertOrderProductDOList(orderProductDOList);
         for (OrderProduct orderProduct : productSkuList) {
-            Product product = FastJsonUtil.toBean(orderProduct.getProductSnapshot(), Product.class);
+            Product product = FastJsonUtil.toBean(orderProduct.getProductSkuSnapshot(), Product.class);
             for (ProductSku productSku : product.getProductSkuList()) {
-                if(orderProduct.getProductSkuId().equals(productSku.getSkuId())){
+                if (orderProduct.getProductSkuId().equals(productSku.getSkuId())) {
                     orderProduct.setProductSkuPropertyList(productSku.getProductSkuPropertyList());
                     break;
                 }
@@ -439,24 +440,59 @@ public class OrderServiceImpl implements OrderService {
 
     private void calculateOrderProductInfo(List<OrderProductDO> orderProductDOList, OrderDO orderDO) {
         if (orderProductDOList != null && !orderProductDOList.isEmpty()) {
+            CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
+            if (!OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
+                if (customerRiskManagementDO == null) {
+                    throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+                }
+            }
+
             int productCount = 0;
             BigDecimal productAmountTotal = new BigDecimal(0.0);
             for (OrderProductDO orderProductDO : orderProductDOList) {
                 ServiceResult<String, Product> productServiceResult = productService.queryProductById(orderProductDO.getProductId());
                 Product product = productServiceResult.getResult();
                 orderProductDO.setProductName(product.getProductName());
-                ProductSkuDO productSkuDO = productSkuMapper.findById(orderProductDO.getProductSkuId());
-                orderProductDO.setProductSkuName(productSkuDO.getSkuName());
-                orderProductDO.setProductUnitAmount(productSkuDO.getMonthRentPrice()); // TODO 计算商品单价和总价
-                orderProductDO.setProductAmount(BigDemicalUtil.mul(productSkuDO.getMonthRentPrice(), new BigDecimal(orderProductDO.getProductCount())));
-                orderProductDO.setProductSnapshot(FastJsonUtil.toJSONString(product));
+                List<ProductSku> thisProductSkuList = new ArrayList<>();
+                ProductSku thisProductSku = null;
+                if (CollectionUtil.isNotEmpty(product.getProductSkuList())) {
+                    for (ProductSku dbProductSku : product.getProductSkuList()) {
+                        if (dbProductSku.getSkuId().equals(orderProductDO.getProductSkuId())) {
+                            thisProductSku = dbProductSku;
+                            thisProductSkuList.add(thisProductSku);
+                            product.setProductSkuList(thisProductSkuList);
+                            break;
+                        }
+                    }
+                }
+                if (thisProductSku == null) {
+                    throw new BusinessException(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                }
+                BigDecimal productUnitAmount = null;
+                if (OrderRentType.RENT_TYPE_TIME.equals(orderDO.getRentType())) {
+                    productUnitAmount = thisProductSku.getTimeRentPrice();
+                } else if (OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
+                    productUnitAmount = thisProductSku.getDayRentPrice();
+                } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())) {
+                    productUnitAmount = thisProductSku.getMonthRentPrice();
+                }
+                orderProductDO.setProductSkuName(thisProductSku.getSkuName());
+                orderProductDO.setProductUnitAmount(productUnitAmount);
+                orderProductDO.setProductAmount(BigDecimalUtil.mul(productUnitAmount, new BigDecimal(orderProductDO.getProductCount())));
+                orderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(product));
                 productCount += orderProductDO.getProductCount();
-                productAmountTotal = BigDemicalUtil.add(productAmountTotal, orderProductDO.getProductAmount());
+                productAmountTotal = BigDecimalUtil.add(productAmountTotal, orderProductDO.getProductAmount());
+            }
+            BigDecimal zero = new BigDecimal(0);
+            if (!OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
+                if (BigDecimalUtil.compare(zero, BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmount(), customerRiskManagementDO.getCreditAmountUsed())) < 0) {
+                    throw new BusinessException("额度不够无法下单。");
+                }
             }
 
             orderDO.setTotalProductCount(productCount);
-            orderDO.setTotalProductAmount(BigDemicalUtil.mul(productAmountTotal, new BigDecimal(orderDO.getRentTimeLength())));
-            orderDO.setTotalOrderAmount(BigDemicalUtil.sub(BigDemicalUtil.add(orderDO.getTotalProductAmount(), orderDO.getLogisticsAmount()), orderDO.getTotalDiscountAmount()));
+            orderDO.setTotalProductAmount(BigDecimalUtil.mul(productAmountTotal, new BigDecimal(orderDO.getRentTimeLength())));
+            orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getLogisticsAmount()), orderDO.getTotalDiscountAmount()));
         }
     }
 
@@ -476,6 +512,7 @@ public class OrderServiceImpl implements OrderService {
         if (order.getRentType() == null || order.getRentTimeLength() == null || order.getRentTimeLength() <= 0) {
             return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
         }
+        BigDecimal zero = new BigDecimal(0);
         for (OrderProduct orderProduct : order.getOrderProductList()) {
             if (orderProduct.getProductSkuPropertyList() == null || orderProduct.getProductSkuPropertyList().isEmpty()) {
                 return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
@@ -545,4 +582,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private CustomerConsignInfoMapper customerConsignInfoMapper;
+
+    @Autowired
+    private CustomerRiskManagementMapper customerRiskManagementMapper;
 }

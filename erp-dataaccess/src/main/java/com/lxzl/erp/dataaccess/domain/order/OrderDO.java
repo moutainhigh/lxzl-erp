@@ -15,6 +15,11 @@ public class OrderDO extends BaseDO {
     private Integer buyerCustomerId;
     private Integer rentType;
     private Integer rentTimeLength;
+    private Integer depositCycle;
+    private Integer paymentCycle;
+    private BigDecimal totalDepositAmount;
+    private BigDecimal totalCreditDepositAmount;
+    private BigDecimal totalInsuranceAmount;
     private Integer payMode;
     private Integer totalProductCount;
     private BigDecimal totalProductAmount;
@@ -219,4 +224,43 @@ public class OrderDO extends BaseDO {
         this.payMode = payMode;
     }
 
+    public BigDecimal getTotalDepositAmount() {
+        return totalDepositAmount;
+    }
+
+    public void setTotalDepositAmount(BigDecimal totalDepositAmount) {
+        this.totalDepositAmount = totalDepositAmount;
+    }
+
+    public BigDecimal getTotalCreditDepositAmount() {
+        return totalCreditDepositAmount;
+    }
+
+    public void setTotalCreditDepositAmount(BigDecimal totalCreditDepositAmount) {
+        this.totalCreditDepositAmount = totalCreditDepositAmount;
+    }
+
+    public BigDecimal getTotalInsuranceAmount() {
+        return totalInsuranceAmount;
+    }
+
+    public void setTotalInsuranceAmount(BigDecimal totalInsuranceAmount) {
+        this.totalInsuranceAmount = totalInsuranceAmount;
+    }
+
+    public Integer getDepositCycle() {
+        return depositCycle;
+    }
+
+    public void setDepositCycle(Integer depositCycle) {
+        this.depositCycle = depositCycle;
+    }
+
+    public Integer getPaymentCycle() {
+        return paymentCycle;
+    }
+
+    public void setPaymentCycle(Integer paymentCycle) {
+        this.paymentCycle = paymentCycle;
+    }
 }

@@ -256,16 +256,6 @@ public class ProductTest extends BaseUnTransactionalTest {
     }
 
     @Test
-    public void testProductInStorage() {
-        ProductInStorage productInStorage = new ProductInStorage();
-        productInStorage.setProductId(2000001);
-        productInStorage.setProductSkuId(31);
-        productInStorage.setProductCount(100);
-
-        ServiceResult<String, Integer> result = productService.productInStorage(productInStorage);
-    }
-
-    @Test
     public void testQueryProductEquipment(){
         ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
         productEquipmentQueryParam.setPageNo(1);

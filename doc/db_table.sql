@@ -226,7 +226,7 @@ CREATE TABLE `erp_supplier` (
 
 DROP TABLE if exists `erp_area_province`;
 CREATE TABLE `erp_area_province` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `province_name` varchar(64) NOT NULL COMMENT '地区名称',
   `area_type` int(11) COMMENT '区域类型，1-华东，2-华南，3-华中，4-华北，5-西北，6-西南，7-东北，8-港澳台',
   `abb_cn` varchar(64) COMMENT '中文简称',
@@ -238,7 +238,7 @@ CREATE TABLE `erp_area_province` (
 
 DROP TABLE if exists `erp_area_city`;
 CREATE TABLE `erp_area_city` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `province_id` int(20) NOT NULL COMMENT '地区省份ID',
   `city_name` varchar(64) NOT NULL COMMENT '地区名称',
   `city_code` varchar(64) COMMENT '城市区号',
@@ -252,7 +252,7 @@ CREATE TABLE `erp_area_city` (
 
 DROP TABLE if exists `erp_area_district`;
 CREATE TABLE `erp_area_district` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `province_id` int(20) NOT NULL COMMENT '地区省份ID',
   `city_id` int(20) NOT NULL COMMENT '地区省份ID',
   `district_name` varchar(64) NOT NULL COMMENT '地区名称',
@@ -267,10 +267,10 @@ CREATE TABLE `erp_area_district` (
 -- ****************************************客户表**************************************** --
 DROP TABLE if exists `erp_customer`;
 CREATE TABLE `erp_customer` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `customer_type` int(11) DEFAULT NULL COMMENT '用户类型,1为企业用户，2为个人用户',
   `customer_no` varchar(100) NOT NULL COMMENT '客戶编码',
-  `is_disabled` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否禁用，0不可用；1可用',
+  `is_disabled` int(4) NOT NULL DEFAULT '0' COMMENT '是否禁用，0不可用；1可用',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -283,7 +283,7 @@ CREATE TABLE `erp_customer` (
 
 DROP TABLE if exists `erp_customer_person`;
 CREATE TABLE `erp_customer_person` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
   `real_name` varchar(64) NOT NULL COMMENT '真实姓名',
   `email` varchar(128) DEFAULT NULL COMMENT '电子邮件',
@@ -303,7 +303,7 @@ CREATE TABLE `erp_customer_person` (
 
 DROP TABLE if exists `erp_customer_company`;
 CREATE TABLE `erp_customer_company` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
   `landline` varchar(64) DEFAULT NULL COMMENT '座机电话',
   `connect_real_name` varchar(64) NOT NULL COMMENT '联系人',
@@ -328,9 +328,10 @@ CREATE TABLE `erp_customer_company` (
 
 DROP TABLE if exists `erp_customer_risk_management`;
 CREATE TABLE `erp_customer_risk_management` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `customer_id` bigint(20) NOT NULL COMMENT '用户ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `customer_id` int(20) NOT NULL COMMENT '用户ID',
   `credit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '授信额度',
+  `credit_amount_used` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '已用授信额度',
   `deposit_cycle` int(11) COMMENT '押金期数',
   `payment_cycle` int(11) COMMENT '付款期数',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -344,8 +345,8 @@ CREATE TABLE `erp_customer_risk_management` (
 
 DROP TABLE if exists `erp_customer_consign_info`;
 CREATE TABLE `erp_customer_consign_info` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `customer_id` bigint(20) NOT NULL COMMENT '用户ID',
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `customer_id` int(20) NOT NULL COMMENT '用户ID',
   `consignee_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '收货人姓名',
   `consignee_phone` varchar(24) CHARACTER SET ascii DEFAULT NULL COMMENT '收货人手机号',
   `province` int(20) DEFAULT NULL COMMENT '省份ID，省份ID',
@@ -860,7 +861,7 @@ CREATE TABLE `erp_order_product` (
   `deposit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '押金金额',
   `credit_deposit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '授信押金金额',
   `insurance_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '保险金额',
-  `product_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照',
+  `product_sku_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',

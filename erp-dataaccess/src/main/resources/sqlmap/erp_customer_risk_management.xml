@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper">
+
+	<resultMap id="CustomerRiskManagementDO" type="com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
+		<result column="credit_amount" jdbcType="DECIMAL" property="creditAmount" />
+		<result column="credit_amount_used" jdbcType="DECIMAL" property="creditAmountUsed" />
+		<result column="deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
+		<result column="payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ecrm.id,ecrm.customer_id,ecrm.credit_amount,ecrm.credit_amount_used,ecrm.deposit_cycle,ecrm.payment_cycle,ecrm.data_status,ecrm.remark,ecrm.create_time,ecrm.create_user,ecrm.update_time,ecrm.update_user
+	</sql>
+
+	<select id="findById" resultMap="CustomerRiskManagementDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_customer_risk_management ecrm 
+		WHERE ecrm.customer_id = #{id, jdbcType=INTEGER} AND ecrm.data_status = 1
+	</select>
+
+	<select id="findByCustomerId" resultMap="CustomerRiskManagementDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_customer_risk_management ecrm
+		WHERE ecrm.id = #{customerId, jdbcType=INTEGER} AND ecrm.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ecrm.id) FROM erp_customer_risk_management ecrm 
+		<where>
+			<if test="true">
+				AND ecrm.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="CustomerRiskManagementDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_customer_risk_management ecrm 
+		<where>
+			<if test="true">
+				AND ecrm.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="customerId != null">
+				customer_id = #{customerId,jdbcType=INTEGER},
+			</if>
+			<if test="creditAmount != null">
+				credit_amount = #{creditAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="creditAmountUsed != null">
+				credit_amount_used = #{creditAmountUsed,jdbcType=DECIMAL},
+			</if>
+			<if test="depositCycle != null">
+				deposit_cycle = #{depositCycle,jdbcType=INTEGER},
+			</if>
+			<if test="paymentCycle != null">
+				payment_cycle = #{paymentCycle,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO">
+		INSERT INTO erp_customer_risk_management <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO">
+		UPDATE erp_customer_risk_management <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

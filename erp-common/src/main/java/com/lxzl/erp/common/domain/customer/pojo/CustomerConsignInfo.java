@@ -8,8 +8,8 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomerConsignInfo implements Serializable {
 
-	private Long customerConsignInfoId;   //唯一标识
-	private Long customerId;   //用户ID
+	private Integer customerConsignInfoId;   //唯一标识
+	private Integer customerId;   //用户ID
 	private String consigneeName;   //收货人姓名
 	private String consigneePhone;   //收货人手机号
 	private Integer province;   //省份ID，省份ID
@@ -25,19 +25,19 @@ public class CustomerConsignInfo implements Serializable {
 	private String updateUser;   //修改人
 
 
-	public Long getCustomerConsignInfoId(){
+	public Integer getCustomerConsignInfoId(){
 		return customerConsignInfoId;
 	}
 
-	public void setCustomerConsignInfoId(Long customerConsignInfoId){
+	public void setCustomerConsignInfoId(Integer customerConsignInfoId){
 		this.customerConsignInfoId = customerConsignInfoId;
 	}
 
-	public Long getCustomerId(){
+	public Integer getCustomerId(){
 		return customerId;
 	}
 
-	public void setCustomerId(Long customerId){
+	public void setCustomerId(Integer customerId){
 		this.customerId = customerId;
 	}
 

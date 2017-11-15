@@ -5,31 +5,37 @@
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper">
 
     <resultMap type="com.lxzl.erp.dataaccess.domain.order.OrderDO" id="OrderDO">
-        <id column="id" property="id"/>
-        <result column="order_no" property="orderNo"/>
-        <result column="buyer_customer_id" property="buyerCustomerId"/>
-        <result column="rent_type" property="rentType"/>
-        <result column="rent_time_length" property="rentTimeLength"/>
-        <result column="pay_mode" property="payMode"/>
-        <result column="total_product_count" property="totalProductCount"/>
-        <result column="total_product_amount" property="totalProductAmount"/>
-        <result column="total_order_amount" property="totalOrderAmount"/>
-        <result column="total_discount_amount" property="totalDiscountAmount"/>
-        <result column="logistics_amount" property="logisticsAmount"/>
-        <result column="order_status" property="orderStatus"/>
-        <result column="pay_status" property="payStatus"/>
-        <result column="pay_time" property="payTime"/>
-        <result column="delivery_time" property="deliveryTime"/>
-        <result column="confirm_delivery_time" property="confirmDeliveryTime"/>
-        <result column="expect_return_time" property="expectReturnTime"/>
-        <result column="actual_return_time" property="actualReturnTime"/>
-        <result column="buyer_remark" property="buyerRemark"/>
-        <result column="data_status" property="dataStatus"/>
-        <result column="remark" property="remark"/>
-        <result column="create_user" property="createUser"/>
-        <result column="create_time" property="createTime"/>
-        <result column="update_user" property="updateUser"/>
-        <result column="update_time" property="updateTime"/>
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+        <result column="buyer_customer_id" jdbcType="INTEGER" property="buyerCustomerId" />
+        <result column="rent_type" jdbcType="INTEGER" property="rentType" />
+        <result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+        <result column="deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
+        <result column="payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+        <result column="total_deposit_amount" jdbcType="DECIMAL" property="totalDepositAmount" />
+        <result column="total_credit_deposit_amount" jdbcType="DECIMAL" property="totalCreditDepositAmount" />
+        <result column="total_insurance_amount" jdbcType="DECIMAL" property="totalInsuranceAmount" />
+        <result column="pay_mode" jdbcType="INTEGER" property="payMode" />
+        <result column="total_product_count" jdbcType="INTEGER" property="totalProductCount" />
+        <result column="total_product_amount" jdbcType="DECIMAL" property="totalProductAmount" />
+        <result column="total_order_amount" jdbcType="DECIMAL" property="totalOrderAmount" />
+        <result column="total_discount_amount" jdbcType="DECIMAL" property="totalDiscountAmount" />
+        <result column="logistics_amount" jdbcType="DECIMAL" property="logisticsAmount" />
+        <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
+        <result column="pay_status" jdbcType="INTEGER" property="payStatus" />
+        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+        <result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime" />
+        <result column="confirm_delivery_time" jdbcType="TIMESTAMP" property="confirmDeliveryTime" />
+        <result column="expect_return_time" jdbcType="TIMESTAMP" property="expectReturnTime" />
+        <result column="actual_return_time" jdbcType="TIMESTAMP" property="actualReturnTime" />
+        <result column="buyer_remark" jdbcType="VARCHAR" property="buyerRemark" />
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="owner" jdbcType="INTEGER" property="owner" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
         <collection property="orderProductDOList" resultMap="OrderProductDO" />
         <collection property="orderConsignInfoDO" resultMap="OrderConsignInfoDO" />
     </resultMap>
@@ -44,7 +50,7 @@
         <result column="product_product_count" property="productCount"/>
         <result column="product_product_unit_amount" property="productUnitAmount"/>
         <result column="product_product_amount" property="productAmount"/>
-        <result column="product_product_mode_params" property="productModeParams"/>
+        <result column="product_sku_snapshot" property="productSkuSnapshot"/>
         <result column="product_data_status" property="dataStatus"/>
         <result column="product_remark" property="remark"/>
         <result column="product_create_user" property="createUser"/>
@@ -75,7 +81,7 @@
     </resultMap>
 
     <sql id="column_List">
-		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.buyer_real_name as buyer_real_name,eo.rent_type as rent_type,eo.rent_time_length as rent_time_length,eo.pay_mode as pay_mode,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_order_amount as total_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_status as order_status,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.buyer_remark as buyer_remark,eo.data_status as data_status,eo.remark as remark,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user
+		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.rent_type as rent_type,eo.rent_time_length as rent_time_length,eo.deposit_cycle as deposit_cycle,eo.payment_cycle as payment_cycle,eo.total_deposit_amount as total_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.pay_mode as pay_mode,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_order_amount as total_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_status as order_status,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.buyer_remark as buyer_remark,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user
 	</sql>
     <sql id="product_column_List">
         eop.id as order_product_id,eop.order_id as product_order_id,eop.product_id as product_product_id,eop.product_name as product_product_name,eop.product_sku_id as product_product_sku_id,eop.product_sku_name as product_product_sku_name,eop.product_count as product_product_count,eop.product_unit_amount as product_product_unit_amount,eop.product_amount as product_product_amount,eop.product_mode_params as product_product_mode_params,eop.data_status as product_data_status,eop.remark as product_remark,eop.create_time as product_create_time,eop.create_user as product_create_user,eop.update_time as product_update_time,eop.update_user as product_update_user
@@ -238,6 +244,21 @@
             </if>
             <if test="rentTimeLength != null">
                 rent_time_length = #{rentTimeLength, jdbcType=INTEGER},
+            </if>
+            <if test="depositCycle != null">
+                deposit_cycle = #{depositCycle,jdbcType=INTEGER},
+            </if>
+            <if test="paymentCycle != null">
+                payment_cycle = #{paymentCycle,jdbcType=INTEGER},
+            </if>
+            <if test="totalDepositAmount != null">
+                total_deposit_amount = #{totalDepositAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="totalCreditDepositAmount != null">
+                total_credit_deposit_amount = #{totalCreditDepositAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="totalInsuranceAmount != null">
+                total_insurance_amount = #{totalInsuranceAmount,jdbcType=DECIMAL},
             </if>
             <if test="payMode != null">
                 pay_mode = #{payMode, jdbcType=INTEGER},
