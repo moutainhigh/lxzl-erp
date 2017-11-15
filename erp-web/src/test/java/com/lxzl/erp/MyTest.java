@@ -1,9 +1,8 @@
 package com.lxzl.erp;
 
-import com.lxzl.erp.common.domain.ApplicationConfig;
-import com.lxzl.erp.dataaccess.dao.mysql.LogMysqlDAO;
-import com.lxzl.erp.dataaccess.domain.LogDO;
 import com.lxzl.se.common.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.sql.*;
@@ -11,10 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyTest {
+    private static final Logger log = LoggerFactory.getLogger(MyTest.class);
 
     public static void main(String[] args) throws Exception {
-//        generateDomains("erp_customer","customer");
-        generateDomainsByDir("erp_customer","customer");
+//        generateDomains("erp_customer");
+        generateDomainsByDir("erp_customer_company","customer");
 //        String dir = "customer";
 //        String poDir = System.getProperty("user.dir")+"\\erp-common\\src\\main\\java\\com\\lxzl\\erp\\common\\domain\\"+dir+File.separator+"pojo"+File.separator;
 //        String mapperDir = System.getProperty("user.dir")+"\\erp-dataaccess\\src\\main\\java\\com\\lxzl\\erp\\dataaccess\\dao\\mysql\\"+dir+File.separator;
@@ -544,26 +544,44 @@ public class MyTest {
         if(StringUtil.isNotEmpty(poString)){
             String poFileName = table.poTableName +".java";
             File file = new File(poDirFile+File.separator+poFileName);
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write(poString.getBytes());
+            if(file.exists()){
+                log.error("文件已存在，如果想要替换，请先删除原文件【"+file.getName()+"】");
+            }else{
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write(poString.getBytes());
+            }
         }
         if(StringUtil.isNotEmpty(poString)){
             String doFileName = table.doTableName +".java";
             File file = new File(doDirFile+File.separator+doFileName);
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write(doString.getBytes());
+            if(file.exists()){
+                log.error("文件已存在，如果想要替换，请先删除原文件【"+file.getName()+"】");
+            }else{
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write(doString.getBytes());
+            }
+
         }
         if(StringUtil.isNotEmpty(xmlString)){
             String xmlFileName = table.sqlTableName +".xml";
             File file = new File(xmlDir+File.separator+xmlFileName);
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write(xmlString.getBytes());
+            if(file.exists()){
+                log.error("文件已存在，如果想要替换，请先删除原文件【"+file.getName()+"】");
+            }else{
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write(xmlString.getBytes());
+            }
+
         }
         if(StringUtil.isNotEmpty(mapperString)){
             String mapperFileName = table.poTableName +"Mapper.java";
             File file = new File(mapperDir+File.separator+mapperFileName);
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write(mapperString.getBytes());
+            if(file.exists()){
+                log.error("文件已存在，如果想要替换，请先删除原文件【"+file.getName()+"】");
+            }else{
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write(mapperString.getBytes());
+            }
         }
     }
 
