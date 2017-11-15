@@ -55,9 +55,10 @@ public class ProductTest extends ERPUnTransactionalTest {
 
         List<ProductSku> productSkuList = new ArrayList<>();
         ProductSku productSku = new ProductSku();
-        productSku.setOriginalPrice(new BigDecimal(100.00));
         productSku.setSkuPrice(new BigDecimal(5000.00));
-        productSku.setRentPrice(new BigDecimal(98.00));
+        productSku.setTimeRentPrice(new BigDecimal(98.00));
+        productSku.setDayRentPrice(new BigDecimal(98.00));
+        productSku.setMonthRentPrice(new BigDecimal(98.00));
         productSku.setStock(500);
         List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
         ProductSkuProperty productSkuProperty = new ProductSkuProperty();
@@ -96,9 +97,10 @@ public class ProductTest extends ERPUnTransactionalTest {
         List<ProductSku> productSkuList = new ArrayList<>();
         ProductSku productSku = new ProductSku();
         productSku.setSkuId(14);
-        productSku.setOriginalPrice(new BigDecimal(1050.00));
         productSku.setSkuPrice(new BigDecimal(5100.00));
-        productSku.setRentPrice(new BigDecimal(198.00));
+        productSku.setTimeRentPrice(new BigDecimal(98.00));
+        productSku.setDayRentPrice(new BigDecimal(98.00));
+        productSku.setMonthRentPrice(new BigDecimal(98.00));
         List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
         ProductSkuProperty productSkuProperty = new ProductSkuProperty();
         productSkuProperty.setPropertyId(1);

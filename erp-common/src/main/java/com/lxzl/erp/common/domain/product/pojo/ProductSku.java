@@ -13,8 +13,9 @@ public class ProductSku implements Serializable {
     private Integer productId;
     private Integer stock;
     private BigDecimal skuPrice;
-    private BigDecimal originalPrice;
-    private BigDecimal rentPrice;
+    private BigDecimal timeRentPrice;
+    private BigDecimal dayRentPrice;
+    private BigDecimal monthRentPrice;
     private String customCode;
     private String barCode;
     private String properties;
@@ -57,20 +58,28 @@ public class ProductSku implements Serializable {
         this.stock = stock;
     }
 
-    public BigDecimal getOriginalPrice() {
-        return originalPrice;
+    public BigDecimal getMonthRentPrice() {
+        return monthRentPrice;
     }
 
-    public void setOriginalPrice(BigDecimal originalPrice) {
-        this.originalPrice = originalPrice;
+    public void setMonthRentPrice(BigDecimal monthRentPrice) {
+        this.monthRentPrice = monthRentPrice;
     }
 
-    public BigDecimal getRentPrice() {
-        return rentPrice;
+    public BigDecimal getTimeRentPrice() {
+        return timeRentPrice;
     }
 
-    public void setRentPrice(BigDecimal rentPrice) {
-        this.rentPrice = rentPrice;
+    public void setTimeRentPrice(BigDecimal timeRentPrice) {
+        this.timeRentPrice = timeRentPrice;
+    }
+
+    public BigDecimal getDayRentPrice() {
+        return dayRentPrice;
+    }
+
+    public void setDayRentPrice(BigDecimal dayRentPrice) {
+        this.dayRentPrice = dayRentPrice;
     }
 
     public String getCustomCode() {

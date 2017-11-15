@@ -39,11 +39,14 @@ public class ProductConverter {
         if (productSku.getSkuPrice() != null) {
             productSkuDO.setSkuPrice(productSku.getSkuPrice());
         }
-        if (productSku.getOriginalPrice() != null) {
-            productSkuDO.setOriginalPrice(productSku.getOriginalPrice());
+        if (productSku.getTimeRentPrice() != null) {
+            productSkuDO.setTimeRentPrice(productSku.getTimeRentPrice());
         }
-        if (productSku.getRentPrice() != null) {
-            productSkuDO.setRentPrice(productSku.getRentPrice());
+        if (productSku.getDayRentPrice() != null) {
+            productSkuDO.setDayRentPrice(productSku.getDayRentPrice());
+        }
+        if (productSku.getMonthRentPrice() != null) {
+            productSkuDO.setMonthRentPrice(productSku.getMonthRentPrice());
         }
         if (productSku.getCustomCode() != null) {
             productSkuDO.setCustomCode(productSku.getCustomCode());
@@ -81,11 +84,14 @@ public class ProductConverter {
         if (productSkuDO.getSkuPrice() != null) {
             productSku.setSkuPrice(productSkuDO.getSkuPrice());
         }
-        if (productSkuDO.getOriginalPrice() != null) {
-            productSku.setOriginalPrice(productSkuDO.getOriginalPrice());
+        if (productSkuDO.getDayRentPrice() != null) {
+            productSku.setDayRentPrice(productSkuDO.getDayRentPrice());
         }
-        if (productSkuDO.getRentPrice() != null) {
-            productSku.setRentPrice(productSkuDO.getRentPrice());
+        if (productSkuDO.getTimeRentPrice() != null) {
+            productSku.setTimeRentPrice(productSkuDO.getTimeRentPrice());
+        }
+        if (productSkuDO.getMonthRentPrice() != null) {
+            productSku.setMonthRentPrice(productSkuDO.getMonthRentPrice());
         }
         if (productSkuDO.getCustomCode() != null) {
             productSku.setCustomCode(productSkuDO.getCustomCode());

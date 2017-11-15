@@ -447,16 +447,16 @@ public class OrderServiceImpl implements OrderService {
                 orderProductDO.setProductName(product.getProductName());
                 ProductSkuDO productSkuDO = productSkuMapper.findById(orderProductDO.getProductSkuId());
                 orderProductDO.setProductSkuName(productSkuDO.getSkuName());
-                orderProductDO.setProductUnitAmount(productSkuDO.getRentPrice());
-                orderProductDO.setProductAmount(BigDemicalUtil.mul(productSkuDO.getRentPrice(), new BigDecimal(orderProductDO.getProductCount())));
+                orderProductDO.setProductUnitAmount(productSkuDO.getMonthRentPrice()); // TODO 计算商品单价和总价
+                orderProductDO.setProductAmount(BigDemicalUtil.mul(productSkuDO.getMonthRentPrice(), new BigDecimal(orderProductDO.getProductCount())));
                 orderProductDO.setProductSnapshot(FastJsonUtil.toJSONString(product));
                 productCount += orderProductDO.getProductCount();
                 productAmountTotal = BigDemicalUtil.add(productAmountTotal, orderProductDO.getProductAmount());
             }
 
-            orderDO.setProductCountTotal(productCount);
-            orderDO.setProductAmountTotal(BigDemicalUtil.mul(productAmountTotal, new BigDecimal(orderDO.getRentTimeLength())));
-            orderDO.setOrderAmountTotal(BigDemicalUtil.sub(BigDemicalUtil.add(orderDO.getProductAmountTotal(), orderDO.getLogisticsAmount()), orderDO.getDiscountAmountTotal()));
+            orderDO.setTotalProductCount(productCount);
+            orderDO.setTotalProductAmount(BigDemicalUtil.mul(productAmountTotal, new BigDecimal(orderDO.getRentTimeLength())));
+            orderDO.setTotalOrderAmount(BigDemicalUtil.sub(BigDemicalUtil.add(orderDO.getTotalProductAmount(), orderDO.getLogisticsAmount()), orderDO.getTotalDiscountAmount()));
         }
     }
 
