@@ -50,8 +50,9 @@
         <mapper resource="sqlmap/erp_supplier.xml" />
         <mapper resource="sqlmap/erp_product_equipment_bulk_material.xml" />
         <mapper resource="sqlmap/erp_bulk_material.xml" />
-        <mapper resource="sqlmap/mall_data_dictionary.xml" />
-        <mapper resource="sqlmap/mall_img.xml" />
+        <mapper resource="sqlmap/erp_data_dictionary.xml" />
+        <mapper resource="sqlmap/erp_img.xml" />
+        <mapper resource="sqlmap/erp_customer_consign_info.xml" />
     </mappers>
 
 </configuration>

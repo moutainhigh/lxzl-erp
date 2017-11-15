@@ -120,7 +120,7 @@ public class ErrorCode {
     public static final String PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_IN_AGAIN = "J300033";
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
-    public static final String ORDER_USER_CONSIGN_NOT_NULL = "J400001";
+    public static final String ORDER_CUSTOMER_CONSIGN_NOT_NULL = "J400001";
     public static final String ORDER_PRODUCT_STOCK_INSUFFICIENT = "J400002";
     public static final String ORDER_NOT_EXISTS = "J400004";
     public static final String ORDER_PRODUCT_EQUIPMENT_NOT_NULL = "J400005";
@@ -248,7 +248,7 @@ public class ErrorCode {
 
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL,"订单商品不能为空");
-        MAP.put(ORDER_USER_CONSIGN_NOT_NULL,"订单没有选择地址");
+        MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL,"订单没有选择地址");
         MAP.put(ORDER_PRODUCT_STOCK_INSUFFICIENT,"库存不足");
         MAP.put(ORDER_NOT_EXISTS,"订单不存在");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_NOT_NULL,"订单商品项设备编号不能为空");

@@ -33,6 +33,8 @@ public class Order implements Serializable {
     private String remark;
     private Date createTime;
 
+    private Integer customerConsignId;
+
     private List<OrderProduct> orderProductList;
     private OrderConsignInfo orderConsignInfo;
 
@@ -162,6 +164,14 @@ public class Order implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Integer getCustomerConsignId() {
+        return customerConsignId;
+    }
+
+    public void setCustomerConsignId(Integer customerConsignId) {
+        this.customerConsignId = customerConsignId;
     }
 
     public Date getDeliveryTime() {

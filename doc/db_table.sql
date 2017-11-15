@@ -321,6 +321,42 @@ CREATE TABLE `erp_customer_company` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='公司客户表';
 
+DROP TABLE if exists `erp_customer_risk_management`;
+CREATE TABLE `erp_customer_risk_management` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `customer_id` bigint(20) NOT NULL COMMENT '用户ID',
+  `credit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '授信额度',
+  `deposit_cycle` int(11) NOT NULL DEFAULT '0' COMMENT '押金期数',
+  `payment_cycle` int(11) NOT NULL DEFAULT '0' COMMENT '付款期数',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户风控信息';
+
+DROP TABLE if exists `erp_customer_consign_info`;
+CREATE TABLE `erp_customer_consign_info` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `customer_id` bigint(20) NOT NULL COMMENT '用户ID',
+  `consignee_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '收货人姓名',
+  `consignee_phone` varchar(24) CHARACTER SET ascii DEFAULT NULL COMMENT '收货人手机号',
+  `province` int(20) DEFAULT NULL COMMENT '省份ID，省份ID',
+  `city` int(20) DEFAULT NULL COMMENT '城市ID，对应城市ID',
+  `district` int(20) DEFAULT NULL COMMENT '区ID，对应区ID',
+  `address` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
+  `is_main` int(11) NOT NULL DEFAULT '0' COMMENT '是否为默认地址，0否1是',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户收货配置信息表';
+
 -- ****************************************审批流程**************************************** --
 
 DROP TABLE if exists `erp_workflow_template`;
@@ -583,7 +619,7 @@ CREATE TABLE `erp_product_equipment` (
   `product_id` int(20) NOT NULL COMMENT '所属产品ID',
   `sku_id` int(20) NOT NULL COMMENT '所属SKU ID',
   `current_warehouse_id` int(20) NOT NULL COMMENT '目前仓库ID',
-  `current_warehouse_position_id` int(20) NOT NULL COMMENT '目前仓位ID',
+  `current_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '目前仓位ID',
   `owner_warehouse_id` int(20) NOT NULL COMMENT '归属仓库ID',
   `owner_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '归属目前仓位ID',
   `equipment_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '设备本身价值',
@@ -622,7 +658,7 @@ CREATE TABLE `erp_bulk_material` (
   `material_id` int(20) NOT NULL COMMENT '物料ID，从物料生成的',
   `material_no` varchar(100) NOT NULL COMMENT '物料编号，从物料生成的',
   `current_warehouse_id` int(20) NOT NULL COMMENT '目前仓库ID',
-  `current_warehouse_position_id` int(20) NOT NULL COMMENT '目前仓位ID',
+  `current_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '目前仓位ID',
   `owner_warehouse_id` int(20) NOT NULL COMMENT '归属仓库ID',
   `owner_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '归属仓位ID',
   `brand_id` int(20) COMMENT '所属品牌ID',
@@ -736,7 +772,7 @@ CREATE TABLE `erp_stock_order` (
   `refer_no` varchar(100) NOT NULL COMMENT '关联单号',
   `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '出入库单状态，1未出库，2已出库',
   `src_warehouse_id` int(20) COMMENT '源仓库ID',
-  `src_warehouse_position_id` int(20) COMMENT '源仓位ID',
+  `src_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '源仓位ID',
   `target_warehouse_id` int(20) NOT NULL COMMENT '目标仓库ID',
   `target_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '目标仓位ID',
   `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
