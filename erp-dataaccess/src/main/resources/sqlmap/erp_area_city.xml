@@ -39,6 +39,7 @@
 				AND eac.data_status = 1
 			</if>
 		</where>
+		ORDER BY eac.city_code,eac.abb_en
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 

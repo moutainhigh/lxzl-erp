@@ -8,7 +8,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AreaDistrict implements Serializable {
 
-	private Long areaDistrictId;   //唯一标识
+	private Integer areaDistrictId;   //唯一标识
 	private Integer provinceId;   //地区省份ID
 	private Integer cityId;   //地区省份ID
 	private String districtName;   //地区名称
@@ -19,11 +19,11 @@ public class AreaDistrict implements Serializable {
 	private String remark;   //备注
 
 
-	public Long getAreaDistrictId(){
+	public Integer getAreaDistrictId() {
 		return areaDistrictId;
 	}
 
-	public void setAreaDistrictId(Long areaDistrictId){
+	public void setAreaDistrictId(Integer areaDistrictId) {
 		this.areaDistrictId = areaDistrictId;
 	}
 

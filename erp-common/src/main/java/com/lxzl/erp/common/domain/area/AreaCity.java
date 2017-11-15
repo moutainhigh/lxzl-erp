@@ -2,13 +2,13 @@ package com.lxzl.erp.common.domain.area;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
-
+import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AreaCity implements Serializable {
 
-	private Long areaCityId;   //唯一标识
+	private Integer areaCityId;   //唯一标识
 	private Integer provinceId;   //地区省份ID
 	private String cityName;   //地区名称
 	private String cityCode;   //城市区号
@@ -18,12 +18,13 @@ public class AreaCity implements Serializable {
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 
+	private List<AreaDistrict> areaDistrictList;
 
-	public Long getAreaCityId(){
+	public Integer getAreaCityId() {
 		return areaCityId;
 	}
 
-	public void setAreaCityId(Long areaCityId){
+	public void setAreaCityId(Integer areaCityId) {
 		this.areaCityId = areaCityId;
 	}
 
@@ -91,4 +92,11 @@ public class AreaCity implements Serializable {
 		this.remark = remark;
 	}
 
+	public List<AreaDistrict> getAreaDistrictList() {
+		return areaDistrictList;
+	}
+
+	public void setAreaDistrictList(List<AreaDistrict> areaDistrictList) {
+		this.areaDistrictList = areaDistrictList;
+	}
 }

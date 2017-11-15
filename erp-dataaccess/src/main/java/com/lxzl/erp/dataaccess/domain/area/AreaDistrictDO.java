@@ -6,7 +6,7 @@ import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 
 public class AreaDistrictDO  extends BaseDO {
 
-	private Long id;
+	private Integer id;
 	private Integer provinceId;
 	private Integer cityId;
 	private String districtName;
@@ -16,11 +16,11 @@ public class AreaDistrictDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
-	public Long getId(){
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id){
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

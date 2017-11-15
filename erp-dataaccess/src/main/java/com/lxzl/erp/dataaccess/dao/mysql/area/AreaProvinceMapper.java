@@ -11,4 +11,6 @@ public interface AreaProvinceMapper extends BaseMysqlDAO<AreaProvinceDO> {
 	List<AreaProvinceDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+	List<AreaProvinceDO> getAreaList();
 }

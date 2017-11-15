@@ -1,6 +1,8 @@
 package com.lxzl.erp;
 
 import com.lxzl.se.common.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.sql.*;
@@ -8,16 +10,94 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyTest {
+    private static final Logger log = LoggerFactory.getLogger(MyTest.class);
 
     public static void main(String[] args) throws Exception {
-        test("erp_customer_consign_info");
+//        generateDomains("erp_customer");
+        generateDomainsByDir("erp_customer_company","customer");
+//        String dir = "customer";
+//        String poDir = System.getProperty("user.dir")+"\\erp-common\\src\\main\\java\\com\\lxzl\\erp\\common\\domain\\"+dir+File.separator+"pojo"+File.separator;
+//        String mapperDir = System.getProperty("user.dir")+"\\erp-dataaccess\\src\\main\\java\\com\\lxzl\\erp\\dataaccess\\dao\\mysql\\"+dir+File.separator;
+//        String doDir = System.getProperty("user.dir")+"\\erp-dataaccess\\src\\main\\java\\com\\lxzl\\erp\\dataaccess\\domain\\"+dir+File.separator;
+//        String xmlDir = System.getProperty("user.dir")+File.separator+"erp-dataaccess"+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"sqlmap"+File.separator;
+//        System.out.println(poDir);
+//        System.out.println(mapperDir);
+//        System.out.println(doDir);
+//        System.out.println(xmlDir);
     }
 
     private static String URL = "jdbc:mysql://192.168.10.205:3306/lxzl_erp?useUnicode=true&amp;characterEncoding=UTF-8";
     private static String USER = "lxzldev";
     private static String PASSWORD = "lxzldev";
 
-    public static void test(String tableName) throws Exception{
+
+    /**
+     * 针对本项目生成到指定目录
+     * @param tableName
+     * @param dir
+     * @throws Exception
+     */
+
+    public static void generateDomainsByDir(String tableName,String dir) throws Exception{
+
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection con= DriverManager.getConnection(URL, USER, PASSWORD);
+
+        DatabaseMetaData databaseMetaData = con.getMetaData();
+        ResultSet tableRet = databaseMetaData.getColumns(null, "%", tableName, "%");
+
+        String poName = "";
+        String dataImport = "";
+        String bigDecimalImport = "";
+
+        List<NameAndType> nameAndTypeList = new ArrayList<>();
+        List<String> nameList = new ArrayList<>();
+        List<String> typeList = new ArrayList<>();
+        List<String> remarkList = new ArrayList<>();
+        while(tableRet.next()){
+            nameList.add(tableRet.getString("COLUMN_NAME"));
+            typeList.add(tableRet.getString("TYPE_NAME"));
+            remarkList.add(tableRet.getString("REMARKS"));
+        }
+        int size = nameList.size();
+        boolean haveDate = false;
+        boolean haveBigDecimal = false;
+        for(int i = 0 ; i<size ;i++){
+            NameAndType nameAndType = new NameAndType(nameList.get(i),typeList.get(i),remarkList.get(i),tableName);
+            if(nameAndType.haveDate){
+                haveDate = nameAndType.haveDate;
+            }
+            if(nameAndType.haveBigDecimal){
+                haveBigDecimal = nameAndType.haveBigDecimal;
+            }
+            nameAndTypeList.add(nameAndType);
+        }
+        if(haveDate){
+            dataImport = "import java.util.Date;";
+        }
+        if(haveBigDecimal){
+            bigDecimalImport = "import java.math.BigDecimal;";
+        }
+        Table table = new Table(tableName);
+        String poString = getPoStringByDir(dataImport,bigDecimalImport,nameAndTypeList,table,dir);
+        String doString = getDoStringByDir(dataImport,bigDecimalImport,nameAndTypeList,table,dir);
+        String xmlString = getXmlStringByDir(nameAndTypeList,table,dir);
+        String mapperString = getMapperStringByDir(table,dir);
+
+//        String poDir = System.getProperty("user.dir")+"/erp-common/src/main/java/com/lxzl/erp/common/domain"+dir+File.separator+"pojo"+File.separator;
+//        String mapperDir = System.getProperty("user.dir")+"/erp-dataaccess/src/main/java/com/lxzl/erp/dataaccess/dao/mysql"+dir+File.separator;
+//        String doDir = System.getProperty("user.dir")+"/erp-dataaccess/src/main/java/com/lxzl/erp/dataaccess/domain"+dir+File.separator;
+//        String xmlDir = System.getProperty("user.dir")+File.separator+"erp-dataaccess"+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"sqlmap"+File.separator;
+        String poDir = System.getProperty("user.dir")+"\\erp-common\\src\\main\\java\\com\\lxzl\\erp\\common\\domain\\"+dir+File.separator+"pojo"+File.separator;
+        String mapperDir = System.getProperty("user.dir")+"\\erp-dataaccess\\src\\main\\java\\com\\lxzl\\erp\\dataaccess\\dao\\mysql\\"+dir+File.separator;
+        String doDir = System.getProperty("user.dir")+"\\erp-dataaccess\\src\\main\\java\\com\\lxzl\\erp\\dataaccess\\domain\\"+dir+File.separator;
+        String xmlDir = System.getProperty("user.dir")+File.separator+"erp-dataaccess"+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"sqlmap"+File.separator;
+        writeToFile(poString,doString,xmlString,mapperString,table,poDir,doDir,mapperDir,xmlDir);
+    }
+
+
+
+    public static void generateDomains(String tableName) throws Exception{
 
         Class.forName("com.mysql.jdbc.Driver");
         Connection con= DriverManager.getConnection(URL, USER, PASSWORD);
@@ -65,6 +145,21 @@ public class MyTest {
 
         writeToFile(poString,doString,xmlString,mapperString,table);
     }
+    public static String getPoStringByDir(String dataImport , String bigDecimalImport , List<NameAndType> nameAndTypeList , Table table,String dir){
+
+        StringBuffer poSb = new StringBuffer(
+                "package com.lxzl.erp.common.domain."+dir+".pojo;\n\n" +
+                "import com.fasterxml.jackson.annotation.JsonIgnoreProperties;\n" +
+                        "import java.io.Serializable;\n" +
+                        dataImport+"\n" +bigDecimalImport+"\n" +
+                        "\n" +
+                        "@JsonIgnoreProperties(ignoreUnknown = true)\n" +
+                        "public class "+ table.poTableName+" implements Serializable {");
+        appendAllPOParam(nameAndTypeList,poSb);
+        appendPOSetterAndSetter(nameAndTypeList,poSb);
+        poSb.append("\n}");
+        return poSb.toString();
+    }
     public static String getPoString(String dataImport , String bigDecimalImport , List<NameAndType> nameAndTypeList , Table table){
         StringBuffer poSb = new StringBuffer(
                 "import com.fasterxml.jackson.annotation.JsonIgnoreProperties;\n" +
@@ -78,6 +173,18 @@ public class MyTest {
         poSb.append("\n}");
         return poSb.toString();
     }
+    public static String getDoStringByDir(String dataImport , String bigDecimalImport , List<NameAndType> nameAndTypeList , Table table,String dir){
+        StringBuffer doSb = new StringBuffer(
+                "package com.lxzl.erp.dataaccess.domain."+dir+";\n\n"+
+                "import com.lxzl.se.dataaccess.mysql.domain.BaseDO;\n"+
+                        dataImport+"\n" +bigDecimalImport+"\n" +
+                        "\n" +
+                        "public class "+ table.poTableName+"DO "+" extends BaseDO {");
+        appendAllDOParam(nameAndTypeList,doSb);
+        appendDOSetterAndSetter(nameAndTypeList,doSb);
+        doSb.append("\n}");
+        return doSb.toString();
+    }
     public static String getDoString(String dataImport , String bigDecimalImport , List<NameAndType> nameAndTypeList , Table table){
         StringBuffer doSb = new StringBuffer(
                         "import com.lxzl.se.dataaccess.mysql.domain.BaseDO;\n"+
@@ -88,6 +195,23 @@ public class MyTest {
         appendDOSetterAndSetter(nameAndTypeList,doSb);
         doSb.append("\n}");
         return doSb.toString();
+    }
+    public static String getMapperStringByDir(Table table,String dir){
+        StringBuffer mapperSb = new StringBuffer(
+                "package com.lxzl.erp.dataaccess.dao.mysql."+dir+";\n\n"+
+                "import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;\n"+
+                "import com.lxzl.erp.dataaccess.domain."+dir+"."+table.doTableName+";"
+        );
+
+        String mapperName = table.poTableName+"Mapper";
+        mapperSb.append("import org.apache.ibatis.annotations.Param;\n" +
+                "import java.util.List;\n" +
+                "import java.util.Map;\n\n");
+        mapperSb.append("public interface "+mapperName+" extends BaseMysqlDAO<"+table.doTableName+"> {\n\n");
+        mapperSb.append("\tList<"+table.doTableName+"> listPage(@Param(\"maps\") Map<String, Object> paramMap);\n\n");
+        mapperSb.append("\tInteger listCount(@Param(\"maps\") Map<String, Object> paramMap);\n");
+        mapperSb.append("}");
+        return mapperSb.toString();
     }
     public static String getMapperString(Table table){
         StringBuffer mapperSb = new StringBuffer("import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;\n");
@@ -103,6 +227,79 @@ public class MyTest {
         return mapperSb.toString();
     }
 
+    public static String getXmlStringByDir(List<NameAndType> nameAndTypeList , Table table,String dir){
+        String mapperName = table.poTableName+"Mapper";
+        String mapperPackage = "com.lxzl.erp.dataaccess.dao.mysql."+dir+"."+mapperName;
+        String doPackage = "com.lxzl.erp.dataaccess.domain."+dir+"."+table.doTableName;
+        StringBuffer xmlSb = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        xmlSb.append("<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">\n");
+        xmlSb.append("<mapper namespace=\""+mapperPackage+"\">\n\n");
+        xmlSb.append("\t<resultMap id=\""+table.doTableName+"\" type=\""+doPackage+"\">\n");
+        for(NameAndType nameAndType : nameAndTypeList){
+            if("id".equals(nameAndType.trueDoName)){
+                xmlSb.append("\t\t<id column=\"id\" jdbcType=\"INTEGER\" property=\"id\" />\n");
+            }else{
+                xmlSb.append("\t\t<result column=\""+nameAndType.sqlName+"\" jdbcType=\""+nameAndType.sqlType+"\" property=\""+nameAndType.trueDoName+"\" />\n");
+            }
+        }
+        xmlSb.append("\t</resultMap>\n\n");
+        xmlSb.append("\t<sql id=\"column_List\">\n");
+        xmlSb.append("\t\t"+getSimpleString(table,nameAndTypeList)+"\n");
+        xmlSb.append("\t</sql>\n\n");
+
+        String[] ss = table.sqlTableName.split("_");
+        StringBuffer simpleSb = new StringBuffer();
+        for(String s : ss){
+            simpleSb.append(s.substring(0,1));
+        }
+        xmlSb.append("\t<select id=\"findById\" resultMap=\""+table.doTableName+"\" parameterType=\"java.lang.Integer\">\n");
+        xmlSb.append("\t\tSELECT <include refid=\"column_List\"/> FROM "+table.sqlTableName + " "+simpleSb.toString()+" \n");
+        xmlSb.append("\t\tWHERE "+simpleSb.toString()+".id = #{id, jdbcType=INTEGER} AND "+simpleSb.toString()+".data_status = 1 \n");
+        xmlSb.append("\t</select>\n\n");
+
+        xmlSb.append("\t<select id=\"listCount\" resultType=\"java.lang.Integer\" parameterType=\"map\">\n");
+        xmlSb.append("\t\tSELECT count("+simpleSb.toString()+".id) FROM "+table.sqlTableName+ " "+simpleSb.toString()+" \n");
+        xmlSb.append("\t\t<where>\n");
+        xmlSb.append("\t\t\t<if test=\"true\">\n");
+        xmlSb.append("\t\t\t\tAND "+simpleSb.toString()+".data_status = 1\n");
+        xmlSb.append("\t\t\t</if>\n");
+        xmlSb.append("\t\t</where>\n");
+        xmlSb.append("\t</select>\n\n");
+
+        xmlSb.append("\t<select id=\"listPage\" resultMap=\""+table.doTableName+"\" parameterType=\"map\">\n");
+        xmlSb.append("\t\tSELECT <include refid=\"column_List\"/> FROM "+table.sqlTableName+ " "+simpleSb.toString()+" \n");
+        xmlSb.append("\t\t<where>\n");
+        xmlSb.append("\t\t\t<if test=\"true\">\n");
+        xmlSb.append("\t\t\t\tAND "+simpleSb.toString()+".data_status = 1\n");
+        xmlSb.append("\t\t\t</if>\n");
+        xmlSb.append("\t\t</where>\n");
+        xmlSb.append("\t\tLIMIT #{maps.start},#{maps.pageSize}\n");
+        xmlSb.append("\t</select>\n\n");
+
+
+
+        xmlSb.append("\t<sql id=\"set_column_sql\">\n");
+        xmlSb.append("\t\t<set>\n");
+        for(NameAndType nameAndType : nameAndTypeList){
+            if("id".equals(nameAndType.trueDoName)){
+                continue;
+            }
+            xmlSb.append("\t\t\t<if test=\""+nameAndType.trueDoName+" != null\">\n");
+            xmlSb.append("\t\t\t\t"+nameAndType.sqlName+" = #{"+nameAndType.trueDoName+",jdbcType="+nameAndType.sqlType+"},\n");
+            xmlSb.append("\t\t\t</if>\n");
+        }
+        xmlSb.append("\t\t</set>\n");
+        xmlSb.append("\t</sql>\n\n");
+        xmlSb.append("\t<insert id=\"save\" keyProperty=\"id\" useGeneratedKeys=\"true\" parameterType=\""+doPackage+"\">\n");
+        xmlSb.append("\t\tINSERT INTO "+table.sqlTableName+" <include refid=\"set_column_sql\"/>\n");
+        xmlSb.append("\t</insert>\n");
+        xmlSb.append("\n");
+        xmlSb.append("\t<update id=\"update\" parameterType=\""+doPackage+"\">\n");
+        xmlSb.append("\t\tUPDATE "+table.sqlTableName+" <include refid=\"set_column_sql\"/> WHERE id = #{id, jdbcType=INTEGER}\n");
+        xmlSb.append("\t</update>\n");
+        xmlSb.append("</mapper>");
+        return xmlSb.toString();
+    }
     public static String getXmlString(List<NameAndType> nameAndTypeList , Table table){
         String mapperName = table.poTableName+"Mapper";
         StringBuffer xmlSb = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -328,7 +525,65 @@ public class MyTest {
             }
         }
     }
+    private static void  writeToFile(String poString , String doString  , String xmlString ,String mapperString , Table table ,String poDir,String doDir,String mapperDir,String xmlDir) throws IOException {
 
+
+        String dirName = table.poTableName;
+        File poDirFile = new File(poDir);
+        File doDirFile = new File(doDir);
+        File mapperDirFile = new File(mapperDir);
+        if(!poDirFile.isDirectory()){
+            poDirFile.mkdirs();
+        }
+        if(!doDirFile.isDirectory()){
+            doDirFile.mkdirs();
+        }
+        if(!mapperDirFile.isDirectory()){
+            mapperDirFile.mkdirs();
+        }
+        if(StringUtil.isNotEmpty(poString)){
+            String poFileName = table.poTableName +".java";
+            File file = new File(poDirFile+File.separator+poFileName);
+            if(file.exists()){
+                log.error("文件已存在，如果想要替换，请先删除原文件【"+file.getName()+"】");
+            }else{
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write(poString.getBytes());
+            }
+        }
+        if(StringUtil.isNotEmpty(poString)){
+            String doFileName = table.doTableName +".java";
+            File file = new File(doDirFile+File.separator+doFileName);
+            if(file.exists()){
+                log.error("文件已存在，如果想要替换，请先删除原文件【"+file.getName()+"】");
+            }else{
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write(doString.getBytes());
+            }
+
+        }
+        if(StringUtil.isNotEmpty(xmlString)){
+            String xmlFileName = table.sqlTableName +".xml";
+            File file = new File(xmlDir+File.separator+xmlFileName);
+            if(file.exists()){
+                log.error("文件已存在，如果想要替换，请先删除原文件【"+file.getName()+"】");
+            }else{
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write(xmlString.getBytes());
+            }
+
+        }
+        if(StringUtil.isNotEmpty(mapperString)){
+            String mapperFileName = table.poTableName +"Mapper.java";
+            File file = new File(mapperDir+File.separator+mapperFileName);
+            if(file.exists()){
+                log.error("文件已存在，如果想要替换，请先删除原文件【"+file.getName()+"】");
+            }else{
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write(mapperString.getBytes());
+            }
+        }
+    }
 
     private static void  writeToFile(String poString , String doString  , String xmlString ,String mapperString , Table table) throws IOException {
 
