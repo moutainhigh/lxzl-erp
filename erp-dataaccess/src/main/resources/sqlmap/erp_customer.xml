@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper">
+
+	<resultMap id="CustomerDO" type="com.lxzl.erp.dataaccess.domain.customer.CustomerDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="customer_type" jdbcType="INTEGER" property="customerType" />
+		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+		<result column="is_disabled" jdbcType="INTEGER" property="isDisabled" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ec.id,ec.customer_type,ec.customer_no,ec.is_disabled,ec.data_status,ec.remark,ec.create_time,ec.create_user,ec.update_time,ec.update_user
+	</sql>
+
+	<select id="findById" resultMap="CustomerDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_customer ec 
+		WHERE ec.id = #{id, jdbcType=INTEGER} AND ec.data_status = 1 
+	</select>
+	<select id="findByNo" resultMap="CustomerDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_customer ec
+		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ec.id) FROM erp_customer ec 
+		<where>
+			<if test="true">
+				AND ec.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="CustomerDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_customer ec 
+		<where>
+			<if test="true">
+				AND ec.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="customerType != null">
+				customer_type = #{customerType,jdbcType=INTEGER},
+			</if>
+			<if test="customerNo != null">
+				customer_no = #{customerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="isDisabled != null">
+				is_disabled = #{isDisabled,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.customer.CustomerDO">
+		INSERT INTO erp_customer <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.customer.CustomerDO">
+		UPDATE erp_customer <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
