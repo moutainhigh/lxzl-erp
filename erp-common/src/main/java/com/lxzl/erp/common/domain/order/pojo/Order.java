@@ -33,9 +33,6 @@ public class Order implements Serializable {
     private String remark;
     private Date createTime;
 
-    // 用户选择的收货地址，传入时使用
-    private Integer userConsignId;
-
     private List<OrderProduct> orderProductList;
     private OrderConsignInfo orderConsignInfo;
 
@@ -165,14 +162,6 @@ public class Order implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    public Integer getUserConsignId() {
-        return userConsignId;
-    }
-
-    public void setUserConsignId(Integer userConsignId) {
-        this.userConsignId = userConsignId;
     }
 
     public Date getDeliveryTime() {

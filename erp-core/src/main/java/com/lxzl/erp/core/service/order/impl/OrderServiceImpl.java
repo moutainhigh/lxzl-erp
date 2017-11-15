@@ -41,12 +41,12 @@ public class OrderServiceImpl implements OrderService {
     private static Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> createOrder(Order order) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
-        String verifyCreateOrderCode = verifyCreateOrder(order, loginUser);
+        String verifyCreateOrderCode = verifyCreateOrder(order);
         if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
             result.setErrorCode(verifyCreateOrderCode);
             return result;
@@ -56,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
         OrderDO orderDO = OrderConverter.convertOrder(order);
         calculateOrderProductInfo(orderProductDOList, orderDO);
 
-        orderDO.setOrderNo(GenerateNoUtil.generateOrderNo(currentTime, loginUser.getUserId()));
+        orderDO.setOrderNo(GenerateNoUtil.generateOrderNo(currentTime));
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_INIT);
         orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         orderDO.setCreateUser(loginUser.getUserId().toString());
@@ -407,7 +407,7 @@ public class OrderServiceImpl implements OrderService {
                 orderProductDO.setUpdateTime(currentTime);
                 orderProductMapper.save(orderProductDO);
 
-                // 减库存
+                // TODO 减库存
                 ProductSkuDO productSkuDO = productSkuMapper.findById(orderProductDO.getProductSkuId());
                 productSkuDO.setStock(productSkuDO.getStock() - orderProductDO.getProductCount());
                 productSkuMapper.update(productSkuDO);
@@ -438,15 +438,12 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private String verifyCreateOrder(Order order, User loginUser) {
+    private String verifyCreateOrder(Order order) {
         if (order == null) {
             return ErrorCode.PARAM_IS_NOT_NULL;
         }
         if (order.getOrderProductList() == null || order.getOrderProductList().isEmpty()) {
             return ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL;
-        }
-        if (order.getUserConsignId() == null) {
-            return ErrorCode.ORDER_USER_CONSIGN_NOT_NULL;
         }
         if (order.getPayMode() == null) {
             return ErrorCode.ORDER_PAY_MODE_NOT_NULL;

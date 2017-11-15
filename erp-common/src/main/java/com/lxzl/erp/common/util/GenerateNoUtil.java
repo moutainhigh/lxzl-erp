@@ -17,9 +17,9 @@ public class GenerateNoUtil {
         return "P" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
     }
 
-    public static String generateOrderNo(Date currentTime, Integer userId) {
+    public static String generateOrderNo(Date currentTime) {
         Random random = new Random();
-        return "O" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + userId + (1000 + random.nextInt(900));
+        return "O" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
     }
 
     public static String generatePayNo(Date currentTime, Integer orderId) {
