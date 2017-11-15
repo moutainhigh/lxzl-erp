@@ -1,12 +1,14 @@
 package com.lxzl.erp.dataaccess.domain.area;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
 
+import java.util.List;
 
 
 public class AreaProvinceDO  extends BaseDO {
 
-	private Long id;
+	private Integer id;
 	private String provinceName;
 	private Integer areaType;
 	private String abbCn;
@@ -14,11 +16,14 @@ public class AreaProvinceDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
-	public Long getId(){
+	@Transient
+	private List<AreaCityDO> areaCityDOList;
+
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id){
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -70,4 +75,11 @@ public class AreaProvinceDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public List<AreaCityDO> getAreaCityDOList() {
+		return areaCityDOList;
+	}
+
+	public void setAreaCityDOList(List<AreaCityDO> areaCityDOList) {
+		this.areaCityDOList = areaCityDOList;
+	}
 }

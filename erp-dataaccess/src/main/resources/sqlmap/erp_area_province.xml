@@ -10,12 +10,40 @@
 		<result column="abb_en" jdbcType="VARCHAR" property="abbEn" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
-	</resultMap>
 
+	</resultMap>
+	<resultMap id="AreaCityDO" type="com.lxzl.erp.dataaccess.domain.area.AreaCityDO">
+		<id column="eac_id" jdbcType="INTEGER" property="id"/>
+		<result column="eac_provinceId" jdbcType="INTEGER" property="provinceId"/>
+		<result column="eac_cityName" jdbcType="VARCHAR" property="cityName"/>
+		<result column="eac_cityCode" jdbcType="VARCHAR" property="cityCode"/>
+		<result column="eac_postCode" jdbcType="VARCHAR" property="postCode"/>
+		<result column="eac_abbCn" jdbcType="VARCHAR" property="abbCn"/>
+		<result column="eac_abbEn" jdbcType="VARCHAR" property="abbEn"/>
+		<result column="eac_dataStatus" jdbcType="INTEGER" property="dataStatus"/>
+		<result column="eac_remark" jdbcType="VARCHAR" property="remark"/>
+
+	</resultMap>
+	<resultMap id="AreaDistrictDO" type="com.lxzl.erp.dataaccess.domain.area.AreaDistrictDO">
+		<id column="ead_id" jdbcType="INTEGER" property="id"/>
+		<result column="ead_provinceId" jdbcType="INTEGER" property="provinceId"/>
+		<result column="ead_cityId" jdbcType="INTEGER" property="cityId"/>
+		<result column="ead_districtName" jdbcType="VARCHAR" property="districtName"/>
+		<result column="ead_postCode" jdbcType="VARCHAR" property="postCode"/>
+		<result column="ead_abbCn" jdbcType="VARCHAR" property="abbCn"/>
+		<result column="ead_abbEn" jdbcType="VARCHAR" property="abbEn"/>
+		<result column="ead_dataStatus" jdbcType="INTEGER" property="dataStatus"/>
+		<result column="ead_remark" jdbcType="VARCHAR" property="remark"/>
+	</resultMap>
 	<sql id="column_List">
 		eap.id,eap.province_name,eap.area_type,eap.abb_cn,eap.abb_en,eap.data_status,eap.remark
 	</sql>
-
+	<sql id="city_column_List">
+			eac.id AS eac_id,eac.province_id AS eac_provinceId,eac.city_name AS eac_cityName,eac.city_code AS eac_cityCode,eac.post_code AS eac_postCode,eac.abb_cn AS eac_abbCn,eac.abb_en AS eac_abbEn,eac.data_status AS eac_dataStatus,eac.remark AS eac_remark
+	</sql>
+	<sql id="district_column_List">
+		ead.id AS ead_id,ead.province_id AS ead_provinceId,ead.city_id AS ead_cityId,ead.district_name AS ead_districtName,ead.post_code AS ead_postCode,ead.abb_cn AS ead_abbCn,ead.abb_en AS ead_abbEn,ead.data_status AS ead_dataStatus,ead.remark AS ead_remark
+	</sql>
 	<select id="findById" resultMap="AreaProvinceDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_area_province eap 
 		WHERE eap.id = #{id, jdbcType=INTEGER} AND eap.data_status = 1 
@@ -31,12 +59,13 @@
 	</select>
 
 	<select id="listPage" resultMap="AreaProvinceDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_area_province eap 
+		SELECT <include refid="column_List"/> FROM erp_area_province eap
 		<where>
 			<if test="true">
 				AND eap.data_status = 1
 			</if>
 		</where>
+		ORDER BY eap.area_type,eap.abb_en
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 
@@ -70,4 +99,5 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.area.AreaProvinceDO">
 		UPDATE erp_area_province <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
 </mapper>

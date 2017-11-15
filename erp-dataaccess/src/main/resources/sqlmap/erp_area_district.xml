@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="AreaDistrictMapper">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.area.AreaDistrictMapper">
 
-	<resultMap id="AreaDistrictDO" type="AreaDistrictDO">
+	<resultMap id="AreaDistrictDO" type="com.lxzl.erp.dataaccess.domain.area.AreaDistrictDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="province_id" jdbcType="INTEGER" property="provinceId" />
 		<result column="city_id" jdbcType="INTEGER" property="cityId" />
@@ -39,6 +39,7 @@
 				AND ead.data_status = 1
 			</if>
 		</where>
+		ORDER BY ead.city_id,ead.district_name
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 
@@ -71,11 +72,11 @@
 		</set>
 	</sql>
 
-	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="AreaDistrictDO">
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.area.AreaDistrictDO">
 		INSERT INTO erp_area_district <include refid="set_column_sql"/>
 	</insert>
 
-	<update id="update" parameterType="AreaDistrictDO">
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.area.AreaDistrictDO">
 		UPDATE erp_area_district <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
 </mapper>
