@@ -17,8 +17,10 @@ import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderConverter;
 import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.*;
 import com.lxzl.se.common.util.StringUtil;
@@ -66,6 +68,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.save(orderDO);
         saveOrderProductInfo(orderProductDOList, orderDO.getId(), loginUser, currentTime);
         // TODO保存收货地址
+        saveOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
@@ -415,6 +418,25 @@ public class OrderServiceImpl implements OrderService {
             }
         }
     }
+
+    private void saveOrderConsignInfo(Integer userConsignId, Integer orderId, User loginUser, Date currentTime) {
+        CustomerConsignInfoDO userConsignInfoDO = customerConsignInfoMapper.findById(userConsignId);
+        OrderConsignInfoDO orderConsignInfoDO = new OrderConsignInfoDO();
+        orderConsignInfoDO.setOrderId(orderId);
+        orderConsignInfoDO.setConsigneeName(userConsignInfoDO.getConsigneeName());
+        orderConsignInfoDO.setConsigneePhone(userConsignInfoDO.getConsigneePhone());
+        orderConsignInfoDO.setProvince(userConsignInfoDO.getProvince());
+        orderConsignInfoDO.setCity(userConsignInfoDO.getCity());
+        orderConsignInfoDO.setDistrict(userConsignInfoDO.getDistrict());
+        orderConsignInfoDO.setAddress(userConsignInfoDO.getAddress());
+        orderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        orderConsignInfoDO.setCreateUser(loginUser.getUserId().toString());
+        orderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+        orderConsignInfoDO.setCreateTime(currentTime);
+        orderConsignInfoDO.setUpdateTime(currentTime);
+        orderConsignInfoMapper.save(orderConsignInfoDO);
+    }
+
     private void calculateOrderProductInfo(List<OrderProductDO> orderProductDOList, OrderDO orderDO) {
         if (orderProductDOList != null && !orderProductDOList.isEmpty()) {
             int productCount = 0;
@@ -444,6 +466,9 @@ public class OrderServiceImpl implements OrderService {
         }
         if (order.getOrderProductList() == null || order.getOrderProductList().isEmpty()) {
             return ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL;
+        }
+        if (order.getCustomerConsignId() == null) {
+            return ErrorCode.ORDER_CUSTOMER_CONSIGN_NOT_NULL;
         }
         if (order.getPayMode() == null) {
             return ErrorCode.ORDER_PAY_MODE_NOT_NULL;
@@ -517,4 +542,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private ProductEquipmentRepairRecordMapper productEquipmentRepairRecordMapper;
+
+    @Autowired
+    private CustomerConsignInfoMapper customerConsignInfoMapper;
 }
