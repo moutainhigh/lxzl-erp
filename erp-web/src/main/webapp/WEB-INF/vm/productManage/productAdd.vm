@@ -165,8 +165,9 @@
                             {{/ths}}
                             #*<th>SKU名称</th>*#
                             <th>商品价值</th>
-                            <th>原价</th>
-                            <th>销售价</th>
+                            <th>次租价</th>
+                            <th>日租价</th>
+                            <th>月租价</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -180,13 +181,28 @@
                                 <label class="field prepend-icon"><input type="text" name="skuName-{{rowKey}}" value="{{skuName}}" class="skuName form-control" /></label>
                             </td>*#
                             <td>
-                                <label class="field prepend-icon"><input type="text" name="skuPrice-{{rowKey}}" value="{{skuPrice}}" class="skuPrice form-control required moneyNumber" /></label>
+                                <label class="field prepend-icon">
+                                    <input type="text" name="skuPrice-{{rowKey}}" value="{{skuPrice}}" class="skuPrice form-control required moneyNumber" />
+                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                </label>
                             </td>
                             <td>
-                                <label class="field prepend-icon"><input type="text" name="originalPrice-{{rowKey}}" value="{{originalPrice}}" class="originalPrice form-control required moneyNumber" /></label>
+                                <label class="field prepend-icon">
+                                    <input type="text" name="timeRentPrice-{{rowKey}}" value="{{timeRentPrice}}" class="timeRentPrice form-control required moneyNumber" />
+                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                </label>
                             </td>
                             <td>
-                                <label class="field prepend-icon"><input type="text" name="salePrice-{{rowKey}}" value="{{rentPrice}}" class="rentPrice form-control required moneyNumber" /></label>
+                                <label class="field prepend-icon">
+                                    <input type="text" name="dayRentPrice-{{rowKey}}" value="{{dayRentPrice}}" class="dayRentPrice form-control required moneyNumber" />
+                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                </label>
+                            </td>
+                            <td>
+                                <label class="field prepend-icon">
+                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                    <input type="text" name="monthRentPrice-{{rowKey}}" value="{{monthRentPrice}}" class="monthRentPrice form-control required moneyNumber" />
+                                </label>
                             </td>
                         </tr>
                         {{/list}}
