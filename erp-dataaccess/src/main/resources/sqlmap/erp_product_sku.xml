@@ -73,10 +73,21 @@
 
 
     <select id="findById" resultMap="ProductSkuDO" parameterType="java.lang.Integer">
-        select
-        <include refid="column_List"/>,ep.product_name
-        from erp_product_sku eps left join erp_product ep on ep.id=eps.product_id
-        where eps.id = #{id, jdbcType=INTEGER} and eps.data_status = 1
+        SELECT sku_main.*
+        <trim prefix=",">
+            <include refid="sku_property_column_List" />
+        </trim>
+        ,mpcp.property_name AS sku_property_property_name,mpcpv.property_value_name AS sku_property_property_value_Name
+        FROM (
+            select
+            <include refid="column_List"/>,ep.product_name
+            from erp_product_sku eps left join erp_product ep on ep.id=eps.product_id
+            where eps.id = #{id, jdbcType=INTEGER} and eps.data_status = 1
+        ) sku_main
+        LEFT JOIN erp_product_sku_property epsps ON epsps.sku_id = sku_main.id AND epsps.data_status = 1 AND epsps.is_sku = 1
+        LEFT JOIN erp_product_category_property mpcp ON epsps.property_id = mpcp.id
+        LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id
+        ORDER BY mpcp.data_order DESC,mpcpv.data_order DESC
     </select>
 
     <select id="findByProductId" resultMap="ProductSkuDO" parameterType="java.lang.Integer">

@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.constant.OrderRentType;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
@@ -22,7 +23,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     public void testCreateOrder() throws Exception{
         Order order = new Order();
 
-        order.setRentType(1);
+        order.setRentType(OrderRentType.RENT_TYPE_DAY);
         order.setRentTimeLength(6);
         order.setPayMode(2);
         order.setLogisticsAmount(new BigDecimal(12));

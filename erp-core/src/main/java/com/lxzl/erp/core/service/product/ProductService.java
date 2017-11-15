@@ -13,6 +13,7 @@ import java.util.List;
  * Created by IntelliJ IDEA.
  * Date: 2017/10/6.
  * Time: 14:48.
+ *
  * @author gaochao
  */
 public interface ProductService extends BaseService {
@@ -56,6 +57,15 @@ public interface ProductService extends BaseService {
      * @return 单个商品信息
      */
     ServiceResult<String, Product> queryProductById(Integer productId);
+
+    /**
+     * 根据ID查询商品信息以及SKU信息
+     *
+     * @param productId    商品ID
+     * @param productSkuId 商品SKUID
+     * @return 商品信息，内仅含一个SKU
+     */
+    ServiceResult<String, Product> queryProductById(Integer productId, Integer productSkuId);
 
     /**
      * 商品详情

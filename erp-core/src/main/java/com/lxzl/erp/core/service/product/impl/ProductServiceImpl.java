@@ -204,6 +204,29 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ServiceResult<String, Product> queryProductById(Integer productId, Integer productSkuId) {
+        ServiceResult<String, Product> result = new ServiceResult<>();
+        if (productId == null) {
+            result.setErrorCode(ErrorCode.PRODUCT_ID_NOT_NULL);
+            return result;
+        }
+        ProductDO productDO = productMapper.findByProductId(productId);
+        List<ProductSkuDO> productSkuDOList = new ArrayList<>();
+        ProductSkuDO productSkuDO = productSkuMapper.findById(productSkuId);
+        productSkuDOList.add(productSkuDO);
+        productDO.setProductSkuDOList(productSkuDOList);
+        Product product = ProductConverter.convertProductDO(productDO);
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("productId", productId);
+        List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findProductCategoryPropertyListByProductId(maps);
+        product.setProductCategoryPropertyList(ProductCategoryPropertyConverter.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(product);
+        return result;
+    }
+
+    @Override
     public ServiceResult<String, Product> queryProductDetailById(Integer productId) {
         ServiceResult<String, Product> result = new ServiceResult<>();
         if (productId == null) {

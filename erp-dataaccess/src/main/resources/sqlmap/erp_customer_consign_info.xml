@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper">
+
+	<resultMap id="CustomerConsignInfoDO" type="com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
+		<result column="consignee_name" jdbcType="VARCHAR" property="consigneeName" />
+		<result column="consignee_phone" jdbcType="VARCHAR" property="consigneePhone" />
+		<result column="province" jdbcType="INTEGER" property="province" />
+		<result column="city" jdbcType="INTEGER" property="city" />
+		<result column="district" jdbcType="INTEGER" property="district" />
+		<result column="address" jdbcType="VARCHAR" property="address" />
+		<result column="is_main" jdbcType="INTEGER" property="isMain" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ecci.id,ecci.customer_id,ecci.consignee_name,ecci.consignee_phone,ecci.province,ecci.city,ecci.district,ecci.address,ecci.is_main,ecci.data_status,ecci.remark,ecci.create_time,ecci.create_user,ecci.update_time,ecci.update_user
+	</sql>
+
+	<select id="findById" resultMap="CustomerConsignInfoDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_customer_consign_info ecci 
+		WHERE ecci.id = #{id, jdbcType=INTEGER} AND ecci.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ecci.id) FROM erp_customer_consign_info ecci
+		<where>
+			<if test="true">
+				AND ecci.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="CustomerConsignInfoDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_customer_consign_info ecci
+		<where>
+			<if test="true">
+				AND ecci.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="customerId != null">
+				customer_id = #{customerId,jdbcType=INTEGER},
+			</if>
+			<if test="consigneeName != null">
+				consignee_name = #{consigneeName,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneePhone != null">
+				consignee_phone = #{consigneePhone,jdbcType=VARCHAR},
+			</if>
+			<if test="province != null">
+				province = #{province,jdbcType=INTEGER},
+			</if>
+			<if test="city != null">
+				city = #{city,jdbcType=INTEGER},
+			</if>
+			<if test="district != null">
+				district = #{district,jdbcType=INTEGER},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="isMain != null">
+				is_main = #{isMain,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO">
+		INSERT INTO erp_customer_consign_info <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO">
+		UPDATE erp_customer_consign_info <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -60,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderProductInfo(orderProductDOList, orderDO);
 
         orderDO.setOrderNo(GenerateNoUtil.generateOrderNo(currentTime));
-        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_INIT);
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
         orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         orderDO.setCreateUser(loginUser.getUserId().toString());
         orderDO.setUpdateUser(loginUser.getUserId().toString());
@@ -124,7 +124,7 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.OPERATOR_IS_NOT_YOURSELF);
             return result;
         }
-        if (orderDO.getOrderStatus() == null || !OrderStatus.ORDER_STATUS_INIT.equals(orderDO.getOrderStatus())) {
+        if (orderDO.getOrderStatus() == null || !OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus())) {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
@@ -189,7 +189,7 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
-        if (!OrderStatus.ORDER_STATUS_PAID.equals(dbRecordOrder.getOrderStatus())) {
+        if (!OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(dbRecordOrder.getOrderStatus())) {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
@@ -280,7 +280,7 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
-        if (!OrderStatus.ORDER_STATUS_PAID.equals(dbRecordOrder.getOrderStatus())) {
+        if (!OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(dbRecordOrder.getOrderStatus())) {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
@@ -444,27 +444,22 @@ public class OrderServiceImpl implements OrderService {
             if (!OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
                 if (customerRiskManagementDO == null) {
                     throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+                } else {
+                    orderDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
+                    orderDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
                 }
             }
 
             int productCount = 0;
             BigDecimal productAmountTotal = new BigDecimal(0.0);
+            BigDecimal totalInsuranceAmount = new BigDecimal(0.0);
+            BigDecimal totalDepositAmount = new BigDecimal(0.0);
+            BigDecimal totalCreditDepositAmount = new BigDecimal(0.0);
             for (OrderProductDO orderProductDO : orderProductDOList) {
-                ServiceResult<String, Product> productServiceResult = productService.queryProductById(orderProductDO.getProductId());
+                ServiceResult<String, Product> productServiceResult = productService.queryProductById(orderProductDO.getProductId(), orderProductDO.getProductSkuId());
                 Product product = productServiceResult.getResult();
                 orderProductDO.setProductName(product.getProductName());
-                List<ProductSku> thisProductSkuList = new ArrayList<>();
-                ProductSku thisProductSku = null;
-                if (CollectionUtil.isNotEmpty(product.getProductSkuList())) {
-                    for (ProductSku dbProductSku : product.getProductSkuList()) {
-                        if (dbProductSku.getSkuId().equals(orderProductDO.getProductSkuId())) {
-                            thisProductSku = dbProductSku;
-                            thisProductSkuList.add(thisProductSku);
-                            product.setProductSkuList(thisProductSkuList);
-                            break;
-                        }
-                    }
-                }
+                ProductSku thisProductSku = CollectionUtil.isNotEmpty(product.getProductSkuList()) ? product.getProductSkuList().get(0) : null;
                 if (thisProductSku == null) {
                     throw new BusinessException(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                 }
@@ -476,6 +471,7 @@ public class OrderServiceImpl implements OrderService {
                 } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())) {
                     productUnitAmount = thisProductSku.getMonthRentPrice();
                 }
+                totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, thisProductSku.getSkuPrice());
                 orderProductDO.setProductSkuName(thisProductSku.getSkuName());
                 orderProductDO.setProductUnitAmount(productUnitAmount);
                 orderProductDO.setProductAmount(BigDecimalUtil.mul(productUnitAmount, new BigDecimal(orderProductDO.getProductCount())));
@@ -485,11 +481,13 @@ public class OrderServiceImpl implements OrderService {
             }
             BigDecimal zero = new BigDecimal(0);
             if (!OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
-                if (BigDecimalUtil.compare(zero, BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmount(), customerRiskManagementDO.getCreditAmountUsed())) < 0) {
+                if (BigDecimalUtil.compare(zero, BigDecimalUtil.sub(BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmount(), customerRiskManagementDO.getCreditAmountUsed()), totalCreditDepositAmount)) < 0) {
                     throw new BusinessException("额度不够无法下单。");
                 }
             }
-
+            orderDO.setTotalCreditDepositAmount(totalCreditDepositAmount);
+            orderDO.setTotalInsuranceAmount(totalInsuranceAmount);
+            orderDO.setTotalDepositAmount(totalDepositAmount);
             orderDO.setTotalProductCount(productCount);
             orderDO.setTotalProductAmount(BigDecimalUtil.mul(productAmountTotal, new BigDecimal(orderDO.getRentTimeLength())));
             orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getLogisticsAmount()), orderDO.getTotalDiscountAmount()));
