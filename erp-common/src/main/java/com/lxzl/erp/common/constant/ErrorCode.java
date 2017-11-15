@@ -135,6 +135,15 @@ public class ErrorCode {
     public static final String ORDER_REFUND_STATUS_ERROR = "J400014";
     public static final String ORDER_PAY_RECORD_NOT_EXISTS = "J400015";
 
+    public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
+    public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
+    public static final String CUSTOMER_PERSON_NOT_NULL = "J500003";
+    public static final String CUSTOMER_PERSON_NAME_NOT_NULL = "J500004";
+    public static final String CUSTOMER_TYPE_NOT_NULL = "J500005";
+    public static final String CUSTOMER_COMPANY_CONNECT_NAME_NOT_NULL = "J500006";
+    public static final String CUSTOMER_NOT_NULL = "J500007";
+    public static final String CUSTOMER_NO_NOT_NULL = "J500008";
+
     static
     {
         MAP.put(SUCCESS,"成功");
@@ -262,6 +271,15 @@ public class ErrorCode {
         MAP.put(ORDER_PAY_STATUS_ERROR,"付款单状态异常，请检查");
         MAP.put(ORDER_REFUND_STATUS_ERROR,"退款单状态异常，请检查");
         MAP.put(ORDER_PAY_RECORD_NOT_EXISTS,"支付记录不存在");
+
+        MAP.put(CUSTOMER_COMPANY_NOT_NULL,"企业客户信息不能为空");
+        MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL,"企业公司名称不能为空");
+        MAP.put(CUSTOMER_PERSON_NOT_NULL,"客户个人信息不能为空");
+        MAP.put(CUSTOMER_PERSON_NAME_NOT_NULL,"客户个人姓名不能为空");
+        MAP.put(CUSTOMER_TYPE_NOT_NULL,"客户类型不能为空");
+        MAP.put(CUSTOMER_COMPANY_CONNECT_NAME_NOT_NULL,"企业客户联系人姓名不能为空");
+        MAP.put(CUSTOMER_NOT_NULL,"客户不存在");
+        MAP.put(CUSTOMER_NO_NOT_NULL,"客户编号不能为空");
     }
 
     public static String getMessage(String code)

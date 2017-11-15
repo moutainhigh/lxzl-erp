@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerCompanyMapper">
+
+	<resultMap id="CustomerCompanyDO" type="com.lxzl.erp.dataaccess.domain.customer.CustomerCompanyDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
+		<result column="landline" jdbcType="VARCHAR" property="landline" />
+		<result column="connect_real_name" jdbcType="VARCHAR" property="connectRealName" />
+		<result column="connect_phone" jdbcType="VARCHAR" property="connectPhone" />
+		<result column="company_name" jdbcType="VARCHAR" property="companyName" />
+		<result column="company_abb" jdbcType="VARCHAR" property="companyAbb" />
+		<result column="province" jdbcType="INTEGER" property="province" />
+		<result column="city" jdbcType="INTEGER" property="city" />
+		<result column="district" jdbcType="INTEGER" property="district" />
+		<result column="address" jdbcType="VARCHAR" property="address" />
+		<result column="legal_person" jdbcType="VARCHAR" property="legalPerson" />
+		<result column="legal_person_no" jdbcType="VARCHAR" property="legalPersonNo" />
+		<result column="business_license_no" jdbcType="VARCHAR" property="businessLicenseNo" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ecc.id,ecc.customer_id,ecc.landline,ecc.connect_real_name,ecc.connect_phone,ecc.company_name,ecc.company_abb,ecc.province,ecc.city,ecc.district,ecc.address,ecc.legal_person,ecc.legal_person_no,ecc.business_license_no,ecc.data_status,ecc.remark,ecc.create_time,ecc.create_user,ecc.update_time,ecc.update_user
+	</sql>
+
+	<select id="findById" resultMap="CustomerCompanyDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_customer_company ecc 
+		WHERE ecc.id = #{id, jdbcType=INTEGER} AND ecc.data_status = 1 
+	</select>
+
+	<select id="findByCustomerId" resultMap="CustomerCompanyDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_customer_company ecc
+		WHERE ecc.customer_id = #{customerId, jdbcType=INTEGER} AND ecc.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ecc.id) FROM erp_customer_company ecc 
+		<where>
+			<if test="true">
+				AND ecc.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="CustomerCompanyDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_customer_company ecc 
+		<where>
+			<if test="true">
+				AND ecc.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="customerId != null">
+				customer_id = #{customerId,jdbcType=INTEGER},
+			</if>
+			<if test="landline != null">
+				landline = #{landline,jdbcType=VARCHAR},
+			</if>
+			<if test="connectRealName != null">
+				connect_real_name = #{connectRealName,jdbcType=VARCHAR},
+			</if>
+			<if test="connectPhone != null">
+				connect_phone = #{connectPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="companyName != null">
+				company_name = #{companyName,jdbcType=VARCHAR},
+			</if>
+			<if test="companyAbb != null">
+				company_abb = #{companyAbb,jdbcType=VARCHAR},
+			</if>
+			<if test="province != null">
+				province = #{province,jdbcType=INTEGER},
+			</if>
+			<if test="city != null">
+				city = #{city,jdbcType=INTEGER},
+			</if>
+			<if test="district != null">
+				district = #{district,jdbcType=INTEGER},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="legalPerson != null">
+				legal_person = #{legalPerson,jdbcType=VARCHAR},
+			</if>
+			<if test="legalPersonNo != null">
+				legal_person_no = #{legalPersonNo,jdbcType=VARCHAR},
+			</if>
+			<if test="businessLicenseNo != null">
+				business_license_no = #{businessLicenseNo,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.customer.CustomerCompanyDO">
+		INSERT INTO erp_customer_company <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.customer.CustomerCompanyDO">
+		UPDATE erp_customer_company <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<select id="findCustomerCompanyCountByParams" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(id)
+		FROM erp_customer_company ecc
+		<where>
+			<if test="maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
+				and ecc.customer_no = #{maps.queryParam.customerNo, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.connectRealName != null &amp;&amp; maps.queryParam.connectRealName != null">
+				and ecc.connect_real_name like CONCAT('%','${maps.queryParam.connectRealName}','%' )
+			</if>
+			<if test="maps.queryParam.connectPhone != null &amp;&amp; maps.queryParam.connectPhone != ''">
+				and ecc.connect_phone like CONCAT('%','${maps.queryParam.connectPhone}','%' )
+			</if>
+			<if test="maps.queryParam.companyName != null &amp;&amp; maps.queryParam.companyName != ''">
+				and ecc.company_name like CONCAT('%','${maps.queryParam.companyName}','%' )
+			</if>
+			<if test="maps.queryParam.province != null">
+				and ecc.province = #{maps.queryParam.province, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.city != null">
+				and ecc.city = #{maps.queryParam.city, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.district != null">
+				and ecc.district = #{maps.queryParam.district, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.legalPerson != null &amp;&amp; maps.queryParam.legalPerson != ''">
+				and ecc.legal_person like CONCAT('%','${maps.queryParam.legalPerson}','%' )
+			</if>
+			<if test="maps.queryParam.legalPersonNo != null &amp;&amp; maps.queryParam.legalPersonNo != ''">
+				and ecc.legal_person_no = #{maps.queryParam.legalPersonNo, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.businessLicenseNo != null &amp;&amp; maps.queryParam.businessLicenseNo != ''">
+				and ecc.business_license_no = #{maps.queryParam.businessLicenseNo, jdbcType=VARCHAR}
+			</if>
+			<if test="true">
+				and ecc.data_status = 1
+			</if>
+		</where>
+	</select>
+	<select id="findCustomerCompanyByParams" resultMap="CustomerCompanyDO" parameterType="map">
+
+		SELECT <include refid="column_List"/>
+		FROM erp_customer_company ecc
+		<where>
+			<if test="maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
+				and ecc.customer_no = #{maps.queryParam.customerNo, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.connectRealName != null &amp;&amp; maps.queryParam.connectRealName != null">
+				and ecc.connect_real_name like CONCAT('%','${maps.queryParam.connectRealName}','%' )
+			</if>
+			<if test="maps.queryParam.connectPhone != null &amp;&amp; maps.queryParam.connectPhone != ''">
+				and ecc.connect_phone like CONCAT('%','${maps.queryParam.connectPhone}','%' )
+			</if>
+			<if test="maps.queryParam.companyName != null &amp;&amp; maps.queryParam.companyName != ''">
+				and ecc.company_name like CONCAT('%','${maps.queryParam.companyName}','%' )
+			</if>
+			<if test="maps.queryParam.province != null">
+				and ecc.province = #{maps.queryParam.province, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.city != null">
+				and ecc.city = #{maps.queryParam.city, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.district != null">
+				and ecc.district = #{maps.queryParam.district, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.legalPerson != null &amp;&amp; maps.queryParam.legalPerson != ''">
+				and ecc.legal_person like CONCAT('%','${maps.queryParam.legalPerson}','%' )
+			</if>
+			<if test="maps.queryParam.legalPersonNo != null &amp;&amp; maps.queryParam.legalPersonNo != ''">
+				and ecc.legal_person_no = #{maps.queryParam.legalPersonNo, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.businessLicenseNo != null &amp;&amp; maps.queryParam.businessLicenseNo != ''">
+				and ecc.business_license_no = #{maps.queryParam.businessLicenseNo, jdbcType=VARCHAR}
+			</if>
+			<if test="true">
+				and ecc.data_status = 1
+			</if>
+		</where>
+		ORDER BY ecc.create_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+
+	</select>
+
+</mapper>
