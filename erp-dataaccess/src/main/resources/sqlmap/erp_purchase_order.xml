@@ -64,10 +64,14 @@
 	</select>
 
 	<select id="findDetailByPurchaseNo" resultMap="PurchaseOrderDO" parameterType="java.lang.String">
-		select <include refid="column_List"/>,<include refid="product_column_List"/> from (
+		select <include refid="column_List"/>,<include refid="product_column_List"/> ,eu.real_name as ownerName,es1.supplier_name as productSupplierName
+		,es2.supplier_name as invoiceSupplierName from (
 		select <include refid="column_List"/> from erp_purchase_order epo
 		where epo.purchase_no = #{purchaseNo, jdbcType=VARCHAR} and data_status = 1
 		) epo left join erp_purchase_order_product epop on epop.purchase_order_id = epo.id and epop.data_status=1
+		left join erp_user eu on epo.owner = eu.id
+		left join erp_supplier es1 on epo.product_supplier_id = es1.id
+		left join erp_supplier es2 on epo.invoice_supplier_id = es2.id
 	</select>
 	<select id="findDetailById" resultMap="PurchaseOrderDO" parameterType="java.lang.Integer">
 		select <include refid="column_List"/>,<include refid="product_column_List"/> from (
