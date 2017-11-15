@@ -2,6 +2,7 @@ package com.lxzl.erp.web;
 
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.core.component.ResultGenerator;
+import com.lxzl.se.common.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,11 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> exception(Exception exception , WebRequest request) {
         log.error("ExceptionHandlerAdvice catch the System Exception, ", exception);
-        return new ResponseEntity<Object>(resultGenerator.generate(ErrorCode.SYSTEM_ERROR,ErrorCode.getMessage(ErrorCode.SYSTEM_ERROR) ),HttpStatus.OK);
+        if(StringUtil.isEmpty(ErrorCode.getMessage(exception.getMessage()))){
+            return new ResponseEntity<Object>(resultGenerator.generate(ErrorCode.SYSTEM_ERROR,ErrorCode.getMessage(ErrorCode.SYSTEM_ERROR) ),HttpStatus.OK);
+        }else{
+            return new ResponseEntity<Object>(resultGenerator.generate(exception.getMessage(),ErrorCode.getMessage(exception.getMessage()) ),HttpStatus.OK);
+        }
     }
     @Autowired
     private ResultGenerator resultGenerator;
