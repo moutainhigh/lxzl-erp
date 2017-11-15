@@ -27,4 +27,4 @@ hs_err_pid*
 *.rebel-remote.xml
 *.rebel-remote.xml.bak
 *.rebel.xml.bak
-
+*Mine_*

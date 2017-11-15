@@ -53,6 +53,9 @@
         <mapper resource="sqlmap/erp_data_dictionary.xml" />
         <mapper resource="sqlmap/erp_img.xml" />
         <mapper resource="sqlmap/erp_customer_consign_info.xml" />
+        <mapper resource="sqlmap/erp_area_province.xml" />
+        <mapper resource="sqlmap/erp_area_city.xml" />
+        <mapper resource="sqlmap/erp_area_district.xml" />
     </mappers>
 
 </configuration>

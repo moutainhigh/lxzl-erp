@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.area.AreaProvinceMapper">
+
+	<resultMap id="AreaProvinceDO" type="com.lxzl.erp.dataaccess.domain.area.AreaProvinceDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="province_name" jdbcType="VARCHAR" property="provinceName" />
+		<result column="area_type" jdbcType="INTEGER" property="areaType" />
+		<result column="abb_cn" jdbcType="VARCHAR" property="abbCn" />
+		<result column="abb_en" jdbcType="VARCHAR" property="abbEn" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+
+	<sql id="column_List">
+		eap.id,eap.province_name,eap.area_type,eap.abb_cn,eap.abb_en,eap.data_status,eap.remark
+	</sql>
+
+	<select id="findById" resultMap="AreaProvinceDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_area_province eap 
+		WHERE eap.id = #{id, jdbcType=INTEGER} AND eap.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eap.id) FROM erp_area_province eap 
+		<where>
+			<if test="true">
+				AND eap.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="AreaProvinceDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_area_province eap 
+		<where>
+			<if test="true">
+				AND eap.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="provinceName != null">
+				province_name = #{provinceName,jdbcType=VARCHAR},
+			</if>
+			<if test="areaType != null">
+				area_type = #{areaType,jdbcType=INTEGER},
+			</if>
+			<if test="abbCn != null">
+				abb_cn = #{abbCn,jdbcType=VARCHAR},
+			</if>
+			<if test="abbEn != null">
+				abb_en = #{abbEn,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.area.AreaProvinceDO">
+		INSERT INTO erp_area_province <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.area.AreaProvinceDO">
+		UPDATE erp_area_province <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

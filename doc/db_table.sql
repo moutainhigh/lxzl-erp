@@ -284,31 +284,35 @@ DROP TABLE if exists `erp_customer_person`;
 CREATE TABLE `erp_customer_person` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
-  `real_name` varchar(64) NOT NULL COMMENT '联系人',
-  `email` varchar(128) CHARACTER SET ascii DEFAULT NULL COMMENT 'email',
-  `phone` varchar(24) CHARACTER SET ascii DEFAULT NULL COMMENT '手机号',
+  `real_name` varchar(64) NOT NULL COMMENT '真实姓名',
+  `email` varchar(128) DEFAULT NULL COMMENT '电子邮件',
+  `phone` varchar(24) DEFAULT NULL COMMENT '手机号',
   `province` int(20) DEFAULT NULL COMMENT '省份ID，省份ID',
   `city` int(20) DEFAULT NULL COMMENT '城市ID，对应城市ID',
   `district` int(20) DEFAULT NULL COMMENT '区ID，对应区ID',
-  `address` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
+  `address` varchar(200) DEFAULT NULL COMMENT '详细地址',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='个人客户表';
+) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='个人客户表';
 
 DROP TABLE if exists `erp_customer_company`;
 CREATE TABLE `erp_customer_company` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
-  `company_name` varchar(64) NOT NULL COMMENT '公司名称',
+  `landline` varchar(64) DEFAULT NULL COMMENT '座机电话',
+  `connect_real_name` varchar(64) NOT NULL COMMENT '联系人',
+  `connect_phone` varchar(24) DEFAULT NULL COMMENT '联系人手机号',
+  `company_name` varchar(128) DEFAULT NULL COMMENT '公司名称',
+  `company_abb` varchar(128) DEFAULT NULL COMMENT '公司简称',
   `province` int(20) DEFAULT NULL COMMENT '省份ID，省份ID',
   `city` int(20) DEFAULT NULL COMMENT '城市ID，对应城市ID',
   `district` int(20) DEFAULT NULL COMMENT '区ID，对应区ID',
-  `address` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
+  `address` varchar(200) DEFAULT NULL COMMENT '详细地址',
   `legal_person` varchar(64) COMMENT '法人姓名',
   `legal_person_no` varchar(64) COMMENT '法人身份证号',
   `business_license_no` varchar(64) COMMENT '营业执照号',
@@ -319,7 +323,7 @@ CREATE TABLE `erp_customer_company` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='公司客户表';
+) ENGINE=InnoDB AUTO_INCREMENT=400001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='公司客户表';
 
 DROP TABLE if exists `erp_customer_risk_management`;
 CREATE TABLE `erp_customer_risk_management` (

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AreaDistrictMapper">
+
+	<resultMap id="AreaDistrictDO" type="AreaDistrictDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="province_id" jdbcType="INTEGER" property="provinceId" />
+		<result column="city_id" jdbcType="INTEGER" property="cityId" />
+		<result column="district_name" jdbcType="VARCHAR" property="districtName" />
+		<result column="post_code" jdbcType="VARCHAR" property="postCode" />
+		<result column="abb_cn" jdbcType="VARCHAR" property="abbCn" />
+		<result column="abb_en" jdbcType="VARCHAR" property="abbEn" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+
+	<sql id="column_List">
+		ead.id,ead.province_id,ead.city_id,ead.district_name,ead.post_code,ead.abb_cn,ead.abb_en,ead.data_status,ead.remark
+	</sql>
+
+	<select id="findById" resultMap="AreaDistrictDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_area_district ead 
+		WHERE ead.id = #{id, jdbcType=INTEGER} AND ead.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ead.id) FROM erp_area_district ead 
+		<where>
+			<if test="true">
+				AND ead.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="AreaDistrictDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_area_district ead 
+		<where>
+			<if test="true">
+				AND ead.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="provinceId != null">
+				province_id = #{provinceId,jdbcType=INTEGER},
+			</if>
+			<if test="cityId != null">
+				city_id = #{cityId,jdbcType=INTEGER},
+			</if>
+			<if test="districtName != null">
+				district_name = #{districtName,jdbcType=VARCHAR},
+			</if>
+			<if test="postCode != null">
+				post_code = #{postCode,jdbcType=VARCHAR},
+			</if>
+			<if test="abbCn != null">
+				abb_cn = #{abbCn,jdbcType=VARCHAR},
+			</if>
+			<if test="abbEn != null">
+				abb_en = #{abbEn,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="AreaDistrictDO">
+		INSERT INTO erp_area_district <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="AreaDistrictDO">
+		UPDATE erp_area_district <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
