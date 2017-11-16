@@ -8,6 +8,8 @@ import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.se.core.service.BaseService;
 
+import java.util.List;
+
 /**
  * 描述: ${DESCRIPTION}
  *
@@ -55,4 +57,20 @@ public interface MaterialService extends BaseService {
      * @return 散料集合
      */
     ServiceResult<String, Page<BulkMaterial>> queryBulkMaterialByMaterialId(BulkMaterialQueryParam bulkMaterialQueryParam);
+
+    /**
+     * 集合内是否都是四大件
+     *
+     * @param materialList 物料集合
+     * @return 是否
+     */
+    boolean isAllMainMaterial(List<Material> materialList);
+
+    /**
+     * 集合内是否都是小配件
+     *
+     * @param materialList 物料集合
+     * @return 是否
+     */
+    boolean isAllGadget(List<Material> materialList);
 }

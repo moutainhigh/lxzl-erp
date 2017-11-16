@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.*;
 import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.FileUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.common.util.ListUtil;
@@ -178,6 +179,31 @@ public class ProductServiceImpl implements ProductService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(product.getProductId());
         return result;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> addProductMaterial(ProductSku productSku) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        if(CollectionUtil.isEmpty(productSku.getProductMaterialList())){
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+
+        ProductSkuDO productSkuDO = productSkuMapper.findById(productSku.getSkuId());
+        if(productSkuDO == null){
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> removeProductMaterial(ProductSku productSku) {
+        return null;
     }
 
     @Override
@@ -593,7 +619,6 @@ public class ProductServiceImpl implements ProductService {
                     productSkuPropertyDO.setCreateTime(currentTime);
                     productSkuPropertyDO.setUpdateTime(currentTime);
                     productSkuPropertyMapper.save(productSkuPropertyDO);
-                    saveProductMaterial(productId, skuId, productSkuPropertyDO.getPropertyId(), productSkuPropertyDO.getPropertyValueId(), loginUser, currentTime);
                 } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_UPDATE.equals(operationType)) {
                     productSkuPropertyDO.setIsSku(CommonConstant.COMMON_CONSTANT_YES);
                     productSkuPropertyDO.setSkuId(skuId);
@@ -608,7 +633,17 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    void saveProductMaterial(Integer productId, Integer skuId, Integer propertyId, Integer propertyValueId, User loginUser, Date currentTime) {
+
+
+    /**
+     * @param productId 商品ID
+     * @param skuId SKUID
+     * @param propertyId 属性ID
+     * @param propertyValueId 属性值ID
+     * @param loginUser 登录人
+     * @param currentTime 当前时间
+     */
+    public void saveProductMaterial(Integer productId, Integer skuId, Integer propertyId, Integer propertyValueId, User loginUser, Date currentTime) {
         MaterialDO materialDO = materialMapper.findByPropertyAndValueId(propertyId, propertyValueId);
         if (materialDO != null) {
             ProductMaterialDO dbProductMaterialDO = productMaterialMapper.findBySkuAndMaterial(skuId, materialDO.getId());

@@ -60,6 +60,18 @@ public class ProductController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "addProductMaterial", method = RequestMethod.POST)
+    public Result addProductMaterial(@RequestBody ProductSku productSku, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = productService.addProductMaterial(productSku);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "removeProductMaterial", method = RequestMethod.POST)
+    public Result removeProductMaterial(@RequestBody ProductSku productSku, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = productService.removeProductMaterial(productSku);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "queryProductById", method = RequestMethod.POST)
     public Result queryProductById(@RequestBody Product product, BindingResult validResult) {
         ServiceResult<String, Product> serviceResult = productService.queryProductById(product.getProductId());

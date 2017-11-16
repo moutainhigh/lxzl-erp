@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.material.impl;
 import com.lxzl.erp.common.constant.CategoryType;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.MaterialType;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
@@ -10,6 +11,7 @@ import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.product.impl.support.MaterialConverter;
@@ -206,5 +208,37 @@ public class MaterialServiceImpl implements MaterialService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
+    }
+
+    @Override
+    public boolean isAllMainMaterial(List<Material> materialList) {
+        if (CollectionUtil.isEmpty(materialList)) {
+            return false;
+        }
+        for (Material material : materialList) {
+            if(!MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
+                    || !MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(material.getMaterialType())
+                    || !MaterialType.MATERIAL_TYPE_CPU.equals(material.getMaterialType())
+                    || !MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(material.getMaterialType())){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean isAllGadget(List<Material> materialList) {
+        if (CollectionUtil.isEmpty(materialList)) {
+            return false;
+        }
+        for (Material material : materialList) {
+            if(MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
+                    || MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(material.getMaterialType())
+                    || MaterialType.MATERIAL_TYPE_CPU.equals(material.getMaterialType())
+                    || MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(material.getMaterialType())){
+                return false;
+            }
+        }
+        return true;
     }
 }

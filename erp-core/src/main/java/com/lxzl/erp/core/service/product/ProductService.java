@@ -51,6 +51,22 @@ public interface ProductService extends BaseService {
     ServiceResult<String, Integer> updateProduct(Product product);
 
     /**
+     * 添加商品物料
+     *
+     * @param productSku 商品SKU
+     * @return 商品ID
+     */
+    ServiceResult<String, Integer> addProductMaterial(ProductSku productSku);
+
+    /**
+     * 移除商品物料
+     *
+     * @param productSku 商品SKU
+     * @return 商品ID
+     */
+    ServiceResult<String, Integer> removeProductMaterial(ProductSku productSku);
+
+    /**
      * 根据商品ID查询商品
      *
      * @param productId 商品ID
