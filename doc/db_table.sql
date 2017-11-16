@@ -411,7 +411,7 @@ CREATE TABLE `erp_workflow_link` (
   `workflow_last_step` int(20) NOT NULL COMMENT '流程最后步骤',
   `workflow_current_node_id` int(20) NOT NULL COMMENT '当前结点ID',
   `current_verify_user` int(20) COMMENT '审核人',
-  `current_verify_time` datetime COMMENT '审核时间',
+  `current_verify_status` int(20) COMMENT '审核状态',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',

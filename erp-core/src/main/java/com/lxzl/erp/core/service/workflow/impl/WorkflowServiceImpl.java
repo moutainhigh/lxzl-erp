@@ -264,8 +264,8 @@ public class WorkflowServiceImpl implements WorkflowService {
                 noticeBusinessModule = true;
             }
             workflowLinkDO.setCurrentVerifyUser(nextVerifyUser);
+            workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
         } else {
-
             workflowLinkDO.setCurrentVerifyUser(null);
             workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
             if (WorkflowReturnType.RETURN_TYPE_ROOT.equals(returnType)) {
@@ -362,12 +362,12 @@ public class WorkflowServiceImpl implements WorkflowService {
     /**
      * 继续工作流
      */
-    private Integer continueWorkflowLink(WorkflowLinkDO oldWorkflowLinkDO, Integer verifyUser, Date currentTime) {
+    private Integer continueWorkflowLink(WorkflowLinkDO workflowLinkDO, Integer verifyUser, Date currentTime) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        if (oldWorkflowLinkDO == null) {
+        if (workflowLinkDO == null) {
             return null;
         }
-        List<WorkflowLinkDetailDO> workflowLinkDetailDOList = oldWorkflowLinkDO.getWorkflowLinkDetailDOList();
+        List<WorkflowLinkDetailDO> workflowLinkDetailDOList = workflowLinkDO.getWorkflowLinkDetailDOList();
         if (workflowLinkDetailDOList == null || workflowLinkDetailDOList.isEmpty()) {
             return null;
         }
@@ -376,9 +376,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         if (!VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
             return null;
         }
-
-
-        WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findById(oldWorkflowLinkDO.getWorkflowTemplateId());
+        WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findById(workflowLinkDO.getWorkflowTemplateId());
         if (workflowTemplateDO == null) {
             return null;
         }
@@ -386,13 +384,11 @@ public class WorkflowServiceImpl implements WorkflowService {
         if (workflowNodeDOList == null || workflowNodeDOList.isEmpty()) {
             return null;
         }
-        WorkflowLinkDO workflowLinkDO = new WorkflowLinkDO();
-        workflowLinkDO.setWorkflowType(oldWorkflowLinkDO.getWorkflowType());
-        workflowLinkDO.setWorkflowTemplateId(oldWorkflowLinkDO.getWorkflowTemplateId());
-        workflowLinkDO.setWorkflowReferId(oldWorkflowLinkDO.getWorkflowReferId());
-        workflowLinkDO.setWorkflowStep(oldWorkflowLinkDO.getWorkflowStep());
-        workflowLinkDO.setWorkflowLastStep(oldWorkflowLinkDO.getWorkflowLastStep());
-        workflowLinkDO.setWorkflowCurrentNodeId(oldWorkflowLinkDO.getWorkflowCurrentNodeId());
+        WorkflowNodeDO thisWorkflowNodeDO = workflowNodeDOList.get(0);
+        WorkflowNodeDO lastWorkflowNodeDO = workflowNodeDOList.get(workflowNodeDOList.size() - 1);
+        workflowLinkDO.setWorkflowStep(thisWorkflowNodeDO.getWorkflowStep());
+        workflowLinkDO.setWorkflowLastStep(lastWorkflowNodeDO.getWorkflowStep());
+        workflowLinkDO.setWorkflowCurrentNodeId(thisWorkflowNodeDO.getId());
         workflowLinkDO.setCurrentVerifyUser(verifyUser);
         workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
         workflowLinkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -400,9 +396,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowLinkDO.setCreateUser(loginUser.getUserId().toString());
         workflowLinkDO.setUpdateTime(currentTime);
         workflowLinkDO.setCreateTime(currentTime);
-        workflowLinkMapper.save(workflowLinkDO);
+        workflowLinkMapper.update(workflowLinkDO);
 
-        WorkflowNodeDO thisWorkflowNodeDO = workflowNodeDOList.get(0);
         WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
         workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
         workflowLinkDetailDO.setWorkflowReferId(lastWorkflowLinkDetailDO.getWorkflowReferId());
