@@ -143,6 +143,15 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_CONNECT_NAME_NOT_NULL = "J500006";
     public static final String CUSTOMER_NOT_NULL = "J500007";
     public static final String CUSTOMER_NO_NOT_NULL = "J500008";
+    public static final String CUSTOMER_RISK_MANAGEMENT_ID_NOT_NULL = "J500009";
+    public static final String CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_NOT_NULL = "J500010";
+    public static final String CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_NOT_NULL = "J500011";
+    public static final String CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_NOT_NULL = "J500012";
+    public static final String CUSTOMER_NOT_EXISTS = "J500013";
+    public static final String CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_ERROR = "J500014";
+    public static final String CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR = "J500015";
+    public static final String CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR = "J500016";
+    public static final String CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS = "J500017";
 
     static
     {
@@ -280,6 +289,15 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_CONNECT_NAME_NOT_NULL,"企业客户联系人姓名不能为空");
         MAP.put(CUSTOMER_NOT_NULL,"客户不存在");
         MAP.put(CUSTOMER_NO_NOT_NULL,"客户编号不能为空");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_ID_NOT_NULL,"风控ID不能为空");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_NOT_NULL,"授信额度不能为空");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_NOT_NULL,"押金期数不能为空");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_NOT_NULL,"付款期数不能为空");
+        MAP.put(CUSTOMER_NOT_EXISTS,"客户不存在");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_ERROR,"授信额度不能小于0");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR,"押金期数不能小于0");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR,"付款期数不能小于1");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS,"风控信息不存在");
     }
 
     public static String getMessage(String code)
