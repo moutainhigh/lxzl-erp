@@ -11,6 +11,7 @@ public class ProductCategoryPropertyValue implements Serializable {
     private String propertyValueName;
     private Integer propertyId;
     private Integer categoryId;
+    private Integer referId;
     private Integer dataOrder;
     private Integer dataStatus;
     private String remark;
@@ -69,5 +70,13 @@ public class ProductCategoryPropertyValue implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Integer getReferId() {
+        return referId;
+    }
+
+    public void setReferId(Integer referId) {
+        this.referId = referId;
     }
 }

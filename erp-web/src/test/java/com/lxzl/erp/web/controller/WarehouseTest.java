@@ -25,7 +25,6 @@ public class WarehouseTest extends ERPUnTransactionalTest {
         WarehouseQueryParam warehouseQueryParam = new WarehouseQueryParam();
         warehouseQueryParam.setPageNo(1);
         warehouseQueryParam.setPageSize(20);
-        warehouseQueryParam.setWarehouseType(20);
         TestResult result = getJsonTestResult("/warehouse/getWarehousePage", warehouseQueryParam);
     }
 
