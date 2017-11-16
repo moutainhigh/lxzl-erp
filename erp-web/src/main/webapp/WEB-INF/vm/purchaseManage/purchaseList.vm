@@ -123,7 +123,7 @@
                                         <div class="btn-group text-right">
                                             {{#rowActionButtons}}
                                             {{#buttons}}
-                                            <a href="${ctx}{{menuUrl}}?no={{purchaseNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-purchaseno="{{purchaseNo}}">{{text}}</a>
+                                            <a href="${ctx}{{menuUrl}}?no={{purchaseNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-purchaseno="{{purchaseNo}}" data-purchaseorderid="{{purchaseOrderId}}">{{text}}</a>
                                             {{/buttons}}
                                             {{/rowActionButtons}}
                                         </div>

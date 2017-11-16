@@ -3,7 +3,7 @@
         <div class="panel-heading">
             <span class="panel-title"><i class="fa fa-search"></i>选择审核人</span>
         </div>
-        <div class="panel-menu p12">
+        #*<div class="panel-menu p12">
             <div class="row">
                 <div class="col-md-12 text-right">
                     <form id="chooseAuditUserSearchForm" class="form-horizontal">
@@ -19,7 +19,7 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </div>*#
         <div class="panel-body pn">
             <div class="table-responsive">
                 <script type="text/html" id="chooseAuditUserModalDataListTpl">
@@ -81,13 +81,13 @@
                 <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="chooseAuditUserModalDataListTable"></table>
             </div>
         </div>
-        <div class="panel-footer">
+        #*<div class="panel-footer">
             <div class="row">
                 <div class="col-xs-12 col-md-12 text-right mt10 mb10">
                     #parse("component/pager.vm")
                 </div>
             </div>
-        </div>
+        </div>*#
     </div>
 </div>
 
