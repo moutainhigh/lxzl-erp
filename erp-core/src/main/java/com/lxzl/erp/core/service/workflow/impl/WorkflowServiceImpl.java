@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
@@ -116,18 +117,24 @@ public class WorkflowServiceImpl implements WorkflowService {
     public ServiceResult<String, List<User>> getNextVerifyUsers(Integer workflowType, Integer workflowReferId) {
         ServiceResult<String, List<User>> result = new ServiceResult<>();
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferId(workflowType, workflowReferId);
+        WorkflowNodeDO workflowNodeDO;
         if (workflowLinkDO == null) {
-            result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
-            return result;
+            WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
+            if (workflowTemplateDO == null || CollectionUtil.isEmpty(workflowTemplateDO.getWorkflowNodeDOList())) {
+                result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+                return result;
+            }
+            workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(0);
+        } else {
+            List<WorkflowLinkDetailDO> workflowLinkDetailDOList = workflowLinkDO.getWorkflowLinkDetailDOList();
+            if (workflowLinkDetailDOList == null || workflowLinkDetailDOList.isEmpty()) {
+                result.setErrorCode(ErrorCode.WORKFLOW_LINK_HAVE_NO_DETAIL);
+                return result;
+            }
+            WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(workflowLinkDetailDOList.size() - 1);
+            workflowNodeDO = workflowNodeMapper.findById(lastWorkflowLinkDetailDO.getWorkflowCurrentNodeId());
         }
 
-        List<WorkflowLinkDetailDO> workflowLinkDetailDOList = workflowLinkDO.getWorkflowLinkDetailDOList();
-        if (workflowLinkDetailDOList == null || workflowLinkDetailDOList.isEmpty()) {
-            result.setErrorCode(ErrorCode.WORKFLOW_LINK_HAVE_NO_DETAIL);
-            return result;
-        }
-        WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(workflowLinkDetailDOList.size() - 1);
-        WorkflowNodeDO workflowNodeDO = workflowNodeMapper.findById(lastWorkflowLinkDetailDO.getWorkflowCurrentNodeId());
         if (workflowNodeDO == null) {
             result.setErrorCode(ErrorCode.WORKFLOW_NODE_NOT_EXISTS);
             return result;
