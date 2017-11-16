@@ -30,6 +30,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class MaterialController extends BaseController {
 
 
+    @RequestMapping(value = "add", method = RequestMethod.POST)
+    public Result add(@RequestBody Material material, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = materialService.addMaterial(material);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public Result update(@RequestBody Material material, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = materialService.addMaterial(material);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "queryAllMaterial", method = RequestMethod.POST)
     public Result queryAllMaterial(@RequestBody MaterialQueryParam materialQueryParam, BindingResult validResult) {
         ServiceResult<String, Page<Material>> serviceResult = materialService.queryAllMaterial(materialQueryParam);

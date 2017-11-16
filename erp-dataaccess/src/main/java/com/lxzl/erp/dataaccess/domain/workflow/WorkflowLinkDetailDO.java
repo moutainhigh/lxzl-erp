@@ -14,6 +14,7 @@ public class WorkflowLinkDetailDO  extends BaseDO {
 	private Integer workflowPreviousNodeId;
 	private Integer workflowNextNodeId;
 	private Integer verifyUser;
+	private String verifyUserName;
 	private Date verifyTime;
 	private Integer verifyStatus;
 	private String verifyOpinion;
@@ -124,4 +125,11 @@ public class WorkflowLinkDetailDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public String getVerifyUserName() {
+		return verifyUserName;
+	}
+
+	public void setVerifyUserName(String verifyUserName) {
+		this.verifyUserName = verifyUserName;
+	}
 }

@@ -45,6 +45,15 @@ public class MaterialConverter {
         return material;
     }
 
+    public static MaterialDO convertMaterial(Material material){
+        MaterialDO materialDO = new MaterialDO();
+        if(material.getMaterialId() != null){
+            materialDO.setId(material.getMaterialId());
+        }
+        BeanUtils.copyProperties(material,materialDO);
+        return materialDO;
+    }
+
     public static List<Material> convertMaterialDOList(List<MaterialDO> materialDOList){
         List<Material> materialList = new ArrayList<>();
         if(materialDOList != null && !materialDOList.isEmpty()){

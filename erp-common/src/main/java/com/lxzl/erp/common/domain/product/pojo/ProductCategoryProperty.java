@@ -12,7 +12,6 @@ public class ProductCategoryProperty implements Serializable {
     private String propertyName;
     private Integer categoryId;
     private Integer propertyType;
-    private Integer isMaterial;
     private Integer materialType;
     private Integer isInput;
     private Integer isCheckbox;
@@ -108,14 +107,6 @@ public class ProductCategoryProperty implements Serializable {
 
     public void setProductCategoryPropertyValueList(List<ProductCategoryPropertyValue> productCategoryPropertyValueList) {
         this.productCategoryPropertyValueList = productCategoryPropertyValueList;
-    }
-
-    public Integer getIsMaterial() {
-        return isMaterial;
-    }
-
-    public void setIsMaterial(Integer isMaterial) {
-        this.isMaterial = isMaterial;
     }
 
     public Integer getMaterialType() {

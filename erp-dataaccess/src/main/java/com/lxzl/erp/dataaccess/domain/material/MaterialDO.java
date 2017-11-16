@@ -1,6 +1,7 @@
 package com.lxzl.erp.dataaccess.domain.material;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
 
@@ -20,11 +21,16 @@ public class MaterialDO extends BaseDO {
     private Integer propertyId;
     private Integer propertyValueId;
     private BigDecimal materialPrice;
-    private BigDecimal originalPrice;
     private BigDecimal rentPrice;
     private String materialDesc;
     private Integer dataStatus;
     private String remark;
+
+
+    @Transient
+    private String propertyName;
+    @Transient
+    private String propertyValueName;
 
     public Integer getId() {
         return id;
@@ -106,14 +112,6 @@ public class MaterialDO extends BaseDO {
         this.propertyValueId = propertyValueId;
     }
 
-    public BigDecimal getOriginalPrice() {
-        return originalPrice;
-    }
-
-    public void setOriginalPrice(BigDecimal originalPrice) {
-        this.originalPrice = originalPrice;
-    }
-
     public BigDecimal getRentPrice() {
         return rentPrice;
     }
@@ -136,5 +134,21 @@ public class MaterialDO extends BaseDO {
 
     public void setMaterialType(Integer materialType) {
         this.materialType = materialType;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
+    public String getPropertyValueName() {
+        return propertyValueName;
+    }
+
+    public void setPropertyValueName(String propertyValueName) {
+        this.propertyValueName = propertyValueName;
     }
 }

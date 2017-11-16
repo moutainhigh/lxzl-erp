@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.product.impl;
 
+import com.lxzl.erp.common.constant.CategoryType;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -98,23 +99,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         productCategoryPropertyValueDO.setUpdateTime(currentTime);
         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
 
-        if (CommonConstant.COMMON_CONSTANT_YES.equals(productCategoryPropertyDO.getIsMaterial())) {
-            MaterialDO materialDO = new MaterialDO();
-            materialDO.setMaterialName(productCategoryPropertyDO.getPropertyName() + "&" + productCategoryPropertyValueDO.getPropertyValueName());
-            materialDO.setMaterialNo(GenerateNoUtil.generateMaterialNo(currentTime));
-            materialDO.setMaterialType(productCategoryPropertyDO.getMaterialType());
-            materialDO.setCategoryId(productCategoryPropertyDO.getCategoryId());
-            materialDO.setPropertyId(productCategoryPropertyDO.getId());
-            materialDO.setPropertyValueId(productCategoryPropertyValueDO.getId());
-            materialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            materialDO.setCreateUser(loginUser.getUserId().toString());
-            materialDO.setUpdateUser(loginUser.getUserId().toString());
-            materialDO.setCreateTime(currentTime);
-            materialDO.setUpdateTime(currentTime);
-            materialMapper.save(materialDO);
-        }
-
-
         result.setResult(productCategoryPropertyValueDO.getId());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -144,30 +128,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         productCategoryPropertyValueDO.setCreateTime(currentTime);
         productCategoryPropertyValueDO.setUpdateTime(currentTime);
         productCategoryPropertyValueMapper.update(productCategoryPropertyValueDO);
-
-        if (CommonConstant.COMMON_CONSTANT_YES.equals(productCategoryPropertyDO.getIsMaterial())) {
-            MaterialDO dbMaterialDO = materialMapper.findByPropertyAndValueId(productCategoryPropertyDO.getId(), productCategoryPropertyValueDO.getId());
-            if (dbMaterialDO == null) {
-                MaterialDO materialDO = new MaterialDO();
-                materialDO.setMaterialName(productCategoryPropertyDO.getPropertyName() + "&" + productCategoryPropertyValueDO.getPropertyValueName());
-                materialDO.setMaterialNo(GenerateNoUtil.generateMaterialNo(currentTime));
-                materialDO.setMaterialType(productCategoryPropertyDO.getMaterialType());
-                materialDO.setCategoryId(productCategoryPropertyDO.getCategoryId());
-                materialDO.setPropertyId(productCategoryPropertyDO.getId());
-                materialDO.setPropertyValueId(productCategoryPropertyValueDO.getId());
-                materialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                materialDO.setCreateUser(loginUser.getUserId().toString());
-                materialDO.setUpdateUser(loginUser.getUserId().toString());
-                materialDO.setCreateTime(currentTime);
-                materialDO.setUpdateTime(currentTime);
-                materialMapper.save(materialDO);
-            } else {
-                dbMaterialDO.setMaterialName(productCategoryPropertyDO.getPropertyName() + "&" + productCategoryPropertyValueDO.getPropertyValueName());
-                dbMaterialDO.setUpdateUser(loginUser.getUserId().toString());
-                dbMaterialDO.setUpdateTime(currentTime);
-                materialMapper.update(dbMaterialDO);
-            }
-        }
 
         result.setResult(productCategoryPropertyValueDO.getId());
         result.setErrorCode(ErrorCode.SUCCESS);

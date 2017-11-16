@@ -12,7 +12,6 @@ public class ProductCategoryPropertyDO extends BaseDO {
     private String propertyName;
     private Integer categoryId;
     private Integer propertyType;
-    private Integer isMaterial;
     private Integer materialType;
     private Integer isInput;
     private Integer isCheckbox;
@@ -108,14 +107,6 @@ public class ProductCategoryPropertyDO extends BaseDO {
 
     public void setProductCategoryPropertyValueDOList(List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList) {
         this.productCategoryPropertyValueDOList = productCategoryPropertyValueDOList;
-    }
-
-    public Integer getIsMaterial() {
-        return isMaterial;
-    }
-
-    public void setIsMaterial(Integer isMaterial) {
-        this.isMaterial = isMaterial;
     }
 
     public Integer getMaterialType() {

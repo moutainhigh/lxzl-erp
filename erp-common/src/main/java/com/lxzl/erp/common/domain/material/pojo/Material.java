@@ -21,11 +21,13 @@ public class Material implements Serializable {
     private Integer propertyId;
     private Integer propertyValueId;
     private BigDecimal materialPrice;
-    private BigDecimal originalPrice;
     private BigDecimal rentPrice;
     private String materialDesc;
     private Integer dataStatus;
     private String remark;
+
+    private String propertyName;
+    private String propertyValueName;
 
     public Integer getMaterialId() {
         return materialId;
@@ -91,14 +93,6 @@ public class Material implements Serializable {
         this.propertyValueId = propertyValueId;
     }
 
-    public BigDecimal getOriginalPrice() {
-        return originalPrice;
-    }
-
-    public void setOriginalPrice(BigDecimal originalPrice) {
-        this.originalPrice = originalPrice;
-    }
-
     public BigDecimal getRentPrice() {
         return rentPrice;
     }
@@ -137,5 +131,21 @@ public class Material implements Serializable {
 
     public void setMaterialType(Integer materialType) {
         this.materialType = materialType;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
+    public String getPropertyValueName() {
+        return propertyValueName;
+    }
+
+    public void setPropertyValueName(String propertyValueName) {
+        this.propertyValueName = propertyValueName;
     }
 }

@@ -16,6 +16,7 @@ public class WorkflowLinkDetail implements Serializable {
 	private Integer workflowPreviousNodeId;   //上节点ID
 	private Integer workflowNextNodeId;   //下节点ID
 	private Integer verifyUser;   //审核人
+	private String verifyUserName;   //审核人
 	private Date verifyTime;   //审核时间
 	private Integer verifyStatus;   //审核状态
 	private String verifyOpinion;   //审核意见
@@ -163,4 +164,11 @@ public class WorkflowLinkDetail implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public String getVerifyUserName() {
+		return verifyUserName;
+	}
+
+	public void setVerifyUserName(String verifyUserName) {
+		this.verifyUserName = verifyUserName;
+	}
 }

@@ -17,18 +17,40 @@ import com.lxzl.se.core.service.BaseService;
 public interface MaterialService extends BaseService {
 
     /**
+     * 添加物料
+     *
+     * @param material 物料信息
+     * @return 物料编码
+     */
+    ServiceResult<String, String> addMaterial(Material material);
+
+    /**
+     * 修改物料
+     *
+     * @param material 物料信息
+     * @return 物料编码
+     */
+    ServiceResult<String, String> updateMaterial(Material material);
+
+    /**
+     * 查询所有物料
+     *
      * @param materialQueryParam 查询物料参数
-     * @return  物料集合
+     * @return 物料集合
      */
     ServiceResult<String, Page<Material>> queryAllMaterial(MaterialQueryParam materialQueryParam);
 
     /**
+     * 查询所有散料
+     *
      * @param bulkMaterialQueryParam 查询散料参数
      * @return 散料集合
      */
     ServiceResult<String, Page<BulkMaterial>> queryAllBulkMaterial(BulkMaterialQueryParam bulkMaterialQueryParam);
 
     /**
+     * 根据物料信息查询散料
+     *
      * @param bulkMaterialQueryParam 查询散料参数
      * @return 散料集合
      */

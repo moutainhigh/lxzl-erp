@@ -16,6 +16,7 @@ public class ErrorCode {
     public static final String SYSTEM_EXCEPTION = "J000998";
     public static final String SYSTEM_ERROR = "J000999";
     public static final String RECORD_NOT_EXISTS = "J009999";
+    public static final String RECORD_ALREADY_EXISTS = "J099999";
 
     public static final String USER_NAME_NOT_NULL = "J100000";
     public static final String USER_PASSWORD_NOT_NULL = "J100001";
@@ -83,6 +84,7 @@ public class ErrorCode {
     public static final String OPERATOR_IS_NOT_YOURSELF = "J900015";
     public static final String PARAM_IS_NOT_ENOUGH = "J900016";
     public static final String NO_DUPLICATE_COMMIT = "J900017";
+    public static final String PARAM_IS_ERROR= "J900018";
 
     public static final String PURCHASE_ORDER_ID_NOT_NULL = "J300000";
     public static final String PRODUCT_SUPPLIER_ID_NOT_NULL = "J300001";
@@ -161,6 +163,7 @@ public class ErrorCode {
         MAP.put(SYSTEM_EXCEPTION,"系统异常");
         MAP.put(SYSTEM_ERROR,"系统错误,请联系管理员");
         MAP.put(RECORD_NOT_EXISTS,"记录不存在");
+        MAP.put(RECORD_ALREADY_EXISTS,"记录已经存在");
         MAP.put(USER_NOT_LOGIN,"用户未登录");
         MAP.put(USER_DISABLE,"用户已禁用，请联系管理员");
         MAP.put(USER_NAME_NOT_FOUND,"用户名不存在");
@@ -228,6 +231,7 @@ public class ErrorCode {
         MAP.put(OPERATOR_IS_NOT_YOURSELF,"操作者不是本人，不能操作");
         MAP.put(PARAM_IS_NOT_ENOUGH,"信息不全，请仔细检查");
         MAP.put(NO_DUPLICATE_COMMIT,"禁止重复提交");
+        MAP.put(PARAM_IS_ERROR,"参数有误，请仔细检查");
 
         MAP.put(PURCHASE_ORDER_ID_NOT_NULL,"采购订单ID不能为空");
         MAP.put(PRODUCT_SUPPLIER_ID_NOT_NULL,"商品供应商ID不能为空");

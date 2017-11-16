@@ -31,6 +31,7 @@
 		<result column="detail_workflow_previous_node_id" jdbcType="INTEGER" property="workflowPreviousNodeId" />
 		<result column="detail_workflow_next_node_id" jdbcType="INTEGER" property="workflowNextNodeId" />
 		<result column="detail_verify_user" jdbcType="INTEGER" property="verifyUser" />
+		<result column="detail_verify_user_name" jdbcType="VARCHAR" property="verifyUserName" />
 		<result column="detail_verify_time" jdbcType="TIMESTAMP" property="verifyTime" />
 		<result column="detail_verify_status" jdbcType="INTEGER" property="verifyStatus" />
 		<result column="detail_verify_opinion" jdbcType="VARCHAR" property="verifyOpinion" />
@@ -51,22 +52,24 @@
 	</sql>
 
 	<select id="findById" resultMap="WorkflowLinkDO" parameterType="java.lang.Integer">
-		select link.*,<include refid="detail_column_List"/> from
+		select link.*,<include refid="detail_column_List"/>,eu.real_name as detail_verify_user_name from
 		(
 			select <include refid="column_List"/>,eu.real_name as current_verify_user_name from erp_workflow_link ewl
 			LEFT JOIN erp_user eu ON eu.id = ewl.current_verify_user
 			where ewl.id = #{id, jdbcType=INTEGER} and data_status = 1
 		) link left join erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
+		LEFT JOIN erp_user eu ON eu.id = ewld.verify_user
 		order by ewld.id
 	</select>
 
 	<select id="findByWorkflowTypeAndReferId" resultMap="WorkflowLinkDO" parameterType="map">
-		select link.*,<include refid="detail_column_List"/> from
+		select link.*,<include refid="detail_column_List"/>,eu.real_name as detail_verify_user_name from
 		(
 			select <include refid="column_List"/>,eu.real_name as current_verify_user_name from erp_workflow_link ewl
 			LEFT JOIN erp_user eu ON eu.id = ewl.current_verify_user
 			where ewl.workflow_type = #{workflowType, jdbcType=INTEGER} and ewl.workflow_refer_id = #{referId, jdbcType=INTEGER} and data_status = 1
 		) link left join erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
+		LEFT JOIN erp_user eu ON eu.id = ewld.verify_user
 		order by ewld.id
 	</select>
 
@@ -86,7 +89,7 @@
 	</select>
 
 	<select id="listPage" resultMap="WorkflowLinkDO" parameterType="map">
-		select link.*,<include refid="detail_column_List"/>
+		select link.*,<include refid="detail_column_List"/>,eu.real_name as detail_verify_user_name
 		from
 		(
 			select <include refid="column_List"/>,eu.real_name as current_verify_user_name from erp_workflow_link ewl
@@ -104,6 +107,7 @@
 			</where>
 			LIMIT #{maps.start},#{maps.pageSize}
 		) link left join erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
+		LEFT JOIN erp_user eu ON eu.id = ewld.verify_user
 		order by ewld.id
 	</select>
 

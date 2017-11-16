@@ -14,7 +14,6 @@
 		<result column="property_id" jdbcType="INTEGER" property="propertyId" />
 		<result column="property_value_id" jdbcType="INTEGER" property="propertyValueId" />
 		<result column="material_price" jdbcType="DECIMAL" property="materialPrice" />
-		<result column="original_price" jdbcType="DECIMAL" property="originalPrice" />
 		<result column="rent_price" jdbcType="DECIMAL" property="rentPrice" />
 		<result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -26,7 +25,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		em.id,em.material_no,em.material_name,em.material_type,em.brand_id,em.category_id,em.property_id,em.property_value_id,em.material_price,em.original_price,em.rent_price,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
+		em.id,em.material_no,em.material_name,em.material_type,em.brand_id,em.category_id,em.property_id,em.property_value_id,em.material_price,em.rent_price,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
 	</sql>
 
 	<select id="findById" resultMap="MaterialDO" parameterType="java.lang.Integer">
@@ -62,6 +61,7 @@
 
 	<select id="listPage" resultMap="MaterialDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_material em
+		LEFT JOIN erp_product_category_property epcp on em.property_id =
 		<where>
 			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialType != null &amp;&amp; maps.materialQueryParam.materialType != ''">
 				and em.material_type = #{maps.materialQueryParam.materialType, jdbcType=INTEGER}
@@ -105,9 +105,6 @@
 			</if>
 			<if test="materialPrice != null">
 				material_price = #{materialPrice,jdbcType=DECIMAL},
-			</if>
-			<if test="originalPrice != null">
-				original_price = #{originalPrice,jdbcType=DECIMAL},
 			</if>
 			<if test="rentPrice != null">
 				rent_price = #{rentPrice,jdbcType=DECIMAL},
