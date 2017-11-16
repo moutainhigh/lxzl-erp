@@ -13,6 +13,9 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="companyName" jdbcType="VARCHAR" property="companyName" />
+		<result column="personName" jdbcType="VARCHAR" property="personName" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -24,7 +27,9 @@
 		WHERE ec.id = #{id, jdbcType=INTEGER} AND ec.data_status = 1 
 	</select>
 	<select id="findByNo" resultMap="CustomerDO" parameterType="java.lang.String">
-		SELECT <include refid="column_List"/> FROM erp_customer ec
+		SELECT <include refid="column_List"/>,ecc.company_name companyName ,ecp.real_name personName FROM erp_customer ec
+		LEFT JOIN erp_customer_company ecc ON ec.id=ecc.customer_id AND ec.customer_type=1 AND ecc.data_status=1
+		LEFT JOIN erp_customer_person ecp ON ec.id=ecp.customer_id AND ec.customer_type=2 AND ecp.data_status=1
 		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>
 

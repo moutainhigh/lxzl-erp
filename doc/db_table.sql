@@ -329,7 +329,7 @@ CREATE TABLE `erp_customer_company` (
 DROP TABLE if exists `erp_customer_risk_management`;
 CREATE TABLE `erp_customer_risk_management` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `customer_id` int(20) NOT NULL COMMENT '用户ID',
+  `customer_id` int(20) NOT NULL COMMENT '客户ID',
   `credit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '授信额度',
   `credit_amount_used` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '已用授信额度',
   `deposit_cycle` int(11) COMMENT '押金期数',
