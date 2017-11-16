@@ -77,6 +77,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public ServiceResult<String, String> commitOrder(String orderNo) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
     public ServiceResult<String, Order> queryOrderByNo(String orderNo) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         ServiceResult<String, Order> result = new ServiceResult<>();

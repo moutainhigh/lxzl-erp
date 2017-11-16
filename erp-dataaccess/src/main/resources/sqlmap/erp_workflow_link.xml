@@ -66,8 +66,14 @@
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		select count(ewl.id) from erp_workflow_link ewl 
+		select count(ewl.id) from erp_workflow_link ewl
 		<where>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowType != null">and
+				ewl.workflow_type = #{maps.workflowQueryParam.workflowType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowReferId != null">
+				and ewl.workflow_refer_id = #{maps.workflowQueryParam.workflowReferId, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				and ewl.data_status = 1
 			</if>
@@ -75,13 +81,24 @@
 	</select>
 
 	<select id="listPage" resultMap="WorkflowLinkDO" parameterType="map">
-		select <include refid="column_List"/> from erp_workflow_link ewl 
-		<where>
-			<if test="true">
-				and ewl.data_status = 1
-			</if>
-		</where>
-		LIMIT #{maps.start},#{maps.pageSize}
+		select link.*,<include refid="detail_column_List"/>
+		from
+		(
+			select <include refid="column_List"/> from erp_workflow_link ewl
+			<where>
+				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowType != null">
+					and ewl.workflow_type = #{maps.workflowQueryParam.workflowType, jdbcType=INTEGER}
+				</if>
+				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowReferId != null">
+					and ewl.workflow_refer_id = #{maps.workflowQueryParam.workflowReferId, jdbcType=INTEGER}
+				</if>
+				<if test="true">
+					and ewl.data_status = 1
+				</if>
+			</where>
+			LIMIT #{maps.start},#{maps.pageSize}
+		) link left join erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
+		order by ewld.id
 	</select>
 
 	<sql id="set_column_sql">

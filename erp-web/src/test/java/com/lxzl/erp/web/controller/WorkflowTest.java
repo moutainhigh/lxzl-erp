@@ -3,7 +3,9 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.VerifyStatus;
+import com.lxzl.erp.common.constant.WorkflowType;
 import com.lxzl.erp.common.domain.workflow.VerifyWorkflowParam;
+import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import org.junit.Test;
 
 /**
@@ -23,5 +25,29 @@ public class WorkflowTest extends ERPUnTransactionalTest {
         workflowParam.setVerifyOpinion("允许采购");
 
         TestResult result = getJsonTestResult("/workflow/verifyWorkFlow",workflowParam);
+    }
+
+    @Test
+    public void queryNextVerifyUsers() throws Exception{
+        WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
+        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
+        workflowLinkQueryParam.setWorkflowReferId(6000013);
+        TestResult result = getJsonTestResult("/workflow/queryNextVerifyUsers",workflowLinkQueryParam);
+    }
+
+    @Test
+    public void queryWorkflowLinkPage() throws Exception{
+        WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
+        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
+//        workflowLinkQueryParam.setWorkflowReferId(6000013);
+        TestResult result = getJsonTestResult("/workflow/queryWorkflowLinkPage",workflowLinkQueryParam);
+    }
+
+    @Test
+    public void queryWorkflowLinkDetail() throws Exception{
+        WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
+        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
+        workflowLinkQueryParam.setWorkflowReferId(6000013);
+        TestResult result = getJsonTestResult("/workflow/queryWorkflowLinkDetail",workflowLinkQueryParam);
     }
 }

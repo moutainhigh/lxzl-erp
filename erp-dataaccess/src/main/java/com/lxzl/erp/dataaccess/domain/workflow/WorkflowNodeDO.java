@@ -10,6 +10,8 @@ public class WorkflowNodeDO  extends BaseDO {
 	private String workflowNodeName;
 	private Integer workflowTemplateId;
 	private Integer workflowStep;
+	private Integer workflowPreviousNodeId;
+	private Integer workflowNextNodeId;
 	private Integer workflowDepartment;
 	private Integer workflowRole;
 	private Integer workflowUser;
@@ -88,4 +90,19 @@ public class WorkflowNodeDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public Integer getWorkflowPreviousNodeId() {
+		return workflowPreviousNodeId;
+	}
+
+	public void setWorkflowPreviousNodeId(Integer workflowPreviousNodeId) {
+		this.workflowPreviousNodeId = workflowPreviousNodeId;
+	}
+
+	public Integer getWorkflowNextNodeId() {
+		return workflowNextNodeId;
+	}
+
+	public void setWorkflowNextNodeId(Integer workflowNextNodeId) {
+		this.workflowNextNodeId = workflowNextNodeId;
+	}
 }

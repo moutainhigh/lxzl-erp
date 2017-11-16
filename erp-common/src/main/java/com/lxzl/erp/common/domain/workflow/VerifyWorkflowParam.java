@@ -8,10 +8,26 @@ import java.io.Serializable;
  * @author gaochao
  * @date 2017-11-07 19:26
  */
-public class VerifyWorkflowParam implements Serializable{
+public class VerifyWorkflowParam implements Serializable {
+    /**
+     * 工作流ID
+     */
     private Integer workflowLinkId;
+    /**
+     * 审核状态
+     */
     private Integer verifyStatus;
+    /**
+     * 回退类型，0直接退回根部，1退回上一层,只针对拒绝的时候有效
+     */
+    private Integer returnType;
+    /**
+     * 审核意见
+     */
     private String verifyOpinion;
+    /**
+     * 下一个审核人，可空
+     */
     private Integer nextVerifyUser;
 
     public Integer getWorkflowLinkId() {
@@ -44,5 +60,13 @@ public class VerifyWorkflowParam implements Serializable{
 
     public void setNextVerifyUser(Integer nextVerifyUser) {
         this.nextVerifyUser = nextVerifyUser;
+    }
+
+    public Integer getReturnType() {
+        return returnType;
+    }
+
+    public void setReturnType(Integer returnType) {
+        this.returnType = returnType;
     }
 }

@@ -7,6 +7,8 @@
 		<result column="workflow_node_name" jdbcType="VARCHAR" property="workflowNodeName" />
 		<result column="workflow_template_id" jdbcType="INTEGER" property="workflowTemplateId" />
 		<result column="workflow_step" jdbcType="INTEGER" property="workflowStep" />
+		<result column="workflow_previous_node_id" jdbcType="INTEGER" property="workflowPreviousNodeId" />
+		<result column="workflow_next_node_id" jdbcType="INTEGER" property="workflowNextNodeId" />
 		<result column="workflow_department" jdbcType="INTEGER" property="workflowDepartment" />
 		<result column="workflow_role" jdbcType="INTEGER" property="workflowRole" />
 		<result column="workflow_user" jdbcType="INTEGER" property="workflowUser" />
@@ -19,7 +21,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ewn.id,ewn.workflow_node_name,ewn.workflow_template_id,ewn.workflow_step,ewn.workflow_department,ewn.workflow_role,ewn.workflow_user,ewn.data_status,ewn.remark,ewn.create_time,ewn.create_user,ewn.update_time,ewn.update_user
+		ewn.id,ewn.workflow_node_name,ewn.workflow_template_id,ewn.workflow_step,ewn.workflow_previous_node_id,ewn.workflow_next_node_id,ewn.workflow_department,ewn.workflow_role,ewn.workflow_user,ewn.data_status,ewn.remark,ewn.create_time,ewn.create_user,ewn.update_time,ewn.update_user
 	</sql>
 
 	<select id="findById" resultMap="WorkflowNodeDO" parameterType="java.lang.Integer">
@@ -56,6 +58,12 @@
 			</if>
 			<if test="workflowStep != null">
 				workflow_step = #{workflowStep,jdbcType=INTEGER},
+			</if>
+			<if test="workflowPreviousNodeId != null">
+				workflow_previous_node_id = #{workflowPreviousNodeId,jdbcType=INTEGER},
+			</if>
+			<if test="workflowNextNodeId != null">
+				workflow_next_node_id = #{workflowNextNodeId,jdbcType=INTEGER},
 			</if>
 			<if test="workflowDepartment != null">
 				workflow_department = #{workflowDepartment,jdbcType=INTEGER},

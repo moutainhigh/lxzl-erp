@@ -71,10 +71,10 @@
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseId != null">
 				and ew.id = #{maps.warehouseQueryParam.warehouseId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.warehouseQueryParam.warehouseNo != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != null">
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != null">
 				and ew.warehouse_no = #{maps.warehouseQueryParam.warehouseNo, jdbcType=INTEGER}
 			</if>
-			<if test="maps.warehouseQueryParam.warehouseType != null &amp;&amp; maps.warehouseQueryParam.warehouseType != null">
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseType != null">
 				and ew.warehouse_type = #{maps.warehouseQueryParam.warehouseType, jdbcType=INTEGER}
 			</if>
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseName != null &amp;&amp; maps.warehouseQueryParam.warehouseName != ''">
@@ -105,10 +105,10 @@
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseId != null">
 				and ew.id = #{maps.warehouseQueryParam.warehouseId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.warehouseQueryParam.warehouseNo != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != null">
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != null">
 				and ew.warehouse_no = #{maps.warehouseQueryParam.warehouseNo, jdbcType=INTEGER}
 			</if>
-			<if test="maps.warehouseQueryParam.warehouseType != null &amp;&amp; maps.warehouseQueryParam.warehouseType != null">
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseType != null">
 				and ew.warehouse_type = #{maps.warehouseQueryParam.warehouseType, jdbcType=INTEGER}
 			</if>
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseName != null &amp;&amp; maps.warehouseQueryParam.warehouseName != ''">

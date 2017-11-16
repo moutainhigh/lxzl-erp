@@ -12,6 +12,8 @@ public class WorkflowNode implements Serializable {
 	private String workflowNodeName;   //工作流子节点名称
 	private Integer workflowTemplateId;   //流程模板ID
 	private Integer workflowStep;   //流程步骤
+	private Integer workflowPreviousNodeId;	// 上级节点
+	private Integer workflowNextNodeId;		// 下级节点
 	private Integer workflowDepartment;   //本步骤可审批部门
 	private Integer workflowRole;   //本步骤可审批角色
 	private Integer workflowUser;   //本步骤可审批人员
@@ -127,4 +129,19 @@ public class WorkflowNode implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public Integer getWorkflowPreviousNodeId() {
+		return workflowPreviousNodeId;
+	}
+
+	public void setWorkflowPreviousNodeId(Integer workflowPreviousNodeId) {
+		this.workflowPreviousNodeId = workflowPreviousNodeId;
+	}
+
+	public Integer getWorkflowNextNodeId() {
+		return workflowNextNodeId;
+	}
+
+	public void setWorkflowNextNodeId(Integer workflowNextNodeId) {
+		this.workflowNextNodeId = workflowNextNodeId;
+	}
 }

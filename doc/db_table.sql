@@ -387,6 +387,8 @@ CREATE TABLE `erp_workflow_node` (
   `workflow_node_name` varchar(100) NOT NULL DEFAULT '' COMMENT '工作流子节点名称',
   `workflow_template_id` int(20) NOT NULL COMMENT '流程模板ID',
   `workflow_step` int(20) NOT NULL COMMENT '流程步骤',
+  `workflow_previous_node_id` int(20) COMMENT '上节点ID',
+  `workflow_next_node_id` int(20) COMMENT '下节点ID',
   `workflow_department` int(20) NOT NULL COMMENT '本步骤可审批部门',
   `workflow_role` int(20) NOT NULL COMMENT '本步骤可审批角色',
   `workflow_user` int(20) NOT NULL COMMENT '本步骤可审批人员',
