@@ -107,6 +107,7 @@ public class ProductController extends BaseController {
         ServiceResult<String, List<ProductCategory>> serviceResult = productCategoryService.queryAllProductCategory();
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     @RequestMapping(value = "queryProductSkuList", method = RequestMethod.POST)
     public Result queryProductSkuList(@RequestBody ProductSkuQueryParam productSkuQueryParam, BindingResult validResult) {
         ServiceResult<String, Page<ProductSku>> serviceResult = productService.queryProductSkuList(productSkuQueryParam);
@@ -118,6 +119,7 @@ public class ProductController extends BaseController {
         ServiceResult<String, Integer> serviceResult = productCategoryService.addProductCategoryPropertyValue(productCategoryPropertyValue);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     @Autowired
     private HttpSession session;
 

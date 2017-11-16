@@ -1,5 +1,6 @@
 package com.lxzl.erp.common.domain.warehouse;
 
+import com.lxzl.erp.common.domain.material.pojo.MaterialInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.util.List;
  */
 public class ProductInStockParam implements Serializable {
     private List<ProductInStorage> productInStorageList;
+    private List<MaterialInStorage> materialInStorageList;
     private Integer srcWarehouseId;
     private Integer targetWarehouseId;
     private Integer causeType;
@@ -56,5 +58,13 @@ public class ProductInStockParam implements Serializable {
 
     public void setReferNo(String referNo) {
         this.referNo = referNo;
+    }
+
+    public List<MaterialInStorage> getMaterialInStorageList() {
+        return materialInStorageList;
+    }
+
+    public void setMaterialInStorageList(List<MaterialInStorage> materialInStorageList) {
+        this.materialInStorageList = materialInStorageList;
     }
 }

@@ -11,6 +11,7 @@ public class ProductCategoryPropertyValueDO extends BaseDO {
     private String propertyValueName;
     private Integer propertyId;
     private Integer categoryId;
+    private Integer referId;
     private Integer dataOrder;
     private Integer dataStatus;
     private String remark;
@@ -80,5 +81,13 @@ public class ProductCategoryPropertyValueDO extends BaseDO {
 
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
+    }
+
+    public Integer getReferId() {
+        return referId;
+    }
+
+    public void setReferId(Integer referId) {
+        this.referId = referId;
     }
 }

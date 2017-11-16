@@ -54,6 +54,7 @@ public class ErrorCode {
     public static final String PRODUCT_CATEGORY_PROPERTY_VALUE_NOT_EXISTS = "J200013";
     public static final String PRODUCT_CATEGORY_PROPERTY_VALUE_ALREADY_EXISTS = "J200014";
     public static final String PRODUCT_EQUIPMENT_NOT_EXISTS = "J200015";
+    public static final String MATERIAL_NOT_EXISTS = "J200016";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -202,6 +203,7 @@ public class ErrorCode {
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_NOT_EXISTS,"商品属性值不存在");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_ALREADY_EXISTS,"商品属性值不存在");
         MAP.put(PRODUCT_EQUIPMENT_NOT_EXISTS,"设备不存在");
+        MAP.put(MATERIAL_NOT_EXISTS,"物料信息不存在");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS,"工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE,"此工作流模板没有节点");

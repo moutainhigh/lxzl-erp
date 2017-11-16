@@ -18,6 +18,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.*;
+import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -182,20 +183,49 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> addProductMaterial(ProductSku productSku) {
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        if(CollectionUtil.isEmpty(productSku.getProductMaterialList())){
+        if (CollectionUtil.isEmpty(productSku.getProductMaterialList())) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
 
         ProductSkuDO productSkuDO = productSkuMapper.findById(productSku.getSkuId());
-        if(productSkuDO == null){
+        if (productSkuDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
 
-
+        for (ProductMaterial productMaterial : productSku.getProductMaterialList()) {
+            MaterialDO materialDO = materialMapper.findById(productMaterial.getMaterialId());
+            if (materialDO != null) {
+                ProductMaterialDO dbProductMaterialDO = productMaterialMapper.findBySkuAndMaterial(productSkuDO.getId(), materialDO.getId());
+                if (dbProductMaterialDO == null) {
+                    ProductMaterialDO productMaterialDO = new ProductMaterialDO();
+                    productMaterialDO.setProductId(productSkuDO.getProductId());
+                    productMaterialDO.setProductSkuId(productSkuDO.getId());
+                    productMaterialDO.setMaterialId(materialDO.getId());
+                    productMaterialDO.setMaterialCount(productMaterial.getMaterialCount());
+                    productMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    productMaterialDO.setCreateUser(loginUser.getUserId().toString());
+                    productMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+                    productMaterialDO.setCreateTime(currentTime);
+                    productMaterialDO.setUpdateTime(currentTime);
+                    productMaterialMapper.save(productMaterialDO);
+                } else {
+                    dbProductMaterialDO.setMaterialCount(productMaterial.getMaterialCount());
+                    dbProductMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    dbProductMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+                    dbProductMaterialDO.setUpdateTime(currentTime);
+                    productMaterialMapper.update(dbProductMaterialDO);
+                }
+            } else {
+                throw new BusinessException(ErrorCode.MATERIAL_NOT_EXISTS);
+            }
+        }
 
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -203,7 +233,37 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ServiceResult<String, Integer> removeProductMaterial(ProductSku productSku) {
-        return null;
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        if (CollectionUtil.isEmpty(productSku.getProductMaterialList())) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+
+        ProductSkuDO productSkuDO = productSkuMapper.findById(productSku.getSkuId());
+        if (productSkuDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        for (ProductMaterial productMaterial : productSku.getProductMaterialList()) {
+            MaterialDO materialDO = materialMapper.findById(productMaterial.getMaterialId());
+            if (materialDO != null) {
+                ProductMaterialDO dbProductMaterialDO = productMaterialMapper.findBySkuAndMaterial(productSkuDO.getId(), materialDO.getId());
+                if (dbProductMaterialDO != null) {
+                    dbProductMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                    dbProductMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+                    dbProductMaterialDO.setUpdateTime(currentTime);
+                    productMaterialMapper.update(dbProductMaterialDO);
+                }
+            } else {
+                throw new BusinessException(ErrorCode.MATERIAL_NOT_EXISTS);
+            }
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
     @Override
@@ -542,7 +602,7 @@ public class ProductServiceImpl implements ProductService {
 
     String saveProductProperties(List<ProductSkuProperty> productSkuPropertyList, Integer productId, User loginUser, Date currentTime) {
 
-        if (productSkuPropertyList == null || productSkuPropertyList.isEmpty()) {
+        if (CollectionUtil.isEmpty(productSkuPropertyList)) {
             return ErrorCode.PRODUCT_PROPERTY_NOT_NULL;
         }
 
@@ -601,65 +661,74 @@ public class ProductServiceImpl implements ProductService {
     }
 
     void saveSkuProperties(List<ProductSkuProperty> productSkuPropertyList, Integer productId, Integer skuId, Integer operationType, User loginUser, Date currentTime) {
-        if (productSkuPropertyList != null && !productSkuPropertyList.isEmpty()) {
-            for (ProductSkuProperty productSkuProperty : productSkuPropertyList) {
-                ProductSkuPropertyDO productSkuPropertyDO = ProductConverter.convertProductSkuProperty(productSkuProperty);
-                ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productSkuPropertyDO.getPropertyValueId());
-                if (productCategoryPropertyValueDO == null) {
-                    continue;
-                }
-                productSkuPropertyDO.setPropertyId(productCategoryPropertyValueDO.getPropertyId());
-                productSkuPropertyDO.setProductId(productId);
-                if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(operationType)) {
-                    productSkuPropertyDO.setIsSku(CommonConstant.COMMON_CONSTANT_YES);
-                    productSkuPropertyDO.setSkuId(skuId);
-                    productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                    productSkuPropertyDO.setCreateUser(loginUser.getUserId().toString());
-                    productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
-                    productSkuPropertyDO.setCreateTime(currentTime);
-                    productSkuPropertyDO.setUpdateTime(currentTime);
-                    productSkuPropertyMapper.save(productSkuPropertyDO);
-                } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_UPDATE.equals(operationType)) {
-                    productSkuPropertyDO.setIsSku(CommonConstant.COMMON_CONSTANT_YES);
-                    productSkuPropertyDO.setSkuId(skuId);
-                    productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                    productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
-                    productSkuPropertyDO.setUpdateTime(currentTime);
-                    productSkuPropertyMapper.update(productSkuPropertyDO);
-                } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(operationType)) {
-                    deleteProductSkuPropertyDO(productSkuPropertyDO, loginUser, currentTime);
-                }
+        if (CollectionUtil.isEmpty(productSkuPropertyList)) {
+            return;
+        }
+        for (ProductSkuProperty productSkuProperty : productSkuPropertyList) {
+            ProductSkuPropertyDO productSkuPropertyDO = ProductConverter.convertProductSkuProperty(productSkuProperty);
+            ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productSkuPropertyDO.getPropertyValueId());
+            if (productCategoryPropertyValueDO == null) {
+                continue;
+            }
+            productSkuPropertyDO.setPropertyId(productCategoryPropertyValueDO.getPropertyId());
+            productSkuPropertyDO.setProductId(productId);
+            if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(operationType)) {
+                productSkuPropertyDO.setIsSku(CommonConstant.COMMON_CONSTANT_YES);
+                productSkuPropertyDO.setSkuId(skuId);
+                productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                productSkuPropertyDO.setCreateUser(loginUser.getUserId().toString());
+                productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
+                productSkuPropertyDO.setCreateTime(currentTime);
+                productSkuPropertyDO.setUpdateTime(currentTime);
+                productSkuPropertyMapper.save(productSkuPropertyDO);
+                saveProductMaterial(productId, skuId, productSkuPropertyDO.getPropertyValueId(), loginUser, currentTime);
+            } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_UPDATE.equals(operationType)) {
+                productSkuPropertyDO.setIsSku(CommonConstant.COMMON_CONSTANT_YES);
+                productSkuPropertyDO.setSkuId(skuId);
+                productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
+                productSkuPropertyDO.setUpdateTime(currentTime);
+                productSkuPropertyMapper.update(productSkuPropertyDO);
+            } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(operationType)) {
+                deleteProductSkuPropertyDO(productSkuPropertyDO, loginUser, currentTime);
             }
         }
     }
 
 
-
     /**
-     * @param productId 商品ID
-     * @param skuId SKUID
-     * @param propertyId 属性ID
-     * @param propertyValueId 属性值ID
-     * @param loginUser 登录人
-     * @param currentTime 当前时间
+     * @param productId              商品ID
+     * @param skuId                  SKUID
+     * @param productPropertyValueId 商品属性值ID
+     * @param loginUser              登录人
+     * @param currentTime            当前时间
      */
-    public void saveProductMaterial(Integer productId, Integer skuId, Integer propertyId, Integer propertyValueId, User loginUser, Date currentTime) {
-        MaterialDO materialDO = materialMapper.findByPropertyAndValueId(propertyId, propertyValueId);
-        if (materialDO != null) {
-            ProductMaterialDO dbProductMaterialDO = productMaterialMapper.findBySkuAndMaterial(skuId, materialDO.getId());
-            if (dbProductMaterialDO == null) {
-                ProductMaterialDO productMaterialDO = new ProductMaterialDO();
-                productMaterialDO.setProductId(productId);
-                productMaterialDO.setProductSkuId(skuId);
-                productMaterialDO.setMaterialId(materialDO.getId());
-                productMaterialDO.setMaterialCount(1);
-                productMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                productMaterialDO.setCreateUser(loginUser.getUserId().toString());
-                productMaterialDO.setUpdateUser(loginUser.getUserId().toString());
-                productMaterialDO.setCreateTime(currentTime);
-                productMaterialDO.setUpdateTime(currentTime);
-                productMaterialMapper.save(productMaterialDO);
-            }
+    public void saveProductMaterial(Integer productId, Integer skuId, Integer productPropertyValueId, User loginUser, Date currentTime) {
+        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productPropertyValueId);
+        if (productCategoryPropertyValueDO.getReferId() == null) {
+            return;
+        }
+        ProductCategoryPropertyValueDO materialCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productPropertyValueId);
+        if (materialCategoryPropertyValueDO == null) {
+            return;
+        }
+        MaterialDO materialDO = materialMapper.findByPropertyAndValueId(materialCategoryPropertyValueDO.getPropertyId(), materialCategoryPropertyValueDO.getId());
+        if (materialDO == null) {
+            return;
+        }
+        ProductMaterialDO dbProductMaterialDO = productMaterialMapper.findBySkuAndMaterial(skuId, materialDO.getId());
+        if (dbProductMaterialDO == null) {
+            ProductMaterialDO productMaterialDO = new ProductMaterialDO();
+            productMaterialDO.setProductId(productId);
+            productMaterialDO.setProductSkuId(skuId);
+            productMaterialDO.setMaterialId(materialDO.getId());
+            productMaterialDO.setMaterialCount(1);
+            productMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            productMaterialDO.setCreateUser(loginUser.getUserId().toString());
+            productMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+            productMaterialDO.setCreateTime(currentTime);
+            productMaterialDO.setUpdateTime(currentTime);
+            productMaterialMapper.save(productMaterialDO);
         }
     }
 
