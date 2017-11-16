@@ -1,4 +1,4 @@
-package com.lxzl.erp.core.service.product.impl.support;
+package com.lxzl.erp.core.service.material.impl.support;
 
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;

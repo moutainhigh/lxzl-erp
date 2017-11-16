@@ -24,28 +24,69 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<collection property="materialImgDOList" resultMap="MaterialImgDO" />
+	</resultMap>
+
+
+	<resultMap id="MaterialImgDO" type="com.lxzl.erp.dataaccess.domain.material.MaterialImgDO">
+		<id column="img_id" jdbcType="INTEGER" property="id"/>
+		<result column="img_img_type" jdbcType="INTEGER" property="imgType"/>
+		<result column="img_original_name" jdbcType="VARCHAR" property="originalName"/>
+		<result column="img_material_id" jdbcType="INTEGER" property="materialId"/>
+		<result column="img_img_url" jdbcType="VARCHAR" property="imgUrl"/>
+		<result column="img_data_status" jdbcType="INTEGER" property="dataStatus"/>
+		<result column="img_is_main" jdbcType="INTEGER" property="isMain"/>
+		<result column="img_img_order" jdbcType="INTEGER" property="imgOrder"/>
+		<result column="img_remark" jdbcType="VARCHAR" property="remark"/>
+		<result column="img_create_user" jdbcType="VARCHAR" property="createUser"/>
+		<result column="img_create_time" jdbcType="TIMESTAMP" property="createTime"/>
+		<result column="img_update_user" jdbcType="VARCHAR" property="updateUser"/>
+		<result column="img_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
 	</resultMap>
 
 	<sql id="column_List">
 		em.id,em.material_no,em.material_name,em.material_type,em.brand_id,em.category_id,em.property_id,em.property_value_id,em.material_price,em.rent_price,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
 	</sql>
 
+	<sql id="img_column_List">
+		emi.id as img_id,emi.img_type as img_img_type,emi.original_name as img_original_name,emi.material_id as img_material_id,emi.img_url as img_img_url,emi.is_main as img_is_main,emi.img_order as img_img_order,emi.data_status as img_data_status,emi.remark as img_remark,emi.create_time as img_create_time,emi.create_user as img_create_user,emi.update_time as img_update_time,emi.update_user as img_update_user
+	</sql>
+
+
 	<select id="findById" resultMap="MaterialDO" parameterType="java.lang.Integer">
-		select
-		<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name
-		from erp_material em
-		LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
-		LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
-		where em.id = #{id, jdbcType=INTEGER} and em.data_status = 1
+		SELECT material_main.*, <include refid="img_column_List"/> FROM
+		(
+			select
+			<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name
+			from erp_material em
+			LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
+			LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
+			where em.id = #{id, jdbcType=INTEGER} and em.data_status = 1
+		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
+	</select>
+
+	<select id="findByNo" resultMap="MaterialDO" parameterType="java.lang.Integer">
+		SELECT material_main.*, <include refid="img_column_List"/> FROM
+		(
+			select
+			<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name
+			from erp_material em
+			LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
+			LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
+			where em.material_no = #{materialNo, jdbcType=INTEGER} and em.data_status = 1
+		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
 
 	<select id="findByPropertyAndValueId" resultMap="MaterialDO" parameterType="java.lang.Integer">
-		select
-		<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name
-		from erp_material em
-		LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
-		LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
-		where em.property_id = #{propertyId, jdbcType=INTEGER} and em.property_value_id = #{propertyValueId, jdbcType=INTEGER} and em.data_status = 1
+		SELECT material_main.*, <include refid="img_column_List"/> FROM
+		(
+			select
+			<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name
+			from erp_material em
+			LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
+			LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
+			where em.property_id = #{propertyId, jdbcType=INTEGER} and em.property_value_id = #{propertyValueId, jdbcType=INTEGER} and em.data_status = 1
+		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
 
 
@@ -68,25 +109,28 @@
 	</select>
 
 	<select id="listPage" resultMap="MaterialDO" parameterType="map">
-		SELECT <include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name
-		FROM erp_material em
-		LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
-		LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
-		<where>
-			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialType != null &amp;&amp; maps.materialQueryParam.materialType != ''">
-				and em.material_type = #{maps.materialQueryParam.materialType, jdbcType=INTEGER}
-			</if>
-			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialNo != null &amp;&amp; maps.materialQueryParam.materialNo != ''">
-				and em.material_no like CONCAT('%','${maps.materialQueryParam.materialNo}','%' )
-			</if>
-			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialName != null &amp;&amp; maps.materialQueryParam.materialName != ''">
-				and em.material_name like CONCAT('%','${maps.materialQueryParam.materialName}','%' )
-			</if>
-			<if test="true">
-				AND em.data_status = 1
-			</if>
-		</where>
-		LIMIT #{maps.start},#{maps.pageSize}
+		SELECT material_main.*, <include refid="img_column_List"/> FROM
+		(
+			SELECT <include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name
+			FROM erp_material em
+			LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
+			LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
+			<where>
+				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialType != null &amp;&amp; maps.materialQueryParam.materialType != ''">
+					and em.material_type = #{maps.materialQueryParam.materialType, jdbcType=INTEGER}
+				</if>
+				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialNo != null &amp;&amp; maps.materialQueryParam.materialNo != ''">
+					and em.material_no like CONCAT('%','${maps.materialQueryParam.materialNo}','%' )
+				</if>
+				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialName != null &amp;&amp; maps.materialQueryParam.materialName != ''">
+					and em.material_name like CONCAT('%','${maps.materialQueryParam.materialName}','%' )
+				</if>
+				<if test="true">
+					AND em.data_status = 1
+				</if>
+			</where>
+			LIMIT #{maps.start},#{maps.pageSize}
+		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
 
 

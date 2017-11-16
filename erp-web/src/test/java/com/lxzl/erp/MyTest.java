@@ -14,7 +14,7 @@ public class MyTest {
 
     public static void main(String[] args) throws Exception {
 //        generateDomains("erp_customer");
-        generateDomainsByDir("erp_customer_company","customer");
+        generateDomainsByDir("erp_material_img","material");
 //        String dir = "customer";
 //        String poDir = System.getProperty("user.dir")+"\\erp-common\\src\\main\\java\\com\\lxzl\\erp\\common\\domain\\"+dir+File.separator+"pojo"+File.separator;
 //        String mapperDir = System.getProperty("user.dir")+"\\erp-dataaccess\\src\\main\\java\\com\\lxzl\\erp\\dataaccess\\dao\\mysql\\"+dir+File.separator;

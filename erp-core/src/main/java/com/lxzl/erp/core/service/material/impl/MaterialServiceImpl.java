@@ -10,29 +10,36 @@ import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;
+import com.lxzl.erp.common.domain.material.pojo.MaterialImg;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.FileUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
+import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.material.MaterialService;
-import com.lxzl.erp.core.service.product.impl.support.MaterialConverter;
+import com.lxzl.erp.core.service.material.impl.support.MaterialConverter;
+import com.lxzl.erp.core.service.material.impl.support.MaterialImageConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialImgMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyValueMapper;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialImgDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -42,6 +49,8 @@ import java.util.Map;
  */
 @Service("materialService")
 public class MaterialServiceImpl implements MaterialService {
+
+    private static Logger logger = LoggerFactory.getLogger(MaterialServiceImpl.class);
 
     @Autowired
     private MaterialMapper materialMapper;
@@ -55,8 +64,72 @@ public class MaterialServiceImpl implements MaterialService {
     @Autowired
     private ProductCategoryPropertyValueMapper productCategoryPropertyValueMapper;
 
+    @Autowired
+    private MaterialImgMapper materialImgMapper;
+
+    @Autowired
+    private FileService fileService;
+
     @Autowired(required = false)
     private HttpSession session;
+
+    @Override
+    public ServiceResult<String, List<MaterialImg>> uploadImage(MultipartFile[] files) {
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        ServiceResult<String, List<MaterialImg>> result = new ServiceResult<>();
+        List<MaterialImg> imgList = new ArrayList<>();
+
+        try {
+            for (MultipartFile file : files) {
+                String filePath = FileUtil.uploadFile(file);
+                Map<String, String> extraInfo = new HashMap<>();
+                InputStream inputStream = file.getInputStream();
+                byte[] fileBytes = file.getBytes();
+                long size = file.getSize();
+                String fileId = fileService.uploadFile(filePath, fileBytes, size, CommonConstant.UPLOAD_USER, extraInfo, inputStream);
+                MaterialImgDO materialImgDO = new MaterialImgDO();
+                materialImgDO.setOriginalName(file.getOriginalFilename());
+                materialImgDO.setImgUrl(fileId);
+                materialImgDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                materialImgDO.setCreateUser(loginUser.getUserId().toString());
+                materialImgDO.setUpdateUser(loginUser.getUserId().toString());
+                materialImgDO.setCreateTime(new Date());
+                materialImgDO.setUpdateTime(new Date());
+                materialImgMapper.save(materialImgDO);
+
+                imgList.add(MaterialImageConverter.convertMaterialImgDO(materialImgDO));
+                FileUtil.deleteFile(filePath);
+            }
+        } catch (Exception e) {
+            logger.error("upload material image file error", e);
+            result.setErrorCode(ErrorCode.PRODUCT_IMAGE_UPLOAD_ERROR);
+            return result;
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(imgList);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> deleteImage(Integer imgId) {
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        MaterialImgDO dbRecord = materialImgMapper.findById(imgId);
+        if (dbRecord == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        MaterialImgDO materialImgDO = new MaterialImgDO();
+        materialImgDO.setId(imgId);
+        materialImgDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        materialImgDO.setUpdateUser(loginUser.getUserId().toString());
+        materialImgDO.setUpdateTime(new Date());
+        Integer returnCode = materialImgMapper.update(materialImgDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(returnCode);
+        return result;
+    }
 
     @Override
     public ServiceResult<String, String> addMaterial(Material material) {
@@ -164,6 +237,24 @@ public class MaterialServiceImpl implements MaterialService {
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Material> queryMaterialByNo(String materialNo) {
+        ServiceResult<String, Material> result = new ServiceResult<>();
+        if(StringUtil.isBlank(materialNo)){
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+        MaterialDO materialDO = materialMapper.findByNo(materialNo);
+        if(materialDO == null){
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(MaterialConverter.convertMaterialDO(materialDO));
         return result;
     }
 
