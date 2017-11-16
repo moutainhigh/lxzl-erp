@@ -13,6 +13,8 @@
 		<result column="category_id" jdbcType="INTEGER" property="categoryId" />
 		<result column="property_id" jdbcType="INTEGER" property="propertyId" />
 		<result column="property_value_id" jdbcType="INTEGER" property="propertyValueId" />
+		<result column="property_name" jdbcType="VARCHAR" property="propertyName" />
+		<result column="property_value_name" jdbcType="VARCHAR" property="propertyValueName" />
 		<result column="material_price" jdbcType="DECIMAL" property="materialPrice" />
 		<result column="rent_price" jdbcType="DECIMAL" property="rentPrice" />
 		<result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
@@ -30,14 +32,20 @@
 
 	<select id="findById" resultMap="MaterialDO" parameterType="java.lang.Integer">
 		select
-		<include refid="column_List"/>
-		from erp_material em where em.id = #{id, jdbcType=INTEGER} and data_status = 1
+		<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name
+		from erp_material em
+		LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
+		LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
+		where em.id = #{id, jdbcType=INTEGER} and em.data_status = 1
 	</select>
 
 	<select id="findByPropertyAndValueId" resultMap="MaterialDO" parameterType="java.lang.Integer">
 		select
-		<include refid="column_List"/>
-		from erp_material em where em.property_id = #{propertyId, jdbcType=INTEGER} and em.property_value_id = #{propertyValueId, jdbcType=INTEGER} and data_status = 1
+		<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name
+		from erp_material em
+		LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
+		LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
+		where em.property_id = #{propertyId, jdbcType=INTEGER} and em.property_value_id = #{propertyValueId, jdbcType=INTEGER} and em.data_status = 1
 	</select>
 
 
@@ -60,8 +68,10 @@
 	</select>
 
 	<select id="listPage" resultMap="MaterialDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_material em
-		LEFT JOIN erp_product_category_property epcp on em.property_id =
+		SELECT <include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name
+		FROM erp_material em
+		LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
+		LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
 		<where>
 			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialType != null &amp;&amp; maps.materialQueryParam.materialType != ''">
 				and em.material_type = #{maps.materialQueryParam.materialType, jdbcType=INTEGER}
