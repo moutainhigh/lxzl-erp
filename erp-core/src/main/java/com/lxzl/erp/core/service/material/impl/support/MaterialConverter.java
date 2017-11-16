@@ -42,6 +42,7 @@ public class MaterialConverter {
             material.setMaterialId(materialDO.getId());
         }
         BeanUtils.copyProperties(materialDO,material);
+        material.setMaterialImgList(MaterialImageConverter.convertMaterialImgDOList(materialDO.getMaterialImgDOList()));
         return material;
     }
 

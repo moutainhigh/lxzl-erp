@@ -169,7 +169,7 @@ public class MaterialServiceImpl implements MaterialService {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
 
-        MaterialDO dbRecord = materialMapper.findById(material.getMaterialId());
+        MaterialDO dbRecord = materialMapper.findByNo(material.getMaterialNo());
         if (dbRecord == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
