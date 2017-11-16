@@ -226,9 +226,42 @@ public class ProductServiceImpl implements ProductService {
                 throw new BusinessException(ErrorCode.MATERIAL_NOT_EXISTS);
             }
         }
-
+        result.setResult(productSku.getSkuId());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+
+    @Override
+    public ServiceResult<String, Integer> updateProductMaterial(ProductSku productSku){
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        if (CollectionUtil.isEmpty(productSku.getProductMaterialList())) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+
+        ProductSkuDO productSkuDO = productSkuMapper.findById(productSku.getSkuId());
+        if (productSkuDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        for (ProductMaterial productMaterial : productSku.getProductMaterialList()) {
+            ProductMaterialDO dbProductMaterialDO = productMaterialMapper.findBySkuAndMaterial(productSkuDO.getId(), productMaterial.getMaterialId());
+            if (dbProductMaterialDO != null) {
+                dbProductMaterialDO.setMaterialCount(productMaterial.getMaterialCount());
+                dbProductMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                dbProductMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+                dbProductMaterialDO.setUpdateTime(currentTime);
+                productMaterialMapper.update(dbProductMaterialDO);
+            }
+        }
+        result.setResult(productSku.getSkuId());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+
     }
 
     @Override
@@ -262,6 +295,7 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
+        result.setResult(productSku.getSkuId());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }

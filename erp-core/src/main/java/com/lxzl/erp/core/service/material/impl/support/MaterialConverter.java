@@ -1,4 +1,4 @@
-package com.lxzl.erp.core.service.product.impl.support;
+package com.lxzl.erp.core.service.material.impl.support;
 
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;
@@ -42,6 +42,7 @@ public class MaterialConverter {
             material.setMaterialId(materialDO.getId());
         }
         BeanUtils.copyProperties(materialDO,material);
+        material.setMaterialImgList(MaterialImageConverter.convertMaterialImgDOList(materialDO.getMaterialImgDOList()));
         return material;
     }
 

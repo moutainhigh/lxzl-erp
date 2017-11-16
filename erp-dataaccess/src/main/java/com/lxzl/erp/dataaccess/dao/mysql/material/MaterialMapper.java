@@ -8,9 +8,11 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 import java.util.Map;
 
-public interface MaterialMapper extends BaseMysqlDAO<MaterialDO>{
+public interface MaterialMapper extends BaseMysqlDAO<MaterialDO> {
     MaterialDO findByPropertyAndValueId(@Param("propertyId") Integer propertyId,
                                         @Param("propertyValueId") Integer propertyValueId);
+
+    MaterialDO findByNo(@Param("materialNo") String materialNo);
 
     List<MaterialDO> listPage(@Param("maps") Map<String, Object> paramMap);
 

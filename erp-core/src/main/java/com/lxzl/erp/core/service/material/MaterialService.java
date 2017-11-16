@@ -6,7 +6,9 @@ import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;
+import com.lxzl.erp.common.domain.material.pojo.MaterialImg;
 import com.lxzl.se.core.service.BaseService;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,6 +20,21 @@ import java.util.List;
  */
 public interface MaterialService extends BaseService {
 
+    /**
+     * 上传图片
+     *
+     * @param files 图片流
+     * @return 图片ID
+     */
+    ServiceResult<String, List<MaterialImg>> uploadImage(MultipartFile[] files);
+
+    /**
+     * 删除商品图片
+     *
+     * @param imgId 图片ID
+     * @return 图片ID
+     */
+    ServiceResult<String, Integer> deleteImage(Integer imgId);
     /**
      * 添加物料
      *
@@ -41,6 +58,14 @@ public interface MaterialService extends BaseService {
      * @return 物料集合
      */
     ServiceResult<String, Page<Material>> queryAllMaterial(MaterialQueryParam materialQueryParam);
+
+    /**
+     * 查询单个物料
+     *
+     * @param materialNo 查询物料编号
+     * @return 物料信息
+     */
+    ServiceResult<String, Material> queryMaterialByNo(String materialNo);
 
     /**
      * 查询所有散料

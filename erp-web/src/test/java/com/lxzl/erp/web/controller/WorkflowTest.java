@@ -17,37 +17,37 @@ import org.junit.Test;
 public class WorkflowTest extends ERPUnTransactionalTest {
 
     @Test
-    public void verifyWorkFlow() throws Exception{
+    public void verifyWorkFlow() throws Exception {
 
         VerifyWorkflowParam workflowParam = new VerifyWorkflowParam();
         workflowParam.setWorkflowLinkId(6);
         workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
         workflowParam.setVerifyOpinion("允许采购");
 
-        TestResult result = getJsonTestResult("/workflow/verifyWorkFlow",workflowParam);
+        TestResult result = getJsonTestResult("/workflow/verifyWorkFlow", workflowParam);
     }
 
     @Test
-    public void queryNextVerifyUsers() throws Exception{
+    public void queryNextVerifyUsers() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
         workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
         workflowLinkQueryParam.setWorkflowReferId(6000013);
-        TestResult result = getJsonTestResult("/workflow/queryNextVerifyUsers",workflowLinkQueryParam);
+        TestResult result = getJsonTestResult("/workflow/queryNextVerifyUsers", workflowLinkQueryParam);
     }
 
     @Test
-    public void queryWorkflowLinkPage() throws Exception{
+    public void queryWorkflowLinkPage() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
         workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
 //        workflowLinkQueryParam.setWorkflowReferId(6000013);
-        TestResult result = getJsonTestResult("/workflow/queryWorkflowLinkPage",workflowLinkQueryParam);
+        TestResult result = getJsonTestResult("/workflow/queryWorkflowLinkPage", workflowLinkQueryParam);
     }
 
     @Test
-    public void queryWorkflowLinkDetail() throws Exception{
+    public void queryWorkflowLinkDetail() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
         workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
         workflowLinkQueryParam.setWorkflowReferId(6000013);
-        TestResult result = getJsonTestResult("/workflow/queryWorkflowLinkDetail",workflowLinkQueryParam);
+        TestResult result = getJsonTestResult("/workflow/queryWorkflowLinkDetail", workflowLinkQueryParam);
     }
 }

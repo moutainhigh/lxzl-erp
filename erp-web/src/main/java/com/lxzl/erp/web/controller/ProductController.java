@@ -66,6 +66,12 @@ public class ProductController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "updateProductMaterial", method = RequestMethod.POST)
+    public Result updateProductMaterial(@RequestBody ProductSku productSku, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = productService.updateProductMaterial(productSku);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "removeProductMaterial", method = RequestMethod.POST)
     public Result removeProductMaterial(@RequestBody ProductSku productSku, BindingResult validResult) {
         ServiceResult<String, Integer> serviceResult = productService.removeProductMaterial(productSku);

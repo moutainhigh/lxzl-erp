@@ -4,6 +4,7 @@ import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -25,6 +26,8 @@ public class MaterialDO extends BaseDO {
     private String materialDesc;
     private Integer dataStatus;
     private String remark;
+
+    private List<MaterialImgDO> materialImgDOList;
 
 
     @Transient
@@ -150,5 +153,13 @@ public class MaterialDO extends BaseDO {
 
     public void setPropertyValueName(String propertyValueName) {
         this.propertyValueName = propertyValueName;
+    }
+
+    public List<MaterialImgDO> getMaterialImgDOList() {
+        return materialImgDOList;
+    }
+
+    public void setMaterialImgDOList(List<MaterialImgDO> materialImgDOList) {
+        this.materialImgDOList = materialImgDOList;
     }
 }
