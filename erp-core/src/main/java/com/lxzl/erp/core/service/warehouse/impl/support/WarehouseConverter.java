@@ -41,6 +41,15 @@ public class WarehouseConverter {
         return warehouse;
     }
 
+    public static WarehouseDO convertWarehouse(Warehouse warehouse) {
+        WarehouseDO warehouseDO = new WarehouseDO();
+        if (warehouse.getWarehouseId() != null) {
+            warehouseDO.setId(warehouse.getWarehouseId());
+        }
+        BeanUtils.copyProperties(warehouse, warehouseDO);
+        return warehouseDO;
+    }
+
     public static List<WarehousePosition> convertWarehousePositionDOList(List<WarehousePositionDO> warehousePositionDOList) {
         List<WarehousePosition> warehousePositionList = new ArrayList<>();
         if (warehousePositionDOList != null && !warehousePositionDOList.isEmpty()) {

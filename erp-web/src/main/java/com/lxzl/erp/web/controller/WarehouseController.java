@@ -39,6 +39,18 @@ public class WarehouseController extends BaseController {
     @Autowired
     private ResultGenerator resultGenerator;
 
+    @RequestMapping(value = "add", method = RequestMethod.POST)
+    public Result add(@RequestBody Warehouse warehouse) {
+        ServiceResult<String, String> serviceResult = warehouseService.addWarehouse(warehouse);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public Result update(@RequestBody Warehouse warehouse) {
+        ServiceResult<String, String> serviceResult = warehouseService.updateWarehouse(warehouse);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "getWarehousePage", method = RequestMethod.POST)
     public Result getWarehousePage(@RequestBody WarehouseQueryParam warehouseQueryParam) {
         ServiceResult<String, Page<Warehouse>> serviceResult = warehouseService.getWarehousePage(warehouseQueryParam);

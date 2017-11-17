@@ -181,6 +181,12 @@ public class MaterialServiceImpl implements MaterialService {
             return result;
         }
 
+        MaterialDO dbMaterialDO = materialMapper.findByPropertyAndValueId(material.getPropertyId(), material.getPropertyValueId());
+        if (dbMaterialDO != null && !dbMaterialDO.getMaterialNo().equals(material.getMaterialNo())) {
+            result.setErrorCode(ErrorCode.RECORD_ALREADY_EXISTS);
+            return result;
+        }
+
         MaterialDO materialDO = MaterialConverter.convertMaterial(material);
         // 以下两个值不能改
         materialDO.setPropertyId(null);

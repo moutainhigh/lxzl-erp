@@ -82,6 +82,38 @@ public class WarehouseServiceImpl implements WarehouseService {
     private ProductEquipmentBulkMaterialMapper productEquipmentBulkMaterialMapper;
 
     @Override
+    public ServiceResult<String, String> addWarehouse(Warehouse warehouse) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+
+        WarehouseDO dbRecord = warehouseMapper.finByCompanyAndType(warehouse.getSubCompanyId(), warehouse.getWarehouseType());
+        if (dbRecord != null) {
+            result.setErrorCode(ErrorCode.RECORD_ALREADY_EXISTS);
+            return result;
+        }
+
+        WarehouseDO warehouseDO = WarehouseConverter.convertWarehouse(warehouse);
+
+        warehouseDO.setWarehouseNo(GenerateNoUtil.generateWarehouseNo(currentTime));
+        warehouseDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        warehouseDO.setUpdateUser(loginUser.getUserId().toString());
+        warehouseDO.setCreateUser(loginUser.getUserId().toString());
+        warehouseDO.setUpdateTime(currentTime);
+        warehouseDO.setCreateTime(currentTime);
+        warehouseMapper.save(warehouseDO);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(warehouseDO.getWarehouseNo());
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> updateWarehouse(Warehouse warehouse) {
+        return null;
+    }
+
+    @Override
     public ServiceResult<String, Page<Warehouse>> getWarehousePage(WarehouseQueryParam param) {
         ServiceResult<String, Page<Warehouse>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(param.getPageNo(), param.getPageSize());

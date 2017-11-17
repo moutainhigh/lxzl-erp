@@ -16,4 +16,13 @@ public interface WarehouseMapper extends BaseMysqlDAO<WarehouseDO>{
 
     WarehouseDO finByNo(@Param("warehouseNo") String warehouseNo);
 
+    /**
+     * 根据ID和仓库类型查询仓库，本接口只适用于非普通仓库，因为只有非普通仓库才能确定唯一性
+     * @param subCompanyId 公司ID
+     * @param warehouseType 仓库类型
+     * @return 唯一仓库
+     */
+    WarehouseDO finByCompanyAndType(@Param("subCompanyId") Integer subCompanyId,
+                                    @Param("warehouseType") Integer warehouseType);
+
 }

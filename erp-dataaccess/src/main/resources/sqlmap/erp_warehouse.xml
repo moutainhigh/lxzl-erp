@@ -52,6 +52,7 @@
 			where ew.id = #{id, jdbcType=INTEGER} and ew.data_status = 1  and esc.data_status = 1
 		) warehouse left join erp_warehouse_position ewp on ewp.warehouse_id = warehouse.id
 	</select>
+
 	<select id="finByNo" resultMap="WarehouseDO" parameterType="java.lang.String">
 		select warehouse.*,<include refid="position_column_List"/>
 		from
@@ -64,6 +65,18 @@
 		) warehouse left join erp_warehouse_position ewp on ewp.warehouse_id = warehouse.id
 	</select>
 
+	<select id="finByCompanyAndType" resultMap="WarehouseDO" parameterType="java.util.Map">
+		select warehouse.*,<include refid="position_column_List"/>
+		from
+		(
+			select
+			<include refid="column_List"/>,esc.sub_company_name,esc.sub_company_type
+			from erp_warehouse ew
+			left join erp_sub_company esc on esc.id = ew.sub_company_id
+			where ew.sub_company_id = #{subCompanyId, jdbcType=INTEGER} and ew.warehouse_type = #{warehouseType, jdbcType=INTEGER} and ew.data_status = 1  and esc.data_status = 1
+		) warehouse left join erp_warehouse_position ewp on ewp.warehouse_id = warehouse.id
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(ew.id) from erp_warehouse ew
 		left join erp_sub_company esc on esc.id = ew.sub_company_id and esc.data_status = 1
@@ -71,7 +84,7 @@
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseId != null">
 				and ew.id = #{maps.warehouseQueryParam.warehouseId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != null">
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != ''">
 				and ew.warehouse_no = #{maps.warehouseQueryParam.warehouseNo, jdbcType=INTEGER}
 			</if>
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseType != null">
@@ -105,7 +118,7 @@
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseId != null">
 				and ew.id = #{maps.warehouseQueryParam.warehouseId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != null">
+			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != null &amp;&amp; maps.warehouseQueryParam.warehouseNo != ''">
 				and ew.warehouse_no = #{maps.warehouseQueryParam.warehouseNo, jdbcType=INTEGER}
 			</if>
 			<if test="maps.warehouseQueryParam != null &amp;&amp; maps.warehouseQueryParam.warehouseType != null">
