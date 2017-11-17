@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.supplier;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 
 
@@ -9,17 +11,20 @@ public class SupplierDO  extends BaseDO {
 	private Integer id;
 	private String supplierName;
 	private Integer province;
-	private String provinceName;
 	private Integer city;
-	private String cityName;
 	private Integer district;
-	private String districtName;
 	private String address;
 	private String tel;
 	private String contactName;
 	private String contactPhone;
 	private Integer dataStatus;
 	private String remark;
+	@Transient
+	private String provinceName;
+	@Transient
+	private String cityName;
+	@Transient
+	private String districtName;
 
 	public Integer getId(){
 		return id;

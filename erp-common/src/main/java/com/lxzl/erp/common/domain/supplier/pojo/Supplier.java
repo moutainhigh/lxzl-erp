@@ -23,6 +23,9 @@ public class Supplier implements Serializable {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+	private String provinceName;	//省份名称
+	private String cityName;		//城市名称
+	private String districtName;	//地区名称
 
 
 	public Integer getSupplierId(){
@@ -145,4 +148,27 @@ public class Supplier implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getDistrictName() {
+		return districtName;
+	}
+
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
+	}
+
+	public String getProvinceName() {
+		return provinceName;
+	}
+
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
+	}
 }
