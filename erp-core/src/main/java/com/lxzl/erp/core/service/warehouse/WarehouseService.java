@@ -42,13 +42,31 @@ public interface WarehouseService extends BaseService {
      */
     ServiceResult<String, Page<Warehouse>> getWarehousePage(WarehouseQueryParam param);
 
+    /**
+     * 获取分公司下的仓库
+     *
+     * @param subCompanyId 公司ID
+     * @return 仓库列表
+     */
     ServiceResult<String, List<Warehouse>> getWarehouseByCompany(Integer subCompanyId);
 
+    /**
+     * 获取当前分公司下的仓库
+     *
+     * @return 仓库列表
+     */
     ServiceResult<String, List<Warehouse>> getWarehouseByCurrentCompany();
 
+    /**
+     * 根据ID获取仓库详情
+     *
+     * @param warehouseId 仓库ID
+     * @return 仓库详情
+     */
     ServiceResult<String, Warehouse> getWarehouseById(Integer warehouseId);
 
     /**
+     * 商品入库
      * @param productInStockParam 商品入库基本信息
      * @return
      * @description 商品入库，只支持采购首次入库

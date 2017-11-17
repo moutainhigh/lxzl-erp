@@ -22,7 +22,10 @@ public class Material implements Serializable {
     private Integer propertyId;   //属性ID
     private Integer propertyValueId;   //属性值ID
     private BigDecimal materialPrice;   //物料本身的价值(单价)
-    private BigDecimal rentPrice;   //租赁价格
+    private Integer stock;              // 库存
+    private BigDecimal timeRentPrice;   // 次租价格
+    private BigDecimal dayRentPrice;    // 日租价格
+    private BigDecimal monthRentPrice;  // 月租价格
     private String materialDesc;   //物料描述
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注
@@ -98,14 +101,6 @@ public class Material implements Serializable {
 
     public void setPropertyValueId(Integer propertyValueId) {
         this.propertyValueId = propertyValueId;
-    }
-
-    public BigDecimal getRentPrice() {
-        return rentPrice;
-    }
-
-    public void setRentPrice(BigDecimal rentPrice) {
-        this.rentPrice = rentPrice;
     }
 
     public Integer getDataStatus() {
@@ -194,5 +189,37 @@ public class Material implements Serializable {
 
     public void setMaterialImgList(List<MaterialImg> materialImgList) {
         this.materialImgList = materialImgList;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public BigDecimal getTimeRentPrice() {
+        return timeRentPrice;
+    }
+
+    public void setTimeRentPrice(BigDecimal timeRentPrice) {
+        this.timeRentPrice = timeRentPrice;
+    }
+
+    public BigDecimal getDayRentPrice() {
+        return dayRentPrice;
+    }
+
+    public void setDayRentPrice(BigDecimal dayRentPrice) {
+        this.dayRentPrice = dayRentPrice;
+    }
+
+    public BigDecimal getMonthRentPrice() {
+        return monthRentPrice;
+    }
+
+    public void setMonthRentPrice(BigDecimal monthRentPrice) {
+        this.monthRentPrice = monthRentPrice;
     }
 }

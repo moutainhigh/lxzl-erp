@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.warehouse.impl;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.material.pojo.MaterialInStorage;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
@@ -16,20 +17,16 @@ import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
-import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderEquipmentMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehousePositionMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.warehouse.*;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentBulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
-import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderDO;
-import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO;
-import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
-import com.lxzl.erp.dataaccess.domain.warehouse.WarehousePositionDO;
+import com.lxzl.erp.dataaccess.domain.warehouse.*;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
@@ -75,6 +72,9 @@ public class WarehouseServiceImpl implements WarehouseService {
     private StockOrderEquipmentMapper stockOrderEquipmentMapper;
 
     @Autowired
+    private StockOrderBulkMaterialMapper stockOrderBulkMaterialMapper;
+
+    @Autowired
     private ProductEquipmentMaterialMapper productEquipmentMaterialMapper;
 
     @Autowired
@@ -82,6 +82,9 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Autowired
     private ProductEquipmentBulkMaterialMapper productEquipmentBulkMaterialMapper;
+
+    @Autowired
+    private MaterialMapper materialMapper;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -232,6 +235,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> productInStock(ProductInStockParam productInStockParam) {
         List<ProductInStorage> productInStorageList = productInStockParam.getProductInStorageList();
+        List<MaterialInStorage> materialInStorageList = productInStockParam.getMaterialInStorageList();
         Integer srcWarehouseId = productInStockParam.getSrcWarehouseId();
         Integer targetWarehouseId = productInStockParam.getTargetWarehouseId();
         Integer causeType = productInStockParam.getCauseType();
@@ -239,7 +243,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         ServiceResult<String, Integer> result = new ServiceResult<>();
         Date currentTime = new Date();
-        String errorCode = verifyProductInfo(productInStorageList);
+        String errorCode = verifyProductInfo(productInStorageList, materialInStorageList);
         if (!ErrorCode.SUCCESS.equals(errorCode)) {
             result.setErrorCode(errorCode);
             return result;
@@ -263,10 +267,17 @@ public class WarehouseServiceImpl implements WarehouseService {
             return result;
         }
 
-        Integer warehousePositionId = 0;
-        List<WarehousePositionDO> warehousePositionDOList = warehousePositionMapper.findByWarehouseId(targetWarehouseId);
-        if (warehousePositionDOList != null && !warehousePositionDOList.isEmpty()) {
-            warehousePositionId = warehousePositionDOList.get(0).getId();
+        Integer targetWarehousePositionId = 0, srcWarehousePositionId = 0;
+        List<WarehousePositionDO> targetWarehousePositionDOList = warehousePositionMapper.findByWarehouseId(targetWarehouseId);
+        if (targetWarehousePositionDOList != null && !targetWarehousePositionDOList.isEmpty()) {
+            targetWarehousePositionId = targetWarehousePositionDOList.get(0).getId();
+        }
+
+        if(srcWarehouseId != null){
+            List<WarehousePositionDO> srcWarehousePositionDOList = warehousePositionMapper.findByWarehouseId(srcWarehouseId);
+            if (srcWarehousePositionDOList != null && !srcWarehousePositionDOList.isEmpty()) {
+                srcWarehousePositionId = srcWarehousePositionDOList.get(0).getId();
+            }
         }
 
         StockOrderDO dbOrder = stockOrderMapper.findOrderByTypeAndRefer(causeType, referNo);
@@ -281,9 +292,9 @@ public class WarehouseServiceImpl implements WarehouseService {
         stockOrderDO.setCauseType(causeType);
         stockOrderDO.setReferNo(referNo);
         stockOrderDO.setSrcWarehouseId(srcWarehouseId);
-        stockOrderDO.setSrcWarehousePositionId(warehousePositionId);
+        stockOrderDO.setSrcWarehousePositionId(srcWarehousePositionId);
         stockOrderDO.setTargetWarehouseId(targetWarehouseId);
-        stockOrderDO.setTargetWarehousePositionId(warehousePositionId);
+        stockOrderDO.setTargetWarehousePositionId(targetWarehousePositionId);
         stockOrderDO.setOrderStatus(StockOrderStatus.STOCK_ORDER_STATUS_OVER);
         stockOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         stockOrderDO.setUpdateUser(loginUser.getUserId().toString());
@@ -293,13 +304,24 @@ public class WarehouseServiceImpl implements WarehouseService {
         stockOrderMapper.save(stockOrderDO);
 
         for (ProductInStorage productInStorage : productInStorageList) {
-            saveProductEquipment(stockOrderDO.getStockOrderNo(), targetWarehouseId, warehousePositionId, productInStorage, currentTime);
+            saveProductEquipment(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, productInStorage, currentTime);
             ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
             productSkuDO.setStock(productSkuDO.getStock() + productInStorage.getProductCount());
             productSkuDO.setUpdateUser(loginUser.getUserId().toString());
             productSkuDO.setUpdateTime(currentTime);
             productSkuMapper.update(productSkuDO);
         }
+
+        for (MaterialInStorage materialInStorage : materialInStorageList) {
+            saveBulkMaterial(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, materialInStorage, currentTime);
+            MaterialDO materialDO = materialMapper.findById(materialInStorage.getMaterialId());
+            materialDO.setStock(materialDO.getStock() + materialInStorage.getMaterialCount());
+            materialDO.setUpdateUser(loginUser.getUserId().toString());
+            materialDO.setUpdateTime(currentTime);
+            materialMapper.update(materialDO);
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(stockOrderDO.getId());
         return result;
     }
 
@@ -311,18 +333,71 @@ public class WarehouseServiceImpl implements WarehouseService {
         return result;
     }
 
-    public String verifyProductInfo(List<ProductInStorage> productInStorageList) {
+    public String verifyProductInfo(List<ProductInStorage> productInStorageList, List<MaterialInStorage> materialInStorageList) {
 
-        if (productInStorageList == null || productInStorageList.isEmpty()) {
+        if ((productInStorageList == null || productInStorageList.isEmpty())
+                && (materialInStorageList == null || materialInStorageList.isEmpty())) {
             return ErrorCode.WAREHOUSE_IN_STORAGE_LIST_NOT_NULL;
         }
-        for (ProductInStorage productInStorage : productInStorageList) {
-            ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
-            if (productSkuDO == null || !productInStorage.getProductId().equals(productSkuDO.getProductId())) {
-                return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
+        if(CollectionUtil.isNotEmpty(productInStorageList)){
+            for (ProductInStorage productInStorage : productInStorageList) {
+                ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
+                if (productSkuDO == null || !productInStorage.getProductId().equals(productSkuDO.getProductId())) {
+                    return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
+                }
             }
         }
+        if(CollectionUtil.isNotEmpty(materialInStorageList)){
+            for (MaterialInStorage materialInStorage : materialInStorageList) {
+                MaterialDO materialDO = materialMapper.findById(materialInStorage.getMaterialId());
+                if (materialDO == null) {
+                    return ErrorCode.MATERIAL_NOT_EXISTS;
+                }
+            }
+        }
+
         return ErrorCode.SUCCESS;
+    }
+
+    private void saveBulkMaterial(String stockOrderNo, Integer warehouseId, Integer warehousePositionId, MaterialInStorage materialInStorage, Date currentTime){
+        // 入库散料（由物料产生散料）
+        List<BulkMaterialDO> allBulkMaterialDOList = new ArrayList<>();
+        // 入库物料记录
+        List<StockOrderBulkMaterialDO> allStockOrderBulkMaterialDOList = new ArrayList<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        for(int i = 0 ; i<materialInStorage.getMaterialCount();i++){
+            BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
+            bulkMaterialDO.setBulkMaterialNo(GenerateNoUtil.generateBulkMaterialNo(currentTime));
+            bulkMaterialDO.setMaterialId(materialInStorage.getMaterialId());
+            bulkMaterialDO.setCurrentWarehouseId(warehouseId);
+            bulkMaterialDO.setCurrentWarehousePositionId(warehousePositionId);
+            bulkMaterialDO.setOwnerWarehouseId(warehouseId);
+            bulkMaterialDO.setOwnerWarehousePositionId(warehousePositionId);
+            bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+            bulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            bulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+            bulkMaterialDO.setCreateUser(loginUser.getUserId().toString());
+            bulkMaterialDO.setUpdateTime(currentTime);
+            bulkMaterialDO.setCreateTime(currentTime);
+            allBulkMaterialDOList.add(bulkMaterialDO);
+
+            StockOrderBulkMaterialDO stockOrderBulkMaterialDO = new StockOrderBulkMaterialDO();
+            stockOrderBulkMaterialDO.setStockOrderNo(stockOrderNo);
+            stockOrderBulkMaterialDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
+            stockOrderBulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            stockOrderBulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+            stockOrderBulkMaterialDO.setCreateUser(loginUser.getUserId().toString());
+            stockOrderBulkMaterialDO.setUpdateTime(currentTime);
+            stockOrderBulkMaterialDO.setCreateTime(currentTime);
+            allStockOrderBulkMaterialDOList.add(stockOrderBulkMaterialDO);
+        }
+
+        if (!allBulkMaterialDOList.isEmpty()) {
+            bulkMaterialMapper.saveList(allBulkMaterialDOList);
+        }
+        if (!allStockOrderBulkMaterialDOList.isEmpty()) {
+            stockOrderBulkMaterialMapper.saveList(allStockOrderBulkMaterialDOList);
+        }
     }
 
 
@@ -342,6 +417,8 @@ public class WarehouseServiceImpl implements WarehouseService {
         List<ProductEquipmentDO> allProductEquipmentDOList = new ArrayList<>();
         // 入库设备记录
         List<StockOrderEquipmentDO> allStockOrderEquipmentDOList = new ArrayList<>();
+        // 入库物料记录
+        List<StockOrderBulkMaterialDO> allStockOrderBulkMaterialDOList = new ArrayList<>();
         // 入库设备物料
         List<ProductEquipmentMaterialDO> allProductEquipmentMaterialDOList = new ArrayList<>();
         // 入库散料（由物料产生散料）
@@ -404,6 +481,16 @@ public class WarehouseServiceImpl implements WarehouseService {
                         bulkMaterialDO.setCreateTime(currentTime);
                         allBulkMaterialDOList.add(bulkMaterialDO);
 
+                        StockOrderBulkMaterialDO stockOrderBulkMaterialDO = new StockOrderBulkMaterialDO();
+                        stockOrderBulkMaterialDO.setStockOrderNo(stockOrderNo);
+                        stockOrderBulkMaterialDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
+                        stockOrderBulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                        stockOrderBulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+                        stockOrderBulkMaterialDO.setCreateUser(loginUser.getUserId().toString());
+                        stockOrderBulkMaterialDO.setUpdateTime(currentTime);
+                        stockOrderBulkMaterialDO.setCreateTime(currentTime);
+                        allStockOrderBulkMaterialDOList.add(stockOrderBulkMaterialDO);
+
                         ProductEquipmentBulkMaterialDO productEquipmentBulkMaterialDO = new ProductEquipmentBulkMaterialDO();
                         productEquipmentBulkMaterialDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
                         productEquipmentBulkMaterialDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
@@ -432,6 +519,9 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
         if (!allProductEquipmentBulkMaterialDOList.isEmpty()) {
             productEquipmentBulkMaterialMapper.saveList(allProductEquipmentBulkMaterialDOList);
+        }
+        if (!allStockOrderBulkMaterialDOList.isEmpty()) {
+            stockOrderBulkMaterialMapper.saveList(allStockOrderBulkMaterialDOList);
         }
     }
 }

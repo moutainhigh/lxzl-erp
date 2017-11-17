@@ -22,7 +22,10 @@ public class MaterialDO extends BaseDO {
     private Integer propertyId;
     private Integer propertyValueId;
     private BigDecimal materialPrice;
-    private BigDecimal rentPrice;
+    private Integer stock;
+    private BigDecimal timeRentPrice;
+    private BigDecimal dayRentPrice;
+    private BigDecimal monthRentPrice;
     private String materialDesc;
     private Integer dataStatus;
     private String remark;
@@ -115,12 +118,36 @@ public class MaterialDO extends BaseDO {
         this.propertyValueId = propertyValueId;
     }
 
-    public BigDecimal getRentPrice() {
-        return rentPrice;
+    public Integer getStock() {
+        return stock;
     }
 
-    public void setRentPrice(BigDecimal rentPrice) {
-        this.rentPrice = rentPrice;
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public BigDecimal getTimeRentPrice() {
+        return timeRentPrice;
+    }
+
+    public void setTimeRentPrice(BigDecimal timeRentPrice) {
+        this.timeRentPrice = timeRentPrice;
+    }
+
+    public BigDecimal getDayRentPrice() {
+        return dayRentPrice;
+    }
+
+    public void setDayRentPrice(BigDecimal dayRentPrice) {
+        this.dayRentPrice = dayRentPrice;
+    }
+
+    public BigDecimal getMonthRentPrice() {
+        return monthRentPrice;
+    }
+
+    public void setMonthRentPrice(BigDecimal monthRentPrice) {
+        this.monthRentPrice = monthRentPrice;
     }
 
     public String getMaterialDesc() {

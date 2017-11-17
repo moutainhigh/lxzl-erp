@@ -24,7 +24,7 @@ public class MaterialTest extends ERPUnTransactionalTest {
     public void addMaterial() throws Exception {
         Material material = new Material();
         material.setMaterialName("一个小小的内存条");
-        material.setMaterialType(15);
+        material.setMaterialType(1);
         material.setPropertyId(12);
         material.setPropertyValueId(24);
         material.setMaterialPrice(new BigDecimal(500.0));

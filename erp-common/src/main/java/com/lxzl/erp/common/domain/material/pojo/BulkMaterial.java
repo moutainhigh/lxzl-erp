@@ -23,8 +23,6 @@ public class BulkMaterial implements Serializable {
 	private Integer propertyId;   //属性ID
 	private Integer propertyValueId;   //属性值ID
 	private BigDecimal bulkMaterialPrice;   //散料本身的价值(单价)
-	private BigDecimal originalPrice;   //原价
-	private BigDecimal rentPrice;   //租赁价格
 	private Integer currentEquipmentId;	// 当前设备ID
 	private String currentEquipmentNo;	// 当前设备编号
 	private Integer bulkMaterialStatus;   //散料状态，0闲置，1租赁中，2报废
@@ -138,22 +136,6 @@ public class BulkMaterial implements Serializable {
 
 	public void setBulkMaterialPrice(BigDecimal bulkMaterialPrice){
 		this.bulkMaterialPrice = bulkMaterialPrice;
-	}
-
-	public BigDecimal getOriginalPrice(){
-		return originalPrice;
-	}
-
-	public void setOriginalPrice(BigDecimal originalPrice){
-		this.originalPrice = originalPrice;
-	}
-
-	public BigDecimal getRentPrice(){
-		return rentPrice;
-	}
-
-	public void setRentPrice(BigDecimal rentPrice){
-		this.rentPrice = rentPrice;
 	}
 
 	public Integer getBulkMaterialStatus(){

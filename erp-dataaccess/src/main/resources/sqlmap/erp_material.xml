@@ -15,8 +15,11 @@
 		<result column="property_value_id" jdbcType="INTEGER" property="propertyValueId" />
 		<result column="property_name" jdbcType="VARCHAR" property="propertyName" />
 		<result column="property_value_name" jdbcType="VARCHAR" property="propertyValueName" />
+		<result column="stock" jdbcType="INTEGER" property="stock"/>
 		<result column="material_price" jdbcType="DECIMAL" property="materialPrice" />
-		<result column="rent_price" jdbcType="DECIMAL" property="rentPrice" />
+		<result column="time_rent_price" jdbcType="DECIMAL" property="timeRentPrice"/>
+		<result column="day_rent_price" jdbcType="DECIMAL" property="dayRentPrice"/>
+		<result column="month_rent_price" jdbcType="DECIMAL" property="monthRentPrice"/>
 		<result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -45,7 +48,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		em.id,em.material_no,em.material_name,em.material_type,em.brand_id,em.category_id,em.property_id,em.property_value_id,em.material_price,em.rent_price,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
+		em.id,em.material_no,em.material_name,em.material_type,em.brand_id,em.category_id,em.property_id,em.property_value_id,em.stock,em.material_price,em.time_rent_price,em.day_rent_price,em.month_rent_price,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
 	</sql>
 
 	<sql id="img_column_List">
@@ -157,11 +160,20 @@
 			<if test="propertyValueId != null">
 				property_value_id = #{propertyValueId,jdbcType=INTEGER},
 			</if>
+			<if test="stock != null">
+				stock = #{stock, jdbcType=INTEGER},
+			</if>
 			<if test="materialPrice != null">
 				material_price = #{materialPrice,jdbcType=DECIMAL},
 			</if>
-			<if test="rentPrice != null">
-				rent_price = #{rentPrice,jdbcType=DECIMAL},
+			<if test="timeRentPrice != null">
+				time_rent_price = #{timeRentPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="dayRentPrice != null">
+				day_rent_price = #{dayRentPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="monthRentPrice != null">
+				month_rent_price = #{monthRentPrice,jdbcType=DECIMAL},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},

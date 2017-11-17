@@ -18,8 +18,6 @@
 		<result column="property_id" jdbcType="INTEGER" property="propertyId" />
 		<result column="property_value_id" jdbcType="INTEGER" property="propertyValueId" />
 		<result column="bulk_material_price" jdbcType="DECIMAL" property="bulkMaterialPrice" />
-		<result column="original_price" jdbcType="DECIMAL" property="originalPrice" />
-		<result column="rent_price" jdbcType="DECIMAL" property="rentPrice" />
 		<result column="current_equipment_id" jdbcType="INTEGER" property="currentEquipmentId" />
 		<result column="current_equipment_no" jdbcType="VARCHAR" property="currentEquipmentNo" />
 		<result column="bulk_material_status" jdbcType="INTEGER" property="bulkMaterialStatus" />
@@ -32,7 +30,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ebm.id,ebm.bulk_material_no,ebm.bulk_material_type,ebm.bulk_material_name,ebm.material_id,ebm.material_no,ebm.current_warehouse_id,ebm.current_warehouse_position_id,ebm.owner_warehouse_id,ebm.owner_warehouse_position_id,ebm.brand_id,ebm.category_id,ebm.property_id,ebm.property_value_id,ebm.bulk_material_price,ebm.original_price,ebm.rent_price,ebm.current_equipment_id,ebm.current_equipment_no,ebm.bulk_material_status,ebm.data_status,ebm.remark,ebm.create_time,ebm.create_user,ebm.update_time,ebm.update_user
+		ebm.id,ebm.bulk_material_no,ebm.bulk_material_type,ebm.bulk_material_name,ebm.material_id,ebm.material_no,ebm.current_warehouse_id,ebm.current_warehouse_position_id,ebm.owner_warehouse_id,ebm.owner_warehouse_position_id,ebm.brand_id,ebm.category_id,ebm.property_id,ebm.property_value_id,ebm.bulk_material_price,ebm.current_equipment_id,ebm.current_equipment_no,ebm.bulk_material_status,ebm.data_status,ebm.remark,ebm.create_time,ebm.create_user,ebm.update_time,ebm.update_user
 	</sql>
 
 	<select id="findById" resultMap="BulkMaterialDO" parameterType="java.lang.Integer">
@@ -127,12 +125,6 @@
 			<if test="bulkMaterialPrice != null">
 				bulk_material_price = #{bulkMaterialPrice,jdbcType=DECIMAL},
 			</if>
-			<if test="originalPrice != null">
-				original_price = #{originalPrice,jdbcType=DECIMAL},
-			</if>
-			<if test="rentPrice != null">
-				rent_price = #{rentPrice,jdbcType=DECIMAL},
-			</if>
 			<if test="currentEquipmentId != null">
 				current_equipment_id = #{currentEquipmentId,jdbcType=INTEGER},
 			</if>
@@ -165,10 +157,10 @@
 
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_bulk_material (bulk_material_no,bulk_material_type,bulk_material_name,material_id,material_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,brand_id,category_id,property_id,property_value_id,bulk_material_price,original_price,rent_price,current_equipment_id,current_equipment_no,bulk_material_status,data_status,remark,create_time,create_user,update_time,update_user)
+		insert into erp_bulk_material (bulk_material_no,bulk_material_type,bulk_material_name,material_id,material_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,brand_id,category_id,property_id,property_value_id,bulk_material_price,current_equipment_id,current_equipment_no,bulk_material_status,data_status,remark,create_time,create_user,update_time,update_user)
 		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList" separator="UNION ALL">
 			SELECT #{bulkMaterialDO.bulkMaterialNo},em.material_type, em.material_name ,#{bulkMaterialDO.materialId},em.material_no,#{bulkMaterialDO.currentWarehouseId},#{bulkMaterialDO.currentWarehousePositionId},#{bulkMaterialDO.ownerWarehouseId},#{bulkMaterialDO.ownerWarehousePositionId},
-			em.brand_id,em.category_id,em.property_id,em.property_value_id,em.material_price,em.original_price,em.rent_price, epe.id ,#{bulkMaterialDO.currentEquipmentNo}, #{bulkMaterialDO.bulkMaterialStatus},#{bulkMaterialDO.dataStatus},#{bulkMaterialDO.remark},
+			em.brand_id,em.category_id,em.property_id,em.property_value_id,em.material_price,epe.id ,#{bulkMaterialDO.currentEquipmentNo}, #{bulkMaterialDO.bulkMaterialStatus},#{bulkMaterialDO.dataStatus},#{bulkMaterialDO.remark},
 			#{bulkMaterialDO.createTime},#{bulkMaterialDO.createUser},#{bulkMaterialDO.updateTime},#{bulkMaterialDO.updateUser}
 			FROM erp_material em, erp_product_equipment epe
 			WHERE em.id = #{bulkMaterialDO.materialId} and epe.equipment_no = #{bulkMaterialDO.currentEquipmentNo}

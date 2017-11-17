@@ -592,7 +592,10 @@ CREATE TABLE `erp_material` (
   `property_id` int(20) NOT NULL COMMENT '属性ID',
   `property_value_id` int(20) NOT NULL COMMENT '属性值ID',
   `material_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '物料本身的价值(单价)',
-  `rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '租赁价格',
+  `stock` int(11) NOT NULL DEFAULT '0' COMMENT '库存',
+  `time_rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '次租赁价格',
+  `day_rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '天租赁价格',
+  `month_rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '月租赁价格',
   `material_desc` text COLLATE utf8_bin COMMENT '物料描述',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -600,8 +603,7 @@ CREATE TABLE `erp_material` (
   `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `index_material_property` (`property_id`,`property_value_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='物料表';
 
 DROP TABLE if exists `erp_material_img`;
@@ -827,6 +829,21 @@ CREATE TABLE `erp_stock_order_equipment` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备出入库单明细';
+
+DROP TABLE if exists `erp_stock_order_bulk_material`;
+CREATE TABLE `erp_stock_order_bulk_material` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `stock_order_no` varchar(100) NOT NULL COMMENT '出入库单编号',
+  `bulk_material_id` int(20) NOT NULL COMMENT '散料ID',
+  `bulk_material_no` varchar(100) NOT NULL COMMENT '散料编号唯一',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='散料出入库单明细';
 
 -- ****************************************订单模块**************************************** --
 
