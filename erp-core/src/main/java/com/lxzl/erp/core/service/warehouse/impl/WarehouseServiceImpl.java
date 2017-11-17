@@ -303,23 +303,28 @@ public class WarehouseServiceImpl implements WarehouseService {
         stockOrderDO.setCreateTime(currentTime);
         stockOrderMapper.save(stockOrderDO);
 
-        for (ProductInStorage productInStorage : productInStorageList) {
-            saveProductEquipment(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, productInStorage, currentTime);
-            ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
-            productSkuDO.setStock(productSkuDO.getStock() + productInStorage.getProductCount());
-            productSkuDO.setUpdateUser(loginUser.getUserId().toString());
-            productSkuDO.setUpdateTime(currentTime);
-            productSkuMapper.update(productSkuDO);
+        if(CollectionUtil.isNotEmpty(productInStorageList)){
+            for (ProductInStorage productInStorage : productInStorageList) {
+                saveProductEquipment(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, productInStorage, currentTime);
+                ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
+                productSkuDO.setStock(productSkuDO.getStock() + productInStorage.getProductCount());
+                productSkuDO.setUpdateUser(loginUser.getUserId().toString());
+                productSkuDO.setUpdateTime(currentTime);
+                productSkuMapper.update(productSkuDO);
+            }
         }
 
-        for (MaterialInStorage materialInStorage : materialInStorageList) {
-            saveBulkMaterial(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, materialInStorage, currentTime);
-            MaterialDO materialDO = materialMapper.findById(materialInStorage.getMaterialId());
-            materialDO.setStock(materialDO.getStock() + materialInStorage.getMaterialCount());
-            materialDO.setUpdateUser(loginUser.getUserId().toString());
-            materialDO.setUpdateTime(currentTime);
-            materialMapper.update(materialDO);
+        if(CollectionUtil.isNotEmpty(materialInStorageList)){
+            for (MaterialInStorage materialInStorage : materialInStorageList) {
+                saveBulkMaterial(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, materialInStorage, currentTime);
+                MaterialDO materialDO = materialMapper.findById(materialInStorage.getMaterialId());
+                materialDO.setStock(materialDO.getStock() + materialInStorage.getMaterialCount());
+                materialDO.setUpdateUser(loginUser.getUserId().toString());
+                materialDO.setUpdateTime(currentTime);
+                materialMapper.update(materialDO);
+            }
         }
+
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(stockOrderDO.getId());
         return result;

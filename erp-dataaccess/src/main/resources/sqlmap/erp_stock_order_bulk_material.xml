@@ -85,7 +85,7 @@
 
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_stock_order_equipment (stock_order_no, bulk_material_id, bulk_material_no, data_status, remark, create_time, create_user, update_time, update_user)
+		insert into erp_stock_order_bulk_material (stock_order_no, bulk_material_id, bulk_material_no, data_status, remark, create_time, create_user, update_time, update_user)
 		<foreach item="stockOrderBulkMaterialDO" collection="stockOrderBulkMaterialDOList" separator="UNION ALL">
 			SELECT #{stockOrderBulkMaterialDO.stockOrderNo},ebm.id,#{stockOrderBulkMaterialDO.bulkMaterialNo},#{stockOrderBulkMaterialDO.dataStatus},#{stockOrderBulkMaterialDO.remark},
 			#{stockOrderBulkMaterialDO.createTime},#{stockOrderBulkMaterialDO.createUser},#{stockOrderBulkMaterialDO.updateTime},#{stockOrderBulkMaterialDO.updateUser}

@@ -77,7 +77,7 @@
     </sql>
 
     <sql id="bulk_material_column_List">
-        ebm.id AS bulk_id,ebm.bulk_material_no AS bulk_bulk_material_no,ebm.bulk_material_type AS bulk_bulk_material_type,ebm.bulk_material_name AS bulk_bulk_material_name,ebm.material_id AS bulk_material_id,ebm.material_no AS bulk_material_no,ebm.warehouse_id AS bulk_current_warehouse_id,ebm.warehouse_position_id AS bulk_current_warehouse_position_id,ebm.owner_warehouse_id AS bulk_owner_warehouse_id,ebm.owner_warehouse_position_id AS bulk_owner_warehouse_position_id,ebm.brand_id AS bulk_brand_id,ebm.category_id AS bulk_category_id,ebm.property_id AS bulk_property_id,ebm.property_value_id AS bulk_property_value_id,ebm.bulk_material_price AS bulk_bulk_material_price,ebm.original_price AS bulk_original_price,ebm.rent_price AS bulk_rent_price,ebm.bulk_material_status AS bulk_bulk_material_status,ebm.data_status AS bulk_data_status,ebm.remark AS bulk_remark,ebm.create_time AS bulk_create_time,ebm.create_user AS bulk_create_user,ebm.update_time AS bulk_update_time,ebm.update_user AS bulk_update_user
+        ebm.id AS bulk_id,ebm.bulk_material_no AS bulk_bulk_material_no,ebm.bulk_material_type AS bulk_bulk_material_type,ebm.bulk_material_name AS bulk_bulk_material_name,ebm.material_id AS bulk_material_id,ebm.material_no AS bulk_material_no,ebm.warehouse_id AS bulk_current_warehouse_id,ebm.warehouse_position_id AS bulk_current_warehouse_position_id,ebm.owner_warehouse_id AS bulk_owner_warehouse_id,ebm.owner_warehouse_position_id AS bulk_owner_warehouse_position_id,ebm.brand_id AS bulk_brand_id,ebm.category_id AS bulk_category_id,ebm.property_id AS bulk_property_id,ebm.property_value_id AS bulk_property_value_id,ebm.bulk_material_price AS bulk_bulk_material_price,ebm.bulk_material_status AS bulk_bulk_material_status,ebm.data_status AS bulk_data_status,ebm.remark AS bulk_remark,ebm.create_time AS bulk_create_time,ebm.create_user AS bulk_create_user,ebm.update_time AS bulk_update_time,ebm.update_user AS bulk_update_user
     </sql>
 
     <select id="findById" resultMap="ProductEquipmentDO" parameterType="java.lang.Integer">
@@ -256,7 +256,7 @@
         insert into erp_product_equipment (equipment_no,product_id,sku_id,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,equipment_price,equipment_status,data_status,remark,create_time,create_user,update_time,update_user)
         <foreach item="productEquipmentDO" collection="productEquipmentDOList" separator="UNION ALL">
             SELECT #{productEquipmentDO.equipmentNo},#{productEquipmentDO.productId},#{productEquipmentDO.skuId},#{productEquipmentDO.currentWarehouseId},#{productEquipmentDO.currentWarehousePositionId},#{productEquipmentDO.ownerWarehouseId},
-            #{productEquipmentDO.ownerWarehousePositionId},eps.rent_price,#{productEquipmentDO.equipmentStatus},#{productEquipmentDO.dataStatus},#{productEquipmentDO.remark},
+            #{productEquipmentDO.ownerWarehousePositionId},eps.sku_price,#{productEquipmentDO.equipmentStatus},#{productEquipmentDO.dataStatus},#{productEquipmentDO.remark},
             #{productEquipmentDO.createTime},#{productEquipmentDO.createUser},#{productEquipmentDO.updateTime},#{productEquipmentDO.updateUser}
             FROM erp_product_sku eps WHERE eps.id = #{productEquipmentDO.skuId}
         </foreach>

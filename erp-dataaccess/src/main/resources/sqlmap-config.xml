@@ -64,6 +64,7 @@
         <mapper resource="sqlmap/erp_customer_company.xml" />
         <mapper resource="sqlmap/erp_customer_person.xml" />
         <mapper resource="sqlmap/erp_material_img.xml" />
+        <mapper resource="sqlmap/erp_stock_order_bulk_material.xml" />
     </mappers>
 
 </configuration>
