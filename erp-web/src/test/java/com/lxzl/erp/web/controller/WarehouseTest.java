@@ -53,8 +53,8 @@ public class WarehouseTest extends ERPUnTransactionalTest {
         ProductInStockParam productInStockParam = new ProductInStockParam();
         List<ProductInStorage> productInStorageList = new ArrayList<>();
         ProductInStorage productInStorage = new ProductInStorage();
-        productInStorage.setProductId(2000007);
-        productInStorage.setProductSkuId(16);
+        productInStorage.setProductId(2000013);
+        productInStorage.setProductSkuId(40);
         productInStorage.setProductCount(10);
 
         List<ProductMaterial> productMaterialList = new ArrayList<>();
@@ -67,7 +67,7 @@ public class WarehouseTest extends ERPUnTransactionalTest {
         productInStorageList.add(productInStorage);
         productInStockParam.setProductInStorageList(productInStorageList);
         productInStockParam.setTargetWarehouseId(4000001);
-        productInStockParam.setReferNo("C201711071720430655000051083");
+        productInStockParam.setReferNo("C201711071720430655000051084");
         productInStockParam.setCauseType(StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE);
         TestResult result = getJsonTestResult("/warehouse/productInStock", productInStockParam);
     }
