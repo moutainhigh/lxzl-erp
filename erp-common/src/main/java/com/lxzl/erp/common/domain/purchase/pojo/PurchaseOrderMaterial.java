@@ -11,6 +11,7 @@ public class PurchaseOrderMaterial implements Serializable {
 	private Integer purchaseOrderMaterialId;   //唯一标识
 	private Integer purchaseOrderId;   //采购单ID
 	private Integer materialId;   //物料ID冗余
+	private String materialNo;   //物料No冗余
 	private String materialName;   //物料名称冗余
 	private String materialSnapshot;   //物料快照
 	private Integer materialCount;   //物料总数
@@ -37,6 +38,14 @@ public class PurchaseOrderMaterial implements Serializable {
 
 	public void setPurchaseOrderId(Integer purchaseOrderId){
 		this.purchaseOrderId = purchaseOrderId;
+	}
+
+	public String getMaterialNo() {
+		return materialNo;
+	}
+
+	public void setMaterialNo(String materialNo) {
+		this.materialNo = materialNo;
 	}
 
 	public Integer getMaterialId(){

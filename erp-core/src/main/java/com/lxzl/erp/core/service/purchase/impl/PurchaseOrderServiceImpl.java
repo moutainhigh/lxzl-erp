@@ -336,8 +336,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         // 验证采购单物料项是否合法
         for(PurchaseOrderMaterial purchaseOrderMaterial : purchaseOrderMaterialList){
 
-            if(purchaseOrderMaterial.getMaterialId()==null) {
-                return ErrorCode.MATERIAL_ID_NOT_NULL;
+            if(StringUtil.isEmpty(purchaseOrderMaterial.getMaterialNo())) {
+                return ErrorCode.MATERIAL_NO_NOT_NULL;
             }
             if(purchaseOrderMaterial.getMaterialAmount()==null||  purchaseOrderMaterial.getMaterialAmount().doubleValue()<=0){
                 return ErrorCode.MATERIAL_PRICE_ERROR;
@@ -345,16 +345,18 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             if(purchaseOrderMaterial.getMaterialCount()==null||purchaseOrderMaterial.getMaterialCount()<=0){
                 return ErrorCode.MATERIAL_COUNT_ERROR;
             }
-            materialIdSet.add(purchaseOrderMaterial.getMaterialId());
+            //保存采购订单物料项快照
+            MaterialDO materialDO = materialMapper.findByNo(purchaseOrderMaterial.getMaterialNo());
+            if(materialDO==null){
+                return ErrorCode.MATERIAL_NOT_EXISTS;
+            }
+            materialIdSet.add(materialDO.getId());
             //累加采购单物料项总价
             purchaseOrderDetail.totalMaterialAmount = BigDecimalUtil.add(purchaseOrderDetail.totalMaterialAmount,BigDecimalUtil.mul(purchaseOrderMaterial.getMaterialAmount(),new BigDecimal(purchaseOrderMaterial.getMaterialCount())));
 
             PurchaseOrderMaterialDO purchaseOrderMaterialDO = new PurchaseOrderMaterialDO();
-            //保存采购订单商品项快照
-            MaterialDO materialDO = materialMapper.findById(purchaseOrderMaterial.getMaterialId());
-            if(materialDO==null){
-                return ErrorCode.MATERIAL_ID_NOT_NULL;
-            }
+
+
             Material material = MaterialConverter.convertMaterialDO(materialDO);
             materialList.add(material);
             purchaseOrderMaterialDO.setMaterialSnapshot(JSON.toJSONString(material));
@@ -1040,7 +1042,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }else if(CommonConstant.COMMON_CONSTANT_NO.equals(purchaseOrderDO.getIsInvoice())){//如果没有发票
             //解析采购单库房快照，是否为总公司库
             Warehouse warehouse = JSON.parseObject(purchaseOrderDO.getWarehouseSnapshot(),Warehouse.class);
-            boolean isHead  = SubCompanyType.SUB_COMPANY_TYPE_HEADER.equals(warehouse.getSubCompanyType())?true:false;
+            boolean isHead  = SubCompanyType.SUB_COMPANY_TYPE_HEADER.equals(warehouse.getSubCompanyType());
             if(isHead){//如果是总公司仓库
                 //直接生成收料通知单
                 createReceiveDetail(purchaseDeliveryOrderDO,AutoAllotStatus.AUTO_ALLOT_STATUS_NO,null);

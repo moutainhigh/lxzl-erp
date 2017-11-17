@@ -133,6 +133,7 @@ public class ErrorCode {
     public static final String PURCHASE_ORDER_MATERIAL_NOT_GADGET = "J300043";
     public static final String PURCHASE_ORDER_MATERIAL_LIST_NOT_NULL = "J300044";
     public static final String PURCHASE_ORDER_MATERIAL_CAN_NOT_CREATE = "J300045";
+    public static final String MATERIAL_NO_NOT_NULL = "J300046";
 
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
@@ -294,6 +295,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_ORDER_MATERIAL_LIST_NOT_NULL,"采购订单物料项列表不能为空");
         MAP.put(PURCHASE_ORDER_MATERIAL_CAN_NOT_CREATE,"采购的物料总额大于100元且没有发票");
         MAP.put(PURCHASE_ORDER_SKU_MATERIAL_ERROR,"SKU物料配置错误");
+        MAP.put(MATERIAL_NO_NOT_NULL,"物料编号不能为空");
 
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL,"订单商品不能为空");

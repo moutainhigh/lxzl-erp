@@ -82,9 +82,9 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
 
         List<PurchaseOrderMaterial> purchaseOrderMaterialList = new ArrayList<>();//小配件采购单物料项列表不能为空
         PurchaseOrderMaterial purchaseOrderMaterial = new PurchaseOrderMaterial();
-        purchaseOrderMaterial.setMaterialId(1);
+        purchaseOrderMaterial.setMaterialNo("M201711171838059981293");
         purchaseOrderMaterial.setMaterialCount(2);
-        purchaseOrderMaterial.setMaterialAmount(new BigDecimal(130));
+        purchaseOrderMaterial.setMaterialAmount(new BigDecimal(42));
         purchaseOrderMaterialList.add(purchaseOrderMaterial);
 
         purchaseOrder.setPurchaseOrderMaterialList(purchaseOrderMaterialList);
