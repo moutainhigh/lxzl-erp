@@ -45,23 +45,15 @@
                                     <button type="reset" class="btn btn-default btn-sm">重置</button>
                                 </div>
                                 <div class="form-group pull-right mn mr10" style="width: 120px;">
-                                    <input type="text" name="purchaseNo" id="purchaseNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入采购单编号">
-                                </div>
-                                <div class="form-group pull-right mn mr10" style="width: 210px;">
-                                    <input type="hidden" name="createStartTime" id="createStartTime" />
-                                    <input type="hidden" name="createEndTime" id="createEndTime" />
-                                    <div class="input-group date" id="createTimePicker">
-                                        <input type="text" name="createTimePicker" id="createTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择采购单创建时间">
-                                        <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                    <div class="input-group">
+                                        <input type="text" name="supplierName" id="supplierName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入供应商名称">
                                     </div>
                                 </div>
-                                <script type="text/html" id="purchaseOrderStatusSelectTpl">
-                                    <option value="">全部（采购单状态）</option>
-                                    {{#purchaseOrderStatus}}
-                                    <option value={{num}}>{{value}}</option>
-                                    {{/purchaseOrderStatus}}
-                                </script>
-                                <select name="purchaseOrderStatus" id="purchaseOrderStatus" class="hide"></select>
+                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                    <div class="input-group">
+                                        <input type="text" name="supplierId" id="supplierId" class="form-control input-sm bradius number" autocomplete="off" placeholder="输入供应商ID">
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -79,17 +71,13 @@
                                     </label>
                                 </th>
                                 {{/hasCommonActionButtons}}
-                                <th>采购单编号</th>
-                                <th>总价</th>
+                                <th>ID</th>
                                 <th>供应商</th>
-                                <th>发票供应商</th>
-                                <th>仓库</th>
-                                <th>是否有发票</th>
-                                <th>是否全新机</th>
-                                <th>采购单状态</th>
-                                <th>采购者</th>
-                                <th>商品信息</th>
-                                <th>创建时间</th>
+                                <th>地址</th>
+                                <th>电话</th>
+                                <th>联系人</th>
+                                <th>联系人手机</th>
+                                <th>备注</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
                                 {{/hasRowActionButtons}}
@@ -107,24 +95,20 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{purchaseNo}}</td>
-                                <td>{{purchaseOrderAmountTotalFixed}}</td>
-                                <td>{{productSupplierName}}</td>
-                                <td>{{invoiceSupplierName}}</td>
-                                <td>{{warehouse}}</td>
-                                <td>{{isInvoiceStr}}</td>
-                                <td>{{isNewStr}}</td>
-                                <td>{{purchaseOrderStatusStr}}</td>
-                                <td>{{ownerName}}</td>
-                                <td>{{}}</td>
-                                <td>{{createTimeFormat}}</td>
+                                <td>{{supplierId}}</td>
+                                <td>{{supplierName}}</td>
+                                <td>
+                                    {{provinceName}}{{cityName}}{{districtName}}{{address}}
+                                </td>
+                                <td>{{tel}}</td>
+                                <td>{{contactName}}</td>
+                                <td>{{contactPhone}}</td>
+                                <td>{{remark}}</td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
                                     <div class="btn-group text-right">
                                         {{#rowActionButtons}}
-                                        {{#buttons}}
                                         <a href="${ctx}{{menuUrl}}?no={{purchaseNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-purchaseno="{{purchaseNo}}" data-purchaseorderid="{{purchaseOrderId}}">{{text}}</a>
-                                        {{/buttons}}
                                         {{/rowActionButtons}}
                                     </div>
                                 </td>
@@ -133,7 +117,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="14" class="text-center">没有查询到商品</td>
+                                <td valign="top" colspan="14" class="text-center">没有查询到仓库</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
