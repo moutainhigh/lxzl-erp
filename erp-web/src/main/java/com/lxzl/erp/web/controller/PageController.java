@@ -98,6 +98,24 @@ public class PageController extends BaseController {
         return "/productManage/skuList";
     }
 
+    //物料管理
+    @RequestMapping("/material-manage/list")
+    public String materialManageMaterialList() {
+        return "/materialManage/materialList";
+    }
+    @RequestMapping("/material-manage/detail")
+    public String materialManageMaterialDetail() {
+        return "/materialManage/materialDetail";
+    }
+    @RequestMapping("/material-manage/add")
+    public String materialManageMaterialAdd() {
+        return "/materialManage/materialAdd";
+    }
+    @RequestMapping("/material-manage/edit")
+    public String materialManageMaterialEdit() {
+        return "/materialManage/materialEdit";
+    }
+
     //订单管理
     @RequestMapping("/order-manage/list")
     public String orderManageList() {
