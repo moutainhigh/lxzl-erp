@@ -426,7 +426,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     private boolean verifyVerifyUsers(WorkflowNodeDO workflowNodeDO, Integer userId) {
         List<User> userList = getUserListByNode(workflowNodeDO);
-        if (userList != null && !userList.isEmpty()) {
+        if (CollectionUtil.isNotEmpty(userList)) {
             Map<Integer, User> userMap = ListUtil.listToMap(userList, "userId");
             if (userMap.containsKey(userId)) {
                 return true;

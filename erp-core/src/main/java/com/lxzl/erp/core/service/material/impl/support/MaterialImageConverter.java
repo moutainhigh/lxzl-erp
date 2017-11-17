@@ -41,8 +41,8 @@ public class MaterialImageConverter {
 
     public static MaterialImgDO convertMaterialImg(MaterialImg materialImg) {
         MaterialImgDO materialImgDO = new MaterialImgDO();
-        if (materialImg.getMaterialId() != null) {
-            materialImgDO.setId(materialImg.getMaterialId());
+        if (materialImg.getMaterialImgId() != null) {
+            materialImgDO.setId(materialImg.getMaterialImgId());
         }
         BeanUtils.copyProperties(materialImg, materialImgDO);
         return materialImgDO;

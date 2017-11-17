@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.WarehouseQueryParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseConverter;
@@ -29,6 +30,7 @@ import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehousePositionDO;
+import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,10 +84,17 @@ public class WarehouseServiceImpl implements WarehouseService {
     private ProductEquipmentBulkMaterialMapper productEquipmentBulkMaterialMapper;
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> addWarehouse(Warehouse warehouse) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
+
+        String verifyCode = verifyAddWarehouse(warehouse);
+        if (!ErrorCode.SUCCESS.equals(verifyCode)) {
+            result.setErrorCode(verifyCode);
+            return result;
+        }
 
         WarehouseDO dbRecord = warehouseMapper.finByCompanyAndType(warehouse.getSubCompanyId(), warehouse.getWarehouseType());
         if (dbRecord != null) {
@@ -94,7 +103,6 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
 
         WarehouseDO warehouseDO = WarehouseConverter.convertWarehouse(warehouse);
-
         warehouseDO.setWarehouseNo(GenerateNoUtil.generateWarehouseNo(currentTime));
         warehouseDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         warehouseDO.setUpdateUser(loginUser.getUserId().toString());
@@ -109,8 +117,48 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateWarehouse(Warehouse warehouse) {
-        return null;
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+
+        String verifyCode = verifyAddWarehouse(warehouse);
+        if (!ErrorCode.SUCCESS.equals(verifyCode)) {
+            result.setErrorCode(verifyCode);
+            return result;
+        }
+
+        WarehouseDO dbRecord = warehouseMapper.finByCompanyAndType(warehouse.getSubCompanyId(), warehouse.getWarehouseType());
+        if (dbRecord == null || !dbRecord.getWarehouseNo().equals(warehouse.getWarehouseNo())) {
+            result.setErrorCode(ErrorCode.RECORD_ALREADY_EXISTS);
+            return result;
+        }
+
+        WarehouseDO warehouseDO = WarehouseConverter.convertWarehouse(warehouse);
+        warehouseDO.setWarehouseNo(GenerateNoUtil.generateWarehouseNo(currentTime));
+        warehouseDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        warehouseDO.setUpdateUser(loginUser.getUserId().toString());
+        warehouseDO.setCreateUser(loginUser.getUserId().toString());
+        warehouseDO.setUpdateTime(currentTime);
+        warehouseDO.setCreateTime(currentTime);
+        warehouseMapper.update(warehouseDO);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(warehouseDO.getWarehouseNo());
+        return result;
+    }
+
+    private String verifyAddWarehouse(Warehouse warehouse) {
+        if (warehouse == null) {
+            return ErrorCode.PARAM_IS_NOT_NULL;
+        }
+        if (warehouse.getSubCompanyId() == null
+                || warehouse.getSubCompanyType() == null
+                || StringUtil.isBlank(warehouse.getWarehouseName())) {
+            return ErrorCode.PARAM_IS_NOT_ENOUGH;
+        }
+        return ErrorCode.SUCCESS;
     }
 
     @Override
@@ -328,7 +376,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             stockOrderEquipmentDO.setCreateTime(currentTime);
             allStockOrderEquipmentDOList.add(stockOrderEquipmentDO);
 
-            if (productInStorage.getProductMaterialList() != null && !productInStorage.getProductMaterialList().isEmpty()) {
+            if (CollectionUtil.isNotEmpty(productInStorage.getProductMaterialList())) {
                 for (ProductMaterial productMaterial : productInStorage.getProductMaterialList()) {
                     ProductEquipmentMaterialDO productEquipmentMaterialDO = new ProductEquipmentMaterialDO();
                     productEquipmentMaterialDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());

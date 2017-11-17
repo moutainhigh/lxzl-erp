@@ -15,6 +15,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.FileUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
+import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.MaterialConverter;
@@ -35,6 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
@@ -132,6 +136,7 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> addMaterial(Material material) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -157,6 +162,7 @@ public class MaterialServiceImpl implements MaterialService {
         materialDO.setUpdateTime(currentTime);
         materialDO.setCreateTime(currentTime);
         materialMapper.save(materialDO);
+        saveMaterialImage(material.getMaterialImgList(), 1, materialDO.getId(), loginUser, currentTime);
 
         result.setResult(materialDO.getMaterialNo());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -164,6 +170,7 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateMaterial(Material material) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -182,13 +189,14 @@ public class MaterialServiceImpl implements MaterialService {
         }
 
         MaterialDO dbMaterialDO = materialMapper.findByPropertyAndValueId(material.getPropertyId(), material.getPropertyValueId());
-        if (dbMaterialDO != null && !dbMaterialDO.getMaterialNo().equals(material.getMaterialNo())) {
+        if (dbMaterialDO == null || !dbMaterialDO.getMaterialNo().equals(material.getMaterialNo())) {
             result.setErrorCode(ErrorCode.RECORD_ALREADY_EXISTS);
             return result;
         }
 
         MaterialDO materialDO = MaterialConverter.convertMaterial(material);
         // 以下两个值不能改
+        materialDO.setId(dbRecord.getId());
         materialDO.setPropertyId(null);
         materialDO.setPropertyValueId(null);
         materialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -196,9 +204,52 @@ public class MaterialServiceImpl implements MaterialService {
         materialDO.setUpdateTime(currentTime);
         materialMapper.update(materialDO);
 
+        saveMaterialImage(material.getMaterialImgList(), 1, materialDO.getId(), loginUser, currentTime);
+
         result.setResult(materialDO.getMaterialNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+
+    void saveMaterialImage(List<MaterialImg> materialImgList, Integer type, Integer materialId, User loginUser, Date currentTime) {
+
+        List<MaterialImg> updateMaterialImgList = new ArrayList<>();
+        List<MaterialImgDO> dbMaterialImgRecord = materialImgMapper.findByMaterialIdAndType(materialId, type);
+        Map<Integer, MaterialImgDO> dbMaterialImgRecordMap = ListUtil.listToMap(dbMaterialImgRecord, "id");
+
+        if (materialImgList != null) {
+            for (MaterialImg materialImg : materialImgList) {
+                if (materialImg != null && materialImg.getMaterialImgId() != null) {
+                    updateMaterialImgList.add(materialImg);
+                    if (dbMaterialImgRecordMap.get(materialImg.getMaterialImgId()) != null) {
+                        dbMaterialImgRecordMap.remove(materialImg.getMaterialImgId());
+                    }
+                }
+            }
+        }
+
+
+        if (!updateMaterialImgList.isEmpty()) {
+            for (MaterialImg materialImg : updateMaterialImgList) {
+                MaterialImgDO materialImgDO = MaterialImageConverter.convertMaterialImg(materialImg);
+                materialImgDO.setMaterialId(materialId);
+                materialImgDO.setImgType(type);
+                materialImgDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                materialImgDO.setUpdateUser(loginUser.getUserId().toString());
+                materialImgDO.setUpdateTime(currentTime);
+                materialImgMapper.update(materialImgDO);
+            }
+        }
+        if (!dbMaterialImgRecordMap.isEmpty()) {
+            for (Map.Entry<Integer, MaterialImgDO> entry : dbMaterialImgRecordMap.entrySet()) {
+                MaterialImgDO materialImgDO = entry.getValue();
+                materialImgDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                materialImgDO.setUpdateUser(loginUser.getUserId().toString());
+                materialImgDO.setUpdateTime(currentTime);
+                materialImgMapper.update(materialImgDO);
+            }
+        }
     }
 
     private String verifyAddMaterial(Material material) {
@@ -249,12 +300,12 @@ public class MaterialServiceImpl implements MaterialService {
     @Override
     public ServiceResult<String, Material> queryMaterialByNo(String materialNo) {
         ServiceResult<String, Material> result = new ServiceResult<>();
-        if(StringUtil.isBlank(materialNo)){
+        if (StringUtil.isBlank(materialNo)) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
         MaterialDO materialDO = materialMapper.findByNo(materialNo);
-        if(materialDO == null){
+        if (materialDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
@@ -313,10 +364,10 @@ public class MaterialServiceImpl implements MaterialService {
             return false;
         }
         for (Material material : materialList) {
-            if(!MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
+            if (!MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
                     || !MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(material.getMaterialType())
                     || !MaterialType.MATERIAL_TYPE_CPU.equals(material.getMaterialType())
-                    || !MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(material.getMaterialType())){
+                    || !MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(material.getMaterialType())) {
                 return false;
             }
         }
@@ -329,10 +380,10 @@ public class MaterialServiceImpl implements MaterialService {
             return false;
         }
         for (Material material : materialList) {
-            if(MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
+            if (MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
                     || MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(material.getMaterialType())
                     || MaterialType.MATERIAL_TYPE_CPU.equals(material.getMaterialType())
-                    || MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(material.getMaterialType())){
+                    || MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(material.getMaterialType())) {
                 return false;
             }
         }
