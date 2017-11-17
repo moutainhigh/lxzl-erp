@@ -75,7 +75,7 @@
                 and tsm.data_status != 2
             </if>
         </where>
-        order by level,is_folder,menu_order
+        order by level,is_folder,menu_order DESC
     </select>
 
     <select id="findAllMenu" resultMap="SysMenuDO" parameterType="map">
