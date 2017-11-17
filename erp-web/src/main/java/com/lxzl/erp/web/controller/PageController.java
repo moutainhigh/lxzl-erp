@@ -160,6 +160,44 @@ public class PageController extends BaseController {
         return "/purchaseManage/purchaseDetail";
     }
 
+
+    //供应商管理
+    @RequestMapping("/supplier-manage/list")
+    public String supplierManageList() {
+        return "/supplierManage/supplierList";
+    }
+    @RequestMapping("/supplier-manage/detail")
+    public String supplierManageDetail() {
+        return "/supplierManage/supplierList";
+    }
+    @RequestMapping("/supplier-manage/add")
+    public String supplierManageAdd() {
+        return "/supplierManage/supplierList";
+    }
+    @RequestMapping("/supplier-manage/edit")
+    public String supplierManageEdit() {
+        return "/supplierManage/supplierList";
+    }
+
+    //仓库商管理
+    @RequestMapping("/warehouse-manage/list")
+    public String warehouseManageList() {
+        return "/warehouseManage/warehouseList";
+    }
+    @RequestMapping("/warehouse-manage/detail")
+    public String warehouseManageDetail() {
+        return "/warehouseManage/warehouseList";
+    }
+    @RequestMapping("/warehouse-manage/add")
+    public String warehouseManageAdd() {
+        return "/warehouseManage/warehouseList";
+    }
+    @RequestMapping("/warehouse-manage/edit")
+    public String warehouseManageEdit() {
+        return "/warehouseManage/warehouseList";
+    }
+
+
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")
     public String warehouseChoose() {
