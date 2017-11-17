@@ -3,6 +3,8 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.PurchaseType;
+import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderCommitParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
@@ -20,7 +22,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
 
     /**
      * 测试自动过总公司的采购单
-     * 条件：1.没有发票，2.收货库房为分公司
+     * 条件：1.没有发票，2.收货库房为分公司，3.整机四大件
      * @throws Exception
      */
     @Test
@@ -30,6 +32,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrder.setWarehouseNo("W201708081508");//仓库编号必填,这里为分公司
         purchaseOrder.setIsInvoice(CommonConstant.COMMON_CONSTANT_NO);//是否有发票字段必填
         purchaseOrder.setIsNew(CommonConstant.COMMON_CONSTANT_NO);//是否是全新机
+        purchaseOrder.setPurchaseType(PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN);
         purchaseOrder.setProductSupplierId(1);//商品供应商ID不能为空
 
         List<PurchaseOrderProduct> purchaseOrderProductList = new ArrayList<>();//采购单商品项列表不能为空
@@ -38,16 +41,53 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrderProduct.setProductAmount(new BigDecimal(1100));//采购单商品单价不能为空且大于0
         purchaseOrderProduct.setProductCount(10);//采购单商品数量不能为空且大于0
 
+        //添加物料配置
+        List<ProductMaterial> productMaterialList1 = new ArrayList<ProductMaterial>();
+        ProductMaterial productMaterial = new ProductMaterial();
+        productMaterial.setMaterialId(1);
+        productMaterialList1.add(productMaterial);
+        purchaseOrderProduct.setProductMaterialList(productMaterialList1);
 
         PurchaseOrderProduct purchaseOrderProduct2 = new PurchaseOrderProduct();
         purchaseOrderProduct2.setProductSkuId(2); //采购单商品项SKU UD 不能为空，且不能重复
-        purchaseOrderProduct2.setProductAmount(new BigDecimal(1300));//采购单商品单价不能为空且大于0
+        purchaseOrderProduct2.setProductAmount(new BigDecimal(1300));//采购单商品单价不能为空且大于0Purchase
         purchaseOrderProduct2.setProductCount(10);//采购单商品数量不能为空且大于0
+        purchaseOrderProduct2.setProductMaterialList(new ArrayList<ProductMaterial>());
+        //添加物料配置
+        List<ProductMaterial> productMaterialList2 = new ArrayList<ProductMaterial>();
+        productMaterial.setMaterialId(1);
+        productMaterialList2.add(productMaterial);
+        purchaseOrderProduct.setProductMaterialList(productMaterialList2);
 
         purchaseOrderProductList.add(purchaseOrderProduct);
         purchaseOrderProductList.add(purchaseOrderProduct2);
 
         purchaseOrder.setPurchaseOrderProductList(purchaseOrderProductList);
+        TestResult result = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
+    }
+    /**
+     * 测试小配件不过总公司
+     * 条件：1.没有发票，2.收货库房为分公司，3.小配件
+     * @throws Exception
+     */
+    @Test
+    public void addPurchaseOrder2() throws Exception {
+
+        PurchaseOrder purchaseOrder = new PurchaseOrder();
+        purchaseOrder.setWarehouseNo("W201708081508");//仓库编号必填,这里为分公司
+        purchaseOrder.setIsInvoice(CommonConstant.COMMON_CONSTANT_NO);//是否有发票字段必填
+        purchaseOrder.setIsNew(CommonConstant.COMMON_CONSTANT_NO);//是否是全新机
+        purchaseOrder.setPurchaseType(PurchaseType.PURCHASE_TYPE_GADGET);
+        purchaseOrder.setProductSupplierId(1);//商品供应商ID不能为空
+
+        List<PurchaseOrderMaterial> purchaseOrderMaterialList = new ArrayList<>();//小配件采购单物料项列表不能为空
+        PurchaseOrderMaterial purchaseOrderMaterial = new PurchaseOrderMaterial();
+        purchaseOrderMaterial.setMaterialId(1);
+        purchaseOrderMaterial.setMaterialCount(2);
+        purchaseOrderMaterial.setMaterialAmount(new BigDecimal(130));
+        purchaseOrderMaterialList.add(purchaseOrderMaterial);
+
+        purchaseOrder.setPurchaseOrderMaterialList(purchaseOrderMaterialList);
         TestResult result = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
     }
     @Test

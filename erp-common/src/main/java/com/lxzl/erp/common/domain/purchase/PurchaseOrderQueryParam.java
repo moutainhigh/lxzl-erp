@@ -9,7 +9,6 @@ import java.util.Date;
 public class PurchaseOrderQueryParam extends BasePageParam {
     private String purchaseNo ;//采购单编号
     private Integer productSupplierId ;//商品供应商ID
-    private Integer invoiceSupplierId ;//发票供应商ID
     private String warehouseNo ;//仓库ID
     private Integer warehouseId ;//仓库ID
     private Integer isInvoice ;//是否有发票，0否1是
@@ -33,14 +32,6 @@ public class PurchaseOrderQueryParam extends BasePageParam {
 
     public void setProductSupplierId(Integer productSupplierId) {
         this.productSupplierId = productSupplierId;
-    }
-
-    public Integer getInvoiceSupplierId() {
-        return invoiceSupplierId;
-    }
-
-    public void setInvoiceSupplierId(Integer invoiceSupplierId) {
-        this.invoiceSupplierId = invoiceSupplierId;
     }
 
     public String getWarehouseNo() {
@@ -78,7 +69,6 @@ public class PurchaseOrderQueryParam extends BasePageParam {
     public Integer getCommitStatus() {
         return commitStatus;
     }
-
     public void setCommitStatus(Integer commitStatus) {
         this.commitStatus = commitStatus;
     }

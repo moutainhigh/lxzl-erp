@@ -121,6 +121,19 @@ public class ErrorCode {
     public static final String PURCHASE_ORDER_STATUS_CAN_NOT_END = "J300031";
     public static final String PURCHASE_ORDER_STATUS_CAN_NOT_CONTINUE = "J300032";
     public static final String PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_IN_AGAIN = "J300033";
+    public static final String PURCHASE_TYPE_ERROR = "J300034";
+    public static final String PURCHASE_TYPE_NOT_NULL = "J300035";
+    public static final String PURCHASE_PRODUCT_MATERIAL_CAN_NOT_ALL_NULL = "J300036";
+    public static final String MATERIAL_ID_NOT_NULL = "J300037";
+    public static final String MATERIAL_PRICE_ERROR = "J300038";
+    public static final String MATERIAL_COUNT_ERROR = "J300039";
+    public static final String PURCHASE_ORDER_SKU_MATERIAL_ERROR = "J300040";
+    public static final String PURCHASE_ORDER_MATERIAL_CAN_NOT_REPEAT = "J300041";
+    public static final String PURCHASE_ORDER_MATERIAL_NOT_MAIN = "J300042";
+    public static final String PURCHASE_ORDER_MATERIAL_NOT_GADGET = "J300043";
+    public static final String PURCHASE_ORDER_MATERIAL_LIST_NOT_NULL = "J300044";
+    public static final String PURCHASE_ORDER_MATERIAL_CAN_NOT_CREATE = "J300045";
+
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
     public static final String ORDER_CUSTOMER_CONSIGN_NOT_NULL = "J400001";
@@ -203,7 +216,7 @@ public class ErrorCode {
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_NOT_EXISTS,"商品属性值不存在");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_ALREADY_EXISTS,"商品属性值不存在");
         MAP.put(PRODUCT_EQUIPMENT_NOT_EXISTS,"设备不存在");
-        MAP.put(MATERIAL_NOT_EXISTS,"物料信息不存在");
+        MAP.put(MATERIAL_NOT_EXISTS,"物料不存在");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS,"工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE,"此工作流模板没有节点");
@@ -269,6 +282,18 @@ public class ErrorCode {
         MAP.put(PURCHASE_ORDER_STATUS_CAN_NOT_END,"当前采购单状态不允许结束");
         MAP.put(PURCHASE_ORDER_STATUS_CAN_NOT_CONTINUE,"当前采购单状态不允许继续采购");
         MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_IN_AGAIN,"已入库的采购收货单不允许再次入库");
+        MAP.put(PURCHASE_TYPE_ERROR,"采购单类型错误");
+        MAP.put(PURCHASE_TYPE_NOT_NULL,"采购单类型不能为空");
+        MAP.put(PURCHASE_PRODUCT_MATERIAL_CAN_NOT_ALL_NULL,"采购单商品项和物料项不能都为空");
+        MAP.put(MATERIAL_ID_NOT_NULL,"物料ID不能为空");
+        MAP.put(MATERIAL_PRICE_ERROR,"物料价格填写不正确");
+        MAP.put(MATERIAL_COUNT_ERROR,"物料数量填写不正确");
+        MAP.put(PURCHASE_ORDER_MATERIAL_CAN_NOT_REPEAT,"采购单物料项不能重复");
+        MAP.put(PURCHASE_ORDER_MATERIAL_NOT_MAIN,"采购单物料项存在非四大件");
+        MAP.put(PURCHASE_ORDER_MATERIAL_NOT_GADGET,"采购单物料项存在非小配件");
+        MAP.put(PURCHASE_ORDER_MATERIAL_LIST_NOT_NULL,"采购订单物料项列表不能为空");
+        MAP.put(PURCHASE_ORDER_MATERIAL_CAN_NOT_CREATE,"采购的物料总额大于100元且没有发票");
+        MAP.put(PURCHASE_ORDER_SKU_MATERIAL_ERROR,"SKU物料配置错误");
 
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL,"订单商品不能为空");

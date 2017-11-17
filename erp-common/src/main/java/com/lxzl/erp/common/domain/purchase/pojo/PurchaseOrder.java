@@ -2,11 +2,11 @@ package com.lxzl.erp.common.domain.purchase.pojo;
 
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.PurchaseType;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
-import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
 import com.lxzl.erp.common.util.validate.constraints.In;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -24,7 +24,6 @@ public class PurchaseOrder implements Serializable {
     private String purchaseNo;   //采购单编号
     @NotNull(message = ErrorCode.PRODUCT_SUPPLIER_ID_NOT_NULL , groups = {AddGroup.class,UpdateGroup.class})
     private Integer productSupplierId;   //商品供应商ID
-    private Integer invoiceSupplierId;   //发票供应商ID
 
     private Integer warehouseId;   //仓库ID
     @NotEmpty(message = ErrorCode.WAREHOUSE_NO_NOT_NULL, groups = {AddGroup.class,UpdateGroup.class})
@@ -41,6 +40,9 @@ public class PurchaseOrder implements Serializable {
     private BigDecimal purchaseOrderAmountStatement;   //采购单结算金额
     private Integer purchaseOrderStatus;   //采购单状态，0-待提交，3-审核中，6-采购中，9-部分采购，12-全部采购，15-结束采购
     private Date deliveryTime;   //发货时间
+    @NotNull(message = ErrorCode.PURCHASE_TYPE_NOT_NULL , groups = {AddGroup.class,UpdateGroup.class})
+    @In(value = {PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN,PurchaseType.PURCHASE_TYPE_GADGET},message = ErrorCode.PURCHASE_TYPE_ERROR,groups = {AddGroup.class,UpdateGroup.class})
+    private Integer purchaseType;//采购类型：1-整机及四大件，2-小配件
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private Integer owner;   //数据归属人
     private String remark;   //备注
@@ -50,12 +52,10 @@ public class PurchaseOrder implements Serializable {
     private String updateUser;   //修改人
 
     private String productSupplierName;//商品供应商名称
-    private String invoiceSupplierName;//发票供应商名称
     private String ownerName;//采购员名称
 
-
-    @CollectionNotNull(message = ErrorCode.PURCHASE_ORDER_PRODUCT_LIST_NOT_NULL , groups = {AddGroup.class,UpdateGroup.class})
     private List<PurchaseOrderProduct> purchaseOrderProductList;
+    private List<PurchaseOrderMaterial> purchaseOrderMaterialList;
 
     private List<PurchaseDeliveryOrder> purchaseDeliveryOrderList;
     private List<PurchaseReceiveOrder> purchaseReceiveOrderList;
@@ -82,14 +82,6 @@ public class PurchaseOrder implements Serializable {
 
     public void setProductSupplierId(Integer productSupplierId){
         this.productSupplierId = productSupplierId;
-    }
-
-    public Integer getInvoiceSupplierId(){
-        return invoiceSupplierId;
-    }
-
-    public void setInvoiceSupplierId(Integer invoiceSupplierId){
-        this.invoiceSupplierId = invoiceSupplierId;
     }
 
     public Integer getWarehouseId(){
@@ -172,6 +164,14 @@ public class PurchaseOrder implements Serializable {
         this.deliveryTime = deliveryTime;
     }
 
+    public Integer getPurchaseType() {
+        return purchaseType;
+    }
+
+    public void setPurchaseType(Integer purchaseType) {
+        this.purchaseType = purchaseType;
+    }
+
     public Integer getDataStatus(){
         return dataStatus;
     }
@@ -244,14 +244,6 @@ public class PurchaseOrder implements Serializable {
         this.productSupplierName = productSupplierName;
     }
 
-    public String getInvoiceSupplierName() {
-        return invoiceSupplierName;
-    }
-
-    public void setInvoiceSupplierName(String invoiceSupplierName) {
-        this.invoiceSupplierName = invoiceSupplierName;
-    }
-
     public String getOwnerName() {
         return ownerName;
     }
@@ -274,5 +266,13 @@ public class PurchaseOrder implements Serializable {
 
     public void setPurchaseReceiveOrderList(List<PurchaseReceiveOrder> purchaseReceiveOrderList) {
         this.purchaseReceiveOrderList = purchaseReceiveOrderList;
+    }
+
+    public List<PurchaseOrderMaterial> getPurchaseOrderMaterialList() {
+        return purchaseOrderMaterialList;
+    }
+
+    public void setPurchaseOrderMaterialList(List<PurchaseOrderMaterial> purchaseOrderMaterialList) {
+        this.purchaseOrderMaterialList = purchaseOrderMaterialList;
     }
 }

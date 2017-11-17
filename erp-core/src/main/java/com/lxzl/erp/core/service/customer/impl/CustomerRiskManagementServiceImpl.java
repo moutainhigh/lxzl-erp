@@ -96,13 +96,17 @@ public class CustomerRiskManagementServiceImpl implements CustomerRiskManagement
 
     @Override
     public ServiceResult<String, CustomerRiskManagement> detail(String customerNo) {
-        ServiceResult<String, CustomerRiskManagement> serviceResult = new ServiceResult<>()
-;        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        ServiceResult<String, CustomerRiskManagement> serviceResult = new ServiceResult<>();
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
         if(customerDO==null){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
         CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerDO.getId());
+        if(customerRiskManagementDO==null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS);
+            return serviceResult;
+        }
         CustomerRiskManagement customerRiskManagement = CustomerRiskManagementConverter.convertCustomerRiskManagementDO(customerRiskManagementDO);
         if(StringUtil.isNotEmpty(customerDO.getPersonName())){
             customerRiskManagement.setCustomerName(customerDO.getPersonName());

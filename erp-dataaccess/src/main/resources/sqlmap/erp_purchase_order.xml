@@ -6,7 +6,6 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="purchase_no" jdbcType="VARCHAR" property="purchaseNo" />
 		<result column="product_supplier_id" jdbcType="INTEGER" property="productSupplierId" />
-		<result column="invoice_supplier_id" jdbcType="INTEGER" property="invoiceSupplierId" />
 		<result column="warehouse_id" jdbcType="INTEGER" property="warehouseId" />
 		<result column="warehouse_snapshot" jdbcType="VARCHAR" property="warehouseSnapshot" />
 		<result column="is_invoice" jdbcType="INTEGER" property="isInvoice" />
@@ -16,6 +15,7 @@
 		<result column="purchase_order_amount_statement" jdbcType="DECIMAL" property="purchaseOrderAmountStatement" />
 		<result column="purchase_order_status" jdbcType="INTEGER" property="purchaseOrderStatus" />
 		<result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime" />
+		<result column="purchase_type" jdbcType="INTEGER" property="purchaseType" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="owner" jdbcType="INTEGER" property="owner" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -48,7 +48,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		epo.id,epo.purchase_no,epo.product_supplier_id,epo.invoice_supplier_id,epo.warehouse_id,epo.warehouse_snapshot,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_amount_real,epo.purchase_order_amount_statement,epo.purchase_order_status,epo.delivery_time,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user
+		epo.id,epo.purchase_no,epo.product_supplier_id,epo.warehouse_id,epo.warehouse_snapshot,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_amount_real,epo.purchase_order_amount_statement,epo.purchase_order_status,epo.delivery_time,epo.purchase_type,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user
 	</sql>
 
 	<sql id="product_column_List">
@@ -65,13 +65,12 @@
 
 	<select id="findDetailByPurchaseNo" resultMap="PurchaseOrderDO" parameterType="java.lang.String">
 		select <include refid="column_List"/>,<include refid="product_column_List"/> ,eu.real_name as ownerName,es1.supplier_name as productSupplierName
-		,es2.supplier_name as invoiceSupplierName from (
+		from (
 		select <include refid="column_List"/> from erp_purchase_order epo
 		where epo.purchase_no = #{purchaseNo, jdbcType=VARCHAR} and data_status = 1
 		) epo left join erp_purchase_order_product epop on epop.purchase_order_id = epo.id and epop.data_status=1
 		left join erp_user eu on epo.owner = eu.id
 		left join erp_supplier es1 on epo.product_supplier_id = es1.id
-		left join erp_supplier es2 on epo.invoice_supplier_id = es2.id
 	</select>
 	<select id="findDetailById" resultMap="PurchaseOrderDO" parameterType="java.lang.Integer">
 		select <include refid="column_List"/>,<include refid="product_column_List"/> from (
@@ -107,9 +106,6 @@
 			<if test="productSupplierId != null">
 				product_supplier_id = #{productSupplierId,jdbcType=INTEGER},
 			</if>
-			<if test="invoiceSupplierId != null">
-				invoice_supplier_id = #{invoiceSupplierId,jdbcType=INTEGER},
-			</if>
 			<if test="warehouseId != null">
 				warehouse_id = #{warehouseId,jdbcType=INTEGER},
 			</if>
@@ -137,6 +133,9 @@
 
 			<if test="deliveryTime != null">
 				delivery_time = #{deliveryTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="purchaseType != null">
+				purchase_type = #{purchaseType,jdbcType=INTEGER},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
@@ -183,9 +182,6 @@
 			<if test="maps.queryParam.productSupplierId != null">
 				and epo.product_supplier_id = #{maps.queryParam.productSupplierId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.invoiceSupplierId != null">
-				and epo.invoice_supplier_id = #{maps.queryParam.invoiceSupplierId, jdbcType=INTEGER}
-			</if>
 			<if test="maps.queryParam.warehouseId != null">
 				and epo.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
 			</if>
@@ -194,6 +190,9 @@
 			</if>
 			<if test="maps.queryParam.isNew != null">
 				and epo.is_new = #{maps.queryParam.isNew, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.purchaseType != null">
+				and epo.purchase_type = #{maps.queryParam.purchaseType, jdbcType=INTEGER}
 			</if>
 			<if test="maps.queryParam.purchaseOrderStatus != null">
 				and epo.purchase_order_status = #{maps.queryParam.purchaseOrderStatus, jdbcType=INTEGER}
@@ -212,7 +211,6 @@
 	</select>
 	<select id="findPurchaseOrderByParams" resultMap="PurchaseOrderDO" parameterType="map">
 		select <include refid="column_List"/>,<include refid="product_column_List"/> ,eu.real_name as ownerName,es1.supplier_name as productSupplierName
-		,es2.supplier_name as invoiceSupplierName
 		from (
 		SELECT <include refid="column_List"/>
 		FROM erp_purchase_order epo
@@ -223,9 +221,6 @@
 			<if test="maps.queryParam.productSupplierId != null">
 				and epo.product_supplier_id = #{maps.queryParam.productSupplierId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.invoiceSupplierId != null">
-				and epo.invoice_supplier_id = #{maps.queryParam.invoiceSupplierId, jdbcType=INTEGER}
-			</if>
 			<if test="maps.queryParam.warehouseId != null">
 				and epo.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
 			</if>
@@ -234,6 +229,9 @@
 			</if>
 			<if test="maps.queryParam.isNew != null">
 				and epo.is_new = #{maps.queryParam.isNew, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.purchaseType != null">
+				and epo.purchase_type = #{maps.queryParam.purchaseType, jdbcType=INTEGER}
 			</if>
 			<if test="maps.queryParam.purchaseOrderStatus != null">
 				and epo.purchase_order_status = #{maps.queryParam.purchaseOrderStatus, jdbcType=INTEGER}
@@ -252,6 +250,5 @@
 		) epo left join erp_purchase_order_product epop on epop.purchase_order_id = epo.id and epop.data_status=1
 		left join erp_user eu on epo.owner = eu.id
 		left join erp_supplier es1 on epo.product_supplier_id = es1.id
-		left join erp_supplier es2 on epo.invoice_supplier_id = es2.id
 	</select>
 </mapper>

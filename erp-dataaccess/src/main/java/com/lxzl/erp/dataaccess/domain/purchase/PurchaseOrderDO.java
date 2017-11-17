@@ -12,7 +12,6 @@ public class PurchaseOrderDO extends BaseDO {
     private Integer id;
     private String purchaseNo;
     private Integer productSupplierId;
-    private Integer invoiceSupplierId;
     private Integer warehouseId;
     private String warehouseSnapshot;
     private Integer isInvoice;
@@ -22,6 +21,7 @@ public class PurchaseOrderDO extends BaseDO {
     private BigDecimal purchaseOrderAmountStatement;
     private Integer purchaseOrderStatus;
     private Date deliveryTime;
+    private Integer purchaseType;//采购类型：1-整机及四大件，2-小配件
     private Integer dataStatus;
     private Integer owner;
     private String remark;
@@ -30,8 +30,6 @@ public class PurchaseOrderDO extends BaseDO {
     private List<PurchaseOrderProductDO> purchaseOrderProductDOList;
     @Transient
     private String productSupplierName;//商品供应商名称
-    @Transient
-    private String invoiceSupplierName;//发票供应商名称
     @Transient
     private String ownerName;//采购员名称
 
@@ -57,14 +55,6 @@ public class PurchaseOrderDO extends BaseDO {
 
     public void setProductSupplierId(Integer productSupplierId) {
         this.productSupplierId = productSupplierId;
-    }
-
-    public Integer getInvoiceSupplierId() {
-        return invoiceSupplierId;
-    }
-
-    public void setInvoiceSupplierId(Integer invoiceSupplierId) {
-        this.invoiceSupplierId = invoiceSupplierId;
     }
 
     public Integer getWarehouseId() {
@@ -139,6 +129,14 @@ public class PurchaseOrderDO extends BaseDO {
         this.deliveryTime = deliveryTime;
     }
 
+    public Integer getPurchaseType() {
+        return purchaseType;
+    }
+
+    public void setPurchaseType(Integer purchaseType) {
+        this.purchaseType = purchaseType;
+    }
+
     public Integer getDataStatus() {
         return dataStatus;
     }
@@ -177,14 +175,6 @@ public class PurchaseOrderDO extends BaseDO {
 
     public void setProductSupplierName(String productSupplierName) {
         this.productSupplierName = productSupplierName;
-    }
-
-    public String getInvoiceSupplierName() {
-        return invoiceSupplierName;
-    }
-
-    public void setInvoiceSupplierName(String invoiceSupplierName) {
-        this.invoiceSupplierName = invoiceSupplierName;
     }
 
     public String getOwnerName() {

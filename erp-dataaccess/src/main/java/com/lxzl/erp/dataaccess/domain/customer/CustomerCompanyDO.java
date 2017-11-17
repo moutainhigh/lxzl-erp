@@ -23,6 +23,8 @@ public class CustomerCompanyDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
+	private CustomerRiskManagementDO customerRiskManagementDO;
+
 	public Integer getId(){
 		return id;
 	}
@@ -151,4 +153,11 @@ public class CustomerCompanyDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public CustomerRiskManagementDO getCustomerRiskManagementDO() {
+		return customerRiskManagementDO;
+	}
+
+	public void setCustomerRiskManagementDO(CustomerRiskManagementDO customerRiskManagementDO) {
+		this.customerRiskManagementDO = customerRiskManagementDO;
+	}
 }

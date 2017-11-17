@@ -5,8 +5,10 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
+import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
+import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderCommitParam;
@@ -16,21 +18,25 @@ import com.lxzl.erp.common.domain.purchase.pojo.*;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.BigDecimalUtil;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.company.CompanyService;
+import com.lxzl.erp.core.service.material.MaterialService;
+import com.lxzl.erp.core.service.material.impl.support.MaterialConverter;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.core.service.purchase.impl.support.PurchaseOrderConverter;
 import com.lxzl.erp.core.service.purchase.impl.support.PurchaseOrderSupport;
-import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseConverter;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.*;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
+import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.purchase.*;
 import com.lxzl.erp.dataaccess.domain.supplier.SupplierDO;
@@ -55,8 +61,6 @@ import java.util.*;
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     private static final Logger log = LoggerFactory.getLogger(PurchaseOrderServiceImpl.class);
-    @Autowired
-    private UserService userService;
     @Autowired
     private UserSupport userSupport;
     @Autowired
@@ -87,13 +91,21 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private SupplierMapper supplierMapper;
     @Autowired
     private CompanyService companyService;
+    @Autowired
+    private MaterialMapper materialMapper;
+    @Autowired
+    private MaterialService materialService;
+    @Autowired
+    private PurchaseOrderMaterialMapper purchaseOrderMaterialMapper;
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> add(PurchaseOrder purchaseOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date now = new Date();
         List<PurchaseOrderProduct> purchaseOrderProductList = purchaseOrder.getPurchaseOrderProductList();
+        List<PurchaseOrderMaterial> purchaseOrderMaterialList = purchaseOrder.getPurchaseOrderMaterialList();
         WarehouseDO warehouseDO = warehouseMapper.finByNo(purchaseOrder.getWarehouseNo());
+
         if(warehouseDO==null){
             result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
             return result;
@@ -109,15 +121,22 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             result.setErrorCode(ErrorCode.USER_CAN_NOT_OP_WAREHOUSE);
             return result;
         }
-        //判断该笔采购单是总公司发起还是分公司发起，分公司表要加一个字段代表是否是总公司,这里取的用户是session中的user
-        boolean isHead = userSupport.isHeadUser();
-        //校验采购订单商品项
-        ServiceResult<String, PurchaseOrderDetail> checkResult = checkPurchaseOrderProductList(purchaseOrderProductList,userSupport.getCurrentUserId().toString(),now,purchaseOrder.getIsNew(),isHead);
-        if(!ErrorCode.SUCCESS.equals(checkResult.getErrorCode())){
-            result.setErrorCode(checkResult.getErrorCode());
+        //商品项列表和物料项列表至少有一个不为空
+        if(CollectionUtil.isEmpty(purchaseOrderProductList)&&CollectionUtil.isEmpty(purchaseOrder.getPurchaseOrderMaterialList())){
+            result.setErrorCode(ErrorCode.PURCHASE_PRODUCT_MATERIAL_CAN_NOT_ALL_NULL);
             return result;
         }
-        PurchaseOrderDetail purchaseOrderDetail = checkResult.getResult();
+        //判断该笔采购单是总公司发起还是分公司发起，分公司表要加一个字段代表是否是总公司,这里取的用户是session中的user
+        boolean isHead = userSupport.isHeadUser();
+
+        PurchaseOrderDetail purchaseOrderDetail = new PurchaseOrderDetail(userSupport.getCurrentUserId().toString(),now);
+        //校验并准备数据
+        String checkErrorCode = checkDetail(purchaseOrderDetail,purchaseOrder,purchaseOrderProductList,purchaseOrderMaterialList,isHead ,now);
+        if(!ErrorCode.SUCCESS.equals(checkErrorCode)){
+            result.setErrorCode(checkErrorCode);
+            return result;
+        }
+
         PurchaseOrderDO purchaseOrderDO = buildPurchaseOrder(now,purchaseOrder,purchaseOrderDetail,warehouseDO);
         purchaseOrderDO.setPurchaseNo(GenerateNoUtil.generatePurchaseOrderNo(now, userSupport.getCurrentUserId()));
         purchaseOrderDO.setCreateUser(userSupport.getCurrentUserId().toString());
@@ -129,6 +148,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             purchaseOrderProductDO.setPurchaseOrderId(purchaseOrderDO.getId());
             purchaseOrderProductMapper.save(purchaseOrderProductDO);
         }
+        //保存采购订单物料项
+        for(PurchaseOrderMaterialDO purchaseOrderMaterialDO : purchaseOrderDetail.purchaseOrderMaterialDOList){
+            purchaseOrderMaterialDO.setPurchaseOrderId(purchaseOrderDO.getId());
+            purchaseOrderMaterialMapper.save(purchaseOrderMaterialDO);
+        }
         result.setResult(purchaseOrderDO.getPurchaseNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -136,9 +160,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private PurchaseOrderDO buildPurchaseOrder(Date now , PurchaseOrder purchaseOrder,PurchaseOrderDetail purchaseOrderDetail ,WarehouseDO warehouseDO){
         //保存采购单
         PurchaseOrderDO purchaseOrderDO = PurchaseOrderConverter.convertPurchaseOrder(purchaseOrder);
-        if(purchaseOrderDO.getInvoiceSupplierId()==null){
-            purchaseOrderDO.setInvoiceSupplierId(purchaseOrderDO.getProductSupplierId());
-        }
+
         //查询库房信息并保存库房快照
         purchaseOrderDO.setWarehouseSnapshot(JSON.toJSONString(WarehouseConverter.convertWarehouseDO(warehouseDO)));
         purchaseOrderDO.setPurchaseOrderAmountTotal(purchaseOrderDetail.totalAmount);
@@ -152,6 +174,44 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         purchaseOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         purchaseOrderDO.setUpdateTime(now);
         return purchaseOrderDO;
+    }
+
+    private String checkDetail(PurchaseOrderDetail purchaseOrderDetail,PurchaseOrder purchaseOrder,List<PurchaseOrderProduct> purchaseOrderProductList,List<PurchaseOrderMaterial> purchaseOrderMaterialList,boolean isHead , Date now){
+
+        //如果是整机四大件，物料列表只能有四大件物料
+        if(PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN==purchaseOrder.getPurchaseType()){
+
+            if(CollectionUtil.isNotEmpty(purchaseOrderProductList)){
+                //校验采购订单商品项
+                String checkErrorCode = checkPurchaseOrderProductList(purchaseOrderDetail,purchaseOrderProductList,purchaseOrder.getIsNew(),isHead);
+                if(!ErrorCode.SUCCESS.equals(checkErrorCode)){
+                    return checkErrorCode;
+                }
+            }
+            if(CollectionUtil.isNotEmpty(purchaseOrderMaterialList)){
+                //校验采购订单物料项
+                String checkErrorCode = checkPurchaseOrderMaterialList(purchaseOrderDetail,purchaseOrderMaterialList,purchaseOrder.getPurchaseType());
+                if(!ErrorCode.SUCCESS.equals(checkErrorCode)){
+                    return checkErrorCode;
+                }
+
+            }
+        }else{
+            //如果是小配件，物料项列表一定不为空
+            if(CollectionUtil.isEmpty(purchaseOrderMaterialList)){
+                return ErrorCode.PURCHASE_ORDER_MATERIAL_LIST_NOT_NULL;
+            }
+            //校验采购订单物料项
+            String checkErrorCode = checkPurchaseOrderMaterialList(purchaseOrderDetail,purchaseOrderMaterialList,purchaseOrder.getPurchaseType());
+            if(!ErrorCode.SUCCESS.equals(checkErrorCode)){
+                return checkErrorCode;
+            }
+            //小配件没发票的，100元及以上的，不允许创建采购单
+            if(CommonConstant.COMMON_CONSTANT_NO.equals(purchaseOrder.getIsInvoice())&&purchaseOrderDetail.totalMaterialAmount.compareTo(new BigDecimal(100))>=0){
+                return ErrorCode.PURCHASE_ORDER_MATERIAL_CAN_NOT_CREATE;
+            }
+        }
+        return ErrorCode.SUCCESS;
     }
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
@@ -173,6 +233,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             result.setErrorCode(ErrorCode.SUPPLIER_NOT_EXISTS);
             return result;
         }
+
         //判断操作人是否可以选择该仓库
         boolean warehouseOp = userSupport.checkCurrentUserWarehouse(warehouseDO.getId());
         if(!warehouseOp){
@@ -189,13 +250,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         boolean isHead = userSupport.isHeadUser(Integer.valueOf(purchaseOrderDO.getCreateUser()));
         Date now = new Date();
         List<PurchaseOrderProduct> purchaseOrderProductList = purchaseOrder.getPurchaseOrderProductList();
+        PurchaseOrderDetail purchaseOrderDetail = new PurchaseOrderDetail(userSupport.getCurrentUserId().toString(),now);
         //校验采购订单商品项
-        ServiceResult<String, PurchaseOrderDetail> checkResult = checkPurchaseOrderProductList(purchaseOrderProductList,userSupport.getCurrentUserId().toString(),now,purchaseOrder.getIsNew(),isHead);
-        if(!ErrorCode.SUCCESS.equals(checkResult.getErrorCode())){
-            result.setErrorCode(checkResult.getErrorCode());
+        String checkErrorCode = checkPurchaseOrderProductList(purchaseOrderDetail,purchaseOrderProductList,purchaseOrder.getIsNew(),isHead);
+        if(!ErrorCode.SUCCESS.equals(checkErrorCode)){
+            result.setErrorCode(checkErrorCode);
             return result;
         }
-        PurchaseOrderDetail purchaseOrderDetail = checkResult.getResult();
 
         //更新采购单
         Integer purchaseOrderDOId = purchaseOrderDO.getId();
@@ -249,8 +310,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     class PurchaseOrderDetail{
         //声明待保存的采购单项列表
         private List<PurchaseOrderProductDO> purchaseOrderProductDOList = new ArrayList<>();
+        //声明待保存的采购单物料项列表
+        private List<PurchaseOrderMaterialDO> purchaseOrderMaterialDOList = new ArrayList<>();
         //声明累加采购单总价
         private BigDecimal totalAmount = new BigDecimal(0);
+        //声明累加采购单商品项总价
+        private BigDecimal totalProductAmount = new BigDecimal(0);
+        //声明累加采购单物料项总价
+        private BigDecimal totalMaterialAmount = new BigDecimal(0);
         private Date now = null;
         private String userId = null;
         public PurchaseOrderDetail(String userId , Date now){
@@ -258,42 +325,94 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             this.now = now;
         }
     }
-    private ServiceResult<String,PurchaseOrderDetail> checkPurchaseOrderProductList(List<PurchaseOrderProduct> purchaseOrderProductList , String userId , Date now , Integer isNew ,boolean isHead){
-        ServiceResult<String,PurchaseOrderDetail> result = new ServiceResult<>();
-        PurchaseOrderDetail purchaseOrderDetail = new PurchaseOrderDetail(userId,now);
 
-        //声明skuSet，如果一个采购单中有相同sku的商品项，则返回错误
-        Set<Integer> skuSet = new HashSet<>();
+    private String checkPurchaseOrderMaterialList(PurchaseOrderDetail purchaseOrderDetail , List<PurchaseOrderMaterial> purchaseOrderMaterialList ,Integer purchaseType){
+        ServiceResult<String,PurchaseOrderDetail> result = new ServiceResult<>();
+
+        //声明materialIdSet，如果一个采购单中有相同物料项，则返回错误
+        Set<Integer> materialIdSet = new HashSet<>();
+        //声明用于校验整机四大件列表
+        List<Material> materialList = new ArrayList<>();
+        // 验证采购单物料项是否合法
+        for(PurchaseOrderMaterial purchaseOrderMaterial : purchaseOrderMaterialList){
+
+            if(purchaseOrderMaterial.getMaterialId()==null) {
+                return ErrorCode.MATERIAL_ID_NOT_NULL;
+            }
+            if(purchaseOrderMaterial.getMaterialAmount()==null||  purchaseOrderMaterial.getMaterialAmount().doubleValue()<=0){
+                return ErrorCode.MATERIAL_PRICE_ERROR;
+            }
+            if(purchaseOrderMaterial.getMaterialCount()==null||purchaseOrderMaterial.getMaterialCount()<=0){
+                return ErrorCode.MATERIAL_COUNT_ERROR;
+            }
+            materialIdSet.add(purchaseOrderMaterial.getMaterialId());
+            //累加采购单物料项总价
+            purchaseOrderDetail.totalMaterialAmount = BigDecimalUtil.add(purchaseOrderDetail.totalMaterialAmount,BigDecimalUtil.mul(purchaseOrderMaterial.getMaterialAmount(),new BigDecimal(purchaseOrderMaterial.getMaterialCount())));
+
+            PurchaseOrderMaterialDO purchaseOrderMaterialDO = new PurchaseOrderMaterialDO();
+            //保存采购订单商品项快照
+            MaterialDO materialDO = materialMapper.findById(purchaseOrderMaterial.getMaterialId());
+            if(materialDO==null){
+                return ErrorCode.MATERIAL_ID_NOT_NULL;
+            }
+            Material material = MaterialConverter.convertMaterialDO(materialDO);
+            materialList.add(material);
+            purchaseOrderMaterialDO.setMaterialSnapshot(JSON.toJSONString(material));
+            purchaseOrderMaterialDO.setMaterialId(materialDO.getId());
+            purchaseOrderMaterialDO.setMaterialName(materialDO.getMaterialName());
+            purchaseOrderMaterialDO.setMaterialCount(purchaseOrderMaterial.getMaterialCount());
+            purchaseOrderMaterialDO.setMaterialAmount(purchaseOrderMaterial.getMaterialAmount());
+            purchaseOrderMaterialDO.setRemark(purchaseOrderMaterial.getRemark());
+            purchaseOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            purchaseOrderMaterialDO.setCreateUser(purchaseOrderDetail.userId);
+            purchaseOrderMaterialDO.setUpdateUser(purchaseOrderDetail.userId);
+            purchaseOrderMaterialDO.setCreateTime(purchaseOrderDetail.now);
+            purchaseOrderMaterialDO.setUpdateTime(purchaseOrderDetail.now);
+            purchaseOrderDetail.purchaseOrderMaterialDOList.add(purchaseOrderMaterialDO);
+        }
+        //采购单物料项物料ID有重复
+        if(purchaseOrderMaterialList.size()!=materialIdSet.size()){
+            return ErrorCode.PURCHASE_ORDER_MATERIAL_CAN_NOT_REPEAT;
+        }
+        //校验整机四大件类型的是否全为整机四大件
+        if(PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN==purchaseType&&!materialService.isAllMainMaterial(materialList)){
+            return ErrorCode.PURCHASE_ORDER_MATERIAL_NOT_MAIN;
+        }
+        //校验小配件类型的是否全为小配件
+        if(PurchaseType.PURCHASE_TYPE_GADGET==purchaseType&&!materialService.isAllGadget(materialList)){
+            return ErrorCode.PURCHASE_ORDER_MATERIAL_NOT_GADGET;
+        }
+
+        return ErrorCode.SUCCESS;
+    }
+    private String checkPurchaseOrderProductList(PurchaseOrderDetail purchaseOrderDetail,List<PurchaseOrderProduct> purchaseOrderProductList , Integer isNew ,boolean isHead){
+
         // 验证采购单商品项是否合法
         for(PurchaseOrderProduct purchaseOrderProduct : purchaseOrderProductList){
-
             if(purchaseOrderProduct.getProductSkuId()==null){
-                result.setErrorCode(ErrorCode.PRODUCT_SKU_NOT_NULL);
-                return result;
-            }else{
-                skuSet.add(purchaseOrderProduct.getProductSkuId());
+                return ErrorCode.PRODUCT_SKU_NOT_NULL;
             }
             if(purchaseOrderProduct.getProductAmount()==null||  purchaseOrderProduct.getProductAmount().doubleValue()<=0){
-                result.setErrorCode(ErrorCode.PRODUCT_SKU_PRICE_ERROR);
-                return result;
+                return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
             }
             if(purchaseOrderProduct.getProductCount()==null||purchaseOrderProduct.getProductCount()<=0){
-                result.setErrorCode(ErrorCode.PRODUCT_SKU_COUNT_ERROR);
-                return result;
+                return ErrorCode.PRODUCT_SKU_COUNT_ERROR;
             }
             ProductSkuDO productSkuDO = productSkuMapper.findById(purchaseOrderProduct.getProductSkuId());
             if(productSkuDO==null){
-                result.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
-                return result;
+                return ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS;
             }
-
+            //todo 校验此sku是否可以使用productMaterialList的物料配置
+            if(purchaseOrderProduct.getProductMaterialList()==null){
+                return ErrorCode.PURCHASE_ORDER_SKU_MATERIAL_ERROR;
+            }
             //累加采购单总价
             purchaseOrderDetail.totalAmount = BigDecimalUtil.add(purchaseOrderDetail.totalAmount,BigDecimalUtil.mul(purchaseOrderProduct.getProductAmount(),new BigDecimal(purchaseOrderProduct.getProductCount())));
 
             PurchaseOrderProductDO purchaseOrderProductDO = new PurchaseOrderProductDO();
             //保存采购订单商品项快照
-            ServiceResult<String,Product> productResult = productService.queryProductDetailById(productSkuDO.getProductId());
-            purchaseOrderProductDO.setProductSnapshot(JSON.toJSONString(getProductBySkuId(productResult.getResult(),productSkuDO.getId())));
+            ServiceResult<String,Product> productResult = productService.queryProductById(productSkuDO.getProductId());
+            purchaseOrderProductDO.setProductSnapshot(JSON.toJSONString(getProductBySkuId(productResult.getResult(),productSkuDO.getId(),purchaseOrderProduct.getProductMaterialList())));
             purchaseOrderProductDO.setProductId(productSkuDO.getProductId());
             purchaseOrderProductDO.setProductName(productSkuDO.getProductName());
             purchaseOrderProductDO.setProductSkuId(productSkuDO.getId());
@@ -307,19 +426,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             purchaseOrderProductDO.setUpdateTime(purchaseOrderDetail.now);
             purchaseOrderDetail.purchaseOrderProductDOList.add(purchaseOrderProductDO);
         }
-        //skuId有重复
-        if(purchaseOrderProductList.size()!=skuSet.size()){
-            result.setErrorCode(ErrorCode.PURCHASE_ORDER_PRODUCT_CAN_NOT_REPEAT);
-            return result;
-        }
         //发起者不是总公司 ，并且采购20000元以上全新机，则返回错误
-        if(!isHead&&CommonConstant.COMMON_CONSTANT_YES.equals(isNew)&&purchaseOrderDetail.totalAmount.doubleValue()>=20000D){
-            result.setErrorCode(ErrorCode.PURCHASE_ORDER_CANNOT_CREATE_BY_NEW_AND_AMOUNT);
-            return result;
+        if(!isHead&&CommonConstant.COMMON_CONSTANT_YES.equals(isNew)&&purchaseOrderDetail.totalAmount.compareTo(new BigDecimal(20000))>=0){
+            return ErrorCode.PURCHASE_ORDER_CANNOT_CREATE_BY_NEW_AND_AMOUNT;
         }
-        result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(purchaseOrderDetail);
-        return result;
+        return ErrorCode.SUCCESS;
     }
     private ServiceResult<String,List<PurchaseReceiveOrderProductDO>> checkPurchaseReceiveOrderProductListForUpdate(List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList , String userId , Date now ){
         ServiceResult<String,List<PurchaseReceiveOrderProductDO>> result = new ServiceResult<>();
@@ -345,10 +456,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 result.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                 return result;
             }
+            //todo 校验此sku是否可以使用productMaterialList的物料配置
+            if(purchaseReceiveOrderProduct.getProductMaterialList()==null){
+                result.setErrorCode(ErrorCode.PURCHASE_ORDER_SKU_MATERIAL_ERROR);
+                return result;
+            }
             PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO = new PurchaseReceiveOrderProductDO();
             //保存采购订单商品项快照
             ServiceResult<String,Product> productResult = productService.queryProductDetailById(productSkuDO.getProductId());
-            purchaseReceiveOrderProductDO.setRealProductSnapshot(JSON.toJSONString(getProductBySkuId(productResult.getResult(),productSkuDO.getId())));
+            purchaseReceiveOrderProductDO.setRealProductSnapshot(JSON.toJSONString(getProductBySkuId(productResult.getResult(),productSkuDO.getId(),purchaseReceiveOrderProduct.getProductMaterialList())));
             purchaseReceiveOrderProductDO.setRealProductId(productSkuDO.getProductId());
             purchaseReceiveOrderProductDO.setRealProductName(productSkuDO.getProductName());
             purchaseReceiveOrderProductDO.setRealProductSkuId(productSkuDO.getId());
@@ -368,12 +484,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         result.setResult(purchaseReceiveOrderProductDOList);
         return result;
     }
-    private Product getProductBySkuId(Product product , Integer productSkuId){
+    private Product getProductBySkuId(Product product , Integer productSkuId, List<ProductMaterial> materialList){
         List<ProductSku> productSkuList = product.getProductSkuList();
         List<ProductSku> list = new ArrayList<>();
         for(ProductSku productSku : productSkuList){
             if(productSkuId!=null&&productSkuId.equals(productSku.getSkuId())){
                 list.add(productSku);
+                productSku.setProductMaterialList(materialList);
+                break;
             }
         }
         product.setProductSkuList(list);

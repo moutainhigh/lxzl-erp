@@ -30,6 +30,7 @@ public class Customer implements Serializable {
 
 	private CustomerPerson customerPerson;
 	private CustomerCompany customerCompany;
+	private CustomerRiskManagement customerRiskManagement;
 
 
 	public Integer getCustomerId(){
@@ -126,5 +127,13 @@ public class Customer implements Serializable {
 
 	public void setCustomerCompany(CustomerCompany customerCompany) {
 		this.customerCompany = customerCompany;
+	}
+
+	public CustomerRiskManagement getCustomerRiskManagement() {
+		return customerRiskManagement;
+	}
+
+	public void setCustomerRiskManagement(CustomerRiskManagement customerRiskManagement) {
+		this.customerRiskManagement = customerRiskManagement;
 	}
 }

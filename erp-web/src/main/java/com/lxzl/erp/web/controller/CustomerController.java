@@ -52,4 +52,5 @@ public class CustomerController {
         ServiceResult<String, Page<CustomerPerson>> serviceResult = customerService.pageCustomerPerson(customerPersonQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
 }

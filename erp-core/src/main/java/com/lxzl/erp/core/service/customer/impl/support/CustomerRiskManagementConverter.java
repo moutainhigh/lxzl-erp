@@ -21,12 +21,14 @@ public class CustomerRiskManagementConverter {
     }
 
     public static CustomerRiskManagement convertCustomerRiskManagementDO(CustomerRiskManagementDO customerRiskManagementDO){
+        if(customerRiskManagementDO==null) return null;
         CustomerRiskManagement customerRiskManagement = new CustomerRiskManagement();
         BeanUtils.copyProperties(customerRiskManagementDO,customerRiskManagement);
         customerRiskManagement.setCustomerRiskManagementId(customerRiskManagementDO.getId());
         return customerRiskManagement;
     }
     public static CustomerRiskManagementDO convertCustomerRiskManagement(CustomerRiskManagement customerRiskManagement){
+        if(customerRiskManagement==null) return null;
         CustomerRiskManagementDO customerRiskManagementDO = new CustomerRiskManagementDO();
         BeanUtils.copyProperties(customerRiskManagement,customerRiskManagementDO);
         customerRiskManagementDO.setId(customerRiskManagement.getCustomerRiskManagementId());
