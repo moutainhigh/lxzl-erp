@@ -3,9 +3,11 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.StockCauseType;
+import com.lxzl.erp.common.domain.product.pojo.ProductEquipmentOutStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
+import com.lxzl.erp.common.domain.warehouse.ProductOutStockParam;
 import com.lxzl.erp.common.domain.warehouse.WarehouseQueryParam;
 import org.junit.Test;
 
@@ -70,5 +72,22 @@ public class WarehouseTest extends ERPUnTransactionalTest {
         productInStockParam.setReferNo("C201711071720430655000051084");
         productInStockParam.setCauseType(StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE);
         TestResult result = getJsonTestResult("/warehouse/productInStock", productInStockParam);
+    }
+
+    @Test
+    public void productOutStock() throws Exception {
+        ProductOutStockParam productOutStockParam = new ProductOutStockParam();
+        productOutStockParam.setCauseType(StockCauseType.STOCK_CAUSE_TYPE_ALLOCATION);
+        productOutStockParam.setSrcWarehouseId(4000001);
+        productOutStockParam.setTargetWarehouseId(4000002);
+        productOutStockParam.setReferNo("6500001");
+
+        List<Integer> productEquipmentIdList = new ArrayList<>();
+        for (int i = 1300; i < 1310; i++) {
+            productEquipmentIdList.add(i);
+        }
+        productOutStockParam.setProductEquipmentIdList(productEquipmentIdList);
+
+        TestResult result = getJsonTestResult("/warehouse/productOutStock", productOutStockParam);
     }
 }

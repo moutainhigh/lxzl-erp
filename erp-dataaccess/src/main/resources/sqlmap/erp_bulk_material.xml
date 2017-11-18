@@ -172,98 +172,144 @@
 	<update id="updateList" parameterType="java.util.ArrayList">
 		update erp_bulk_material
 		SET
-		bulk_material_no =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.bulkMaterialNo,jdbcType=VARCHAR}
-		</foreach>,
-		bulk_material_type =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.bulkMaterialType,jdbcType=INTEGER}
-		</foreach>,
-		bulk_material_name =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.bulkMaterialName,jdbcType=VARCHAR}
-		</foreach>,
-		material_id =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.materialId,jdbcType=INTEGER}
-		</foreach>,
-		material_no =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.materialNo,jdbcType=VARCHAR}
-		</foreach>,
-		current_warehouse_id =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.currentWarehouseId,jdbcType=INTEGER}
-		</foreach>,
-		current_warehouse_position_id =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.currentWarehousePositionId,jdbcType=INTEGER}
-		</foreach>,
-		owner_warehouse_id =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.ownerWarehouseId,jdbcType=INTEGER}
-		</foreach>,
-		owner_warehouse_position_id =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.ownerWarehousePositionId,jdbcType=INTEGER}
-		</foreach>,
-		brand_id =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.brandId,jdbcType=INTEGER}
-		</foreach>,
-		category_id =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.categoryId,jdbcType=INTEGER}
-		</foreach>,
-		property_id =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.propertyId,jdbcType=INTEGER}
-		</foreach>,
-		property_value_id =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.propertyValueId,jdbcType=INTEGER}
-		</foreach>,
-		bulk_material_price =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.bulkMaterialPrice,jdbcType=DECIMAL}
-		</foreach>,
-		current_equipment_id =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.currentEquipmentId,jdbcType=INTEGER}
-		</foreach>,
-		current_equipment_no =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.currentEquipmentNo,jdbcType=VARCHAR}
-		</foreach>,
-		bulk_material_status =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.bulkMaterialStatus,jdbcType=INTEGER}
-		</foreach>,
-		data_status =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.dataStatus,jdbcType=INTEGER}
-		</foreach>,
-		remark =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.remark,jdbcType=VARCHAR}
-		</foreach>,
-		create_time =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.createTime,jdbcType=TIMESTAMP}
-		</foreach>,
-		create_user =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.createUser,jdbcType=VARCHAR}
-		</foreach>,
-		update_time =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.updateTime,jdbcType=TIMESTAMP}
-		</foreach>,
-		update_user =
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-			when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.updateUser,jdbcType=VARCHAR}
-		</foreach>,
+		<trim>
+			bulk_material_no =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.bulkMaterialNo,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			bulk_material_type =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.bulkMaterialType,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			bulk_material_name =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.bulkMaterialName,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			material_id =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.materialId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			material_no =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.materialNo,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			current_warehouse_id =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.currentWarehouseId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			current_warehouse_position_id =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.currentWarehousePositionId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			owner_warehouse_id =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.ownerWarehouseId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			owner_warehouse_position_id =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.ownerWarehousePositionId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			brand_id =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.brandId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			category_id =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.categoryId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			property_id =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.propertyId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			property_value_id =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.propertyValueId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			bulk_material_price =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.bulkMaterialPrice,jdbcType=DECIMAL}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			current_equipment_id =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.currentEquipmentId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			current_equipment_no =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.currentEquipmentNo,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			bulk_material_status =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.bulkMaterialStatus,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			data_status =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.dataStatus,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			remark =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.remark,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			create_time =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.createTime,jdbcType=TIMESTAMP}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			create_user =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.createUser,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.updateTime,jdbcType=TIMESTAMP}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_user =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.updateUser,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
 		WHERE id in
 		<foreach collection="bulkMaterialDOList" index="index" item="bulkMaterialDO"
 				 separator="," open="(" close=")">

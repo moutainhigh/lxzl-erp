@@ -15,21 +15,13 @@ import java.util.List;
  * @date 2017-11-07 20:23
  */
 public class ProductOutStockParam implements Serializable {
-    private List<ProductEquipmentOutStorage> productEquipmentOutStorageList;
-    private List<BulkMaterialOutStorage> bulkMaterialOutStorageList;
+    private List<Integer> productEquipmentIdList;
+    private List<Integer> bulkMaterialIdList;
     private Integer srcWarehouseId;
     private Integer targetWarehouseId;
     private Integer causeType;
     private String referNo;
 
-
-    public List<ProductEquipmentOutStorage> getProductEquipmentOutStorageList() {
-        return productEquipmentOutStorageList;
-    }
-
-    public void setProductEquipmentOutStorageList(List<ProductEquipmentOutStorage> productEquipmentOutStorageList) {
-        this.productEquipmentOutStorageList = productEquipmentOutStorageList;
-    }
 
     public Integer getSrcWarehouseId() {
         return srcWarehouseId;
@@ -63,11 +55,19 @@ public class ProductOutStockParam implements Serializable {
         this.referNo = referNo;
     }
 
-    public List<BulkMaterialOutStorage> getBulkMaterialOutStorageList() {
-        return bulkMaterialOutStorageList;
+    public List<Integer> getProductEquipmentIdList() {
+        return productEquipmentIdList;
     }
 
-    public void setBulkMaterialOutStorageList(List<BulkMaterialOutStorage> bulkMaterialOutStorageList) {
-        this.bulkMaterialOutStorageList = bulkMaterialOutStorageList;
+    public void setProductEquipmentIdList(List<Integer> productEquipmentIdList) {
+        this.productEquipmentIdList = productEquipmentIdList;
+    }
+
+    public List<Integer> getBulkMaterialIdList() {
+        return bulkMaterialIdList;
+    }
+
+    public void setBulkMaterialIdList(List<Integer> bulkMaterialIdList) {
+        this.bulkMaterialIdList = bulkMaterialIdList;
     }
 }

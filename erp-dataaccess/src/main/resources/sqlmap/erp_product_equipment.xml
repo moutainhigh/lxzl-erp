@@ -77,7 +77,7 @@
     </sql>
 
     <sql id="bulk_material_column_List">
-        ebm.id AS bulk_id,ebm.bulk_material_no AS bulk_bulk_material_no,ebm.bulk_material_type AS bulk_bulk_material_type,ebm.bulk_material_name AS bulk_bulk_material_name,ebm.material_id AS bulk_material_id,ebm.material_no AS bulk_material_no,ebm.warehouse_id AS bulk_current_warehouse_id,ebm.warehouse_position_id AS bulk_current_warehouse_position_id,ebm.owner_warehouse_id AS bulk_owner_warehouse_id,ebm.owner_warehouse_position_id AS bulk_owner_warehouse_position_id,ebm.brand_id AS bulk_brand_id,ebm.category_id AS bulk_category_id,ebm.property_id AS bulk_property_id,ebm.property_value_id AS bulk_property_value_id,ebm.bulk_material_price AS bulk_bulk_material_price,ebm.bulk_material_status AS bulk_bulk_material_status,ebm.data_status AS bulk_data_status,ebm.remark AS bulk_remark,ebm.create_time AS bulk_create_time,ebm.create_user AS bulk_create_user,ebm.update_time AS bulk_update_time,ebm.update_user AS bulk_update_user
+        ebm.id AS bulk_id,ebm.bulk_material_no AS bulk_bulk_material_no,ebm.bulk_material_type AS bulk_bulk_material_type,ebm.bulk_material_name AS bulk_bulk_material_name,ebm.material_id AS bulk_material_id,ebm.material_no AS bulk_material_no,ebm.current_warehouse_id AS bulk_current_warehouse_id,ebm.current_warehouse_position_id AS bulk_current_warehouse_position_id,ebm.owner_warehouse_id AS bulk_owner_warehouse_id,ebm.owner_warehouse_position_id AS bulk_owner_warehouse_position_id,ebm.brand_id AS bulk_brand_id,ebm.category_id AS bulk_category_id,ebm.property_id AS bulk_property_id,ebm.property_value_id AS bulk_property_value_id,ebm.bulk_material_price AS bulk_bulk_material_price,ebm.bulk_material_status AS bulk_bulk_material_status,ebm.data_status AS bulk_data_status,ebm.remark AS bulk_remark,ebm.create_time AS bulk_create_time,ebm.create_user AS bulk_create_user,ebm.update_time AS bulk_update_time,ebm.update_user AS bulk_update_user
     </sql>
 
     <select id="findById" resultMap="ProductEquipmentDO" parameterType="java.lang.Integer">
@@ -265,66 +265,96 @@
     <update id="updateList" parameterType="java.util.ArrayList">
         update erp_product_equipment
         SET
-        equipment_no =
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-            when #{productEquipmentDO.id} then #{productEquipmentDO.equipmentNo}
-        </foreach>,
-        product_id =
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-            when #{productEquipmentDO.id} then #{productEquipmentDO.productId}
-        </foreach>,
-        sku_id =
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-            when #{productEquipmentDO.id} then #{productEquipmentDO.skuId}
-        </foreach>,
-        current_warehouse_id =
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-            when #{productEquipmentDO.id} then #{productEquipmentDO.currentWarehouseId}
-        </foreach>,
-        current_warehouse_position_id =
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-            when #{productEquipmentDO.id} then #{productEquipmentDO.currentWarehousePositionId}
-        </foreach>,
-        owner_warehouse_id =
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-            when #{productEquipmentDO.id} then #{productEquipmentDO.ownerWarehouseId}
-        </foreach>,
-        owner_warehouse_position_id =
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-            when #{productEquipmentDO.id} then #{productEquipmentDO.ownerWarehousePositionId}
-        </foreach>,
-        equipment_price =
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-            when #{productEquipmentDO.id} then #{productEquipmentDO.equipmentPrice}
-        </foreach>,
-        equipment_status =
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-            when #{productEquipmentDO.id} then #{productEquipmentDO.equipmentStatus}
-        </foreach>,
-        data_status =
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-            when #{productEquipmentDO.id} then #{productEquipmentDO.dataStatus}
-        </foreach>,
-        remark =
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-            when #{productEquipmentDO.id} then #{productEquipmentDO.remark}
-        </foreach>,
-        create_time =
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-            when #{productEquipmentDO.id} then #{productEquipmentDO.createTime}
-        </foreach>,
-        create_user =
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-            when #{productEquipmentDO.id} then #{productEquipmentDO.createUser}
-        </foreach>,
-        update_time =
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-            when #{productEquipmentDO.id} then #{productEquipmentDO.updateTime}
-        </foreach>,
-        update_user =
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-            when #{productEquipmentDO.id} then #{productEquipmentDO.updateUser}
-        </foreach>
+        <trim>
+            equipment_no =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.equipmentNo}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            product_id =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.productId}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            sku_id =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.skuId}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            current_warehouse_id =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.currentWarehouseId}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            current_warehouse_position_id =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.currentWarehousePositionId}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            owner_warehouse_id =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.ownerWarehouseId}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            owner_warehouse_position_id =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.ownerWarehousePositionId}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            equipment_price =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.equipmentPrice}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            equipment_status =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.equipmentStatus}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            data_status =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.dataStatus}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            remark =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.remark}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            create_time =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.createTime}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            create_user =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.createUser}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            update_time =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.updateTime}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            update_user =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.updateUser}
+            </foreach>
+        </trim>
         WHERE id in
         <foreach collection="productEquipmentDOList" index="index" item="productEquipmentDO"
                  separator="," open="(" close=")">

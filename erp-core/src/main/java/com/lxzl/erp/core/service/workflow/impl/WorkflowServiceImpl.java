@@ -245,6 +245,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         if (VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus)) {
 
+            // 审核通过并且有下一步的情况
             if (thisWorkflowNodeDO != null && thisWorkflowNodeDO.getWorkflowNextNodeId() != null) {
                 workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
 
@@ -256,6 +257,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDetailDO.setWorkflowCurrentNodeId(thisWorkflowNodeDO.getId());
                 workflowLinkDetailDO.setWorkflowNextNodeId(thisWorkflowNodeDO.getWorkflowNextNodeId());
                 workflowLinkDetailDO.setVerifyUser(nextVerifyUser);
+                workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
                 workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 workflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
                 workflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
@@ -271,6 +273,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         } else {
             workflowLinkDO.setCurrentVerifyUser(null);
             workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
+            // 拒绝并且一步驳回到底
             if (WorkflowReturnType.RETURN_TYPE_ROOT.equals(returnType)) {
                 noticeBusinessModule = true;
             } else if (previousWorkflowNodeDO != null) {
@@ -282,6 +285,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDetailDO.setWorkflowCurrentNodeId(previousWorkflowNodeDO.getId());
                 workflowLinkDetailDO.setWorkflowNextNodeId(previousWorkflowNodeDO.getWorkflowNextNodeId());
                 workflowLinkDetailDO.setVerifyUser(nextVerifyUser);
+                workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
                 workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 workflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
                 workflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
@@ -352,6 +356,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkDetailDO.setWorkflowNextNodeId(nextWorkflowNodeDO.getId());
         }
         workflowLinkDetailDO.setVerifyUser(verifyUser);
+        workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
         workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         workflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
         workflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
@@ -410,6 +415,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkDetailDO.setWorkflowNextNodeId(workflowNodeDOList.get(1).getId());
         }
         workflowLinkDetailDO.setVerifyUser(verifyUser);
+        workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
         workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         workflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
         workflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
