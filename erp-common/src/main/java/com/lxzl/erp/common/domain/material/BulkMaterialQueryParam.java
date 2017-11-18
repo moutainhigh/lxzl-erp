@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -18,6 +19,8 @@ public class BulkMaterialQueryParam extends BasePageParam {
     private String bulkMaterialNo;
     private String bulkMaterialName;
     private Integer bulkMaterialType;
+    private Date createStartTime;
+    private Date createEndTime;
 
     public Integer getMaterialId() {
         return materialId;
@@ -49,5 +52,21 @@ public class BulkMaterialQueryParam extends BasePageParam {
 
     public void setBulkMaterialType(Integer bulkMaterialType) {
         this.bulkMaterialType = bulkMaterialType;
+    }
+
+    public Date getCreateStartTime() {
+        return createStartTime;
+    }
+
+    public void setCreateStartTime(Date createStartTime) {
+        this.createStartTime = createStartTime;
+    }
+
+    public Date getCreateEndTime() {
+        return createEndTime;
+    }
+
+    public void setCreateEndTime(Date createEndTime) {
+        this.createEndTime = createEndTime;
     }
 }

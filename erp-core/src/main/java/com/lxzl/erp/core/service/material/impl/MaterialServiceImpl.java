@@ -367,11 +367,12 @@ public class MaterialServiceImpl implements MaterialService {
             return false;
         }
         for (Material material : materialList) {
-            if (!MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
-                    || !MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(material.getMaterialType())
-                    || !MaterialType.MATERIAL_TYPE_CPU.equals(material.getMaterialType())
-                    || !MaterialType.MATERIAL_TYPE_HDD.equals(material.getMaterialType())
-                    || !MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(material.getMaterialType())) {
+            if (material.getMaterialType() == null
+                    || (!MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
+                    && !MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(material.getMaterialType())
+                    && !MaterialType.MATERIAL_TYPE_CPU.equals(material.getMaterialType())
+                    && !MaterialType.MATERIAL_TYPE_HDD.equals(material.getMaterialType())
+                    && !MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(material.getMaterialType()))) {
                 return false;
             }
         }
@@ -384,7 +385,8 @@ public class MaterialServiceImpl implements MaterialService {
             return false;
         }
         for (Material material : materialList) {
-            if (MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
+            if (material.getMaterialType() == null
+                    || MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
                     || MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(material.getMaterialType())
                     || MaterialType.MATERIAL_TYPE_CPU.equals(material.getMaterialType())
                     || MaterialType.MATERIAL_TYPE_HDD.equals(material.getMaterialType())

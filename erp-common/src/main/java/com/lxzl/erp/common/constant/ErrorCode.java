@@ -134,6 +134,8 @@ public class ErrorCode {
     public static final String PURCHASE_ORDER_MATERIAL_LIST_NOT_NULL = "J300044";
     public static final String PURCHASE_ORDER_MATERIAL_CAN_NOT_CREATE = "J300045";
     public static final String MATERIAL_NO_NOT_NULL = "J300046";
+    public static final String STOCK_ALLOCATION_WAREHOUSE_IS_NOT_SAME = "J300047";
+    public static final String WAREHOUSE_OUT_STORAGE_LIST_NOT_NULL = "J300048";
 
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
@@ -265,6 +267,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_ORDER_PRODUCT_CAN_NOT_REPEAT,"采购订单项重复");
         MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN,"已提交的采购单不能再次提交");
         MAP.put(WAREHOUSE_IN_STORAGE_LIST_NOT_NULL,"商品入仓数据不能为空");
+        MAP.put(WAREHOUSE_OUT_STORAGE_LIST_NOT_NULL,"商品出仓数据不能为空");
         MAP.put(USER_CAN_NOT_OP_WAREHOUSE,"您没有该仓库的操作权限");
         MAP.put(VERIFY_USER_NOT_NULL,"审核人不能为空");
         MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_DELETE,"已提交的采购单不能删除");
@@ -296,6 +299,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_ORDER_MATERIAL_CAN_NOT_CREATE,"采购的物料总额大于100元且没有发票");
         MAP.put(PURCHASE_ORDER_SKU_MATERIAL_ERROR,"SKU物料配置错误");
         MAP.put(MATERIAL_NO_NOT_NULL,"物料编号不能为空");
+        MAP.put(STOCK_ALLOCATION_WAREHOUSE_IS_NOT_SAME,"库存调拨库房必须是同一间");
 
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL,"订单商品不能为空");

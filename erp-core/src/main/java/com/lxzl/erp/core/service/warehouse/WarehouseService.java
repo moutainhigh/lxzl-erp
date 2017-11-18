@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
+import com.lxzl.erp.common.domain.warehouse.ProductOutStockParam;
 import com.lxzl.erp.common.domain.warehouse.WarehouseQueryParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.se.core.service.BaseService;
@@ -73,5 +74,5 @@ public interface WarehouseService extends BaseService {
      */
     ServiceResult<String, Integer> productInStock(ProductInStockParam productInStockParam);
 
-    ServiceResult<String, Integer> productOutStock(List<ProductInStorage> productInStorageList);
+    ServiceResult<String, Integer> productOutStock(ProductOutStockParam productOutStockParam);
 }
