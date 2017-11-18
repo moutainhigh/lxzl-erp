@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
 import com.lxzl.erp.common.util.validate.constraints.In;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.annotation.Transient;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -43,9 +44,8 @@ public class PurchaseReceiveOrder implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
-	@CollectionNotNull(message = ErrorCode.PURCHASE_RECEIVE_ORDER_PRODUCT_LIST_NOT_NULL , groups = {UpdateGroup.class})
-	List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList ;
-
+	private List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList ;
+	private List<PurchaseReceiveOrderMaterial> PurchaseReceiveOrderMaterialList;
 	private String ownerName;
 	private String productSupplierName;
 	private String invoiceSupplierName;
@@ -240,5 +240,13 @@ public class PurchaseReceiveOrder implements Serializable {
 
 	public void setInvoiceSupplierName(String invoiceSupplierName) {
 		this.invoiceSupplierName = invoiceSupplierName;
+	}
+
+	public List<PurchaseReceiveOrderMaterial> getPurchaseReceiveOrderMaterialList() {
+		return PurchaseReceiveOrderMaterialList;
+	}
+
+	public void setPurchaseReceiveOrderMaterialList(List<PurchaseReceiveOrderMaterial> purchaseReceiveOrderMaterialList) {
+		PurchaseReceiveOrderMaterialList = purchaseReceiveOrderMaterialList;
 	}
 }

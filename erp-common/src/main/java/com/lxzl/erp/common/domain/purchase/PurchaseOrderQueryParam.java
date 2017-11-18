@@ -8,6 +8,7 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PurchaseOrderQueryParam extends BasePageParam {
     private String purchaseNo ;//采购单编号
+    private Integer purchaseType ;//采购单类型
     private Integer productSupplierId ;//商品供应商ID
     private String warehouseNo ;//仓库ID
     private Integer warehouseId ;//仓库ID
@@ -24,6 +25,14 @@ public class PurchaseOrderQueryParam extends BasePageParam {
 
     public void setPurchaseNo(String purchaseNo) {
         this.purchaseNo = purchaseNo;
+    }
+
+    public Integer getPurchaseType() {
+        return purchaseType;
+    }
+
+    public void setPurchaseType(Integer purchaseType) {
+        this.purchaseType = purchaseType;
     }
 
     public Integer getProductSupplierId() {

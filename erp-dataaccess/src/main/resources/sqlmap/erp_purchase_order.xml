@@ -27,7 +27,9 @@
 		<result column="ownerName" jdbcType="VARCHAR" property="ownerName" />
 		<result column="productSupplierName" jdbcType="VARCHAR" property="productSupplierName" />
 		<result column="invoiceSupplierName" jdbcType="VARCHAR" property="invoiceSupplierName" />
+
 		<collection property="purchaseOrderProductDOList" resultMap="PurchaseOrderProductDO" />
+		<collection property="purchaseOrderMaterialDOList" resultMap="PurchaseOrderMaterialDO" />
 	</resultMap>
 
 	<resultMap id="PurchaseOrderProductDO" type="com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderProductDO">
@@ -46,7 +48,21 @@
 		<result column="epop_updateTime" jdbcType="TIMESTAMP" property="updateTime"/>
 		<result column="epop_updateUser" jdbcType="VARCHAR" property="updateUser"/>
 	</resultMap>
-
+	<resultMap id="PurchaseOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderMaterialDO">
+		<id column="epom_id" jdbcType="INTEGER" property="id"/>
+		<result column="epom_purchaseOrderId" jdbcType="INTEGER" property="purchaseOrderId"/>
+		<result column="epom_materialId" jdbcType="INTEGER" property="materialId"/>
+		<result column="epom_materialName" jdbcType="VARCHAR" property="materialName"/>
+		<result column="epom_materialSnapshot" jdbcType="VARCHAR" property="materialSnapshot"/>
+		<result column="epom_materialCount" jdbcType="INTEGER" property="materialCount"/>
+		<result column="epom_materialAmount" jdbcType="DECIMAL" property="materialAmount"/>
+		<result column="epom_dataStatus" jdbcType="INTEGER" property="dataStatus"/>
+		<result column="epom_remark" jdbcType="VARCHAR" property="remark"/>
+		<result column="epom_createTime" jdbcType="TIMESTAMP" property="createTime"/>
+		<result column="epom_createUser" jdbcType="VARCHAR" property="createUser"/>
+		<result column="epom_updateTime" jdbcType="TIMESTAMP" property="updateTime"/>
+		<result column="epom_updateUser" jdbcType="VARCHAR" property="updateUser"/>
+	</resultMap>
 	<sql id="column_List">
 		epo.id,epo.purchase_no,epo.product_supplier_id,epo.warehouse_id,epo.warehouse_snapshot,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_amount_real,epo.purchase_order_amount_statement,epo.purchase_order_status,epo.delivery_time,epo.purchase_type,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user
 	</sql>
@@ -54,6 +70,9 @@
 	<sql id="product_column_List">
 		epop.id as epop_id,epop.purchase_order_id as epop_purchaseOrderId,epop.product_id as epop_productId,epop.product_name as epop_productName,epop.product_snapshot as epop_productSnapshot,epop.product_sku_id as epop_productSkuId,epop.product_count as epop_productCount,epop.product_amount as epop_productAmount,epop.data_status as epop_dataStatus,epop.remark as epop_remark,epop.create_time as epop_createTime,epop.create_user as epop_createUser,epop.update_time as epop_updateTime,epop.update_user as epop_updateUser
     </sql>
+	<sql id="material_column_List">
+		epom.id AS epom_id,epom.purchase_order_id AS epom_purchaseOrderId,epom.material_id AS epom_materialId,epom.material_name AS epom_materialName,epom.material_snapshot AS epom_materialSnapshot,epom.material_count AS epom_materialCount,epom.material_amount AS epom_materialAmount,epom.data_status AS epom_dataStatus,epom.remark AS epom_remark,epom.create_time AS epom_createTime,epom.create_user AS epom_createUser,epom.update_time AS epom_updateTime,epom.update_user AS epom_updateUser
+	</sql>
 	<select id="findById" resultMap="PurchaseOrderDO" parameterType="java.lang.Integer">
 		select <include refid="column_List"/> from erp_purchase_order epo 
 		where epo.id = #{id, jdbcType=INTEGER} and data_status = 1 
@@ -64,19 +83,22 @@
 	</select>
 
 	<select id="findDetailByPurchaseNo" resultMap="PurchaseOrderDO" parameterType="java.lang.String">
-		select <include refid="column_List"/>,<include refid="product_column_List"/> ,eu.real_name as ownerName,es1.supplier_name as productSupplierName
+		select <include refid="column_List"/>,<include refid="product_column_List"/> ,<include refid="material_column_List"/>,eu.real_name as ownerName,es1.supplier_name as productSupplierName
 		from (
 		select <include refid="column_List"/> from erp_purchase_order epo
 		where epo.purchase_no = #{purchaseNo, jdbcType=VARCHAR} and data_status = 1
 		) epo left join erp_purchase_order_product epop on epop.purchase_order_id = epo.id and epop.data_status=1
+		left join erp_purchase_order_material epom on epom.purchase_order_id = epo.id and epom.data_status=1
 		left join erp_user eu on epo.owner = eu.id
 		left join erp_supplier es1 on epo.product_supplier_id = es1.id
 	</select>
 	<select id="findDetailById" resultMap="PurchaseOrderDO" parameterType="java.lang.Integer">
-		select <include refid="column_List"/>,<include refid="product_column_List"/> from (
+		select <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/> from (
 		select <include refid="column_List"/> from erp_purchase_order epo
 		where epo.id = #{id, jdbcType=INTEGER} and data_status = 1
-		) epo left join erp_purchase_order_product epop on epop.purchase_order_id = epo.id and epop.data_status=1
+		) epo
+		left join erp_purchase_order_product epop on epop.purchase_order_id = epo.id and epop.data_status=1
+		left join erp_purchase_order_material epom on epom.purchase_order_id = epo.id and epom.data_status=1
 	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(epo.id) from erp_purchase_order epo
@@ -169,9 +191,6 @@
 		update erp_purchase_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
 
-	<update id="deleteByPurchaseNo" parameterType="java.lang.String">
-		update erp_purchase_order set data_status=2 WHERE purchase_no = #{purchaseNo, jdbcType=VARCHAR}
-	</update>
 	<select id="findPurchaseOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(id)
 		FROM erp_purchase_order epo
@@ -210,7 +229,7 @@
 		</where>
 	</select>
 	<select id="findPurchaseOrderByParams" resultMap="PurchaseOrderDO" parameterType="map">
-		select <include refid="column_List"/>,<include refid="product_column_List"/> ,eu.real_name as ownerName,es1.supplier_name as productSupplierName
+		select <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/> ,eu.real_name as ownerName,es1.supplier_name as productSupplierName
 		from (
 		SELECT <include refid="column_List"/>
 		FROM erp_purchase_order epo
@@ -247,7 +266,9 @@
 			</if>
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}
-		) epo left join erp_purchase_order_product epop on epop.purchase_order_id = epo.id and epop.data_status=1
+		) epo
+		left join erp_purchase_order_product epop on epop.purchase_order_id = epo.id and epop.data_status=1
+		left join erp_purchase_order_material epom on epom.purchase_order_id = epo.id and epom.data_status=1
 		left join erp_user eu on epo.owner = eu.id
 		left join erp_supplier es1 on epo.product_supplier_id = es1.id
 	</select>

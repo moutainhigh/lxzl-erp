@@ -31,6 +31,7 @@ public class PurchaseDeliveryOrder implements Serializable {
 	private String updateUser;   //修改人
 
 	private List<PurchaseDeliveryOrderProduct> purchaseDeliveryOrderProductList;
+	private List<PurchaseDeliveryOrderMaterial> purchaseDeliveryOrderMaterialList;
 
 
 	public Integer getPurchaseDeliveryOrderId(){
@@ -167,5 +168,13 @@ public class PurchaseDeliveryOrder implements Serializable {
 
 	public void setPurchaseDeliveryOrderProductList(List<PurchaseDeliveryOrderProduct> purchaseDeliveryOrderProductList) {
 		this.purchaseDeliveryOrderProductList = purchaseDeliveryOrderProductList;
+	}
+
+	public List<PurchaseDeliveryOrderMaterial> getPurchaseDeliveryOrderMaterialList() {
+		return purchaseDeliveryOrderMaterialList;
+	}
+
+	public void setPurchaseDeliveryOrderMaterialList(List<PurchaseDeliveryOrderMaterial> purchaseDeliveryOrderMaterialList) {
+		this.purchaseDeliveryOrderMaterialList = purchaseDeliveryOrderMaterialList;
 	}
 }

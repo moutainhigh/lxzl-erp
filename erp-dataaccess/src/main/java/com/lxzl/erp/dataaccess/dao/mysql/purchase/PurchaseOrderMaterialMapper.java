@@ -10,4 +10,6 @@ public interface PurchaseOrderMaterialMapper extends BaseMysqlDAO<PurchaseOrderM
 	List<PurchaseOrderMaterialDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+	Integer deleteByPurchaseOrderId(PurchaseOrderMaterialDO purchaseOrderMaterialDO);
 }

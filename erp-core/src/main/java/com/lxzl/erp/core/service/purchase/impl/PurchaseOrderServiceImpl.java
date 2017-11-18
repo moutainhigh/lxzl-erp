@@ -80,6 +80,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Autowired
     private PurchaseReceiveOrderProductMapper purchaseReceiveOrderProductMapper;
     @Autowired
+    private PurchaseReceiveOrderMaterialMapper purchaseReceiveOrderMaterialMapper;
+    @Autowired
     private PurchaseOrderSupport purchaseOrderSupport;
     @Autowired
     private WarehouseService warehouseService;
@@ -97,6 +99,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private MaterialService materialService;
     @Autowired
     private PurchaseOrderMaterialMapper purchaseOrderMaterialMapper;
+    @Autowired
+    private PurchaseDeliveryOrderMaterialMapper purchaseDeliveryOrderMaterialMapper;
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> add(PurchaseOrder purchaseOrder) {
@@ -310,7 +314,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
         for(Integer skuId : oldMap.keySet()){
             if(!newMap.containsKey(skuId)){//如果原列表有新列表没有，则删除
-                purchaseOrderProductMapper.delete(oldMap.get(skuId).getId());
+                PurchaseOrderProductDO oldPurchaseOrderProductDO = oldMap.get(skuId);
+                oldPurchaseOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                oldPurchaseOrderProductDO.setUpdateTime(now);
+                oldPurchaseOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                purchaseOrderProductMapper.update(oldPurchaseOrderProductDO);
             }
         }
     }
@@ -347,7 +355,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
         for(Integer materialId : oldMap.keySet()){
             if(!newMap.containsKey(materialId)){//如果原列表有新列表没有，则删除
-                purchaseOrderMaterialMapper.delete(oldMap.get(materialId).getId());
+                PurchaseOrderMaterialDO oldPurchaseOrderMaterialDO = oldMap.get(materialId);
+                oldPurchaseOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                oldPurchaseOrderMaterialDO.setUpdateTime(now);
+                oldPurchaseOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                purchaseOrderMaterialMapper.update(oldPurchaseOrderMaterialDO);
             }
         }
     }
@@ -397,7 +409,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             }
             materialIdSet.add(materialDO.getId());
             //累加采购单物料项总价
-            purchaseOrderDetail.totalMaterialAmount = BigDecimalUtil.add(purchaseOrderDetail.totalMaterialAmount,BigDecimalUtil.mul(purchaseOrderMaterial.getMaterialAmount(),new BigDecimal(purchaseOrderMaterial.getMaterialCount())));
+            purchaseOrderDetail.totalAmount = BigDecimalUtil.add(purchaseOrderDetail.totalAmount,BigDecimalUtil.mul(purchaseOrderMaterial.getMaterialAmount(),new BigDecimal(purchaseOrderMaterial.getMaterialCount())));
 
             PurchaseOrderMaterialDO purchaseOrderMaterialDO = new PurchaseOrderMaterialDO();
 
@@ -607,12 +619,16 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             result.setErrorCode(ErrorCode.PURCHASE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN);
             return result;
         }
-        //调用审核服务
-        ServiceResult<String ,Integer > verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE,purchaseOrderDO.getId(),purchaseOrderCommitParam.getVerifyUserId());
+        ServiceResult<String, Integer> verifyResult =null;
+        //调用提交审核服务
+        verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE, purchaseOrderDO.getId(), purchaseOrderCommitParam.getVerifyUserId());
         //修改提交审核状态
         if(ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())){
             purchaseOrderDO.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_VERIFYING);
             purchaseOrderMapper.update(purchaseOrderDO);
+        }else{
+            result.setErrorCode(verifyResult.getErrorCode());
+            return result;
         }
         return verifyResult;
     }
@@ -628,8 +644,26 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             //只有待提交状态的采购单可以删除
             return ErrorCode.PURCHASE_ORDER_COMMITTED_CAN_NOT_DELETE;
         }
-        purchaseOrderMapper.deleteByPurchaseNo(purchaseOrderDO.getPurchaseNo());
-        purchaseOrderProductMapper.deleteByPurchaseOrderId(purchaseOrderDO.getId());
+        Date now = new Date();
+
+        purchaseOrderDO.setUpdateTime(now);
+        purchaseOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        purchaseOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        purchaseOrderMapper.update(purchaseOrderDO);
+
+        PurchaseOrderProductDO purchaseOrderProductDO = new PurchaseOrderProductDO();
+        purchaseOrderProductDO.setPurchaseOrderId(purchaseOrderDO.getId());
+        purchaseOrderProductDO.setUpdateTime(now);
+        purchaseOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        purchaseOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        purchaseOrderProductMapper.deleteByPurchaseOrderId(purchaseOrderProductDO);
+
+        PurchaseOrderMaterialDO purchaseOrderMaterialDO = new PurchaseOrderMaterialDO();
+        purchaseOrderMaterialDO.setPurchaseOrderId(purchaseOrderDO.getId());
+        purchaseOrderMaterialDO.setUpdateTime(now);
+        purchaseOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        purchaseOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        purchaseOrderMaterialMapper.deleteByPurchaseOrderId(purchaseOrderMaterialDO);
         return ErrorCode.SUCCESS;
     }
 
@@ -1064,24 +1098,27 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }catch (Exception e){
             log.error("【采购单审核后，业务处理异常，未生成发货单】",e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            log.error("【数据已回滚】");
             return false;
         }catch (Throwable t){
             log.error("【采购单审核后，业务处理异常，未生成发货单】",t);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            log.error("【数据已回滚】");
             return false;
         }
     }
 
     /**
-     * 如果有发票：生成发货通知单及收货通知单
+     * 如果有发票：生成发货通知单，收料通知单
      * 如果没有发票；收货库房为总公司库：生成发货通知单，收料通知单
      * 如果没有发票；收货库房为分公司库：生成发货通知单，生成总公司收料通知单（real空着不存，待分公司收货通知单状态为已确认时回填）及分拨单号，生成分公司收料通知单
+     * 如果是小配件；生成发货通知单，收料通知单
      * @param purchaseOrderDO
      */
     public void createPurchaseDeliveryAndReceiveOrder(PurchaseOrderDO purchaseOrderDO){
         //生成发货通知单
         PurchaseDeliveryOrderDO purchaseDeliveryOrderDO = createDeliveryDetail(purchaseOrderDO);
-        if(CommonConstant.COMMON_CONSTANT_YES.equals(purchaseOrderDO.getIsInvoice())){//如果有发票
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(purchaseOrderDO.getIsInvoice())||PurchaseType.PURCHASE_TYPE_GADGET==purchaseOrderDO.getPurchaseType()){//如果有发票或者是小配件类型
             //直接生成收料通知单
             createReceiveDetail(purchaseDeliveryOrderDO,AutoAllotStatus.AUTO_ALLOT_STATUS_NO,null);
         }else if(CommonConstant.COMMON_CONSTANT_NO.equals(purchaseOrderDO.getIsInvoice())){//如果没有发票
@@ -1129,7 +1166,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         List<PurchaseDeliveryOrderProductDO> purchaseDeliveryOrderProductDOList = new ArrayList<>();
 
         //保存采购发货单商品项
-        if(purchaseOrderProductDOList!=null&&purchaseOrderProductDOList.size()>0){
+        if(CollectionUtil.isNotEmpty(purchaseOrderProductDOList)){
             for(PurchaseOrderProductDO purchaseOrderProductDO : purchaseOrderProductDOList){
                 PurchaseDeliveryOrderProductDO purchaseDeliveryOrderProductDO = new PurchaseDeliveryOrderProductDO();
                 purchaseDeliveryOrderProductDO.setPurchaseDeliveryOrderId(purchaseDeliveryOrderDO.getId());
@@ -1155,6 +1192,39 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             }
         }
         purchaseDeliveryOrderDO.setPurchaseDeliveryOrderProductDOList(purchaseDeliveryOrderProductDOList);
+
+        //获取采购订单物料项列表
+//        List<PurchaseOrderProductDO> purchaseOrderProductDOList =  purchaseOrderSupport.getAllPurchaseOrderProductDO(purchaseOrderDO.getId());
+        List<PurchaseOrderMaterialDO> purchaseOrderMaterialDOList = purchaseOrderDO.getPurchaseOrderMaterialDOList();
+        //声明发货单物料项列表，后面会将保存后的发货单物料项add到发货单中
+        List<PurchaseDeliveryOrderMaterialDO> purchaseDeliveryOrderMaterialDOList = new ArrayList<>();
+
+        //保存采购发货单商品项
+        if(CollectionUtil.isNotEmpty(purchaseOrderMaterialDOList)){
+            for(PurchaseOrderMaterialDO purchaseOrderMaterialDO : purchaseOrderMaterialDOList){
+                PurchaseDeliveryOrderMaterialDO purchaseDeliveryOrderMaterialDO = new PurchaseDeliveryOrderMaterialDO();
+                purchaseDeliveryOrderMaterialDO.setPurchaseDeliveryOrderId(purchaseDeliveryOrderDO.getId());
+                purchaseDeliveryOrderMaterialDO.setPurchaseOrderMaterialId(purchaseOrderMaterialDO.getId());
+                purchaseDeliveryOrderMaterialDO.setMaterialId(purchaseOrderMaterialDO.getMaterialId());
+                purchaseDeliveryOrderMaterialDO.setMaterialName(purchaseOrderMaterialDO.getMaterialName());
+                purchaseDeliveryOrderMaterialDO.setMaterialSnapshot(purchaseOrderMaterialDO.getMaterialSnapshot());
+                purchaseDeliveryOrderMaterialDO.setMaterialCount(purchaseOrderMaterialDO.getMaterialCount());
+                purchaseDeliveryOrderMaterialDO.setMaterialAmount(purchaseOrderMaterialDO.getMaterialAmount());
+                purchaseDeliveryOrderMaterialDO.setRealMaterialId(purchaseOrderMaterialDO.getMaterialId());
+                purchaseDeliveryOrderMaterialDO.setRealMaterialName(purchaseOrderMaterialDO.getMaterialName());
+                purchaseDeliveryOrderMaterialDO.setRealMaterialSnapshot(purchaseOrderMaterialDO.getMaterialSnapshot());
+                purchaseDeliveryOrderMaterialDO.setRealMaterialCount(purchaseOrderMaterialDO.getMaterialCount());
+                purchaseDeliveryOrderMaterialDO.setRealMaterialAmount(purchaseOrderMaterialDO.getMaterialAmount());
+                purchaseDeliveryOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                purchaseDeliveryOrderMaterialDO.setCreateTime(now);
+                purchaseDeliveryOrderMaterialDO.setUpdateTime(now);
+                purchaseDeliveryOrderMaterialDO.setCreateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
+                purchaseDeliveryOrderMaterialDO.setUpdateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
+                purchaseDeliveryOrderMaterialMapper.save(purchaseDeliveryOrderMaterialDO);
+                purchaseDeliveryOrderMaterialDOList.add(purchaseDeliveryOrderMaterialDO);
+            }
+        }
+        purchaseDeliveryOrderDO.setPurchaseDeliveryOrderMaterialDOList(purchaseDeliveryOrderMaterialDOList);
         return purchaseDeliveryOrderDO;
     }
 
@@ -1203,7 +1273,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 //        List<PurchaseDeliveryOrderProductDO> purchaseDeliveryOrderProductDOList =  purchaseOrderSupport.getAllPurchaseDeliveryOrderProductDO(purchaseDeliveryOrderDO.getId());
         List<PurchaseDeliveryOrderProductDO> purchaseDeliveryOrderProductDOList = purchaseDeliveryOrderDO.getPurchaseDeliveryOrderProductDOList();
         //保存采购发货单商品项
-        if(purchaseDeliveryOrderProductDOList!=null&&purchaseDeliveryOrderProductDOList.size()>0){
+        if(CollectionUtil.isNotEmpty(purchaseDeliveryOrderProductDOList)){
             for(PurchaseDeliveryOrderProductDO purchaseDeliveryOrderProductDO : purchaseDeliveryOrderProductDOList){
                 PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO = new PurchaseReceiveOrderProductDO();
                 purchaseReceiveOrderProductDO.setPurchaseDeliveryOrderProductId(purchaseDeliveryOrderProductDO.getId());
@@ -1226,6 +1296,34 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 purchaseReceiveOrderProductDO.setCreateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
                 purchaseReceiveOrderProductDO.setUpdateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
                 purchaseReceiveOrderProductMapper.save(purchaseReceiveOrderProductDO);
+            }
+        }
+
+        //获取发货订单物料项列表
+//        List<PurchaseDeliveryOrderProductDO> purchaseDeliveryOrderProductDOList =  purchaseOrderSupport.getAllPurchaseDeliveryOrderProductDO(purchaseDeliveryOrderDO.getId());
+        List<PurchaseDeliveryOrderMaterialDO> purchaseDeliveryOrderMaterialDOList = purchaseDeliveryOrderDO.getPurchaseDeliveryOrderMaterialDOList();
+        //保存采购发货单商品项
+        if(CollectionUtil.isNotEmpty(purchaseDeliveryOrderMaterialDOList)){
+            for(PurchaseDeliveryOrderMaterialDO purchaseDeliveryOrderMaterialDO : purchaseDeliveryOrderMaterialDOList){
+                PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO = new PurchaseReceiveOrderMaterialDO();
+                purchaseReceiveOrderMaterialDO.setPurchaseDeliveryOrderMaterialId(purchaseDeliveryOrderMaterialDO.getId());
+                purchaseReceiveOrderMaterialDO.setPurchaseReceiveOrderId(purchaseReceiveOrderDO.getId());
+                purchaseReceiveOrderMaterialDO.setPurchaseDeliveryOrderMaterialId(purchaseDeliveryOrderMaterialDO.getPurchaseOrderMaterialId());
+                purchaseReceiveOrderMaterialDO.setMaterialId(purchaseDeliveryOrderMaterialDO.getMaterialId());
+                purchaseReceiveOrderMaterialDO.setMaterialName(purchaseDeliveryOrderMaterialDO.getMaterialName());
+                purchaseReceiveOrderMaterialDO.setMaterialSnapshot(purchaseDeliveryOrderMaterialDO.getMaterialSnapshot());
+                purchaseReceiveOrderMaterialDO.setMaterialCount(purchaseDeliveryOrderMaterialDO.getMaterialCount());
+                purchaseReceiveOrderMaterialDO.setRealMaterialId(purchaseDeliveryOrderMaterialDO.getMaterialId());
+                purchaseReceiveOrderMaterialDO.setRealMaterialName(purchaseDeliveryOrderMaterialDO.getMaterialName());
+                purchaseReceiveOrderMaterialDO.setRealMaterialSnapshot(purchaseDeliveryOrderMaterialDO.getMaterialSnapshot());
+                purchaseReceiveOrderMaterialDO.setRealMaterialCount(purchaseDeliveryOrderMaterialDO.getMaterialCount());
+                purchaseReceiveOrderMaterialDO.setIsSrc(CommonConstant.YES);
+                purchaseReceiveOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                purchaseReceiveOrderMaterialDO.setCreateTime(now);
+                purchaseReceiveOrderMaterialDO.setUpdateTime(now);
+                purchaseReceiveOrderMaterialDO.setCreateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
+                purchaseReceiveOrderMaterialDO.setUpdateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
+                purchaseReceiveOrderMaterialMapper.save(purchaseReceiveOrderMaterialDO);
             }
         }
         return purchaseReceiveOrderDO;

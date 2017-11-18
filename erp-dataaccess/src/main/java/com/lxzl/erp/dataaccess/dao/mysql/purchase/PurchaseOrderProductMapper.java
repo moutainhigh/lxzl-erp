@@ -12,6 +12,6 @@ public interface PurchaseOrderProductMapper extends BaseMysqlDAO<PurchaseOrderPr
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
-	Integer deleteByPurchaseOrderId(@Param("purchaseOrderId") Integer purchaseOrderId);
+	Integer deleteByPurchaseOrderId(PurchaseOrderProductDO purchaseOrderProductDO);
 
 }

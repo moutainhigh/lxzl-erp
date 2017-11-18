@@ -24,6 +24,8 @@ public class PurchaseDeliveryOrderDO  extends BaseDO {
 
 	@Transient
 	private List<PurchaseDeliveryOrderProductDO> purchaseDeliveryOrderProductDOList;
+	@Transient
+	private List<PurchaseDeliveryOrderMaterialDO> purchaseDeliveryOrderMaterialDOList;
 
 	public Integer getId(){
 		return id;
@@ -127,5 +129,13 @@ public class PurchaseDeliveryOrderDO  extends BaseDO {
 
 	public void setPurchaseDeliveryOrderProductDOList(List<PurchaseDeliveryOrderProductDO> purchaseDeliveryOrderProductDOList) {
 		this.purchaseDeliveryOrderProductDOList = purchaseDeliveryOrderProductDOList;
+	}
+
+	public List<PurchaseDeliveryOrderMaterialDO> getPurchaseDeliveryOrderMaterialDOList() {
+		return purchaseDeliveryOrderMaterialDOList;
+	}
+
+	public void setPurchaseDeliveryOrderMaterialDOList(List<PurchaseDeliveryOrderMaterialDO> purchaseDeliveryOrderMaterialDOList) {
+		this.purchaseDeliveryOrderMaterialDOList = purchaseDeliveryOrderMaterialDOList;
 	}
 }
