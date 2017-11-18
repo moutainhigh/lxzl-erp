@@ -262,6 +262,76 @@
         </foreach>
     </insert>
 
+    <update id="updateList" parameterType="java.util.ArrayList">
+        update erp_product_equipment
+        SET
+        equipment_no =
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+            when #{productEquipmentDO.id} then #{productEquipmentDO.equipmentNo}
+        </foreach>,
+        product_id =
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+            when #{productEquipmentDO.id} then #{productEquipmentDO.productId}
+        </foreach>,
+        sku_id =
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+            when #{productEquipmentDO.id} then #{productEquipmentDO.skuId}
+        </foreach>,
+        current_warehouse_id =
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+            when #{productEquipmentDO.id} then #{productEquipmentDO.currentWarehouseId}
+        </foreach>,
+        current_warehouse_position_id =
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+            when #{productEquipmentDO.id} then #{productEquipmentDO.currentWarehousePositionId}
+        </foreach>,
+        owner_warehouse_id =
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+            when #{productEquipmentDO.id} then #{productEquipmentDO.ownerWarehouseId}
+        </foreach>,
+        owner_warehouse_position_id =
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+            when #{productEquipmentDO.id} then #{productEquipmentDO.ownerWarehousePositionId}
+        </foreach>,
+        equipment_price =
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+            when #{productEquipmentDO.id} then #{productEquipmentDO.equipmentPrice}
+        </foreach>,
+        equipment_status =
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+            when #{productEquipmentDO.id} then #{productEquipmentDO.equipmentStatus}
+        </foreach>,
+        data_status =
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+            when #{productEquipmentDO.id} then #{productEquipmentDO.dataStatus}
+        </foreach>,
+        remark =
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+            when #{productEquipmentDO.id} then #{productEquipmentDO.remark}
+        </foreach>,
+        create_time =
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+            when #{productEquipmentDO.id} then #{productEquipmentDO.createTime}
+        </foreach>,
+        create_user =
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+            when #{productEquipmentDO.id} then #{productEquipmentDO.createUser}
+        </foreach>,
+        update_time =
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+            when #{productEquipmentDO.id} then #{productEquipmentDO.updateTime}
+        </foreach>,
+        update_user =
+        <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+            when #{productEquipmentDO.id} then #{productEquipmentDO.updateUser}
+        </foreach>
+        WHERE id in
+        <foreach collection="productEquipmentDOList" index="index" item="productEquipmentDO"
+                 separator="," open="(" close=")">
+            #{productEquipmentDO.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
+
     <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO">
         update erp_product_equipment
         <include refid="set_column_sql"/>

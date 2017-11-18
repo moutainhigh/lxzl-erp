@@ -245,11 +245,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         if (VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus)) {
 
-            if (thisWorkflowNodeDO == null) {
-                throw new BusinessException(ErrorCode.SYSTEM_ERROR);
-            }
-
-            if (thisWorkflowNodeDO.getWorkflowNextNodeId() != null) {
+            if (thisWorkflowNodeDO != null && thisWorkflowNodeDO.getWorkflowNextNodeId() != null) {
                 workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
 
                 WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
