@@ -3,13 +3,17 @@ package com.lxzl.erp.core.service.warehouse.impl;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
+import com.lxzl.erp.common.domain.material.pojo.BulkMaterialOutStorage;
 import com.lxzl.erp.common.domain.material.pojo.MaterialInStorage;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
+import com.lxzl.erp.common.domain.product.pojo.ProductEquipmentOutStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
+import com.lxzl.erp.common.domain.warehouse.ProductOutStockParam;
 import com.lxzl.erp.common.domain.warehouse.WarehouseQueryParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.CollectionUtil;
@@ -243,7 +247,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         ServiceResult<String, Integer> result = new ServiceResult<>();
         Date currentTime = new Date();
-        String errorCode = verifyProductInfo(productInStorageList, materialInStorageList);
+        String errorCode = verifyProductAndMaterialInfo(productInStorageList, materialInStorageList);
         if (!ErrorCode.SUCCESS.equals(errorCode)) {
             result.setErrorCode(errorCode);
             return result;
@@ -253,11 +257,15 @@ public class WarehouseServiceImpl implements WarehouseService {
             return result;
         }
 
+        Integer targetWarehousePositionId = 0, srcWarehousePositionId = 0;
         if (srcWarehouseId != null) {
             WarehouseDO srcWarehouseDO = warehouseMapper.findById(srcWarehouseId);
             if (srcWarehouseDO == null) {
                 result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
                 return result;
+            }
+            if (CollectionUtil.isNotEmpty(srcWarehouseDO.getWarehousePositionDOList())) {
+                srcWarehousePositionId = srcWarehouseDO.getWarehousePositionDOList().get(0).getId();
             }
         }
 
@@ -266,18 +274,8 @@ public class WarehouseServiceImpl implements WarehouseService {
             result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
             return result;
         }
-
-        Integer targetWarehousePositionId = 0, srcWarehousePositionId = 0;
-        List<WarehousePositionDO> targetWarehousePositionDOList = warehousePositionMapper.findByWarehouseId(targetWarehouseId);
-        if (targetWarehousePositionDOList != null && !targetWarehousePositionDOList.isEmpty()) {
-            targetWarehousePositionId = targetWarehousePositionDOList.get(0).getId();
-        }
-
-        if(srcWarehouseId != null){
-            List<WarehousePositionDO> srcWarehousePositionDOList = warehousePositionMapper.findByWarehouseId(srcWarehouseId);
-            if (srcWarehousePositionDOList != null && !srcWarehousePositionDOList.isEmpty()) {
-                srcWarehousePositionId = srcWarehousePositionDOList.get(0).getId();
-            }
+        if (CollectionUtil.isNotEmpty(targetWarehouseDO.getWarehousePositionDOList())) {
+            targetWarehousePositionId = targetWarehouseDO.getWarehousePositionDOList().get(0).getId();
         }
 
         StockOrderDO dbOrder = stockOrderMapper.findOrderByTypeAndRefer(causeType, referNo);
@@ -303,25 +301,26 @@ public class WarehouseServiceImpl implements WarehouseService {
         stockOrderDO.setCreateTime(currentTime);
         stockOrderMapper.save(stockOrderDO);
 
-        if(CollectionUtil.isNotEmpty(productInStorageList)){
-            for (ProductInStorage productInStorage : productInStorageList) {
-                saveProductEquipment(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, productInStorage, currentTime);
-                ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
-                productSkuDO.setStock(productSkuDO.getStock() + productInStorage.getProductCount());
-                productSkuDO.setUpdateUser(loginUser.getUserId().toString());
-                productSkuDO.setUpdateTime(currentTime);
-                productSkuMapper.update(productSkuDO);
+        if (StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE.equals(causeType)) {
+            if (CollectionUtil.isNotEmpty(productInStorageList)) {
+                for (ProductInStorage productInStorage : productInStorageList) {
+                    saveProductEquipment(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, productInStorage, currentTime);
+                    ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
+                    productSkuDO.setStock(productSkuDO.getStock() + productInStorage.getProductCount());
+                    productSkuDO.setUpdateUser(loginUser.getUserId().toString());
+                    productSkuDO.setUpdateTime(currentTime);
+                    productSkuMapper.update(productSkuDO);
+                }
             }
-        }
-
-        if(CollectionUtil.isNotEmpty(materialInStorageList)){
-            for (MaterialInStorage materialInStorage : materialInStorageList) {
-                saveBulkMaterial(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, materialInStorage, currentTime);
-                MaterialDO materialDO = materialMapper.findById(materialInStorage.getMaterialId());
-                materialDO.setStock(materialDO.getStock() + materialInStorage.getMaterialCount());
-                materialDO.setUpdateUser(loginUser.getUserId().toString());
-                materialDO.setUpdateTime(currentTime);
-                materialMapper.update(materialDO);
+            if (CollectionUtil.isNotEmpty(materialInStorageList)) {
+                for (MaterialInStorage materialInStorage : materialInStorageList) {
+                    saveBulkMaterial(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, materialInStorage, currentTime);
+                    MaterialDO materialDO = materialMapper.findById(materialInStorage.getMaterialId());
+                    materialDO.setStock(materialDO.getStock() + materialInStorage.getMaterialCount());
+                    materialDO.setUpdateUser(loginUser.getUserId().toString());
+                    materialDO.setUpdateTime(currentTime);
+                    materialMapper.update(materialDO);
+                }
             }
         }
 
@@ -332,19 +331,108 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, Integer> productOutStock(List<ProductInStorage> productInStorageList) {
+    public ServiceResult<String, Integer> productOutStock(ProductOutStockParam productOutStockParam) {
+        List<ProductEquipmentOutStorage> productEquipmentOutStorageList = productOutStockParam.getProductEquipmentOutStorageList();
+        List<BulkMaterialOutStorage> bulkMaterialOutStorageList = productOutStockParam.getBulkMaterialOutStorageList();
+        Integer srcWarehouseId = productOutStockParam.getSrcWarehouseId();
+        Integer targetWarehouseId = productOutStockParam.getTargetWarehouseId();
+        Integer causeType = productOutStockParam.getCauseType();
+        String referNo = productOutStockParam.getReferNo();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         ServiceResult<String, Integer> result = new ServiceResult<>();
+        Date currentTime = new Date();
+        String errorCode = verifyProductEquipmentAndBulkMaterialInfo(productEquipmentOutStorageList, bulkMaterialOutStorageList);
+        if (!ErrorCode.SUCCESS.equals(errorCode)) {
+            result.setErrorCode(errorCode);
+            return result;
+        }
+        if (srcWarehouseId == null || causeType == null || referNo == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
 
+        Integer targetWarehousePositionId = 0, srcWarehousePositionId = 0;
+        WarehouseDO srcWarehouseDO = warehouseMapper.findById(srcWarehouseId);
+        if (srcWarehouseDO == null) {
+            result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
+            return result;
+        }
+        if (CollectionUtil.isNotEmpty(srcWarehouseDO.getWarehousePositionDOList())) {
+            srcWarehousePositionId = srcWarehouseDO.getWarehousePositionDOList().get(0).getId();
+        }
+
+        if (targetWarehouseId != null) {
+            WarehouseDO targetWarehouseDO = warehouseMapper.findById(targetWarehouseId);
+            if (targetWarehouseDO == null) {
+                result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
+                return result;
+            }
+            if (CollectionUtil.isNotEmpty(targetWarehouseDO.getWarehousePositionDOList())) {
+                targetWarehousePositionId = targetWarehouseDO.getWarehousePositionDOList().get(0).getId();
+            }
+        }
+
+
+        StockOrderDO dbOrder = stockOrderMapper.findOrderByTypeAndRefer(causeType, referNo);
+        if (dbOrder != null) {
+            result.setErrorCode(ErrorCode.STOCK_ORDER_ALREADY_EXISTS);
+            return result;
+        }
+
+        StockOrderDO stockOrderDO = new StockOrderDO();
+        stockOrderDO.setOperationType(StockOperationType.STORCK_OPERATION_TYPE_OUT);
+        stockOrderDO.setStockOrderNo(GenerateNoUtil.generateStockOrderNo(currentTime));
+        stockOrderDO.setCauseType(causeType);
+        stockOrderDO.setReferNo(referNo);
+        stockOrderDO.setSrcWarehouseId(srcWarehouseId);
+        stockOrderDO.setSrcWarehousePositionId(srcWarehousePositionId);
+        stockOrderDO.setTargetWarehouseId(targetWarehouseId);
+        stockOrderDO.setTargetWarehousePositionId(targetWarehousePositionId);
+        stockOrderDO.setOrderStatus(StockOrderStatus.STOCK_ORDER_STATUS_OVER);
+        stockOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        stockOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        stockOrderDO.setCreateUser(loginUser.getUserId().toString());
+        stockOrderDO.setUpdateTime(currentTime);
+        stockOrderDO.setCreateTime(currentTime);
+        stockOrderMapper.save(stockOrderDO);
+
+        if (StockCauseType.STOCK_CAUSE_TYPE_ALLOCATION.equals(causeType)) {
+            if (CollectionUtil.isNotEmpty(productEquipmentOutStorageList)) {
+                for (ProductEquipmentOutStorage productEquipmentOutStorage : productEquipmentOutStorageList) {
+                    ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findById(productEquipmentOutStorage.getProductEquipmentId());
+                    updateProductEquipment(stockOrderDO.getStockOrderNo(), srcWarehouseId, srcWarehousePositionId, targetWarehouseId, targetWarehousePositionId, productEquipmentOutStorage, currentTime);
+                    ProductSkuDO productSkuDO = productSkuMapper.findById(productEquipmentDO.getSkuId());
+                    productSkuDO.setStock(productSkuDO.getStock() - productEquipmentOutStorage.getProductEquipmentCount());
+                    productSkuDO.setUpdateUser(loginUser.getUserId().toString());
+                    productSkuDO.setUpdateTime(currentTime);
+                    productSkuMapper.update(productSkuDO);
+                }
+            }
+            if (CollectionUtil.isNotEmpty(bulkMaterialOutStorageList)) {
+                for (BulkMaterialOutStorage bulkMaterialOutStorage : bulkMaterialOutStorageList) {
+                    BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findById(bulkMaterialOutStorage.getBulkMaterialId());
+                    updateBulkMaterial(stockOrderDO.getStockOrderNo(), srcWarehouseId, srcWarehousePositionId, targetWarehouseId, targetWarehousePositionId, bulkMaterialOutStorage, currentTime);
+                    MaterialDO materialDO = materialMapper.findById(bulkMaterialDO.getMaterialId());
+                    materialDO.setStock(materialDO.getStock() - bulkMaterialOutStorage.getBulkMaterialCount());
+                    materialDO.setUpdateUser(loginUser.getUserId().toString());
+                    materialDO.setUpdateTime(currentTime);
+                    materialMapper.update(materialDO);
+                }
+            }
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(stockOrderDO.getId());
         return result;
     }
 
-    public String verifyProductInfo(List<ProductInStorage> productInStorageList, List<MaterialInStorage> materialInStorageList) {
+    public String verifyProductAndMaterialInfo(List<ProductInStorage> productInStorageList, List<MaterialInStorage> materialInStorageList) {
 
         if ((productInStorageList == null || productInStorageList.isEmpty())
                 && (materialInStorageList == null || materialInStorageList.isEmpty())) {
             return ErrorCode.WAREHOUSE_IN_STORAGE_LIST_NOT_NULL;
         }
-        if(CollectionUtil.isNotEmpty(productInStorageList)){
+        if (CollectionUtil.isNotEmpty(productInStorageList)) {
             for (ProductInStorage productInStorage : productInStorageList) {
                 ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
                 if (productSkuDO == null || !productInStorage.getProductId().equals(productSkuDO.getProductId())) {
@@ -352,7 +440,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                 }
             }
         }
-        if(CollectionUtil.isNotEmpty(materialInStorageList)){
+        if (CollectionUtil.isNotEmpty(materialInStorageList)) {
             for (MaterialInStorage materialInStorage : materialInStorageList) {
                 MaterialDO materialDO = materialMapper.findById(materialInStorage.getMaterialId());
                 if (materialDO == null) {
@@ -364,15 +452,52 @@ public class WarehouseServiceImpl implements WarehouseService {
         return ErrorCode.SUCCESS;
     }
 
-    private void saveBulkMaterial(String stockOrderNo, Integer warehouseId, Integer warehousePositionId, MaterialInStorage materialInStorage, Date currentTime){
+
+    public String verifyProductEquipmentAndBulkMaterialInfo(List<ProductEquipmentOutStorage> productEquipmentOutStorageList, List<BulkMaterialOutStorage> bulkMaterialOutStorageList) {
+
+        if ((productEquipmentOutStorageList == null || productEquipmentOutStorageList.isEmpty())
+                && (bulkMaterialOutStorageList == null || bulkMaterialOutStorageList.isEmpty())) {
+            return ErrorCode.WAREHOUSE_IN_STORAGE_LIST_NOT_NULL;
+        }
+        if (CollectionUtil.isNotEmpty(productEquipmentOutStorageList)) {
+            for (ProductEquipmentOutStorage productEquipmentOutStorage : productEquipmentOutStorageList) {
+                ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findById(productEquipmentOutStorage.getProductEquipmentId());
+                if (productEquipmentDO == null) {
+                    return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
+                }
+            }
+        }
+        if (CollectionUtil.isNotEmpty(bulkMaterialOutStorageList)) {
+            for (BulkMaterialOutStorage bulkMaterialOutStorage : bulkMaterialOutStorageList) {
+                BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findById(bulkMaterialOutStorage.getBulkMaterialId());
+                if (bulkMaterialDO == null) {
+                    return ErrorCode.MATERIAL_NOT_EXISTS;
+                }
+            }
+        }
+
+        return ErrorCode.SUCCESS;
+    }
+
+    private void saveBulkMaterial(String stockOrderNo, Integer warehouseId, Integer warehousePositionId, MaterialInStorage materialInStorage, Date currentTime) {
         // 入库散料（由物料产生散料）
         List<BulkMaterialDO> allBulkMaterialDOList = new ArrayList<>();
         // 入库物料记录
         List<StockOrderBulkMaterialDO> allStockOrderBulkMaterialDOList = new ArrayList<>();
+
+        BulkMaterialQueryParam param = new BulkMaterialQueryParam();
+        param.setCreateStartTime(DateUtil.getBeginOfDay(currentTime));
+        param.setCreateEndTime(DateUtil.getEndOfDay(currentTime));
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", 1);
+        maps.put("pageSize", Integer.MAX_VALUE);
+        maps.put("bulkMaterialQueryParam", param);
+        Integer oldCount = bulkMaterialMapper.listCount(maps);
+        oldCount = oldCount == null ? 0 : oldCount;
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        for(int i = 0 ; i<materialInStorage.getMaterialCount();i++){
+        for (int i = 0; i < materialInStorage.getMaterialCount(); i++) {
             BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
-            bulkMaterialDO.setBulkMaterialNo(GenerateNoUtil.generateBulkMaterialNo(currentTime));
+            bulkMaterialDO.setBulkMaterialNo(GenerateNoUtil.generateBulkMaterialNo(currentTime, (oldCount + i + 1)));
             bulkMaterialDO.setMaterialId(materialInStorage.getMaterialId());
             bulkMaterialDO.setCurrentWarehouseId(warehouseId);
             bulkMaterialDO.setCurrentWarehousePositionId(warehousePositionId);
@@ -415,8 +540,19 @@ public class WarehouseServiceImpl implements WarehouseService {
         maps.put("start", 1);
         maps.put("pageSize", Integer.MAX_VALUE);
         maps.put("productEquipmentQueryParam", param);
-        Integer oldCount = productEquipmentMapper.findProductEquipmentCountByParams(maps);
-        oldCount = oldCount == null ? 0 : oldCount;
+        Integer productEquipmentOldCount = productEquipmentMapper.findProductEquipmentCountByParams(maps);
+        productEquipmentOldCount = productEquipmentOldCount == null ? 0 : productEquipmentOldCount;
+
+
+        BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
+        bulkMaterialQueryParam.setCreateStartTime(DateUtil.getBeginOfDay(currentTime));
+        bulkMaterialQueryParam.setCreateEndTime(DateUtil.getEndOfDay(currentTime));
+        Map<String, Object> paramMaps = new HashMap<>();
+        paramMaps.put("start", 1);
+        paramMaps.put("pageSize", Integer.MAX_VALUE);
+        paramMaps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
+        Integer bulkMaterialOldCount = bulkMaterialMapper.listCount(paramMaps);
+        bulkMaterialOldCount = bulkMaterialOldCount == null ? 0 : bulkMaterialOldCount;
 
         // 入库设备
         List<ProductEquipmentDO> allProductEquipmentDOList = new ArrayList<>();
@@ -431,9 +567,10 @@ public class WarehouseServiceImpl implements WarehouseService {
         // 设备散料
         List<ProductEquipmentBulkMaterialDO> allProductEquipmentBulkMaterialDOList = new ArrayList<>();
 
+
         for (int i = 0; i < productInStorage.getProductCount(); i++) {
             ProductEquipmentDO productEquipmentDO = new ProductEquipmentDO();
-            productEquipmentDO.setEquipmentNo(GenerateNoUtil.generateEquipmentNo(currentTime, warehouseId, (oldCount + i + 1)));
+            productEquipmentDO.setEquipmentNo(GenerateNoUtil.generateEquipmentNo(currentTime, warehouseId, (productEquipmentOldCount + i + 1)));
             productEquipmentDO.setProductId(productInStorage.getProductId());
             productEquipmentDO.setSkuId(productInStorage.getProductSkuId());
             productEquipmentDO.setCurrentWarehouseId(warehouseId);
@@ -472,12 +609,13 @@ public class WarehouseServiceImpl implements WarehouseService {
                     allProductEquipmentMaterialDOList.add(productEquipmentMaterialDO);
                     for (int j = 0; j < productMaterial.getMaterialCount(); j++) {
                         BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
-                        bulkMaterialDO.setBulkMaterialNo(GenerateNoUtil.generateBulkMaterialNo(currentTime));
+                        bulkMaterialDO.setBulkMaterialNo(GenerateNoUtil.generateBulkMaterialNo(currentTime,bulkMaterialOldCount));
                         bulkMaterialDO.setMaterialId(productMaterial.getMaterialId());
                         bulkMaterialDO.setCurrentWarehouseId(warehouseId);
                         bulkMaterialDO.setCurrentWarehousePositionId(warehousePositionId);
                         bulkMaterialDO.setOwnerWarehouseId(warehouseId);
                         bulkMaterialDO.setOwnerWarehousePositionId(warehousePositionId);
+                        bulkMaterialDO.setCurrentEquipmentNo(productEquipmentDO.getEquipmentNo());
                         bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
                         bulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                         bulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
@@ -485,6 +623,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                         bulkMaterialDO.setUpdateTime(currentTime);
                         bulkMaterialDO.setCreateTime(currentTime);
                         allBulkMaterialDOList.add(bulkMaterialDO);
+                        bulkMaterialOldCount ++ ;
 
                         StockOrderBulkMaterialDO stockOrderBulkMaterialDO = new StockOrderBulkMaterialDO();
                         stockOrderBulkMaterialDO.setStockOrderNo(stockOrderNo);
@@ -528,5 +667,96 @@ public class WarehouseServiceImpl implements WarehouseService {
         if (!allStockOrderBulkMaterialDOList.isEmpty()) {
             stockOrderBulkMaterialMapper.saveList(allStockOrderBulkMaterialDOList);
         }
+    }
+
+
+    private void updateBulkMaterial(String stockOrderNo, Integer srcWarehouseId, Integer srcWarehousePositionId, Integer targetWarehouseId, Integer targetWarehousePositionId, BulkMaterialOutStorage bulkMaterialOutStorage, Date currentTime) {
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        // 变更散料（由物料产生散料）
+        List<BulkMaterialDO> allBulkMaterialDOList = new ArrayList<>();
+        // 变更物料记录
+        List<StockOrderBulkMaterialDO> allStockOrderBulkMaterialDOList = new ArrayList<>();
+
+        for (int i = 0; i < bulkMaterialOutStorage.getBulkMaterialCount(); i++) {
+            BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
+            bulkMaterialDO.setId(bulkMaterialOutStorage.getBulkMaterialId());
+            bulkMaterialDO.setCurrentWarehouseId(targetWarehouseId);
+            bulkMaterialDO.setCurrentWarehousePositionId(targetWarehousePositionId);
+            bulkMaterialDO.setOwnerWarehouseId(srcWarehouseId);
+            bulkMaterialDO.setOwnerWarehousePositionId(srcWarehousePositionId);
+            bulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            bulkMaterialDO.setCreateUser(loginUser.getUserId().toString());
+            bulkMaterialDO.setUpdateTime(currentTime);
+            allBulkMaterialDOList.add(bulkMaterialDO);
+
+            StockOrderBulkMaterialDO stockOrderBulkMaterialDO = new StockOrderBulkMaterialDO();
+            stockOrderBulkMaterialDO.setStockOrderNo(stockOrderNo);
+            stockOrderBulkMaterialDO.setBulkMaterialId(bulkMaterialDO.getId());
+            stockOrderBulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            stockOrderBulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+            stockOrderBulkMaterialDO.setCreateUser(loginUser.getUserId().toString());
+            stockOrderBulkMaterialDO.setUpdateTime(currentTime);
+            stockOrderBulkMaterialDO.setCreateTime(currentTime);
+            allStockOrderBulkMaterialDOList.add(stockOrderBulkMaterialDO);
+        }
+
+        if (!allBulkMaterialDOList.isEmpty()) {
+            bulkMaterialMapper.updateList(allBulkMaterialDOList);
+        }
+        if (!allStockOrderBulkMaterialDOList.isEmpty()) {
+            stockOrderBulkMaterialMapper.saveList(allStockOrderBulkMaterialDOList);
+        }
+
+    }
+
+    private void updateProductEquipment(String stockOrderNo, Integer srcWarehouseId,Integer srcWarehousePositionId, Integer targetWarehouseId, Integer targetWarehousePositionId, ProductEquipmentOutStorage productEquipmentOutStorage, Date currentTime) {
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        // 变更设备
+        List<ProductEquipmentDO> allProductEquipmentDOList = new ArrayList<>();
+        // 变更设备记录
+        List<StockOrderEquipmentDO> allStockOrderEquipmentDOList = new ArrayList<>();
+        // 变更物料记录
+        List<StockOrderBulkMaterialDO> allStockOrderBulkMaterialDOList = new ArrayList<>();
+        // 入库散料（由物料产生散料）
+        List<BulkMaterialDO> allBulkMaterialDOList = new ArrayList<>();
+
+
+        for (int i = 0; i < productEquipmentOutStorage.getProductEquipmentCount(); i++) {
+            ProductEquipmentDO productEquipmentDO = new ProductEquipmentDO();
+            productEquipmentDO.setId(productEquipmentOutStorage.getProductEquipmentId());
+            productEquipmentDO.setCurrentWarehouseId(targetWarehouseId);
+            productEquipmentDO.setCurrentWarehousePositionId(targetWarehousePositionId);
+            productEquipmentDO.setOwnerWarehouseId(srcWarehouseId);
+            productEquipmentDO.setOwnerWarehousePositionId(srcWarehousePositionId);
+            productEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            productEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+            productEquipmentDO.setUpdateTime(currentTime);
+            allProductEquipmentDOList.add(productEquipmentDO);
+
+            StockOrderEquipmentDO stockOrderEquipmentDO = new StockOrderEquipmentDO();
+            stockOrderEquipmentDO.setStockOrderNo(stockOrderNo);
+            stockOrderEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
+            stockOrderEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            stockOrderEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+            stockOrderEquipmentDO.setCreateUser(loginUser.getUserId().toString());
+            stockOrderEquipmentDO.setUpdateTime(currentTime);
+            stockOrderEquipmentDO.setCreateTime(currentTime);
+            allStockOrderEquipmentDOList.add(stockOrderEquipmentDO);
+
+        }
+
+        if (!allProductEquipmentDOList.isEmpty()) {
+            productEquipmentMapper.saveList(allProductEquipmentDOList);
+        }
+        if (!allStockOrderEquipmentDOList.isEmpty()) {
+            stockOrderEquipmentMapper.saveList(allStockOrderEquipmentDOList);
+        }
+        if (!allBulkMaterialDOList.isEmpty()) {
+            bulkMaterialMapper.saveList(allBulkMaterialDOList);
+        }
+        if (!allStockOrderBulkMaterialDOList.isEmpty()) {
+            stockOrderBulkMaterialMapper.saveList(allStockOrderBulkMaterialDOList);
+        }
+
     }
 }

@@ -47,9 +47,8 @@ public class GenerateNoUtil {
         return "SO" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
     }
 
-    public static String generateBulkMaterialNo(Date currentTime) {
-        Random random = new Random();
-        return "BM" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
+    public static String generateBulkMaterialNo(Date currentTime, int no) {
+        return "BM" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) +  + (10000 + no);
     }
 
     public static String generateMaterialNo(Date currentTime) {

@@ -160,10 +160,11 @@
 		insert into erp_bulk_material (bulk_material_no,bulk_material_type,bulk_material_name,material_id,material_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,brand_id,category_id,property_id,property_value_id,bulk_material_price,current_equipment_id,current_equipment_no,bulk_material_status,data_status,remark,create_time,create_user,update_time,update_user)
 		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList" separator="UNION ALL">
 			SELECT #{bulkMaterialDO.bulkMaterialNo},em.material_type, em.material_name ,#{bulkMaterialDO.materialId},em.material_no,#{bulkMaterialDO.currentWarehouseId},#{bulkMaterialDO.currentWarehousePositionId},#{bulkMaterialDO.ownerWarehouseId},#{bulkMaterialDO.ownerWarehousePositionId},
-			em.brand_id,em.category_id,em.property_id,em.property_value_id,em.material_price,epe.id ,#{bulkMaterialDO.currentEquipmentNo}, #{bulkMaterialDO.bulkMaterialStatus},#{bulkMaterialDO.dataStatus},#{bulkMaterialDO.remark},
+			em.brand_id,em.category_id,em.property_id,em.property_value_id,em.material_price,equipment_info.current_equipment_id ,#{bulkMaterialDO.currentEquipmentNo}, #{bulkMaterialDO.bulkMaterialStatus},#{bulkMaterialDO.dataStatus},#{bulkMaterialDO.remark},
 			#{bulkMaterialDO.createTime},#{bulkMaterialDO.createUser},#{bulkMaterialDO.updateTime},#{bulkMaterialDO.updateUser}
-			FROM erp_material em, erp_product_equipment epe
-			WHERE em.id = #{bulkMaterialDO.materialId} and epe.equipment_no = #{bulkMaterialDO.currentEquipmentNo}
+			FROM erp_material em
+			LEFT JOIN (select epe.id as current_equipment_id from erp_product_equipment epe where epe.equipment_no = #{bulkMaterialDO.currentEquipmentNo}) equipment_info on 1=1
+			WHERE em.id = #{bulkMaterialDO.materialId}
 		</foreach>
 	</insert>
 

@@ -183,7 +183,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> verifyWorkFlow(Integer workflowLinkId, Integer verifyStatus, Integer returnType, String verifyOpinion, Integer nextVerifyUser) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
