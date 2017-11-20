@@ -452,7 +452,7 @@ public class ProductServiceImpl implements ProductService {
         Map<Integer, MaterialDO> materialDOParamMap = new HashMap<>();
 
         for (ProductMaterial productMaterial : productSku.getProductMaterialList()) {
-            MaterialDO materialDO = materialMapper.findById(productMaterial.getMaterialId());
+            MaterialDO materialDO = materialMapper.findByNo(productMaterial.getMaterialNo());
             if (materialDO == null) {
                 result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                 return result;

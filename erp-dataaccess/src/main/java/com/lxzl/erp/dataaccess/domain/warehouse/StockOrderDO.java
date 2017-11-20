@@ -1,7 +1,10 @@
 package com.lxzl.erp.dataaccess.domain.warehouse;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
+import java.util.List;
 
 
 public class StockOrderDO  extends BaseDO {
@@ -19,6 +22,14 @@ public class StockOrderDO  extends BaseDO {
 	private Integer owner;
 	private Integer dataStatus;
 	private String remark;
+
+	private List<StockOrderEquipmentDO> stockOrderEquipmentDOList;
+	private List<StockOrderBulkMaterialDO> stockOrderBulkMaterialDOList;
+
+	@Transient
+	private String srcWarehouseName;
+	@Transient
+	private String targetWarehouseName;
 
 	public Integer getId(){
 		return id;
@@ -124,4 +135,35 @@ public class StockOrderDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public List<StockOrderEquipmentDO> getStockOrderEquipmentDOList() {
+		return stockOrderEquipmentDOList;
+	}
+
+	public void setStockOrderEquipmentDOList(List<StockOrderEquipmentDO> stockOrderEquipmentDOList) {
+		this.stockOrderEquipmentDOList = stockOrderEquipmentDOList;
+	}
+
+	public List<StockOrderBulkMaterialDO> getStockOrderBulkMaterialDOList() {
+		return stockOrderBulkMaterialDOList;
+	}
+
+	public void setStockOrderBulkMaterialDOList(List<StockOrderBulkMaterialDO> stockOrderBulkMaterialDOList) {
+		this.stockOrderBulkMaterialDOList = stockOrderBulkMaterialDOList;
+	}
+
+	public String getSrcWarehouseName() {
+		return srcWarehouseName;
+	}
+
+	public void setSrcWarehouseName(String srcWarehouseName) {
+		this.srcWarehouseName = srcWarehouseName;
+	}
+
+	public String getTargetWarehouseName() {
+		return targetWarehouseName;
+	}
+
+	public void setTargetWarehouseName(String targetWarehouseName) {
+		this.targetWarehouseName = targetWarehouseName;
+	}
 }

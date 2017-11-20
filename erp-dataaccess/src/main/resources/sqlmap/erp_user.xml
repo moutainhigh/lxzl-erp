@@ -150,13 +150,37 @@
     </select>
 
     <select id="listCount" resultType="java.lang.Integer" parameterType="map">
-        select count(1) from erp_user u
+        select count(user_main.id)
+        from
+        (
+            select <include refid="columnList"/> from erp_user u
+            <where>
+                <if test="userQueryParam.realName!=null and userQueryParam.realName!=''">
+                    and u.real_name like '%${userQueryParam.realName}%'
+                </if>
+            </where>
+        ) user_main
+        left join erp_user_role tur on tur.user_id = user_main.id and tur.data_status = 1
+        left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
+        left join erp_department ed on ed.id = tr.department_id and ed.data_status = 1
+        left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
         <where>
-            <if test="userQueryParam.realName!=null and userQueryParam.realName!=''">
-                and u.real_name like '%${userQueryParam.realName}%'
+            <if test="userQueryParam.departmentId != null &amp;&amp; userQueryParam.departmentId != ''">
+                and ed.id = #{userQueryParam.departmentId, jdbcType=INTEGER}
+            </if>
+            <if test="userQueryParam.roleId != null &amp;&amp; userQueryParam.roleId != ''">
+                and tr.id = #{userQueryParam.roleId, jdbcType=INTEGER}
+            </if>
+            <if test="userQueryParam.subCompanyId != null &amp;&amp; userQueryParam.subCompanyId != ''">
+                and esc.id = #{userQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="userQueryParam.departmentIdList != null &amp;&amp; userQueryParam.departmentIdList.size() > 0">
+                and ed.id in <foreach collection="userQueryParam.departmentIdList" open="(" close=")" separator="," item="departmentId">#{departmentId}</foreach>
+            </if>
+            <if test="userQueryParam.subCompanyIdList != null &amp;&amp; userQueryParam.subCompanyIdList.size() > 0">
+                and esc.id in <foreach collection="userQueryParam.subCompanyIdList" open="(" close=")" separator="," item="subCompanyId">#{subCompanyId}</foreach>
             </if>
         </where>
-
     </select>
     <select id="listPage" resultMap="userResult" parameterType="map">
         select user_main.*,<include refid="role_columnList"/>,

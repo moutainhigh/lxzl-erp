@@ -6,7 +6,9 @@ import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.ProductOutStockParam;
+import com.lxzl.erp.common.domain.warehouse.StockOrderQueryParam;
 import com.lxzl.erp.common.domain.warehouse.WarehouseQueryParam;
+import com.lxzl.erp.common.domain.warehouse.pojo.StockOrder;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -85,6 +87,12 @@ public class WarehouseController extends BaseController {
     @RequestMapping(value = "productOutStock", method = RequestMethod.POST)
     public Result productOutStock(@RequestBody ProductOutStockParam productOutStockParam) {
         ServiceResult<String, Integer> serviceResult = warehouseService.productOutStock(productOutStockParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "getStockOrderPage", method = RequestMethod.POST)
+    public Result getStockOrderPage(@RequestBody StockOrderQueryParam stockOrderQueryParam) {
+        ServiceResult<String, Page<StockOrder>> serviceResult = warehouseService.getStockOrderPage(stockOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }

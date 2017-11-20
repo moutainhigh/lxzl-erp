@@ -20,6 +20,11 @@ public class StockOrderEquipment implements Serializable {
 	private String updateUser;   //修改人
 
 
+	private Integer productId;
+	private String productName;
+	private Integer productSkuId;
+	private String productSkuName;
+
 	public Integer getStockOrderEquipmentId(){
 		return stockOrderEquipmentId;
 	}
@@ -100,4 +105,35 @@ public class StockOrderEquipment implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public Integer getProductId() {
+		return productId;
+	}
+
+	public void setProductId(Integer productId) {
+		this.productId = productId;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public Integer getProductSkuId() {
+		return productSkuId;
+	}
+
+	public void setProductSkuId(Integer productSkuId) {
+		this.productSkuId = productSkuId;
+	}
+
+	public String getProductSkuName() {
+		return productSkuName;
+	}
+
+	public void setProductSkuName(String productSkuName) {
+		this.productSkuName = productSkuName;
+	}
 }

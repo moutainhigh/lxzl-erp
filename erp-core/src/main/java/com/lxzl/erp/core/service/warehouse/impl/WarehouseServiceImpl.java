@@ -15,11 +15,14 @@ import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.ProductOutStockParam;
+import com.lxzl.erp.common.domain.warehouse.StockOrderQueryParam;
 import com.lxzl.erp.common.domain.warehouse.WarehouseQueryParam;
+import com.lxzl.erp.common.domain.warehouse.pojo.StockOrder;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
+import com.lxzl.erp.core.service.warehouse.impl.support.StockOrderConverter;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
@@ -410,6 +413,24 @@ public class WarehouseServiceImpl implements WarehouseService {
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(stockOrderDO.getId());
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Page<StockOrder>> getStockOrderPage(StockOrderQueryParam stockOrderQueryParam) {
+        ServiceResult<String, Page<StockOrder>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(stockOrderQueryParam.getPageNo(), stockOrderQueryParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("start", pageQuery.getStart());
+        paramMap.put("pageSize", pageQuery.getPageSize());
+        paramMap.put("stockOrderQueryParam", stockOrderQueryParam);
+        Integer totalCount = stockOrderMapper.listCount(paramMap);
+        List<StockOrderDO> stockOrderDOList = stockOrderMapper.listPage(paramMap);
+        Page<StockOrder> page = new Page<>(StockOrderConverter.convertStockOrderDOList(stockOrderDOList), totalCount, stockOrderQueryParam.getPageNo(), stockOrderQueryParam.getPageSize());
+
+        result.setResult(page);
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 
