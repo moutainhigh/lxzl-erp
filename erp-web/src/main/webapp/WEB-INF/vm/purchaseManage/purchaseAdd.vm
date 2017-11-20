@@ -169,8 +169,14 @@
                                                     </td>
                                                     <td style="width:10%" class="text-right">
                                                         <div class="btn-group text-right">
+                                                            <a href="#" type="button" class="btn btn-default btn-xs" data-skuid="{{skuId}}" data-productid="{{productId}}">选择物料</a>
                                                             <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
                                                         </div>
+                                                    </td>
+                                                </tr>
+                                                <tr class="bg-light">
+                                                    <td colspan="4">
+                                                        test
                                                     </td>
                                                 </tr>
                                                 {{/skuList}}
