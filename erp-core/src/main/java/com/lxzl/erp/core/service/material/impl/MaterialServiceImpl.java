@@ -24,11 +24,13 @@ import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialImgMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyValueMapper;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialImgDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
@@ -67,6 +69,9 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Autowired
     private ProductCategoryPropertyValueMapper productCategoryPropertyValueMapper;
+
+    @Autowired
+    private ProductCategoryPropertyMapper productCategoryPropertyMapper;
 
     @Autowired
     private MaterialImgMapper materialImgMapper;
@@ -153,6 +158,18 @@ public class MaterialServiceImpl implements MaterialService {
             result.setErrorCode(ErrorCode.RECORD_ALREADY_EXISTS);
             return result;
         }
+
+        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(material.getPropertyValueId());
+        if (productCategoryPropertyValueDO == null || !productCategoryPropertyValueDO.getPropertyId().equals(material.getPropertyId())) {
+            result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+            return result;
+        }
+        ProductCategoryPropertyDO productCategoryPropertyDO = productCategoryPropertyMapper.findById(material.getPropertyId());
+        if (productCategoryPropertyDO.getMaterialType() == null || !material.getMaterialType().equals(productCategoryPropertyDO.getMaterialType())) {
+            result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+            return result;
+        }
+        material.setMaterialType(productCategoryPropertyDO.getMaterialType());
 
         MaterialDO materialDO = MaterialConverter.convertMaterial(material);
         materialDO.setMaterialNo(GenerateNoUtil.generateMaterialNo(currentTime));

@@ -1,9 +1,11 @@
 package com.lxzl.erp.core.service.product.impl.support;
 
 import com.lxzl.erp.common.domain.product.pojo.Product;
+import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductMaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO;
 import org.springframework.beans.BeanUtils;
@@ -111,6 +113,9 @@ public class ProductConverter {
         if (productSkuDO.getProductSkuPropertyDOList() != null && !productSkuDO.getProductSkuPropertyDOList().isEmpty()) {
             productSku.setProductSkuPropertyList(convertProductSkuPropertyDOList(productSkuDO.getProductSkuPropertyDOList()));
         }
+        if (productSkuDO.getProductMaterialDOList() != null && !productSkuDO.getProductMaterialDOList().isEmpty()) {
+            productSku.setProductMaterialList(convertProductMaterialDOList(productSkuDO.getProductMaterialDOList()));
+        }
 
         if (productSkuDO.getProductName() != null) {
             productSku.setProductName(productSkuDO.getProductName());
@@ -200,6 +205,26 @@ public class ProductConverter {
             productSkuProperty.setDataStatus(productSkuPropertyDO.getDataStatus());
         }
         return productSkuProperty;
+    }
+
+    public static List<ProductMaterial> convertProductMaterialDOList(List<ProductMaterialDO> productMaterialDOList) {
+        List<ProductMaterial> productMaterialList = new ArrayList<>();
+        if (productMaterialDOList != null && !productMaterialDOList.isEmpty()) {
+            for (ProductMaterialDO productMaterialDO : productMaterialDOList) {
+                productMaterialList.add(convertProductMaterialDO(productMaterialDO));
+            }
+        }
+        return productMaterialList;
+    }
+
+    public static ProductMaterial convertProductMaterialDO(ProductMaterialDO productMaterialDO) {
+        ProductMaterial productMaterial = new ProductMaterial();
+        if (productMaterialDO.getId() != null) {
+            productMaterial.setProductMaterialId(productMaterialDO.getId());
+        }
+        BeanUtils.copyProperties(productMaterialDO, productMaterial);
+
+        return productMaterial;
     }
 
     public static List<ProductSkuProperty> convertProductSkuPropertyDOList(List<ProductSkuPropertyDO> productSkuPropertyDOList) {

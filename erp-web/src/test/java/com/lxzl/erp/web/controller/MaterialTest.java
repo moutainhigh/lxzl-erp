@@ -23,10 +23,10 @@ public class MaterialTest extends ERPUnTransactionalTest {
     @Test
     public void addMaterial() throws Exception {
         Material material = new Material();
-        material.setMaterialName("CPU物料-I5-6400");
-        material.setMaterialType(1);
-        material.setPropertyId(14);
-        material.setPropertyValueId(32);
+        material.setMaterialName("固态/256G SSD");
+        material.setMaterialType(8);
+        material.setPropertyId(19);
+        material.setPropertyValueId(42);
         material.setMaterialPrice(new BigDecimal(5000.0));
         material.setDayRentPrice(new BigDecimal(5000.0));
         material.setMonthRentPrice(new BigDecimal(5000.0));
