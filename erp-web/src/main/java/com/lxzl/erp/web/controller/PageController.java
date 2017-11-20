@@ -178,6 +178,30 @@ public class PageController extends BaseController {
         return "/purchaseManage/purchaseDetail";
     }
 
+    //采购收料通知
+    @RequestMapping("/purchase-receive-manage/list")
+    public String purchaseReceiveManageList() {
+        return "/purchaseReceiveManage/purchaseReceiveList";
+    }
+    @RequestMapping("/purchase-receive-manage/detail")
+    public String purchaseReceiveManageDetail() {
+        return "/purchaseReceiveManage/purchaseReceiveDetail";
+    }
+    @RequestMapping("/purchase-receive-manage/edit")
+    public String purchaseReceiveManageEdit() {
+        return "/purchaseReceiveManage/purchaseReceiveEdit";
+    }
+
+    //采购发货单
+    @RequestMapping("/purchase-delivery-manage/list")
+    public String purchaseDeliveryManageList() {
+        return "/purchaseDeliveryManage/purchaseDeliveryList";
+    }
+    @RequestMapping("/purchase-delivery-manage/detail")
+    public String purchaseDeliveryManageDetail() {
+        return "/purchaseDeliveryManage/purchaseDeliveryDetail";
+    }
+
 
     //供应商管理
     @RequestMapping("/supplier-manage/list")
@@ -213,20 +237,6 @@ public class PageController extends BaseController {
     @RequestMapping("/warehouse-manage/edit")
     public String warehouseManageEdit() {
         return "/warehouseManage/warehouseList";
-    }
-
-    //收料通知
-    @RequestMapping("/purchase-receive-manage/list")
-    public String purchaseReceiveManageList() {
-        return "/purchaseReceiveManage/purchaseReceiveList";
-    }
-    @RequestMapping("/purchase-receive-manage/detail")
-    public String purchaseReceiveManageDetail() {
-        return "/purchaseReceiveManage/purchaseReceiveDetail";
-    }
-    @RequestMapping("/purchase-receive-manage/edit")
-    public String purchaseReceiveManageEdit() {
-        return "/purchaseReceiveManage/purchaseReceiveEdit";
     }
 
 
