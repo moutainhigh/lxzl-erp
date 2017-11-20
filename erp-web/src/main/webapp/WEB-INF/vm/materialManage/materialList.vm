@@ -44,14 +44,14 @@
                                     <button type="submit" class="btn btn-primary btn-sm">查询</button>
                                     <button type="reset" class="btn btn-default btn-sm">重置</button>
                                 </div>
-                                <div class="form-group pull-right mn mr10" style="width: 120px;">
-                                    <div class="input-group">
-                                        <input type="text" name="materialNo" id="materialNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入物料编号">
-                                    </div>
-                                </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <div class="input-group">
                                         <input type="text" name="materialName" id="materialName" class="form-control input-sm bradius number" autocomplete="off" placeholder="输入物料名称">
+                                    </div>
+                                </div>
+                                <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                    <div class="input-group">
+                                        <input type="text" name="materialNo" id="materialNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入物料编号">
                                     </div>
                                 </div>
                                 <script type="text/html" id="materialTypeSelectTpl">

@@ -3,8 +3,6 @@
 <head>
     <title>凌雄ERP-物料管理-添加物料</title>
     #parse("layout/header.vm")
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
     <script type="text/javascript">
         common_load_css('${staticCommon}/rental/css','dropzone.css');
@@ -33,6 +31,12 @@
                                         <div class="section row">
                                             <div class="col-md-4">
                                                 <label for="userName" class="field-label">物料类型</label>
+                                                <script type="text/html" id="materialSelectTpl">
+                                                    <option value="">请选择</option>
+                                                    {{#materialType}}
+                                                        <option value={{num}}>{{value}}</option>
+                                                    {{/materialType}}
+                                                </script>
                                                 <label class="field select">
                                                     <select id="materialType" name="materialType">
                                                         <option value="">请选择</option>
@@ -101,7 +105,7 @@
 
                                         <div class="section-divider mv40"><span> 图片  </span></div>
                                         <div class="tray-bin">
-                                            <div class="atl-dropzone dropzoneImg" id="dropzoneProductImg">
+                                            <div class="atl-dropzone dropzoneImg" id="dropzoneMaterialImg">
                                                 <div class="dz-default dz-message" >
                                                     <span>
                                                         <i class="fa fa-cloud-upload"></i>
@@ -110,10 +114,44 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <script type="text/html" id="materialPropertiesTpl">
+                                            <div class="section-divider mv40"><span> 物料属性  </span></div>
+                                            {{#properties}}
+                                            <div class="col-md-3 pad-r40 border-right">
+                                                <div class="panel">
+                                                    <div class="panel-heading pn ph8">
+                                                        <span>{{propertyName}}</span>
+                                                    </div>
+                                                    <div class="panel-body nano nano-default affix rtlnao" style="height: 200px">
+                                                        <div class="nano-content">
+                                                            <div class="option-group field p10">
+                                                                {{#propertyValueList}}
+                                                                {{#list}}
+                                                                <label class="option option-primary mb10 block">
+                                                                    <input type="radio" name="materialPropertyRido" class="materialPropertyRido" value="{{categoryPropertyValueId}}" data-property="{{property}}" />
+                                                                    <span class="radio"></span> {{propertyValueName}}
+                                                                </label>
+                                                                {{/list}}
+                                                                {{/propertyValueList}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {{/properties}}
+
+                                        </script>
+
+
+                                        <div class="section row">
+                                            <div class="col-md-12" id="materialPropertiesContainer"></div>
+                                        </div>
+
                                     </div>
                                     <div class="panel-footer text-right">
                                         <button type="submit" class="button btn-primary"> 确定 </button>
-                                        <button type="reset" class="button"> 返回 </button>
+                                        <button type="reset" class="button goBack"> 返回 </button>
                                     </div>
                                 </form>
                             </div>
