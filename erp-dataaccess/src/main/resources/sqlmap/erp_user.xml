@@ -197,7 +197,7 @@
                 and esc.id in <foreach collection="userQueryParam.subCompanyIdList" open="(" close=")" separator="," item="subCompanyId">#{subCompanyId}</foreach>
             </if>
         </where>
-        order by a.register_time desc
+        order by user_main.register_time desc
     </select>
 
 

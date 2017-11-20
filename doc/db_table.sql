@@ -866,6 +866,8 @@ CREATE TABLE `erp_order` (
   `total_order_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '订单总价，实际支付价格',
   `total_discount_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '共计优惠金额',
   `logistics_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '运费',
+  `order_seller_id` int(20) NOT NULL COMMENT '订单销售员',
+  `order_sub_company_id` int(20) DEFAULT NULL COMMENT '订单所属分公司',
   `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '订单状态，未付款,支付中,已付款,已发货,租赁中,逾期中,退租,取消交易',
   `pay_status` int(11) NOT NULL DEFAULT '0' COMMENT '支付状态，0未支付，1已支付，2已退款',
   `pay_time` datetime DEFAULT NULL COMMENT '支付时间',
