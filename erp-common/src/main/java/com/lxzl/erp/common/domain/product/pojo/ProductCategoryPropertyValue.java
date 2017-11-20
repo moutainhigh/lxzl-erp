@@ -17,6 +17,9 @@ public class ProductCategoryPropertyValue implements Serializable {
     private Integer dataStatus;
     private String remark;
 
+    private String propertyName;
+    private Integer materialType;
+
     public Integer getCategoryPropertyValueId() {
         return categoryPropertyValueId;
     }
@@ -87,5 +90,21 @@ public class ProductCategoryPropertyValue implements Serializable {
 
     public void setPropertyCapacityValue(Double propertyCapacityValue) {
         this.propertyCapacityValue = propertyCapacityValue;
+    }
+
+    public Integer getMaterialType() {
+        return materialType;
+    }
+
+    public void setMaterialType(Integer materialType) {
+        this.materialType = materialType;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
     }
 }

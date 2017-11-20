@@ -18,12 +18,10 @@ public class StockOrderEquipment implements Serializable {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
-
-
-	private Integer productId;
-	private String productName;
-	private Integer productSkuId;
-	private String productSkuName;
+	private Integer productId;	//商品ID
+	private String productName;	 //商品名称
+	private Integer productSkuId; //商品SKUID
+	private String productSkuName;	//商品SKU名称
 
 	public Integer getStockOrderEquipmentId(){
 		return stockOrderEquipmentId;

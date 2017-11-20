@@ -12,14 +12,13 @@ public class StockOrderBulkMaterial implements Serializable {
 	private String stockOrderNo;   //出入库单编号
 	private Integer bulkMaterialId;   //散料ID
 	private String bulkMaterialNo;   //散料编号唯一
+	private String bulkMaterialName; //散料名称
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
-
-	private String bulkMaterialName;
 
 	public Integer getStockOrderBulkMaterialId(){
 		return stockOrderBulkMaterialId;

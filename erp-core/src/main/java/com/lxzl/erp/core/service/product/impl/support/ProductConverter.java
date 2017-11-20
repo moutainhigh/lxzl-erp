@@ -116,6 +116,9 @@ public class ProductConverter {
         if (productSkuDO.getProductMaterialDOList() != null && !productSkuDO.getProductMaterialDOList().isEmpty()) {
             productSku.setProductMaterialList(convertProductMaterialDOList(productSkuDO.getProductMaterialDOList()));
         }
+        if (productSkuDO.getShouldProductCategoryPropertyValueDOList() != null && !productSkuDO.getShouldProductCategoryPropertyValueDOList().isEmpty()) {
+            productSku.setShouldProductCategoryPropertyValueList(ProductCategoryPropertyConverter.convertProductCategoryPropertyValueDOList(productSkuDO.getShouldProductCategoryPropertyValueDOList()));
+        }
 
         if (productSkuDO.getProductName() != null) {
             productSku.setProductName(productSkuDO.getProductName());
@@ -243,42 +246,7 @@ public class ProductConverter {
         if (productDO.getId() != null) {
             product.setProductId(productDO.getId());
         }
-        if (productDO.getProductNo() != null) {
-            product.setProductNo(productDO.getProductNo());
-        }
-        if (productDO.getProductName() != null) {
-            product.setProductName(productDO.getProductName());
-        }
-        if (productDO.getBrandId() != null) {
-            product.setBrandId(productDO.getBrandId());
-        }
-        if (productDO.getCategoryId() != null) {
-            product.setCategoryId(productDO.getCategoryId());
-        }
-        if (productDO.getSubtitle() != null) {
-            product.setSubtitle(productDO.getSubtitle());
-        }
-        if (productDO.getUnit() != null) {
-            product.setUnit(productDO.getUnit());
-        }
-        if (productDO.getListPrice() != null) {
-            product.setListPrice(productDO.getListPrice());
-        }
-        if (productDO.getIsRent() != null) {
-            product.setIsRent(productDO.getIsRent());
-        }
-        if (productDO.getProductDesc() != null) {
-            product.setProductDesc(productDO.getProductDesc());
-        }
-        if (productDO.getKeyword() != null) {
-            product.setKeyword(productDO.getKeyword());
-        }
-        if (productDO.getRemark() != null) {
-            product.setRemark(productDO.getRemark());
-        }
-        if (productDO.getDataStatus() != null) {
-            product.setDataStatus(productDO.getDataStatus());
-        }
+        BeanUtils.copyProperties(productDO, product);
         if (productDO.getProductImgDOList() != null && !productDO.getProductImgDOList().isEmpty()) {
             product.setProductImgList(ProductImageConverter.convertProductImgDOList(productDO.getProductImgDOList()));
         }

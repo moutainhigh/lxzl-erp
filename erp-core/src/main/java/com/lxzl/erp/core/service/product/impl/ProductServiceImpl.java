@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.product.impl;
 
+import com.lxzl.erp.common.constant.CategoryType;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
@@ -309,6 +310,14 @@ public class ProductServiceImpl implements ProductService {
         ProductDO productDO = productMapper.findByProductId(productId);
 
         List<ProductSkuDO> productSkuDOList = productSkuMapper.findByProductId(productId);
+        for(ProductSkuDO productSkuDO : productSkuDOList){
+            Map<String, Object> propertyValueMaps = new HashMap<>();
+            propertyValueMaps.put("productId", productSkuDO.getProductId());
+            propertyValueMaps.put("skuId", productSkuDO.getId());
+            propertyValueMaps.put("categoryType", CategoryType.CATEGORY_TYPE_PRODUCT);
+            List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByParams(propertyValueMaps);
+            productSkuDO.setShouldProductCategoryPropertyValueDOList(productCategoryPropertyValueDOList);
+        }
         productDO.setProductSkuDOList(productSkuDOList);
         Product product = ProductConverter.convertProductDO(productDO);
         Map<String, Object> maps = new HashMap<>();
@@ -379,6 +388,10 @@ public class ProductServiceImpl implements ProductService {
 
         Integer totalCount = productMapper.findProductCountByParams(maps);
         List<ProductDO> productDOList = productMapper.findProductByParams(maps);
+        for(ProductDO productDO : productDOList){
+            List<ProductSkuDO> productSkuDOList = productSkuMapper.findDetailByProductId(productDO.getId());
+            productDO.setProductSkuDOList(productSkuDOList);
+        }
         List<Product> productList = ProductConverter.convertProductDOList(productDOList);
         Page<Product> page = new Page<>(productList, totalCount, productQueryParam.getPageNo(), productQueryParam.getPageSize());
 

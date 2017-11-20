@@ -14,6 +14,7 @@ public class ProductMaterial implements Serializable {
 	private Integer productId;   //商品ID
 	private Integer productSkuId;   //商品SKU ID
 	private Integer materialId;   //物料ID
+	private Integer materialType;   //物料类型
 	private Integer materialCount;   //物料总数
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -118,5 +119,13 @@ public class ProductMaterial implements Serializable {
 
 	public void setMaterialNo(String materialNo) {
 		this.materialNo = materialNo;
+	}
+
+	public Integer getMaterialType() {
+		return materialType;
+	}
+
+	public void setMaterialType(Integer materialType) {
+		this.materialType = materialType;
 	}
 }

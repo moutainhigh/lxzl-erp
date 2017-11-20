@@ -23,6 +23,10 @@ public class ProductSku implements Serializable {
     private Integer dataStatus;
     private List<ProductSkuProperty> productSkuPropertyList;
     private List<ProductMaterial> productMaterialList;
+    /**
+     * 应该有哪些属性值
+     */
+    private List<ProductCategoryPropertyValue> shouldProductCategoryPropertyValueList;
 
     private String productName;
 
@@ -152,5 +156,13 @@ public class ProductSku implements Serializable {
 
     public void setProductMaterialList(List<ProductMaterial> productMaterialList) {
         this.productMaterialList = productMaterialList;
+    }
+
+    public List<ProductCategoryPropertyValue> getShouldProductCategoryPropertyValueList() {
+        return shouldProductCategoryPropertyValueList;
+    }
+
+    public void setShouldProductCategoryPropertyValueList(List<ProductCategoryPropertyValue> shouldProductCategoryPropertyValueList) {
+        this.shouldProductCategoryPropertyValueList = shouldProductCategoryPropertyValueList;
     }
 }

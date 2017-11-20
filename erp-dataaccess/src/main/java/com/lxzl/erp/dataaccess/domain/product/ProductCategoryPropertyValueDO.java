@@ -19,6 +19,8 @@ public class ProductCategoryPropertyValueDO extends BaseDO {
 
     @Transient
     private String propertyName;
+    @Transient
+    private Integer materialType;
 
     public Integer getId() {
         return id;
@@ -98,5 +100,13 @@ public class ProductCategoryPropertyValueDO extends BaseDO {
 
     public void setPropertyCapacityValue(Double propertyCapacityValue) {
         this.propertyCapacityValue = propertyCapacityValue;
+    }
+
+    public Integer getMaterialType() {
+        return materialType;
+    }
+
+    public void setMaterialType(Integer materialType) {
+        this.materialType = materialType;
     }
 }

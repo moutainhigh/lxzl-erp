@@ -10,6 +10,7 @@ public class ProductMaterialDO  extends BaseDO {
 	private Integer productId;
 	private Integer productSkuId;
 	private Integer materialId;
+	private Integer materialType;
 	private Integer materialCount;
 	private Integer dataStatus;
 	private String remark;
@@ -70,4 +71,11 @@ public class ProductMaterialDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public Integer getMaterialType() {
+		return materialType;
+	}
+
+	public void setMaterialType(Integer materialType) {
+		this.materialType = materialType;
+	}
 }
