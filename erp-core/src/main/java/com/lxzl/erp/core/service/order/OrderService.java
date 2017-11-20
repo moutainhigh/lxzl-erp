@@ -23,7 +23,7 @@ public interface OrderService extends BaseService {
      * @param orderNo 订单编号
      * @return 订单编号
      */
-    ServiceResult<String, String> commitOrder(String orderNo);
+    ServiceResult<String, String> commitOrder(String orderNo,Integer verifyUser);
 
     /**
      * 根据订单编号查询单个订单

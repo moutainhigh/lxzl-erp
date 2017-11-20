@@ -109,10 +109,8 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderProductDO">
 		update erp_purchase_order_product <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
-	<update id="delete" parameterType="java.lang.Integer">
-		update erp_purchase_order_product set data_status = 2 WHERE id = #{id, jdbcType=INTEGER}
-	</update>
-	<update id="deleteByPurchaseOrderId" parameterType="java.lang.Integer">
-		update erp_purchase_order_product set data_status = 2 WHERE purchase_order_id = #{purchaseOrderId, jdbcType=INTEGER}
+
+	<update id="deleteByPurchaseOrderId" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderProductDO">
+		update erp_purchase_order_product <include refid="set_column_sql"/> WHERE purchase_order_id = #{purchaseOrderId, jdbcType=INTEGER}
 	</update>
 </mapper>

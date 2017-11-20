@@ -28,7 +28,9 @@ public class ProductTest extends BaseUnTransactionalTest {
 
     @Test
     public void testQueryAllProductCategory() {
-        ServiceResult<String, List<ProductCategory>> result = productCategoryService.queryAllProductCategory();
+        ProductCategoryQueryParam productCategoryQueryParam = new ProductCategoryQueryParam();
+        productCategoryQueryParam.setCategoryType(2);
+        ServiceResult<String, List<ProductCategory>> result = productCategoryService.queryAllProductCategory(productCategoryQueryParam);
     }
 
     @Test
@@ -40,6 +42,7 @@ public class ProductTest extends BaseUnTransactionalTest {
     public void testQueryPropertiesByProductId() {
         ServiceResult<String, List<ProductCategoryProperty>> result = productCategoryService.queryPropertiesByProductId(2000001);
     }
+
     @Test
     public void addProductCategoryPropertyValue() {
         ProductCategoryPropertyValue productCategoryPropertyValue = new ProductCategoryPropertyValue();
@@ -102,7 +105,6 @@ public class ProductTest extends BaseUnTransactionalTest {
         product.setSubtitle("一体机E270DMG");
 
         List<ProductSku> productSkuList = new ArrayList<>();
-
 
 
         List<String> propertyList1 = new ArrayList<String>();
@@ -256,7 +258,7 @@ public class ProductTest extends BaseUnTransactionalTest {
     }
 
     @Test
-    public void testQueryProductEquipment(){
+    public void testQueryProductEquipment() {
         ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
         productEquipmentQueryParam.setPageNo(1);
         productEquipmentQueryParam.setPageSize(10);
@@ -264,12 +266,12 @@ public class ProductTest extends BaseUnTransactionalTest {
     }
 
     @Test
-    public void testQueryProductSku(){
+    public void testQueryProductSku() {
         ProductSkuQueryParam productSkuQueryParam = new ProductSkuQueryParam();
         productSkuQueryParam.setProductId(2000004);
         productSkuQueryParam.setPageNo(1);
         productSkuQueryParam.setPageSize(10);
         ServiceResult<String, Page<ProductSku>> result = productService.queryProductSkuList(productSkuQueryParam);
-        System.out.println(JSON.toJSONString(result,true));
+        System.out.println(JSON.toJSONString(result, true));
     }
 }

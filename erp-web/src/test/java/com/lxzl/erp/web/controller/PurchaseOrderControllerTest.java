@@ -62,6 +62,16 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrderProductList.add(purchaseOrderProduct);
         purchaseOrderProductList.add(purchaseOrderProduct2);
 
+        //添加采购的物料大件
+        List<PurchaseOrderMaterial> purchaseOrderMaterialList = new ArrayList<>();//小配件采购单物料项列表不能为空
+        PurchaseOrderMaterial purchaseOrderMaterial = new PurchaseOrderMaterial();
+        purchaseOrderMaterial.setMaterialNo("M201711171838059981292");
+        purchaseOrderMaterial.setMaterialCount(1);
+        purchaseOrderMaterial.setMaterialAmount(new BigDecimal(42));
+        purchaseOrderMaterialList.add(purchaseOrderMaterial);
+
+        purchaseOrder.setPurchaseOrderMaterialList(purchaseOrderMaterialList);
+
         purchaseOrder.setPurchaseOrderProductList(purchaseOrderProductList);
         TestResult result = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
     }
@@ -94,23 +104,34 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     public void updatePurchaseOrder() throws Exception {
 
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setPurchaseNo("C201711081828392315000051602");
+        purchaseOrder.setPurchaseNo("PO201711172026001085000051604");
         purchaseOrder.setWarehouseNo("W201708081508");//仓库编号必填,这里为分公司
         purchaseOrder.setIsInvoice(CommonConstant.COMMON_CONSTANT_NO);//是否有发票字段必填
         purchaseOrder.setIsNew(CommonConstant.COMMON_CONSTANT_NO);//是否是全新机
         purchaseOrder.setProductSupplierId(1);//商品供应商ID不能为空
+        purchaseOrder.setPurchaseType(PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN);
 
         List<PurchaseOrderProduct> purchaseOrderProductList = new ArrayList<>();//采购单商品项列表不能为空
         PurchaseOrderProduct purchaseOrderProduct = new PurchaseOrderProduct();
         purchaseOrderProduct.setProductSkuId(1); //采购单商品项SKU UD 不能为空
         purchaseOrderProduct.setProductAmount(new BigDecimal(800));//采购单商品单价不能为空且大于0
         purchaseOrderProduct.setProductCount(10);//采购单商品数量不能为空且大于0
-
+        //添加物料配置
+        List<ProductMaterial> productMaterialList1 = new ArrayList<ProductMaterial>();
+        ProductMaterial productMaterial = new ProductMaterial();
+        productMaterial.setMaterialId(1);
+        productMaterialList1.add(productMaterial);
+        purchaseOrderProduct.setProductMaterialList(productMaterialList1);
 
         PurchaseOrderProduct purchaseOrderProduct2 = new PurchaseOrderProduct();
         purchaseOrderProduct2.setProductSkuId(2); //采购单商品项SKU UD 不能为空，且不能重复
         purchaseOrderProduct2.setProductAmount(new BigDecimal(2000));//采购单商品单价不能为空且大于0
         purchaseOrderProduct2.setProductCount(8);//采购单商品数量不能为空且大于0
+        //添加物料配置
+        List<ProductMaterial> productMaterialList2 = new ArrayList<ProductMaterial>();
+        productMaterial.setMaterialId(1);
+        productMaterialList2.add(productMaterial);
+        purchaseOrderProduct2.setProductMaterialList(productMaterialList2);
 
         purchaseOrderProductList.add(purchaseOrderProduct);
         purchaseOrderProductList.add(purchaseOrderProduct2);
@@ -121,23 +142,23 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void commit() throws Exception {
         PurchaseOrderCommitParam purchaseOrderCommitParam = new PurchaseOrderCommitParam();
-        purchaseOrderCommitParam.setPurchaseNo("C201711111120157125000051666");
+        purchaseOrderCommitParam.setPurchaseNo("PO201711181544591335000051741");
         purchaseOrderCommitParam.setVerifyUserId(500006);
         TestResult result = getJsonTestResult("/purchaseOrder/commit",purchaseOrderCommitParam);
     }
     @Test
     public void delete() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setPurchaseNo("C201711081745290995000051114");
+        purchaseOrder.setPurchaseNo("PO201711181416106215000051764");
         TestResult result = getJsonTestResult("/purchaseOrder/delete",purchaseOrder);
     }
     @Test
     public void page() throws Exception {
         PurchaseOrderQueryParam purchaseOrderQueryParam = new PurchaseOrderQueryParam();
-//        purchaseOrderQueryParam.setPurchaseNo("C201711071624559555000051509");
+        purchaseOrderQueryParam.setPurchaseNo("PO201711181544591335000051741");
 //        purchaseOrderQueryParam.setProductSupplierId(1);
 //        purchaseOrderQueryParam.setInvoiceSupplierId(1);
-        purchaseOrderQueryParam.setWarehouseNo("W201708081508");
+//        purchaseOrderQueryParam.setWarehouseNo("W201708081508");
 //        purchaseOrderQueryParam.setIsInvoice(1);
 //        purchaseOrderQueryParam.setIsNew(1);
 //        purchaseOrderQueryParam.setCreateStartTime(new Date());
@@ -149,7 +170,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryPurchaseOrderByNo() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setPurchaseNo("C201711111120157125000051666");
+        purchaseOrder.setPurchaseNo("PO201711181544591335000051741");
         TestResult result = getJsonTestResult("/purchaseOrder/queryPurchaseOrderByNo",purchaseOrder);
     }
     @Test
@@ -160,7 +181,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pagePurchaseDelivery() throws Exception {
         PurchaseDeliveryOrderQueryParam purchaseOrderDeliveryQueryParam = new PurchaseDeliveryOrderQueryParam();
-        purchaseOrderDeliveryQueryParam.setPurchaseNo("C201711091550440665000051897");
+        purchaseOrderDeliveryQueryParam.setPurchaseNo("PO201711181544591335000051741");
 //        purchaseOrderDeliveryQueryParam.setWarehouseId(4000001);
 //        purchaseOrderDeliveryQueryParam.setIsInvoice(1);
 //        purchaseOrderDeliveryQueryParam.setIsNew(1);
@@ -173,10 +194,11 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryPurchaseDeliveryOrderByNo() throws Exception {
         PurchaseDeliveryOrder purchaseDeliveryOrder = new PurchaseDeliveryOrder();
-        purchaseDeliveryOrder.setPurchaseDeliveryNo("D2017111111213247160000161155");
+        purchaseDeliveryOrder.setPurchaseDeliveryNo("PD2017111816030427860000471733");
         TestResult result = getJsonTestResult("/purchaseOrder/queryPurchaseDeliveryOrderByNo",purchaseDeliveryOrder);
     }
 
+    //todo 这里没改完
     @Test
     public void updatePurchaseReceiveOrder() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
@@ -202,7 +224,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseReceiveOrder.setPurchaseReceiveOrderProductList(purchaseOrderProductList);
         TestResult result = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder",purchaseReceiveOrder);
      }
-
+    //todo 这里没改完
     @Test
     public void commitPurchaseReceiveOrder() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
@@ -214,7 +236,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pagePurchaseReceive() throws Exception {
         PurchaseReceiveOrderQueryParam purchaseReceiveOrderQueryParam = new PurchaseReceiveOrderQueryParam();
-
+        purchaseReceiveOrderQueryParam.setPurchaseNo("PO201711181544591335000051741");
 //        purchaseReceiveOrderQueryParam.setPurchaseOrderId(1);
 //        purchaseReceiveOrderQueryParam.setPurchaseDeliveryOrderId(1);
 //        purchaseReceiveOrderQueryParam.setWarehouseId(1);
@@ -244,7 +266,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryPurchaseReceiveOrderByNo() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
-        purchaseReceiveOrder.setPurchaseReceiveNo("R2017111111213674960000161292");
+        purchaseReceiveOrder.setPurchaseReceiveNo("PR2017111816030429760000471031");
         TestResult result = getJsonTestResult("/purchaseOrder/queryPurchaseReceiveOrderByNo",purchaseReceiveOrder);
     }
     @Test
@@ -253,6 +275,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrder.setPurchaseNo("C201711091550440665000051897");
         TestResult result = getJsonTestResult("/purchaseOrder/endPurchaseOrder",purchaseOrder);
     }
+    //todo 这里没改完
     @Test
     public void continuePurchaseOrder() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();

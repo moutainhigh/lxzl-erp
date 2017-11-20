@@ -1,11 +1,7 @@
 package com.lxzl.erp.core.service.purchase.impl.support;
 
-import com.alibaba.fastjson.JSON;
-import com.lxzl.erp.common.domain.company.pojo.SubCompany;
-import com.lxzl.erp.common.domain.product.pojo.Product;
-import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.purchase.pojo.*;
-import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.dataaccess.domain.purchase.*;
 import org.springframework.beans.BeanUtils;
 
@@ -23,9 +19,9 @@ public class PurchaseOrderConverter {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         BeanUtils.copyProperties(purchaseOrderDO,purchaseOrder);
         purchaseOrder.setPurchaseOrderId(purchaseOrderDO.getId());
-        if(purchaseOrderDO!=null&&purchaseOrderDO.getPurchaseOrderProductDOList()!=null&&purchaseOrderDO.getPurchaseOrderProductDOList().size()>0){
+        List<PurchaseOrderProductDO> purchaseOrderProductDOList = purchaseOrderDO.getPurchaseOrderProductDOList();
+        if(purchaseOrderDO!=null&& CollectionUtil.isNotEmpty(purchaseOrderProductDOList)){
             List<PurchaseOrderProduct> purchaseOrderProductList = new ArrayList<>();
-            List<PurchaseOrderProductDO> purchaseOrderProductDOList = purchaseOrderDO.getPurchaseOrderProductDOList();
             for(PurchaseOrderProductDO purchaseOrderProductDO : purchaseOrderProductDOList){
                 PurchaseOrderProduct purchaseOrderProduct = new PurchaseOrderProduct();
                 BeanUtils.copyProperties(purchaseOrderProductDO,purchaseOrderProduct);
@@ -34,15 +30,26 @@ public class PurchaseOrderConverter {
             }
             purchaseOrder.setPurchaseOrderProductList(purchaseOrderProductList);
         }
+        List<PurchaseOrderMaterialDO> purchaseOrderMaterialDOList = purchaseOrderDO.getPurchaseOrderMaterialDOList();
+        if(purchaseOrderDO!=null&& CollectionUtil.isNotEmpty(purchaseOrderMaterialDOList)){
+            List<PurchaseOrderMaterial> purchaseOrderMaterialList = new ArrayList<>();
+            for(PurchaseOrderMaterialDO purchaseOrderMaterialDO : purchaseOrderMaterialDOList){
+                PurchaseOrderMaterial purchaseOrderMaterial = new PurchaseOrderMaterial();
+                BeanUtils.copyProperties(purchaseOrderMaterialDO,purchaseOrderMaterial);
+                purchaseOrderMaterial.setPurchaseOrderMaterialId(purchaseOrderMaterialDO.getId());
+                purchaseOrderMaterialList.add(purchaseOrderMaterial);
+            }
+            purchaseOrder.setPurchaseOrderMaterialList(purchaseOrderMaterialList);
+        }
         return purchaseOrder;
     }
     public static PurchaseDeliveryOrder convertPurchaseDeliveryOrderDO(PurchaseDeliveryOrderDO purchaseDeliveryOrderDO){
         PurchaseDeliveryOrder purchaseDeliveryOrder = new PurchaseDeliveryOrder();
         BeanUtils.copyProperties(purchaseDeliveryOrderDO,purchaseDeliveryOrder);
         purchaseDeliveryOrder.setPurchaseOrderId(purchaseDeliveryOrderDO.getId());
-        if(purchaseDeliveryOrderDO!=null&&purchaseDeliveryOrderDO.getPurchaseDeliveryOrderProductDOList()!=null&&purchaseDeliveryOrderDO.getPurchaseDeliveryOrderProductDOList().size()>0){
+        List<PurchaseDeliveryOrderProductDO> purchaseDeliveryOrderProductDOList = purchaseDeliveryOrderDO.getPurchaseDeliveryOrderProductDOList();
+        if(purchaseDeliveryOrderDO!=null&&CollectionUtil.isNotEmpty(purchaseDeliveryOrderProductDOList)){
             List<PurchaseDeliveryOrderProduct> purchaseDeliveryOrderProductList = new ArrayList<>();
-            List<PurchaseDeliveryOrderProductDO> purchaseDeliveryOrderProductDOList = purchaseDeliveryOrderDO.getPurchaseDeliveryOrderProductDOList();
             for(PurchaseDeliveryOrderProductDO purchaseDeliveryOrderProductDO : purchaseDeliveryOrderProductDOList){
                 PurchaseDeliveryOrderProduct purchaseDeliveryOrderProduct = new PurchaseDeliveryOrderProduct();
                 BeanUtils.copyProperties(purchaseDeliveryOrderProductDO,purchaseDeliveryOrderProduct);
@@ -51,6 +58,17 @@ public class PurchaseOrderConverter {
             }
             purchaseDeliveryOrder.setPurchaseDeliveryOrderProductList(purchaseDeliveryOrderProductList);
         }
+        List<PurchaseDeliveryOrderMaterialDO> purchaseDeliveryOrderMaterialDOList = purchaseDeliveryOrderDO.getPurchaseDeliveryOrderMaterialDOList();
+        if(purchaseDeliveryOrderDO!=null&&CollectionUtil.isNotEmpty(purchaseDeliveryOrderMaterialDOList)){
+            List<PurchaseDeliveryOrderMaterial> purchaseDeliveryOrderMaterialList = new ArrayList<>();
+            for(PurchaseDeliveryOrderMaterialDO purchaseDeliveryOrderMaterialDO : purchaseDeliveryOrderMaterialDOList){
+                PurchaseDeliveryOrderMaterial purchaseDeliveryOrderMaterial = new PurchaseDeliveryOrderMaterial();
+                BeanUtils.copyProperties(purchaseDeliveryOrderMaterialDO,purchaseDeliveryOrderMaterial);
+                purchaseDeliveryOrderMaterial.setPurchaseDeliveryOrderId(purchaseDeliveryOrderMaterialDO.getId());
+                purchaseDeliveryOrderMaterialList.add(purchaseDeliveryOrderMaterial);
+            }
+            purchaseDeliveryOrder.setPurchaseDeliveryOrderMaterialList(purchaseDeliveryOrderMaterialList);
+        }
         return purchaseDeliveryOrder;
     }
 
@@ -58,9 +76,9 @@ public class PurchaseOrderConverter {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
         BeanUtils.copyProperties(purchaseReceiveOrderDO,purchaseReceiveOrder);
         purchaseReceiveOrder.setPurchaseReceiveOrderId(purchaseReceiveOrderDO.getId());
-        if(purchaseReceiveOrderDO!=null&&purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList()!=null&&purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList().size()>0){
+        List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList();
+        if(purchaseReceiveOrderDO!=null&&CollectionUtil.isNotEmpty(purchaseReceiveOrderProductDOList)){
             List<PurchaseReceiveOrderProduct> purchaseDeliveryOrderProductList = new ArrayList<>();
-            List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList();
             for(PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO : purchaseReceiveOrderProductDOList){
                 PurchaseReceiveOrderProduct purchaseReceiveOrderProduct = new PurchaseReceiveOrderProduct();
                 BeanUtils.copyProperties(purchaseReceiveOrderProductDO,purchaseReceiveOrderProduct);
@@ -68,6 +86,17 @@ public class PurchaseOrderConverter {
                 purchaseDeliveryOrderProductList.add(purchaseReceiveOrderProduct);
             }
             purchaseReceiveOrder.setPurchaseReceiveOrderProductList(purchaseDeliveryOrderProductList);
+        }
+        List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderMaterialDOList();
+        if(purchaseReceiveOrderDO!=null&&CollectionUtil.isNotEmpty(purchaseReceiveOrderMaterialDOList)){
+            List<PurchaseReceiveOrderMaterial> purchaseReceiveOrderMaterialList = new ArrayList<>();
+            for(PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO : purchaseReceiveOrderMaterialDOList){
+                PurchaseReceiveOrderMaterial purchaseReceiveOrderMaterial = new PurchaseReceiveOrderMaterial();
+                BeanUtils.copyProperties(purchaseReceiveOrderMaterialDO,purchaseReceiveOrderMaterial);
+                purchaseReceiveOrderMaterial.setPurchaseReceiveOrderMaterialId(purchaseReceiveOrderMaterialDO.getId());
+                purchaseReceiveOrderMaterialList.add(purchaseReceiveOrderMaterial);
+            }
+            purchaseReceiveOrder.setPurchaseReceiveOrderMaterialList(purchaseReceiveOrderMaterialList);
         }
         return purchaseReceiveOrder;
     }

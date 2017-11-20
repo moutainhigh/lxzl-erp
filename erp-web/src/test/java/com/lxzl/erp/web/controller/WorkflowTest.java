@@ -20,7 +20,7 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     public void verifyWorkFlow() throws Exception {
 
         VerifyWorkflowParam workflowParam = new VerifyWorkflowParam();
-        workflowParam.setWorkflowLinkId(6);
+        workflowParam.setWorkflowLinkId(34);
         workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
         workflowParam.setVerifyOpinion("允许采购");
 

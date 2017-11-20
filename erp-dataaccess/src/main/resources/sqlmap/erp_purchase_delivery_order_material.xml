@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseDeliveryOrderMaterialMapper">
+
+	<resultMap id="PurchaseDeliveryOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderMaterialDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="purchase_delivery_order_id" jdbcType="INTEGER" property="purchaseDeliveryOrderId" />
+		<result column="purchase_order_material_id" jdbcType="INTEGER" property="purchaseOrderMaterialId" />
+		<result column="material_id" jdbcType="INTEGER" property="materialId" />
+		<result column="material_name" jdbcType="VARCHAR" property="materialName" />
+		<result column="material_snapshot" jdbcType="VARCHAR" property="materialSnapshot" />
+		<result column="material_count" jdbcType="INTEGER" property="materialCount" />
+		<result column="material_amount" jdbcType="DECIMAL" property="materialAmount" />
+		<result column="real_material_id" jdbcType="INTEGER" property="realMaterialId" />
+		<result column="real_material_name" jdbcType="VARCHAR" property="realMaterialName" />
+		<result column="real_material_snapshot" jdbcType="VARCHAR" property="realMaterialSnapshot" />
+		<result column="real_material_count" jdbcType="INTEGER" property="realMaterialCount" />
+		<result column="real_material_amount" jdbcType="DECIMAL" property="realMaterialAmount" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		epdom.id,epdom.purchase_delivery_order_id,epdom.purchase_order_material_id,epdom.material_id,epdom.material_name,epdom.material_snapshot,epdom.material_count,epdom.material_amount,epdom.real_material_id,epdom.real_material_name,epdom.real_material_snapshot,epdom.real_material_count,epdom.real_material_amount,epdom.data_status,epdom.remark,epdom.create_time,epdom.create_user,epdom.update_time,epdom.update_user
+	</sql>
+
+	<select id="findById" resultMap="PurchaseDeliveryOrderMaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_purchase_delivery_order_material epdom 
+		WHERE epdom.id = #{id, jdbcType=INTEGER} AND epdom.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(epdom.id) FROM erp_purchase_delivery_order_material epdom 
+		<where>
+			<if test="true">
+				AND epdom.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="PurchaseDeliveryOrderMaterialDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_purchase_delivery_order_material epdom 
+		<where>
+			<if test="true">
+				AND epdom.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="purchaseDeliveryOrderId != null">
+				purchase_delivery_order_id = #{purchaseDeliveryOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="purchaseOrderMaterialId != null">
+				purchase_order_material_id = #{purchaseOrderMaterialId,jdbcType=INTEGER},
+			</if>
+			<if test="materialId != null">
+				material_id = #{materialId,jdbcType=INTEGER},
+			</if>
+			<if test="materialName != null">
+				material_name = #{materialName,jdbcType=VARCHAR},
+			</if>
+			<if test="materialSnapshot != null">
+				material_snapshot = #{materialSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="materialCount != null">
+				material_count = #{materialCount,jdbcType=INTEGER},
+			</if>
+			<if test="materialAmount != null">
+				material_amount = #{materialAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="realMaterialId != null">
+				real_material_id = #{realMaterialId,jdbcType=INTEGER},
+			</if>
+			<if test="realMaterialName != null">
+				real_material_name = #{realMaterialName,jdbcType=VARCHAR},
+			</if>
+			<if test="realMaterialSnapshot != null">
+				real_material_snapshot = #{realMaterialSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="realMaterialCount != null">
+				real_material_count = #{realMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="realMaterialAmount != null">
+				real_material_amount = #{realMaterialAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderMaterialDO">
+		INSERT INTO erp_purchase_delivery_order_material <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderMaterialDO">
+		UPDATE erp_purchase_delivery_order_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

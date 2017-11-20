@@ -36,8 +36,8 @@ public class ProductTest extends ERPUnTransactionalTest {
     @Test
     public void addProductCategoryPropertyValue() throws Exception {
         ProductCategoryPropertyValue productCategoryPropertyValue = new ProductCategoryPropertyValue();
-        productCategoryPropertyValue.setPropertyId(11);
-        productCategoryPropertyValue.setPropertyValueName("普通机箱");
+        productCategoryPropertyValue.setPropertyId(13);
+        productCategoryPropertyValue.setPropertyValueName("E270DMG物料");
         TestResult result = getJsonTestResult("/product/addProductCategoryPropertyValue", productCategoryPropertyValue);
     }
 

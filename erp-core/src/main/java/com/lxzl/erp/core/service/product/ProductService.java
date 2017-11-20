@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.product;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.*;
 import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.se.core.service.BaseService;
@@ -132,4 +133,12 @@ public interface ProductService extends BaseService {
      * @return SKU列表
      */
     ServiceResult<String, Page<ProductSku>> queryProductSkuList(ProductSkuQueryParam productSkuQueryParam);
+
+
+    /**
+     * 校验SKU的物料信息是否准确
+     * @param productSku SKU信息
+     * @return 错误码，错误的物料类型
+     * */
+    ServiceResult<String, Integer> verifyProductMaterial(ProductSku productSku);
 }

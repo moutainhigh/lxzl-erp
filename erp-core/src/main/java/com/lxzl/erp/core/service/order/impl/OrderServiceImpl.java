@@ -14,6 +14,7 @@ import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderConverter;
 import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
@@ -29,7 +30,6 @@ import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -68,7 +68,6 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateTime(currentTime);
         orderMapper.save(orderDO);
         saveOrderProductInfo(orderProductDOList, orderDO.getId(), loginUser, currentTime);
-        // TODO保存收货地址
         saveOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -77,10 +76,60 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ServiceResult<String, String> commitOrder(String orderNo) {
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> commitOrder(String orderNo, Integer verifyUser) {
         ServiceResult<String, String> result = new ServiceResult<>();
+        Date currentTime = new Date();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
+        if (CollectionUtil.isEmpty(orderDO.getOrderProductDOList())) {
+            result.setErrorCode(ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL);
+            return result;
+        }
+        boolean isNeedVerify = false;
+        // TODO 判断订单是否合法，如果合法直接通知库房发货，否则进入审核状态
+        for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+            ProductSkuDO productSkuDO = productSkuMapper.findById(orderProductDO.getProductSkuId());
+            if (productSkuDO == null) {
+                result.setErrorCode(ErrorCode.PRODUCT_SKU_NOT_NULL);
+                return result;
+            }
+            BigDecimal productUnitAmount = null;
+            if (OrderRentType.RENT_TYPE_TIME.equals(orderDO.getRentType())) {
+                productUnitAmount = productSkuDO.getTimeRentPrice();
+            } else if (OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
+                productUnitAmount = productSkuDO.getDayRentPrice();
+            } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())) {
+                productUnitAmount = productSkuDO.getMonthRentPrice();
+            }
+            // 订单价格低于商品租赁价，需要商务审批
+            if (BigDecimalUtil.compare(orderProductDO.getProductUnitAmount(), productUnitAmount) < 0) {
+                isNeedVerify = true;
+            }
+        }
 
+        if (isNeedVerify) {
+            ServiceResult<String, Integer> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getId(), verifyUser);
+            if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
+                result.setErrorCode(workflowCommitResult.getErrorCode());
+                return result;
+            }
+            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
+            orderDO.setUpdateUser(loginUser.getUserId().toString());
+            orderDO.setUpdateTime(currentTime);
+            orderMapper.update(orderDO);
+        } else {
+            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
+            orderDO.setUpdateUser(loginUser.getUserId().toString());
+            orderDO.setUpdateTime(currentTime);
+            orderMapper.update(orderDO);
+        }
+
+        result.setResult(orderNo);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -574,6 +623,8 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ProductSkuPropertyMapper productSkuPropertyMapper;
 
+    @Autowired
+    private WorkflowService workflowService;
 
     @Autowired
     private ProductSkuMapper productSkuMapper;

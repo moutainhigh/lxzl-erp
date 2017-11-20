@@ -9,43 +9,43 @@ import java.util.List;
 
 public class ProductCategoryConverter {
 
-    public static ProductCategory convertProductCategoryDO(ProductCategoryDO productCategoryDO){
+    public static ProductCategory convertProductCategoryDO(ProductCategoryDO productCategoryDO) {
         ProductCategory productCategory = new ProductCategory();
-        if(productCategoryDO.getId() != null){
+        if (productCategoryDO.getId() != null) {
             productCategory.setCategoryId(productCategoryDO.getId());
         }
-        if(productCategoryDO.getCategoryName() != null){
+        if (productCategoryDO.getCategoryName() != null) {
             productCategory.setCategoryName(productCategoryDO.getCategoryName());
         }
-        if(productCategoryDO.getParentCategoryId() != null){
+        if (productCategoryDO.getParentCategoryId() != null) {
             productCategory.setParentCategoryId(productCategoryDO.getParentCategoryId());
         }
-        if(productCategoryDO.getCategoryType() != null){
+        if (productCategoryDO.getCategoryType() != null) {
             productCategory.setCategoryType(productCategoryDO.getCategoryType());
         }
-        if(productCategoryDO.getDataOrder() != null){
+        if (productCategoryDO.getDataOrder() != null) {
             productCategory.setDataOrder(productCategoryDO.getDataOrder());
         }
-        if(productCategoryDO.getDataStatus() != null){
+        if (productCategoryDO.getDataStatus() != null) {
             productCategory.setDataStatus(productCategoryDO.getDataStatus());
         }
-        if(productCategoryDO.getRemark() != null){
+        if (productCategoryDO.getRemark() != null) {
             productCategory.setRemark(productCategoryDO.getRemark());
         }
         return productCategory;
     }
 
-    public static List<ProductCategory> convertProductCategoryDOList(List<ProductCategoryDO> productCategoryDOList){
+    public static List<ProductCategory> convertProductCategoryDOList(List<ProductCategoryDO> productCategoryDOList) {
         List<ProductCategory> productCategoryList = new ArrayList<>();
-        if(productCategoryDOList != null && productCategoryDOList.size()>0){
-            for(ProductCategoryDO productCategoryDO : productCategoryDOList){
+        if (productCategoryDOList != null && productCategoryDOList.size() > 0) {
+            for (ProductCategoryDO productCategoryDO : productCategoryDOList) {
                 productCategoryList.add(convertProductCategoryDO(productCategoryDO));
             }
         }
         return productCategoryList;
     }
 
-    public static List<ProductCategoryDO> convertProductCategoryDOTree(List<ProductCategoryDO> productCategoryDOList){
+    public static List<ProductCategoryDO> convertProductCategoryDOTree(List<ProductCategoryDO> productCategoryDOList) {
         List<ProductCategoryDO> nodeList = new ArrayList<>();
         if (productCategoryDOList != null) {
             for (ProductCategoryDO node1 : productCategoryDOList) {
@@ -69,7 +69,7 @@ public class ProductCategoryConverter {
         return nodeList;
     }
 
-    public static List<ProductCategory> convertProductCategoryTree(List<ProductCategory> productCategoryList){
+    public static List<ProductCategory> convertProductCategoryTree(List<ProductCategory> productCategoryList) {
         List<ProductCategory> nodeList = new ArrayList<>();
         if (productCategoryList != null) {
             for (ProductCategory node1 : productCategoryList) {

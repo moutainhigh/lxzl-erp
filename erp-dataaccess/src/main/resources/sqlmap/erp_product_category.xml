@@ -33,6 +33,12 @@
         <include refid="column_List"/>
         from erp_product_category epc
         <where>
+            <if test="maps.productCategoryQueryParam.categoryType != null &amp;&amp; maps.productCategoryQueryParam.categoryType != ''">
+                and epc.category_type = #{maps.productCategoryQueryParam.categoryType, jdbcType=INTEGER} or epc.category_type = 0
+            </if>
+            <if test="maps.productCategoryQueryParam.categoryId != null &amp;&amp; maps.productCategoryQueryParam.categoryId != ''">
+                and epc.id = #{maps.productCategoryQueryParam.categoryId, jdbcType=INTEGER}
+            </if>
             <if test="true">
                 and epc.data_status = 1
             </if>

@@ -21,6 +21,7 @@
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 
 		<collection property="purchaseDeliveryOrderProductDOList" resultMap="PurchaseDeliveryOrderProductDO" />
+		<collection property="purchaseDeliveryOrderMaterialDOList" resultMap="PurchaseDeliveryOrderMaterialDO" />
 	</resultMap>
 	<resultMap id="PurchaseDeliveryOrderProductDO" type="com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderProductDO">
 		<id column="epdop_id" jdbcType="INTEGER" property="id" />
@@ -43,27 +44,53 @@
 		<result column="epdop_update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="epdop_update_user" jdbcType="VARCHAR" property="updateUser" />
 	</resultMap>
+	<resultMap id="PurchaseDeliveryOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderMaterialDO">
+		<id column="epdom_id" jdbcType="INTEGER" property="id" />
+		<result column="epdom_purchaseDeliveryOrderId" jdbcType="INTEGER" property="purchaseDeliveryOrderId" />
+		<result column="epdom_purchaseOrderMaterialId" jdbcType="INTEGER" property="purchaseOrderMaterialId" />
+		<result column="epdom_materialId" jdbcType="INTEGER" property="materialId" />
+		<result column="epdom_materialName" jdbcType="VARCHAR" property="materialName" />
+		<result column="epdom_materialSnapshot" jdbcType="VARCHAR" property="materialSnapshot" />
+		<result column="epdom_materialCount" jdbcType="INTEGER" property="materialCount" />
+		<result column="epdom_materialAmount" jdbcType="DECIMAL" property="materialAmount" />
+		<result column="epdom_realMaterialId" jdbcType="INTEGER" property="realMaterialId" />
+		<result column="epdom_realMaterialName" jdbcType="VARCHAR" property="realMaterialName" />
+		<result column="epdom_realMaterialSnapshot" jdbcType="VARCHAR" property="realMaterialSnapshot" />
+		<result column="epdom_realMaterialCount" jdbcType="INTEGER" property="realMaterialCount" />
+		<result column="epdom_realMaterialAmount" jdbcType="DECIMAL" property="realMaterialAmount" />
+		<result column="epdom_dataStatus" jdbcType="INTEGER" property="dataStatus" />
+		<result column="epdom_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="epdom_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="epdom_createUser" jdbcType="VARCHAR" property="createUser" />
+		<result column="epdom_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="epdom_updateUser" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
 	<sql id="column_List">
 		epdo.id,epdo.purchase_order_id,epdo.purchase_delivery_no,epdo.warehouse_id,epdo.warehouse_snapshot,epdo.is_invoice,epdo.is_new,epdo.purchase_delivery_order_status,epdo.delivery_time,epdo.data_status,epdo.owner_supplier_id,epdo.remark,epdo.create_time,epdo.create_user,epdo.update_time,epdo.update_user
 	</sql>
 	<sql id="product_column_List">
 		epdop.id as epdop_id,epdop.purchase_delivery_order_id as epdop_purchase_delivery_order_id,epdop.purchase_order_product_id as epdop_purchase_order_product_id,epdop.product_id as epdop_product_id,epdop.product_name as epdop_product_name,epdop.product_sku_id as epdop_product_sku_id,epdop.product_snapshot as epdop_product_snapshot,epdop.product_count as epdop_product_count,epdop.real_product_id as epdop_real_product_id,epdop.real_product_name as epdop_real_product_name,epdop.real_product_sku_id as epdop_real_product_sku_id,epdop.real_product_snapshot as epdop_real_product_snapshot,epdop.real_product_count as epdop_real_product_count,epdop.product_amount as epdop_product_amount,epdop.remark as epdop_remark,epdop.create_time as epdop_create_time,epdop.create_user as epdop_create_user,epdop.update_time as epdop_update_time,epdop.update_user as epdop_update_user
 	</sql>
+	<sql id="material_column_List">
+		epdom.id AS epdom_id,epdom.purchase_delivery_order_id AS epdom_purchaseDeliveryOrderId,epdom.purchase_order_material_id AS epdom_purchaseOrderMaterialId,epdom.material_id AS epdom_materialId,epdom.material_name AS epdom_materialName,epdom.material_snapshot AS epdom_materialSnapshot,epdom.material_count AS epdom_materialCount,epdom.material_amount AS epdom_materialAmount,epdom.real_material_id AS epdom_realMaterialId,epdom.real_material_name AS epdom_realMaterialName,epdom.real_material_snapshot AS epdom_realMaterialSnapshot,epdom.real_material_count AS epdom_realMaterialCount,epdom.real_material_amount AS epdom_realMaterialAmount,epdom.data_status AS epdom_dataStatus,epdom.remark AS epdom_remark,epdom.create_time AS epdom_createTime,epdom.create_user AS epdom_createUser,epdom.update_time AS epdom_updateTime,epdom.update_user AS epdom_updateUser
+	</sql>
 	<select id="findById" resultMap="PurchaseDeliveryOrderDO" parameterType="java.lang.Integer">
 		select <include refid="column_List"/> from erp_purchase_delivery_order epdo 
 		where epdo.id = #{id, jdbcType=INTEGER} and data_status = 1 
 	</select>
 	<select id="findByNo" resultMap="PurchaseDeliveryOrderDO" parameterType="java.lang.String">
-		select <include refid="column_List"/>,<include refid="product_column_List"/> from (
+		select <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/> from (
 		select <include refid="column_List"/> from erp_purchase_delivery_order epdo
 		where epdo.purchase_delivery_no = #{purchaseDeliveryNo, jdbcType=VARCHAR} and data_status = 1
 		) epdo left join erp_purchase_delivery_order_product epdop on epdo.id = epdop.purchase_delivery_order_id and epdop.data_status=1
+		left join erp_purchase_delivery_order_material epdom on epdo.id = epdom.purchase_delivery_order_id and epdom.data_status=1
 	</select>
 	<select id="findListByPurchaseId" resultMap="PurchaseDeliveryOrderDO" parameterType="java.lang.String">
-		SELECT <include refid="column_List"/>,<include refid="product_column_List"/> FROM (
+		SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/> FROM (
 		SELECT <include refid="column_List"/> FROM erp_purchase_delivery_order epdo
 		WHERE epdo.purchase_order_id = #{purchaseOrderId, jdbcType=INTEGER} AND epdo.data_status = 1
 		) epdo LEFT JOIN erp_purchase_delivery_order_product epdop ON epdop.purchase_delivery_order_id = epdo.id AND epdop.data_status = 1
+		left join erp_purchase_delivery_order_material epdom on epdo.id = epdom.purchase_delivery_order_id and epdom.data_status=1
 	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(epdo.id) from erp_purchase_delivery_order epdo 
@@ -165,7 +192,7 @@
 	</select>
 	<select id="findPurchaseDeliveryOrderByParams" resultMap="PurchaseDeliveryOrderDO" parameterType="map">
 
-		select <include refid="column_List"/>,<include refid="product_column_List"/> from (
+		select <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/> from (
 		SELECT <include refid="column_List"/>
 		FROM erp_purchase_delivery_order epdo
 		<where>
@@ -195,7 +222,9 @@
 			</if>
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}
-		) epdo left join erp_purchase_delivery_order_product epdop on epdo.id = epdop.purchase_delivery_order_id and epdop.data_status=1
+		) epdo
+		left join erp_purchase_delivery_order_product epdop on epdo.id = epdop.purchase_delivery_order_id and epdop.data_status=1
+		left join erp_purchase_delivery_order_material epdom on epdo.id = epdom.purchase_delivery_order_id and epdom.data_status=1
 	</select>
 	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderDO">
 		insert into erp_purchase_delivery_order <include refid="set_column_sql"/>

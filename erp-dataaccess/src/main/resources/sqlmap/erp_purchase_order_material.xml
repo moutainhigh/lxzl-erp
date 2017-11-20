@@ -94,4 +94,7 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderMaterialDO">
 		UPDATE erp_purchase_order_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+	<update id="deleteByPurchaseOrderId" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderMaterialDO">
+		UPDATE erp_purchase_order_material <include refid="set_column_sql"/> WHERE purchase_order_id = #{purchaseOrderId, jdbcType=INTEGER}
+	</update>
 </mapper>
