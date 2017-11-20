@@ -23,11 +23,15 @@ public class MaterialTest extends ERPUnTransactionalTest {
     @Test
     public void addMaterial() throws Exception {
         Material material = new Material();
-        material.setMaterialName("一个小小的内存条");
+        material.setMaterialName("CPU物料-I5-6400");
         material.setMaterialType(1);
-        material.setPropertyId(12);
-        material.setPropertyValueId(24);
-        material.setMaterialPrice(new BigDecimal(500.0));
+        material.setPropertyId(14);
+        material.setPropertyValueId(32);
+        material.setMaterialPrice(new BigDecimal(5000.0));
+        material.setDayRentPrice(new BigDecimal(5000.0));
+        material.setMonthRentPrice(new BigDecimal(5000.0));
+        material.setTimeRentPrice(new BigDecimal(5000.0));
+        material.setMaterialDesc("测试备注");
 
         List<MaterialImg> materialImgList = new ArrayList<>();
         MaterialImg materialImg = new MaterialImg();
@@ -39,18 +43,8 @@ public class MaterialTest extends ERPUnTransactionalTest {
     @Test
     public void updateMaterial() throws Exception {
         Material material = new Material();
-        material.setMaterialNo("M201711171736437081492");
-        material.setMaterialName("一个小小的内存条");
-        material.setMaterialType(15);
-        material.setPropertyId(12);
-        material.setPropertyValueId(24);
-        material.setMaterialPrice(new BigDecimal(5000.0));
-
-        List<MaterialImg> materialImgList = new ArrayList<>();
-        MaterialImg materialImg = new MaterialImg();
-        materialImg.setMaterialImgId(1);
-        materialImgList.add(materialImg);
-//        material.setMaterialImgList(materialImgList);
+        material.setMaterialNo("M201711201356145971009");
+        material.setMaterialDesc("M201711201356145971009");
         TestResult result = getJsonTestResult("/material/update", material);
     }
 

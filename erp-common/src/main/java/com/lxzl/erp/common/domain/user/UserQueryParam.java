@@ -13,6 +13,9 @@ public class UserQueryParam extends BasePageParam {
     private Integer roleId;
     private Integer departmentId;
     private Integer subCompanyId;
+    private List<Integer> departmentIdList;
+    private List<Integer> subCompanyIdList;
+    private Integer departmentType;
 
     public Integer getUserId() {
         return userId;
@@ -60,5 +63,29 @@ public class UserQueryParam extends BasePageParam {
 
     public void setSubCompanyId(Integer subCompanyId) {
         this.subCompanyId = subCompanyId;
+    }
+
+    public List<Integer> getDepartmentIdList() {
+        return departmentIdList;
+    }
+
+    public void setDepartmentIdList(List<Integer> departmentIdList) {
+        this.departmentIdList = departmentIdList;
+    }
+
+    public List<Integer> getSubCompanyIdList() {
+        return subCompanyIdList;
+    }
+
+    public void setSubCompanyIdList(List<Integer> subCompanyIdList) {
+        this.subCompanyIdList = subCompanyIdList;
+    }
+
+    public Integer getDepartmentType() {
+        return departmentType;
+    }
+
+    public void setDepartmentType(Integer departmentType) {
+        this.departmentType = departmentType;
     }
 }

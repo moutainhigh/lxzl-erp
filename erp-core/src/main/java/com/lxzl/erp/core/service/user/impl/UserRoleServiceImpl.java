@@ -595,18 +595,4 @@ public class UserRoleServiceImpl implements UserRoleService {
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
-
-    @Override
-    public ServiceResult<String, List<User>> getUserByRoleId(Integer roleId) {
-        ServiceResult<String, List<User>> result = new ServiceResult<>();
-        UserQueryParam userQueryParam = new UserQueryParam();
-        PageQuery pageQuery = new PageQuery();
-        pageQuery.setPageNo(1);
-        pageQuery.setPageSize(Integer.MAX_VALUE);
-        List<UserDO> userDOList = userMapper.listPage(userQueryParam, pageQuery);
-        result.setResult(UserConverter.convertUserList(userDOList));
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
-    }
-
 }

@@ -467,9 +467,9 @@ public class ProductServiceImpl implements ProductService {
                 }
             } else {
                 if (propertyCapacityParamMap.get(materialDO.getMaterialType()) == null) {
-                    propertyCapacityParamMap.put(materialDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
+                    propertyCapacityParamMap.put(materialDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue() * productMaterial.getMaterialCount());
                 } else {
-                    propertyCapacityParamMap.put(materialDO.getMaterialType(), BigDecimalUtil.add(propertyCapacityParamMap.get(materialDO.getMaterialType()), productCategoryPropertyValueDO.getPropertyCapacityValue()));
+                    propertyCapacityParamMap.put(materialDO.getMaterialType(), BigDecimalUtil.add(propertyCapacityParamMap.get(materialDO.getMaterialType()), productCategoryPropertyValueDO.getPropertyCapacityValue() * productMaterial.getMaterialCount()));
                 }
             }
         }

@@ -4,6 +4,8 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
+import com.lxzl.erp.common.domain.user.UserQueryParam;
+import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
@@ -57,9 +59,6 @@ public class WorkflowServiceImpl implements WorkflowService {
     private WorkflowLinkDetailMapper workflowLinkDetailMapper;
 
     @Autowired
-    private UserRoleService userRoleService;
-
-    @Autowired
     private UserService userService;
 
     @Autowired(required = false)
@@ -67,9 +66,6 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Autowired
     private PurchaseOrderService purchaseOrderService;
-
-    @Autowired
-    private CompanyService companyService;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -87,24 +83,17 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.WORKFLOW_TEMPLATE_HAVE_NO_NODE);
             return result;
         }
+        WorkflowNodeDO thisWorkflowNodeDO = workflowNodeDOList.get(0);
+        if (!verifyVerifyUsers(thisWorkflowNodeDO, verifyUser)) {
+            result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_ERROR);
+            return result;
+        }
 
         Integer workflowLinkId;
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferId(workflowType, workflowReferId);
         if (workflowLinkDO == null) {
-            WorkflowNodeDO thisWorkflowNodeDO = workflowNodeDOList.get(0);
-            if (!verifyVerifyUsers(thisWorkflowNodeDO, verifyUser)) {
-                result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_ERROR);
-                return result;
-            }
             workflowLinkId = generateWorkflowLink(workflowTemplateDO, workflowReferId, verifyUser, currentTime);
         } else {
-            List<WorkflowLinkDetailDO> workflowLinkDetailDOList = workflowLinkDO.getWorkflowLinkDetailDOList();
-            WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(workflowLinkDetailDOList.size() - 1);
-            WorkflowNodeDO thisWorkflowNodeDO = workflowNodeMapper.findById(lastWorkflowLinkDetailDO.getWorkflowNextNodeId());
-            if (!verifyVerifyUsers(thisWorkflowNodeDO, verifyUser)) {
-                result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_ERROR);
-                return result;
-            }
             workflowLinkId = continueWorkflowLink(workflowLinkDO, verifyUser, currentTime);
         }
 
@@ -221,6 +210,29 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.WORKFLOW_TEMPLATE_HAVE_NO_NODE);
             return result;
         }
+
+        // 是否通知业务模块
+        boolean noticeBusinessModule = false;
+        // 本步骤节点
+        WorkflowNodeDO nextWorkflowNodeDO = null;
+        WorkflowNodeDO previousWorkflowNodeDO = null;
+        for (WorkflowNodeDO workflowNodeDO : workflowNodeDOList) {
+            if (workflowNodeDO.getId().equals(lastWorkflowLinkDetailDO.getWorkflowPreviousNodeId())) {
+                previousWorkflowNodeDO = workflowNodeDO;
+            }
+            if (workflowNodeDO.getId().equals(lastWorkflowLinkDetailDO.getWorkflowNextNodeId())) {
+                nextWorkflowNodeDO = workflowNodeDO;
+                break;
+            }
+        }
+        // 如果审核通过并且下一步审核不为空的时候，判断下一步的审核人是否正确
+        if (VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus) && nextWorkflowNodeDO != null) {
+            if (!verifyVerifyUsers(nextWorkflowNodeDO, nextVerifyUser)) {
+                result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_ERROR);
+                return result;
+            }
+        }
+
         lastWorkflowLinkDetailDO.setVerifyStatus(verifyStatus);
         lastWorkflowLinkDetailDO.setVerifyTime(currentTime);
         lastWorkflowLinkDetailDO.setVerifyOpinion(verifyOpinion);
@@ -228,34 +240,19 @@ public class WorkflowServiceImpl implements WorkflowService {
         lastWorkflowLinkDetailDO.setUpdateTime(currentTime);
         workflowLinkDetailMapper.update(lastWorkflowLinkDetailDO);
 
-        // 是否通知业务模块
-        boolean noticeBusinessModule = false;
-        // 本步骤节点
-        WorkflowNodeDO thisWorkflowNodeDO = null;
-        WorkflowNodeDO previousWorkflowNodeDO = null;
-        for (WorkflowNodeDO workflowNodeDO : workflowNodeDOList) {
-            if (workflowNodeDO.getId().equals(lastWorkflowLinkDetailDO.getWorkflowPreviousNodeId())) {
-                previousWorkflowNodeDO = workflowNodeDO;
-            }
-            if (workflowNodeDO.getId().equals(lastWorkflowLinkDetailDO.getWorkflowNextNodeId())) {
-                thisWorkflowNodeDO = workflowNodeDO;
-                break;
-            }
-        }
-
         if (VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus)) {
 
             // 审核通过并且有下一步的情况
-            if (thisWorkflowNodeDO != null && thisWorkflowNodeDO.getWorkflowNextNodeId() != null) {
+            if (nextWorkflowNodeDO != null && nextWorkflowNodeDO.getWorkflowNextNodeId() != null) {
                 workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
 
                 WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
                 workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
                 workflowLinkDetailDO.setWorkflowReferId(lastWorkflowLinkDetailDO.getWorkflowReferId());
-                workflowLinkDetailDO.setWorkflowStep(thisWorkflowNodeDO.getWorkflowStep());
+                workflowLinkDetailDO.setWorkflowStep(nextWorkflowNodeDO.getWorkflowStep());
                 workflowLinkDetailDO.setWorkflowPreviousNodeId(lastWorkflowLinkDetailDO.getId());
-                workflowLinkDetailDO.setWorkflowCurrentNodeId(thisWorkflowNodeDO.getId());
-                workflowLinkDetailDO.setWorkflowNextNodeId(thisWorkflowNodeDO.getWorkflowNextNodeId());
+                workflowLinkDetailDO.setWorkflowCurrentNodeId(nextWorkflowNodeDO.getId());
+                workflowLinkDetailDO.setWorkflowNextNodeId(nextWorkflowNodeDO.getWorkflowNextNodeId());
                 workflowLinkDetailDO.setVerifyUser(nextVerifyUser);
                 workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
                 workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -310,6 +307,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowLinkDO.setUpdateTime(currentTime);
         workflowLinkMapper.update(workflowLinkDO);
 
+        result.setResult(workflowLinkDO.getId());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -442,22 +440,37 @@ public class WorkflowServiceImpl implements WorkflowService {
         if (workflowNodeDO == null) {
             return userList;
         }
+        UserQueryParam userQueryParam = new UserQueryParam();
         if (workflowNodeDO.getWorkflowUser() != null) {
             ServiceResult<String, User> userResult = userService.getUserById(workflowNodeDO.getWorkflowUser());
             if (ErrorCode.SUCCESS.equals(userResult.getErrorCode())) {
                 userList.add(userResult.getResult());
             }
         } else if (workflowNodeDO.getWorkflowRole() != null) {
-            ServiceResult<String, List<User>> userResult = userRoleService.getUserByRoleId(workflowNodeDO.getWorkflowRole());
+            userQueryParam.setRoleId(workflowNodeDO.getWorkflowRole());
+            ServiceResult<String, List<User>> userResult = userService.getUserListByParam(userQueryParam);
             if (ErrorCode.SUCCESS.equals(userResult.getErrorCode())) {
                 userList = userResult.getResult();
             }
         } else if (workflowNodeDO.getWorkflowDepartment() != null) {
-            DepartmentQueryParam departmentQueryParam = new DepartmentQueryParam();
-            departmentQueryParam.setDepartmentId(workflowNodeDO.getWorkflowDepartment());
-            ServiceResult<String, List<User>> departmentTreeServiceResult = userService.getUserByDepartmentId(workflowNodeDO.getWorkflowDepartment());
-            if (ErrorCode.SUCCESS.equals(departmentTreeServiceResult.getErrorCode())) {
-                userList = departmentTreeServiceResult.getResult();
+            userQueryParam.setDepartmentId(workflowNodeDO.getWorkflowDepartment());
+            ServiceResult<String, List<User>> departmentUserResult = userService.getUserListByParam(userQueryParam);
+            if (ErrorCode.SUCCESS.equals(departmentUserResult.getErrorCode())) {
+                userList = departmentUserResult.getResult();
+            }
+        } else if (workflowNodeDO.getWorkflowDepartmentType() != null) {
+            userQueryParam.setDepartmentType(workflowNodeDO.getWorkflowDepartmentType());
+            User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+            List<Integer> subCompanyIdList = new ArrayList<>();
+            if (CollectionUtil.isNotEmpty(loginUser.getRoleList())) {
+                for (Role role : loginUser.getRoleList()) {
+                    subCompanyIdList.add(role.getSubCompanyId());
+                }
+            }
+            userQueryParam.setSubCompanyIdList(subCompanyIdList);
+            ServiceResult<String, List<User>> subCompanyUserResult = userService.getUserListByParam(userQueryParam);
+            if (ErrorCode.SUCCESS.equals(subCompanyUserResult.getErrorCode())) {
+                userList = subCompanyUserResult.getResult();
             }
         }
 

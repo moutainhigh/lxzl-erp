@@ -14,13 +14,60 @@ import java.util.List;
 
 public interface UserService extends BaseService {
 
-    ServiceResult<String,User> login(LoginParam loginParam, String ip);
+    /**
+     * 登录
+     *
+     * @param loginParam 登录参数
+     * @param ip         ip
+     * @return 用户信息
+     */
+    ServiceResult<String, User> login(LoginParam loginParam, String ip);
+
+    /**
+     * 添加用户
+     *
+     * @param user 用户信息
+     * @return 用户ID
+     */
     ServiceResult<String, Integer> addUser(User user);
+
+    /**
+     * 修改用户信息
+     *
+     * @param user 用户信息
+     * @return 用户ID
+     */
     ServiceResult<String, Integer> updateUser(User user);
+
+    /**
+     * 修改用户密码
+     *
+     * @param user 用户信息
+     * @return 用户ID
+     */
     ServiceResult<String, Integer> updateUserPassword(User user);
-    ServiceResult<String,User> getUserById(Integer userId);
-    ServiceResult<String,Page<User>> userPage(UserQueryParam userQueryParam);
-    ServiceResult<String,List<User>> getUserByDepartmentId(Integer departmentId);
-    ServiceResult<String,List<User>> getUserByRoleId(Integer departmentId);
-    ServiceResult<String,List<User>> getUserBySubCompanyId(Integer departmentId);
+
+    /**
+     * 根据ID查询用户信息
+     *
+     * @param userId 用户ID
+     * @return 用户信息
+     */
+    ServiceResult<String, User> getUserById(Integer userId);
+
+    /**
+     * 查询用户列表（分页）
+     *
+     * @param userQueryParam 查询参数
+     * @return 用户列表
+     */
+    ServiceResult<String, Page<User>> userPage(UserQueryParam userQueryParam);
+
+    /**
+     * 查询用户列表（非分页）
+     *
+     * @param userQueryParam 查询参数
+     * @return 用户列表
+     */
+    ServiceResult<String, List<User>> getUserListByParam(UserQueryParam userQueryParam);
 }

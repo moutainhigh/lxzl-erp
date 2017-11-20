@@ -182,14 +182,8 @@ public class MaterialServiceImpl implements MaterialService {
             return result;
         }
 
-        String verifyCode = verifyAddMaterial(material);
-        if (!ErrorCode.SUCCESS.equals(verifyCode)) {
-            result.setErrorCode(verifyCode);
-            return result;
-        }
-
-        MaterialDO dbMaterialDO = materialMapper.findByPropertyAndValueId(material.getPropertyId(), material.getPropertyValueId());
-        if (dbMaterialDO == null || !dbMaterialDO.getMaterialNo().equals(material.getMaterialNo())) {
+        if ((material.getPropertyId() != null && !dbRecord.getPropertyId().equals(material.getPropertyId()))
+                || (material.getPropertyValueId() != null && !dbRecord.getPropertyValueId().equals(material.getPropertyValueId()))) {
             result.setErrorCode(ErrorCode.RECORD_ALREADY_EXISTS);
             return result;
         }

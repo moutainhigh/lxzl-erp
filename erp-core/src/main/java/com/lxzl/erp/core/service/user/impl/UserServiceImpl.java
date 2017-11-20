@@ -293,37 +293,11 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     }
 
     @Override
-    public ServiceResult<String, List<User>> getUserByDepartmentId(Integer departmentId) {
+    public ServiceResult<String, List<User>> getUserListByParam(UserQueryParam userQueryParam) {
         ServiceResult<String, List<User>> result = new ServiceResult<>();
-        UserQueryParam userQueryParam = new UserQueryParam();
-        userQueryParam.setDepartmentId(departmentId);
         PageQuery pageQuery = new PageQuery(1, Integer.MAX_VALUE);
-        List<UserDO> userDOList = userMapper.listPage(userQueryParam,pageQuery);
-        result.setResult(UserConverter.convertUserList(userDOList));
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
-    }
-
-    @Override
-    public ServiceResult<String, List<User>> getUserByRoleId(Integer roleId) {
-        ServiceResult<String, List<User>> result = new ServiceResult<>();
-        UserQueryParam userQueryParam = new UserQueryParam();
-        userQueryParam.setRoleId(roleId);
-        PageQuery pageQuery = new PageQuery(1, Integer.MAX_VALUE);
-        List<UserDO> userDOList = userMapper.listPage(userQueryParam,pageQuery);
-        result.setResult(UserConverter.convertUserList(userDOList));
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
-    }
-
-    @Override
-    public ServiceResult<String, List<User>> getUserBySubCompanyId(Integer subCompanyId) {
-        ServiceResult<String, List<User>> result = new ServiceResult<>();
-        UserQueryParam userQueryParam = new UserQueryParam();
-        userQueryParam.setSubCompanyId(subCompanyId);
-        PageQuery pageQuery = new PageQuery(1, Integer.MAX_VALUE);
-        List<UserDO> userDOList = userMapper.listPage(userQueryParam,pageQuery);
-        result.setResult(UserConverter.convertUserList(userDOList));
+        List<UserDO> userDoList = userMapper.listPage(userQueryParam, pageQuery);
+        result.setResult(UserConverter.convertUserList(userDoList));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }

@@ -12,6 +12,7 @@ public class WorkflowNodeDO  extends BaseDO {
 	private Integer workflowStep;
 	private Integer workflowPreviousNodeId;
 	private Integer workflowNextNodeId;
+	private Integer workflowDepartmentType;
 	private Integer workflowDepartment;
 	private Integer workflowRole;
 	private Integer workflowUser;
@@ -104,5 +105,13 @@ public class WorkflowNodeDO  extends BaseDO {
 
 	public void setWorkflowNextNodeId(Integer workflowNextNodeId) {
 		this.workflowNextNodeId = workflowNextNodeId;
+	}
+
+	public Integer getWorkflowDepartmentType() {
+		return workflowDepartmentType;
+	}
+
+	public void setWorkflowDepartmentType(Integer workflowDepartmentType) {
+		this.workflowDepartmentType = workflowDepartmentType;
 	}
 }
