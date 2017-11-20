@@ -61,13 +61,13 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     }
 
     private void filterSurplusProductCategoryNode(List<ProductCategory> nodeList) {
-        if(CollectionUtil.isEmpty(nodeList)){
+        if (CollectionUtil.isEmpty(nodeList)) {
             return;
         }
-        for(ProductCategory productCategory : nodeList){
-            if(CategoryType.CATEGORY_TYPE_FOLDER.equals(productCategory.getCategoryType()) && CollectionUtil.isEmpty(productCategory.getChildren())){
+        for (ProductCategory productCategory : nodeList) {
+            if (CategoryType.CATEGORY_TYPE_FOLDER.equals(productCategory.getCategoryType()) && CollectionUtil.isEmpty(productCategory.getChildren())) {
                 nodeList.remove(productCategory);
-            }else if(CollectionUtil.isNotEmpty(productCategory.getChildren())){
+            } else if (CollectionUtil.isNotEmpty(productCategory.getChildren())) {
                 filterSurplusProductCategoryNode(productCategory.getChildren());
             }
         }

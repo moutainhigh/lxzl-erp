@@ -72,7 +72,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     private CompanyService companyService;
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> commitWorkFlow(Integer workflowType, Integer workflowReferId, Integer verifyUser) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         Date currentTime = new Date();
