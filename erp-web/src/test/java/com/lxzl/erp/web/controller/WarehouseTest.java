@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.ProductOutStockParam;
+import com.lxzl.erp.common.domain.warehouse.StockOrderQueryParam;
 import com.lxzl.erp.common.domain.warehouse.WarehouseQueryParam;
 import org.junit.Test;
 
@@ -89,5 +90,14 @@ public class WarehouseTest extends ERPUnTransactionalTest {
         productOutStockParam.setProductEquipmentIdList(productEquipmentIdList);
 
         TestResult result = getJsonTestResult("/warehouse/productOutStock", productOutStockParam);
+    }
+
+
+
+    @Test
+    public void getStockOrderPage() throws Exception {
+        StockOrderQueryParam stockOrderQueryParam = new StockOrderQueryParam();
+        stockOrderQueryParam.setCauseType(1);
+        TestResult result = getJsonTestResult("/warehouse/getStockOrderPage", stockOrderQueryParam);
     }
 }

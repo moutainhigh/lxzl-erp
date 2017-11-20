@@ -19,6 +19,7 @@ public class StockOrderBulkMaterial implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
+	private String bulkMaterialName;
 
 	public Integer getStockOrderBulkMaterialId(){
 		return stockOrderBulkMaterialId;
@@ -100,4 +101,11 @@ public class StockOrderBulkMaterial implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public String getBulkMaterialName() {
+		return bulkMaterialName;
+	}
+
+	public void setBulkMaterialName(String bulkMaterialName) {
+		this.bulkMaterialName = bulkMaterialName;
+	}
 }

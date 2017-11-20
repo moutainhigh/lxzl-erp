@@ -26,6 +26,8 @@ public class OrderDO extends BaseDO {
     private BigDecimal totalOrderAmount;
     private BigDecimal totalDiscountAmount;
     private BigDecimal logisticsAmount;
+    private Integer orderSellerId;
+    private Integer orderSubCompanyId;
     private Integer orderStatus;
     private Integer payStatus;
     private Date payTime;
@@ -262,5 +264,21 @@ public class OrderDO extends BaseDO {
 
     public void setPaymentCycle(Integer paymentCycle) {
         this.paymentCycle = paymentCycle;
+    }
+
+    public Integer getOrderSellerId() {
+        return orderSellerId;
+    }
+
+    public void setOrderSellerId(Integer orderSellerId) {
+        this.orderSellerId = orderSellerId;
+    }
+
+    public Integer getOrderSubCompanyId() {
+        return orderSubCompanyId;
+    }
+
+    public void setOrderSubCompanyId(Integer orderSubCompanyId) {
+        this.orderSubCompanyId = orderSubCompanyId;
     }
 }

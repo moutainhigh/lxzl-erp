@@ -6,7 +6,9 @@ import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.ProductOutStockParam;
+import com.lxzl.erp.common.domain.warehouse.StockOrderQueryParam;
 import com.lxzl.erp.common.domain.warehouse.WarehouseQueryParam;
+import com.lxzl.erp.common.domain.warehouse.pojo.StockOrder;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.se.core.service.BaseService;
 
@@ -68,11 +70,26 @@ public interface WarehouseService extends BaseService {
 
     /**
      * 商品入库
+     *
      * @param productInStockParam 商品入库基本信息
      * @return
      * @description 商品入库，只支持采购首次入库
      */
     ServiceResult<String, Integer> productInStock(ProductInStockParam productInStockParam);
 
+    /**
+     * 商品出库
+     *
+     * @param productOutStockParam 商品出库参数
+     * @return 出库单ID
+     */
     ServiceResult<String, Integer> productOutStock(ProductOutStockParam productOutStockParam);
+
+
+    /**
+     * 获取出入库单列表
+     * @param stockOrderQueryParam 查询出入库单信息
+     * @return 出入库列表
+     */
+    ServiceResult<String, Page<StockOrder>> getStockOrderPage(StockOrderQueryParam stockOrderQueryParam);
 }

@@ -452,7 +452,7 @@ public class ProductServiceImpl implements ProductService {
         Map<Integer, MaterialDO> materialDOParamMap = new HashMap<>();
 
         for (ProductMaterial productMaterial : productSku.getProductMaterialList()) {
-            MaterialDO materialDO = materialMapper.findById(productMaterial.getMaterialId());
+            MaterialDO materialDO = materialMapper.findByNo(productMaterial.getMaterialNo());
             if (materialDO == null) {
                 result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                 return result;
@@ -467,9 +467,9 @@ public class ProductServiceImpl implements ProductService {
                 }
             } else {
                 if (propertyCapacityParamMap.get(materialDO.getMaterialType()) == null) {
-                    propertyCapacityParamMap.put(materialDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
+                    propertyCapacityParamMap.put(materialDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue() * productMaterial.getMaterialCount());
                 } else {
-                    propertyCapacityParamMap.put(materialDO.getMaterialType(), BigDecimalUtil.add(propertyCapacityParamMap.get(materialDO.getMaterialType()), productCategoryPropertyValueDO.getPropertyCapacityValue()));
+                    propertyCapacityParamMap.put(materialDO.getMaterialType(), BigDecimalUtil.add(propertyCapacityParamMap.get(materialDO.getMaterialType()), productCategoryPropertyValueDO.getPropertyCapacityValue() * productMaterial.getMaterialCount()));
                 }
             }
         }
@@ -492,7 +492,7 @@ public class ProductServiceImpl implements ProductService {
                     result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                     return result;
                 }
-                if (productCategoryPropertyValueDO.getPropertyCapacityValue() == null) {
+                if (materialProductCategoryPropertyValueDO.getPropertyCapacityValue() == null) {
                     if (skuMaterialDOMap.get(materialDO.getMaterialType()) == null) {
                         skuMaterialDOMap.put(materialDO.getMaterialType(), materialDO);
                     } else {
@@ -501,34 +501,32 @@ public class ProductServiceImpl implements ProductService {
                     }
                 } else {
                     if (skuPropertyCapacityMap.get(materialDO.getMaterialType()) == null) {
-                        skuPropertyCapacityMap.put(materialDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
+                        skuPropertyCapacityMap.put(materialDO.getMaterialType(), materialProductCategoryPropertyValueDO.getPropertyCapacityValue());
                     } else {
-                        skuPropertyCapacityMap.put(materialDO.getMaterialType(), BigDecimalUtil.add(skuPropertyCapacityMap.get(materialDO.getMaterialType()), productCategoryPropertyValueDO.getPropertyCapacityValue()));
+                        skuPropertyCapacityMap.put(materialDO.getMaterialType(), BigDecimalUtil.add(skuPropertyCapacityMap.get(materialDO.getMaterialType()), materialProductCategoryPropertyValueDO.getPropertyCapacityValue()));
                     }
                 }
             }
         }
 
         // 校验有容量的物料，是否匹配
-        for (Map.Entry<Integer, Double> entry : skuPropertyCapacityMap.entrySet()) {
-            if (propertyCapacityParamMap.get(entry.getKey()) == null || !propertyCapacityParamMap.get(entry.getKey()).equals(skuPropertyCapacityMap.get(entry.getKey()))) {
+        for (Map.Entry<Integer, Double> entry : propertyCapacityParamMap.entrySet()) {
+            if (skuPropertyCapacityMap.get(entry.getKey()) == null || !skuPropertyCapacityMap.get(entry.getKey()).equals(propertyCapacityParamMap.get(entry.getKey()))) {
                 result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
                 result.setResult(entry.getKey());
                 return result;
             } else {
                 skuPropertyCapacityMap.remove(entry.getKey());
-                propertyCapacityParamMap.remove(entry.getKey());
             }
         }
 
         // 校验单个的物料是否匹配
-        for (Map.Entry<Integer, MaterialDO> entry : skuMaterialDOMap.entrySet()) {
-            if (materialDOParamMap.get(entry.getKey()) == null || !materialDOParamMap.get(entry.getKey()).getId().equals(skuMaterialDOMap.get(entry.getKey()).getId())) {
+        for (Map.Entry<Integer, MaterialDO> entry : materialDOParamMap.entrySet()) {
+            if (skuMaterialDOMap.get(entry.getKey()) == null || !skuMaterialDOMap.get(entry.getKey()).getId().equals(materialDOParamMap.get(entry.getKey()).getId())) {
                 result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
                 result.setResult(entry.getKey());
                 return result;
             } else {
-                materialDOParamMap.remove(entry.getKey());
                 skuMaterialDOMap.remove(entry.getKey());
             }
         }

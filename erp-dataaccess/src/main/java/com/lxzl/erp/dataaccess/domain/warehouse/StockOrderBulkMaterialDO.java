@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.warehouse;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 
 
@@ -12,6 +14,10 @@ public class StockOrderBulkMaterialDO  extends BaseDO {
 	private String bulkMaterialNo;
 	private Integer dataStatus;
 	private String remark;
+
+	@Transient
+	private String bulkMaterialName;
+
 
 	public Integer getId(){
 		return id;
@@ -61,4 +67,11 @@ public class StockOrderBulkMaterialDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public String getBulkMaterialName() {
+		return bulkMaterialName;
+	}
+
+	public void setBulkMaterialName(String bulkMaterialName) {
+		this.bulkMaterialName = bulkMaterialName;
+	}
 }

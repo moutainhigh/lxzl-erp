@@ -1,6 +1,8 @@
 package com.lxzl.erp.common.domain.warehouse.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.annotation.Transient;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +30,10 @@ public class StockOrder implements Serializable {
 	private String updateUser;
 
 	private List<StockOrderEquipment> stockOrderEquipmentList;
+	private List<StockOrderBulkMaterial> stockOrderBulkMaterialList;
+
+	private String srcWarehouseName;
+	private String targetWarehouseName;
 
 	public Integer getStockOrderId(){
 		return stockOrderId;
@@ -171,5 +177,29 @@ public class StockOrder implements Serializable {
 
 	public void setStockOrderEquipmentList(List<StockOrderEquipment> stockOrderEquipmentList) {
 		this.stockOrderEquipmentList = stockOrderEquipmentList;
+	}
+
+	public List<StockOrderBulkMaterial> getStockOrderBulkMaterialList() {
+		return stockOrderBulkMaterialList;
+	}
+
+	public void setStockOrderBulkMaterialList(List<StockOrderBulkMaterial> stockOrderBulkMaterialList) {
+		this.stockOrderBulkMaterialList = stockOrderBulkMaterialList;
+	}
+
+	public String getSrcWarehouseName() {
+		return srcWarehouseName;
+	}
+
+	public void setSrcWarehouseName(String srcWarehouseName) {
+		this.srcWarehouseName = srcWarehouseName;
+	}
+
+	public String getTargetWarehouseName() {
+		return targetWarehouseName;
+	}
+
+	public void setTargetWarehouseName(String targetWarehouseName) {
+		this.targetWarehouseName = targetWarehouseName;
 	}
 }

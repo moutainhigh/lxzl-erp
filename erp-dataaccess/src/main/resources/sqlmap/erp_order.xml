@@ -21,6 +21,8 @@
         <result column="total_order_amount" jdbcType="DECIMAL" property="totalOrderAmount" />
         <result column="total_discount_amount" jdbcType="DECIMAL" property="totalDiscountAmount" />
         <result column="logistics_amount" jdbcType="DECIMAL" property="logisticsAmount" />
+        <result column="order_seller_id" jdbcType="INTEGER" property="orderSellerId" />
+        <result column="order_sub_company_id" jdbcType="INTEGER" property="orderSubCompanyId" />
         <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
         <result column="pay_status" jdbcType="INTEGER" property="payStatus" />
         <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
@@ -81,7 +83,7 @@
     </resultMap>
 
     <sql id="column_List">
-		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.rent_type as rent_type,eo.rent_time_length as rent_time_length,eo.deposit_cycle as deposit_cycle,eo.payment_cycle as payment_cycle,eo.total_deposit_amount as total_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.pay_mode as pay_mode,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_order_amount as total_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_status as order_status,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.buyer_remark as buyer_remark,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user
+		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.rent_type as rent_type,eo.rent_time_length as rent_time_length,eo.deposit_cycle as deposit_cycle,eo.payment_cycle as payment_cycle,eo.total_deposit_amount as total_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.pay_mode as pay_mode,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_order_amount as total_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.buyer_remark as buyer_remark,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user
 	</sql>
     <sql id="product_column_List">
         eop.id as order_product_id,eop.order_id as product_order_id,eop.product_id as product_product_id,eop.product_name as product_product_name,eop.product_sku_id as product_product_sku_id,eop.product_sku_name as product_product_sku_name,eop.product_count as product_product_count,eop.product_unit_amount as product_product_unit_amount,eop.product_amount as product_product_amount,eop.product_mode_params as product_product_mode_params,eop.data_status as product_data_status,eop.remark as product_remark,eop.create_time as product_create_time,eop.create_user as product_create_user,eop.update_time as product_update_time,eop.update_user as product_update_user
@@ -277,6 +279,12 @@
             </if>
             <if test="logisticsAmount != null">
                 logistics_amount = #{logisticsAmount, jdbcType=DECIMAL},
+            </if>
+            <if test="orderSellerId != null">
+                order_seller_id = #{orderSellerId, jdbcType=INTEGER},
+            </if>
+            <if test="orderSubCompanyId != null">
+                order_sub_company_id = #{orderSubCompanyId, jdbcType=INTEGER},
             </if>
             <if test="orderStatus != null">
                 order_status = #{orderStatus, jdbcType=INTEGER},

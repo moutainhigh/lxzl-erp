@@ -60,6 +60,7 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderProductInfo(orderProductDOList, orderDO);
 
         orderDO.setOrderNo(GenerateNoUtil.generateOrderNo(currentTime));
+        orderDO.setOrderSellerId(loginUser.getUserId());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
         orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         orderDO.setCreateUser(loginUser.getUserId().toString());

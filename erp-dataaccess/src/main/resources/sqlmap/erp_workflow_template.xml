@@ -21,6 +21,9 @@
 		<result column="node_workflow_node_name" jdbcType="VARCHAR" property="workflowNodeName" />
 		<result column="node_workflow_template_id" jdbcType="INTEGER" property="workflowTemplateId" />
 		<result column="node_workflow_step" jdbcType="INTEGER" property="workflowStep" />
+		<result column="node_workflow_previous_node_id" jdbcType="INTEGER" property="workflowPreviousNodeId" />
+		<result column="node_workflow_next_node_id" jdbcType="INTEGER" property="workflowNextNodeId" />
+		<result column="node_workflow_department_type" jdbcType="INTEGER" property="workflowDepartmentType" />
 		<result column="node_workflow_department" jdbcType="INTEGER" property="workflowDepartment" />
 		<result column="node_workflow_role" jdbcType="INTEGER" property="workflowRole" />
 		<result column="node_workflow_user" jdbcType="INTEGER" property="workflowUser" />
@@ -37,7 +40,7 @@
 	</sql>
 
 	<sql id="node_column_List">
-		ewn.id as node_id,ewn.workflow_node_name as node_workflow_node_name,ewn.workflow_template_id as node_workflow_template_id,ewn.workflow_step as node_workflow_step,ewn.workflow_department as node_workflow_department,ewn.workflow_role as node_workflow_role,ewn.workflow_user as node_workflow_user,ewn.data_status as node_data_status,ewn.remark as node_remark,ewn.create_time as node_create_time,ewn.create_user as node_create_user,ewn.update_time as node_update_time,ewn.update_user as node_update_user
+		ewn.id as node_id,ewn.workflow_node_name as node_workflow_node_name,ewn.workflow_template_id as node_workflow_template_id,ewn.workflow_step as node_workflow_step,ewn.workflow_previous_node_id as node_workflow_previous_node_id,ewn.workflow_next_node_id as node_workflow_next_node_id,ewn.workflow_department_type as node_workflow_department_type,ewn.workflow_department as node_workflow_department,ewn.workflow_role as node_workflow_role,ewn.workflow_user as node_workflow_user,ewn.data_status as node_data_status,ewn.remark as node_remark,ewn.create_time as node_create_time,ewn.create_user as node_create_user,ewn.update_time as node_update_time,ewn.update_user as node_update_user
 	</sql>
 
 	<select id="findById" resultMap="WorkflowTemplateDO" parameterType="java.lang.Integer">

@@ -1,6 +1,8 @@
 package com.lxzl.erp.common.domain.product.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.annotation.Transient;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -20,6 +22,7 @@ public class ProductMaterial implements Serializable {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 
+	private String materialNo;
 
 	public Integer getProductMaterialId(){
 		return productMaterialId;
@@ -109,4 +112,11 @@ public class ProductMaterial implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public String getMaterialNo() {
+		return materialNo;
+	}
+
+	public void setMaterialNo(String materialNo) {
+		this.materialNo = materialNo;
+	}
 }

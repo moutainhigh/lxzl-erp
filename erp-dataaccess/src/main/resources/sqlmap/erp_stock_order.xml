@@ -10,8 +10,10 @@
 		<result column="refer_no" jdbcType="VARCHAR" property="referNo" />
 		<result column="order_status" jdbcType="INTEGER" property="orderStatus" />
 		<result column="src_warehouse_id" jdbcType="INTEGER" property="srcWarehouseId" />
+		<result column="src_warehouse_name" jdbcType="VARCHAR" property="srcWarehouseName" />
 		<result column="src_warehouse_position_id" jdbcType="INTEGER" property="srcWarehousePositionId" />
 		<result column="target_warehouse_id" jdbcType="INTEGER" property="targetWarehouseId" />
+		<result column="target_warehouse_name" jdbcType="VARCHAR" property="targetWarehouseName" />
 		<result column="target_warehouse_position_id" jdbcType="INTEGER" property="targetWarehousePositionId" />
 		<result column="owner" jdbcType="INTEGER" property="owner" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -20,20 +22,108 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<collection property="stockOrderEquipmentDOList" resultMap="StockOrderEquipmentDO" />
+		<collection property="stockOrderBulkMaterialDOList" resultMap="StockOrderBulkMaterialDO" />
+	</resultMap>
+
+	<resultMap id="StockOrderEquipmentDO" type="com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO">
+		<id column="equipment_id" jdbcType="INTEGER" property="id" />
+		<result column="equipment_stock_order_no" jdbcType="VARCHAR" property="stockOrderNo" />
+		<result column="equipment_equipment_id" jdbcType="INTEGER" property="equipmentId" />
+		<result column="equipment_equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
+		<result column="equipment_product_id" jdbcType="INTEGER" property="productId" />
+		<result column="equipment_product_name" jdbcType="VARCHAR" property="productName" />
+		<result column="equipment_product_sku_id" jdbcType="INTEGER" property="productSkuId" />
+		<result column="equipment_product_sku_name" jdbcType="VARCHAR" property="productSkuName" />
+		<result column="equipment_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="equipment_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="equipment_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="equipment_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="equipment_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="equipment_update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<resultMap id="StockOrderBulkMaterialDO" type="com.lxzl.erp.dataaccess.domain.warehouse.StockOrderBulkMaterialDO">
+		<id column="bulk_material_id" jdbcType="INTEGER" property="id" />
+		<result column="bulk_material_stock_order_no" jdbcType="VARCHAR" property="stockOrderNo" />
+		<result column="bulk_material_bulk_material_id" jdbcType="INTEGER" property="bulkMaterialId" />
+		<result column="bulk_material_bulk_material_no" jdbcType="VARCHAR" property="bulkMaterialNo" />
+		<result column="bulk_material_name" jdbcType="VARCHAR" property="bulkMaterialName" />
+		<result column="bulk_material_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="bulk_material_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="bulk_material_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="bulk_material_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="bulk_material_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="bulk_material_update_user" jdbcType="VARCHAR" property="updateUser" />
 	</resultMap>
 
 	<sql id="column_List">
-		eso.id,eso.stock_order_no,eso.operation_type,eso.cause_type,eso.refer_no,eso.order_status,eso.src_warehouse_id,eso.src_warehouse_position_id,eso.target_warehouse_id,eso.target_warehouse_position_id,eso.owner,eso.data_status,eso.remark,eso.create_time,eso.create_user,eso.update_time,eso.update_user
+		eso.id as id,eso.stock_order_no as stock_order_no,eso.operation_type as operation_type,eso.cause_type as cause_type,eso.refer_no as refer_no,eso.order_status as order_status,eso.src_warehouse_id as src_warehouse_id,eso.src_warehouse_position_id as src_warehouse_position_id,eso.target_warehouse_id as target_warehouse_id,eso.target_warehouse_position_id as target_warehouse_position_id,eso.owner as owner,eso.data_status as data_status,eso.remark asremark,eso.create_time as create_time,eso.create_user as create_user,eso.update_time as update_time,eso.update_user as update_user
+	</sql>
+
+	<sql id="equipment_column_List">
+		esoe.id as equipment_id,esoe.stock_order_no as equipment_stock_order_no,esoe.equipment_id as equipment_equipment_id,esoe.equipment_no as equipment_equipment_no,esoe.data_status as equipment_data_status,esoe.remark as equipment_remark,esoe.create_time as equipment_create_time,esoe.create_user as equipment_create_user,esoe.update_time as equipment_update_time,esoe.update_user as equipment_update_user
+	</sql>
+
+	<sql id="bulk_material_column_List">
+		esobm.id as bulk_material_id,esobm.stock_order_no as bulk_material_stock_order_no,esobm.bulk_material_id as bulk_material_bulk_material_id,esobm.bulk_material_no as bulk_material_bulk_material_no,esobm.data_status as bulk_material_data_status,esobm.remark as bulk_material_remark,esobm.create_time as bulk_material_create_time,esobm.create_user as bulk_material_create_user,esobm.update_time as bulk_material_update_time,esobm.update_user as bulk_material_update_user
 	</sql>
 
 	<select id="findById" resultMap="StockOrderDO" parameterType="java.lang.Integer">
-		select <include refid="column_List"/> from erp_stock_order eso
-		where eso.id = #{id, jdbcType=INTEGER} and eso.data_status = 1
+		select order_main.*
+		<trim prefix=",">
+			<include refid="equipment_column_List" />
+		</trim>
+		<trim prefix=",">
+			<include refid="bulk_material_column_List" />
+		</trim>
+		<trim prefix=",">
+			ep.id AS equipment_product_id, ep.product_name AS equipment_product_name, eps.id as equipment_product_sku_id, eps.sku_name as equipment_product_sku_name, ebm.bulk_material_name as bulk_material_name
+		</trim>
+		FROM;
+		(
+			select <include refid="column_List"/>
+			<trim prefix=",">
+				ews.warehouse_name as src_warehouse_name,ewt.warehouse_name AS target_warehouse_name
+			</trim> from erp_stock_order eso
+			LEFT JOIN erp_warehouse ews ON ews.id = eso.src_warehouse_id and ews.data_status = 1
+			LEFT JOIN erp_warehouse ewt ON ewt.id = eso.target_warehouse_id and ewt.data_status = 1
+			where eso.id = #{id, jdbcType=INTEGER} and eso.data_status = 1
+		) order_main LEFT JOIN erp_stock_order_equipment esoe ON esoe.stock_order_no = order_main.stock_order_no and esoe.data_status = 1
+		LEFT JOIN erp_stock_order_bulk_material esobm ON esobm.stock_order_no = order_main.stock_order_no and esobm.data_status = 1
+		LEFT JOIN erp_product_equipment epe ON epe.equipment_no = esoe.equipment_no
+		LEFT JOIN erp_product ep ON ep.id = epe.product_id
+		LEFT JOIN erp_product_sku eps ON eps.id = epe.sku_id
+		LEFT JOIN erp_bulk_material ebm ON ebm.id = esobm.bulk_material_id
 	</select>
 
 	<select id="findOrderByTypeAndRefer" resultMap="StockOrderDO" parameterType="map">
-		select <include refid="column_List"/> from erp_stock_order eso
-		where eso.cause_type = #{causeType, jdbcType=INTEGER} and eso.refer_no = #{referNo, jdbcType=INTEGER} and eso.data_status = 1
+		select order_main.*
+		<trim prefix=",">
+			<include refid="equipment_column_List" />
+		</trim>
+		<trim prefix=",">
+			<include refid="bulk_material_column_List" />
+		</trim>
+		<trim prefix=",">
+			ep.id AS equipment_product_id, ep.product_name AS equipment_product_name, eps.id as equipment_product_sku_id, eps.sku_name as equipment_product_sku_name, ebm.bulk_material_name as bulk_material_name
+		</trim>
+		FROM
+		(
+			select <include refid="column_List"/>
+			<trim prefix=",">
+				ews.warehouse_name as src_warehouse_name,ewt.warehouse_name AS target_warehouse_name
+			</trim>
+			from erp_stock_order eso
+			LEFT JOIN erp_warehouse ews ON ews.id = eso.src_warehouse_id and ews.data_status = 1
+			LEFT JOIN erp_warehouse ewt ON ewt.id = eso.target_warehouse_id and ewt.data_status = 1
+			where eso.cause_type = #{causeType, jdbcType=INTEGER} and eso.refer_no = #{referNo, jdbcType=INTEGER} and eso.data_status = 1
+		) order_main LEFT JOIN erp_stock_order_equipment esoe ON esoe.stock_order_no = order_main.stock_order_no and esoe.data_status = 1
+		LEFT JOIN erp_stock_order_bulk_material esobm ON esobm.stock_order_no = order_main.stock_order_no and esobm.data_status = 1
+		LEFT JOIN erp_product_equipment epe ON epe.equipment_no = esoe.equipment_no
+		LEFT JOIN erp_product ep ON ep.id = epe.product_id
+		LEFT JOIN erp_product_sku eps ON eps.id = epe.sku_id
+		LEFT JOIN erp_bulk_material ebm ON ebm.id = esobm.bulk_material_id
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -46,13 +136,37 @@
 	</select>
 
 	<select id="listPage" resultMap="StockOrderDO" parameterType="map">
-		select <include refid="column_List"/> from erp_stock_order eso
-		<where>
-			<if test="true">
-				and eso.data_status = 1
-			</if>
-		</where>
-		LIMIT #{maps.start},#{maps.pageSize}
+		select order_main.*
+		<trim prefix=",">
+			<include refid="equipment_column_List" />
+		</trim>
+		<trim prefix=",">
+			<include refid="bulk_material_column_List" />
+		</trim>
+		<trim prefix=",">
+			ep.id AS equipment_product_id, ep.product_name AS equipment_product_name, eps.id as equipment_product_sku_id, eps.sku_name as equipment_product_sku_name, ebm.bulk_material_name as bulk_material_name
+		</trim>
+		FROM
+		(
+			select <include refid="column_List"/>
+			<trim prefix=",">
+				ews.warehouse_name AS src_warehouse_name,ewt.warehouse_name AS target_warehouse_name
+			</trim>
+			from erp_stock_order eso
+			LEFT JOIN erp_warehouse ews ON ews.id = eso.src_warehouse_id AND ews.data_status = 1
+			LEFT JOIN erp_warehouse ewt ON ewt.id = eso.target_warehouse_id AND ewt.data_status = 1
+			<where>
+				<if test="true">
+					and eso.data_status = 1
+				</if>
+			</where>
+			LIMIT #{maps.start},#{maps.pageSize}
+		) order_main LEFT JOIN erp_stock_order_equipment esoe ON esoe.stock_order_no = order_main.stock_order_no AND esoe.data_status = 1
+		LEFT JOIN erp_stock_order_bulk_material esobm ON esobm.stock_order_no = order_main.stock_order_no AND esobm.data_status = 1
+		LEFT JOIN erp_product_equipment epe ON epe.equipment_no = esoe.equipment_no
+		LEFT JOIN erp_product ep ON ep.id = epe.product_id
+		LEFT JOIN erp_product_sku eps ON eps.id = epe.sku_id
+		LEFT JOIN erp_bulk_material ebm ON ebm.id = esobm.bulk_material_id
 	</select>
 
 	<sql id="set_column_sql">

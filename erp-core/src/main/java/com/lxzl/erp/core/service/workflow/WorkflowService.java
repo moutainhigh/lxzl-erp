@@ -61,7 +61,7 @@ public interface WorkflowService extends BaseService {
      * @param returnType   返回类型0返回根部，1返回上一级
      * @param verifyOpinion  审核意见
      * @param nextVerifyUser 下一步的审核人，没有下一步的时候可空
-     * @return
+     * @return 工作流ID
      */
     ServiceResult<String, Integer> verifyWorkFlow(Integer workflowLinkId, Integer verifyStatus, Integer returnType, String verifyOpinion, Integer nextVerifyUser);
 }

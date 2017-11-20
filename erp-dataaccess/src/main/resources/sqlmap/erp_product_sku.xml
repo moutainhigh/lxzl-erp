@@ -77,6 +77,9 @@
         <trim prefix=",">
             <include refid="sku_property_column_List" />
         </trim>
+        <trim prefix=",">
+            <include refid="product_material_column_List" />
+        </trim>
         ,mpcp.property_name AS sku_property_property_name,mpcpv.property_value_name AS sku_property_property_value_Name
         FROM (
             select
@@ -87,6 +90,7 @@
         LEFT JOIN erp_product_sku_property epsps ON epsps.sku_id = sku_main.id AND epsps.data_status = 1 AND epsps.is_sku = 1
         LEFT JOIN erp_product_category_property mpcp ON epsps.property_id = mpcp.id
         LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id
+        LEFT JOIN erp_product_material epm ON epm.product_sku_id = sku_main.id AND epm.data_status = 1
         ORDER BY mpcp.data_order DESC,mpcpv.data_order DESC
     </select>
 
@@ -94,6 +98,9 @@
         SELECT sku_main.*
         <trim prefix=",">
             <include refid="sku_property_column_List" />
+        </trim>
+        <trim prefix=",">
+            <include refid="product_material_column_List" />
         </trim>
         ,mpcp.property_name AS sku_property_property_name,mpcpv.property_value_name AS sku_property_property_value_Name
         FROM (
@@ -104,6 +111,7 @@
         LEFT JOIN erp_product_sku_property epsps ON epsps.sku_id = sku_main.id AND epsps.data_status = 1 AND epsps.is_sku = 1
         LEFT JOIN erp_product_category_property mpcp ON epsps.property_id = mpcp.id
         LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id
+        LEFT JOIN erp_product_material epm ON epm.product_sku_id = sku_main.id AND epm.data_status = 1
         ORDER BY mpcp.data_order DESC,mpcpv.data_order DESC
     </select>
 

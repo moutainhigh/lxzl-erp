@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.warehouse;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 
 
@@ -12,6 +14,15 @@ public class StockOrderEquipmentDO  extends BaseDO {
 	private String equipmentNo;
 	private Integer dataStatus;
 	private String remark;
+
+	@Transient
+	private Integer productId;
+	@Transient
+	private String productName;
+	@Transient
+	private Integer productSkuId;
+	@Transient
+	private String productSkuName;
 
 	public Integer getId(){
 		return id;
@@ -61,4 +72,35 @@ public class StockOrderEquipmentDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public Integer getProductId() {
+		return productId;
+	}
+
+	public void setProductId(Integer productId) {
+		this.productId = productId;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public Integer getProductSkuId() {
+		return productSkuId;
+	}
+
+	public void setProductSkuId(Integer productSkuId) {
+		this.productSkuId = productSkuId;
+	}
+
+	public String getProductSkuName() {
+		return productSkuName;
+	}
+
+	public void setProductSkuName(String productSkuName) {
+		this.productSkuName = productSkuName;
+	}
 }
