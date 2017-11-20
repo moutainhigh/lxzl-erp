@@ -215,6 +215,20 @@ public class PageController extends BaseController {
         return "/warehouseManage/warehouseList";
     }
 
+    //收料通知
+    @RequestMapping("/purchase-receive-manage/list")
+    public String purchaseReceiveManageList() {
+        return "/purchaseReceiveManage/purchaseReceiveList";
+    }
+    @RequestMapping("/purchase-receive-manage/detail")
+    public String purchaseReceiveManageDetail() {
+        return "/purchaseReceiveManage/purchaseReceiveDetail";
+    }
+    @RequestMapping("/purchase-receive-manage/edit")
+    public String purchaseReceiveManageEdit() {
+        return "/purchaseReceiveManage/purchaseReceiveEdit";
+    }
+
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")
