@@ -4,13 +4,11 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.*;
 import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.FileUtil;
-import com.lxzl.erp.common.util.GenerateNoUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.*;
@@ -233,7 +231,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public ServiceResult<String, Integer> updateProductMaterial(ProductSku productSku){
+    public ServiceResult<String, Integer> updateProductMaterial(ProductSku productSku) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
         ServiceResult<String, Integer> result = new ServiceResult<>();
@@ -435,6 +433,111 @@ public class ProductServiceImpl implements ProductService {
         Page<ProductSku> page = new Page<>(productSkuList, totalCount, productSkuQueryParam.getPageNo(), productSkuQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> verifyProductMaterial(ProductSku productSku) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+
+        //校验传进来的物料类型总和
+        if (CollectionUtil.isEmpty(productSku.getProductMaterialList())) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+
+        // 存储有容量的物料，key类型，value容量，比对下是否相等即可
+        Map<Integer, Double> propertyCapacityParamMap = new HashMap<>();
+        // 存储没有容量的物料，key为类型，value就一个物料
+        Map<Integer, MaterialDO> materialDOParamMap = new HashMap<>();
+
+        for (ProductMaterial productMaterial : productSku.getProductMaterialList()) {
+            MaterialDO materialDO = materialMapper.findById(productMaterial.getMaterialId());
+            if (materialDO == null) {
+                result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+                return result;
+            }
+            ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(materialDO.getPropertyValueId());
+            if (productCategoryPropertyValueDO.getPropertyCapacityValue() == null) {
+                if (materialDOParamMap.get(materialDO.getMaterialType()) == null) {
+                    materialDOParamMap.put(materialDO.getMaterialType(), materialDO);
+                } else {
+                    result.setErrorCode(ErrorCode.MATERIAL_COUNT_ERROR);
+                    return result;
+                }
+            } else {
+                if (propertyCapacityParamMap.get(materialDO.getMaterialType()) == null) {
+                    propertyCapacityParamMap.put(materialDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
+                } else {
+                    propertyCapacityParamMap.put(materialDO.getMaterialType(), BigDecimalUtil.add(propertyCapacityParamMap.get(materialDO.getMaterialType()), productCategoryPropertyValueDO.getPropertyCapacityValue()));
+                }
+            }
+        }
+
+        // 查询SKU的属性
+
+        // 存储有容量的物料，key类型，value容量，比对下是否相等即可
+        Map<Integer, Double> skuPropertyCapacityMap = new HashMap<>();
+        // 存储没有容量的物料，key为类型，value就一个物料
+        Map<Integer, MaterialDO> skuMaterialDOMap = new HashMap<>();
+
+        // SKU 属性值
+        List<ProductSkuPropertyDO> productSkuPropertyDOList = productSkuPropertyMapper.findSkuProperties(productSku.getSkuId());
+        for (ProductSkuPropertyDO productSkuPropertyDO : productSkuPropertyDOList) {
+            ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productSkuPropertyDO.getPropertyValueId());
+            if (productCategoryPropertyValueDO.getReferId() != null) {
+                ProductCategoryPropertyValueDO materialProductCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productCategoryPropertyValueDO.getReferId());
+                MaterialDO materialDO = materialMapper.findByPropertyAndValueId(materialProductCategoryPropertyValueDO.getPropertyId(), materialProductCategoryPropertyValueDO.getId());
+                if (materialDO == null) {
+                    result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+                    return result;
+                }
+                if (productCategoryPropertyValueDO.getPropertyCapacityValue() == null) {
+                    if (skuMaterialDOMap.get(materialDO.getMaterialType()) == null) {
+                        skuMaterialDOMap.put(materialDO.getMaterialType(), materialDO);
+                    } else {
+                        result.setErrorCode(ErrorCode.MATERIAL_COUNT_ERROR);
+                        return result;
+                    }
+                } else {
+                    if (skuPropertyCapacityMap.get(materialDO.getMaterialType()) == null) {
+                        skuPropertyCapacityMap.put(materialDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
+                    } else {
+                        skuPropertyCapacityMap.put(materialDO.getMaterialType(), BigDecimalUtil.add(skuPropertyCapacityMap.get(materialDO.getMaterialType()), productCategoryPropertyValueDO.getPropertyCapacityValue()));
+                    }
+                }
+            }
+        }
+
+        // 校验有容量的物料，是否匹配
+        for (Map.Entry<Integer, Double> entry : skuPropertyCapacityMap.entrySet()) {
+            if (propertyCapacityParamMap.get(entry.getKey()) == null || !propertyCapacityParamMap.get(entry.getKey()).equals(skuPropertyCapacityMap.get(entry.getKey()))) {
+                result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+                result.setResult(entry.getKey());
+                return result;
+            } else {
+                skuPropertyCapacityMap.remove(entry.getKey());
+                propertyCapacityParamMap.remove(entry.getKey());
+            }
+        }
+
+        // 校验单个的物料是否匹配
+        for (Map.Entry<Integer, MaterialDO> entry : skuMaterialDOMap.entrySet()) {
+            if (materialDOParamMap.get(entry.getKey()) == null || !materialDOParamMap.get(entry.getKey()).getId().equals(skuMaterialDOMap.get(entry.getKey()).getId())) {
+                result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+                result.setResult(entry.getKey());
+                return result;
+            } else {
+                materialDOParamMap.remove(entry.getKey());
+                skuMaterialDOMap.remove(entry.getKey());
+            }
+        }
+        if (skuPropertyCapacityMap.size() > 0 || skuMaterialDOMap.size() > 0) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
+            return result;
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 

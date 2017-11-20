@@ -109,8 +109,8 @@ public class ProductController extends BaseController {
     }
 
     @RequestMapping(value = "queryAllProductCategory", method = RequestMethod.POST)
-    public Result queryAllProductCategory(@RequestBody ProductCategory productCategory, BindingResult validResult) {
-        ServiceResult<String, List<ProductCategory>> serviceResult = productCategoryService.queryAllProductCategory();
+    public Result queryAllProductCategory(@RequestBody ProductCategoryQueryParam productCategoryQueryParam, BindingResult validResult) {
+        ServiceResult<String, List<ProductCategory>> serviceResult = productCategoryService.queryAllProductCategory(productCategoryQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

@@ -1,6 +1,7 @@
 package com.lxzl.erp.core.service.product;
 
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.product.ProductCategoryQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategory;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategoryProperty;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategoryPropertyValue;
@@ -17,7 +18,7 @@ import java.util.List;
 public interface ProductCategoryService extends BaseService {
 
     // 查询商品所有的类目
-    ServiceResult<String, List<ProductCategory>> queryAllProductCategory();
+    ServiceResult<String, List<ProductCategory>> queryAllProductCategory(ProductCategoryQueryParam productCategoryQueryParam);
 
     // 根据类目ID，查询类目下所有的属性
     ServiceResult<String, List<ProductCategoryProperty>> queryProductCategoryPropertyListByCategoryId(Integer categoryId);

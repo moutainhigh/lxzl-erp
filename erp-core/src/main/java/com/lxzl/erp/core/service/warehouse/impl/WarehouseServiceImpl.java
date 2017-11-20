@@ -286,6 +286,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             return result;
         }
 
+        // 生成入库单
         StockOrderDO stockOrderDO = new StockOrderDO();
         stockOrderDO.setOperationType(StockOperationType.STORCK_OPERATION_TYPE_IN);
         stockOrderDO.setStockOrderNo(GenerateNoUtil.generateStockOrderNo(currentTime));
@@ -303,6 +304,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         stockOrderDO.setCreateTime(currentTime);
         stockOrderMapper.save(stockOrderDO);
 
+        // 目前支持采购
         if (StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE.equals(causeType)) {
             if (CollectionUtil.isNotEmpty(productInStorageList)) {
                 for (ProductInStorage productInStorage : productInStorageList) {
@@ -324,6 +326,8 @@ public class WarehouseServiceImpl implements WarehouseService {
                     materialMapper.update(materialDO);
                 }
             }
+        } else {
+            throw new BusinessException(ErrorCode.BUSINESS_EXCEPTION);
         }
 
         result.setErrorCode(ErrorCode.SUCCESS);

@@ -4,11 +4,12 @@ import com.lxzl.erp.common.constant.CategoryType;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.product.ProductCategoryQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategory;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategoryProperty;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategoryPropertyValue;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.GenerateNoUtil;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.core.service.product.ProductCategoryService;
 import com.lxzl.erp.core.service.product.impl.support.ProductCategoryConverter;
 import com.lxzl.erp.core.service.product.impl.support.ProductCategoryPropertyConverter;
@@ -16,7 +17,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyValueMapper;
-import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
@@ -46,15 +46,31 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     private static Logger logger = LoggerFactory.getLogger(ProductCategoryServiceImpl.class);
 
     @Override
-    public ServiceResult<String, List<ProductCategory>> queryAllProductCategory() {
+    public ServiceResult<String, List<ProductCategory>> queryAllProductCategory(ProductCategoryQueryParam productCategoryQueryParam) {
         ServiceResult<String, List<ProductCategory>> result = new ServiceResult<>();
 
         Map<String, Object> maps = new HashMap<>();
+        maps.put("productCategoryQueryParam", productCategoryQueryParam);
         List<ProductCategoryDO> productCategoryDOList = productCategoryMapper.findAllCategory(maps);
         List<ProductCategory> nodeList = ProductCategoryConverter.convertProductCategoryTree(ProductCategoryConverter.convertProductCategoryDOList(productCategoryDOList));
+        // 过滤没有下级且本身不是
+        filterSurplusProductCategoryNode(nodeList);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(nodeList);
         return result;
+    }
+
+    private void filterSurplusProductCategoryNode(List<ProductCategory> nodeList) {
+        if(CollectionUtil.isEmpty(nodeList)){
+            return;
+        }
+        for(ProductCategory productCategory : nodeList){
+            if(CategoryType.CATEGORY_TYPE_FOLDER.equals(productCategory.getCategoryType()) && CollectionUtil.isEmpty(productCategory.getChildren())){
+                nodeList.remove(productCategory);
+            }else if(CollectionUtil.isNotEmpty(productCategory.getChildren())){
+                filterSurplusProductCategoryNode(productCategory.getChildren());
+            }
+        }
     }
 
     @Override
@@ -80,7 +96,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> addProductCategoryPropertyValue(ProductCategoryPropertyValue productCategoryPropertyValue) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
