@@ -78,10 +78,10 @@
                                     </label>
                                 </th>
                                 {{/hasCommonActionButtons}}
-                                <td>编号</td>
-                                <td>名称</td>
-                                <td>类型</td>
-                                <td>属性</td>
+                                <th>编号</th>
+                                <th>名称</th>
+                                <th>类型</th>
+                                <th>属性</th>
                                 <th>本身价值</th>
                                 <th>租赁价格</th>
                                 <th>描述</th>

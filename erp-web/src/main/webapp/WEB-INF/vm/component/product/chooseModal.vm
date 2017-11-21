@@ -74,7 +74,6 @@
                             </div>
                         </td>
                     </tr>
-                    <div class="detail">测试容器</div>
                     <tr class="bg-light br-n" style="height: 0">
                         <td colspan="7" class="pn mn br-n" style="height: 0"></td>
                     </tr>

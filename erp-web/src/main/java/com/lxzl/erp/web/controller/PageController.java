@@ -260,5 +260,10 @@ public class PageController extends BaseController {
     public String auditUserChoose() {
         return "/component/purchase/chooseAuditUserModal";
     }
+    //采购单选择审核人Modal
+    @RequestMapping("/material/choose")
+    public String materialChoose() {
+        return "/component/material/chooseModal";
+    }
 
 }
