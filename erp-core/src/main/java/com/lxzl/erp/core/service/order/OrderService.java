@@ -40,7 +40,7 @@ public interface OrderService extends VerifyReceiver {
      * @param orderNo 订单号码
      * @return 是否成功，订单号码
      */
-    ServiceResult<String, Integer> cancelOrder(String orderNo);
+    ServiceResult<String, String> cancelOrder(String orderNo);
 
     /**
      * 根据参数查询订单
@@ -64,7 +64,7 @@ public interface OrderService extends VerifyReceiver {
      * @param order 订单信息
      * @return 订单ID
      */
-    ServiceResult<String, Integer> deliveryOrder(Order order);
+    ServiceResult<String, String> deliveryOrder(Order order);
 
 
     /**
@@ -73,7 +73,7 @@ public interface OrderService extends VerifyReceiver {
      * @param orderNo 订单编号
      * @return 订单ID
      */
-    ServiceResult<String, Integer> confirmOrder(String orderNo);
+    ServiceResult<String, String> confirmOrder(String orderNo);
 
     /**
      * 查询订单商品项

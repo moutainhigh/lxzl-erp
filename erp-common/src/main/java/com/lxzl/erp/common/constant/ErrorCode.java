@@ -61,7 +61,7 @@ public class ErrorCode {
     public static final String BULK_MATERIAL_NOT_EXISTS = "J200020";
     public static final String PRODUCT_NOT_EXISTS = "J200021";
     public static final String PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE = "J200022";
-
+    public static final String PRODUCT_IS_NOT_RENT = "J200023";
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
     public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
@@ -235,6 +235,7 @@ public class ErrorCode {
         MAP.put(BULK_MATERIAL_NOT_EXISTS,"散料不存在");
         MAP.put(PRODUCT_NOT_EXISTS,"商品不存在");
         MAP.put(PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE,"商品不在该库房");
+        MAP.put(PRODUCT_IS_NOT_RENT,"该商品已下架");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS,"工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE,"此工作流模板没有节点");

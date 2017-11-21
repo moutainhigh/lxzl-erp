@@ -39,6 +39,7 @@ public class OrderDO extends BaseDO {
     private String buyerRemark;
     private Integer dataStatus;
     private String remark;
+    private Integer owner;
 
     private List<OrderProductDO> orderProductDOList;
     private OrderConsignInfoDO orderConsignInfoDO;
@@ -289,5 +290,13 @@ public class OrderDO extends BaseDO {
 
     public void setRentStartTime(Date rentStartTime) {
         this.rentStartTime = rentStartTime;
+    }
+
+    public Integer getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Integer owner) {
+        this.owner = owner;
     }
 }
