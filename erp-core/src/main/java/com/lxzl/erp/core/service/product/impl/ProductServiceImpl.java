@@ -919,7 +919,7 @@ public class ProductServiceImpl implements ProductService {
             productMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
             productMaterialDO.setUpdateUser(loginUser.getUserId().toString());
             productMaterialDO.setUpdateTime(currentTime);
-            productMaterialMapper.save(productMaterialDO);
+            productMaterialMapper.update(productMaterialDO);
         }
     }
 
