@@ -117,6 +117,8 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
+        // TODO 先付后用的单子，如果没有付款就不能提交
+
         if (isNeedVerify) {
             ServiceResult<String, Integer> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getId(), verifyUser);
             if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
@@ -199,10 +201,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ServiceResult<String, Integer> cancelOrder(String orderNo) {
+    public ServiceResult<String, String> cancelOrder(String orderNo) {
         Date currentTime = new Date();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        ServiceResult<String, Integer> result = new ServiceResult<>();
+        ServiceResult<String, String> result = new ServiceResult<>();
         if (orderNo == null) {
             result.setErrorCode(ErrorCode.ID_NOT_NULL);
             return result;
@@ -224,7 +226,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
 
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(orderDO.getId());
+        result.setResult(orderDO.getOrderNo());
         return result;
     }
 
@@ -268,11 +270,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, Integer> deliveryOrder(Order order) {
-        ServiceResult<String, Integer> result = new ServiceResult<>();
+    public ServiceResult<String, String> deliveryOrder(Order order) {
+        ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
-        OrderDO dbRecordOrder = orderMapper.findByOrderId(order.getOrderId());
+        OrderDO dbRecordOrder = orderMapper.findByOrderNo(order.getOrderNo());
         if (dbRecordOrder == null) {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
@@ -393,7 +395,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(dbRecordOrder);
 
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(order.getOrderId());
+        result.setResult(order.getOrderNo());
         return result;
     }
 
@@ -423,8 +425,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ServiceResult<String, Integer> confirmOrder(String orderNo) {
-        ServiceResult<String, Integer> result = new ServiceResult<>();
+    public ServiceResult<String, String> confirmOrder(String orderNo) {
+        ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
 
         Date currentTime = new Date();
@@ -452,7 +454,7 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderMapper.update(orderDO);
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(orderDO.getId());
+        result.setResult(orderDO.getOrderNo());
         return result;
     }
 
@@ -506,10 +508,9 @@ public class OrderServiceImpl implements OrderService {
                 orderProductMapper.save(orderProductDO);
 
                 // TODO 减库存
-                ProductSkuDO productSkuDO = productSkuMapper.findById(orderProductDO.getProductSkuId());
+                /*ProductSkuDO productSkuDO = productSkuMapper.findById(orderProductDO.getProductSkuId());
                 productSkuDO.setStock(productSkuDO.getStock() - orderProductDO.getProductCount());
-                productSkuMapper.update(productSkuDO);
-
+                productSkuMapper.update(productSkuDO);*/
             }
         }
     }
@@ -635,6 +636,10 @@ public class OrderServiceImpl implements OrderService {
             ProductSkuDO productSkuDO = productSkuMapper.findById(orderProduct.getProductSkuId());
             if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode()) || productServiceResult.getResult() == null || productSkuDO == null) {
                 return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
+            }
+            Product product = productServiceResult.getResult();
+            if (CommonConstant.COMMON_CONSTANT_NO.equals(product.getIsRent())) {
+                return ErrorCode.PRODUCT_IS_NOT_RENT;
             }
             if (productSkuDO.getStock() == null || productSkuDO.getStock() <= 0 || (productSkuDO.getStock() - orderProduct.getProductCount()) < 0) {
                 return ErrorCode.ORDER_PRODUCT_STOCK_INSUFFICIENT;

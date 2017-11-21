@@ -46,6 +46,9 @@ public class Order implements Serializable {
     private List<OrderProduct> orderProductList;
     private OrderConsignInfo orderConsignInfo;
 
+    // 审核人,只提供给审核的时候用
+    private Integer verifyUser;
+
     public List<OrderProduct> getOrderProductList() {
         return orderProductList;
     }
@@ -308,5 +311,13 @@ public class Order implements Serializable {
 
     public void setRentStartTime(Date rentStartTime) {
         this.rentStartTime = rentStartTime;
+    }
+
+    public Integer getVerifyUser() {
+        return verifyUser;
+    }
+
+    public void setVerifyUser(Integer verifyUser) {
+        this.verifyUser = verifyUser;
     }
 }

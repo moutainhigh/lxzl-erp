@@ -1,6 +1,8 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -29,6 +31,42 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public Result create(@RequestBody Order order, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = orderService.createOrder(order);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "commit", method = RequestMethod.POST)
+    public Result commit(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = orderService.commitOrder(order.getOrderNo(), order.getVerifyUser());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "queryOrderByNo", method = RequestMethod.POST)
+    public Result queryOrderByNo(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, Order> serviceResult = orderService.queryOrderByNo(order.getOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "cancel", method = RequestMethod.POST)
+    public Result cancel(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = orderService.cancelOrder(order.getOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "queryAllOrder", method = RequestMethod.POST)
+    public Result queryAllOrder(@RequestBody OrderQueryParam param, BindingResult validResult) {
+        ServiceResult<String, Page<Order>> serviceResult = orderService.queryAllOrder(param);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "confirm", method = RequestMethod.POST)
+    public Result confirm(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = orderService.confirmOrder(order.getOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "delivery", method = RequestMethod.POST)
+    public Result delivery(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = orderService.deliveryOrder(order);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

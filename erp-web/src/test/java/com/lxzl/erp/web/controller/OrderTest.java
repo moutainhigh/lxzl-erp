@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class OrderTest extends ERPUnTransactionalTest {
     @Test
-    public void testCreateOrder() throws Exception{
+    public void testCreateOrder() throws Exception {
         Order order = new Order();
 
         order.setRentType(OrderRentType.RENT_TYPE_DAY);
@@ -50,6 +50,14 @@ public class OrderTest extends ERPUnTransactionalTest {
 
         order.setBuyerCustomerId(1);
         order.setCustomerConsignId(1);
-        TestResult result = getJsonTestResult("/order/create",order);
+        TestResult result = getJsonTestResult("/order/create", order);
+    }
+
+    @Test
+    public void testCommitOrder() throws Exception {
+        Order order = new Order();
+        order.setOrderNo("O201711151901080841608");
+        order.setVerifyUser(1);
+        TestResult result = getJsonTestResult("/order/commit", order);
     }
 }
