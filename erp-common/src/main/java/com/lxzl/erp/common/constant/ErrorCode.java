@@ -55,6 +55,12 @@ public class ErrorCode {
     public static final String PRODUCT_CATEGORY_PROPERTY_VALUE_ALREADY_EXISTS = "J200014";
     public static final String PRODUCT_EQUIPMENT_NOT_EXISTS = "J200015";
     public static final String MATERIAL_NOT_EXISTS = "J200016";
+    public static final String PRODUCT_EQUIPMENT_HAVE_NO_BULK_MATERIAL = "J200017";
+    public static final String PRODUCT_EQUIPMENT_IS_NOT_IDLE = "J200018";
+    public static final String BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT = "J200019";
+    public static final String BULK_MATERIAL_NOT_EXISTS = "J200020";
+    public static final String PRODUCT_NOT_EXISTS = "J200021";
+    public static final String PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE = "J200022";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -153,6 +159,7 @@ public class ErrorCode {
     public static final String ORDER_PAY_STATUS_ERROR = "J400013";
     public static final String ORDER_REFUND_STATUS_ERROR = "J400014";
     public static final String ORDER_PAY_RECORD_NOT_EXISTS = "J400015";
+    public static final String ORDER_PRODUCT_BULK_MATERIAL_COUNT_ERROR = "J400016";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -220,6 +227,12 @@ public class ErrorCode {
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_ALREADY_EXISTS,"商品属性值不存在");
         MAP.put(PRODUCT_EQUIPMENT_NOT_EXISTS,"设备不存在");
         MAP.put(MATERIAL_NOT_EXISTS,"物料不存在");
+        MAP.put(PRODUCT_EQUIPMENT_HAVE_NO_BULK_MATERIAL,"该设备没有散料，数据有误");
+        MAP.put(PRODUCT_EQUIPMENT_IS_NOT_IDLE,"该设备没有在空闲状态");
+        MAP.put(BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT,"散料在某设备上");
+        MAP.put(BULK_MATERIAL_NOT_EXISTS,"散料不存在");
+        MAP.put(PRODUCT_NOT_EXISTS,"商品不存在");
+        MAP.put(PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE,"商品不在该库房");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS,"工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE,"此工作流模板没有节点");
@@ -312,6 +325,7 @@ public class ErrorCode {
         MAP.put(ORDER_PRODUCT_EQUIPMENT_IS_NULL,"订单商品项设备编号为空");
         MAP.put(ORDER_STATUS_ERROR,"订单状态不正确，请仔细检查");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR,"订单商品设备数不正确，请仔细检查");
+        MAP.put(ORDER_PRODUCT_BULK_MATERIAL_COUNT_ERROR,"订单物料数不正确，请仔细检查");
         MAP.put(ORDER_RENT_TYPE_OR_LENGTH_ERROR,"订单租赁方式或时长有误");
         MAP.put(ORDER_PAY_MODE_NOT_NULL,"订单支付方式不能为空");
         MAP.put(ORDER_PAY_STATUS_ERROR,"付款单状态异常，请检查");

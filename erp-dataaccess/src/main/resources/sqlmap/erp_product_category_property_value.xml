@@ -41,7 +41,7 @@
         inner join erp_product_category_property epcpr on epcpr.id = epcpvr.property_id and epcpr.data_status = 1
         inner join erp_product_category epc on epcp.category_id = epc.id and epc.data_status = 1
         inner JOIN erp_product_sku_property epsp ON epsp.property_value_id = epcpv.id and epsp.data_status = 1
-        where epc.category_type = #{maps.categoryType, jdbcType=INTEGER} and (epsp.sku_id = #{maps.skuId, jdbcType=INTEGER} or epsp.product_id = #{maps.productId, jdbcType=INTEGER});
+        where epc.category_type = #{maps.categoryType, jdbcType=INTEGER} and epsp.product_id = #{maps.productId, jdbcType=INTEGER} and (epsp.sku_id = #{maps.skuId, jdbcType=INTEGER} or epsp.is_sku = 0 );
     </select>
 
     <sql id="set_column_sql">

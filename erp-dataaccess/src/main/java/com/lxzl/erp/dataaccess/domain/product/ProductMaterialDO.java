@@ -19,6 +19,10 @@ public class ProductMaterialDO  extends BaseDO {
 
 	@Transient
 	private String materialName;
+	@Transient
+	private String materialNo;
+	@Transient
+	private Double materialCapacityValue;
 
 	public Integer getId(){
 		return id;
@@ -90,5 +94,21 @@ public class ProductMaterialDO  extends BaseDO {
 
 	public void setMaterialName(String materialName) {
 		this.materialName = materialName;
+	}
+
+	public String getMaterialNo() {
+		return materialNo;
+	}
+
+	public void setMaterialNo(String materialNo) {
+		this.materialNo = materialNo;
+	}
+
+	public Double getMaterialCapacityValue() {
+		return materialCapacityValue;
+	}
+
+	public void setMaterialCapacityValue(Double materialCapacityValue) {
+		this.materialCapacityValue = materialCapacityValue;
 	}
 }

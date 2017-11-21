@@ -38,6 +38,7 @@ public class Material implements Serializable {
 
     private String propertyName;
     private String propertyValueName;
+    private Double materialCapacityValue;
 
     public Integer getMaterialId() {
         return materialId;
@@ -221,5 +222,13 @@ public class Material implements Serializable {
 
     public void setMonthRentPrice(BigDecimal monthRentPrice) {
         this.monthRentPrice = monthRentPrice;
+    }
+
+    public Double getMaterialCapacityValue() {
+        return materialCapacityValue;
+    }
+
+    public void setMaterialCapacityValue(Double materialCapacityValue) {
+        this.materialCapacityValue = materialCapacityValue;
     }
 }

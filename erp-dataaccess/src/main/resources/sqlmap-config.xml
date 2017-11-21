@@ -68,6 +68,7 @@
         <mapper resource="sqlmap/erp_purchase_delivery_order_material.xml" />
         <mapper resource="sqlmap/erp_purchase_receive_order_material.xml" />
         <mapper resource="sqlmap/erp_stock_order_bulk_material.xml" />
+        <mapper resource="sqlmap/erp_order_product_equipment.xml" />
     </mappers>
 
 </configuration>

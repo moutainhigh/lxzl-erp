@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductEquipmentMapper">
+
+	<resultMap id="OrderProductEquipmentDO" type="com.lxzl.erp.dataaccess.domain.order.OrderProductEquipmentDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="order_id" jdbcType="INTEGER" property="orderId" />
+		<result column="order_product_id" jdbcType="INTEGER" property="orderProductId" />
+		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
+		<result column="equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
+		<result column="expect_return_time" jdbcType="TIMESTAMP" property="expectReturnTime" />
+		<result column="actual_return_time" jdbcType="TIMESTAMP" property="actualReturnTime" />
+		<result column="expect_rent_amount" jdbcType="DECIMAL" property="expectRentAmount" />
+		<result column="actual_rent_amount" jdbcType="DECIMAL" property="actualRentAmount" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		eope.id,eope.order_id,eope.order_product_id,eope.equipment_id,eope.equipment_no,eope.expect_return_time,eope.actual_return_time,eope.expect_rent_amount,eope.actual_rent_amount,eope.data_status,eope.remark,eope.create_time,eope.create_user,eope.update_time,eope.update_user
+	</sql>
+
+	<select id="findById" resultMap="OrderProductEquipmentDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_order_product_equipment eope 
+		WHERE eope.id = #{id, jdbcType=INTEGER} AND eope.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eope.id) FROM erp_order_product_equipment eope 
+		<where>
+			<if test="true">
+				AND eope.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="OrderProductEquipmentDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_order_product_equipment eope 
+		<where>
+			<if test="true">
+				AND eope.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="orderId != null">
+				order_id = #{orderId,jdbcType=INTEGER},
+			</if>
+			<if test="orderProductId != null">
+				order_product_id = #{orderProductId,jdbcType=INTEGER},
+			</if>
+			<if test="equipmentId != null">
+				equipment_id = #{equipmentId,jdbcType=INTEGER},
+			</if>
+			<if test="equipmentNo != null">
+				equipment_no = #{equipmentNo,jdbcType=VARCHAR},
+			</if>
+			<if test="expectReturnTime != null">
+				expect_return_time = #{expectReturnTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="actualReturnTime != null">
+				actual_return_time = #{actualReturnTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="expectRentAmount != null">
+				expect_rent_amount = #{expectRentAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="actualRentAmount != null">
+				actual_rent_amount = #{actualRentAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.order.OrderProductEquipmentDO">
+		INSERT INTO erp_order_product_equipment <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.order.OrderProductEquipmentDO">
+		UPDATE erp_order_product_equipment <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+
+	<insert id="saveList" parameterType="java.util.ArrayList">
+		insert into erp_order_product_equipment (id,order_id,order_product_id,equipment_id,equipment_no,expect_return_time,actual_return_time,expect_rent_amount,actual_rent_amount,data_status,remark,create_time,create_user,update_time,update_user)
+		<foreach item="orderProductEquipmentDO" collection="orderProductEquipmentDOList" separator="UNION ALL">
+			SELECT #{orderProductEquipmentDO.id},#{orderProductEquipmentDO.orderId},#{orderProductEquipmentDO.orderProductId},#{orderProductEquipmentDO.equipmentId},#{orderProductEquipmentDO.equipmentNo},#{orderProductEquipmentDO.expectReturnTime},#{orderProductEquipmentDO.actualReturnTime},#{orderProductEquipmentDO.expectRentAmount},#{orderProductEquipmentDO.actualRentAmount},#{orderProductEquipmentDO.dataStatus},#{orderProductEquipmentDO.remark},#{orderProductEquipmentDO.createTime},#{orderProductEquipmentDO.createUser},#{orderProductEquipmentDO.updateTime},#{orderProductEquipmentDO.updateUser}
+			FROM DUAL
+		</foreach>
+	</insert>
+</mapper>

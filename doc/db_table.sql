@@ -855,6 +855,7 @@ CREATE TABLE `erp_order` (
   `buyer_customer_id` int(20) NOT NULL COMMENT '购买人ID',
   `rent_type` int(11) NOT NULL DEFAULT '0' COMMENT '租赁方式，1按月租，2按月租，4按次租',
   `rent_time_length` int(11) NOT NULL DEFAULT '0' COMMENT '租赁期限',
+  `rent_start_time` datetime NOT NULL COMMENT '起租时间',
   `deposit_cycle` int(11) COMMENT '押金期数',
   `payment_cycle` int(11) COMMENT '付款期数',
   `total_deposit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '押金金额',
@@ -1383,6 +1384,7 @@ CREATE TABLE `erp_message` (
   `receiver_user_id` int(20) NOT NULL COMMENT '接收人ID',
   `send_time` datetime NOT NULL COMMENT '发送时间',
   `read_time` datetime COMMENT '读取时间',
+  `title` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '标题',
   `message_text` text COMMENT '发送内容',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='站内信表';

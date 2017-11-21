@@ -15,6 +15,7 @@ public class Order implements Serializable {
     private Integer buyerCustomerId;
     private Integer rentType;
     private Integer rentTimeLength;
+    private Date rentStartTime;
     private Integer depositCycle;
     private Integer paymentCycle;
     private BigDecimal totalDepositAmount;
@@ -299,5 +300,13 @@ public class Order implements Serializable {
 
     public void setOrderSubCompanyId(Integer orderSubCompanyId) {
         this.orderSubCompanyId = orderSubCompanyId;
+    }
+
+    public Date getRentStartTime() {
+        return rentStartTime;
+    }
+
+    public void setRentStartTime(Date rentStartTime) {
+        this.rentStartTime = rentStartTime;
     }
 }

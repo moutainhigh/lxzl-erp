@@ -15,6 +15,7 @@ public class OrderDO extends BaseDO {
     private Integer buyerCustomerId;
     private Integer rentType;
     private Integer rentTimeLength;
+    private Date rentStartTime;
     private Integer depositCycle;
     private Integer paymentCycle;
     private BigDecimal totalDepositAmount;
@@ -280,5 +281,13 @@ public class OrderDO extends BaseDO {
 
     public void setOrderSubCompanyId(Integer orderSubCompanyId) {
         this.orderSubCompanyId = orderSubCompanyId;
+    }
+
+    public Date getRentStartTime() {
+        return rentStartTime;
+    }
+
+    public void setRentStartTime(Date rentStartTime) {
+        this.rentStartTime = rentStartTime;
     }
 }

@@ -52,8 +52,8 @@ public class ProductTest extends BaseUnTransactionalTest {
     }
 
     @Test
-    public void testVerifyProductMaterial(){
-        ProductSku productSku= productService.queryProductById(2000013).getResult().getProductSkuList().get(0);
+    public void testVerifyProductMaterial() {
+        ProductSku productSku = productService.queryProductById(2000009).getResult().getProductSkuList().get(0);
 
         ServiceResult<String, Integer> result = productService.verifyProductMaterial(productSku);
     }

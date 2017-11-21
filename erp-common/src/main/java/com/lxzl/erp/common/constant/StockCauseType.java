@@ -16,5 +16,8 @@ public class StockCauseType {
      */
     public static final Integer STOCK_CAUSE_TYPE_ALLOCATION = 2;
 
-    public static final Integer STOCK_CAUSE_TYPE_OUT = 2;
+    /**
+     * 订单发货
+     */
+    public static final Integer STOCK_CAUSE_TYPE_ORDER_DELIVERY = 3;
 }

@@ -37,6 +37,8 @@ public class MaterialDO extends BaseDO {
     private String propertyName;
     @Transient
     private String propertyValueName;
+    @Transient
+    private Double materialCapacityValue;
 
     public Integer getId() {
         return id;
@@ -188,5 +190,13 @@ public class MaterialDO extends BaseDO {
 
     public void setMaterialImgDOList(List<MaterialImgDO> materialImgDOList) {
         this.materialImgDOList = materialImgDOList;
+    }
+
+    public Double getMaterialCapacityValue() {
+        return materialCapacityValue;
+    }
+
+    public void setMaterialCapacityValue(Double materialCapacityValue) {
+        this.materialCapacityValue = materialCapacityValue;
     }
 }

@@ -686,9 +686,18 @@ public class WarehouseServiceImpl implements WarehouseService {
         Map<Integer, Integer> bulkMaterialStockMap = new HashMap<>();
         for (Integer bulkMaterialId : bulkMaterialIdList) {
             BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findById(bulkMaterialId);
+            if(bulkMaterialDO == null){
+                throw new BusinessException(ErrorCode.BULK_MATERIAL_NOT_EXISTS);
+            }
+            // 出货时，当前库房和出货库房必须是同一个
             if (!bulkMaterialDO.getCurrentWarehouseId().equals(srcWarehouseId)) {
                 throw new BusinessException(ErrorCode.STOCK_ALLOCATION_WAREHOUSE_IS_NOT_SAME);
             }
+            // 散料如果在设备上，则不允许走这种出库
+            if(bulkMaterialDO.getCurrentEquipmentId() != null){
+                throw new BusinessException(ErrorCode.BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT);
+            }
+
 
             bulkMaterialDO.setCurrentWarehouseId(targetWarehouseId);
             bulkMaterialDO.setCurrentWarehousePositionId(targetWarehousePositionId);

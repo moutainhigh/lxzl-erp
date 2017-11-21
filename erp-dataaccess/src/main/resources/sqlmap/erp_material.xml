@@ -27,6 +27,7 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="material_capacity_value" jdbcType="DOUBLE" property="materialCapacityValue" />
 		<collection property="materialImgDOList" resultMap="MaterialImgDO" />
 	</resultMap>
 
@@ -60,7 +61,7 @@
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
 			select
-			<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name
+			<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name,epcpv.property_capacity_value AS material_capacity_value
 			from erp_material em
 			LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
 			LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
@@ -72,7 +73,7 @@
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
 			select
-			<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name
+			<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name,epcpv.property_capacity_value AS material_capacity_value
 			from erp_material em
 			LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
 			LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
@@ -84,7 +85,7 @@
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
 			select
-			<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name
+			<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name,epcpv.property_capacity_value AS material_capacity_value
 			from erp_material em
 			LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
 			LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
@@ -114,7 +115,7 @@
 	<select id="listPage" resultMap="MaterialDO" parameterType="map">
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
-			SELECT <include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name
+			SELECT <include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name,epcpv.property_capacity_value AS material_capacity_value
 			FROM erp_material em
 			LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
 			LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
