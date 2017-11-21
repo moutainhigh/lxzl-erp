@@ -749,7 +749,7 @@ public class ProductServiceImpl implements ProductService {
                 productSkuDO.setUpdateUser(loginUser.getUserId().toString());
                 productSkuDO.setUpdateTime(currentTime);
                 productSkuMapper.update(productSkuDO);
-                List<ProductSkuPropertyDO> dbPropertiesRecord = productSkuPropertyMapper.findSkuProperties(skuId);
+                List<ProductSkuPropertyDO> dbPropertiesRecord = productSkuPropertyMapper.findSkuProperties(productSkuDO.getId());
                 saveSkuProperties(ProductConverter.convertProductSkuPropertyDOList(dbPropertiesRecord), productId, productSkuDO.getId(), CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE, loginUser, currentTime);
             }
         }
