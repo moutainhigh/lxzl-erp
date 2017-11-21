@@ -308,18 +308,20 @@ public class ProductServiceImpl implements ProductService {
         }
 
         ProductDO productDO = productMapper.findByProductId(productId);
+        ProductCategoryDO productCategoryDO = productCategoryMapper.findById(productDO.getCategoryId());
 
         List<ProductSkuDO> productSkuDOList = productSkuMapper.findByProductId(productId);
-        for(ProductSkuDO productSkuDO : productSkuDOList){
-            Map<String, Object> propertyValueMaps = new HashMap<>();
-            propertyValueMaps.put("productId", productSkuDO.getProductId());
-            propertyValueMaps.put("skuId", productSkuDO.getId());
-            propertyValueMaps.put("categoryType", CategoryType.CATEGORY_TYPE_PRODUCT);
-            List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByParams(propertyValueMaps);
-            productSkuDO.setShouldProductCategoryPropertyValueDOList(productCategoryPropertyValueDOList);
-        }
         productDO.setProductSkuDOList(productSkuDOList);
         Product product = ProductConverter.convertProductDO(productDO);
+
+        for(ProductSku productSku : product.getProductSkuList()){
+            Map<String, Object> propertyValueMaps = new HashMap<>();
+            propertyValueMaps.put("productId", productSku.getProductId());
+            propertyValueMaps.put("skuId", productSku.getSkuId());
+            propertyValueMaps.put("categoryType", productCategoryDO.getCategoryType());
+            List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByParams(propertyValueMaps);
+            productSku.setShouldProductCategoryPropertyValueList(ProductCategoryPropertyConverter.convertProductCategoryPropertyValueDOList(productCategoryPropertyValueDOList));
+        }
         Map<String, Object> maps = new HashMap<>();
         maps.put("productId", productId);
         List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findProductCategoryPropertyListByProductId(maps);
@@ -919,4 +921,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductMaterialMapper productMaterialMapper;
+
+    @Autowired
+    private ProductCategoryMapper productCategoryMapper;
 }

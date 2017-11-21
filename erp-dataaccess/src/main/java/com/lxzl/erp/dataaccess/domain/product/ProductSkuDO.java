@@ -22,7 +22,6 @@ public class ProductSkuDO extends BaseDO {
     private Integer dataStatus;
     private List<ProductSkuPropertyDO> productSkuPropertyDOList;
     private List<ProductMaterialDO> productMaterialDOList;
-    private List<ProductCategoryPropertyValueDO> shouldProductCategoryPropertyValueDOList;
 
     @Transient
     private String productName;
@@ -155,11 +154,4 @@ public class ProductSkuDO extends BaseDO {
         this.productMaterialDOList = productMaterialDOList;
     }
 
-    public List<ProductCategoryPropertyValueDO> getShouldProductCategoryPropertyValueDOList() {
-        return shouldProductCategoryPropertyValueDOList;
-    }
-
-    public void setShouldProductCategoryPropertyValueDOList(List<ProductCategoryPropertyValueDO> shouldProductCategoryPropertyValueDOList) {
-        this.shouldProductCategoryPropertyValueDOList = shouldProductCategoryPropertyValueDOList;
-    }
 }

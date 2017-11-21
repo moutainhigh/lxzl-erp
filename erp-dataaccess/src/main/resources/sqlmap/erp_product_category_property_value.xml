@@ -35,7 +35,7 @@
     </select>
 
     <select id="findByParams" resultMap="ProductCategoryPropertyValueDO" parameterType="java.util.Map">
-        select distinct epcp.id as property_id,epcp.property_name,epcpv.id as id,epcpv.property_value_name,epcpvr.property_capacity_value,epcpr.material_type from erp_product_category_property epcp
+        select distinct epcp.id as property_id,epcp.property_name,epcpv.id as id,epcpv.property_value_name,epcpvr.property_capacity_value,epcp.category_id,epcpr.material_type from erp_product_category_property epcp
         inner join erp_product_category_property_value epcpv on epcp.id = epcpv.property_id and epcpv.data_status = 1
         inner join erp_product_category_property_value epcpvr on epcpv.refer_id = epcpvr.id and epcpvr.data_status = 1
         inner join erp_product_category_property epcpr on epcpr.id = epcpvr.property_id and epcpr.data_status = 1

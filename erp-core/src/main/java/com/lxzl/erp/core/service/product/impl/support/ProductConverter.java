@@ -116,9 +116,6 @@ public class ProductConverter {
         if (productSkuDO.getProductMaterialDOList() != null && !productSkuDO.getProductMaterialDOList().isEmpty()) {
             productSku.setProductMaterialList(convertProductMaterialDOList(productSkuDO.getProductMaterialDOList()));
         }
-        if (productSkuDO.getShouldProductCategoryPropertyValueDOList() != null && !productSkuDO.getShouldProductCategoryPropertyValueDOList().isEmpty()) {
-            productSku.setShouldProductCategoryPropertyValueList(ProductCategoryPropertyConverter.convertProductCategoryPropertyValueDOList(productSkuDO.getShouldProductCategoryPropertyValueDOList()));
-        }
 
         if (productSkuDO.getProductName() != null) {
             productSku.setProductName(productSkuDO.getProductName());
