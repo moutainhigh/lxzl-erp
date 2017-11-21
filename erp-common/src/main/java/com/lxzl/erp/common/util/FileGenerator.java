@@ -1,4 +1,4 @@
-package com.lxzl.erp;
+package com.lxzl.erp.common.util;
 
 import com.lxzl.se.common.util.StringUtil;
 import org.slf4j.Logger;
@@ -9,8 +9,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyTest {
-    private static final Logger log = LoggerFactory.getLogger(MyTest.class);
+public class FileGenerator {
+    private static final Logger log = LoggerFactory.getLogger(FileGenerator.class);
 
     public static void main(String[] args) throws Exception {
 //        generateDomains("erp_customer");

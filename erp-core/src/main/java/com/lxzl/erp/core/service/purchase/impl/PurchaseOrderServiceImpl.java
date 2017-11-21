@@ -1306,7 +1306,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 return false;
             }
             //不是审核中状态的采购单，拒绝处理
-            if(!PurchaseOrderStatus.PURCHASE_ORDER_STATUS_VERIFYING.equals(purchaseOrderDO.getPurchaseType())){
+            if(!PurchaseOrderStatus.PURCHASE_ORDER_STATUS_VERIFYING.equals(purchaseOrderDO.getPurchaseOrderStatus())){
                 return false;
             }
             if(verifyResult){
