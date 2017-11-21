@@ -24,6 +24,7 @@ public class ProductMaterial implements Serializable {
 	private String updateUser;   //修改人
 
 	private String materialNo;
+	private String materialName;
 
 	public Integer getProductMaterialId(){
 		return productMaterialId;
@@ -127,5 +128,13 @@ public class ProductMaterial implements Serializable {
 
 	public void setMaterialType(Integer materialType) {
 		this.materialType = materialType;
+	}
+
+	public String getMaterialName() {
+		return materialName;
+	}
+
+	public void setMaterialName(String materialName) {
+		this.materialName = materialName;
 	}
 }

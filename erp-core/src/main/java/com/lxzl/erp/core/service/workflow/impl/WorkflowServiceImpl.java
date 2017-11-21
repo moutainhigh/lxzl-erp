@@ -12,6 +12,7 @@ import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.company.CompanyService;
+import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
@@ -66,6 +67,9 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Autowired
     private PurchaseOrderService purchaseOrderService;
+
+    @Autowired
+    private OrderService orderService;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -271,7 +275,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkDO.setCurrentVerifyUser(null);
             workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
             // 拒绝并且一步驳回到底
-            if (WorkflowReturnType.RETURN_TYPE_ROOT.equals(returnType)) {
+            if (returnType == null || WorkflowReturnType.RETURN_TYPE_ROOT.equals(returnType)) {
                 noticeBusinessModule = true;
             } else if (previousWorkflowNodeDO != null) {
                 WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
@@ -296,6 +300,13 @@ public class WorkflowServiceImpl implements WorkflowService {
             // 根据不同业务，回调业务系统
             if (WorkflowType.WORKFLOW_TYPE_PURCHASE.equals(workflowLinkDO.getWorkflowType())) {
                 boolean receiveResult = purchaseOrderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferId());
+                if (!receiveResult) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
+                    result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+                    return result;
+                }
+            } else if (WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())) {
+                boolean receiveResult = orderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferId());
                 if (!receiveResult) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
                     result.setErrorCode(ErrorCode.SYSTEM_ERROR);

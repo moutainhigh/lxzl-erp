@@ -50,6 +50,7 @@
         <result column="product_material_product_id" jdbcType="INTEGER" property="productId" />
         <result column="product_material_product_sku_id" jdbcType="INTEGER" property="productSkuId" />
         <result column="product_material_material_id" jdbcType="INTEGER" property="materialId" />
+        <result column="product_material_material_name" jdbcType="INTEGER" property="materialName" />
         <result column="product_material_material_type" jdbcType="INTEGER" property="materialType" />
         <result column="product_material_material_count" jdbcType="INTEGER" property="materialCount" />
         <result column="product_material_data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -104,7 +105,7 @@
         <trim prefix=",">
             <include refid="product_material_column_List" />
         </trim>
-        ,em.material_type as product_material_material_type,mpcp.property_name AS sku_property_property_name,mpcpv.property_value_name AS sku_property_property_value_Name
+        ,em.material_type as product_material_material_type,mpcp.property_name AS sku_property_property_name,mpcpv.property_value_name AS sku_property_property_value_Name,em.material_name AS product_material_material_name
         FROM (
             SELECT
             <include refid="column_List"/>

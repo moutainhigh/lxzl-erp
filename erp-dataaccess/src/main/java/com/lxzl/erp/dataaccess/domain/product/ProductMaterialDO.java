@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.product;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 
 
@@ -14,6 +16,9 @@ public class ProductMaterialDO  extends BaseDO {
 	private Integer materialCount;
 	private Integer dataStatus;
 	private String remark;
+
+	@Transient
+	private String materialName;
 
 	public Integer getId(){
 		return id;
@@ -77,5 +82,13 @@ public class ProductMaterialDO  extends BaseDO {
 
 	public void setMaterialType(Integer materialType) {
 		this.materialType = materialType;
+	}
+
+	public String getMaterialName() {
+		return materialName;
+	}
+
+	public void setMaterialName(String materialName) {
+		this.materialName = materialName;
 	}
 }

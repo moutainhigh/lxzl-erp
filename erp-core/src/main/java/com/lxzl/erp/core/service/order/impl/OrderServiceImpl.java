@@ -92,7 +92,6 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         boolean isNeedVerify = false;
-        // TODO 判断订单是否合法，如果合法直接通知库房发货，否则进入审核状态
         for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
             ProductSkuDO productSkuDO = productSkuMapper.findById(orderProductDO.getProductSkuId());
             if (productSkuDO == null) {
@@ -133,6 +132,31 @@ public class OrderServiceImpl implements OrderService {
         result.setResult(orderNo);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public boolean receiveVerifyResult(boolean verifyResult, Integer businessId) {
+        try {
+            Date currentTime = new Date();
+            User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+            OrderDO orderDO = orderMapper.findByOrderId(businessId);
+            if (orderDO == null || !OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())) {
+                return false;
+            }
+            if (verifyResult) {
+                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
+            } else {
+                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
+            }
+            orderDO.setUpdateTime(currentTime);
+            orderDO.setUpdateUser(loginUser.getUserId().toString());
+            orderMapper.update(orderDO);
+        } catch (Exception e) {
+            logger.error("审批订单通知失败： {}", businessId);
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -316,109 +340,6 @@ public class OrderServiceImpl implements OrderService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getId());
         return result;
-    }
-
-    @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, Integer> outOrderProductEquipment(OrderProduct orderProduct) {
-        ServiceResult<String, Integer> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        Date currentTime = new Date();
-        if (orderProduct.getEquipmentNoList() == null || orderProduct.getEquipmentNoList().size() == 0) {
-            result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_NOT_NULL);
-            return result;
-        }
-
-        OrderProductDO orderProductDO = orderProductMapper.findById(orderProduct.getOrderProductId());
-        if (orderProductDO == null) {
-            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-            return result;
-        }
-        OrderDO dbRecordOrder = orderMapper.findByOrderId(orderProductDO.getOrderId());
-        if (dbRecordOrder == null) {
-            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-            return result;
-        }
-        if (!OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(dbRecordOrder.getOrderStatus())) {
-            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
-            return result;
-        }
-
-        // 判断该订单项是不是录入多了
-        if ((orderProductDO.getEquipmentNoList().size() + orderProduct.getEquipmentNoList().size()) > orderProductDO.getProductCount()) {
-            result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR);
-            return result;
-        }
-
-        for (String equipmentNo : orderProduct.getEquipmentNoList()) {
-            ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(equipmentNo);
-            if (productEquipmentDO == null || !ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE.equals(productEquipmentDO.getEquipmentStatus())) {
-                result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_STATUS_ERROR);
-                return result;
-            }
-            if (!orderProductDO.getProductSkuId().equals(productEquipmentDO.getSkuId())) {
-                result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_SKU_NOT_SAME);
-                return result;
-            }
-
-            // 操作设备
-            productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY);
-            productEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
-            productEquipmentDO.setUpdateTime(currentTime);
-            productEquipmentMapper.update(productEquipmentDO);
-            // 商品出入库
-        }
-
-        result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(orderProductDO.getId());
-        return result;
-    }
-
-    @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, Integer> returnOrderProductEquipment(OrderProduct orderProduct) {
-        ServiceResult<String, Integer> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        Date currentTime = new Date();
-
-        OrderProductDO orderProductDO = orderProductMapper.findById(orderProduct.getOrderProductId());
-        if (orderProductDO == null) {
-            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-            return result;
-        }
-        if (orderProductDO.getEquipmentNoList() == null || orderProductDO.getEquipmentNoList().size() == 0) {
-            result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_IS_NULL);
-            return result;
-        }
-
-        for (String equipmentNo : orderProduct.getEquipmentNoList()) {
-            ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(equipmentNo);
-            if (productEquipmentDO == null || !ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY.equals(productEquipmentDO.getEquipmentStatus())) {
-                result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_STATUS_ERROR);
-                return result;
-            }
-            // 操作设备
-            productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
-            productEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
-            productEquipmentDO.setUpdateTime(currentTime);
-            productEquipmentMapper.update(productEquipmentDO);
-            // TODO 商品出入库
-        }
-        result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(orderProductDO.getId());
-        return result;
-    }
-
-    @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, Integer> updateOrderProductEquipment(OrderProduct orderProduct) {
-        // 变更设备就是先归还，然后再出库
-        ServiceResult<String, Integer> result = returnOrderProductEquipment(orderProduct);
-        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
-            result.setErrorCode(result.getErrorCode());
-            return result;
-        }
-        return outOrderProductEquipment(orderProduct);
     }
 
     @Override

@@ -5,9 +5,10 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
+import com.lxzl.erp.core.service.VerifyReceiver;
 import com.lxzl.se.core.service.BaseService;
 
-public interface OrderService extends BaseService {
+public interface OrderService extends VerifyReceiver {
 
     /**
      * 创建订单
@@ -73,30 +74,6 @@ public interface OrderService extends BaseService {
      * @return 订单ID
      */
     ServiceResult<String, Integer> confirmOrder(String orderNo);
-
-    /**
-     * 为订单项设备出库
-     *
-     * @param orderProduct 订单商品项
-     * @return 订单号
-     */
-    ServiceResult<String, Integer> outOrderProductEquipment(OrderProduct orderProduct);
-
-    /**
-     * 为订单项设备回库
-     *
-     * @param orderProduct 订单商品项
-     * @return 订单号
-     */
-    ServiceResult<String, Integer> returnOrderProductEquipment(OrderProduct orderProduct);
-
-    /**
-     * 为订单项变更设备
-     *
-     * @param orderProduct 订单商品项
-     * @return 订单号
-     */
-    ServiceResult<String, Integer> updateOrderProductEquipment(OrderProduct orderProduct);
 
     /**
      * 查询订单商品项
