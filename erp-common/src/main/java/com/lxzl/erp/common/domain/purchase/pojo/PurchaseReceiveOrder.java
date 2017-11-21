@@ -47,8 +47,8 @@ public class PurchaseReceiveOrder implements Serializable {
 	private List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList ;
 	private List<PurchaseReceiveOrderMaterial> PurchaseReceiveOrderMaterialList;
 	private String ownerName;
+	private String purchaseOrderNo;
 	private String productSupplierName;
-	private String invoiceSupplierName;
 
 	public Integer getPurchaseReceiveOrderId(){
 		return purchaseReceiveOrderId;
@@ -234,12 +234,12 @@ public class PurchaseReceiveOrder implements Serializable {
 		this.productSupplierName = productSupplierName;
 	}
 
-	public String getInvoiceSupplierName() {
-		return invoiceSupplierName;
+	public String getPurchaseOrderNo() {
+		return purchaseOrderNo;
 	}
 
-	public void setInvoiceSupplierName(String invoiceSupplierName) {
-		this.invoiceSupplierName = invoiceSupplierName;
+	public void setPurchaseOrderNo(String purchaseOrderNo) {
+		this.purchaseOrderNo = purchaseOrderNo;
 	}
 
 	public List<PurchaseReceiveOrderMaterial> getPurchaseReceiveOrderMaterialList() {

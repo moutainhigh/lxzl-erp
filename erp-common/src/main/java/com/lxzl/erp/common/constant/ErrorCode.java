@@ -142,6 +142,8 @@ public class ErrorCode {
     public static final String MATERIAL_NO_NOT_NULL = "J300046";
     public static final String STOCK_ALLOCATION_WAREHOUSE_IS_NOT_SAME = "J300047";
     public static final String WAREHOUSE_OUT_STORAGE_LIST_NOT_NULL = "J300048";
+    public static final String PURCHASE_RECEIVE_ORDER_MATERIAL_ID_NOT_NULL = "J300049";
+    public static final String PURCHASE_RECEIVE_ORDER_MATERIAL_REAL_COUNT_NOT_NULL = "J300050";
 
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
@@ -313,6 +315,8 @@ public class ErrorCode {
         MAP.put(PURCHASE_ORDER_SKU_MATERIAL_ERROR,"SKU物料配置错误");
         MAP.put(MATERIAL_NO_NOT_NULL,"物料编号不能为空");
         MAP.put(STOCK_ALLOCATION_WAREHOUSE_IS_NOT_SAME,"库存调拨库房必须是同一间");
+        MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_ID_NOT_NULL,"采购收货单物料项物料ID不能为空");
+        MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_REAL_COUNT_NOT_NULL,"采购收货单物料项实际物料数量不能为空");
 
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL,"订单商品不能为空");

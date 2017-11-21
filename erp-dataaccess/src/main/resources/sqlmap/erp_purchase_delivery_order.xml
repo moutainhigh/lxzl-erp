@@ -20,6 +20,8 @@
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 
+		<result column="supplier_name" jdbcType="VARCHAR" property="ownerSupplierName" />
+		<result column="purchase_order_no" jdbcType="VARCHAR" property="purchaseOrderNo" />
 		<collection property="purchaseDeliveryOrderProductDOList" resultMap="PurchaseDeliveryOrderProductDO" />
 		<collection property="purchaseDeliveryOrderMaterialDOList" resultMap="PurchaseDeliveryOrderMaterialDO" />
 	</resultMap>
@@ -79,18 +81,22 @@
 		where epdo.id = #{id, jdbcType=INTEGER} and data_status = 1 
 	</select>
 	<select id="findByNo" resultMap="PurchaseDeliveryOrderDO" parameterType="java.lang.String">
-		select <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/> from (
+		select <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/> ,es1.supplier_name,epo.purchase_no purchase_order_no from (
 		select <include refid="column_List"/> from erp_purchase_delivery_order epdo
 		where epdo.purchase_delivery_no = #{purchaseDeliveryNo, jdbcType=VARCHAR} and data_status = 1
 		) epdo left join erp_purchase_delivery_order_product epdop on epdo.id = epdop.purchase_delivery_order_id and epdop.data_status=1
 		left join erp_purchase_delivery_order_material epdom on epdo.id = epdom.purchase_delivery_order_id and epdom.data_status=1
+		left join erp_supplier es1 on epdo.owner_supplier_id = es1.id
+		left join erp_purchase_order epo on epo.id=epdo.purchase_order_id
 	</select>
 	<select id="findListByPurchaseId" resultMap="PurchaseDeliveryOrderDO" parameterType="java.lang.String">
-		SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/> FROM (
+		SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>,es1.supplier_name,epo.purchase_no purchase_order_no FROM (
 		SELECT <include refid="column_List"/> FROM erp_purchase_delivery_order epdo
 		WHERE epdo.purchase_order_id = #{purchaseOrderId, jdbcType=INTEGER} AND epdo.data_status = 1
 		) epdo LEFT JOIN erp_purchase_delivery_order_product epdop ON epdop.purchase_delivery_order_id = epdo.id AND epdop.data_status = 1
 		left join erp_purchase_delivery_order_material epdom on epdo.id = epdom.purchase_delivery_order_id and epdom.data_status=1
+		left join erp_supplier es1 on epdo.owner_supplier_id = es1.id
+		left join erp_purchase_order epo on epo.id=epdo.purchase_order_id
 	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(epdo.id) from erp_purchase_delivery_order epdo 
@@ -192,7 +198,7 @@
 	</select>
 	<select id="findPurchaseDeliveryOrderByParams" resultMap="PurchaseDeliveryOrderDO" parameterType="map">
 
-		select <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/> from (
+		select <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>,es1.supplier_name,epo.purchase_no purchase_order_no from (
 		SELECT <include refid="column_List"/>
 		FROM erp_purchase_delivery_order epdo
 		<where>
@@ -225,6 +231,9 @@
 		) epdo
 		left join erp_purchase_delivery_order_product epdop on epdo.id = epdop.purchase_delivery_order_id and epdop.data_status=1
 		left join erp_purchase_delivery_order_material epdom on epdo.id = epdom.purchase_delivery_order_id and epdom.data_status=1
+		left join erp_supplier es1 on epdo.owner_supplier_id = es1.id
+		left join erp_purchase_order epo on epo.id=epdo.purchase_order_id
+
 	</select>
 	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderDO">
 		insert into erp_purchase_delivery_order <include refid="set_column_sql"/>
