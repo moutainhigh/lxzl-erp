@@ -28,6 +28,9 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(epem.id) from erp_product_equipment_material epem 
 		<where>
+			<if test="maps.materialId != null">
+				and epem.material_id = #{maps.materialId, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				and epem.data_status = 1
 			</if>
@@ -37,6 +40,9 @@
 	<select id="listPage" resultMap="ProductEquipmentMaterialDO" parameterType="map">
 		select <include refid="column_List"/> from erp_product_equipment_material epem 
 		<where>
+			<if test="maps.materialId != null">
+				and epem.material_id = #{maps.materialId, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				and epem.data_status = 1
 			</if>

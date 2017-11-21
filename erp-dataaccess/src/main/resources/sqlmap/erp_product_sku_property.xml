@@ -39,7 +39,7 @@
             <foreach collection="maps.propertyValueIdList" item="propertyValueId" index="index" open="(" close=")" separator=",">
                 #{propertyValueId}
             </foreach> GROUP BY sku_id) count_sku
-        where count_sku.sku_count = (select count(ID) from erp_product_sku_property where sku_id = count_sku.sku_id)
+        where count_sku.sku_count = (select count(ID) from erp_product_sku_property where sku_id = count_sku.sku_id and data_status = 1)
         AND count_sku.sku_count = #{maps.propertyValueIdCount, jdbcType=INTEGER}
     </select>
 

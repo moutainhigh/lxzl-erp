@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,18 +32,30 @@ public class OrderTest extends ERPUnTransactionalTest {
 
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
-        orderProduct.setProductId(2000011);
-        orderProduct.setProductSkuId(38);
+        orderProduct.setProductId(2000013);
+        orderProduct.setProductSkuId(40);
         orderProduct.setProductCount(1);
 
         List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
         ProductSkuProperty productSkuProperty = new ProductSkuProperty();
         productSkuProperty.setPropertyId(1);
-        productSkuProperty.setPropertyValueId(1);
+        productSkuProperty.setPropertyValueId(2);
         productSkuPropertyList.add(productSkuProperty);
         ProductSkuProperty productSkuProperty2 = new ProductSkuProperty();
         productSkuProperty2.setPropertyId(2);
-        productSkuProperty2.setPropertyValueId(4);
+        productSkuProperty2.setPropertyValueId(5);
+        productSkuPropertyList.add(productSkuProperty2);
+        productSkuProperty2 = new ProductSkuProperty();
+        productSkuProperty2.setPropertyId(5);
+        productSkuProperty2.setPropertyValueId(11);
+        productSkuPropertyList.add(productSkuProperty2);
+        productSkuProperty2 = new ProductSkuProperty();
+        productSkuProperty2.setPropertyId(6);
+        productSkuProperty2.setPropertyValueId(13);
+        productSkuPropertyList.add(productSkuProperty2);
+        productSkuProperty2 = new ProductSkuProperty();
+        productSkuProperty2.setPropertyId(7);
+        productSkuProperty2.setPropertyValueId(15);
         productSkuPropertyList.add(productSkuProperty2);
         orderProduct.setProductSkuPropertyList(productSkuPropertyList);
         orderProductList.add(orderProduct);
@@ -50,6 +63,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 
         order.setBuyerCustomerId(1);
         order.setCustomerConsignId(1);
+        order.setRentStartTime(new Date());
         TestResult result = getJsonTestResult("/order/create", order);
     }
 
@@ -59,5 +73,13 @@ public class OrderTest extends ERPUnTransactionalTest {
         order.setOrderNo("O201711151901080841608");
         order.setVerifyUser(1);
         TestResult result = getJsonTestResult("/order/commit", order);
+    }
+
+    @Test
+    public void testCancelOrder() throws Exception {
+        Order order = new Order();
+        order.setOrderNo("O201711151901080841608");
+        order.setVerifyUser(1);
+        TestResult result = getJsonTestResult("/order/cancel", order);
     }
 }

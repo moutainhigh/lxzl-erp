@@ -62,6 +62,7 @@ public class ErrorCode {
     public static final String PRODUCT_NOT_EXISTS = "J200021";
     public static final String PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE = "J200022";
     public static final String PRODUCT_IS_NOT_RENT = "J200023";
+    public static final String MATERIAL_IN_USED = "J200024";
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
     public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
@@ -162,6 +163,7 @@ public class ErrorCode {
     public static final String ORDER_REFUND_STATUS_ERROR = "J400014";
     public static final String ORDER_PAY_RECORD_NOT_EXISTS = "J400015";
     public static final String ORDER_PRODUCT_BULK_MATERIAL_COUNT_ERROR = "J400016";
+    public static final String ORDER_HAVE_NO_RENT_START_TIME = "J400017";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -236,6 +238,7 @@ public class ErrorCode {
         MAP.put(PRODUCT_NOT_EXISTS,"商品不存在");
         MAP.put(PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE,"商品不在该库房");
         MAP.put(PRODUCT_IS_NOT_RENT,"该商品已下架");
+        MAP.put(MATERIAL_IN_USED,"物料正在被使用");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS,"工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE,"此工作流模板没有节点");
@@ -336,6 +339,7 @@ public class ErrorCode {
         MAP.put(ORDER_PAY_STATUS_ERROR,"付款单状态异常，请检查");
         MAP.put(ORDER_REFUND_STATUS_ERROR,"退款单状态异常，请检查");
         MAP.put(ORDER_PAY_RECORD_NOT_EXISTS,"支付记录不存在");
+        MAP.put(ORDER_HAVE_NO_RENT_START_TIME,"订单没有租赁开始时间");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL,"企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL,"企业公司名称不能为空");

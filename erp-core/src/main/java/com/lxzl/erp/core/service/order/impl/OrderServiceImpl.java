@@ -599,6 +599,9 @@ public class OrderServiceImpl implements OrderService {
         if (order.getCustomerConsignId() == null) {
             return ErrorCode.ORDER_CUSTOMER_CONSIGN_NOT_NULL;
         }
+        if (order.getRentStartTime() == null) {
+            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+        }
         if (order.getPayMode() == null) {
             return ErrorCode.ORDER_PAY_MODE_NOT_NULL;
         }

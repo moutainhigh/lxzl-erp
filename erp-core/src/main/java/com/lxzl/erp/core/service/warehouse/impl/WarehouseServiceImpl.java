@@ -496,7 +496,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         param.setCreateStartTime(DateUtil.getBeginOfDay(currentTime));
         param.setCreateEndTime(DateUtil.getEndOfDay(currentTime));
         Map<String, Object> maps = new HashMap<>();
-        maps.put("start", 1);
+        maps.put("start", 0);
         maps.put("pageSize", Integer.MAX_VALUE);
         maps.put("bulkMaterialQueryParam", param);
         Integer oldCount = bulkMaterialMapper.listCount(maps);
@@ -544,7 +544,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         param.setCreateStartTime(DateUtil.getBeginOfDay(currentTime));
         param.setCreateEndTime(DateUtil.getEndOfDay(currentTime));
         Map<String, Object> maps = new HashMap<>();
-        maps.put("start", 1);
+        maps.put("start", 0);
         maps.put("pageSize", Integer.MAX_VALUE);
         maps.put("productEquipmentQueryParam", param);
         Integer productEquipmentOldCount = productEquipmentMapper.findProductEquipmentCountByParams(maps);
@@ -555,7 +555,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         bulkMaterialQueryParam.setCreateStartTime(DateUtil.getBeginOfDay(currentTime));
         bulkMaterialQueryParam.setCreateEndTime(DateUtil.getEndOfDay(currentTime));
         Map<String, Object> paramMaps = new HashMap<>();
-        paramMaps.put("start", 1);
+        paramMaps.put("start", 0);
         paramMaps.put("pageSize", Integer.MAX_VALUE);
         paramMaps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
         Integer bulkMaterialOldCount = bulkMaterialMapper.listCount(paramMaps);
