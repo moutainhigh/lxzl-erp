@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.material.pojo.MaterialImg;
+import com.lxzl.erp.common.domain.product.ProductMaterialQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.FileUtil;
@@ -23,17 +24,16 @@ import com.lxzl.erp.core.service.material.impl.support.MaterialImageConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialImgMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyValueMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.*;
+import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialImgDO;
-import com.lxzl.erp.dataaccess.domain.product.ProductCategoryDO;
-import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO;
-import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
+import com.lxzl.erp.dataaccess.domain.product.*;
+import com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderMaterialDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import com.sun.org.apache.regexp.internal.RE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,9 +62,6 @@ public class MaterialServiceImpl implements MaterialService {
     private MaterialMapper materialMapper;
 
     @Autowired
-    private BulkMaterialMapper bulkMaterialMapper;
-
-    @Autowired
     private ProductCategoryMapper productCategoryMapper;
 
     @Autowired
@@ -75,6 +72,18 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Autowired
     private MaterialImgMapper materialImgMapper;
+
+    @Autowired
+    private ProductMaterialMapper productMaterialMapper;
+
+    @Autowired
+    private ProductEquipmentMaterialMapper productEquipmentMaterialMapper;
+
+    @Autowired
+    private BulkMaterialMapper bulkMaterialMapper;
+
+    @Autowired
+    private PurchaseOrderMaterialMapper purchaseOrderMaterialMapper;
 
     @Autowired
     private FileService fileService;
@@ -170,6 +179,7 @@ public class MaterialServiceImpl implements MaterialService {
             return result;
         }
         material.setMaterialType(productCategoryPropertyDO.getMaterialType());
+        material.setCategoryId(productCategoryPropertyDO.getCategoryId());
 
         MaterialDO materialDO = MaterialConverter.convertMaterial(material);
         materialDO.setMaterialNo(GenerateNoUtil.generateMaterialNo(currentTime));
@@ -208,6 +218,8 @@ public class MaterialServiceImpl implements MaterialService {
         MaterialDO materialDO = MaterialConverter.convertMaterial(material);
         // 以下两个值不能改
         materialDO.setId(dbRecord.getId());
+        materialDO.setMaterialType(null);
+        materialDO.setCategoryId(null);
         materialDO.setPropertyId(null);
         materialDO.setPropertyValueId(null);
         materialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -218,6 +230,42 @@ public class MaterialServiceImpl implements MaterialService {
         saveMaterialImage(material.getMaterialImgList(), 1, materialDO.getId(), loginUser, currentTime);
 
         result.setResult(materialDO.getMaterialNo());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> deleteMaterial(String materialNo) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+        MaterialDO materialDO = materialMapper.findByNo(materialNo);
+        if (materialDO == null) {
+            result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+            return result;
+        }
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("start", 0);
+        paramMap.put("pageSize", Integer.MAX_VALUE);
+        paramMap.put("materialId", materialDO.getId());
+
+        List<ProductMaterialDO> productMaterialDOList = productMaterialMapper.listPage(paramMap);
+        List<ProductEquipmentMaterialDO> productEquipmentMaterialDOList = productEquipmentMaterialMapper.listPage(paramMap);
+        List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(paramMap);
+        List<PurchaseOrderMaterialDO> purchaseOrderMaterialDOList = purchaseOrderMaterialMapper.listPage(paramMap);
+        if (productMaterialDOList != null
+                || productEquipmentMaterialDOList != null
+                || bulkMaterialDOList != null
+                || purchaseOrderMaterialDOList != null) {
+            result.setErrorCode(ErrorCode.MATERIAL_IN_USED);
+            return result;
+        }
+        materialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        materialDO.setUpdateTime(currentTime);
+        materialDO.setUpdateUser(loginUser.getUserId().toString());
+        materialMapper.update(materialDO);
+
+        result.setResult(materialNo);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }

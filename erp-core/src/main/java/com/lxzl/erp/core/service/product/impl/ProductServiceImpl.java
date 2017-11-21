@@ -749,7 +749,7 @@ public class ProductServiceImpl implements ProductService {
                 productSkuDO.setUpdateUser(loginUser.getUserId().toString());
                 productSkuDO.setUpdateTime(currentTime);
                 productSkuMapper.update(productSkuDO);
-                List<ProductSkuPropertyDO> dbPropertiesRecord = productSkuPropertyMapper.findSkuProperties(skuId);
+                List<ProductSkuPropertyDO> dbPropertiesRecord = productSkuPropertyMapper.findSkuProperties(productSkuDO.getId());
                 saveSkuProperties(ProductConverter.convertProductSkuPropertyDOList(dbPropertiesRecord), productId, productSkuDO.getId(), CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE, loginUser, currentTime);
             }
         }
@@ -856,15 +856,9 @@ public class ProductServiceImpl implements ProductService {
                 productSkuPropertyDO.setUpdateTime(currentTime);
                 productSkuPropertyMapper.save(productSkuPropertyDO);
                 saveProductMaterial(productId, skuId, productSkuPropertyDO.getPropertyValueId(), loginUser, currentTime);
-            } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_UPDATE.equals(operationType)) {
-                productSkuPropertyDO.setIsSku(CommonConstant.COMMON_CONSTANT_YES);
-                productSkuPropertyDO.setSkuId(skuId);
-                productSkuPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                productSkuPropertyDO.setUpdateUser(loginUser.getUserId().toString());
-                productSkuPropertyDO.setUpdateTime(currentTime);
-                productSkuPropertyMapper.update(productSkuPropertyDO);
             } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(operationType)) {
                 deleteProductSkuPropertyDO(productSkuPropertyDO, loginUser, currentTime);
+                deleteProductMaterial(skuId, productSkuPropertyDO.getPropertyValueId(), loginUser, currentTime);
             }
         }
     }
@@ -882,7 +876,7 @@ public class ProductServiceImpl implements ProductService {
         if (productCategoryPropertyValueDO.getReferId() == null) {
             return;
         }
-        ProductCategoryPropertyValueDO materialCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productPropertyValueId);
+        ProductCategoryPropertyValueDO materialCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productCategoryPropertyValueDO.getReferId());
         if (materialCategoryPropertyValueDO == null) {
             return;
         }
@@ -890,6 +884,7 @@ public class ProductServiceImpl implements ProductService {
         if (materialDO == null) {
             return;
         }
+
         ProductMaterialDO dbProductMaterialDO = productMaterialMapper.findBySkuAndMaterial(skuId, materialDO.getId());
         if (dbProductMaterialDO == null) {
             ProductMaterialDO productMaterialDO = new ProductMaterialDO();
@@ -903,6 +898,28 @@ public class ProductServiceImpl implements ProductService {
             productMaterialDO.setCreateTime(currentTime);
             productMaterialDO.setUpdateTime(currentTime);
             productMaterialMapper.save(productMaterialDO);
+        }
+    }
+
+    public void deleteProductMaterial(Integer skuId, Integer productPropertyValueId, User loginUser, Date currentTime) {
+        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productPropertyValueId);
+        if (productCategoryPropertyValueDO.getReferId() == null) {
+            return;
+        }
+        ProductCategoryPropertyValueDO materialCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productCategoryPropertyValueDO.getReferId());
+        if (materialCategoryPropertyValueDO == null) {
+            return;
+        }
+        MaterialDO materialDO = materialMapper.findByPropertyAndValueId(materialCategoryPropertyValueDO.getPropertyId(), materialCategoryPropertyValueDO.getId());
+        if (materialDO == null) {
+            return;
+        }
+        ProductMaterialDO productMaterialDO = productMaterialMapper.findBySkuAndMaterial(skuId, materialDO.getId());
+        if (productMaterialDO != null) {
+            productMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            productMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+            productMaterialDO.setUpdateTime(currentTime);
+            productMaterialMapper.update(productMaterialDO);
         }
     }
 

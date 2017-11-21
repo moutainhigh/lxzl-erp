@@ -26,6 +26,10 @@ public class PurchaseDeliveryOrderDO  extends BaseDO {
 	private List<PurchaseDeliveryOrderProductDO> purchaseDeliveryOrderProductDOList;
 	@Transient
 	private List<PurchaseDeliveryOrderMaterialDO> purchaseDeliveryOrderMaterialDOList;
+	@Transient
+	private String purchaseOrderNo;
+	@Transient
+	private String ownerSupplierName;
 
 	public Integer getId(){
 		return id;
@@ -137,5 +141,21 @@ public class PurchaseDeliveryOrderDO  extends BaseDO {
 
 	public void setPurchaseDeliveryOrderMaterialDOList(List<PurchaseDeliveryOrderMaterialDO> purchaseDeliveryOrderMaterialDOList) {
 		this.purchaseDeliveryOrderMaterialDOList = purchaseDeliveryOrderMaterialDOList;
+	}
+
+	public String getPurchaseOrderNo() {
+		return purchaseOrderNo;
+	}
+
+	public void setPurchaseOrderNo(String purchaseOrderNo) {
+		this.purchaseOrderNo = purchaseOrderNo;
+	}
+
+	public String getOwnerSupplierName() {
+		return ownerSupplierName;
+	}
+
+	public void setOwnerSupplierName(String ownerSupplierName) {
+		this.ownerSupplierName = ownerSupplierName;
 	}
 }

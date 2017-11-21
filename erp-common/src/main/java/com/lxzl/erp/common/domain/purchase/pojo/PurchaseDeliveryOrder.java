@@ -32,6 +32,8 @@ public class PurchaseDeliveryOrder implements Serializable {
 
 	private List<PurchaseDeliveryOrderProduct> purchaseDeliveryOrderProductList;
 	private List<PurchaseDeliveryOrderMaterial> purchaseDeliveryOrderMaterialList;
+	private String purchaseOrderNo;
+	private String ownerSupplierName;
 
 
 	public Integer getPurchaseDeliveryOrderId(){
@@ -176,5 +178,21 @@ public class PurchaseDeliveryOrder implements Serializable {
 
 	public void setPurchaseDeliveryOrderMaterialList(List<PurchaseDeliveryOrderMaterial> purchaseDeliveryOrderMaterialList) {
 		this.purchaseDeliveryOrderMaterialList = purchaseDeliveryOrderMaterialList;
+	}
+
+	public String getPurchaseOrderNo() {
+		return purchaseOrderNo;
+	}
+
+	public void setPurchaseOrderNo(String purchaseOrderNo) {
+		this.purchaseOrderNo = purchaseOrderNo;
+	}
+
+	public String getOwnerSupplierName() {
+		return ownerSupplierName;
+	}
+
+	public void setOwnerSupplierName(String ownerSupplierName) {
+		this.ownerSupplierName = ownerSupplierName;
 	}
 }

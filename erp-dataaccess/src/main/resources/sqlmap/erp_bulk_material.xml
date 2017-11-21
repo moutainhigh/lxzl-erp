@@ -53,6 +53,9 @@
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != ''">
 				AND ebm.bulk_material_name like CONCAT('%','${maps.bulkMaterialQueryParam.bulkMaterialName}','%' )
 			</if>
+			<if test="maps.materialId != null">
+				and ebm.material_id = #{maps.materialId, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				AND ebm.data_status = 1
 			</if>
@@ -73,6 +76,9 @@
 			</if>
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != ''">
 				AND ebm.bulk_material_name like CONCAT('%','${maps.bulkMaterialQueryParam.bulkMaterialName}','%' )
+			</if>
+			<if test="maps.materialId != null">
+				and ebm.material_id = #{maps.materialId, jdbcType=INTEGER}
 			</if>
 			<if test="true">
 				AND ebm.data_status = 1

@@ -52,6 +52,14 @@ public interface MaterialService extends BaseService {
     ServiceResult<String, String> updateMaterial(Material material);
 
     /**
+     * 删除物料
+     *
+     * @param materialNo 物料信息编号
+     * @return 物料编码
+     */
+    ServiceResult<String, String> deleteMaterial(String materialNo);
+
+    /**
      * 查询所有物料
      *
      * @param materialQueryParam 查询物料参数

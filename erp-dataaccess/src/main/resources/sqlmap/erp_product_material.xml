@@ -30,9 +30,26 @@
 		where epm.product_sku_id = #{productSkuId, jdbcType=INTEGER} and epm.material_id = #{materialId, jdbcType=INTEGER} and data_status = 1
 	</select>
 
+	<select id="findBySkuId" resultMap="ProductMaterialDO" parameterType="java.lang.Integer">
+		select <include refid="column_List"/> from erp_product_material epm
+		where epm.product_sku_id = #{productSkuId, jdbcType=INTEGER} and data_status = 1
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(epm.id) from erp_product_material epm 
 		<where>
+			<if test="maps.productMaterialQueryParam.productId != null">
+				and epm.product_id = #{maps.productMaterialQueryParam.productId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.productMaterialQueryParam.productSkuId != null">
+				and epm.product_sku_id = #{maps.productMaterialQueryParam.productSkuId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.productMaterialQueryParam.materialId != null">
+				and epm.material_id = #{maps.productMaterialQueryParam.materialId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.materialId != null">
+				and epm.material_id = #{maps.materialId, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				and epm.data_status = 1
 			</if>
@@ -42,6 +59,18 @@
 	<select id="listPage" resultMap="ProductMaterialDO" parameterType="map">
 		select <include refid="column_List"/> from erp_product_material epm 
 		<where>
+			<if test="maps.productMaterialQueryParam.productId != null">
+				and epm.product_id = #{maps.productMaterialQueryParam.productId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.productMaterialQueryParam.productSkuId != null">
+				and epm.product_sku_id = #{maps.productMaterialQueryParam.productSkuId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.productMaterialQueryParam.materialId != null">
+				and epm.material_id = #{maps.productMaterialQueryParam.materialId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.materialId != null">
+				and epm.material_id = #{maps.materialId, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				and epm.data_status = 1
 			</if>

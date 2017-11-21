@@ -61,7 +61,8 @@ public class ErrorCode {
     public static final String BULK_MATERIAL_NOT_EXISTS = "J200020";
     public static final String PRODUCT_NOT_EXISTS = "J200021";
     public static final String PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE = "J200022";
-
+    public static final String PRODUCT_IS_NOT_RENT = "J200023";
+    public static final String MATERIAL_IN_USED = "J200024";
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
     public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
@@ -142,6 +143,8 @@ public class ErrorCode {
     public static final String MATERIAL_NO_NOT_NULL = "J300046";
     public static final String STOCK_ALLOCATION_WAREHOUSE_IS_NOT_SAME = "J300047";
     public static final String WAREHOUSE_OUT_STORAGE_LIST_NOT_NULL = "J300048";
+    public static final String PURCHASE_RECEIVE_ORDER_MATERIAL_ID_NOT_NULL = "J300049";
+    public static final String PURCHASE_RECEIVE_ORDER_MATERIAL_REAL_COUNT_NOT_NULL = "J300050";
 
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
@@ -160,6 +163,7 @@ public class ErrorCode {
     public static final String ORDER_REFUND_STATUS_ERROR = "J400014";
     public static final String ORDER_PAY_RECORD_NOT_EXISTS = "J400015";
     public static final String ORDER_PRODUCT_BULK_MATERIAL_COUNT_ERROR = "J400016";
+    public static final String ORDER_HAVE_NO_RENT_START_TIME = "J400017";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -233,6 +237,8 @@ public class ErrorCode {
         MAP.put(BULK_MATERIAL_NOT_EXISTS,"散料不存在");
         MAP.put(PRODUCT_NOT_EXISTS,"商品不存在");
         MAP.put(PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE,"商品不在该库房");
+        MAP.put(PRODUCT_IS_NOT_RENT,"该商品已下架");
+        MAP.put(MATERIAL_IN_USED,"物料正在被使用");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS,"工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE,"此工作流模板没有节点");
@@ -313,6 +319,8 @@ public class ErrorCode {
         MAP.put(PURCHASE_ORDER_SKU_MATERIAL_ERROR,"SKU物料配置错误");
         MAP.put(MATERIAL_NO_NOT_NULL,"物料编号不能为空");
         MAP.put(STOCK_ALLOCATION_WAREHOUSE_IS_NOT_SAME,"库存调拨库房必须是同一间");
+        MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_ID_NOT_NULL,"采购收货单物料项物料ID不能为空");
+        MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_REAL_COUNT_NOT_NULL,"采购收货单物料项实际物料数量不能为空");
 
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL,"订单商品不能为空");
@@ -331,6 +339,7 @@ public class ErrorCode {
         MAP.put(ORDER_PAY_STATUS_ERROR,"付款单状态异常，请检查");
         MAP.put(ORDER_REFUND_STATUS_ERROR,"退款单状态异常，请检查");
         MAP.put(ORDER_PAY_RECORD_NOT_EXISTS,"支付记录不存在");
+        MAP.put(ORDER_HAVE_NO_RENT_START_TIME,"订单没有租赁开始时间");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL,"企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL,"企业公司名称不能为空");

@@ -30,6 +30,9 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(epom.id) FROM erp_purchase_order_material epom 
 		<where>
+			<if test="maps.materialId != null">
+				and epom.material_id = #{maps.materialId, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				AND epom.data_status = 1
 			</if>
@@ -39,6 +42,9 @@
 	<select id="listPage" resultMap="PurchaseOrderMaterialDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_purchase_order_material epom 
 		<where>
+			<if test="maps.materialId != null">
+				and epom.material_id = #{maps.materialId, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				AND epom.data_status = 1
 			</if>
