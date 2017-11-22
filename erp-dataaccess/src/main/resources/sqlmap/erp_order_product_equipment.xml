@@ -103,7 +103,6 @@
 		UPDATE erp_order_product_equipment <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
 
-
 	<insert id="saveList" parameterType="java.util.ArrayList">
 		insert into erp_order_product_equipment (order_id,order_product_id,equipment_id,equipment_no,expect_return_time,actual_return_time,expect_rent_amount,actual_rent_amount,data_status,remark,create_time,create_user,update_time,update_user)
 		<foreach item="orderProductEquipmentDO" collection="orderProductEquipmentDOList" separator="UNION ALL">

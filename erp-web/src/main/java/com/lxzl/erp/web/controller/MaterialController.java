@@ -82,9 +82,9 @@ public class MaterialController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "queryBulkMaterialByMaterialId", method = RequestMethod.POST)
-    public Result queryBulkMaterialByMaterialId(@RequestBody BulkMaterialQueryParam bulkMaterialQueryParam, BindingResult validResult) {
-        ServiceResult<String, Page<BulkMaterial>> serviceResult = materialService.queryBulkMaterialByMaterialId(bulkMaterialQueryParam);
+    @RequestMapping(value = "queryAllBulkMaterial", method = RequestMethod.POST)
+    public Result queryAllBulkMaterial(@RequestBody BulkMaterialQueryParam bulkMaterialQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<BulkMaterial>> serviceResult = materialService.queryAllBulkMaterial(bulkMaterialQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

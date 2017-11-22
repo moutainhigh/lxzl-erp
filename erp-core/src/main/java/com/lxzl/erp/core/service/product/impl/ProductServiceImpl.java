@@ -128,13 +128,13 @@ public class ProductServiceImpl implements ProductService {
         String errorCode = saveSkuAndProperties(product.getProductSkuList(), productId, loginUser, currentTime);
         if (!ErrorCode.SUCCESS.equals(errorCode)) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // SKU 未保存成功回滚
-            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+            result.setErrorCode(errorCode);
             return result;
         }
         errorCode = saveProductProperties(product.getProductPropertyList(), productId, loginUser, currentTime);
         if (!ErrorCode.SUCCESS.equals(errorCode)) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 商品属性未保存成功回滚
-            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+            result.setErrorCode(errorCode);
             return result;
         }
 
@@ -550,22 +550,14 @@ public class ProductServiceImpl implements ProductService {
 
         // 校验有容量的物料，是否匹配
         for (Map.Entry<Integer, Double> entry : propertyCapacityParamMap.entrySet()) {
-            if (skuPropertyCapacityMap.get(entry.getKey()) == null || !skuPropertyCapacityMap.get(entry.getKey()).equals(propertyCapacityParamMap.get(entry.getKey()))) {
-                result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
-                result.setResult(entry.getKey());
-                return result;
-            } else {
+            if (skuPropertyCapacityMap.get(entry.getKey()) != null && skuPropertyCapacityMap.get(entry.getKey()).equals(propertyCapacityParamMap.get(entry.getKey()))) {
                 skuPropertyCapacityMap.remove(entry.getKey());
             }
         }
 
         // 校验单个的物料是否匹配
         for (Map.Entry<Integer, MaterialDO> entry : materialDOParamMap.entrySet()) {
-            if (skuMaterialDOMap.get(entry.getKey()) == null || !skuMaterialDOMap.get(entry.getKey()).getId().equals(materialDOParamMap.get(entry.getKey()).getId())) {
-                result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
-                result.setResult(entry.getKey());
-                return result;
-            } else {
+            if (skuMaterialDOMap.get(entry.getKey()) != null && skuMaterialDOMap.get(entry.getKey()).getId().equals(materialDOParamMap.get(entry.getKey()).getId())) {
                 skuMaterialDOMap.remove(entry.getKey());
             }
         }
@@ -697,6 +689,11 @@ public class ProductServiceImpl implements ProductService {
                 saveProductSkuList.add(productSku);
             }
         }
+
+        // 目前不支持商品SKU删除
+        if (dbSkuRecordMap != null && dbSkuRecordMap.size() > 0) {
+            return ErrorCode.PRODUCT_SKU_CAN_NOT_DELETE;
+        }
         Integer skuId = null;
 
         if (!saveProductSkuList.isEmpty()) {
@@ -742,7 +739,9 @@ public class ProductServiceImpl implements ProductService {
                 saveSkuProperties(ProductConverter.convertProductSkuPropertyDOList(deleteProductSkuPropertyList), productId, skuId, CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE, loginUser, currentTime);
             }
         }
-        if (!dbSkuRecordMap.isEmpty()) {
+
+        // 先注释删除SKU代码
+        /*if (!dbSkuRecordMap.isEmpty()) {
             for (Map.Entry<Integer, ProductSkuDO> entry : dbSkuRecordMap.entrySet()) {
                 ProductSkuDO productSkuDO = entry.getValue();
                 productSkuDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
@@ -752,7 +751,7 @@ public class ProductServiceImpl implements ProductService {
                 List<ProductSkuPropertyDO> dbPropertiesRecord = productSkuPropertyMapper.findSkuProperties(productSkuDO.getId());
                 saveSkuProperties(ProductConverter.convertProductSkuPropertyDOList(dbPropertiesRecord), productId, productSkuDO.getId(), CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE, loginUser, currentTime);
             }
-        }
+        }*/
 
         List<ProductSkuPropertyDO> productSkuPropertyDOList = productSkuPropertyMapper.findSkuProperties(skuId);
         StringBuilder skuName = new StringBuilder();

@@ -3,8 +3,10 @@ package com.lxzl.erp.core.service.order.impl;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
@@ -13,6 +15,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.warehouse.ProductOutStockParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderConverter;
 import com.lxzl.erp.core.service.product.ProductService;
@@ -61,9 +64,14 @@ public class OrderServiceImpl implements OrderService {
         }
 
         List<OrderProductDO> orderProductDOList = OrderConverter.convertOrderProductList(order.getOrderProductList());
+        List<OrderMaterialDO> orderMaterialDOList = OrderConverter.convertOrderMaterialList(order.getOrderMaterialList());
         OrderDO orderDO = OrderConverter.convertOrder(order);
         calculateOrderProductInfo(orderProductDOList, orderDO);
+        calculateOrderMaterialInfo(orderMaterialDOList, orderDO);
+        // 校验客户风控信息
+        verifyCustomerRiskInfo(orderDO);
 
+        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setOrderNo(GenerateNoUtil.generateOrderNo(currentTime));
         orderDO.setOrderSellerId(loginUser.getUserId());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
@@ -74,6 +82,7 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateTime(currentTime);
         orderMapper.save(orderDO);
         saveOrderProductInfo(orderProductDOList, orderDO.getId(), loginUser, currentTime);
+        saveOrderMaterialInfo(orderMaterialDOList, orderDO.getId(), loginUser, currentTime);
         saveOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -307,6 +316,7 @@ public class OrderServiceImpl implements OrderService {
 
 
         Map<Integer, OrderProduct> orderProductMap = ListUtil.listToMap(order.getOrderProductList(), "orderProductId");
+        Map<Integer, OrderMaterial> orderMaterialMap = ListUtil.listToMap(order.getOrderMaterialList(), "orderMaterialId");
 
         // 计算预计归还时间
         Date expectReturnTime = calculationOrderExpectReturnTime(dbRecordOrder.getRentStartTime(), dbRecordOrder.getRentType(), dbRecordOrder.getRentTimeLength());
@@ -316,22 +326,20 @@ public class OrderServiceImpl implements OrderService {
         List<Integer> bulkMaterialIdList = new ArrayList<>();
         // 订单项设备项
         List<OrderProductEquipmentDO> orderProductEquipmentDOList = new ArrayList<>();
+        // 订单项设备项
+        List<OrderMaterialBulkDO> orderMaterialBulkDOList = new ArrayList<>();
 
         // 判断挨个订单项，都要发货，并且整合发货的设备及物料
         for (OrderProductDO orderProductDO : dbRecordOrder.getOrderProductDOList()) {
             OrderProduct orderProduct = orderProductMap.get(orderProductDO.getId());
-            if ((orderProduct.getEquipmentNoList() == null || orderProduct.getEquipmentNoList().size() == 0)
-                    && (orderProduct.getBulkMaterialNoList() == null || orderProduct.getBulkMaterialNoList().size() == 0)) {
+            if ((orderProduct.getEquipmentNoList() == null || orderProduct.getEquipmentNoList().size() == 0)) {
                 throw new BusinessException(ErrorCode.ORDER_PRODUCT_EQUIPMENT_NOT_NULL);
             }
-            if (orderProduct.getEquipmentNoList().size() > 0 && orderProduct.getEquipmentNoList().size() != orderProductDO.getProductCount()) {
+            if (orderProduct.getEquipmentNoList().size() != orderProductDO.getProductCount()) {
                 throw new BusinessException(ErrorCode.ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR);
             }
-            if (orderProduct.getBulkMaterialNoList().size() > 0 && orderProduct.getBulkMaterialNoList().size() != orderProductDO.getProductCount()) {
-                throw new BusinessException(ErrorCode.ORDER_PRODUCT_BULK_MATERIAL_COUNT_ERROR);
-            }
 
-            // 计算预计归还金额
+            // 计算预计金额
             BigDecimal expectRentAmount = calculationOrderExpectRentAmount(orderProductDO.getProductUnitAmount(), dbRecordOrder.getRentType(), dbRecordOrder.getRentTimeLength());
             for (String equipmentNo : orderProduct.getEquipmentNoList()) {
                 ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(equipmentNo);
@@ -363,7 +371,21 @@ public class OrderServiceImpl implements OrderService {
                 orderProductEquipmentDOList.add(orderProductEquipmentDO);
             }
 
-            for (String bulkMaterialNo : orderProduct.getBulkMaterialNoList()) {
+            orderProductDO.setEquipmentNoList(orderProduct.getEquipmentNoList());
+        }
+
+        for (OrderMaterialDO orderMaterialDO : dbRecordOrder.getOrderMaterialDOList()) {
+
+            OrderMaterial orderMaterial = orderMaterialMap.get(orderMaterialDO.getId());
+            if ((orderMaterial.getBulkMaterialNoList() == null || orderMaterial.getBulkMaterialNoList().size() == 0)) {
+                throw new BusinessException(ErrorCode.ORDER_PRODUCT_EQUIPMENT_NOT_NULL);
+            }
+            if (orderMaterial.getBulkMaterialNoList().size() != orderMaterial.getMaterialCount()) {
+                throw new BusinessException(ErrorCode.ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR);
+            }
+
+            BigDecimal expectRentAmount = calculationOrderExpectRentAmount(orderMaterialDO.getMaterialUnitAmount(), dbRecordOrder.getRentType(), dbRecordOrder.getRentTimeLength());
+            for (String bulkMaterialNo : orderMaterial.getBulkMaterialNoList()) {
                 BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(bulkMaterialNo);
                 if (bulkMaterialDO == null) {
                     throw new BusinessException(ErrorCode.BULK_MATERIAL_NOT_EXISTS);
@@ -372,12 +394,28 @@ public class OrderServiceImpl implements OrderService {
                     throw new BusinessException(ErrorCode.BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT);
                 }
                 bulkMaterialIdList.add(bulkMaterialDO.getId());
-            }
 
-            orderProductDO.setEquipmentNoList(orderProduct.getEquipmentNoList());
+                OrderMaterialBulkDO orderMaterialBulkDO = new OrderMaterialBulkDO();
+                orderMaterialBulkDO.setOrderId(orderMaterialDO.getOrderId());
+                orderMaterialBulkDO.setOrderMaterialId(orderMaterialDO.getId());
+                orderMaterialBulkDO.setBulkMaterialId(bulkMaterialDO.getId());
+                orderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
+                orderMaterialBulkDO.setExpectReturnTime(expectReturnTime);
+                orderMaterialBulkDO.setExpectRentAmount(expectRentAmount);
+                orderMaterialBulkDO.setCreateTime(currentTime);
+                orderMaterialBulkDO.setCreateUser(loginUser.getUserId().toString());
+                orderMaterialBulkDO.setUpdateTime(currentTime);
+                orderMaterialBulkDO.setUpdateUser(loginUser.getUserId().toString());
+                orderMaterialBulkDOList.add(orderMaterialBulkDO);
+            }
+        }
+        if (CollectionUtil.isNotEmpty(orderProductEquipmentDOList)) {
+            orderProductEquipmentMapper.saveList(orderProductEquipmentDOList);
+        }
+        if (CollectionUtil.isNotEmpty(orderMaterialBulkDOList)) {
+            orderMaterialBulkMapper.saveList(orderMaterialBulkDOList);
         }
 
-        orderProductEquipmentMapper.saveList(orderProductEquipmentDOList);
         ProductOutStockParam productOutStockParam = new ProductOutStockParam();
         productOutStockParam.setSrcWarehouseId(srcWarehouse.getWarehouseId());
         productOutStockParam.setTargetWarehouseId(targetWarehouse.getWarehouseId());
@@ -422,6 +460,27 @@ public class OrderServiceImpl implements OrderService {
             return unitAmount;
         }
         return null;
+    }
+
+    public void verifyCustomerRiskInfo(OrderDO orderDO) {
+        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
+        if (!OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
+            if (customerRiskManagementDO == null) {
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            } else {
+                orderDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
+                orderDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
+            }
+        }
+
+        // 商品加上物料的总和，即为本次的总额度
+        BigDecimal totalCreditDepositAmount = BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount());
+        BigDecimal zero = new BigDecimal(0);
+        if (!OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
+            if (BigDecimalUtil.compare(zero, BigDecimalUtil.sub(BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmount(), customerRiskManagementDO.getCreditAmountUsed()), totalCreditDepositAmount)) < 0) {
+                throw new BusinessException("额度不够无法下单。");
+            }
+        }
     }
 
     @Override
@@ -506,11 +565,20 @@ public class OrderServiceImpl implements OrderService {
                 orderProductDO.setCreateTime(currentTime);
                 orderProductDO.setUpdateTime(currentTime);
                 orderProductMapper.save(orderProductDO);
+            }
+        }
+    }
 
-                // TODO 减库存
-                /*ProductSkuDO productSkuDO = productSkuMapper.findById(orderProductDO.getProductSkuId());
-                productSkuDO.setStock(productSkuDO.getStock() - orderProductDO.getProductCount());
-                productSkuMapper.update(productSkuDO);*/
+    private void saveOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, Integer orderId, User loginUser, Date currentTime) {
+        if (orderMaterialDOList != null && !orderMaterialDOList.isEmpty()) {
+            for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+                orderMaterialDO.setOrderId(orderId);
+                orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                orderMaterialDO.setCreateUser(loginUser.getUserId().toString());
+                orderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+                orderMaterialDO.setCreateTime(currentTime);
+                orderMaterialDO.setUpdateTime(currentTime);
+                orderMaterialMapper.save(orderMaterialDO);
             }
         }
     }
@@ -535,16 +603,6 @@ public class OrderServiceImpl implements OrderService {
 
     private void calculateOrderProductInfo(List<OrderProductDO> orderProductDOList, OrderDO orderDO) {
         if (orderProductDOList != null && !orderProductDOList.isEmpty()) {
-            CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
-            if (!OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
-                if (customerRiskManagementDO == null) {
-                    throw new BusinessException(ErrorCode.SYSTEM_ERROR);
-                } else {
-                    orderDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
-                    orderDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
-                }
-            }
-
             int productCount = 0;
             BigDecimal productAmountTotal = new BigDecimal(0.0);
             BigDecimal totalInsuranceAmount = new BigDecimal(0.0);
@@ -569,23 +627,55 @@ public class OrderServiceImpl implements OrderService {
                 totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, thisProductSku.getSkuPrice());
                 orderProductDO.setProductSkuName(thisProductSku.getSkuName());
                 orderProductDO.setProductUnitAmount(productUnitAmount);
-                orderProductDO.setProductAmount(BigDecimalUtil.mul(productUnitAmount, new BigDecimal(orderProductDO.getProductCount())));
+                orderProductDO.setProductAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(productUnitAmount, new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderDO.getRentTimeLength())));
                 orderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(product));
                 productCount += orderProductDO.getProductCount();
                 productAmountTotal = BigDecimalUtil.add(productAmountTotal, orderProductDO.getProductAmount());
-            }
-            BigDecimal zero = new BigDecimal(0);
-            if (!OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
-                if (BigDecimalUtil.compare(zero, BigDecimalUtil.sub(BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmount(), customerRiskManagementDO.getCreditAmountUsed()), totalCreditDepositAmount)) < 0) {
-                    throw new BusinessException("额度不够无法下单。");
-                }
             }
             orderDO.setTotalCreditDepositAmount(totalCreditDepositAmount);
             orderDO.setTotalInsuranceAmount(totalInsuranceAmount);
             orderDO.setTotalDepositAmount(totalDepositAmount);
             orderDO.setTotalProductCount(productCount);
             orderDO.setTotalProductAmount(BigDecimalUtil.mul(productAmountTotal, new BigDecimal(orderDO.getRentTimeLength())));
-            orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getLogisticsAmount()), orderDO.getTotalDiscountAmount()));
+        }
+    }
+
+    private void calculateOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, OrderDO orderDO) {
+        if (orderMaterialDOList != null && !orderMaterialDOList.isEmpty()) {
+
+            int materialCount = 0;
+            BigDecimal materialAmountTotal = new BigDecimal(0.0);
+            BigDecimal totalInsuranceAmount = new BigDecimal(0.0);
+            BigDecimal totalDepositAmount = new BigDecimal(0.0);
+            BigDecimal totalCreditDepositAmount = new BigDecimal(0.0);
+            for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+                ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
+                Material material = materialServiceResult.getResult();
+                if (material == null) {
+                    throw new BusinessException(ErrorCode.MATERIAL_NOT_EXISTS);
+                }
+                orderMaterialDO.setMaterialName(material.getMaterialName());
+                BigDecimal productUnitAmount = null;
+                if (OrderRentType.RENT_TYPE_TIME.equals(orderDO.getRentType())) {
+                    productUnitAmount = material.getTimeRentPrice();
+                } else if (OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
+                    productUnitAmount = material.getDayRentPrice();
+                } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())) {
+                    productUnitAmount = material.getMonthRentPrice();
+                }
+                totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, material.getMaterialPrice());
+                orderMaterialDO.setMaterialName(material.getMaterialName());
+                orderMaterialDO.setMaterialUnitAmount(productUnitAmount);
+                orderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(productUnitAmount, new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderDO.getRentTimeLength())));
+                orderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(material));
+                materialCount += orderMaterialDO.getMaterialCount();
+                materialAmountTotal = BigDecimalUtil.add(materialAmountTotal, orderMaterialDO.getMaterialAmount());
+            }
+            orderDO.setTotalCreditDepositAmount(BigDecimalUtil.add(orderDO.getTotalCreditDepositAmount(), totalCreditDepositAmount));
+            orderDO.setTotalInsuranceAmount(BigDecimalUtil.add(orderDO.getTotalInsuranceAmount(), totalInsuranceAmount));
+            orderDO.setTotalDepositAmount(BigDecimalUtil.add(orderDO.getTotalDepositAmount(), totalDepositAmount));
+            orderDO.setTotalMaterialCount(materialCount);
+            orderDO.setTotalMaterialAmount(BigDecimalUtil.mul(materialAmountTotal, new BigDecimal(orderDO.getRentTimeLength())));
         }
     }
 
@@ -593,7 +683,8 @@ public class OrderServiceImpl implements OrderService {
         if (order == null) {
             return ErrorCode.PARAM_IS_NOT_NULL;
         }
-        if (order.getOrderProductList() == null || order.getOrderProductList().isEmpty()) {
+        if ((order.getOrderProductList() == null || order.getOrderProductList().isEmpty())
+                && (order.getOrderMaterialList() == null || order.getOrderMaterialList().isEmpty())) {
             return ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL;
         }
         if (order.getCustomerConsignId() == null) {
@@ -608,44 +699,59 @@ public class OrderServiceImpl implements OrderService {
         if (order.getRentType() == null || order.getRentTimeLength() == null || order.getRentTimeLength() <= 0) {
             return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
         }
-        BigDecimal zero = new BigDecimal(0);
-        for (OrderProduct orderProduct : order.getOrderProductList()) {
-            if (orderProduct.getProductSkuPropertyList() == null || orderProduct.getProductSkuPropertyList().isEmpty()) {
-                return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
-            }
-            List<Integer> propertyValueIdList = new ArrayList<>();
-            for (ProductSkuProperty productSkuProperty : orderProduct.getProductSkuPropertyList()) {
-                propertyValueIdList.add(productSkuProperty.getPropertyValueId());
-            }
-            if (propertyValueIdList.size() == 0) {
-                return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
-            }
-            if (orderProduct.getProductCount() == null || orderProduct.getProductCount() <= 0) {
-                return ErrorCode.PARAM_IS_NOT_NULL;
-            }
+        if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
+            for (OrderProduct orderProduct : order.getOrderProductList()) {
+                if (orderProduct.getProductSkuPropertyList() == null || orderProduct.getProductSkuPropertyList().isEmpty()) {
+                    return ErrorCode.PARAM_IS_NOT_ENOUGH;
+                }
+                List<Integer> propertyValueIdList = new ArrayList<>();
+                for (ProductSkuProperty productSkuProperty : orderProduct.getProductSkuPropertyList()) {
+                    propertyValueIdList.add(productSkuProperty.getPropertyValueId());
+                }
+                if (propertyValueIdList.size() == 0) {
+                    return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
+                }
+                if (orderProduct.getProductCount() == null || orderProduct.getProductCount() <= 0) {
+                    return ErrorCode.PARAM_IS_NOT_NULL;
+                }
 
-            Map<String, Object> maps = new HashMap<>();
-            maps.put("productId", orderProduct.getProductId());
-            maps.put("isSku", CommonConstant.COMMON_CONSTANT_YES);
-            maps.put("propertyValueIdList", propertyValueIdList);
-            maps.put("propertyValueIdCount", propertyValueIdList.size());
-            Integer skuId = productSkuPropertyMapper.findSkuIdByParams(maps);
-            if (skuId == null) {
-                return ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS;
-            }
+                Map<String, Object> maps = new HashMap<>();
+                maps.put("productId", orderProduct.getProductId());
+                maps.put("isSku", CommonConstant.COMMON_CONSTANT_YES);
+                maps.put("propertyValueIdList", propertyValueIdList);
+                maps.put("propertyValueIdCount", propertyValueIdList.size());
+                Integer skuId = productSkuPropertyMapper.findSkuIdByParams(maps);
+                if (skuId == null) {
+                    return ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS;
+                }
 
-            orderProduct.setProductSkuId(skuId);
-            ServiceResult<String, Product> productServiceResult = productService.queryProductById(orderProduct.getProductId());
-            ProductSkuDO productSkuDO = productSkuMapper.findById(orderProduct.getProductSkuId());
-            if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode()) || productServiceResult.getResult() == null || productSkuDO == null) {
-                return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
+                orderProduct.setProductSkuId(skuId);
+                ServiceResult<String, Product> productServiceResult = productService.queryProductById(orderProduct.getProductId());
+                ProductSkuDO productSkuDO = productSkuMapper.findById(orderProduct.getProductSkuId());
+                if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode()) || productServiceResult.getResult() == null || productSkuDO == null) {
+                    return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
+                }
+                Product product = productServiceResult.getResult();
+                if (CommonConstant.COMMON_CONSTANT_NO.equals(product.getIsRent())) {
+                    return ErrorCode.PRODUCT_IS_NOT_RENT;
+                }
+                if (productSkuDO.getStock() == null || productSkuDO.getStock() <= 0 || (productSkuDO.getStock() - orderProduct.getProductCount()) < 0) {
+                    return ErrorCode.ORDER_PRODUCT_STOCK_INSUFFICIENT;
+                }
             }
-            Product product = productServiceResult.getResult();
-            if (CommonConstant.COMMON_CONSTANT_NO.equals(product.getIsRent())) {
-                return ErrorCode.PRODUCT_IS_NOT_RENT;
-            }
-            if (productSkuDO.getStock() == null || productSkuDO.getStock() <= 0 || (productSkuDO.getStock() - orderProduct.getProductCount()) < 0) {
-                return ErrorCode.ORDER_PRODUCT_STOCK_INSUFFICIENT;
+        }
+
+        if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
+            for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
+                if (orderMaterial.getMaterialId() == null) {
+                    return ErrorCode.PARAM_IS_NOT_ENOUGH;
+                }
+                ServiceResult<String, Material> materialServiceResult =  materialService.queryMaterialById(orderMaterial.getMaterialId());
+
+                if(!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())
+                        || materialServiceResult.getResult() == null){
+                    return ErrorCode.MATERIAL_NOT_EXISTS;
+                }
             }
         }
         return ErrorCode.SUCCESS;
@@ -660,6 +766,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderProductMapper orderProductMapper;
+
+    @Autowired
+    private OrderMaterialMapper orderMaterialMapper;
 
     @Autowired
     private OrderConsignInfoMapper orderConsignInfoMapper;
@@ -685,6 +794,10 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderProductEquipmentMapper orderProductEquipmentMapper;
 
+
+    @Autowired
+    private OrderMaterialBulkMapper orderMaterialBulkMapper;
+
     @Autowired
     private CustomerConsignInfoMapper customerConsignInfoMapper;
 
@@ -693,4 +806,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private WarehouseService warehouseService;
+
+    @Autowired
+    private MaterialService materialService;
 }

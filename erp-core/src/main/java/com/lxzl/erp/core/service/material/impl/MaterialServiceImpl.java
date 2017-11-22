@@ -182,6 +182,17 @@ public class MaterialServiceImpl implements MaterialService {
         material.setCategoryId(productCategoryPropertyDO.getCategoryId());
 
         MaterialDO materialDO = MaterialConverter.convertMaterial(material);
+
+        if (MaterialType.MATERIAL_TYPE_MEMORY.equals(materialDO.getMaterialType())
+                || MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(materialDO.getMaterialType())
+                || MaterialType.MATERIAL_TYPE_CPU.equals(materialDO.getMaterialType())
+                || MaterialType.MATERIAL_TYPE_HDD.equals(materialDO.getMaterialType())
+                || MaterialType.MATERIAL_TYPE_SSD.equals(materialDO.getMaterialType())
+                || MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(materialDO.getMaterialType())) {
+            materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_YES);
+        } else {
+            materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_NO);
+        }
         materialDO.setMaterialNo(GenerateNoUtil.generateMaterialNo(currentTime));
         materialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         materialDO.setUpdateUser(loginUser.getUserId().toString());
@@ -378,6 +389,24 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
+    public ServiceResult<String, Material> queryMaterialById(Integer materialId) {
+        ServiceResult<String, Material> result = new ServiceResult<>();
+        if (materialId == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+        MaterialDO materialDO = materialMapper.findById(materialId);
+        if (materialDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(MaterialConverter.convertMaterialDO(materialDO));
+        return result;
+    }
+
+    @Override
     public ServiceResult<String, Page<BulkMaterial>> queryAllBulkMaterial(BulkMaterialQueryParam bulkMaterialQueryParam) {
         ServiceResult<String, Page<BulkMaterial>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(bulkMaterialQueryParam.getPageNo(), bulkMaterialQueryParam.getPageSize());
@@ -399,10 +428,6 @@ public class MaterialServiceImpl implements MaterialService {
     @Override
     public ServiceResult<String, Page<BulkMaterial>> queryBulkMaterialByMaterialId(BulkMaterialQueryParam bulkMaterialQueryParam) {
         ServiceResult<String, Page<BulkMaterial>> result = new ServiceResult<>();
-        if (bulkMaterialQueryParam.getMaterialId() == null) {
-            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
-            return result;
-        }
 
         PageQuery pageQuery = new PageQuery(bulkMaterialQueryParam.getPageNo(), bulkMaterialQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
@@ -431,6 +456,7 @@ public class MaterialServiceImpl implements MaterialService {
                     && !MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(material.getMaterialType())
                     && !MaterialType.MATERIAL_TYPE_CPU.equals(material.getMaterialType())
                     && !MaterialType.MATERIAL_TYPE_HDD.equals(material.getMaterialType())
+                    && !MaterialType.MATERIAL_TYPE_SSD.equals(material.getMaterialType())
                     && !MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(material.getMaterialType()))) {
                 return false;
             }
@@ -449,6 +475,7 @@ public class MaterialServiceImpl implements MaterialService {
                     || MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(material.getMaterialType())
                     || MaterialType.MATERIAL_TYPE_CPU.equals(material.getMaterialType())
                     || MaterialType.MATERIAL_TYPE_HDD.equals(material.getMaterialType())
+                    || MaterialType.MATERIAL_TYPE_SSD.equals(material.getMaterialType())
                     || MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(material.getMaterialType())) {
                 return false;
             }

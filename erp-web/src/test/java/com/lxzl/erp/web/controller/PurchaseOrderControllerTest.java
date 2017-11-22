@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.purchase.PurchaseOrderCommitParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseReceiveOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.pojo.*;
+import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.domain.product.ProductMaterialDO;
@@ -287,6 +288,52 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setPurchaseNo("PO201711201619009825000051652");
         TestResult result = getJsonTestResult("/purchaseOrder/continuePurchaseOrder",purchaseOrder);
+    }
+
+    @Test
+    public void testJSONCreateOrder() throws Exception{
+        String json = "{\n" +
+                "\t\"productSupplierId\": \"1\",\n" +
+                "\t\"warehouseNo\": \"W201708091508\",\n" +
+                "\t\"isInvoice\": \"1\",\n" +
+                "\t\"isNew\": \"1\",\n" +
+                "\t\"purchaseType\": \"1\",\n" +
+                "\t\"purchaseOrderProductList\": [{\n" +
+                "\t\t\"productId\": \"2000013\",\n" +
+                "\t\t\"productSkuId\": \"40\",\n" +
+                "\t\t\"productAmount\": \"10\",\n" +
+                "\t\t\"productCount\": \"10\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711201356145971009\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201422478141693\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201457288791418\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201500267591516\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711212007516281673\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711200917156471667\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711171838059981293\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}]\n" +
+                "\t}]\n" +
+                "}\n";
+
+        PurchaseOrder purchaseOrder = FastJsonUtil.toBean(json,PurchaseOrder.class);
+
+        TestResult result = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
     }
     @Autowired
     private PurchaseOrderService purchaseOrderService;

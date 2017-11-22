@@ -590,6 +590,7 @@ CREATE TABLE `erp_material` (
   `material_no` varchar(100) NOT NULL COMMENT '物料唯一编号',
   `material_name` varchar(100) COLLATE utf8_bin COMMENT '物料名称，取属性与属性值全称',
   `material_type` int(20) NOT NULL COMMENT '物料类型',
+  `is_main_material` int(20) NOT NULL COMMENT '是否是主物料（四大件）',
   `brand_id` int(20) COMMENT '所属品牌ID',
   `category_id` int(20) NOT NULL COMMENT '所属类目ID',
   `property_id` int(20) NOT NULL COMMENT '属性ID',
@@ -686,6 +687,7 @@ CREATE TABLE `erp_bulk_material` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '散料ID',
   `bulk_material_no` varchar(100) NOT NULL COMMENT '散料唯一编号',
   `bulk_material_type` int(20) NOT NULL COMMENT '散料类型',
+  `is_main_material` int(20) NOT NULL COMMENT '是否是主物料（四大件）',
   `bulk_material_name` varchar(100) COLLATE utf8_bin COMMENT '散料名称，从物料生成',
   `material_id` int(20) NOT NULL COMMENT '物料ID，从物料生成的',
   `material_no` varchar(100) NOT NULL COMMENT '物料编号，从物料生成的',
@@ -914,7 +916,6 @@ CREATE TABLE `erp_order_product` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单商品项表';
 
-
 DROP TABLE if exists `erp_order_product_equipment`;
 CREATE TABLE `erp_order_product_equipment` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
@@ -934,6 +935,48 @@ CREATE TABLE `erp_order_product_equipment` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单商品设备表';
+
+DROP TABLE if exists `erp_order_material`;
+CREATE TABLE `erp_order_material` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `material_id` int(20) COMMENT '物料ID',
+  `material_name` varchar(100) COLLATE utf8_bin COMMENT '物料名称',
+  `material_count` int(11) NOT NULL DEFAULT '0' COMMENT '物料总数',
+  `material_unit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '物料单价',
+  `material_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '物料价格',
+  `deposit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '押金金额',
+  `credit_deposit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '授信押金金额',
+  `insurance_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '保险金额',
+  `material_snapshot` text COMMENT '物料冗余信息，防止商品修改留存快照',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单物料项表';
+
+DROP TABLE if exists `erp_order_material_bulk`;
+CREATE TABLE `erp_order_material_bulk` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `order_material_id` int(20) NOT NULL COMMENT '订单物料项ID',
+  `bulk_material_id` int(20) NOT NULL COMMENT '设备ID',
+  `bulk_material_no` varchar(100) NOT NULL COMMENT '设备编号唯一',
+  `expect_return_time` datetime DEFAULT NULL COMMENT '预计归还时间',
+  `actual_return_time` datetime DEFAULT NULL COMMENT '实际归还时间',
+  `expect_rent_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '预计租金',
+  `actual_rent_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '实际租金',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单物料散料表';
 
 
 

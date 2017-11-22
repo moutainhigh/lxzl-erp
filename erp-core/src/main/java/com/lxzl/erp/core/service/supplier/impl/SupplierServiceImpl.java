@@ -108,9 +108,7 @@ public class SupplierServiceImpl implements SupplierService {
         supplierDO.setSupplierNo(dbSupplierDO.getSupplierNo());
         supplierDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         supplierDO.setUpdateUser(loginUser.getUserId().toString());
-        supplierDO.setCreateUser(loginUser.getUserId().toString());
         supplierDO.setUpdateTime(currentTime);
-        supplierDO.setCreateTime(currentTime);
         supplierMapper.update(supplierDO);
 
         result.setResult(supplierDO.getSupplierNo());

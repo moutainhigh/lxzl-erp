@@ -9,6 +9,7 @@ public class BulkMaterialDO  extends BaseDO {
 	private Integer id;
 	private String bulkMaterialNo;
 	private Integer bulkMaterialType;
+	private Integer isMainMaterial;
 	private String bulkMaterialName;
 	private Integer materialId;
 	private String materialNo;
@@ -185,5 +186,13 @@ public class BulkMaterialDO  extends BaseDO {
 
 	public void setBulkMaterialName(String bulkMaterialName) {
 		this.bulkMaterialName = bulkMaterialName;
+	}
+
+	public Integer getIsMainMaterial() {
+		return isMainMaterial;
+	}
+
+	public void setIsMainMaterial(Integer isMainMaterial) {
+		this.isMainMaterial = isMainMaterial;
 	}
 }

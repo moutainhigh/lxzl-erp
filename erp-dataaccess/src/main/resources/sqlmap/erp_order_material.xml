@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper">
+
+	<resultMap id="OrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="order_id" jdbcType="INTEGER" property="orderId" />
+		<result column="material_id" jdbcType="INTEGER" property="materialId" />
+		<result column="material_name" jdbcType="VARCHAR" property="materialName" />
+		<result column="material_count" jdbcType="INTEGER" property="materialCount" />
+		<result column="material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount" />
+		<result column="material_amount" jdbcType="DECIMAL" property="materialAmount" />
+		<result column="deposit_amount" jdbcType="DECIMAL" property="depositAmount" />
+		<result column="credit_deposit_amount" jdbcType="DECIMAL" property="creditDepositAmount" />
+		<result column="insurance_amount" jdbcType="DECIMAL" property="insuranceAmount" />
+		<result column="material_snapshot" jdbcType="VARCHAR" property="materialSnapshot" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		eom.id,eom.order_id,eom.material_id,eom.material_name,eom.material_count,eom.material_unit_amount,eom.material_amount,eom.deposit_amount,eom.credit_deposit_amount,eom.insurance_amount,eom.material_snapshot,eom.data_status,eom.remark,eom.create_time,eom.create_user,eom.update_time,eom.update_user
+	</sql>
+
+	<select id="findById" resultMap="OrderMaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_order_material eom 
+		WHERE eom.id = #{id, jdbcType=INTEGER} AND eom.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eom.id) FROM erp_order_material eom 
+		<where>
+			<if test="true">
+				AND eom.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="OrderMaterialDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_order_material eom 
+		<where>
+			<if test="true">
+				AND eom.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="orderId != null">
+				order_id = #{orderId,jdbcType=INTEGER},
+			</if>
+			<if test="materialId != null">
+				material_id = #{materialId,jdbcType=INTEGER},
+			</if>
+			<if test="materialName != null">
+				material_name = #{materialName,jdbcType=VARCHAR},
+			</if>
+			<if test="materialCount != null">
+				material_count = #{materialCount,jdbcType=INTEGER},
+			</if>
+			<if test="materialUnitAmount != null">
+				material_unit_amount = #{materialUnitAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="materialAmount != null">
+				material_amount = #{materialAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="depositAmount != null">
+				deposit_amount = #{depositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="creditDepositAmount != null">
+				credit_deposit_amount = #{creditDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="insuranceAmount != null">
+				insurance_amount = #{insuranceAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="materialSnapshot != null">
+				material_snapshot = #{materialSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO">
+		INSERT INTO erp_order_material <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO">
+		UPDATE erp_order_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
