@@ -195,7 +195,6 @@
                                                                 <td style="width:20%" class="text-right">
                                                                     <div class="btn-group text-right">
                                                                         <a href="#" type="button" class="btn btn-default btn-xs editMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">编辑物料</a>
-                                                                        #*<a href="#" type="button" class="btn btn-default btn-xs" data-skuid="{{skuId}}" data-productid="{{productId}}">新增</a>*#
                                                                         <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
                                                                     </div>
                                                                 </td>
