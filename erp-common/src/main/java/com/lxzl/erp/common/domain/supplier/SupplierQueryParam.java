@@ -12,6 +12,7 @@ import java.util.Date;
 public class SupplierQueryParam extends BasePageParam {
 
     private Integer supplierId;   //字典ID，唯一
+    private String supplierNo;   //供应商编号
     private String supplierName;   //供应商名称
 
 
@@ -31,5 +32,11 @@ public class SupplierQueryParam extends BasePageParam {
         this.supplierName = supplierName;
     }
 
+    public String getSupplierNo() {
+        return supplierNo;
+    }
 
+    public void setSupplierNo(String supplierNo) {
+        this.supplierNo = supplierNo;
+    }
 }

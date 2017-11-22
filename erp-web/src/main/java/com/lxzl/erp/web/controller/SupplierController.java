@@ -34,6 +34,30 @@ public class SupplierController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "getSupplierByNo", method = RequestMethod.POST)
+    public Result getSupplierByNo(@RequestBody SupplierQueryParam supplierQueryParam, BindingResult validResult) {
+        ServiceResult<String, Supplier> serviceResult = supplierService.getSupplierByNo(supplierQueryParam.getSupplierNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "add", method = RequestMethod.POST)
+    public Result add(@RequestBody Supplier supplier, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = supplierService.addSupplier(supplier);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public Result update(@RequestBody Supplier supplier, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = supplierService.updateSupplier(supplier);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "delete", method = RequestMethod.POST)
+    public Result delete(@RequestBody Supplier supplier, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = supplierService.deleteSupplier(supplier.getSupplierNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @Autowired
     private SupplierService supplierService;
 

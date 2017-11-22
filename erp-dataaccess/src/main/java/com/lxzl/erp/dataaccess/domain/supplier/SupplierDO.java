@@ -9,6 +9,7 @@ import java.util.Date;
 public class SupplierDO  extends BaseDO {
 
 	private Integer id;
+	private String supplierNo;
 	private String supplierName;
 	private Integer province;
 	private Integer city;
@@ -136,5 +137,13 @@ public class SupplierDO  extends BaseDO {
 
 	public void setDistrictName(String districtName) {
 		this.districtName = districtName;
+	}
+
+	public String getSupplierNo() {
+		return supplierNo;
+	}
+
+	public void setSupplierNo(String supplierNo) {
+		this.supplierNo = supplierNo;
 	}
 }

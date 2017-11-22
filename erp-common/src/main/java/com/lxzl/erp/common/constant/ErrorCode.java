@@ -10,6 +10,7 @@ public class ErrorCode {
      */
     public static final String SUCCESS = "J000000";
 
+    public static final String SYSTEM_DEVELOPING = "J000994";
     public static final String USER_NOT_LOGIN = "J000995";
     public static final String CUSTOM_ERROR = "J000996";
     public static final String BUSINESS_EXCEPTION = "J000997";
@@ -147,6 +148,7 @@ public class ErrorCode {
     public static final String PURCHASE_RECEIVE_ORDER_MATERIAL_REAL_COUNT_NOT_NULL = "J300050";
 
 
+
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
     public static final String ORDER_CUSTOMER_CONSIGN_NOT_NULL = "J400001";
     public static final String ORDER_PRODUCT_STOCK_INSUFFICIENT = "J400002";
@@ -192,6 +194,7 @@ public class ErrorCode {
         MAP.put(SYSTEM_ERROR,"系统错误,请联系管理员");
         MAP.put(RECORD_NOT_EXISTS,"记录不存在");
         MAP.put(RECORD_ALREADY_EXISTS,"记录已经存在");
+        MAP.put(SYSTEM_DEVELOPING,"开发中……");
         MAP.put(USER_NOT_LOGIN,"用户未登录");
         MAP.put(USER_DISABLE,"用户已禁用，请联系管理员");
         MAP.put(USER_NAME_NOT_FOUND,"用户名不存在");

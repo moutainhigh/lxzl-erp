@@ -56,6 +56,11 @@ public class GenerateNoUtil {
         return "M" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
     }
 
+    public static String generateSupplierNo(Date currentTime) {
+        Random random = new Random();
+        return "S" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
+    }
+
     public static String generateCustomerNo(Date currentTime) {
         Random random = new Random();
         return "C" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));

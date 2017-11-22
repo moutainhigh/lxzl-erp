@@ -9,6 +9,7 @@ import java.util.Date;
 public class Supplier implements Serializable {
 
 	private Integer supplierId;   //字典ID，唯一
+	private String supplierNo;   //供应商编号
 	private String supplierName;   //供应商名称
 	private Integer province;   //省份ID，对应字典ID
 	private Integer city;   //城市ID，对应字典ID
@@ -170,5 +171,13 @@ public class Supplier implements Serializable {
 
 	public void setProvinceName(String provinceName) {
 		this.provinceName = provinceName;
+	}
+
+	public String getSupplierNo() {
+		return supplierNo;
+	}
+
+	public void setSupplierNo(String supplierNo) {
+		this.supplierNo = supplierNo;
 	}
 }

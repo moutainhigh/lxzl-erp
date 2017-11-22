@@ -4,6 +4,7 @@
 
 	<resultMap id="SupplierDO" type="com.lxzl.erp.dataaccess.domain.supplier.SupplierDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="supplier_no" jdbcType="VARCHAR" property="supplierNo" />
 		<result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
 		<result column="province" jdbcType="INTEGER" property="province" />
 		<result column="province_name" jdbcType="VARCHAR" property="provinceName" />
@@ -24,7 +25,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		es.id,es.supplier_name,es.province,es.city,es.district,es.address,es.tel,es.contactName,es.contactPhone,es.data_status,es.remark,es.create_time,es.create_user,es.update_time,es.update_user
+		es.id,es.supplier_no,es.supplier_name,es.province,es.city,es.district,es.address,es.tel,es.contactName,es.contactPhone,es.data_status,es.remark,es.create_time,es.create_user,es.update_time,es.update_user
 	</sql>
 
 	<select id="findById" resultMap="SupplierDO" parameterType="java.lang.Integer">
@@ -37,6 +38,16 @@
 		where es.id = #{id, jdbcType=INTEGER} and es.data_status = 1
 	</select>
 
+	<select id="findByNo" resultMap="SupplierDO" parameterType="java.lang.String">
+		select <include refid="column_List"/>
+		,eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name
+		from erp_supplier es
+		LEFT JOIN erp_area_province eap ON eap.id = es.province
+		LEFT JOIN erp_area_city eac ON eac.id = es.city
+		LEFT JOIN erp_area_district ead ON ead.id = es.district
+		where es.supplier_no = #{supplierNo, jdbcType=VARCHAR} and es.data_status = 1
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(es.id) from erp_supplier es 
 		<where>
@@ -45,6 +56,9 @@
 			</if>
 			<if test="maps.supplierQueryParam != null &amp;&amp; maps.supplierQueryParam.supplierName != null &amp;&amp; maps.supplierQueryParam.supplierName != ''">
 				and es.supplier_name like CONCAT('%','${maps.supplierQueryParam.supplierName}','%' )
+			</if>
+			<if test="maps.supplierQueryParam != null &amp;&amp; maps.supplierQueryParam.supplierNo != null &amp;&amp; maps.supplierQueryParam.supplierNo != ''">
+				and es.supplier_no like CONCAT('%','${maps.supplierQueryParam.supplierNo}','%' )
 			</if>
 			<if test="true">
 				and es.data_status = 1
@@ -66,6 +80,9 @@
 			<if test="maps.supplierQueryParam != null &amp;&amp; maps.supplierQueryParam.supplierName != null &amp;&amp; maps.supplierQueryParam.supplierName != ''">
 				AND es.supplier_name LIKE CONCAT('%','${maps.supplierQueryParam.supplierName}','%' )
 			</if>
+			<if test="maps.supplierQueryParam != null &amp;&amp; maps.supplierQueryParam.supplierNo != null &amp;&amp; maps.supplierQueryParam.supplierNo != ''">
+				and es.supplier_no like CONCAT('%','${maps.supplierQueryParam.supplierNo}','%' )
+			</if>
 			<if test="true">
 				AND es.data_status = 1
 			</if>
@@ -77,6 +94,9 @@
 		<set>
 			<if test="supplierName != null">
 				supplier_name = #{supplierName,jdbcType=VARCHAR},
+			</if>
+			<if test="supplierNo != null">
+				supplier_no = #{supplierNo,jdbcType=VARCHAR},
 			</if>
 			<if test="province != null">
 				province = #{province,jdbcType=INTEGER},

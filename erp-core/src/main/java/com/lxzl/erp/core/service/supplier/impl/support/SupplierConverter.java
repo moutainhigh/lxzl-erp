@@ -32,4 +32,13 @@ public class SupplierConverter {
         BeanUtils.copyProperties(supplierDO, supplier);
         return supplier;
     }
+
+    public static SupplierDO convertSupplier(Supplier supplier) {
+        SupplierDO supplierDO = new SupplierDO();
+        if (supplier.getSupplierId() != null) {
+            supplierDO.setId(supplier.getSupplierId());
+        }
+        BeanUtils.copyProperties(supplier, supplierDO);
+        return supplierDO;
+    }
 }
