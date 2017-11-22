@@ -18,6 +18,7 @@ public class ErrorCode {
     public static final String SYSTEM_ERROR = "J000999";
     public static final String RECORD_NOT_EXISTS = "J009999";
     public static final String RECORD_ALREADY_EXISTS = "J099999";
+    public static final String EMAIL_ERROR = "J000993";
 
     public static final String USER_NAME_NOT_NULL = "J100000";
     public static final String USER_PASSWORD_NOT_NULL = "J100001";
@@ -196,6 +197,8 @@ public class ErrorCode {
         MAP.put(RECORD_NOT_EXISTS,"记录不存在");
         MAP.put(RECORD_ALREADY_EXISTS,"记录已经存在");
         MAP.put(SYSTEM_DEVELOPING,"开发中……");
+        MAP.put(EMAIL_ERROR,"邮箱格式有误");
+
         MAP.put(USER_NOT_LOGIN,"用户未登录");
         MAP.put(USER_DISABLE,"用户已禁用，请联系管理员");
         MAP.put(USER_NAME_NOT_FOUND,"用户名不存在");

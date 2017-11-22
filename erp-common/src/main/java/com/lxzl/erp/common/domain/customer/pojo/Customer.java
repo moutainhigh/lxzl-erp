@@ -2,12 +2,12 @@ package com.lxzl.erp.common.domain.customer.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
-import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
-import org.hibernate.validator.constraints.NotEmpty;
+import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerPersonGroup;
+import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -16,10 +16,9 @@ import java.util.Date;
 public class Customer implements Serializable {
 
 	private Integer customerId;   //唯一标识
-	@NotNull(message = ErrorCode.CUSTOMER_TYPE_NOT_NULL , groups = {AddGroup.class})
 	private Integer customerType;   //用户类型,1为企业用户，2为个人用户
-	@NotEmpty(message = ErrorCode.CUSTOMER_NO_NOT_NULL , groups = {IdGroup.class,UpdateGroup.class})
-	private String customerNo;   //客戶编码
+	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL , groups = {IdGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class})
+	private String customerNo;   //客戶编号
 	private Integer isDisabled;   //是否禁用，0不可用；1可用
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -28,10 +27,12 @@ public class Customer implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
+	@Valid
 	private CustomerPerson customerPerson;
+	@Valid
 	private CustomerCompany customerCompany;
-	private CustomerRiskManagement customerRiskManagement;
 
+	private CustomerRiskManagement customerRiskManagement;
 
 	public Integer getCustomerId(){
 		return customerId;

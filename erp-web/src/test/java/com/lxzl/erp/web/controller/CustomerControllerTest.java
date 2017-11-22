@@ -15,12 +15,11 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
     @Test
     public void addCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerType(CustomerType.CUSTOMER_TYPE_COMPANY);
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCompanyName("清华同方");
         customerCompany.setConnectRealName("李四");
         customer.setCustomerCompany(customerCompany);
-        TestResult result = getJsonTestResult("/customer/add",customer);
+        TestResult result = getJsonTestResult("/customer/addCompany",customer);
     }
     @Test
     public void addCustomerPerson() throws Exception {
@@ -28,8 +27,9 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customer.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
         CustomerPerson customerPerson = new CustomerPerson();
         customerPerson.setRealName("张三");
+        customerPerson.setEmail("zhangsan@163.com");
         customer.setCustomerPerson(customerPerson);
-        TestResult result = getJsonTestResult("/customer/add",customer);
+        TestResult result = getJsonTestResult("/customer/addPerson",customer);
     }
     @Test
     public void updateCustomerCompany() throws Exception {
@@ -38,8 +38,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customerCompany.setCompanyName("深圳市腾讯科技股份有限公司");
         customerCompany.setConnectRealName("张三啊");
         customer.setCustomerCompany(customerCompany);
-        customer.setCustomerNo("C201711151924067931067");
-        TestResult result = getJsonTestResult("/customer/update",customer);
+        customer.setCustomerNo("C201711221037203271636");
+        TestResult result = getJsonTestResult("/customer/updateCompany",customer);
     }
     @Test
     public void updateCustomerPerson() throws Exception {
@@ -47,8 +47,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         CustomerPerson customerPerson = new CustomerPerson();
         customerPerson.setRealName("我是一个人名");
         customer.setCustomerPerson(customerPerson);
-        customer.setCustomerNo("C201711152009429071100");
-        TestResult result = getJsonTestResult("/customer/update",customer);
+        customer.setCustomerNo("C201711221149433561458");
+        TestResult result = getJsonTestResult("/customer/updatePerson",customer);
     }
     @Test
     public void pageCustomerCompany() throws Exception {
@@ -59,7 +59,21 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
     @Test
     public void pageCustomerPerson() throws Exception {
         CustomerPersonQueryParam customerPersonQueryParam = new CustomerPersonQueryParam();
+        customerPersonQueryParam.setCustomerNo("C201711221429052021353");
         TestResult result = getJsonTestResult("/customer/pageCustomerPerson",customerPersonQueryParam);
+    }
+
+    @Test
+    public void detailCustomerCompany() throws Exception {
+        Customer customer = new Customer();
+        customer.setCustomerNo("CC201711221418540821486");
+        TestResult result = getJsonTestResult("/customer/detailCustomerCompany",customer);
+    }
+    @Test
+    public void detailCustomerPerson() throws Exception {
+        Customer customer = new Customer();
+        customer.setCustomerNo("CP01711221151519901204");
+        TestResult result = getJsonTestResult("/customer/detailCustomerPerson",customer);
     }
 
 }

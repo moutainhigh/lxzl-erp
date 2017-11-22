@@ -61,11 +61,14 @@ public class GenerateNoUtil {
         return "S" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
     }
 
-    public static String generateCustomerNo(Date currentTime) {
+    public static String generateCustomerCompanyNo(Date currentTime) {
         Random random = new Random();
-        return "C" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
+        return "CC" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
     }
-
+    public static String generateCustomerPersonNo(Date currentTime) {
+        Random random = new Random();
+        return "CP" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
+    }
     public static String generateEquipmentNo(Date currentTime, Integer warehouseId, int no) {
         return "LX-EQUIPMENT-" + warehouseId + "-" + new SimpleDateFormat("yyyyMMdd").format(currentTime) + (10000 + no);
     }

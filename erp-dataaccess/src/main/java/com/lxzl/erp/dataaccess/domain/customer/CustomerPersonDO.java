@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.customer;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 
 
@@ -17,6 +19,13 @@ public class CustomerPersonDO  extends BaseDO {
 	private String address;
 	private Integer dataStatus;
 	private String remark;
+
+	@Transient
+	private String provinceName;
+	@Transient
+	private String cityName;
+	@Transient
+	private String districtName;
 
 	public Integer getId(){
 		return id;
@@ -106,4 +115,27 @@ public class CustomerPersonDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public String getProvinceName() {
+		return provinceName;
+	}
+
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getDistrictName() {
+		return districtName;
+	}
+
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
+	}
 }

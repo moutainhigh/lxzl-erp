@@ -1,6 +1,12 @@
 package com.lxzl.erp.common.domain.customer.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
+import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.data.annotation.Transient;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -11,8 +17,10 @@ public class CustomerCompany implements Serializable {
 	private Integer customerCompanyId;   //唯一标识
 	private Integer customerId;   //客户ID
 	private String landline;   //座机电话
+	@NotBlank(message = ErrorCode.CUSTOMER_COMPANY_CONNECT_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
 	private String connectRealName;   //联系人
 	private String connectPhone;   //联系人手机号
+	@NotBlank(message = ErrorCode.CUSTOMER_COMPANY_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
 	private String companyName;   //公司名称
 	private String companyAbb;   //公司简称
 	private Integer province;   //省份ID，省份ID
@@ -29,6 +37,9 @@ public class CustomerCompany implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
+	private String provinceName;
+	private String cityName;
+	private String districtName;
 
 	public Integer getCustomerCompanyId(){
 		return customerCompanyId;
@@ -190,4 +201,27 @@ public class CustomerCompany implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public String getProvinceName() {
+		return provinceName;
+	}
+
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getDistrictName() {
+		return districtName;
+	}
+
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
+	}
 }

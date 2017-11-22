@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerCompany;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerPerson;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.core.service.customer.impl.support.CustomerRiskManagementConverter;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerPersonDO;
@@ -34,6 +35,10 @@ public class CustomerConverter {
             customer.setCustomerCompany(convertCustomerCompanyDO(customerDO.getCustomerCompanyDO()));
         }else if(CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())){
             customer.setCustomerPerson(convertCustomerPersonDO(customerDO.getCustomerPersonDO()));
+        }
+
+        if(customerDO.getCustomerRiskManagementDO()!=null){
+            customer.setCustomerRiskManagement(CustomerRiskManagementConverter.convertCustomerRiskManagementDO(customerDO.getCustomerRiskManagementDO()));
         }
         return customer;
     }
