@@ -5,12 +5,17 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerPerson;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerPersonGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.customer.CustomerService;
+import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerPersonGroup;
 import com.lxzl.se.common.domain.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,14 +35,24 @@ public class CustomerController {
     @Autowired
     private ResultGenerator resultGenerator;
 
-    @RequestMapping(value = "add", method = RequestMethod.POST)
-    public Result add(@RequestBody @Validated(AddGroup.class) Customer customer, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = customerService.add(customer);
+    @RequestMapping(value = "addCompany", method = RequestMethod.POST)
+    public Result addCompany(@RequestBody @Validated(AddCustomerCompanyGroup.class) Customer customer, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.addCompany(customer);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
-    @RequestMapping(value = "update", method = RequestMethod.POST)
-    public Result update(@RequestBody @Validated(UpdateGroup.class) Customer customer, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = customerService.update(customer);
+    @RequestMapping(value = "addPerson", method = RequestMethod.POST)
+    public Result addPerson(@RequestBody @Validated(AddCustomerPersonGroup.class) Customer customer, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.addPerson(customer);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+    @RequestMapping(value = "updateCompany", method = RequestMethod.POST)
+    public Result updateCompany(@RequestBody @Validated(UpdateCustomerCompanyGroup.class) Customer customer, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.updateCompany(customer);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+    @RequestMapping(value = "updatePerson", method = RequestMethod.POST)
+    public Result updatePerson(@RequestBody @Validated(UpdateCustomerPersonGroup.class) Customer customer, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.updatePerson(customer);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
     @RequestMapping(value = "pageCustomerCompany", method = RequestMethod.POST)
@@ -51,5 +66,20 @@ public class CustomerController {
         ServiceResult<String, Page<Customer>> serviceResult = customerService.pageCustomerPerson(customerPersonQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+    @RequestMapping(value = "detailCustomerCompany", method = RequestMethod.POST)
+    public Result detailCustomerCompany(@RequestBody @Validated(IdGroup.class)Customer customer, BindingResult validResult) {
+        ServiceResult<String, Customer> serviceResult = customerService.detailCustomerCompany(customer);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+    @RequestMapping(value = "detailCustomerPerson", method = RequestMethod.POST)
+    public Result detailCustomerPerson(@RequestBody @Validated(IdGroup.class)Customer customer, BindingResult validResult) {
+        ServiceResult<String, Customer> serviceResult = customerService.detailCustomerPerson(customer);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 
+    @RequestMapping(value = "updateRisk", method = RequestMethod.POST)
+    public Result update(@RequestBody @Validated(UpdateGroup.class) CustomerRiskManagement customerRiskManagement, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.updateRisk(customerRiskManagement);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }

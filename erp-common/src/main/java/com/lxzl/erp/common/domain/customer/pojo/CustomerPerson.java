@@ -1,6 +1,12 @@
 package com.lxzl.erp.common.domain.customer.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerPersonGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerPersonGroup;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -10,7 +16,9 @@ public class CustomerPerson implements Serializable {
 
 	private Integer customerPersonId;   //唯一标识
 	private Integer customerId;   //客户ID
+	@NotBlank(message = ErrorCode.CUSTOMER_PERSON_NAME_NOT_NULL,groups={AddCustomerPersonGroup.class,UpdateCustomerPersonGroup.class})
 	private String realName;   //真实姓名
+	@Email(message = ErrorCode.EMAIL_ERROR,groups={AddCustomerPersonGroup.class,UpdateCustomerPersonGroup.class})
 	private String email;   //电子邮件
 	private String phone;   //手机号
 	private Integer province;   //省份ID，省份ID
@@ -23,6 +31,10 @@ public class CustomerPerson implements Serializable {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+
+	private String provinceName;
+	private String cityName;
+	private String districtName;
 
 
 	public Integer getCustomerPersonId(){
@@ -145,4 +157,28 @@ public class CustomerPerson implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+
+	public String getProvinceName() {
+		return provinceName;
+	}
+
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getDistrictName() {
+		return districtName;
+	}
+
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
+	}
 }

@@ -8,18 +8,19 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerCompany;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerPerson;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.customer.CustomerService;
+import com.lxzl.erp.core.service.customer.impl.support.CustomerRiskManagementConverter;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerPersonMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerPersonDO;
-import com.lxzl.se.common.util.StringUtil;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -39,20 +41,21 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerCompanyMapper customerCompanyMapper;
     @Autowired
     private UserSupport userSupport;
+    @Autowired
+    private CustomerRiskManagementMapper customerRiskManagementMapper;
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> add(Customer customer) {
+    public ServiceResult<String, String> addCompany(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        String checkResult = check(customer);
-        if(!ErrorCode.SUCCESS.equals(checkResult)){
-            serviceResult.setErrorCode(checkResult);
-            return serviceResult;
-        }
         Date now = new Date();
         CustomerDO customerDO = new CustomerDO();
-        customerDO.setCustomerNo(GenerateNoUtil.generateCustomerNo(now));
-        customerDO.setCustomerType(customer.getCustomerType());
-        customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);
+        customerDO.setCustomerNo(GenerateNoUtil.generateCustomerCompanyNo(now));
+        customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_COMPANY);
+        if(customer.getIsDisabled()==null){
+            customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);
+        }else{
+            customerDO.setIsDisabled(customer.getIsDisabled());
+        }
         customerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerDO.setCreateTime(now);
         customerDO.setUpdateTime(now);
@@ -60,69 +63,101 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerMapper.save(customerDO);
 
-        if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customer.getCustomerType())){
-            CustomerCompanyDO customerCompanyDO  = CustomerConverter.convertCustomerCompany(customer.getCustomerCompany());
-            customerCompanyDO.setCustomerId(customerDO.getId());
-            customerCompanyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            customerCompanyDO.setCreateTime(now);
-            customerCompanyDO.setUpdateTime(now);
-            customerCompanyDO.setCreateUser(userSupport.getCurrentUserId().toString());
-            customerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            customerCompanyMapper.save(customerCompanyDO);
-        }else if(CustomerType.CUSTOMER_TYPE_PERSON.equals(customer.getCustomerType())){
-            CustomerPersonDO customerPersonDO  = CustomerConverter.convertCustomerPerson(customer.getCustomerPerson());
-            customerPersonDO.setCustomerId(customerDO.getId());
-            customerPersonDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            customerPersonDO.setCreateTime(now);
-            customerPersonDO.setUpdateTime(now);
-            customerPersonDO.setCreateUser(userSupport.getCurrentUserId().toString());
-            customerPersonDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            customerPersonMapper.save(customerPersonDO);
-        }
+        CustomerCompanyDO customerCompanyDO  = CustomerConverter.convertCustomerCompany(customer.getCustomerCompany());
+        customerCompanyDO.setCustomerId(customerDO.getId());
+        customerCompanyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        customerCompanyDO.setCreateTime(now);
+        customerCompanyDO.setUpdateTime(now);
+        customerCompanyDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        customerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerCompanyMapper.save(customerCompanyDO);
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customer.getCustomerNo());
         return serviceResult;
     }
-
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> update(Customer customer) {
+    public ServiceResult<String, String> addPerson(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
-        CustomerDO customerDO = customerMapper.findByNo(customer.getCustomerNo());
-        if(customerDO==null){
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
-            return serviceResult;
+        CustomerDO customerDO = new CustomerDO();
+        customerDO.setCustomerNo(GenerateNoUtil.generateCustomerPersonNo(now));
+        customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
+        if(customer.getIsDisabled()==null){
+            customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);
+        }else{
+            customerDO.setIsDisabled(customer.getIsDisabled());
         }
-        customer.setCustomerType(customerDO.getCustomerType());
-        String checkResult = check(customer);
-        if(!ErrorCode.SUCCESS.equals(checkResult)){
-            serviceResult.setErrorCode(checkResult);
-            return serviceResult;
-        }
+        customerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        customerDO.setCreateTime(now);
+        customerDO.setUpdateTime(now);
+        customerDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerMapper.save(customerDO);
 
-        if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customer.getCustomerType())){
-            CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
-            CustomerCompanyDO newCustomerCompanyDO = CustomerConverter.convertCustomerCompany(customer.getCustomerCompany());
-            newCustomerCompanyDO.setDataStatus(null);
-            newCustomerCompanyDO.setCreateTime(null);
-            newCustomerCompanyDO.setCreateUser(null);
-            newCustomerCompanyDO.setUpdateTime(now);
-            newCustomerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            newCustomerCompanyDO.setId(customerCompanyDO.getId());
-            customerCompanyMapper.update(newCustomerCompanyDO);
+        CustomerPersonDO customerPersonDO  = CustomerConverter.convertCustomerPerson(customer.getCustomerPerson());
+        customerPersonDO.setCustomerId(customerDO.getId());
+        customerPersonDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        customerPersonDO.setCreateTime(now);
+        customerPersonDO.setUpdateTime(now);
+        customerPersonDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        customerPersonDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerPersonMapper.save(customerPersonDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(customer.getCustomerNo());
+        return serviceResult;
+    }
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> updateCompany(Customer customer) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+        CustomerDO customerDO = customerMapper.findCustomerCompanyByNo(customer.getCustomerNo());
+        if(customerDO==null||!CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
         }
-        if(CustomerType.CUSTOMER_TYPE_PERSON.equals(customer.getCustomerType())){
-            CustomerPersonDO customerPersonDO = customerPersonMapper.findByCustomerId(customerDO.getId());
-            CustomerPersonDO newCustomerPersonDO = CustomerConverter.convertCustomerPerson(customer.getCustomerPerson());
-            newCustomerPersonDO.setDataStatus(null);
-            newCustomerPersonDO.setCreateTime(null);
-            newCustomerPersonDO.setCreateUser(null);
-            newCustomerPersonDO.setUpdateTime(now);
-            newCustomerPersonDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            newCustomerPersonDO.setId(customerPersonDO.getId());
-            customerPersonMapper.update(newCustomerPersonDO);
+        CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
+        CustomerCompanyDO newCustomerCompanyDO = CustomerConverter.convertCustomerCompany(customer.getCustomerCompany());
+        newCustomerCompanyDO.setDataStatus(null);
+        newCustomerCompanyDO.setCreateTime(null);
+        newCustomerCompanyDO.setCreateUser(null);
+        newCustomerCompanyDO.setUpdateTime(now);
+        newCustomerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        newCustomerCompanyDO.setId(customerCompanyDO.getId());
+        customerCompanyMapper.update(newCustomerCompanyDO);
+
+        customerDO.setUpdateTime(now);
+        customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerDO.setIsDisabled(customer.getIsDisabled());
+        customerDO.setRemark(customer.getRemark());
+        customerMapper.update(customerDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(customer.getCustomerNo());
+        return serviceResult;
+    }
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> updatePerson(Customer customer) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+        CustomerDO customerDO = customerMapper.findCustomerPersonByNo(customer.getCustomerNo());
+        if(customerDO==null||!CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
         }
+        CustomerPersonDO customerPersonDO = customerPersonMapper.findByCustomerId(customerDO.getId());
+        CustomerPersonDO newCustomerPersonDO = CustomerConverter.convertCustomerPerson(customer.getCustomerPerson());
+        newCustomerPersonDO.setDataStatus(null);
+        newCustomerPersonDO.setCreateTime(null);
+        newCustomerPersonDO.setCreateUser(null);
+        newCustomerPersonDO.setUpdateTime(now);
+        newCustomerPersonDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        newCustomerPersonDO.setId(customerPersonDO.getId());
+        customerPersonMapper.update(newCustomerPersonDO);
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerDO.setIsDisabled(customer.getIsDisabled());
@@ -172,28 +207,69 @@ public class CustomerServiceImpl implements CustomerService {
         return result;
     }
 
-    private String check(Customer customer){
-        if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customer.getCustomerType())){
-
-            if(customer.getCustomerCompany()==null){
-                return ErrorCode.CUSTOMER_COMPANY_NOT_NULL;
-            }
-            if(StringUtil.isEmpty(customer.getCustomerCompany().getCompanyName())){
-                return ErrorCode.CUSTOMER_COMPANY_NAME_NOT_NULL;
-            }
-            if(StringUtil.isEmpty(customer.getCustomerCompany().getConnectRealName())){
-                return ErrorCode.CUSTOMER_COMPANY_CONNECT_NAME_NOT_NULL;
-            }
+    @Override
+    public ServiceResult<String, Customer> detailCustomerCompany(Customer customer) {
+        ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
+        CustomerDO customerDO = customerMapper.findCustomerCompanyByNo(customer.getCustomerNo());
+        if(customerDO==null||!CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
         }
-        if(CustomerType.CUSTOMER_TYPE_PERSON.equals(customer.getCustomerType())){
-
-            if(customer.getCustomerPerson()==null){
-                return ErrorCode.CUSTOMER_PERSON_NOT_NULL;
-            }
-            if(StringUtil.isEmpty(customer.getCustomerPerson().getRealName())){
-                return ErrorCode.CUSTOMER_PERSON_NAME_NOT_NULL;
-            }
-        }
-        return ErrorCode.SUCCESS;
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(CustomerConverter.convertCustomerDO(customerDO));
+        return serviceResult;
     }
+
+    @Override
+    public ServiceResult<String, Customer> detailCustomerPerson(Customer customer) {
+        ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
+        CustomerDO customerDO = customerMapper.findCustomerPersonByNo(customer.getCustomerNo());
+        if(customerDO==null||!CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(CustomerConverter.convertCustomerDO(customerDO));
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, String> updateRisk(CustomerRiskManagement customerRiskManagement) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        CustomerDO customerDO = customerMapper.findByNo(customerRiskManagement.getCustomerNo());
+        if(customerDO==null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+        Date now = new Date();
+        if(customerDO.getCustomerRiskManagementDO()==null){//没有风控信息则添加
+
+            CustomerRiskManagementDO customerRiskManagementDO = CustomerRiskManagementConverter.convertCustomerRiskManagement(customerRiskManagement);
+            customerRiskManagementDO.setCreditAmountUsed(BigDecimal.ZERO);
+            customerRiskManagementDO.setCustomerId(customerDO.getId());
+            customerRiskManagementDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            customerRiskManagementDO.setCreateTime(now);
+            customerRiskManagementDO.setUpdateTime(now);
+            customerRiskManagementDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            customerRiskManagementDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            customerRiskManagementMapper.save(customerRiskManagementDO);
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            serviceResult.setResult(customerDO.getCustomerNo());
+            return serviceResult;
+        }else{//有风控信息则修改
+            CustomerRiskManagementDO newCustomerRiskManagementDO = new CustomerRiskManagementDO();
+            newCustomerRiskManagementDO.setId(customerDO.getCustomerRiskManagementDO().getId());
+            newCustomerRiskManagementDO.setUpdateTime(now);
+            newCustomerRiskManagementDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            newCustomerRiskManagementDO.setCreditAmount(customerRiskManagement.getCreditAmount());
+            newCustomerRiskManagementDO.setDepositCycle(customerRiskManagement.getDepositCycle());
+            newCustomerRiskManagementDO.setPaymentCycle(customerRiskManagement.getPaymentCycle());
+            customerRiskManagementMapper.update(newCustomerRiskManagementDO);
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            serviceResult.setResult(customerDO.getCustomerNo());
+        }
+
+        return serviceResult;
+    }
+
 }

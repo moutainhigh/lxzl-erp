@@ -3,9 +3,6 @@ package com.lxzl.erp.dataaccess.domain.customer;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
-import java.util.Date;
-
-
 public class CustomerDO  extends BaseDO {
 
 	private Integer id;
@@ -19,6 +16,8 @@ public class CustomerDO  extends BaseDO {
 	private CustomerCompanyDO customerCompanyDO;
 	@Transient
 	private CustomerPersonDO customerPersonDO;
+
+	private CustomerRiskManagementDO customerRiskManagementDO;
 
 	public Integer getId(){
 		return id;
@@ -82,5 +81,13 @@ public class CustomerDO  extends BaseDO {
 
 	public void setCustomerPersonDO(CustomerPersonDO customerPersonDO) {
 		this.customerPersonDO = customerPersonDO;
+	}
+
+	public CustomerRiskManagementDO getCustomerRiskManagementDO() {
+		return customerRiskManagementDO;
+	}
+
+	public void setCustomerRiskManagementDO(CustomerRiskManagementDO customerRiskManagementDO) {
+		this.customerRiskManagementDO = customerRiskManagementDO;
 	}
 }
