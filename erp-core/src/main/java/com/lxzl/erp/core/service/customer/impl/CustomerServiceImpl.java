@@ -8,15 +8,19 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.customer.CustomerService;
+import com.lxzl.erp.core.service.customer.impl.support.CustomerRiskManagementConverter;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerPersonMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerPersonDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -36,6 +41,8 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerCompanyMapper customerCompanyMapper;
     @Autowired
     private UserSupport userSupport;
+    @Autowired
+    private CustomerRiskManagementMapper customerRiskManagementMapper;
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addCompany(Customer customer) {
@@ -225,4 +232,44 @@ public class CustomerServiceImpl implements CustomerService {
         serviceResult.setResult(CustomerConverter.convertCustomerDO(customerDO));
         return serviceResult;
     }
+
+    @Override
+    public ServiceResult<String, String> updateRisk(CustomerRiskManagement customerRiskManagement) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        CustomerDO customerDO = customerMapper.findByNo(customerRiskManagement.getCustomerNo());
+        if(customerDO==null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+        Date now = new Date();
+        if(customerDO.getCustomerRiskManagementDO()==null){//没有风控信息则添加
+
+            CustomerRiskManagementDO customerRiskManagementDO = CustomerRiskManagementConverter.convertCustomerRiskManagement(customerRiskManagement);
+            customerRiskManagementDO.setCreditAmountUsed(BigDecimal.ZERO);
+            customerRiskManagementDO.setCustomerId(customerDO.getId());
+            customerRiskManagementDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            customerRiskManagementDO.setCreateTime(now);
+            customerRiskManagementDO.setUpdateTime(now);
+            customerRiskManagementDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            customerRiskManagementDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            customerRiskManagementMapper.save(customerRiskManagementDO);
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            serviceResult.setResult(customerDO.getCustomerNo());
+            return serviceResult;
+        }else{//有风控信息则修改
+            CustomerRiskManagementDO newCustomerRiskManagementDO = new CustomerRiskManagementDO();
+            newCustomerRiskManagementDO.setId(customerDO.getCustomerRiskManagementDO().getId());
+            newCustomerRiskManagementDO.setUpdateTime(now);
+            newCustomerRiskManagementDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            newCustomerRiskManagementDO.setCreditAmount(customerRiskManagement.getCreditAmount());
+            newCustomerRiskManagementDO.setDepositCycle(customerRiskManagement.getDepositCycle());
+            newCustomerRiskManagementDO.setPaymentCycle(customerRiskManagement.getPaymentCycle());
+            customerRiskManagementMapper.update(newCustomerRiskManagementDO);
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            serviceResult.setResult(customerDO.getCustomerNo());
+        }
+
+        return serviceResult;
+    }
+
 }

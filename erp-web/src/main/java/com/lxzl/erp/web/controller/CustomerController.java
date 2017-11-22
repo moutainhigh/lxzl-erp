@@ -5,7 +5,10 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerPersonGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
@@ -71,6 +74,12 @@ public class CustomerController {
     @RequestMapping(value = "detailCustomerPerson", method = RequestMethod.POST)
     public Result detailCustomerPerson(@RequestBody @Validated(IdGroup.class)Customer customer, BindingResult validResult) {
         ServiceResult<String, Customer> serviceResult = customerService.detailCustomerPerson(customer);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "updateRisk", method = RequestMethod.POST)
+    public Result update(@RequestBody @Validated(UpdateGroup.class) CustomerRiskManagement customerRiskManagement, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.updateRisk(customerRiskManagement);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }

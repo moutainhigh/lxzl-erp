@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
 
 public interface CustomerService {
     ServiceResult<String,String> addCompany(Customer customer);
@@ -15,4 +16,5 @@ public interface CustomerService {
     ServiceResult<String,Page<Customer>> pageCustomerPerson(CustomerPersonQueryParam customerPersonQueryParam);
     ServiceResult<String,Customer> detailCustomerCompany(Customer customer);
     ServiceResult<String,Customer> detailCustomerPerson(Customer customer);
+    ServiceResult<String,String> updateRisk(CustomerRiskManagement customerRiskManagement);
 }

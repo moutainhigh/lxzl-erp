@@ -8,7 +8,10 @@ import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerCompany;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerPerson;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
 import org.junit.Test;
+
+import java.math.BigDecimal;
 
 
 public class CustomerControllerTest extends ERPUnTransactionalTest{
@@ -72,8 +75,17 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
     @Test
     public void detailCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("CP01711221151519901204");
+        customer.setCustomerNo("C201711152010206581143");
         TestResult result = getJsonTestResult("/customer/detailCustomerPerson",customer);
+    }
+    @Test
+    public void updateRisk() throws Exception {
+        CustomerRiskManagement customerRiskManagement = new CustomerRiskManagement();
+        customerRiskManagement.setCustomerNo("C201711152010206581143");
+        customerRiskManagement.setPaymentCycle(3);
+        customerRiskManagement.setCreditAmount(new BigDecimal(10000d));
+        customerRiskManagement.setDepositCycle(3);
+        TestResult result = getJsonTestResult("/customer/updateRisk",customerRiskManagement);
     }
 
 }
