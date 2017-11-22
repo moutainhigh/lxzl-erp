@@ -135,29 +135,18 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult<String, Page<CustomerCompany>> pageCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam) {
-        ServiceResult<String, Page<CustomerCompany>> result = new ServiceResult<>();
+    public ServiceResult<String, Page<Customer>> pageCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam) {
+        ServiceResult<String, Page<Customer>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
-        customerCompanyQueryParam.setCustomerId(null);
-        if(StringUtil.isNotEmpty(customerCompanyQueryParam.getCustomerNo())){
-            CustomerDO customerDO = customerMapper.findByNo(customerCompanyQueryParam.getCustomerNo());
-            if(customerDO==null){
-                result.setErrorCode(ErrorCode.SUCCESS);
-                Page<CustomerCompany> page = new Page<>(new ArrayList<CustomerCompany>(), 0, customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
-                result.setResult(page);
-                return result;
-            }
-            customerCompanyQueryParam.setCustomerId(customerDO.getId());
-        }
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("queryParam", customerCompanyQueryParam);
 
-        Integer totalCount = customerCompanyMapper.findCustomerCompanyCountByParams(maps);
-        List<CustomerCompanyDO> purchaseOrderDOList = customerCompanyMapper.findCustomerCompanyByParams(maps);
-        List<CustomerCompany> customerCompanyList = CustomerConverter.convertCustomerCompanyDOList(purchaseOrderDOList);
-        Page<CustomerCompany> page = new Page<>(customerCompanyList, totalCount, customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
+        Integer totalCount = customerMapper.findCustomerCompanyCountByParams(maps);
+        List<CustomerDO> customerDOList = customerMapper.findCustomerCompanyByParams(maps);
+        List<Customer> customerList = CustomerConverter.convertCustomerDOList(customerDOList);
+        Page<Customer> page = new Page<>(customerList, totalCount, customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
@@ -165,29 +154,18 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult<String, Page<CustomerPerson>> pageCustomerPerson(CustomerPersonQueryParam customerPersonQueryParam) {
-        ServiceResult<String, Page<CustomerPerson>> result = new ServiceResult<>();
+    public ServiceResult<String, Page<Customer>> pageCustomerPerson(CustomerPersonQueryParam customerPersonQueryParam) {
+        ServiceResult<String, Page<Customer>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(customerPersonQueryParam.getPageNo(), customerPersonQueryParam.getPageSize());
-        customerPersonQueryParam.setCustomerId(null);
-        if(StringUtil.isNotEmpty(customerPersonQueryParam.getCustomerNo())){
-            CustomerDO customerDO = customerMapper.findByNo(customerPersonQueryParam.getCustomerNo());
-            if(customerDO==null){
-                result.setErrorCode(ErrorCode.SUCCESS);
-                Page<CustomerPerson> page = new Page<>(new ArrayList<CustomerPerson>(), 0, customerPersonQueryParam.getPageNo(), customerPersonQueryParam.getPageSize());
-                result.setResult(page);
-                return result;
-            }
-            customerPersonQueryParam.setCustomerId(customerDO.getId());
-        }
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("queryParam", customerPersonQueryParam);
 
-        Integer totalCount = customerPersonMapper.findCustomerPersonCountByParams(maps);
-        List<CustomerPersonDO> customerPersonDOList = customerPersonMapper.findCustomerPersonByParams(maps);
-        List<CustomerPerson> customerPersonList = CustomerConverter.convertCustomerPersonDOList(customerPersonDOList);
-        Page<CustomerPerson> page = new Page<>(customerPersonList, totalCount, customerPersonQueryParam.getPageNo(), customerPersonQueryParam.getPageSize());
+        Integer totalCount = customerMapper.findCustomerPersonCountByParams(maps);
+        List<CustomerDO> customerDOList = customerMapper.findCustomerPersonByParams(maps);
+        List<Customer> customerPersonList = CustomerConverter.convertCustomerDOList(customerDOList);
+        Page<Customer> page = new Page<>(customerPersonList, totalCount, customerPersonQueryParam.getPageNo(), customerPersonQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);

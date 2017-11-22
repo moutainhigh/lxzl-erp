@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.customer.impl;
 
+import com.lxzl.erp.common.constant.CustomerType;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerCompany;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerPerson;
@@ -14,10 +15,26 @@ import java.util.List;
 
 public class CustomerConverter {
 
+    public static List<Customer> convertCustomerDOList(List<CustomerDO> customerDOList){
+        List<Customer> customerList  = new ArrayList<>();
+        if(CollectionUtil.isNotEmpty(customerDOList)){
+            for(CustomerDO customerDO : customerDOList){
+                Customer customer = convertCustomerDO(customerDO);
+                customerList.add(customer);
+            }
+        }
+        return customerList;
+    }
+
     public static Customer convertCustomerDO(CustomerDO customerDO){
         Customer customer = new Customer();
         BeanUtils.copyProperties(customerDO,customer);
         customer.setCustomerId(customerDO.getId());
+        if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+            customer.setCustomerCompany(convertCustomerCompanyDO(customerDO.getCustomerCompanyDO()));
+        }else if(CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())){
+            customer.setCustomerPerson(convertCustomerPersonDO(customerDO.getCustomerPersonDO()));
+        }
         return customer;
     }
 
