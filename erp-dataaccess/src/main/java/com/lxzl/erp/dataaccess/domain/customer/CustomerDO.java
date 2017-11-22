@@ -16,9 +16,9 @@ public class CustomerDO  extends BaseDO {
 	private String remark;
 
 	@Transient
-	private String companyName;
+	private CustomerCompanyDO customerCompanyDO;
 	@Transient
-	private String personName;
+	private CustomerPersonDO customerPersonDO;
 
 	public Integer getId(){
 		return id;
@@ -68,19 +68,19 @@ public class CustomerDO  extends BaseDO {
 		this.remark = remark;
 	}
 
-	public String getCompanyName() {
-		return companyName;
+	public CustomerCompanyDO getCustomerCompanyDO() {
+		return customerCompanyDO;
 	}
 
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
+	public void setCustomerCompanyDO(CustomerCompanyDO customerCompanyDO) {
+		this.customerCompanyDO = customerCompanyDO;
 	}
 
-	public String getPersonName() {
-		return personName;
+	public CustomerPersonDO getCustomerPersonDO() {
+		return customerPersonDO;
 	}
 
-	public void setPersonName(String personName) {
-		this.personName = personName;
+	public void setCustomerPersonDO(CustomerPersonDO customerPersonDO) {
+		this.customerPersonDO = customerPersonDO;
 	}
 }

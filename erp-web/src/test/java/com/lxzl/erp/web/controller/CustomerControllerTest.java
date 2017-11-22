@@ -17,8 +17,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         Customer customer = new Customer();
         customer.setCustomerType(CustomerType.CUSTOMER_TYPE_COMPANY);
         CustomerCompany customerCompany = new CustomerCompany();
-        customerCompany.setCompanyName("百度");
-        customerCompany.setConnectRealName("小王");
+        customerCompany.setCompanyName("清华同方");
+        customerCompany.setConnectRealName("李四");
         customer.setCustomerCompany(customerCompany);
         TestResult result = getJsonTestResult("/customer/add",customer);
     }
@@ -53,7 +53,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
     @Test
     public void pageCustomerCompany() throws Exception {
         CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
-        customerCompanyQueryParam.setCompanyName("百");
+//        customerCompanyQueryParam.setCompanyName("百");
         TestResult result = getJsonTestResult("/customer/pageCustomerCompany",customerCompanyQueryParam);
     }
     @Test

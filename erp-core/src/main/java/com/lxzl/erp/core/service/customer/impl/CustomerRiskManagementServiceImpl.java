@@ -108,11 +108,11 @@ public class CustomerRiskManagementServiceImpl implements CustomerRiskManagement
             return serviceResult;
         }
         CustomerRiskManagement customerRiskManagement = CustomerRiskManagementConverter.convertCustomerRiskManagementDO(customerRiskManagementDO);
-        if(StringUtil.isNotEmpty(customerDO.getPersonName())){
-            customerRiskManagement.setCustomerName(customerDO.getPersonName());
-        }else if(StringUtil.isNotEmpty(customerDO.getCompanyName())){
-            customerRiskManagement.setCustomerName(customerDO.getCompanyName());
-        }
+//        if(StringUtil.isNotEmpty(customerDO.getPersonName())){
+//            customerRiskManagement.setCustomerName(customerDO.getPersonName());
+//        }else if(StringUtil.isNotEmpty(customerDO.getCompanyName())){
+//            customerRiskManagement.setCustomerName(customerDO.getCompanyName());
+//        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerRiskManagement);
         return serviceResult;

@@ -11,6 +11,6 @@ import com.lxzl.erp.common.domain.customer.pojo.CustomerPerson;
 public interface CustomerService {
     ServiceResult<String,String> add(Customer customer);
     ServiceResult<String,String> update(Customer customer);
-    ServiceResult<String,Page<CustomerCompany>> pageCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam);
-    ServiceResult<String,Page<CustomerPerson>> pageCustomerPerson(CustomerPersonQueryParam customerPersonQueryParam);
+    ServiceResult<String,Page<Customer>> pageCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam);
+    ServiceResult<String,Page<Customer>> pageCustomerPerson(CustomerPersonQueryParam customerPersonQueryParam);
 }
