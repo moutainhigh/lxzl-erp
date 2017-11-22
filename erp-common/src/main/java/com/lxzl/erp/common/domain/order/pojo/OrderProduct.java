@@ -23,7 +23,6 @@ public class OrderProduct implements Serializable {
     private BigDecimal insuranceAmount;
     private String productSkuSnapshot;
     private List<String> equipmentNoList;
-    private List<String> bulkMaterialNoList;
     private Integer dataStatus;
     private String remark;
     private List<ProductSkuProperty> productSkuPropertyList;
@@ -164,11 +163,4 @@ public class OrderProduct implements Serializable {
         this.insuranceAmount = insuranceAmount;
     }
 
-    public List<String> getBulkMaterialNoList() {
-        return bulkMaterialNoList;
-    }
-
-    public void setBulkMaterialNoList(List<String> bulkMaterialNoList) {
-        this.bulkMaterialNoList = bulkMaterialNoList;
-    }
 }

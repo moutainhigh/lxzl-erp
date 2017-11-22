@@ -914,7 +914,6 @@ CREATE TABLE `erp_order_product` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单商品项表';
 
-
 DROP TABLE if exists `erp_order_product_equipment`;
 CREATE TABLE `erp_order_product_equipment` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
@@ -934,6 +933,48 @@ CREATE TABLE `erp_order_product_equipment` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单商品设备表';
+
+DROP TABLE if exists `erp_order_material`;
+CREATE TABLE `erp_order_material` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `material_id` int(20) COMMENT '物料ID',
+  `material_name` varchar(100) COLLATE utf8_bin COMMENT '物料名称',
+  `material_count` int(11) NOT NULL DEFAULT '0' COMMENT '物料总数',
+  `material_unit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '物料单价',
+  `material_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '物料价格',
+  `deposit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '押金金额',
+  `credit_deposit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '授信押金金额',
+  `insurance_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '保险金额',
+  `material_snapshot` text COMMENT '物料冗余信息，防止商品修改留存快照',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单物料项表';
+
+DROP TABLE if exists `erp_order_material_bulk`;
+CREATE TABLE `erp_order_material_bulk` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `order_material_id` int(20) NOT NULL COMMENT '订单物料项ID',
+  `bulk_material_id` int(20) NOT NULL COMMENT '设备ID',
+  `bulk_material_no` varchar(100) NOT NULL COMMENT '设备编号唯一',
+  `expect_return_time` datetime DEFAULT NULL COMMENT '预计归还时间',
+  `actual_return_time` datetime DEFAULT NULL COMMENT '实际归还时间',
+  `expect_rent_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '预计租金',
+  `actual_rent_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '实际租金',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单物料散料表';
 
 
 

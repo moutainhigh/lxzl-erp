@@ -42,6 +42,7 @@ public class OrderDO extends BaseDO {
     private Integer owner;
 
     private List<OrderProductDO> orderProductDOList;
+    private List<OrderMaterialDO> orderMaterialDOList;
     private OrderConsignInfoDO orderConsignInfoDO;
 
     public Integer getId() {
@@ -298,5 +299,13 @@ public class OrderDO extends BaseDO {
 
     public void setOwner(Integer owner) {
         this.owner = owner;
+    }
+
+    public List<OrderMaterialDO> getOrderMaterialDOList() {
+        return orderMaterialDOList;
+    }
+
+    public void setOrderMaterialDOList(List<OrderMaterialDO> orderMaterialDOList) {
+        this.orderMaterialDOList = orderMaterialDOList;
     }
 }

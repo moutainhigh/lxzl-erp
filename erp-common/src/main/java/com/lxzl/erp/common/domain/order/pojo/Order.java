@@ -44,6 +44,7 @@ public class Order implements Serializable {
     private Integer customerConsignId;
 
     private List<OrderProduct> orderProductList;
+    private List<OrderMaterial> orderMaterialList;
     private OrderConsignInfo orderConsignInfo;
 
     // 审核人,只提供给审核的时候用
@@ -319,5 +320,13 @@ public class Order implements Serializable {
 
     public void setVerifyUser(Integer verifyUser) {
         this.verifyUser = verifyUser;
+    }
+
+    public List<OrderMaterial> getOrderMaterialList() {
+        return orderMaterialList;
+    }
+
+    public void setOrderMaterialList(List<OrderMaterial> orderMaterialList) {
+        this.orderMaterialList = orderMaterialList;
     }
 }
