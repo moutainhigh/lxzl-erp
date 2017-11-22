@@ -24,6 +24,8 @@ public class Order implements Serializable {
     private Integer payMode;
     private Integer totalProductCount;
     private BigDecimal totalProductAmount;
+    private Integer totalMaterialCount;
+    private BigDecimal totalMaterialAmount;
     private BigDecimal totalOrderAmount;
     private BigDecimal totalDiscountAmount;
     private BigDecimal logisticsAmount;
@@ -328,5 +330,21 @@ public class Order implements Serializable {
 
     public void setOrderMaterialList(List<OrderMaterial> orderMaterialList) {
         this.orderMaterialList = orderMaterialList;
+    }
+
+    public Integer getTotalMaterialCount() {
+        return totalMaterialCount;
+    }
+
+    public void setTotalMaterialCount(Integer totalMaterialCount) {
+        this.totalMaterialCount = totalMaterialCount;
+    }
+
+    public BigDecimal getTotalMaterialAmount() {
+        return totalMaterialAmount;
+    }
+
+    public void setTotalMaterialAmount(BigDecimal totalMaterialAmount) {
+        this.totalMaterialAmount = totalMaterialAmount;
     }
 }

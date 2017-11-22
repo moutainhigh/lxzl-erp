@@ -39,6 +39,7 @@ public class Material implements Serializable {
     private String propertyName;
     private String propertyValueName;
     private Double materialCapacityValue;
+    private Integer isMainMaterial;
 
     public Integer getMaterialId() {
         return materialId;
@@ -230,5 +231,13 @@ public class Material implements Serializable {
 
     public void setMaterialCapacityValue(Double materialCapacityValue) {
         this.materialCapacityValue = materialCapacityValue;
+    }
+
+    public Integer getIsMainMaterial() {
+        return isMainMaterial;
+    }
+
+    public void setIsMainMaterial(Integer isMainMaterial) {
+        this.isMainMaterial = isMainMaterial;
     }
 }

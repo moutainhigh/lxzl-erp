@@ -76,6 +76,14 @@ public interface MaterialService extends BaseService {
     ServiceResult<String, Material> queryMaterialByNo(String materialNo);
 
     /**
+     * 查询单个物料
+     *
+     * @param materialId 查询物料ID
+     * @return 物料信息
+     */
+    ServiceResult<String, Material> queryMaterialById(Integer materialId);
+
+    /**
      * 查询所有散料
      *
      * @param bulkMaterialQueryParam 查询散料参数

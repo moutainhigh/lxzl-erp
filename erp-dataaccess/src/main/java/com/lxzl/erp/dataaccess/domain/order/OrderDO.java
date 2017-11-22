@@ -24,6 +24,8 @@ public class OrderDO extends BaseDO {
     private Integer payMode;
     private Integer totalProductCount;
     private BigDecimal totalProductAmount;
+    private Integer totalMaterialCount;
+    private BigDecimal totalMaterialAmount;
     private BigDecimal totalOrderAmount;
     private BigDecimal totalDiscountAmount;
     private BigDecimal logisticsAmount;
@@ -307,5 +309,21 @@ public class OrderDO extends BaseDO {
 
     public void setOrderMaterialDOList(List<OrderMaterialDO> orderMaterialDOList) {
         this.orderMaterialDOList = orderMaterialDOList;
+    }
+
+    public Integer getTotalMaterialCount() {
+        return totalMaterialCount;
+    }
+
+    public void setTotalMaterialCount(Integer totalMaterialCount) {
+        this.totalMaterialCount = totalMaterialCount;
+    }
+
+    public BigDecimal getTotalMaterialAmount() {
+        return totalMaterialAmount;
+    }
+
+    public void setTotalMaterialAmount(BigDecimal totalMaterialAmount) {
+        this.totalMaterialAmount = totalMaterialAmount;
     }
 }

@@ -17,6 +17,7 @@ public class MaterialQueryParam extends BasePageParam {
     private String materialNo;
     private String materialName;
     private Integer materialType;
+    private Integer isMainMaterial;
 
     public String getMaterialNo() {
         return materialNo;
@@ -40,5 +41,13 @@ public class MaterialQueryParam extends BasePageParam {
 
     public void setMaterialType(Integer materialType) {
         this.materialType = materialType;
+    }
+
+    public Integer getIsMainMaterial() {
+        return isMainMaterial;
+    }
+
+    public void setIsMainMaterial(Integer isMainMaterial) {
+        this.isMainMaterial = isMainMaterial;
     }
 }

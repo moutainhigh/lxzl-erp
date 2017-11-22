@@ -11,6 +11,7 @@ public class BulkMaterial implements Serializable {
 	private Integer bulkMaterialId;   //散料ID
 	private String bulkMaterialNo;   //散料唯一编号
 	private Integer bulkMaterialType;	// 散料类型，来自于物料类型
+	private Integer isMainMaterial;		// 是否是四大件，1是0否
 	private String bulkMaterialName;   //散料名称
 	private Integer materialId;   //物料ID，从哪个物料生成的
 	private String materialNo;   //物料编号，从哪个物料生成的
@@ -224,5 +225,13 @@ public class BulkMaterial implements Serializable {
 
 	public void setCurrentEquipmentNo(String currentEquipmentNo) {
 		this.currentEquipmentNo = currentEquipmentNo;
+	}
+
+	public Integer getIsMainMaterial() {
+		return isMainMaterial;
+	}
+
+	public void setIsMainMaterial(Integer isMainMaterial) {
+		this.isMainMaterial = isMainMaterial;
 	}
 }

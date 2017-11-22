@@ -9,6 +9,7 @@
 		<result column="material_no" jdbcType="VARCHAR" property="materialNo" />
 		<result column="material_name" jdbcType="VARCHAR" property="materialName" />
 		<result column="material_type" jdbcType="INTEGER" property="materialType" />
+		<result column="is_main_material" jdbcType="INTEGER" property="isMainMaterial" />
 		<result column="brand_id" jdbcType="INTEGER" property="brandId" />
 		<result column="category_id" jdbcType="INTEGER" property="categoryId" />
 		<result column="property_id" jdbcType="INTEGER" property="propertyId" />
@@ -49,7 +50,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		em.id,em.material_no,em.material_name,em.material_type,em.brand_id,em.category_id,em.property_id,em.property_value_id,em.stock,em.material_price,em.time_rent_price,em.day_rent_price,em.month_rent_price,em.material_desc,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
+		em.id,em.material_no,em.material_name,em.material_type,em.is_main_material,em.brand_id,em.category_id,em.property_id,em.property_value_id,em.stock,em.material_price,em.time_rent_price,em.day_rent_price,em.month_rent_price,em.material_desc,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
 	</sql>
 
 	<sql id="img_column_List">
@@ -100,6 +101,9 @@
 			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialType != null &amp;&amp; maps.materialQueryParam.materialType != ''">
 				and em.material_type = #{maps.materialQueryParam.materialType, jdbcType=INTEGER}
 			</if>
+			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.isMainMaterial != null &amp;&amp; maps.materialQueryParam.isMainMaterial != ''">
+				and em.is_main_material = #{maps.materialQueryParam.isMainMaterial, jdbcType=INTEGER}
+			</if>
 			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialNo != null &amp;&amp; maps.materialQueryParam.materialNo != ''">
 				and em.material_no like CONCAT('%','${maps.materialQueryParam.materialNo}','%' )
 			</if>
@@ -122,6 +126,9 @@
 			<where>
 				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialType != null &amp;&amp; maps.materialQueryParam.materialType != ''">
 					and em.material_type = #{maps.materialQueryParam.materialType, jdbcType=INTEGER}
+				</if>
+				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.isMainMaterial != null &amp;&amp; maps.materialQueryParam.isMainMaterial != ''">
+					and em.is_main_material = #{maps.materialQueryParam.isMainMaterial, jdbcType=INTEGER}
 				</if>
 				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialNo != null &amp;&amp; maps.materialQueryParam.materialNo != ''">
 					and em.material_no like CONCAT('%','${maps.materialQueryParam.materialNo}','%' )
@@ -148,6 +155,9 @@
 			</if>
 			<if test="materialType != null">
 				material_type = #{materialType,jdbcType=INTEGER},
+			</if>
+			<if test="isMainMaterial != null">
+				is_main_material = #{isMainMaterial,jdbcType=INTEGER},
 			</if>
 			<if test="brandId != null">
 				brand_id = #{brandId,jdbcType=INTEGER},

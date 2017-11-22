@@ -38,6 +38,27 @@ public class OrderConverter {
         return orderProductDOList;
     }
 
+    public static List<OrderMaterialDO> convertOrderMaterialList(List<OrderMaterial> orderMaterialList) {
+        List<OrderMaterialDO> orderMaterialDOList = new ArrayList<>();
+        if (orderMaterialList != null && !orderMaterialList.isEmpty()) {
+            for (OrderMaterial orderMaterial : orderMaterialList) {
+                orderMaterialDOList.add(convertOrderProduct(orderMaterial));
+            }
+        }
+        return orderMaterialDOList;
+    }
+
+
+    public static OrderMaterialDO convertOrderProduct(OrderMaterial orderMaterial) {
+        OrderMaterialDO orderMaterialDO = new OrderMaterialDO();
+        if (orderMaterial.getOrderMaterialId() != null) {
+            orderMaterialDO.setId(orderMaterial.getOrderMaterialId());
+        }
+        BeanUtils.copyProperties(orderMaterial, orderMaterialDO);
+        return orderMaterialDO;
+    }
+
+
 
     public static Order convertOrderDO(OrderDO orderDO) {
         Order order = new Order();
