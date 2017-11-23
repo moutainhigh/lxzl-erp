@@ -189,6 +189,12 @@ public class ErrorCode {
     public static final String CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR = "J500016";
     public static final String CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS = "J500017";
 
+    public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
+    public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
+    public static final String MESSAGE_RECEIVER_NOT_NULL = "J600003";
+    public static final String MESSAGE_ID_NOT_NULL = "J600004";
+    public static final String MESSAGE_NOT_EXISTS = "J600005";
+
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -370,6 +376,13 @@ public class ErrorCode {
         MAP.put(CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR, "押金期数不能小于0");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR, "付款期数不能小于1");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS, "风控信息不存在");
+
+        MAP.put(MESSAGE_TITLE_NOT_NULL,"站内信标题不能为空");
+        MAP.put(MESSAGE_CONTENT_NOT_NULL,"站内信内容不能为空");
+        MAP.put(MESSAGE_RECEIVER_NOT_NULL,"站内信收件人不能为空");
+        MAP.put(MESSAGE_ID_NOT_NULL,"站内信ID不能为空");
+        MAP.put(MESSAGE_NOT_EXISTS,"站内信不存在");
+
     }
 
     public static String getMessage(String code) {
