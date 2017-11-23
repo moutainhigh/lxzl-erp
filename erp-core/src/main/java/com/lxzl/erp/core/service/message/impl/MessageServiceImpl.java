@@ -128,7 +128,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public ServiceResult<String, Page<Message>> pageReadMessage(MessageQueryParam messageQueryParam) {
+    public ServiceResult<String, Page<Message>> pageReceiveMessage(MessageQueryParam messageQueryParam) {
         ServiceResult<String, Page<Message>> result = new ServiceResult<>();
 		//从分页参数中获取第几页，和每页页数的值，放入分页对象中
         PageQuery pageQuery = new PageQuery(messageQueryParam.getPageNo(), messageQueryParam.getPageSize());
@@ -141,8 +141,8 @@ public class MessageServiceImpl implements MessageService {
         maps.put("messageQueryParam", messageQueryParam);
 
 		//通过分页查询数据库，获取总的数据条数以及所有的数据
-        Integer totalCount = messageMapper.findReadMessageCountByParams(maps);
-        List<MessageDO> messageDOList = messageMapper.findReadMessageByParams(maps);
+        Integer totalCount = messageMapper.findReceiveMessageCountByParams(maps);
+        List<MessageDO> messageDOList = messageMapper.findReceiveMessageByParams(maps);
 
 		//将查询的数据转换为前端专用的数据
         List<Message> messageList = MessageConverter.convertMessageDOList(messageDOList);
