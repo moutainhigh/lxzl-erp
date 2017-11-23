@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.message.MessageMapper">
+
+    <resultMap type="com.lxzl.erp.dataaccess.domain.message.MessageDO" id="MessageDO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="sender_user_id" jdbcType="INTEGER" property="senderUserId" />
+        <result column="receiver_user_id" jdbcType="INTEGER" property="receiverUserId" />
+        <result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
+        <result column="read_time" jdbcType="TIMESTAMP" property="readTime" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="message_text" jdbcType="VARCHAR" property="messageText" />
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+
+        <result column="senderUserName" jdbcType="VARCHAR" property="senderName" />
+        <result column="receiverUserName" jdbcType="VARCHAR" property="receiverName" />
+    </resultMap>
+
+    <insert id="batchSave" parameterType="java.util.List">
+        <!--<selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">-->
+            <!--SELECT LAST_INSERT_ID()-->
+        <!--</selectKey>-->
+        insert into erp_message
+        (sender_user_id,receiver_user_id,send_time,title,message_text,data_status,create_time,create_user,update_time,update_user)
+        values
+        <foreach collection="messageDOList" item="messageDO" index="index" separator =",">
+            (
+            #{messageDO.senderUserId},#{messageDO.receiverUserId},#{messageDO.sendTime},#{messageDO.title},#{messageDO.messageText},
+            #{messageDO.dataStatus},#{messageDO.createTime},#{messageDO.createUser},#{messageDO.updateTime},#{messageDO.updateUser}
+            )
+        </foreach>
+    </insert>
+
+
+    <select id="findSendMessageCountByParams" resultType="java.lang.Integer" parameterType="map">
+    SELECT count(*)
+        FROM erp_message em
+    WHERE
+        em.`sender_user_id` = #{maps.senderUserId} AND em.data_status =1
+    </select>
+
+    <sql id="column_List">
+        em.id,em.sender_user_id,em.receiver_user_id,em.send_time,em.read_time,em.title,em.message_text,em.data_status,em.remark,em.create_user,em.create_time,em.update_user,em.update_time
+</sql>
+
+    <select id="findSendMessageByParams" resultMap="MessageDO" parameterType="map">
+         SELECT
+            <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName
+          FROM erp_message em
+            LEFT JOIN erp_user esu ON em.sender_user_id = esu.id
+            LEFT JOIN erp_user eru ON em.receiver_user_id = eru.id
+          WHERE
+          em.sender_user_id = #{maps.senderUserId} AND em.data_status =1
+        ORDER BY em.send_time DESC ,em.receiver_user_id DESC
+        LIMIT #{maps.start},#{maps.pageSize}
+    </select>
+    
+    <select id="findById" parameterType="int" resultMap="MessageDO">
+        SELECT
+        <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName
+        FROM erp_message em
+        LEFT JOIN erp_user esu ON em.sender_user_id = esu.id
+        LEFT JOIN erp_user eru ON em.receiver_user_id = eru.id
+        WHERE
+        em.id = #{id} AND em.data_status =1
+    </select>
+
+    <select id="findReadMessageCountByParams" resultType="java.lang.Integer" parameterType="map">
+        SELECT count(*)
+        FROM erp_message em
+        WHERE
+        em.receiver_user_id = #{maps.receiverUserId} AND em.data_status =1
+    </select>
+
+    <select id="findReadMessageByParams" resultMap="MessageDO" parameterType="map">
+        SELECT
+        <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName
+        FROM erp_message em
+        LEFT JOIN erp_user esu ON em.`sender_user_id` = esu.id
+        LEFT JOIN erp_user eru ON em.`receiver_user_id` = eru.id
+        WHERE
+        em.receiver_user_id = #{maps.receiverUserId} AND em.data_status =1
+        ORDER BY em.send_time DESC ,em.sender_user_id DESC
+        LIMIT #{maps.start},#{maps.pageSize}
+    </select>
+
+    <sql id="set_column_sql">
+        <set>
+            <if test="senderUserId != null">
+                sender_user_id = #{senderUserId,jdbcType=INTEGER},
+            </if>
+            <if test="receiverUserId != null">
+                receiver_user_id = #{receiverUserId,jdbcType=INTEGER},
+            </if>
+            <if test="sendTime != null">
+                send_time = #{sendTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="readTime != null">
+                read_time = #{readTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="messageText != null">
+                message_text = #{messageText,jdbcType=VARCHAR},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+        </set>
+    </sql>
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.message.MessageDO">
+        UPDATE erp_message
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <select id="findNotReadCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT
+        count(*)
+        FROM
+        erp_message
+        WHERE
+        receiver_user_id = #{id} AND
+        read_time IS NULL
+    </select>
+
+</mapper>
