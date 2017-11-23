@@ -21,8 +21,6 @@ import java.util.*;
 @Service("messageService")
 public class MessageServiceImpl implements MessageService {
 
-	@Autowired(required = false)
-	private HttpSession session;
 	@Autowired
 	private UserSupport userSupport;
 
@@ -99,7 +97,7 @@ public class MessageServiceImpl implements MessageService {
 		return result;
 	}
 
-	//todo 进行收件箱信息查看，更改读取时间上出现问题
+
 	@Override
     public ServiceResult<String, Message> queryMessage(Message message) {
         ServiceResult<String, Message> result = new ServiceResult<>();
