@@ -4,7 +4,6 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.message.MessageQueryParam;
 import com.lxzl.erp.common.domain.message.pojo.Message;
-import org.apache.ibatis.jdbc.Null;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -49,13 +48,13 @@ public class MessageControllerTest extends ERPUnTransactionalTest{
     }
 
     @Test
-    public void pageReadMessage() throws Exception{
+    public void pageReceiveMessage() throws Exception{
 
         MessageQueryParam messageQueryParam = new MessageQueryParam();
         messageQueryParam.setPageNo(1);
         messageQueryParam.setPageSize(10);
 
-        TestResult result = getJsonTestResult("/message/pageReadMessage",messageQueryParam);
+        TestResult result = getJsonTestResult("/message/pageReceiveMessage",messageQueryParam);
     }
 
     @Test

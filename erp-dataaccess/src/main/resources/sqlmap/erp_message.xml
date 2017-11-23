@@ -71,14 +71,14 @@
         em.id = #{id} AND em.data_status =1
     </select>
 
-    <select id="findReadMessageCountByParams" resultType="java.lang.Integer" parameterType="map">
+    <select id="findReceiveMessageCountByParams" resultType="java.lang.Integer" parameterType="map">
         SELECT count(*)
         FROM erp_message em
         WHERE
         em.receiver_user_id = #{maps.receiverUserId} AND em.data_status =1
     </select>
 
-    <select id="findReadMessageByParams" resultMap="MessageDO" parameterType="map">
+    <select id="findReceiveMessageByParams" resultMap="MessageDO" parameterType="map">
         SELECT
         <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName
         FROM erp_message em
@@ -142,7 +142,7 @@
         FROM
         erp_message
         WHERE
-        receiver_user_id = #{id} AND
+        receiver_user_id = #{id} AND data_status =1 AND
         read_time IS NULL
     </select>
 

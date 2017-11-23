@@ -50,9 +50,9 @@ public class MessageController extends BaseController{
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value="pageReadMessage",method = RequestMethod.POST)
-    public Result pageReadMessage(@RequestBody MessageQueryParam messageQueryParam){
-        ServiceResult<String, Page<Message>> serviceResult = messageService.pageReadMessage(messageQueryParam);
+    @RequestMapping(value="pageReceiveMessage",method = RequestMethod.POST)
+    public Result pageReceiveMessage(@RequestBody MessageQueryParam messageQueryParam){
+        ServiceResult<String, Page<Message>> serviceResult = messageService.pageReceiveMessage(messageQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
