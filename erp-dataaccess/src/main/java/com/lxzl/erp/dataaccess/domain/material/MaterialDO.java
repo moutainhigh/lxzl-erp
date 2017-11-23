@@ -18,10 +18,9 @@ public class MaterialDO extends BaseDO {
     private String materialName;
     private Integer materialType;
     private Integer isMainMaterial;
+    private Double materialCapacityValue;
+    private Integer materialModelId;
     private Integer brandId;
-    private Integer categoryId;
-    private Integer propertyId;
-    private Integer propertyValueId;
     private BigDecimal materialPrice;
     private Integer stock;
     private BigDecimal timeRentPrice;
@@ -30,16 +29,7 @@ public class MaterialDO extends BaseDO {
     private String materialDesc;
     private Integer dataStatus;
     private String remark;
-
     private List<MaterialImgDO> materialImgDOList;
-
-
-    @Transient
-    private String propertyName;
-    @Transient
-    private String propertyValueName;
-    @Transient
-    private Double materialCapacityValue;
 
     public Integer getId() {
         return id;
@@ -65,28 +55,28 @@ public class MaterialDO extends BaseDO {
         this.materialName = materialName;
     }
 
-    public BigDecimal getMaterialPrice() {
-        return materialPrice;
+    public Integer getMaterialType() {
+        return materialType;
     }
 
-    public void setMaterialPrice(BigDecimal materialPrice) {
-        this.materialPrice = materialPrice;
+    public void setMaterialType(Integer materialType) {
+        this.materialType = materialType;
     }
 
-    public Integer getDataStatus() {
-        return dataStatus;
+    public Integer getIsMainMaterial() {
+        return isMainMaterial;
     }
 
-    public void setDataStatus(Integer dataStatus) {
-        this.dataStatus = dataStatus;
+    public void setIsMainMaterial(Integer isMainMaterial) {
+        this.isMainMaterial = isMainMaterial;
     }
 
-    public String getRemark() {
-        return remark;
+    public Double getMaterialCapacityValue() {
+        return materialCapacityValue;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark == null ? null : remark.trim();
+    public void setMaterialCapacityValue(Double materialCapacityValue) {
+        this.materialCapacityValue = materialCapacityValue;
     }
 
     public Integer getBrandId() {
@@ -97,28 +87,12 @@ public class MaterialDO extends BaseDO {
         this.brandId = brandId;
     }
 
-    public Integer getCategoryId() {
-        return categoryId;
+    public BigDecimal getMaterialPrice() {
+        return materialPrice;
     }
 
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public Integer getPropertyId() {
-        return propertyId;
-    }
-
-    public void setPropertyId(Integer propertyId) {
-        this.propertyId = propertyId;
-    }
-
-    public Integer getPropertyValueId() {
-        return propertyValueId;
-    }
-
-    public void setPropertyValueId(Integer propertyValueId) {
-        this.propertyValueId = propertyValueId;
+    public void setMaterialPrice(BigDecimal materialPrice) {
+        this.materialPrice = materialPrice;
     }
 
     public Integer getStock() {
@@ -161,28 +135,20 @@ public class MaterialDO extends BaseDO {
         this.materialDesc = materialDesc;
     }
 
-    public Integer getMaterialType() {
-        return materialType;
+    public Integer getDataStatus() {
+        return dataStatus;
     }
 
-    public void setMaterialType(Integer materialType) {
-        this.materialType = materialType;
+    public void setDataStatus(Integer dataStatus) {
+        this.dataStatus = dataStatus;
     }
 
-    public String getPropertyName() {
-        return propertyName;
+    public String getRemark() {
+        return remark;
     }
 
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
-
-    public String getPropertyValueName() {
-        return propertyValueName;
-    }
-
-    public void setPropertyValueName(String propertyValueName) {
-        this.propertyValueName = propertyValueName;
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public List<MaterialImgDO> getMaterialImgDOList() {
@@ -193,19 +159,11 @@ public class MaterialDO extends BaseDO {
         this.materialImgDOList = materialImgDOList;
     }
 
-    public Double getMaterialCapacityValue() {
-        return materialCapacityValue;
+    public Integer getMaterialModelId() {
+        return materialModelId;
     }
 
-    public void setMaterialCapacityValue(Double materialCapacityValue) {
-        this.materialCapacityValue = materialCapacityValue;
-    }
-
-    public Integer getIsMainMaterial() {
-        return isMainMaterial;
-    }
-
-    public void setIsMainMaterial(Integer isMainMaterial) {
-        this.isMainMaterial = isMainMaterial;
+    public void setMaterialModelId(Integer materialModelId) {
+        this.materialModelId = materialModelId;
     }
 }

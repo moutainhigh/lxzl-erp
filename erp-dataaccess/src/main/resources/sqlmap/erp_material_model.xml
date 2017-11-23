@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.material.MaterialModelMapper">
+
+	<resultMap id="MaterialModelDO" type="com.lxzl.erp.dataaccess.domain.material.MaterialModelDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="material_type" jdbcType="INTEGER" property="materialType" />
+		<result column="model_name" jdbcType="VARCHAR" property="modelName" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		emm.id,emm.material_type,emm.model_name,emm.data_status,emm.remark,emm.create_time,emm.create_user,emm.update_time,emm.update_user
+	</sql>
+
+	<select id="findById" resultMap="MaterialModelDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_material_model emm 
+		WHERE emm.id = #{id, jdbcType=INTEGER} AND emm.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(emm.id) FROM erp_material_model emm 
+		<where>
+			<if test="true">
+				AND emm.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="MaterialModelDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_material_model emm 
+		<where>
+			<if test="true">
+				AND emm.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="materialType != null">
+				material_type = #{materialType,jdbcType=INTEGER},
+			</if>
+			<if test="modelName != null">
+				model_name = #{modelName,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.material.MaterialModelDO">
+		INSERT INTO erp_material_model <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.material.MaterialModelDO">
+		UPDATE erp_material_model <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

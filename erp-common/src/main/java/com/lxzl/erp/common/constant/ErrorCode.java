@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ErrorCode {
-    private static Map<String,String> MAP = new HashMap<String,String>();
+    private static Map<String, String> MAP = new HashMap<String, String>();
     /**
      * 返回码
      */
@@ -95,7 +95,7 @@ public class ErrorCode {
     public static final String OPERATOR_IS_NOT_YOURSELF = "J900015";
     public static final String PARAM_IS_NOT_ENOUGH = "J900016";
     public static final String NO_DUPLICATE_COMMIT = "J900017";
-    public static final String PARAM_IS_ERROR= "J900018";
+    public static final String PARAM_IS_ERROR = "J900018";
 
     public static final String PURCHASE_ORDER_ID_NOT_NULL = "J300000";
     public static final String PRODUCT_SUPPLIER_ID_NOT_NULL = "J300001";
@@ -148,7 +148,8 @@ public class ErrorCode {
     public static final String WAREHOUSE_OUT_STORAGE_LIST_NOT_NULL = "J300048";
     public static final String PURCHASE_RECEIVE_ORDER_MATERIAL_ID_NOT_NULL = "J300049";
     public static final String PURCHASE_RECEIVE_ORDER_MATERIAL_REAL_COUNT_NOT_NULL = "J300050";
-
+    public static final String MATERIAL_CAPACITY_VALUE_NOT_NULL = "J300051";
+    public static final String MATERIAL_MODEL_NOT_NULL = "J300052";
 
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
@@ -187,199 +188,197 @@ public class ErrorCode {
     public static final String CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR = "J500016";
     public static final String CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS = "J500017";
 
-    static
-    {
-        MAP.put(SUCCESS,"成功");
-        MAP.put(ID_NOT_NULL,"ID不能为空");
-        MAP.put(BUSINESS_EXCEPTION,"业务异常");
-        MAP.put(SYSTEM_EXCEPTION,"系统异常");
-        MAP.put(SYSTEM_ERROR,"系统错误,请联系管理员");
-        MAP.put(RECORD_NOT_EXISTS,"记录不存在");
-        MAP.put(RECORD_ALREADY_EXISTS,"记录已经存在");
-        MAP.put(SYSTEM_DEVELOPING,"开发中……");
-        MAP.put(EMAIL_ERROR,"邮箱格式有误");
+    static {
+        MAP.put(SUCCESS, "成功");
+        MAP.put(ID_NOT_NULL, "ID不能为空");
+        MAP.put(BUSINESS_EXCEPTION, "业务异常");
+        MAP.put(SYSTEM_EXCEPTION, "系统异常");
+        MAP.put(SYSTEM_ERROR, "系统错误,请联系管理员");
+        MAP.put(RECORD_NOT_EXISTS, "记录不存在");
+        MAP.put(RECORD_ALREADY_EXISTS, "记录已经存在");
+        MAP.put(SYSTEM_DEVELOPING, "开发中……");
+        MAP.put(EMAIL_ERROR, "邮箱格式有误");
 
-        MAP.put(USER_NOT_LOGIN,"用户未登录");
-        MAP.put(USER_DISABLE,"用户已禁用，请联系管理员");
-        MAP.put(USER_NAME_NOT_FOUND,"用户名不存在");
-        MAP.put(USER_NOT_ACTIVATED,"用户未激活，请联系管理员");
-        MAP.put(USER_PASSWORD_ERROR,"密码错误");
-        MAP.put(USER_EXISTS,"用户已存在");
-        MAP.put(USER_NAME_NOT_NULL,"用户名不能为空");
-        MAP.put(USER_PASSWORD_NOT_NULL,"密码不能为空");
-        MAP.put(USER_ROLE_NOT_NULL,"用户角色不能为空");
-        MAP.put(ROLE_NOT_NULL,"角色不存在");
-        MAP.put(USER_NOT_EXISTS,"用户不存在");
-        MAP.put(ROLE_ID_NOT_NULL,"角色ID不能为空");
-        MAP.put(DEPARTMENT_ID_NOT_NULL,"部门ID不能为空");
-        MAP.put(DEPARTMENT_NOT_NULL,"部门不能为空");
-        MAP.put(USER_NOT_NULL,"用户不能为空");
-        MAP.put(ACTIVE_USER_ID_NOT_NULL,"观察者用户ID不能为空");
-        MAP.put(OPERATOR_IS_NOT_YOURSELF,"操作者不是本人，不能操作");
-        MAP.put(ROLE_NAME_NOT_NULL,"角色名称不能为空");
-        MAP.put(ROLE_HAVE_USER,"角色包含用户");
-        MAP.put(SUB_COMPANY_NAME_NOT_NULL,"子公司名称不能为空");
-        MAP.put(DEPARTMENT_NOT_EXISTS,"部门不存在");
+        MAP.put(USER_NOT_LOGIN, "用户未登录");
+        MAP.put(USER_DISABLE, "用户已禁用，请联系管理员");
+        MAP.put(USER_NAME_NOT_FOUND, "用户名不存在");
+        MAP.put(USER_NOT_ACTIVATED, "用户未激活，请联系管理员");
+        MAP.put(USER_PASSWORD_ERROR, "密码错误");
+        MAP.put(USER_EXISTS, "用户已存在");
+        MAP.put(USER_NAME_NOT_NULL, "用户名不能为空");
+        MAP.put(USER_PASSWORD_NOT_NULL, "密码不能为空");
+        MAP.put(USER_ROLE_NOT_NULL, "用户角色不能为空");
+        MAP.put(ROLE_NOT_NULL, "角色不存在");
+        MAP.put(USER_NOT_EXISTS, "用户不存在");
+        MAP.put(ROLE_ID_NOT_NULL, "角色ID不能为空");
+        MAP.put(DEPARTMENT_ID_NOT_NULL, "部门ID不能为空");
+        MAP.put(DEPARTMENT_NOT_NULL, "部门不能为空");
+        MAP.put(USER_NOT_NULL, "用户不能为空");
+        MAP.put(ACTIVE_USER_ID_NOT_NULL, "观察者用户ID不能为空");
+        MAP.put(OPERATOR_IS_NOT_YOURSELF, "操作者不是本人，不能操作");
+        MAP.put(ROLE_NAME_NOT_NULL, "角色名称不能为空");
+        MAP.put(ROLE_HAVE_USER, "角色包含用户");
+        MAP.put(SUB_COMPANY_NAME_NOT_NULL, "子公司名称不能为空");
+        MAP.put(DEPARTMENT_NOT_EXISTS, "部门不存在");
 
-        MAP.put(PRODUCT_ID_NOT_NULL,"商品ID不能为空");
-        MAP.put(PRODUCT_NAME_NOT_NULL,"商品名称不能为空");
-        MAP.put(PRODUCT_PROPERTY_NOT_NULL,"商品属性不能为空");
-        MAP.put(PRODUCT_SKU_NOT_NULL,"商品SKU不能为空");
-        MAP.put(PRODUCT_SKU_PROPERTY_NOT_NULL,"商品SKU属性不能为空");
-        MAP.put(PRODUCT_PROPERTY_VALUE_NOT_NULL,"商品属性值不能为空");
-        MAP.put(PRODUCT_SKU_PROPERTY_VALUE_NOT_NULL,"商品SKU属性值不能为空");
-        MAP.put(PRODUCT_IMAGE_UPLOAD_ERROR,"商品图片上传失败");
-        MAP.put(PRODUCT_IS_NULL_OR_NOT_EXISTS,"商品不存在或发生变更");
-        MAP.put(PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS,"商品SKU不存在或发生变更");
-        MAP.put(PRODUCT_SKU_PRICE_ERROR,"商品SKU价格填写不正确");
-        MAP.put(PRODUCT_SKU_COUNT_ERROR,"商品SKU数量填写不正确");
-        MAP.put(PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS,"商品属性不存在");
-        MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_NOT_EXISTS,"商品属性值不存在");
-        MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_ALREADY_EXISTS,"商品属性值不存在");
-        MAP.put(PRODUCT_EQUIPMENT_NOT_EXISTS,"设备不存在");
-        MAP.put(MATERIAL_NOT_EXISTS,"物料不存在");
-        MAP.put(PRODUCT_EQUIPMENT_HAVE_NO_BULK_MATERIAL,"该设备没有散料，数据有误");
-        MAP.put(PRODUCT_EQUIPMENT_IS_NOT_IDLE,"该设备没有在空闲状态");
-        MAP.put(BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT,"散料在某设备上");
-        MAP.put(BULK_MATERIAL_NOT_EXISTS,"散料不存在");
-        MAP.put(PRODUCT_NOT_EXISTS,"商品不存在");
-        MAP.put(PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE,"商品不在该库房");
-        MAP.put(PRODUCT_IS_NOT_RENT,"该商品已下架");
-        MAP.put(MATERIAL_IN_USED,"物料正在被使用");
-        MAP.put(PRODUCT_SKU_CAN_NOT_DELETE,"检测到您要删除商品SKU，目前SKU不支持删除。");
+        MAP.put(PRODUCT_ID_NOT_NULL, "商品ID不能为空");
+        MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
+        MAP.put(PRODUCT_PROPERTY_NOT_NULL, "商品属性不能为空");
+        MAP.put(PRODUCT_SKU_NOT_NULL, "商品SKU不能为空");
+        MAP.put(PRODUCT_SKU_PROPERTY_NOT_NULL, "商品SKU属性不能为空");
+        MAP.put(PRODUCT_PROPERTY_VALUE_NOT_NULL, "商品属性值不能为空");
+        MAP.put(PRODUCT_SKU_PROPERTY_VALUE_NOT_NULL, "商品SKU属性值不能为空");
+        MAP.put(PRODUCT_IMAGE_UPLOAD_ERROR, "商品图片上传失败");
+        MAP.put(PRODUCT_IS_NULL_OR_NOT_EXISTS, "商品不存在或发生变更");
+        MAP.put(PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS, "商品SKU不存在或发生变更");
+        MAP.put(PRODUCT_SKU_PRICE_ERROR, "商品SKU价格填写不正确");
+        MAP.put(PRODUCT_SKU_COUNT_ERROR, "商品SKU数量填写不正确");
+        MAP.put(PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS, "商品属性不存在");
+        MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_NOT_EXISTS, "商品属性值不存在");
+        MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_ALREADY_EXISTS, "商品属性值不存在");
+        MAP.put(PRODUCT_EQUIPMENT_NOT_EXISTS, "设备不存在");
+        MAP.put(MATERIAL_NOT_EXISTS, "物料不存在");
+        MAP.put(PRODUCT_EQUIPMENT_HAVE_NO_BULK_MATERIAL, "该设备没有散料，数据有误");
+        MAP.put(PRODUCT_EQUIPMENT_IS_NOT_IDLE, "该设备没有在空闲状态");
+        MAP.put(BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT, "散料在某设备上");
+        MAP.put(BULK_MATERIAL_NOT_EXISTS, "散料不存在");
+        MAP.put(PRODUCT_NOT_EXISTS, "商品不存在");
+        MAP.put(PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, "商品不在该库房");
+        MAP.put(PRODUCT_IS_NOT_RENT, "该商品已下架");
+        MAP.put(MATERIAL_IN_USED, "物料正在被使用");
+        MAP.put(PRODUCT_SKU_CAN_NOT_DELETE, "检测到您要删除商品SKU，目前SKU不支持删除。");
 
-        MAP.put(WORKFLOW_TYPE_NOT_EXISTS,"工作流类型不存在");
-        MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE,"此工作流模板没有节点");
-        MAP.put(WORKFLOW_LINK_EXISTS,"此单工作流已经存在");
-        MAP.put(WORKFLOW_LINK_NOT_EXISTS,"此单工作流不存在");
-        MAP.put(WORKFLOW_LINK_HAVE_NO_DETAIL,"此单工作流没有明细");
-        MAP.put(WORKFLOW_LINK_VERIFY_ALREADY_OVER,"此单工作流已经结束");
-        MAP.put(WORKFLOW_NOT_BELONG_TO_YOU,"此单工作流还不该您审核");
-        MAP.put(WORKFLOW_NOT_EXISTS_CLOSED,"此工作流不存在或已经关闭");
-        MAP.put(WORKFLOW_NODE_NOT_EXISTS,"此工作流节点不存在");
-        MAP.put(WORKFLOW_VERIFY_USER_ERROR,"此工作流审核人员有误");
+        MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
+        MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
+        MAP.put(WORKFLOW_LINK_EXISTS, "此单工作流已经存在");
+        MAP.put(WORKFLOW_LINK_NOT_EXISTS, "此单工作流不存在");
+        MAP.put(WORKFLOW_LINK_HAVE_NO_DETAIL, "此单工作流没有明细");
+        MAP.put(WORKFLOW_LINK_VERIFY_ALREADY_OVER, "此单工作流已经结束");
+        MAP.put(WORKFLOW_NOT_BELONG_TO_YOU, "此单工作流还不该您审核");
+        MAP.put(WORKFLOW_NOT_EXISTS_CLOSED, "此工作流不存在或已经关闭");
+        MAP.put(WORKFLOW_NODE_NOT_EXISTS, "此工作流节点不存在");
+        MAP.put(WORKFLOW_VERIFY_USER_ERROR, "此工作流审核人员有误");
 
-        MAP.put(REMARK_PATTERN,"备注信息超过限制，最多输入200个字符");
-        MAP.put(ID_NOT_NULL,"ID不能为空");
-        MAP.put(MONEY_MORE_THAN_ZERO,"金额不能小于0");
-        MAP.put(IMAGE_NOT_EXISTS,"图片不存在");
-        MAP.put(IMAGE_TYPE_ERROR,"图片类型错误");
-        MAP.put(IMAGE_USED,"图片已使用");
-        MAP.put(DATA_DICTIONARY_NAME_NOT_NULL,"系统字典名称不能为空");
-        MAP.put(PARAM_IS_NOT_NULL,"参数不能为空");
-        MAP.put(HAVE_NO_CHANGE_STATUS,"无需改变状态");
-        MAP.put(STATUS_PATTERN,"未知状态");
-        MAP.put(COUNT_MORE_THAN_ZERO,"数量必须大于0");
-        MAP.put(DAYS_MORE_THAN_ZERO,"天数不能小于0");
-        MAP.put(DATA_STATUS_ERROR,"数据状态异常");
-        MAP.put(VERIFY_STATUS_ERROR,"审核状态异常");
-        MAP.put(OPERATOR_IS_NOT_YOURSELF,"操作者不是本人，不能操作");
-        MAP.put(PARAM_IS_NOT_ENOUGH,"信息不全，请仔细检查");
-        MAP.put(NO_DUPLICATE_COMMIT,"禁止重复提交");
-        MAP.put(PARAM_IS_ERROR,"参数有误，请仔细检查");
+        MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
+        MAP.put(ID_NOT_NULL, "ID不能为空");
+        MAP.put(MONEY_MORE_THAN_ZERO, "金额不能小于0");
+        MAP.put(IMAGE_NOT_EXISTS, "图片不存在");
+        MAP.put(IMAGE_TYPE_ERROR, "图片类型错误");
+        MAP.put(IMAGE_USED, "图片已使用");
+        MAP.put(DATA_DICTIONARY_NAME_NOT_NULL, "系统字典名称不能为空");
+        MAP.put(PARAM_IS_NOT_NULL, "参数不能为空");
+        MAP.put(HAVE_NO_CHANGE_STATUS, "无需改变状态");
+        MAP.put(STATUS_PATTERN, "未知状态");
+        MAP.put(COUNT_MORE_THAN_ZERO, "数量必须大于0");
+        MAP.put(DAYS_MORE_THAN_ZERO, "天数不能小于0");
+        MAP.put(DATA_STATUS_ERROR, "数据状态异常");
+        MAP.put(VERIFY_STATUS_ERROR, "审核状态异常");
+        MAP.put(OPERATOR_IS_NOT_YOURSELF, "操作者不是本人，不能操作");
+        MAP.put(PARAM_IS_NOT_ENOUGH, "信息不全，请仔细检查");
+        MAP.put(NO_DUPLICATE_COMMIT, "禁止重复提交");
+        MAP.put(PARAM_IS_ERROR, "参数有误，请仔细检查");
 
-        MAP.put(PURCHASE_ORDER_ID_NOT_NULL,"采购订单ID不能为空");
-        MAP.put(PRODUCT_SUPPLIER_ID_NOT_NULL,"商品供应商ID不能为空");
-        MAP.put(WAREHOUSE_ID_NOT_NULL,"仓库ID不能为空");
-        MAP.put(IS_INVOICE_NOT_NULL,"是否有发票字段必填");
-        MAP.put(IS_NEW_NOT_NULL,"是否是全新机字段必填");
-        MAP.put(PURCHASE_ORDER_PRODUCT_LIST_NOT_NULL,"采购订单商品项列表不能为空");
-        MAP.put(IS_INVOICE_VALUE_ERROR,"是否有发票参数错误");
-        MAP.put(IS_NEW_VALUE_ERROR,"是否是全新机参数错误");
-        MAP.put(PURCHASE_ORDER_NO_NOT_NULL,"采购订单号不能为空");
-        MAP.put(PURCHASE_ORDER_NOT_EXISTS,"采购订单不存在");
-        MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_UPDATE,"待审核状态的采购单不允许修改");
-        MAP.put(PURCHASE_ORDER_CANNOT_CREATE_BY_NEW_AND_AMOUNT,"拒绝创建该采购单，原因【分公司采购单不能为大于两万元的全新机】");
-        MAP.put(WAREHOUSE_NOT_EXISTS,"仓库不存在");
-        MAP.put(PURCHASE_ORDER_PRODUCT_CAN_NOT_REPEAT,"采购订单项重复");
-        MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN,"已提交的采购单不能再次提交");
-        MAP.put(WAREHOUSE_IN_STORAGE_LIST_NOT_NULL,"商品入仓数据不能为空");
-        MAP.put(WAREHOUSE_OUT_STORAGE_LIST_NOT_NULL,"商品出仓数据不能为空");
-        MAP.put(USER_CAN_NOT_OP_WAREHOUSE,"您没有该仓库的操作权限");
-        MAP.put(VERIFY_USER_NOT_NULL,"审核人不能为空");
-        MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_DELETE,"已提交的采购单不能删除");
-        MAP.put(PURCHASE_DELIVERY_ORDER_NO_NOT_NULL,"采购发货单编号不能为空");
-        MAP.put(PURCHASE_DELIVERY_ORDER_NOT_EXISTS,"采购发货单不存在");
-        MAP.put(WAREHOUSE_NO_NOT_NULL,"仓库编号不能为空");
-        MAP.put(SUPPLIER_NOT_EXISTS,"供应商不存在");
-        MAP.put(PURCHASE_RECEIVE_ORDER_NO_NOT_NULL,"采购收货单编号不能为空");
-        MAP.put(PURCHASE_RECEIVE_ORDER_NOT_EXISTS,"采购收货单不存在");
-        MAP.put(PURCHASE_RECEIVE_ORDER_AUTO_ALLOT_YES_CAN_NOT_UPDATE,"自动流转到总仓的采购发货单不能修改");
-        MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_UPDATE,"已签单的采购发货单不能修改");
-        MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_LIST_NOT_NULL,"采购收货单商品项列表不能为空");
-        MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_REAL_COUNT_NOT_NULL,"商品SKU实际数量填写不正确");
-        MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_SKU_ID_NOT_NULL,"采购收货单商品项商品SKU_ID不能为空");
-        MAP.put(STOCK_ORDER_ALREADY_EXISTS,"入库单已经存在，不能入库");
-        MAP.put(PURCHASE_ORDER_STATUS_CAN_NOT_END,"当前采购单状态不允许结束");
-        MAP.put(PURCHASE_ORDER_STATUS_CAN_NOT_CONTINUE,"当前采购单状态不允许继续采购");
-        MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_IN_AGAIN,"已入库的采购收货单不允许再次入库");
-        MAP.put(PURCHASE_TYPE_ERROR,"采购单类型错误");
-        MAP.put(PURCHASE_TYPE_NOT_NULL,"采购单类型不能为空");
-        MAP.put(PURCHASE_PRODUCT_MATERIAL_CAN_NOT_ALL_NULL,"采购单商品项和物料项不能都为空");
-        MAP.put(MATERIAL_ID_NOT_NULL,"物料ID不能为空");
-        MAP.put(MATERIAL_PRICE_ERROR,"物料价格填写不正确");
-        MAP.put(MATERIAL_COUNT_ERROR,"物料数量填写不正确");
-        MAP.put(PURCHASE_ORDER_MATERIAL_CAN_NOT_REPEAT,"采购单物料项不能重复");
-        MAP.put(PURCHASE_ORDER_MATERIAL_NOT_MAIN,"采购单物料项存在非四大件");
-        MAP.put(PURCHASE_ORDER_MATERIAL_NOT_GADGET,"采购单物料项存在非小配件");
-        MAP.put(PURCHASE_ORDER_MATERIAL_LIST_NOT_NULL,"采购订单物料项列表不能为空");
-        MAP.put(PURCHASE_ORDER_MATERIAL_CAN_NOT_CREATE,"采购的物料总额大于100元且没有发票");
-        MAP.put(PURCHASE_ORDER_SKU_MATERIAL_ERROR,"SKU物料配置错误");
-        MAP.put(MATERIAL_NO_NOT_NULL,"物料编号不能为空");
-        MAP.put(STOCK_ALLOCATION_WAREHOUSE_IS_NOT_SAME,"库存调拨库房必须是同一间");
-        MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_ID_NOT_NULL,"采购收货单物料项物料ID不能为空");
-        MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_REAL_COUNT_NOT_NULL,"采购收货单物料项实际物料数量不能为空");
+        MAP.put(PURCHASE_ORDER_ID_NOT_NULL, "采购订单ID不能为空");
+        MAP.put(PRODUCT_SUPPLIER_ID_NOT_NULL, "商品供应商ID不能为空");
+        MAP.put(WAREHOUSE_ID_NOT_NULL, "仓库ID不能为空");
+        MAP.put(IS_INVOICE_NOT_NULL, "是否有发票字段必填");
+        MAP.put(IS_NEW_NOT_NULL, "是否是全新机字段必填");
+        MAP.put(PURCHASE_ORDER_PRODUCT_LIST_NOT_NULL, "采购订单商品项列表不能为空");
+        MAP.put(IS_INVOICE_VALUE_ERROR, "是否有发票参数错误");
+        MAP.put(IS_NEW_VALUE_ERROR, "是否是全新机参数错误");
+        MAP.put(PURCHASE_ORDER_NO_NOT_NULL, "采购订单号不能为空");
+        MAP.put(PURCHASE_ORDER_NOT_EXISTS, "采购订单不存在");
+        MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_UPDATE, "待审核状态的采购单不允许修改");
+        MAP.put(PURCHASE_ORDER_CANNOT_CREATE_BY_NEW_AND_AMOUNT, "拒绝创建该采购单，原因【分公司采购单不能为大于两万元的全新机】");
+        MAP.put(WAREHOUSE_NOT_EXISTS, "仓库不存在");
+        MAP.put(PURCHASE_ORDER_PRODUCT_CAN_NOT_REPEAT, "采购订单项重复");
+        MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "已提交的采购单不能再次提交");
+        MAP.put(WAREHOUSE_IN_STORAGE_LIST_NOT_NULL, "商品入仓数据不能为空");
+        MAP.put(WAREHOUSE_OUT_STORAGE_LIST_NOT_NULL, "商品出仓数据不能为空");
+        MAP.put(USER_CAN_NOT_OP_WAREHOUSE, "您没有该仓库的操作权限");
+        MAP.put(VERIFY_USER_NOT_NULL, "审核人不能为空");
+        MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_DELETE, "已提交的采购单不能删除");
+        MAP.put(PURCHASE_DELIVERY_ORDER_NO_NOT_NULL, "采购发货单编号不能为空");
+        MAP.put(PURCHASE_DELIVERY_ORDER_NOT_EXISTS, "采购发货单不存在");
+        MAP.put(WAREHOUSE_NO_NOT_NULL, "仓库编号不能为空");
+        MAP.put(SUPPLIER_NOT_EXISTS, "供应商不存在");
+        MAP.put(PURCHASE_RECEIVE_ORDER_NO_NOT_NULL, "采购收货单编号不能为空");
+        MAP.put(PURCHASE_RECEIVE_ORDER_NOT_EXISTS, "采购收货单不存在");
+        MAP.put(PURCHASE_RECEIVE_ORDER_AUTO_ALLOT_YES_CAN_NOT_UPDATE, "自动流转到总仓的采购发货单不能修改");
+        MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_UPDATE, "已签单的采购发货单不能修改");
+        MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_LIST_NOT_NULL, "采购收货单商品项列表不能为空");
+        MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_REAL_COUNT_NOT_NULL, "商品SKU实际数量填写不正确");
+        MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_SKU_ID_NOT_NULL, "采购收货单商品项商品SKU_ID不能为空");
+        MAP.put(STOCK_ORDER_ALREADY_EXISTS, "入库单已经存在，不能入库");
+        MAP.put(PURCHASE_ORDER_STATUS_CAN_NOT_END, "当前采购单状态不允许结束");
+        MAP.put(PURCHASE_ORDER_STATUS_CAN_NOT_CONTINUE, "当前采购单状态不允许继续采购");
+        MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_IN_AGAIN, "已入库的采购收货单不允许再次入库");
+        MAP.put(PURCHASE_TYPE_ERROR, "采购单类型错误");
+        MAP.put(PURCHASE_TYPE_NOT_NULL, "采购单类型不能为空");
+        MAP.put(PURCHASE_PRODUCT_MATERIAL_CAN_NOT_ALL_NULL, "采购单商品项和物料项不能都为空");
+        MAP.put(MATERIAL_ID_NOT_NULL, "物料ID不能为空");
+        MAP.put(MATERIAL_PRICE_ERROR, "物料价格填写不正确");
+        MAP.put(MATERIAL_COUNT_ERROR, "物料数量填写不正确");
+        MAP.put(PURCHASE_ORDER_MATERIAL_CAN_NOT_REPEAT, "采购单物料项不能重复");
+        MAP.put(PURCHASE_ORDER_MATERIAL_NOT_MAIN, "采购单物料项存在非四大件");
+        MAP.put(PURCHASE_ORDER_MATERIAL_NOT_GADGET, "采购单物料项存在非小配件");
+        MAP.put(PURCHASE_ORDER_MATERIAL_LIST_NOT_NULL, "采购订单物料项列表不能为空");
+        MAP.put(PURCHASE_ORDER_MATERIAL_CAN_NOT_CREATE, "采购的物料总额大于100元且没有发票");
+        MAP.put(PURCHASE_ORDER_SKU_MATERIAL_ERROR, "SKU物料配置错误");
+        MAP.put(MATERIAL_NO_NOT_NULL, "物料编号不能为空");
+        MAP.put(STOCK_ALLOCATION_WAREHOUSE_IS_NOT_SAME, "库存调拨库房必须是同一间");
+        MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_ID_NOT_NULL, "采购收货单物料项物料ID不能为空");
+        MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_REAL_COUNT_NOT_NULL, "采购收货单物料项实际物料数量不能为空");
+        MAP.put(MATERIAL_CAPACITY_VALUE_NOT_NULL, "物料字面量不能为空");
+        MAP.put(MATERIAL_MODEL_NOT_NULL, "物料型号不能为空");
 
 
-        MAP.put(ORDER_PRODUCT_LIST_NOT_NULL,"订单商品不能为空");
-        MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL,"订单没有选择地址");
-        MAP.put(ORDER_PRODUCT_STOCK_INSUFFICIENT,"库存不足");
-        MAP.put(ORDER_NOT_EXISTS,"订单不存在");
-        MAP.put(ORDER_PRODUCT_EQUIPMENT_NOT_NULL,"订单商品项设备编号不能为空");
-        MAP.put(ORDER_PRODUCT_EQUIPMENT_STATUS_ERROR,"该设备不存在或者该设备状态异常，请仔细检查");
-        MAP.put(ORDER_PRODUCT_EQUIPMENT_SKU_NOT_SAME,"该用户购买的商品不是这个型号的，请仔细检查");
-        MAP.put(ORDER_PRODUCT_EQUIPMENT_IS_NULL,"订单商品项设备编号为空");
-        MAP.put(ORDER_STATUS_ERROR,"订单状态不正确，请仔细检查");
-        MAP.put(ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR,"订单商品设备数不正确，请仔细检查");
-        MAP.put(ORDER_PRODUCT_BULK_MATERIAL_COUNT_ERROR,"订单物料数不正确，请仔细检查");
-        MAP.put(ORDER_RENT_TYPE_OR_LENGTH_ERROR,"订单租赁方式或时长有误");
-        MAP.put(ORDER_PAY_MODE_NOT_NULL,"订单支付方式不能为空");
-        MAP.put(ORDER_PAY_STATUS_ERROR,"付款单状态异常，请检查");
-        MAP.put(ORDER_REFUND_STATUS_ERROR,"退款单状态异常，请检查");
-        MAP.put(ORDER_PAY_RECORD_NOT_EXISTS,"支付记录不存在");
-        MAP.put(ORDER_HAVE_NO_RENT_START_TIME,"订单没有租赁开始时间");
+        MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
+        MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
+        MAP.put(ORDER_PRODUCT_STOCK_INSUFFICIENT, "库存不足");
+        MAP.put(ORDER_NOT_EXISTS, "订单不存在");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_NOT_NULL, "订单商品项设备编号不能为空");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_STATUS_ERROR, "该设备不存在或者该设备状态异常，请仔细检查");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_SKU_NOT_SAME, "该用户购买的商品不是这个型号的，请仔细检查");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_IS_NULL, "订单商品项设备编号为空");
+        MAP.put(ORDER_STATUS_ERROR, "订单状态不正确，请仔细检查");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR, "订单商品设备数不正确，请仔细检查");
+        MAP.put(ORDER_PRODUCT_BULK_MATERIAL_COUNT_ERROR, "订单物料数不正确，请仔细检查");
+        MAP.put(ORDER_RENT_TYPE_OR_LENGTH_ERROR, "订单租赁方式或时长有误");
+        MAP.put(ORDER_PAY_MODE_NOT_NULL, "订单支付方式不能为空");
+        MAP.put(ORDER_PAY_STATUS_ERROR, "付款单状态异常，请检查");
+        MAP.put(ORDER_REFUND_STATUS_ERROR, "退款单状态异常，请检查");
+        MAP.put(ORDER_PAY_RECORD_NOT_EXISTS, "支付记录不存在");
+        MAP.put(ORDER_HAVE_NO_RENT_START_TIME, "订单没有租赁开始时间");
 
-        MAP.put(CUSTOMER_COMPANY_NOT_NULL,"企业客户信息不能为空");
-        MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL,"企业公司名称不能为空");
-        MAP.put(CUSTOMER_PERSON_NOT_NULL,"客户个人信息不能为空");
-        MAP.put(CUSTOMER_PERSON_NAME_NOT_NULL,"客户个人姓名不能为空");
-        MAP.put(CUSTOMER_TYPE_NOT_NULL,"客户类型不能为空");
-        MAP.put(CUSTOMER_COMPANY_CONNECT_NAME_NOT_NULL,"企业客户联系人姓名不能为空");
-        MAP.put(CUSTOMER_NOT_NULL,"客户不存在");
-        MAP.put(CUSTOMER_NO_NOT_NULL,"客户编号不能为空");
-        MAP.put(CUSTOMER_RISK_MANAGEMENT_ID_NOT_NULL,"风控ID不能为空");
-        MAP.put(CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_NOT_NULL,"授信额度不能为空");
-        MAP.put(CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_NOT_NULL,"押金期数不能为空");
-        MAP.put(CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_NOT_NULL,"付款期数不能为空");
-        MAP.put(CUSTOMER_NOT_EXISTS,"客户不存在");
-        MAP.put(CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_ERROR,"授信额度不能小于0");
-        MAP.put(CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR,"押金期数不能小于0");
-        MAP.put(CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR,"付款期数不能小于1");
-        MAP.put(CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS,"风控信息不存在");
+        MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
+        MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
+        MAP.put(CUSTOMER_PERSON_NOT_NULL, "客户个人信息不能为空");
+        MAP.put(CUSTOMER_PERSON_NAME_NOT_NULL, "客户个人姓名不能为空");
+        MAP.put(CUSTOMER_TYPE_NOT_NULL, "客户类型不能为空");
+        MAP.put(CUSTOMER_COMPANY_CONNECT_NAME_NOT_NULL, "企业客户联系人姓名不能为空");
+        MAP.put(CUSTOMER_NOT_NULL, "客户不存在");
+        MAP.put(CUSTOMER_NO_NOT_NULL, "客户编号不能为空");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_ID_NOT_NULL, "风控ID不能为空");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_NOT_NULL, "授信额度不能为空");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_NOT_NULL, "押金期数不能为空");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_NOT_NULL, "付款期数不能为空");
+        MAP.put(CUSTOMER_NOT_EXISTS, "客户不存在");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_ERROR, "授信额度不能小于0");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR, "押金期数不能小于0");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR, "付款期数不能小于1");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS, "风控信息不存在");
     }
 
-    public static String getMessage(String code)
-    {
+    public static String getMessage(String code) {
         return MAP.get(code);
     }
 
-    public static String getMessage(String code , String parmName)
-    {
-        return MAP.get(code) + " : "+parmName;
+    public static String getMessage(String code, String parmName) {
+        return MAP.get(code) + " : " + parmName;
     }
 
-    public static String clear(String code)
-    {
-        return MAP.put(code,"");
+    public static String clear(String code) {
+        return MAP.put(code, "");
     }
 }

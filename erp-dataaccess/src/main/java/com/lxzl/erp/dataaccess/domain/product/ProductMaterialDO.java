@@ -23,6 +23,8 @@ public class ProductMaterialDO  extends BaseDO {
 	private String materialNo;
 	@Transient
 	private Double materialCapacityValue;
+	@Transient
+	private Double materialModelId;
 
 	public Integer getId(){
 		return id;
@@ -110,5 +112,13 @@ public class ProductMaterialDO  extends BaseDO {
 
 	public void setMaterialCapacityValue(Double materialCapacityValue) {
 		this.materialCapacityValue = materialCapacityValue;
+	}
+
+	public Double getMaterialModelId() {
+		return materialModelId;
+	}
+
+	public void setMaterialModelId(Double materialModelId) {
+		this.materialModelId = materialModelId;
 	}
 }

@@ -18,10 +18,10 @@ public class Material implements Serializable {
     private String materialName;   //物料名称，取属性与属性值全称
     private Integer materialType;   //物料类型
     private Integer brandId;   //所属品牌ID
-    private Integer categoryId;   //所属类目ID
-    private Integer propertyId;   //属性ID
-    private Integer propertyValueId;   //属性值ID
     private BigDecimal materialPrice;   //物料本身的价值(单价)
+    private Double materialCapacityValue;   //物料字面量
+    private Integer materialModelId;    // 物料型号ID
+    private Integer isMainMaterial;         //是否四大件
     private Integer stock;              // 库存
     private BigDecimal timeRentPrice;   // 次租价格
     private BigDecimal dayRentPrice;    // 日租价格
@@ -35,11 +35,6 @@ public class Material implements Serializable {
     private String updateUser;   //修改人
 
     private List<MaterialImg> materialImgList;
-
-    private String propertyName;
-    private String propertyValueName;
-    private Double materialCapacityValue;
-    private Integer isMainMaterial;
 
     public Integer getMaterialId() {
         return materialId;
@@ -65,12 +60,12 @@ public class Material implements Serializable {
         this.materialName = materialName;
     }
 
-    public BigDecimal getMaterialPrice() {
-        return materialPrice;
+    public Integer getMaterialType() {
+        return materialType;
     }
 
-    public void setMaterialPrice(BigDecimal materialPrice) {
-        this.materialPrice = materialPrice;
+    public void setMaterialType(Integer materialType) {
+        this.materialType = materialType;
     }
 
     public Integer getBrandId() {
@@ -81,28 +76,68 @@ public class Material implements Serializable {
         this.brandId = brandId;
     }
 
-    public Integer getCategoryId() {
-        return categoryId;
+    public BigDecimal getMaterialPrice() {
+        return materialPrice;
     }
 
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
+    public void setMaterialPrice(BigDecimal materialPrice) {
+        this.materialPrice = materialPrice;
     }
 
-    public Integer getPropertyId() {
-        return propertyId;
+    public Double getMaterialCapacityValue() {
+        return materialCapacityValue;
     }
 
-    public void setPropertyId(Integer propertyId) {
-        this.propertyId = propertyId;
+    public void setMaterialCapacityValue(Double materialCapacityValue) {
+        this.materialCapacityValue = materialCapacityValue;
     }
 
-    public Integer getPropertyValueId() {
-        return propertyValueId;
+    public Integer getIsMainMaterial() {
+        return isMainMaterial;
     }
 
-    public void setPropertyValueId(Integer propertyValueId) {
-        this.propertyValueId = propertyValueId;
+    public void setIsMainMaterial(Integer isMainMaterial) {
+        this.isMainMaterial = isMainMaterial;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public BigDecimal getTimeRentPrice() {
+        return timeRentPrice;
+    }
+
+    public void setTimeRentPrice(BigDecimal timeRentPrice) {
+        this.timeRentPrice = timeRentPrice;
+    }
+
+    public BigDecimal getDayRentPrice() {
+        return dayRentPrice;
+    }
+
+    public void setDayRentPrice(BigDecimal dayRentPrice) {
+        this.dayRentPrice = dayRentPrice;
+    }
+
+    public BigDecimal getMonthRentPrice() {
+        return monthRentPrice;
+    }
+
+    public void setMonthRentPrice(BigDecimal monthRentPrice) {
+        this.monthRentPrice = monthRentPrice;
+    }
+
+    public String getMaterialDesc() {
+        return materialDesc;
+    }
+
+    public void setMaterialDesc(String materialDesc) {
+        this.materialDesc = materialDesc;
     }
 
     public Integer getDataStatus() {
@@ -119,38 +154,6 @@ public class Material implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    public String getMaterialDesc() {
-        return materialDesc;
-    }
-
-    public void setMaterialDesc(String materialDesc) {
-        this.materialDesc = materialDesc;
-    }
-
-    public Integer getMaterialType() {
-        return materialType;
-    }
-
-    public void setMaterialType(Integer materialType) {
-        this.materialType = materialType;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
-
-    public String getPropertyValueName() {
-        return propertyValueName;
-    }
-
-    public void setPropertyValueName(String propertyValueName) {
-        this.propertyValueName = propertyValueName;
     }
 
     public Date getCreateTime() {
@@ -193,51 +196,11 @@ public class Material implements Serializable {
         this.materialImgList = materialImgList;
     }
 
-    public Integer getStock() {
-        return stock;
+    public Integer getMaterialModelId() {
+        return materialModelId;
     }
 
-    public void setStock(Integer stock) {
-        this.stock = stock;
-    }
-
-    public BigDecimal getTimeRentPrice() {
-        return timeRentPrice;
-    }
-
-    public void setTimeRentPrice(BigDecimal timeRentPrice) {
-        this.timeRentPrice = timeRentPrice;
-    }
-
-    public BigDecimal getDayRentPrice() {
-        return dayRentPrice;
-    }
-
-    public void setDayRentPrice(BigDecimal dayRentPrice) {
-        this.dayRentPrice = dayRentPrice;
-    }
-
-    public BigDecimal getMonthRentPrice() {
-        return monthRentPrice;
-    }
-
-    public void setMonthRentPrice(BigDecimal monthRentPrice) {
-        this.monthRentPrice = monthRentPrice;
-    }
-
-    public Double getMaterialCapacityValue() {
-        return materialCapacityValue;
-    }
-
-    public void setMaterialCapacityValue(Double materialCapacityValue) {
-        this.materialCapacityValue = materialCapacityValue;
-    }
-
-    public Integer getIsMainMaterial() {
-        return isMainMaterial;
-    }
-
-    public void setIsMainMaterial(Integer isMainMaterial) {
-        this.isMainMaterial = isMainMaterial;
+    public void setMaterialModelId(Integer materialModelId) {
+        this.materialModelId = materialModelId;
     }
 }

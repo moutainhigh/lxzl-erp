@@ -13,6 +13,7 @@ public class ProductCategoryPropertyValueDO extends BaseDO {
     private Integer categoryId;
     private Integer referId;
     private Double propertyCapacityValue;
+    private Integer materialModelId;
     private Integer dataOrder;
     private Integer dataStatus;
     private String remark;
@@ -108,5 +109,13 @@ public class ProductCategoryPropertyValueDO extends BaseDO {
 
     public void setMaterialType(Integer materialType) {
         this.materialType = materialType;
+    }
+
+    public Integer getMaterialModelId() {
+        return materialModelId;
+    }
+
+    public void setMaterialModelId(Integer materialModelId) {
+        this.materialModelId = materialModelId;
     }
 }

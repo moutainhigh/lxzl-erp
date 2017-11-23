@@ -55,6 +55,7 @@
         <result column="product_material_material_type" jdbcType="INTEGER" property="materialType" />
         <result column="product_material_material_count" jdbcType="INTEGER" property="materialCount" />
         <result column="product_material_material_capacity_value" jdbcType="DOUBLE" property="materialCapacityValue" />
+        <result column="product_material_material_model_id" jdbcType="DOUBLE" property="materialModelId" />
         <result column="product_material_data_status" jdbcType="INTEGER" property="dataStatus" />
         <result column="product_material_remark" jdbcType="VARCHAR" property="remark" />
         <result column="product_material_create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -86,7 +87,8 @@
         </trim>
         <trim prefix=",">
             em.material_type as product_material_material_type,mpcp.property_name AS sku_property_property_name,mpcpv.property_value_name AS sku_property_property_value_Name,
-            em.material_name AS product_material_material_name,em.material_no AS product_material_material_no,epcpvm.property_capacity_value AS product_material_material_capacity_value
+            em.material_name AS product_material_material_name,em.material_no AS product_material_material_no,em.material_capacity_value AS product_material_material_capacity_value,
+            em.material_model_id AS product_material_material_model_id
         </trim>
         FROM (
             select
@@ -99,7 +101,6 @@
         LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id
         LEFT JOIN erp_product_material epm ON epm.product_sku_id = sku_main.id AND epm.data_status = 1
         LEFT JOIN erp_material em on epm.material_id = em.id
-        LEFT JOIN erp_product_category_property_value epcpvm ON em.property_value_id = epcpvm.id
         ORDER BY mpcp.data_order DESC,mpcpv.data_order DESC
     </select>
 
@@ -113,7 +114,8 @@
         </trim>
         <trim prefix=",">
             em.material_type as product_material_material_type,mpcp.property_name AS sku_property_property_name,mpcpv.property_value_name AS sku_property_property_value_Name,
-            em.material_name AS product_material_material_name,em.material_no AS product_material_material_no,epcpvm.property_capacity_value AS product_material_material_capacity_value
+            em.material_name AS product_material_material_name,em.material_no AS product_material_material_no,em.material_capacity_value AS product_material_material_capacity_value,
+            em.material_model_id AS product_material_material_model_id
         </trim>
         FROM (
             SELECT
@@ -125,7 +127,6 @@
         LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id
         LEFT JOIN erp_product_material epm ON epm.product_sku_id = sku_main.id AND epm.data_status = 1
         LEFT JOIN erp_material em on epm.material_id = em.id
-        LEFT JOIN erp_product_category_property_value epcpvm ON em.property_value_id = epcpvm.id
         ORDER BY mpcp.data_order DESC,mpcpv.data_order DESC
     </select>
 
@@ -139,7 +140,8 @@
         </trim>
         <trim prefix=",">
             em.material_type as product_material_material_type,mpcp.property_name AS sku_property_property_name,mpcpv.property_value_name AS sku_property_property_value_Name,
-            em.material_name AS product_material_material_name,em.material_no AS product_material_material_no,epcpvm.property_capacity_value AS product_material_material_capacity_value
+            em.material_name AS product_material_material_name,em.material_no AS product_material_material_no,em.material_capacity_value AS product_material_material_capacity_value,
+            em.material_model_id AS product_material_material_model_id
         </trim>
         FROM (
             SELECT
@@ -151,10 +153,71 @@
         LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id
         LEFT JOIN erp_product_material epm ON epm.product_sku_id = sku_main.id AND epm.data_status = 1
         LEFT JOIN erp_material em on epm.material_id = em.id
-        LEFT JOIN erp_product_category_property_value epcpvm ON em.property_value_id = epcpvm.id
         ORDER BY mpcp.data_order DESC,mpcpv.data_order DESC
     </select>
 
+    <select id="findProductSkuCountByParams" resultType="java.lang.Integer" parameterType="map">
+        select count(eps.id)
+        from erp_product_sku eps inner join erp_product mp
+        on eps.product_id = ep.id
+        <where>
+            <if test="maps.productSkuQueryParam.productId != null">
+                and eps.product_id = #{maps.productSkuQueryParam.productId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.productSkuQueryParam.productName != null &amp;&amp; maps.productSkuQueryParam.productName != ''">
+                and ep.product_name like CONCAT('%','${maps.productSkuQueryParam.productName}','%' )
+            </if>
+            <if test="maps.productSkuQueryParam.skuName != null &amp;&amp; maps.productSkuQueryParam.skuName != ''">
+                and eps.sku_name like CONCAT('%','${maps.productSkuQueryParam.skuName}','%' )
+            </if>
+            <if test="true">
+                and eps.data_status = 1
+            </if>
+        </where>
+    </select>
+    <select id="findProductSkuByParams" resultMap="ProductSkuDO" parameterType="map">
+        SELECT eps.product_name as product_name,<include refid="column_List"/>
+        <trim prefix=",">
+            <include refid="sku_property_column_List" />
+        </trim>
+        <trim prefix=",">
+            <include refid="product_material_column_List" />
+        </trim>
+        <trim prefix=",">
+            em.material_type as product_material_material_type,mpcp.property_name AS sku_property_property_name,mpcpv.property_value_name AS sku_property_property_value_Name,
+            em.material_name AS product_material_material_name,em.material_no AS product_material_material_no,em.material_capacity_value AS product_material_material_capacity_value,
+            em.material_model_id AS product_material_material_model_id
+        </trim>
+        FROM
+        (
+        select
+        ep.product_name as product_name,
+        <include refid="column_List"/>
+        from erp_product_sku eps inner join erp_product ep
+        on eps.product_id = ep.id
+        <where>
+            <if test="maps.productSkuQueryParam.productId != null">
+                and eps.product_id = #{maps.productSkuQueryParam.productId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.productSkuQueryParam.productName != null &amp;&amp; maps.productSkuQueryParam.productName != ''">
+                and ep.product_name like CONCAT('%','${maps.productSkuQueryParam.productName}','%' )
+            </if>
+            <if test="maps.productSkuQueryParam.skuName != null &amp;&amp; maps.productSkuQueryParam.skuName != ''">
+                and eps.sku_name like CONCAT('%','${maps.productSkuQueryParam.skuName}','%' )
+            </if>
+            <if test="true">
+                and eps.data_status = 1
+            </if>
+        </where>
+        LIMIT #{maps.start},#{maps.pageSize}
+        ) eps
+        LEFT JOIN erp_product_sku_property epsps ON epsps.sku_id = eps.id AND epsps.data_status = 1
+        LEFT JOIN erp_product_category_property mpcp ON epsps.property_id = mpcp.id AND mpcp.data_status = 1
+        LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id AND mpcpv.data_status = 1
+        LEFT JOIN erp_product_material epm ON epm.product_sku_id = sku_main.id AND epm.data_status = 1
+        LEFT JOIN erp_material em on epm.material_id = em.id
+        ORDER BY eps.create_time DESC
+    </select>
 
 
     <sql id="set_column_sql">
@@ -221,67 +284,4 @@
         INSERT INTO erp_product_sku
         <include refid="set_column_sql"/>
     </insert>
-
-    <select id="findProductSkuCountByParams" resultType="java.lang.Integer" parameterType="map">
-        select count(eps.id)
-        from erp_product_sku eps inner join erp_product mp
-        on eps.product_id = ep.id
-        <where>
-            <if test="maps.productSkuQueryParam.productId != null">
-                and eps.product_id = #{maps.productSkuQueryParam.productId, jdbcType=INTEGER}
-            </if>
-            <if test="maps.productSkuQueryParam.productName != null &amp;&amp; maps.productSkuQueryParam.productName != ''">
-                and ep.product_name like CONCAT('%','${maps.productSkuQueryParam.productName}','%' )
-            </if>
-            <if test="maps.productSkuQueryParam.skuName != null &amp;&amp; maps.productSkuQueryParam.skuName != ''">
-                and eps.sku_name like CONCAT('%','${maps.productSkuQueryParam.skuName}','%' )
-            </if>
-            <if test="true">
-                and eps.data_status = 1
-            </if>
-        </where>
-    </select>
-    <select id="findProductSkuByParams" resultMap="ProductSkuDO" parameterType="map">
-        SELECT eps.product_name as product_name,<include refid="column_List"/>
-        <trim prefix=",">
-            <include refid="sku_property_column_List" />
-        </trim>
-        <trim prefix=",">
-            <include refid="product_material_column_List" />
-        </trim>
-        <trim prefix=",">
-            em.material_type as product_material_material_type,mpcp.property_name AS sku_property_property_name,mpcpv.property_value_name AS sku_property_property_value_Name,
-            em.material_name AS product_material_material_name,em.material_no AS product_material_material_no,epcpvm.property_capacity_value AS product_material_material_capacity_value
-        </trim>
-        FROM
-        (
-            select
-            ep.product_name as product_name,
-            <include refid="column_List"/>
-            from erp_product_sku eps inner join erp_product ep
-            on eps.product_id = ep.id
-            <where>
-                <if test="maps.productSkuQueryParam.productId != null">
-                    and eps.product_id = #{maps.productSkuQueryParam.productId, jdbcType=INTEGER}
-                </if>
-                <if test="maps.productSkuQueryParam.productName != null &amp;&amp; maps.productSkuQueryParam.productName != ''">
-                    and ep.product_name like CONCAT('%','${maps.productSkuQueryParam.productName}','%' )
-                </if>
-                <if test="maps.productSkuQueryParam.skuName != null &amp;&amp; maps.productSkuQueryParam.skuName != ''">
-                    and eps.sku_name like CONCAT('%','${maps.productSkuQueryParam.skuName}','%' )
-                </if>
-                <if test="true">
-                    and eps.data_status = 1
-                </if>
-            </where>
-            LIMIT #{maps.start},#{maps.pageSize}
-        ) eps
-        LEFT JOIN erp_product_sku_property epsps ON epsps.sku_id = eps.id AND epsps.data_status = 1
-        LEFT JOIN erp_product_category_property mpcp ON epsps.property_id = mpcp.id AND mpcp.data_status = 1
-        LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id AND mpcpv.data_status = 1
-        LEFT JOIN erp_product_material epm ON epm.product_sku_id = sku_main.id AND epm.data_status = 1
-        LEFT JOIN erp_material em on epm.material_id = em.id
-        LEFT JOIN erp_product_category_property_value epcpvm ON em.property_value_id = epcpvm.id
-        ORDER BY eps.create_time DESC
-    </select>
 </mapper>

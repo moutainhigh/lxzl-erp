@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.material.pojo.MaterialImg;
+import com.lxzl.erp.common.domain.material.pojo.MaterialModel;
 import com.lxzl.erp.common.domain.product.ProductMaterialQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
@@ -60,15 +61,6 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Autowired
     private MaterialMapper materialMapper;
-
-    @Autowired
-    private ProductCategoryMapper productCategoryMapper;
-
-    @Autowired
-    private ProductCategoryPropertyValueMapper productCategoryPropertyValueMapper;
-
-    @Autowired
-    private ProductCategoryPropertyMapper productCategoryPropertyMapper;
 
     @Autowired
     private MaterialImgMapper materialImgMapper;
@@ -162,25 +154,18 @@ public class MaterialServiceImpl implements MaterialService {
             return result;
         }
 
-        MaterialDO dbMaterialDO = materialMapper.findByPropertyAndValueId(material.getPropertyId(), material.getPropertyValueId());
+        MaterialDO dbMaterialDO = null;
+        if (MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
+                || MaterialType.MATERIAL_TYPE_HDD.equals(material.getMaterialType())
+                || MaterialType.MATERIAL_TYPE_SSD.equals(material.getMaterialType())) {
+            dbMaterialDO = materialMapper.findByMaterialTypeAndCapacity(material.getMaterialType(), material.getMaterialCapacityValue());
+        } else {
+            dbMaterialDO = materialMapper.findByMaterialTypeAndModelId(material.getMaterialType(), material.getMaterialModelId());
+        }
         if (dbMaterialDO != null) {
             result.setErrorCode(ErrorCode.RECORD_ALREADY_EXISTS);
             return result;
         }
-
-        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(material.getPropertyValueId());
-        if (productCategoryPropertyValueDO == null || !productCategoryPropertyValueDO.getPropertyId().equals(material.getPropertyId())) {
-            result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
-            return result;
-        }
-        ProductCategoryPropertyDO productCategoryPropertyDO = productCategoryPropertyMapper.findById(material.getPropertyId());
-        if (productCategoryPropertyDO.getMaterialType() == null || !material.getMaterialType().equals(productCategoryPropertyDO.getMaterialType())) {
-            result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
-            return result;
-        }
-        material.setMaterialType(productCategoryPropertyDO.getMaterialType());
-        material.setCategoryId(productCategoryPropertyDO.getCategoryId());
-
         MaterialDO materialDO = MaterialConverter.convertMaterial(material);
 
         if (MaterialType.MATERIAL_TYPE_MEMORY.equals(materialDO.getMaterialType())
@@ -220,19 +205,11 @@ public class MaterialServiceImpl implements MaterialService {
             return result;
         }
 
-        if ((material.getPropertyId() != null && !dbRecord.getPropertyId().equals(material.getPropertyId()))
-                || (material.getPropertyValueId() != null && !dbRecord.getPropertyValueId().equals(material.getPropertyValueId()))) {
-            result.setErrorCode(ErrorCode.RECORD_ALREADY_EXISTS);
-            return result;
-        }
 
         MaterialDO materialDO = MaterialConverter.convertMaterial(material);
         // 以下两个值不能改
         materialDO.setId(dbRecord.getId());
         materialDO.setMaterialType(null);
-        materialDO.setCategoryId(null);
-        materialDO.setPropertyId(null);
-        materialDO.setPropertyValueId(null);
         materialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         materialDO.setUpdateUser(loginUser.getUserId().toString());
         materialDO.setUpdateTime(currentTime);
@@ -331,23 +308,23 @@ public class MaterialServiceImpl implements MaterialService {
                 || material.getMaterialPrice() == null
                 || material.getTimeRentPrice() == null
                 || material.getDayRentPrice() == null
-                || material.getMonthRentPrice() == null
-                || material.getPropertyId() == null
-                || material.getPropertyValueId() == null) {
+                || material.getMonthRentPrice() == null) {
             return ErrorCode.PARAM_IS_NOT_ENOUGH;
         }
 
-        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(material.getPropertyValueId());
-        if (productCategoryPropertyValueDO == null || !material.getPropertyId().equals(productCategoryPropertyValueDO.getPropertyId())) {
-            return ErrorCode.PARAM_IS_ERROR;
-        } else {
-            material.setCategoryId(productCategoryPropertyValueDO.getCategoryId());
+
+        if ((MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
+                || MaterialType.MATERIAL_TYPE_HDD.equals(material.getMaterialType())
+                || MaterialType.MATERIAL_TYPE_SSD.equals(material.getMaterialType()))
+                && material.getMaterialCapacityValue() == null) {
+            return ErrorCode.MATERIAL_CAPACITY_VALUE_NOT_NULL;
+        } else if ((!MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
+                && !MaterialType.MATERIAL_TYPE_HDD.equals(material.getMaterialType())
+                && !MaterialType.MATERIAL_TYPE_SSD.equals(material.getMaterialType()))
+                && material.getMaterialModelId() == null) {
+            return ErrorCode.MATERIAL_MODEL_NOT_NULL;
         }
 
-        ProductCategoryDO productCategoryDO = productCategoryMapper.findById(productCategoryPropertyValueDO.getCategoryId());
-        if (!CategoryType.CATEGORY_TYPE_MATERIAL.equals(productCategoryDO.getCategoryType())) {
-            return ErrorCode.PARAM_IS_ERROR;
-        }
         return ErrorCode.SUCCESS;
     }
 
@@ -481,5 +458,12 @@ public class MaterialServiceImpl implements MaterialService {
             }
         }
         return true;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> addMaterialModel(MaterialModel materialModel) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+
+        return result;
     }
 }

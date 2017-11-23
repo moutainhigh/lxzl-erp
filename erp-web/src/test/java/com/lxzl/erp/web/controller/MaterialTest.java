@@ -25,8 +25,7 @@ public class MaterialTest extends ERPUnTransactionalTest {
         Material material = new Material();
         material.setMaterialName("固态/256G SSD");
         material.setMaterialType(8);
-        material.setPropertyId(19);
-        material.setPropertyValueId(42);
+        material.setMaterialCapacityValue(256.0);
         material.setMaterialPrice(new BigDecimal(5000.0));
         material.setDayRentPrice(new BigDecimal(5000.0));
         material.setMonthRentPrice(new BigDecimal(5000.0));

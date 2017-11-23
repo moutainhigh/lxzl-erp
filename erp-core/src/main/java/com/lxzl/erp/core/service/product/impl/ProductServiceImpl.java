@@ -496,8 +496,7 @@ public class ProductServiceImpl implements ProductService {
                 result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                 return result;
             }
-            ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(materialDO.getPropertyValueId());
-            if (productCategoryPropertyValueDO.getPropertyCapacityValue() == null) {
+            if (materialDO.getMaterialCapacityValue() == null) {
                 if (materialDOParamMap.get(materialDO.getMaterialType()) == null) {
                     materialDOParamMap.put(materialDO.getMaterialType(), materialDO);
                 } else {
@@ -506,9 +505,9 @@ public class ProductServiceImpl implements ProductService {
                 }
             } else {
                 if (propertyCapacityParamMap.get(materialDO.getMaterialType()) == null) {
-                    propertyCapacityParamMap.put(materialDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue() * productMaterial.getMaterialCount());
+                    propertyCapacityParamMap.put(materialDO.getMaterialType(), materialDO.getMaterialCapacityValue() * productMaterial.getMaterialCount());
                 } else {
-                    propertyCapacityParamMap.put(materialDO.getMaterialType(), BigDecimalUtil.add(propertyCapacityParamMap.get(materialDO.getMaterialType()), productCategoryPropertyValueDO.getPropertyCapacityValue() * productMaterial.getMaterialCount()));
+                    propertyCapacityParamMap.put(materialDO.getMaterialType(), BigDecimalUtil.add(propertyCapacityParamMap.get(materialDO.getMaterialType()), materialDO.getMaterialCapacityValue() * productMaterial.getMaterialCount()));
                 }
             }
         }
@@ -523,15 +522,22 @@ public class ProductServiceImpl implements ProductService {
         // SKU 属性值
         List<ProductSkuPropertyDO> productSkuPropertyDOList = productSkuPropertyMapper.findSkuProperties(productSku.getSkuId());
         for (ProductSkuPropertyDO productSkuPropertyDO : productSkuPropertyDOList) {
+            ProductCategoryPropertyDO productCategoryPropertyDO = productCategoryPropertyMapper.findById(productSkuPropertyDO.getPropertyId());
             ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productSkuPropertyDO.getPropertyValueId());
-            if (productCategoryPropertyValueDO.getReferId() != null) {
-                ProductCategoryPropertyValueDO materialProductCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productCategoryPropertyValueDO.getReferId());
-                MaterialDO materialDO = materialMapper.findByPropertyAndValueId(materialProductCategoryPropertyValueDO.getPropertyId(), materialProductCategoryPropertyValueDO.getId());
+
+            if (productCategoryPropertyValueDO.getMaterialType() != null) {
+                MaterialDO materialDO;
+                if(productCategoryPropertyValueDO.getPropertyCapacityValue() != null){
+                    materialDO = materialMapper.findByMaterialTypeAndCapacity(productCategoryPropertyDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
+                }else{
+                    materialDO = materialMapper.findByMaterialTypeAndModelId(productCategoryPropertyDO.getMaterialType(), productCategoryPropertyValueDO.getMaterialModelId());
+                }
+
                 if (materialDO == null) {
                     result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                     return result;
                 }
-                if (materialProductCategoryPropertyValueDO.getPropertyCapacityValue() == null) {
+                if (materialDO.getMaterialCapacityValue() == null) {
                     if (skuMaterialDOMap.get(materialDO.getMaterialType()) == null) {
                         skuMaterialDOMap.put(materialDO.getMaterialType(), materialDO);
                     } else {
@@ -540,9 +546,9 @@ public class ProductServiceImpl implements ProductService {
                     }
                 } else {
                     if (skuPropertyCapacityMap.get(materialDO.getMaterialType()) == null) {
-                        skuPropertyCapacityMap.put(materialDO.getMaterialType(), materialProductCategoryPropertyValueDO.getPropertyCapacityValue());
+                        skuPropertyCapacityMap.put(materialDO.getMaterialType(), materialDO.getMaterialCapacityValue());
                     } else {
-                        skuPropertyCapacityMap.put(materialDO.getMaterialType(), BigDecimalUtil.add(skuPropertyCapacityMap.get(materialDO.getMaterialType()), materialProductCategoryPropertyValueDO.getPropertyCapacityValue()));
+                        skuPropertyCapacityMap.put(materialDO.getMaterialType(), BigDecimalUtil.add(skuPropertyCapacityMap.get(materialDO.getMaterialType()), materialDO.getMaterialCapacityValue()));
                     }
                 }
             }
@@ -872,14 +878,17 @@ public class ProductServiceImpl implements ProductService {
      */
     public void saveProductMaterial(Integer productId, Integer skuId, Integer productPropertyValueId, User loginUser, Date currentTime) {
         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productPropertyValueId);
+
         if (productCategoryPropertyValueDO.getReferId() == null) {
             return;
         }
-        ProductCategoryPropertyValueDO materialCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productCategoryPropertyValueDO.getReferId());
-        if (materialCategoryPropertyValueDO == null) {
-            return;
+        MaterialDO materialDO;
+        if(productCategoryPropertyValueDO.getPropertyCapacityValue() != null){
+            materialDO = materialMapper.findByMaterialTypeAndCapacity(productCategoryPropertyValueDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
+        }else{
+            materialDO = materialMapper.findByMaterialTypeAndModelId(productCategoryPropertyValueDO.getMaterialType(), productCategoryPropertyValueDO.getMaterialModelId());
         }
-        MaterialDO materialDO = materialMapper.findByPropertyAndValueId(materialCategoryPropertyValueDO.getPropertyId(), materialCategoryPropertyValueDO.getId());
+
         if (materialDO == null) {
             return;
         }
@@ -905,13 +914,12 @@ public class ProductServiceImpl implements ProductService {
         if (productCategoryPropertyValueDO.getReferId() == null) {
             return;
         }
-        ProductCategoryPropertyValueDO materialCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productCategoryPropertyValueDO.getReferId());
-        if (materialCategoryPropertyValueDO == null) {
-            return;
-        }
-        MaterialDO materialDO = materialMapper.findByPropertyAndValueId(materialCategoryPropertyValueDO.getPropertyId(), materialCategoryPropertyValueDO.getId());
-        if (materialDO == null) {
-            return;
+
+        MaterialDO materialDO;
+        if(productCategoryPropertyValueDO.getPropertyCapacityValue() != null){
+            materialDO = materialMapper.findByMaterialTypeAndCapacity(productCategoryPropertyValueDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
+        }else{
+            materialDO = materialMapper.findByMaterialTypeAndModelId(productCategoryPropertyValueDO.getMaterialType(), productCategoryPropertyValueDO.getMaterialModelId());
         }
         ProductMaterialDO productMaterialDO = productMaterialMapper.findBySkuAndMaterial(skuId, materialDO.getId());
         if (productMaterialDO != null) {

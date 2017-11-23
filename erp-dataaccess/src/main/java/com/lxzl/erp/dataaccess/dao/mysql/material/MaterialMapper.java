@@ -9,8 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface MaterialMapper extends BaseMysqlDAO<MaterialDO> {
-    MaterialDO findByPropertyAndValueId(@Param("propertyId") Integer propertyId,
-                                        @Param("propertyValueId") Integer propertyValueId);
+    MaterialDO findByMaterialTypeAndCapacity(@Param("materialType") Integer materialType,
+                                             @Param("materialCapacityValue") Double materialCapacityValue);
+
+    MaterialDO findByMaterialTypeAndModelId(@Param("materialType") Integer materialType,
+                                            @Param("materialModelId") Integer materialModelId);
 
     MaterialDO findByNo(@Param("materialNo") String materialNo);
 

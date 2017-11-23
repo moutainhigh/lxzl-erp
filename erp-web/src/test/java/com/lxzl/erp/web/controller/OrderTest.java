@@ -4,6 +4,7 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.OrderRentType;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
 import org.junit.Test;
@@ -60,6 +61,15 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderProduct.setProductSkuPropertyList(productSkuPropertyList);
         orderProductList.add(orderProduct);
         order.setOrderProductList(orderProductList);
+
+        List<OrderMaterial> orderMaterialList = new ArrayList<>();
+
+        OrderMaterial orderMaterial = new OrderMaterial();
+        orderMaterial.setMaterialId(5);
+        orderMaterial.setMaterialCount(1);
+
+        orderMaterialList.add(orderMaterial);
+        order.setOrderMaterialList(orderMaterialList);
 
         order.setBuyerCustomerId(1);
         order.setCustomerConsignId(1);

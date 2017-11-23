@@ -18,9 +18,8 @@ public class BulkMaterialDO  extends BaseDO {
 	private Integer ownerWarehouseId;
 	private Integer ownerWarehousePositionId;
 	private Integer brandId;
-	private Integer categoryId;
-	private Integer propertyId;
-	private Integer propertyValueId;
+	private Integer materialModelId;
+	private Double materialCapacityValue;
 	private BigDecimal bulkMaterialPrice;
 	private Integer currentEquipmentId;
 	private String currentEquipmentNo;
@@ -100,28 +99,20 @@ public class BulkMaterialDO  extends BaseDO {
 		this.brandId = brandId;
 	}
 
-	public Integer getCategoryId(){
-		return categoryId;
+	public Integer getMaterialModelId() {
+		return materialModelId;
 	}
 
-	public void setCategoryId(Integer categoryId){
-		this.categoryId = categoryId;
+	public void setMaterialModelId(Integer materialModelId) {
+		this.materialModelId = materialModelId;
 	}
 
-	public Integer getPropertyId(){
-		return propertyId;
+	public Double getMaterialCapacityValue() {
+		return materialCapacityValue;
 	}
 
-	public void setPropertyId(Integer propertyId){
-		this.propertyId = propertyId;
-	}
-
-	public Integer getPropertyValueId(){
-		return propertyValueId;
-	}
-
-	public void setPropertyValueId(Integer propertyValueId){
-		this.propertyValueId = propertyValueId;
+	public void setMaterialCapacityValue(Double materialCapacityValue) {
+		this.materialCapacityValue = materialCapacityValue;
 	}
 
 	public BigDecimal getBulkMaterialPrice(){

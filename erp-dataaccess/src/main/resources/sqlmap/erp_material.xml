@@ -10,12 +10,9 @@
 		<result column="material_name" jdbcType="VARCHAR" property="materialName" />
 		<result column="material_type" jdbcType="INTEGER" property="materialType" />
 		<result column="is_main_material" jdbcType="INTEGER" property="isMainMaterial" />
+		<result column="material_capacity_value" jdbcType="DOUBLE" property="materialCapacityValue" />
+		<result column="material_model_id" jdbcType="INTEGER" property="materialModelId" />
 		<result column="brand_id" jdbcType="INTEGER" property="brandId" />
-		<result column="category_id" jdbcType="INTEGER" property="categoryId" />
-		<result column="property_id" jdbcType="INTEGER" property="propertyId" />
-		<result column="property_value_id" jdbcType="INTEGER" property="propertyValueId" />
-		<result column="property_name" jdbcType="VARCHAR" property="propertyName" />
-		<result column="property_value_name" jdbcType="VARCHAR" property="propertyValueName" />
 		<result column="stock" jdbcType="INTEGER" property="stock"/>
 		<result column="material_price" jdbcType="DECIMAL" property="materialPrice" />
 		<result column="time_rent_price" jdbcType="DECIMAL" property="timeRentPrice"/>
@@ -28,7 +25,6 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
-		<result column="material_capacity_value" jdbcType="DOUBLE" property="materialCapacityValue" />
 		<collection property="materialImgDOList" resultMap="MaterialImgDO" />
 	</resultMap>
 
@@ -50,7 +46,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		em.id,em.material_no,em.material_name,em.material_type,em.is_main_material,em.brand_id,em.category_id,em.property_id,em.property_value_id,em.stock,em.material_price,em.time_rent_price,em.day_rent_price,em.month_rent_price,em.material_desc,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
+		em.id,em.material_no,em.material_name,em.material_type,em.material_capacity_value,em.material_model_id,em.is_main_material,em.brand_id,em.stock,em.material_price,em.time_rent_price,em.day_rent_price,em.month_rent_price,em.material_desc,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
 	</sql>
 
 	<sql id="img_column_List">
@@ -62,10 +58,8 @@
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
 			select
-			<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name,epcpv.property_capacity_value AS material_capacity_value
+			<include refid="column_List"/>
 			from erp_material em
-			LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
-			LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
 			where em.id = #{id, jdbcType=INTEGER} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
@@ -74,23 +68,29 @@
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
 			select
-			<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name,epcpv.property_capacity_value AS material_capacity_value
+			<include refid="column_List"/>
 			from erp_material em
-			LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
-			LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
 			where em.material_no = #{materialNo, jdbcType=INTEGER} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
 
-	<select id="findByPropertyAndValueId" resultMap="MaterialDO" parameterType="java.lang.Integer">
+	<select id="findByMaterialTypeAndCapacity" resultMap="MaterialDO" parameterType="java.lang.Integer">
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
 			select
-			<include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name,epcpv.property_capacity_value AS material_capacity_value
+			<include refid="column_List"/>
 			from erp_material em
-			LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
-			LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
-			where em.property_id = #{propertyId, jdbcType=INTEGER} and em.property_value_id = #{propertyValueId, jdbcType=INTEGER} and em.data_status = 1
+			where em.material_type = #{materialType, jdbcType=INTEGER} and em.material_capacity_value = #{materialCapacityValue, jdbcType=DOUBLE} and em.data_status = 1
+		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
+	</select>
+
+	<select id="findByMaterialTypeAndModelId" resultMap="MaterialDO" parameterType="java.lang.Integer">
+		SELECT material_main.*, <include refid="img_column_List"/> FROM
+		(
+			select
+			<include refid="column_List"/>
+			from erp_material em
+			where em.material_type = #{materialType, jdbcType=INTEGER} and em.material_model_id = #{materialModelId, jdbcType=Integer} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
 
@@ -119,10 +119,8 @@
 	<select id="listPage" resultMap="MaterialDO" parameterType="map">
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
-			SELECT <include refid="column_List"/>,epcp.property_name as property_name, epcpv.property_value_name as property_value_name,epcpv.property_capacity_value AS material_capacity_value
+			SELECT <include refid="column_List"/>
 			FROM erp_material em
-			LEFT JOIN erp_product_category_property epcp on em.property_id = epcp.id
-			LEFT JOIN erp_product_category_property_value epcpv on em.property_value_id = epcpv.id
 			<where>
 				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialType != null &amp;&amp; maps.materialQueryParam.materialType != ''">
 					and em.material_type = #{maps.materialQueryParam.materialType, jdbcType=INTEGER}
@@ -162,14 +160,11 @@
 			<if test="brandId != null">
 				brand_id = #{brandId,jdbcType=INTEGER},
 			</if>
-			<if test="categoryId != null">
-				category_id = #{categoryId,jdbcType=INTEGER},
+			<if test="materialModelId != null">
+				material_model_id = #{materialModelId,jdbcType=INTEGER},
 			</if>
-			<if test="propertyId != null">
-				property_id = #{propertyId,jdbcType=INTEGER},
-			</if>
-			<if test="propertyValueId != null">
-				property_value_id = #{propertyValueId,jdbcType=INTEGER},
+			<if test="materialCapacityValue != null">
+				material_capacity_value = #{materialCapacityValue,jdbcType=DOUBLE},
 			</if>
 			<if test="stock != null">
 				stock = #{stock, jdbcType=INTEGER},

@@ -20,9 +20,8 @@ public class BulkMaterial implements Serializable {
 	private Integer ownerWarehouseId;   //归属仓库ID
 	private Integer ownerWarehousePositionId;   //归属目前仓位ID
 	private Integer brandId;   //所属品牌ID
-	private Integer categoryId;   //所属类目ID
-	private Integer propertyId;   //属性ID
-	private Integer propertyValueId;   //属性值ID
+	private Integer materialModelId;		//散料型号
+	private Double materialCapacityValue;	// 散料字面量值
 	private BigDecimal bulkMaterialPrice;   //散料本身的价值(单价)
 	private Integer currentEquipmentId;	// 当前设备ID
 	private String currentEquipmentNo;	// 当前设备编号
@@ -107,28 +106,20 @@ public class BulkMaterial implements Serializable {
 		this.brandId = brandId;
 	}
 
-	public Integer getCategoryId(){
-		return categoryId;
+	public Integer getMaterialModelId() {
+		return materialModelId;
 	}
 
-	public void setCategoryId(Integer categoryId){
-		this.categoryId = categoryId;
+	public void setMaterialModelId(Integer materialModelId) {
+		this.materialModelId = materialModelId;
 	}
 
-	public Integer getPropertyId(){
-		return propertyId;
+	public Double getMaterialCapacityValue() {
+		return materialCapacityValue;
 	}
 
-	public void setPropertyId(Integer propertyId){
-		this.propertyId = propertyId;
-	}
-
-	public Integer getPropertyValueId(){
-		return propertyValueId;
-	}
-
-	public void setPropertyValueId(Integer propertyValueId){
-		this.propertyValueId = propertyValueId;
+	public void setMaterialCapacityValue(Double materialCapacityValue) {
+		this.materialCapacityValue = materialCapacityValue;
 	}
 
 	public BigDecimal getBulkMaterialPrice(){

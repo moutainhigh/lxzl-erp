@@ -592,9 +592,6 @@ CREATE TABLE `erp_material` (
   `material_type` int(20) NOT NULL COMMENT '物料类型',
   `is_main_material` int(20) NOT NULL COMMENT '是否是主物料（四大件）',
   `brand_id` int(20) COMMENT '所属品牌ID',
-  `category_id` int(20) NOT NULL COMMENT '所属类目ID',
-  `property_id` int(20) NOT NULL COMMENT '属性ID',
-  `property_value_id` int(20) NOT NULL COMMENT '属性值ID',
   `material_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '物料本身的价值(单价)',
   `stock` int(11) NOT NULL DEFAULT '0' COMMENT '库存',
   `time_rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '次租赁价格',
@@ -626,7 +623,21 @@ CREATE TABLE `erp_material_img` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='商品图片表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='物料图片表';
+
+DROP TABLE if exists `erp_material_model`;
+CREATE TABLE `erp_material_model` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `material_type` int(11) NOT NULL DEFAULT '0' COMMENT '图片类型',
+  `model_name` varchar(200) NOT NULL DEFAULT '' COMMENT '文件原名',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='物料型号表';
 
 DROP TABLE if exists `erp_product_material`;
 CREATE TABLE `erp_product_material` (
@@ -1431,5 +1442,11 @@ CREATE TABLE `erp_message` (
   `read_time` datetime COMMENT '读取时间',
   `title` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '标题',
   `message_text` text COMMENT '发送内容',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='站内信表';

@@ -701,7 +701,7 @@ public class OrderServiceImpl implements OrderService {
         }
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
             for (OrderProduct orderProduct : order.getOrderProductList()) {
-                if (orderProduct.getProductSkuPropertyList() == null || orderProduct.getProductSkuPropertyList().isEmpty()) {
+                if (CollectionUtil.isEmpty(orderProduct.getProductSkuPropertyList()) || orderProduct.getProductCount() == null) {
                     return ErrorCode.PARAM_IS_NOT_ENOUGH;
                 }
                 List<Integer> propertyValueIdList = new ArrayList<>();
@@ -743,7 +743,7 @@ public class OrderServiceImpl implements OrderService {
 
         if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
             for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
-                if (orderMaterial.getMaterialId() == null) {
+                if (orderMaterial.getMaterialId() == null || orderMaterial.getMaterialCount() == null) {
                     return ErrorCode.PARAM_IS_NOT_ENOUGH;
                 }
                 ServiceResult<String, Material> materialServiceResult =  materialService.queryMaterialById(orderMaterial.getMaterialId());
@@ -751,6 +751,10 @@ public class OrderServiceImpl implements OrderService {
                 if(!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())
                         || materialServiceResult.getResult() == null){
                     return ErrorCode.MATERIAL_NOT_EXISTS;
+                }
+                Material material = materialServiceResult.getResult();
+                if (material.getStock() == null || material.getStock() <= 0 || (material.getStock() - orderMaterial.getMaterialCount()) < 0) {
+                    return ErrorCode.ORDER_PRODUCT_STOCK_INSUFFICIENT;
                 }
             }
         }

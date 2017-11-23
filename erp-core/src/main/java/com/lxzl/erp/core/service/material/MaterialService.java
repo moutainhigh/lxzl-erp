@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.material.pojo.MaterialImg;
+import com.lxzl.erp.common.domain.material.pojo.MaterialModel;
 import com.lxzl.se.core.service.BaseService;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -114,4 +115,7 @@ public interface MaterialService extends BaseService {
      * @return 是否
      */
     boolean isAllGadget(List<Material> materialList);
+
+
+    ServiceResult<String, Integer> addMaterialModel(MaterialModel materialModel);
 }
