@@ -168,6 +168,7 @@ public class MaterialServiceImpl implements MaterialService {
             dbMaterialDO = materialMapper.findByMaterialTypeAndCapacity(material.getMaterialType(), material.getMaterialCapacityValue());
         } else {
             dbMaterialDO = materialMapper.findByMaterialTypeAndModelId(material.getMaterialType(), material.getMaterialModelId());
+
         }
         if (dbMaterialDO != null) {
             result.setErrorCode(ErrorCode.RECORD_ALREADY_EXISTS);
@@ -175,12 +176,7 @@ public class MaterialServiceImpl implements MaterialService {
         }
         MaterialDO materialDO = MaterialConverter.convertMaterial(material);
 
-        if (MaterialType.MATERIAL_TYPE_MEMORY.equals(materialDO.getMaterialType())
-                || MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(materialDO.getMaterialType())
-                || MaterialType.MATERIAL_TYPE_CPU.equals(materialDO.getMaterialType())
-                || MaterialType.MATERIAL_TYPE_HDD.equals(materialDO.getMaterialType())
-                || MaterialType.MATERIAL_TYPE_SSD.equals(materialDO.getMaterialType())
-                || MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(materialDO.getMaterialType())) {
+        if (isMainMaterial(materialDO.getMaterialType())) {
             materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_YES);
         } else {
             materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_NO);
@@ -197,6 +193,20 @@ public class MaterialServiceImpl implements MaterialService {
         result.setResult(materialDO.getMaterialNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    @Override
+    public boolean isMainMaterial(Integer materialType) {
+        if (MaterialType.MATERIAL_TYPE_MEMORY.equals(materialType)
+                || MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(materialType)
+                || MaterialType.MATERIAL_TYPE_CPU.equals(materialType)
+                || MaterialType.MATERIAL_TYPE_HDD.equals(materialType)
+                || MaterialType.MATERIAL_TYPE_SSD.equals(materialType)
+                || MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(materialType)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -319,7 +329,6 @@ public class MaterialServiceImpl implements MaterialService {
             return ErrorCode.PARAM_IS_NOT_ENOUGH;
         }
 
-
         if ((MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
                 || MaterialType.MATERIAL_TYPE_HDD.equals(material.getMaterialType())
                 || MaterialType.MATERIAL_TYPE_SSD.equals(material.getMaterialType()))
@@ -331,6 +340,15 @@ public class MaterialServiceImpl implements MaterialService {
                 && material.getMaterialModelId() == null) {
             return ErrorCode.MATERIAL_MODEL_NOT_NULL;
         }
+
+        if(material.getMaterialModelId() != null){
+            MaterialModelDO materialModelDO = materialModelMapper.findById(material.getMaterialModelId());
+            if(materialModelDO == null
+                    || !materialModelDO.getMaterialType().equals(material.getMaterialType())){
+                return ErrorCode.PARAM_IS_ERROR;
+            }
+        }
+
 
         return ErrorCode.SUCCESS;
     }

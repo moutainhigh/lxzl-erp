@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialModelQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialQueryParam;
@@ -25,9 +26,10 @@ public class MaterialTest extends ERPUnTransactionalTest {
     @Test
     public void addMaterial() throws Exception {
         Material material = new Material();
-        material.setMaterialName("固态/256G SSD");
+        material.setMaterialName("固态/128G SSD");
         material.setMaterialType(8);
-        material.setMaterialCapacityValue(256.0);
+        material.setMaterialCapacityValue(128.0);
+        material.setIsRent(CommonConstant.YES);
         material.setMaterialPrice(new BigDecimal(5000.0));
         material.setDayRentPrice(new BigDecimal(5000.0));
         material.setMonthRentPrice(new BigDecimal(5000.0));

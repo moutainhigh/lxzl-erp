@@ -596,6 +596,7 @@ CREATE TABLE `erp_material` (
   `brand_id` int(20) COMMENT '所属品牌ID',
   `material_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '物料本身的价值(单价)',
   `stock` int(11) NOT NULL DEFAULT '0' COMMENT '库存',
+  `is_rent` int(11) NOT NULL DEFAULT '0' COMMENT '是否在租：0下架；1上架',
   `time_rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '次租赁价格',
   `day_rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '天租赁价格',
   `month_rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '月租赁价格',

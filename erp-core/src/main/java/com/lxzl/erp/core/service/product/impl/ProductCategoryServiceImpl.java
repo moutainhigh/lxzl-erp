@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.product.impl;
 import com.lxzl.erp.common.constant.CategoryType;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.MaterialType;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.ProductCategoryQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategory;
@@ -10,13 +11,18 @@ import com.lxzl.erp.common.domain.product.pojo.ProductCategoryProperty;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategoryPropertyValue;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.GenerateNoUtil;
+import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.product.ProductCategoryService;
 import com.lxzl.erp.core.service.product.impl.support.ProductCategoryConverter;
 import com.lxzl.erp.core.service.product.impl.support.ProductCategoryPropertyConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialModelMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyValueMapper;
+import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialModelDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
@@ -96,6 +102,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> addProductCategoryPropertyValue(ProductCategoryPropertyValue productCategoryPropertyValue) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -106,6 +113,29 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS);
             return result;
         }
+
+        if ((MaterialType.MATERIAL_TYPE_MEMORY.equals(productCategoryPropertyDO.getMaterialType())
+                || MaterialType.MATERIAL_TYPE_HDD.equals(productCategoryPropertyDO.getMaterialType())
+                || MaterialType.MATERIAL_TYPE_SSD.equals(productCategoryPropertyDO.getMaterialType()))
+                && productCategoryPropertyValueDO.getPropertyCapacityValue() == null) {
+            result.setErrorCode(ErrorCode.MATERIAL_CAPACITY_VALUE_NOT_NULL);
+            return result;
+        } else if ((!MaterialType.MATERIAL_TYPE_MEMORY.equals(productCategoryPropertyDO.getMaterialType())
+                && !MaterialType.MATERIAL_TYPE_HDD.equals(productCategoryPropertyDO.getMaterialType())
+                && !MaterialType.MATERIAL_TYPE_SSD.equals(productCategoryPropertyDO.getMaterialType()))
+                && productCategoryPropertyValueDO.getMaterialModelId() == null) {
+            result.setErrorCode(ErrorCode.MATERIAL_MODEL_NOT_NULL);
+            return result;
+        }
+        if (productCategoryPropertyValueDO.getMaterialModelId() != null) {
+            MaterialModelDO materialModelDO = materialModelMapper.findById(productCategoryPropertyValueDO.getMaterialModelId());
+            if (materialModelDO == null
+                    || !materialModelDO.getMaterialType().equals(productCategoryPropertyDO.getMaterialType())) {
+                result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+                return result;
+            }
+        }
+
         productCategoryPropertyValueDO.setCategoryId(productCategoryPropertyDO.getCategoryId());
         productCategoryPropertyValueDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         productCategoryPropertyValueDO.setCreateUser(loginUser.getUserId().toString());
@@ -113,10 +143,35 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         productCategoryPropertyValueDO.setCreateTime(currentTime);
         productCategoryPropertyValueDO.setUpdateTime(currentTime);
         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
+        saveMaterial(productCategoryPropertyDO, productCategoryPropertyValueDO, loginUser, currentTime);
 
         result.setResult(productCategoryPropertyValueDO.getId());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    private void saveMaterial(ProductCategoryPropertyDO productCategoryPropertyDO, ProductCategoryPropertyValueDO productCategoryPropertyValueDO, User loginUser, Date currentTime) {
+        if(productCategoryPropertyDO.getMaterialType() == null){
+            return;
+        }
+        MaterialDO materialDO = new MaterialDO();
+        materialDO.setMaterialType(productCategoryPropertyDO.getMaterialType());
+        materialDO.setMaterialModelId(productCategoryPropertyValueDO.getMaterialModelId());
+        materialDO.setMaterialCapacityValue(productCategoryPropertyValueDO.getPropertyCapacityValue());
+        if (materialService.isMainMaterial(materialDO.getMaterialType())) {
+            materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_YES);
+        } else {
+            materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_NO);
+        }
+        materialDO.setMaterialName(productCategoryPropertyDO.getPropertyName() + "/" + productCategoryPropertyValueDO.getPropertyValueName());
+        materialDO.setMaterialNo(GenerateNoUtil.generateMaterialNo(currentTime));
+        materialDO.setIsRent(CommonConstant.COMMON_CONSTANT_NO);
+        materialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        materialDO.setUpdateUser(loginUser.getUserId().toString());
+        materialDO.setCreateUser(loginUser.getUserId().toString());
+        materialDO.setUpdateTime(currentTime);
+        materialDO.setCreateTime(currentTime);
+        materialMapper.save(materialDO);
     }
 
     @Override
@@ -164,5 +219,11 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Autowired
     private MaterialMapper materialMapper;
+
+    @Autowired
+    private MaterialModelMapper materialModelMapper;
+
+    @Autowired
+    private MaterialService materialService;
 
 }
