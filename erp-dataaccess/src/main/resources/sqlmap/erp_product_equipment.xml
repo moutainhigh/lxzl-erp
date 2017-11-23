@@ -24,7 +24,6 @@
         <collection property="bulkMaterialDOList" resultMap="BulkMaterialDO" />
     </resultMap>
 
-
     <resultMap id="BulkMaterialDO" type="com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO">
         <id column="bulk_id" jdbcType="INTEGER" property="id" />
         <result column="bulk_bulk_material_no" jdbcType="VARCHAR" property="bulkMaterialNo" />
@@ -38,8 +37,8 @@
         <result column="bulk_owner_warehouse_position_id" jdbcType="INTEGER" property="ownerWarehousePositionId" />
         <result column="bulk_brand_id" jdbcType="INTEGER" property="brandId" />
         <result column="bulk_category_id" jdbcType="INTEGER" property="categoryId" />
-        <result column="bulk_property_id" jdbcType="INTEGER" property="propertyId" />
-        <result column="bulk_property_value_id" jdbcType="INTEGER" property="propertyValueId" />
+        <result column="bulk_material_model_id" jdbcType="INTEGER" property="materialModelId" />
+        <result column="bulk_material_capacity_value" jdbcType="INTEGER" property="materialCapacityValue" />
         <result column="bulk_bulk_material_price" jdbcType="DECIMAL" property="bulkMaterialPrice" />
         <result column="bulk_original_price" jdbcType="DECIMAL" property="originalPrice" />
         <result column="bulk_rent_price" jdbcType="DECIMAL" property="rentPrice" />
@@ -77,7 +76,7 @@
     </sql>
 
     <sql id="bulk_material_column_List">
-        ebm.id AS bulk_id,ebm.bulk_material_no AS bulk_bulk_material_no,ebm.bulk_material_type AS bulk_bulk_material_type,ebm.bulk_material_name AS bulk_bulk_material_name,ebm.material_id AS bulk_material_id,ebm.material_no AS bulk_material_no,ebm.current_warehouse_id AS bulk_current_warehouse_id,ebm.current_warehouse_position_id AS bulk_current_warehouse_position_id,ebm.owner_warehouse_id AS bulk_owner_warehouse_id,ebm.owner_warehouse_position_id AS bulk_owner_warehouse_position_id,ebm.brand_id AS bulk_brand_id,ebm.category_id AS bulk_category_id,ebm.property_id AS bulk_property_id,ebm.property_value_id AS bulk_property_value_id,ebm.bulk_material_price AS bulk_bulk_material_price,ebm.bulk_material_status AS bulk_bulk_material_status,ebm.data_status AS bulk_data_status,ebm.remark AS bulk_remark,ebm.create_time AS bulk_create_time,ebm.create_user AS bulk_create_user,ebm.update_time AS bulk_update_time,ebm.update_user AS bulk_update_user
+        ebm.id AS bulk_id,ebm.bulk_material_no AS bulk_bulk_material_no,ebm.bulk_material_type AS bulk_bulk_material_type,ebm.bulk_material_name AS bulk_bulk_material_name,ebm.material_id AS bulk_material_id,ebm.material_no AS bulk_material_no,ebm.current_warehouse_id AS bulk_current_warehouse_id,ebm.current_warehouse_position_id AS bulk_current_warehouse_position_id,ebm.owner_warehouse_id AS bulk_owner_warehouse_id,ebm.owner_warehouse_position_id AS bulk_owner_warehouse_position_id,ebm.brand_id AS bulk_brand_id,ebm.material_model_id AS bulk_material_model_id,ebm.material_capacity_value AS bulk_material_capacity_value,ebm.bulk_material_price AS bulk_bulk_material_price,ebm.bulk_material_status AS bulk_bulk_material_status,ebm.data_status AS bulk_data_status,ebm.remark AS bulk_remark,ebm.create_time AS bulk_create_time,ebm.create_user AS bulk_create_user,ebm.update_time AS bulk_update_time,ebm.update_user AS bulk_update_user
     </sql>
 
     <select id="findById" resultMap="ProductEquipmentDO" parameterType="java.lang.Integer">

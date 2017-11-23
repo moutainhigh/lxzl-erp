@@ -4,10 +4,12 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
+import com.lxzl.erp.common.domain.material.MaterialModelQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.material.pojo.MaterialImg;
+import com.lxzl.erp.common.domain.material.pojo.MaterialModel;
 import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -85,6 +87,24 @@ public class MaterialController extends BaseController {
     @RequestMapping(value = "queryAllBulkMaterial", method = RequestMethod.POST)
     public Result queryAllBulkMaterial(@RequestBody BulkMaterialQueryParam bulkMaterialQueryParam, BindingResult validResult) {
         ServiceResult<String, Page<BulkMaterial>> serviceResult = materialService.queryAllBulkMaterial(bulkMaterialQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "addModel", method = RequestMethod.POST)
+    public Result addModel(@RequestBody MaterialModel materialModel, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = materialService.addMaterialModel(materialModel);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "updateModel", method = RequestMethod.POST)
+    public Result updateModel(@RequestBody MaterialModel materialModel, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = materialService.updateMaterialModel(materialModel);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "queryModel", method = RequestMethod.POST)
+    public Result queryModel(@RequestBody MaterialModelQueryParam materialModelQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<MaterialModel>> serviceResult = materialService.queryMaterialModel(materialModelQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

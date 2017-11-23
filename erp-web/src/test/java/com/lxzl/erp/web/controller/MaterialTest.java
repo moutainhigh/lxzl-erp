@@ -3,9 +3,11 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
+import com.lxzl.erp.common.domain.material.MaterialModelQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.material.pojo.MaterialImg;
+import com.lxzl.erp.common.domain.material.pojo.MaterialModel;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -39,6 +41,7 @@ public class MaterialTest extends ERPUnTransactionalTest {
         material.setMaterialImgList(materialImgList);
         TestResult result = getJsonTestResult("/material/add", material);
     }
+
     @Test
     public void updateMaterial() throws Exception {
         Material material = new Material();
@@ -62,5 +65,29 @@ public class MaterialTest extends ERPUnTransactionalTest {
         materialQueryParam.setPageSize(15);
         materialQueryParam.setMaterialId(2);
         TestResult result = getJsonTestResult("/material/queryBulkMaterialByMaterialId", materialQueryParam);
+    }
+
+    @Test
+    public void addMaterialModel() throws Exception {
+        MaterialModel materialModel = new MaterialModel();
+        materialModel.setMaterialModelId(11);
+        materialModel.setMaterialType(2);
+        materialModel.setModelName("水冷机箱");
+        TestResult result = getJsonTestResult("/material/addModel", materialModel);
+    }
+
+    @Test
+    public void updateMaterialModel() throws Exception {
+        MaterialModel materialModel = new MaterialModel();
+        materialModel.setMaterialModelId(11);
+        materialModel.setModelName("水冷机箱1");
+        TestResult result = getJsonTestResult("/material/updateModel", materialModel);
+    }
+
+    @Test
+    public void queryModel() throws Exception {
+        MaterialModelQueryParam materialModelQueryParam = new MaterialModelQueryParam();
+        materialModelQueryParam.setMaterialType(2);
+        TestResult result = getJsonTestResult("/material/queryModel", materialModelQueryParam);
     }
 }

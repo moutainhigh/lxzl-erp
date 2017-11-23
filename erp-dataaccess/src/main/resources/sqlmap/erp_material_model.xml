@@ -23,9 +23,20 @@
 		WHERE emm.id = #{id, jdbcType=INTEGER} AND emm.data_status = 1 
 	</select>
 
+	<select id="findByTypeAndName" resultMap="MaterialModelDO" parameterType="java.util.Map">
+		SELECT <include refid="column_List"/> FROM erp_material_model emm
+		WHERE emm.material_type = #{materialType, jdbcType=INTEGER} AND emm.model_name = #{modelName, jdbcType=VARCHAR} AND emm.data_status = 1
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(emm.id) FROM erp_material_model emm 
 		<where>
+			<if test="maps.materialModelQueryParam != null &amp;&amp; maps.materialModelQueryParam.modelName != null &amp;&amp; maps.materialModelQueryParam.modelName != ''">
+				and emm.model_name like CONCAT('%','${maps.materialModelQueryParam.modelName}','%' )
+			</if>
+			<if test="maps.materialModelQueryParam != null &amp;&amp; maps.materialModelQueryParam.materialType != null">
+				and emm.material_type = #{maps.materialModelQueryParam.materialType, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				AND emm.data_status = 1
 			</if>
@@ -35,6 +46,15 @@
 	<select id="listPage" resultMap="MaterialModelDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_material_model emm 
 		<where>
+			<if test="maps.materialModelQueryParam != null &amp;&amp; maps.materialModelQueryParam.modelName != null &amp;&amp; maps.materialModelQueryParam.modelName != ''">
+				and emm.model_name like CONCAT('%','${maps.materialModelQueryParam.modelName}','%' )
+			</if>
+			<if test="maps.materialModelQueryParam != null &amp;&amp; maps.materialModelQueryParam.materialType != null">
+				and emm.material_type = #{maps.materialModelQueryParam.materialType, jdbcType=INTEGER}
+			</if>
+			<if test="true">
+				AND emm.data_status = 1
+			</if>
 			<if test="true">
 				AND emm.data_status = 1
 			</if>

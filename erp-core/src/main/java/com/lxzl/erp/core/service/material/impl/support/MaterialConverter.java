@@ -2,8 +2,11 @@ package com.lxzl.erp.core.service.material.impl.support;
 
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;
+import com.lxzl.erp.common.domain.material.pojo.MaterialModel;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialModelDO;
 import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
@@ -36,32 +39,60 @@ public class MaterialConverter {
         return bulkMaterial;
     }
 
-    public static Material convertMaterialDO(MaterialDO materialDO){
+    public static Material convertMaterialDO(MaterialDO materialDO) {
         Material material = new Material();
-        if(materialDO.getId() != null){
+        if (materialDO.getId() != null) {
             material.setMaterialId(materialDO.getId());
         }
-        BeanUtils.copyProperties(materialDO,material);
+        BeanUtils.copyProperties(materialDO, material);
         material.setMaterialImgList(MaterialImageConverter.convertMaterialImgDOList(materialDO.getMaterialImgDOList()));
         return material;
     }
 
-    public static MaterialDO convertMaterial(Material material){
+    public static MaterialDO convertMaterial(Material material) {
         MaterialDO materialDO = new MaterialDO();
-        if(material.getMaterialId() != null){
+        if (material.getMaterialId() != null) {
             materialDO.setId(material.getMaterialId());
         }
-        BeanUtils.copyProperties(material,materialDO);
+        BeanUtils.copyProperties(material, materialDO);
         return materialDO;
     }
 
-    public static List<Material> convertMaterialDOList(List<MaterialDO> materialDOList){
+    public static List<Material> convertMaterialDOList(List<MaterialDO> materialDOList) {
         List<Material> materialList = new ArrayList<>();
-        if(materialDOList != null && !materialDOList.isEmpty()){
-            for(MaterialDO materialDO : materialDOList){
+        if (materialDOList != null && !materialDOList.isEmpty()) {
+            for (MaterialDO materialDO : materialDOList) {
                 materialList.add(convertMaterialDO(materialDO));
             }
         }
         return materialList;
+    }
+
+    public static List<MaterialModel> convertMaterialModelDOList(List<MaterialModelDO> materialModelDOList){
+        List<MaterialModel>  materialModelList = new ArrayList<>();
+        if(CollectionUtil.isNotEmpty(materialModelDOList)){
+            for(MaterialModelDO materialModelDO : materialModelDOList){
+                materialModelList.add(convertMaterialModelDO(materialModelDO));
+            }
+        }
+        return materialModelList;
+    }
+
+    public static MaterialModel convertMaterialModelDO(MaterialModelDO materialModelDO) {
+        MaterialModel materialModel = new MaterialModel();
+        if (materialModelDO.getId() != null) {
+            materialModel.setMaterialModelId(materialModelDO.getId());
+        }
+        BeanUtils.copyProperties(materialModelDO, materialModel);
+        return materialModel;
+    }
+
+    public static MaterialModelDO convertMaterialModel(MaterialModel materialModel) {
+        MaterialModelDO materialModelDO = new MaterialModelDO();
+        if (materialModel.getMaterialModelId() != null) {
+            materialModelDO.setId(materialModel.getMaterialModelId());
+        }
+        BeanUtils.copyProperties(materialModel, materialModelDO);
+        return materialModelDO;
     }
 }

@@ -150,6 +150,7 @@ public class ErrorCode {
     public static final String PURCHASE_RECEIVE_ORDER_MATERIAL_REAL_COUNT_NOT_NULL = "J300050";
     public static final String MATERIAL_CAPACITY_VALUE_NOT_NULL = "J300051";
     public static final String MATERIAL_MODEL_NOT_NULL = "J300052";
+    public static final String MATERIAL_TYPE_HAVE_NO_MODEL = "J300053";
 
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
@@ -331,6 +332,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_REAL_COUNT_NOT_NULL, "采购收货单物料项实际物料数量不能为空");
         MAP.put(MATERIAL_CAPACITY_VALUE_NOT_NULL, "物料字面量不能为空");
         MAP.put(MATERIAL_MODEL_NOT_NULL, "物料型号不能为空");
+        MAP.put(MATERIAL_TYPE_HAVE_NO_MODEL, "该物料类型没有型号");
 
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");

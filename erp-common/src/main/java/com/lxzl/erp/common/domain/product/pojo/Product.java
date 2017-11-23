@@ -26,8 +26,6 @@ public class Product implements Serializable {
     private List<ProductImg> productDescImgList;           // 商品图片
     private List<ProductSku> productSkuList;                // 商品SKU
     private List<ProductSkuProperty> productPropertyList;   // 商品属性
-
-    // 该商品应该有的属性列表
     private List<ProductCategoryProperty> productCategoryPropertyList;
 
     public Integer getProductId() {

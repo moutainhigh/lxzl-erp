@@ -17,6 +17,8 @@ public class MaterialQueryParam extends BasePageParam {
     private String materialNo;
     private String materialName;
     private Integer materialType;
+    private Double materialCapacityValue;
+    private Integer materialModelId;
     private Integer isMainMaterial;
 
     public String getMaterialNo() {
@@ -49,5 +51,21 @@ public class MaterialQueryParam extends BasePageParam {
 
     public void setIsMainMaterial(Integer isMainMaterial) {
         this.isMainMaterial = isMainMaterial;
+    }
+
+    public Double getMaterialCapacityValue() {
+        return materialCapacityValue;
+    }
+
+    public void setMaterialCapacityValue(Double materialCapacityValue) {
+        this.materialCapacityValue = materialCapacityValue;
+    }
+
+    public Integer getMaterialModelId() {
+        return materialModelId;
+    }
+
+    public void setMaterialModelId(Integer materialModelId) {
+        this.materialModelId = materialModelId;
     }
 }

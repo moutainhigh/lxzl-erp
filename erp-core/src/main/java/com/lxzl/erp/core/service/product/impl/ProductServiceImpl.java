@@ -354,7 +354,6 @@ public class ProductServiceImpl implements ProductService {
             Map<String, Object> propertyValueMaps = new HashMap<>();
             propertyValueMaps.put("productId", productSku.getProductId());
             propertyValueMaps.put("skuId", productSku.getSkuId());
-            propertyValueMaps.put("categoryType", productCategoryDO.getCategoryType());
             List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByParams(propertyValueMaps);
             productSku.setShouldProductCategoryPropertyValueList(ProductCategoryPropertyConverter.convertProductCategoryPropertyValueDOList(productCategoryPropertyValueDOList));
         }

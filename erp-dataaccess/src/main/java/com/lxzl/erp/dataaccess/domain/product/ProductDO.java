@@ -21,7 +21,6 @@ public class ProductDO extends BaseDO {
 
     private List<ProductImgDO> productImgDOList;           // 商品图片
     private List<ProductImgDO> productDescImgDOList;           // 商品详情图片
-
     private List<ProductSkuDO> productSkuDOList;
     private List<ProductSkuPropertyDO> productPropertyDOList;
 

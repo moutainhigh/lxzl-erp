@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.material;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
+import com.lxzl.erp.common.domain.material.MaterialModelQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;
@@ -118,4 +119,6 @@ public interface MaterialService extends BaseService {
 
 
     ServiceResult<String, Integer> addMaterialModel(MaterialModel materialModel);
+    ServiceResult<String, Integer> updateMaterialModel(MaterialModel materialModel);
+    ServiceResult<String, Page<MaterialModel>> queryMaterialModel(MaterialModelQueryParam materialModelQueryParam);
 }

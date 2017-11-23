@@ -7,6 +7,7 @@ import com.lxzl.erp.common.constant.MaterialType;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
+import com.lxzl.erp.common.domain.material.MaterialModelQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;
@@ -25,11 +26,13 @@ import com.lxzl.erp.core.service.material.impl.support.MaterialImageConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialImgMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialModelMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialImgDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialModelDO;
 import com.lxzl.erp.dataaccess.domain.product.*;
 import com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderMaterialDO;
 import com.lxzl.se.common.util.StringUtil;
@@ -76,6 +79,9 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Autowired
     private PurchaseOrderMaterialMapper purchaseOrderMaterialMapper;
+
+    @Autowired
+    private MaterialModelMapper materialModelMapper;
 
     @Autowired
     private FileService fileService;
@@ -157,7 +163,8 @@ public class MaterialServiceImpl implements MaterialService {
         MaterialDO dbMaterialDO = null;
         if (MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
                 || MaterialType.MATERIAL_TYPE_HDD.equals(material.getMaterialType())
-                || MaterialType.MATERIAL_TYPE_SSD.equals(material.getMaterialType())) {
+                || MaterialType.MATERIAL_TYPE_SSD.equals(material.getMaterialType())
+                || !isRightMaterialType(material.getMaterialType())) {
             dbMaterialDO = materialMapper.findByMaterialTypeAndCapacity(material.getMaterialType(), material.getMaterialCapacityValue());
         } else {
             dbMaterialDO = materialMapper.findByMaterialTypeAndModelId(material.getMaterialType(), material.getMaterialModelId());
@@ -339,8 +346,8 @@ public class MaterialServiceImpl implements MaterialService {
 
         Integer totalCount = materialMapper.listCount(maps);
         List<MaterialDO> materialDOList = materialMapper.listPage(maps);
-        List<Material> productList = MaterialConverter.convertMaterialDOList(materialDOList);
-        Page<Material> page = new Page<>(productList, totalCount, materialQueryParam.getPageNo(), materialQueryParam.getPageSize());
+        List<Material> materialList = MaterialConverter.convertMaterialDOList(materialDOList);
+        Page<Material> page = new Page<>(materialList, totalCount, materialQueryParam.getPageNo(), materialQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
@@ -460,10 +467,100 @@ public class MaterialServiceImpl implements MaterialService {
         return true;
     }
 
+    private boolean isRightMaterialType(Integer materialType) {
+        if (MaterialType.MATERIAL_TYPE_MEMORY.equals(materialType)
+                || MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(materialType)
+                || MaterialType.MATERIAL_TYPE_CPU.equals(materialType)
+                || MaterialType.MATERIAL_TYPE_HDD.equals(materialType)
+                || MaterialType.MATERIAL_TYPE_SSD.equals(materialType)
+                || MaterialType.MATERIAL_TYPE_POWER_SUPPLY.equals(materialType)
+                || MaterialType.MATERIAL_TYPE_RADIATOR.equals(materialType)
+                || MaterialType.MATERIAL_TYPE_BOX.equals(materialType)
+                || MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(materialType)) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public ServiceResult<String, Integer> addMaterialModel(MaterialModel materialModel) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+        if (materialModel == null
+                || materialModel.getMaterialType() == null
+                || materialModel.getModelName() == null
+                || !isRightMaterialType(materialModel.getMaterialType())) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+        if (MaterialType.MATERIAL_TYPE_MEMORY.equals(materialModel.getMaterialType())
+                || MaterialType.MATERIAL_TYPE_HDD.equals(materialModel.getMaterialType())
+                || MaterialType.MATERIAL_TYPE_SSD.equals(materialModel.getMaterialType())) {
+            result.setErrorCode(ErrorCode.MATERIAL_TYPE_HAVE_NO_MODEL);
+            return result;
+        }
+        MaterialModelDO dbMaterialModelDO = materialModelMapper.findByTypeAndName(materialModel.getMaterialType(), materialModel.getModelName());
+        if (dbMaterialModelDO != null) {
+            result.setErrorCode(ErrorCode.RECORD_ALREADY_EXISTS);
+            return result;
+        }
 
+        MaterialModelDO materialModelDO = MaterialConverter.convertMaterialModel(materialModel);
+        materialModelDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        materialModelDO.setUpdateUser(loginUser.getUserId().toString());
+        materialModelDO.setCreateUser(loginUser.getUserId().toString());
+        materialModelDO.setUpdateTime(currentTime);
+        materialModelDO.setCreateTime(currentTime);
+        materialModelMapper.save(materialModelDO);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(materialModelDO.getId());
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> updateMaterialModel(MaterialModel materialModel) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+
+        MaterialModelDO dbMaterialModelDO = materialModelMapper.findById(materialModel.getMaterialModelId());
+        if (dbMaterialModelDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        if (materialModel.getMaterialType() != null && dbMaterialModelDO.getMaterialType().equals(materialModel.getMaterialType())) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        MaterialModelDO materialModelDO = MaterialConverter.convertMaterialModel(materialModel);
+        materialModelDO.setMaterialType(null);
+        materialModelDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        materialModelDO.setUpdateUser(loginUser.getUserId().toString());
+        materialModelDO.setUpdateTime(currentTime);
+        materialModelMapper.update(materialModelDO);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(materialModelDO.getId());
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Page<MaterialModel>> queryMaterialModel(MaterialModelQueryParam materialModelQueryParam) {
+        ServiceResult<String, Page<MaterialModel>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(materialModelQueryParam.getPageNo(), materialModelQueryParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("materialModelQueryParam", materialModelQueryParam);
+        Integer totalCount = materialModelMapper.listCount(maps);
+        List<MaterialModelDO> materialModelDOList = materialModelMapper.listPage(maps);
+        List<MaterialModel> materialModelList = MaterialConverter.convertMaterialModelDOList(materialModelDOList);
+        Page<MaterialModel> page = new Page<>(materialModelList, totalCount, materialModelQueryParam.getPageNo(), materialModelQueryParam.getPageSize());
+        result.setResult(page);
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 }
