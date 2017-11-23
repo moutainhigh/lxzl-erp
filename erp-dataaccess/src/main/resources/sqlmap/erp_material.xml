@@ -14,6 +14,7 @@
 		<result column="material_model_id" jdbcType="INTEGER" property="materialModelId" />
 		<result column="brand_id" jdbcType="INTEGER" property="brandId" />
 		<result column="stock" jdbcType="INTEGER" property="stock"/>
+		<result column="is_rent" jdbcType="INTEGER" property="isRent"/>
 		<result column="material_price" jdbcType="DECIMAL" property="materialPrice" />
 		<result column="time_rent_price" jdbcType="DECIMAL" property="timeRentPrice"/>
 		<result column="day_rent_price" jdbcType="DECIMAL" property="dayRentPrice"/>
@@ -46,7 +47,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		em.id,em.material_no,em.material_name,em.material_type,em.material_capacity_value,em.material_model_id,em.is_main_material,em.brand_id,em.stock,em.material_price,em.time_rent_price,em.day_rent_price,em.month_rent_price,em.material_desc,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
+		em.id,em.material_no,em.material_name,em.material_type,em.material_capacity_value,em.material_model_id,em.is_main_material,em.brand_id,em.stock,em.is_rent,em.material_price,em.time_rent_price,em.day_rent_price,em.month_rent_price,em.material_desc,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
 	</sql>
 
 	<sql id="img_column_List">
@@ -107,6 +108,9 @@
 			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialModelId != null &amp;&amp; maps.materialQueryParam.materialModelId != ''">
 				and em.material_model_id = #{maps.materialQueryParam.materialModelId, jdbcType=INTEGER}
 			</if>
+			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.isRent != null &amp;&amp; maps.materialQueryParam.isRent != ''">
+				and em.is_rent = #{maps.materialQueryParam.isRent, jdbcType=INTEGER}
+			</if>
 			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialCapacityValue != null &amp;&amp; maps.materialQueryParam.materialCapacityValue != ''">
 				and em.material_capacity_value = #{maps.materialQueryParam.materialCapacityValue, jdbcType=DOUBLE}
 			</if>
@@ -136,6 +140,9 @@
 				</if>
 				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialModelId != null &amp;&amp; maps.materialQueryParam.materialModelId != ''">
 					and em.material_model_id = #{maps.materialQueryParam.materialModelId, jdbcType=INTEGER}
+				</if>
+				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.isRent != null &amp;&amp; maps.materialQueryParam.isRent != ''">
+					and em.is_rent = #{maps.materialQueryParam.isRent, jdbcType=INTEGER}
 				</if>
 				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialCapacityValue != null &amp;&amp; maps.materialQueryParam.materialCapacityValue != ''">
 					and em.material_capacity_value = #{maps.materialQueryParam.materialCapacityValue, jdbcType=DOUBLE}
@@ -180,6 +187,9 @@
 			</if>
 			<if test="stock != null">
 				stock = #{stock, jdbcType=INTEGER},
+			</if>
+			<if test="isRent != null">
+				is_rent = #{isRent, jdbcType=INTEGER},
 			</if>
 			<if test="materialPrice != null">
 				material_price = #{materialPrice,jdbcType=DECIMAL},

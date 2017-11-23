@@ -22,6 +22,7 @@ public class Material implements Serializable {
     private Double materialCapacityValue;   //物料字面量
     private Integer materialModelId;    // 物料型号ID
     private Integer isMainMaterial;         //是否四大件
+    private Integer isRent;             // 是否在租
     private Integer stock;              // 库存
     private BigDecimal timeRentPrice;   // 次租价格
     private BigDecimal dayRentPrice;    // 日租价格
@@ -202,5 +203,13 @@ public class Material implements Serializable {
 
     public void setMaterialModelId(Integer materialModelId) {
         this.materialModelId = materialModelId;
+    }
+
+    public Integer getIsRent() {
+        return isRent;
+    }
+
+    public void setIsRent(Integer isRent) {
+        this.isRent = isRent;
     }
 }
