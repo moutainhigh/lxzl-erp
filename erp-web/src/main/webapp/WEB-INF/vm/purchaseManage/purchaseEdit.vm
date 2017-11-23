@@ -170,7 +170,7 @@
                                             <th>图片</th>
                                             <th>商品名称</th>
                                             <th>列表价格</th>
-                                            <th>SKU属性</th>
+                                            <th>SKU</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -198,11 +198,12 @@
                                                             <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
                                                             <label class="field prepend-icon mw200">
                                                                 <input type="text" name="productAmount-{{skuId}}-{{rowKey}}" value="{{productAmount}}" class="productAmount form-control required moneyNumber" placeholder="输入采购价格" />
+                                                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                                             </label>
                                                         </td>
                                                         <td style="width: 20%">
                                                             <label class="field prepend-icon mw200">
-                                                                <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number" placeholder="输入采购数量" />
+                                                                <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入采购数量" />
                                                             </label>
                                                         </td>
                                                         <td style="width:20%" class="text-right">
