@@ -10,7 +10,7 @@ import java.util.Map;
 
 public interface MessageMapper extends BaseMysqlDAO<MessageDO> {
 
-    Integer batchSave(@Param("messageDOList") List<MessageDO> messageDOList);
+    void batchSave(@Param("messageDOList") List<MessageDO> messageDOList);
 
     Integer findSendMessageCountByParams(@Param("maps")Map<String, Object> maps);
 

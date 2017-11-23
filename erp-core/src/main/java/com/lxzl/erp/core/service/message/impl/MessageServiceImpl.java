@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.message.MessageQueryParam;
 import com.lxzl.erp.common.domain.message.pojo.Message;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.core.service.message.MessageService;
 import com.lxzl.erp.core.service.message.impl.support.MessageConverter;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -15,7 +16,6 @@ import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @Service("messageService")
@@ -29,6 +29,14 @@ public class MessageServiceImpl implements MessageService {
 
 	@Override
 	public ServiceResult<String, Integer> sendMessage(Message message) {
+		return sendMessageDetail(message,userSupport.getCurrentUserId());
+	}
+	@Override
+	public ServiceResult<String, Integer> superSendMessage(Message message) {
+		return sendMessageDetail(message,CommonConstant.SUPER_USER_ID);
+	}
+
+	private ServiceResult<String, Integer> sendMessageDetail(Message message , Integer senderId) {
 		Date currentTime = new Date();
 		ServiceResult<String, Integer> result = new ServiceResult<>();
 
@@ -40,36 +48,36 @@ public class MessageServiceImpl implements MessageService {
 		//将收信人进行去重操作
 		Set<Integer> receiverIdSet = new HashSet<>();
 		for (Integer receiverId : receiverIdList) {
-			//如果发件人和收件人是同一个人，就不予操作
-			if (!userSupport.getCurrentUserId().equals(receiverId)){
-				receiverIdSet.add(receiverId);
-			}
+			receiverIdSet.add(receiverId);
 		}
-
+		if(receiverIdSet.size()==1&&receiverIdSet.iterator().next().equals(userSupport.getCurrentUserId())){
+			result.setErrorCode(ErrorCode.MESSAGE_CAN_NOT_SEND_SELF);
+			return result;
+		}
 		//去重后的收信人保存到数据库表中
 		for (Integer receiverId: receiverIdSet) {
-			MessageDO messageDO = new MessageDO();
-			messageDO.setSenderUserId(userSupport.getCurrentUserId());
-			messageDO.setReceiverUserId(receiverId);
-			messageDO.setSendTime(currentTime);
-			messageDO.setTitle(message.getTitle());
-			messageDO.setMessageText(message.getMessageText());
-			messageDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-			messageDO.setCreateTime(currentTime);
-			messageDO.setCreateUser(userSupport.getCurrentUserId().toString());
-			messageDO.setUpdateTime(currentTime);
-			messageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+			if(!receiverId.equals(userSupport.getCurrentUserId())){
+				MessageDO messageDO = new MessageDO();
+				messageDO.setSenderUserId(senderId);
+				messageDO.setReceiverUserId(receiverId);
+				messageDO.setSendTime(currentTime);
+				messageDO.setTitle(message.getTitle());
+				messageDO.setMessageText(message.getMessageText());
+				messageDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+				messageDO.setCreateTime(currentTime);
+				messageDO.setCreateUser(userSupport.getCurrentUserId().toString());
+				messageDO.setUpdateTime(currentTime);
+				messageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
 
-			messageDOList.add(messageDO);
+				messageDOList.add(messageDO);
+			}
 		}
-
-		Integer integer = messageMapper.batchSave(messageDOList);
-		//System.out.println(integer);
-
+		if(CollectionUtil.isNotEmpty(messageDOList)){
+			messageMapper.batchSave(messageDOList);
+		}
 		result.setErrorCode(ErrorCode.SUCCESS);
 		return result;
 	}
-
 	@Override
 	public ServiceResult<String, Page<Message>> pageSendMessage(MessageQueryParam messageQueryParam) {
 		ServiceResult<String, Page<Message>> result = new ServiceResult<>();
@@ -146,56 +154,15 @@ public class MessageServiceImpl implements MessageService {
         return result;
     }
 
-	@Override
-	public ServiceResult<String, Integer> superSendMessage(Message message) {
-		Date currentTime = new Date();
-		ServiceResult<String, Integer> result = new ServiceResult<>();
 
-
-		List<MessageDO> messageDOList = new ArrayList<>();
-		//获取收信人的列表
-		List<Integer> receiverIdList = message.getReceiverUserIdList();
-
-		//将收信人进行去重操作
-		Set<Integer> receiverIdSet = new HashSet<>();
-		for (Integer receiverId : receiverIdList) {
-			//如果发件人和收件人是同一个人，就不予操作
-			if (!userSupport.getCurrentUserId().equals(receiverId)){
-				receiverIdSet.add(receiverId);
-			}
-		}
-
-		//去重后的收信人保存到数据库表中
-		for (Integer receiverId: receiverIdSet) {
-			MessageDO messageDO = new MessageDO();
-			messageDO.setSenderUserId(CommonConstant.SUPER_USER_ID );
-			messageDO.setReceiverUserId(receiverId);
-			messageDO.setSendTime(currentTime);
-			messageDO.setTitle(message.getTitle());
-			messageDO.setMessageText(message.getMessageText());
-			messageDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-			messageDO.setCreateTime(currentTime);
-			messageDO.setCreateUser(userSupport.getCurrentUserId().toString());
-			messageDO.setUpdateTime(currentTime);
-			messageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-
-			messageDOList.add(messageDO);
-		}
-
-		Integer integer = messageMapper.batchSave(messageDOList);
-		//System.out.println(integer);
-
-		result.setErrorCode(ErrorCode.SUCCESS);
-		return result;
-	}
 
 	@Override
 	public ServiceResult<String, Integer> noReadCount() {
 		ServiceResult<String, Integer> result = new ServiceResult<>();
-		Integer integer = messageMapper.findNotReadCount(userSupport.getCurrentUserId());
+		Integer noReadCount = messageMapper.findNotReadCount(userSupport.getCurrentUserId());
 
 		result.setErrorCode(ErrorCode.SUCCESS);
-		result.setResult(integer);
+		result.setResult(noReadCount);
 
 		return result;
 	}
