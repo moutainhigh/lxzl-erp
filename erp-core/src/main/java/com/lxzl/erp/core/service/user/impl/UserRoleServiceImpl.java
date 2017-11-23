@@ -13,7 +13,6 @@ import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.company.impl.support.CompanyConverter;
 import com.lxzl.erp.core.service.company.impl.support.DepartmentConverter;
 import com.lxzl.erp.core.service.user.UserRoleService;
-import com.lxzl.erp.core.service.user.impl.support.UserConverter;
 import com.lxzl.erp.core.service.user.impl.support.UserRoleConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;

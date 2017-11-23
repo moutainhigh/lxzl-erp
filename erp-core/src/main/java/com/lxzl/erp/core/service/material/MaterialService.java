@@ -37,6 +37,7 @@ public interface MaterialService extends BaseService {
      * @return 图片ID
      */
     ServiceResult<String, Integer> deleteImage(Integer imgId);
+
     /**
      * 添加物料
      *
@@ -118,7 +119,35 @@ public interface MaterialService extends BaseService {
     boolean isAllGadget(List<Material> materialList);
 
 
+    /**
+     * 判断该类型是否是四大件
+     *
+     * @param materialType 物料类型
+     * @return 是true否false
+     */
+    boolean isMainMaterial(Integer materialType);
+
+    /**
+     * 添加物料型号
+     *
+     * @param materialModel 物料型号
+     * @return 唯一标识
+     */
     ServiceResult<String, Integer> addMaterialModel(MaterialModel materialModel);
+
+    /**
+     * 修改物料型号
+     *
+     * @param materialModel 物料型号
+     * @return 唯一标识
+     */
     ServiceResult<String, Integer> updateMaterialModel(MaterialModel materialModel);
+
+    /**
+     * 查询物料型号
+     *
+     * @param materialModelQueryParam 物料型号参数
+     * @return 物料型号列表
+     */
     ServiceResult<String, Page<MaterialModel>> queryMaterialModel(MaterialModelQueryParam materialModelQueryParam);
 }

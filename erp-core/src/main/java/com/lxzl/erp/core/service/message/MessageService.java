@@ -39,7 +39,7 @@ public interface MessageService extends BaseService {
      * @param messageQueryParam 分页传递的参数
      * @return
      */
-    ServiceResult<String,Page<Message>> pageReadMessage(MessageQueryParam messageQueryParam);
+    ServiceResult<String,Page<Message>> pageReceiveMessage(MessageQueryParam messageQueryParam);
 
     /**
      *  管理者发送系统信息

@@ -194,6 +194,7 @@ public class ErrorCode {
     public static final String MESSAGE_RECEIVER_NOT_NULL = "J600003";
     public static final String MESSAGE_ID_NOT_NULL = "J600004";
     public static final String MESSAGE_NOT_EXISTS = "J600005";
+    public static final String MESSAGE_CAN_NOT_SEND_SELF = "J600006";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -382,6 +383,7 @@ public class ErrorCode {
         MAP.put(MESSAGE_RECEIVER_NOT_NULL,"站内信收件人不能为空");
         MAP.put(MESSAGE_ID_NOT_NULL,"站内信ID不能为空");
         MAP.put(MESSAGE_NOT_EXISTS,"站内信不存在");
+        MAP.put(MESSAGE_CAN_NOT_SEND_SELF,"站内信不能发给自己");
 
     }
 

@@ -21,6 +21,7 @@ public class MaterialDO extends BaseDO {
     private Double materialCapacityValue;
     private Integer materialModelId;
     private Integer brandId;
+    private Integer isRent;
     private BigDecimal materialPrice;
     private Integer stock;
     private BigDecimal timeRentPrice;
@@ -165,5 +166,13 @@ public class MaterialDO extends BaseDO {
 
     public void setMaterialModelId(Integer materialModelId) {
         this.materialModelId = materialModelId;
+    }
+
+    public Integer getIsRent() {
+        return isRent;
+    }
+
+    public void setIsRent(Integer isRent) {
+        this.isRent = isRent;
     }
 }
