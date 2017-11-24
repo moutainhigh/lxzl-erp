@@ -1014,6 +1014,124 @@ CREATE TABLE `erp_order_consign_info` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单收货地址表';
 
+
+  ---------------------------------------租赁退还订单-------------------------------------------------
+  DROP TABLE if exists `erp_return_order`;
+CREATE TABLE `erp_return_order` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `return_no` varchar(100) NOT NULL COMMENT '退还编号',
+  `customer_id` int(20) NOT NULL AUTO_INCREMENT COMMENT '客户ID',
+  `customer_no` varchar(100) NOT NULL AUTO_INCREMENT COMMENT '客户编号',
+  `is_charging` int(11) NOT NULL COMMENT '是否计租赁费用',
+  `total_return_product_count` int(11) NOT NULL DEFAULT '0' COMMENT '退还商品总数',
+  `total_return_material_count` int(11) NOT NULL DEFAULT '0' COMMENT '退还物料总数',
+  `real_total_return_product_count` int(11) NOT NULL DEFAULT '0' COMMENT '实际退还商品总数',
+  `real_total_return_material_count` int(11) NOT NULL DEFAULT '0' COMMENT '实际退还物料总数',
+  `total_rent_cost` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '租赁期间产生总费用',
+  `service_cost` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '服务费',
+  `damage_cost` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '损坏加收费用',
+  `return_order_status` int(11) NOT NULL DEFAULT 0 COMMENT '归还订单状态，0-待归还，1-部分归还，2-全部归还,3-确认结束',
+  `real_return_time` datetime DEFAULT NULL COMMENT '实际归还时间，最后一件设备归还的时间',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_order_no` (`order_no`)
+) ENGINE=InnoDB AUTO_INCREMENT=1000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁退还订单表';
+
+DROP TABLE if exists `erp_return_order_product`;
+CREATE TABLE `erp_return_order_product` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `return_id` int(20) NOT NULL COMMENT '退还ID',
+  `return_no` varchar(100) NOT NULL COMMENT '退还编号',
+  `return_product_sku_id` int(20) NOT NULL  COMMENT '退还商品SKU_ID',
+  `return_product_sku_count` int(11) NOT NULL DEFAULT 0 COMMENT '退还商品SKU数量',
+  `return_product_sku_snapshot` text '退还商品SKU快照',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁退还商品项表';
+
+DROP TABLE if exists `erp_return_order_material`;
+CREATE TABLE `erp_return_order_material` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `return_id` int(20) NOT NULL COMMENT '退还ID',
+  `return_no` varchar(100) NOT NULL COMMENT '退还编号',
+  `return_material_id` int(20) NOT NULL '退还物料ID',
+  `return_product_material_count` int(11) NOT NULL DEFAULT 0 COMMENT '退还物料数量',
+  `return_product_material_snapshot` text '退还物料快照',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁退还物料项表';
+
+DROP TABLE if exists `erp_return_order_product_equipment`;
+CREATE TABLE `erp_return_order_product_equipment` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `return_order_product_id` int(20) NOT NULL COMMENT '租赁退还商品项ID',
+  `return_id` int(20) NOT NULL COMMENT '退还ID',
+  `return_no` varchar(100) NOT NULL COMMENT '退还编号',
+  `equipment_id` int(20) NOT NULL COMMENT '设备ID',
+  `equipment_no` varchar(100) NOT NULL COMMENT '设备编号',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁退还商品项设备表';
+
+DROP TABLE if exists `erp_return_order_material_bulk`;
+CREATE TABLE `erp_return_order_material_bulk` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `return_order_material_id` int(20) NOT NULL COMMENT '租赁退还物料项ID',
+  `return_id` int(20) NOT NULL COMMENT '退还ID',
+  `return_no` varchar(100) NOT NULL COMMENT '退还编号',
+  `bulk_material_id` int(20) NOT NULL COMMENT '散料ID',
+  `bulk_material_no` varchar(100) NOT NULL COMMENT '散料编号',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁退还物料项散料表';
+
+DROP TABLE if exists `erp_return_order_consign_info`;
+CREATE TABLE `erp_return_order_consign_info` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `return_id` int(20) NOT NULL COMMENT '退还ID',
+  `return_no` varchar(100) NOT NULL COMMENT '退还编号',
+  `consignee_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '收货人姓名',
+  `consignee_phone` varchar(24) CHARACTER SET ascii DEFAULT NULL COMMENT '收货人手机号',
+  `province` int(20) DEFAULT NULL COMMENT '省份ID，省份ID',
+  `city` int(20) DEFAULT NULL COMMENT '城市ID，对应城市ID',
+  `district` int(20) DEFAULT NULL COMMENT '区ID，对应区ID',
+  `address` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁退还订单地址表';
+
+  ---------------------------------------租赁退还订单-------------------------------------------------
 -- ****************************************订单模块**************************************** --
 
 -- ****************************************支付模块**************************************** --
