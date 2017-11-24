@@ -678,6 +678,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             result.setErrorCode(ErrorCode.PURCHASE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN);
             return result;
         }
+        if(!purchaseOrderDO.getCreateUser().equals(userSupport.getCurrentUserId().toString())){
+            //只有待提交状态的采购单可以提交
+            result.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
+            return result;
+        }
         //调用提交审核服务
         ServiceResult<String, String>  verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE, purchaseOrderDO.getPurchaseNo(), purchaseOrderCommitParam.getVerifyUserId());
         //修改提交审核状态
