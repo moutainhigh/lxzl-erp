@@ -77,4 +77,9 @@ public class GenerateNoUtil {
         Random random = new Random();
         return "W" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
     }
+
+    public static String generateWorkflowLinkNo(Date currentTime) {
+        Random random = new Random();
+        return "WL" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
+    }
 }

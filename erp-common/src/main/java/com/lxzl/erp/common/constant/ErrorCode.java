@@ -77,6 +77,8 @@ public class ErrorCode {
     public static final String WORKFLOW_NOT_EXISTS_CLOSED = "J800008";
     public static final String WORKFLOW_NODE_NOT_EXISTS = "J800009";
     public static final String WORKFLOW_VERIFY_USER_ERROR = "J800010";
+    public static final String WORKFLOW_LINK_STATUS_ERROR = "J800011";
+    public static final String WORKFLOW_TEMPLATE_NOT_EXISTS = "J800012";
 
     public static final String REMARK_PATTERN = "J900001";
     public static final String ID_NOT_NULL = "J900002";
@@ -266,6 +268,8 @@ public class ErrorCode {
         MAP.put(WORKFLOW_NOT_EXISTS_CLOSED, "此工作流不存在或已经关闭");
         MAP.put(WORKFLOW_NODE_NOT_EXISTS, "此工作流节点不存在");
         MAP.put(WORKFLOW_VERIFY_USER_ERROR, "此工作流审核人员有误");
+        MAP.put(WORKFLOW_LINK_STATUS_ERROR, "此工作流状态有误");
+        MAP.put(WORKFLOW_TEMPLATE_NOT_EXISTS, "工作流模板不存在或者已经禁用");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");

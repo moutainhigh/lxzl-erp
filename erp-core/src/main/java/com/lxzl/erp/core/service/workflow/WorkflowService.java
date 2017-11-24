@@ -20,30 +20,30 @@ public interface WorkflowService extends BaseService {
      * 提交工作流
      *
      * @param workflowType    工作流类型，详见WorkflowType
-     * @param workflowReferId 工作流关联ID，业务ID
+     * @param workflowReferNo 工作流关联ID，业务NO
      * @param verifyUser      目标审核人
      * @return 错误代码，生成的工作流ID
      */
-    ServiceResult<String, Integer> commitWorkFlow(Integer workflowType, Integer workflowReferId, Integer verifyUser);
+    ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser);
 
 
     /**
      * 获取可审核人
      *
      * @param workflowType    工作流类型，详见WorkflowType
-     * @param workflowReferId 工作流关联ID，业务ID
+     * @param workflowReferNo 工作流关联ID，业务ID
      * @return 错误代码，可审核人
      */
-    ServiceResult<String, List<User>> getNextVerifyUsers(Integer workflowType, Integer workflowReferId);
+    ServiceResult<String, List<User>> getNextVerifyUsers(Integer workflowType, String workflowReferNo);
 
     /**
      * 获取当前工作流记录
      *
      * @param workflowType    工作流类型，详见WorkflowType
-     * @param workflowReferId 工作流关联ID，业务ID
+     * @param workflowReferNo 工作流关联ID，业务ID
      * @return 错误代码，工作流记录
      */
-    ServiceResult<String, WorkflowLink> getWorkflowLink(Integer workflowType, Integer workflowReferId);
+    ServiceResult<String, WorkflowLink> getWorkflowLink(Integer workflowType, String workflowReferNo);
 
     /**
      * 获取工作流列表

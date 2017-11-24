@@ -151,7 +151,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     }
 
     private void saveMaterial(ProductCategoryPropertyDO productCategoryPropertyDO, ProductCategoryPropertyValueDO productCategoryPropertyValueDO, User loginUser, Date currentTime) {
-        if(productCategoryPropertyDO.getMaterialType() == null){
+        if (productCategoryPropertyDO.getMaterialType() == null) {
             return;
         }
         MaterialDO materialDO = new MaterialDO();

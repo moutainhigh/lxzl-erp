@@ -129,7 +129,7 @@ public class OrderServiceImpl implements OrderService {
         // TODO 先付后用的单子，如果没有付款就不能提交
 
         if (isNeedVerify) {
-            ServiceResult<String, Integer> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getId(), verifyUser);
+            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser);
             if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
                 result.setErrorCode(workflowCommitResult.getErrorCode());
                 return result;
@@ -152,11 +152,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public boolean receiveVerifyResult(boolean verifyResult, Integer businessId) {
+    public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
             Date currentTime = new Date();
             User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-            OrderDO orderDO = orderMapper.findByOrderId(businessId);
+            OrderDO orderDO = orderMapper.findByOrderNo(businessNo);
             if (orderDO == null || !OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())) {
                 return false;
             }
@@ -169,7 +169,7 @@ public class OrderServiceImpl implements OrderService {
             orderDO.setUpdateUser(loginUser.getUserId().toString());
             orderMapper.update(orderDO);
         } catch (Exception e) {
-            logger.error("审批订单通知失败： {}", businessId);
+            logger.error("审批订单通知失败： {}", businessNo);
             return false;
         }
         return true;

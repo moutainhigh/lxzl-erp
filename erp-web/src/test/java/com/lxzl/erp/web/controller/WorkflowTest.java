@@ -31,14 +31,14 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     public void queryNextVerifyUsers() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
         workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
-        workflowLinkQueryParam.setWorkflowReferId(6000013);
+        workflowLinkQueryParam.setWorkflowReferNo("");
         TestResult result = getJsonTestResult("/workflow/queryNextVerifyUsers", workflowLinkQueryParam);
     }
 
     @Test
     public void queryWorkflowLinkPage() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
-        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
+//        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
 //        workflowLinkQueryParam.setWorkflowReferId(6000013);
         TestResult result = getJsonTestResult("/workflow/queryWorkflowLinkPage", workflowLinkQueryParam);
     }
@@ -47,7 +47,7 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     public void queryWorkflowLinkDetail() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
         workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
-        workflowLinkQueryParam.setWorkflowReferId(6000013);
+        workflowLinkQueryParam.setWorkflowReferNo("");
         TestResult result = getJsonTestResult("/workflow/queryWorkflowLinkDetail", workflowLinkQueryParam);
     }
 }

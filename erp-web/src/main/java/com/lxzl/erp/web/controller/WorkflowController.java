@@ -40,7 +40,7 @@ public class WorkflowController extends BaseController {
 
     @RequestMapping(value = "queryNextVerifyUsers", method = RequestMethod.POST)
     public Result queryNextVerifyUsers(@RequestBody WorkflowLinkQueryParam workflowQueryParam, HttpServletRequest request) {
-        ServiceResult<String, List<User>> serviceResult = workflowService.getNextVerifyUsers(workflowQueryParam.getWorkflowType(), workflowQueryParam.getWorkflowReferId());
+        ServiceResult<String, List<User>> serviceResult = workflowService.getNextVerifyUsers(workflowQueryParam.getWorkflowType(), workflowQueryParam.getWorkflowReferNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -52,7 +52,7 @@ public class WorkflowController extends BaseController {
 
     @RequestMapping(value = "queryWorkflowLinkDetail", method = RequestMethod.POST)
     public Result queryWorkflowLinkDetail(@RequestBody WorkflowLinkQueryParam workflowLinkQueryParam, HttpServletRequest request) {
-        ServiceResult<String, WorkflowLink> serviceResult = workflowService.getWorkflowLink(workflowLinkQueryParam.getWorkflowType(),workflowLinkQueryParam.getWorkflowReferId());
+        ServiceResult<String, WorkflowLink> serviceResult = workflowService.getWorkflowLink(workflowLinkQueryParam.getWorkflowType(),workflowLinkQueryParam.getWorkflowReferNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

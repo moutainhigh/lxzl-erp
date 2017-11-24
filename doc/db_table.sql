@@ -407,12 +407,14 @@ CREATE TABLE `erp_workflow_node` (
 DROP TABLE if exists `erp_workflow_link`;
 CREATE TABLE `erp_workflow_link` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `workflow_link_no` varchar(100) NOT NULL COMMENT '工作流编码',
   `workflow_type` int(11) NOT NULL DEFAULT '0' COMMENT '工作流类型',
   `workflow_template_id` int(20) NOT NULL COMMENT '工作流模板ID',
-  `workflow_refer_id` int(20) NOT NULL COMMENT '工作流关联ID',
+  `workflow_refer_no` varchar(100) NOT NULL COMMENT '工作流关联NO',
   `workflow_step` int(20) NOT NULL COMMENT '流程当前步骤',
   `workflow_last_step` int(20) NOT NULL COMMENT '流程最后步骤',
   `workflow_current_node_id` int(20) NOT NULL COMMENT '当前结点ID',
+  `commit_user` int(20) COMMENT '提交人',
   `current_verify_user` int(20) COMMENT '审核人',
   `current_verify_status` int(20) COMMENT '审核状态',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -422,14 +424,14 @@ CREATE TABLE `erp_workflow_link` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_workflow_type_refer` (`workflow_type`,`workflow_refer_id`)
+  UNIQUE KEY `index_workflow_type_refer` (`workflow_type`,`workflow_refer_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='工作流线表';
 
 DROP TABLE if exists `erp_workflow_link_detail`;
 CREATE TABLE `erp_workflow_link_detail` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `workflow_link_id` int(20) NOT NULL COMMENT '工作流线ID',
-  `workflow_refer_id` int(20) NOT NULL COMMENT '工作流关联ID',
+  `workflow_refer_no` varchar(100) NOT NULL COMMENT '工作流关联NO',
   `workflow_step` int(20) NOT NULL COMMENT '流程当前步骤',
   `workflow_current_node_id` int(20) NOT NULL COMMENT '当前结点ID',
   `workflow_previous_node_id` int(20) COMMENT '上节点ID',
@@ -870,7 +872,7 @@ CREATE TABLE `erp_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `order_no` varchar(100) NOT NULL COMMENT '订单编号',
   `buyer_customer_id` int(20) NOT NULL COMMENT '购买人ID',
-  `rent_type` int(11) NOT NULL DEFAULT '0' COMMENT '租赁方式，1按月租，2按月租，4按次租',
+  `rent_type` int(11) NOT NULL DEFAULT '0' COMMENT '租赁方式，1按次租，2按天租，4按月租',
   `rent_time_length` int(11) NOT NULL DEFAULT '0' COMMENT '租赁期限',
   `rent_start_time` datetime NOT NULL COMMENT '起租时间',
   `deposit_cycle` int(11) COMMENT '押金期数',

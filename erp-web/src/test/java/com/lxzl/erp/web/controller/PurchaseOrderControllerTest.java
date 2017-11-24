@@ -175,7 +175,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     }
     @Test
     public void receiveVerifyResult(){
-        boolean flag = purchaseOrderService.receiveVerifyResult(true,6000001);
+        boolean flag = purchaseOrderService.receiveVerifyResult(true,"");
     }
 
     @Test

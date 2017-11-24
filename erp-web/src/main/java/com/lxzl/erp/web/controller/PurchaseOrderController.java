@@ -77,7 +77,7 @@ public class PurchaseOrderController {
      */
     @RequestMapping(value = "commit", method = RequestMethod.POST)
     public Result commit(@RequestBody @Validated(ExtendGroup.class) PurchaseOrderCommitParam purchaseOrderCommitParam, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = purchaseOrderService.commit(purchaseOrderCommitParam);
+        ServiceResult<String, String> serviceResult = purchaseOrderService.commit(purchaseOrderCommitParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

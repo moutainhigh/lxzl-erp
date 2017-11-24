@@ -10,7 +10,7 @@ public class WorkflowLinkDetail implements Serializable {
 
 	private Integer workflowLinkDetailId;   //唯一标识
 	private Integer workflowLinkId;   //工作流线ID
-	private Integer workflowReferId;   //工作流关联ID
+	private String workflowReferNo;   //工作流关联ID
 	private Integer workflowStep;   //流程当前步骤
 	private Integer workflowCurrentNodeId;   //当前结点ID
 	private Integer workflowPreviousNodeId;   //上节点ID
@@ -27,7 +27,9 @@ public class WorkflowLinkDetail implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
-
+	private String workflowCurrentNodeName;
+	private String workflowPreviousNodeName;
+	private String workflowNextNodeName;
 	public Integer getWorkflowLinkDetailId(){
 		return workflowLinkDetailId;
 	}
@@ -44,12 +46,12 @@ public class WorkflowLinkDetail implements Serializable {
 		this.workflowLinkId = workflowLinkId;
 	}
 
-	public Integer getWorkflowReferId(){
-		return workflowReferId;
+	public String getWorkflowReferNo() {
+		return workflowReferNo;
 	}
 
-	public void setWorkflowReferId(Integer workflowReferId){
-		this.workflowReferId = workflowReferId;
+	public void setWorkflowReferNo(String workflowReferNo) {
+		this.workflowReferNo = workflowReferNo;
 	}
 
 	public Integer getWorkflowStep(){
@@ -170,5 +172,29 @@ public class WorkflowLinkDetail implements Serializable {
 
 	public void setVerifyUserName(String verifyUserName) {
 		this.verifyUserName = verifyUserName;
+	}
+
+	public String getWorkflowCurrentNodeName() {
+		return workflowCurrentNodeName;
+	}
+
+	public void setWorkflowCurrentNodeName(String workflowCurrentNodeName) {
+		this.workflowCurrentNodeName = workflowCurrentNodeName;
+	}
+
+	public String getWorkflowPreviousNodeName() {
+		return workflowPreviousNodeName;
+	}
+
+	public void setWorkflowPreviousNodeName(String workflowPreviousNodeName) {
+		this.workflowPreviousNodeName = workflowPreviousNodeName;
+	}
+
+	public String getWorkflowNextNodeName() {
+		return workflowNextNodeName;
+	}
+
+	public void setWorkflowNextNodeName(String workflowNextNodeName) {
+		this.workflowNextNodeName = workflowNextNodeName;
 	}
 }
