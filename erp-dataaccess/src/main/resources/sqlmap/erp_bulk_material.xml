@@ -37,6 +37,14 @@
 		WHERE ebm.id = #{id, jdbcType=INTEGER} AND data_status = 1 
 	</select>
 
+
+	<select id="findByMaterialTypeAndModelId" resultMap="BulkMaterialDO" parameterType="java.util.Map">
+		select
+		<include refid="column_List"/>
+		from erp_bulk_material ebm
+		where ebm.bulk_material_type = #{materialType, jdbcType=INTEGER} and ebm.material_model_id = #{materialModelId, jdbcType=INTEGER} and ebm.data_status = 1
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ebm.id) FROM erp_bulk_material ebm 
 		<where>

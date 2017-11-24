@@ -338,10 +338,10 @@ public class MaterialServiceImpl implements MaterialService {
             return ErrorCode.MATERIAL_MODEL_NOT_NULL;
         }
 
-        if(material.getMaterialModelId() != null){
+        if (material.getMaterialModelId() != null) {
             MaterialModelDO materialModelDO = materialModelMapper.findById(material.getMaterialModelId());
-            if(materialModelDO == null
-                    || !materialModelDO.getMaterialType().equals(material.getMaterialType())){
+            if (materialModelDO == null
+                    || !materialModelDO.getMaterialType().equals(material.getMaterialType())) {
                 return ErrorCode.PARAM_IS_ERROR;
             }
         }
@@ -559,6 +559,41 @@ public class MaterialServiceImpl implements MaterialService {
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(materialModelDO.getId());
+        return result;
+    }
+
+
+    @Override
+    public ServiceResult<String, Integer> deleteMaterialModel(Integer materialModelId) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+
+        MaterialModelDO dbMaterialModelDO = materialModelMapper.findById(materialModelId);
+        if (dbMaterialModelDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        MaterialDO materialDO = materialMapper.findByMaterialTypeAndModelId(dbMaterialModelDO.getMaterialType(), dbMaterialModelDO.getId());
+        if (materialDO != null) {
+            result.setErrorCode(ErrorCode.RECORD_USED_CAN_NOT_DELETE);
+            return result;
+        }
+
+        BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByMaterialTypeAndModelId(dbMaterialModelDO.getMaterialType(), dbMaterialModelDO.getId());
+        if (bulkMaterialDO != null) {
+            result.setErrorCode(ErrorCode.RECORD_USED_CAN_NOT_DELETE);
+            return result;
+        }
+
+        dbMaterialModelDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        dbMaterialModelDO.setUpdateUser(loginUser.getUserId().toString());
+        dbMaterialModelDO.setUpdateTime(currentTime);
+        materialModelMapper.update(dbMaterialModelDO);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(dbMaterialModelDO.getId());
         return result;
     }
 

@@ -144,6 +144,14 @@ public interface MaterialService extends BaseService {
     ServiceResult<String, Integer> updateMaterialModel(MaterialModel materialModel);
 
     /**
+     * 删除
+     *
+     * @param modelId 物料型号
+     * @return 唯一标识
+     */
+    ServiceResult<String, Integer> deleteMaterialModel(Integer modelId);
+
+    /**
      * 查询物料型号
      *
      * @param materialModelQueryParam 物料型号参数

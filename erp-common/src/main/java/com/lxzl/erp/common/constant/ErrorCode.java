@@ -20,6 +20,7 @@ public class ErrorCode {
     public static final String RECORD_ALREADY_EXISTS = "J099999";
     public static final String EMAIL_ERROR = "J000993";
     public static final String COMMIT_ONLY_SELF = "J000992";
+    public static final String RECORD_USED_CAN_NOT_DELETE = "J000993";
 
     public static final String USER_NAME_NOT_NULL = "J100000";
     public static final String USER_PASSWORD_NOT_NULL = "J100001";
@@ -210,6 +211,7 @@ public class ErrorCode {
         MAP.put(SYSTEM_DEVELOPING, "开发中……");
         MAP.put(EMAIL_ERROR, "邮箱格式有误");
         MAP.put(COMMIT_ONLY_SELF, "只能提交自己的数据");
+        MAP.put(RECORD_USED_CAN_NOT_DELETE, "数据被使用，无法删除");
 
         MAP.put(USER_NOT_LOGIN, "用户未登录");
         MAP.put(USER_DISABLE, "用户已禁用，请联系管理员");
