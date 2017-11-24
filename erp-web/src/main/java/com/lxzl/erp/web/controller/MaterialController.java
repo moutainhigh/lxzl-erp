@@ -102,6 +102,12 @@ public class MaterialController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "deleteModel", method = RequestMethod.POST)
+    public Result deleteModel(@RequestBody MaterialModel materialModel, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = materialService.deleteMaterialModel(materialModel.getMaterialModelId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "queryModel", method = RequestMethod.POST)
     public Result queryModel(@RequestBody MaterialModelQueryParam materialModelQueryParam, BindingResult validResult) {
         ServiceResult<String, Page<MaterialModel>> serviceResult = materialService.queryMaterialModel(materialModelQueryParam);
