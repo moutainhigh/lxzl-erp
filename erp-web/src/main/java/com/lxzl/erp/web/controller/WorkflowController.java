@@ -34,7 +34,7 @@ public class WorkflowController extends BaseController {
 
     @RequestMapping(value = "verifyWorkFlow", method = RequestMethod.POST)
     public Result verifyWorkFlow(@RequestBody VerifyWorkflowParam param, HttpServletRequest request) {
-        ServiceResult<String, Integer> serviceResult = workflowService.verifyWorkFlow(param.getWorkflowLinkId(), param.getVerifyStatus(), param.getReturnType(), param.getVerifyOpinion(), param.getNextVerifyUser());
+        ServiceResult<String, Integer> serviceResult = workflowService.verifyWorkFlow(param.getWorkflowLinkNo(), param.getVerifyStatus(), param.getReturnType(), param.getVerifyOpinion(), param.getNextVerifyUser());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -47,6 +47,12 @@ public class WorkflowController extends BaseController {
     @RequestMapping(value = "queryWorkflowLinkPage", method = RequestMethod.POST)
     public Result queryWorkflowLinkPage(@RequestBody WorkflowLinkQueryParam workflowLinkQueryParam, HttpServletRequest request) {
         ServiceResult<String, Page<WorkflowLink>> serviceResult = workflowService.getWorkflowLinkPage(workflowLinkQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "queryCurrentUserWorkflowLinkPage", method = RequestMethod.POST)
+    public Result queryCurrentUserWorkflowLinkPage(@RequestBody WorkflowLinkQueryParam workflowLinkQueryParam, HttpServletRequest request) {
+        ServiceResult<String, Page<WorkflowLink>> serviceResult = workflowService.getCurrentUserWorkflowLinkPage(workflowLinkQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

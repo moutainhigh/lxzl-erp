@@ -54,14 +54,22 @@ public interface WorkflowService extends BaseService {
     ServiceResult<String, Page<WorkflowLink>> getWorkflowLinkPage(WorkflowLinkQueryParam workflowLinkQueryParam);
 
     /**
+     * 获取当前人工作流列表
+     *
+     * @param workflowLinkQueryParam    获取工作流列表参数
+     * @return 错误代码，工作流记录
+     */
+    ServiceResult<String, Page<WorkflowLink>> getCurrentUserWorkflowLinkPage(WorkflowLinkQueryParam workflowLinkQueryParam);
+
+    /**
      * 审核工作流
      *
-     * @param workflowLinkId 工作流ID
+     * @param workflowLinkNo 工作流ID
      * @param verifyStatus   审核状态
      * @param returnType   返回类型0返回根部，1返回上一级
      * @param verifyOpinion  审核意见
      * @param nextVerifyUser 下一步的审核人，没有下一步的时候可空
      * @return 工作流ID
      */
-    ServiceResult<String, Integer> verifyWorkFlow(Integer workflowLinkId, Integer verifyStatus, Integer returnType, String verifyOpinion, Integer nextVerifyUser);
+    ServiceResult<String, Integer> verifyWorkFlow(String workflowLinkNo, Integer verifyStatus, Integer returnType, String verifyOpinion, Integer nextVerifyUser);
 }

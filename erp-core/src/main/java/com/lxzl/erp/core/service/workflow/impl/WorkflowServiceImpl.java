@@ -24,6 +24,7 @@ import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDetailDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowNodeDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowTemplateDO;
+import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -111,6 +112,11 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Override
     public ServiceResult<String, List<User>> getNextVerifyUsers(Integer workflowType, String workflowReferNo) {
         ServiceResult<String, List<User>> result = new ServiceResult<>();
+        if (workflowType == null
+                || StringUtil.isBlank(workflowReferNo)) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
         WorkflowNodeDO workflowNodeDO;
         if (workflowLinkDO == null) {
@@ -121,12 +127,20 @@ public class WorkflowServiceImpl implements WorkflowService {
             }
             workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(0);
         } else {
+            if (VerifyStatus.VERIFY_STATUS_PASS.equals(workflowLinkDO.getCurrentVerifyStatus())) {
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
+            }
             List<WorkflowLinkDetailDO> workflowLinkDetailDOList = workflowLinkDO.getWorkflowLinkDetailDOList();
             if (workflowLinkDetailDOList == null || workflowLinkDetailDOList.isEmpty()) {
                 result.setErrorCode(ErrorCode.WORKFLOW_LINK_HAVE_NO_DETAIL);
                 return result;
             }
             WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(workflowLinkDetailDOList.size() - 1);
+            if (VerifyStatus.VERIFY_STATUS_PASS.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
+            }
             workflowNodeDO = workflowNodeMapper.findById(lastWorkflowLinkDetailDO.getWorkflowCurrentNodeId());
         }
 
@@ -178,13 +192,34 @@ public class WorkflowServiceImpl implements WorkflowService {
     }
 
     @Override
+    public ServiceResult<String, Page<WorkflowLink>> getCurrentUserWorkflowLinkPage(WorkflowLinkQueryParam workflowLinkQueryParam) {
+        ServiceResult<String, Page<WorkflowLink>> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        workflowLinkQueryParam.setCurrentVerifyUser(loginUser.getUserId());
+        workflowLinkQueryParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+        PageQuery pageQuery = new PageQuery(workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("start", pageQuery.getStart());
+        paramMap.put("pageSize", pageQuery.getPageSize());
+        paramMap.put("workflowQueryParam", workflowLinkQueryParam);
+        Integer dataCount = workflowLinkMapper.listCount(paramMap);
+        List<WorkflowLinkDO> dataList = workflowLinkMapper.listPage(paramMap);
+        Page<WorkflowLink> page = new Page<>(WorkflowConverter.convertWorkflowLinkDOList(dataList), dataCount, workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
+
+        result.setResult(page);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+
+    }
+
+    @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, Integer> verifyWorkFlow(Integer workflowLinkId, Integer verifyStatus, Integer returnType, String verifyOpinion, Integer nextVerifyUser) {
+    public ServiceResult<String, Integer> verifyWorkFlow(String workflowLinkNo, Integer verifyStatus, Integer returnType, String verifyOpinion, Integer nextVerifyUser) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
 
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findById(workflowLinkId);
+        WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByNo(workflowLinkNo);
         if (workflowLinkDO == null) {
             result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
             return result;
@@ -278,6 +313,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             // 拒绝并且一步驳回到底
             if (returnType == null || WorkflowReturnType.RETURN_TYPE_ROOT.equals(returnType)) {
                 noticeBusinessModule = true;
+                workflowLinkDO.setWorkflowStep(0);
             } else if (previousWorkflowNodeDO != null) {
                 WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
                 workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());

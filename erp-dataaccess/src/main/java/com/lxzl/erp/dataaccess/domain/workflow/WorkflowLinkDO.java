@@ -28,6 +28,10 @@ public class WorkflowLinkDO extends BaseDO {
     private String currentVerifyUserName;
     @Transient
     private String workflowCurrentNodeName;
+    @Transient
+    private String commitUserName;
+    @Transient
+    private Boolean isLastStep;
 
     public Integer getId() {
         return id;
@@ -155,5 +159,21 @@ public class WorkflowLinkDO extends BaseDO {
 
     public void setWorkflowCurrentNodeName(String workflowCurrentNodeName) {
         this.workflowCurrentNodeName = workflowCurrentNodeName;
+    }
+
+    public String getCommitUserName() {
+        return commitUserName;
+    }
+
+    public void setCommitUserName(String commitUserName) {
+        this.commitUserName = commitUserName;
+    }
+
+    public Boolean getLastStep() {
+        return isLastStep;
+    }
+
+    public void setLastStep(Boolean lastStep) {
+        isLastStep = lastStep;
     }
 }

@@ -10,9 +10,11 @@
 		<result column="workflow_refer_no" jdbcType="VARCHAR" property="workflowReferNo" />
 		<result column="workflow_step" jdbcType="INTEGER" property="workflowStep" />
 		<result column="workflow_last_step" jdbcType="INTEGER" property="workflowLastStep" />
+		<result column="is_last_step" jdbcType="BOOLEAN" property="isLastStep" />
 		<result column="workflow_current_node_id" jdbcType="INTEGER" property="workflowCurrentNodeId" />
 		<result column="workflow_current_node_name" jdbcType="VARCHAR" property="workflowCurrentNodeName" />
 		<result column="commit_user" jdbcType="INTEGER" property="commitUser" />
+		<result column="commit_user_name" jdbcType="VARCHAR" property="commitUserName" />
 		<result column="current_verify_user" jdbcType="INTEGER" property="currentVerifyUser" />
 		<result column="current_verify_user_name" jdbcType="VARCHAR" property="currentVerifyUserName" />
 		<result column="current_verify_status" jdbcType="INTEGER" property="currentVerifyStatus" />
@@ -64,11 +66,15 @@
         </trim>
         from
 		(
-			select <include refid="column_List"/>,eu.real_name as current_verify_user_name, ewn.workflow_node_name as workflow_current_node_name
+			select <include refid="column_List"/>
+			<trim prefix=",">
+				eu.real_name as current_verify_user_name, euc.real_name as commit_user_name, ewn.workflow_node_name as workflow_current_node_name, CASE WHEN ewn.workflow_step = workflow_last_step THEN true ELSE false END AS is_last_step
+			</trim>
             from erp_workflow_link ewl
 			LEFT JOIN erp_user eu ON eu.id = ewl.current_verify_user
+			LEFT JOIN erp_user euc ON euc.id = ewl.commit_user
             LEFT JOIN erp_workflow_node ewn ON ewn.id = ewl.workflow_current_node_id
-			where ewl.id = #{id, jdbcType=INTEGER} and data_status = 1
+			where ewl.id = #{id, jdbcType=INTEGER} and ewl.data_status = 1
 		) link left join erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
 		LEFT JOIN erp_user eu ON eu.id = ewld.verify_user
         LEFT JOIN erp_workflow_node ewnc on ewnc.id = ewld.workflow_current_node_id
@@ -77,18 +83,46 @@
 		order by ewld.id
 	</select>
 
-	<select id="findByWorkflowTypeAndReferId" resultMap="WorkflowLinkDO" parameterType="map">
+	<select id="findByNo" resultMap="WorkflowLinkDO" parameterType="java.lang.String">
 		select link.*,<include refid="detail_column_List"/>
         <trim prefix=",">
             eu.real_name as detail_verify_user_name,ewnc.workflow_node_name as detail_workflow_current_node_name,ewnp.workflow_node_name as detail_workflow_previous_node_name,ewnn.workflow_node_name as detail_workflow_next_node_name
         </trim>
         from
 		(
-			select <include refid="column_List"/>,eu.real_name as current_verify_user_name, ewn.workflow_node_name as workflow_current_node_name
+			select <include refid="column_List"/>
+			<trim prefix=",">
+				eu.real_name as current_verify_user_name, euc.real_name as commit_user_name, ewn.workflow_node_name as workflow_current_node_name, CASE WHEN ewn.workflow_step = workflow_last_step THEN true ELSE false END AS is_last_step
+			</trim>
             from erp_workflow_link ewl
 			LEFT JOIN erp_user eu ON eu.id = ewl.current_verify_user
+			LEFT JOIN erp_user euc ON euc.id = ewl.commit_user
+            LEFT JOIN erp_workflow_node ewn ON ewn.id = ewl.workflow_current_node_id
+			where ewl.workflow_link_no = #{workflowLinkNo, jdbcType=VARCHAR} and ewl.data_status = 1
+		) link left join erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
+		LEFT JOIN erp_user eu ON eu.id = ewld.verify_user
+        LEFT JOIN erp_workflow_node ewnc on ewnc.id = ewld.workflow_current_node_id
+        LEFT JOIN erp_workflow_node ewnp on ewnp.id = ewld.workflow_previous_node_id
+        LEFT JOIN erp_workflow_node ewnn on ewnn.id = ewld.workflow_next_node_id
+		order by ewld.id
+	</select>
+
+	<select id="findByWorkflowTypeAndReferNo" resultMap="WorkflowLinkDO" parameterType="map">
+		select link.*,<include refid="detail_column_List"/>
+        <trim prefix=",">
+            eu.real_name as detail_verify_user_name,ewnc.workflow_node_name as detail_workflow_current_node_name,ewnp.workflow_node_name as detail_workflow_previous_node_name,ewnn.workflow_node_name as detail_workflow_next_node_name
+        </trim>
+        from
+		(
+			select <include refid="column_List"/>
+			<trim prefix=",">
+				eu.real_name as current_verify_user_name, euc.real_name as commit_user_name, ewn.workflow_node_name as workflow_current_node_name, CASE WHEN ewn.workflow_step = workflow_last_step THEN true ELSE false END AS is_last_step
+			</trim>
+            from erp_workflow_link ewl
+			LEFT JOIN erp_user eu ON eu.id = ewl.current_verify_user
+			LEFT JOIN erp_user euc ON euc.id = ewl.commit_user
 			LEFT JOIN erp_workflow_node ewn ON ewn.id = ewl.workflow_current_node_id
-			where ewl.workflow_type = #{workflowType, jdbcType=INTEGER} and ewl.workflow_refer_no = #{referId, jdbcType=INTEGER} and data_status = 1
+			where ewl.workflow_type = #{workflowType, jdbcType=INTEGER} and ewl.workflow_refer_no = #{workflowReferNo, jdbcType=INTEGER} and ewl.data_status = 1
 		) link left join erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
 		LEFT JOIN erp_user eu ON eu.id = ewld.verify_user
         LEFT JOIN erp_workflow_node ewnc on ewnc.id = ewld.workflow_current_node_id
@@ -109,8 +143,8 @@
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.verifyStatus != null">
 				and ewl.current_verify_status = #{maps.workflowQueryParam.verifyStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyStatus != null">
-				and ewl.current_verify_user = #{maps.workflowQueryParam.currentVerifyStatus, jdbcType=INTEGER}
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != null">
+				and ewl.current_verify_user = #{maps.workflowQueryParam.currentVerifyUser, jdbcType=INTEGER}
 			</if>
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.commitUserId != null">
 				and ewl.commit_user = #{maps.workflowQueryParam.commitUserId, jdbcType=INTEGER}
@@ -128,9 +162,13 @@
         </trim>
 		from
 		(
-			select <include refid="column_List"/>,eu.real_name as current_verify_user_name , ewn.workflow_node_name as workflow_current_node_name
+			select <include refid="column_List"/>
+			<trim prefix=",">
+				eu.real_name as current_verify_user_name, euc.real_name as commit_user_name, ewn.workflow_node_name as workflow_current_node_name, CASE WHEN ewn.workflow_step = workflow_last_step THEN true ELSE false END AS is_last_step
+			</trim>
             from erp_workflow_link ewl
 			LEFT JOIN erp_user eu ON eu.id = ewl.current_verify_user
+			LEFT JOIN erp_user euc ON euc.id = ewl.commit_user
             LEFT JOIN erp_workflow_node ewn ON ewn.id = ewl.workflow_current_node_id
 			<where>
 				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowType != null">
@@ -142,8 +180,8 @@
 				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.verifyStatus != null">
 					and ewl.current_verify_status = #{maps.workflowQueryParam.verifyStatus, jdbcType=INTEGER}
 				</if>
-				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyStatus != null">
-					and ewl.current_verify_user = #{maps.workflowQueryParam.currentVerifyStatus, jdbcType=INTEGER}
+				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != null">
+					and ewl.current_verify_user = #{maps.workflowQueryParam.currentVerifyUser, jdbcType=INTEGER}
 				</if>
 				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.commitUserId != null">
 					and ewl.commit_user = #{maps.workflowQueryParam.commitUserId, jdbcType=INTEGER}

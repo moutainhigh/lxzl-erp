@@ -14,6 +14,10 @@ public class VerifyWorkflowParam implements Serializable {
      */
     private Integer workflowLinkId;
     /**
+     * 工作流No
+     */
+    private String workflowLinkNo;
+    /**
      * 审核状态
      */
     private Integer verifyStatus;
@@ -68,5 +72,13 @@ public class VerifyWorkflowParam implements Serializable {
 
     public void setReturnType(Integer returnType) {
         this.returnType = returnType;
+    }
+
+    public String getWorkflowLinkNo() {
+        return workflowLinkNo;
+    }
+
+    public void setWorkflowLinkNo(String workflowLinkNo) {
+        this.workflowLinkNo = workflowLinkNo;
     }
 }

@@ -13,5 +13,7 @@ public interface WorkflowLinkMapper extends BaseMysqlDAO<WorkflowLinkDO> {
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	WorkflowLinkDO findByWorkflowTypeAndReferNo(@Param("workflowType") Integer workflowType,
-												@Param("referNo") String referMo);
+												@Param("workflowReferNo") String workflowReferNo);
+
+	WorkflowLinkDO findByNo(@Param("workflowLinkNo") String workflowLinkNo);
 }

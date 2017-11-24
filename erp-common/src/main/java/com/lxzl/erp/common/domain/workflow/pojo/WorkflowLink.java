@@ -20,6 +20,7 @@ public class WorkflowLink implements Serializable {
 	private Integer workflowLastStep;   //流程最后步骤
 	private Integer workflowCurrentNodeId;   //当前结点ID
 	private Integer commitUser;				//提交人
+	private String commitUserName;				//提交人姓名
 	private Integer currentVerifyUser;		// 当前审核人
 	private String currentVerifyUserName;	// 当前审核人姓名
 	private Integer currentVerifyStatus;	// 当前审核状态
@@ -34,6 +35,7 @@ public class WorkflowLink implements Serializable {
 
 	private String workflowCurrentNodeName;
 
+	private Boolean isLastStep;
 
 	public Integer getWorkflowLinkId(){
 		return workflowLinkId;
@@ -193,5 +195,21 @@ public class WorkflowLink implements Serializable {
 
 	public void setWorkflowCurrentNodeName(String workflowCurrentNodeName) {
 		this.workflowCurrentNodeName = workflowCurrentNodeName;
+	}
+
+	public String getCommitUserName() {
+		return commitUserName;
+	}
+
+	public void setCommitUserName(String commitUserName) {
+		this.commitUserName = commitUserName;
+	}
+
+	public Boolean getLastStep() {
+		return isLastStep;
+	}
+
+	public void setLastStep(Boolean lastStep) {
+		isLastStep = lastStep;
 	}
 }
