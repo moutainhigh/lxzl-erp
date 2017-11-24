@@ -239,6 +239,15 @@ public class PageController extends BaseController {
         return "/warehouseManage/warehouseList";
     }
 
+    //审核管理
+    @RequestMapping("/audit-manage/list")
+    public String auditManageList() {
+        return "/auditManage/auditList";
+    }
+    @RequestMapping("/audit-manage/detail")
+    public String auditManageDetail() {
+        return "/auditManage/auditDetail";
+    }
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-审核管理-工作流</title>
+    #parse("layout/header.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
+    #parse("layout/theme.vm")
+##    <script type="text/javascript">
+##        common_load_css('${staticCommon}/rental/css','dropzone.css');
+##    </script>
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+
+            #parse("component/loading.vm")
+
+            <div class="panel panel-primary panel-border top">
+                <div class="panel-menu p12">
+                    <div class="row">
+                        <div class="pull-left ml10">
+                            <script type="text/html" id="actionCommonButtonsTpl">
+                                <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                {{#acitonCommonButtons}}
+                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
+                                    <i class="{{iClass}}"></i> {{text}}
+                                </a>
+                                {{/acitonCommonButtons}}
+                            </script>
+
+                            <div class="btn-group" id="actionCommonButtons"></div>
+                        </div>
+                        <div class="pull-right mr10 text-right">
+                            <form id="searchForm" class="form-horizontal">
+                                <div class="pull-right">
+                                    <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                    <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                </div>
+                                <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                    <input type="text" name="workflowReferId" id="workflowReferId" class="form-control input-sm bradius" autocomplete="off" placeholder="工作流关联ID">
+                                </div>
+                                <script type="text/html" id="workflowTypeSelectTpl">
+                                    <option value="">全部（工作流类型）</option>
+                                    {{#workflowType}}
+                                    <option value={{num}}>{{value}}</option>
+                                    {{/workflowType}}
+                                </script>
+                                <select name="workflowType" id="workflowType" class="hide"></select>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body pn">
+                    <div class="table-responsive">
+                        <script type="text/html" id="dataListTpl">
+                            <thead>
+                            <tr>
+                                {{#hasCommonActionButtons}}
+                                <th>
+                                    <label class="option block mn">
+                                        <input type="checkbox" name="checkAll" value="">
+                                        <span class="checkbox mn"></span>
+                                    </label>
+                                </th>
+                                {{/hasCommonActionButtons}}
+                                <th>工作流ID</th>
+                                <th>类型</th>
+                                <th>关联ID</th>
+                                <th>模板ID</th>
+                                <th>流程当前步骤</th>
+                                <th>流程最后步骤</th>
+                                <th>当前结点ID</th>
+                                <th>当前审批人</th>
+                                <th>审批状态</th>
+                                {{#hasRowActionButtons}}
+                                <th class="text-right">操作</th>
+                                {{/hasRowActionButtons}}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#dataSource}}
+                            {{#listData}}
+                            <tr>
+                                {{#hasCommonActionButtons}}
+                                <td>
+                                    <label class="option block mn">
+                                        <input type="checkbox" name="checkItem" value="{{productId}}">
+                                        <span class="checkbox mn"></span>
+                                    </label>
+                                </td>
+                                {{/hasCommonActionButtons}}
+                                <td>{{workflowLinkId}}</td>
+                                <td>{{workflowTypeStr}}</td>
+                                <td>{{workflowReferId}}</td>
+                                <td>{{workflowTemplateId}}</td>
+                                <td>{{workflowStep}}</td>
+                                <td>{{workflowLastStep}}</td>
+                                <td>{{workflowCurrentNodeId}}</td>
+                                <td>{{currentVerifyUserName}}</td>
+                                <td>{{workflowVerifyStatusStr}}</td>
+                                {{#hasRowActionButtons}}
+                                <td class="text-right">
+                                    <div class="btn-group text-right">
+                                        {{#rowActionButtons}}
+                                        {{#buttons}}
+                                        <a href="${ctx}{{menuUrl}}?no={{purchaseNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-workflowlinkid="{{workflowLinkId}}">{{text}}</a>
+                                        {{/buttons}}
+                                        {{/rowActionButtons}}
+                                    </div>
+                                </td>
+                                {{/hasRowActionButtons}}
+                            </tr>
+                            {{/listData}}
+                            {{^listData}}
+                            <tr>
+                                <td valign="top" colspan="14" class="text-center">没有查询到采购单</td>
+                            </tr>
+                            {{/listData}}
+                            {{/dataSource}}
+                            </tbody>
+                        </script>
+                        <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                            #parse("component/pager.vm")
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js','manage.audit.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    AuditManage.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+
+</script>
+</body>
+</html>
