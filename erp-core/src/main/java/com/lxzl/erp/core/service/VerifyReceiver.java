@@ -9,8 +9,8 @@ import com.lxzl.se.core.service.BaseService;
 public interface VerifyReceiver extends BaseService {
     /**
      * @param verifyResult
-     * @param businessId
+     * @param businessNo
      * @return 业务处理结果
      */
-    boolean receiveVerifyResult(boolean verifyResult,Integer businessId);
+    boolean receiveVerifyResult(boolean verifyResult,String businessNo);
 }

@@ -13,7 +13,10 @@ import java.io.Serializable;
 public class WorkflowLinkQueryParam extends BasePageParam implements Serializable {
 
     private Integer workflowType;
-    private Integer workflowReferId;
+    private String workflowReferNo;
+    private Integer verifyStatus;
+    private Integer commitUserId;
+    private Integer currentVerifyUser;
 
     public Integer getWorkflowType() {
         return workflowType;
@@ -23,11 +26,35 @@ public class WorkflowLinkQueryParam extends BasePageParam implements Serializabl
         this.workflowType = workflowType;
     }
 
-    public Integer getWorkflowReferId() {
-        return workflowReferId;
+    public String getWorkflowReferNo() {
+        return workflowReferNo;
     }
 
-    public void setWorkflowReferId(Integer workflowReferId) {
-        this.workflowReferId = workflowReferId;
+    public void setWorkflowReferNo(String workflowReferNo) {
+        this.workflowReferNo = workflowReferNo;
+    }
+
+    public Integer getVerifyStatus() {
+        return verifyStatus;
+    }
+
+    public void setVerifyStatus(Integer verifyStatus) {
+        this.verifyStatus = verifyStatus;
+    }
+
+    public Integer getCommitUserId() {
+        return commitUserId;
+    }
+
+    public void setCommitUserId(Integer commitUserId) {
+        this.commitUserId = commitUserId;
+    }
+
+    public Integer getCurrentVerifyUser() {
+        return currentVerifyUser;
+    }
+
+    public void setCurrentVerifyUser(Integer currentVerifyUser) {
+        this.currentVerifyUser = currentVerifyUser;
     }
 }

@@ -666,8 +666,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
-    public ServiceResult<String, Integer> commit(PurchaseOrderCommitParam purchaseOrderCommitParam) {
-        ServiceResult<String, Integer> result = new ServiceResult<>();
+    public ServiceResult<String, String> commit(PurchaseOrderCommitParam purchaseOrderCommitParam) {
+        ServiceResult<String, String> result = new ServiceResult<>();
         //校验采购单是否存在
         PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findByPurchaseNo(purchaseOrderCommitParam.getPurchaseNo());
         if(purchaseOrderDO==null){
@@ -678,9 +678,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             result.setErrorCode(ErrorCode.PURCHASE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN);
             return result;
         }
-        ServiceResult<String, Integer> verifyResult =null;
+        if(!purchaseOrderDO.getCreateUser().equals(userSupport.getCurrentUserId().toString())){
+            //只有待提交状态的采购单可以提交
+            result.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
+            return result;
+        }
         //调用提交审核服务
-        verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE, purchaseOrderDO.getId(), purchaseOrderCommitParam.getVerifyUserId());
+        ServiceResult<String, String>  verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE, purchaseOrderDO.getPurchaseNo(), purchaseOrderCommitParam.getVerifyUserId());
         //修改提交审核状态
         if(ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())){
             purchaseOrderDO.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_VERIFYING);
@@ -1295,13 +1299,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     /**
      * 接收审核结果通知，审核通过生成发货单
      * @param verifyResult
-     * @param businessId
+     * @param businessNo
      */
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     @Override
-    public boolean receiveVerifyResult(boolean verifyResult, Integer businessId) {
+    public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
         try{
-            PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findDetailById(businessId);
+            PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findDetailByPurchaseNo(businessNo);
             if(purchaseOrderDO==null){
                 return false;
             }

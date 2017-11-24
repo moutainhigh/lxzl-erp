@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.workflow;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 
 
@@ -8,7 +10,7 @@ public class WorkflowLinkDetailDO  extends BaseDO {
 
 	private Integer id;
 	private Integer workflowLinkId;
-	private Integer workflowReferId;
+	private String workflowReferNo;
 	private Integer workflowStep;
 	private Integer workflowCurrentNodeId;
 	private Integer workflowPreviousNodeId;
@@ -20,6 +22,14 @@ public class WorkflowLinkDetailDO  extends BaseDO {
 	private String verifyOpinion;
 	private Integer dataStatus;
 	private String remark;
+
+
+	@Transient
+	private String workflowCurrentNodeName;
+	@Transient
+	private String workflowPreviousNodeName;
+	@Transient
+	private String workflowNextNodeName;
 
 	public Integer getId(){
 		return id;
@@ -37,12 +47,12 @@ public class WorkflowLinkDetailDO  extends BaseDO {
 		this.workflowLinkId = workflowLinkId;
 	}
 
-	public Integer getWorkflowReferId(){
-		return workflowReferId;
+	public String getWorkflowReferNo() {
+		return workflowReferNo;
 	}
 
-	public void setWorkflowReferId(Integer workflowReferId){
-		this.workflowReferId = workflowReferId;
+	public void setWorkflowReferNo(String workflowReferNo) {
+		this.workflowReferNo = workflowReferNo;
 	}
 
 	public Integer getWorkflowStep(){
@@ -131,5 +141,29 @@ public class WorkflowLinkDetailDO  extends BaseDO {
 
 	public void setVerifyUserName(String verifyUserName) {
 		this.verifyUserName = verifyUserName;
+	}
+
+	public String getWorkflowCurrentNodeName() {
+		return workflowCurrentNodeName;
+	}
+
+	public void setWorkflowCurrentNodeName(String workflowCurrentNodeName) {
+		this.workflowCurrentNodeName = workflowCurrentNodeName;
+	}
+
+	public String getWorkflowPreviousNodeName() {
+		return workflowPreviousNodeName;
+	}
+
+	public void setWorkflowPreviousNodeName(String workflowPreviousNodeName) {
+		this.workflowPreviousNodeName = workflowPreviousNodeName;
+	}
+
+	public String getWorkflowNextNodeName() {
+		return workflowNextNodeName;
+	}
+
+	public void setWorkflowNextNodeName(String workflowNextNodeName) {
+		this.workflowNextNodeName = workflowNextNodeName;
 	}
 }

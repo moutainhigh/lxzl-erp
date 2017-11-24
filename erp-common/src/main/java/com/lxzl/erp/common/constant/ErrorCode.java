@@ -19,6 +19,7 @@ public class ErrorCode {
     public static final String RECORD_NOT_EXISTS = "J009999";
     public static final String RECORD_ALREADY_EXISTS = "J099999";
     public static final String EMAIL_ERROR = "J000993";
+    public static final String COMMIT_ONLY_SELF = "J000992";
 
     public static final String USER_NAME_NOT_NULL = "J100000";
     public static final String USER_PASSWORD_NOT_NULL = "J100001";
@@ -77,6 +78,8 @@ public class ErrorCode {
     public static final String WORKFLOW_NOT_EXISTS_CLOSED = "J800008";
     public static final String WORKFLOW_NODE_NOT_EXISTS = "J800009";
     public static final String WORKFLOW_VERIFY_USER_ERROR = "J800010";
+    public static final String WORKFLOW_LINK_STATUS_ERROR = "J800011";
+    public static final String WORKFLOW_TEMPLATE_NOT_EXISTS = "J800012";
 
     public static final String REMARK_PATTERN = "J900001";
     public static final String ID_NOT_NULL = "J900002";
@@ -206,6 +209,7 @@ public class ErrorCode {
         MAP.put(RECORD_ALREADY_EXISTS, "记录已经存在");
         MAP.put(SYSTEM_DEVELOPING, "开发中……");
         MAP.put(EMAIL_ERROR, "邮箱格式有误");
+        MAP.put(COMMIT_ONLY_SELF, "只能提交自己的数据");
 
         MAP.put(USER_NOT_LOGIN, "用户未登录");
         MAP.put(USER_DISABLE, "用户已禁用，请联系管理员");
@@ -266,6 +270,8 @@ public class ErrorCode {
         MAP.put(WORKFLOW_NOT_EXISTS_CLOSED, "此工作流不存在或已经关闭");
         MAP.put(WORKFLOW_NODE_NOT_EXISTS, "此工作流节点不存在");
         MAP.put(WORKFLOW_VERIFY_USER_ERROR, "此工作流审核人员有误");
+        MAP.put(WORKFLOW_LINK_STATUS_ERROR, "此工作流状态有误");
+        MAP.put(WORKFLOW_TEMPLATE_NOT_EXISTS, "工作流模板不存在或者已经禁用");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");

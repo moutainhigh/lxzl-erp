@@ -29,7 +29,7 @@ public class WorkflowConverter {
     }
     public static WorkflowLink convertWorkflowLinkDO(WorkflowLinkDO workflowLinkDO){
         WorkflowLink workflowLink = new WorkflowLink();
-        if(workflowLinkDO.getId() == null){
+        if(workflowLinkDO.getId() != null){
             workflowLink.setWorkflowLinkId(workflowLinkDO.getId());
         }
         if(workflowLinkDO.getWorkflowLinkDetailDOList() != null && !workflowLinkDO.getWorkflowLinkDetailDOList().isEmpty()){

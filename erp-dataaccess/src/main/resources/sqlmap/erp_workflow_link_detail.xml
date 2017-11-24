@@ -5,7 +5,7 @@
 	<resultMap id="WorkflowLinkDetailDO" type="com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDetailDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="workflow_link_id" jdbcType="INTEGER" property="workflowLinkId" />
-		<result column="workflow_refer_id" jdbcType="INTEGER" property="workflowReferId" />
+		<result column="workflow_refer_no" jdbcType="VARCHAR" property="workflowReferNo" />
 		<result column="workflow_step" jdbcType="INTEGER" property="workflowStep" />
 		<result column="workflow_current_node_id" jdbcType="INTEGER" property="workflowCurrentNodeId" />
 		<result column="workflow_previous_node_id" jdbcType="INTEGER" property="workflowPreviousNodeId" />
@@ -23,7 +23,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ewld.id,ewld.workflow_link_id,ewld.workflow_refer_id,ewld.workflow_step,ewld.workflow_current_node_id,ewld.workflow_previous_node_id,ewld.workflow_next_node_id,ewld.verify_user,ewld.verify_time,ewld.verify_status,ewld.verify_opinion,ewld.data_status,ewld.remark,ewld.create_time,ewld.create_user,ewld.update_time,ewld.update_user
+		ewld.id,ewld.workflow_link_id,ewld.workflow_refer_no,ewld.workflow_step,ewld.workflow_current_node_id,ewld.workflow_previous_node_id,ewld.workflow_next_node_id,ewld.verify_user,ewld.verify_time,ewld.verify_status,ewld.verify_opinion,ewld.data_status,ewld.remark,ewld.create_time,ewld.create_user,ewld.update_time,ewld.update_user
 	</sql>
 
 	<select id="findById" resultMap="WorkflowLinkDetailDO" parameterType="java.lang.Integer">
@@ -55,8 +55,8 @@
 			<if test="workflowLinkId != null">
 				workflow_link_id = #{workflowLinkId,jdbcType=INTEGER},
 			</if>
-			<if test="workflowReferId != null">
-				workflow_refer_id = #{workflowReferId,jdbcType=INTEGER},
+			<if test="workflowReferNo != null">
+				workflow_refer_no = #{workflowReferNo,jdbcType=VARCHAR},
 			</if>
 			<if test="workflowStep != null">
 				workflow_step = #{workflowStep,jdbcType=INTEGER},

@@ -1,6 +1,8 @@
 package com.lxzl.erp.common.domain.workflow.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.annotation.Transient;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -10,12 +12,15 @@ import java.util.List;
 public class WorkflowLink implements Serializable {
 
 	private Integer workflowLinkId;   //唯一标识
+	private String workflowLinkNo;		// 工作流编号
 	private Integer workflowType;   //工作流类型
 	private Integer workflowTemplateId;   //工作流模板ID
-	private Integer workflowReferId;   //工作流关联ID
+	private String workflowReferNo;   //工作流关联ID
 	private Integer workflowStep;   //流程当前步骤
 	private Integer workflowLastStep;   //流程最后步骤
 	private Integer workflowCurrentNodeId;   //当前结点ID
+	private Integer commitUser;				//提交人
+	private String commitUserName;				//提交人姓名
 	private Integer currentVerifyUser;		// 当前审核人
 	private String currentVerifyUserName;	// 当前审核人姓名
 	private Integer currentVerifyStatus;	// 当前审核状态
@@ -28,6 +33,9 @@ public class WorkflowLink implements Serializable {
 
 	private List<WorkflowLinkDetail> workflowLinkDetailList;
 
+	private String workflowCurrentNodeName;
+
+	private Boolean isLastStep;
 
 	public Integer getWorkflowLinkId(){
 		return workflowLinkId;
@@ -35,6 +43,14 @@ public class WorkflowLink implements Serializable {
 
 	public void setWorkflowLinkId(Integer workflowLinkId){
 		this.workflowLinkId = workflowLinkId;
+	}
+
+	public String getWorkflowLinkNo() {
+		return workflowLinkNo;
+	}
+
+	public void setWorkflowLinkNo(String workflowLinkNo) {
+		this.workflowLinkNo = workflowLinkNo;
 	}
 
 	public Integer getWorkflowType(){
@@ -53,12 +69,12 @@ public class WorkflowLink implements Serializable {
 		this.workflowTemplateId = workflowTemplateId;
 	}
 
-	public Integer getWorkflowReferId(){
-		return workflowReferId;
+	public String getWorkflowReferNo() {
+		return workflowReferNo;
 	}
 
-	public void setWorkflowReferId(Integer workflowReferId){
-		this.workflowReferId = workflowReferId;
+	public void setWorkflowReferNo(String workflowReferNo) {
+		this.workflowReferNo = workflowReferNo;
 	}
 
 	public Integer getWorkflowStep(){
@@ -163,5 +179,37 @@ public class WorkflowLink implements Serializable {
 
 	public void setCurrentVerifyUserName(String currentVerifyUserName) {
 		this.currentVerifyUserName = currentVerifyUserName;
+	}
+
+	public Integer getCommitUser() {
+		return commitUser;
+	}
+
+	public void setCommitUser(Integer commitUser) {
+		this.commitUser = commitUser;
+	}
+
+	public String getWorkflowCurrentNodeName() {
+		return workflowCurrentNodeName;
+	}
+
+	public void setWorkflowCurrentNodeName(String workflowCurrentNodeName) {
+		this.workflowCurrentNodeName = workflowCurrentNodeName;
+	}
+
+	public String getCommitUserName() {
+		return commitUserName;
+	}
+
+	public void setCommitUserName(String commitUserName) {
+		this.commitUserName = commitUserName;
+	}
+
+	public Boolean getLastStep() {
+		return isLastStep;
+	}
+
+	public void setLastStep(Boolean lastStep) {
+		isLastStep = lastStep;
 	}
 }
