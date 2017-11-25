@@ -255,10 +255,10 @@ public class MaterialServiceImpl implements MaterialService {
         List<ProductEquipmentMaterialDO> productEquipmentMaterialDOList = productEquipmentMaterialMapper.listPage(paramMap);
         List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(paramMap);
         List<PurchaseOrderMaterialDO> purchaseOrderMaterialDOList = purchaseOrderMaterialMapper.listPage(paramMap);
-        if (productMaterialDOList != null
-                || productEquipmentMaterialDOList != null
-                || bulkMaterialDOList != null
-                || purchaseOrderMaterialDOList != null) {
+        if (CollectionUtil.isNotEmpty(productMaterialDOList)
+                || CollectionUtil.isNotEmpty(productEquipmentMaterialDOList)
+                || CollectionUtil.isNotEmpty(bulkMaterialDOList)
+                || CollectionUtil.isNotEmpty(purchaseOrderMaterialDOList)) {
             result.setErrorCode(ErrorCode.MATERIAL_IN_USED);
             return result;
         }

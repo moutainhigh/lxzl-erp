@@ -53,6 +53,13 @@ public class MaterialTest extends ERPUnTransactionalTest {
     }
 
     @Test
+    public void deleteMaterial() throws Exception {
+        Material material = new Material();
+        material.setMaterialNo("M201711251159171311112");
+        TestResult result = getJsonTestResult("/material/delete", material);
+    }
+
+    @Test
     public void queryAllMaterial() throws Exception {
         MaterialQueryParam materialQueryParam = new MaterialQueryParam();
         materialQueryParam.setPageNo(1);
@@ -84,6 +91,14 @@ public class MaterialTest extends ERPUnTransactionalTest {
         materialModel.setMaterialModelId(11);
         materialModel.setModelName("水冷机箱1");
         TestResult result = getJsonTestResult("/material/updateModel", materialModel);
+    }
+
+    @Test
+    public void deleteModel() throws Exception {
+        MaterialModel materialModel = new MaterialModel();
+        materialModel.setMaterialModelId(13);
+        materialModel.setModelName("水冷机箱1");
+        TestResult result = getJsonTestResult("/material/deleteModel", materialModel);
     }
 
     @Test
