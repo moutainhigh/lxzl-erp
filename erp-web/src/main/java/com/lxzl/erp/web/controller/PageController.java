@@ -152,7 +152,7 @@ public class PageController extends BaseController {
         return "/orderManage/orderItem";
     }
 
-    //客户管理
+    //个人客户管理
     @RequestMapping("/customer-manage/list")
     public String customerManageList() {
         return "/customerManage/customerList";
@@ -172,6 +172,28 @@ public class PageController extends BaseController {
     @RequestMapping("/customer-manage/info")
     public String customerManageInfo() {
         return "/customerManage/customerInfo";
+    }
+
+    //企业客户
+    @RequestMapping("/business-customer-manage/list")
+    public String businessCustomerManageList() {
+        return "/businessCustomerManage/businessCustomerList";
+    }
+    @RequestMapping("/business-customer-manage/detail")
+    public String businessCustomerManageDetail() {
+        return "/businessCustomerManage/businessCustomerDetail";
+    }
+    @RequestMapping("/business-customer-manage/add")
+    public String businessCustomerManageAdd() {
+        return "/businessCustomerManage/businessCustomerAdd";
+    }
+    @RequestMapping("/business-customer-manage/edit")
+    public String businessCustomerManageEdit() {
+        return "/businessCustomerManage/businessCustomerEdit";
+    }
+    @RequestMapping("/business-customer-manage/info")
+    public String businessCustomerManageInfo() {
+        return "/businessCustomerManage/businessCustomerInfo";
     }
 
     //采购管理
