@@ -54,7 +54,7 @@
                     {{/listData}}
                     {{^listData}}
                     <tr>
-                        <td valign="top" colspan="14" class="text-center">没有查询到物料信息</td>
+                        <td valign="top" colspan="14" class="text-center">没有查询到物料型号信息</td>
                     </tr>
                     {{/listData}}
                     {{/dataSource}}

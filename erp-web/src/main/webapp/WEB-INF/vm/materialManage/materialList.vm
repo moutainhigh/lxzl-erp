@@ -79,12 +79,12 @@
                                 </th>
                                 {{/hasCommonActionButtons}}
                                 <th>编号</th>
+                                <th>图片</th>
                                 <th>名称</th>
                                 <th>类型</th>
                                 <th>本身价值</th>
                                 <th>租赁价格</th>
                                 <th>描述</th>
-                                <th>图片</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
                                 {{/hasRowActionButtons}}
@@ -103,17 +103,17 @@
                                 </td>
                                 {{/hasCommonActionButtons}}
                                 <td>{{materialNo}}</td>
+                                <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                 <td>{{materialName}}</td>
                                 <td>{{materialTypeStr}}</td>
                                 <td>{{materialPriceFormat}}</td>
                                 <td>{{rentPriceFormat}}</td>
                                 <td>{{materialDesc}}</td>
-                                <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
                                     <div class="btn-group text-right">
                                         {{#rowActionButtons}}
-                                        <a href="${ctx}{{menuUrl}}?no={{materialNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-materialNo="{{materialNo}}">{{text}}</a>
+                                        <a href="${ctx}{{menuUrl}}?no={{materialNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-materialno="{{materialNo}}">{{text}}</a>
                                         {{/rowActionButtons}}
                                     </div>
                                 </td>

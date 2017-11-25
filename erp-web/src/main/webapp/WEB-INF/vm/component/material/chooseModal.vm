@@ -38,13 +38,13 @@
                     <thead>
                     <tr>
                         <th>编号</th>
+                        <th>图片</th>
                         <th>名称</th>
                         <th>类型</th>
                         <th>属性</th>
                         <th>本身价值</th>
                         <th>租赁价格</th>
                         <th>描述</th>
-                        <th>图片</th>
                         <th class="text-right">操作</th>
                     </tr>
                     </thead>
@@ -53,13 +53,13 @@
                     {{#listData}}
                     <tr>
                         <td>{{materialNo}}</td>
+                        <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                         <td>{{materialName}}</td>
                         <td>{{materialTypeStr}}</td>
                         <td>{{propertyName}}:{{propertyValueName}}</td>
                         <td>{{materialPriceFormat}}</td>
                         <td>{{rentPriceFormat}}</td>
                         <td>{{materialDesc}}</td>
-                        <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                         <td class="text-right">
                             <div class="btn-group text-right">
                                 <a href="#" type="button" class="btn btn-default btn-xs chooseButton" data-materialNo="{{materialNo}}" data-material="{{materialJSONString}}">选择</a>

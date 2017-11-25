@@ -45,19 +45,46 @@
                                             </label>
                                         </div>
                                         <div class="col-md-4">
-                                            <label for="userName" class="field-label">物料类别</label>
-                                            <label class="field select">
-                                                <select id="categoryId" name="categoryId">
-                                                    <option value="">请选择</option>
-                                                </select>
-                                                <i class="arrow double"></i>
-                                            </label>
+                                            <label for="userName" class="field-label">物料型号</label>
+                                            <div class="smart-widget sm-right smr-50">
+                                                <label class="field">
+                                                    <input type="hidden" value="" name="materialModelId" />
+                                                    <input type="text" name="modelName" id="modelName" class="gui-input" readonly />
+                                                </label>
+##                                                <button type="button" class="button btn-primary bradiusN chooseMaterialModalButton"><i class="fa fa-search"></i></button>
+                                            </div>
                                         </div>
                                         <div class="col-md-4">
                                             <label for="userName" class="field-label">物料名称</label>
                                             <label for="materialName" class="field prepend-icon">
                                                 <input type="text" name="materialName" id="materialName" class="gui-input" />
                                                 <label for="materialName" class="field-icon"><i class="fa fa-tag"></i></label>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="section row">
+                                        <div class="col-md-4">
+                                            <label for="userName" class="field-label">物料值(例如内存大小数值)</label>
+                                            <label for="materialCapacityValue" class="field prepend-icon">
+                                                <input type="text" name="materialCapacityValue" id="materialCapacityValue number" class="gui-input" />
+                                                <label for="materialCapacityValue" class="field-icon"><i class="fa fa-tag"></i></label>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="userName" class="field-label">是否上架</label>
+                                            <label class="field select">
+                                                <select id="isRent" name="isRent">
+                                                    <option value="1">是</option>
+                                                    <option value="0">否</option>
+                                                </select>
+                                                <i class="arrow"></i>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="materialPrice" class="field-label">本身价值</label>
+                                            <label for="materialPrice" class="field select prepend-icon">
+                                                <input type="text" name="materialPrice" id="materialPrice" class="gui-input required moneyNumber" />
+                                                <label for="materialPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                             </label>
                                         </div>
                                     </div>
@@ -85,16 +112,6 @@
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="section row">
-                                        <div class="col-md-12">
-                                            <label for="materialPrice" class="field-label">本身价值</label>
-                                            <label for="materialPrice" class="field prepend-icon">
-                                                <input type="text" name="materialPrice" id="materialPrice" class="gui-input" />
-                                                <label for="materialPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                                            </label>
-                                        </div>
-                                    </div>
-
                                     <div class="section">
                                         <label for="materialDesc" class="field-label">描述</label>
                                         <label for="materialDesc" class="field prepend-icon">
