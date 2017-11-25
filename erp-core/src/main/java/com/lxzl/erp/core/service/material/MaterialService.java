@@ -158,4 +158,12 @@ public interface MaterialService extends BaseService {
      * @return 物料型号列表
      */
     ServiceResult<String, Page<MaterialModel>> queryMaterialModel(MaterialModelQueryParam materialModelQueryParam);
+
+    /**
+     * 查询物料型号详细
+     *
+     * @param materialModelId 物料型号ID
+     * @return 查询物料型号详细
+     */
+    ServiceResult<String, MaterialModel> queryMaterialModelById(Integer materialModelId);
 }

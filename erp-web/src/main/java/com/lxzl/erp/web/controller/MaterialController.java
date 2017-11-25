@@ -114,6 +114,12 @@ public class MaterialController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "queryModelById", method = RequestMethod.POST)
+    public Result queryModelById(@RequestBody MaterialModelQueryParam materialModelQueryParam, BindingResult validResult) {
+        ServiceResult<String, MaterialModel> serviceResult = materialService.queryMaterialModelById(materialModelQueryParam.getMaterialModelId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 
     @Autowired
     private MaterialService materialService;

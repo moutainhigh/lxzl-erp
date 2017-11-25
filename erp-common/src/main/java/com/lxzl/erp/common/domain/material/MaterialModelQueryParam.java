@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
  * @date 2017-11-23 16:01
  */
 public class MaterialModelQueryParam extends BasePageParam {
+    private Integer materialModelId;
     private Integer materialType;
     private String modelName;
 
@@ -26,5 +27,13 @@ public class MaterialModelQueryParam extends BasePageParam {
 
     public void setModelName(String modelName) {
         this.modelName = modelName;
+    }
+
+    public Integer getMaterialModelId() {
+        return materialModelId;
+    }
+
+    public void setMaterialModelId(Integer materialModelId) {
+        this.materialModelId = materialModelId;
     }
 }

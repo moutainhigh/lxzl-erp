@@ -613,4 +613,18 @@ public class MaterialServiceImpl implements MaterialService {
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
+
+    @Override
+    public ServiceResult<String, MaterialModel> queryMaterialModelById(Integer materialModelId) {
+        ServiceResult<String, MaterialModel> result = new ServiceResult<>();
+        MaterialModelDO materialModelDO = materialModelMapper.findById(materialModelId);
+        if (materialModelDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        result.setResult(MaterialConverter.convertMaterialModelDO(materialModelDO));
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
 }
