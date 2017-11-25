@@ -43,7 +43,7 @@
                                     </div>
                                     <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                         <div class="input-group">
-                                            <input type="text" name="modelName" id="modelName" class="form-control input-sm bradius number" autocomplete="off" placeholder="输入型号名称">
+                                            <input type="text" name="modelName" id="modelName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入型号名称">
                                         </div>
                                     </div>
                                     <script type="text/html" id="materialTypeSelectTpl">
@@ -97,7 +97,7 @@
                                     <td class="text-right">
                                         <div class="btn-group text-right">
                                             {{#rowActionButtons}}
-                                            <a href="${ctx}{{menuUrl}}?no={{materialNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-materialNo="{{materialNo}}">{{text}}</a>
+                                            <a href="${ctx}{{menuUrl}}?no={{materialNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-materialmodelid="{{materialModelId}}" data-modelname="{{modelName}}">{{text}}</a>
                                             {{/rowActionButtons}}
                                         </div>
                                     </td>
@@ -132,7 +132,7 @@
     </div>
     #parse("layout/footer.vm")
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.material.modal.js');
+        management_load_script('${staticManagement}/js','manage.material.modal.js','manage.material.modal.add.js','manage.material.modal.edit.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
