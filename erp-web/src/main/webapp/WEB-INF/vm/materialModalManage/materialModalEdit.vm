@@ -4,11 +4,10 @@
             <span class="panel-title"><i class="fa fa-pencil"></i>编辑物料型号</span>
         </div>
         <form id="editMaterialModalForm" description="编辑物料型号">
-            <input type="hidden" name="userId" />
             <div class="panel-body p25">
                 <div class="section row">
                     <div class="col-md-6">
-                        <label for="userName" class="field-label">型号名称</label>
+                        <label for="modelName" class="field-label">型号名称</label>
                         <label for="modelName" class="field prepend-icon">
                             <input type="text" name="modelName" id="modelName" class="gui-input required" placeholder="请输入物料名称" maxlength="20">
                             <label for="modelName" class="field-icon"><i class="fa fa-tag"></i>
@@ -21,7 +20,7 @@
                             <script type="text/html" id="materialTypeSelectTpl">
                                 <option value="">请选择</option>
                                 {{#materialType}}
-                                <option value={{num}}>{{value}}</option>
+                                <option value="{{num}}" {{#disabled}} disabled {{/disabled}}>{{value}}</option>
                                 {{/materialType}}
                             </script>
                             <select name="materialType" id="materialType" class="required">

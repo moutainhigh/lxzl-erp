@@ -1,0 +1,77 @@
+<div class="popup-basic popup-xl admin-form mfp-with-anim theme-primary " id="chooseMaterialModalDialog">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-search"></i>选择物料型号</span>
+        </div>
+        <div class="panel-menu p12">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <form id="chooseMaterialModalSearchForm" class="form-horizontal">
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                            <button type="reset" class="btn btn-default btn-sm">重置</button>
+                        </div>
+                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                            <div class="input-group">
+                                <input type="text" name="modelName" id="modelName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入型号名称">
+                            </div>
+                        </div>
+                        <script type="text/html" id="materialTypeSelectTpl">
+                            <option value="">全部（物料类型）</option>
+                            {{#materialType}}
+                            <option value={{num}}>{{value}}</option>
+                            {{/materialType}}
+                        </script>
+                        <select name="materialType" id="materialType" class="hide"></select>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body pn">
+            <div class="table-responsive">
+                <script type="text/html" id="chooseMaterialModalDataListTpl">
+                    <thead>
+                    <tr>
+                        <th>物料类型ID</th>
+                        <th>物料类型</th>
+                        <th>型号名称</th>
+                        <th class="text-right">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#dataSource}}
+                    {{#listData}}
+                    <tr data-rowdata="{{rowData}}">
+                        <td>{{materialModelId}}</td>
+                        <td>{{materialTypeStr}}</td>
+                        <td>{{modelName}}</td>
+                        <td class="text-right">
+                            <div class="btn-group text-right">
+                                <a href="#" type="button" class="btn btn-default btn-xs {{class}} chooseButton">选择</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {{/listData}}
+                    {{^listData}}
+                    <tr>
+                        <td valign="top" colspan="14" class="text-center">没有查询到物料信息</td>
+                    </tr>
+                    {{/listData}}
+                    {{/dataSource}}
+                    </tbody>
+                </script>
+                <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="chooseMaterialModalDataListTable"></table>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                    #parse("component/pager.vm")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

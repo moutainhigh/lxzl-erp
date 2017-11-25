@@ -38,26 +38,53 @@
                                                     {{/materialType}}
                                                 </script>
                                                 <label class="field select">
-                                                    <select id="materialType" name="materialType">
+                                                    <select id="materialType" name="materialType" class="required">
                                                         <option value="">请选择</option>
                                                     </select>
                                                     <i class="arrow double"></i>
                                                 </label>
                                             </div>
                                             <div class="col-md-4">
-                                                <label for="userName" class="field-label">物料类别</label>
-                                                <label class="field select">
-                                                    <select id="categoryId" name="categoryId">
-                                                        <option value="">请选择</option>
-                                                    </select>
-                                                    <i class="arrow double"></i>
-                                                </label>
+                                                <label for="userName" class="field-label">物料型号</label>
+                                                <div class="smart-widget sm-right smr-50">
+                                                    <label class="field">
+                                                        <input type="hidden" value="" name="materialModelId" />
+                                                        <input type="text" name="modelName" id="modelName" class="gui-input" placeholder="请选择物料型号" readonly />
+                                                    </label>
+                                                    <button type="button" class="button btn-primary bradiusN chooseMaterialModalButton"><i class="fa fa-search"></i></button>
+                                                </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="userName" class="field-label">物料名称</label>
                                                 <label for="materialName" class="field prepend-icon">
-                                                    <input type="text" name="materialName" id="materialName" class="gui-input" />
+                                                    <input type="text" name="materialName" id="materialName" class="gui-input required" />
                                                     <label for="materialName" class="field-icon"><i class="fa fa-tag"></i></label>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="section row">
+                                            <div class="col-md-4">
+                                                <label for="userName" class="field-label">物料值(例如内存大小数值)</label>
+                                                <label for="materialCapacityValue" class="field prepend-icon">
+                                                    <input type="text" name="materialCapacityValue" id="materialCapacityValue number" class="gui-input" />
+                                                    <label for="materialCapacityValue" class="field-icon"><i class="fa fa-tag"></i></label>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="userName" class="field-label">是否上架</label>
+                                                <label class="field select">
+                                                    <select id="isRent" name="isRent">
+                                                        <option value="1">是</option>
+                                                        <option value="0">否</option>
+                                                    </select>
+                                                    <i class="arrow"></i>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="materialPrice" class="field-label">本身价值</label>
+                                                <label for="materialPrice" class="field select prepend-icon">
+                                                    <input type="text" name="materialPrice" id="materialPrice" class="gui-input required moneyNumber" />
+                                                    <label for="materialPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                                 </label>
                                             </div>
                                         </div>
@@ -66,31 +93,22 @@
                                             <div class="col-md-4">
                                                 <label for="userName" class="field-label">次租价</label>
                                                 <label for="timeRentPrice" class="field prepend-icon">
-                                                    <input type="text" name="timeRentPrice" id="timeRentPrice" class="gui-input" />
+                                                    <input type="text" name="timeRentPrice" id="timeRentPrice" class="gui-input required moneyNumber" />
                                                     <label for="timeRentPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                                 </label>
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="userName" class="field-label">日租价</label>
                                                 <label for="dayRentPrice" class="field prepend-icon">
-                                                    <input type="text" name="dayRentPrice" id="dayRentPrice" class="gui-input" />
+                                                    <input type="text" name="dayRentPrice" id="dayRentPrice" class="gui-input required moneyNumber" />
                                                     <label for="dayRentPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                                 </label>
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="monthRentPrice" class="field-label">月租价</label>
                                                 <label for="monthRentPrice" class="field prepend-icon">
-                                                    <input type="text" name="monthRentPrice" id="monthRentPrice" class="gui-input" />
+                                                    <input type="text" name="monthRentPrice" id="monthRentPrice" class="gui-input required moneyNumber" />
                                                     <label for="monthRentPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="section row">
-                                            <div class="col-md-12">
-                                                <label for="materialPrice" class="field-label">本身价值</label>
-                                                <label for="materialPrice" class="field prepend-icon">
-                                                    <input type="text" name="materialPrice" id="materialPrice" class="gui-input" />
-                                                    <label for="materialPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                                 </label>
                                             </div>
                                         </div>
@@ -114,40 +132,6 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <script type="text/html" id="materialPropertiesTpl">
-                                            <div class="section-divider mv40"><span> 物料属性  </span></div>
-                                            {{#properties}}
-                                            <div class="col-md-3 pad-r40 border-right">
-                                                <div class="panel">
-                                                    <div class="panel-heading pn ph8">
-                                                        <span>{{propertyName}}</span>
-                                                    </div>
-                                                    <div class="panel-body nano nano-default affix rtlnao" style="height: 200px">
-                                                        <div class="nano-content">
-                                                            <div class="option-group field p10">
-                                                                {{#propertyValueList}}
-                                                                {{#list}}
-                                                                <label class="option option-primary mb10 block">
-                                                                    <input type="radio" name="materialPropertyRido" class="materialPropertyRido" value="{{categoryPropertyValueId}}" data-property="{{property}}" />
-                                                                    <span class="radio"></span> {{propertyValueName}}
-                                                                </label>
-                                                                {{/list}}
-                                                                {{/propertyValueList}}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {{/properties}}
-
-                                        </script>
-
-
-                                        <div class="section row">
-                                            <div class="col-md-12" id="materialPropertiesContainer"></div>
-                                        </div>
-
                                     </div>
                                     <div class="panel-footer text-right">
                                         <button type="submit" class="button btn-primary"> 确定 </button>
@@ -169,7 +153,7 @@
 
     <script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.material.add.js');
+        management_load_script('${staticManagement}/js','manage.material.add.js','modal.choose.material.modal.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

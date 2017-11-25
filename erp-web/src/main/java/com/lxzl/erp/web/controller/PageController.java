@@ -289,5 +289,9 @@ public class PageController extends BaseController {
     public String materialChoose() {
         return "/component/material/chooseModal";
     }
-
+    //选择物料型号
+    @RequestMapping("/material-modal/choose")
+    public String materialModalChoose() {
+        return "/component/materialModal/chooseModal";
+    }
 }
