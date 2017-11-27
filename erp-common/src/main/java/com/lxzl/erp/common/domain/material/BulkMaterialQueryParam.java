@@ -21,6 +21,7 @@ public class BulkMaterialQueryParam extends BasePageParam {
     private Integer bulkMaterialType;
     private Date createStartTime;
     private Date createEndTime;
+    private Integer currentWarehouseId;
 
     public Integer getMaterialId() {
         return materialId;
@@ -68,5 +69,13 @@ public class BulkMaterialQueryParam extends BasePageParam {
 
     public void setCreateEndTime(Date createEndTime) {
         this.createEndTime = createEndTime;
+    }
+
+    public Integer getCurrentWarehouseId() {
+        return currentWarehouseId;
+    }
+
+    public void setCurrentWarehouseId(Integer currentWarehouseId) {
+        this.currentWarehouseId = currentWarehouseId;
     }
 }

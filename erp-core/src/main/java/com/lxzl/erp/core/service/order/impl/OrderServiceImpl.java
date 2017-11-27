@@ -364,6 +364,8 @@ public class OrderServiceImpl implements OrderService {
                 orderProductEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
                 orderProductEquipmentDO.setExpectReturnTime(expectReturnTime);
                 orderProductEquipmentDO.setExpectRentAmount(expectRentAmount);
+                orderProductEquipmentDO.setActualRentAmount(BigDecimal.ZERO);
+                orderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderProductEquipmentDO.setCreateTime(currentTime);
                 orderProductEquipmentDO.setCreateUser(loginUser.getUserId().toString());
                 orderProductEquipmentDO.setUpdateTime(currentTime);
@@ -380,7 +382,7 @@ public class OrderServiceImpl implements OrderService {
             if ((orderMaterial.getBulkMaterialNoList() == null || orderMaterial.getBulkMaterialNoList().size() == 0)) {
                 throw new BusinessException(ErrorCode.ORDER_PRODUCT_EQUIPMENT_NOT_NULL);
             }
-            if (orderMaterial.getBulkMaterialNoList().size() != orderMaterial.getMaterialCount()) {
+            if (orderMaterial.getBulkMaterialNoList().size() != orderMaterialDO.getMaterialCount()) {
                 throw new BusinessException(ErrorCode.ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR);
             }
 
@@ -402,6 +404,8 @@ public class OrderServiceImpl implements OrderService {
                 orderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
                 orderMaterialBulkDO.setExpectReturnTime(expectReturnTime);
                 orderMaterialBulkDO.setExpectRentAmount(expectRentAmount);
+                orderMaterialBulkDO.setActualRentAmount(BigDecimal.ZERO);
+                orderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderMaterialBulkDO.setCreateTime(currentTime);
                 orderMaterialBulkDO.setCreateUser(loginUser.getUserId().toString());
                 orderMaterialBulkDO.setUpdateTime(currentTime);
@@ -609,7 +613,7 @@ public class OrderServiceImpl implements OrderService {
             BigDecimal totalDepositAmount = new BigDecimal(0.0);
             BigDecimal totalCreditDepositAmount = new BigDecimal(0.0);
             for (OrderProductDO orderProductDO : orderProductDOList) {
-                ServiceResult<String, Product> productServiceResult = productService.queryProductById(orderProductDO.getProductId(), orderProductDO.getProductSkuId());
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
                 Product product = productServiceResult.getResult();
                 orderProductDO.setProductName(product.getProductName());
                 ProductSku thisProductSku = CollectionUtil.isNotEmpty(product.getProductSkuList()) ? product.getProductSkuList().get(0) : null;

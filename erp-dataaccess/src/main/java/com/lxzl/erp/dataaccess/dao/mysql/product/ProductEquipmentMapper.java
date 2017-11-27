@@ -14,6 +14,6 @@ public interface ProductEquipmentMapper extends BaseMysqlDAO<ProductEquipmentDO>
     Integer updateList(@Param("productEquipmentDOList")List<ProductEquipmentDO> productEquipmentDOList);
 
     ProductEquipmentDO findByEquipmentNo(@Param("equipmentNo") String equipmentNo);
-    Integer findProductEquipmentCountByParams(@Param("maps") Map<String, Object> paramMap);
-    List<ProductEquipmentDO> findProductEquipmentByParams(@Param("maps") Map<String, Object> paramMap);
+    Integer listCount(@Param("maps") Map<String, Object> paramMap);
+    List<ProductEquipmentDO> listPage(@Param("maps") Map<String, Object> paramMap);
 }

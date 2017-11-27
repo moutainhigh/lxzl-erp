@@ -4,11 +4,8 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
-import com.lxzl.erp.common.domain.material.pojo.BulkMaterialOutStorage;
 import com.lxzl.erp.common.domain.material.pojo.MaterialInStorage;
-import com.lxzl.erp.common.domain.product.ProductEquipmentBulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
-import com.lxzl.erp.common.domain.product.pojo.ProductEquipmentOutStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.user.pojo.Role;
@@ -547,7 +544,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         maps.put("start", 0);
         maps.put("pageSize", Integer.MAX_VALUE);
         maps.put("productEquipmentQueryParam", param);
-        Integer productEquipmentOldCount = productEquipmentMapper.findProductEquipmentCountByParams(maps);
+        Integer productEquipmentOldCount = productEquipmentMapper.listCount(maps);
         productEquipmentOldCount = productEquipmentOldCount == null ? 0 : productEquipmentOldCount;
 
 

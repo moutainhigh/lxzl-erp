@@ -883,6 +883,8 @@ CREATE TABLE `erp_order` (
   `pay_mode` int(11) NOT NULL DEFAULT '0' COMMENT '支付方式：1先用后付，2先付后用',
   `total_product_count` int(11) NOT NULL DEFAULT '0' COMMENT '商品总数',
   `total_product_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品总价',
+  `total_material_count` int(11) NOT NULL DEFAULT '0' COMMENT '物料总数',
+  `total_material_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '物料总价',
   `total_order_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '订单总价，实际支付价格',
   `total_discount_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '共计优惠金额',
   `logistics_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '运费',
@@ -993,8 +995,6 @@ CREATE TABLE `erp_order_material_bulk` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单物料散料表';
 
-
-
 DROP TABLE if exists `erp_order_consign_info`;
 CREATE TABLE `erp_order_consign_info` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
@@ -1015,13 +1015,116 @@ CREATE TABLE `erp_order_consign_info` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单收货地址表';
 
 
-  ---------------------------------------租赁退还订单-------------------------------------------------
-  DROP TABLE if exists `erp_return_order`;
+
+-- -------------------------------------货物调拨单（库房间调拨）-------------------------------------------------
+DROP TABLE if exists `erp_deployment_order`;
+CREATE TABLE `erp_deployment_order` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `deployment_order_no` varchar(100) NOT NULL COMMENT '调配单编号',
+  `deployment_type` int(11) NOT NULL COMMENT '调配类型，1借调，2售调',
+  `src_warehouse_id` int(20) COMMENT '源仓库ID',
+  `src_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '源仓位ID',
+  `target_warehouse_id` int(20) NOT NULL COMMENT '目标仓库ID',
+  `target_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '目标仓位ID',
+  `deployment_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '调配单状态，0未提交，1审批中，2处理中，3确认收货',
+  `total_product_count` int(11) NOT NULL DEFAULT '0' COMMENT '商品总数',
+  `total_product_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品总价',
+  `total_material_count` int(11) NOT NULL DEFAULT '0' COMMENT '物料总数',
+  `total_material_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '物料总价',
+  `total_order_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '订单总价',
+  `total_discount_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '共计优惠金额',
+  `expect_return_time` datetime DEFAULT NULL COMMENT '预计归还时间',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_deployment_order_no` (`deployment_order_no`)
+) ENGINE=InnoDB AUTO_INCREMENT=2000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='货物库房间调配单';
+
+
+DROP TABLE if exists `erp_deployment_order_product`;
+CREATE TABLE `erp_deployment_order_product` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `deployment_order_id` int(20) NOT NULL COMMENT '调拨单ID',
+  `deployment_order_no` varchar(100) NOT NULL COMMENT '货物调拨单编号',
+  `deployment_product_sku_id` int(20) NOT NULL  COMMENT '货物调拨单商品SKU_ID',
+  `deployment_product_unit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品单价',
+  `deployment_product_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品总价格',
+  `deployment_product_sku_count` int(11) NOT NULL DEFAULT 0 COMMENT '货物调拨单商品SKU数量',
+  `deployment_product_sku_snapshot` text COMMENT '货物调拨单商品SKU快照',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='货物调拨商品项表';
+
+DROP TABLE if exists `erp_deployment_order_material`;
+CREATE TABLE `erp_deployment_order_material` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `deployment_order_id` int(20) NOT NULL COMMENT '货物调拨单ID',
+  `deployment_order_no` varchar(100) NOT NULL COMMENT '货物调拨单编号',
+  `deployment_material_id` int(20) NOT NULL COMMENT '货物调拨物料ID',
+  `deployment_material_unit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '物料单价',
+  `deployment_material_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '物料总价格',
+  `deployment_product_material_count` int(11) COMMENT '货物调拨物料数量',
+  `deployment_product_material_snapshot` text COMMENT '货物调拨物料快照',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='货物调拨物料项表';
+
+DROP TABLE if exists `erp_deployment_order_product_equipment`;
+CREATE TABLE `erp_deployment_order_product_equipment` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `deployment_order_product_id` int(20) NOT NULL COMMENT '货物调拨商品项ID',
+  `deployment_order_id` int(20) NOT NULL COMMENT '货物调拨单ID',
+  `deployment_order_no` varchar(100) NOT NULL COMMENT '货物调拨单编号',
+  `equipment_id` int(20) NOT NULL COMMENT '设备ID',
+  `equipment_no` varchar(100) NOT NULL COMMENT '设备编号',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='货物调拨商品项设备表';
+
+DROP TABLE if exists `erp_deployment_order_material_bulk`;
+CREATE TABLE `erp_deployment_order_material_bulk` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `deployment_order_material_id` int(20) NOT NULL COMMENT '货物调拨物料项ID',
+  `deployment_order_id` int(20) NOT NULL COMMENT '货物调拨单ID',
+  `deployment_order_no` varchar(100) NOT NULL COMMENT '货物调拨单编号',
+  `bulk_material_id` int(20) NOT NULL COMMENT '散料ID',
+  `bulk_material_no` varchar(100) NOT NULL COMMENT '散料编号',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='货物调拨物料项散料表';
+
+
+-- -------------------------------------租赁退还订单-------------------------------------------------
+DROP TABLE if exists `erp_return_order`;
 CREATE TABLE `erp_return_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `return_no` varchar(100) NOT NULL COMMENT '退还编号',
-  `customer_id` int(20) NOT NULL AUTO_INCREMENT COMMENT '客户ID',
-  `customer_no` varchar(100) NOT NULL AUTO_INCREMENT COMMENT '客户编号',
+  `return_order_no` varchar(100) NOT NULL COMMENT '退还编号',
+  `customer_id` int(20) NOT NULL COMMENT '客户ID',
+  `customer_no` varchar(100) NOT NULL COMMENT '客户编号',
   `is_charging` int(11) NOT NULL COMMENT '是否计租赁费用',
   `total_return_product_count` int(11) NOT NULL DEFAULT '0' COMMENT '退还商品总数',
   `total_return_material_count` int(11) NOT NULL DEFAULT '0' COMMENT '退还物料总数',
@@ -1040,17 +1143,17 @@ CREATE TABLE `erp_return_order` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_order_no` (`order_no`)
+  UNIQUE KEY `index_return_no` (`return_order_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁退还订单表';
 
 DROP TABLE if exists `erp_return_order_product`;
 CREATE TABLE `erp_return_order_product` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `return_id` int(20) NOT NULL COMMENT '退还ID',
-  `return_no` varchar(100) NOT NULL COMMENT '退还编号',
+  `return_order_id` int(20) NOT NULL COMMENT '退还ID',
+  `return_order_no` varchar(100) NOT NULL COMMENT '退还编号',
   `return_product_sku_id` int(20) NOT NULL  COMMENT '退还商品SKU_ID',
   `return_product_sku_count` int(11) NOT NULL DEFAULT 0 COMMENT '退还商品SKU数量',
-  `return_product_sku_snapshot` text '退还商品SKU快照',
+  `return_product_sku_snapshot` text COMMENT '退还商品SKU快照',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -1063,11 +1166,11 @@ CREATE TABLE `erp_return_order_product` (
 DROP TABLE if exists `erp_return_order_material`;
 CREATE TABLE `erp_return_order_material` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `return_id` int(20) NOT NULL COMMENT '退还ID',
-  `return_no` varchar(100) NOT NULL COMMENT '退还编号',
-  `return_material_id` int(20) NOT NULL '退还物料ID',
+  `return_order_id` int(20) NOT NULL COMMENT '退还ID',
+  `return_order_no` varchar(100) NOT NULL COMMENT '退还编号',
+  `return_material_id` int(20) NOT NULL COMMENT '退还物料ID',
   `return_product_material_count` int(11) NOT NULL DEFAULT 0 COMMENT '退还物料数量',
-  `return_product_material_snapshot` text '退还物料快照',
+  `return_product_material_snapshot` text COMMENT '退还物料快照',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -1081,8 +1184,8 @@ DROP TABLE if exists `erp_return_order_product_equipment`;
 CREATE TABLE `erp_return_order_product_equipment` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `return_order_product_id` int(20) NOT NULL COMMENT '租赁退还商品项ID',
-  `return_id` int(20) NOT NULL COMMENT '退还ID',
-  `return_no` varchar(100) NOT NULL COMMENT '退还编号',
+  `return_order_id` int(20) NOT NULL COMMENT '退还ID',
+  `return_order_no` varchar(100) NOT NULL COMMENT '退还编号',
   `equipment_id` int(20) NOT NULL COMMENT '设备ID',
   `equipment_no` varchar(100) NOT NULL COMMENT '设备编号',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -1098,8 +1201,8 @@ DROP TABLE if exists `erp_return_order_material_bulk`;
 CREATE TABLE `erp_return_order_material_bulk` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `return_order_material_id` int(20) NOT NULL COMMENT '租赁退还物料项ID',
-  `return_id` int(20) NOT NULL COMMENT '退还ID',
-  `return_no` varchar(100) NOT NULL COMMENT '退还编号',
+  `return_order_id` int(20) NOT NULL COMMENT '退还ID',
+  `return_order_no` varchar(100) NOT NULL COMMENT '退还编号',
   `bulk_material_id` int(20) NOT NULL COMMENT '散料ID',
   `bulk_material_no` varchar(100) NOT NULL COMMENT '散料编号',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -1114,8 +1217,8 @@ CREATE TABLE `erp_return_order_material_bulk` (
 DROP TABLE if exists `erp_return_order_consign_info`;
 CREATE TABLE `erp_return_order_consign_info` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `return_id` int(20) NOT NULL COMMENT '退还ID',
-  `return_no` varchar(100) NOT NULL COMMENT '退还编号',
+  `return_order_id` int(20) NOT NULL COMMENT '退还ID',
+  `return_order_no` varchar(100) NOT NULL COMMENT '退还编号',
   `consignee_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '收货人姓名',
   `consignee_phone` varchar(24) CHARACTER SET ascii DEFAULT NULL COMMENT '收货人手机号',
   `province` int(20) DEFAULT NULL COMMENT '省份ID，省份ID',
@@ -1131,7 +1234,7 @@ CREATE TABLE `erp_return_order_consign_info` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁退还订单地址表';
 
-  ---------------------------------------租赁退还订单-------------------------------------------------
+-- -------------------------------------租赁退还订单-------------------------------------------------
 -- ****************************************订单模块**************************************** --
 
 -- ****************************************支付模块**************************************** --

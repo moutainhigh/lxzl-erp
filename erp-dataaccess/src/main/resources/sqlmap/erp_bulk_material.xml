@@ -37,6 +37,11 @@
 		WHERE ebm.id = #{id, jdbcType=INTEGER} AND data_status = 1 
 	</select>
 
+	<select id="findByNo" resultMap="BulkMaterialDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm
+		WHERE ebm.bulk_material_no = #{bulkMaterialNo, jdbcType=VARCHAR} AND data_status = 1
+	</select>
+
 
 	<select id="findByMaterialTypeAndModelId" resultMap="BulkMaterialDO" parameterType="java.util.Map">
 		select
@@ -59,6 +64,9 @@
 			</if>
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != ''">
 				AND ebm.bulk_material_name like CONCAT('%','${maps.bulkMaterialQueryParam.bulkMaterialName}','%' )
+			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.currentWarehouseId != null &amp;&amp; maps.bulkMaterialQueryParam.currentWarehouseId != ''">
+				AND ebm.current_warehouse_id = #{maps.bulkMaterialQueryParam.currentWarehouseId, jdbcType=INTEGER}
 			</if>
 			<if test="maps.materialId != null">
 				and ebm.material_id = #{maps.materialId, jdbcType=INTEGER}
@@ -83,6 +91,9 @@
 			</if>
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != ''">
 				AND ebm.bulk_material_name like CONCAT('%','${maps.bulkMaterialQueryParam.bulkMaterialName}','%' )
+			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.currentWarehouseId != null &amp;&amp; maps.bulkMaterialQueryParam.currentWarehouseId != ''">
+				AND ebm.current_warehouse_id = #{maps.bulkMaterialQueryParam.currentWarehouseId, jdbcType=INTEGER}
 			</if>
 			<if test="maps.materialId != null">
 				and ebm.material_id = #{maps.materialId, jdbcType=INTEGER}

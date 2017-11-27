@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.deploymentOrder.DeploymentOrderProductMapper">
+
+	<resultMap id="DeploymentOrderProductDO" type="com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderProductDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="deployment_order_id" jdbcType="INTEGER" property="deploymentOrderId" />
+		<result column="deployment_order_no" jdbcType="VARCHAR" property="deploymentOrderNo" />
+		<result column="deployment_product_sku_id" jdbcType="INTEGER" property="deploymentProductSkuId" />
+		<result column="deployment_product_unit_amount" jdbcType="DECIMAL" property="deploymentProductUnitAmount" />
+		<result column="deployment_product_amount" jdbcType="DECIMAL" property="deploymentProductAmount" />
+		<result column="deployment_product_sku_count" jdbcType="INTEGER" property="deploymentProductSkuCount" />
+		<result column="deployment_product_sku_snapshot" jdbcType="VARCHAR" property="deploymentProductSkuSnapshot" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		edop.id,edop.deployment_order_id,edop.deployment_order_no,edop.deployment_product_sku_id,edop.deployment_product_unit_amount,edop.deployment_product_amount,edop.deployment_product_sku_count,edop.deployment_product_sku_snapshot,edop.data_status,edop.remark,edop.create_time,edop.create_user,edop.update_time,edop.update_user
+	</sql>
+
+	<select id="findById" resultMap="DeploymentOrderProductDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_deployment_order_product edop 
+		WHERE edop.id = #{id, jdbcType=INTEGER} AND edop.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(edop.id) FROM erp_deployment_order_product edop 
+		<where>
+			<if test="true">
+				AND edop.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="DeploymentOrderProductDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_deployment_order_product edop 
+		<where>
+			<if test="true">
+				AND edop.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="deploymentOrderId != null">
+				deployment_order_id = #{deploymentOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="deploymentOrderNo != null">
+				deployment_order_no = #{deploymentOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="deploymentProductSkuId != null">
+				deployment_product_sku_id = #{deploymentProductSkuId,jdbcType=INTEGER},
+			</if>
+			<if test="deploymentProductUnitAmount != null">
+				deployment_product_unit_amount = #{deploymentProductUnitAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="deploymentProductAmount != null">
+				deployment_product_amount = #{deploymentProductAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="deploymentProductSkuCount != null">
+				deployment_product_sku_count = #{deploymentProductSkuCount,jdbcType=INTEGER},
+			</if>
+			<if test="deploymentProductSkuSnapshot != null">
+				deployment_product_sku_snapshot = #{deploymentProductSkuSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderProductDO">
+		INSERT INTO erp_deployment_order_product <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderProductDO">
+		UPDATE erp_deployment_order_product <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<insert id="saveList" parameterType="java.util.ArrayList">
+		insert into erp_deployment_order_product (deployment_order_id,deployment_order_no,deployment_product_sku_id,deployment_product_unit_amount,deployment_product_amount,deployment_product_sku_count,deployment_product_sku_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
+		<foreach item="deploymentOrderProductDO" collection="deploymentOrderProductDOList" separator="UNION ALL">
+			SELECT edo.id,#{deploymentOrderProductDO.deploymentOrderNo},#{deploymentOrderProductDO.deploymentProductSkuId},#{deploymentOrderProductDO.deploymentProductUnitAmount},#{deploymentOrderProductDO.deploymentProductAmount},#{deploymentOrderProductDO.deploymentProductSkuCount},#{deploymentOrderProductDO.deploymentProductSkuSnapshot},
+			#{deploymentOrderProductDO.dataStatus},#{deploymentOrderProductDO.remark},#{deploymentOrderProductDO.createTime},#{deploymentOrderProductDO.createUser},#{deploymentOrderProductDO.updateTime},#{deploymentOrderProductDO.updateUser}
+			FROM erp_deployment_order edo WHERE edo.deployment_order_no = #{deploymentOrderProductDO.deploymentOrderNo}
+		</foreach>
+	</insert>
+</mapper>

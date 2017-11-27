@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.deploymentOrder.DeploymentOrderMaterialMapper">
+
+	<resultMap id="DeploymentOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderMaterialDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="deployment_order_id" jdbcType="INTEGER" property="deploymentOrderId" />
+		<result column="deployment_order_no" jdbcType="VARCHAR" property="deploymentOrderNo" />
+		<result column="deployment_material_id" jdbcType="INTEGER" property="deploymentMaterialId" />
+		<result column="deployment_material_unit_amount" jdbcType="DECIMAL" property="deploymentMaterialUnitAmount" />
+		<result column="deployment_material_amount" jdbcType="DECIMAL" property="deploymentMaterialAmount" />
+		<result column="deployment_product_material_count" jdbcType="INTEGER" property="deploymentProductMaterialCount" />
+		<result column="deployment_product_material_snapshot" jdbcType="VARCHAR" property="deploymentProductMaterialSnapshot" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		edom.id,edom.deployment_order_id,edom.deployment_order_no,edom.deployment_material_id,edom.deployment_material_unit_amount,edom.deployment_material_amount,edom.deployment_product_material_count,edom.deployment_product_material_snapshot,edom.data_status,edom.remark,edom.create_time,edom.create_user,edom.update_time,edom.update_user
+	</sql>
+
+	<select id="findById" resultMap="DeploymentOrderMaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_deployment_order_material edom 
+		WHERE edom.id = #{id, jdbcType=INTEGER} AND edom.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(edom.id) FROM erp_deployment_order_material edom 
+		<where>
+			<if test="true">
+				AND edom.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="DeploymentOrderMaterialDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_deployment_order_material edom 
+		<where>
+			<if test="true">
+				AND edom.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="deploymentOrderId != null">
+				deployment_order_id = #{deploymentOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="deploymentOrderNo != null">
+				deployment_order_no = #{deploymentOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="deploymentMaterialId != null">
+				deployment_material_id = #{deploymentMaterialId,jdbcType=INTEGER},
+			</if>
+			<if test="deploymentMaterialUnitAmount != null">
+				deployment_material_unit_amount = #{deploymentMaterialUnitAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="deploymentMaterialAmount != null">
+				deployment_material_amount = #{deploymentMaterialAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="deploymentProductMaterialCount != null">
+				deployment_product_material_count = #{deploymentProductMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="deploymentProductMaterialSnapshot != null">
+				deployment_product_material_snapshot = #{deploymentProductMaterialSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderMaterialDO">
+		INSERT INTO erp_deployment_order_material <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderMaterialDO">
+		UPDATE erp_deployment_order_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<insert id="saveList" parameterType="java.util.ArrayList">
+		insert into erp_deployment_order_material (id,deployment_order_id,deployment_order_no,deployment_material_id,deployment_material_unit_amount,deployment_material_amount,deployment_product_material_count,deployment_product_material_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
+		<foreach item="deploymentOrderMaterialDO" collection="deploymentOrderMaterialDOList" separator="UNION ALL">
+			SELECT edo.id,#{deploymentOrderMaterialDO.deploymentOrderNo},#{deploymentOrderMaterialDO.deploymentMaterialId},#{deploymentOrderMaterialDO.deploymentMaterialUnitAmount},#{deploymentOrderMaterialDO.deploymentMaterialAmount},#{deploymentOrderMaterialDO.deploymentProductMaterialCount},#{deploymentOrderMaterialDO.deploymentProductMaterialSnapshot},
+			#{deploymentOrderMaterialDO.dataStatus},#{deploymentOrderMaterialDO.remark},#{deploymentOrderMaterialDO.createTime},#{deploymentOrderMaterialDO.createUser},#{deploymentOrderMaterialDO.updateTime},#{deploymentOrderMaterialDO.updateUser}
+			FROM erp_deployment_order edo WHERE edo.deployment_order_no = #{deploymentOrderMaterialDO.deploymentOrderNo}
+		</foreach>
+	</insert>
+</mapper>

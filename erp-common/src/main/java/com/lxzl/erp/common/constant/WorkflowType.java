@@ -15,4 +15,8 @@ public class WorkflowType {
      * 订单信息审批
      */
     public static Integer WORKFLOW_TYPE_ORDER_INFO = 2;
+    /**
+     * 调配单审批
+     */
+    public static Integer WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO = 3;
 }
