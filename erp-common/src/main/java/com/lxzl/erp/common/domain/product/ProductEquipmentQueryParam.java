@@ -17,6 +17,8 @@ public class ProductEquipmentQueryParam extends PageQuery implements Serializabl
     private Date createStartTime;
     private Date createEndTime;
 
+    private Integer currentWarehouseId;
+
     public Integer getProductEquipmentId() {
         return productEquipmentId;
     }
@@ -79,5 +81,13 @@ public class ProductEquipmentQueryParam extends PageQuery implements Serializabl
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public Integer getCurrentWarehouseId() {
+        return currentWarehouseId;
+    }
+
+    public void setCurrentWarehouseId(Integer currentWarehouseId) {
+        this.currentWarehouseId = currentWarehouseId;
     }
 }

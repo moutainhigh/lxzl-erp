@@ -117,7 +117,7 @@
         LEFT JOIN erp_product_img epi ON epi.product_id = equipment_main.product_id AND epi.data_status = 1 AND epi.img_type = 1
     </select>
 
-    <select id="findProductEquipmentByParams" resultMap="ProductEquipmentDO" parameterType="map">
+    <select id="listPage" resultMap="ProductEquipmentDO" parameterType="map">
         SELECT product_equipment.*
         <trim prefix=",">
             <include refid="img_column_List" />
@@ -130,28 +130,31 @@
             from erp_product_equipment epe
             INNER JOIN erp_product mp ON epe.product_id = mp.id
             <where>
-                <if test="maps.productEquipmentQueryParam.productEquipmentId != null">
+                <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.productEquipmentId != null">
                     and epe.id = #{maps.productEquipmentQueryParam.productEquipmentId, jdbcType=INTEGER}
                 </if>
-                <if test="maps.productEquipmentQueryParam.equipmentNo != null &amp;&amp; maps.productEquipmentQueryParam.equipmentNo != ''">
+                <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.equipmentNo != null &amp;&amp; maps.productEquipmentQueryParam.equipmentNo != ''">
                     and epe.equipment_no = #{maps.productEquipmentQueryParam.equipmentNo, jdbcType=INTEGER}
                 </if>
-                <if test="maps.productEquipmentQueryParam.productId != null">
+                <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.productId != null">
                     and epe.product_id = #{maps.productEquipmentQueryParam.productId, jdbcType=INTEGER}
                 </if>
-                <if test="maps.productEquipmentQueryParam.productName != null &amp;&amp; maps.productEquipmentQueryParam.productName != ''">
+                <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.productName != null &amp;&amp; maps.productEquipmentQueryParam.productName != ''">
                     and mp.product_name like CONCAT('%','${maps.productEquipmentQueryParam.productName}','%' )
                 </if>
                 <if test="maps.productEquipmentQueryParam.skuId != null">
                     and epe.sku_id = #{maps.productEquipmentQueryParam.skuId, jdbcType=INTEGER}
                 </if>
-                <if test="maps.productEquipmentQueryParam.equipmentStatus != null">
+                <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.equipmentStatus != null">
                     and epe.equipment_status = #{maps.productEquipmentQueryParam.equipmentStatus, jdbcType=INTEGER}
                 </if>
-                <if test="maps.productEquipmentQueryParam.createStartTime != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != ''">
+                <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.currentWarehouseId != null">
+                    and epe.current_warehouse_id = #{maps.productEquipmentQueryParam.currentWarehouseId, jdbcType=INTEGER}
+                </if>
+                <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != ''">
                     <![CDATA[ AND epe.create_time >= #{maps.productEquipmentQueryParam.createStartTime} ]]>
                 </if>
-                <if test="maps.productEquipmentQueryParam.createEndTime != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != ''">
+                <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != ''">
                     <![CDATA[ AND epe.create_time <= #{maps.productEquipmentQueryParam.createEndTime} ]]>
                 </if>
                 <if test="true">
@@ -164,33 +167,36 @@
         ORDER BY product_equipment.create_time DESC,epi.is_main DESC
     </select>
 
-    <select id="findProductEquipmentCountByParams" resultType="java.lang.Integer" parameterType="map">
+    <select id="listCount" resultType="java.lang.Integer" parameterType="map">
         select count(epe.id)
         from erp_product_equipment epe
         INNER JOIN erp_product mp ON epe.product_id = mp.id
         <where>
-            <if test="maps.productEquipmentQueryParam.productEquipmentId != null">
+            <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.productEquipmentId != null">
                 and epe.id = #{maps.productEquipmentQueryParam.productEquipmentId, jdbcType=INTEGER}
             </if>
-            <if test="maps.productEquipmentQueryParam.equipmentNo != null &amp;&amp; maps.productEquipmentQueryParam.equipmentNo != ''">
+            <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.equipmentNo != null &amp;&amp; maps.productEquipmentQueryParam.equipmentNo != ''">
                 and epe.equipment_no = #{maps.productEquipmentQueryParam.equipmentNo, jdbcType=INTEGER}
             </if>
-            <if test="maps.productEquipmentQueryParam.productName != null &amp;&amp; maps.productEquipmentQueryParam.productName != ''">
-                and mp.product_name like CONCAT('%','${maps.productEquipmentQueryParam.productName}','%' )
-            </if>
-            <if test="maps.productEquipmentQueryParam.productId != null">
+            <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.productId != null">
                 and epe.product_id = #{maps.productEquipmentQueryParam.productId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.productName != null &amp;&amp; maps.productEquipmentQueryParam.productName != ''">
+                and mp.product_name like CONCAT('%','${maps.productEquipmentQueryParam.productName}','%' )
             </if>
             <if test="maps.productEquipmentQueryParam.skuId != null">
                 and epe.sku_id = #{maps.productEquipmentQueryParam.skuId, jdbcType=INTEGER}
             </if>
-            <if test="maps.productEquipmentQueryParam.equipmentStatus != null">
+            <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.equipmentStatus != null">
                 and epe.equipment_status = #{maps.productEquipmentQueryParam.equipmentStatus, jdbcType=INTEGER}
             </if>
-            <if test="maps.productEquipmentQueryParam.createStartTime != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != ''">
+            <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.currentWarehouseId != null">
+                and epe.current_warehouse_id = #{maps.productEquipmentQueryParam.currentWarehouseId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != ''">
                 <![CDATA[ AND epe.create_time >= #{maps.productEquipmentQueryParam.createStartTime} ]]>
             </if>
-            <if test="maps.productEquipmentQueryParam.createEndTime != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != ''">
+            <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != ''">
                 <![CDATA[ AND epe.create_time <= #{maps.productEquipmentQueryParam.createEndTime} ]]>
             </if>
             <if test="true">
