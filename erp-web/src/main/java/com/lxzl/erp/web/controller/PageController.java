@@ -191,6 +191,7 @@ public class PageController extends BaseController {
     public String businessCustomerManageEdit() {
         return "/businessCustomerManage/businessCustomerEdit";
     }
+
     //采购管理
     @RequestMapping("/purchase-manage/list")
     public String purchaseManageList() {
