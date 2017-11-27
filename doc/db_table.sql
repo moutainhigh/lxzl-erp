@@ -1053,7 +1053,7 @@ CREATE TABLE `erp_deployment_order_product` (
   `deployment_product_unit_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品单格',
   `deployment_product_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '商品总价格',
   `deployment_product_sku_count` int(11) NOT NULL DEFAULT 0 COMMENT '退还商品SKU数量',
-  `deployment_product_sku_snapshot` text '退还商品SKU快照',
+  `deployment_product_sku_snapshot` text COMMENT '退还商品SKU快照',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -1124,8 +1124,8 @@ CREATE TABLE `erp_deployment_order_material_bulk` (
 CREATE TABLE `erp_return_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `return_order_no` varchar(100) NOT NULL COMMENT '退还编号',
-  `customer_id` int(20) NOT NULL AUTO_INCREMENT COMMENT '客户ID',
-  `customer_no` varchar(100) NOT NULL AUTO_INCREMENT COMMENT '客户编号',
+  `customer_id` int(20) NOT NULL COMMENT '客户ID',
+  `customer_no` varchar(100) NOT NULL COMMENT '客户编号',
   `is_charging` int(11) NOT NULL COMMENT '是否计租赁费用',
   `total_return_product_count` int(11) NOT NULL DEFAULT '0' COMMENT '退还商品总数',
   `total_return_material_count` int(11) NOT NULL DEFAULT '0' COMMENT '退还物料总数',
@@ -1144,7 +1144,7 @@ CREATE TABLE `erp_return_order` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_order_no` (`order_no`)
+  UNIQUE KEY `index_return_no` (`return_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁退还订单表';
 
 DROP TABLE if exists `erp_return_order_product`;
@@ -1154,7 +1154,7 @@ CREATE TABLE `erp_return_order_product` (
   `return_order_no` varchar(100) NOT NULL COMMENT '退还编号',
   `return_product_sku_id` int(20) NOT NULL  COMMENT '退还商品SKU_ID',
   `return_product_sku_count` int(11) NOT NULL DEFAULT 0 COMMENT '退还商品SKU数量',
-  `return_product_sku_snapshot` text '退还商品SKU快照',
+  `return_product_sku_snapshot` text COMMENT '退还商品SKU快照',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -1171,7 +1171,7 @@ CREATE TABLE `erp_return_order_material` (
   `return_order_no` varchar(100) NOT NULL COMMENT '退还编号',
   `return_material_id` int(20) NOT NULL '退还物料ID',
   `return_product_material_count` int(11) NOT NULL DEFAULT 0 COMMENT '退还物料数量',
-  `return_product_material_snapshot` text '退还物料快照',
+  `return_product_material_snapshot` text COMMENT '退还物料快照',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
