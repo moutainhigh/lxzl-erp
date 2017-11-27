@@ -92,4 +92,32 @@ public class OrderTest extends ERPUnTransactionalTest {
         order.setVerifyUser(1);
         TestResult result = getJsonTestResult("/order/cancel", order);
     }
+
+    @Test
+    public void testDelivery() throws Exception {
+        Order order = new Order();
+        order.setOrderNo("O201711272022590091169");
+        order.setVerifyUser(1);
+
+
+        List<OrderProduct> orderProductList = new ArrayList<>();
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setOrderProductId(10);
+        List<String> equipmentNoList = new ArrayList<>();
+        equipmentNoList.add("LX-EQUIPMENT-4000002-2017112010006");
+        orderProduct.setEquipmentNoList(equipmentNoList);
+        orderProductList.add(orderProduct);
+        order.setOrderProductList(orderProductList);
+
+        List<OrderMaterial> orderMaterialList = new ArrayList<>();
+        OrderMaterial orderMaterial = new OrderMaterial();
+        orderMaterial.setOrderMaterialId(4);
+        List<String> bulkMaterialNoList = new ArrayList<>();
+        bulkMaterialNoList.add("BM2017112017070030810028");
+        orderMaterial.setBulkMaterialNoList(bulkMaterialNoList);
+        orderMaterialList.add(orderMaterial);
+        order.setOrderMaterialList(orderMaterialList);
+
+        TestResult result = getJsonTestResult("/order/delivery", order);
+    }
 }

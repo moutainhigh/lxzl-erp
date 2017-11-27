@@ -24,15 +24,84 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<collection property="deploymentOrderProductDOList" resultMap="DeploymentOrderProductDO" />
+		<collection property="deploymentOrderMaterialDOList" resultMap="DeploymentOrderMaterialDO" />
+	</resultMap>
+
+	<resultMap id="DeploymentOrderProductDO" type="com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderProductDO">
+		<id column="product_id" jdbcType="INTEGER" property="id" />
+		<result column="product_deployment_order_id" jdbcType="INTEGER" property="deploymentOrderId" />
+		<result column="product_deployment_order_no" jdbcType="VARCHAR" property="deploymentOrderNo" />
+		<result column="product_deployment_product_sku_id" jdbcType="INTEGER" property="deploymentProductSkuId" />
+		<result column="product_deployment_product_unit_amount" jdbcType="DECIMAL" property="deploymentProductUnitAmount" />
+		<result column="product_deployment_product_amount" jdbcType="DECIMAL" property="deploymentProductAmount" />
+		<result column="product_deployment_product_sku_count" jdbcType="INTEGER" property="deploymentProductSkuCount" />
+		<result column="product_deployment_product_sku_snapshot" jdbcType="VARCHAR" property="deploymentProductSkuSnapshot" />
+		<result column="product_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="product_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="product_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="product_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="product_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="product_update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<resultMap id="DeploymentOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderMaterialDO">
+		<id column="material_id" jdbcType="INTEGER" property="id" />
+		<result column="material_deployment_order_id" jdbcType="INTEGER" property="deploymentOrderId" />
+		<result column="material_deployment_order_no" jdbcType="VARCHAR" property="deploymentOrderNo" />
+		<result column="material_deployment_material_id" jdbcType="INTEGER" property="deploymentMaterialId" />
+		<result column="material_deployment_material_unit_amount" jdbcType="DECIMAL" property="deploymentMaterialUnitAmount" />
+		<result column="material_deployment_material_amount" jdbcType="DECIMAL" property="deploymentMaterialAmount" />
+		<result column="material_deployment_product_material_count" jdbcType="INTEGER" property="deploymentProductMaterialCount" />
+		<result column="material_deployment_product_material_snapshot" jdbcType="VARCHAR" property="deploymentProductMaterialSnapshot" />
+		<result column="material_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="material_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="material_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="material_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="material_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="material_update_user" jdbcType="VARCHAR" property="updateUser" />
 	</resultMap>
 
 	<sql id="column_List">
-		edo.id,edo.deployment_order_no,edo.deployment_type,edo.src_warehouse_id,edo.src_warehouse_position_id,edo.target_warehouse_id,edo.target_warehouse_position_id,edo.deployment_order_status,edo.total_product_count,edo.total_product_amount,edo.total_material_count,edo.total_material_amount,edo.total_order_amount,edo.total_discount_amount,edo.expect_return_time,edo.data_status,edo.remark,edo.create_time,edo.create_user,edo.update_time,edo.update_user
+		edo.id as id,edo.deployment_order_no as deployment_order_no,edo.deployment_type as deployment_type,edo.src_warehouse_id as src_warehouse_id,edo.src_warehouse_position_id as src_warehouse_position_id,edo.target_warehouse_id as target_warehouse_id,edo.target_warehouse_position_id as target_warehouse_position_id,edo.deployment_order_status as deployment_order_status,edo.total_product_count as total_product_count,edo.total_product_amount as total_product_amount,edo.total_material_count as total_material_count,edo.total_material_amount as total_material_amount,edo.total_order_amount as total_order_amount,edo.total_discount_amount as total_discount_amount,edo.expect_return_time as expect_return_time,edo.data_status as data_status,edo.remark as remark,edo.create_time as create_time,edo.create_user as create_user,edo.update_time as update_time,edo.update_user as update_user
+	</sql>
+
+	<sql id="product_column_List">
+		edop.id as product_id,edop.deployment_order_id as product_deployment_order_id,edop.deployment_order_no as product_deployment_order_no,edop.deployment_product_sku_id as product_deployment_product_sku_id,edop.deployment_product_unit_amount as product_deployment_product_unit_amount,edop.deployment_product_amount as product_deployment_product_amount,edop.deployment_product_sku_count as product_deployment_product_sku_count,edop.deployment_product_sku_snapshot as product_deployment_product_sku_snapshot,edop.data_status as product_data_status,edop.remark as product_remark,edop.create_time as product_create_time,edop.create_user as product_create_user,edop.update_time as product_update_time,edop.update_user as product_update_user
+	</sql>
+
+	<sql id="material_column_List">
+		edom.id as material_id,edom.deployment_order_id as material_deployment_order_id,edom.deployment_order_no as material_deployment_order_no,edom.deployment_material_id as material_deployment_material_id,edom.deployment_material_unit_amount as material_deployment_material_unit_amount,edom.deployment_material_amount as material_deployment_material_amount,edom.deployment_product_material_count as material_deployment_product_material_count,edom.deployment_product_material_snapshot as material_deployment_product_material_snapshot,edom.data_status as material_data_status,edom.remark as material_remark,edom.create_time as material_create_time,edom.create_user as material_create_user,edom.update_time as material_update_time,edom.update_user as material_update_user
 	</sql>
 
 	<select id="findById" resultMap="DeploymentOrderDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_deployment_order edo 
-		WHERE edo.id = #{id, jdbcType=INTEGER} AND edo.data_status = 1 
+		SELECT deployment_order_main.*
+		<trim prefix=",">
+			<include refid="product_column_List" />
+		</trim>
+		<trim prefix=",">
+			<include refid="material_column_List" />
+		</trim>
+		FROM (
+			SELECT <include refid="column_List"/> FROM erp_deployment_order edo
+			WHERE edo.id = #{id, jdbcType=INTEGER} AND edo.data_status = 1
+		) deployment_order_main LEFT  JOIN erp_deployment_order_product edop ON edop.deployment_order_id = deployment_order_main.id AND edop.data_status = 1
+		LEFT  JOIN erp_deployment_order_material edom ON edom.deployment_order_id = deployment_order_main.id AND edom.data_status = 1
+	</select>
+
+	<select id="findByNo" resultMap="DeploymentOrderDO" parameterType="java.lang.Integer">
+		SELECT deployment_order_main.*
+		<trim prefix=",">
+			<include refid="product_column_List" />
+		</trim>
+		<trim prefix=",">
+			<include refid="material_column_List" />
+		</trim>
+		FROM (
+			SELECT <include refid="column_List"/> FROM erp_deployment_order edo
+			WHERE edo.deployment_order_no = #{deploymentOrderNo, jdbcType=VARCHAR} AND edo.data_status = 1
+		) deployment_order_main LEFT  JOIN erp_deployment_order_product edop ON edop.deployment_order_id = deployment_order_main.id AND edop.data_status = 1
+		LEFT  JOIN erp_deployment_order_material edom ON edom.deployment_order_id = deployment_order_main.id AND edom.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">

@@ -42,6 +42,7 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
         <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
         <collection property="orderProductDOList" resultMap="OrderProductDO" />
+        <collection property="orderMaterialDOList" resultMap="OrderMaterialDO" />
         <collection property="orderConsignInfoDO" resultMap="OrderConsignInfoDO" />
     </resultMap>
     
