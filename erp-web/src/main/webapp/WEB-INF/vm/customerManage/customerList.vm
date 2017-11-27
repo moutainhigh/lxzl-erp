@@ -3,16 +3,11 @@
 <head>
     <title>凌雄ERP-客户管理-个人客户列表</title>
     #parse("layout/header.vm")
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
-##    <script type="text/javascript">
-##        common_load_css('${staticCommon}/rental/css','dropzone.css');
-##    </script>
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
-<div id="main">
+    <div id="main">
     #parse("layout/navbar.vm")
     #parse("layout/sidebar.vm")
 
@@ -46,7 +41,17 @@
                                 </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <div class="input-group">
-                                        <input type="text" name="workflowReferNo" id="workflowReferNo" class="form-control input-sm bradius" autocomplete="off" placeholder="工作流关联编号">
+                                        <input type="text" name="realName" id="realName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入真实姓名">
+                                    </div>
+                                </div>
+                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                    <div class="input-group">
+                                        <input type="text" name="phone" id="phone" class="form-control input-sm bradius" autocomplete="off" placeholder="输入手机号">
+                                    </div>
+                                </div>
+                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                    <div class="input-group">
+                                        <input type="text" name="customerNo" id="customerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户编号">
                                     </div>
                                 </div>
                                 <script type="text/html" id="workflowTypeSelectTpl">
@@ -73,16 +78,14 @@
                                     </label>
                                 </th>
                                 {{/hasCommonActionButtons}}
-                                <th>工作流ID</th>
-                                <th>工作流编号</th>
-                                <th>类型</th>
-                                <th>关联编号</th>
-                                <th>模板ID</th>
-                                <th>流程当前步骤</th>
-                                <th>流程最后步骤</th>
-                                <th>当前结点ID</th>
-                                <th>当前审批人</th>
-                                <th>审批状态</th>
+                                <th>客户编号</th>
+##                                <th>类型</th>
+                                <th>真实姓名</th>
+                                <th>电子邮件</th>
+                                <th>手机号</th>
+                                <th>地址</th>
+                                <th>创建时间</th>
+                                <th>备注</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
                                 {{/hasRowActionButtons}}
@@ -100,23 +103,19 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{workflowLinkId}}</td>
-                                <th>{{workflowLinkNo}}</th>
-                                <td>{{workflowTypeStr}}</td>
-                                <td>{{workflowReferNo}}</td>
-                                <td>{{workflowTemplateId}}</td>
-                                <td>{{workflowStep}}</td>
-                                <td>{{workflowLastStep}}</td>
-                                <td>{{workflowCurrentNodeId}}</td>
-                                <td>{{currentVerifyUserName}}</td>
-                                <td>{{workflowVerifyStatusStr}}</td>
+                                <td>{{customerNo}}</td>
+##                                <td>{{cutomerTypeValue}}</td>
+                                <td>{{customerPerson.realName}}</td>
+                                <td>{{customerPerson.email}}</td>
+                                <td>{{customerPerson.phone}}</td>
+                                <td>{{addressForamt}}</td>
+                                <td>{{createTimeFormat}}</td>
+                                <td>{{customerPerson.remark}}</td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
                                     <div class="btn-group text-right">
                                         {{#rowActionButtons}}
-                                        {{#buttons}}
                                         <a href="${ctx}{{menuUrl}}?no={{purchaseNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-workflowlinkid="{{workflowLinkId}}">{{text}}</a>
-                                        {{/buttons}}
                                         {{/rowActionButtons}}
                                     </div>
                                 </td>
@@ -125,7 +124,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="14" class="text-center">没有查询到工作流</td>
+                                <td valign="top" colspan="14" class="text-center">没有查询到客户信息</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
@@ -150,21 +149,19 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
-<script type="text/javascript">
-    management_load_script('${staticManagement}/js','manage.audit.js');
-</script>
-<script type="text/javascript">
-    //功能事件初始化
-    Rental.init();
-    Layout.init();
-    AuditManage.init();
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js','manage.customer.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        CustomerManage.init();
 
-    //UI效果初始化
-    Core.init();
-    Demo.init();
+        //UI效果初始化
+        Core.init();
+        Demo.init();
 
-</script>
+    </script>
 </body>
 </html>

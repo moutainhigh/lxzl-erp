@@ -175,27 +175,22 @@ public class PageController extends BaseController {
     }
 
     //企业客户
-    @RequestMapping("/business-customer-manage/list")
+    @RequestMapping("/customer-business-manage/list")
     public String businessCustomerManageList() {
         return "/businessCustomerManage/businessCustomerList";
     }
-    @RequestMapping("/business-customer-manage/detail")
+    @RequestMapping("/customer-business-manage/detail")
     public String businessCustomerManageDetail() {
         return "/businessCustomerManage/businessCustomerDetail";
     }
-    @RequestMapping("/business-customer-manage/add")
+    @RequestMapping("/customer-business-manage/add")
     public String businessCustomerManageAdd() {
         return "/businessCustomerManage/businessCustomerAdd";
     }
-    @RequestMapping("/business-customer-manage/edit")
+    @RequestMapping("/customer-business-manage/edit")
     public String businessCustomerManageEdit() {
         return "/businessCustomerManage/businessCustomerEdit";
     }
-    @RequestMapping("/business-customer-manage/info")
-    public String businessCustomerManageInfo() {
-        return "/businessCustomerManage/businessCustomerInfo";
-    }
-
     //采购管理
     @RequestMapping("/purchase-manage/list")
     public String purchaseManageList() {
