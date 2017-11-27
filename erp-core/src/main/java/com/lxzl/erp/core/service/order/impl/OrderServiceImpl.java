@@ -609,7 +609,7 @@ public class OrderServiceImpl implements OrderService {
             BigDecimal totalDepositAmount = new BigDecimal(0.0);
             BigDecimal totalCreditDepositAmount = new BigDecimal(0.0);
             for (OrderProductDO orderProductDO : orderProductDOList) {
-                ServiceResult<String, Product> productServiceResult = productService.queryProductById(orderProductDO.getProductId(), orderProductDO.getProductSkuId());
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
                 Product product = productServiceResult.getResult();
                 orderProductDO.setProductName(product.getProductName());
                 ProductSku thisProductSku = CollectionUtil.isNotEmpty(product.getProductSkuList()) ? product.getProductSkuList().get(0) : null;

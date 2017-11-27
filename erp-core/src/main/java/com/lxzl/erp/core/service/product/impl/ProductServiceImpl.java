@@ -1,11 +1,9 @@
 package com.lxzl.erp.core.service.product.impl;
 
-import com.lxzl.erp.common.constant.CategoryType;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.*;
 import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -335,15 +333,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ServiceResult<String, Product> queryProductById(Integer productId, Integer productSkuId) {
+    public ServiceResult<String, Product> queryProductBySkuId(Integer productSkuId) {
         ServiceResult<String, Product> result = new ServiceResult<>();
-        if (productId == null) {
-            result.setErrorCode(ErrorCode.PRODUCT_ID_NOT_NULL);
+        if (productSkuId == null) {
+            result.setErrorCode(ErrorCode.PRODUCT_SKU_NOT_NULL);
             return result;
         }
-        ProductDO productDO = productMapper.findByProductId(productId);
-        List<ProductSkuDO> productSkuDOList = new ArrayList<>();
         ProductSkuDO productSkuDO = productSkuMapper.findById(productSkuId);
+        if (productSkuDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        ProductDO productDO = productMapper.findByProductId(productSkuDO.getProductId());
+        List<ProductSkuDO> productSkuDOList = new ArrayList<>();
         productSkuDOList.add(productSkuDO);
         productDO.setProductSkuDOList(productSkuDOList);
         Product product = ProductConverter.convertProductDO(productDO);
@@ -355,7 +357,7 @@ public class ProductServiceImpl implements ProductService {
             productSku.setShouldProductCategoryPropertyValueList(ProductCategoryPropertyConverter.convertProductCategoryPropertyValueDOList(productCategoryPropertyValueDOList));
         }
         Map<String, Object> maps = new HashMap<>();
-        maps.put("productId", productId);
+        maps.put("productId", productSkuDO.getProductId());
         List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findProductCategoryPropertyListByProductId(maps);
         product.setProductCategoryPropertyList(ProductCategoryPropertyConverter.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
 
@@ -428,8 +430,8 @@ public class ProductServiceImpl implements ProductService {
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("productEquipmentQueryParam", productEquipmentQueryParam);
 
-        Integer totalCount = productEquipmentMapper.findProductEquipmentCountByParams(maps);
-        List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.findProductEquipmentByParams(maps);
+        Integer totalCount = productEquipmentMapper.listCount(maps);
+        List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.listPage(maps);
         List<ProductEquipment> productEquipmentList = ProductEquipmentConverter.convertProductEquipmentDOList(productEquipmentDOList);
         Page<ProductEquipment> page = new Page<>(productEquipmentList, totalCount, productEquipmentQueryParam.getPageNo(), productEquipmentQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -520,9 +522,9 @@ public class ProductServiceImpl implements ProductService {
 
             if (productCategoryPropertyValueDO.getMaterialType() != null) {
                 MaterialDO materialDO;
-                if(productCategoryPropertyValueDO.getPropertyCapacityValue() != null){
+                if (productCategoryPropertyValueDO.getPropertyCapacityValue() != null) {
                     materialDO = materialMapper.findByMaterialTypeAndCapacity(productCategoryPropertyDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
-                }else{
+                } else {
                     materialDO = materialMapper.findByMaterialTypeAndModelId(productCategoryPropertyDO.getMaterialType(), productCategoryPropertyValueDO.getMaterialModelId());
                 }
 
@@ -876,9 +878,9 @@ public class ProductServiceImpl implements ProductService {
             return;
         }
         MaterialDO materialDO;
-        if(productCategoryPropertyValueDO.getPropertyCapacityValue() != null){
+        if (productCategoryPropertyValueDO.getPropertyCapacityValue() != null) {
             materialDO = materialMapper.findByMaterialTypeAndCapacity(productCategoryPropertyValueDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
-        }else{
+        } else {
             materialDO = materialMapper.findByMaterialTypeAndModelId(productCategoryPropertyValueDO.getMaterialType(), productCategoryPropertyValueDO.getMaterialModelId());
         }
 
@@ -909,9 +911,9 @@ public class ProductServiceImpl implements ProductService {
         }
 
         MaterialDO materialDO;
-        if(productCategoryPropertyValueDO.getPropertyCapacityValue() != null){
+        if (productCategoryPropertyValueDO.getPropertyCapacityValue() != null) {
             materialDO = materialMapper.findByMaterialTypeAndCapacity(productCategoryPropertyValueDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
-        }else{
+        } else {
             materialDO = materialMapper.findByMaterialTypeAndModelId(productCategoryPropertyValueDO.getMaterialType(), productCategoryPropertyValueDO.getMaterialModelId());
         }
         ProductMaterialDO productMaterialDO = productMaterialMapper.findBySkuAndMaterial(skuId, materialDO.getId());

@@ -86,11 +86,10 @@ public interface ProductService extends BaseService {
     /**
      * 根据ID查询商品信息以及SKU信息
      *
-     * @param productId    商品ID
      * @param productSkuId 商品SKUID
      * @return 商品信息，内仅含一个SKU
      */
-    ServiceResult<String, Product> queryProductById(Integer productId, Integer productSkuId);
+    ServiceResult<String, Product> queryProductBySkuId(Integer productSkuId);
 
     /**
      * 商品详情
