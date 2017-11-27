@@ -1144,7 +1144,7 @@ CREATE TABLE `erp_return_order` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_return_no` (`return_no`)
+  UNIQUE KEY `index_return_no` (`return_order_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁退还订单表';
 
 DROP TABLE if exists `erp_return_order_product`;
@@ -1169,7 +1169,7 @@ CREATE TABLE `erp_return_order_material` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `return_order_id` int(20) NOT NULL COMMENT '退还ID',
   `return_order_no` varchar(100) NOT NULL COMMENT '退还编号',
-  `return_material_id` int(20) NOT NULL '退还物料ID',
+  `return_material_id` int(20) NOT NULL COMMENT '退还物料ID',
   `return_product_material_count` int(11) NOT NULL DEFAULT 0 COMMENT '退还物料数量',
   `return_product_material_snapshot` text COMMENT '退还物料快照',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
