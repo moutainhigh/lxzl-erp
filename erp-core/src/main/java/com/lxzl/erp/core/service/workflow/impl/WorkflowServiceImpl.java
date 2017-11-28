@@ -284,7 +284,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         if (VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus)) {
 
             // 审核通过并且有下一步的情况
-            if (nextWorkflowNodeDO != null && nextWorkflowNodeDO.getWorkflowNextNodeId() != null) {
+            if (nextWorkflowNodeDO != null) {
                 workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
 
                 WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
