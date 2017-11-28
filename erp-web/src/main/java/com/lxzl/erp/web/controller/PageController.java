@@ -280,6 +280,14 @@ public class PageController extends BaseController {
     public String auditManageDetail() {
         return "/auditManage/auditDetail";
     }
+    @RequestMapping("/audit-manage/modal/pass")
+    public String auditManagePassModal() {
+        return "/component/audit/passModal";
+    }
+    @RequestMapping("/audit-manage/modal/reject")
+    public String auditManageRejectModal() {
+        return "/component/audit/rejectModal";
+    }
 
 
     //选择仓库Modal
