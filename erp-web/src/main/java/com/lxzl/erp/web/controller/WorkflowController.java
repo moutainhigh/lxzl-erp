@@ -58,7 +58,7 @@ public class WorkflowController extends BaseController {
 
     @RequestMapping(value = "queryWorkflowLinkDetail", method = RequestMethod.POST)
     public Result queryWorkflowLinkDetail(@RequestBody WorkflowLinkQueryParam workflowLinkQueryParam, HttpServletRequest request) {
-        ServiceResult<String, WorkflowLink> serviceResult = workflowService.getWorkflowLink(workflowLinkQueryParam.getWorkflowType(),workflowLinkQueryParam.getWorkflowReferNo());
+        ServiceResult<String, WorkflowLink> serviceResult = workflowService.getWorkflowLink(workflowLinkQueryParam.getWorkflowLinkNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
