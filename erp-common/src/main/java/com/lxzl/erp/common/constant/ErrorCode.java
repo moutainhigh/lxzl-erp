@@ -68,6 +68,8 @@ public class ErrorCode {
     public static final String PRODUCT_IS_NOT_RENT = "J200023";
     public static final String MATERIAL_IN_USED = "J200024";
     public static final String PRODUCT_SKU_CAN_NOT_DELETE = "J200025";
+    public static final String BULK_MATERIAL_IS_NOT_IDLE = "J200026";
+
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
     public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
@@ -266,6 +268,7 @@ public class ErrorCode {
         MAP.put(PRODUCT_IS_NOT_RENT, "该商品已下架");
         MAP.put(MATERIAL_IN_USED, "物料正在被使用");
         MAP.put(PRODUCT_SKU_CAN_NOT_DELETE, "检测到您要删除商品SKU，目前SKU不支持删除。");
+        MAP.put(BULK_MATERIAL_IS_NOT_IDLE, "物料没有在闲置状态。");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");

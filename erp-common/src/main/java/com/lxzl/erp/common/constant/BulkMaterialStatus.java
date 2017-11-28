@@ -5,4 +5,5 @@ public class BulkMaterialStatus {
     public static final Integer BULK_MATERIAL_STATUS_BUSY = 2;          // 租赁中
     public static final Integer BULK_MATERIAL_STATUS_REPAIRING = 3;     // 维修中
     public static final Integer BULK_MATERIAL_STATUS_SCRAP = 4;         // 报废
+    public static final Integer BULK_MATERIAL_STATUS_DEPLOYING = 5;         // 调拨中
 }

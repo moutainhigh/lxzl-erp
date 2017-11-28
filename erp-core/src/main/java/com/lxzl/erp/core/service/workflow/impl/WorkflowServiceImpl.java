@@ -370,7 +370,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
         if (workflowTemplateDO == null || CollectionUtil.isEmpty(workflowTemplateDO.getWorkflowNodeDOList())) {
-            result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.SUCCESS);
             result.setResult(Boolean.FALSE);
             return result;
         }

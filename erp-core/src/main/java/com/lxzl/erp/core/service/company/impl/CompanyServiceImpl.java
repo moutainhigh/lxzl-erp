@@ -10,14 +10,17 @@ import com.lxzl.erp.common.domain.company.pojo.CompanyDepartmentTree;
 import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
+import com.lxzl.erp.common.domain.user.RoleQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.company.impl.support.CompanyConverter;
 import com.lxzl.erp.core.service.company.impl.support.DepartmentConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private DepartmentMapper departmentMapper;
+
+    @Autowired
+    private RoleMapper roleMapper;
 
     @Override
     public ServiceResult<String, Integer> addSubCompany(SubCompany subCompany) {
@@ -73,8 +79,8 @@ public class CompanyServiceImpl implements CompanyService {
         ServiceResult<String, Page<SubCompany>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(subCompanyQueryParam.getPageNo(), subCompanyQueryParam.getPageSize());
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("start", subCompanyQueryParam.getStart());
-        paramMap.put("pageSize", subCompanyQueryParam.getPageSize());
+        paramMap.put("start", pageQuery.getStart());
+        paramMap.put("pageSize", pageQuery.getPageSize());
         paramMap.put("subCompanyQueryParam", subCompanyQueryParam);
 
         Integer totalCount = subCompanyMapper.listCount(paramMap);
@@ -183,12 +189,106 @@ public class CompanyServiceImpl implements CompanyService {
         paramMap.put("subCompanyQueryParam", subCompanyQueryParam);
         List<SubCompanyDO> subCompanyDOList = subCompanyMapper.listPage(paramMap);
 
-        if(subCompanyDOList == null || subCompanyDOList.isEmpty()){
+        if (subCompanyDOList == null || subCompanyDOList.isEmpty()) {
             return result;
         }
 
         result.setResult(CompanyConverter.convertSubCompany(subCompanyDOList.get(0)));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> addDepartment(Department department) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+
+        if (StringUtil.isBlank(department.getDepartmentName())
+                || department.getDepartmentType() == null
+                || department.getSubCompanyId() == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+
+        if (department.getParentDepartmentId() == null) {
+            department.setParentDepartmentId(CommonConstant.SUPER_DEPARTMENT_ID);
+        } else {
+            DepartmentDO parentDepartment = departmentMapper.findById(department.getParentDepartmentId());
+            if (parentDepartment == null) {
+                result.setErrorCode(ErrorCode.DEPARTMENT_NOT_EXISTS);
+                return result;
+            }
+        }
+
+        DepartmentDO departmentDO = DepartmentConverter.convertDepartment(department);
+        departmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        departmentDO.setCreateTime(currentTime);
+        departmentDO.setUpdateTime(currentTime);
+        departmentDO.setCreateUser(loginUser.getUserId().toString());
+        departmentDO.setUpdateUser(loginUser.getUserId().toString());
+        departmentMapper.save(departmentDO);
+
+        result.setResult(departmentDO.getId());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> updateDepartment(Department department) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+
+        if (department.getParentDepartmentId() != null) {
+            DepartmentDO parentDepartment = departmentMapper.findById(department.getParentDepartmentId());
+            if (parentDepartment == null) {
+                result.setErrorCode(ErrorCode.DEPARTMENT_NOT_EXISTS);
+                return result;
+            }
+        }
+
+        DepartmentDO departmentDO = DepartmentConverter.convertDepartment(department);
+        departmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        departmentDO.setUpdateTime(currentTime);
+        departmentDO.setUpdateUser(loginUser.getUserId().toString());
+        departmentMapper.update(departmentDO);
+
+        result.setResult(departmentDO.getId());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> deleteDepartment(Integer departmentId) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+        DepartmentDO dbDepartment = departmentMapper.findById(departmentId);
+        if (dbDepartment == null) {
+            result.setErrorCode(ErrorCode.DEPARTMENT_NOT_EXISTS);
+            return result;
+        }
+
+        RoleQueryParam roleQueryParam = new RoleQueryParam();
+        Map<String, Object> params = new HashMap<>();
+        params.put("start", 0);
+        params.put("pageSize", Integer.MAX_VALUE);
+        params.put("roleQueryParam", roleQueryParam);
+        Integer roleCount = roleMapper.findListCount(params);
+        if (roleCount != null && roleCount > 0) {
+            result.setErrorCode(ErrorCode.RECORD_USED_CAN_NOT_DELETE);
+            return result;
+        }
+
+        dbDepartment.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        dbDepartment.setUpdateUser(loginUser.getUserId().toString());
+        dbDepartment.setUpdateTime(currentTime);
+        departmentMapper.update(dbDepartment);
+
+        result.setResult(dbDepartment.getId());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+
     }
 }
