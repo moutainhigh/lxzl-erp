@@ -141,7 +141,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
             }
-            workflowNodeDO = workflowNodeMapper.findById(lastWorkflowLinkDetailDO.getWorkflowCurrentNodeId());
+            workflowNodeDO = workflowNodeMapper.findById(lastWorkflowLinkDetailDO.getWorkflowNextNodeId());
         }
 
         if (workflowNodeDO == null) {
