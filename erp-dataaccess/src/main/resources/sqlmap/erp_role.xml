@@ -34,6 +34,9 @@
         left join erp_department ed on ed.id = tr.department_id and tr.data_status = 1
         left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
         <where>
+            <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.departmentId != null">
+                and tr.department_id = #{maps.roleQueryParam.departmentId, jdbcType=INTEGER}
+            </if>
             <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.roleId != null">
                 and tr.id = #{maps.roleQueryParam.roleId, jdbcType=INTEGER}
             </if>
@@ -52,6 +55,9 @@
         select count(1)
         from erp_role tr
         <where>
+            <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.departmentId != null">
+                and tr.department_id = #{maps.roleQueryParam.departmentId, jdbcType=INTEGER}
+            </if>
             <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.roleId != null">
                 and tr.id = #{maps.roleQueryParam.roleId, jdbcType=INTEGER}
             </if>

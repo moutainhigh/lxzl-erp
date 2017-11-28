@@ -11,7 +11,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Department implements Serializable {
     private Integer departmentId;   //唯一标识
-    private String departmentName;   //功能名称
+    private String departmentName;   //部门名称
     private Integer departmentType;   //部门类型，对应字典ID
     private Integer parentDepartmentId;   //上级部门ID
     private Integer subCompanyId;   //所属分公司

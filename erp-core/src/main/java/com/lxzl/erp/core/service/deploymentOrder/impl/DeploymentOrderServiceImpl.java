@@ -25,6 +25,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderDO;
 import com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderProductDO;
+import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.se.common.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -358,8 +359,11 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> processDeploymentOrder(ProcessDeploymentOrderParam param) {
         ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
         if (param == null) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
@@ -386,15 +390,36 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                 result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM);
                 return result;
             }
-            // TODO
+            productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_DEPLOYING);
+            productEquipmentDO.setUpdateTime(currentTime);
+            productEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+            productEquipmentMapper.update(productEquipmentDO);
         }
 
         // 处理调拨物料业务
         if (param.getBulkMaterialNo() != null) {
+            BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(param.getBulkMaterialNo());
+            if (bulkMaterialDO == null) {
+                result.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_EXISTS);
+                return result;
+            }
+            if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE.equals(bulkMaterialDO.getBulkMaterialStatus())) {
+                result.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NOT_IDLE);
+                return result;
+            }
 
+            Map<Integer, DeploymentOrderMaterialDO> deploymentOrderMaterialDOMap = ListUtil.listToMap(deploymentOrderDO.getDeploymentOrderMaterialDOList(), "deploymentMaterialId");
+            if (deploymentOrderMaterialDOMap.get(bulkMaterialDO.getMaterialId()) == null) {
+                result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM);
+                return result;
+            }
+            bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_DEPLOYING);
+            bulkMaterialDO.setUpdateTime(currentTime);
+            bulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+            bulkMaterialMapper.update(bulkMaterialDO);
         }
 
-
+        result.setResult(param.getDeploymentOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }

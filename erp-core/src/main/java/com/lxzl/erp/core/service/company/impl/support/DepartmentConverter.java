@@ -42,6 +42,16 @@ public class DepartmentConverter {
         return department;
     }
 
+    public static DepartmentDO convertDepartment(Department department) {
+        DepartmentDO departmentDO = new DepartmentDO();
+        if(department.getDepartmentId() != null){
+            departmentDO.setId(department.getDepartmentId());
+        }
+
+        BeanUtils.copyProperties(department, departmentDO);
+        return departmentDO;
+    }
+
 
     public static List<Department> convertDepartmentDOList(List<DepartmentDO>  departmentDOList) {
         List<Department> departmentList = new ArrayList<>();

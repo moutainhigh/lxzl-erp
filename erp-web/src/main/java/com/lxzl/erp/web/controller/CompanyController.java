@@ -62,4 +62,22 @@ public class CompanyController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "addDepartment", method = RequestMethod.POST)
+    public Result addDepartment(@RequestBody Department department) {
+        ServiceResult<String, Integer> serviceResult = companyService.addDepartment(department);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "updateDepartment", method = RequestMethod.POST)
+    public Result updateDepartment(@RequestBody Department department) {
+        ServiceResult<String, Integer> serviceResult = companyService.updateDepartment(department);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "deleteDepartment", method = RequestMethod.POST)
+    public Result deleteDepartment(@RequestBody Department department) {
+        ServiceResult<String, Integer> serviceResult = companyService.deleteDepartment(department.getDepartmentId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 }

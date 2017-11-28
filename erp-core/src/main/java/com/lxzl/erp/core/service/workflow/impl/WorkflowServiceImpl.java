@@ -141,7 +141,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
             }
-            workflowNodeDO = workflowNodeMapper.findById(lastWorkflowLinkDetailDO.getWorkflowCurrentNodeId());
+            workflowNodeDO = workflowNodeMapper.findById(lastWorkflowLinkDetailDO.getWorkflowNextNodeId());
         }
 
         if (workflowNodeDO == null) {
@@ -357,6 +357,25 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         result.setResult(workflowLinkDO.getId());
         result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Boolean> isMeedVerify(Integer workflowType) {
+        ServiceResult<String, Boolean> result = new ServiceResult<>();
+        if (workflowType == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+
+        WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
+        if (workflowTemplateDO == null || CollectionUtil.isEmpty(workflowTemplateDO.getWorkflowNodeDOList())) {
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(Boolean.FALSE);
+            return result;
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(Boolean.TRUE);
         return result;
     }
 
