@@ -280,6 +280,14 @@ public class PageController extends BaseController {
     public String auditManageDetail() {
         return "/auditManage/auditDetail";
     }
+    @RequestMapping("/audit-manage/modal/pass")
+    public String auditManagePassModal() {
+        return "/component/audit/passModal";
+    }
+    @RequestMapping("/audit-manage/modal/reject")
+    public String auditManageRejectModal() {
+        return "/component/audit/rejectModal";
+    }
 
 
     //选择仓库Modal
@@ -300,7 +308,7 @@ public class PageController extends BaseController {
     //采购单选择审核人Modal
     @RequestMapping("/audit-user/choose")
     public String auditUserChoose() {
-        return "/component/purchase/chooseAuditUserModal";
+        return "/component/audit/chooseAuditUserModal";
     }
     //采购单选择审核人Modal
     @RequestMapping("/material/choose")

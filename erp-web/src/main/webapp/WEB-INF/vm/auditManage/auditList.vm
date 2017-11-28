@@ -3,16 +3,11 @@
 <head>
     <title>凌雄ERP-审核管理-工作流</title>
     #parse("layout/header.vm")
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
-##    <script type="text/javascript">
-##        common_load_css('${staticCommon}/rental/css','dropzone.css');
-##    </script>
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
-<div id="main">
+    <div id="main">
     #parse("layout/navbar.vm")
     #parse("layout/sidebar.vm")
 
@@ -49,12 +44,7 @@
                                         <input type="text" name="workflowReferNo" id="workflowReferNo" class="form-control input-sm bradius" autocomplete="off" placeholder="工作流关联编号">
                                     </div>
                                 </div>
-                                <script type="text/html" id="workflowTypeSelectTpl">
-                                    <option value="">全部（工作流类型）</option>
-                                    {{#workflowType}}
-                                    <option value={{num}}>{{value}}</option>
-                                    {{/workflowType}}
-                                </script>
+                                <select name="verifyStatus" id="verifyStatus" class="hide"></select>
                                 <select name="workflowType" id="workflowType" class="hide"></select>
                             </form>
                         </div>
@@ -91,7 +81,7 @@
                             <tbody>
                             {{#dataSource}}
                             {{#listData}}
-                            <tr>
+                            <tr data-rowdata="{{rowData}}" class="rowTr">
                                 {{#hasCommonActionButtons}}
                                 <td>
                                     <label class="option block mn">
@@ -101,7 +91,7 @@
                                 </td>
                                 {{/hasCommonActionButtons}}
                                 <td>{{workflowLinkId}}</td>
-                                <th>{{workflowLinkNo}}</th>
+                                <td>{{workflowLinkNo}}</td>
                                 <td>{{workflowTypeStr}}</td>
                                 <td>{{workflowReferNo}}</td>
                                 <td>{{workflowTemplateId}}</td>
@@ -115,7 +105,7 @@
                                     <div class="btn-group text-right">
                                         {{#rowActionButtons}}
                                         {{#buttons}}
-                                        <a href="${ctx}{{menuUrl}}?no={{purchaseNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-workflowlinkid="{{workflowLinkId}}">{{text}}</a>
+                                        <a href="${ctx}{{menuUrl}}?no={{workflowLinkNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-workflowlinkid="{{workflowLinkId}}" data-workflowlinkno="{{workflowLinkNo}}">{{text}}</a>
                                         {{/buttons}}
                                         {{/rowActionButtons}}
                                     </div>
@@ -150,21 +140,19 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
-<script type="text/javascript">
-    management_load_script('${staticManagement}/js','manage.audit.js');
-</script>
-<script type="text/javascript">
-    //功能事件初始化
-    Rental.init();
-    Layout.init();
-    AuditManage.init();
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js', 'manage.audit.js', 'manage.audit.pass.js', 'manage.audit.reject.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        AuditManage.init();
 
-    //UI效果初始化
-    Core.init();
-    Demo.init();
+        //UI效果初始化
+        Core.init();
+        Demo.init();
 
-</script>
+    </script>
 </body>
 </html>

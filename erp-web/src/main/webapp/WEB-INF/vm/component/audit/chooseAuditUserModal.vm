@@ -36,8 +36,6 @@
                         <th>用户名</th>
                         <th>邮箱</th>
                         <th>手机号</th>
-                        #*<th>激活</th>
-                        <th>禁用</th>*#
                         <th width="16%" class="text-right">操作</th>
                     </tr>
                     </thead>
@@ -61,8 +59,6 @@
                         <td class="">{{userName}}</td>
                         <td class="">{{email}}</td>
                         <td class="">{{phone}}</td>
-                       #* <td class="">{{isActivatedStr}}</td>
-                        <td class="">{{isDisabledStr}}</td>*#
                         <td class="text-right">
                             <div class="btn-group text-right">
                                 <a href="#" class="btn btn-default btn-xs chooseButton" data-userid="{{userId}}">选择</a>
@@ -72,7 +68,7 @@
                     {{/listData}}
                     {{^listData}}
                     <tr>
-                        <td valign="top" colspan="9" class="text-center">没有查询到用户</td>
+                        <td valign="top" colspan="9" class="text-center">没有查询到审核人信息</td>
                     </tr>
                     {{/listData}}
                     {{/dataSource}}
@@ -83,9 +79,9 @@
         </div>
         <div class="panel-footer">
             <div class="row">
-                #*<div class="col-xs-12 col-md-12 text-right mt10 mb10">
-                    #parse("component/pager.vm")
-                </div>*#
+##                <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+##                    #parse("component/pager.vm")
+##                </div>
             </div>
         </div>
     </div>
