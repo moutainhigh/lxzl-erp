@@ -77,24 +77,26 @@
                             </div>
 
                             <div class="row">
-                                <script type="text/html" class="workflowTimelineActionTpl">
+                                <script type="text/html" id="workflowTimelineActionTpl">
+                                    {{#dataSource}}
                                     <div class="timeline-item">
                                         <div class="timeline-icon">
                                             <span class="glyphicons glyphicons-edit text-warning"></span>
                                         </div>
                                         <div class="panel">
                                             <div class="panel-heading">
-                                                <span class="panel-title"><span class="glyphicons glyphicons-user"></span>毛涛</span>
+                                                <span class="panel-title"><span class="glyphicons glyphicons-user"></span>{{currentVerifyUserName}}</span>
                                             </div>
                                             <div class="panel-body">
-                                                <button class="btn btn-sm btn-danger">驳回</button>
-                                                <button class="btn btn-sm btn-primary">同意</button>
+                                                <button class="btn btn-sm btn-danger rejectButton">驳回</button>
+                                                <button class="btn btn-sm btn-primary passButton">同意</button>
                                             </div>
                                         </div>
                                     </div>
+                                    {{/dataSource}}
                                 </script>
 
-                                <div class="col-sm-6 left-column"></div>
+                                <div class="col-sm-6 left-column" id="workflowTimelineAction"></div>
 
                                 <script type="text/html" id="workflowTimelineTpl">
                                     {{#dataSource}}
