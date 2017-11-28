@@ -20,7 +20,7 @@
                 <div class="section row">
                     <div class="col-md-12">
                         <label for="verifyOpinion" class="field prepend-icon">
-                            <textarea class="gui-textarea" id="verifyOpinion" name="verifyOpinion" placeholder="请输审核意见"></textarea>
+                            <textarea class="gui-textarea" id="verifyOpinion" name="verifyOpinion" placeholder="请输入审核意见"></textarea>
                             <label for="verifyOpinion" class="field-icon"><i class="fa fa-comments"></i>
                             </label>
                         </label>

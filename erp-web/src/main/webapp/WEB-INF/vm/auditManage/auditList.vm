@@ -105,7 +105,7 @@
                                     <div class="btn-group text-right">
                                         {{#rowActionButtons}}
                                         {{#buttons}}
-                                        <a href="${ctx}{{menuUrl}}?no={{purchaseNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-workflowlinkid="{{workflowLinkId}}" data-workflowlinkno="{{workflowLinkNo}}">{{text}}</a>
+                                        <a href="${ctx}{{menuUrl}}?no={{workflowLinkNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-workflowlinkid="{{workflowLinkId}}" data-workflowlinkno="{{workflowLinkNo}}">{{text}}</a>
                                         {{/buttons}}
                                         {{/rowActionButtons}}
                                     </div>
