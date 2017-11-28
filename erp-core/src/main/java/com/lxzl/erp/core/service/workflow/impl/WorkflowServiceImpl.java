@@ -136,7 +136,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 result.setErrorCode(ErrorCode.WORKFLOW_LINK_HAVE_NO_DETAIL);
                 return result;
             }
-            WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(workflowLinkDetailDOList.size() - 1);
+            WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(0);
             if (VerifyStatus.VERIFY_STATUS_PASS.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
@@ -231,7 +231,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             return result;
         }
 
-        WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(workflowLinkDetailDOList.size() - 1);
+        WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(0);
         if (VerifyStatus.VERIFY_STATUS_PASS.equals(lastWorkflowLinkDetailDO.getVerifyStatus())
                 || VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
             result.setErrorCode(ErrorCode.WORKFLOW_LINK_VERIFY_ALREADY_OVER);
@@ -447,7 +447,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             return ErrorCode.WORKFLOW_LINK_HAVE_NO_DETAIL;
         }
 
-        WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(workflowLinkDetailDOList.size() - 1);
+        WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(0);
         if (!VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
             return ErrorCode.WORKFLOW_LINK_STATUS_ERROR;
         }
