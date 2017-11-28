@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.deploymentOrder.impl;
 
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.deploymentOrder.ProcessDeploymentOrderParam;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrder;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrderMaterial;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrderProduct;
@@ -24,6 +25,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderDO;
 import com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderProductDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.se.common.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -226,12 +228,11 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             return ErrorCode.PARAM_IS_ERROR;
         }
 
-        BigDecimal ZERO = new BigDecimal(0);
         for (DeploymentOrderProduct deploymentOrderProduct : deploymentOrder.getDeploymentOrderProductList()) {
             if (deploymentOrderProduct.getDeploymentProductSkuCount() == null) {
                 return ErrorCode.PARAM_IS_ERROR;
             }
-            if (BigDecimalUtil.compare(deploymentOrderProduct.getDeploymentProductUnitAmount(), ZERO) <= 0) {
+            if (BigDecimalUtil.compare(deploymentOrderProduct.getDeploymentProductUnitAmount(), BigDecimal.ZERO) <= 0) {
                 return ErrorCode.PARAM_IS_ERROR;
             }
 
@@ -254,7 +255,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             if (deploymentOrderMaterial.getDeploymentProductMaterialCount() == null) {
                 return ErrorCode.PARAM_IS_ERROR;
             }
-            if (BigDecimalUtil.compare(deploymentOrderMaterial.getDeploymentMaterialUnitAmount(), ZERO) <= 0) {
+            if (BigDecimalUtil.compare(deploymentOrderMaterial.getDeploymentMaterialUnitAmount(), BigDecimal.ZERO) <= 0) {
                 return ErrorCode.PARAM_IS_ERROR;
             }
             BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
@@ -353,6 +354,48 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(dbDeploymentOrderDO.getDeploymentOrderNo());
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> processDeploymentOrder(ProcessDeploymentOrderParam param) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        if (param == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+        DeploymentOrderDO deploymentOrderDO = deploymentOrderMapper.findByNo(param.getDeploymentOrderNo());
+        if (deploymentOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        // 处理调拨设备业务
+        if (param.getEquipmentNo() != null) {
+            ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(param.getEquipmentNo());
+            if (productEquipmentDO == null) {
+                result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_EXISTS);
+                return result;
+            }
+            if (!ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE.equals(productEquipmentDO.getEquipmentStatus())) {
+                result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_IS_NOT_IDLE);
+                return result;
+            }
+            Map<Integer, DeploymentOrderProductDO> deploymentOrderProductDOMap = ListUtil.listToMap(deploymentOrderDO.getDeploymentOrderProductDOList(), "deploymentProductSkuId");
+            if (deploymentOrderProductDOMap.get(productEquipmentDO.getSkuId()) == null) {
+                result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM);
+                return result;
+            }
+            // TODO
+        }
+
+        // 处理调拨物料业务
+        if (param.getBulkMaterialNo() != null) {
+
+        }
+
+
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 

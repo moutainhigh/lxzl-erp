@@ -12,6 +12,7 @@ import java.io.Serializable;
  */
 public class WorkflowLinkQueryParam extends BasePageParam implements Serializable {
 
+    private String workflowLinkNo;
     private Integer workflowType;
     private String workflowReferNo;
     private Integer verifyStatus;
@@ -56,5 +57,13 @@ public class WorkflowLinkQueryParam extends BasePageParam implements Serializabl
 
     public void setCurrentVerifyUser(Integer currentVerifyUser) {
         this.currentVerifyUser = currentVerifyUser;
+    }
+
+    public String getWorkflowLinkNo() {
+        return workflowLinkNo;
+    }
+
+    public void setWorkflowLinkNo(String workflowLinkNo) {
+        this.workflowLinkNo = workflowLinkNo;
     }
 }

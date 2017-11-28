@@ -479,9 +479,8 @@ public class OrderServiceImpl implements OrderService {
 
         // 商品加上物料的总和，即为本次的总额度
         BigDecimal totalCreditDepositAmount = BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount());
-        BigDecimal zero = new BigDecimal(0);
         if (!OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
-            if (BigDecimalUtil.compare(zero, BigDecimalUtil.sub(BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmount(), customerRiskManagementDO.getCreditAmountUsed()), totalCreditDepositAmount)) < 0) {
+            if (BigDecimalUtil.compare(BigDecimal.ZERO, BigDecimalUtil.sub(BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmount(), customerRiskManagementDO.getCreditAmountUsed()), totalCreditDepositAmount)) < 0) {
                 throw new BusinessException("额度不够无法下单。");
             }
         }

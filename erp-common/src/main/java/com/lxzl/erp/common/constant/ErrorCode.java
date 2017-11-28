@@ -178,6 +178,7 @@ public class ErrorCode {
     public static final String DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_STOCK_NOT_ENOUGH = "J400018";
     public static final String DEPLOYMENT_ORDER_BULK_MATERIAL_STOCK_NOT_ENOUGH = "J400019";
     public static final String DEPLOYMENT_ORDER_STATUS_ERROR = "J400020";
+    public static final String DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM = "J400021";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -374,6 +375,7 @@ public class ErrorCode {
         MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_STOCK_NOT_ENOUGH, "货物调拨该库房该商品库存不足。");
         MAP.put(DEPLOYMENT_ORDER_BULK_MATERIAL_STOCK_NOT_ENOUGH, "货物调拨该库房该物料库存不足。");
         MAP.put(DEPLOYMENT_ORDER_STATUS_ERROR, "调配单状态有误。");
+        MAP.put(DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, "调拨单没有这个单项。");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");

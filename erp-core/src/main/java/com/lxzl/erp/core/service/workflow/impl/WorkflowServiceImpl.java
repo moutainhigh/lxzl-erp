@@ -156,14 +156,14 @@ public class WorkflowServiceImpl implements WorkflowService {
     }
 
     @Override
-    public ServiceResult<String, WorkflowLink> getWorkflowLink(Integer workflowType, String workflowReferNo) {
+    public ServiceResult<String, WorkflowLink> getWorkflowLink(String workflowLinkNo) {
         ServiceResult<String, WorkflowLink> result = new ServiceResult<>();
-        if (workflowType == null || workflowReferNo == null) {
+        if (workflowLinkNo == null) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
             return result;
         }
 
-        WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
+        WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByNo(workflowLinkNo);
         if (workflowLinkDO == null) {
             result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
             return result;

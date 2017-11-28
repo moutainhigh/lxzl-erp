@@ -39,11 +39,10 @@ public interface WorkflowService extends BaseService {
     /**
      * 获取当前工作流记录
      *
-     * @param workflowType    工作流类型，详见WorkflowType
-     * @param workflowReferNo 工作流关联ID，业务ID
+     * @param workflowLinkNo 工作流NO
      * @return 错误代码，工作流记录
      */
-    ServiceResult<String, WorkflowLink> getWorkflowLink(Integer workflowType, String workflowReferNo);
+    ServiceResult<String, WorkflowLink> getWorkflowLink(String  workflowLinkNo);
 
     /**
      * 获取工作流列表

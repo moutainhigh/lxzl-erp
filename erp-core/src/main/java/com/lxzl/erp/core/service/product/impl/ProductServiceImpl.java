@@ -587,22 +587,21 @@ public class ProductServiceImpl implements ProductService {
         if (product.getProductSkuList() == null || product.getProductSkuList().isEmpty()) {
             return ErrorCode.PRODUCT_SKU_NOT_NULL;
         }
-        BigDecimal zero = new BigDecimal(0);
         for (ProductSku productSku : product.getProductSkuList()) {
 
-            if (productSku.getSkuPrice() == null || -1 != (zero.compareTo(productSku.getSkuPrice()))) {
+            if (productSku.getSkuPrice() == null || BigDecimalUtil.compare(productSku.getSkuPrice(), BigDecimal.ZERO) < 0) {
                 return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
             }
 
-            if (productSku.getTimeRentPrice() == null || -1 != (zero.compareTo(productSku.getTimeRentPrice()))) {
+            if (productSku.getTimeRentPrice() == null || BigDecimalUtil.compare(productSku.getTimeRentPrice(), BigDecimal.ZERO) < 0) {
                 return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
             }
 
-            if (productSku.getDayRentPrice() == null || -1 != (zero.compareTo(productSku.getDayRentPrice()))) {
+            if (productSku.getDayRentPrice() == null || BigDecimalUtil.compare(productSku.getDayRentPrice(), BigDecimal.ZERO) < 0) {
                 return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
             }
 
-            if (productSku.getMonthRentPrice() == null || -1 != (zero.compareTo(productSku.getMonthRentPrice()))) {
+            if (productSku.getMonthRentPrice() == null || BigDecimalUtil.compare(productSku.getMonthRentPrice(), BigDecimal.ZERO) < 0) {
                 return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
             }
 
