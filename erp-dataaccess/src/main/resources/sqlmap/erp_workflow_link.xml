@@ -171,19 +171,19 @@
 			LEFT JOIN erp_user euc ON euc.id = ewl.commit_user
             LEFT JOIN erp_workflow_node ewn ON ewn.id = ewl.workflow_current_node_id
 			<where>
-				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowType != null">
+				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowType != null &amp;&amp; maps.workflowQueryParam.workflowType != ''">
 					and ewl.workflow_type = #{maps.workflowQueryParam.workflowType, jdbcType=INTEGER}
 				</if>
-				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowReferNo != null">
-					and ewl.workflow_refer_no = #{maps.workflowQueryParam.workflowReferNo, jdbcType=VARCHAR}
+				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowReferNo != null &amp;&amp; maps.workflowQueryParam.workflowReferNo != ''">
+					and ewl.workflow_refer_no like CONCAT('%','${maps.workflowQueryParam.workflowReferNo}','%' )
 				</if>
-				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.verifyStatus != null">
+				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.verifyStatus != null &amp;&amp; maps.workflowQueryParam.verifyStatus != ''">
 					and ewl.current_verify_status = #{maps.workflowQueryParam.verifyStatus, jdbcType=INTEGER}
 				</if>
-				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != null">
+				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != ''">
 					and ewl.current_verify_user = #{maps.workflowQueryParam.currentVerifyUser, jdbcType=INTEGER}
 				</if>
-				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.commitUserId != null">
+				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.commitUserId != null &amp;&amp; maps.workflowQueryParam.commitUserId != ''">
 					and ewl.commit_user = #{maps.workflowQueryParam.commitUserId, jdbcType=INTEGER}
 				</if>
 				<if test="true">
