@@ -42,12 +42,12 @@ public interface WorkflowService extends BaseService {
      * @param workflowLinkNo 工作流NO
      * @return 错误代码，工作流记录
      */
-    ServiceResult<String, WorkflowLink> getWorkflowLink(String  workflowLinkNo);
+    ServiceResult<String, WorkflowLink> getWorkflowLink(String workflowLinkNo);
 
     /**
      * 获取工作流列表
      *
-     * @param workflowLinkQueryParam    获取工作流列表参数
+     * @param workflowLinkQueryParam 获取工作流列表参数
      * @return 错误代码，工作流记录
      */
     ServiceResult<String, Page<WorkflowLink>> getWorkflowLinkPage(WorkflowLinkQueryParam workflowLinkQueryParam);
@@ -55,7 +55,7 @@ public interface WorkflowService extends BaseService {
     /**
      * 获取当前人工作流列表
      *
-     * @param workflowLinkQueryParam    获取工作流列表参数
+     * @param workflowLinkQueryParam 获取工作流列表参数
      * @return 错误代码，工作流记录
      */
     ServiceResult<String, Page<WorkflowLink>> getCurrentUserWorkflowLinkPage(WorkflowLinkQueryParam workflowLinkQueryParam);
@@ -65,10 +65,18 @@ public interface WorkflowService extends BaseService {
      *
      * @param workflowLinkNo 工作流ID
      * @param verifyStatus   审核状态
-     * @param returnType   返回类型0返回根部，1返回上一级
+     * @param returnType     返回类型0返回根部，1返回上一级
      * @param verifyOpinion  审核意见
      * @param nextVerifyUser 下一步的审核人，没有下一步的时候可空
      * @return 工作流ID
      */
     ServiceResult<String, Integer> verifyWorkFlow(String workflowLinkNo, Integer verifyStatus, Integer returnType, String verifyOpinion, Integer nextVerifyUser);
+
+    /**
+     * 是否需要审核
+     *
+     * @param workflowType    工作流类型，详见WorkflowType
+     * @return true 是 false 否
+     */
+    ServiceResult<String, Boolean> isMeedVerify(Integer workflowType);
 }

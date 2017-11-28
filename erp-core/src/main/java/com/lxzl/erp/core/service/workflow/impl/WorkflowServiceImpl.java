@@ -360,6 +360,25 @@ public class WorkflowServiceImpl implements WorkflowService {
         return result;
     }
 
+    @Override
+    public ServiceResult<String, Boolean> isMeedVerify(Integer workflowType) {
+        ServiceResult<String, Boolean> result = new ServiceResult<>();
+        if (workflowType == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+
+        WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
+        if (workflowTemplateDO == null || CollectionUtil.isEmpty(workflowTemplateDO.getWorkflowNodeDOList())) {
+            result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+            result.setResult(Boolean.FALSE);
+            return result;
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(Boolean.TRUE);
+        return result;
+    }
+
 
     /**
      * 生成工作流线，只适用于首次创建
