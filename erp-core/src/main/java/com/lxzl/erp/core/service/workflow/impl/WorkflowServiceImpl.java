@@ -291,7 +291,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
                 workflowLinkDetailDO.setWorkflowReferNo(lastWorkflowLinkDetailDO.getWorkflowReferNo());
                 workflowLinkDetailDO.setWorkflowStep(nextWorkflowNodeDO.getWorkflowStep());
-                workflowLinkDetailDO.setWorkflowPreviousNodeId(lastWorkflowLinkDetailDO.getId());
+                workflowLinkDetailDO.setWorkflowPreviousNodeId(lastWorkflowLinkDetailDO.getWorkflowCurrentNodeId());
                 workflowLinkDetailDO.setWorkflowCurrentNodeId(nextWorkflowNodeDO.getId());
                 workflowLinkDetailDO.setWorkflowNextNodeId(nextWorkflowNodeDO.getWorkflowNextNodeId());
                 workflowLinkDetailDO.setVerifyUser(nextVerifyUser);

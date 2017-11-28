@@ -20,9 +20,10 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     public void verifyWorkFlow() throws Exception {
 
         VerifyWorkflowParam workflowParam = new VerifyWorkflowParam();
-        workflowParam.setWorkflowLinkNo("WL201711241649000021740");
+        workflowParam.setWorkflowLinkNo("WL201711280942023151094");
         workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
         workflowParam.setVerifyOpinion("允许采购");
+        workflowParam.setNextVerifyUser(500006);
 
         TestResult result = getJsonTestResult("/workflow/verifyWorkFlow", workflowParam);
     }
@@ -31,7 +32,7 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     public void queryNextVerifyUsers() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
         workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
-        workflowLinkQueryParam.setWorkflowReferNo("WL201711241649000021740");
+        workflowLinkQueryParam.setWorkflowReferNo("PO201711212100541125000011411");
         TestResult result = getJsonTestResult("/workflow/queryNextVerifyUsers", workflowLinkQueryParam);
     }
 
