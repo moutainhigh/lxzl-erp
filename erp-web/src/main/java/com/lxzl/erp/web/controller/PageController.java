@@ -300,7 +300,7 @@ public class PageController extends BaseController {
     //采购单选择审核人Modal
     @RequestMapping("/audit-user/choose")
     public String auditUserChoose() {
-        return "/component/purchase/chooseAuditUserModal";
+        return "/component/audit/chooseAuditUserModal";
     }
     //采购单选择审核人Modal
     @RequestMapping("/material/choose")

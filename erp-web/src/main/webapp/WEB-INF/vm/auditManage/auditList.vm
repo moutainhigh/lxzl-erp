@@ -3,16 +3,11 @@
 <head>
     <title>凌雄ERP-审核管理-工作流</title>
     #parse("layout/header.vm")
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
-##    <script type="text/javascript">
-##        common_load_css('${staticCommon}/rental/css','dropzone.css');
-##    </script>
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
-<div id="main">
+    <div id="main">
     #parse("layout/navbar.vm")
     #parse("layout/sidebar.vm")
 
@@ -150,21 +145,19 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
-<script type="text/javascript">
-    management_load_script('${staticManagement}/js','manage.audit.js');
-</script>
-<script type="text/javascript">
-    //功能事件初始化
-    Rental.init();
-    Layout.init();
-    AuditManage.init();
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js','manage.audit.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        AuditManage.init();
 
-    //UI效果初始化
-    Core.init();
-    Demo.init();
+        //UI效果初始化
+        Core.init();
+        Demo.init();
 
-</script>
+    </script>
 </body>
 </html>
