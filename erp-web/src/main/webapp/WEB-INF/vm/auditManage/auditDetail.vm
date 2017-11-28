@@ -77,8 +77,7 @@
                             </div>
 
                             <div class="row">
-
-                                <div class="col-sm-6 left-column">
+                                <script type="text/html" class="workflowTimelineActionTpl">
                                     <div class="timeline-item">
                                         <div class="timeline-icon">
                                             <span class="glyphicons glyphicons-edit text-warning"></span>
@@ -93,7 +92,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </script>
+
+                                <div class="col-sm-6 left-column"></div>
 
                                 <script type="text/html" id="workflowTimelineTpl">
                                     {{#dataSource}}
@@ -104,7 +105,7 @@
                                         <div class="panel">
                                             <div class="panel-heading clearfix" style="min-height: 40px; height: auto;">
                                                 <span class="panel-title"><span class="glyphicons glyphicons-user"></span>{{workflowCurrentNodeName}} - {{verifyUserName}}</span>
-                                                <div class="panel-header-menu pull-right mr10 text-muted fs12">2017-11-28 17:21:00</div>
+                                                <div class="panel-header-menu pull-right mr10 text-muted fs12">{{verifyTimeFormat}}</div>
                                             </div>
                                             <div class="panel-body clearfix">
                                                 <blockquote class="mbn ml10">
