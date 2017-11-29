@@ -113,20 +113,6 @@
                             <div class="col-md-4" id="invoiceSupplierSelect"></div>
                         </div>
                     </div>
-                    #*<div class="panel-menu p12">
-                        <div class="row">
-                            <div class="pull-left ml10">
-                                <div class="btn-group" id="actionCommonButtons">
-                                    <button type="button" class="btn btn-primary btn-sm" id="batchAddProduct" title="选择商品">
-                                        <i class="fa fa-plus"></i> 选择商品
-                                    </button>
-                                    <button type="button" class="btn btn-primary btn-sm" id="batchDeleteProduct" title="删除商品">
-                                        <i class="fa fa-trash-o"></i> 删除
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>*#
                     <div class="panel-heading">
                         <div class="row">
                             <ul class="nav panel-tabs-border panel-tabs">
