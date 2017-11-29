@@ -32,6 +32,8 @@ public class WorkflowLinkDO extends BaseDO {
     private String commitUserName;
     @Transient
     private Boolean isLastStep;
+    @Transient
+    private String workflowTemplateName;
 
     public Integer getId() {
         return id;
@@ -175,5 +177,13 @@ public class WorkflowLinkDO extends BaseDO {
 
     public void setLastStep(Boolean lastStep) {
         isLastStep = lastStep;
+    }
+
+    public String getWorkflowTemplateName() {
+        return workflowTemplateName;
+    }
+
+    public void setWorkflowTemplateName(String workflowTemplateName) {
+        this.workflowTemplateName = workflowTemplateName;
     }
 }

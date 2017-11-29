@@ -12,6 +12,7 @@ public class ProcessDeploymentOrderParam implements Serializable {
     private String deploymentOrderNo;
     private String equipmentNo;
     private String bulkMaterialNo;
+    private Integer operationType;
 
     public String getDeploymentOrderNo() {
         return deploymentOrderNo;
@@ -35,5 +36,13 @@ public class ProcessDeploymentOrderParam implements Serializable {
 
     public void setBulkMaterialNo(String bulkMaterialNo) {
         this.bulkMaterialNo = bulkMaterialNo;
+    }
+
+    public Integer getOperationType() {
+        return operationType;
+    }
+
+    public void setOperationType(Integer operationType) {
+        this.operationType = operationType;
     }
 }

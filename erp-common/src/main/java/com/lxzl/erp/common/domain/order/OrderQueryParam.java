@@ -12,7 +12,7 @@ public class OrderQueryParam extends PageQuery implements Serializable {
     private Integer orderId;
     private String orderNo;
     private String buyerRealName;
-    private Integer buyerUserId;
+    private Integer buyerCustomerId;
     private String consigneeName;
     private String consigneePhone;
     private Integer rentType;
@@ -36,12 +36,12 @@ public class OrderQueryParam extends PageQuery implements Serializable {
         this.orderNo = orderNo;
     }
 
-    public Integer getBuyerUserId() {
-        return buyerUserId;
+    public Integer getBuyerCustomerId() {
+        return buyerCustomerId;
     }
 
-    public void setBuyerUserId(Integer buyerUserId) {
-        this.buyerUserId = buyerUserId;
+    public void setBuyerCustomerId(Integer buyerCustomerId) {
+        this.buyerCustomerId = buyerCustomerId;
     }
 
     public Integer getRentType() {

@@ -34,6 +34,7 @@ public class WorkflowLink implements Serializable {
 	private List<WorkflowLinkDetail> workflowLinkDetailList;
 
 	private String workflowCurrentNodeName;
+	private String workflowTemplateName;   //工作流模板名称
 
 	private Boolean isLastStep;
 
@@ -211,5 +212,13 @@ public class WorkflowLink implements Serializable {
 
 	public void setLastStep(Boolean lastStep) {
 		isLastStep = lastStep;
+	}
+
+	public String getWorkflowTemplateName() {
+		return workflowTemplateName;
+	}
+
+	public void setWorkflowTemplateName(String workflowTemplateName) {
+		this.workflowTemplateName = workflowTemplateName;
 	}
 }

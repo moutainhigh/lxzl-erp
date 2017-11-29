@@ -195,32 +195,32 @@
             FROM erp_order eo
             LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
             <where>
-                <if test="maps.oderQueryParam.consigneeName != null &amp;&amp; maps.oderQueryParam.consigneeName != ''">
-                    and eoci.consignee_name like CONCAT('%','${maps.oderQueryParam.consigneeName}','%' )
+                <if test="maps.orderQueryParam.consigneeName != null &amp;&amp; maps.orderQueryParam.consigneeName != ''">
+                    and eoci.consignee_name like CONCAT('%','${maps.orderQueryParam.consigneeName}','%' )
                 </if>
-                <if test="maps.oderQueryParam.consigneePhone != null &amp;&amp; maps.oderQueryParam.consigneePhone != ''">
-                    and eoci.consignee_phone = #{maps.oderQueryParam.consigneePhone, jdbcType=VARCHAR}
+                <if test="maps.orderQueryParam.consigneePhone != null &amp;&amp; maps.orderQueryParam.consigneePhone != ''">
+                    and eoci.consignee_phone = #{maps.orderQueryParam.consigneePhone, jdbcType=VARCHAR}
                 </if>
-                <if test="maps.oderQueryParam.orderId != null &amp;&amp; maps.oderQueryParam.orderId != ''">
-                    and eo.id = #{maps.oderQueryParam.orderId, jdbcType=INTEGER}
+                <if test="maps.orderQueryParam.orderId != null &amp;&amp; maps.orderQueryParam.orderId != ''">
+                    and eo.id = #{maps.orderQueryParam.orderId, jdbcType=INTEGER}
                 </if>
-                <if test="maps.oderQueryParam.orderNo != null &amp;&amp; maps.oderQueryParam.orderNo != ''">
-                    and eo.order_no = #{maps.oderQueryParam.orderNo, jdbcType=VARCHAR}
+                <if test="maps.orderQueryParam.orderNo != null &amp;&amp; maps.orderQueryParam.orderNo != ''">
+                    and eo.order_no = #{maps.orderQueryParam.orderNo, jdbcType=VARCHAR}
                 </if>
-                <if test="maps.oderQueryParam.buyerCustomerId != null &amp;&amp; maps.oderQueryParam.buyerCustomerId != ''">
-                    and eo.buyer_customer_id = #{maps.oderQueryParam.buyerCustomerId, jdbcType=INTEGER}
+                <if test="maps.orderQueryParam.buyerCustomerId != null &amp;&amp; maps.orderQueryParam.buyerCustomerId != ''">
+                    and eo.buyer_customer_id = #{maps.orderQueryParam.buyerCustomerId, jdbcType=INTEGER}
                 </if>
-                <if test="maps.oderQueryParam.rentType != null">
-                    and eo.rent_type = #{maps.oderQueryParam.rentType, jdbcType=INTEGER}
+                <if test="maps.orderQueryParam.rentType != null">
+                    and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
                 </if>
-                <if test="maps.oderQueryParam.orderStatus != null">
-                    and eo.order_status = #{maps.oderQueryParam.orderStatus, jdbcType=INTEGER}
+                <if test="maps.orderQueryParam.orderStatus != null">
+                    and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
                 </if>
-                <if test="maps.oderQueryParam.createStartTime != null &amp;&amp; maps.oderQueryParam.createStartTime != ''">
-                    <![CDATA[ AND eo.create_time >= #{maps.oderQueryParam.createStartTime} ]]>
+                <if test="maps.orderQueryParam.createStartTime != null &amp;&amp; maps.orderQueryParam.createStartTime != ''">
+                    <![CDATA[ AND eo.create_time >= #{maps.orderQueryParam.createStartTime} ]]>
                 </if>
-                <if test="maps.oderQueryParam.createEndTime != null &amp;&amp; maps.oderQueryParam.createEndTime != ''">
-                    <![CDATA[ AND eo.create_time <= #{maps.oderQueryParam.createEndTime} ]]>
+                <if test="maps.orderQueryParam.createEndTime != null &amp;&amp; maps.orderQueryParam.createEndTime != ''">
+                    <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
                 </if>
                 <if test="true">
                     and eo.data_status = 1
@@ -239,32 +239,32 @@
         FROM erp_order eo
         LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
         <where>
-            <if test="maps.oderQueryParam.consigneeName != null &amp;&amp; maps.oderQueryParam.consigneeName != ''">
-                and eoci.consignee_name like CONCAT('%','${maps.oderQueryParam.consigneeName}','%' )
+            <if test="maps.orderQueryParam.consigneeName != null &amp;&amp; maps.orderQueryParam.consigneeName != ''">
+                and eoci.consignee_name like CONCAT('%','${maps.orderQueryParam.consigneeName}','%' )
             </if>
-            <if test="maps.oderQueryParam.consigneePhone != null &amp;&amp; maps.oderQueryParam.consigneePhone != ''">
-                and eoci.consignee_phone = #{maps.oderQueryParam.consigneePhone, jdbcType=VARCHAR}
+            <if test="maps.orderQueryParam.consigneePhone != null &amp;&amp; maps.orderQueryParam.consigneePhone != ''">
+                and eoci.consignee_phone = #{maps.orderQueryParam.consigneePhone, jdbcType=VARCHAR}
             </if>
-            <if test="maps.oderQueryParam.orderId != null &amp;&amp; maps.oderQueryParam.orderId != ''">
-                and eo.id = #{maps.oderQueryParam.orderId, jdbcType=INTEGER}
+            <if test="maps.orderQueryParam.orderId != null &amp;&amp; maps.orderQueryParam.orderId != ''">
+                and eo.id = #{maps.orderQueryParam.orderId, jdbcType=INTEGER}
             </if>
-            <if test="maps.oderQueryParam.orderNo != null &amp;&amp; maps.oderQueryParam.orderNo != ''">
-                and eo.order_no = #{maps.oderQueryParam.orderNo, jdbcType=VARCHAR}
+            <if test="maps.orderQueryParam.orderNo != null &amp;&amp; maps.orderQueryParam.orderNo != ''">
+                and eo.order_no = #{maps.orderQueryParam.orderNo, jdbcType=VARCHAR}
             </if>
-            <if test="maps.oderQueryParam.buyerCustomerId != null &amp;&amp; maps.oderQueryParam.buyerCustomerId != ''">
-                and eo.buyer_customer_id = #{maps.oderQueryParam.buyerCustomerId, jdbcType=INTEGER}
+            <if test="maps.orderQueryParam.buyerCustomerId != null &amp;&amp; maps.orderQueryParam.buyerCustomerId != ''">
+                and eo.buyer_customer_id = #{maps.orderQueryParam.buyerCustomerId, jdbcType=INTEGER}
             </if>
-            <if test="maps.oderQueryParam.rentType != null">
-                and eo.rent_type = #{maps.oderQueryParam.rentType, jdbcType=INTEGER}
+            <if test="maps.orderQueryParam.rentType != null">
+                and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
             </if>
-            <if test="maps.oderQueryParam.orderStatus != null">
-                and eo.order_status = #{maps.oderQueryParam.orderStatus, jdbcType=INTEGER}
+            <if test="maps.orderQueryParam.orderStatus != null">
+                and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
             </if>
-            <if test="maps.oderQueryParam.createStartTime != null &amp;&amp; maps.oderQueryParam.createStartTime != ''">
-                <![CDATA[ AND eo.create_time >= #{maps.oderQueryParam.createStartTime} ]]>
+            <if test="maps.orderQueryParam.createStartTime != null &amp;&amp; maps.orderQueryParam.createStartTime != ''">
+                <![CDATA[ AND eo.create_time >= #{maps.orderQueryParam.createStartTime} ]]>
             </if>
-            <if test="maps.oderQueryParam.createEndTime != null &amp;&amp; maps.oderQueryParam.createEndTime != ''">
-                <![CDATA[ AND eo.create_time <= #{maps.oderQueryParam.createEndTime} ]]>
+            <if test="maps.orderQueryParam.createEndTime != null &amp;&amp; maps.orderQueryParam.createEndTime != ''">
+                <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
             </if>
             <if test="true">
                 and eo.data_status = 1

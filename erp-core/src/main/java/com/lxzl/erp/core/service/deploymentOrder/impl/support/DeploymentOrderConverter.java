@@ -19,6 +19,29 @@ import java.util.List;
  * @date 2017-11-27 16:40
  */
 public class DeploymentOrderConverter {
+
+    public static DeploymentOrder convertDeploymentOrderDO(DeploymentOrderDO deploymentOrderDO) {
+        DeploymentOrder deploymentOrder = new DeploymentOrder();
+        if (deploymentOrderDO.getId() != null) {
+            deploymentOrder.setDeploymentOrderId(deploymentOrderDO.getId());
+        }
+        BeanUtils.copyProperties(deploymentOrderDO, deploymentOrder);
+
+        deploymentOrder.setDeploymentOrderProductList(convertDeploymentOrderProductDOList(deploymentOrderDO.getDeploymentOrderProductDOList()));
+        deploymentOrder.setDeploymentOrderMaterialList(convertDeploymentOrderMaterialDOList(deploymentOrderDO.getDeploymentOrderMaterialDOList()));
+        return deploymentOrder;
+    }
+
+    public static List<DeploymentOrder> convertDeploymentOrderDOList(List<DeploymentOrderDO> deploymentOrderDOList) {
+        List<DeploymentOrder> deploymentOrderList = new ArrayList<>();
+        if(CollectionUtil.isNotEmpty(deploymentOrderDOList)){
+            for(DeploymentOrderDO deploymentOrderDO : deploymentOrderDOList){
+                deploymentOrderList.add(convertDeploymentOrderDO(deploymentOrderDO));
+            }
+        }
+        return deploymentOrderList;
+    }
+
     public static DeploymentOrderDO convertDeploymentOrder(DeploymentOrder deploymentOrder) {
         DeploymentOrderDO deploymentOrderDO = new DeploymentOrderDO();
         if (deploymentOrder.getDeploymentOrderId() != null) {
@@ -26,6 +49,47 @@ public class DeploymentOrderConverter {
         }
         BeanUtils.copyProperties(deploymentOrder, deploymentOrderDO);
         return deploymentOrderDO;
+    }
+
+    public static List<DeploymentOrderProduct> convertDeploymentOrderProductDOList(List<DeploymentOrderProductDO> deploymentOrderProductDOList) {
+        List<DeploymentOrderProduct> deploymentOrderProductList = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(deploymentOrderProductDOList)) {
+            for (DeploymentOrderProductDO deploymentOrderProductDO : deploymentOrderProductDOList) {
+                deploymentOrderProductList.add(convertDeploymentOrderProductDO(deploymentOrderProductDO));
+            }
+        }
+        return deploymentOrderProductList;
+    }
+
+    public static DeploymentOrderProduct convertDeploymentOrderProductDO(DeploymentOrderProductDO deploymentOrderProductDO) {
+        DeploymentOrderProduct deploymentOrderProduct = new DeploymentOrderProduct();
+        if (deploymentOrderProductDO.getId() != null) {
+            deploymentOrderProduct.setDeploymentOrderProductId(deploymentOrderProductDO.getId());
+        }
+        BeanUtils.copyProperties(deploymentOrderProductDO,deploymentOrderProduct);
+
+        return deploymentOrderProduct;
+    }
+
+
+    public static List<DeploymentOrderMaterial> convertDeploymentOrderMaterialDOList(List<DeploymentOrderMaterialDO> deploymentOrderMaterialDOList) {
+        List<DeploymentOrderMaterial> deploymentOrderMaterialList = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(deploymentOrderMaterialDOList)) {
+            for (DeploymentOrderMaterialDO deploymentOrderMaterialDO : deploymentOrderMaterialDOList) {
+                deploymentOrderMaterialList.add(convertDeploymentOrderMaterialDO(deploymentOrderMaterialDO));
+            }
+        }
+        return deploymentOrderMaterialList;
+    }
+
+    public static DeploymentOrderMaterial convertDeploymentOrderMaterialDO(DeploymentOrderMaterialDO deploymentOrderMaterialDO) {
+        DeploymentOrderMaterial deploymentOrderMaterial = new DeploymentOrderMaterial();
+        if (deploymentOrderMaterialDO.getId() != null) {
+            deploymentOrderMaterial.setDeploymentMaterialId(deploymentOrderMaterialDO.getId());
+        }
+        BeanUtils.copyProperties(deploymentOrderMaterialDO,deploymentOrderMaterial);
+
+        return deploymentOrderMaterial;
     }
 
     public static List<DeploymentOrderProductDO> convertDeploymentOrderProductList(List<DeploymentOrderProduct> deploymentOrderProductList) {

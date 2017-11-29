@@ -258,7 +258,7 @@ public class OrderServiceImpl implements OrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("oderQueryParam", orderQueryParam);
+        maps.put("orderQueryParam", orderQueryParam);
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
@@ -277,9 +277,8 @@ public class OrderServiceImpl implements OrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-
-        orderQueryParam.setBuyerUserId(loginUser.getUserId());
-        maps.put("oderQueryParam", orderQueryParam);
+        orderQueryParam.setBuyerCustomerId(loginUser.getUserId());
+        maps.put("orderQueryParam", orderQueryParam);
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
@@ -714,6 +713,11 @@ public class OrderServiceImpl implements OrderService {
         if (order.getRentType() == null || order.getRentTimeLength() == null || order.getRentTimeLength() <= 0) {
             return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
         }
+        if (!OrderRentType.RENT_TYPE_TIME.equals(order.getRentType())
+                && !OrderRentType.RENT_TYPE_DAY.equals(order.getRentType())
+                && !OrderRentType.RENT_TYPE_MONTH.equals(order.getRentType())) {
+            return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
+        }
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
             for (OrderProduct orderProduct : order.getOrderProductList()) {
                 if (CollectionUtil.isEmpty(orderProduct.getProductSkuPropertyList()) || orderProduct.getProductCount() == null) {
@@ -812,7 +816,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderProductEquipmentMapper orderProductEquipmentMapper;
-
 
     @Autowired
     private OrderMaterialBulkMapper orderMaterialBulkMapper;

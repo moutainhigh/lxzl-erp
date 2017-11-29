@@ -1,6 +1,8 @@
 package com.lxzl.erp.core.service.deploymentOrder;
 
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.deploymentOrder.ProcessDeploymentOrderParam;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrder;
 import com.lxzl.erp.core.service.VerifyReceiver;
@@ -54,4 +56,21 @@ public interface DeploymentOrderService extends VerifyReceiver {
      * @return 调拨单号
      */
     ServiceResult<String, String> confirmDeploymentOrder(String deploymentOrderNo);
+
+    /**
+     * 查询调拨单列表
+     *
+     * @param param 查询参数
+     * @return 调拨单分页信息
+     */
+    ServiceResult<String, Page<DeploymentOrder>> queryDeploymentOrderPage(DeploymentOrderQueryParam param);
+
+
+    /**
+     * 查询调拨单详情
+     *
+     * @param deploymentOrderNo 调拨单编号
+     * @return 调拨单信息
+     */
+    ServiceResult<String, DeploymentOrder> queryDeploymentOrderDetail(String deploymentOrderNo);
 }

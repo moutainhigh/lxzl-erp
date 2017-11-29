@@ -17,7 +17,7 @@ import com.lxzl.se.common.domain.Result;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * 描述: ${DESCRIPTION}
+ * 描述: 订单控制器
  *
  * @author gaochao
  * @date 2017-11-15 14:16

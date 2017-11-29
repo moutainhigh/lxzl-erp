@@ -34,6 +34,8 @@ public class DeploymentOrder implements Serializable {
 	private List<DeploymentOrderProduct> deploymentOrderProductList;
 	private List<DeploymentOrderMaterial> deploymentOrderMaterialList;
 
+	private Integer verifyUser;
+
 
 	public Integer getDeploymentOrderId(){
 		return deploymentOrderId;
@@ -217,5 +219,13 @@ public class DeploymentOrder implements Serializable {
 
 	public void setDeploymentOrderMaterialList(List<DeploymentOrderMaterial> deploymentOrderMaterialList) {
 		this.deploymentOrderMaterialList = deploymentOrderMaterialList;
+	}
+
+	public Integer getVerifyUser() {
+		return verifyUser;
+	}
+
+	public void setVerifyUser(Integer verifyUser) {
+		this.verifyUser = verifyUser;
 	}
 }
