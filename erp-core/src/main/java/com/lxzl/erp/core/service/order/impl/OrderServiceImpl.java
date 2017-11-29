@@ -291,38 +291,62 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ServiceResult<String, String> processOrder(ProcessOrderParam param) {
         ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+
         if (param == null) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
 
+        OrderDO orderDO = orderMapper.findByOrderNo(param.getOrderNo());
+        if (orderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        ServiceResult<String, List<Warehouse>> warehouseResult = warehouseService.getWarehouseByCurrentCompany();
+        if (!ErrorCode.SUCCESS.equals(warehouseResult.getErrorCode())) {
+            result.setErrorCode(warehouseResult.getErrorCode());
+            return result;
+        }
+        // 取仓库，本公司的默认仓库和客户仓
+        List<Warehouse> warehouseList = warehouseResult.getResult();
+        Warehouse srcWarehouse = null;
+        for (Warehouse warehouse : warehouseList) {
+            if (WarehouseType.WAREHOUSE_TYPE_DEFAULT.equals(warehouse.getWarehouseType())) {
+                srcWarehouse = warehouse;
+            }
+        }
+        if (srcWarehouse == null) {
+            result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
+            return result;
+        }
+
+
         if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())) {
-            String errorCode = addOrderItem(param.getOrderNo(), param.getEquipmentNo(), param.getBulkMaterialNo());
+            String errorCode = addOrderItem(orderDO, srcWarehouse.getWarehouseId(), param.getEquipmentNo(), param.getBulkMaterialNo(), loginUser.getUserId(), currentTime);
             if (!ErrorCode.SUCCESS.equals(errorCode)) {
                 result.setErrorCode(errorCode);
                 return result;
             }
         } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(param.getOperationType())) {
-            String errorCode = removeOrderItem(param.getOrderNo(), param.getEquipmentNo(), param.getBulkMaterialNo());
+            String errorCode = removeOrderItem(orderDO, param.getEquipmentNo(), param.getBulkMaterialNo(), loginUser.getUserId(), currentTime);
             if (!ErrorCode.SUCCESS.equals(errorCode)) {
                 result.setErrorCode(errorCode);
                 return result;
             }
         }
 
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_PROCESSING);
+        orderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderDO.setUpdateTime(currentTime);
+        orderMapper.update(orderDO);
         result.setResult(param.getOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 
-    private String addOrderItem(String orderNo, String equipmentNo, String bulkMaterialNo) {
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        Date currentTime = new Date();
-        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
-        if (orderDO == null) {
-            return ErrorCode.RECORD_NOT_EXISTS;
-        }
-
+    private String addOrderItem(OrderDO orderDO, Integer srcWarehouseId, String equipmentNo, String bulkMaterialNo, Integer loginUserId, Date currentTime) {
         // 计算预计归还时间
         Date expectReturnTime = calculationOrderExpectReturnTime(orderDO.getRentStartTime(), orderDO.getRentType(), orderDO.getRentTimeLength());
         if (equipmentNo != null) {
@@ -333,6 +357,9 @@ public class OrderServiceImpl implements OrderService {
             if (!ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE.equals(productEquipmentDO.getEquipmentStatus())) {
                 return ErrorCode.PRODUCT_EQUIPMENT_IS_NOT_IDLE;
             }
+            if (!srcWarehouseId.equals(productEquipmentDO.getCurrentWarehouseId())) {
+                return ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE;
+            }
             Map<Integer, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(), "productSkuId");
             OrderProductDO orderProductDO = orderProductDOMap.get(productEquipmentDO.getSkuId());
             if (orderProductDO == null) {
@@ -340,7 +367,7 @@ public class OrderServiceImpl implements OrderService {
             }
             productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY);
             productEquipmentDO.setUpdateTime(currentTime);
-            productEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+            productEquipmentDO.setUpdateUser(loginUserId.toString());
             productEquipmentMapper.update(productEquipmentDO);
 
             BigDecimal expectRentAmount = calculationOrderExpectRentAmount(orderProductDO.getProductUnitAmount(), orderDO.getRentType(), orderDO.getRentTimeLength());
@@ -355,9 +382,9 @@ public class OrderServiceImpl implements OrderService {
             orderProductEquipmentDO.setActualRentAmount(BigDecimal.ZERO);
             orderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             orderProductEquipmentDO.setCreateTime(currentTime);
-            orderProductEquipmentDO.setCreateUser(loginUser.getUserId().toString());
+            orderProductEquipmentDO.setCreateUser(loginUserId.toString());
             orderProductEquipmentDO.setUpdateTime(currentTime);
-            orderProductEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+            orderProductEquipmentDO.setUpdateUser(loginUserId.toString());
             orderProductEquipmentMapper.save(orderProductEquipmentDO);
         }
         if (bulkMaterialNo != null) {
@@ -368,6 +395,9 @@ public class OrderServiceImpl implements OrderService {
             if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE.equals(bulkMaterialDO.getBulkMaterialStatus())) {
                 return ErrorCode.BULK_MATERIAL_IS_NOT_IDLE;
             }
+            if (!srcWarehouseId.equals(bulkMaterialDO.getCurrentWarehouseId())) {
+                return ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE;
+            }
 
             Map<Integer, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId");
             OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(bulkMaterialDO.getMaterialId());
@@ -376,7 +406,7 @@ public class OrderServiceImpl implements OrderService {
             }
             bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
             bulkMaterialDO.setUpdateTime(currentTime);
-            bulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+            bulkMaterialDO.setUpdateUser(loginUserId.toString());
             bulkMaterialMapper.update(bulkMaterialDO);
 
             BigDecimal expectRentAmount = calculationOrderExpectRentAmount(orderMaterialDO.getMaterialUnitAmount(), orderDO.getRentType(), orderDO.getRentTimeLength());
@@ -391,27 +421,16 @@ public class OrderServiceImpl implements OrderService {
             orderMaterialBulkDO.setActualRentAmount(BigDecimal.ZERO);
             orderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             orderMaterialBulkDO.setCreateTime(currentTime);
-            orderMaterialBulkDO.setCreateUser(loginUser.getUserId().toString());
+            orderMaterialBulkDO.setCreateUser(loginUserId.toString());
             orderMaterialBulkDO.setUpdateTime(currentTime);
-            orderMaterialBulkDO.setUpdateUser(loginUser.getUserId().toString());
+            orderMaterialBulkDO.setUpdateUser(loginUserId.toString());
             orderMaterialBulkMapper.save(orderMaterialBulkDO);
         }
 
-        orderDO.setExpectReturnTime(expectReturnTime);
-        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_PROCESSING);
-        orderDO.setUpdateUser(loginUser.getUserId().toString());
-        orderDO.setUpdateTime(currentTime);
-        orderMapper.update(orderDO);
         return ErrorCode.SUCCESS;
     }
 
-    private String removeOrderItem(String orderNo, String equipmentNo, String bulkMaterialNo) {
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        Date currentTime = new Date();
-        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
-        if (orderDO == null) {
-            return ErrorCode.RECORD_NOT_EXISTS;
-        }
+    private String removeOrderItem(OrderDO orderDO, String equipmentNo, String bulkMaterialNo, Integer loginUserId, Date currentTime) {
 
         if (equipmentNo != null) {
             ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(equipmentNo);
@@ -428,12 +447,12 @@ public class OrderServiceImpl implements OrderService {
 
             productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
             productEquipmentDO.setUpdateTime(currentTime);
-            productEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+            productEquipmentDO.setUpdateUser(loginUserId.toString());
             productEquipmentMapper.update(productEquipmentDO);
 
             orderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
             orderProductEquipmentDO.setUpdateTime(currentTime);
-            orderProductEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+            orderProductEquipmentDO.setUpdateUser(loginUserId.toString());
             orderProductEquipmentMapper.save(orderProductEquipmentDO);
         }
         if (bulkMaterialNo != null) {
@@ -452,7 +471,7 @@ public class OrderServiceImpl implements OrderService {
             }
             bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
             bulkMaterialDO.setUpdateTime(currentTime);
-            bulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+            bulkMaterialDO.setUpdateUser(loginUserId.toString());
             bulkMaterialMapper.update(bulkMaterialDO);
 
             OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderIdAndBulkMaterialNo(orderDO.getId(), bulkMaterialDO.getBulkMaterialNo());
@@ -462,9 +481,9 @@ public class OrderServiceImpl implements OrderService {
 
             orderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             orderMaterialBulkDO.setCreateTime(currentTime);
-            orderMaterialBulkDO.setCreateUser(loginUser.getUserId().toString());
+            orderMaterialBulkDO.setCreateUser(loginUserId.toString());
             orderMaterialBulkDO.setUpdateTime(currentTime);
-            orderMaterialBulkDO.setUpdateUser(loginUser.getUserId().toString());
+            orderMaterialBulkDO.setUpdateUser(loginUserId.toString());
             orderMaterialBulkMapper.save(orderMaterialBulkDO);
         }
 
@@ -482,35 +501,11 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
-        if (!OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(dbRecordOrder.getOrderStatus())) {
+        if (!OrderStatus.ORDER_STATUS_PROCESSING.equals(dbRecordOrder.getOrderStatus())) {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
-        ServiceResult<String, List<Warehouse>> warehouseResult = warehouseService.getWarehouseByCurrentCompany();
-        if (!ErrorCode.SUCCESS.equals(warehouseResult.getErrorCode())) {
-            result.setErrorCode(warehouseResult.getErrorCode());
-            return result;
-        }
 
-        // 取仓库，本公司的默认仓库和客户仓
-        List<Warehouse> warehouseList = warehouseResult.getResult();
-        Warehouse srcWarehouse = null;
-        Warehouse targetWarehouse = null;
-        for (Warehouse warehouse : warehouseList) {
-            if (WarehouseType.WAREHOUSE_TYPE_DEFAULT.equals(warehouse.getWarehouseType())) {
-                srcWarehouse = warehouse;
-            } else if (WarehouseType.WAREHOUSE_TYPE_RENT.equals(warehouse.getWarehouseType())) {
-                targetWarehouse = warehouse;
-            }
-        }
-        if (srcWarehouse == null || targetWarehouse == null) {
-            result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
-            return result;
-        }
-
-
-        Map<Integer, OrderProduct> orderProductMap = ListUtil.listToMap(order.getOrderProductList(), "orderProductId");
-        Map<Integer, OrderMaterial> orderMaterialMap = ListUtil.listToMap(order.getOrderMaterialList(), "orderMaterialId");
 
         // 计算预计归还时间
         Date expectReturnTime = calculationOrderExpectReturnTime(dbRecordOrder.getRentStartTime(), dbRecordOrder.getRentType(), dbRecordOrder.getRentTimeLength());
@@ -518,105 +513,11 @@ public class OrderServiceImpl implements OrderService {
         List<Integer> productEquipmentIdList = new ArrayList<>();
         // 即将出库的散料ID
         List<Integer> bulkMaterialIdList = new ArrayList<>();
-        // 订单项设备项
-        List<OrderProductEquipmentDO> orderProductEquipmentDOList = new ArrayList<>();
-        // 订单项设备项
-        List<OrderMaterialBulkDO> orderMaterialBulkDOList = new ArrayList<>();
-
-        // 判断挨个订单项，都要发货，并且整合发货的设备及物料
-        for (OrderProductDO orderProductDO : dbRecordOrder.getOrderProductDOList()) {
-            OrderProduct orderProduct = orderProductMap.get(orderProductDO.getId());
-            if ((orderProduct.getEquipmentNoList() == null || orderProduct.getEquipmentNoList().size() == 0)) {
-                throw new BusinessException(ErrorCode.ORDER_PRODUCT_EQUIPMENT_NOT_NULL);
-            }
-            if (orderProduct.getEquipmentNoList().size() != orderProductDO.getProductCount()) {
-                throw new BusinessException(ErrorCode.ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR);
-            }
-
-            // 计算预计金额
-            BigDecimal expectRentAmount = calculationOrderExpectRentAmount(orderProductDO.getProductUnitAmount(), dbRecordOrder.getRentType(), dbRecordOrder.getRentTimeLength());
-            for (String equipmentNo : orderProduct.getEquipmentNoList()) {
-                ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(equipmentNo);
-                if (productEquipmentDO == null) {
-                    throw new BusinessException(ErrorCode.PRODUCT_EQUIPMENT_NOT_EXISTS);
-                }
-                if (!ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE.equals(productEquipmentDO.getEquipmentStatus())) {
-                    throw new BusinessException(ErrorCode.PRODUCT_EQUIPMENT_IS_NOT_IDLE);
-                }
-                if (!productEquipmentDO.getSkuId().equals(orderProductDO.getProductSkuId())) {
-                    throw new BusinessException(ErrorCode.ORDER_PRODUCT_EQUIPMENT_SKU_NOT_SAME);
-                }
-                if (!productEquipmentDO.getCurrentWarehouseId().equals(srcWarehouse.getWarehouseId())) {
-                    throw new BusinessException(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE);
-                }
-                productEquipmentIdList.add(productEquipmentDO.getId());
-
-                OrderProductEquipmentDO orderProductEquipmentDO = new OrderProductEquipmentDO();
-                orderProductEquipmentDO.setOrderId(orderProductDO.getOrderId());
-                orderProductEquipmentDO.setOrderProductId(orderProductDO.getId());
-                orderProductEquipmentDO.setEquipmentId(productEquipmentDO.getId());
-                orderProductEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
-                orderProductEquipmentDO.setExpectReturnTime(expectReturnTime);
-                orderProductEquipmentDO.setExpectRentAmount(expectRentAmount);
-                orderProductEquipmentDO.setActualRentAmount(BigDecimal.ZERO);
-                orderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                orderProductEquipmentDO.setCreateTime(currentTime);
-                orderProductEquipmentDO.setCreateUser(loginUser.getUserId().toString());
-                orderProductEquipmentDO.setUpdateTime(currentTime);
-                orderProductEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
-                orderProductEquipmentDOList.add(orderProductEquipmentDO);
-            }
-
-            orderProductDO.setEquipmentNoList(orderProduct.getEquipmentNoList());
-        }
-
-        for (OrderMaterialDO orderMaterialDO : dbRecordOrder.getOrderMaterialDOList()) {
-
-            OrderMaterial orderMaterial = orderMaterialMap.get(orderMaterialDO.getId());
-            if ((orderMaterial.getBulkMaterialNoList() == null || orderMaterial.getBulkMaterialNoList().size() == 0)) {
-                throw new BusinessException(ErrorCode.ORDER_PRODUCT_EQUIPMENT_NOT_NULL);
-            }
-            if (orderMaterial.getBulkMaterialNoList().size() != orderMaterialDO.getMaterialCount()) {
-                throw new BusinessException(ErrorCode.ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR);
-            }
-
-            BigDecimal expectRentAmount = calculationOrderExpectRentAmount(orderMaterialDO.getMaterialUnitAmount(), dbRecordOrder.getRentType(), dbRecordOrder.getRentTimeLength());
-            for (String bulkMaterialNo : orderMaterial.getBulkMaterialNoList()) {
-                BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(bulkMaterialNo);
-                if (bulkMaterialDO == null) {
-                    throw new BusinessException(ErrorCode.BULK_MATERIAL_NOT_EXISTS);
-                }
-                if (bulkMaterialDO.getCurrentEquipmentId() != null) {
-                    throw new BusinessException(ErrorCode.BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT);
-                }
-                bulkMaterialIdList.add(bulkMaterialDO.getId());
-
-                OrderMaterialBulkDO orderMaterialBulkDO = new OrderMaterialBulkDO();
-                orderMaterialBulkDO.setOrderId(orderMaterialDO.getOrderId());
-                orderMaterialBulkDO.setOrderMaterialId(orderMaterialDO.getId());
-                orderMaterialBulkDO.setBulkMaterialId(bulkMaterialDO.getId());
-                orderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
-                orderMaterialBulkDO.setExpectReturnTime(expectReturnTime);
-                orderMaterialBulkDO.setExpectRentAmount(expectRentAmount);
-                orderMaterialBulkDO.setActualRentAmount(BigDecimal.ZERO);
-                orderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                orderMaterialBulkDO.setCreateTime(currentTime);
-                orderMaterialBulkDO.setCreateUser(loginUser.getUserId().toString());
-                orderMaterialBulkDO.setUpdateTime(currentTime);
-                orderMaterialBulkDO.setUpdateUser(loginUser.getUserId().toString());
-                orderMaterialBulkDOList.add(orderMaterialBulkDO);
-            }
-        }
-        if (CollectionUtil.isNotEmpty(orderProductEquipmentDOList)) {
-            orderProductEquipmentMapper.saveList(orderProductEquipmentDOList);
-        }
-        if (CollectionUtil.isNotEmpty(orderMaterialBulkDOList)) {
-            orderMaterialBulkMapper.saveList(orderMaterialBulkDOList);
-        }
 
         ProductOutStockParam productOutStockParam = new ProductOutStockParam();
-        productOutStockParam.setSrcWarehouseId(srcWarehouse.getWarehouseId());
-        productOutStockParam.setTargetWarehouseId(targetWarehouse.getWarehouseId());
+        // TODO 待填值
+        productOutStockParam.setSrcWarehouseId(null);
+        productOutStockParam.setTargetWarehouseId(null);
         productOutStockParam.setCauseType(StockCauseType.STOCK_CAUSE_TYPE_ORDER_DELIVERY);
         productOutStockParam.setReferNo(dbRecordOrder.getOrderNo());
         productOutStockParam.setProductEquipmentIdList(productEquipmentIdList);

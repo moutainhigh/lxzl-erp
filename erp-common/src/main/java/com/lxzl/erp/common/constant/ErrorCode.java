@@ -71,6 +71,7 @@ public class ErrorCode {
     public static final String BULK_MATERIAL_IS_NOT_IDLE = "J200026";
     public static final String BULK_MATERIAL_STATUS_ERROR = "J200027";
     public static final String PRODUCT_EQUIPMENT_STATUS_ERROR = "J200028";
+    public static final String BULK_MATERIAL_NOT_IN_THIS_WAREHOUSE = "J200029";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -291,6 +292,7 @@ public class ErrorCode {
         MAP.put(BULK_MATERIAL_IS_NOT_IDLE, "物料没有在闲置状态。");
         MAP.put(PRODUCT_EQUIPMENT_STATUS_ERROR, "商品设备状态有误。");
         MAP.put(BULK_MATERIAL_STATUS_ERROR, "散料状态有误。");
+        MAP.put(BULK_MATERIAL_NOT_IN_THIS_WAREHOUSE, "散料不在该库房。");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
