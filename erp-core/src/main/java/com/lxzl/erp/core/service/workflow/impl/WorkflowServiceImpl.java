@@ -386,7 +386,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     }
 
     @Override
-    public ServiceResult<String, Boolean> isMeedVerify(Integer workflowType) {
+    public ServiceResult<String, Boolean> isNeedVerify(Integer workflowType) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         if (workflowType == null) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);

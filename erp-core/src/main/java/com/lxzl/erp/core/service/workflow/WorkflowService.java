@@ -78,5 +78,5 @@ public interface WorkflowService extends BaseService {
      * @param workflowType    工作流类型，详见WorkflowType
      * @return true 是 false 否
      */
-    ServiceResult<String, Boolean> isMeedVerify(Integer workflowType);
+    ServiceResult<String, Boolean> isNeedVerify(Integer workflowType);
 }

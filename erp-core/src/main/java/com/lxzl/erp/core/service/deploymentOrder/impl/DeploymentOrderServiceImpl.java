@@ -340,7 +340,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             return result;
         }
 
-        ServiceResult<String, Boolean> isMeedVerifyResult = workflowService.isMeedVerify(WorkflowType.WORKFLOW_TYPE_ORDER_INFO);
+        ServiceResult<String, Boolean> isMeedVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_ORDER_INFO);
         if (!ErrorCode.SUCCESS.equals(isMeedVerifyResult.getErrorCode())) {
             result.setErrorCode(isMeedVerifyResult.getErrorCode());
             return result;
