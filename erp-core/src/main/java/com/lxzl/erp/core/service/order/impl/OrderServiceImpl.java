@@ -137,7 +137,7 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
             if (isMeedVerifyResult.getResult()) {
-                ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser);
+                ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, null);
                 if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
                     result.setErrorCode(workflowCommitResult.getErrorCode());
                     return result;

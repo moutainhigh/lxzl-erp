@@ -71,7 +71,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser) {
+    public ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser, String commitRemark) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
 
@@ -94,9 +94,9 @@ public class WorkflowServiceImpl implements WorkflowService {
         String workflowLinkNo;
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
         if (workflowLinkDO == null) {
-            workflowLinkNo = generateWorkflowLink(workflowTemplateDO, workflowReferNo, verifyUser, currentTime);
+            workflowLinkNo = generateWorkflowLink(workflowTemplateDO, workflowReferNo,commitRemark, verifyUser, currentTime);
         } else {
-            String errorCode = continueWorkflowLink(workflowLinkDO, verifyUser, currentTime);
+            String errorCode = continueWorkflowLink(workflowLinkDO,commitRemark, verifyUser, currentTime);
             if (!ErrorCode.SUCCESS.equals(errorCode)) {
                 result.setErrorCode(errorCode);
                 return result;
@@ -408,7 +408,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     /**
      * 生成工作流线，只适用于首次创建
      */
-    private String generateWorkflowLink(WorkflowTemplateDO workflowTemplateDO, String workflowReferNo, Integer verifyUser, Date currentTime) {
+    private String generateWorkflowLink(WorkflowTemplateDO workflowTemplateDO, String workflowReferNo, String commitRemark, Integer verifyUser, Date currentTime) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         if (workflowTemplateDO == null) {
             return null;
@@ -447,7 +447,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         commitWorkflowLinkDetailDO.setWorkflowNextNodeId(thisWorkflowNodeDO.getId());
         commitWorkflowLinkDetailDO.setVerifyUser(loginUser.getUserId());
         commitWorkflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
-        commitWorkflowLinkDetailDO.setVerifyOpinion("提交审核");
+        commitWorkflowLinkDetailDO.setVerifyOpinion(commitRemark);
         commitWorkflowLinkDetailDO.setVerifyTime(currentTime);
         commitWorkflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         commitWorkflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
@@ -481,7 +481,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     /**
      * 继续工作流
      */
-    private String continueWorkflowLink(WorkflowLinkDO workflowLinkDO, Integer verifyUser, Date currentTime) {
+    private String continueWorkflowLink(WorkflowLinkDO workflowLinkDO, String commitRemark, Integer verifyUser, Date currentTime) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         if (workflowLinkDO == null) {
             return ErrorCode.WORKFLOW_LINK_NOT_EXISTS;
@@ -526,7 +526,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         commitWorkflowLinkDetailDO.setWorkflowNextNodeId(thisWorkflowNodeDO.getId());
         commitWorkflowLinkDetailDO.setVerifyUser(loginUser.getUserId());
         commitWorkflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
-        commitWorkflowLinkDetailDO.setVerifyOpinion("提交审核");
+        commitWorkflowLinkDetailDO.setVerifyOpinion(commitRemark);
         commitWorkflowLinkDetailDO.setVerifyTime(currentTime);
         commitWorkflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         commitWorkflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());

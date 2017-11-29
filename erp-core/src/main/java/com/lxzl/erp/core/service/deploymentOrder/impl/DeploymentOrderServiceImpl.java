@@ -348,7 +348,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             return result;
         }
         if (isMeedVerifyResult.getResult()) {
-            ServiceResult<String, String> workFlowResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO, deploymentOrderNo, verifyUser);
+            ServiceResult<String, String> workFlowResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO, deploymentOrderNo, verifyUser, null);
             if (!ErrorCode.SUCCESS.equals(workFlowResult.getErrorCode())) {
                 result.setErrorCode(workFlowResult.getErrorCode());
                 return result;
