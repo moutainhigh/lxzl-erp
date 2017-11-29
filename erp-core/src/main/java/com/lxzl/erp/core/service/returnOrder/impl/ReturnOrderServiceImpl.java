@@ -1,10 +1,7 @@
 package com.lxzl.erp.core.service.returnOrder.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.ProductEquipmentStatus;
-import com.lxzl.erp.common.constant.ReturnOrderStatus;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.pojo.Order;
@@ -20,6 +17,7 @@ import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.core.service.product.impl.support.ProductEquipmentConverter;
 import com.lxzl.erp.core.service.returnOrder.ReturnOrderService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
@@ -30,10 +28,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderConsignInfoMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
@@ -42,16 +37,14 @@ import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
-import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderConsignInfoDO;
-import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderDO;
-import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderMaterialDO;
-import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderProductDO;
+import com.lxzl.erp.dataaccess.domain.returnOrder.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -65,6 +58,30 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         if(customerDO==null){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
+        }
+        //校验退还商品项sku不能重复
+        List<ProductSku> productSkuList = addReturnOrderParam.getProductSkuList();
+        Set<Integer> skuIdSet = new HashSet<>();
+        if(CollectionUtil.isNotEmpty(productSkuList)){
+            for(ProductSku productSku : productSkuList){
+                skuIdSet.add(productSku.getSkuId());
+            }
+            if(skuIdSet.size()<productSkuList.size()){
+                serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_CAN_NOT_REPEAT);
+                return serviceResult;
+            }
+        }
+        //校验退还商品项sku不能重复
+        List<Material> materialList = addReturnOrderParam.getMaterialList();
+        Set<Integer> materialIdSet = new HashSet<>();
+        if(CollectionUtil.isNotEmpty(materialList)){
+            for(Material material : materialList){
+                materialIdSet.add(material.getMaterialId());
+            }
+            if(materialIdSet.size()<materialList.size()){
+                serviceResult.setErrorCode(ErrorCode.MATERIAL_CAN_NOT_REPEAT);
+                return serviceResult;
+            }
         }
         //用户在租sku统计
         List<ProductSkuDO> oldProductSkuDOList = productMapper.findSkuRentByCustomerId(customerDO.getId());
@@ -91,7 +108,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         //构造待保存退换单商品项
         List<ReturnOrderProductDO> returnOrderProductDOList = new ArrayList<>();
         //如果要退还的sku不在在租列表，或者要退还的sku数量大于可租数量，返回相应错误
-        List<ProductSku> productSkuList = addReturnOrderParam.getProductSkuList();
+
         if(CollectionUtil.isNotEmpty(productSkuList)){
             for(ProductSku productSku : productSkuList){
                 ProductSkuDO oldSkuRent = oldSkuCountMap.get(productSku.getSkuId());
@@ -123,7 +140,6 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         //构造待保存退换单商品项
         List<ReturnOrderMaterialDO> returnOrderMaterialDOList = new ArrayList<>();
         //如果要退还的物料不在在租列表，或者要退还的物料数量大于在租数量，返回相应错误
-        List<Material> materialList = addReturnOrderParam.getMaterialList();
         if(CollectionUtil.isNotEmpty(materialList)){
             for(Material material : materialList){
                 MaterialDO oldMaterialRent = oldMaterialCountMap.get(material.getMaterialId());
@@ -153,7 +169,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         returnOrderDO.setReturnOrderNo(GenerateNoUtil.generateReturnOrderNo(now));
         returnOrderDO.setCustomerId(customerDO.getId());
         returnOrderDO.setCustomerNo(customerDO.getCustomerNo());
-        returnOrderDO.setIsCharging(CommonConstant.COMMON_CONSTANT_YES);
+        returnOrderDO.setIsCharging(addReturnOrderParam.getIsCharging());
         returnOrderDO.setTotalReturnProductCount(totalReturnProductCount);
         returnOrderDO.setTotalReturnMaterialCount(totalReturnMaterialCount);
         returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAITING);
@@ -219,7 +235,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             serviceResult.setErrorCode(ErrorCode.EQUIPMENT_NOT_RENT);
             return serviceResult;
         }
-        //修改设备状态为空闲
+        //修改设备状态为闲置
         productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
         productEquipmentDO.setOrderNo("");
         productEquipmentMapper.update(productEquipmentDO);
@@ -236,7 +252,9 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findRentByCustomerIdAndEquipmentId(returnOrderDO.getCustomerId(),productEquipmentDO.getId());
         OrderProductDO orderProductDO = orderProductDOMap.get(orderProductEquipmentDO.getOrderProductId());
         //todo 计算该设备的租金
-        orderProductEquipmentDO.setActualRentAmount(amountSupport.calculateRentCost(orderProductDO.getProductUnitAmount(),orderDO.getRentStartTime(),now,orderDO.getRentType()));
+        BigDecimal rentCost = CommonConstant.COMMON_CONSTANT_NO.equals(returnOrderDO.getIsCharging())?
+                new BigDecimal(0):amountSupport.calculateRentCost(orderProductDO.getProductUnitAmount(),orderDO.getRentStartTime(),now,orderDO.getRentType());
+        orderProductEquipmentDO.setActualRentAmount(rentCost);
         orderProductEquipmentDO.setActualReturnTime(now);
         orderProductEquipmentMapper.update(orderProductEquipmentDO);
 
@@ -245,11 +263,44 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         customerRiskManagementDO.setCreditAmountUsed(BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(),productEquipmentDO.getEquipmentPrice()));
         customerRiskManagementMapper.update(customerRiskManagementDO);
 
-        //todo 修改相应订单
-        //todo 修改退还单
-        //todo 修改退还商品项表
-        //todo 修改退还商品设备表
+        //修改订单,全部归还状态，最后一件归还时间
+        if(rentMap.size()==1){
+            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
+            orderDO.setActualReturnTime(now);
+            orderMapper.update(orderDO);
+        }
+        //修改退还单，归还订单状态，最后一件设备归还的时间,租赁期间产生总费用,实际退还商品总数,修改时间，修改人
+        returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
+        returnOrderDO.setTotalRentCost(BigDecimalUtil.add(returnOrderDO.getTotalRentCost(),rentCost));
+        returnOrderDO.setRealTotalReturnProductCount(returnOrderDO.getRealTotalReturnProductCount()+1);
+        returnOrderDO.setUpdateTime(now);
+        returnOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        if(rentMap.size()==1){
+            returnOrderDO.setRealReturnTime(now);
+        }
+        returnOrderMapper.update(returnOrderDO);
+        //修改退还商品项表,实际退还商品数量,修改时间，修改人
+        ReturnOrderProductDO returnOrderProductDO = returnOrderProductMapper.findBySkuIdAndReturnOrderId(productEquipmentDO.getSkuId(),returnOrderDO.getId());
+        returnOrderProductDO.setRealReturnProductSkuCount(returnOrderProductDO.getRealReturnProductSkuCount()+1);
+        returnOrderProductDO.setUpdateTime(now);
+        returnOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        returnOrderProductMapper.update(returnOrderProductDO);
+        //添加退还商品设备表记录
+        ReturnOrderProductEquipmentDO returnOrderProductEquipmentDO = new ReturnOrderProductEquipmentDO();
+        returnOrderProductEquipmentDO.setReturnOrderProductId(returnOrderProductDO.getId());
+        returnOrderProductEquipmentDO.setReturnOrderId(returnOrderDO.getId());
+        returnOrderProductEquipmentDO.setReturnOrderNo(returnOrderDO.getReturnOrderNo());
+        returnOrderProductEquipmentDO.setEquipmentId(productEquipmentDO.getId());
+        returnOrderProductEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
+        returnOrderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        returnOrderProductEquipmentDO.setCreateTime(now);
+        returnOrderProductEquipmentDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        returnOrderProductEquipmentDO.setUpdateTime(now);
+        returnOrderProductEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        returnOrderProductEquipmentMapper.save(returnOrderProductEquipmentDO);
 
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(ProductEquipmentConverter.convertProductEquipmentDO(productEquipmentDO));
         return serviceResult;
     }
 
@@ -283,4 +334,6 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     private OrderProductMapper orderProductMapper;
     @Autowired
     private CustomerRiskManagementMapper customerRiskManagementMapper;
+    @Autowired
+    private ReturnOrderProductEquipmentMapper returnOrderProductEquipmentMapper;
 }

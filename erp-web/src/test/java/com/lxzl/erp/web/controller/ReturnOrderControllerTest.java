@@ -2,10 +2,13 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.returnOrder.AddReturnOrderParam;
+import com.lxzl.erp.common.domain.returnOrder.DoReturnEquipmentParam;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderConsignInfo;
+import org.hibernate.validator.constraints.NotBlank;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -39,5 +42,11 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest{
         addReturnOrderParam.setReturnOrderConsignInfo(returnOrderConsignInfo);
         TestResult result = getJsonTestResult("/returnOrder/add",addReturnOrderParam);
     }
-
+    @Test
+    public void doReturnEquipment() throws Exception {
+        DoReturnEquipmentParam doReturnEquipmentParam = new DoReturnEquipmentParam();
+        doReturnEquipmentParam.setReturnOrderNo("RO201711281440283001372");
+//        doReturnEquipmentParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010006");
+        TestResult result = getJsonTestResult("/returnOrder/doReturnEquipment",doReturnEquipmentParam);
+    }
 }

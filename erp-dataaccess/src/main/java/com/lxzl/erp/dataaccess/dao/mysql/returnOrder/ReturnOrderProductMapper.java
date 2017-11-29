@@ -12,4 +12,6 @@ public interface ReturnOrderProductMapper extends BaseMysqlDAO<ReturnOrderProduc
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	void batchSave(@Param("returnOrderId") Integer returnOrderId, @Param("returnOrderNo") String returnOrderNo, @Param("returnOrderProductDOList")List<ReturnOrderProductDO> returnOrderProductDOList);
+
+	ReturnOrderProductDO findBySkuIdAndReturnOrderId(@Param("skuId") Integer skuId,@Param("returnOrderId") Integer returnOrderId);
 }

@@ -25,7 +25,8 @@ public class AddReturnOrderParam {
     @NotNull(message = ErrorCode.ORDER_CUSTOMER_CONSIGN_NOT_NULL,groups = {AddReturnOrderGroup.class})
     private ReturnOrderConsignInfo returnOrderConsignInfo;
     private String remark;
-
+    @NotNull(message = ErrorCode.RETURN_ORDER_IS_CHARGING_IS_NOT_NULL,groups = {AddReturnOrderGroup.class})
+    private Integer isCharging;
     public String getCustomerNo() {
         return customerNo;
     }
@@ -64,5 +65,13 @@ public class AddReturnOrderParam {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Integer getIsCharging() {
+        return isCharging;
+    }
+
+    public void setIsCharging(Integer isCharging) {
+        this.isCharging = isCharging;
     }
 }

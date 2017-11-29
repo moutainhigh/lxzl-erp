@@ -216,6 +216,9 @@ public class ErrorCode {
     public static final String DISTRICT_ID_NOT_NULL = "J500025";
     public static final String ADDRESS_NOT_NULL = "J500026";
     public static final String RETURN_COUNT_ERROR = "J500027";
+    public static final String RETURN_ORDER_IS_CHARGING_IS_NOT_NULL = "J500028";
+    public static final String PRODUCT_SKU_CAN_NOT_REPEAT = "J500029";
+    public static final String MATERIAL_CAN_NOT_REPEAT = "J500030";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -431,6 +434,9 @@ public class ErrorCode {
         MAP.put(RETURN_ORDER_NO_EXISTS, "退还单不存在");
         MAP.put(EQUIPMENT_NOT_EXISTS, "设备不存在");
         MAP.put(EQUIPMENT_NOT_RENT, "该设备不是客户在租设备，不能退还");
+        MAP.put(RETURN_ORDER_IS_CHARGING_IS_NOT_NULL, "是否计租赁费用不能为空");
+        MAP.put(PRODUCT_SKU_CAN_NOT_REPEAT, "SKU不能重复");
+        MAP.put(MATERIAL_CAN_NOT_REPEAT, "物料不能重复");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL,"站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL,"站内信内容不能为空");

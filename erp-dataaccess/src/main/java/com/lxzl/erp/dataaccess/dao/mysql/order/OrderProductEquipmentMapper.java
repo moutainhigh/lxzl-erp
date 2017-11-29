@@ -19,5 +19,5 @@ public interface OrderProductEquipmentMapper extends BaseMysqlDAO<OrderProductEq
 	 * @param equipmentId
 	 * @return
 	 */
-	OrderProductEquipmentDO findRentByCustomerIdAndEquipmentId(@Param("orderId") Integer orderId , @Param("equipmentId") Integer equipmentId);
+	OrderProductEquipmentDO findRentByCustomerIdAndEquipmentId(@Param("customerId") Integer orderId , @Param("equipmentId") Integer equipmentId);
 }
