@@ -231,9 +231,11 @@
                                                                                             </label>
                                                                                         </td>
                                                                                         <td style="width: 10%;">
-                                                                                            <div class="btn-group text-right" style="display: none;">
+                                                                                            {{#canAdd}}
+                                                                                            <div class="btn-group text-right">
                                                                                                 <a href="#" type="button" class="btn btn-default btn-xs delSkuMaterialButton">删除</a>
                                                                                             </div>
+                                                                                            {{/canAdd}}
                                                                                         </td>
                                                                                     </tr>
                                                                                     {{/materialList}}
