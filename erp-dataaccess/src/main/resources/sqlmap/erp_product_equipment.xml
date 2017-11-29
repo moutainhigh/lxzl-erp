@@ -8,6 +8,7 @@
         <result column="product_id" jdbcType="INTEGER" property="productId" />
         <result column="product_name" jdbcType="VARCHAR" property="productName"/>
         <result column="sku_id" jdbcType="INTEGER" property="skuId" />
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
         <result column="current_warehouse_id" jdbcType="INTEGER" property="currentWarehouseId" />
         <result column="current_warehouse_position_id" jdbcType="INTEGER" property="currentWarehousePositionId" />
         <result column="owner_warehouse_id" jdbcType="INTEGER" property="ownerWarehouseId" />
@@ -69,7 +70,7 @@
         <result column="img_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
     <sql id="column_List">
-        epe.id,epe.equipment_no,epe.product_id,epe.sku_id,epe.current_warehouse_id,epe.current_warehouse_position_id,epe.owner_warehouse_id,epe.owner_warehouse_position_id,epe.equipment_price,epe.equipment_status,epe.data_status,epe.remark,epe.create_user,epe.create_time,epe.update_user,epe.update_time
+        epe.id,epe.equipment_no,epe.product_id,epe.sku_id,epe.order_no,epe.current_warehouse_id,epe.current_warehouse_position_id,epe.owner_warehouse_id,epe.owner_warehouse_position_id,epe.equipment_price,epe.equipment_status,epe.data_status,epe.remark,epe.create_user,epe.create_time,epe.update_user,epe.update_time
     </sql>
     <sql id="img_column_List">
         epi.id as img_id,epi.img_type as img_img_type,epi.original_name as img_original_name,epi.product_id as img_product_id,epi.img_url as img_img_url,epi.data_status as img_data_status,epi.remark as img_remark,epi.is_main as img_is_main,epi.img_order as img_img_order,epi.create_user as img_create_user,epi.create_time as img_create_time,epi.update_user as img_update_user,epi.update_time as img_update_time
@@ -97,7 +98,9 @@
         LEFT JOIN erp_bulk_material ebm ON epebm.bulk_material_id = ebm.id AND ebm.data_status = 1
         LEFT JOIN erp_product_img epi ON epi.product_id = equipment_main.product_id AND epi.data_status = 1 AND epi.img_type = 1
     </select>
-
+    <select id="findByCustomerId" resultMap="ProductEquipmentDO" parameterType="java.lang.Integer">
+        SELECT <include refid="column_List"/> FROM erp_order eo INNER JOIN erp_product_equipment epe ON eo.id=epe.order_id WHERE eo.data_status=1 AND eo.buyer_customer_id = #{customerId}
+    </select>
     <select id="findByEquipmentNo" resultMap="ProductEquipmentDO" parameterType="java.lang.String">
         SELECT equipment_main.*
         <trim prefix=",">
@@ -145,6 +148,9 @@
                 <if test="maps.productEquipmentQueryParam.skuId != null">
                     and epe.sku_id = #{maps.productEquipmentQueryParam.skuId, jdbcType=INTEGER}
                 </if>
+                <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.orderNo != null &amp;&amp; maps.productEquipmentQueryParam.orderNo != ''">
+                    and epe.order_no = #{maps.productEquipmentQueryParam.orderNo, jdbcType=VARCHAR}
+                </if>
                 <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.equipmentStatus != null">
                     and epe.equipment_status = #{maps.productEquipmentQueryParam.equipmentStatus, jdbcType=INTEGER}
                 </if>
@@ -176,7 +182,7 @@
                 and epe.id = #{maps.productEquipmentQueryParam.productEquipmentId, jdbcType=INTEGER}
             </if>
             <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.equipmentNo != null &amp;&amp; maps.productEquipmentQueryParam.equipmentNo != ''">
-                and epe.equipment_no = #{maps.productEquipmentQueryParam.equipmentNo, jdbcType=INTEGER}
+                and epe.equipment_no = #{maps.productEquipmentQueryParam.equipmentNo, jdbcType=VARCHAR}
             </if>
             <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.productId != null">
                 and epe.product_id = #{maps.productEquipmentQueryParam.productId, jdbcType=INTEGER}
@@ -186,6 +192,9 @@
             </if>
             <if test="maps.productEquipmentQueryParam.skuId != null">
                 and epe.sku_id = #{maps.productEquipmentQueryParam.skuId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.orderNo != null &amp;&amp; maps.productEquipmentQueryParam.orderNo != ''">
+                and epe.order_no = #{maps.productEquipmentQueryParam.orderNo, jdbcType=VARCHAR}
             </if>
             <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.equipmentStatus != null">
                 and epe.equipment_status = #{maps.productEquipmentQueryParam.equipmentStatus, jdbcType=INTEGER}
@@ -216,6 +225,9 @@
             </if>
             <if test="skuId != null">
                 sku_id = #{skuId,jdbcType=INTEGER},
+            </if>
+            <if test="orderNo != null">
+                order_no = #{orderNo,jdbcType=VARCHAR},
             </if>
             <if test="currentWarehouseId != null">
                 current_warehouse_id = #{currentWarehouseId,jdbcType=INTEGER},
@@ -258,9 +270,9 @@
 
 
     <insert id="saveList" parameterType="java.util.ArrayList">
-        insert into erp_product_equipment (equipment_no,product_id,sku_id,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,equipment_price,equipment_status,data_status,remark,create_time,create_user,update_time,update_user)
+        insert into erp_product_equipment (equipment_no,product_id,sku_id,order_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,equipment_price,equipment_status,data_status,remark,create_time,create_user,update_time,update_user)
         <foreach item="productEquipmentDO" collection="productEquipmentDOList" separator="UNION ALL">
-            SELECT #{productEquipmentDO.equipmentNo},#{productEquipmentDO.productId},#{productEquipmentDO.skuId},#{productEquipmentDO.currentWarehouseId},#{productEquipmentDO.currentWarehousePositionId},#{productEquipmentDO.ownerWarehouseId},
+            SELECT #{productEquipmentDO.equipmentNo},#{productEquipmentDO.productId},#{productEquipmentDO.skuId},#{productEquipmentDO.orderNo},#{productEquipmentDO.currentWarehouseId},#{productEquipmentDO.currentWarehousePositionId},#{productEquipmentDO.ownerWarehouseId},
             #{productEquipmentDO.ownerWarehousePositionId},eps.sku_price,#{productEquipmentDO.equipmentStatus},#{productEquipmentDO.dataStatus},#{productEquipmentDO.remark},
             #{productEquipmentDO.createTime},#{productEquipmentDO.createUser},#{productEquipmentDO.updateTime},#{productEquipmentDO.updateUser}
             FROM erp_product_sku eps WHERE eps.id = #{productEquipmentDO.skuId}
@@ -286,6 +298,12 @@
             sku_id =
             <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
                 when #{productEquipmentDO.id} then #{productEquipmentDO.skuId}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            order_no =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.orderno}
             </foreach>
         </trim>
         <trim prefix=",">

@@ -1,13 +1,18 @@
 package com.lxzl.erp.common.domain.product.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.returnOrder.AddReturnOrderGroup;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductSku implements Serializable {
+    @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL,groups = {AddReturnOrderGroup.class})
     private Integer skuId;
     private String skuName;
     private Integer productId;
@@ -29,6 +34,15 @@ public class ProductSku implements Serializable {
     private List<ProductCategoryPropertyValue> shouldProductCategoryPropertyValueList;
 
     private String productName;
+
+    //在租数量
+    private Integer rentCount;
+    @NotNull(message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class})
+    @Min(value=0,message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class})
+    //退还数量
+    private Integer returnCount;
+    //退还数量
+    private Integer canReturnCount;
 
     public Integer getSkuId() {
         return skuId;
@@ -164,5 +178,29 @@ public class ProductSku implements Serializable {
 
     public void setShouldProductCategoryPropertyValueList(List<ProductCategoryPropertyValue> shouldProductCategoryPropertyValueList) {
         this.shouldProductCategoryPropertyValueList = shouldProductCategoryPropertyValueList;
+    }
+
+    public Integer getRentCount() {
+        return rentCount;
+    }
+
+    public void setRentCount(Integer rentCount) {
+        this.rentCount = rentCount;
+    }
+
+    public Integer getReturnCount() {
+        return returnCount;
+    }
+
+    public void setReturnCount(Integer returnCount) {
+        this.returnCount = returnCount;
+    }
+
+    public Integer getCanReturnCount() {
+        return canReturnCount;
+    }
+
+    public void setCanReturnCount(Integer canReturnCount) {
+        this.canReturnCount = canReturnCount;
     }
 }

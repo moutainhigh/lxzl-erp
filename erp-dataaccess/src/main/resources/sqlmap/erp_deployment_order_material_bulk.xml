@@ -26,6 +26,11 @@
 		WHERE edomb.id = #{id, jdbcType=INTEGER} AND edomb.data_status = 1 
 	</select>
 
+	<select id="findDeploymentOrderByBulkMaterialNo" resultMap="DeploymentOrderMaterialBulkDO" parameterType="java.util.Map">
+		SELECT <include refid="column_List"/> FROM erp_deployment_order_material_bulk edomb
+		WHERE edomb.id = #{id, jdbcType=INTEGER} AND edomb.deployment_order_id = #{deploymentOrderId, jdbcType=INTEGER} AND edomb.data_status = 1
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(edomb.id) FROM erp_deployment_order_material_bulk edomb 
 		<where>

@@ -32,6 +32,12 @@ public class MaterialDO extends BaseDO {
     private String remark;
     private List<MaterialImgDO> materialImgDOList;
 
+    private Integer rentCount;
+    private Integer returnCount;
+    private Integer canReturnCount;
+    @Transient
+    private String materialModelName;
+
     public Integer getId() {
         return id;
     }
@@ -174,5 +180,37 @@ public class MaterialDO extends BaseDO {
 
     public void setIsRent(Integer isRent) {
         this.isRent = isRent;
+    }
+
+    public Integer getRentCount() {
+        return rentCount;
+    }
+
+    public void setRentCount(Integer rentCount) {
+        this.rentCount = rentCount;
+    }
+
+    public Integer getReturnCount() {
+        return returnCount;
+    }
+
+    public void setReturnCount(Integer returnCount) {
+        this.returnCount = returnCount;
+    }
+
+    public Integer getCanReturnCount() {
+        return canReturnCount;
+    }
+
+    public void setCanReturnCount(Integer canReturnCount) {
+        this.canReturnCount = canReturnCount;
+    }
+
+    public String getMaterialModelName() {
+        return materialModelName;
+    }
+
+    public void setMaterialModelName(String materialModelName) {
+        this.materialModelName = materialModelName;
     }
 }

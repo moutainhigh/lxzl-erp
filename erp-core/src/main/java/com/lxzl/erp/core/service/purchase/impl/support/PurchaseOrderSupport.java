@@ -1,8 +1,5 @@
 package com.lxzl.erp.core.service.purchase.impl.support;
 
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseDeliveryOrder;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrderMaterial;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseDeliveryOrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderProductMapper;

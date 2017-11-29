@@ -14,6 +14,7 @@ public class ProductEquipmentDO extends BaseDO {
     private String equipmentNo;
     private Integer productId;
     private Integer skuId;
+    private String orderNo;
     private Integer currentWarehouseId;
     private Integer currentWarehousePositionId;
     private Integer ownerWarehouseId;
@@ -59,6 +60,14 @@ public class ProductEquipmentDO extends BaseDO {
 
     public void setSkuId(Integer skuId) {
         this.skuId = skuId;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
     }
 
     public Integer getEquipmentStatus() {
@@ -148,4 +157,6 @@ public class ProductEquipmentDO extends BaseDO {
     public void setBulkMaterialDOList(List<BulkMaterialDO> bulkMaterialDOList) {
         this.bulkMaterialDOList = bulkMaterialDOList;
     }
+
+
 }

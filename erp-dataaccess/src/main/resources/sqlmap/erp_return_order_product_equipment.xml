@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderProductEquipmentMapper">
+
+	<resultMap id="ReturnOrderProductEquipmentDO" type="com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderProductEquipmentDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="return_order_product_id" jdbcType="INTEGER" property="returnOrderProductId" />
+		<result column="return_order_id" jdbcType="INTEGER" property="returnOrderId" />
+		<result column="return_order_no" jdbcType="VARCHAR" property="returnOrderNo" />
+		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
+		<result column="equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		erope.id,erope.return_order_product_id,erope.return_order_id,erope.return_order_no,erope.equipment_id,erope.equipment_no,erope.data_status,erope.remark,erope.create_time,erope.create_user,erope.update_time,erope.update_user
+	</sql>
+
+	<select id="findById" resultMap="ReturnOrderProductEquipmentDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_return_order_product_equipment erope 
+		WHERE erope.id = #{id, jdbcType=INTEGER} AND erope.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(erope.id) FROM erp_return_order_product_equipment erope 
+		<where>
+			<if test="true">
+				AND erope.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="ReturnOrderProductEquipmentDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_return_order_product_equipment erope 
+		<where>
+			<if test="true">
+				AND erope.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="returnOrderProductId != null">
+				return_order_product_id = #{returnOrderProductId,jdbcType=INTEGER},
+			</if>
+			<if test="returnOrderId != null">
+				return_order_id = #{returnOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="returnOrderNo != null">
+				return_order_no = #{returnOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="equipmentId != null">
+				equipment_id = #{equipmentId,jdbcType=INTEGER},
+			</if>
+			<if test="equipmentNo != null">
+				equipment_no = #{equipmentNo,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderProductEquipmentDO">
+		INSERT INTO erp_return_order_product_equipment <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderProductEquipmentDO">
+		UPDATE erp_return_order_product_equipment <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

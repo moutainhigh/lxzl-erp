@@ -12,6 +12,7 @@
 		<result column="is_main_material" jdbcType="INTEGER" property="isMainMaterial" />
 		<result column="material_capacity_value" jdbcType="DOUBLE" property="materialCapacityValue" />
 		<result column="material_model_id" jdbcType="INTEGER" property="materialModelId" />
+		<result column="material_model_name" jdbcType="VARCHAR" property="materialModelName" />
 		<result column="brand_id" jdbcType="INTEGER" property="brandId" />
 		<result column="stock" jdbcType="INTEGER" property="stock"/>
 		<result column="is_rent" jdbcType="INTEGER" property="isRent"/>
@@ -26,6 +27,8 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="rent_count" jdbcType="INTEGER" property="rentCount" />
+		<result column="material_can_return_count" jdbcType="INTEGER" property="canReturnCount" />
 		<collection property="materialImgDOList" resultMap="MaterialImgDO" />
 	</resultMap>
 
@@ -59,8 +62,9 @@
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
 			select
-			<include refid="column_List"/>
+			<include refid="column_List"/>,emm.model_name AS material_model_name
 			from erp_material em
+			INNER JOIN erp_material_model emm ON em.material_model_id = emm.id
 			where em.id = #{id, jdbcType=INTEGER} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
@@ -69,8 +73,9 @@
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
 			select
-			<include refid="column_List"/>
+			<include refid="column_List"/>,emm.model_name AS material_model_name
 			from erp_material em
+			INNER JOIN erp_material_model emm ON em.material_model_id = emm.id
 			where em.material_no = #{materialNo, jdbcType=INTEGER} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
@@ -79,8 +84,9 @@
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
 			select
-			<include refid="column_List"/>
+			<include refid="column_List"/>,emm.model_name AS material_model_name
 			from erp_material em
+			INNER JOIN erp_material_model emm ON em.material_model_id = emm.id
 			where em.material_type = #{materialType, jdbcType=INTEGER} and em.material_capacity_value = #{materialCapacityValue, jdbcType=DOUBLE} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
@@ -91,6 +97,7 @@
 			select
 			<include refid="column_List"/>
 			from erp_material em
+			INNER JOIN erp_material_model emm ON em.material_model_id = emm.id
 			where em.material_type = #{materialType, jdbcType=INTEGER} and em.material_model_id = #{materialModelId, jdbcType=INTEGER} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
@@ -129,8 +136,9 @@
 	<select id="listPage" resultMap="MaterialDO" parameterType="map">
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
-			SELECT <include refid="column_List"/>
+			SELECT <include refid="column_List"/>,emm.model_name AS material_model_name
 			FROM erp_material em
+			INNER JOIN erp_material_model emm ON em.material_model_id = emm.id
 			<where>
 				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialType != null &amp;&amp; maps.materialQueryParam.materialType != ''">
 					and em.material_type = #{maps.materialQueryParam.materialType, jdbcType=INTEGER}
@@ -238,5 +246,21 @@
 		INSERT INTO erp_material
 		<include refid="set_column_sql"/>
 	</insert>
+
+	<select id="findMaterialRentByCustomerId" resultMap="MaterialDO" parameterType="java.lang.Integer">
+		SELECT
+		<include refid="column_List"/> ,eb.rent_count,eb.material_can_return_count
+		FROM (SELECT
+		eom.material_id,SUM(1) AS rent_count ,SUM(1) + SUM(IFNULL(erom.real_return_material_count,0)) - SUM(IFNULL(erom.return_material_count, 0)) AS material_can_return_count
+		FROM erp_order eo
+		LEFT JOIN erp_order_material eom ON eo.id = eom.order_id AND eom.data_status=1
+		LEFT JOIN erp_order_material_bulk eomb ON eomb.order_material_id = eom.id AND eomb.data_status=1
+		LEFT JOIN erp_return_order_material erom ON erom.return_material_id = eom.material_id AND erom.data_status=1
+		WHERE eo.buyer_customer_id = #{customerId} AND eo.data_status = 1 AND eo.order_status = 4
+		AND eomb.actual_return_time IS NULL AND eomb.bulk_material_id IS NOT NULL
+		GROUP BY eom.material_id) eb
+		LEFT JOIN erp_material em
+		ON eb.material_id = em.id
+	</select>
 
 </mapper>

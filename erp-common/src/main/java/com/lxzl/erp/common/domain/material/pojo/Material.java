@@ -1,5 +1,10 @@
 package com.lxzl.erp.common.domain.material.pojo;
 
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.returnOrder.AddReturnOrderGroup;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -13,6 +18,7 @@ import java.util.List;
  */
 public class Material implements Serializable {
 
+    @NotNull(message = ErrorCode.MATERIAL_ID_NOT_NULL,groups = {AddReturnOrderGroup.class})
     private Integer materialId;   //物料ID
     private String materialNo;   //物料唯一编号
     private String materialName;   //物料名称，取属性与属性值全称
@@ -36,6 +42,13 @@ public class Material implements Serializable {
     private String updateUser;   //修改人
 
     private List<MaterialImg> materialImgList;
+
+    private Integer rentCount;
+    @NotNull(message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class})
+    @Min(value = 1 , message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class})
+    private Integer returnCount;
+    private Integer canReturnCount;
+    private String materialModelName;
 
     public Integer getMaterialId() {
         return materialId;
@@ -211,5 +224,37 @@ public class Material implements Serializable {
 
     public void setIsRent(Integer isRent) {
         this.isRent = isRent;
+    }
+
+    public Integer getRentCount() {
+        return rentCount;
+    }
+
+    public void setRentCount(Integer rentCount) {
+        this.rentCount = rentCount;
+    }
+
+    public Integer getReturnCount() {
+        return returnCount;
+    }
+
+    public void setReturnCount(Integer returnCount) {
+        this.returnCount = returnCount;
+    }
+
+    public Integer getCanReturnCount() {
+        return canReturnCount;
+    }
+
+    public void setCanReturnCount(Integer canReturnCount) {
+        this.canReturnCount = canReturnCount;
+    }
+
+    public String getMaterialModelName() {
+        return materialModelName;
+    }
+
+    public void setMaterialModelName(String materialModelName) {
+        this.materialModelName = materialModelName;
     }
 }

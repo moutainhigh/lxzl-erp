@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderProductMapper">
+
+	<resultMap id="ReturnOrderProductDO" type="com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderProductDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="return_order_id" jdbcType="INTEGER" property="returnOrderId" />
+		<result column="return_order_no" jdbcType="VARCHAR" property="returnOrderNo" />
+		<result column="return_product_sku_id" jdbcType="INTEGER" property="returnProductSkuId" />
+		<result column="return_product_sku_count" jdbcType="INTEGER" property="returnProductSkuCount" />
+		<result column="real_return_product_sku_count" jdbcType="INTEGER" property="realReturnProductSkuCount" />
+		<result column="return_product_sku_snapshot" jdbcType="VARCHAR" property="returnProductSkuSnapshot" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		erop.id,erop.return_order_id,erop.return_order_no,erop.return_product_sku_id,erop.return_product_sku_count,erop.real_return_product_sku_count,erop.return_product_sku_snapshot,erop.data_status,erop.remark,erop.create_time,erop.create_user,erop.update_time,erop.update_user
+	</sql>
+
+	<select id="findById" resultMap="ReturnOrderProductDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_return_order_product erop
+		WHERE erop.id = #{id, jdbcType=INTEGER} AND erop.data_status = 1
+	</select>
+	<select id="findBySkuIdAndReturnOrderId" resultMap="ReturnOrderProductDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_return_order_product erop
+		WHERE erop.return_product_sku_id = #{skuId, jdbcType=INTEGER}
+		AND erop.return_order_id = #{returnOrderId, jdbcType=INTEGER}
+		AND erop.data_status = 1
+	</select>
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(erop.id) FROM erp_return_order_product erop
+		<where>
+			<if test="true">
+				AND erop.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="ReturnOrderProductDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_return_order_product erop
+		<where>
+			<if test="true">
+				AND erop.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="returnOrderId != null">
+				return_order_id = #{returnOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="returnOrderNo != null">
+				return_order_no = #{returnOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="returnProductSkuId != null">
+				return_product_sku_id = #{returnProductSkuId,jdbcType=INTEGER},
+			</if>
+			<if test="returnProductSkuCount != null">
+				return_product_sku_count = #{returnProductSkuCount,jdbcType=INTEGER},
+			</if>
+			<if test="realReturnProductSkuCount != null">
+				real_return_product_sku_count = #{realReturnProductSkuCount,jdbcType=INTEGER},
+			</if>
+			<if test="returnProductSkuSnapshot != null">
+				return_product_sku_snapshot = #{returnProductSkuSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderProductDO">
+		INSERT INTO erp_return_order_product <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderProductDO">
+		UPDATE erp_return_order_product <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<insert id="batchSave" parameterType="java.util.List">
+		insert into erp_return_order_product
+		(return_order_id,return_order_no,return_product_sku_id,return_product_sku_count,real_return_product_sku_count,return_product_sku_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
+		values
+		<foreach collection="returnOrderProductDOList" item="returnOrderProductDO" index="index" separator =",">
+			(
+			#{returnOrderId},#{returnOrderNo},#{returnOrderProductDO.returnProductSkuId},#{returnOrderProductDO.returnProductSkuCount},#{returnOrderProductDO.realReturnProductSkuCount},
+			#{returnOrderProductDO.returnProductSkuSnapshot},#{returnOrderProductDO.dataStatus},#{returnOrderProductDO.remark},
+			#{returnOrderProductDO.createTime},#{returnOrderProductDO.createUser},#{returnOrderProductDO.updateTime},#{returnOrderProductDO.updateUser}
+			)
+		</foreach>
+	</insert>
+</mapper>

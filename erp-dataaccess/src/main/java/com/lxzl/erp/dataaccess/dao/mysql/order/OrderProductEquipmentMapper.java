@@ -12,4 +12,14 @@ public interface OrderProductEquipmentMapper extends BaseMysqlDAO<OrderProductEq
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	Integer saveList(@Param("orderProductEquipmentDOList") List<OrderProductEquipmentDO> orderProductEquipmentDOList);
+
+	OrderProductEquipmentDO findByOrderIdAndEquipmentNo(@Param("orderId") Integer orderId , @Param("equipmentNo") String equipmentNo);
+
+	/**
+	 * 根据客户和设备查询在租设备的订单商品设备
+	 * @param customerId
+	 * @param equipmentId
+	 * @return
+	 */
+	OrderProductEquipmentDO findRentByCustomerIdAndEquipmentId(@Param("customerId") Integer customerId , @Param("equipmentId") Integer equipmentId);
 }

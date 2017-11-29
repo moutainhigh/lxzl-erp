@@ -183,6 +183,11 @@ public class ErrorCode {
     public static final String DEPLOYMENT_ORDER_BULK_MATERIAL_STOCK_NOT_ENOUGH = "J400019";
     public static final String DEPLOYMENT_ORDER_STATUS_ERROR = "J400020";
     public static final String DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM = "J400021";
+    public static final String RETURN_ORDER_NO_NOT_NULL = "J400022";
+    public static final String EQUIPMENT_NO_NOT_NULL = "J400023";
+    public static final String RETURN_ORDER_NO_EXISTS = "J400024";
+    public static final String EQUIPMENT_NOT_EXISTS = "J400025";
+    public static final String EQUIPMENT_NOT_RENT = "J400026";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -201,6 +206,19 @@ public class ErrorCode {
     public static final String CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR = "J500015";
     public static final String CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR = "J500016";
     public static final String CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS = "J500017";
+    public static final String CUSTOMER_HAVE_NO_RETURN = "J500018";
+    public static final String CUSTOMER_NOT_RENT_THIS = "J500019";
+    public static final String CUSTOMER_RETURN_TOO_MORE = "J500020";
+    public static final String CONSIGNEE_NAME_NOT_NULL = "J500021";
+    public static final String CONSIGNEE_PHONE_NOT_NULL = "J500022";
+    public static final String PROVINCE_ID_NOT_NULL = "J500023";
+    public static final String CITY_ID_NOT_NULL = "J500024";
+    public static final String DISTRICT_ID_NOT_NULL = "J500025";
+    public static final String ADDRESS_NOT_NULL = "J500026";
+    public static final String RETURN_COUNT_ERROR = "J500027";
+    public static final String RETURN_ORDER_IS_CHARGING_IS_NOT_NULL = "J500028";
+    public static final String PRODUCT_SKU_CAN_NOT_REPEAT = "J500029";
+    public static final String MATERIAL_CAN_NOT_REPEAT = "J500030";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -401,6 +419,24 @@ public class ErrorCode {
         MAP.put(CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR, "押金期数不能小于0");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR, "付款期数不能小于1");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS, "风控信息不存在");
+        MAP.put(CUSTOMER_HAVE_NO_RETURN, "客户没有可归还商品");
+        MAP.put(CUSTOMER_NOT_RENT_THIS, "客户没有租赁该商品");
+        MAP.put(CUSTOMER_RETURN_TOO_MORE, "客户退还商品数超过限制");
+        MAP.put(CONSIGNEE_NAME_NOT_NULL, "收货人姓名不能为空");
+        MAP.put(CONSIGNEE_PHONE_NOT_NULL, "收货人电话不能为空");
+        MAP.put(PROVINCE_ID_NOT_NULL, "省份ID不能为空");
+        MAP.put(CITY_ID_NOT_NULL, "城市ID不能为空");
+        MAP.put(DISTRICT_ID_NOT_NULL, "街道ID不能为空");
+        MAP.put(ADDRESS_NOT_NULL, "地址不能为空");
+        MAP.put(RETURN_COUNT_ERROR, "退还数量必须大于1");
+        MAP.put(RETURN_ORDER_NO_NOT_NULL, "退还单号不能为空");
+        MAP.put(EQUIPMENT_NO_NOT_NULL, "设备编号不能为空");
+        MAP.put(RETURN_ORDER_NO_EXISTS, "退还单不存在");
+        MAP.put(EQUIPMENT_NOT_EXISTS, "设备不存在");
+        MAP.put(EQUIPMENT_NOT_RENT, "该设备不是客户在租设备，不能退还");
+        MAP.put(RETURN_ORDER_IS_CHARGING_IS_NOT_NULL, "是否计租赁费用不能为空");
+        MAP.put(PRODUCT_SKU_CAN_NOT_REPEAT, "SKU不能重复");
+        MAP.put(MATERIAL_CAN_NOT_REPEAT, "物料不能重复");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL,"站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL,"站内信内容不能为空");
