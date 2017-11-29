@@ -140,7 +140,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             if (VerifyStatus.VERIFY_STATUS_PASS.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
-            }else if(VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())){
+            } else if (VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
                 // 如果 最后是驳回状态，审核人就要从头来
                 WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
                 if (workflowTemplateDO == null || CollectionUtil.isEmpty(workflowTemplateDO.getWorkflowNodeDOList())) {
@@ -148,7 +148,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                     return result;
                 }
                 workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(0);
-            }else{
+            } else {
                 workflowNodeDO = workflowNodeMapper.findById(lastWorkflowLinkDetailDO.getWorkflowNextNodeId());
             }
         }
@@ -329,6 +329,10 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDO.setCurrentVerifyUser(CommonConstant.SUPER_USER_ID);
             } else if (previousWorkflowNodeDO != null) {
                 WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
+                if (workflowLinkDetailDOList.size() > 1) {
+                    WorkflowLinkDetailDO previousWorkflowLinkDetailDO = workflowLinkDetailDOList.get(1);
+                    workflowLinkDetailDO.setVerifyUser(previousWorkflowLinkDetailDO.getVerifyUser());
+                }
                 workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
                 workflowLinkDetailDO.setWorkflowReferNo(lastWorkflowLinkDetailDO.getWorkflowReferNo());
                 workflowLinkDetailDO.setWorkflowStep(previousWorkflowNodeDO.getWorkflowStep());
@@ -344,6 +348,11 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDetailDO.setCreateTime(currentTime);
                 workflowLinkDetailMapper.save(workflowLinkDetailDO);
                 workflowLinkDO.setWorkflowStep(previousWorkflowNodeDO.getWorkflowStep());
+            }else{
+                // 如果第一步就驳回了，那么就相当于驳回到根部
+                noticeBusinessModule = true;
+                workflowLinkDO.setWorkflowStep(0);
+                workflowLinkDO.setCurrentVerifyUser(CommonConstant.SUPER_USER_ID);
             }
         }
 
