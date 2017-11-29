@@ -35,6 +35,8 @@ public class MaterialDO extends BaseDO {
     private Integer rentCount;
     private Integer returnCount;
     private Integer canReturnCount;
+    @Transient
+    private String materialModelName;
 
     public Integer getId() {
         return id;
@@ -202,5 +204,13 @@ public class MaterialDO extends BaseDO {
 
     public void setCanReturnCount(Integer canReturnCount) {
         this.canReturnCount = canReturnCount;
+    }
+
+    public String getMaterialModelName() {
+        return materialModelName;
+    }
+
+    public void setMaterialModelName(String materialModelName) {
+        this.materialModelName = materialModelName;
     }
 }

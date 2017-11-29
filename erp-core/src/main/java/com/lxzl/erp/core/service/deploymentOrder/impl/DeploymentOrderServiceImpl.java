@@ -484,8 +484,8 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             if (!ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_DEPLOYING.equals(productEquipmentDO.getEquipmentStatus())) {
                 return ErrorCode.PRODUCT_EQUIPMENT_STATUS_ERROR;
             }
-            DeploymentOrderProductEquipmentDO deploymentOrderProductEquipmentDO = deploymentOrderProductEquipmentMapper.findByEquipmentNo(equipmentNo);
-            if(deploymentOrderProductEquipmentDO == null){
+            DeploymentOrderProductEquipmentDO deploymentOrderProductEquipmentDO = deploymentOrderProductEquipmentMapper.findDeploymentOrderByEquipmentNo(deploymentOrderDO.getId(), equipmentNo);
+            if (deploymentOrderProductEquipmentDO == null) {
                 return ErrorCode.PARAM_IS_ERROR;
             }
             deploymentOrderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
@@ -509,8 +509,8 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                 return ErrorCode.BULK_MATERIAL_STATUS_ERROR;
             }
 
-            DeploymentOrderMaterialBulkDO deploymentOrderMaterialBulkDO = deploymentOrderMaterialBulkMapper.findByBulkMaterialNo(bulkMaterialNo);
-            if(deploymentOrderMaterialBulkDO == null){
+            DeploymentOrderMaterialBulkDO deploymentOrderMaterialBulkDO = deploymentOrderMaterialBulkMapper.findDeploymentOrderByBulkMaterialNo(bulkMaterialNo);
+            if (deploymentOrderMaterialBulkDO == null) {
                 return ErrorCode.PARAM_IS_ERROR;
             }
             deploymentOrderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);

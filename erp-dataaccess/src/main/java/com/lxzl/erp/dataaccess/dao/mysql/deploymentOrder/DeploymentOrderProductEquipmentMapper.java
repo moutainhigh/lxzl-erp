@@ -13,5 +13,6 @@ public interface DeploymentOrderProductEquipmentMapper extends BaseMysqlDAO<Depl
 
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
-    DeploymentOrderProductEquipmentDO findByEquipmentNo(@Param("equipmentNo") String equipmentNo);
+    DeploymentOrderProductEquipmentDO findDeploymentOrderByEquipmentNo(@Param("deploymentOrderId") Integer deploymentOrderId,
+                                                                       @Param("equipmentNo") String equipmentNo);
 }
