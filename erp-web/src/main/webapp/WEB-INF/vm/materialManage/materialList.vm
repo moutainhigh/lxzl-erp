@@ -81,6 +81,7 @@
                                 <th>编号</th>
                                 <th>图片</th>
                                 <th>名称</th>
+                                <th>型号</th>
                                 <th>类型</th>
                                 <th>本身价值</th>
                                 <th>租赁价格</th>
@@ -105,6 +106,7 @@
                                 <td>{{materialNo}}</td>
                                 <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                 <td>{{materialName}}</td>
+                                <td>{{materialModelName}}</td>
                                 <td>{{materialTypeStr}}</td>
                                 <td>{{materialPriceFormat}}</td>
                                 <td>{{rentPriceFormat}}</td>

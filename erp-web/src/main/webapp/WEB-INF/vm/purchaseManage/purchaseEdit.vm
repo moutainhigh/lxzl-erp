@@ -221,7 +221,7 @@
                                                                                                     <input type="hidden" name="materialCapacityValue" value="{{materialCapacityValue}}" class="materialCapacityValue" />
                                                                                                     <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
                                                                                                     <input name="materialName-{{skuId}}-{{rowKey}}-{{materialType}}" value="{{materialName}}" bringfiled="warehouseName" class="materialName form-control required" type="text" readonly placeholder="选择物料" />
-                                                                                                    <span class="input-group-addon cursor chooseMaterialButton" data-materialtype="{{materialType}}"><i class="fa fa-search"></i></span>
+                                                                                                    <span class="input-group-addon cursor chooseMaterialButton" data-materialtype="{{materialType}}" data-materialmodelid="{{materialModelId}}"><i class="fa fa-search"></i></span>
                                                                                                 </div>
                                                                                             </div>
                                                                                         </td>
