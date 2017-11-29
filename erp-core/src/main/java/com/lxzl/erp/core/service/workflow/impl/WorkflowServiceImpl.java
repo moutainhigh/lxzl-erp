@@ -332,6 +332,8 @@ public class WorkflowServiceImpl implements WorkflowService {
                 if (workflowLinkDetailDOList.size() > 1) {
                     WorkflowLinkDetailDO previousWorkflowLinkDetailDO = workflowLinkDetailDOList.get(1);
                     workflowLinkDetailDO.setVerifyUser(previousWorkflowLinkDetailDO.getVerifyUser());
+                    workflowLinkDO.setCurrentVerifyUser(previousWorkflowLinkDetailDO.getVerifyUser());
+                    workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
                 }
                 workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
                 workflowLinkDetailDO.setWorkflowReferNo(lastWorkflowLinkDetailDO.getWorkflowReferNo());

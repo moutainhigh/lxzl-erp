@@ -105,6 +105,7 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL);
             return result;
         }
+        // 是否需要审批
         boolean isNeedVerify = false;
         for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
             ProductSkuDO productSkuDO = productSkuMapper.findById(orderProductDO.getProductSkuId());
@@ -129,12 +130,23 @@ public class OrderServiceImpl implements OrderService {
         // TODO 先付后用的单子，如果没有付款就不能提交
 
         if (isNeedVerify) {
-            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser);
-            if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
-                result.setErrorCode(workflowCommitResult.getErrorCode());
+            // 检查是否需要审批流程
+            ServiceResult<String, Boolean> isMeedVerifyResult = workflowService.isMeedVerify(WorkflowType.WORKFLOW_TYPE_ORDER_INFO);
+            if (!ErrorCode.SUCCESS.equals(isMeedVerifyResult.getErrorCode())) {
+                result.setErrorCode(isMeedVerifyResult.getErrorCode());
                 return result;
             }
-            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_VERIFYING);
+            if (isMeedVerifyResult.getResult()) {
+                ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser);
+                if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
+                    result.setErrorCode(workflowCommitResult.getErrorCode());
+                    return result;
+                }
+                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_VERIFYING);
+            } else {
+                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
+            }
+
             orderDO.setUpdateUser(loginUser.getUserId().toString());
             orderDO.setUpdateTime(currentTime);
             orderMapper.update(orderDO);
@@ -749,10 +761,10 @@ public class OrderServiceImpl implements OrderService {
                 if (orderMaterial.getMaterialId() == null || orderMaterial.getMaterialCount() == null) {
                     return ErrorCode.PARAM_IS_NOT_ENOUGH;
                 }
-                ServiceResult<String, Material> materialServiceResult =  materialService.queryMaterialById(orderMaterial.getMaterialId());
+                ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(orderMaterial.getMaterialId());
 
-                if(!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())
-                        || materialServiceResult.getResult() == null){
+                if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())
+                        || materialServiceResult.getResult() == null) {
                     return ErrorCode.MATERIAL_NOT_EXISTS;
                 }
                 Material material = materialServiceResult.getResult();

@@ -62,6 +62,11 @@ public class WorkflowController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "commitWorkFlow", method = RequestMethod.POST)
+    public Result commitWorkFlow(@RequestBody WorkflowLinkQueryParam workflowLinkQueryParam, HttpServletRequest request) {
+        ServiceResult<String, String> serviceResult = workflowService.commitWorkFlow(workflowLinkQueryParam.getWorkflowType(), workflowLinkQueryParam.getWorkflowReferNo(), workflowLinkQueryParam.getCurrentVerifyUser());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 
     @Autowired
     private WorkflowService workflowService;

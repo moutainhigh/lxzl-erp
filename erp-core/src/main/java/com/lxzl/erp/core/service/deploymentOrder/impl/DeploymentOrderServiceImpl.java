@@ -342,13 +342,21 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             return result;
         }
 
-        ServiceResult<String, String> workFlowResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO, deploymentOrderNo, verifyUser);
-        if (!ErrorCode.SUCCESS.equals(workFlowResult.getErrorCode())) {
-            result.setErrorCode(workFlowResult.getErrorCode());
+        ServiceResult<String, Boolean> isMeedVerifyResult = workflowService.isMeedVerify(WorkflowType.WORKFLOW_TYPE_ORDER_INFO);
+        if (!ErrorCode.SUCCESS.equals(isMeedVerifyResult.getErrorCode())) {
+            result.setErrorCode(isMeedVerifyResult.getErrorCode());
             return result;
         }
-
-        dbDeploymentOrderDO.setDeploymentOrderStatus(DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_VERIFYING);
+        if (isMeedVerifyResult.getResult()) {
+            ServiceResult<String, String> workFlowResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO, deploymentOrderNo, verifyUser);
+            if (!ErrorCode.SUCCESS.equals(workFlowResult.getErrorCode())) {
+                result.setErrorCode(workFlowResult.getErrorCode());
+                return result;
+            }
+            dbDeploymentOrderDO.setDeploymentOrderStatus(DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_VERIFYING);
+        } else {
+            dbDeploymentOrderDO.setDeploymentOrderStatus(DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_PROCESSING);
+        }
         dbDeploymentOrderDO.setUpdateTime(currentTime);
         dbDeploymentOrderDO.setUpdateUser(loginUser.getUserId().toString());
         deploymentOrderMapper.update(dbDeploymentOrderDO);
