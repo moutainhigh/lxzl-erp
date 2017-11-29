@@ -45,6 +45,15 @@ public interface WorkflowService extends BaseService {
     ServiceResult<String, WorkflowLink> getWorkflowLink(String workflowLinkNo);
 
     /**
+     * 获取当前工作流记录
+     *
+     * @param workflowType 工作流类型
+     * @param workflowReferNo 工作流关联ID
+     * @return 错误代码，工作流记录
+     */
+    ServiceResult<String, WorkflowLink> getWorkflowLink(Integer workflowType, String workflowReferNo);
+
+    /**
      * 获取工作流列表
      *
      * @param workflowLinkQueryParam 获取工作流列表参数
@@ -78,5 +87,5 @@ public interface WorkflowService extends BaseService {
      * @param workflowType    工作流类型，详见WorkflowType
      * @return true 是 false 否
      */
-    ServiceResult<String, Boolean> isMeedVerify(Integer workflowType);
+    ServiceResult<String, Boolean> isNeedVerify(Integer workflowType);
 }

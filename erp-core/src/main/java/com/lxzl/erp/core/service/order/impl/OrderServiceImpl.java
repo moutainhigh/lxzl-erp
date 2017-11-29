@@ -131,7 +131,7 @@ public class OrderServiceImpl implements OrderService {
 
         if (isNeedVerify) {
             // 检查是否需要审批流程
-            ServiceResult<String, Boolean> isMeedVerifyResult = workflowService.isMeedVerify(WorkflowType.WORKFLOW_TYPE_ORDER_INFO);
+            ServiceResult<String, Boolean> isMeedVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_ORDER_INFO);
             if (!ErrorCode.SUCCESS.equals(isMeedVerifyResult.getErrorCode())) {
                 result.setErrorCode(isMeedVerifyResult.getErrorCode());
                 return result;
