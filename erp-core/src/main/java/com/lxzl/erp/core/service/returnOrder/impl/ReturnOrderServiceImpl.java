@@ -137,7 +137,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
                 returnOrderProductDOList.add(returnOrderProductDO);
             }
         }
-        //构造待保存退换单商品项
+        //构造待保存退换单物料项
         List<ReturnOrderMaterialDO> returnOrderMaterialDOList = new ArrayList<>();
         //如果要退还的物料不在在租列表，或者要退还的物料数量大于在租数量，返回相应错误
         if(CollectionUtil.isNotEmpty(materialList)){
@@ -236,12 +236,13 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             return serviceResult;
         }
         //修改设备状态为闲置
+        String orderNo = productEquipmentDO.getOrderNo();
         productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
         productEquipmentDO.setOrderNo("");
         productEquipmentMapper.update(productEquipmentDO);
 
         //取得订单，并且把商品项存入map方便查找
-        OrderDO orderDO = orderMapper.findByOrderNo(productEquipmentDO.getOrderNo());
+        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
         Map<Integer,OrderProductDO> orderProductDOMap = new HashMap<>();
         for(OrderProductDO orderProductDO : orderProductDOList){
@@ -258,18 +259,20 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         orderProductEquipmentDO.setActualReturnTime(now);
         orderProductEquipmentMapper.update(orderProductEquipmentDO);
 
-        //修改客户授信额度
-        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(returnOrderDO.getCustomerId());
-        customerRiskManagementDO.setCreditAmountUsed(BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(),productEquipmentDO.getEquipmentPrice()));
-        customerRiskManagementMapper.update(customerRiskManagementDO);
-
-        //修改订单,全部归还状态，最后一件归还时间
+        //由于按天租赁无需授信额度，需交押金，所以当订单按月或按天租赁时，修改客户已用授信额度
+        if(OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())||OrderRentType.RENT_TYPE_TIME.equals(orderDO.getRentType())){
+            CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(returnOrderDO.getCustomerId());
+            customerRiskManagementDO.setCreditAmountUsed(BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(),productEquipmentDO.getEquipmentPrice()));
+            customerRiskManagementMapper.update(customerRiskManagementDO);
+        }
+        //todo 这里逻辑有问题 修改订单,全部归还状态，最后一件归还时间
         if(rentMap.size()==1){
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
             orderDO.setActualReturnTime(now);
             orderMapper.update(orderDO);
         }
         //修改退还单，归还订单状态，最后一件设备归还的时间,租赁期间产生总费用,实际退还商品总数,修改时间，修改人
+        //todo 退还单的退还时间问题，如果没退完，那么这个退还时间就一直是空啊
         returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
         returnOrderDO.setTotalRentCost(BigDecimalUtil.add(returnOrderDO.getTotalRentCost(),rentCost));
         returnOrderDO.setRealTotalReturnProductCount(returnOrderDO.getRealTotalReturnProductCount()+1);
@@ -281,10 +284,30 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         returnOrderMapper.update(returnOrderDO);
         //修改退还商品项表,实际退还商品数量,修改时间，修改人
         ReturnOrderProductDO returnOrderProductDO = returnOrderProductMapper.findBySkuIdAndReturnOrderId(productEquipmentDO.getSkuId(),returnOrderDO.getId());
-        returnOrderProductDO.setRealReturnProductSkuCount(returnOrderProductDO.getRealReturnProductSkuCount()+1);
-        returnOrderProductDO.setUpdateTime(now);
-        returnOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        returnOrderProductMapper.update(returnOrderProductDO);
+        //如果退还单商品项不存在，意味着当初建退还单的时候，没有要退该种类的sku商品，但是货拿回来了
+        //这种情况有两种处理方式：1.在本退还单中自动创建该sku的退还商品项 2.不允许在该退还单中退，要新建退还单
+        //目前采用第一种处理方式，系统自动创建该sku的退还商品项
+        if(returnOrderProductDO==null){
+            ServiceResult<String , Product> productSkuResult = productService.queryProductBySkuId(productEquipmentDO.getSkuId());
+            returnOrderProductDO = new ReturnOrderProductDO();
+            returnOrderProductDO.setReturnOrderId(returnOrderDO.getId());
+            returnOrderProductDO.setReturnOrderNo(returnOrderDO.getReturnOrderNo());
+            returnOrderProductDO.setReturnProductSkuId(productEquipmentDO.getSkuId());
+            returnOrderProductDO.setReturnProductSkuCount(0);
+            returnOrderProductDO.setReturnProductSkuSnapshot(JSON.toJSONString(productSkuResult.getResult()));
+            returnOrderProductDO.setRealReturnProductSkuCount(1);
+            returnOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            returnOrderProductDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            returnOrderProductDO.setCreateTime(now);
+            returnOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            returnOrderProductDO.setUpdateTime(now);
+            returnOrderProductMapper.save(returnOrderProductDO);
+        }else{
+            returnOrderProductDO.setRealReturnProductSkuCount(returnOrderProductDO.getRealReturnProductSkuCount()+1);
+            returnOrderProductDO.setUpdateTime(now);
+            returnOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            returnOrderProductMapper.update(returnOrderProductDO);
+        }
         //添加退还商品设备表记录
         ReturnOrderProductEquipmentDO returnOrderProductEquipmentDO = new ReturnOrderProductEquipmentDO();
         returnOrderProductEquipmentDO.setReturnOrderProductId(returnOrderProductDO.getId());
@@ -330,8 +353,6 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     private OrderProductEquipmentMapper orderProductEquipmentMapper;
     @Autowired
     private AmountSupport amountSupport;
-    @Autowired
-    private OrderProductMapper orderProductMapper;
     @Autowired
     private CustomerRiskManagementMapper customerRiskManagementMapper;
     @Autowired
