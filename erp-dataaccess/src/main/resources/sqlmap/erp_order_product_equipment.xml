@@ -29,6 +29,11 @@
 		WHERE eope.id = #{id, jdbcType=INTEGER} AND eope.data_status = 1 
 	</select>
 
+	<select id="findRentByCustomerIdAndEquipmentId" resultMap="OrderProductEquipmentDO">
+		SELECT <include refid="column_List"/> FROM erp_order eo INNER JOIN erp_order_product_equipment eope ON eo.id=eope.order_id AND eope.data_status=1
+		WHERE eo.buyer_customer_id = #{customerId} AND eo.data_status=1 AND eo.order_status=4 AND eope.equipment_id=#{equipmentId} AND eope.actual_return_time IS NULL
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(eope.id) FROM erp_order_product_equipment eope 
 		<where>

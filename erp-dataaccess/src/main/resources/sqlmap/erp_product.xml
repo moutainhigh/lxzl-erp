@@ -78,6 +78,9 @@
         <result column="sku_create_time" property="createTime"/>
         <result column="sku_update_user" property="updateUser"/>
         <result column="sku_update_time" property="updateTime"/>
+
+        <result column="sku_rent_count" property="rentCount"/>
+        <result column="sku_can_return_count" property="canReturnCount"/>
         <collection property="productSkuPropertyDOList" resultMap="ProductSkuPropertyDO" />
     </resultMap>
 
@@ -281,4 +284,23 @@
         INSERT INTO erp_product
         <include refid="set_column_sql"/>
     </insert>
+    <select id="findSkuRentByCustomerId" resultMap="ProductSkuDO" parameterType="java.lang.Integer">
+          SELECT
+              epe.sku_id,SUM(1) sku_rent_count,SUM(1) + SUM(IFNULL(erop.real_return_product_sku_count,0))- SUM(IFNULL(erop.return_product_sku_count,0)) AS sku_can_return_count
+            FROM
+              erp_order eo
+              LEFT JOIN erp_order_product_equipment eope
+                ON eope.order_id = eo.id
+              LEFT JOIN erp_product_equipment epe
+                ON epe.id = eope.equipment_id
+              LEFT JOIN erp_return_order_product erop
+                ON erop.return_product_sku_id = epe.sku_id
+                AND erop.data_status = 1
+            WHERE eo.buyer_customer_id =  #{customerId}
+              AND eo.order_status = 4
+              AND eo.data_status = 1
+              AND eope.actual_return_time IS NULL
+              AND eope.equipment_id IS NOT NULL
+            GROUP BY epe.sku_id
+    </select>
 </mapper>

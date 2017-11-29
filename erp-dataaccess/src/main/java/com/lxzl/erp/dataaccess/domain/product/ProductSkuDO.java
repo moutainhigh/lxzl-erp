@@ -25,6 +25,10 @@ public class ProductSkuDO extends BaseDO {
 
     @Transient
     private String productName;
+    @Transient
+    private Integer rentCount;
+    @Transient
+    private Integer canReturnCount;
 
     public Integer getId() {
         return id;
@@ -154,4 +158,19 @@ public class ProductSkuDO extends BaseDO {
         this.productMaterialDOList = productMaterialDOList;
     }
 
+    public Integer getRentCount() {
+        return rentCount;
+    }
+
+    public void setRentCount(Integer rentCount) {
+        this.rentCount = rentCount;
+    }
+
+    public Integer getCanReturnCount() {
+        return canReturnCount;
+    }
+
+    public void setCanReturnCount(Integer canReturnCount) {
+        this.canReturnCount = canReturnCount;
+    }
 }

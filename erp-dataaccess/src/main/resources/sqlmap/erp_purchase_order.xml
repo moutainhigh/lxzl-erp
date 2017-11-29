@@ -271,5 +271,6 @@
 		left join erp_purchase_order_material epom on epom.purchase_order_id = epo.id and epom.data_status=1
 		left join erp_user eu on epo.owner = eu.id
 		left join erp_supplier es1 on epo.product_supplier_id = es1.id
+		order by epo.create_time desc
 	</select>
 </mapper>
