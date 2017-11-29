@@ -12,6 +12,7 @@ public class PurchaseOrderCommitParam {
     private String purchaseNo;
     @NotNull(message = ErrorCode.VERIFY_USER_NOT_NULL , groups = {ExtendGroup.class})
     private Integer verifyUserId;
+    private String remark;
 
     public String getPurchaseNo() {
         return purchaseNo;
@@ -27,5 +28,13 @@ public class PurchaseOrderCommitParam {
 
     public void setVerifyUserId(Integer verifyUserId) {
         this.verifyUserId = verifyUserId;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

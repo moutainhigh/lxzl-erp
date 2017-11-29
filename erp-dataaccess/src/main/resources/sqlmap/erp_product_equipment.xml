@@ -99,7 +99,7 @@
         LEFT JOIN erp_product_img epi ON epi.product_id = equipment_main.product_id AND epi.data_status = 1 AND epi.img_type = 1
     </select>
     <select id="findByCustomerId" resultMap="ProductEquipmentDO" parameterType="java.lang.Integer">
-        SELECT <include refid="column_List"/> FROM erp_order eo INNER JOIN erp_product_equipment epe ON eo.id=epe.order_id WHERE eo.data_status=1 AND eo.buyer_customer_id = #{customerId}
+        SELECT <include refid="column_List"/> FROM erp_order eo INNER JOIN erp_product_equipment epe ON eo.order_no=epe.order_no WHERE eo.data_status=1 AND eo.buyer_customer_id = #{customerId}
     </select>
     <select id="findByEquipmentNo" resultMap="ProductEquipmentDO" parameterType="java.lang.String">
         SELECT equipment_main.*

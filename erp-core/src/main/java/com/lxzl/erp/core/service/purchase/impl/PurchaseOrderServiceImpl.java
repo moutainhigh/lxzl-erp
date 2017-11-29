@@ -683,17 +683,28 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             result.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
             return result;
         }
-        //调用提交审核服务
-        ServiceResult<String, String>  verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE, purchaseOrderDO.getPurchaseNo(), purchaseOrderCommitParam.getVerifyUserId(), null);
-        //修改提交审核状态
-        if(ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())){
-            purchaseOrderDO.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_VERIFYING);
-            purchaseOrderMapper.update(purchaseOrderDO);
+        ServiceResult<String, Boolean>  needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_PURCHASE);
+        if(!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())){
+            result.setErrorCode(needVerifyResult.getErrorCode());
+            return result;
+        }else if(needVerifyResult.getResult()){
+            //调用提交审核服务
+            ServiceResult<String, String>  verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE, purchaseOrderDO.getPurchaseNo(), purchaseOrderCommitParam.getVerifyUserId(), purchaseOrderCommitParam.getRemark());
+            //修改提交审核状态
+            if(ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())){
+                purchaseOrderDO.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_VERIFYING);
+                purchaseOrderMapper.update(purchaseOrderDO);
+                return verifyResult;
+            }else{
+                result.setErrorCode(verifyResult.getErrorCode());
+                return result;
+            }
         }else{
-            result.setErrorCode(verifyResult.getErrorCode());
+            purchaseOrderDO.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PURCHASING);
+            purchaseOrderMapper.update(purchaseOrderDO);
+            result.setErrorCode(ErrorCode.SUCCESS);
             return result;
         }
-        return verifyResult;
     }
 
     @Override
