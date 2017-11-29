@@ -41,7 +41,6 @@
                         <th>图片</th>
                         <th>名称</th>
                         <th>类型</th>
-                        <th>属性</th>
                         <th>本身价值</th>
                         <th>租赁价格</th>
                         <th>描述</th>
@@ -56,7 +55,6 @@
                         <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                         <td>{{materialName}}</td>
                         <td>{{materialTypeStr}}</td>
-                        <td>{{propertyName}}:{{propertyValueName}}</td>
                         <td>{{materialPriceFormat}}</td>
                         <td>{{rentPriceFormat}}</td>
                         <td>{{materialDesc}}</td>

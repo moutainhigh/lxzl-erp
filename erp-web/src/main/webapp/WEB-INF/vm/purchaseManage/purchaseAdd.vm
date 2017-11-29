@@ -221,7 +221,7 @@
                                                                                                                <input type="hidden" name="materialCapacityValue" value="{{materialCapacityValue}}" class="materialCapacityValue" />
                                                                                                                <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
                                                                                                                <input name="materialName-{{skuId}}-{{rowKey}}-{{materialType}}" value="{{materialName}}" bringfiled="warehouseName" class="materialName form-control required" type="text" readonly placeholder="选择物料" />
-                                                                                                               <span class="input-group-addon cursor chooseMaterialButton" data-materialtype="{{materialType}}"><i class="fa fa-search"></i></span>
+                                                                                                               <span class="input-group-addon cursor chooseMaterialButton" data-materialtype="{{materialType}}" data-materialmodelid="{{materialModelId}}"><i class="fa fa-search"></i></span>
                                                                                                            </div>
                                                                                                        </div>
                                                                                                    </td>
@@ -298,7 +298,6 @@
                                                 <th>编号</th>
                                                 <th>名称</th>
                                                 <th>类型</th>
-                                                <th>属性</th>
                                                 <th>本身价值</th>
                                                 <th>租赁价格</th>
                                                 <th>描述</th>
@@ -321,7 +320,6 @@
                                                 <td>{{materialNo}}</td>
                                                 <td>{{materialName}}</td>
                                                 <td>{{materialTypeStr}}</td>
-                                                <td>{{propertyName}}:{{propertyValueName}}</td>
                                                 <td>{{materialPriceFormat}}</td>
                                                 <td>{{rentPriceFormat}}</td>
                                                 <td>{{materialDesc}}</td>
