@@ -302,6 +302,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDetailDO.setUpdateTime(currentTime);
                 workflowLinkDetailDO.setCreateTime(currentTime);
                 workflowLinkDetailMapper.save(workflowLinkDetailDO);
+                workflowLinkDO.setWorkflowStep(nextWorkflowNodeDO.getWorkflowStep());
             } else {
                 workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
                 noticeBusinessModule = true;
@@ -330,6 +331,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDetailDO.setUpdateTime(currentTime);
                 workflowLinkDetailDO.setCreateTime(currentTime);
                 workflowLinkDetailMapper.save(workflowLinkDetailDO);
+                workflowLinkDO.setWorkflowStep(previousWorkflowNodeDO.getWorkflowStep());
             }
         }
 
@@ -413,6 +415,23 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowLinkDO.setCreateTime(currentTime);
         workflowLinkMapper.save(workflowLinkDO);
 
+        // 生成提交人工作流
+        WorkflowLinkDetailDO commitWorkflowLinkDetailDO = new WorkflowLinkDetailDO();
+        commitWorkflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
+        commitWorkflowLinkDetailDO.setWorkflowReferNo(workflowReferNo);
+        commitWorkflowLinkDetailDO.setWorkflowCurrentNodeId(0);
+        commitWorkflowLinkDetailDO.setWorkflowStep(0);
+        commitWorkflowLinkDetailDO.setWorkflowNextNodeId(thisWorkflowNodeDO.getId());
+        commitWorkflowLinkDetailDO.setVerifyUser(loginUser.getUserId());
+        commitWorkflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
+        commitWorkflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        commitWorkflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
+        commitWorkflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
+        commitWorkflowLinkDetailDO.setUpdateTime(currentTime);
+        commitWorkflowLinkDetailDO.setCreateTime(currentTime);
+        workflowLinkDetailMapper.save(commitWorkflowLinkDetailDO);
+
+        // 生成审批人工作流
         WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
         workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
         workflowLinkDetailDO.setWorkflowReferNo(workflowReferNo);
@@ -472,6 +491,22 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowLinkDO.setUpdateTime(currentTime);
         workflowLinkDO.setCreateTime(currentTime);
         workflowLinkMapper.update(workflowLinkDO);
+
+        // 生成提交人工作流
+        WorkflowLinkDetailDO commitWorkflowLinkDetailDO = new WorkflowLinkDetailDO();
+        commitWorkflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
+        commitWorkflowLinkDetailDO.setWorkflowReferNo(workflowLinkDO.getWorkflowReferNo());
+        commitWorkflowLinkDetailDO.setWorkflowCurrentNodeId(0);
+        commitWorkflowLinkDetailDO.setWorkflowStep(0);
+        commitWorkflowLinkDetailDO.setWorkflowNextNodeId(thisWorkflowNodeDO.getId());
+        commitWorkflowLinkDetailDO.setVerifyUser(loginUser.getUserId());
+        commitWorkflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
+        commitWorkflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        commitWorkflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
+        commitWorkflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
+        commitWorkflowLinkDetailDO.setUpdateTime(currentTime);
+        commitWorkflowLinkDetailDO.setCreateTime(currentTime);
+        workflowLinkDetailMapper.save(commitWorkflowLinkDetailDO);
 
         WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
         workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
