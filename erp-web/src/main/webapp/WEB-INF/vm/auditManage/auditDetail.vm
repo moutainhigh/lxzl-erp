@@ -15,7 +15,7 @@
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
             <section id="content" class="animated fadeIn">
-                <div class="panel panel-primary panel-border top mb35">
+                <div class="panel panel-primary panel-border top mb35" id="workflowDetail">
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-4">
@@ -30,7 +30,7 @@
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
                                         <dt class="mb10">工作流类型</dt><dd>{{workflowTypeStr}}</dd>
-                                        <dt class="mb10">关联编号</dt><dd>{{workflowReferNo}}</dd>
+                                        <dt class="mb10">关联编号</dt><dd><a href="{{workflowReferUrl}}" target="_blank">{{workflowReferNo}}</a></dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
@@ -73,11 +73,11 @@
                         <div class="mt30 timeline-single" id="timeline">
 
                             <div class="timeline-divider mtn">
-                                <div class="divider-label">当前</div>
+                                <div class="divider-label" id="timelineEndLabel">当前</div>
                             </div>
 
                             <div class="row">
-                                <script type="text/html" id="workflowTimelineActionTpl">
+                                #*<script type="text/html" id="workflowTimelineActionTpl">
                                     {{#dataSource}}
                                     <div class="timeline-item">
                                         <div class="timeline-icon">
@@ -96,7 +96,7 @@
                                     {{/dataSource}}
                                 </script>
 
-                                <div class="col-sm-6 left-column" id="workflowTimelineAction"></div>
+                                <div class="col-sm-6 left-column" id="workflowTimelineAction"></div>*#
 
                                 <script type="text/html" id="workflowTimelineTpl">
                                     {{#dataSource}}
@@ -115,6 +115,17 @@
                                                     <small class="{{textClass}}">{{verifyStatusValue}}</small>
                                                 </blockquote>
                                             </div>
+                                            {{#showAction}}
+                                            {{#show}}
+                                            <div class="panel-footer text-right">
+                                                {{#actionButtons}}
+                                                <button class="btn btn-sm {{class}}">{{text}}</button>
+                                                {{/actionButtons}}
+                                                #*<button class="btn btn-sm btn-danger rejectButton">驳回</button>
+                                                <button class="btn btn-sm btn-primary passButton">同意</button>*#
+                                            </div>
+                                            {{/show}}
+                                            {{/showAction}}
                                         </div>
                                     </div>
                                     {{/dataSource}}
@@ -123,7 +134,7 @@
                             </div>
 
                             <div class="timeline-divider">
-                                <div class="divider-label">开始</div>
+                                <div class="divider-label" id="timelineStartLabel">开始</div>
                             </div>
 
                         </div>

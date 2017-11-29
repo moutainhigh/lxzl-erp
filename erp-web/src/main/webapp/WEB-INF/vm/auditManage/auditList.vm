@@ -93,7 +93,7 @@
                                 <td>{{workflowLinkId}}</td>
                                 <td>{{workflowLinkNo}}</td>
                                 <td>{{workflowTypeStr}}</td>
-                                <td>{{workflowReferNo}}</td>
+                                <td><a href="{{workflowReferUrl}}" target="_blank">{{workflowReferNo}}</a></td>
                                 <td>{{workflowTemplateId}}</td>
                                 <td>{{workflowStep}}</td>
                                 <td>{{workflowLastStep}}</td>
