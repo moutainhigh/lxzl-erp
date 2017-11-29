@@ -82,7 +82,7 @@
         LEFT JOIN erp_workflow_node ewnc on ewnc.id = ewld.workflow_current_node_id
         LEFT JOIN erp_workflow_node ewnp on ewnp.id = ewld.workflow_previous_node_id
         LEFT JOIN erp_workflow_node ewnn on ewnn.id = ewld.workflow_next_node_id
-		order by ewld.id DESC
+		order by link.id DESC,ewld.id DESC
 	</select>
 
 	<select id="findByNo" resultMap="WorkflowLinkDO" parameterType="java.lang.String">
@@ -107,7 +107,7 @@
         LEFT JOIN erp_workflow_node ewnc on ewnc.id = ewld.workflow_current_node_id
         LEFT JOIN erp_workflow_node ewnp on ewnp.id = ewld.workflow_previous_node_id
         LEFT JOIN erp_workflow_node ewnn on ewnn.id = ewld.workflow_next_node_id
-		order by ewld.id DESC
+		order by link.id DESC,ewld.id DESC
 	</select>
 
 	<select id="findByWorkflowTypeAndReferNo" resultMap="WorkflowLinkDO" parameterType="map">
@@ -132,7 +132,7 @@
         LEFT JOIN erp_workflow_node ewnc on ewnc.id = ewld.workflow_current_node_id
         LEFT JOIN erp_workflow_node ewnp on ewnp.id = ewld.workflow_previous_node_id
         LEFT JOIN erp_workflow_node ewnn on ewnn.id = ewld.workflow_next_node_id
-		order by ewld.id DESC
+		order by link.id DESC,ewld.id DESC
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -201,7 +201,7 @@
         LEFT JOIN erp_workflow_node ewnc on ewnc.id = ewld.workflow_current_node_id
         LEFT JOIN erp_workflow_node ewnp on ewnp.id = ewld.workflow_previous_node_id
         LEFT JOIN erp_workflow_node ewnn on ewnn.id = ewld.workflow_next_node_id
-		order by ewld.id DESC
+		order by link.id DESC,ewld.id DESC
 	</select>
 
 	<sql id="set_column_sql">

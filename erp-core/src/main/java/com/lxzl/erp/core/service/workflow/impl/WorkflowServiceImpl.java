@@ -94,9 +94,9 @@ public class WorkflowServiceImpl implements WorkflowService {
         String workflowLinkNo;
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
         if (workflowLinkDO == null) {
-            workflowLinkNo = generateWorkflowLink(workflowTemplateDO, workflowReferNo,commitRemark, verifyUser, currentTime);
+            workflowLinkNo = generateWorkflowLink(workflowTemplateDO, workflowReferNo, commitRemark, verifyUser, currentTime);
         } else {
-            String errorCode = continueWorkflowLink(workflowLinkDO,commitRemark, verifyUser, currentTime);
+            String errorCode = continueWorkflowLink(workflowLinkDO, commitRemark, verifyUser, currentTime);
             if (!ErrorCode.SUCCESS.equals(errorCode)) {
                 result.setErrorCode(errorCode);
                 return result;
@@ -173,6 +173,24 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
 
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByNo(workflowLinkNo);
+        if (workflowLinkDO == null) {
+            result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+            return result;
+        }
+        result.setResult(WorkflowConverter.convertWorkflowLinkDO(workflowLinkDO));
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, WorkflowLink> getWorkflowLink(Integer workflowType, String workflowReferNo) {
+        ServiceResult<String, WorkflowLink> result = new ServiceResult<>();
+        if (workflowType == null || workflowReferNo == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
+            return result;
+        }
+
+        WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
         if (workflowLinkDO == null) {
             result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
             return result;
@@ -350,7 +368,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDetailDO.setCreateTime(currentTime);
                 workflowLinkDetailMapper.save(workflowLinkDetailDO);
                 workflowLinkDO.setWorkflowStep(previousWorkflowNodeDO.getWorkflowStep());
-            }else{
+            } else {
                 // 如果第一步就驳回了，那么就相当于驳回到根部
                 noticeBusinessModule = true;
                 workflowLinkDO.setWorkflowStep(0);
