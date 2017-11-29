@@ -15,7 +15,7 @@ public interface OrderProductEquipmentMapper extends BaseMysqlDAO<OrderProductEq
 
 	/**
 	 * 根据客户和设备查询在租设备的订单商品设备
-	 * @param orderId
+	 * @param customerId
 	 * @param equipmentId
 	 * @return
 	 */
