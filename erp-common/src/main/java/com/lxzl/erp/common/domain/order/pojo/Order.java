@@ -44,6 +44,7 @@ public class Order implements Serializable {
     private Date createTime;
 
     private Integer customerConsignId;
+    private String buyerCustomerNo;
 
     private List<OrderProduct> orderProductList;
     private List<OrderMaterial> orderMaterialList;
@@ -346,5 +347,13 @@ public class Order implements Serializable {
 
     public void setTotalMaterialAmount(BigDecimal totalMaterialAmount) {
         this.totalMaterialAmount = totalMaterialAmount;
+    }
+
+    public String getBuyerCustomerNo() {
+        return buyerCustomerNo;
+    }
+
+    public void setBuyerCustomerNo(String buyerCustomerNo) {
+        this.buyerCustomerNo = buyerCustomerNo;
     }
 }

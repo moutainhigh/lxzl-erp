@@ -180,6 +180,9 @@ public class ErrorCode {
     public static final String ORDER_PAY_RECORD_NOT_EXISTS = "J400015";
     public static final String ORDER_PRODUCT_BULK_MATERIAL_COUNT_ERROR = "J400016";
     public static final String ORDER_HAVE_NO_RENT_START_TIME = "J400017";
+    public static final String ORDER_STATUS_NOT_PROCESSED = "J400018";
+    public static final String ORDER_PRODUCT_AMOUNT_ERROR = "J400019";
+    public static final String ORDER_MATERIAL_AMOUNT_ERROR = "J400020";
 
     public static final String DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_STOCK_NOT_ENOUGH = "J400018";
     public static final String DEPLOYMENT_ORDER_BULK_MATERIAL_STOCK_NOT_ENOUGH = "J400019";
@@ -221,6 +224,7 @@ public class ErrorCode {
     public static final String RETURN_ORDER_IS_CHARGING_IS_NOT_NULL = "J500028";
     public static final String PRODUCT_SKU_CAN_NOT_REPEAT = "J500029";
     public static final String MATERIAL_CAN_NOT_REPEAT = "J500030";
+    public static final String CUSTOMER_CONSIGN_NOT_EXISTS = "J500031";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -382,6 +386,7 @@ public class ErrorCode {
         MAP.put(MATERIAL_MODEL_NOT_NULL, "物料型号不能为空");
         MAP.put(MATERIAL_TYPE_HAVE_NO_MODEL, "该物料类型没有型号");
         MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_NO_NOT_NULL, "采购收货单物料项物料编号不能为空");
+        MAP.put(CUSTOMER_CONSIGN_NOT_EXISTS, "客户收货地址不存在。");
 
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
@@ -405,6 +410,9 @@ public class ErrorCode {
         MAP.put(DEPLOYMENT_ORDER_BULK_MATERIAL_STOCK_NOT_ENOUGH, "货物调拨该库房该物料库存不足。");
         MAP.put(DEPLOYMENT_ORDER_STATUS_ERROR, "调配单状态有误。");
         MAP.put(DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, "调拨单没有这个单项。");
+        MAP.put(ORDER_STATUS_NOT_PROCESSED, "订单未处于备货完成状态。");
+        MAP.put(ORDER_PRODUCT_AMOUNT_ERROR, "订单商品价格有误。");
+        MAP.put(ORDER_MATERIAL_AMOUNT_ERROR, "订单物料价格有误。");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");

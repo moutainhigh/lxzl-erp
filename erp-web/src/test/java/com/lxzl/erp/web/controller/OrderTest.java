@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.OrderRentType;
+import com.lxzl.erp.common.domain.order.ProcessOrderParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
@@ -36,6 +37,8 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderProduct.setProductId(2000013);
         orderProduct.setProductSkuId(40);
         orderProduct.setProductCount(1);
+        orderProduct.setProductUnitAmount(new BigDecimal(20.0));
+        orderProduct.setInsuranceAmount(new BigDecimal(15.0));
 
         List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
         ProductSkuProperty productSkuProperty = new ProductSkuProperty();
@@ -67,11 +70,13 @@ public class OrderTest extends ERPUnTransactionalTest {
         OrderMaterial orderMaterial = new OrderMaterial();
         orderMaterial.setMaterialId(5);
         orderMaterial.setMaterialCount(1);
+        orderMaterial.setMaterialUnitAmount(new BigDecimal(18.0));
+        orderMaterial.setInsuranceAmount(new BigDecimal(15.0));
 
         orderMaterialList.add(orderMaterial);
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerId(1);
+        order.setBuyerCustomerNo("CC201711301106206721011");
         order.setCustomerConsignId(1);
         order.setRentStartTime(new Date());
         TestResult result = getJsonTestResult("/order/create", order);
@@ -80,7 +85,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201711151901080841608");
+        order.setOrderNo("O201711301417218351327");
         order.setVerifyUser(1);
         TestResult result = getJsonTestResult("/order/commit", order);
     }
@@ -92,6 +97,14 @@ public class OrderTest extends ERPUnTransactionalTest {
         order.setVerifyUser(1);
         TestResult result = getJsonTestResult("/order/cancel", order);
     }
+
+    @Test
+    public void testProcessOrder() throws Exception {
+        ProcessOrderParam processOrderParam = new ProcessOrderParam();
+        processOrderParam.setOrderNo(null);
+        TestResult result = getJsonTestResult("/order/process", processOrderParam);
+    }
+
 
     @Test
     public void testDelivery() throws Exception {
