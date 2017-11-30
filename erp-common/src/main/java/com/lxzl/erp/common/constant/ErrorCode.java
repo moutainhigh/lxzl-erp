@@ -183,16 +183,18 @@ public class ErrorCode {
     public static final String ORDER_STATUS_NOT_PROCESSED = "J400018";
     public static final String ORDER_PRODUCT_AMOUNT_ERROR = "J400019";
     public static final String ORDER_MATERIAL_AMOUNT_ERROR = "J400020";
-
-    public static final String DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_STOCK_NOT_ENOUGH = "J400018";
-    public static final String DEPLOYMENT_ORDER_BULK_MATERIAL_STOCK_NOT_ENOUGH = "J400019";
-    public static final String DEPLOYMENT_ORDER_STATUS_ERROR = "J400020";
-    public static final String DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM = "J400021";
-    public static final String RETURN_ORDER_NO_NOT_NULL = "J400022";
-    public static final String EQUIPMENT_NO_NOT_NULL = "J400023";
-    public static final String RETURN_ORDER_NO_EXISTS = "J400024";
-    public static final String EQUIPMENT_NOT_EXISTS = "J400025";
-    public static final String EQUIPMENT_NOT_RENT = "J400026";
+    public static final String ORDER_HAVE_NO_THIS_ITEM = "J400021";
+    public static final String ORDER_PRODUCT_EQUIPMENT_COUNT_MAX = "J400022";
+    public static final String ORDER_MATERIAL_BULK_COUNT_MAX = "J400023";
+    public static final String DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_STOCK_NOT_ENOUGH = "J400024";
+    public static final String DEPLOYMENT_ORDER_BULK_MATERIAL_STOCK_NOT_ENOUGH = "J400025";
+    public static final String DEPLOYMENT_ORDER_STATUS_ERROR = "J400026";
+    public static final String DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM = "J400027";
+    public static final String RETURN_ORDER_NO_NOT_NULL = "J400028";
+    public static final String EQUIPMENT_NO_NOT_NULL = "J400029";
+    public static final String RETURN_ORDER_NO_EXISTS = "J400030";
+    public static final String EQUIPMENT_NOT_EXISTS = "J400031";
+    public static final String EQUIPMENT_NOT_RENT = "J400032";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -409,10 +411,13 @@ public class ErrorCode {
         MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_STOCK_NOT_ENOUGH, "货物调拨该库房该商品库存不足。");
         MAP.put(DEPLOYMENT_ORDER_BULK_MATERIAL_STOCK_NOT_ENOUGH, "货物调拨该库房该物料库存不足。");
         MAP.put(DEPLOYMENT_ORDER_STATUS_ERROR, "调配单状态有误。");
-        MAP.put(DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, "调拨单没有这个单项。");
+        MAP.put(DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, "调拨单没有这个SKU或物料单项。");
         MAP.put(ORDER_STATUS_NOT_PROCESSED, "订单未处于备货完成状态。");
         MAP.put(ORDER_PRODUCT_AMOUNT_ERROR, "订单商品价格有误。");
         MAP.put(ORDER_MATERIAL_AMOUNT_ERROR, "订单物料价格有误。");
+        MAP.put(ORDER_HAVE_NO_THIS_ITEM, "订单没有这个SKU或物料单项。");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, "订单商品项的设备数已经达到最大。");
+        MAP.put(ORDER_MATERIAL_BULK_COUNT_MAX, "订单物料项散料数已经达到最大。");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");

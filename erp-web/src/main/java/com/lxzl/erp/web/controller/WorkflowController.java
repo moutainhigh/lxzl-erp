@@ -68,6 +68,12 @@ public class WorkflowController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "isNeedVerify", method = RequestMethod.POST)
+    public Result isNeedVerify(@RequestBody WorkflowLinkQueryParam workflowLinkQueryParam, HttpServletRequest request) {
+        ServiceResult<String, Boolean> serviceResult = workflowService.isNeedVerify(workflowLinkQueryParam.getWorkflowType());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @Autowired
     private WorkflowService workflowService;
 

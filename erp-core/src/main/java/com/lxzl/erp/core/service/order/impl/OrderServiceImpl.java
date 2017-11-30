@@ -356,6 +356,12 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
+        if (!CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())
+                && !CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(param.getOperationType())) {
+            result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+            return result;
+        }
+
 
         if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())) {
             String errorCode = addOrderItem(orderDO, srcWarehouse.getWarehouseId(), param.getEquipmentNo(), param.getBulkMaterialNo(), loginUser.getUserId(), currentTime);
@@ -397,8 +403,13 @@ public class OrderServiceImpl implements OrderService {
             Map<Integer, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(), "productSkuId");
             OrderProductDO orderProductDO = orderProductDOMap.get(productEquipmentDO.getSkuId());
             if (orderProductDO == null) {
-                return ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM;
+                return ErrorCode.ORDER_HAVE_NO_THIS_ITEM;
             }
+            List<OrderProductEquipmentDO> orderProductEquipmentDOList = orderProductEquipmentMapper.findByOrderProductId(orderProductDO.getId());
+            if (orderProductEquipmentDOList != null && orderProductEquipmentDOList.size() >= orderProductDO.getProductCount()) {
+                return ErrorCode.ORDER_PRODUCT_EQUIPMENT_COUNT_MAX;
+            }
+
             productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY);
             productEquipmentDO.setUpdateTime(currentTime);
             productEquipmentDO.setUpdateUser(loginUserId.toString());
@@ -436,7 +447,11 @@ public class OrderServiceImpl implements OrderService {
             Map<Integer, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId");
             OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(bulkMaterialDO.getMaterialId());
             if (orderMaterialDO == null) {
-                return ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM;
+                return ErrorCode.ORDER_HAVE_NO_THIS_ITEM;
+            }
+            List<OrderMaterialBulkDO> orderMaterialBulkDOList = orderMaterialBulkMapper.findByOrderMaterialId(orderMaterialDO.getId());
+            if (orderMaterialBulkDOList != null && orderMaterialBulkDOList.size() >= orderMaterialDO.getMaterialCount()) {
+                return ErrorCode.ORDER_MATERIAL_BULK_COUNT_MAX;
             }
             bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
             bulkMaterialDO.setUpdateTime(currentTime);
@@ -501,7 +516,7 @@ public class OrderServiceImpl implements OrderService {
             Map<Integer, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId");
             OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(bulkMaterialDO.getMaterialId());
             if (orderMaterialDO == null) {
-                return ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM;
+                return ErrorCode.ORDER_HAVE_NO_THIS_ITEM;
             }
             bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
             bulkMaterialDO.setUpdateTime(currentTime);

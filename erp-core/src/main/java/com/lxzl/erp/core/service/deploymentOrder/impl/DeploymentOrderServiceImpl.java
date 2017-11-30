@@ -372,6 +372,11 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
+        if(!CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())
+                && !CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(param.getOperationType())){
+            result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+            return result;
+        }
 
         if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())) {
             String errorCode = addDeploymentOrderItem(param.getDeploymentOrderNo(), param.getEquipmentNo(), param.getBulkMaterialNo());
