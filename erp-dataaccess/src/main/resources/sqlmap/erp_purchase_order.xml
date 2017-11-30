@@ -28,10 +28,13 @@
 		<result column="productSupplierName" jdbcType="VARCHAR" property="productSupplierName" />
 		<result column="invoiceSupplierName" jdbcType="VARCHAR" property="invoiceSupplierName" />
 
+		<association resultMap="WorkflowLinkDO" property="workflowLinkDO"/>
 		<collection property="purchaseOrderProductDOList" resultMap="PurchaseOrderProductDO" />
 		<collection property="purchaseOrderMaterialDOList" resultMap="PurchaseOrderMaterialDO" />
 	</resultMap>
-
+	<resultMap id="WorkflowLinkDO" type="com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO">
+		<result column="ewl_current_verify_status" jdbcType="INTEGER" property="currentVerifyStatus" />
+	</resultMap>
 	<resultMap id="PurchaseOrderProductDO" type="com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderProductDO">
 		<id column="epop_id" jdbcType="INTEGER" property="id"/>
 		<result column="epop_purchaseOrderId" jdbcType="INTEGER" property="purchaseOrderId"/>
@@ -63,6 +66,7 @@
 		<result column="epom_updateTime" jdbcType="TIMESTAMP" property="updateTime"/>
 		<result column="epom_updateUser" jdbcType="VARCHAR" property="updateUser"/>
 	</resultMap>
+
 	<sql id="column_List">
 		epo.id,epo.purchase_no,epo.product_supplier_id,epo.warehouse_id,epo.warehouse_snapshot,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_amount_real,epo.purchase_order_amount_statement,epo.purchase_order_status,epo.delivery_time,epo.purchase_type,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user
 	</sql>
@@ -230,6 +234,7 @@
 	</select>
 	<select id="findPurchaseOrderByParams" resultMap="PurchaseOrderDO" parameterType="map">
 		select <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/> ,eu.real_name as ownerName,es1.supplier_name as productSupplierName
+		,ewl.current_verify_status AS ewl_current_verify_status
 		from (
 		SELECT <include refid="column_List"/>
 		FROM erp_purchase_order epo
@@ -271,6 +276,7 @@
 		left join erp_purchase_order_material epom on epom.purchase_order_id = epo.id and epom.data_status=1
 		left join erp_user eu on epo.owner = eu.id
 		left join erp_supplier es1 on epo.product_supplier_id = es1.id
+		left join erp_workflow_link ewl on ewl.workflow_refer_no = epo.purchase_no and ewl.workflow_type = 1 and ewl.data_status=1
 		order by epo.create_time desc
 	</select>
 </mapper>

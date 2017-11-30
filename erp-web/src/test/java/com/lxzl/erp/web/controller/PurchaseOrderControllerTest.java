@@ -157,7 +157,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void page() throws Exception {
         PurchaseOrderQueryParam purchaseOrderQueryParam = new PurchaseOrderQueryParam();
-        purchaseOrderQueryParam.setPurchaseNo("PO201711181544591335000051741");
+//        purchaseOrderQueryParam.setPurchaseNo("PO201711181544591335000051741");
 //        purchaseOrderQueryParam.setProductSupplierId(1);
 //        purchaseOrderQueryParam.setInvoiceSupplierId(1);
 //        purchaseOrderQueryParam.setWarehouseNo("W201708081508");
@@ -172,7 +172,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryPurchaseOrderByNo() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setPurchaseNo("PO201711181544591335000051741");
+        purchaseOrder.setPurchaseNo("PO201711292045413845000051167");
         TestResult result = getJsonTestResult("/purchaseOrder/queryPurchaseOrderByNo",purchaseOrder);
     }
     @Test
@@ -233,7 +233,63 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseReceiveOrder.setPurchaseReceiveOrderProductList(purchaseOrderProductList);
         TestResult result = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder",purchaseReceiveOrder);
      }
-
+    @Test
+    public void updatePurchaseReceiveOrder2() throws Exception {
+        PurchaseReceiveOrder purchaseReceiveOrder = JSON.parseObject("{\n" +
+                "\t\"purchaseReceiveNo\": \"PR2017112920291060160000701769\",\n" +
+                "\t\"isNew\": \"1\",\n" +
+                "\t\"purchaseReceiveOrderProductList\": [{\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"135\",\n" +
+                "\t\t\"realProductSkuId\": \"40\",\n" +
+                "\t\t\"realProductCount\": \"8\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711251154081811299\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711251154081811299\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711251154081811299\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711251154081811299\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201422478141693\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201457288791418\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201500267591516\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291745413251585\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291744581931681\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711171838059981293\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}]\n" +
+                "\t}],\n" +
+                "\t\"purchaseReceiveOrderMaterialList\": [{\n" +
+                "\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\"materialCount\": 9\n" +
+                "\t}, {\n" +
+                "\t\t\"materialNo\": \"M201711201422478141693\",\n" +
+                "\t\t\"materialCount\": 7\n" +
+                "\t}, {\n" +
+                "\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\"materialCount\": 6\n" +
+                "\t}]\n" +
+                "}\n",PurchaseReceiveOrder.class);
+        TestResult result = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder",purchaseReceiveOrder);
+    }
 
     @Test
     public void commitPurchaseReceiveOrder() throws Exception {

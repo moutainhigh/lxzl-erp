@@ -12,7 +12,6 @@ import com.lxzl.erp.common.domain.product.pojo.ProductCategoryPropertyValue;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
-import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.product.ProductCategoryService;
 import com.lxzl.erp.core.service.product.impl.support.ProductCategoryConverter;
 import com.lxzl.erp.core.service.product.impl.support.ProductCategoryPropertyConverter;
@@ -113,28 +112,27 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS);
             return result;
         }
-
-        if ((MaterialType.MATERIAL_TYPE_MEMORY.equals(productCategoryPropertyDO.getMaterialType())
-                || MaterialType.MATERIAL_TYPE_HDD.equals(productCategoryPropertyDO.getMaterialType())
-                || MaterialType.MATERIAL_TYPE_SSD.equals(productCategoryPropertyDO.getMaterialType()))
-                && productCategoryPropertyValueDO.getPropertyCapacityValue() == null) {
-            result.setErrorCode(ErrorCode.MATERIAL_CAPACITY_VALUE_NOT_NULL);
-            return result;
-        } else if ((!MaterialType.MATERIAL_TYPE_MEMORY.equals(productCategoryPropertyDO.getMaterialType())
-                && !MaterialType.MATERIAL_TYPE_HDD.equals(productCategoryPropertyDO.getMaterialType())
-                && !MaterialType.MATERIAL_TYPE_SSD.equals(productCategoryPropertyDO.getMaterialType()))
-                && productCategoryPropertyValueDO.getMaterialModelId() == null) {
-            result.setErrorCode(ErrorCode.MATERIAL_MODEL_NOT_NULL);
-            return result;
-        }
-        if (productCategoryPropertyValueDO.getMaterialModelId() != null) {
-            MaterialModelDO materialModelDO = materialModelMapper.findById(productCategoryPropertyValueDO.getMaterialModelId());
-            if (materialModelDO == null
-                    || !materialModelDO.getMaterialType().equals(productCategoryPropertyDO.getMaterialType())) {
-                result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+        if (productCategoryPropertyDO.getMaterialType() != null) {
+            if (MaterialType.isCapacityMaterial(productCategoryPropertyDO.getMaterialType())
+                    && productCategoryPropertyValueDO.getPropertyCapacityValue() == null) {
+                result.setErrorCode(ErrorCode.MATERIAL_CAPACITY_VALUE_NOT_NULL);
+                return result;
+            } else if (MaterialType.isModelMaterial(productCategoryPropertyDO.getMaterialType())
+                    && productCategoryPropertyValueDO.getMaterialModelId() == null) {
+                result.setErrorCode(ErrorCode.MATERIAL_MODEL_NOT_NULL);
                 return result;
             }
+
+            if (productCategoryPropertyValueDO.getMaterialModelId() != null) {
+                MaterialModelDO materialModelDO = materialModelMapper.findById(productCategoryPropertyValueDO.getMaterialModelId());
+                if (materialModelDO == null
+                        || !materialModelDO.getMaterialType().equals(productCategoryPropertyDO.getMaterialType())) {
+                    result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+                    return result;
+                }
+            }
         }
+
 
         productCategoryPropertyValueDO.setCategoryId(productCategoryPropertyDO.getCategoryId());
         productCategoryPropertyValueDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -143,6 +141,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         productCategoryPropertyValueDO.setCreateTime(currentTime);
         productCategoryPropertyValueDO.setUpdateTime(currentTime);
         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
+        // 自动添加物料，处于下架状态
         saveMaterial(productCategoryPropertyDO, productCategoryPropertyValueDO, loginUser, currentTime);
 
         result.setResult(productCategoryPropertyValueDO.getId());
@@ -158,7 +157,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         materialDO.setMaterialType(productCategoryPropertyDO.getMaterialType());
         materialDO.setMaterialModelId(productCategoryPropertyValueDO.getMaterialModelId());
         materialDO.setMaterialCapacityValue(productCategoryPropertyValueDO.getPropertyCapacityValue());
-        if (materialService.isMainMaterial(materialDO.getMaterialType())) {
+        if (MaterialType.isMainMaterial(materialDO.getMaterialType())) {
             materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_YES);
         } else {
             materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_NO);
@@ -222,8 +221,5 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Autowired
     private MaterialModelMapper materialModelMapper;
-
-    @Autowired
-    private MaterialService materialService;
 
 }

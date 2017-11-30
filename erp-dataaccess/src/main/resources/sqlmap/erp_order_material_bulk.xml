@@ -25,8 +25,13 @@
 	</sql>
 
 	<select id="findById" resultMap="OrderMaterialBulkDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_order_material_bulk eomb 
-		WHERE eomb.id = #{id, jdbcType=INTEGER} AND eomb.data_status = 1 
+		SELECT <include refid="column_List"/> FROM erp_order_material_bulk eomb
+		WHERE eomb.id = #{id, jdbcType=INTEGER} AND eomb.data_status = 1
+	</select>
+
+	<select id="findByOrderMaterialId" resultMap="OrderMaterialBulkDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_order_material_bulk eomb
+		WHERE eomb.order_material_id = #{orderMaterialId, jdbcType=INTEGER} AND eomb.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">

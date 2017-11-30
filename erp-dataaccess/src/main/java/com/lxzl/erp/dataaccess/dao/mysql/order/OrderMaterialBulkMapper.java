@@ -14,4 +14,6 @@ public interface OrderMaterialBulkMapper extends BaseMysqlDAO<OrderMaterialBulkD
 	Integer saveList(@Param("orderMaterialBulkDOList") List<OrderMaterialBulkDO> orderMaterialBulkDOList);
 
 	OrderMaterialBulkDO findByOrderIdAndBulkMaterialNo(@Param("orderId") Integer orderId , @Param("bulkMaterialNo") String bulkMaterialNo);
+
+	List<OrderMaterialBulkDO> findByOrderMaterialId(@Param("orderMaterialId") Integer orderMaterialId);
 }

@@ -158,14 +158,12 @@ public class MaterialServiceImpl implements MaterialService {
         }
 
         MaterialDO dbMaterialDO = null;
-        if (MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
-                || MaterialType.MATERIAL_TYPE_HDD.equals(material.getMaterialType())
-                || MaterialType.MATERIAL_TYPE_SSD.equals(material.getMaterialType())
-                || !isRightMaterialType(material.getMaterialType())) {
+        if (MaterialType.isCapacityMaterial(material.getMaterialType())) {
             dbMaterialDO = materialMapper.findByMaterialTypeAndCapacity(material.getMaterialType(), material.getMaterialCapacityValue());
+            material.setMaterialModelId(null);
         } else {
             dbMaterialDO = materialMapper.findByMaterialTypeAndModelId(material.getMaterialType(), material.getMaterialModelId());
-
+            material.setMaterialCapacityValue(null);
         }
         if (dbMaterialDO != null) {
             result.setErrorCode(ErrorCode.RECORD_ALREADY_EXISTS);
@@ -173,7 +171,7 @@ public class MaterialServiceImpl implements MaterialService {
         }
         MaterialDO materialDO = MaterialConverter.convertMaterial(material);
 
-        if (isMainMaterial(materialDO.getMaterialType())) {
+        if (MaterialType.isMainMaterial(materialDO.getMaterialType())) {
             materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_YES);
         } else {
             materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_NO);
@@ -193,20 +191,6 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
-    public boolean isMainMaterial(Integer materialType) {
-        if (MaterialType.MATERIAL_TYPE_MEMORY.equals(materialType)
-                || MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(materialType)
-                || MaterialType.MATERIAL_TYPE_CPU.equals(materialType)
-                || MaterialType.MATERIAL_TYPE_HDD.equals(materialType)
-                || MaterialType.MATERIAL_TYPE_SSD.equals(materialType)
-                || MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(materialType)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateMaterial(Material material) {
         ServiceResult<String, String> result = new ServiceResult<>();
@@ -218,7 +202,11 @@ public class MaterialServiceImpl implements MaterialService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-
+        if (MaterialType.isCapacityMaterial(dbRecord.getMaterialType())) {
+            material.setMaterialModelId(null);
+        } else {
+            material.setMaterialCapacityValue(null);
+        }
 
         MaterialDO materialDO = MaterialConverter.convertMaterial(material);
         // 以下两个值不能改
@@ -326,14 +314,10 @@ public class MaterialServiceImpl implements MaterialService {
             return ErrorCode.PARAM_IS_NOT_ENOUGH;
         }
 
-        if ((MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
-                || MaterialType.MATERIAL_TYPE_HDD.equals(material.getMaterialType())
-                || MaterialType.MATERIAL_TYPE_SSD.equals(material.getMaterialType()))
+        if (MaterialType.isCapacityMaterial(material.getMaterialType())
                 && material.getMaterialCapacityValue() == null) {
             return ErrorCode.MATERIAL_CAPACITY_VALUE_NOT_NULL;
-        } else if ((!MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
-                && !MaterialType.MATERIAL_TYPE_HDD.equals(material.getMaterialType())
-                && !MaterialType.MATERIAL_TYPE_SSD.equals(material.getMaterialType()))
+        } else if (MaterialType.isModelMaterial(material.getMaterialType())
                 && material.getMaterialModelId() == null) {
             return ErrorCode.MATERIAL_MODEL_NOT_NULL;
         }
@@ -482,21 +466,6 @@ public class MaterialServiceImpl implements MaterialService {
         return true;
     }
 
-    private boolean isRightMaterialType(Integer materialType) {
-        if (MaterialType.MATERIAL_TYPE_MEMORY.equals(materialType)
-                || MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(materialType)
-                || MaterialType.MATERIAL_TYPE_CPU.equals(materialType)
-                || MaterialType.MATERIAL_TYPE_HDD.equals(materialType)
-                || MaterialType.MATERIAL_TYPE_SSD.equals(materialType)
-                || MaterialType.MATERIAL_TYPE_POWER_SUPPLY.equals(materialType)
-                || MaterialType.MATERIAL_TYPE_RADIATOR.equals(materialType)
-                || MaterialType.MATERIAL_TYPE_BOX.equals(materialType)
-                || MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(materialType)) {
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public ServiceResult<String, Integer> addMaterialModel(MaterialModel materialModel) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
@@ -505,13 +474,11 @@ public class MaterialServiceImpl implements MaterialService {
         if (materialModel == null
                 || materialModel.getMaterialType() == null
                 || materialModel.getModelName() == null
-                || !isRightMaterialType(materialModel.getMaterialType())) {
+                || !MaterialType.inThisScope(materialModel.getMaterialType())) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
-        if (MaterialType.MATERIAL_TYPE_MEMORY.equals(materialModel.getMaterialType())
-                || MaterialType.MATERIAL_TYPE_HDD.equals(materialModel.getMaterialType())
-                || MaterialType.MATERIAL_TYPE_SSD.equals(materialModel.getMaterialType())) {
+        if (MaterialType.isCapacityMaterial(materialModel.getMaterialType())) {
             result.setErrorCode(ErrorCode.MATERIAL_TYPE_HAVE_NO_MODEL);
             return result;
         }

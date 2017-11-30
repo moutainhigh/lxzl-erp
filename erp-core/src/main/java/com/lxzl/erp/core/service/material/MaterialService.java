@@ -118,15 +118,6 @@ public interface MaterialService extends BaseService {
      */
     boolean isAllGadget(List<Material> materialList);
 
-
-    /**
-     * 判断该类型是否是四大件
-     *
-     * @param materialType 物料类型
-     * @return 是true否false
-     */
-    boolean isMainMaterial(Integer materialType);
-
     /**
      * 添加物料型号
      *

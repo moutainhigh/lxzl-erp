@@ -2,7 +2,9 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.OrderRentType;
+import com.lxzl.erp.common.domain.order.ProcessOrderParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
@@ -36,6 +38,8 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderProduct.setProductId(2000013);
         orderProduct.setProductSkuId(40);
         orderProduct.setProductCount(1);
+        orderProduct.setProductUnitAmount(new BigDecimal(20.0));
+        orderProduct.setInsuranceAmount(new BigDecimal(15.0));
 
         List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
         ProductSkuProperty productSkuProperty = new ProductSkuProperty();
@@ -67,11 +71,13 @@ public class OrderTest extends ERPUnTransactionalTest {
         OrderMaterial orderMaterial = new OrderMaterial();
         orderMaterial.setMaterialId(5);
         orderMaterial.setMaterialCount(1);
+        orderMaterial.setMaterialUnitAmount(new BigDecimal(18.0));
+        orderMaterial.setInsuranceAmount(new BigDecimal(15.0));
 
         orderMaterialList.add(orderMaterial);
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerId(1);
+        order.setBuyerCustomerNo("CC201711301106206721011");
         order.setCustomerConsignId(1);
         order.setRentStartTime(new Date());
         TestResult result = getJsonTestResult("/order/create", order);
@@ -80,8 +86,8 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201711151901080841608");
-        order.setVerifyUser(1);
+        order.setOrderNo("O201711301513586691582");
+        order.setVerifyUser(500006);
         TestResult result = getJsonTestResult("/order/commit", order);
     }
 
@@ -94,30 +100,20 @@ public class OrderTest extends ERPUnTransactionalTest {
     }
 
     @Test
+    public void testProcessOrder() throws Exception {
+        ProcessOrderParam processOrderParam = new ProcessOrderParam();
+        processOrderParam.setOrderNo("O201711301513586691582");
+//        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017111110114");
+        processOrderParam.setBulkMaterialNo("BM2017112017070030810053");
+        processOrderParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
+        TestResult result = getJsonTestResult("/order/process", processOrderParam);
+    }
+
+
+    @Test
     public void testDelivery() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201711272022590091169");
-        order.setVerifyUser(1);
-
-
-        List<OrderProduct> orderProductList = new ArrayList<>();
-        OrderProduct orderProduct = new OrderProduct();
-        orderProduct.setOrderProductId(10);
-        List<String> equipmentNoList = new ArrayList<>();
-        equipmentNoList.add("LX-EQUIPMENT-4000002-2017112010006");
-        orderProduct.setEquipmentNoList(equipmentNoList);
-        orderProductList.add(orderProduct);
-        order.setOrderProductList(orderProductList);
-
-        List<OrderMaterial> orderMaterialList = new ArrayList<>();
-        OrderMaterial orderMaterial = new OrderMaterial();
-        orderMaterial.setOrderMaterialId(4);
-        List<String> bulkMaterialNoList = new ArrayList<>();
-        bulkMaterialNoList.add("BM2017112017070030810028");
-        orderMaterial.setBulkMaterialNoList(bulkMaterialNoList);
-        orderMaterialList.add(orderMaterial);
-        order.setOrderMaterialList(orderMaterialList);
-
+        order.setOrderNo("O201711301513586691582");
         TestResult result = getJsonTestResult("/order/delivery", order);
     }
 }

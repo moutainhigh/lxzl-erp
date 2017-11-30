@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.domain.purchase;
 
+import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
@@ -34,6 +35,9 @@ public class PurchaseOrderDO extends BaseDO {
     private String productSupplierName;//商品供应商名称
     @Transient
     private String ownerName;//采购员名称
+
+    @Transient
+    private WorkflowLinkDO workflowLinkDO;
 
     public Integer getId() {
         return id;
@@ -193,5 +197,13 @@ public class PurchaseOrderDO extends BaseDO {
 
     public void setPurchaseOrderMaterialDOList(List<PurchaseOrderMaterialDO> purchaseOrderMaterialDOList) {
         this.purchaseOrderMaterialDOList = purchaseOrderMaterialDOList;
+    }
+
+    public WorkflowLinkDO getWorkflowLinkDO() {
+        return workflowLinkDO;
+    }
+
+    public void setWorkflowLinkDO(WorkflowLinkDO workflowLinkDO) {
+        this.workflowLinkDO = workflowLinkDO;
     }
 }

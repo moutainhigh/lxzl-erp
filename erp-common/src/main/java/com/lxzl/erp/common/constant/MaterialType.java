@@ -25,4 +25,57 @@ public class MaterialType {
     public static final Integer MATERIAL_TYPE_SSD = 8;
     // 机箱
     public static final Integer MATERIAL_TYPE_BOX = 9;
+
+    public static boolean inThisScope(Integer materialType) {
+        if (materialType == null
+                || (!MATERIAL_TYPE_MEMORY.equals(materialType)
+                && !MATERIAL_TYPE_MAIN_BOARD.equals(materialType)
+                && !MATERIAL_TYPE_CPU.equals(materialType)
+                && !MATERIAL_TYPE_HDD.equals(materialType)
+                && !MATERIAL_TYPE_GRAPHICS_CARD.equals(materialType)
+                && !MATERIAL_TYPE_POWER_SUPPLY.equals(materialType)
+                && !MATERIAL_TYPE_RADIATOR.equals(materialType)
+                && !MATERIAL_TYPE_SSD.equals(materialType)
+                && !MATERIAL_TYPE_BOX.equals(materialType))) {
+            return false;
+        }
+        return true;
+    }
+
+
+    public static boolean isMainMaterial(Integer materialType) {
+        if (materialType == null
+                || (!MATERIAL_TYPE_MEMORY.equals(materialType)
+                && !MATERIAL_TYPE_MAIN_BOARD.equals(materialType)
+                && !MATERIAL_TYPE_CPU.equals(materialType)
+                && !MATERIAL_TYPE_HDD.equals(materialType)
+                && !MATERIAL_TYPE_SSD.equals(materialType)
+                && !MATERIAL_TYPE_GRAPHICS_CARD.equals(materialType))) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isCapacityMaterial(Integer materialType) {
+        if (materialType == null
+                || (!MATERIAL_TYPE_MEMORY.equals(materialType)
+                && !MATERIAL_TYPE_HDD.equals(materialType)
+                && !MATERIAL_TYPE_SSD.equals(materialType))) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isModelMaterial(Integer materialType) {
+        if (materialType == null
+                || (!MATERIAL_TYPE_MAIN_BOARD.equals(materialType)
+                && !MATERIAL_TYPE_CPU.equals(materialType)
+                && !MATERIAL_TYPE_GRAPHICS_CARD.equals(materialType)
+                && !MATERIAL_TYPE_POWER_SUPPLY.equals(materialType)
+                && !MATERIAL_TYPE_RADIATOR.equals(materialType)
+                && !MATERIAL_TYPE_BOX.equals(materialType))) {
+            return false;
+        }
+        return true;
+    }
 }
