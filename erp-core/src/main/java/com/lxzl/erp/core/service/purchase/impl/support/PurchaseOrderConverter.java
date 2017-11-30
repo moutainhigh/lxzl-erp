@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.purchase.impl.support;
 
 import com.lxzl.erp.common.domain.purchase.pojo.*;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.core.service.workflow.impl.support.WorkflowConverter;
 import com.lxzl.erp.dataaccess.domain.purchase.*;
 import org.springframework.beans.BeanUtils;
 
@@ -40,6 +41,9 @@ public class PurchaseOrderConverter {
                 purchaseOrderMaterialList.add(purchaseOrderMaterial);
             }
             purchaseOrder.setPurchaseOrderMaterialList(purchaseOrderMaterialList);
+        }
+        if(purchaseOrderDO!=null&&purchaseOrderDO.getWorkflowLinkDO()!=null){
+            purchaseOrder.setWorkflowLink(WorkflowConverter.convertWorkflowLinkDO(purchaseOrderDO.getWorkflowLinkDO()));
         }
         return purchaseOrder;
     }

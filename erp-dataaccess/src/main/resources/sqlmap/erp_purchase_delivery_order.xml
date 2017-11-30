@@ -233,6 +233,7 @@
 		left join erp_purchase_delivery_order_material epdom on epdo.id = epdom.purchase_delivery_order_id and epdom.data_status=1
 		left join erp_supplier es1 on epdo.owner_supplier_id = es1.id
 		left join erp_purchase_order epo on epo.id=epdo.purchase_order_id
+		ORDER BY epdo.create_time DESC
 
 	</select>
 	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.purchase.PurchaseDeliveryOrderDO">

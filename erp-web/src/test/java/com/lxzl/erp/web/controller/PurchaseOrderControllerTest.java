@@ -157,7 +157,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void page() throws Exception {
         PurchaseOrderQueryParam purchaseOrderQueryParam = new PurchaseOrderQueryParam();
-        purchaseOrderQueryParam.setPurchaseNo("PO201711181544591335000051741");
+//        purchaseOrderQueryParam.setPurchaseNo("PO201711181544591335000051741");
 //        purchaseOrderQueryParam.setProductSupplierId(1);
 //        purchaseOrderQueryParam.setInvoiceSupplierId(1);
 //        purchaseOrderQueryParam.setWarehouseNo("W201708081508");
@@ -172,7 +172,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryPurchaseOrderByNo() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setPurchaseNo("PO201711181544591335000051741");
+        purchaseOrder.setPurchaseNo("PO201711292045413845000051167");
         TestResult result = getJsonTestResult("/purchaseOrder/queryPurchaseOrderByNo",purchaseOrder);
     }
     @Test

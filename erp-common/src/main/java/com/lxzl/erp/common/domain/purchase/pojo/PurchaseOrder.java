@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.validate.constraints.In;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -59,6 +60,8 @@ public class PurchaseOrder implements Serializable {
 
     private List<PurchaseDeliveryOrder> purchaseDeliveryOrderList;
     private List<PurchaseReceiveOrder> purchaseReceiveOrderList;
+
+    private WorkflowLink workflowLink;
 
     public Integer getPurchaseOrderId(){
         return purchaseOrderId;
@@ -274,5 +277,13 @@ public class PurchaseOrder implements Serializable {
 
     public void setPurchaseOrderMaterialList(List<PurchaseOrderMaterial> purchaseOrderMaterialList) {
         this.purchaseOrderMaterialList = purchaseOrderMaterialList;
+    }
+
+    public WorkflowLink getWorkflowLink() {
+        return workflowLink;
+    }
+
+    public void setWorkflowLink(WorkflowLink workflowLink) {
+        this.workflowLink = workflowLink;
     }
 }

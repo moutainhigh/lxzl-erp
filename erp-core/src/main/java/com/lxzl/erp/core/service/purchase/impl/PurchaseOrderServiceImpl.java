@@ -32,17 +32,20 @@ import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseConverter;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.core.service.workflow.impl.support.WorkflowConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.*;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.purchase.*;
 import com.lxzl.erp.dataaccess.domain.supplier.SupplierDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
+import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
@@ -104,6 +107,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private PurchaseOrderMaterialMapper purchaseOrderMaterialMapper;
     @Autowired
     private PurchaseDeliveryOrderMaterialMapper purchaseDeliveryOrderMaterialMapper;
+    @Autowired
+    private WorkflowLinkMapper workflowLinkMapper;
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> add(PurchaseOrder purchaseOrder) {
@@ -619,6 +624,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         List<PurchaseReceiveOrder> purchaseReceiveOrderList = PurchaseOrderConverter.convertPurchaseReceiveOrderDOList(purchaseReceiveOrderDOList);
         purchaseOrder.setPurchaseDeliveryOrderList(purchaseDeliveryOrderList);
         purchaseOrder.setPurchaseReceiveOrderList(purchaseReceiveOrderList);
+        WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(WorkflowType.WORKFLOW_TYPE_PURCHASE,purchaseNo);
+        purchaseOrder.setWorkflowLink(WorkflowConverter.convertWorkflowLinkDO(workflowLinkDO));
         serviceResult.setResult(purchaseOrder);
         return serviceResult;
     }
