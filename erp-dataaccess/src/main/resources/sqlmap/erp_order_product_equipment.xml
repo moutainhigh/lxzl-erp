@@ -34,6 +34,16 @@
 		WHERE eo.buyer_customer_id = #{customerId} AND eo.data_status=1 AND eo.order_status=4 AND eope.equipment_id=#{equipmentId} AND eope.actual_return_time IS NULL
 	</select>
 
+	<select id="findByOrderProductId" resultMap="OrderProductEquipmentDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_order_product_equipment eope
+		WHERE eope.order_product_id = #{orderProductId, jdbcType=INTEGER} AND eope.data_status = 1
+	</select>
+
+	<select id="findByOrderIdAndEquipmentNo" resultMap="OrderProductEquipmentDO" parameterType="java.util.Map">
+		SELECT <include refid="column_List"/> FROM erp_order_product_equipment eope
+		WHERE eope.order_id = #{orderId, jdbcType=INTEGER} AND eope.equipment_no = #{equipmentNo, jdbcType=INTEGER}  AND eope.data_status = 1
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(eope.id) FROM erp_order_product_equipment eope 
 		<where>

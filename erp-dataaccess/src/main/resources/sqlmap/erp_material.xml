@@ -167,6 +167,7 @@
 			</where>
 			LIMIT #{maps.start},#{maps.pageSize}
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
+		ORDER BY material_main.id DESC
 	</select>
 
 

@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
+import com.lxzl.erp.common.domain.order.ProcessOrderParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -61,6 +62,12 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "confirm", method = RequestMethod.POST)
     public Result confirm(@RequestBody Order order, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = orderService.confirmOrder(order.getOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "process", method = RequestMethod.POST)
+    public Result process(@RequestBody ProcessOrderParam param, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = orderService.processOrder(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

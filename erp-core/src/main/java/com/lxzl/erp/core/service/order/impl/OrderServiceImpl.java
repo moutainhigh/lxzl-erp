@@ -505,19 +505,52 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
-
-
-        // 计算预计归还时间
-        Date expectReturnTime = calculationOrderExpectReturnTime(dbRecordOrder.getRentStartTime(), dbRecordOrder.getRentType(), dbRecordOrder.getRentTimeLength());
         // 即将出库的设备ID
         List<Integer> productEquipmentIdList = new ArrayList<>();
         // 即将出库的散料ID
         List<Integer> bulkMaterialIdList = new ArrayList<>();
 
+        Integer srcWarehouseId = null;
+        Integer targetWarehouseId = null;
+        if (CollectionUtil.isNotEmpty(dbRecordOrder.getOrderProductDOList())) {
+            for (OrderProductDO orderProductDO : dbRecordOrder.getOrderProductDOList()) {
+                List<OrderProductEquipmentDO> orderProductEquipmentDOList = orderProductEquipmentMapper.findByOrderProductId(orderProductDO.getId());
+                if (orderProductEquipmentDOList == null || orderProductDO.getProductCount() != orderProductEquipmentDOList.size()) {
+                    result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR);
+                    return result;
+                } else if (srcWarehouseId == null || targetWarehouseId == null) {
+                    ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(orderProductEquipmentDOList.get(0).getEquipmentNo());
+                    srcWarehouseId = productEquipmentDO.getCurrentWarehouseId();
+                    targetWarehouseId = productEquipmentDO.getCurrentWarehouseId();
+                }
+                for(OrderProductEquipmentDO orderProductEquipmentDO : orderProductEquipmentDOList){
+                    productEquipmentIdList.add(orderProductEquipmentDO.getEquipmentId());
+                }
+            }
+        }
+        if (CollectionUtil.isNotEmpty(dbRecordOrder.getOrderMaterialDOList())) {
+            for (OrderMaterialDO orderMaterialDO : dbRecordOrder.getOrderMaterialDOList()) {
+                List<OrderMaterialBulkDO> orderMaterialBulkDOList = orderMaterialBulkMapper.findByOrderMaterialId(orderMaterialDO.getId());
+                if (orderMaterialBulkDOList == null || orderMaterialDO.getMaterialCount() != orderMaterialBulkDOList.size()) {
+                    result.setErrorCode(ErrorCode.ORDER_PRODUCT_BULK_MATERIAL_COUNT_ERROR);
+                    return result;
+                } else if (srcWarehouseId == null || targetWarehouseId == null) {
+                    BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(orderMaterialBulkDOList.get(0).getBulkMaterialNo());
+                    srcWarehouseId = bulkMaterialDO.getCurrentWarehouseId();
+                    targetWarehouseId = bulkMaterialDO.getCurrentWarehouseId();
+                }
+                for(OrderMaterialBulkDO orderMaterialBulkDO : orderMaterialBulkDOList){
+                    bulkMaterialIdList.add(orderMaterialBulkDO.getBulkMaterialId());
+                }
+            }
+        }
+
+        // 计算预计归还时间
+        Date expectReturnTime = calculationOrderExpectReturnTime(dbRecordOrder.getRentStartTime(), dbRecordOrder.getRentType(), dbRecordOrder.getRentTimeLength());
+
         ProductOutStockParam productOutStockParam = new ProductOutStockParam();
-        // TODO 待填值
-        productOutStockParam.setSrcWarehouseId(null);
-        productOutStockParam.setTargetWarehouseId(null);
+        productOutStockParam.setSrcWarehouseId(srcWarehouseId);
+        productOutStockParam.setTargetWarehouseId(targetWarehouseId);
         productOutStockParam.setCauseType(StockCauseType.STOCK_CAUSE_TYPE_ORDER_DELIVERY);
         productOutStockParam.setReferNo(dbRecordOrder.getOrderNo());
         productOutStockParam.setProductEquipmentIdList(productEquipmentIdList);

@@ -13,6 +13,8 @@ public interface OrderProductEquipmentMapper extends BaseMysqlDAO<OrderProductEq
 
 	Integer saveList(@Param("orderProductEquipmentDOList") List<OrderProductEquipmentDO> orderProductEquipmentDOList);
 
+	List<OrderProductEquipmentDO> findByOrderProductId(@Param("orderProductId") Integer orderProductId);
+
 	OrderProductEquipmentDO findByOrderIdAndEquipmentNo(@Param("orderId") Integer orderId , @Param("equipmentNo") String equipmentNo);
 
 	/**
