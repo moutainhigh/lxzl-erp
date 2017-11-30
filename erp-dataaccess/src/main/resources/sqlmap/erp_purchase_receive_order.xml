@@ -323,5 +323,6 @@
 		LEFT JOIN erp_user eu ON epro.owner = eu.id
 		LEFT JOIN erp_supplier es1 ON epro.product_supplier_id = es1.id
 		LEFT JOIN erp_purchase_order epo ON epo.id=epro.purchase_order_id
+		ORDER BY epro.create_time DESC
 	</select>
 </mapper>

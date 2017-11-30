@@ -17,6 +17,7 @@ public class PurchaseReceiveOrderMaterial implements Serializable {
 	private String materialSnapshot;   //物料快照
 	private Integer materialCount;   //物料总数
 	private Integer realMaterialId;   //实际物料ID
+	private String realMaterialNo;
 	private String realMaterialName;   //实际物料ID名称
 	private String realMaterialSnapshot;   //实际物料快照
 	private Integer realMaterialCount;   //实际物料总数
@@ -67,6 +68,14 @@ public class PurchaseReceiveOrderMaterial implements Serializable {
 
 	public void setMaterialId(Integer materialId){
 		this.materialId = materialId;
+	}
+
+	public String getRealMaterialNo() {
+		return realMaterialNo;
+	}
+
+	public void setRealMaterialNo(String realMaterialNo) {
+		this.realMaterialNo = realMaterialNo;
 	}
 
 	public String getMaterialName(){
