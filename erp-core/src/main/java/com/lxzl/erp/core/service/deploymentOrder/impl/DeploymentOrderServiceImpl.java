@@ -368,8 +368,15 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> processDeploymentOrder(ProcessDeploymentOrderParam param) {
         ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
         if (param == null) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+        DeploymentOrderDO deploymentOrderDO = deploymentOrderMapper.findByNo(param.getDeploymentOrderNo());
+        if (deploymentOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
         if(!CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())
@@ -379,31 +386,30 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         }
 
         if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())) {
-            String errorCode = addDeploymentOrderItem(param.getDeploymentOrderNo(), param.getEquipmentNo(), param.getBulkMaterialNo());
+            String errorCode = addDeploymentOrderItem(deploymentOrderDO, param.getEquipmentNo(), param.getBulkMaterialNo(), loginUser.getUserId(), currentTime);
             if (!ErrorCode.SUCCESS.equals(errorCode)) {
                 result.setErrorCode(errorCode);
                 return result;
             }
         } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(param.getOperationType())) {
-            String errorCode = removeDeploymentOrderItem(param.getDeploymentOrderNo(), param.getEquipmentNo(), param.getBulkMaterialNo());
+            String errorCode = removeDeploymentOrderItem(deploymentOrderDO, param.getEquipmentNo(), param.getBulkMaterialNo(), loginUser.getUserId(), currentTime);
             if (!ErrorCode.SUCCESS.equals(errorCode)) {
                 result.setErrorCode(errorCode);
                 return result;
             }
         }
+
+        deploymentOrderDO.setDeploymentOrderStatus(DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_PROCESSING);
+        deploymentOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        deploymentOrderDO.setUpdateTime(currentTime);
+        deploymentOrderMapper.update(deploymentOrderDO);
 
         result.setResult(param.getDeploymentOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 
-    private String addDeploymentOrderItem(String deploymentOrderNo, String equipmentNo, String bulkMaterialNo) {
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        Date currentTime = new Date();
-        DeploymentOrderDO deploymentOrderDO = deploymentOrderMapper.findByNo(deploymentOrderNo);
-        if (deploymentOrderDO == null) {
-            return ErrorCode.RECORD_NOT_EXISTS;
-        }
+    private String addDeploymentOrderItem(DeploymentOrderDO deploymentOrderDO, String equipmentNo, String bulkMaterialNo, Integer loginUserId, Date currentTime) {
 
         // 处理调拨设备业务
         if (equipmentNo != null) {
@@ -419,9 +425,13 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             if (deploymentOrderProductDO == null) {
                 return ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM;
             }
+            List<DeploymentOrderProductEquipmentDO> deploymentOrderProductEquipmentDOList = deploymentOrderProductEquipmentMapper.findByDeploymentOrderProductId(deploymentOrderProductDO.getId());
+            if (deploymentOrderProductEquipmentDOList != null && deploymentOrderProductEquipmentDOList.size() >= deploymentOrderProductDO.getDeploymentProductSkuCount()) {
+                return ErrorCode.DEPLOY_ORDER_PRODUCT_EQUIPMENT_COUNT_MAX;
+            }
             productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_DEPLOYING);
             productEquipmentDO.setUpdateTime(currentTime);
-            productEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+            productEquipmentDO.setUpdateUser(loginUserId.toString());
             productEquipmentMapper.update(productEquipmentDO);
 
             DeploymentOrderProductEquipmentDO deploymentOrderProductEquipmentDO = new DeploymentOrderProductEquipmentDO();
@@ -430,8 +440,8 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             deploymentOrderProductEquipmentDO.setDeploymentOrderProductId(deploymentOrderProductDO.getId());
             deploymentOrderProductEquipmentDO.setEquipmentId(productEquipmentDO.getId());
             deploymentOrderProductEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
-            deploymentOrderProductEquipmentDO.setCreateUser(loginUser.getUserId().toString());
-            deploymentOrderProductEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+            deploymentOrderProductEquipmentDO.setCreateUser(loginUserId.toString());
+            deploymentOrderProductEquipmentDO.setUpdateUser(loginUserId.toString());
             deploymentOrderProductEquipmentDO.setCreateTime(currentTime);
             deploymentOrderProductEquipmentDO.setUpdateTime(currentTime);
             deploymentOrderProductEquipmentMapper.save(deploymentOrderProductEquipmentDO);
@@ -452,9 +462,14 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             if (deploymentOrderMaterialDO == null) {
                 return ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM;
             }
+            List<DeploymentOrderMaterialBulkDO> deploymentOrderMaterialBulkDOList = deploymentOrderMaterialBulkMapper.findByDeploymentOrderMaterialBulkId(deploymentOrderMaterialDO.getId());
+            if (deploymentOrderMaterialBulkDOList != null && deploymentOrderMaterialBulkDOList.size() >= deploymentOrderMaterialDO.getDeploymentProductMaterialCount()) {
+                return ErrorCode.DEPLOY_ORDER_MATERIAL_BULK_COUNT_MAX;
+            }
+
             bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_DEPLOYING);
             bulkMaterialDO.setUpdateTime(currentTime);
-            bulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+            bulkMaterialDO.setUpdateUser(loginUserId.toString());
             bulkMaterialMapper.update(bulkMaterialDO);
 
             DeploymentOrderMaterialBulkDO deploymentOrderMaterialBulkDO = new DeploymentOrderMaterialBulkDO();
@@ -463,8 +478,8 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             deploymentOrderMaterialBulkDO.setDeploymentOrderMaterialId(deploymentOrderMaterialDO.getId());
             deploymentOrderMaterialBulkDO.setBulkMaterialId(bulkMaterialDO.getId());
             deploymentOrderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
-            deploymentOrderMaterialBulkDO.setCreateUser(loginUser.getUserId().toString());
-            deploymentOrderMaterialBulkDO.setUpdateUser(loginUser.getUserId().toString());
+            deploymentOrderMaterialBulkDO.setCreateUser(loginUserId.toString());
+            deploymentOrderMaterialBulkDO.setUpdateUser(loginUserId.toString());
             deploymentOrderMaterialBulkDO.setCreateTime(currentTime);
             deploymentOrderMaterialBulkDO.setUpdateTime(currentTime);
             deploymentOrderMaterialBulkMapper.save(deploymentOrderMaterialBulkDO);
@@ -472,14 +487,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         return ErrorCode.SUCCESS;
     }
 
-    private String removeDeploymentOrderItem(String deploymentOrderNo, String equipmentNo, String bulkMaterialNo) {
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        Date currentTime = new Date();
-        DeploymentOrderDO deploymentOrderDO = deploymentOrderMapper.findByNo(deploymentOrderNo);
-        if (deploymentOrderDO == null) {
-            return ErrorCode.RECORD_NOT_EXISTS;
-        }
-
+    private String removeDeploymentOrderItem(DeploymentOrderDO deploymentOrderDO, String equipmentNo, String bulkMaterialNo,Integer loginUserId, Date currentTime) {
         // 处理调拨设备业务
         if (equipmentNo != null) {
             ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(equipmentNo);
@@ -494,13 +502,13 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                 return ErrorCode.PARAM_IS_ERROR;
             }
             deploymentOrderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-            deploymentOrderProductEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+            deploymentOrderProductEquipmentDO.setUpdateUser(loginUserId.toString());
             deploymentOrderProductEquipmentDO.setUpdateTime(currentTime);
             deploymentOrderProductEquipmentMapper.update(deploymentOrderProductEquipmentDO);
 
             productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
             productEquipmentDO.setUpdateTime(currentTime);
-            productEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+            productEquipmentDO.setUpdateUser(loginUserId.toString());
             productEquipmentMapper.update(productEquipmentDO);
         }
 
@@ -519,13 +527,13 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                 return ErrorCode.PARAM_IS_ERROR;
             }
             deploymentOrderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-            deploymentOrderMaterialBulkDO.setUpdateUser(loginUser.getUserId().toString());
+            deploymentOrderMaterialBulkDO.setUpdateUser(loginUserId.toString());
             deploymentOrderMaterialBulkDO.setUpdateTime(currentTime);
             deploymentOrderMaterialBulkMapper.update(deploymentOrderMaterialBulkDO);
 
             bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
             bulkMaterialDO.setUpdateTime(currentTime);
-            bulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+            bulkMaterialDO.setUpdateUser(loginUserId.toString());
             bulkMaterialMapper.update(bulkMaterialDO);
         }
         return ErrorCode.SUCCESS;

@@ -14,4 +14,6 @@ public interface DeploymentOrderMaterialBulkMapper extends BaseMysqlDAO<Deployme
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
     DeploymentOrderMaterialBulkDO findDeploymentOrderByBulkMaterialNo(@Param("byBulkMaterialNo") String byBulkMaterialNo);
+
+    List<DeploymentOrderMaterialBulkDO> findByDeploymentOrderMaterialBulkId(@Param("deploymentOrderMaterialBulkId") Integer deploymentOrderMaterialBulkId);
 }

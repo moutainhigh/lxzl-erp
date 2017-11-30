@@ -15,4 +15,6 @@ public interface DeploymentOrderProductEquipmentMapper extends BaseMysqlDAO<Depl
 
     DeploymentOrderProductEquipmentDO findDeploymentOrderByEquipmentNo(@Param("deploymentOrderId") Integer deploymentOrderId,
                                                                        @Param("equipmentNo") String equipmentNo);
+
+    List<DeploymentOrderProductEquipmentDO> findByDeploymentOrderProductId(@Param("deploymentOrderProductId") Integer deploymentOrderProductId);
 }

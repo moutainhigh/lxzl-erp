@@ -195,6 +195,8 @@ public class ErrorCode {
     public static final String RETURN_ORDER_NO_EXISTS = "J400030";
     public static final String EQUIPMENT_NOT_EXISTS = "J400031";
     public static final String EQUIPMENT_NOT_RENT = "J400032";
+    public static final String DEPLOY_ORDER_PRODUCT_EQUIPMENT_COUNT_MAX = "J400033";
+    public static final String DEPLOY_ORDER_MATERIAL_BULK_COUNT_MAX = "J400034";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -418,6 +420,8 @@ public class ErrorCode {
         MAP.put(ORDER_HAVE_NO_THIS_ITEM, "订单没有这个SKU或物料单项。");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, "订单商品项的设备数已经达到最大。");
         MAP.put(ORDER_MATERIAL_BULK_COUNT_MAX, "订单物料项散料数已经达到最大。");
+        MAP.put(DEPLOY_ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, "调拨单商品项的设备数已经达到最大。");
+        MAP.put(DEPLOY_ORDER_MATERIAL_BULK_COUNT_MAX, "调拨单物料项的散料数已经达到最大。");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");

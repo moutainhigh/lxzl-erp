@@ -31,6 +31,11 @@
 		WHERE edope.equipment_no = #{equipmentNo, jdbcType=VARCHAR} AND edope.deployment_order_id = #{deploymentOrderId, jdbcType=VARCHAR} AND edope.data_status = 1
 	</select>
 
+	<select id="findByDeploymentOrderProductId" resultMap="DeploymentOrderProductEquipmentDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_deployment_order_product_equipment edope
+		WHERE edope.deployment_order_product_id = #{deploymentOrderProductId, jdbcType=VARCHAR} AND edope.data_status = 1
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(edope.id) FROM erp_deployment_order_product_equipment edope 
 		<where>
