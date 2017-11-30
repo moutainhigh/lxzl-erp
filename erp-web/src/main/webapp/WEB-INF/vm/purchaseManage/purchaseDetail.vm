@@ -8,372 +8,347 @@
 <body class="blank-page">
     #parse("layout/toolbox.vm")
     <div id="main">
-    #parse("layout/navbar.vm")
-    #parse("layout/sidebar.vm")
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
 
-    <section id="content_wrapper">
-        #parse("layout/topbarDropmenu.vm")
-        #parse("layout/topbar.vm")
-        <section id="content" class="animated fadeIn">
-            <div class="panel panel-primary panel-border top mb35">
-                <div class="panel-body">
-                   <div class="row">
-                       <div class="col-md-4">
-                           <h5>采购单号：<small id="purchaseOrderNo"></small></h5>
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+                <div class="panel panel-primary panel-border top mb35">
+                    <div class="panel-body">
+                       <div class="row">
+                           <div class="col-md-4">
+                               <h5>采购单号：<small id="purchaseOrderNo"></small></h5>
+                           </div>
+                           <div class="col-md-8"></div>
                        </div>
-                       <div class="col-md-8"></div>
-                   </div>
-                </div>
-                <div class="form-horizontal panel-body bg-light dark">
-                    <script type="text/html" id="baserInfoTpl">
-                        {{#dataSource}}
+                    </div>
+                    <div class="form-horizontal panel-body bg-light dark">
+                        <script type="text/html" id="baserInfoTpl">
+                            {{#dataSource}}
+                                <div class="col-md-3">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">供应商</dt><dd>{{productSupplierName}}</dd>
+                                        <dt class="mb10">仓库</dt><dd>{{warehouseName}}</dd>
+                                        <dt class="mb10">全新机器</dt><dd>{{isNewStr}}</dd>
+                                        <dt class="mb10">采购类型</dt><dd>{{purchaseTypeStr}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-3">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">采购单总价</dt><dd>{{purchaseOrderAmountTotalFixed}}</dd>
+                                        <dt class="mb10">采购单实收</dt><dd>{{purchaseOrderAmountRealFixed}}</dd>
+                                        <dt class="mb10">结算金额</dt><dd>{{purchaseOrderAmountStatementFixed}}</dd>
+                                        <dt class="mb10">是否有发票</dt><dd>{{isInvoiceStr}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-3">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">创建时间</dt><dd>{{createTimeFormat}}</dd>
+                                        <dt class="mb10">修改时间</dt><dd>{{updateTimeFormat}}</dd>
+                                        <dt class="mb10">发货时间</dt><dd>{{deliveryTimeFormat}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-3">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">采购员</dt><dd>{{ownerName}}</dd>
+                                    </dl>
+                                </div>
+                            {{/dataSource}}
+                        </script>
+                        <div class="row" id="baseInfo">
                             <div class="col-md-3">
                                 <dl class="dl-horizontal">
-                                    <dt class="mb10">供应商</dt><dd>{{productSupplierName}}</dd>
-                                    <dt class="mb10">仓库</dt><dd>{{warehouseName}}</dd>
-                                    <dt class="mb10">全新机器</dt><dd>{{isNewStr}}</dd>
-                                    <dt class="mb10">采购类型</dt><dd>{{purchaseTypeStr}}</dd>
+                                    <dt class="mb10">供应商</dt><dd></dd>
+                                    <dt class="mb10">仓库</dt><dd></dd>
+                                    <dt class="mb10">全新机器</dt><dd></dd>
+                                    <dt class="mb10">采购类型</dt><dd></dd>
                                 </dl>
                             </div>
                             <div class="col-md-3">
                                 <dl class="dl-horizontal">
-                                    <dt class="mb10">采购单总价</dt><dd>{{purchaseOrderAmountTotalFixed}}</dd>
-                                    <dt class="mb10">采购单实收</dt><dd>{{purchaseOrderAmountRealFixed}}</dd>
-                                    <dt class="mb10">结算金额</dt><dd>{{purchaseOrderAmountStatementFixed}}</dd>
-                                    <dt class="mb10">是否有发票</dt><dd>{{isInvoiceStr}}</dd>
+                                    <dt class="mb10">采购单总价</dt><dd></dd>
+                                    <dt class="mb10">采购单实收</dt><dd></dd>
+                                    <dt class="mb10">结算金额</dt><dd></dd>
+                                    <dt class="mb10">是否有发票</dt><dd></dd>
                                 </dl>
                             </div>
                             <div class="col-md-3">
                                 <dl class="dl-horizontal">
-                                    <dt class="mb10">创建时间</dt><dd>{{createTimeFormat}}</dd>
-                                    <dt class="mb10">修改时间</dt><dd>{{updateTimeFormat}}</dd>
-                                    <dt class="mb10">发货时间</dt><dd>{{deliveryTimeFormat}}</dd>
+                                    <dt class="mb10">创建时间</dt><dd></dd>
+                                    <dt class="mb10">修改时间</dt><dd></dd>
+                                    <dt class="mb10">发货时间</dt><dd></dd>
                                 </dl>
                             </div>
                             <div class="col-md-3">
                                 <dl class="dl-horizontal">
-                                    <dt class="mb10">采购员</dt><dd>{{ownerName}}</dd>
+                                    <dt class="mb10">采购员</dt><dd></dd>
                                 </dl>
                             </div>
-                        {{/dataSource}}
-                    </script>
-                    <div class="row" id="baseInfo">
-                        <div class="col-md-3">
-                            <dl class="dl-horizontal">
-                                <dt class="mb10">供应商</dt><dd></dd>
-                                <dt class="mb10">仓库</dt><dd></dd>
-                                <dt class="mb10">全新机器</dt><dd></dd>
-                                <dt class="mb10">采购类型</dt><dd></dd>
-                            </dl>
-                        </div>
-                        <div class="col-md-3">
-                            <dl class="dl-horizontal">
-                                <dt class="mb10">采购单总价</dt><dd></dd>
-                                <dt class="mb10">采购单实收</dt><dd></dd>
-                                <dt class="mb10">结算金额</dt><dd></dd>
-                                <dt class="mb10">是否有发票</dt><dd></dd>
-                            </dl>
-                        </div>
-                        <div class="col-md-3">
-                            <dl class="dl-horizontal">
-                                <dt class="mb10">创建时间</dt><dd></dd>
-                                <dt class="mb10">修改时间</dt><dd></dd>
-                                <dt class="mb10">发货时间</dt><dd></dd>
-                            </dl>
-                        </div>
-                        <div class="col-md-3">
-                            <dl class="dl-horizontal">
-                                <dt class="mb10">采购员</dt><dd></dd>
-                            </dl>
                         </div>
                     </div>
-                </div>
-                <div class="panel-heading">
-##                        <script type="text/html" id="dataListMenuTpl">
-##                            {{#dataSource}}
-##                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
-##                                {{#hasProductList}}
-##                                <li>
-##                                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
-##                                </li>
-##                                {{/hasProductList}}
-##                                {{#hasMaterialList}}
-##                                <li>
-##                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">物料项</a>
-##                                </li>
-##                                {{/hasMaterialList}}
-##                                <li>
-##                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">发货通知单</a>
-##                                </li>
-##                                <li>
-##                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">收料详情单</a>
-##                                </li>
-##                            </ul>
-##                            {{/dataSource}}
-##                        </script>
-                    <div class="row" id="dataListMenu">
-                        <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
-                            <li class="active">
-                                <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
-                            </li>
-                            <li>
-                                <a href="#purchaseOrderMaterialItems" data-toggle="tab">物料项</a>
-                            </li>
-                            <li>
-                                <a href="#purchaseDeliveryOrderList" data-toggle="tab">发货单</a>
-                            </li>
-                            <li>
-                                <a href="#purchaseReceiveOrderList" data-toggle="tab">收货单</a>
-                            </li>
-                        </ul>
+                    <div class="panel-heading">
+                        <div class="row" id="dataListMenu">
+                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
+                                <li class="active">
+                                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
+                                </li>
+                                <li>
+                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">物料项</a>
+                                </li>
+                                <li>
+                                    <a href="#purchaseDeliveryOrderList" data-toggle="tab">发货单</a>
+                                </li>
+                                <li>
+                                    <a href="#purchaseReceiveOrderList" data-toggle="tab">收货单</a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div class="panel-body dark pn">
-                    <div class="tab-content pn br-n">
-                        <div id="purchaseOrderProductItems" class="tab-pane active">
-                            <div class="table-responsive">
-                                <script type="text/html" id="dataListTpl">
-                                    <thead>
-                                    <tr class="bg-light">
-                                        <th>商品ID</th>
-                                        <th>图片</th>
-                                        <th>商品名称</th>
-                                        <th>列表价格</th>
-                                        <th>SKU</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {{#dataSource}}
-                                    {{#listData}}
-                                    <tr class="productRow" productRowKey="{{productId}}">
-                                        <td>{{productId}}</td>
-                                        <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-                                        <td>{{productName}}</td>
-                                        <td class="br-r">{{listPriceFixed}}</td>
-                                        <td class="pn">
-                                            <table class="table">
-                                                {{#chooseSkuList}}
-                                                {{#skuList}}
-                                                <tr class="skuRow">
-                                                    <td style="width: 40%">{{propertiesToStr}}</td>
-                                                    <td style="width: 20%">
-                                                        <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
-                                                        <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
-                                                        <label class="field prepend-icon mw200">
-                                                            采购价：￥{{productAmount}}
-                                                        </label>
-                                                    </td>
-                                                    <td style="width: 20%">
-                                                        <label class="field prepend-icon mw200">
-                                                            数量：{{productCount}}
-                                                        </label>
-                                                    </td>
-                                                    <td style="width:20%" class="text-right">
-                                                        <div class="btn-group text-right">
-                                                            <a href="#" type="button" class="btn btn-default btn-xs showMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">查看物料</a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr class="bg-light editMaterialTr" style="height: 0;">
-                                                    <td colspan="4" class="pn br-n" style="height:0;">
-                                                        <div class="panel m15 editMaterialPannel" style="display: none;">
-                                                            <div class="panel-heading pn ph8">
-                                                                <span>物料信息</span>
+                    <div class="panel-body dark pn">
+                        <div class="tab-content pn br-n">
+                            <div id="purchaseOrderProductItems" class="tab-pane active">
+                                <div class="table-responsive">
+                                    <script type="text/html" id="dataListTpl">
+                                        <thead>
+                                        <tr class="bg-light">
+                                            <th>商品ID</th>
+                                            <th>图片</th>
+                                            <th>商品名称</th>
+                                            <th>列表价格</th>
+                                            <th>SKU</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr class="productRow" productRowKey="{{productId}}">
+                                            <td>{{productId}}</td>
+                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                                            <td>{{productName}}</td>
+                                            <td class="br-r">{{listPriceFixed}}</td>
+                                            <td class="pn">
+                                                <table class="table">
+                                                    {{#chooseSkuList}}
+                                                    {{#skuList}}
+                                                    <tr class="skuRow">
+                                                        <td style="width: 40%">{{propertiesToStr}}</td>
+                                                        <td style="width: 20%">
+                                                            <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
+                                                            <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+                                                            <label class="field prepend-icon mw200">
+                                                                采购价：￥{{productAmount}}
+                                                            </label>
+                                                        </td>
+                                                        <td style="width: 20%">
+                                                            <label class="field prepend-icon mw200">
+                                                                数量：{{productCount}}
+                                                            </label>
+                                                        </td>
+                                                        <td style="width:20%" class="text-right">
+                                                            <div class="btn-group text-right">
+                                                                <a href="#" type="button" class="btn btn-default btn-xs showMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">查看物料</a>
                                                             </div>
-                                                            <div class="panel-body pn">
-                                                                <table class="table">
-                                                                    {{#shouldMaterialList}}
-                                                                    <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
-                                                                        <td class="br-r">{{propertyName}}：{{propertyValueName}}</td>
-                                                                        <td class="pn">
-                                                                            <input type="hidden" name="propertyCapacityValue" value="{{propertyCapacityValue}}" />
-                                                                            <table class="table pn br-r materialInputTable" >
-                                                                                {{#materialList}}
-                                                                                <tr class="materialInputRow">
-                                                                                    <td style="width: 60%;">物料名：{{materialName}}</td>
-                                                                                    <td style="width: 40%;">数量：{{materialCount}}</td>
-                                                                                </tr>
-                                                                                {{/materialList}}
-                                                                            </table>
-                                                                        </td>
-                                                                    </tr>
-                                                                    {{/shouldMaterialList}}
-                                                                </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="bg-light editMaterialTr" style="height: 0;">
+                                                        <td colspan="4" class="pn br-n" style="height:0;">
+                                                            <div class="panel m15 editMaterialPannel" style="display: none;">
+                                                                <div class="panel-heading pn ph8">
+                                                                    <span>物料信息</span>
+                                                                </div>
+                                                                <div class="panel-body pn">
+                                                                    <table class="table">
+                                                                        {{#shouldMaterialList}}
+                                                                        <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
+                                                                            <td class="br-r">{{propertyName}}：{{propertyValueName}}</td>
+                                                                            <td class="pn">
+                                                                                <input type="hidden" name="propertyCapacityValue" value="{{propertyCapacityValue}}" />
+                                                                                <table class="table pn br-r materialInputTable" >
+                                                                                    {{#materialList}}
+                                                                                    <tr class="materialInputRow">
+                                                                                        <td style="width: 60%;">物料名：{{materialName}}</td>
+                                                                                        <td style="width: 40%;">数量：{{materialCount}}</td>
+                                                                                    </tr>
+                                                                                    {{/materialList}}
+                                                                                </table>
+                                                                            </td>
+                                                                        </tr>
+                                                                        {{/shouldMaterialList}}
+                                                                    </table>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                {{/skuList}}
-                                                {{/chooseSkuList}}
-                                            </table>
-                                        </td>
-                                    </tr>
-                                    {{/listData}}
-                                    {{^listData}}
-                                    <tr>
-                                        <td valign="top" colspan="14" class="text-center">还没有选择商品</td>
-                                    </tr>
-                                    {{/listData}}
-                                    {{/dataSource}}
-                                    </tbody>
-                                </script>
-                                <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                                                        </td>
+                                                    </tr>
+                                                    {{/skuList}}
+                                                    {{/chooseSkuList}}
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">还没有选择商品</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                                </div>
                             </div>
-                        </div>
-                        <div id="purchaseOrderMaterialItems" class="tab-pane">
-                            <div class="table-responsive">
-                                <script type="text/html" id="materialDataListTpl">
-                                    <thead>
-                                    <tr class="bg-light">
-                                        <th>编号</th>
-                                        <th>名称</th>
-                                        <th>类型</th>
-                                        <th>属性</th>
-                                        <th>本身价值</th>
-                                        <th>租赁价格</th>
-                                        <th>描述</th>
-                                        <th>图片</th>
-                                        <th>采购价</th>
-                                        <th>数量</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {{#dataSource}}
-                                    {{#listData}}
-                                    <tr class="purchaseOrderItemMaterialRow">
-                                        <td>{{materialNo}}</td>
-                                        <td>{{materialName}}</td>
-                                        <td>{{materialTypeStr}}</td>
-                                        <td>{{propertyName}}:{{propertyValueName}}</td>
-                                        <td>{{materialPriceFormat}}</td>
-                                        <td>{{rentPriceFormat}}</td>
-                                        <td>{{materialDesc}}</td>
-                                        <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-                                        <td>{{materialAmount}}</td>
-                                        <td>{{materialCount}}</td>
-                                    </tr>
-                                    {{/listData}}
-                                    {{^listData}}
-                                    <tr>
-                                        <td valign="top" colspan="14" class="text-center">没有选择物料</td>
-                                    </tr>
-                                    {{/listData}}
-                                    {{/dataSource}}
-                                    </tbody>
-                                </script>
-                                <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialDataListTable"></table>
+                            <div id="purchaseOrderMaterialItems" class="tab-pane">
+                                <div class="table-responsive">
+                                    <script type="text/html" id="materialDataListTpl">
+                                        <thead>
+                                        <tr class="bg-light">
+                                            <th>编号</th>
+                                            <th>名称</th>
+                                            <th>类型</th>
+                                            <th>本身价值</th>
+                                            <th>租赁价格</th>
+                                            <th>描述</th>
+                                            <th>图片</th>
+                                            <th>采购价</th>
+                                            <th>数量</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr class="purchaseOrderItemMaterialRow">
+                                            <td>{{materialNo}}</td>
+                                            <td>{{materialName}}</td>
+                                            <td>{{materialTypeStr}}</td>
+                                            <td>{{materialPriceFormat}}</td>
+                                            <td>{{rentPriceFormat}}</td>
+                                            <td>{{materialDesc}}</td>
+                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                                            <td>{{materialAmount}}</td>
+                                            <td>{{materialCount}}</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">没有选择物料</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialDataListTable"></table>
+                                </div>
                             </div>
-                        </div>
-                        <div id="purchaseDeliveryOrderList" class="tab-pane">
-                            <div class="table-responsive">
-                                <script type="text/html" id="dataPurchaseDeliveryOrderListTpl">
-                                    <thead>
-                                    <tr>
-                                        <th>采购发货单编号</th>
-                                        <th>仓库</th>
-                                        <th>是否有发票</th>
-                                        <th>是否全新机</th>
-                                        <th>发货状态</th>
-                                        <th>发货时间</th>
-                                        <th>数据归属供应商</th>
-                                        <th>备注</th>
-                                        <th class="text-right">操作</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {{#dataSource}}
-                                    {{#listData}}
-                                    <tr>
-                                        <td>{{purchaseDeliveryNo}}</td>
-                                        <td>{{warehouse}}</td>
-                                        <td>{{isInvoiceStr}}</td>
-                                        <td>{{isNewStr}}</td>
-                                        <td>{{purchaseDeliveryOrderStatusStr}}</td>
-                                        <td>{{deliveryTimeFormat}}</td>
-                                        <td></td>
-                                        <td>{{remark}}</td>
-                                        <td class="text-right">
-                                            <div class="btn-group text-right">
-                                                <a href="#" type="button" class="btn btn-default btn-xs {{class}}">查看</a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {{/listData}}
-                                    {{^listData}}
-                                    <tr>
-                                        <td valign="top" colspan="14" class="text-center">没有查询到发货通知</td>
-                                    </tr>
-                                    {{/listData}}
-                                    {{/dataSource}}
-                                    </tbody>
-                                </script>
-                                <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataPurchaseDeliveryOrderListTable"></table>
+                            <div id="purchaseDeliveryOrderList" class="tab-pane">
+                                <div class="table-responsive">
+                                    <script type="text/html" id="dataPurchaseDeliveryOrderListTpl">
+                                        <thead>
+                                        <tr>
+                                            <th>发货单编号</th>
+                                            <th>仓库</th>
+                                            <th>是否有发票</th>
+                                            <th>是否全新机</th>
+                                            <th>发货状态</th>
+                                            <th>发货时间</th>
+                                            <th>数据归属供应商</th>
+                                            <th>备注</th>
+                                            <th class="text-right">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr>
+                                            <td>{{purchaseDeliveryNo}}</td>
+                                            <td>{{warehouse}}</td>
+                                            <td>{{isInvoiceStr}}</td>
+                                            <td>{{isNewStr}}</td>
+                                            <td>{{purchaseDeliveryOrderStatusStr}}</td>
+                                            <td>{{deliveryTimeFormat}}</td>
+                                            <td></td>
+                                            <td>{{remark}}</td>
+                                            <td class="text-right">
+                                                <div class="btn-group text-right">
+                                                    <a href="#" type="button" class="btn btn-default btn-xs {{class}}">查看</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">没有查询到发货通知</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataPurchaseDeliveryOrderListTable"></table>
+                                </div>
                             </div>
-                        </div>
-                        <div id="purchaseReceiveOrderList" class="tab-pane">
-                            <div class="table-responsive">
-                                <script type="text/html" id="dataPurchaseReceiveOrderListTpl">
-                                    <thead>
-                                    <tr>
-                                        <th>采购收货单编号</th>
-                                        <th>商品供应商</th>
-                                        <th>仓库</th>
-                                        <th>发票供应商</th>
-                                        <th>是否有发票</th>
-                                        <th>分拨情况</th>
-                                        <th>是否全新机</th>
-                                        <th>收货状态</th>
-                                        <th>签单时间</th>
-                                        <th>数据归属人</th>
-                                        <th>备注</th>
-                                        <th class="text-right">操作</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {{#dataSource}}
-                                    {{#listData}}
-                                    <tr>
-                                        <td>{{purchaseNo}}</td>
-                                        <td>{{purchaseReceiveNo}}</td>
-                                        <td>{{productSupplierName}}</td>
-                                        <td>{{warehouse}}</td>
-                                        <td>{{invoiceSupplierName}}</td>
-                                        <td>{{isInvoiceStr}}</td>
-                                        <td>{{autoAllotStatusStr}}</td>
-                                        <td>{{isNewStr}}</td>
-                                        <td>{{purchaseReceiveOrderStatusStr}}</td>
-                                        <td>{{confirmTimeFormat}}</td>
-                                        <td>{{ownerName}}</td>
-                                        <td>{{remark}}</td>
-                                        <td class="text-right">
-                                            <div class="btn-group text-right">
-                                                <a href="#" type="button">查看</a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {{/listData}}
-                                    {{^listData}}
-                                    <tr>
-                                        <td valign="top" colspan="14" class="text-center">没有查询到收料通知</td>
-                                    </tr>
-                                    {{/listData}}
-                                    {{/dataSource}}
-                                    </tbody>
-                                </script>
-                                <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataPurchaseReceiveOrderListTable"></table>
+                            <div id="purchaseReceiveOrderList" class="tab-pane">
+                                <div class="table-responsive">
+                                    <script type="text/html" id="dataPurchaseReceiveOrderListTpl">
+                                        <thead>
+                                        <tr>
+                                            <th>收货单编号</th>
+                                            <th>商品供应商</th>
+                                            <th>仓库</th>
+                                            <th>发票供应商</th>
+                                            <th>是否有发票</th>
+                                            <th>分拨情况</th>
+                                            <th>是否全新机</th>
+                                            <th>收货状态</th>
+                                            <th>签单时间</th>
+                                            <th>数据归属人</th>
+                                            <th>备注</th>
+                                            <th class="text-right">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr>
+                                            <td>{{purchaseReceiveNo}}</td>
+                                            <td>{{productSupplierName}}</td>
+                                            <td>{{warehouse}}</td>
+                                            <td>{{invoiceSupplierName}}</td>
+                                            <td>{{isInvoiceStr}}</td>
+                                            <td>{{autoAllotStatusStr}}</td>
+                                            <td>{{isNewStr}}</td>
+                                            <td>{{purchaseReceiveOrderStatusStr}}</td>
+                                            <td>{{confirmTimeFormat}}</td>
+                                            <td>{{ownerName}}</td>
+                                            <td>{{remark}}</td>
+                                            <td class="text-right">
+                                                <div class="btn-group text-right">
+                                                    <a href="#" type="button">查看</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">没有查询到收料通知</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataPurchaseReceiveOrderListTable"></table>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="panel-footer clearfix">
+                        <button class="btn btn-default pull-right ml15 goBack">返回</button>
+                    </div>
                 </div>
-                <div class="panel-footer clearfix">
-                    <button class="btn btn-default pull-right ml15 goBack">返回</button>
-                </div>
-            </div>
+            </section>
         </section>
-    </section>
 
-    #parse("layout/sidebarRight.vm")
-</div>
+        #parse("layout/sidebarRight.vm")
+    </div>
     #parse("layout/footer.vm")
     <script type="text/javascript">
         management_load_script('${staticManagement}/js','manage.purchase.detail.js');

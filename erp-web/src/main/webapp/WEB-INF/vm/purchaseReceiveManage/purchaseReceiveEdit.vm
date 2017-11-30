@@ -3,13 +3,11 @@
 <head>
     <title>凌雄ERP-采购管理-收料通知-编辑</title>
     #parse("layout/header.vm")
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
-<div id="main">
+    <div id="main">
     #parse("layout/navbar.vm")
     #parse("layout/sidebar.vm")
 
@@ -90,6 +88,23 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-horizontal panel-body bg-light dark">
+                        <div class="col-md-4">
+                            <div class="form-group field">
+                                <label class="col-md-3 control-label">全新机器</label>
+                                <div class="col-md-9">
+                                    <div class="radio-custom mt10 mr15 pull-left">
+                                        <input type="radio" id="isNew1" name="isNew" value="1" class="required" />
+                                        <label for="isNew1">是</label>
+                                    </div>
+                                    <div class="radio-custom mt10 pull-left">
+                                        <input type="radio" id="isNew2" name="isNew" value="0" class="required" />
+                                        <label for="isNew2">否</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="panel-heading">
                         <div class="row">
                             <ul class="nav panel-tabs-border panel-tabs">
@@ -155,16 +170,18 @@
                                                     {{#chooseSkuList}}
                                                     {{#skuList}}
                                                     <tr class="skuRow">
-                                                        <td style="width: 40%">{{propertiesToStr}}</td>
-                                                        <td style="width: 20%">
-                                                            <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
-                                                            <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
-                                                            <label class="field prepend-icon mw200">
-                                                                <input type="text" name="productAmount-{{skuId}}-{{rowKey}}" value="{{productAmount}}" class="productAmount form-control required moneyNumber" placeholder="输入采购价格" />
-                                                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                                                            </label>
-                                                        </td>
-                                                        <td style="width: 20%">
+                                                        <td style="width: 50%">{{propertiesToStr}}</td>
+##                                                        <td style="width: 20%">
+##                                                            <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
+##                                                            <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+##                                                            <label class="field prepend-icon mw200">
+##                                                                <input type="text" name="productAmount-{{skuId}}-{{rowKey}}" value="{{productAmount}}" class="productAmount form-control required moneyNumber" placeholder="输入采购价格" />
+##                                                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+##                                                            </label>
+##                                                        </td>
+                                                        <td style="width: 30%">
+                                                            <input type="hidden" name="productId" value="{{productId}}" class="productId" />
+                                                            <input type="hidden" name="productSkuId" value="{{skuId}}" class="productSkuId" />
                                                             <label class="field prepend-icon mw200">
                                                                 <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入采购数量" />
                                                             </label>
@@ -208,9 +225,11 @@
                                                                                             </label>
                                                                                         </td>
                                                                                         <td style="width: 10%;">
-                                                                                            <div class="btn-group text-right" style="display: none;">
+                                                                                            {{#canAdd}}
+                                                                                            <div class="btn-group text-right">
                                                                                                 <a href="#" type="button" class="btn btn-default btn-xs delSkuMaterialButton">删除</a>
                                                                                             </div>
+                                                                                            {{/canAdd}}
                                                                                         </td>
                                                                                     </tr>
                                                                                     {{/materialList}}
@@ -275,12 +294,11 @@
                                             <th>编号</th>
                                             <th>名称</th>
                                             <th>类型</th>
-                                            <th>属性</th>
                                             <th>本身价值</th>
                                             <th>租赁价格</th>
                                             <th>描述</th>
                                             <th>图片</th>
-                                            <th>采购价</th>
+##                                            <th>采购价</th>
                                             <th>数量</th>
                                             <th class="text-right">操作</th>
                                         </tr>
@@ -298,18 +316,17 @@
                                             <td>{{materialNo}}</td>
                                             <td>{{materialName}}</td>
                                             <td>{{materialTypeStr}}</td>
-                                            <td>{{propertyName}}:{{propertyValueName}}</td>
                                             <td>{{materialPriceFormat}}</td>
                                             <td>{{rentPriceFormat}}</td>
                                             <td>{{materialDesc}}</td>
                                             <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-                                            <td>
-                                                <label class="field prepend-icon mw200">
-                                                    <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
-                                                    <input type="text" name="materialAmount-{{materialNo}}" value="{{materialAmount}}" class="materialAmount form-control required moneyNumber" placeholder="输入采购价格" />
-                                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                                                </label>
-                                            </td>
+##                                            <td>
+##                                                <label class="field prepend-icon mw200">
+##                                                    <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
+##                                                    <input type="text" name="materialAmount-{{materialNo}}" value="{{materialAmount}}" class="materialAmount form-control required moneyNumber" placeholder="输入采购价格" />
+##                                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+##                                                </label>
+##                                            </td>
                                             <td>
                                                 <label class="field prepend-icon mw200">
                                                     <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入采购数量" />
@@ -347,21 +364,19 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
-<script type="text/javascript">
-    management_load_script('${staticManagement}/js','manage.purchase.receive.edit.js');
-</script>
-<script type="text/javascript">
-    //功能事件初始化
-    Rental.init();
-    Layout.init();
-    PurchaseReceiveEdit.init();
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js','manage.purchase.receive.edit.js', 'modal.choose.product.js', 'modal.choose.material.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        PurchaseReceiveEdit.init();
 
-    //UI效果初始化
-    Core.init();
-    Demo.init();
+        //UI效果初始化
+        Core.init();
+        Demo.init();
 
-</script>
+    </script>
 </body>
 </html>
