@@ -797,9 +797,7 @@ public class OrderServiceImpl implements OrderService {
         if (order.getRentType() == null || order.getRentTimeLength() == null || order.getRentTimeLength() <= 0) {
             return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
         }
-        if (!OrderRentType.RENT_TYPE_TIME.equals(order.getRentType())
-                && !OrderRentType.RENT_TYPE_DAY.equals(order.getRentType())
-                && !OrderRentType.RENT_TYPE_MONTH.equals(order.getRentType())) {
+        if (!OrderRentType.inThisScope(order.getRentType())) {
             return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
         }
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
