@@ -482,8 +482,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
             PurchaseOrderProductDO purchaseOrderProductDO = new PurchaseOrderProductDO();
             //保存采购订单商品项快照
-            ServiceResult<String,Product> productResult = productService.queryProductById(productSkuDO.getProductId());
-            purchaseOrderProductDO.setProductSnapshot(JSON.toJSONString(getProductBySkuId(productResult.getResult(),productSkuDO.getId(),purchaseOrderProduct.getProductMaterialList())));
+//            ServiceResult<String,Product> productResult = productService.queryProductById(productSkuDO.getProductId());
+            ServiceResult<String,Product> productResult = productService.queryProductBySkuId(productSkuDO.getId());
+            purchaseOrderProductDO.setProductSnapshot(JSON.toJSONString(productResult.getResult()));
             purchaseOrderProductDO.setProductId(productSkuDO.getProductId());
             purchaseOrderProductDO.setProductName(productSkuDO.getProductName());
             purchaseOrderProductDO.setProductSkuId(productSkuDO.getId());
@@ -535,9 +536,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 }
                 PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO = new PurchaseReceiveOrderProductDO();
                 //保存采购收货单商品项快照
-                ServiceResult<String,Product> productResult = productService.queryProductDetailById(productSkuDO.getProductId());
+                ServiceResult<String,Product> productResult = productService.queryProductBySkuId(productSkuDO.getId());
                 purchaseReceiveOrderProductDO.setId(purchaseReceiveOrderProduct.getPurchaseReceiveOrderProductId());
-                purchaseReceiveOrderProductDO.setRealProductSnapshot(JSON.toJSONString(getProductBySkuId(productResult.getResult(),productSkuDO.getId(),purchaseReceiveOrderProduct.getProductMaterialList())));
+                purchaseReceiveOrderProductDO.setRealProductSnapshot(JSON.toJSONString(productResult.getResult()));
                 purchaseReceiveOrderProductDO.setRealProductId(productSkuDO.getProductId());
                 purchaseReceiveOrderProductDO.setRealProductName(productSkuDO.getProductName());
                 purchaseReceiveOrderProductDO.setRealProductSkuId(productSkuDO.getId());
@@ -575,7 +576,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     return result;
                 }
                 PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO = new PurchaseReceiveOrderMaterialDO();
-                //保存采购订单商品项快照
+                //保存采购订单物料项快照
                 purchaseReceiveOrderMaterialDO.setRealMaterialSnapshot(JSON.toJSONString(materialDO));
                 purchaseReceiveOrderMaterialDO.setRealMaterialId(materialDO.getId());
                 purchaseReceiveOrderMaterialDO.setRealMaterialName(materialDO.getMaterialName());
@@ -604,6 +605,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             MaterialDO materialDO = materialMapper.findByNo(productMaterial.getMaterialNo());
             productMaterial.setMaterialName(materialDO.getMaterialName());
             productMaterial.setMaterialType(materialDO.getMaterialType());
+            productMaterial.setMaterialModelId(materialDO.getMaterialModelId());
         }
         for(ProductSku productSku : productSkuList){
             if(productSkuId!=null&&productSkuId.equals(productSku.getSkuId())){

@@ -414,6 +414,7 @@ public class OrderServiceImpl implements OrderService {
             }
 
             productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY);
+            productEquipmentDO.setOrderNo(orderDO.getOrderNo());
             productEquipmentDO.setUpdateTime(currentTime);
             productEquipmentDO.setUpdateUser(loginUserId.toString());
             productEquipmentMapper.update(productEquipmentDO);
@@ -498,6 +499,7 @@ public class OrderServiceImpl implements OrderService {
             }
 
             productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
+            productEquipmentDO.setOrderNo("");
             productEquipmentDO.setUpdateTime(currentTime);
             productEquipmentDO.setUpdateUser(loginUserId.toString());
             productEquipmentMapper.update(productEquipmentDO);

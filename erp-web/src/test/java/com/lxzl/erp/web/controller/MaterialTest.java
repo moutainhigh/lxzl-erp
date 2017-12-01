@@ -86,6 +86,13 @@ public class MaterialTest extends ERPUnTransactionalTest {
     }
 
     @Test
+    public void queryMaterialByNo() throws Exception {
+        MaterialQueryParam materialQueryParam = new MaterialQueryParam();
+        materialQueryParam.setMaterialNo("M201711291737346371109");
+        TestResult result = getJsonTestResult("/material/queryMaterialByNo", materialQueryParam);
+    }
+
+    @Test
     public void updateMaterialModel() throws Exception {
         MaterialModel materialModel = new MaterialModel();
         materialModel.setMaterialModelId(11);

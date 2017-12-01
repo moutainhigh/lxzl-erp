@@ -165,13 +165,13 @@ public class ProductServiceImpl implements ProductService {
         String errorCode = saveSkuAndProperties(product.getProductSkuList(), productId, loginUser, currentTime);
         if (!ErrorCode.SUCCESS.equals(errorCode)) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // SKU 未保存成功回滚
-            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+            result.setErrorCode(errorCode);
             return result;
         }
         errorCode = saveProductProperties(product.getProductPropertyList(), productId, loginUser, currentTime);
         if (!ErrorCode.SUCCESS.equals(errorCode)) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 商品属性未保存成功回滚
-            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+            result.setErrorCode(errorCode);
             return result;
         }
 
