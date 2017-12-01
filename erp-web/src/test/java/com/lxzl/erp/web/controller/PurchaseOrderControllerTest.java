@@ -55,56 +55,6 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         TestResult result = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
     }
 
-    @Test
-    public void addPurchaseOrder1() throws Exception {
-
-        PurchaseOrder purchaseOrder = JSON.parseObject("{\n" +
-                "\t\"productSupplierId\": \"1\",\n" +
-                "\t\"warehouseNo\": \"W201708081508\",\n" +
-                "\t\"isInvoice\": \"1\",\n" +
-                "\t\"isNew\": \"1\",\n" +
-                "\t\"purchaseType\": \"1\",\n" +
-                "\t\"purchaseOrderProductList\": [{\n" +
-                "\t\t\"productId\": \"2000009\",\n" +
-                "\t\t\"productSkuId\": \"34\",\n" +
-                "\t\t\"productAmount\": \"1000\",\n" +
-                "\t\t\"productCount\": \"10\",\n" +
-                "\t\t\"productMaterialList\": [{\n" +
-                "\t\t\t\"materialNo\": \"M201711171838059981293\",\n" +
-                "\t\t\t\"materialCount\": \"1\"\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711291753428101534\",\n" +
-                "\t\t\t\"materialCount\": \"1\"\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711291745413251585\",\n" +
-                "\t\t\t\"materialCount\": \"1\"\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711291744581931681\",\n" +
-                "\t\t\t\"materialCount\": \"1\"\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711201501547451898\",\n" +
-                "\t\t\t\"materialCount\": \"1\"\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
-                "\t\t\t\"materialCount\": \"1\"\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711201457288791418\",\n" +
-                "\t\t\t\"materialCount\": \"1\"\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711251154081811299\",\n" +
-                "\t\t\t\"materialCount\": \"1\"\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711251154081811299\",\n" +
-                "\t\t\t\"materialCount\": \"1\"\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711201422478141693\",\n" +
-                "\t\t\t\"materialCount\": \"1\"\n" +
-                "\t\t}]\n" +
-                "\t}]\n" +
-                "}",PurchaseOrder.class);
-
-        TestResult result = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
-    }
     private PurchaseOrderMaterial createPurchaseOrderMaterial(String materialNo,Integer materialCount,BigDecimal materialAmount){
         PurchaseOrderMaterial purchaseOrderMaterial = new PurchaseOrderMaterial();
         purchaseOrderMaterial.setMaterialNo(materialNo);
@@ -191,6 +141,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrder.setPurchaseOrderProductList(purchaseOrderProductList);
         TestResult result = getJsonTestResult("/purchaseOrder/update",purchaseOrder);
     }
+
 
     @Test
     public void commit() throws Exception {
@@ -285,26 +236,19 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseReceiveOrder.setPurchaseReceiveOrderProductList(purchaseOrderProductList);
         TestResult result = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder",purchaseReceiveOrder);
      }
+
     @Test
-    public void updatePurchaseReceiveOrder2() throws Exception {
+    public void updatePurchaseReceiveOrder1() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = JSON.parseObject("{\n" +
-                "\t\"purchaseReceiveNo\": \"PR2017112920291060160000701769\",\n" +
+                "\t\"purchaseReceiveNo\": \"PR2017120111205435560000781724\",\n" +
                 "\t\"isNew\": \"1\",\n" +
                 "\t\"purchaseReceiveOrderProductList\": [{\n" +
-                "\t\t\"purchaseReceiveOrderProductId\": \"135\",\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"136\",\n" +
                 "\t\t\"realProductSkuId\": \"40\",\n" +
-                "\t\t\"realProductCount\": \"8\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
                 "\t\t\"productMaterialList\": [{\n" +
-                "\t\t\t\"materialNo\": \"M201711251154081811299\",\n" +
-                "\t\t\t\"materialCount\": \"1\"\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711251154081811299\",\n" +
-                "\t\t\t\"materialCount\": \"1\"\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711251154081811299\",\n" +
-                "\t\t\t\"materialCount\": \"1\"\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711251154081811299\",\n" +
+                "\t\t\t\"materialNo\": \"M201711201356145971009\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
                 "\t\t}, {\n" +
                 "\t\t\t\"materialNo\": \"M201711201422478141693\",\n" +
@@ -328,16 +272,6 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
                 "\t\t\t\"materialNo\": \"M201711171838059981293\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
                 "\t\t}]\n" +
-                "\t}],\n" +
-                "\t\"purchaseReceiveOrderMaterialList\": [{\n" +
-                "\t\t\"materialNo\": \"M201711211953291591494\",\n" +
-                "\t\t\"materialCount\": 9\n" +
-                "\t}, {\n" +
-                "\t\t\"materialNo\": \"M201711201422478141693\",\n" +
-                "\t\t\"materialCount\": 7\n" +
-                "\t}, {\n" +
-                "\t\t\"materialNo\": \"M201711291737346371109\",\n" +
-                "\t\t\"materialCount\": 6\n" +
                 "\t}]\n" +
                 "}\n",PurchaseReceiveOrder.class);
         TestResult result = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder",purchaseReceiveOrder);
@@ -384,7 +318,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryPurchaseReceiveOrderByNo() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
-        purchaseReceiveOrder.setPurchaseReceiveNo("PR2017112116545442860000571415");
+        purchaseReceiveOrder.setPurchaseReceiveNo("PR2017112920291060160000701769");
         TestResult result = getJsonTestResult("/purchaseOrder/queryPurchaseReceiveOrderByNo",purchaseReceiveOrder);
     }
     @Test
@@ -401,7 +335,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     }
     @Test
     public void test() throws Exception {
-        Product product = JSON.parseObject("{\"categoryId\":800003,\"dataStatus\":1,\"isRent\":1,\"listPrice\":10.00,\"productCategoryPropertyList\":[{\"categoryId\":800003,\"categoryPropertyId\":1,\"dataOrder\":11,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":1,\"dataOrder\":2,\"dataStatus\":1,\"propertyId\":1,\"propertyValueName\":\"黑色\"},{\"categoryId\":800003,\"categoryPropertyValueId\":2,\"dataOrder\":1,\"dataStatus\":1,\"propertyId\":1,\"propertyValueName\":\"白色\"}],\"propertyName\":\"颜色\",\"propertyType\":1},{\"categoryId\":800003,\"categoryPropertyId\":2,\"dataOrder\":10,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"materialType\":1,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":4,\"dataOrder\":0,\"dataStatus\":1,\"propertyId\":2,\"propertyValueName\":\"4G\"},{\"categoryId\":800003,\"categoryPropertyValueId\":5,\"dataOrder\":0,\"dataStatus\":1,\"propertyId\":2,\"propertyValueName\":\"8G\"}],\"propertyName\":\"内存\",\"propertyType\":1},{\"categoryId\":800003,\"categoryPropertyId\":5,\"dataOrder\":7,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"materialType\":3,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":10,\"dataOrder\":0,\"dataStatus\":1,\"propertyId\":5,\"propertyValueName\":\"I3-6100\"}],\"propertyName\":\"CPU\",\"propertyType\":1},{\"categoryId\":800003,\"categoryPropertyId\":6,\"dataOrder\":6,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"materialType\":4,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":12,\"dataOrder\":0,\"dataStatus\":1,\"propertyId\":6,\"propertyValueName\":\"1T HDD\"}],\"propertyName\":\"机械硬盘\",\"propertyType\":1},{\"categoryId\":800003,\"categoryPropertyId\":7,\"dataOrder\":5,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"materialType\":5,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":14,\"dataOrder\":0,\"dataStatus\":1,\"propertyId\":7,\"propertyValueName\":\"集成\"}],\"propertyName\":\"显卡\",\"propertyType\":1},{\"categoryId\":800003,\"categoryPropertyId\":10,\"dataOrder\":2,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"materialType\":8,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":21,\"dataOrder\":0,\"dataStatus\":1,\"propertyId\":10,\"propertyValueName\":\"256G SSD\"}],\"propertyName\":\"固态硬盘\",\"propertyType\":1}],\"productDesc\":\"100\",\"productDescImgList\":[{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":109,\"imgOrder\":0,\"imgType\":2,\"imgUrl\":\"group1/M00/00/07/wKgKyFoGrSqAF2ghAAEfm778e6A228.jpg\",\"isMain\":0,\"originalName\":\"002_02_500x500.jpg\",\"productId\":2000009}],\"productId\":2000009,\"productImgList\":[{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":108,\"imgOrder\":0,\"imgType\":1,\"imgUrl\":\"group1/M00/00/07/wKgKyFoGrSeATjH8AAClthmAlvA282.jpg\",\"isMain\":0,\"originalName\":\"002_01_500x500.jpg\",\"productId\":2000009}],\"productName\":\"mac0002\",\"productPropertyList\":[{\"dataStatus\":1,\"isSku\":0,\"productId\":2000009,\"propertyId\":3,\"propertyName\":\"机型\",\"propertyValueId\":6,\"propertyValueName\":\"E221TTI\",\"remark\":\"\",\"skuPropertyId\":184},{\"dataStatus\":1,\"isSku\":0,\"productId\":2000009,\"propertyId\":4,\"propertyName\":\"主板\",\"propertyValueId\":8,\"propertyValueName\":\"华硕B150-PIO\",\"remark\":\"\",\"skuPropertyId\":185},{\"dataStatus\":1,\"isSku\":0,\"productId\":2000009,\"propertyId\":8,\"propertyName\":\"电源\",\"propertyValueId\":17,\"propertyValueName\":\"350W\",\"remark\":\"\",\"skuPropertyId\":186},{\"dataStatus\":1,\"isSku\":0,\"productId\":2000009,\"propertyId\":9,\"propertyName\":\"散热器\",\"propertyValueId\":19,\"propertyValueName\":\"CPU散热器\",\"remark\":\"\",\"skuPropertyId\":187},{\"dataStatus\":1,\"isSku\":0,\"productId\":2000009,\"propertyId\":11,\"propertyName\":\"机箱\",\"propertyValueId\":23,\"propertyValueName\":\"普通机箱\",\"remark\":\"\",\"skuPropertyId\":183}],\"productSkuList\":[{\"customCode\":\"\",\"dataStatus\":1,\"dayRentPrice\":13.33,\"monthRentPrice\":400.00,\"productId\":2000009,\"productMaterialList\":[{\"materialCount\":1,\"materialName\":\"机械硬盘物料/2T HDD\",\"materialNo\":\"M201711300902575761564\",\"materialType\":9},{\"materialCount\":1,\"materialName\":\"华硕B150-PIO\",\"materialNo\":\"M201711291753428101534\",\"materialType\":2},{\"materialCount\":1,\"materialName\":\"电源350W\",\"materialNo\":\"M201711291745413251585\",\"materialType\":6},{\"materialCount\":1,\"materialName\":\"CPU散热器\",\"materialNo\":\"M201711291744581931681\",\"materialType\":7},{\"materialCount\":1,\"materialName\":\"集成\",\"materialNo\":\"M201711291737346371109\",\"materialType\":5},{\"materialCount\":1,\"materialName\":\"8G内存条\",\"materialNo\":\"M201711201356145971009\",\"materialType\":1},{\"materialCount\":1,\"materialName\":\"1T HDD\",\"materialNo\":\"M201712011508312131037\",\"materialType\":4},{\"materialCount\":1,\"materialName\":\"固态/256G SSD\",\"materialNo\":\"M201711201501547451898\",\"materialType\":8},{\"materialCount\":1,\"materialName\":\"cpu I3-6100\",\"materialNo\":\"M201711291808329011520\",\"materialType\":3}],\"productSkuPropertyList\":[{\"dataStatus\":1,\"isSku\":1,\"productId\":2000009,\"propertyId\":1,\"propertyName\":\"颜色\",\"propertyValueId\":1,\"propertyValueName\":\"黑色\",\"remark\":\"\",\"skuId\":36,\"skuPropertyId\":220},{\"dataStatus\":1,\"isSku\":1,\"productId\":2000009,\"propertyId\":2,\"propertyName\":\"内存\",\"propertyValueId\":5,\"propertyValueName\":\"8G\",\"remark\":\"\",\"skuId\":36,\"skuPropertyId\":221},{\"dataStatus\":1,\"isSku\":1,\"productId\":2000009,\"propertyId\":5,\"propertyName\":\"CPU\",\"propertyValueId\":10,\"propertyValueName\":\"I3-6100\",\"remark\":\"\",\"skuId\":36,\"skuPropertyId\":231},{\"dataStatus\":1,\"isSku\":1,\"productId\":2000009,\"propertyId\":6,\"propertyName\":\"机械硬盘\",\"propertyValueId\":12,\"propertyValueName\":\"1T HDD\",\"remark\":\"\",\"skuId\":36,\"skuPropertyId\":222},{\"dataStatus\":1,\"isSku\":1,\"productId\":2000009,\"propertyId\":7,\"propertyName\":\"显卡\",\"propertyValueId\":14,\"propertyValueName\":\"集成\",\"remark\":\"\",\"skuId\":36,\"skuPropertyId\":219},{\"dataStatus\":1,\"isSku\":1,\"productId\":2000009,\"propertyId\":10,\"propertyName\":\"固态硬盘\",\"propertyValueId\":21,\"propertyValueName\":\"256G SSD\",\"remark\":\"\",\"skuId\":36,\"skuPropertyId\":223}],\"shouldProductCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":23,\"materialModelId\":12,\"materialType\":9,\"propertyId\":11,\"propertyName\":\"机箱\",\"propertyValueName\":\"普通机箱\"},{\"categoryId\":800003,\"categoryPropertyValueId\":8,\"materialModelId\":1,\"materialType\":2,\"propertyId\":4,\"propertyName\":\"主板\",\"propertyValueName\":\"华硕B150-PIO\"},{\"categoryId\":800003,\"categoryPropertyValueId\":17,\"materialModelId\":8,\"materialType\":6,\"propertyId\":8,\"propertyName\":\"电源\",\"propertyValueName\":\"350W\"},{\"categoryId\":800003,\"categoryPropertyValueId\":19,\"materialModelId\":10,\"materialType\":7,\"propertyId\":9,\"propertyName\":\"散热器\",\"propertyValueName\":\"CPU散热器\"},{\"categoryId\":800003,\"categoryPropertyValueId\":14,\"materialModelId\":5,\"materialType\":5,\"propertyId\":7,\"propertyName\":\"显卡\",\"propertyValueName\":\"集成\"},{\"categoryId\":800003,\"categoryPropertyValueId\":5,\"materialType\":1,\"propertyCapacityValue\":8,\"propertyId\":2,\"propertyName\":\"内存\",\"propertyValueName\":\"8G\"},{\"categoryId\":800003,\"categoryPropertyValueId\":12,\"materialType\":4,\"propertyCapacityValue\":1024,\"propertyId\":6,\"propertyName\":\"机械硬盘\",\"propertyValueName\":\"1T HDD\"},{\"categoryId\":800003,\"categoryPropertyValueId\":21,\"materialType\":8,\"propertyCapacityValue\":256,\"propertyId\":10,\"propertyName\":\"固态硬盘\",\"propertyValueName\":\"256G SSD\"},{\"categoryId\":800003,\"categoryPropertyValueId\":10,\"materialModelId\":3,\"materialType\":3,\"propertyId\":5,\"propertyName\":\"CPU\",\"propertyValueName\":\"I3-6100\"}],\"skuId\":36,\"skuPrice\":8000.00,\"stock\":0,\"timeRentPrice\":400.00}],\"subtitle\":\"mac0002\",\"unit\":303719}", Product.class);
+        Product product = JSON.parseObject("{\"categoryId\":800003,\"dataStatus\":1,\"isRent\":1,\"listPrice\":100.00,\"productCategoryPropertyList\":[{\"categoryId\":800003,\"categoryPropertyId\":1,\"dataOrder\":11,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":2,\"dataOrder\":1,\"dataStatus\":1,\"propertyId\":1,\"propertyValueName\":\"白色\"}],\"propertyName\":\"颜色\",\"propertyType\":1},{\"categoryId\":800003,\"categoryPropertyId\":2,\"dataOrder\":10,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"materialType\":1,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":5,\"dataOrder\":0,\"dataStatus\":1,\"propertyId\":2,\"propertyValueName\":\"8G\"}],\"propertyName\":\"内存\",\"propertyType\":1},{\"categoryId\":800003,\"categoryPropertyId\":5,\"dataOrder\":7,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"materialType\":3,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":11,\"dataOrder\":0,\"dataStatus\":1,\"propertyId\":5,\"propertyValueName\":\"I5-6400\"}],\"propertyName\":\"CPU\",\"propertyType\":1},{\"categoryId\":800003,\"categoryPropertyId\":6,\"dataOrder\":6,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"materialType\":4,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":13,\"dataOrder\":0,\"dataStatus\":1,\"propertyId\":6,\"propertyValueName\":\"2T HDD\"}],\"propertyName\":\"机械硬盘\",\"propertyType\":1},{\"categoryId\":800003,\"categoryPropertyId\":7,\"dataOrder\":5,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"materialType\":5,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":15,\"dataOrder\":0,\"dataStatus\":1,\"propertyId\":7,\"propertyValueName\":\"1060 3G\"}],\"propertyName\":\"显卡\",\"propertyType\":1}],\"productDesc\":\"thinkpad002 agagag\",\"productDescImgList\":[{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":128,\"imgOrder\":0,\"imgType\":2,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJ2ATvaQAAClthmAlvA142.jpg\",\"isMain\":0,\"originalName\":\"002_01_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":130,\"imgOrder\":0,\"imgType\":2,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJ2ARglUAADNYmKQUEw790.jpg\",\"isMain\":0,\"originalName\":\"002_03_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":132,\"imgOrder\":0,\"imgType\":2,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJ2AIrubAACyKALuvoc015.jpg\",\"isMain\":0,\"originalName\":\"002_05_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":129,\"imgOrder\":0,\"imgType\":2,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJ2AYa4xAAEfm778e6A667.jpg\",\"isMain\":0,\"originalName\":\"002_02_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":131,\"imgOrder\":0,\"imgType\":2,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJ2ANE50AAA1jKJM1l8479.jpg\",\"isMain\":0,\"originalName\":\"002_04_500x500.jpg\",\"productId\":2000013}],\"productId\":2000013,\"productImgList\":[{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":126,\"imgOrder\":0,\"imgType\":1,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJuAPwpLAAA1jKJM1l8134.jpg\",\"isMain\":0,\"originalName\":\"002_04_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":123,\"imgOrder\":0,\"imgType\":1,\"imgUrl\":\"group1/M00/00/07/wKgKyFoNTJuAbbnkAAClthmAlvA105.jpg\",\"isMain\":0,\"originalName\":\"002_01_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":124,\"imgOrder\":0,\"imgType\":1,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJuAP9vHAAEfm778e6A622.jpg\",\"isMain\":0,\"originalName\":\"002_02_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":127,\"imgOrder\":0,\"imgType\":1,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJuAKEYKAACyKALuvoc275.jpg\",\"isMain\":0,\"originalName\":\"002_05_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":125,\"imgOrder\":0,\"imgType\":1,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJuAPzlsAADNYmKQUEw518.jpg\",\"isMain\":0,\"originalName\":\"002_03_500x500.jpg\",\"productId\":2000013}],\"productName\":\"thinkpad002\",\"productPropertyList\":[{\"dataStatus\":1,\"isSku\":0,\"productId\":2000013,\"propertyId\":3,\"propertyName\":\"机型\",\"propertyValueId\":7,\"propertyValueName\":\"E270DMG\",\"remark\":\"\",\"skuPropertyId\":261},{\"dataStatus\":1,\"isSku\":0,\"productId\":2000013,\"propertyId\":4,\"propertyName\":\"主板\",\"propertyValueId\":9,\"propertyValueName\":\"H110集显主板\",\"remark\":\"\",\"skuPropertyId\":262},{\"dataStatus\":1,\"isSku\":0,\"productId\":2000013,\"propertyId\":8,\"propertyName\":\"电源\",\"propertyValueId\":17,\"propertyValueName\":\"350W\",\"remark\":\"\",\"skuPropertyId\":263},{\"dataStatus\":1,\"isSku\":0,\"productId\":2000013,\"propertyId\":9,\"propertyName\":\"散热器\",\"propertyValueId\":19,\"propertyValueName\":\"CPU散热器\",\"remark\":\"\",\"skuPropertyId\":264},{\"dataStatus\":1,\"isSku\":0,\"productId\":2000013,\"propertyId\":11,\"propertyName\":\"机箱\",\"propertyValueId\":22,\"propertyValueName\":\"水冷机箱\",\"remark\":\"\",\"skuPropertyId\":265}],\"productSkuList\":[{\"customCode\":\"\",\"dataStatus\":1,\"dayRentPrice\":88.00,\"monthRentPrice\":77.00,\"productId\":2000013,\"productMaterialList\":[{\"materialCount\":1,\"materialName\":\"金士顿2G内存\",\"materialNo\":\"M201711251154081811299\",\"materialType\":1},{\"materialCount\":1,\"materialName\":\"金士顿2G内存\",\"materialNo\":\"M201711251154081811299\",\"materialType\":1},{\"materialCount\":1,\"materialName\":\"金士顿2G内存\",\"materialNo\":\"M201711251154081811299\",\"materialType\":1},{\"materialCount\":1,\"materialName\":\"金士顿2G内存\",\"materialNo\":\"M201711251154081811299\",\"materialType\":1},{\"materialCount\":1,\"materialModelId\":4,\"materialName\":\"CPU物料-I5-6400\",\"materialNo\":\"M201711201422478141693\",\"materialType\":3},{\"materialCount\":1,\"materialName\":\"机械硬盘物料/2T HDD\",\"materialNo\":\"M201711201457288791418\",\"materialType\":4},{\"materialCount\":1,\"materialModelId\":6,\"materialName\":\"显卡/1060 3G\",\"materialNo\":\"M201711201500267591516\",\"materialType\":5},{\"materialCount\":1,\"materialModelId\":2,\"materialName\":\"H110集显主板\",\"materialNo\":\"M201711211953291591494\",\"materialType\":2},{\"materialCount\":1,\"materialModelId\":8,\"materialName\":\"电源350W\",\"materialNo\":\"M201711291745413251585\",\"materialType\":6},{\"materialCount\":1,\"materialModelId\":10,\"materialName\":\"CPU散热器\",\"materialNo\":\"M201711291744581931681\",\"materialType\":7},{\"materialCount\":1,\"materialModelId\":11,\"materialName\":\"水冷机箱\",\"materialNo\":\"M201711171838059981293\",\"materialType\":9}],\"productSkuPropertyList\":[{\"dataStatus\":1,\"isSku\":1,\"productId\":2000013,\"propertyId\":1,\"propertyName\":\"颜色\",\"propertyValueId\":2,\"propertyValueName\":\"白色\",\"remark\":\"\",\"skuId\":40,\"skuPropertyId\":255},{\"dataStatus\":1,\"isSku\":1,\"productId\":2000013,\"propertyId\":2,\"propertyName\":\"内存\",\"propertyValueId\":5,\"propertyValueName\":\"8G\",\"remark\":\"\",\"skuId\":40,\"skuPropertyId\":256},{\"dataStatus\":1,\"isSku\":1,\"productId\":2000013,\"propertyId\":5,\"propertyName\":\"CPU\",\"propertyValueId\":11,\"propertyValueName\":\"I5-6400\",\"remark\":\"\",\"skuId\":40,\"skuPropertyId\":257},{\"dataStatus\":1,\"isSku\":1,\"productId\":2000013,\"propertyId\":6,\"propertyName\":\"机械硬盘\",\"propertyValueId\":13,\"propertyValueName\":\"2T HDD\",\"remark\":\"\",\"skuId\":40,\"skuPropertyId\":258},{\"dataStatus\":1,\"isSku\":1,\"productId\":2000013,\"propertyId\":7,\"propertyName\":\"显卡\",\"propertyValueId\":15,\"propertyValueName\":\"1060 3G\",\"remark\":\"\",\"skuId\":40,\"skuPropertyId\":260}],\"shouldProductCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":5,\"materialType\":1,\"propertyCapacityValue\":8,\"propertyId\":2,\"propertyName\":\"内存\",\"propertyValueName\":\"8G\"},{\"categoryId\":800003,\"categoryPropertyValueId\":11,\"materialModelId\":4,\"materialType\":3,\"propertyId\":5,\"propertyName\":\"CPU\",\"propertyValueName\":\"I5-6400\"},{\"categoryId\":800003,\"categoryPropertyValueId\":13,\"materialType\":4,\"propertyCapacityValue\":2048,\"propertyId\":6,\"propertyName\":\"机械硬盘\",\"propertyValueName\":\"2T HDD\"},{\"categoryId\":800003,\"categoryPropertyValueId\":15,\"materialModelId\":6,\"materialType\":5,\"propertyId\":7,\"propertyName\":\"显卡\",\"propertyValueName\":\"1060 3G\"},{\"categoryId\":800003,\"categoryPropertyValueId\":9,\"materialModelId\":2,\"materialType\":2,\"propertyId\":4,\"propertyName\":\"主板\",\"propertyValueName\":\"H110集显主板\"},{\"categoryId\":800003,\"categoryPropertyValueId\":17,\"materialModelId\":8,\"materialType\":6,\"propertyId\":8,\"propertyName\":\"电源\",\"propertyValueName\":\"350W\"},{\"categoryId\":800003,\"categoryPropertyValueId\":19,\"materialModelId\":10,\"materialType\":7,\"propertyId\":9,\"propertyName\":\"散热器\",\"propertyValueName\":\"CPU散热器\"},{\"categoryId\":800003,\"categoryPropertyValueId\":22,\"materialModelId\":11,\"materialType\":9,\"propertyId\":11,\"propertyName\":\"机箱\",\"propertyValueName\":\"水冷机箱\"}],\"skuId\":40,\"skuName\":\"颜色:白色/内存:8G/CPU:I5-6400/机械硬盘:2T HDD/显卡:1060 3G/固态硬盘:256G SSD\",\"skuPrice\":100.00,\"stock\":100,\"timeRentPrice\":99.00}],\"subtitle\":\"thinkpad002\",\"unit\":303719}", Product.class);
         System.out.println();
     }
     @Autowired
