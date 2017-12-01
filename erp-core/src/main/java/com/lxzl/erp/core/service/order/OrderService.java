@@ -22,6 +22,7 @@ public interface OrderService extends VerifyReceiver {
      * 提交订单
      *
      * @param orderNo 订单编号
+     * @param verifyUser 审核人
      * @return 订单编号
      */
     ServiceResult<String, String> commitOrder(String orderNo,Integer verifyUser);

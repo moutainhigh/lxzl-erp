@@ -49,6 +49,23 @@ public interface DeploymentOrderService extends VerifyReceiver {
      */
     ServiceResult<String, String> processDeploymentOrder(ProcessDeploymentOrderParam param);
 
+
+    /**
+     * 取消调拨单
+     *
+     * @param deploymentOrderNo 调拨单编号
+     * @return 调拨单编号
+     */
+    ServiceResult<String, String> cancelDeploymentOrder(String deploymentOrderNo);
+
+    /**
+     * 调拨单发货
+     * @param deploymentOrderNo 调拨单编号
+     * @return 调拨单编号
+     */
+    ServiceResult<String, String> deliveryDeploymentOrder(String deploymentOrderNo);
+
+
     /**
      * 确认调拨单
      *

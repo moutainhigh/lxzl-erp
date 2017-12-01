@@ -47,10 +47,10 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void testCommitDeploymentOrder() throws Exception {
-        Order order = new Order();
-        order.setOrderNo("O201711301513586691582");
-        order.setVerifyUser(500006);
-        TestResult result = getJsonTestResult("/deploymentOrder/commit", order);
+        DeploymentOrder deploymentOrder = new DeploymentOrder();
+        deploymentOrder.setDeploymentOrderNo("DO201712011137331391559");
+        deploymentOrder.setVerifyUser(500006);
+        TestResult result = getJsonTestResult("/deploymentOrder/commit", deploymentOrder);
     }
 
     @Test
@@ -77,5 +77,13 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
         DeploymentOrder deploymentOrder = new DeploymentOrder();
         deploymentOrder.setDeploymentOrderNo("O201711301513586691582");
         TestResult result = getJsonTestResult("/deploymentOrder/delivery", deploymentOrder);
+    }
+
+
+    @Test
+    public void testQueryDetailDeploymentOrder() throws Exception {
+        DeploymentOrder deploymentOrder = new DeploymentOrder();
+        deploymentOrder.setDeploymentOrderNo("DO201712011137331391559");
+        TestResult result = getJsonTestResult("/deploymentOrder/queryDetail", deploymentOrder);
     }
 }
