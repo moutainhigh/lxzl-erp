@@ -19,7 +19,6 @@ public class MaterialDO extends BaseDO {
     private Integer materialType;
     private Integer isMainMaterial;
     private Double materialCapacityValue;
-    private String orderNo;
     private Integer materialModelId;
     private Integer brandId;
     private Integer isRent;
@@ -215,11 +214,4 @@ public class MaterialDO extends BaseDO {
         this.materialModelName = materialModelName;
     }
 
-    public String getOrderNo() {
-        return orderNo;
-    }
-
-    public void setOrderNo(String orderNo) {
-        this.orderNo = orderNo;
-    }
 }

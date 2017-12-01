@@ -594,7 +594,6 @@ CREATE TABLE `erp_material` (
   `material_type` int(20) NOT NULL COMMENT '物料类型',
   `material_model_id` int(20) DEFAULT NULL COMMENT '物料型号ID',
   `material_capacity_value` double(11,2) DEFAULT NULL COMMENT '物料字面量',
-  `order_no` varchar(100) DEFAULT NULL COMMENT '关联订单号，租赁中状态时有值',
   `is_main_material` int(20) NOT NULL COMMENT '是否是主物料（四大件）',
   `brand_id` int(20) COMMENT '所属品牌ID',
   `material_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '物料本身的价值(单价)',
