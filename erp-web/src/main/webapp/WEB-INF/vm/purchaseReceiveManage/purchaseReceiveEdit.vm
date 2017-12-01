@@ -170,7 +170,7 @@
                                                     {{#chooseSkuList}}
                                                     {{#skuList}}
                                                     <tr class="skuRow">
-                                                        <td style="width: 50%">{{propertiesToStr}}</td>
+                                                        <td style="width: 40%">{{propertiesToStr}}</td>
 ##                                                        <td style="width: 20%">
 ##                                                            <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
 ##                                                            <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
@@ -179,12 +179,18 @@
 ##                                                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
 ##                                                            </label>
 ##                                                        </td>
-                                                        <td style="width: 30%">
+                                                        <td style="width: 20%">
                                                             <input type="hidden" name="productId" value="{{productId}}" class="productId" />
                                                             <input type="hidden" name="productSkuId" value="{{skuId}}" class="productSkuId" />
                                                             <input type="hidden" name="purchaseReceiveOrderProductId" value="{{purchaseReceiveOrderProductId}}" class="purchaseReceiveOrderProductId" />
                                                             <label class="field prepend-icon mw200">
                                                                 <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入采购数量" />
+                                                            </label>
+                                                        </td>
+                                                        <td style="width: 20%">
+                                                            <label class="field prepend-icon">
+                                                                <textarea class="gui-textarea remark" id="remark" name="remark" placeholder="输入备注"  style="height: 39px;"></textarea>
+                                                                <label for="comment" class="field-icon"><i class="fa fa-comments"></i></label>
                                                             </label>
                                                         </td>
                                                         <td style="width:20%" class="text-right">
