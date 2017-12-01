@@ -9,6 +9,7 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductEquipmentQueryParam extends PageQuery implements Serializable {
     private Integer productEquipmentId;
+    private String orderNo;
     private String equipmentNo;
     private Integer productId;
     private String productName;
@@ -89,5 +90,13 @@ public class ProductEquipmentQueryParam extends PageQuery implements Serializabl
 
     public void setCurrentWarehouseId(Integer currentWarehouseId) {
         this.currentWarehouseId = currentWarehouseId;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
     }
 }

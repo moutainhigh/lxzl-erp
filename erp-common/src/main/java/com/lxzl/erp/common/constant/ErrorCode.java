@@ -21,6 +21,7 @@ public class ErrorCode {
     public static final String EMAIL_ERROR = "J000993";
     public static final String COMMIT_ONLY_SELF = "J000992";
     public static final String RECORD_USED_CAN_NOT_DELETE = "J000993";
+    public static final String AMOUNT_MAST_MORE_THEN_ZERO = "J000994";
 
     public static final String USER_NAME_NOT_NULL = "J100000";
     public static final String USER_PASSWORD_NOT_NULL = "J100001";
@@ -195,8 +196,9 @@ public class ErrorCode {
     public static final String RETURN_ORDER_NO_EXISTS = "J400030";
     public static final String EQUIPMENT_NOT_EXISTS = "J400031";
     public static final String EQUIPMENT_NOT_RENT = "J400032";
-    public static final String DEPLOY_ORDER_PRODUCT_EQUIPMENT_COUNT_MAX = "J400033";
-    public static final String DEPLOY_ORDER_MATERIAL_BULK_COUNT_MAX = "J400034";
+    public static final String DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_COUNT_MAX = "J400033";
+    public static final String DEPLOYMENT_ORDER_MATERIAL_BULK_COUNT_MAX = "J400034";
+    public static final String DEPLOYMENT_ORDER_WAREHOUSE_NOT_SAME = "J400035";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -250,6 +252,7 @@ public class ErrorCode {
         MAP.put(EMAIL_ERROR, "邮箱格式有误");
         MAP.put(COMMIT_ONLY_SELF, "只能提交自己的数据");
         MAP.put(RECORD_USED_CAN_NOT_DELETE, "数据被使用，无法删除");
+        MAP.put(AMOUNT_MAST_MORE_THEN_ZERO, "金额必须大于0");
 
         MAP.put(USER_NOT_LOGIN, "用户未登录");
         MAP.put(USER_DISABLE, "用户已禁用，请联系管理员");
@@ -422,8 +425,9 @@ public class ErrorCode {
         MAP.put(ORDER_HAVE_NO_THIS_ITEM, "订单没有这个SKU或物料单项。");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, "订单商品项的设备数已经达到最大。");
         MAP.put(ORDER_MATERIAL_BULK_COUNT_MAX, "订单物料项散料数已经达到最大。");
-        MAP.put(DEPLOY_ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, "调拨单商品项的设备数已经达到最大。");
-        MAP.put(DEPLOY_ORDER_MATERIAL_BULK_COUNT_MAX, "调拨单物料项的散料数已经达到最大。");
+        MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, "调拨单商品项的设备数已经达到最大。");
+        MAP.put(DEPLOYMENT_ORDER_MATERIAL_BULK_COUNT_MAX, "调拨单物料项的散料数已经达到最大。");
+        MAP.put(DEPLOYMENT_ORDER_WAREHOUSE_NOT_SAME, "调拨单仓库不能为同一个。");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
