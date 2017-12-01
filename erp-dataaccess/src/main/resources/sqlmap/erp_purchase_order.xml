@@ -278,6 +278,6 @@
 		left join erp_user eu on epo.owner = eu.id
 		left join erp_supplier es1 on epo.product_supplier_id = es1.id
 		left join erp_workflow_link ewl on ewl.workflow_refer_no = epo.purchase_no and ewl.workflow_type = 1 and ewl.data_status=1
-
+		order by epo.create_time desc
 	</select>
 </mapper>

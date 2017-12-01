@@ -95,12 +95,13 @@
 		ecrm.id AS ecrm_id,ecrm.customer_id AS ecrm_customer_id,ecrm.credit_amount AS ecrm_credit_amount,ecrm.credit_amount_used AS ecrm_credit_amount_used,ecrm.deposit_cycle AS ecrm_deposit_cycle,ecrm.payment_cycle AS ecrm_payment_cycle,ecrm.data_status AS ecrm_data_status,ecrm.remark AS ecrm_remark,ecrm.create_time AS ecrm_create_time,ecrm.create_user AS ecrm_create_user,ecrm.update_time AS ecrm_update_time,ecrm.update_user AS ecrm_update_user
 	</sql>
 	<select id="findById" resultMap="CustomerDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_customer ec 
+		SELECT <include refid="column_List"/>,<include refid="risk_column_List"/> FROM erp_customer ec
+		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
 		WHERE ec.id = #{id, jdbcType=INTEGER} AND ec.data_status = 1 
 	</select>
 	<select id="findByNo" resultMap="CustomerDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/>,<include refid="risk_column_List"/> FROM erp_customer ec
-		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id
+		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
 		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>
 	<select id="findCustomerCompanyByNo" resultMap="CustomerDO" parameterType="java.lang.String">
@@ -113,7 +114,7 @@
 		LEFT JOIN erp_area_province eap ON ecc.province=eap.id AND eap.data_status=1
 		LEFT JOIN erp_area_city eac ON ecc.city=eac.id AND eac.data_status=1
 		LEFT JOIN erp_area_district ead ON ecc.district=ead.id AND ead.data_status=1
-		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id
+		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id AND ecrm.data_status=1
 		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>
 	<select id="findCustomerPersonByNo" resultMap="CustomerDO" parameterType="java.lang.String">
@@ -125,7 +126,7 @@
 		LEFT JOIN erp_area_province eap ON ecp.province=eap.id AND eap.data_status=1
 		LEFT JOIN erp_area_city eac ON ecp.city=eac.id AND eac.data_status=1
 		LEFT JOIN erp_area_district ead ON ecp.district=ead.id AND ead.data_status=1
-		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id
+		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id AND ecrm.data_status=1
 		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>
 
