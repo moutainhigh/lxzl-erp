@@ -15,6 +15,7 @@ public class BulkMaterial implements Serializable {
 	private String bulkMaterialName;   //散料名称
 	private Integer materialId;   //物料ID，从哪个物料生成的
 	private String materialNo;   //物料编号，从哪个物料生成的
+	private String orderNo;		// 订单编号
 	private Integer currentWarehouseId;   //目前仓库ID
 	private Integer currentWarehousePositionId;   //目前仓位ID
 	private Integer ownerWarehouseId;   //归属仓库ID
@@ -224,5 +225,13 @@ public class BulkMaterial implements Serializable {
 
 	public void setIsMainMaterial(Integer isMainMaterial) {
 		this.isMainMaterial = isMainMaterial;
+	}
+
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
 	}
 }
