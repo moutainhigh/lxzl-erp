@@ -55,7 +55,7 @@
         <result column="product_material_material_type" jdbcType="INTEGER" property="materialType" />
         <result column="product_material_material_count" jdbcType="INTEGER" property="materialCount" />
         <result column="product_material_material_capacity_value" jdbcType="DOUBLE" property="materialCapacityValue" />
-        <result column="product_material_material_model_id" jdbcType="DOUBLE" property="materialModelId" />
+        <result column="product_material_material_model_id" jdbcType="INTEGER" property="materialModelId" />
         <result column="product_material_data_status" jdbcType="INTEGER" property="dataStatus" />
         <result column="product_material_remark" jdbcType="VARCHAR" property="remark" />
         <result column="product_material_create_time" jdbcType="TIMESTAMP" property="createTime" />

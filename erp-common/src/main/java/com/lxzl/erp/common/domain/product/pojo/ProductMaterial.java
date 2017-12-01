@@ -26,7 +26,7 @@ public class ProductMaterial implements Serializable {
 	private String materialNo;
 	private String materialName;
 	private Double materialCapacityValue;
-	private Double materialModelId;
+	private Integer materialModelId;
 
 	public Integer getProductMaterialId(){
 		return productMaterialId;
@@ -148,11 +148,11 @@ public class ProductMaterial implements Serializable {
 		this.materialCapacityValue = materialCapacityValue;
 	}
 
-	public Double getMaterialModelId() {
+	public Integer getMaterialModelId() {
 		return materialModelId;
 	}
 
-	public void setMaterialModelId(Double materialModelId) {
+	public void setMaterialModelId(Integer materialModelId) {
 		this.materialModelId = materialModelId;
 	}
 }

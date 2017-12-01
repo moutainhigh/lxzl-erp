@@ -86,7 +86,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201711301513586691582");
+        order.setOrderNo("O201712011755357211856");
         order.setVerifyUser(500006);
         TestResult result = getJsonTestResult("/order/commit", order);
     }
@@ -102,9 +102,9 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testProcessOrder() throws Exception {
         ProcessOrderParam processOrderParam = new ProcessOrderParam();
-        processOrderParam.setOrderNo("O201711301513586691582");
-//        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017111110114");
-        processOrderParam.setBulkMaterialNo("BM2017112017070030810053");
+        processOrderParam.setOrderNo("O201712011755357211856");
+        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010009");
+//        processOrderParam.setBulkMaterialNo("BM2017112017070030810080");
         processOrderParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
         TestResult result = getJsonTestResult("/order/process", processOrderParam);
     }
@@ -113,7 +113,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testDelivery() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201711301513586691582");
+        order.setOrderNo("O201712011755357211856");
         TestResult result = getJsonTestResult("/order/delivery", order);
     }
 }
