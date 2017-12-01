@@ -5,6 +5,7 @@ import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.DeploymentType;
 import com.lxzl.erp.common.constant.OrderRentType;
+import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.deploymentOrder.ProcessDeploymentOrderParam;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrder;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrderProduct;
@@ -79,6 +80,15 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
         TestResult result = getJsonTestResult("/deploymentOrder/delivery", deploymentOrder);
     }
 
+
+    @Test
+    public void testQueryPageDeploymentOrder() throws Exception {
+        DeploymentOrderQueryParam param = new DeploymentOrderQueryParam();
+        param.setPageNo(1);
+        param.setPageSize(15);
+//        param.setDeploymentOrderNo("DO201712011137331391559");
+        TestResult result = getJsonTestResult("/deploymentOrder/queryPage", param);
+    }
 
     @Test
     public void testQueryDetailDeploymentOrder() throws Exception {

@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.product.impl;
 
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.MaterialType;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.*;
@@ -563,7 +564,38 @@ public class ProductServiceImpl implements ProductService {
             }
         }
         if (skuPropertyCapacityMap.size() > 0 || skuMaterialDOMap.size() > 0) {
-            result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_NOT_ENOUGH);
+            Integer materialType = null;
+            for (Map.Entry<Integer, Double> entry : skuPropertyCapacityMap.entrySet()) {
+                materialType = entry.getKey();
+                break;
+            }
+            if (materialType == null) {
+                for (Map.Entry<Integer, MaterialDO> entry : skuMaterialDOMap.entrySet()) {
+                    materialType = entry.getKey();
+                    break;
+                }
+            }
+            if (MaterialType.MATERIAL_TYPE_MEMORY.equals(materialType)) {
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_NOT_ENOUGH);
+            } else if (MaterialType.MATERIAL_TYPE_MEMORY.equals(materialType)) {
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_MEMORY_NOT_ENOUGH);
+            } else if (MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(materialType)) {
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_MAIN_BOARD_NOT_ENOUGH);
+            } else if (MaterialType.MATERIAL_TYPE_CPU.equals(materialType)) {
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_CPU_NOT_ENOUGH);
+            } else if (MaterialType.MATERIAL_TYPE_HDD.equals(materialType)) {
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_HDD_NOT_ENOUGH);
+            } else if (MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(materialType)) {
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_GRAPHICS_CARD_NOT_ENOUGH);
+            } else if (MaterialType.MATERIAL_TYPE_POWER_SUPPLY.equals(materialType)) {
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_POWER_SUPPLY_NOT_ENOUGH);
+            } else if (MaterialType.MATERIAL_TYPE_RADIATOR.equals(materialType)) {
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_RADIATOR_NOT_ENOUGH);
+            } else if (MaterialType.MATERIAL_TYPE_SSD.equals(materialType)) {
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_SSD_NOT_ENOUGH);
+            } else if (MaterialType.MATERIAL_TYPE_BOX.equals(materialType)) {
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_BOX_NOT_ENOUGH);
+            }
             return result;
         }
 
@@ -872,10 +904,6 @@ public class ProductServiceImpl implements ProductService {
      */
     public void saveProductMaterial(Integer productId, Integer skuId, Integer productPropertyValueId, User loginUser, Date currentTime) {
         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productPropertyValueId);
-
-        if (productCategoryPropertyValueDO.getReferId() == null) {
-            return;
-        }
         MaterialDO materialDO;
         if (productCategoryPropertyValueDO.getPropertyCapacityValue() != null) {
             materialDO = materialMapper.findByMaterialTypeAndCapacity(productCategoryPropertyValueDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
@@ -905,9 +933,6 @@ public class ProductServiceImpl implements ProductService {
 
     public void deleteProductMaterial(Integer skuId, Integer productPropertyValueId, User loginUser, Date currentTime) {
         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productPropertyValueId);
-        if (productCategoryPropertyValueDO.getReferId() == null) {
-            return;
-        }
 
         MaterialDO materialDO;
         if (productCategoryPropertyValueDO.getPropertyCapacityValue() != null) {

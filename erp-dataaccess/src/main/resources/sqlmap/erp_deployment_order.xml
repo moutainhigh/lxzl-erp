@@ -131,35 +131,42 @@
 		</where>
 	</select>
 
-	<select id="listPage" resultMap="DeploymentOrderDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_deployment_order edo 
-		<where>
-			<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderId != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderId != ''">
-				and edo.id = #{maps.deploymentOrderQueryParam.deploymentOrderId, jdbcType=INTEGER}
-			</if>
-			<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderNo != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderNo != ''">
-				and edo.deployment_order_no like CONCAT('%','${maps.deploymentOrderQueryParam.deploymentOrderNo}','%' )
-			</if>
-			<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentType != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentType != ''">
-				and edo.deployment_type = #{maps.deploymentOrderQueryParam.deploymentType, jdbcType=INTEGER}
-			</if>
-			<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.srcWarehouseId != null &amp;&amp; maps.deploymentOrderQueryParam.srcWarehouseId != ''">
-				and edo.src_warehouse_id = #{maps.deploymentOrderQueryParam.srcWarehouseId, jdbcType=INTEGER}
-			</if>
-			<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.targetWarehouseId != null &amp;&amp; maps.deploymentOrderQueryParam.targetWarehouseId != ''">
-				and edo.target_warehouse_id = #{maps.deploymentOrderQueryParam.targetWarehouseId, jdbcType=INTEGER}
-			</if>
-			<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderStatus != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderStatus != ''">
-				and edo.deployment_order_status = #{maps.deploymentOrderQueryParam.deploymentOrderStatus, jdbcType=INTEGER}
-			</if>
-			<if test="true">
-				AND edo.data_status = 1
-			</if>
-			<if test="true">
-				AND edo.data_status = 1
-			</if>
-		</where>
-		LIMIT #{maps.start},#{maps.pageSize}
+	<select id="listPage" resultMap="DeploymentOrderDO" parameterType="map">SELECT deployment_order_main.*
+		<trim prefix=",">
+			<include refid="product_column_List" />
+		</trim>
+		<trim prefix=",">
+			<include refid="material_column_List" />
+		</trim>
+		FROM (
+			SELECT <include refid="column_List"/> FROM erp_deployment_order edo
+			<where>
+				<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderId != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderId != ''">
+					and edo.id = #{maps.deploymentOrderQueryParam.deploymentOrderId, jdbcType=INTEGER}
+				</if>
+				<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderNo != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderNo != ''">
+					and edo.deployment_order_no like CONCAT('%','${maps.deploymentOrderQueryParam.deploymentOrderNo}','%' )
+				</if>
+				<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentType != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentType != ''">
+					and edo.deployment_type = #{maps.deploymentOrderQueryParam.deploymentType, jdbcType=INTEGER}
+				</if>
+				<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.srcWarehouseId != null &amp;&amp; maps.deploymentOrderQueryParam.srcWarehouseId != ''">
+					and edo.src_warehouse_id = #{maps.deploymentOrderQueryParam.srcWarehouseId, jdbcType=INTEGER}
+				</if>
+				<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.targetWarehouseId != null &amp;&amp; maps.deploymentOrderQueryParam.targetWarehouseId != ''">
+					and edo.target_warehouse_id = #{maps.deploymentOrderQueryParam.targetWarehouseId, jdbcType=INTEGER}
+				</if>
+				<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderStatus != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderStatus != ''">
+					and edo.deployment_order_status = #{maps.deploymentOrderQueryParam.deploymentOrderStatus, jdbcType=INTEGER}
+				</if>
+				<if test="true">
+					AND edo.data_status = 1
+				</if>
+			</where>
+			LIMIT #{maps.start},#{maps.pageSize}
+		) deployment_order_main LEFT  JOIN erp_deployment_order_product edop ON edop.deployment_order_id = deployment_order_main.id AND edop.data_status = 1
+		LEFT  JOIN erp_deployment_order_material edom ON edom.deployment_order_id = deployment_order_main.id AND edom.data_status = 1
+		ORDER BY deployment_order_main.id DESC
 	</select>
 
 	<sql id="set_column_sql">
