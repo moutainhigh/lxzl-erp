@@ -77,4 +77,63 @@ public class CustomerSupport {
             return ErrorCode.SUCCESS;
         }
     }
+
+    /**
+     * 内部调用增加已用授信额度
+     * @param customerId
+     * @param amount
+     * @return
+     */
+    public String addCreditAmountUsed(Integer customerId , BigDecimal amount){
+        if(amount==null||customerId==null){
+            throw new BusinessException();
+        }
+        if(BigDecimalUtil.compare(amount,BigDecimal.ZERO)<0){
+            throw new BusinessException();
+        }else if(BigDecimalUtil.compare(amount,BigDecimal.ZERO)==0){
+            return ErrorCode.SUCCESS;
+        }else{
+            CustomerDO customerDO = customerMapper.findById(customerId);
+            if(customerDO==null){
+                throw new BusinessException();
+            }
+            CustomerRiskManagementDO customerRiskManagementDO = customerDO.getCustomerRiskManagementDO();
+            BigDecimal newValue = BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(),amount);
+            //如果超过了可用授信额度
+            if(BigDecimalUtil.compare(newValue,customerRiskManagementDO.getCreditAmount())>0){
+                return ErrorCode.CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW;
+            }
+            customerRiskManagementDO.setCreditAmountUsed(newValue);
+            customerRiskManagementMapper.update(customerRiskManagementDO);
+            return ErrorCode.SUCCESS;
+        }
+    }
+
+    /**
+     * 内部调用减少已用授信额度
+     * @param customerId
+     * @param amount
+     * @return
+     */
+    public String subCreditAmountUsed(Integer customerId , BigDecimal amount){
+        if(amount==null||customerId==null){
+            throw new BusinessException();
+        }
+        if(BigDecimalUtil.compare(amount,BigDecimal.ZERO)<0){
+            throw new BusinessException();
+        }else if(BigDecimalUtil.compare(amount,BigDecimal.ZERO)==0){
+            return ErrorCode.SUCCESS;
+        }else{
+            CustomerDO customerDO = customerMapper.findById(customerId);
+            if(customerDO==null){
+                throw new BusinessException();
+            }
+            CustomerRiskManagementDO customerRiskManagementDO = customerDO.getCustomerRiskManagementDO();
+            BigDecimal newValue = BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmountUsed(),amount);
+            //减成负值不处理，直接保存
+            customerRiskManagementDO.setCreditAmountUsed(newValue);
+            customerRiskManagementMapper.update(customerRiskManagementDO);
+            return ErrorCode.SUCCESS;
+        }
+    }
 }
