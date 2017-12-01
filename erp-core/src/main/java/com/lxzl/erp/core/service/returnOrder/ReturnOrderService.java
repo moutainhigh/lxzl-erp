@@ -4,8 +4,10 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.returnOrder.AddReturnOrderParam;
 import com.lxzl.erp.common.domain.returnOrder.DoReturnEquipmentParam;
+import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
 
 public interface ReturnOrderService {
     ServiceResult<String,String> create(AddReturnOrderParam addReturnOrderParam);
     ServiceResult<String, ProductEquipment> doReturnEquipment(DoReturnEquipmentParam doReturnEquipmentParam);
+    ServiceResult<String, ReturnOrder> detail(ReturnOrder returnOrder);
 }

@@ -49,4 +49,12 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest{
         doReturnEquipmentParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010006");
         TestResult result = getJsonTestResult("/returnOrder/doReturnEquipment",doReturnEquipmentParam);
     }
+
+    @Test
+    public void detail() throws Exception {
+        DoReturnEquipmentParam doReturnEquipmentParam = new DoReturnEquipmentParam();
+        doReturnEquipmentParam.setReturnOrderNo("RO201711291746283331383");
+        doReturnEquipmentParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010006");
+        TestResult result = getJsonTestResult("/returnOrder/detail",doReturnEquipmentParam);
+    }
 }

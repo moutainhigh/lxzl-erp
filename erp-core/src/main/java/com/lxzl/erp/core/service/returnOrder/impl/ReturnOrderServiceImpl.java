@@ -11,10 +11,9 @@ import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.returnOrder.AddReturnOrderParam;
 import com.lxzl.erp.common.domain.returnOrder.DoReturnEquipmentParam;
-import com.lxzl.erp.common.util.AmountUtil;
-import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.GenerateNoUtil;
+import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
+import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProduct;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductEquipmentConverter;
@@ -38,12 +37,18 @@ import com.lxzl.erp.dataaccess.domain.order.OrderProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.returnOrder.*;
+import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.jsoup.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -265,22 +270,19 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             customerRiskManagementDO.setCreditAmountUsed(BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(),productEquipmentDO.getEquipmentPrice()));
             customerRiskManagementMapper.update(customerRiskManagementDO);
         }
-        //todo 这里逻辑有问题 修改订单,全部归还状态，最后一件归还时间
+        //修改订单,全部归还状态，最后一件归还时间
         if(rentMap.size()==1){
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
             orderDO.setActualReturnTime(now);
             orderMapper.update(orderDO);
         }
         //修改退还单，归还订单状态，最后一件设备归还的时间,租赁期间产生总费用,实际退还商品总数,修改时间，修改人
-        //todo 退还单的退还时间问题，如果没退完，那么这个退还时间就一直是空啊
         returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
         returnOrderDO.setTotalRentCost(BigDecimalUtil.add(returnOrderDO.getTotalRentCost(),rentCost));
         returnOrderDO.setRealTotalReturnProductCount(returnOrderDO.getRealTotalReturnProductCount()+1);
         returnOrderDO.setUpdateTime(now);
         returnOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        if(rentMap.size()==1){
-            returnOrderDO.setRealReturnTime(now);
-        }
+
         returnOrderMapper.update(returnOrderDO);
         //修改退还商品项表,实际退还商品数量,修改时间，修改人
         ReturnOrderProductDO returnOrderProductDO = returnOrderProductMapper.findBySkuIdAndReturnOrderId(productEquipmentDO.getSkuId(),returnOrderDO.getId());
@@ -326,6 +328,18 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         serviceResult.setResult(ProductEquipmentConverter.convertProductEquipmentDO(productEquipmentDO));
         return serviceResult;
     }
+
+    @Override
+    public ServiceResult<String, ReturnOrder> detail(ReturnOrder returnOrder) {
+        ServiceResult<String, ReturnOrder> serviceResult = new ServiceResult<>();
+        ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(returnOrder.getReturnOrderNo());
+        serviceResult.setResult(ConverterUtil.convert(returnOrderDO,ReturnOrder.class));
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+
+
 
     @Autowired
     private CustomerMapper customerMapper;

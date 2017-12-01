@@ -1135,7 +1135,6 @@ CREATE TABLE `erp_return_order` (
   `service_cost` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '服务费',
   `damage_cost` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '损坏加收费用',
   `return_order_status` int(11) NOT NULL DEFAULT 0 COMMENT '归还订单状态，1-待取货，5-处理中，9-已完成',
-  `real_return_time` datetime DEFAULT NULL COMMENT '实际归还时间，最后一件设备归还的时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',

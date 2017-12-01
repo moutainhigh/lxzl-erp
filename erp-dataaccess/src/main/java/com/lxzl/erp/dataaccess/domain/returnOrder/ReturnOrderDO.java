@@ -1,8 +1,11 @@
 package com.lxzl.erp.dataaccess.domain.returnOrder;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 import java.math.BigDecimal;
+import java.util.List;
 
 public class ReturnOrderDO  extends BaseDO {
 
@@ -19,10 +22,17 @@ public class ReturnOrderDO  extends BaseDO {
 	private BigDecimal serviceCost;
 	private BigDecimal damageCost;
 	private Integer returnOrderStatus;
-	private Date realReturnTime;
 	private Integer dataStatus;
 	private String remark;
 	private Integer owner;
+
+	@Transient
+	private ReturnOrderConsignInfoDO returnOrderConsignInfoDO;
+	@Transient
+	private List<ReturnOrderProductDO> returnOrderProductDOList;
+	@Transient
+	private List<ReturnOrderMaterialDO> returnOrderMaterialDOList;
+
 
 	public Integer getId(){
 		return id;
@@ -128,14 +138,6 @@ public class ReturnOrderDO  extends BaseDO {
 		this.returnOrderStatus = returnOrderStatus;
 	}
 
-	public Date getRealReturnTime(){
-		return realReturnTime;
-	}
-
-	public void setRealReturnTime(Date realReturnTime){
-		this.realReturnTime = realReturnTime;
-	}
-
 	public Integer getDataStatus(){
 		return dataStatus;
 	}
@@ -160,4 +162,28 @@ public class ReturnOrderDO  extends BaseDO {
 		this.owner = owner;
 	}
 
+
+	public List<ReturnOrderProductDO> getReturnOrderProductDOList() {
+		return returnOrderProductDOList;
+	}
+
+	public void setReturnOrderProductDOList(List<ReturnOrderProductDO> returnOrderProductDOList) {
+		this.returnOrderProductDOList = returnOrderProductDOList;
+	}
+
+	public List<ReturnOrderMaterialDO> getReturnOrderMaterialDOList() {
+		return returnOrderMaterialDOList;
+	}
+
+	public void setReturnOrderMaterialDOList(List<ReturnOrderMaterialDO> returnOrderMaterialDOList) {
+		this.returnOrderMaterialDOList = returnOrderMaterialDOList;
+	}
+
+	public ReturnOrderConsignInfoDO getReturnOrderConsignInfoDO() {
+		return returnOrderConsignInfoDO;
+	}
+
+	public void setReturnOrderConsignInfoDO(ReturnOrderConsignInfoDO returnOrderConsignInfoDO) {
+		this.returnOrderConsignInfoDO = returnOrderConsignInfoDO;
+	}
 }

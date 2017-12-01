@@ -1,14 +1,20 @@
 package com.lxzl.erp.common.domain.returnOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import org.hibernate.validator.constraints.NotBlank;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.math.BigDecimal;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ReturnOrder implements Serializable {
 
 	private Integer returnOrderId;   //唯一标识
+	@NotBlank(message = ErrorCode.RETURN_ORDER_NO_NOT_NULL , groups = {IdGroup.class})
 	private String returnOrderNo;   //退还编号
 	private Integer customerId;   //客户ID
 	private String customerNo;   //客户编号
@@ -21,7 +27,6 @@ public class ReturnOrder implements Serializable {
 	private BigDecimal serviceCost;   //服务费
 	private BigDecimal damageCost;   //损坏加收费用
 	private Integer returnOrderStatus;   //归还订单状态，1-待归还，3-部分归还，6-全部归还,9-确认结束
-	private Date realReturnTime;   //实际归还时间，最后一件设备归还的时间
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Integer owner;   //数据归属人
@@ -30,6 +35,9 @@ public class ReturnOrder implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
+	private ReturnOrderConsignInfo returnOrderConsignInfo;
+	private List<ReturnOrderProduct> returnOrderProductList;
+	private List<ReturnOrderMaterial> returnOrderMaterialList;
 
 	public Integer getReturnOrderId(){
 		return returnOrderId;
@@ -135,14 +143,6 @@ public class ReturnOrder implements Serializable {
 		this.returnOrderStatus = returnOrderStatus;
 	}
 
-	public Date getRealReturnTime(){
-		return realReturnTime;
-	}
-
-	public void setRealReturnTime(Date realReturnTime){
-		this.realReturnTime = realReturnTime;
-	}
-
 	public Integer getDataStatus(){
 		return dataStatus;
 	}
@@ -199,4 +199,27 @@ public class ReturnOrder implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public List<ReturnOrderProduct> getReturnOrderProductList() {
+		return returnOrderProductList;
+	}
+
+	public void setReturnOrderProductList(List<ReturnOrderProduct> returnOrderProductList) {
+		this.returnOrderProductList = returnOrderProductList;
+	}
+
+	public List<ReturnOrderMaterial> getReturnOrderMaterialList() {
+		return returnOrderMaterialList;
+	}
+
+	public void setReturnOrderMaterialList(List<ReturnOrderMaterial> returnOrderMaterialList) {
+		this.returnOrderMaterialList = returnOrderMaterialList;
+	}
+
+	public ReturnOrderConsignInfo getReturnOrderConsignInfo() {
+		return returnOrderConsignInfo;
+	}
+
+	public void setReturnOrderConsignInfo(ReturnOrderConsignInfo returnOrderConsignInfo) {
+		this.returnOrderConsignInfo = returnOrderConsignInfo;
+	}
 }

@@ -317,12 +317,13 @@
 				AND epro.data_status = 1
 			</if>
 		</where>
+		ORDER BY epro.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
 		) epro LEFT JOIN erp_purchase_receive_order_product eprop ON eprop.purchase_receive_order_id = epro.id AND eprop.data_status=1
 		LEFT JOIN erp_purchase_receive_order_material eprom ON eprom.purchase_receive_order_id = epro.id AND eprom.data_status = 1
 		LEFT JOIN erp_user eu ON epro.owner = eu.id
 		LEFT JOIN erp_supplier es1 ON epro.product_supplier_id = es1.id
 		LEFT JOIN erp_purchase_order epo ON epo.id=epro.purchase_order_id
-		ORDER BY epro.create_time DESC
+
 	</select>
 </mapper>

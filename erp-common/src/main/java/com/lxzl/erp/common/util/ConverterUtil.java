@@ -1,16 +1,23 @@
 package com.lxzl.erp.common.util;
 
 import com.alibaba.fastjson.JSON;
+import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ConverterUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(ConverterUtil.class);
 
     public static final <T> T convert(Object o, Class<T> clazz){
         try{
@@ -41,6 +48,19 @@ public class ConverterUtil {
                         }
                         doField.setAccessible(true);
                         doField.set(t,newList);
+                    }else{
+                        String type = field.getType().getName();
+                        Class cl = Class.forName(type);
+                        if(!isJavaClass(cl)){
+                            String doFieldName = firstLowName(cl.getSimpleName()+"DO");
+                            Field doField = clazz.getDeclaredField(doFieldName);
+                            Class doClazz =  Class.forName(doField.getType().getName());
+                            Object value = field.get(o);
+                            if(value!=null){
+                                doField.setAccessible(true);
+                                doField.set(t,convert(value,doClazz));
+                            }
+                        }
                     }
                 }
                 return t;
@@ -67,13 +87,28 @@ public class ConverterUtil {
                                 newList.add(convert(oo,poListGenericClazz));
                             }
                         }
-                        poField.setAccessible(true);
                         poField.set(t,newList);
+                    }else {
+                        String type = field.getType().getName();
+                        Class cl = Class.forName(type);
+                        if(!isJavaClass(cl)){
+                            String poFieldName = firstLowName(cl.getSimpleName().substring(0,cl.getSimpleName().length()-2));
+                            Field poField = clazz.getDeclaredField(poFieldName);
+                            Class poClazz =  Class.forName(poField.getType().getName());
+                            Object value = field.get(o);
+                            if(value!=null){
+                                poField.setAccessible(true);
+                                poField.set(t,convert(value,poClazz));
+                            }
+
+                        }
                     }
                 }
                 return t;
             }
         }catch (Exception e){
+            e.printStackTrace();
+            logger.error("error:",e);
             throw new BusinessException("数据转换错误");
         }
     }
@@ -94,7 +129,9 @@ public class ConverterUtil {
         items[0] = (byte) ((char) items[0] - 'a' + 'A');
         return new String(items);
     }
-
+    public static boolean isJavaClass(Class<?> clz) {
+        return clz != null && clz.getClassLoader() == null;
+    }
     public static void main(String[] args) throws IllegalAccessException, NoSuchFieldException, InstantiationException, ClassNotFoundException, NoSuchMethodException {
 //        ReturnOrder returnOrder = new ReturnOrder();
 //        returnOrder.setReturnOrderId(1);
@@ -117,6 +154,5 @@ public class ConverterUtil {
 //        returnOrderDO.setReturnOrderProductDOList(returnOrderProductDOList);
 //        ReturnOrder returnOrder = parseObject(returnOrderDO,ReturnOrder.class);
 //        System.out.println();
-
     }
 }
