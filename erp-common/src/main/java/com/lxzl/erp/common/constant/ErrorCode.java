@@ -482,7 +482,7 @@ public class ErrorCode {
         MAP.put(CITY_ID_NOT_NULL, "城市ID不能为空");
         MAP.put(DISTRICT_ID_NOT_NULL, "街道ID不能为空");
         MAP.put(ADDRESS_NOT_NULL, "地址不能为空");
-        MAP.put(RETURN_COUNT_ERROR, "退还数量必须大于1");
+        MAP.put(RETURN_COUNT_ERROR, "退还数量必须大于0");
         MAP.put(RETURN_ORDER_NO_NOT_NULL, "退还单号不能为空");
         MAP.put(EQUIPMENT_NO_NOT_NULL, "设备编号不能为空");
         MAP.put(RETURN_ORDER_NO_EXISTS, "退还单不存在");

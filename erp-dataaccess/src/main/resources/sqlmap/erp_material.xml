@@ -32,7 +32,6 @@
 		<collection property="materialImgDOList" resultMap="MaterialImgDO" />
 	</resultMap>
 
-
 	<resultMap id="MaterialImgDO" type="com.lxzl.erp.dataaccess.domain.material.MaterialImgDO">
 		<id column="img_id" jdbcType="INTEGER" property="id"/>
 		<result column="img_img_type" jdbcType="INTEGER" property="imgType"/>
@@ -247,21 +246,5 @@
 		INSERT INTO erp_material
 		<include refid="set_column_sql"/>
 	</insert>
-
-	<select id="findMaterialRentByCustomerId" resultMap="MaterialDO" parameterType="java.lang.Integer">
-		SELECT
-		<include refid="column_List"/> ,eb.rent_count,eb.material_can_return_count
-		FROM (SELECT
-		eom.material_id,SUM(1) AS rent_count ,SUM(1) + SUM(IFNULL(erom.real_return_material_count,0)) - SUM(IFNULL(erom.return_material_count, 0)) AS material_can_return_count
-		FROM erp_order eo
-		LEFT JOIN erp_order_material eom ON eo.id = eom.order_id AND eom.data_status=1
-		LEFT JOIN erp_order_material_bulk eomb ON eomb.order_material_id = eom.id AND eomb.data_status=1
-		LEFT JOIN erp_return_order_material erom ON erom.return_material_id = eom.material_id AND erom.data_status=1
-		WHERE eo.buyer_customer_id = #{customerId} AND eo.data_status = 1 AND eo.order_status = 4
-		AND eomb.actual_return_time IS NULL AND eomb.bulk_material_id IS NOT NULL
-		GROUP BY eom.material_id) eb
-		LEFT JOIN erp_material em
-		ON eb.material_id = em.id
-	</select>
 
 </mapper>

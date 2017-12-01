@@ -708,6 +708,7 @@ CREATE TABLE `erp_bulk_material` (
   `bulk_material_name` varchar(100) COLLATE utf8_bin COMMENT '散料名称，从物料生成',
   `material_id` int(20) NOT NULL COMMENT '物料ID，从物料生成的',
   `material_no` varchar(100) NOT NULL COMMENT '物料编号，从物料生成的',
+  `order_no` varchar(100) DEFAULT NULL COMMENT '关联订单号，租赁中状态时有值',
   `current_warehouse_id` int(20) NOT NULL COMMENT '目前仓库ID',
   `current_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '目前仓位ID',
   `owner_warehouse_id` int(20) NOT NULL COMMENT '归属仓库ID',

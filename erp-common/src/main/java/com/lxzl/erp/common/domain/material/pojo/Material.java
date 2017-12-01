@@ -18,8 +18,8 @@ import java.util.List;
  */
 public class Material implements Serializable {
 
-    @NotNull(message = ErrorCode.MATERIAL_ID_NOT_NULL,groups = {AddReturnOrderGroup.class})
     private Integer materialId;   //物料ID
+    @NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL,groups = {AddReturnOrderGroup.class})
     private String materialNo;   //物料唯一编号
     private String materialName;   //物料名称，取属性与属性值全称
     private Integer materialType;   //物料类型

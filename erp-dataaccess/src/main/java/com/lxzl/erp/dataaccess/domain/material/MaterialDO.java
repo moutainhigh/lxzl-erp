@@ -213,4 +213,5 @@ public class MaterialDO extends BaseDO {
     public void setMaterialModelName(String materialModelName) {
         this.materialModelName = materialModelName;
     }
+
 }

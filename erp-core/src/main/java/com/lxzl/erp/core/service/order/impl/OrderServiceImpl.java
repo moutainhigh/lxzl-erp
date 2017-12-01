@@ -458,6 +458,7 @@ public class OrderServiceImpl implements OrderService {
                 return ErrorCode.ORDER_MATERIAL_BULK_COUNT_MAX;
             }
             bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
+            bulkMaterialDO.setOrderNo(orderDO.getOrderNo());
             bulkMaterialDO.setUpdateTime(currentTime);
             bulkMaterialDO.setUpdateUser(loginUserId.toString());
             bulkMaterialMapper.update(bulkMaterialDO);
@@ -524,6 +525,7 @@ public class OrderServiceImpl implements OrderService {
                 return ErrorCode.ORDER_HAVE_NO_THIS_ITEM;
             }
             bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
+            bulkMaterialDO.setOrderNo("");
             bulkMaterialDO.setUpdateTime(currentTime);
             bulkMaterialDO.setUpdateUser(loginUserId.toString());
             bulkMaterialMapper.update(bulkMaterialDO);

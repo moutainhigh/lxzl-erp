@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.returnOrder.AddReturnOrderParam;
 import com.lxzl.erp.common.domain.returnOrder.DoReturnEquipmentParam;
+import com.lxzl.erp.common.domain.returnOrder.DoReturnMaterialParam;
 import com.lxzl.erp.common.domain.returnOrder.ReturnOrderPageParam;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
 import com.lxzl.erp.common.util.*;
@@ -92,10 +93,10 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         }
         //用户在租物料统计
         List<MaterialDO> oldMaterialDOList = materialMapper.findMaterialRentByCustomerId(customerDO.getId());
-        Map<Integer,MaterialDO> oldMaterialCountMap = new HashMap<>();
+        Map<String,MaterialDO> oldMaterialCountMap = new HashMap<>();
         if(CollectionUtil.isNotEmpty(oldMaterialDOList)){
             for(MaterialDO materialDO  : oldMaterialDOList){
-                oldMaterialCountMap.put(materialDO.getId(),materialDO);
+                oldMaterialCountMap.put(materialDO.getMaterialNo(),materialDO);
             }
         }
         //累计退还sku总数
@@ -105,7 +106,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         Date now = new Date();
         //构造待保存退换单商品项
         List<ReturnOrderProductDO> returnOrderProductDOList = new ArrayList<>();
-        //如果要退还的sku不在在租列表，或者要退还的sku数量大于可租数量，返回相应错误
+        //如果要退还的sku不在在租列表，或者要退还的sku数量大于可退数量，返回相应错误
 
         if(CollectionUtil.isNotEmpty(productSkuList)){
             for(ProductSku productSku : productSkuList){
@@ -140,7 +141,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         //如果要退还的物料不在在租列表，或者要退还的物料数量大于在租数量，返回相应错误
         if(CollectionUtil.isNotEmpty(materialList)){
             for(Material material : materialList){
-                MaterialDO oldMaterialRent = oldMaterialCountMap.get(material.getMaterialId());
+                MaterialDO oldMaterialRent = oldMaterialCountMap.get(material.getMaterialNo());
                 if(oldMaterialRent==null){//如果要退还的物料不在在租列表
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_RENT_THIS);
                     return serviceResult;
@@ -150,7 +151,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
                 }
                 totalReturnMaterialCount+=material.getReturnCount();
                 ReturnOrderMaterialDO returnOrderMaterialDO = new ReturnOrderMaterialDO();
-                returnOrderMaterialDO.setReturnMaterialId(material.getMaterialId());
+                returnOrderMaterialDO.setReturnMaterialId(oldMaterialRent.getId());
                 returnOrderMaterialDO.setReturnMaterialCount(material.getReturnCount());
                 returnOrderMaterialDO.setReturnMaterialSnapshot(JSON.toJSONString(oldMaterialRent));
                 returnOrderMaterialDO.setRealReturnMaterialCount(0);
@@ -233,19 +234,22 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             serviceResult.setErrorCode(ErrorCode.EQUIPMENT_NOT_RENT);
             return serviceResult;
         }
-        //修改设备状态为闲置
-        String orderNo = productEquipmentDO.getOrderNo();
-        productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
-        productEquipmentDO.setOrderNo("");
-        productEquipmentMapper.update(productEquipmentDO);
+
 
         //取得订单，并且把商品项存入map方便查找
-        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        OrderDO orderDO = orderMapper.findByOrderNo(productEquipmentDO.getOrderNo());
         List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
         Map<Integer,OrderProductDO> orderProductDOMap = new HashMap<>();
         for(OrderProductDO orderProductDO : orderProductDOList){
             orderProductDOMap.put(orderProductDO.getId(),orderProductDO);
         }
+
+        //修改设备状态为闲置
+        productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
+        productEquipmentDO.setOrderNo("");
+        productEquipmentMapper.update(productEquipmentDO);
+
+
         //修改订单商品设备-实际归还时间，实际租金
         Date now = new Date();
         OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findRentByCustomerIdAndEquipmentId(returnOrderDO.getCustomerId(),productEquipmentDO.getId());
@@ -320,6 +324,26 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(ProductEquipmentConverter.convertProductEquipmentDO(productEquipmentDO));
         return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, Material> doReturnMaterial(DoReturnMaterialParam doReturnMaterialParam) {
+        ServiceResult<String, Material> serviceResult = new ServiceResult<>();
+        //校验退还单是否存在
+        ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(doReturnMaterialParam.getReturnOrderNo());
+        if(returnOrderDO==null){
+            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NO_EXISTS);
+            return serviceResult;
+        }
+        List<String> materialNoList = doReturnMaterialParam.getMaterialNoList();
+
+        //用散料的订单号方式查询客户的所有在租设备，并保存到map以便后续使用
+        Map<String,MaterialDO> rentMap = new HashMap<>();
+        List<MaterialDO> materialDOList = materialMapper.findMaterialRentByCustomerId(returnOrderDO.getCustomerId());
+//        for(ProductEquipmentDO productEquipmentDO : productEquipmentDOList){
+//            rentMap.put(productEquipmentDO.getEquipmentNo(),productEquipmentDO);
+//        }
+        return null;
     }
 
     @Override

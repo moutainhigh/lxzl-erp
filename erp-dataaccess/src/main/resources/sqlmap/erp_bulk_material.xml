@@ -9,6 +9,7 @@
 		<result column="bulk_material_name" jdbcType="VARCHAR" property="bulkMaterialName" />
 		<result column="material_id" jdbcType="INTEGER" property="materialId" />
 		<result column="material_no" jdbcType="VARCHAR" property="materialNo" />
+		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
 		<result column="current_warehouse_id" jdbcType="INTEGER" property="currentWarehouseId" />
 		<result column="current_warehouse_position_id" jdbcType="INTEGER" property="currentWarehousePositionId" />
 		<result column="owner_warehouse_id" jdbcType="INTEGER" property="ownerWarehouseId" />
@@ -29,7 +30,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ebm.id,ebm.bulk_material_no,ebm.bulk_material_type,ebm.bulk_material_name,ebm.material_id,ebm.material_no,ebm.current_warehouse_id,ebm.current_warehouse_position_id,ebm.owner_warehouse_id,ebm.owner_warehouse_position_id,ebm.brand_id,ebm.material_model_id,ebm.material_capacity_value,ebm.bulk_material_price,ebm.current_equipment_id,ebm.current_equipment_no,ebm.bulk_material_status,ebm.data_status,ebm.remark,ebm.create_time,ebm.create_user,ebm.update_time,ebm.update_user
+		ebm.id,ebm.bulk_material_no,ebm.bulk_material_type,ebm.bulk_material_name,ebm.material_id,ebm.material_no,ebm.order_no,ebm.current_warehouse_id,ebm.current_warehouse_position_id,ebm.owner_warehouse_id,ebm.owner_warehouse_position_id,ebm.brand_id,ebm.material_model_id,ebm.material_capacity_value,ebm.bulk_material_price,ebm.current_equipment_id,ebm.current_equipment_no,ebm.bulk_material_status,ebm.data_status,ebm.remark,ebm.create_time,ebm.create_user,ebm.update_time,ebm.update_user
 	</sql>
 
 	<select id="findById" resultMap="BulkMaterialDO" parameterType="java.lang.Integer">
@@ -65,6 +66,9 @@
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != ''">
 				AND ebm.bulk_material_name like CONCAT('%','${maps.bulkMaterialQueryParam.bulkMaterialName}','%' )
 			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.orderNo != null &amp;&amp; maps.bulkMaterialQueryParam.orderNo != ''">
+				AND ebm.order_no like CONCAT('%','${maps.bulkMaterialQueryParam.orderNo}','%' )
+			</if>
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.currentWarehouseId != null &amp;&amp; maps.bulkMaterialQueryParam.currentWarehouseId != ''">
 				AND ebm.current_warehouse_id = #{maps.bulkMaterialQueryParam.currentWarehouseId, jdbcType=INTEGER}
 			</if>
@@ -91,6 +95,9 @@
 			</if>
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialName != ''">
 				AND ebm.bulk_material_name like CONCAT('%','${maps.bulkMaterialQueryParam.bulkMaterialName}','%' )
+			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.orderNo != null &amp;&amp; maps.bulkMaterialQueryParam.orderNo != ''">
+				AND ebm.order_no like CONCAT('%','${maps.bulkMaterialQueryParam.orderNo}','%' )
 			</if>
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.currentWarehouseId != null &amp;&amp; maps.bulkMaterialQueryParam.currentWarehouseId != ''">
 				AND ebm.current_warehouse_id = #{maps.bulkMaterialQueryParam.currentWarehouseId, jdbcType=INTEGER}
@@ -121,6 +128,9 @@
 			</if>
 			<if test="materialNo != null">
 				material_no = #{materialNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNo != null">
+				order_no = #{orderNo,jdbcType=VARCHAR},
 			</if>
 			<if test="currentWarehouseId != null">
 				current_warehouse_id = #{currentWarehouseId,jdbcType=INTEGER},
@@ -177,9 +187,9 @@
 	</sql>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_bulk_material (bulk_material_no,bulk_material_type,is_main_material,bulk_material_name,material_id,material_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,brand_id,material_model_id,material_capacity_value,bulk_material_price,current_equipment_id,current_equipment_no,bulk_material_status,data_status,remark,create_time,create_user,update_time,update_user)
+		insert into erp_bulk_material (bulk_material_no,bulk_material_type,is_main_material,bulk_material_name,material_id,material_no,order_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,brand_id,material_model_id,material_capacity_value,bulk_material_price,current_equipment_id,current_equipment_no,bulk_material_status,data_status,remark,create_time,create_user,update_time,update_user)
 		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList" separator="UNION ALL">
-			SELECT #{bulkMaterialDO.bulkMaterialNo},em.material_type, em.is_main_material, em.material_name ,#{bulkMaterialDO.materialId},em.material_no,#{bulkMaterialDO.currentWarehouseId},#{bulkMaterialDO.currentWarehousePositionId},#{bulkMaterialDO.ownerWarehouseId},#{bulkMaterialDO.ownerWarehousePositionId},
+			SELECT #{bulkMaterialDO.bulkMaterialNo},em.material_type, em.is_main_material, em.material_name ,#{bulkMaterialDO.materialId},em.material_no,#{bulkMaterialDO.orderNo},#{bulkMaterialDO.currentWarehouseId},#{bulkMaterialDO.currentWarehousePositionId},#{bulkMaterialDO.ownerWarehouseId},#{bulkMaterialDO.ownerWarehousePositionId},
 			em.brand_id,em.material_model_id,em.material_capacity_value,em.material_price,equipment_info.current_equipment_id ,#{bulkMaterialDO.currentEquipmentNo}, #{bulkMaterialDO.bulkMaterialStatus},#{bulkMaterialDO.dataStatus},#{bulkMaterialDO.remark},
 			#{bulkMaterialDO.createTime},#{bulkMaterialDO.createUser},#{bulkMaterialDO.updateTime},#{bulkMaterialDO.updateUser}
 			FROM erp_material em
@@ -220,6 +230,12 @@
 			material_no =
 			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
 				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.materialNo,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			order_no =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.orderNo,jdbcType=VARCHAR}
 			</foreach>
 		</trim>
 		<trim prefix=",">
