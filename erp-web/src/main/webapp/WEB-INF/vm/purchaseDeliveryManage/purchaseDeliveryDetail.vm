@@ -30,30 +30,30 @@
                         {{#dataSource}}
                         <div class="col-md-3">
                             <dl class="dl-horizontal">
-                                <dt class="mb10">供应商</dt><dd>{{productSupplierName}}</dd>
-                                <dt class="mb10">仓库</dt><dd>{{warehouseName}}</dd>
-                                <dt class="mb10">全新机器</dt><dd>{{isNewStr}}</dd>
-                                <dt class="mb10">采购类型</dt><dd>{{purchaseTypeStr}}</dd>
-                            </dl>
-                        </div>
-                        <div class="col-md-3">
-                            <dl class="dl-horizontal">
-                                <dt class="mb10">采购单总价</dt><dd>{{purchaseOrderAmountTotalFixed}}</dd>
-                                <dt class="mb10">采购单实收</dt><dd>{{purchaseOrderAmountRealFixed}}</dd>
-                                <dt class="mb10">结算金额</dt><dd>{{purchaseOrderAmountStatementFixed}}</dd>
+                                <dt class="mb10">采购单编号</dt><dd>{{purchaseOrderNo}}</dd>
+                                <dt class="mb10">供应商</dt><dd>{{ownerSupplierName}}</dd>
                                 <dt class="mb10">是否有发票</dt><dd>{{isInvoiceStr}}</dd>
+
                             </dl>
                         </div>
                         <div class="col-md-3">
                             <dl class="dl-horizontal">
-                                <dt class="mb10">创建时间</dt><dd>{{createTimeFormat}}</dd>
-                                <dt class="mb10">修改时间</dt><dd>{{updateTimeFormat}}</dd>
+                                <dt class="mb10">仓库</dt><dd>{{warehouseName}}</dd>
+                                <dt class="mb10">是否全新机</dt><dd>{{isNewStr}}</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-3">
+                            <dl class="dl-horizontal">
+                                <dt class="mb10">发货状态</dt><dd>{{purchaseDeliveryOrderStatusValue}}</dd>
                                 <dt class="mb10">发货时间</dt><dd>{{deliveryTimeFormat}}</dd>
                             </dl>
                         </div>
                         <div class="col-md-3">
                             <dl class="dl-horizontal">
-                                <dt class="mb10">采购员</dt><dd>{{ownerName}}</dd>
+                                <dt class="mb10">创建时间</dt><dd>{{createTimeFormat}}</dd>
+                                <dt class="mb10">创建人</dt><dd>{{createUser}}</dd>
+                                <dt class="mb10">修改时间</dt><dd>{{updateTimeFormat}}</dd>
+                                <dt class="mb10">修改人</dt><dd>{{updateUser}}</dd>
                             </dl>
                         </div>
                         {{/dataSource}}
@@ -61,30 +61,29 @@
                     <div class="row" id="baseInfo">
                         <div class="col-md-3">
                             <dl class="dl-horizontal">
+                                <dt class="mb10">采购单编号</dt><dd></dd>
                                 <dt class="mb10">供应商</dt><dd></dd>
-                                <dt class="mb10">仓库</dt><dd></dd>
-                                <dt class="mb10">全新机器</dt><dd></dd>
-                                <dt class="mb10">采购类型</dt><dd></dd>
                             </dl>
                         </div>
                         <div class="col-md-3">
                             <dl class="dl-horizontal">
-                                <dt class="mb10">采购单总价</dt><dd></dd>
-                                <dt class="mb10">采购单实收</dt><dd></dd>
-                                <dt class="mb10">结算金额</dt><dd></dd>
-                                <dt class="mb10">是否有发票</dt><dd></dd>
+                                <dt class="mb10">仓库</dt><dd></dd>
+                                <dt class="mb10">分拨情况</dt><dd></dd>
+                                <dt class="mb10">分拨单号</dt><dd></dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-3">
+                            <dl class="dl-horizontal">
+                                <dt class="mb10">签单时间</dt><dd></dd>
+                                <dt class="mb10">签单人</dt><dd></dd>
                             </dl>
                         </div>
                         <div class="col-md-3">
                             <dl class="dl-horizontal">
                                 <dt class="mb10">创建时间</dt><dd></dd>
+                                <dt class="mb10">创建人</dt><dd></dd>
                                 <dt class="mb10">修改时间</dt><dd></dd>
-                                <dt class="mb10">发货时间</dt><dd></dd>
-                            </dl>
-                        </div>
-                        <div class="col-md-3">
-                            <dl class="dl-horizontal">
-                                <dt class="mb10">采购员</dt><dd></dd>
+                                <dt class="mb10">修改人</dt><dd></dd>
                             </dl>
                         </div>
                     </div>
