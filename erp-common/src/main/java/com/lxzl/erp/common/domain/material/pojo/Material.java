@@ -18,14 +18,15 @@ import java.util.List;
  */
 public class Material implements Serializable {
 
-    @NotNull(message = ErrorCode.MATERIAL_ID_NOT_NULL,groups = {AddReturnOrderGroup.class})
     private Integer materialId;   //物料ID
+    @NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL,groups = {AddReturnOrderGroup.class})
     private String materialNo;   //物料唯一编号
     private String materialName;   //物料名称，取属性与属性值全称
     private Integer materialType;   //物料类型
     private Integer brandId;   //所属品牌ID
     private BigDecimal materialPrice;   //物料本身的价值(单价)
     private Double materialCapacityValue;   //物料字面量
+    private String orderNo;             //关联订单号，租赁中状态时有值
     private Integer materialModelId;    // 物料型号ID
     private Integer isMainMaterial;         //是否四大件
     private Integer isRent;             // 是否在租
@@ -256,5 +257,13 @@ public class Material implements Serializable {
 
     public void setMaterialModelName(String materialModelName) {
         this.materialModelName = materialModelName;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
     }
 }

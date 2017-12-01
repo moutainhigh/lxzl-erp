@@ -2,9 +2,11 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.returnOrder.AddReturnOrderParam;
 import com.lxzl.erp.common.domain.returnOrder.DoReturnEquipmentParam;
+import com.lxzl.erp.common.domain.returnOrder.DoReturnMaterialParam;
 import com.lxzl.erp.common.domain.returnOrder.ReturnOrderPageParam;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
@@ -44,6 +46,11 @@ public class ReturnOrderController extends BaseController {
         ServiceResult<String, ProductEquipment> serviceResult = returnOrderService.doReturnEquipment(doReturnEquipmentParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+    @RequestMapping(value = "doReturnMaterial", method = RequestMethod.POST)
+    public Result doReturnMaterial(@RequestBody @Validated DoReturnMaterialParam doReturnMaterialParam, BindingResult validResult) {
+        ServiceResult<String, Material> serviceResult = returnOrderService.doReturnMaterial(doReturnMaterialParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
     @RequestMapping(value = "detail", method = RequestMethod.POST)
     public Result detail(@RequestBody @Validated(IdGroup.class) ReturnOrder returnOrder, BindingResult validResult) {
         ServiceResult<String, ReturnOrder> serviceResult = returnOrderService.detail(returnOrder);
@@ -54,6 +61,8 @@ public class ReturnOrderController extends BaseController {
         ServiceResult<String, Page<ReturnOrder>> serviceResult = returnOrderService.page(returnOrderPageParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+
     @Autowired
     private ResultGenerator resultGenerator;
 

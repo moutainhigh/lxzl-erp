@@ -11,6 +11,7 @@
 		<result column="material_type" jdbcType="INTEGER" property="materialType" />
 		<result column="is_main_material" jdbcType="INTEGER" property="isMainMaterial" />
 		<result column="material_capacity_value" jdbcType="DOUBLE" property="materialCapacityValue" />
+		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
 		<result column="material_model_id" jdbcType="INTEGER" property="materialModelId" />
 		<result column="material_model_name" jdbcType="VARCHAR" property="materialModelName" />
 		<result column="brand_id" jdbcType="INTEGER" property="brandId" />
@@ -32,7 +33,6 @@
 		<collection property="materialImgDOList" resultMap="MaterialImgDO" />
 	</resultMap>
 
-
 	<resultMap id="MaterialImgDO" type="com.lxzl.erp.dataaccess.domain.material.MaterialImgDO">
 		<id column="img_id" jdbcType="INTEGER" property="id"/>
 		<result column="img_img_type" jdbcType="INTEGER" property="imgType"/>
@@ -50,7 +50,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		em.id,em.material_no,em.material_name,em.material_type,em.material_capacity_value,em.material_model_id,em.is_main_material,em.brand_id,em.stock,em.is_rent,em.material_price,em.time_rent_price,em.day_rent_price,em.month_rent_price,em.material_desc,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
+		em.id,em.material_no,em.material_name,em.material_type,em.material_capacity_value,em.order_no,em.material_model_id,em.is_main_material,em.brand_id,em.stock,em.is_rent,em.material_price,em.time_rent_price,em.day_rent_price,em.month_rent_price,em.material_desc,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
 	</sql>
 
 	<sql id="img_column_List">
@@ -194,6 +194,9 @@
 			<if test="materialCapacityValue != null">
 				material_capacity_value = #{materialCapacityValue,jdbcType=DOUBLE},
 			</if>
+			<if test="orderNo != null">
+				order_no = #{orderNo,jdbcType=VARCHAR},
+			</if>
 			<if test="stock != null">
 				stock = #{stock, jdbcType=INTEGER},
 			</if>
@@ -257,7 +260,7 @@
 		LEFT JOIN erp_order_material eom ON eo.id = eom.order_id AND eom.data_status=1
 		LEFT JOIN erp_order_material_bulk eomb ON eomb.order_material_id = eom.id AND eomb.data_status=1
 		LEFT JOIN erp_return_order_material erom ON erom.return_material_id = eom.material_id AND erom.data_status=1
-		WHERE eo.buyer_customer_id = #{customerId} AND eo.data_status = 1 AND eo.order_status = 4
+		WHERE eo.buyer_customer_id = #{customerId} AND eo.data_status = 1 AND eo.order_status = 24
 		AND eomb.actual_return_time IS NULL AND eomb.bulk_material_id IS NOT NULL
 		GROUP BY eom.material_id) eb
 		LEFT JOIN erp_material em
