@@ -74,6 +74,15 @@ public class ErrorCode {
     public static final String PRODUCT_EQUIPMENT_STATUS_ERROR = "J200028";
     public static final String BULK_MATERIAL_NOT_IN_THIS_WAREHOUSE = "J200029";
     public static final String PRODUCT_MATERIAL_NOT_ENOUGH = "J200030";
+    public static final String PRODUCT_MATERIAL_MEMORY_NOT_ENOUGH = "J200031";
+    public static final String PRODUCT_MATERIAL_MAIN_BOARD_NOT_ENOUGH = "J200032";
+    public static final String PRODUCT_MATERIAL_CPU_NOT_ENOUGH = "J200033";
+    public static final String PRODUCT_MATERIAL_HDD_NOT_ENOUGH = "J200034";
+    public static final String PRODUCT_MATERIAL_GRAPHICS_CARD_NOT_ENOUGH = "J200035";
+    public static final String PRODUCT_MATERIAL_POWER_SUPPLY_NOT_ENOUGH = "J200036";
+    public static final String PRODUCT_MATERIAL_RADIATOR_NOT_ENOUGH = "J200037";
+    public static final String PRODUCT_MATERIAL_SSD_NOT_ENOUGH = "J200038";
+    public static final String PRODUCT_MATERIAL_BOX_NOT_ENOUGH = "J200039";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -311,6 +320,15 @@ public class ErrorCode {
         MAP.put(BULK_MATERIAL_STATUS_ERROR, "散料状态有误。");
         MAP.put(BULK_MATERIAL_NOT_IN_THIS_WAREHOUSE, "散料不在该库房。");
         MAP.put(PRODUCT_MATERIAL_NOT_ENOUGH, "商品物料不足。");
+        MAP.put(PRODUCT_MATERIAL_MEMORY_NOT_ENOUGH, "商品【内存】物料不足");
+        MAP.put(PRODUCT_MATERIAL_MAIN_BOARD_NOT_ENOUGH, "商品【主板】物料不足");
+        MAP.put(PRODUCT_MATERIAL_CPU_NOT_ENOUGH, "商品【CPU】物料不足");
+        MAP.put(PRODUCT_MATERIAL_HDD_NOT_ENOUGH, "商品【机械硬盘】物料不足");
+        MAP.put(PRODUCT_MATERIAL_GRAPHICS_CARD_NOT_ENOUGH, "商品【显卡】物料不足");
+        MAP.put(PRODUCT_MATERIAL_POWER_SUPPLY_NOT_ENOUGH, "商品【电源】物料不足");
+        MAP.put(PRODUCT_MATERIAL_RADIATOR_NOT_ENOUGH, "商品【散热器】物料不足");
+        MAP.put(PRODUCT_MATERIAL_SSD_NOT_ENOUGH, "商品【固态硬盘】物料不足");
+        MAP.put(PRODUCT_MATERIAL_BOX_NOT_ENOUGH, "商品【机箱】物料不足");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
