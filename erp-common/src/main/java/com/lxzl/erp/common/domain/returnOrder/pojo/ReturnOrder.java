@@ -38,6 +38,7 @@ public class ReturnOrder implements Serializable {
 	private ReturnOrderConsignInfo returnOrderConsignInfo;
 	private List<ReturnOrderProduct> returnOrderProductList;
 	private List<ReturnOrderMaterial> returnOrderMaterialList;
+	private String ownerName;
 
 	public Integer getReturnOrderId(){
 		return returnOrderId;
@@ -221,5 +222,13 @@ public class ReturnOrder implements Serializable {
 
 	public void setReturnOrderConsignInfo(ReturnOrderConsignInfo returnOrderConsignInfo) {
 		this.returnOrderConsignInfo = returnOrderConsignInfo;
+	}
+
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
 	}
 }

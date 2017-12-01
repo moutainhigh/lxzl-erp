@@ -15,5 +15,5 @@ public interface DeploymentOrderProductMapper extends BaseMysqlDAO<DeploymentOrd
 
     Integer saveList(@Param("deploymentOrderProductDOList") List<DeploymentOrderProductDO> deploymentOrderProductDOList);
 
-    List<DeploymentOrderProductDO> findByDeploymentOrderNo(@Param("findByDeploymentOrderNo") String findByDeploymentOrderNo);
+    List<DeploymentOrderProductDO> findByDeploymentOrderNo(@Param("deploymentOrderNo") String deploymentOrderNo);
 }

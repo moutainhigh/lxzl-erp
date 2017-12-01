@@ -58,6 +58,18 @@ public class DeploymentOrderController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "delivery", method = RequestMethod.POST)
+    public Result delivery(@RequestBody ProcessDeploymentOrderParam param, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = deploymentOrderService.deliveryDeploymentOrder(param.getDeploymentOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "cancel", method = RequestMethod.POST)
+    public Result cancel(@RequestBody ProcessDeploymentOrderParam param, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = deploymentOrderService.cancelDeploymentOrder(param.getDeploymentOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "confirm", method = RequestMethod.POST)
     public Result confirm(@RequestBody ProcessDeploymentOrderParam param, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = deploymentOrderService.confirmDeploymentOrder(param.getDeploymentOrderNo());

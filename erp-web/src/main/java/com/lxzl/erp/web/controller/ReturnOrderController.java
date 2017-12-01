@@ -1,9 +1,11 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.returnOrder.AddReturnOrderParam;
 import com.lxzl.erp.common.domain.returnOrder.DoReturnEquipmentParam;
+import com.lxzl.erp.common.domain.returnOrder.ReturnOrderPageParam;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.returnOrder.AddReturnOrderGroup;
@@ -47,7 +49,11 @@ public class ReturnOrderController extends BaseController {
         ServiceResult<String, ReturnOrder> serviceResult = returnOrderService.detail(returnOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
-
+    @RequestMapping(value = "page", method = RequestMethod.POST)
+    public Result page(@RequestBody ReturnOrderPageParam returnOrderPageParam, BindingResult validResult) {
+        ServiceResult<String, Page<ReturnOrder>> serviceResult = returnOrderService.page(returnOrderPageParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
     @Autowired
     private ResultGenerator resultGenerator;
 

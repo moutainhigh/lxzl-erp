@@ -153,6 +153,16 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         if (productCategoryPropertyDO.getMaterialType() == null) {
             return;
         }
+        MaterialDO dbMaterialDO = null;
+        if(MaterialType.isCapacityMaterial(productCategoryPropertyDO.getMaterialType())){
+            dbMaterialDO = materialMapper.findByMaterialTypeAndCapacity(productCategoryPropertyDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
+        }else if(MaterialType.isModelMaterial(productCategoryPropertyDO.getMaterialType())){
+            dbMaterialDO = materialMapper.findByMaterialTypeAndModelId(productCategoryPropertyDO.getMaterialType(), productCategoryPropertyValueDO.getMaterialModelId());
+        }
+        if(dbMaterialDO != null){
+            return;
+        }
+
         MaterialDO materialDO = new MaterialDO();
         materialDO.setMaterialType(productCategoryPropertyDO.getMaterialType());
         materialDO.setMaterialModelId(productCategoryPropertyValueDO.getMaterialModelId());

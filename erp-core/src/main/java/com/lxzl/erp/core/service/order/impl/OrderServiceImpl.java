@@ -16,6 +16,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.warehouse.ProductOutStockParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderConverter;
@@ -87,7 +88,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.save(orderDO);
         saveOrderProductInfo(orderProductDOList, orderDO.getId(), loginUser, currentTime);
         saveOrderMaterialInfo(orderMaterialDOList, orderDO.getId(), loginUser, currentTime);
-        saveOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
+        updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
@@ -256,6 +257,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> cancelOrder(String orderNo) {
         Date currentTime = new Date();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -279,6 +281,7 @@ public class OrderServiceImpl implements OrderService {
             orderDO.setUpdateUser(loginUser.getUserId().toString());
         }
         orderMapper.update(orderDO);
+        customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(),orderDO.getTotalCreditDepositAmount());
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
@@ -660,10 +663,8 @@ public class OrderServiceImpl implements OrderService {
                 throw new BusinessException("额度不够无法下单。");
             }
         }
-        customerRiskManagementDO.setCreditAmountUsed(BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(), totalCreditDepositAmount));
-        customerRiskManagementDO.setUpdateUser(loginUserId.toString());
-        customerRiskManagementDO.setUpdateTime(currentTime);
-        customerRiskManagementMapper.update(customerRiskManagementDO);
+
+        customerSupport.addCreditAmountUsed(customerRiskManagementDO.getCustomerId(),totalCreditDepositAmount);
     }
 
     @Override
@@ -739,8 +740,23 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void saveOrderProductInfo(List<OrderProductDO> orderProductDOList, Integer orderId, User loginUser, Date currentTime) {
-        if (orderProductDOList != null && !orderProductDOList.isEmpty()) {
-            for (OrderProductDO orderProductDO : orderProductDOList) {
+
+        Map<Integer, OrderProductDO> saveOrderProductDOMap = new HashMap<>();
+        Map<Integer, OrderProductDO> updateOrderProductDOMap = new HashMap<>();
+        List<OrderProductDO> dbOrderProductDOList = orderProductMapper.findByOrderId(orderId);
+        Map<Integer, OrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(dbOrderProductDOList, "productSkuId");
+        for (OrderProductDO orderProductDO : orderProductDOList) {
+            if (dbOrderProductDOMap.get(orderProductDO.getProductSkuId()) != null) {
+                updateOrderProductDOMap.put(orderProductDO.getProductSkuId(), orderProductDO);
+                dbOrderProductDOMap.remove(orderProductDO.getProductSkuId());
+            } else {
+                saveOrderProductDOMap.put(orderProductDO.getProductSkuId(), orderProductDO);
+            }
+        }
+
+        if (saveOrderProductDOMap.size() > 0) {
+            for (Map.Entry<Integer, OrderProductDO> entry : saveOrderProductDOMap.entrySet()) {
+                OrderProductDO orderProductDO = entry.getValue();
                 orderProductDO.setOrderId(orderId);
                 orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderProductDO.setCreateUser(loginUser.getUserId().toString());
@@ -750,11 +766,48 @@ public class OrderServiceImpl implements OrderService {
                 orderProductMapper.save(orderProductDO);
             }
         }
+
+        if (updateOrderProductDOMap.size() > 0) {
+            for (Map.Entry<Integer, OrderProductDO> entry : updateOrderProductDOMap.entrySet()) {
+                OrderProductDO orderProductDO = entry.getValue();
+                orderProductDO.setOrderId(orderId);
+                orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                orderProductDO.setUpdateUser(loginUser.getUserId().toString());
+                orderProductDO.setUpdateTime(currentTime);
+                orderProductMapper.update(orderProductDO);
+            }
+        }
+
+        if (dbOrderProductDOMap.size() > 0) {
+            for (Map.Entry<Integer, OrderProductDO> entry : dbOrderProductDOMap.entrySet()) {
+                OrderProductDO orderProductDO = entry.getValue();
+                orderProductDO.setOrderId(orderId);
+                orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                orderProductDO.setUpdateUser(loginUser.getUserId().toString());
+                orderProductDO.setUpdateTime(currentTime);
+                orderProductMapper.update(orderProductDO);
+            }
+        }
     }
 
     private void saveOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, Integer orderId, User loginUser, Date currentTime) {
-        if (orderMaterialDOList != null && !orderMaterialDOList.isEmpty()) {
-            for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+
+        Map<Integer, OrderMaterialDO> saveOrderMaterialDOMap = new HashMap<>();
+        Map<Integer, OrderMaterialDO> updateOrderMaterialDOMap = new HashMap<>();
+        List<OrderMaterialDO> dbOrderMaterialDOList = orderMaterialMapper.findByOrderId(orderId);
+        Map<Integer, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(dbOrderMaterialDOList, "materialId");
+        for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+            if (dbOrderMaterialDOMap.get(orderMaterialDO.getMaterialId()) != null) {
+                updateOrderMaterialDOMap.put(orderMaterialDO.getMaterialId(), orderMaterialDO);
+                dbOrderMaterialDOMap.remove(orderMaterialDO.getMaterialId());
+            } else {
+                saveOrderMaterialDOMap.put(orderMaterialDO.getMaterialId(), orderMaterialDO);
+            }
+        }
+
+        if (saveOrderMaterialDOMap.size() > 0) {
+            for (Map.Entry<Integer, OrderMaterialDO> entry : saveOrderMaterialDOMap.entrySet()) {
+                OrderMaterialDO orderMaterialDO = entry.getValue();
                 orderMaterialDO.setOrderId(orderId);
                 orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderMaterialDO.setCreateUser(loginUser.getUserId().toString());
@@ -764,10 +817,33 @@ public class OrderServiceImpl implements OrderService {
                 orderMaterialMapper.save(orderMaterialDO);
             }
         }
+
+        if (updateOrderMaterialDOMap.size() > 0) {
+            for (Map.Entry<Integer, OrderMaterialDO> entry : updateOrderMaterialDOMap.entrySet()) {
+                OrderMaterialDO orderMaterialDO = entry.getValue();
+                orderMaterialDO.setOrderId(orderId);
+                orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                orderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+                orderMaterialDO.setUpdateTime(currentTime);
+                orderMaterialMapper.update(orderMaterialDO);
+            }
+        }
+
+        if (dbOrderMaterialDOMap.size() > 0) {
+            for (Map.Entry<Integer, OrderMaterialDO> entry : dbOrderMaterialDOMap.entrySet()) {
+                OrderMaterialDO orderMaterialDO = entry.getValue();
+                orderMaterialDO.setOrderId(orderId);
+                orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                orderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+                orderMaterialDO.setUpdateTime(currentTime);
+                orderMaterialMapper.update(orderMaterialDO);
+            }
+        }
     }
 
-    private void saveOrderConsignInfo(Integer userConsignId, Integer orderId, User loginUser, Date currentTime) {
+    private void updateOrderConsignInfo(Integer userConsignId, Integer orderId, User loginUser, Date currentTime) {
         CustomerConsignInfoDO userConsignInfoDO = customerConsignInfoMapper.findById(userConsignId);
+        OrderConsignInfoDO dbOrderConsignInfoDO = orderConsignInfoMapper.findByOrderId(orderId);
         OrderConsignInfoDO orderConsignInfoDO = new OrderConsignInfoDO();
         orderConsignInfoDO.setOrderId(orderId);
         orderConsignInfoDO.setConsigneeName(userConsignInfoDO.getConsigneeName());
@@ -777,11 +853,19 @@ public class OrderServiceImpl implements OrderService {
         orderConsignInfoDO.setDistrict(userConsignInfoDO.getDistrict());
         orderConsignInfoDO.setAddress(userConsignInfoDO.getAddress());
         orderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        orderConsignInfoDO.setCreateUser(loginUser.getUserId().toString());
-        orderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
-        orderConsignInfoDO.setCreateTime(currentTime);
-        orderConsignInfoDO.setUpdateTime(currentTime);
-        orderConsignInfoMapper.save(orderConsignInfoDO);
+
+        if (dbOrderConsignInfoDO == null) {
+            orderConsignInfoDO.setCreateUser(loginUser.getUserId().toString());
+            orderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+            orderConsignInfoDO.setCreateTime(currentTime);
+            orderConsignInfoDO.setUpdateTime(currentTime);
+            orderConsignInfoMapper.save(orderConsignInfoDO);
+        } else {
+            orderConsignInfoDO.setId(dbOrderConsignInfoDO.getId());
+            orderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+            orderConsignInfoDO.setUpdateTime(currentTime);
+            orderConsignInfoMapper.update(orderConsignInfoDO);
+        }
     }
 
     private void calculateOrderProductInfo(List<OrderProductDO> orderProductDOList, OrderDO orderDO) {
@@ -1018,4 +1102,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private MaterialService materialService;
+
+    @Autowired
+    private CustomerSupport customerSupport;
 }

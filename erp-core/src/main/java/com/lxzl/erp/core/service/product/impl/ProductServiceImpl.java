@@ -563,7 +563,7 @@ public class ProductServiceImpl implements ProductService {
             }
         }
         if (skuPropertyCapacityMap.size() > 0 || skuMaterialDOMap.size() > 0) {
-            result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
+            result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_NOT_ENOUGH);
             return result;
         }
 

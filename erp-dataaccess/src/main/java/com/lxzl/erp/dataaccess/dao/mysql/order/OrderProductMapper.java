@@ -9,5 +9,8 @@ import java.util.Map;
 
 public interface OrderProductMapper extends BaseMysqlDAO<OrderProductDO> {
     Integer findOrderProductCountByParams(@Param("maps") Map<String, Object> paramMap);
+
     List<OrderProductDO> findOrderProductByParams(@Param("maps") Map<String, Object> paramMap);
+
+    List<OrderProductDO> findByOrderId(@Param("orderId") Integer orderId);
 }
