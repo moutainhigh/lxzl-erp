@@ -365,7 +365,7 @@
 </div>
     #parse("layout/footer.vm")
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.purchase.receive.edit.js', 'modal.choose.product.js', 'modal.choose.material.js');
+        management_load_script('${staticManagement}/js', 'manage.purchase.util.js', 'manage.purchase.receive.edit.js', 'modal.choose.product.js', 'modal.choose.material.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
