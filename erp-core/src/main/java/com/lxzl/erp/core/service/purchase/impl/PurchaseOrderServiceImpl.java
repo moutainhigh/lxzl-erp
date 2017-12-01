@@ -660,18 +660,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         Integer totalCount = purchaseOrderMapper.findPurchaseOrderCountByParams(maps);
         List<PurchaseOrderDO> purchaseOrderDOList = purchaseOrderMapper.findPurchaseOrderByParams(maps);
         List<PurchaseOrder> purchaseOrderList = PurchaseOrderConverter.convertPurchaseOrderDOList(purchaseOrderDOList);
-//        for(PurchaseOrder purchaseOrder : purchaseOrderList){
-//            List<PurchaseOrderProduct> purchaseOrderProductList = purchaseOrder.getPurchaseOrderProductList();
-//            Map<Integer, Product> map = new HashMap<>();
-//            for(PurchaseOrderProduct purchaseOrderProduct : purchaseOrderProductList){
-//                Product product = JSON.parseObject(purchaseOrderProduct.getProductSnapshot(),Product.class);
-//                if(map.get(product.getProductId())==null){
-//                    map.put(product.getProductId(), product);
-//                }else{
-//                    map.get(product.getProductId()).getProductSkuList().add(product.getProductSkuList().get(0));
-//                }
-//            }
-//        }
         Page<PurchaseOrder> page = new Page<>(purchaseOrderList, totalCount, purchaseOrderQueryParam.getPageNo(), purchaseOrderQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);

@@ -2,17 +2,16 @@ package com.lxzl.erp.core.service.returnOrder.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.pojo.Material;
-import com.lxzl.erp.common.domain.order.pojo.Order;
-import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.returnOrder.AddReturnOrderParam;
 import com.lxzl.erp.common.domain.returnOrder.DoReturnEquipmentParam;
+import com.lxzl.erp.common.domain.returnOrder.ReturnOrderPageParam;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
-import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProduct;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.product.ProductService;
@@ -24,7 +23,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductEquipmentMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.*;
@@ -37,18 +35,13 @@ import com.lxzl.erp.dataaccess.domain.order.OrderProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.returnOrder.*;
-import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import org.jsoup.Connection;
+import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -338,7 +331,23 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         return serviceResult;
     }
 
+    @Override
+    public ServiceResult<String, Page<ReturnOrder>> page(ReturnOrderPageParam returnOrderPageParam) {
+        ServiceResult<String, Page<ReturnOrder>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(returnOrderPageParam.getPageNo(), returnOrderPageParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("queryParam", returnOrderPageParam);
 
+        Integer totalCount = returnOrderMapper.findReturnOrderCountByParams(maps);
+        List<ReturnOrderDO> purchaseOrderDOList = returnOrderMapper.findReturnOrderByParams(maps);
+        List<ReturnOrder> purchaseOrderList = ConverterUtil.convertList(purchaseOrderDOList,ReturnOrder.class);
+        Page<ReturnOrder> page = new Page<>(purchaseOrderList, totalCount, returnOrderPageParam.getPageNo(), returnOrderPageParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
 
 
     @Autowired

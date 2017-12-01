@@ -7,10 +7,12 @@ import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.returnOrder.AddReturnOrderParam;
 import com.lxzl.erp.common.domain.returnOrder.DoReturnEquipmentParam;
+import com.lxzl.erp.common.domain.returnOrder.ReturnOrderPageParam;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderConsignInfo;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -57,4 +59,26 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest{
         doReturnEquipmentParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010006");
         TestResult result = getJsonTestResult("/returnOrder/detail",doReturnEquipmentParam);
     }
+
+    @Test
+    public void page() throws Exception {
+        ReturnOrderPageParam returnOrderPageParam = new ReturnOrderPageParam();
+//        returnOrderPageParam.setReturnOrderNo("RO201711291746283331383");
+//        returnOrderPageParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010006");
+        returnOrderPageParam.setReturnOrderNo("RO20171129174628333138");
+        returnOrderPageParam.setCustomerNo("CC201711230928540471145");
+        returnOrderPageParam.setReturnOrderStatus(5);
+        returnOrderPageParam.setOwnerName("毛");
+        returnOrderPageParam.setCreateEndTime(new Date());
+        returnOrderPageParam.setPageNo(1);
+        returnOrderPageParam.setPageSize(5);
+        TestResult result = getJsonTestResult("/returnOrder/page",returnOrderPageParam);
+    }
+
+
+
+
+
+
+
 }

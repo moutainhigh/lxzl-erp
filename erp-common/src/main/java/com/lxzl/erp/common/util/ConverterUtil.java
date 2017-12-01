@@ -18,8 +18,18 @@ import java.util.List;
 public class ConverterUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ConverterUtil.class);
-
+    public static final <T> List<T> convertList(List list, Class<T> clazz){
+        if(list==null) return null;
+        List<T> newList = new ArrayList<>();
+        for(Object o : list){
+            if(o!=null){
+                newList.add(convert(o,clazz));
+            }
+        }
+        return newList;
+    }
     public static final <T> T convert(Object o, Class<T> clazz){
+        if(o == null ) return null;
         try{
             if(clazz.newInstance() instanceof BaseDO){//po转do
                 String name = o.getClass().getSimpleName();
