@@ -182,6 +182,7 @@
                                                         <td style="width: 30%">
                                                             <input type="hidden" name="productId" value="{{productId}}" class="productId" />
                                                             <input type="hidden" name="productSkuId" value="{{skuId}}" class="productSkuId" />
+                                                            <input type="hidden" name="purchaseReceiveOrderProductId" value="{{purchaseReceiveOrderProductId}}" class="purchaseReceiveOrderProductId" />
                                                             <label class="field prepend-icon mw200">
                                                                 <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入采购数量" />
                                                             </label>
