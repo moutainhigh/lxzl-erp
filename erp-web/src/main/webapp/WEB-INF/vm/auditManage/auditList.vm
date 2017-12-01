@@ -73,6 +73,7 @@
                                 <th>当前结点ID</th>
                                 <th>当前审批人</th>
                                 <th>审批状态</th>
+                                <th>创建时间</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
                                 {{/hasRowActionButtons}}
@@ -100,6 +101,7 @@
                                 <td>{{workflowCurrentNodeId}}</td>
                                 <td>{{currentVerifyUserName}}</td>
                                 <td>{{workflowVerifyStatusStr}}</td>
+                                <td>{{createTimeFormat}}</td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
                                     <div class="btn-group text-right">
