@@ -111,12 +111,6 @@
                                         <script type="text/html" id="dataListTpl">
                                             <thead>
                                             <tr class="bg-light">
-                                                <th>
-                                                    <label class="option block mn">
-                                                        <input type="checkbox" name="checkAll" value="">
-                                                        <span class="checkbox mn"></span>
-                                                    </label>
-                                                </th>
                                                 <th>商品ID</th>
                                                 <th>图片</th>
                                                 <th>商品名称</th>
@@ -128,12 +122,6 @@
                                             {{#dataSource}}
                                             {{#listData}}
                                             <tr class="productRow" productRowKey="{{productId}}">
-                                                <td>
-                                                    <label class="option block mn">
-                                                        <input type="checkbox" name="checkItem" value="{{productId}}">
-                                                        <span class="checkbox mn"></span>
-                                                    </label>
-                                                </td>
                                                 <td>{{productId}}</td>
                                                 <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                                 <td>{{productName}}</td>
@@ -211,12 +199,6 @@
                                         <script type="text/html" id="materialDataListTpl">
                                             <thead>
                                             <tr>
-                                                <th>
-                                                    <label class="option block mn">
-                                                        <input type="checkbox" name="checkAll" value="">
-                                                        <span class="checkbox mn"></span>
-                                                    </label>
-                                                </th>
                                                 <th>编号</th>
                                                 <th>名称</th>
                                                 <th>类型</th>
@@ -232,12 +214,6 @@
                                             {{#dataSource}}
                                             {{#listData}}
                                             <tr class="purchaseOrderItemMaterialRow">
-                                                <td>
-                                                    <label class="option block mn">
-                                                        <input type="checkbox" name="checkItem" value="{{materialNo}}">
-                                                        <span class="checkbox mn"></span>
-                                                    </label>
-                                                </td>
                                                 <td>{{materialNo}}</td>
                                                 <td>{{materialName}}</td>
                                                 <td>{{materialTypeStr}}</td>
