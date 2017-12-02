@@ -14,40 +14,45 @@
     <section id="content_wrapper">
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
-        <section id="content" class="animated fadeIn">
+        <section id="content" class="animated fadeIn table-layout">
 
-            #parse("component/loading.vm")
+            <aside class="tray tray-left p20 tray350 va-t" data-tray-height="match">
 
-            <div class="panel panel-primary panel-border top">
-                <div class="panel-menu p12">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <script type="text/html" id="actionCommonButtonsTpl">
-                                <button type="button" class="btn btn-primary btn-sm light refreshButton"  title="刷新"><i class="fa fa-refresh"></i></button>
-                                {{#acitonCommonButtons}}
-                                <button type="button" class="btn btn-primary btn-sm light {{class}}" title="{{text}}">
-                                    <i class="{{iClass}}"></i> {{text}}
-                                </button>
-                                {{/acitonCommonButtons}}
-                            </script>
-                            <div class="btn-group" id="actionCommonButtons"></div>
-                        </div>
-                        <div class="col-md-6 text-right">
-                            <form id="searchForm" class="form-horizontal">
-                                <div class="form-group pull-right mn" style="width: 220px;">
-                                    <div class="input-group">
-                                        <input type="text" name="roleName" id="roleName" class="form-control input-sm bradiusL" autocomplete="off" placeholder="输入角色名...">
-                                        <span class="input-group-addon btn-search  input-sm bradiusR" id="submitSearchForm"><i class="fa fa-search"></i> 查询</span>
+            </aside>
+
+            <div class="tray tray-center p20 va-t posr">
+                #parse("component/loading.vm")
+
+                <div class="panel panel-primary panel-border top">
+                    <div class="panel-menu p12">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <script type="text/html" id="actionCommonButtonsTpl">
+                                    <button type="button" class="btn btn-primary btn-sm light refreshButton"  title="刷新"><i class="fa fa-refresh"></i></button>
+                                    {{#acitonCommonButtons}}
+                                    <button type="button" class="btn btn-primary btn-sm light {{class}}" title="{{text}}">
+                                        <i class="{{iClass}}"></i> {{text}}
+                                    </button>
+                                    {{/acitonCommonButtons}}
+                                </script>
+                                <div class="btn-group" id="actionCommonButtons"></div>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <form id="searchForm" class="form-horizontal">
+                                    <div class="form-group pull-right mn" style="width: 220px;">
+                                        <div class="input-group">
+                                            <input type="text" name="roleName" id="roleName" class="form-control input-sm bradiusL" autocomplete="off" placeholder="输入角色名...">
+                                            <span class="input-group-addon btn-search  input-sm bradiusR" id="submitSearchForm"><i class="fa fa-search"></i> 查询</span>
+                                        </div>
                                     </div>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="panel-body pn">
-                    <div class="table-responsive">
-                        <script type="text/html" id="dataListTpl">
-                            <thead>
+                    <div class="panel-body pn">
+                        <div class="table-responsive">
+                            <script type="text/html" id="dataListTpl">
+                                <thead>
                                 <tr>
                                     {{#hasCommonActionButtons}}
                                     <th>
@@ -65,54 +70,56 @@
                                     <th class="text-right">操作</th>
                                     {{/hasRowActionButtons}}
                                 </tr>
-                            </thead>
-                            <tbody>
+                                </thead>
+                                <tbody>
                                 {{#dataSource}}
-                                    {{#listData}}
-                                    <tr>
-                                        {{#hasCommonActionButtons}}
-                                        <td>
-                                            <label class="option block mn">
-                                                <input type="checkbox" name="checkItem" value="{{roleId}}">
-                                                <span class="checkbox mn"></span>
-                                            </label>
-                                        </td>
-                                        {{/hasCommonActionButtons}}
-                                        <td class="">{{roleName}}</td>
-                                        <td class="">{{department}}</td>
-                                        <td class="">{{roleDesc}}</td>
-                                        <td class="">{{remark}}</td>
-                                        {{#hasRowActionButtons}}
-                                        <td class="text-right">
-                                            <div class="btn-group text-right">
-                                                {{#rowActionButtons}}
-                                                <a href="${ctx}{{menuUrl}}" type="button" class="btn btn-default btn-xs {{class}}" data-roleId="{{roleId}}">{{text}}</a>
-                                                {{/rowActionButtons}}
-                                            </div>
-                                        </td>
-                                        {{/hasRowActionButtons}}
-                                    </tr>
-                                    {{/listData}}
-                                    {{^listData}}
-                                    <tr>
-                                        <td valign="top" colspan="5" class="text-center">没有查询到角色信息</td>
-                                    </tr>
-                                    {{/listData}}
+                                {{#listData}}
+                                <tr>
+                                    {{#hasCommonActionButtons}}
+                                    <td>
+                                        <label class="option block mn">
+                                            <input type="checkbox" name="checkItem" value="{{roleId}}">
+                                            <span class="checkbox mn"></span>
+                                        </label>
+                                    </td>
+                                    {{/hasCommonActionButtons}}
+                                    <td class="">{{roleName}}</td>
+                                    <td class="">{{department}}</td>
+                                    <td class="">{{roleDesc}}</td>
+                                    <td class="">{{remark}}</td>
+                                    {{#hasRowActionButtons}}
+                                    <td class="text-right">
+                                        <div class="btn-group text-right">
+                                            {{#rowActionButtons}}
+                                            <a href="${ctx}{{menuUrl}}" type="button" class="btn btn-default btn-xs {{class}}" data-roleId="{{roleId}}">{{text}}</a>
+                                            {{/rowActionButtons}}
+                                        </div>
+                                    </td>
+                                    {{/hasRowActionButtons}}
+                                </tr>
+                                {{/listData}}
+                                {{^listData}}
+                                <tr>
+                                    <td valign="top" colspan="5" class="text-center">没有查询到角色信息</td>
+                                </tr>
+                                {{/listData}}
                                 {{/dataSource}}
-                            </tbody>
-                        </script>
-                        <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
-                    </div>
-                </div>
-                <div class="panel-footer">
-                    <div class="row">
-                        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
-                            #parse("component/pager.vm")
+                                </tbody>
+                            </script>
+                            <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                         </div>
                     </div>
-                </div>
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                                #parse("component/pager.vm")
+                            </div>
+                        </div>
+                    </div>
 
+                </div>
             </div>
+
         </section>
     </section>
     #parse("layout/sidebarRight.vm")
