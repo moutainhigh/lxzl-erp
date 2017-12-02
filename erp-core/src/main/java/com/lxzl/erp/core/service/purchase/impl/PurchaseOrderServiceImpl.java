@@ -836,6 +836,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         purchaseReceiveOrderDO.setIsNew(purchaseReceiveOrder.getIsNew());
         purchaseReceiveOrderDO.setUpdateTime(now);
         purchaseReceiveOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        purchaseReceiveOrderDO.setRemark(purchaseReceiveOrder.getRemark());
         purchaseReceiveOrderMapper.update(purchaseReceiveOrderDO);
 
         //处理采购收货单商品项变化
@@ -935,16 +936,16 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             }
         }
 
-        for(Integer skuId : newMap.keySet()){
+        for(Integer materialId : newMap.keySet()){
             //如果原列表有此skuId，则更新
-            if(oldMap.containsKey(skuId)){
-                PurchaseReceiveOrderMaterialDO oldDO  = oldMap.get(skuId);
+            if(oldMap.containsKey(materialId)){
+                PurchaseReceiveOrderMaterialDO oldDO  = oldMap.get(materialId);
                 Integer oldId = oldDO.getId();
-                PurchaseReceiveOrderMaterialDO newDO = newMap.get(skuId);
+                PurchaseReceiveOrderMaterialDO newDO = newMap.get(materialId);
                 newDO.setId(oldId);
                 purchaseReceiveOrderMaterialMapper.update(newDO);
             }else{ //如果原列表没有新列表有，则添加
-                PurchaseReceiveOrderMaterialDO newDO = newMap.get(skuId);
+                PurchaseReceiveOrderMaterialDO newDO = newMap.get(materialId);
                 //这种添加属于收货后添加的，用该字段标志
                 newDO.setIsSrc(CommonConstant.COMMON_CONSTANT_NO);
                 newDO.setPurchaseReceiveOrderId(purchaseReceiveOrderDO.getId());

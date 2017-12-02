@@ -141,6 +141,55 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrder.setPurchaseOrderProductList(purchaseOrderProductList);
         TestResult result = getJsonTestResult("/purchaseOrder/update",purchaseOrder);
     }
+    @Test
+    public void updatePurchaseOrder2() throws Exception {
+
+        PurchaseOrder purchaseOrder = JSON.parseObject("{\n" +
+                "\t\"purchaseNo\": \"PO201712012025099545000061068\",\n" +
+                "\t\"productSupplierId\": \"1\",\n" +
+                "\t\"warehouseNo\": \"W201708081508\",\n" +
+                "\t\"isInvoice\": \"0\",\n" +
+                "\t\"isNew\": \"0\",\n" +
+                "\t\"purchaseType\": \"2\",\n" +
+                "\t\"purchaseOrderProductList\": [{\n" +
+                "\t\t\"productId\": \"2000013\",\n" +
+                "\t\t\"productSkuId\": \"40\",\n" +
+                "\t\t\"productAmount\": \"100\",\n" +
+                "\t\t\"productCount\": \"10\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711201356145971009\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201422478141693\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201457288791418\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201500267591516\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291745413251585\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291744581931681\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711171838059981293\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}]\n" +
+                "\t}],\n" +
+                "\t\"purchaseOrderMaterialList\": [{\n" +
+                "\t\t\"materialNo\": \"M201711171838059981293\",\n" +
+                "\t\t\"materialAmount\": 42,\n" +
+                "\t\t\"materialCount\": 2\n" +
+                "\t}]\n" +
+                "}",PurchaseOrder.class);
+        TestResult result = getJsonTestResult("/purchaseOrder/update",purchaseOrder);
+    }
 
 
     @Test
@@ -175,7 +224,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryPurchaseOrderByNo() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setPurchaseNo("PO201712011633396545000011266");
+        purchaseOrder.setPurchaseNo("PO201712012025099545000061068");
         TestResult result = getJsonTestResult("/purchaseOrder/queryPurchaseOrderByNo",purchaseOrder);
     }
     @Test
@@ -272,6 +321,11 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
                 "\t\t\t\"materialNo\": \"M201711171838059981293\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
                 "\t\t}]\n" +
+                "\t}],\n" +
+                "\t\"purchaseReceiveOrderMaterialList\": [{\n" +
+                "\t\t\"realMaterialNo\": \"M201711291745413251585\",\n" +
+                "\t\t\"realMaterialCount\": \"10\",\n" +
+                "\t\t\"remark\": \"\"\n" +
                 "\t}]\n" +
                 "}\n",PurchaseReceiveOrder.class);
         TestResult result = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder",purchaseReceiveOrder);

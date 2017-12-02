@@ -21,21 +21,24 @@ import com.lxzl.erp.core.service.returnOrder.ReturnOrderService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialBulkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
+import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderProductEquipmentDO;
+import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.returnOrder.*;
+import com.lxzl.se.common.exception.BusinessException;
+import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,7 +73,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
                 return serviceResult;
             }
         }
-        //校验退还商品项sku不能重复
+        //校验退还物料项sku不能重复
         List<Material> materialList = addReturnOrderParam.getMaterialList();
         Set<Integer> materialIdSet = new HashSet<>();
         if(CollectionUtil.isNotEmpty(materialList)){
@@ -222,9 +225,10 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NO_EXISTS);
             return serviceResult;
         }
-        //用设备的订单号方式查询客户的所有在租设备，并保存到map以便后续使用
+
+        //查询客户的所有在租设备，并保存到map以便后续使用
         Map<String,ProductEquipmentDO> rentMap = new HashMap<>();
-        List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.findByCustomerId(returnOrderDO.getCustomerId());
+        List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.findRentByCustomerId(returnOrderDO.getCustomerId());
         for(ProductEquipmentDO productEquipmentDO : productEquipmentDOList){
             rentMap.put(productEquipmentDO.getEquipmentNo(),productEquipmentDO);
         }
@@ -235,9 +239,12 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             return serviceResult;
         }
 
-
         //取得订单，并且把商品项存入map方便查找
         OrderDO orderDO = orderMapper.findByOrderNo(productEquipmentDO.getOrderNo());
+        //取得订单的所有在租设备数量
+        Integer rentEquipmentCount = productEquipmentMapper.getRentEquipmentCountByOrderNo(orderDO.getOrderNo());
+        //取得订单的所有在租散料数量
+        Integer rentBulkMaterialCount = bulkMaterialMapper.getRentBulkCountByOrderNo(orderDO.getOrderNo());
         List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
         Map<Integer,OrderProductDO> orderProductDOMap = new HashMap<>();
         for(OrderProductDO orderProductDO : orderProductDOList){
@@ -268,12 +275,12 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             customerRiskManagementMapper.update(customerRiskManagementDO);
         }
         //修改订单,全部归还状态，最后一件归还时间
-        if(rentMap.size()==1){
+        if(rentEquipmentCount==1&&rentBulkMaterialCount==0){
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
             orderDO.setActualReturnTime(now);
             orderMapper.update(orderDO);
         }
-        //修改退还单，归还订单状态，最后一件设备归还的时间,租赁期间产生总费用,实际退还商品总数,修改时间，修改人
+        //修改退还单，归还订单状态,租赁期间产生总费用,实际退还商品总数,修改时间，修改人
         returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
         returnOrderDO.setTotalRentCost(BigDecimalUtil.add(returnOrderDO.getTotalRentCost(),rentCost));
         returnOrderDO.setRealTotalReturnProductCount(returnOrderDO.getRealTotalReturnProductCount()+1);
@@ -336,14 +343,191 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             return serviceResult;
         }
         List<String> materialNoList = doReturnMaterialParam.getMaterialNoList();
+        //查询客户的所有在租散料，并保存到map以便后续使用
+        Map<String,BulkMaterialDO> rentMap = new HashMap<>();
 
-        //用散料的订单号方式查询客户的所有在租设备，并保存到map以便后续使用
-        Map<String,MaterialDO> rentMap = new HashMap<>();
-        List<MaterialDO> materialDOList = materialMapper.findMaterialRentByCustomerId(returnOrderDO.getCustomerId());
-//        for(ProductEquipmentDO productEquipmentDO : productEquipmentDOList){
-//            rentMap.put(productEquipmentDO.getEquipmentNo(),productEquipmentDO);
-//        }
-        return null;
+        List<BulkMaterialDO> rentBulkMaterialDOList = bulkMaterialMapper.findRentByCustomerId(returnOrderDO.getCustomerId());
+        for(BulkMaterialDO bulkMaterialDO : rentBulkMaterialDOList){
+            rentMap.put(bulkMaterialDO.getBulkMaterialNo(),bulkMaterialDO);
+        }
+        //校验散料编号是否有重复的
+        Set<String> materialNoSet = new HashSet<>();
+        for(String materialNo : materialNoList){
+            if(StringUtil.isBlank(materialNo)){
+                serviceResult.setErrorCode(ErrorCode.MATERIAL_NO_NOT_NULL);
+                return serviceResult;
+            }
+            if(!rentMap.containsKey(materialNo)){
+                throw new BusinessException(String.format("用户貌似没有租散料编号为%s的散料吧！"),materialNo);
+            }
+            materialNoSet.add(materialNo);
+        }
+        if(materialNoList.size()>materialNoSet.size()){
+            serviceResult.setErrorCode(ErrorCode.MATERIAL_CAN_NOT_REPEAT);
+            return serviceResult;
+        }
+        Date now = new Date();
+        //获取用户所有在租订单，并存入map待用
+        List<OrderDO> orderDOList = orderMapper.findByCustomerId(returnOrderDO.getCustomerId());
+        Map<String,OrderDO> orderDOMap = new HashMap<>();
+        for(OrderDO orderDO : orderDOList){
+            orderDOMap.put(orderDO.getOrderNo(),orderDO);
+        }
+        //取得每个订单的本次退还的散料总数，存入此map
+        Map<String,Integer> rentBulkMaterialCountNowMap = new HashMap<>();
+        //取得每个订单的在租设备总数，存入此map
+        Map<String,Integer> rentEquipmentCountMap = new HashMap<>();
+        //取得每个订单的在租散料总数，存入此map
+        Map<String,Integer> rentBulkMaterialCountMap = new HashMap<>();
+
+        //待更新的散料列表
+        List<BulkMaterialDO> bulkMaterialDOListForUpdate = new ArrayList<>();
+        //待更新的订单散料列表
+        List<OrderMaterialBulkDO> orderMaterialBulkDOListForUpdate = new ArrayList<>();
+        //待更新的客户风控信息
+        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(returnOrderDO.getCustomerId());
+        //待更新的退还物料项列表
+        Map<Integer , ReturnOrderMaterialDO> returnOrderMaterialDOMapForUpdate = new HashMap<>();
+        //待保存的退还物料项列表
+        Map<Integer , ReturnOrderMaterialDO> returnOrderMaterialDOMapForSave = new HashMap<>();
+        //待保存的退还散料列表
+        List<ReturnOrderMaterialBulkDO> returnOrderMaterialBulkDOListForSave = new ArrayList<>();
+        //租赁期间送费用
+        BigDecimal rentCostTotal = BigDecimal.ZERO;
+        for (String materialNo : materialNoList){
+            BulkMaterialDO bulkMaterialDO = rentMap.get(materialNo);
+            //取得订单，并且把商品项存入map方便查找
+            OrderDO orderDO = orderDOMap.get(bulkMaterialDO.getOrderNo());
+            //这里统计订单的本次退还散料数+1
+            if(!rentBulkMaterialCountNowMap.containsKey(orderDO.getId())){
+                rentBulkMaterialCountNowMap.put(orderDO.getOrderNo(),1);
+                //这里查询一遍该订单的在租设备总数，保存到map
+                rentEquipmentCountMap.put(orderDO.getOrderNo(),productEquipmentMapper.getRentEquipmentCountByOrderNo(orderDO.getOrderNo()));
+                //这里查询一遍该订单的在租物料总数，保存到map
+                rentBulkMaterialCountMap.put(orderDO.getOrderNo(),bulkMaterialMapper.getRentBulkCountByOrderNo(orderDO.getOrderNo()));
+            }else{
+                rentBulkMaterialCountMap.put(orderDO.getOrderNo(),rentBulkMaterialCountMap.get(orderDO.getId())+1);
+            }
+
+            List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
+            Map<Integer,OrderMaterialDO> orderMaterialDOMap = new HashMap<>();
+            for(OrderMaterialDO orderMaterialDO : orderMaterialDOList){
+                orderMaterialDOMap.put(orderMaterialDO.getId(),orderMaterialDO);
+            }
+            //修改设备状态为闲置
+            bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+            bulkMaterialDO.setOrderNo("");
+            bulkMaterialDOListForUpdate.add(bulkMaterialDO);
+            //修改订单散料-实际归还时间，实际租金
+            OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findRentByCustomerIdAndBulkMaterialId(returnOrderDO.getCustomerId(),bulkMaterialDO.getId());
+            OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(orderMaterialBulkDO.getOrderMaterialId());
+            //todo 计算该设备的租金
+            BigDecimal rentCost = CommonConstant.COMMON_CONSTANT_NO.equals(returnOrderDO.getIsCharging())?
+                    new BigDecimal(0):amountSupport.calculateRentCost(orderMaterialDO.getMaterialUnitAmount(),orderDO.getRentStartTime(),now,orderDO.getRentType());
+            rentCostTotal = BigDecimalUtil.add(rentCost,rentCostTotal);
+            orderMaterialBulkDO.setActualRentAmount(rentCost);
+            orderMaterialBulkDO.setActualReturnTime(now);
+            orderMaterialBulkDOListForUpdate.add(orderMaterialBulkDO);
+
+            //由于按天租赁无需授信额度，需交押金，所以当订单按月或按天租赁时，修改客户已用授信额度
+            if(OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())||OrderRentType.RENT_TYPE_TIME.equals(orderDO.getRentType())){
+                customerRiskManagementDO.setCreditAmountUsed(BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(),bulkMaterialDO.getBulkMaterialPrice()));
+            }
+            ReturnOrderMaterialDO returnOrderMaterialDO = null;
+            //修改退还物料项表,实际退还物料数量,修改时间，修改人
+            //如果待保存的退还物料项列表里有这个物料了，说明这个物料在新建退还单中没有，而且目前已经入过至少退一个了，那么就累加实际退还字段即可
+            if(returnOrderMaterialDOMapForSave.containsKey(bulkMaterialDO.getMaterialId())){
+                returnOrderMaterialDO = returnOrderMaterialDOMapForSave.get(bulkMaterialDO.getMaterialId());
+                returnOrderMaterialDO.setRealReturnMaterialCount(returnOrderMaterialDO.getReturnMaterialCount()+1);
+            }else if(returnOrderMaterialDOMapForUpdate.containsKey(bulkMaterialDO.getMaterialId())){
+                returnOrderMaterialDO = returnOrderMaterialDOMapForUpdate.get(bulkMaterialDO.getMaterialId());
+                returnOrderMaterialDO.setRealReturnMaterialCount(returnOrderMaterialDO.getRealReturnMaterialCount()+1);
+            }else{//否则去查询退还单物料项
+                returnOrderMaterialDO = returnOrderMaterialMapper.findByMaterialIdAndReturnOrderId(bulkMaterialDO.getMaterialId(),returnOrderDO.getId());
+                //如果退还单物料项不存在，意味着当初建退还单的时候，没有要退该种类的物料，但是货拿回来了
+                //这种情况有两种处理方式：1.在本退还单中自动创建该退还物料项 2.不允许在该退还单中退，要新建退还单
+                //目前采用第一种处理方式，系统自动创建该退还物料项
+                if(returnOrderMaterialDO==null){
+                    MaterialDO materialDO = materialMapper.findById(bulkMaterialDO.getMaterialId());
+                    returnOrderMaterialDO = new ReturnOrderMaterialDO();
+                    returnOrderMaterialDO.setReturnOrderId(returnOrderDO.getId());
+                    returnOrderMaterialDO.setReturnOrderNo(returnOrderDO.getReturnOrderNo());
+                    returnOrderMaterialDO.setReturnMaterialId(bulkMaterialDO.getMaterialId());
+                    returnOrderMaterialDO.setReturnMaterialCount(0);
+                    returnOrderMaterialDO.setReturnMaterialSnapshot(JSON.toJSONString(ConverterUtil.convert(materialDO,Material.class)));
+                    returnOrderMaterialDO.setRealReturnMaterialCount(1);
+                    returnOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    returnOrderMaterialDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    returnOrderMaterialDO.setCreateTime(now);
+                    returnOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    returnOrderMaterialDO.setUpdateTime(now);
+                    returnOrderMaterialDOMapForSave.put(bulkMaterialDO.getMaterialId(),returnOrderMaterialDO);
+                }else{
+                    returnOrderMaterialDO.setRealReturnMaterialCount(returnOrderMaterialDO.getRealReturnMaterialCount()+1);
+                    returnOrderMaterialDO.setUpdateTime(now);
+                    returnOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    returnOrderMaterialDOMapForUpdate.put(returnOrderMaterialDO.getReturnMaterialId(),returnOrderMaterialDO);
+                }
+            }
+            //添加退还散料记录
+            ReturnOrderMaterialBulkDO returnOrderMaterialBulkDO = new ReturnOrderMaterialBulkDO();
+            returnOrderMaterialBulkDO.setReturnOrderMaterialId(returnOrderMaterialDO.getId());
+            returnOrderMaterialBulkDO.setReturnOrderId(returnOrderDO.getId());
+            returnOrderMaterialBulkDO.setReturnOrderNo(returnOrderDO.getReturnOrderNo());
+            returnOrderMaterialBulkDO.setBulkMaterialId(bulkMaterialDO.getId());
+            returnOrderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
+            returnOrderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            returnOrderMaterialBulkDO.setCreateTime(now);
+            returnOrderMaterialBulkDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            returnOrderMaterialBulkDO.setUpdateTime(now);
+            returnOrderMaterialBulkDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            returnOrderMaterialBulkDOListForSave.add(returnOrderMaterialBulkDO);
+        }
+        //待更新的订单列表
+        List<OrderDO> orderDOListForUpdate = new ArrayList<>();
+        for(String orderNo : rentBulkMaterialCountNowMap.keySet()){
+            //修改订单,全部归还状态，最后一件归还时间
+            if(rentEquipmentCountMap.get(orderNo)==0&&rentBulkMaterialCountNowMap.get(orderNo)==rentBulkMaterialCountMap.get(orderNo)){
+                OrderDO orderDO = orderDOMap.get(orderNo);
+                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
+                orderDO.setActualReturnTime(now);
+                orderDOListForUpdate.add(orderDO);
+            }
+        }
+        //批量更新散料列表
+        bulkMaterialMapper.updateList(bulkMaterialDOListForUpdate);
+        //批量更新订单散料列表
+        orderMaterialBulkMapper.updateList(orderMaterialBulkDOListForUpdate);
+        //批量更新退还物料项列表
+        List<ReturnOrderMaterialDO> returnOrderMaterialDOListForUpdate = new ArrayList<>();
+        for(Integer key : returnOrderMaterialDOMapForUpdate.keySet()){
+            returnOrderMaterialDOListForUpdate.add(returnOrderMaterialDOMapForUpdate.get(key));
+        }
+        returnOrderMaterialMapper.updateListForReturn(returnOrderMaterialDOListForUpdate);
+        //批量保存退还物料项列表
+        List<ReturnOrderMaterialDO> returnOrderMaterialDOListForSave = new ArrayList<>();
+        for(Integer key : returnOrderMaterialDOMapForSave.keySet()){
+            returnOrderMaterialDOListForSave.add(returnOrderMaterialDOMapForSave.get(key));
+        }
+        returnOrderMaterialMapper.saveList(returnOrderMaterialDOListForSave);
+        //批量保存退还散料列表
+        returnOrderMaterialBulkMapper.saveList(returnOrderMaterialBulkDOListForSave);
+//        List<ReturnOrderMaterialBulkDO> returnOrderMaterialBulkDOListForSave = new ArrayList<>();
+        //批量更新订单列表
+        orderMapper.updateListForReturn(orderDOListForUpdate);
+
+        //修改退还单，归还订单状态,租赁期间产生总费用,实际退还商品总数,修改时间，修改人
+        returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
+        returnOrderDO.setTotalRentCost(BigDecimalUtil.add(returnOrderDO.getTotalRentCost(),rentCostTotal));
+        returnOrderDO.setRealTotalReturnProductCount(returnOrderDO.getRealTotalReturnProductCount()+1);
+        returnOrderDO.setUpdateTime(now);
+        returnOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        returnOrderMapper.update(returnOrderDO);
+        //更新客户风控信息
+        customerRiskManagementMapper.update(customerRiskManagementDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
     }
 
     @Override
@@ -404,4 +588,10 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     private CustomerRiskManagementMapper customerRiskManagementMapper;
     @Autowired
     private ReturnOrderProductEquipmentMapper returnOrderProductEquipmentMapper;
+    @Autowired
+    private BulkMaterialMapper bulkMaterialMapper;
+    @Autowired
+    private OrderMaterialBulkMapper orderMaterialBulkMapper;
+    @Autowired
+    private ReturnOrderMaterialBulkMapper returnOrderMaterialBulkMapper;
 }
