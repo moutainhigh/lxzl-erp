@@ -145,7 +145,7 @@
             LEFT JOIN erp_area_province eap ON eap.id = eoci.province
             LEFT JOIN erp_area_city eac ON eac.id = eoci.city
             LEFT JOIN erp_area_district ead ON ead.id = eoci.district
-            WHERE eo.id = #{orderId, jdbcType=INTEGER}
+            WHERE eo.id = #{orderId, jdbcType=INTEGER} and eo.data_status=1
         ) m_order
         LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
@@ -172,7 +172,7 @@
             LEFT JOIN erp_area_province eap ON eap.id = eoci.province
             LEFT JOIN erp_area_city eac ON eac.id = eoci.city
             LEFT JOIN erp_area_district ead ON ead.id = eoci.district
-            WHERE eo.order_no = #{orderNo, jdbcType=VARCHAR}
+            WHERE eo.order_no = #{orderNo, jdbcType=VARCHAR} and eo.data_status=1
         ) m_order
         LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
@@ -197,7 +197,7 @@
         LEFT JOIN erp_area_province eap ON eap.id = eoci.province
         LEFT JOIN erp_area_city eac ON eac.id = eoci.city
         LEFT JOIN erp_area_district ead ON ead.id = eoci.district
-        WHERE eo.buyer_customer_id = #{customerId, jdbcType=INTEGER}
+        WHERE eo.buyer_customer_id = #{customerId, jdbcType=INTEGER} and eo.data_status=1
         ) m_order
         LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
@@ -414,4 +414,25 @@
         INSERT INTO erp_order
         <include refid="set_column_sql"/>
     </insert>
+    <update id="updateListForReturn" parameterType="java.util.ArrayList">
+        update erp_order
+        SET
+        <trim>
+            order_status =
+            <foreach item="orderDO" collection="orderDOList"  index="index" separator=" " open="case id" close="end">
+                when #{orderDO.id} then #{orderDO.orderStatus}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            actual_return_time =
+            <foreach item="orderDO" collection="orderDOList"  index="index" separator=" " open="case id" close="end">
+                when #{orderDO.id} then #{orderDO.actualReturnTime}
+            </foreach>
+        </trim>
+        WHERE id in
+        <foreach collection="orderDOList" index="index" item="orderDO"
+                 separator="," open="(" close=")">
+            #{orderDO.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
 </mapper>

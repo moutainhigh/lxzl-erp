@@ -42,13 +42,18 @@
 		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm
 		WHERE ebm.bulk_material_no = #{bulkMaterialNo, jdbcType=VARCHAR} AND data_status = 1
 	</select>
-
+	<select id="findRentByCustomerId" resultMap="BulkMaterialDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_order eo INNER JOIN erp_bulk_material ebm ON eo.order_no=ebm.order_no WHERE eo.data_status=1 AND eo.buyer_customer_id = #{customerId}
+	</select>
 
 	<select id="findByMaterialTypeAndModelId" resultMap="BulkMaterialDO" parameterType="java.util.Map">
 		select
 		<include refid="column_List"/>
 		from erp_bulk_material ebm
 		where ebm.bulk_material_type = #{materialType, jdbcType=INTEGER} and ebm.material_model_id = #{materialModelId, jdbcType=INTEGER} and ebm.data_status = 1
+	</select>
+	<select id="getRentBulkCountByOrderNo" resultType="java.lang.Integer">
+		SELECT count(1) FROM erp_bulk_material ebm WHERE ebm.data_status=1 AND ebm.order_no = #{orderNo}
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -354,4 +359,5 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO">
 		UPDATE erp_bulk_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
 </mapper>
