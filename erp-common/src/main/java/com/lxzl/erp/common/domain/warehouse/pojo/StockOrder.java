@@ -16,7 +16,7 @@ public class StockOrder implements Serializable {
 	private Integer operationType;
 	private Integer causeType;
 	private String referNo;
-	private Integer orderStatus;
+	private Integer stockOrderStatus;
 	private Integer srcWarehouseId;
 	private Integer srcWarehousePositionId;
 	private Integer targetWarehouseId;
@@ -75,12 +75,12 @@ public class StockOrder implements Serializable {
 		this.referNo = referNo;
 	}
 
-	public Integer getOrderStatus(){
-		return orderStatus;
+	public Integer getStockOrderStatus() {
+		return stockOrderStatus;
 	}
 
-	public void setOrderStatus(Integer orderStatus){
-		this.orderStatus = orderStatus;
+	public void setStockOrderStatus(Integer stockOrderStatus) {
+		this.stockOrderStatus = stockOrderStatus;
 	}
 
 	public Integer getSrcWarehouseId(){

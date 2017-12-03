@@ -764,14 +764,31 @@ CREATE TABLE `erp_product_img` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='商品图片表';
 
-DROP TABLE if exists `erp_product_equipment_repair_record`;
-CREATE TABLE `erp_product_equipment_repair_record` (
+
+DROP TABLE if exists `erp_repair_order`;
+CREATE TABLE `erp_repair_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `equipment_no` varchar(100) NOT NULL COMMENT '设备编号唯一',
-  `order_id` int(20) COMMENT '订单ID',
-  `order_product_id` int(20) COMMENT '订单项ID',
+  `repair_order_no` varchar(100) NOT NULL COMMENT '出入库单编号',
   `repair_reason` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '维修原因，由发起人填写',
-  `repair_status` int(11) NOT NULL DEFAULT '0' COMMENT '维修状态，0发起维修，1维修中，2维修完成回库',
+  `repair_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '维修单状态，0-初始化维修单,4-审核中,8-待维修,12-维修中,16-维修完成回库,20-取消维修',
+  `order_id` int(20) DEFAULT NULL COMMENT '订单ID，如果是在客户手里出现的维修，此字段不能为空',
+  `order_product_id` int(20) DEFAULT NULL COMMENT '订单项ID,如果是在客户手里出现的维修，此字段不能为空',
+  `data_status` int(11) NOT NULL DEFAULT 0 COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备维修单';
+
+DROP TABLE if exists `erp_repair_order_equipment`;
+CREATE TABLE `erp_repair_order_equipment` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `repair_order_no` varchar(100) NOT NULL COMMENT '维修单编号',
+  `equipment_id` int(20) NOT NULL COMMENT '设备ID',
+  `equipment_no` varchar(100) NOT NULL COMMENT '设备编号唯一',
+  `repair_over_time` datetime DEFAULT NULL COMMENT '维修完成时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -779,7 +796,23 @@ CREATE TABLE `erp_product_equipment_repair_record` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='商品维修记录表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备维修单单明细';
+
+DROP TABLE if exists `erp_repair_order_bulk_material`;
+CREATE TABLE `erp_repair_order_bulk_material` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `repair_order_no` varchar(100) NOT NULL COMMENT '维修单编号',
+  `bulk_material_id` int(20) NOT NULL COMMENT '散料ID',
+  `bulk_material_no` varchar(100) NOT NULL COMMENT '散料编号唯一',
+  `repair_over_time` datetime DEFAULT NULL COMMENT '维修完成时间',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='散料维修单明细';
 
 -- ****************************************仓库模块**************************************** --
 
@@ -820,7 +853,7 @@ CREATE TABLE `erp_stock_order` (
   `operation_type` int(11) NOT NULL COMMENT '操作类型，1入库，2出库',
   `cause_type` int(11) NOT NULL COMMENT '起因类型，1采购入库，2退货回库，3维修回库，4用户租赁',
   `refer_no` varchar(100) NOT NULL COMMENT '关联单号',
-  `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '出入库单状态，1未出库，2已出库',
+  `stock_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '出入库单状态，1未出库，2已出库',
   `src_warehouse_id` int(20) COMMENT '源仓库ID',
   `src_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '源仓位ID',
   `target_warehouse_id` int(20) NOT NULL COMMENT '目标仓库ID',
@@ -834,7 +867,7 @@ CREATE TABLE `erp_stock_order` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_stock_type_refer` (`cause_type`,`refer_no`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备出入库单';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备出入库单（仅记录）';
 
 DROP TABLE if exists `erp_stock_order_equipment`;
 CREATE TABLE `erp_stock_order_equipment` (
