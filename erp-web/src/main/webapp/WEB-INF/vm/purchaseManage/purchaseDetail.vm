@@ -270,14 +270,14 @@
                                             <td>{{remark}}</td>
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
-                                                    <a href="#" type="button" class="btn btn-default btn-xs {{class}}">查看</a>
+                                                    <a href="${ctx}purchase-delivery-manage/detail?no={{purchaseDeliveryNo}}" target="_blank">查看</a>
                                                 </div>
                                             </td>
                                         </tr>
                                         {{/listData}}
                                         {{^listData}}
                                         <tr>
-                                            <td valign="top" colspan="14" class="text-center">没有查询到发货通知</td>
+                                            <td valign="top" colspan="14" class="text-center">没有查询到发货单</td>
                                         </tr>
                                         {{/listData}}
                                         {{/dataSource}}
@@ -322,14 +322,14 @@
                                             <td>{{remark}}</td>
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
-                                                    <a href="#" type="button">查看</a>
+                                                    <a href="${ctx}purchase-receive-manage/detail?no={{purchaseReceiveNo}}" target="_blank">查看</a>
                                                 </div>
                                             </td>
                                         </tr>
                                         {{/listData}}
                                         {{^listData}}
                                         <tr>
-                                            <td valign="top" colspan="14" class="text-center">没有查询到收料通知</td>
+                                            <td valign="top" colspan="14" class="text-center">没有查询到收货单</td>
                                         </tr>
                                         {{/listData}}
                                         {{/dataSource}}
@@ -351,7 +351,7 @@
     </div>
     #parse("layout/footer.vm")
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.purchase.detail.js');
+        management_load_script('${staticManagement}/js', 'manage.purchase.util.js', 'manage.purchase.detail.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

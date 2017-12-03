@@ -77,14 +77,14 @@
                                     </label>
                                 </th>
                                 {{/hasCommonActionButtons}}
+                                <th>发货单编号</th>
                                 <th>采购单编号</th>
-                                <th>采购发货单编号</th>
                                 <th>仓库</th>
                                 <th>是否有发票</th>
                                 <th>是否全新机</th>
                                 <th>发货状态</th>
+                                <th>创建时间</th>
                                 <th>发货时间</th>
-                                <th>数据归属供应商</th>
                                 <th>备注</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
@@ -103,14 +103,14 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{purchaseNo}}</td>
                                 <td>{{purchaseDeliveryNo}}</td>
+                                <td>{{purchaseOrderNo}}</td>
                                 <td>{{warehouse}}</td>
                                 <td>{{isInvoiceStr}}</td>
                                 <td>{{isNewStr}}</td>
                                 <td>{{purchaseDeliveryOrderStatusStr}}</td>
+                                <td>{{createTimeFormat}}</td>
                                 <td>{{deliveryTimeFormat}}</td>
-                                <td></td>
                                 <td>{{remark}}</td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">

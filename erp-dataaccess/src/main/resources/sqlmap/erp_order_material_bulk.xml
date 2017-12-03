@@ -34,6 +34,10 @@
 		WHERE eomb.order_material_id = #{orderMaterialId, jdbcType=INTEGER} AND eomb.data_status = 1
 	</select>
 
+	<select id="findRentByCustomerIdAndEquipmentId" resultMap="OrderMaterialBulkDO">
+		SELECT <include refid="column_List"/> FROM erp_order eo INNER JOIN erp_order_material_bulk eomb ON eo.id=eomb.order_id AND eomb.data_status=1
+		WHERE eo.buyer_customer_id = #{customerId} AND eo.data_status=1 AND eo.order_status=24 AND eomb.bulk_material_id=#{bulkMaterialId} AND eomb.actual_return_time IS NULL
+	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(eomb.id) FROM erp_order_material_bulk eomb 
 		<where>
@@ -115,4 +119,98 @@
 			FROM DUAL
 		</foreach>
 	</insert>
+	<update id="updateList" parameterType="java.util.ArrayList">
+		update erp_order_material_bulk
+		SET
+		<trim>
+			order_id =
+			<foreach item="orderMaterialBulkDO" collection="orderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{orderMaterialBulkDO.id,jdbcType=INTEGER} then #{orderMaterialBulkDO.orderId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			order_material_id =
+			<foreach item="orderMaterialBulkDO" collection="orderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{orderMaterialBulkDO.id,jdbcType=INTEGER} then #{orderMaterialBulkDO.orderMaterialId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			bulk_material_id =
+			<foreach item="orderMaterialBulkDO" collection="orderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{orderMaterialBulkDO.id,jdbcType=INTEGER} then #{orderMaterialBulkDO.bulkMaterialId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			bulk_material_no =
+			<foreach item="orderMaterialBulkDO" collection="orderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{orderMaterialBulkDO.id,jdbcType=INTEGER} then #{orderMaterialBulkDO.bulkMaterialNo,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			expect_return_time =
+			<foreach item="orderMaterialBulkDO" collection="orderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{orderMaterialBulkDO.id,jdbcType=INTEGER} then #{orderMaterialBulkDO.expectReturnTime,jdbcType=TIMESTAMP}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			actual_return_time =
+			<foreach item="orderMaterialBulkDO" collection="orderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{orderMaterialBulkDO.id,jdbcType=INTEGER} then #{orderMaterialBulkDO.actualReturnTime,jdbcType=TIMESTAMP}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			expect_rent_amount =
+			<foreach item="orderMaterialBulkDO" collection="orderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{orderMaterialBulkDO.id,jdbcType=INTEGER} then #{orderMaterialBulkDO.expectRentAmount,jdbcType=DECIMAL}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			actual_rent_amount =
+			<foreach item="orderMaterialBulkDO" collection="orderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{orderMaterialBulkDO.id,jdbcType=INTEGER} then #{orderMaterialBulkDO.actualRentAmount,jdbcType=DECIMAL}
+			</foreach>
+		</trim>
+
+		<trim prefix=",">
+			data_status =
+			<foreach item="orderMaterialBulkDO" collection="orderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{orderMaterialBulkDO.id,jdbcType=INTEGER} then #{orderMaterialBulkDO.dataStatus,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			remark =
+			<foreach item="orderMaterialBulkDO" collection="orderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{orderMaterialBulkDO.id,jdbcType=INTEGER} then #{orderMaterialBulkDO.remark,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			create_time =
+			<foreach item="orderMaterialBulkDO" collection="orderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{orderMaterialBulkDO.id,jdbcType=INTEGER} then #{orderMaterialBulkDO.createTime,jdbcType=TIMESTAMP}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			create_user =
+			<foreach item="orderMaterialBulkDO" collection="orderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{orderMaterialBulkDO.id,jdbcType=INTEGER} then #{orderMaterialBulkDO.createUser,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach item="orderMaterialBulkDO" collection="orderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{orderMaterialBulkDO.id,jdbcType=INTEGER} then #{orderMaterialBulkDO.updateTime,jdbcType=TIMESTAMP}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_user =
+			<foreach item="orderMaterialBulkDO" collection="orderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{orderMaterialBulkDO.id,jdbcType=INTEGER} then #{orderMaterialBulkDO.updateUser,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="orderMaterialBulkDOList" index="index" item="orderMaterialBulkDO"
+				 separator="," open="(" close=")">
+			#{orderMaterialBulkDO.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
 </mapper>

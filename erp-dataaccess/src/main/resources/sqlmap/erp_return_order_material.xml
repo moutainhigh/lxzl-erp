@@ -26,7 +26,12 @@
 		SELECT <include refid="column_List"/> FROM erp_return_order_material erom 
 		WHERE erom.id = #{id, jdbcType=INTEGER} AND erom.data_status = 1 
 	</select>
-
+	<select id="findByMaterialIdAndReturnOrderId" resultMap="ReturnOrderMaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_return_order_material erom
+		WHERE erom.return_material_id = #{materialId, jdbcType=INTEGER}
+		AND erop.return_order_id = #{returnOrderId, jdbcType=INTEGER}
+		AND erop.data_status = 1
+	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(erom.id) FROM erp_return_order_material erom 
 		<where>
@@ -105,4 +110,43 @@
 			#{returnOrderMaterialDO.createTime},#{returnOrderMaterialDO.createUser},#{returnOrderMaterialDO.updateTime},#{returnOrderMaterialDO.updateUser})
 		</foreach>
 	</insert>
+
+	<insert id="saveList" parameterType="java.util.List">
+		insert into erp_return_order_material
+		(return_order_id,return_order_no,return_material_id,return_material_count,real_return_material_count,return_material_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
+		values
+		<foreach collection="returnOrderMaterialDOList" item="returnOrderMaterialDO" index="index" separator =",">
+			(#{returnOrderMaterialDO.returnOrderId},#{returnOrderMaterialDO.returnOrderNo},#{returnOrderMaterialDO.returnMaterialId},#{returnOrderMaterialDO.returnMaterialCount},#{returnOrderMaterialDO.realReturnMaterialCount},
+			#{returnOrderMaterialDO.returnMaterialSnapshot},#{returnOrderMaterialDO.dataStatus},#{returnOrderMaterialDO.remark},
+			#{returnOrderMaterialDO.createTime},#{returnOrderMaterialDO.createUser},#{returnOrderMaterialDO.updateTime},#{returnOrderMaterialDO.updateUser})
+		</foreach>
+	</insert>
+	<update id="updateListForReturn" parameterType="java.util.ArrayList">
+		update erp_order
+		SET
+		<trim>
+			real_return_material_count =
+			<foreach item="returnOrderMaterialDO" collection="returnOrderMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{returnOrderMaterialDO.id} then #{returnOrderMaterialDO.realReturnMaterialCount}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach item="returnOrderMaterialDO" collection="returnOrderMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{returnOrderMaterialDO.id} then #{returnOrderMaterialDO.updateTime}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_user =
+			<foreach item="returnOrderMaterialDO" collection="returnOrderMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{returnOrderMaterialDO.id} then #{returnOrderMaterialDO.updateUser}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="returnOrderMaterialDOList" index="index" item="returnOrderMaterialDO"
+				 separator="," open="(" close=")">
+			#{returnOrderMaterialDO.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+	
 </mapper>
