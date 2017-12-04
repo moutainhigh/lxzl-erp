@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-用户管理-组织架构</title>
+    #parse("layout/header.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/fancytree2/skin-win8/ui.fancytree.min.css">
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+
+            #parse("component/loading.vm")
+
+            <div class="panel panel-primary panel-border top">
+                <div class="panel-menu p12">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <script type="text/html" id="actionCommonButtonsTpl">
+                                <button type="button" class="btn btn-primary btn-sm light refreshButton"  title="刷新"><i class="fa fa-refresh"></i></button>
+                                {{#acitonCommonButtons}}
+                                <button type="button" class="btn btn-primary btn-sm light {{class}}" title="{{text}}">
+                                    <i class="{{iClass}}"></i> {{text}}
+                                </button>
+                                {{/acitonCommonButtons}}
+                            </script>
+                            <div class="btn-group" id="actionCommonButtons"></div>
+                        </div>
+##                        <div class="col-md-6 text-right">
+##                            <form id="searchForm" class="form-horizontal">
+##                                <div class="form-group pull-right mn" style="width: 220px;">
+##                                    <div class="input-group">
+##                                        <input type="text" name="roleName" id="roleName" class="form-control input-sm bradiusL" autocomplete="off" placeholder="输入角色名...">
+##                                        <span class="input-group-addon btn-search  input-sm bradiusR" id="submitSearchForm"><i class="fa fa-search"></i> 查询</span>
+##                                    </div>
+##                                </div>
+##                            </form>
+##                        </div>
+                    </div>
+                </div>
+                <div class="panel-body pn">
+                    <div class="table-responsive">
+                        <script type="text/html" id="dataListTableTpl">
+                            <colgroup>
+                                <col width="20%"></col>
+                                <col width="40%"></col>
+                                <col width="20%"></col>
+                                <col width="20%"></col>
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th></th>
+                                <th>ID</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </script>
+                        <table class="table" id="dataListTable">
+                            <colgroup>
+                                <col width="20%"></col>
+                                <col width="40%"></col>
+                                <col width="20%"></col>
+                                <col width="20%"></col>
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th></th>
+                                    <th>ID</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="panel-footer">
+##                    <div class="row">
+##                        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+##                            #parse("component/pager.vm")
+##                        </div>
+##                    </div>
+                </div>
+
+            </div>
+        </section>
+    </section>
+    #parse("layout/sidebarRight.vm")
+
+</div>
+    #parse("layout/footer.vm")
+
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/fancytree2/jquery.fancytree-all.min.js"></script>
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js','manage.department.js' ,'manage.department.add.js');
+</script>
+
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    DepartmentManage.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+</script>
+
+</body>
+</html>
