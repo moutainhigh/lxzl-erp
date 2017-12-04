@@ -74,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderProductInfo(orderProductDOList, orderDO);
         calculateOrderMaterialInfo(orderMaterialDOList, orderDO);
         // 校验客户风控信息
-        verifyCustomerRiskInfo(orderDO, loginUser.getUserId(), currentTime);
+        verifyCustomerRiskInfo(orderDO);
 
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setOrderNo(GenerateNoUtil.generateOrderNo(currentTime));
@@ -650,7 +650,7 @@ public class OrderServiceImpl implements OrderService {
         return null;
     }
 
-    public void verifyCustomerRiskInfo(OrderDO orderDO, Integer loginUserId, Date currentTime) {
+    public void verifyCustomerRiskInfo(OrderDO orderDO) {
         CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
         if (!OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
             if (customerRiskManagementDO == null) {

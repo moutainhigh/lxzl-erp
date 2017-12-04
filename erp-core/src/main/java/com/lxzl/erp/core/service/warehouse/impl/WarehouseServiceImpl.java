@@ -104,8 +104,8 @@ public class WarehouseServiceImpl implements WarehouseService {
             result.setErrorCode(verifyCode);
             return result;
         }
-
-        WarehouseDO dbRecord = warehouseMapper.finByCompanyAndType(warehouse.getSubCompanyId(), warehouse.getWarehouseType());
+        // TODO 添加仓库的时候，只允许添加真实存在的仓库
+        WarehouseDO dbRecord = warehouseMapper.finByCompanyAndType(warehouse.getSubCompanyId(), WarehouseType.WAREHOUSE_TYPE_DEFAULT);
         if (dbRecord != null) {
             result.setErrorCode(ErrorCode.RECORD_ALREADY_EXISTS);
             return result;
@@ -296,7 +296,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         stockOrderDO.setSrcWarehousePositionId(srcWarehousePositionId);
         stockOrderDO.setTargetWarehouseId(targetWarehouseId);
         stockOrderDO.setTargetWarehousePositionId(targetWarehousePositionId);
-        stockOrderDO.setOrderStatus(StockOrderStatus.STOCK_ORDER_STATUS_OVER);
+        stockOrderDO.setStockOrderStatus(StockOrderStatus.STOCK_ORDER_STATUS_OVER);
         stockOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         stockOrderDO.setUpdateUser(loginUser.getUserId().toString());
         stockOrderDO.setCreateUser(loginUser.getUserId().toString());
@@ -391,7 +391,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         stockOrderDO.setSrcWarehousePositionId(srcWarehousePositionId);
         stockOrderDO.setTargetWarehouseId(targetWarehouseId);
         stockOrderDO.setTargetWarehousePositionId(targetWarehousePositionId);
-        stockOrderDO.setOrderStatus(StockOrderStatus.STOCK_ORDER_STATUS_OVER);
+        stockOrderDO.setStockOrderStatus(StockOrderStatus.STOCK_ORDER_STATUS_OVER);
         stockOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         stockOrderDO.setUpdateUser(loginUser.getUserId().toString());
         stockOrderDO.setCreateUser(loginUser.getUserId().toString());

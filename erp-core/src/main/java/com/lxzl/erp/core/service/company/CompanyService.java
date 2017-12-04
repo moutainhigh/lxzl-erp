@@ -22,6 +22,8 @@ public interface CompanyService {
 
     ServiceResult<String, List<Department>> getDepartmentList(DepartmentQueryParam departmentQueryParam);
 
+    ServiceResult<String, Department> getDepartmentById(Integer departmentId);
+
     ServiceResult<String, CompanyDepartmentTree> getCompanyDepartmentTree(DepartmentQueryParam departmentQueryParam);
 
     ServiceResult<String, CompanyDepartmentTree> getCompanyDepartmentUserTree(DepartmentQueryParam departmentQueryParam);

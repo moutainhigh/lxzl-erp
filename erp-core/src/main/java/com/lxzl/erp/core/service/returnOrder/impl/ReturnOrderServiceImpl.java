@@ -4,15 +4,15 @@ import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
-import com.lxzl.erp.common.domain.returnOrder.AddReturnOrderParam;
-import com.lxzl.erp.common.domain.returnOrder.DoReturnEquipmentParam;
-import com.lxzl.erp.common.domain.returnOrder.DoReturnMaterialParam;
-import com.lxzl.erp.common.domain.returnOrder.ReturnOrderPageParam;
+import com.lxzl.erp.common.domain.returnOrder.*;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
+import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderMaterialBulk;
+import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProductEquipment;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.product.ProductService;
@@ -222,7 +222,10 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         //校验退还单是否存在
         ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(doReturnEquipmentParam.getReturnOrderNo());
         if(returnOrderDO==null){
-            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NO_EXISTS);
+            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }else if(ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(returnOrderDO)){
+            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_END_YET);
             return serviceResult;
         }
 
@@ -334,12 +337,16 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     }
 
     @Override
-    public ServiceResult<String, Material> doReturnMaterial(DoReturnMaterialParam doReturnMaterialParam) {
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, Material> doReturnMaterial(DoReturnMaterialParam doReturnMaterialParam){
         ServiceResult<String, Material> serviceResult = new ServiceResult<>();
         //校验退还单是否存在
         ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(doReturnMaterialParam.getReturnOrderNo());
         if(returnOrderDO==null){
-            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NO_EXISTS);
+            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }else if(ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(returnOrderDO)){
+            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_END_YET);
             return serviceResult;
         }
         List<String> materialNoList = doReturnMaterialParam.getMaterialNoList();
@@ -358,7 +365,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
                 return serviceResult;
             }
             if(!rentMap.containsKey(materialNo)){
-                throw new BusinessException(String.format("用户貌似没有租散料编号为%s的散料吧！"),materialNo);
+                throw new BusinessException(String.format("用户貌似没有租散料编号为%s的散料吧！",materialNo));
             }
             materialNoSet.add(materialNo);
         }
@@ -499,23 +506,28 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         //批量更新订单散料列表
         orderMaterialBulkMapper.updateList(orderMaterialBulkDOListForUpdate);
         //批量更新退还物料项列表
-        List<ReturnOrderMaterialDO> returnOrderMaterialDOListForUpdate = new ArrayList<>();
-        for(Integer key : returnOrderMaterialDOMapForUpdate.keySet()){
-            returnOrderMaterialDOListForUpdate.add(returnOrderMaterialDOMapForUpdate.get(key));
+        if(returnOrderMaterialDOMapForUpdate.size()>0){
+            List<ReturnOrderMaterialDO> returnOrderMaterialDOListForUpdate = new ArrayList<>();
+            for(Integer key : returnOrderMaterialDOMapForUpdate.keySet()){
+                returnOrderMaterialDOListForUpdate.add(returnOrderMaterialDOMapForUpdate.get(key));
+            }
+            returnOrderMaterialMapper.updateListForReturn(returnOrderMaterialDOListForUpdate);
         }
-        returnOrderMaterialMapper.updateListForReturn(returnOrderMaterialDOListForUpdate);
+
         //批量保存退还物料项列表
-        List<ReturnOrderMaterialDO> returnOrderMaterialDOListForSave = new ArrayList<>();
-        for(Integer key : returnOrderMaterialDOMapForSave.keySet()){
-            returnOrderMaterialDOListForSave.add(returnOrderMaterialDOMapForSave.get(key));
+        if(returnOrderMaterialDOMapForSave.size()>0){
+            List<ReturnOrderMaterialDO> returnOrderMaterialDOListForSave = new ArrayList<>();
+            for(Integer key : returnOrderMaterialDOMapForSave.keySet()){
+                returnOrderMaterialDOListForSave.add(returnOrderMaterialDOMapForSave.get(key));
+            }
+            returnOrderMaterialMapper.saveList(returnOrderMaterialDOListForSave);
         }
-        returnOrderMaterialMapper.saveList(returnOrderMaterialDOListForSave);
         //批量保存退还散料列表
         returnOrderMaterialBulkMapper.saveList(returnOrderMaterialBulkDOListForSave);
-//        List<ReturnOrderMaterialBulkDO> returnOrderMaterialBulkDOListForSave = new ArrayList<>();
         //批量更新订单列表
-        orderMapper.updateListForReturn(orderDOListForUpdate);
-
+        if(orderDOListForUpdate.size()>0){
+            orderMapper.updateListForReturn(orderDOListForUpdate);
+        }
         //修改退还单，归还订单状态,租赁期间产生总费用,实际退还商品总数,修改时间，修改人
         returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
         returnOrderDO.setTotalRentCost(BigDecimalUtil.add(returnOrderDO.getTotalRentCost(),rentCostTotal));
@@ -552,6 +564,107 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         List<ReturnOrderDO> purchaseOrderDOList = returnOrderMapper.findReturnOrderByParams(maps);
         List<ReturnOrder> purchaseOrderList = ConverterUtil.convertList(purchaseOrderDOList,ReturnOrder.class);
         Page<ReturnOrder> page = new Page<>(purchaseOrderList, totalCount, returnOrderPageParam.getPageNo(), returnOrderPageParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
+    /**
+     * 只有处理中的订单可以结束
+     * @param returnOrder
+     * @return
+     */
+    @Override
+    public ServiceResult<String, String> end(ReturnOrder returnOrder) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(returnOrder.getReturnOrderNo());
+        if(returnOrderDO==null){
+            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        if(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(returnOrderDO.getReturnOrderStatus())){
+            returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_END);
+            returnOrderDO.setUpdateTime(new Date());
+            returnOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            returnOrderMapper.update(returnOrderDO);
+        }else{
+            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_STATUS_CAN_NOT_END);
+            return serviceResult;
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(returnOrderDO.getReturnOrderNo());
+        return serviceResult;
+    }
+    /**
+     * 只有待处理订单可以取消
+     * @param returnOrder
+     * @return
+     */
+    @Override
+    public ServiceResult<String, String> cancel(ReturnOrder returnOrder) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(returnOrder.getReturnOrderNo());
+        if(returnOrderDO==null){
+            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        if(ReturnOrderStatus.RETURN_ORDER_STATUS_WAITING.equals(returnOrderDO.getReturnOrderStatus())){
+            returnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            returnOrderDO.setUpdateTime(new Date());
+            returnOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            returnOrderMapper.update(returnOrderDO);
+        }else{
+            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_STATUS_CAN_NOT_CANCEL);
+            return serviceResult;
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(returnOrderDO.getReturnOrderNo());
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, Page<ReturnOrderProductEquipment>> pageReturnEquipment(ReturnEquipmentPageParam returnEquipmentPageParam) {
+        ServiceResult<String, Page<ReturnOrderProductEquipment>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(returnEquipmentPageParam.getPageNo(), returnEquipmentPageParam.getPageSize());
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("queryParam", returnEquipmentPageParam);
+
+        Integer totalCount = returnOrderProductEquipmentMapper.listCount(maps);
+        List<ReturnOrderProductEquipmentDO> returnOrderProductEquipmentDOList = returnOrderProductEquipmentMapper.listPage(maps);
+        List<ReturnOrderProductEquipment> returnOrderProductEquipmentList = ConverterUtil.convertList(returnOrderProductEquipmentDOList,ReturnOrderProductEquipment.class);
+        for(ReturnOrderProductEquipment returnOrderProductEquipment : returnOrderProductEquipmentList){
+            ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(returnOrderProductEquipment.getEquipmentNo());
+            returnOrderProductEquipment.setProductEquipment(ConverterUtil.convert(productEquipmentDO,ProductEquipment.class));
+        }
+        Page<ReturnOrderProductEquipment> page = new Page<>(returnOrderProductEquipmentList, totalCount, returnEquipmentPageParam.getPageNo(), returnEquipmentPageParam.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Page<ReturnOrderMaterialBulk>> pageReturnBulk(ReturnBulkPageParam returnBulkPageParam) {
+        ServiceResult<String, Page<ReturnOrderMaterialBulk>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(returnBulkPageParam.getPageNo(), returnBulkPageParam.getPageSize());
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("queryParam", returnBulkPageParam);
+
+        Integer totalCount = returnOrderMaterialBulkMapper.listCount(maps);
+        List<ReturnOrderMaterialBulkDO> returnOrderMaterialBulkDOList = returnOrderMaterialBulkMapper.listPage(maps);
+        List<ReturnOrderMaterialBulk> returnOrderMaterialBulkList = ConverterUtil.convertList(returnOrderMaterialBulkDOList,ReturnOrderMaterialBulk.class);
+        for(ReturnOrderMaterialBulk returnOrderMaterialBulk : returnOrderMaterialBulkList){
+            BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(returnOrderMaterialBulk.getBulkMaterialNo());
+            returnOrderMaterialBulk.setBulkMaterial(ConverterUtil.convert(bulkMaterialDO,BulkMaterial.class));
+        }
+        Page<ReturnOrderMaterialBulk> page = new Page<>(returnOrderMaterialBulkList, totalCount, returnBulkPageParam.getPageNo(), returnBulkPageParam.getPageSize());
+
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
