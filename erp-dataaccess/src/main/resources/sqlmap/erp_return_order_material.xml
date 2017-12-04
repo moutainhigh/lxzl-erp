@@ -29,8 +29,8 @@
 	<select id="findByMaterialIdAndReturnOrderId" resultMap="ReturnOrderMaterialDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_return_order_material erom
 		WHERE erom.return_material_id = #{materialId, jdbcType=INTEGER}
-		AND erop.return_order_id = #{returnOrderId, jdbcType=INTEGER}
-		AND erop.data_status = 1
+		AND erom.return_order_id = #{returnOrderId, jdbcType=INTEGER}
+		AND erom.data_status = 1
 	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(erom.id) FROM erp_return_order_material erom 
@@ -122,7 +122,7 @@
 		</foreach>
 	</insert>
 	<update id="updateListForReturn" parameterType="java.util.ArrayList">
-		update erp_order
+		update erp_return_order_material
 		SET
 		<trim>
 			real_return_material_count =

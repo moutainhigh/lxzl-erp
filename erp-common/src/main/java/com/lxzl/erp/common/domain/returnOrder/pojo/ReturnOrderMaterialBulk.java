@@ -1,6 +1,8 @@
 package com.lxzl.erp.common.domain.returnOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -21,6 +23,7 @@ public class ReturnOrderMaterialBulk implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
+	private BulkMaterial bulkMaterial;
 
 	public Integer getReturnOrderMaterialBulkId(){
 		return returnOrderMaterialBulkId;
@@ -118,4 +121,11 @@ public class ReturnOrderMaterialBulk implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public BulkMaterial getBulkMaterial() {
+		return bulkMaterial;
+	}
+
+	public void setBulkMaterial(BulkMaterial bulkMaterial) {
+		this.bulkMaterial = bulkMaterial;
+	}
 }

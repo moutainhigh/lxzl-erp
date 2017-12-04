@@ -11,7 +11,7 @@ public class ProductImageConverter {
     public static ProductImg convertProductImgDO(ProductImgDO productImgDO) {
         ProductImg productImg = new ProductImg();
         if (productImgDO.getId() != null) {
-            productImg.setImgId(productImgDO.getId());
+            productImg.setProductImgId(productImgDO.getId());
         }
         if (productImgDO.getImgType() != null) {
             productImg.setImgType(productImgDO.getImgType());
@@ -55,8 +55,8 @@ public class ProductImageConverter {
 
     public static ProductImgDO convertProductImg(ProductImg productImg) {
         ProductImgDO productImgDO = new ProductImgDO();
-        if (productImg.getImgId() != null) {
-            productImgDO.setId(productImg.getImgId());
+        if (productImg.getProductImgId() != null) {
+            productImgDO.setId(productImg.getProductImgId());
         }
         if (productImg.getImgType() != null) {
             productImgDO.setImgType(productImg.getImgType());
