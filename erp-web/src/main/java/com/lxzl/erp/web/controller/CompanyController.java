@@ -50,6 +50,12 @@ public class CompanyController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "getDepartmentById", method = RequestMethod.POST)
+    public Result getDepartmentById(@RequestBody DepartmentQueryParam departmentQueryParam) {
+        ServiceResult<String, Department> serviceResult = companyService.getDepartmentById(departmentQueryParam.getDepartmentId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "getCompanyDepartmentTree", method = RequestMethod.POST)
     public Result getCompanyDepartmentTree(@RequestBody DepartmentQueryParam departmentQueryParam) {
         ServiceResult<String, CompanyDepartmentTree> serviceResult = companyService.getCompanyDepartmentTree(departmentQueryParam);

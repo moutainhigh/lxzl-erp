@@ -195,6 +195,7 @@
 					and ewl.data_status = 1
 				</if>
 			</where>
+			order by ewl.id DESC
 			LIMIT #{maps.start},#{maps.pageSize}
 		) link left join erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
 		LEFT JOIN erp_user eu ON eu.id = ewld.verify_user

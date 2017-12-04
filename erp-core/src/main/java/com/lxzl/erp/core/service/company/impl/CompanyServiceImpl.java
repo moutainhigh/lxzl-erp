@@ -113,6 +113,19 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    public ServiceResult<String, Department> getDepartmentById(Integer departmentId) {
+        ServiceResult<String, Department> result = new ServiceResult<>();
+        DepartmentDO departmentDO = departmentMapper.findById(departmentId);
+        if(departmentDO == null){
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        result.setResult(DepartmentConverter.convertDepartmentDO(departmentDO));
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
     public ServiceResult<String, CompanyDepartmentTree> getCompanyDepartmentTree(DepartmentQueryParam departmentQueryParam) {
         ServiceResult<String, CompanyDepartmentTree> result = new ServiceResult<>();
         CompanyDepartmentTree companyDepartmentTree = new CompanyDepartmentTree();
