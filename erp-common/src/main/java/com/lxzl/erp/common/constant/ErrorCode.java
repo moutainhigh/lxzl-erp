@@ -217,6 +217,10 @@ public class ErrorCode {
     public static final String RETURN_ORDER_END_YET = "J400041";
     public static final String RETURN_ORDER_PRODUCT_ID_NOT_NULL = "J400042";
     public static final String RETURN_ORDER_MATERIAL_ID_NOT_NULL = "J400043";
+    public static final String RETURN_ORDER_SERVICE_COST_NOT_NULL = "J400044";
+    public static final String RETURN_ORDER_SERVICE_COST_ERROR = "J400045";
+    public static final String RETURN_ORDER_DAMAGE_COST_NOT_NULL = "J400046";
+    public static final String RETURN_ORDER_DAMAGE_COST_ERROR = "J400047";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -461,7 +465,10 @@ public class ErrorCode {
         MAP.put(DEPLOYMENT_ORDER_MATERIAL_BULK_COUNT_NOT_ENOUGH, "调拨单物料备货不足");
         MAP.put(RETURN_ORDER_PRODUCT_ID_NOT_NULL, "退还单商品项不能为空");
         MAP.put(RETURN_ORDER_MATERIAL_ID_NOT_NULL, "退还单物料项不能为空");
-
+        MAP.put(RETURN_ORDER_SERVICE_COST_NOT_NULL, "服务费不能为空");
+        MAP.put(RETURN_ORDER_SERVICE_COST_ERROR, "服务费金额有误");
+        MAP.put(RETURN_ORDER_DAMAGE_COST_NOT_NULL, "损坏费用不能为空");
+        MAP.put(RETURN_ORDER_DAMAGE_COST_ERROR, "损坏费用金额有误");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");

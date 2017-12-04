@@ -577,6 +577,14 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     @Override
     public ServiceResult<String, String> end(ReturnOrder returnOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        if(returnOrder.getServiceCost().compareTo(BigDecimal.ZERO)<0){
+            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_SERVICE_COST_ERROR);
+            return serviceResult;
+        }
+        if(returnOrder.getDamageCost().compareTo(BigDecimal.ZERO)<0){
+            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_DAMAGE_COST_ERROR);
+            return serviceResult;
+        }
         ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(returnOrder.getReturnOrderNo());
         if(returnOrderDO==null){
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
@@ -585,6 +593,8 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         if(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(returnOrderDO.getReturnOrderStatus())){
             returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_END);
             returnOrderDO.setUpdateTime(new Date());
+            returnOrderDO.setServiceCost(returnOrder.getServiceCost());
+            returnOrderDO.setDamageCost(returnOrder.getDamageCost());
             returnOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             returnOrderMapper.update(returnOrderDO);
         }else{

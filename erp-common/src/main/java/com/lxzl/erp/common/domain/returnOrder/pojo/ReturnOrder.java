@@ -2,9 +2,12 @@ package com.lxzl.erp.common.domain.returnOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.math.BigDecimal;
@@ -14,7 +17,7 @@ import java.util.List;
 public class ReturnOrder implements Serializable {
 
 	private Integer returnOrderId;   //唯一标识
-	@NotBlank(message = ErrorCode.RETURN_ORDER_NO_NOT_NULL , groups = {IdGroup.class})
+	@NotBlank(message = ErrorCode.RETURN_ORDER_NO_NOT_NULL , groups = {IdGroup.class, ExtendGroup.class})
 	private String returnOrderNo;   //退还编号
 	private Integer customerId;   //客户ID
 	private String customerNo;   //客户编号
@@ -23,10 +26,13 @@ public class ReturnOrder implements Serializable {
 	private Integer totalReturnMaterialCount;   //退还物料总数
 	private Integer realTotalReturnProductCount;   //实际退还商品总数
 	private Integer realTotalReturnMaterialCount;   //实际退还物料总数
+
 	private BigDecimal totalRentCost;   //租赁期间产生总费用
+	@NotNull(message = ErrorCode.RETURN_ORDER_SERVICE_COST_NOT_NULL , groups = {ExtendGroup.class})
 	private BigDecimal serviceCost;   //服务费
+	@NotNull(message = ErrorCode.RETURN_ORDER_DAMAGE_COST_NOT_NULL , groups = {ExtendGroup.class})
 	private BigDecimal damageCost;   //损坏加收费用
-	private Integer returnOrderStatus;   //归还订单状态，1-待归还，3-部分归还，6-全部归还,9-确认结束
+	private Integer returnOrderStatus;   //归还订单状态，1-待取货，5-处理中，9-已完成
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Integer owner;   //数据归属人

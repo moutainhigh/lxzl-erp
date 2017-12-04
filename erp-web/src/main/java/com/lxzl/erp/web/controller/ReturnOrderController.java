@@ -7,8 +7,8 @@ import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.returnOrder.*;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderMaterialBulk;
-import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProduct;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProductEquipment;
+import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.returnOrder.AddReturnOrderGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
@@ -62,7 +62,7 @@ public class ReturnOrderController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
     @RequestMapping(value = "end", method = RequestMethod.POST)
-    public Result end(@RequestBody @Validated(IdGroup.class)ReturnOrder returnOrder, BindingResult validResult) {
+    public Result end(@RequestBody @Validated(ExtendGroup.class)ReturnOrder returnOrder, BindingResult validResult) {
         ServiceResult<String,String> serviceResult = returnOrderService.end(returnOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
