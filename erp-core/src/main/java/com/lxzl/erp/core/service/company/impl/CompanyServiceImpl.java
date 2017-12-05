@@ -284,6 +284,7 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         RoleQueryParam roleQueryParam = new RoleQueryParam();
+        roleQueryParam.setDepartmentId(dbDepartment.getId());
         Map<String, Object> params = new HashMap<>();
         params.put("start", 0);
         params.put("pageSize", Integer.MAX_VALUE);
