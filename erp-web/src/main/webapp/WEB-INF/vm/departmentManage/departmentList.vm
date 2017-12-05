@@ -87,7 +87,7 @@
 
 <script type="text/javascript" src="${staticCommon}/vendor/plugins/fancytree2/jquery.fancytree-all.min.js"></script>
 <script type="text/javascript">
-    management_load_script('${staticManagement}/js','manage.department.js' ,'manage.department.add.js');
+    management_load_script('${staticManagement}/js','manage.department.js' ,'manage.department.add.js' ,'manage.department.edit.js');
 </script>
 
 <script type="text/javascript">
