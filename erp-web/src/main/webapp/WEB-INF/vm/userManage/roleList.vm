@@ -141,7 +141,6 @@
         Rental.init();
         Layout.init();
         RoleManage.init();
-        DepartmentTree.init();
 
         //UI效果初始化
         Core.init();
