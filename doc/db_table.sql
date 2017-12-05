@@ -673,7 +673,7 @@ CREATE TABLE `erp_product_equipment` (
   `owner_warehouse_id` int(20) NOT NULL COMMENT '归属仓库ID',
   `owner_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '归属目前仓位ID',
   `equipment_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '设备本身价值',
-  `equipment_status` int(11) NOT NULL DEFAULT '0' COMMENT '设备状态，0闲置，1租赁中，2报废',
+  `equipment_status` int(11) NOT NULL DEFAULT '0' COMMENT '设备状态，1设备空闲，2租赁中，3维修中，4报废，5调拨中',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',

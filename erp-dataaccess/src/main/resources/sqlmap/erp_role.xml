@@ -43,6 +43,9 @@
             <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.roleName != null">
                 and tr.role_name like CONCAT('%','${maps.roleQueryParam.roleName}','%' )
             </if>
+            <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.subCompanyId != null">
+                and ed.sub_company_id = #{maps.roleQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
             <if test="true">
                 and tr.data_status = 1
             </if>

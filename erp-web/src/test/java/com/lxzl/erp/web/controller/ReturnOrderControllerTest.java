@@ -87,17 +87,22 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest{
         returnEquipmentPageParam.setReturnOrderProductId(8);
         TestResult result = getJsonTestResult("/returnOrder/pageReturnEquipment",returnEquipmentPageParam);
     }
-
+    @Test
+    public void pageReturnBulk() throws Exception {
+        ReturnBulkPageParam returnBulkPageParam = new ReturnBulkPageParam();
+        returnBulkPageParam.setReturnOrderMaterialId(5);
+        TestResult result = getJsonTestResult("/returnOrder/pageReturnBulk",returnBulkPageParam);
+    }
     @Test
     public void cancel() throws Exception {
         ReturnOrder returnOrder = new ReturnOrder();
-        returnOrder.setReturnOrderNo("RO201711291746283331383");
+        returnOrder.setReturnOrderNo("RO201712011933151931203");
         TestResult result = getJsonTestResult("/returnOrder/cancel",returnOrder);
     }
     @Test
     public void end() throws Exception {
         ReturnOrder returnOrder = new ReturnOrder();
-        returnOrder.setReturnOrderNo("RO201712011933151931203");
+        returnOrder.setReturnOrderNo("RO201711291746283331383");
         returnOrder.setServiceCost(BigDecimal.ZERO);
         returnOrder.setDamageCost(BigDecimal.ZERO);
         TestResult result = getJsonTestResult("/returnOrder/end",returnOrder);

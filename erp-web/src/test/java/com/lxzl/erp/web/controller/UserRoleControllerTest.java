@@ -44,7 +44,8 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
         RoleQueryParam roleQueryParam  = new RoleQueryParam();
         roleQueryParam.setPageNo(1);
         roleQueryParam.setPageSize(10);
-        roleQueryParam.setRoleId(600005);
+//        roleQueryParam.setRoleId(600005);
+        roleQueryParam.setSubCompanyId(1);
         TestResult result = getJsonTestResult("/userRole/page",roleQueryParam);
     }
 
