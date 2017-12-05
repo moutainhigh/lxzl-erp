@@ -11,6 +11,8 @@ public class OrderMaterial implements Serializable {
 
 	private Integer orderMaterialId;   //唯一标识
 	private Integer orderId;   //订单ID
+	private Integer rentType;	// 租赁类型
+	private Integer rentTimeLength;		// 租赁时长
 	private Integer materialId;   //物料ID
 	private String materialName;   //物料名称
 	private Integer materialCount;   //物料总数
@@ -172,5 +174,21 @@ public class OrderMaterial implements Serializable {
 
 	public void setBulkMaterialNoList(List<String> bulkMaterialNoList) {
 		this.bulkMaterialNoList = bulkMaterialNoList;
+	}
+
+	public Integer getRentType() {
+		return rentType;
+	}
+
+	public void setRentType(Integer rentType) {
+		this.rentType = rentType;
+	}
+
+	public Integer getRentTimeLength() {
+		return rentTimeLength;
+	}
+
+	public void setRentTimeLength(Integer rentTimeLength) {
+		this.rentTimeLength = rentTimeLength;
 	}
 }

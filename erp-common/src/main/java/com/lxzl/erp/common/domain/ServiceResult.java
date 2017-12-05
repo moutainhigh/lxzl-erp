@@ -18,10 +18,10 @@ public class ServiceResult<String, RESULT> {
         return errorCode;
     }
 
-    public void setErrorCode(String errorCode) {
+    public void setErrorCode(String errorCode,Object ... objects) {
         this.errorCode = errorCode;
+        this.formatArgs = objects;
     }
-
     public RESULT getResult() {
         return result;
     }
@@ -33,4 +33,10 @@ public class ServiceResult<String, RESULT> {
     private String errorCode;
 
     private RESULT result;
+
+    private Object[] formatArgs;
+
+    public Object[] getFormatArgs() {
+        return formatArgs;
+    }
 }

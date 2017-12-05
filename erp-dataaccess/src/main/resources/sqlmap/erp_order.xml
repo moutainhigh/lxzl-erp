@@ -8,8 +8,7 @@
         <id column="id" jdbcType="INTEGER" property="id" />
         <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
         <result column="buyer_customer_id" jdbcType="INTEGER" property="buyerCustomerId" />
-        <result column="rent_type" jdbcType="INTEGER" property="rentType" />
-        <result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+        <result column="buyer_customer_name" jdbcType="VARCHAR" property="buyerCustomerName" />
         <result column="rent_start_time" jdbcType="VARCHAR" property="rentStartTime" />
         <result column="deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
         <result column="payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
@@ -25,6 +24,7 @@
         <result column="total_discount_amount" jdbcType="DECIMAL" property="totalDiscountAmount" />
         <result column="logistics_amount" jdbcType="DECIMAL" property="logisticsAmount" />
         <result column="order_seller_id" jdbcType="INTEGER" property="orderSellerId" />
+        <result column="order_seller_name" jdbcType="VARCHAR" property="orderSellerName" />
         <result column="order_sub_company_id" jdbcType="INTEGER" property="orderSubCompanyId" />
         <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
         <result column="pay_status" jdbcType="INTEGER" property="payStatus" />
@@ -49,6 +49,8 @@
     <resultMap type="com.lxzl.erp.dataaccess.domain.order.OrderProductDO" id="OrderProductDO">
         <id column="order_product_id" property="id"/>
         <result column="product_order_id" property="orderId"/>
+        <result column="product_rent_type" jdbcType="INTEGER" property="rentType" />
+        <result column="product_rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
         <result column="product_product_id" property="productId"/>
         <result column="product_product_name" property="productName"/>
         <result column="product_product_sku_id" property="productSkuId"/>
@@ -68,6 +70,8 @@
     <resultMap id="OrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO">
         <id column="material_id" jdbcType="INTEGER" property="id" />
         <result column="material_order_id" jdbcType="INTEGER" property="orderId" />
+        <result column="material_rent_type" jdbcType="INTEGER" property="rentType" />
+        <result column="material_rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
         <result column="material_material_id" jdbcType="INTEGER" property="materialId" />
         <result column="material_material_name" jdbcType="VARCHAR" property="materialName" />
         <result column="material_material_count" jdbcType="INTEGER" property="materialCount" />
@@ -107,16 +111,19 @@
     </resultMap>
 
     <sql id="column_List">
-		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.rent_type as rent_type,eo.rent_time_length as rent_time_length,eo.rent_start_time as rent_start_time,eo.deposit_cycle as deposit_cycle,eo.payment_cycle as payment_cycle,eo.total_deposit_amount as total_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.pay_mode as pay_mode,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_order_amount as total_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.buyer_remark as buyer_remark,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user
+		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.rent_start_time as rent_start_time,eo.deposit_cycle as deposit_cycle,eo.payment_cycle as payment_cycle,eo.total_deposit_amount as total_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.pay_mode as pay_mode,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_order_amount as total_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.buyer_remark as buyer_remark,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user
 	</sql>
+
     <sql id="product_column_List">
-        eop.id as order_product_id,eop.order_id as product_order_id,eop.product_id as product_product_id,eop.product_name as product_product_name,eop.product_sku_id as product_product_sku_id,eop.product_sku_name as product_product_sku_name,eop.product_count as product_product_count,eop.product_unit_amount as product_product_unit_amount,eop.product_amount as product_product_amount,eop.product_sku_snapshot as product_product_sku_snapshot,eop.data_status as product_data_status,eop.remark as product_remark,eop.create_time as product_create_time,eop.create_user as product_create_user,eop.update_time as product_update_time,eop.update_user as product_update_user
+        eop.id as order_product_id,eop.order_id as product_order_id,eop.rent_type as product_rent_type,eop.rent_time_length as product_rent_time_length,eop.product_id as product_product_id,eop.product_name as product_product_name,eop.product_sku_id as product_product_sku_id,eop.product_sku_name as product_product_sku_name,eop.product_count as product_product_count,eop.product_unit_amount as product_product_unit_amount,eop.product_amount as product_product_amount,eop.product_sku_snapshot as product_product_sku_snapshot,eop.data_status as product_data_status,eop.remark as product_remark,eop.create_time as product_create_time,eop.create_user as product_create_user,eop.update_time as product_update_time,eop.update_user as product_update_user
 	</sql>
+
     <sql id="consign_column_List">
         eoci.id as consign_id,eoci.order_id as consign_order_id,eoci.consignee_name as consign_consignee_name,eoci.consignee_phone as consign_consignee_phone,eoci.province as consign_province,eoci.city as consign_city,eoci.district as consign_district,eoci.address as consign_address,eoci.data_status as consign_data_status,eoci.remark as consign_remark,eoci.create_time as consign_create_time,eoci.create_user as consign_create_user,eoci.update_time as consign_update_time,eoci.update_user as consign_update_user
 	</sql>
+
     <sql id="material_column_List">
-        eom.id as material_id,eom.order_id as material_order_id,eom.material_id as material_material_id,eom.material_name as material_material_name,eom.material_count as material_material_count,eom.material_unit_amount as material_material_unit_amount,eom.material_amount as material_material_amount,eom.deposit_amount as material_deposit_amount,eom.credit_deposit_amount as material_credit_deposit_amount,eom.insurance_amount as material_insurance_amount,eom.material_snapshot as material_material_snapshot,eom.data_status as material_data_status,eom.remark as material_remark,eom.create_time as material_create_time,eom.create_user as material_create_user,eom.update_time as material_update_time,eom.update_user as material_update_user
+        eom.id as material_id,eom.order_id as material_order_id,eom.rent_type as material_rent_type,eom.rent_time_length as material_rent_time_length,eom.material_id as material_material_id,eom.material_name as material_material_name,eom.material_count as material_material_count,eom.material_unit_amount as material_material_unit_amount,eom.material_amount as material_material_amount,eom.deposit_amount as material_deposit_amount,eom.credit_deposit_amount as material_credit_deposit_amount,eom.insurance_amount as material_insurance_amount,eom.material_snapshot as material_material_snapshot,eom.data_status as material_data_status,eom.remark as material_remark,eom.create_time as material_create_time,eom.create_user as material_create_user,eom.update_time as material_update_time,eom.update_user as material_update_user
     </sql>
 
     <select id="findById" resultMap="OrderDO" parameterType="java.lang.Integer">
@@ -139,18 +146,19 @@
             <trim prefix=",">
                 <include refid="consign_column_List" />
             </trim>
-            ,eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name
+            ,eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, ec.customer_name AS buyer_customer_name
             FROM erp_order eo
+            LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
             LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
             LEFT JOIN erp_area_province eap ON eap.id = eoci.province
             LEFT JOIN erp_area_city eac ON eac.id = eoci.city
             LEFT JOIN erp_area_district ead ON ead.id = eoci.district
+            LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
             WHERE eo.id = #{orderId, jdbcType=INTEGER} and eo.data_status=1
         ) m_order
         LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
     </select>
-
 
     <select id="findByOrderNo" resultMap="OrderDO" parameterType="java.lang.String">
         SELECT m_order.*
@@ -166,17 +174,20 @@
             <trim prefix=",">
                 <include refid="consign_column_List" />
             </trim>
-            ,eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name
+            ,eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, ec.customer_name AS buyer_customer_name
             FROM erp_order eo
+            LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
             LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
             LEFT JOIN erp_area_province eap ON eap.id = eoci.province
             LEFT JOIN erp_area_city eac ON eac.id = eoci.city
             LEFT JOIN erp_area_district ead ON ead.id = eoci.district
+        LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
             WHERE eo.order_no = #{orderNo, jdbcType=VARCHAR} and eo.data_status=1
         ) m_order
         LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
     </select>
+
     <select id="findByCustomerId" resultMap="OrderDO" parameterType="java.lang.Integer">
         SELECT m_order.*
         <trim prefix=",">
@@ -191,17 +202,20 @@
         <trim prefix=",">
             <include refid="consign_column_List" />
         </trim>
-        ,eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name
+        ,eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, ec.customer_name AS buyer_customer_name
         FROM erp_order eo
+        LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
         LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
         LEFT JOIN erp_area_province eap ON eap.id = eoci.province
         LEFT JOIN erp_area_city eac ON eac.id = eoci.city
         LEFT JOIN erp_area_district ead ON ead.id = eoci.district
+        LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
         WHERE eo.buyer_customer_id = #{customerId, jdbcType=INTEGER} and eo.data_status=1
         ) m_order
         LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
     </select>
+
     <select id="findOrderByParams" resultMap="OrderDO" parameterType="map">
         SELECT m_order.*
         <trim prefix=",">
@@ -216,8 +230,14 @@
             <trim prefix=",">
                 <include refid="consign_column_List" />
             </trim>
+            ,eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, ec.customer_name AS buyer_customer_name
             FROM erp_order eo
+            LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
             LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
+            LEFT JOIN erp_area_province eap ON eap.id = eoci.province
+            LEFT JOIN erp_area_city eac ON eac.id = eoci.city
+            LEFT JOIN erp_area_district ead ON ead.id = eoci.district
+            LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
             <where>
                 <if test="maps.orderQueryParam.consigneeName != null &amp;&amp; maps.orderQueryParam.consigneeName != ''">
                     and eoci.consignee_name like CONCAT('%','${maps.orderQueryParam.consigneeName}','%' )
@@ -233,9 +253,6 @@
                 </if>
                 <if test="maps.orderQueryParam.buyerCustomerId != null &amp;&amp; maps.orderQueryParam.buyerCustomerId != ''">
                     and eo.buyer_customer_id = #{maps.orderQueryParam.buyerCustomerId, jdbcType=INTEGER}
-                </if>
-                <if test="maps.orderQueryParam.rentType != null">
-                    and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
                 </if>
                 <if test="maps.orderQueryParam.orderStatus != null">
                     and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
@@ -278,9 +295,6 @@
             <if test="maps.orderQueryParam.buyerCustomerId != null &amp;&amp; maps.orderQueryParam.buyerCustomerId != ''">
                 and eo.buyer_customer_id = #{maps.orderQueryParam.buyerCustomerId, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.rentType != null">
-                and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
-            </if>
             <if test="maps.orderQueryParam.orderStatus != null">
                 and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
             </if>
@@ -303,12 +317,6 @@
             </if>
             <if test="buyerCustomerId != null">
                 buyer_customer_id = #{buyerCustomerId, jdbcType=INTEGER},
-            </if>
-            <if test="rentType != null">
-                rent_type = #{rentType, jdbcType=INTEGER},
-            </if>
-            <if test="rentTimeLength != null">
-                rent_time_length = #{rentTimeLength, jdbcType=INTEGER},
             </if>
             <if test="rentStartTime != null">
                 rent_start_time = #{rentStartTime, jdbcType=TIMESTAMP},

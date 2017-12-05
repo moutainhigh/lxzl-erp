@@ -4,6 +4,7 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.OrderRentType;
+import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.ProcessOrderParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
@@ -27,50 +28,28 @@ public class OrderTest extends ERPUnTransactionalTest {
     public void testCreateOrder() throws Exception {
         Order order = new Order();
 
-        order.setRentType(OrderRentType.RENT_TYPE_DAY);
-        order.setRentTimeLength(6);
         order.setPayMode(2);
         order.setLogisticsAmount(new BigDecimal(12));
         order.setBuyerRemark("仔细包装，别弄坏了");
 
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
-        orderProduct.setProductId(2000013);
+        orderProduct.setRentType(OrderRentType.RENT_TYPE_DAY);
+        orderProduct.setRentTimeLength(6);
         orderProduct.setProductSkuId(40);
-        orderProduct.setProductCount(1);
+        orderProduct.setProductCount(2);
         orderProduct.setProductUnitAmount(new BigDecimal(20.0));
         orderProduct.setInsuranceAmount(new BigDecimal(15.0));
-
-        List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
-        ProductSkuProperty productSkuProperty = new ProductSkuProperty();
-        productSkuProperty.setPropertyId(1);
-        productSkuProperty.setPropertyValueId(2);
-        productSkuPropertyList.add(productSkuProperty);
-        ProductSkuProperty productSkuProperty2 = new ProductSkuProperty();
-        productSkuProperty2.setPropertyId(2);
-        productSkuProperty2.setPropertyValueId(5);
-        productSkuPropertyList.add(productSkuProperty2);
-        productSkuProperty2 = new ProductSkuProperty();
-        productSkuProperty2.setPropertyId(5);
-        productSkuProperty2.setPropertyValueId(11);
-        productSkuPropertyList.add(productSkuProperty2);
-        productSkuProperty2 = new ProductSkuProperty();
-        productSkuProperty2.setPropertyId(6);
-        productSkuProperty2.setPropertyValueId(13);
-        productSkuPropertyList.add(productSkuProperty2);
-        productSkuProperty2 = new ProductSkuProperty();
-        productSkuProperty2.setPropertyId(7);
-        productSkuProperty2.setPropertyValueId(15);
-        productSkuPropertyList.add(productSkuProperty2);
-        orderProduct.setProductSkuPropertyList(productSkuPropertyList);
         orderProductList.add(orderProduct);
         order.setOrderProductList(orderProductList);
 
         List<OrderMaterial> orderMaterialList = new ArrayList<>();
 
         OrderMaterial orderMaterial = new OrderMaterial();
+        orderMaterial.setRentType(OrderRentType.RENT_TYPE_DAY);
+        orderMaterial.setRentTimeLength(6);
         orderMaterial.setMaterialId(5);
-        orderMaterial.setMaterialCount(1);
+        orderMaterial.setMaterialCount(3);
         orderMaterial.setMaterialUnitAmount(new BigDecimal(18.0));
         orderMaterial.setInsuranceAmount(new BigDecimal(15.0));
 
@@ -86,7 +65,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712041441449431257");
+        order.setOrderNo("O201712051948457121036");
         order.setVerifyUser(500006);
         TestResult result = getJsonTestResult("/order/commit", order);
     }
@@ -102,10 +81,12 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testProcessOrder() throws Exception {
         ProcessOrderParam processOrderParam = new ProcessOrderParam();
-        processOrderParam.setOrderNo("O201712041441449431257");
-//        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017112010034");
-        processOrderParam.setBulkMaterialNo("BM2017112017070030810018");
-//        processOrderParam.setBulkMaterialNo("BM2017112017070030810080");
+        processOrderParam.setOrderNo("O201712051948457121036");
+//        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017120110036");
+//        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017120110037");
+        List<String> materialNoList = new ArrayList<>();
+        materialNoList.add("BM2017112017075511010113");
+        processOrderParam.setBulkMaterialNoList(materialNoList);
         processOrderParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
         TestResult result = getJsonTestResult("/order/process", processOrderParam);
     }
@@ -114,7 +95,23 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testDelivery() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712041441449431257");
+        order.setOrderNo("O201712051948457121036");
         TestResult result = getJsonTestResult("/order/delivery", order);
+    }
+
+
+    @Test
+    public void queryAllOrder() throws Exception {
+        OrderQueryParam param = new OrderQueryParam();
+
+        TestResult result = getJsonTestResult("/order/queryAllOrder", param);
+    }
+
+
+    @Test
+    public void queryOrderByNo() throws Exception {
+        Order order = new Order();
+        order.setOrderNo("O201712051359417241090");
+        TestResult result = getJsonTestResult("/order/queryOrderByNo", order);
     }
 }

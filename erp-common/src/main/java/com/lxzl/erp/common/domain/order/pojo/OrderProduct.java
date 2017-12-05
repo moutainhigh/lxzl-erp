@@ -11,6 +11,8 @@ import java.util.List;
 public class OrderProduct implements Serializable {
     private Integer orderProductId;
     private Integer orderId;
+    private Integer rentType;
+    private Integer rentTimeLength;
     private Integer productId;
     private String productName;
     private Integer productSkuId;
@@ -163,4 +165,19 @@ public class OrderProduct implements Serializable {
         this.insuranceAmount = insuranceAmount;
     }
 
+    public Integer getRentType() {
+        return rentType;
+    }
+
+    public void setRentType(Integer rentType) {
+        this.rentType = rentType;
+    }
+
+    public Integer getRentTimeLength() {
+        return rentTimeLength;
+    }
+
+    public void setRentTimeLength(Integer rentTimeLength) {
+        this.rentTimeLength = rentTimeLength;
+    }
 }

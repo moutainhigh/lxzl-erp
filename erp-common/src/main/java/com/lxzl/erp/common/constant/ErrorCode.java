@@ -10,7 +10,11 @@ public class ErrorCode {
      */
     public static final String SUCCESS = "J000000";
 
-    public static final String SYSTEM_DEVELOPING = "J000994";
+    public static final String SYSTEM_DEVELOPING = "J000992";
+    public static final String EMAIL_ERROR = "J000993";
+    public static final String COMMIT_ONLY_SELF = "J000992";
+    public static final String RECORD_USED_CAN_NOT_DELETE = "J000993";
+    public static final String AMOUNT_MAST_MORE_THEN_ZERO = "J000994";
     public static final String USER_NOT_LOGIN = "J000995";
     public static final String CUSTOM_ERROR = "J000996";
     public static final String BUSINESS_EXCEPTION = "J000997";
@@ -18,10 +22,6 @@ public class ErrorCode {
     public static final String SYSTEM_ERROR = "J000999";
     public static final String RECORD_NOT_EXISTS = "J009999";
     public static final String RECORD_ALREADY_EXISTS = "J099999";
-    public static final String EMAIL_ERROR = "J000993";
-    public static final String COMMIT_ONLY_SELF = "J000992";
-    public static final String RECORD_USED_CAN_NOT_DELETE = "J000993";
-    public static final String AMOUNT_MAST_MORE_THEN_ZERO = "J000994";
 
     public static final String USER_NAME_NOT_NULL = "J100000";
     public static final String USER_PASSWORD_NOT_NULL = "J100001";

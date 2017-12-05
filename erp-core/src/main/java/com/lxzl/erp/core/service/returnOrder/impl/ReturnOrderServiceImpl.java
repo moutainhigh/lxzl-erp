@@ -266,13 +266,13 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         OrderProductDO orderProductDO = orderProductDOMap.get(orderProductEquipmentDO.getOrderProductId());
         //todo 计算该设备的租金
         BigDecimal rentCost = CommonConstant.COMMON_CONSTANT_NO.equals(returnOrderDO.getIsCharging())?
-                new BigDecimal(0):amountSupport.calculateRentCost(orderProductDO.getProductUnitAmount(),orderDO.getRentStartTime(),now,orderDO.getRentType());
+                new BigDecimal(0):amountSupport.calculateRentCost(orderProductDO.getProductUnitAmount(),orderDO.getRentStartTime(),now,orderProductDO.getRentType());
         orderProductEquipmentDO.setActualRentAmount(rentCost);
         orderProductEquipmentDO.setActualReturnTime(now);
         orderProductEquipmentMapper.update(orderProductEquipmentDO);
 
         //由于按天租赁无需授信额度，需交押金，所以当订单按月或按天租赁时，修改客户已用授信额度
-        if(OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())||OrderRentType.RENT_TYPE_TIME.equals(orderDO.getRentType())){
+        if(OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())||OrderRentType.RENT_TYPE_TIME.equals(orderProductDO.getRentType())){
             CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(returnOrderDO.getCustomerId());
             customerRiskManagementDO.setCreditAmountUsed(BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(),productEquipmentDO.getEquipmentPrice()));
             customerRiskManagementMapper.update(customerRiskManagementDO);
@@ -430,14 +430,14 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(orderMaterialBulkDO.getOrderMaterialId());
             //todo 计算该设备的租金
             BigDecimal rentCost = CommonConstant.COMMON_CONSTANT_NO.equals(returnOrderDO.getIsCharging())?
-                    new BigDecimal(0):amountSupport.calculateRentCost(orderMaterialDO.getMaterialUnitAmount(),orderDO.getRentStartTime(),now,orderDO.getRentType());
+                    new BigDecimal(0):amountSupport.calculateRentCost(orderMaterialDO.getMaterialUnitAmount(),orderDO.getRentStartTime(),now,orderMaterialDO.getRentType());
             rentCostTotal = BigDecimalUtil.add(rentCost,rentCostTotal);
             orderMaterialBulkDO.setActualRentAmount(rentCost);
             orderMaterialBulkDO.setActualReturnTime(now);
             orderMaterialBulkDOListForUpdate.add(orderMaterialBulkDO);
 
             //由于按天租赁无需授信额度，需交押金，所以当订单按月或按天租赁时，修改客户已用授信额度
-            if(OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())||OrderRentType.RENT_TYPE_TIME.equals(orderDO.getRentType())){
+            if(OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())||OrderRentType.RENT_TYPE_TIME.equals(orderMaterialDO.getRentType())){
                 customerRiskManagementDO.setCreditAmountUsed(BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(),bulkMaterialDO.getBulkMaterialPrice()));
             }
             ReturnOrderMaterialDO returnOrderMaterialDO = null;

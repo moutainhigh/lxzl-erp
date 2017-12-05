@@ -230,7 +230,7 @@
                 sku_id = #{skuId,jdbcType=INTEGER},
             </if>
             <if test="orderNo != null">
-                order_no = #{orderNo,jdbcType=VARCHAR},
+                order_no = CASE WHEN #{orderNo,jdbcType=VARCHAR}='' THEN NULL ELSE #{orderNo,jdbcType=VARCHAR} END,
             </if>
             <if test="currentWarehouseId != null">
                 current_warehouse_id = #{currentWarehouseId,jdbcType=INTEGER},
@@ -306,7 +306,7 @@
         <trim prefix=",">
             order_no =
             <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-                when #{productEquipmentDO.id} then #{productEquipmentDO.orderno}
+                when #{productEquipmentDO.id} then (CASE WHEN #{productEquipmentDO.orderno}='' THEN NULL ELSE #{productEquipmentDO.orderno} END)
             </foreach>
         </trim>
         <trim prefix=",">

@@ -2,6 +2,7 @@ package com.lxzl.erp.dataaccess.domain.order;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -13,8 +14,6 @@ public class OrderDO extends BaseDO {
     private Integer id;
     private String orderNo;
     private Integer buyerCustomerId;
-    private Integer rentType;
-    private Integer rentTimeLength;
     private Date rentStartTime;
     private Integer depositCycle;
     private Integer paymentCycle;
@@ -47,6 +46,12 @@ public class OrderDO extends BaseDO {
     private List<OrderMaterialDO> orderMaterialDOList;
     private OrderConsignInfoDO orderConsignInfoDO;
 
+    @Transient
+    private String buyerCustomerName;
+
+    @Transient
+    private String orderSellerName;
+
     public Integer getId() {
         return id;
     }
@@ -77,14 +82,6 @@ public class OrderDO extends BaseDO {
 
     public void setBuyerCustomerId(Integer buyerCustomerId) {
         this.buyerCustomerId = buyerCustomerId;
-    }
-
-    public Integer getRentType() {
-        return rentType;
-    }
-
-    public void setRentType(Integer rentType) {
-        this.rentType = rentType;
     }
 
     public Integer getTotalProductCount() {
@@ -189,14 +186,6 @@ public class OrderDO extends BaseDO {
 
     public void setDeliveryTime(Date deliveryTime) {
         this.deliveryTime = deliveryTime;
-    }
-
-    public Integer getRentTimeLength() {
-        return rentTimeLength;
-    }
-
-    public void setRentTimeLength(Integer rentTimeLength) {
-        this.rentTimeLength = rentTimeLength;
     }
 
     public Date getExpectReturnTime() {
@@ -325,5 +314,21 @@ public class OrderDO extends BaseDO {
 
     public void setTotalMaterialAmount(BigDecimal totalMaterialAmount) {
         this.totalMaterialAmount = totalMaterialAmount;
+    }
+
+    public String getOrderSellerName() {
+        return orderSellerName;
+    }
+
+    public void setOrderSellerName(String orderSellerName) {
+        this.orderSellerName = orderSellerName;
+    }
+
+    public String getBuyerCustomerName() {
+        return buyerCustomerName;
+    }
+
+    public void setBuyerCustomerName(String buyerCustomerName) {
+        this.buyerCustomerName = buyerCustomerName;
     }
 }

@@ -1,13 +1,14 @@
 package com.lxzl.erp.common.domain.order;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePageParam;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 
 import java.io.Serializable;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OrderQueryParam extends PageQuery implements Serializable {
+public class OrderQueryParam extends BasePageParam implements Serializable {
 
     private Integer orderId;
     private String orderNo;
