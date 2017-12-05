@@ -1,7 +1,7 @@
 package com.lxzl.erp.dataaccess.domain.returnOrder;
 
+import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import java.util.Date;
 
 
 public class ReturnOrderProductEquipmentDO  extends BaseDO {
@@ -14,6 +14,8 @@ public class ReturnOrderProductEquipmentDO  extends BaseDO {
 	private String equipmentNo;
 	private Integer dataStatus;
 	private String remark;
+
+	private ProductEquipmentDO productEquipmentDO;
 
 	public Integer getId(){
 		return id;
@@ -79,4 +81,11 @@ public class ReturnOrderProductEquipmentDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public ProductEquipmentDO getProductEquipmentDO() {
+		return productEquipmentDO;
+	}
+
+	public void setProductEquipmentDO(ProductEquipmentDO productEquipmentDO) {
+		this.productEquipmentDO = productEquipmentDO;
+	}
 }

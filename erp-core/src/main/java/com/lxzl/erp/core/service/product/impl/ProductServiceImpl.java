@@ -669,10 +669,10 @@ public class ProductServiceImpl implements ProductService {
 
         if (productImgList != null) {
             for (ProductImg productImg : productImgList) {
-                if (productImg != null && productImg.getImgId() != null) {
+                if (productImg != null && productImg.getProductImgId() != null) {
                     updateProductImgList.add(productImg);
-                    if (dbProductImgRecordMap.get(productImg.getImgId()) != null) {
-                        dbProductImgRecordMap.remove(productImg.getImgId());
+                    if (dbProductImgRecordMap.get(productImg.getProductImgId()) != null) {
+                        dbProductImgRecordMap.remove(productImg.getProductImgId());
                     }
                 }
             }

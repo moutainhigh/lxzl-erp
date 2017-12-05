@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductImg implements Serializable {
-    private Integer imgId;
+    private Integer productImgId;
     private Integer imgType;
     private String originalName;
     private Integer productId;
@@ -17,12 +17,12 @@ public class ProductImg implements Serializable {
     private String remark;
     private String imgDomain;
 
-    public Integer getImgId() {
-        return imgId;
+    public Integer getProductImgId() {
+        return productImgId;
     }
 
-    public void setImgId(Integer imgId) {
-        this.imgId = imgId;
+    public void setProductImgId(Integer productImgId) {
+        this.productImgId = productImgId;
     }
 
     public Integer getImgType() {

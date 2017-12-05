@@ -1,6 +1,8 @@
 package com.lxzl.erp.common.domain.returnOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -21,6 +23,7 @@ public class ReturnOrderProductEquipment implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
+	private ProductEquipment productEquipment;
 
 	public Integer getReturnOrderProductEquipmentId(){
 		return returnOrderProductEquipmentId;
@@ -118,4 +121,11 @@ public class ReturnOrderProductEquipment implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public ProductEquipment getProductEquipment() {
+		return productEquipment;
+	}
+
+	public void setProductEquipment(ProductEquipment productEquipment) {
+		this.productEquipment = productEquipment;
+	}
 }

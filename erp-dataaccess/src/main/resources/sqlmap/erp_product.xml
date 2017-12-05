@@ -297,7 +297,7 @@
                 ON erop.return_product_sku_id = epe.sku_id
                 AND erop.data_status = 1
             WHERE eo.buyer_customer_id =  #{customerId}
-              AND eo.order_status = 24
+              AND eo.order_status = 20
               AND eo.data_status = 1
               AND eope.actual_return_time IS NULL
               AND eope.equipment_id IS NOT NULL

@@ -203,7 +203,7 @@ public class ErrorCode {
     public static final String DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM = "J400027";
     public static final String RETURN_ORDER_NO_NOT_NULL = "J400028";
     public static final String EQUIPMENT_NO_NOT_NULL = "J400029";
-    public static final String RETURN_ORDER_NO_EXISTS = "J400030";
+    public static final String RETURN_ORDER_NOT_EXISTS = "J400030";
     public static final String EQUIPMENT_NOT_EXISTS = "J400031";
     public static final String EQUIPMENT_NOT_RENT = "J400032";
     public static final String DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_COUNT_MAX = "J400033";
@@ -212,6 +212,15 @@ public class ErrorCode {
     public static final String DEPLOYMENT_ORDER_HAVE_LOCK_ITEM = "J400036";
     public static final String DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_COUNT_NOT_ENOUGH = "J400037";
     public static final String DEPLOYMENT_ORDER_MATERIAL_BULK_COUNT_NOT_ENOUGH = "J400038";
+    public static final String RETURN_ORDER_STATUS_CAN_NOT_END = "J400039";
+    public static final String RETURN_ORDER_STATUS_CAN_NOT_CANCEL = "J400040";
+    public static final String RETURN_ORDER_END_YET = "J400041";
+    public static final String RETURN_ORDER_PRODUCT_ID_NOT_NULL = "J400042";
+    public static final String RETURN_ORDER_MATERIAL_ID_NOT_NULL = "J400043";
+    public static final String RETURN_ORDER_SERVICE_COST_NOT_NULL = "J400044";
+    public static final String RETURN_ORDER_SERVICE_COST_ERROR = "J400045";
+    public static final String RETURN_ORDER_DAMAGE_COST_NOT_NULL = "J400046";
+    public static final String RETURN_ORDER_DAMAGE_COST_ERROR = "J400047";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -454,6 +463,12 @@ public class ErrorCode {
         MAP.put(DEPLOYMENT_ORDER_HAVE_LOCK_ITEM, "调拨单有锁定的商品或物料，请仔细检查。");
         MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_COUNT_NOT_ENOUGH, "调拨单商品备货不足");
         MAP.put(DEPLOYMENT_ORDER_MATERIAL_BULK_COUNT_NOT_ENOUGH, "调拨单物料备货不足");
+        MAP.put(RETURN_ORDER_PRODUCT_ID_NOT_NULL, "退还单商品项不能为空");
+        MAP.put(RETURN_ORDER_MATERIAL_ID_NOT_NULL, "退还单物料项不能为空");
+        MAP.put(RETURN_ORDER_SERVICE_COST_NOT_NULL, "服务费不能为空");
+        MAP.put(RETURN_ORDER_SERVICE_COST_ERROR, "服务费金额有误");
+        MAP.put(RETURN_ORDER_DAMAGE_COST_NOT_NULL, "损坏费用不能为空");
+        MAP.put(RETURN_ORDER_DAMAGE_COST_ERROR, "损坏费用金额有误");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
@@ -485,12 +500,15 @@ public class ErrorCode {
         MAP.put(RETURN_COUNT_ERROR, "退还数量必须大于0");
         MAP.put(RETURN_ORDER_NO_NOT_NULL, "退还单号不能为空");
         MAP.put(EQUIPMENT_NO_NOT_NULL, "设备编号不能为空");
-        MAP.put(RETURN_ORDER_NO_EXISTS, "退还单不存在");
+        MAP.put(RETURN_ORDER_NOT_EXISTS, "退还单不存在");
         MAP.put(EQUIPMENT_NOT_EXISTS, "设备不存在");
         MAP.put(EQUIPMENT_NOT_RENT, "该设备不是客户在租设备，不能退还");
         MAP.put(RETURN_ORDER_IS_CHARGING_IS_NOT_NULL, "是否计租赁费用不能为空");
         MAP.put(PRODUCT_SKU_CAN_NOT_REPEAT, "SKU不能重复");
         MAP.put(MATERIAL_CAN_NOT_REPEAT, "物料不能重复");
+        MAP.put(RETURN_ORDER_STATUS_CAN_NOT_END, "只有处理中的退还单可以结束");
+        MAP.put(RETURN_ORDER_STATUS_CAN_NOT_CANCEL, "只有待处理的退还单可以取消");
+        MAP.put(RETURN_ORDER_END_YET, "该笔退还单已结束");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL,"站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL,"站内信内容不能为空");

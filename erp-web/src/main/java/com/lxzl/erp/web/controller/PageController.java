@@ -72,6 +72,19 @@ public class PageController extends BaseController {
         return "/component/user/roleAccessData";
     }
 
+    @RequestMapping("/user-manage/department")
+    public String userManageDepartment() {
+        return "/departmentManage/departmentList";
+    }
+    @RequestMapping("/user-manage/departmentAdd")
+    public String userManageDepartmentAdd() {
+        return "/departmentManage/departmentAdd";
+    }
+    @RequestMapping("/user-manage/departmentEdit")
+    public String userManageDepartmentEdit() {
+        return "/departmentManage/departmentEdit";
+    }
+
     //商品管理
     @RequestMapping("/product-manage/list")
     public String productManageList() {
@@ -288,6 +301,7 @@ public class PageController extends BaseController {
     public String auditManageRejectModal() {
         return "/component/audit/rejectModal";
     }
+
 
 
     //选择仓库Modal
