@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>爱租-运营管理系统-客户管理-客户列表</title>
+    <title>凌雄ERP-客户管理-个人客户列表-客户详细</title>
     #parse("layout/header.vm")
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
+    #parse("layout/theme.vm")
 </head>
 <body class="profile-page">
     #parse("layout/toolbox.vm")
@@ -20,14 +19,23 @@
                     <script type="text/html" id="customerHeadTpl">
                         {{#customer}}
                         <div class="w200 text-center pr30 hidden-xs">
-                            <img src="{{avatar}}" class="responsive" width="100%" />
+                            <img src="${staticManagement}img/author.png" class="responsive" width="100%" />
                         </div>
                         <div class="va-t m30">
-                            <h2 class=""> {{realName}} <small>{{userName}}</small></h2>
-                            <p class="fs15"><b>用户类型：</b>{{cutomerTypeValue}}</p>
-                            <p class="fs15"><b>注册时间：</b>{{registerTimeFormat}}</p>
-                            <p class="fs15"><b>最后登录时间：</b>{{lastLoginTimeFormat}}</p>
-                            <p class="fs15"><b>联系方式：</b><span class="mr10">{{email}}</span><span>{{phone}}</span></p>
+                            <div class="col-md-6">
+                                <h2 class=""> {{customerPerson.realName}} <small>{{customerNo}}</small></h2>
+                                <p class="fs15"><b>用户类型：</b>{{cutomerTypeValue}}</p>
+                                <p class="fs15"><b>是否禁用：</b>{{registerTimeFormat}}</p>
+                                <p class="fs15"><b>联系方式：</b><span class="mr10">{{customerPerson.email}}</span><span>{{customerPerson.phone}}</span></p>
+                                <p class="fs15"><b>创建时间：</b><span class="mr10">{{customerPerson.email}}</span><span>{{customerPerson.phone}}</span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="fs15"><b>省份：</b>{{customerPerson.provinceName}}</p>
+                                <p class="fs15"><b>城市：</b>{{customerPerson.cityName}}</p>
+                                <p class="fs15"><b>地区：</b>{{lastLoginTimeFormat}}</p>
+                                <p class="fs15"><b>地址：</b><span class="mr10">{{email}}</span><span>{{phone}}</span></p>
+                                <p class="fs15"><b>备注：</b><span class="mr10">{{email}}</span><span>{{phone}}</span></p>
+                            </div>
                         </div>
                         {{/customer}}
                     </script>

@@ -20,75 +20,6 @@
 
                 #parse("component/loading.vm")
 
-                #*<div class="panel mb25 mt5">
-                    <form id="searchForm">
-                        <input type="hidden" name="orderStatus" />
-                        <div class="panel-heading">
-                            <span class="panel-title">订单查询</span>
-                        </div>
-                        <div class="panel-body p25 pb5 admin-form">
-                            <div class="section row">
-                                <div class="col-md-3">
-                                    <label for="username" class="field-label">下单时间</label>
-                                    <label for="orderId" class="field prepend-icon">
-                                        <input type="hidden" name="createStartTime" id="createStartTime" />
-                                        <input type="hidden" name="createEndTime" id="createEndTime" />
-                                        <input type="text" name="createTimePicker" id="createTimePicker" class="gui-input" placeholder="请输入选择下单时间">
-                                        <label for="orderId" class="field-icon"><i class="fa fa-calendar"></i>
-                                        </label>
-                                    </label>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="username" class="field-label">订单ID</label>
-                                    <label for="orderId" class="field prepend-icon">
-                                        <input type="text" name="orderId" id="orderId" class="gui-input number" placeholder="请输入订单号...">
-                                        <label for="orderId" class="field-icon"><i class="fa fa-tag"></i>
-                                        </label>
-                                    </label>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="username" class="field-label">订单编号</label>
-                                    <label for="orderNo" class="field prepend-icon">
-                                        <input type="orderNo" name="orderNo" id="orderNo" class="gui-input number" placeholder="请输入订单编码...">
-                                        <label for="orderNo" class="field-icon"><i class="fa fa-tag"></i>
-                                        </label>
-                                    </label>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="username" class="field-label">购买人姓名</label>
-                                    <label for="buyerRealName" class="field prepend-icon">
-                                        <input type="text" name="buyerRealName" id="buyerRealName" class="gui-input" placeholder="请输入购买人姓名...">
-                                        <label for="buyerUserId" class="field-icon"><i class="fa fa-user"></i>
-                                        </label>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="section row">
-                                <div class="col-md-3">
-                                    <label for="username" class="field-label">收货人姓名</label>
-                                    <label for="consigneeName" class="field prepend-icon">
-                                        <input type="text" name="consigneeName" id="consigneeName" class="gui-input" placeholder="请输入收货人姓名...">
-                                        <label for="buyerUserId" class="field-icon"><i class="fa fa-user"></i>
-                                        </label>
-                                    </label>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="username" class="field-label">收货人手机号</label>
-                                    <label for="consigneePhone" class="field prepend-icon">
-                                        <input type="text" name="consigneePhone" id="consigneePhone" class="gui-input mobilephone" placeholder="请输入收货人手机号...">
-                                        <label for="buyerUserId" class="field-icon"><i class="fa fa-user"></i>
-                                        </label>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel-footer text-right admin-form">
-                            <button type="submit" class="btn btn-primary"> 查询 </button>
-                            <button type="reset" class="btn"> 重置 </button>
-                        </div>
-                    </form>
-                </div>*#
-
                 <div class="panel panel-primary panel-border top">
                     <div class="panel-menu p12">
                         <div class="row">
@@ -144,22 +75,17 @@
                                             </label>
                                         </th>
                                         {{/hasCommonActionButtons}}
-                                        #*<th class="">订单ID</th>*#
                                         <th class="">订单编号</th>
                                         <th class="">状态</th>
                                         <th class="">客户</th>
                                         <th class="">租赁方式</th>
                                         <th class="">租期</th>
-                                        #*<th class="">商品总数</th>*#
                                         <th class="">商品总价</th>
                                         <th class="">订单总价</th>
                                         <th class="">优惠金额</th>
-                                        #*<th class="">运费</th>*#
                                         <th class="">支付时间</th>
                                         <th class="">发货时间</th>
                                         <th class="">确认收货时间</th>
-                                        #*<th class="">预计归还时间</th>
-                                        <th class="">实际归还时间</th>*#
                                         <th class="">购买人备注</th>
                                         <th class="">订单备注</th>
                                         {{#hasRowActionButtons}}
@@ -179,29 +105,24 @@
                                                 </label>
                                             </td>
                                             {{/hasCommonActionButtons}}
-                                            #*<td class="">{{orderId}}</td>*#
                                             <td class="">{{orderNo}}</td>
                                             <td class="">{{orderStatusStr}}</td>
                                             <td class="">{{buyerRealName}}</td>
                                             <td class="">{{rentTypeStr}}</td>
                                             <td class="">{{rentTimeLength}}</td>
-                                            #*<td class="">商品总数</td>*#
-                                            <td class="">{{productAmountTotalFixed}}</td>
-                                            <td class="">{{orderAmountTotalFixed}}</td>
-                                            <td class="">{{discountAmountTotalFixed}}</td>
-                                            #*<td class="">运费</td>*#
+                                            <td class="">{{totalProductAmountFixed}}</td>
+                                            <td class="">{{totalOrderAmountFixed}}</td>
+                                            <td class="">{{totalDiscountAmountFixed}}</td>
                                             <td class="">{{payTimeFormat}}</td>
                                             <td class="">{{deliveryTimeFormat}}</td>
                                             <td class="">{{confirmDeliveryTimeFormat}}</td>
-                                            #*<td class="">预计归还时间</td>
-                                            <td class="">实际归还时间</td>*#
                                             <td class="">{{buyerRemark}}</td>
                                             <td class="">{{remark}}</td>
                                             {{#hasRowActionButtons}}
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
                                                     {{#rowActionButtons}}
-                                                    <a href="${ctx}{{menuUrl}}?orderNo={{orderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-productId="{{productId}}"> <i class="{{iClass}}"></i> </a>
+                                                    <a href="${ctx}{{menuUrl}}?no={{orderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-orderno="{{orderNo}}"> <i class="{{iClass}}"></i> </a>
                                                     {{/rowActionButtons}}
                                                 </div>
                                             </td>
