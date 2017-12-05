@@ -13,8 +13,6 @@ public class Order implements Serializable {
     private Integer orderId;
     private String orderNo;
     private Integer buyerCustomerId;
-    private Integer rentType;
-    private Integer rentTimeLength;
     private Date rentStartTime;
     private Integer depositCycle;
     private Integer paymentCycle;
@@ -45,6 +43,8 @@ public class Order implements Serializable {
 
     private Integer customerConsignId;
     private String buyerCustomerNo;
+    private String buyerCustomerName;
+    private String orderSellerName;
 
     private List<OrderProduct> orderProductList;
     private List<OrderMaterial> orderMaterialList;
@@ -91,14 +91,6 @@ public class Order implements Serializable {
 
     public void setOrderStatus(Integer orderStatus) {
         this.orderStatus = orderStatus;
-    }
-
-    public Integer getRentType() {
-        return rentType;
-    }
-
-    public void setRentType(Integer rentType) {
-        this.rentType = rentType;
     }
 
     public Integer getTotalProductCount() {
@@ -195,14 +187,6 @@ public class Order implements Serializable {
 
     public void setDeliveryTime(Date deliveryTime) {
         this.deliveryTime = deliveryTime;
-    }
-
-    public Integer getRentTimeLength() {
-        return rentTimeLength;
-    }
-
-    public void setRentTimeLength(Integer rentTimeLength) {
-        this.rentTimeLength = rentTimeLength;
     }
 
     public Date getExpectReturnTime() {
@@ -355,5 +339,21 @@ public class Order implements Serializable {
 
     public void setBuyerCustomerNo(String buyerCustomerNo) {
         this.buyerCustomerNo = buyerCustomerNo;
+    }
+
+    public String getBuyerCustomerName() {
+        return buyerCustomerName;
+    }
+
+    public void setBuyerCustomerName(String buyerCustomerName) {
+        this.buyerCustomerName = buyerCustomerName;
+    }
+
+    public String getOrderSellerName() {
+        return orderSellerName;
+    }
+
+    public void setOrderSellerName(String orderSellerName) {
+        this.orderSellerName = orderSellerName;
     }
 }

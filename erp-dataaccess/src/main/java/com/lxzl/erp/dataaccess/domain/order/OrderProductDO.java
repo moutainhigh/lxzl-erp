@@ -10,6 +10,8 @@ import java.util.List;
 public class OrderProductDO extends BaseDO {
     private Integer id;
     private Integer orderId;
+    private Integer rentType;
+    private Integer rentTimeLength;
     private Integer productId;
     private String productName;
     private Integer productSkuId;
@@ -160,5 +162,21 @@ public class OrderProductDO extends BaseDO {
 
     public void setBulkMaterialNoList(List<String> bulkMaterialNoList) {
         this.bulkMaterialNoList = bulkMaterialNoList;
+    }
+
+    public Integer getRentType() {
+        return rentType;
+    }
+
+    public void setRentType(Integer rentType) {
+        this.rentType = rentType;
+    }
+
+    public Integer getRentTimeLength() {
+        return rentTimeLength;
+    }
+
+    public void setRentTimeLength(Integer rentTimeLength) {
+        this.rentTimeLength = rentTimeLength;
     }
 }

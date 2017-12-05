@@ -5,6 +5,8 @@
 	<resultMap id="OrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="order_id" jdbcType="INTEGER" property="orderId" />
+		<result column="rent_type" jdbcType="INTEGER" property="rentType" />
+		<result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
 		<result column="material_id" jdbcType="INTEGER" property="materialId" />
 		<result column="material_name" jdbcType="VARCHAR" property="materialName" />
 		<result column="material_count" jdbcType="INTEGER" property="materialCount" />
@@ -23,7 +25,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eom.id,eom.order_id,eom.material_id,eom.material_name,eom.material_count,eom.material_unit_amount,eom.material_amount,eom.deposit_amount,eom.credit_deposit_amount,eom.insurance_amount,eom.material_snapshot,eom.data_status,eom.remark,eom.create_time,eom.create_user,eom.update_time,eom.update_user
+		eom.id,eom.order_id,eom.material_id,eom.rent_type as rent_type,eom.rent_time_length as rent_time_length,eom.material_name,eom.material_count,eom.material_unit_amount,eom.material_amount,eom.deposit_amount,eom.credit_deposit_amount,eom.insurance_amount,eom.material_snapshot,eom.data_status,eom.remark,eom.create_time,eom.create_user,eom.update_time,eom.update_user
 	</sql>
 
 	<select id="findById" resultMap="OrderMaterialDO" parameterType="java.lang.Integer">
@@ -59,6 +61,12 @@
 		<set>
 			<if test="orderId != null">
 				order_id = #{orderId,jdbcType=INTEGER},
+			</if>
+			<if test="rentType != null">
+				rent_type = #{rentType, jdbcType=INTEGER},
+			</if>
+			<if test="rentTimeLength != null">
+				rent_time_length = #{rentTimeLength, jdbcType=INTEGER},
 			</if>
 			<if test="materialId != null">
 				material_id = #{materialId,jdbcType=INTEGER},

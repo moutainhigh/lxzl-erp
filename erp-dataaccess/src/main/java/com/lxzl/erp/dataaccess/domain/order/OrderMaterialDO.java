@@ -8,6 +8,8 @@ public class OrderMaterialDO  extends BaseDO {
 
 	private Integer id;
 	private Integer orderId;
+	private Integer rentType;
+	private Integer rentTimeLength;
 	private Integer materialId;
 	private String materialName;
 	private Integer materialCount;
@@ -124,4 +126,19 @@ public class OrderMaterialDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public Integer getRentType() {
+		return rentType;
+	}
+
+	public void setRentType(Integer rentType) {
+		this.rentType = rentType;
+	}
+
+	public Integer getRentTimeLength() {
+		return rentTimeLength;
+	}
+
+	public void setRentTimeLength(Integer rentTimeLength) {
+		this.rentTimeLength = rentTimeLength;
+	}
 }

@@ -162,10 +162,10 @@
 				bulk_material_price = #{bulkMaterialPrice,jdbcType=DECIMAL},
 			</if>
 			<if test="currentEquipmentId != null">
-				current_equipment_id = #{currentEquipmentId,jdbcType=INTEGER},
+				current_equipment_id = CASE WHEN #{currentEquipmentId,jdbcType=INTEGER}=0 THEN NULL ELSE #{currentEquipmentId,jdbcType=INTEGER} END,
 			</if>
 			<if test="currentEquipmentNo != null">
-				current_equipment_no = #{currentEquipmentNo,jdbcType=VARCHAR},
+				current_equipment_no = CASE WHEN #{currentEquipmentNo,jdbcType=VARCHAR}='' THEN NULL ELSE #{currentEquipmentNo,jdbcType=VARCHAR} END,
 			</if>
 			<if test="bulkMaterialStatus != null">
 				bulk_material_status = #{bulkMaterialStatus,jdbcType=INTEGER},
@@ -294,13 +294,13 @@
 		<trim prefix=",">
 			current_equipment_id =
 			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.currentEquipmentId,jdbcType=INTEGER}
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then (CASE WHEN  #{bulkMaterialDO.currentEquipmentId,jdbcType=INTEGER} = 0 THEN NULL ELSE  #{bulkMaterialDO.currentEquipmentId,jdbcType=INTEGER} END)
 			</foreach>
 		</trim>
 		<trim prefix=",">
 			current_equipment_no =
 			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
-				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.currentEquipmentNo,jdbcType=VARCHAR}
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then (CASE WHEN  #{bulkMaterialDO.currentEquipmentNo,jdbcType=VARCHAR} = '' THEN NULL ELSE  #{bulkMaterialDO.currentEquipmentNo,jdbcType=VARCHAR} END)
 			</foreach>
 		</trim>
 		<trim prefix=",">
