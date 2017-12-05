@@ -986,44 +986,19 @@ public class OrderServiceImpl implements OrderService {
         }
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
             for (OrderProduct orderProduct : order.getOrderProductList()) {
-                if (CollectionUtil.isEmpty(orderProduct.getProductSkuPropertyList()) || orderProduct.getProductCount() == null) {
-                    return ErrorCode.PARAM_IS_NOT_ENOUGH;
-                }
-                List<Integer> propertyValueIdList = new ArrayList<>();
-                for (ProductSkuProperty productSkuProperty : orderProduct.getProductSkuPropertyList()) {
-                    propertyValueIdList.add(productSkuProperty.getPropertyValueId());
-                }
-                if (propertyValueIdList.size() == 0) {
-                    return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
-                }
-                if (orderProduct.getProductCount() == null || orderProduct.getProductCount() <= 0) {
-                    return ErrorCode.PARAM_IS_NOT_NULL;
-                }
-                if (orderProduct.getProductUnitAmount() == null || BigDecimalUtil.compare(orderProduct.getProductUnitAmount(), BigDecimal.ZERO) < 0) {
-                    return ErrorCode.ORDER_PRODUCT_AMOUNT_ERROR;
-                }
-
-                Map<String, Object> maps = new HashMap<>();
-                maps.put("productId", orderProduct.getProductId());
-                maps.put("isSku", CommonConstant.COMMON_CONSTANT_YES);
-                maps.put("propertyValueIdList", propertyValueIdList);
-                maps.put("propertyValueIdCount", propertyValueIdList.size());
-                Integer skuId = productSkuPropertyMapper.findSkuIdByParams(maps);
-                if (skuId == null) {
-                    return ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS;
-                }
-
-                orderProduct.setProductSkuId(skuId);
-                ServiceResult<String, Product> productServiceResult = productService.queryProductById(orderProduct.getProductId());
-                ProductSkuDO productSkuDO = productSkuMapper.findById(orderProduct.getProductSkuId());
-                if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode()) || productServiceResult.getResult() == null || productSkuDO == null) {
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProduct.getProductSkuId());
+                if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode()) || productServiceResult.getResult() == null) {
                     return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
                 }
                 Product product = productServiceResult.getResult();
                 if (CommonConstant.COMMON_CONSTANT_NO.equals(product.getIsRent())) {
                     return ErrorCode.PRODUCT_IS_NOT_RENT;
                 }
-                if (productSkuDO.getStock() == null || productSkuDO.getStock() <= 0 || (productSkuDO.getStock() - orderProduct.getProductCount()) < 0) {
+                if (CollectionUtil.isEmpty(product.getProductSkuList())) {
+                    return ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS;
+                }
+                ProductSku productSku = product.getProductSkuList().get(0);
+                if (productSku == null || productSku.getStock() == null || productSku.getStock() <= 0 || (productSku.getStock() - orderProduct.getProductCount()) < 0) {
                     return ErrorCode.ORDER_PRODUCT_STOCK_INSUFFICIENT;
                 }
             }
@@ -1069,13 +1044,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderConsignInfoMapper orderConsignInfoMapper;
 
     @Autowired
-    private ProductSkuPropertyMapper productSkuPropertyMapper;
-
-    @Autowired
     private WorkflowService workflowService;
-
-    @Autowired
-    private ProductSkuMapper productSkuMapper;
 
     @Autowired
     private ProductEquipmentMapper productEquipmentMapper;

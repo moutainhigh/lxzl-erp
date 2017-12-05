@@ -35,34 +35,10 @@ public class OrderTest extends ERPUnTransactionalTest {
 
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
-        orderProduct.setProductId(2000013);
         orderProduct.setProductSkuId(40);
         orderProduct.setProductCount(1);
         orderProduct.setProductUnitAmount(new BigDecimal(20.0));
         orderProduct.setInsuranceAmount(new BigDecimal(15.0));
-
-        List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
-        ProductSkuProperty productSkuProperty = new ProductSkuProperty();
-        productSkuProperty.setPropertyId(1);
-        productSkuProperty.setPropertyValueId(2);
-        productSkuPropertyList.add(productSkuProperty);
-        ProductSkuProperty productSkuProperty2 = new ProductSkuProperty();
-        productSkuProperty2.setPropertyId(2);
-        productSkuProperty2.setPropertyValueId(5);
-        productSkuPropertyList.add(productSkuProperty2);
-        productSkuProperty2 = new ProductSkuProperty();
-        productSkuProperty2.setPropertyId(5);
-        productSkuProperty2.setPropertyValueId(11);
-        productSkuPropertyList.add(productSkuProperty2);
-        productSkuProperty2 = new ProductSkuProperty();
-        productSkuProperty2.setPropertyId(6);
-        productSkuProperty2.setPropertyValueId(13);
-        productSkuPropertyList.add(productSkuProperty2);
-        productSkuProperty2 = new ProductSkuProperty();
-        productSkuProperty2.setPropertyId(7);
-        productSkuProperty2.setPropertyValueId(15);
-        productSkuPropertyList.add(productSkuProperty2);
-        orderProduct.setProductSkuPropertyList(productSkuPropertyList);
         orderProductList.add(orderProduct);
         order.setOrderProductList(orderProductList);
 

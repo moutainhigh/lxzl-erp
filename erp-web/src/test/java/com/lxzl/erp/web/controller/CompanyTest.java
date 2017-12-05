@@ -40,4 +40,11 @@ public class CompanyTest extends ERPUnTransactionalTest {
         departmentQueryParam.setSubCompanyId(1);
         TestResult result = getJsonTestResult("/company/getCompanyDepartmentUserTree",departmentQueryParam);
     }
+
+    @Test
+    public void deleteDepartment() throws Exception {
+        DepartmentQueryParam departmentQueryParam = new DepartmentQueryParam();
+        departmentQueryParam.setDepartmentId(400039);
+        TestResult result = getJsonTestResult("/company/deleteDepartment",departmentQueryParam);
+    }
 }
