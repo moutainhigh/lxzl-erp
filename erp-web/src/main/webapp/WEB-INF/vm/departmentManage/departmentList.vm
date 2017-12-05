@@ -45,8 +45,8 @@
                     </div>
                 </div>
                 <div class="panel-body pn">
-                    <div class="table-responsive">
-                        <script type="text/html" id="dataListTableTpl">
+                    <script type="text/html" id="dataListTableTpl">
+                        <table class="table" id="dataListTable">
                             <colgroup>
                                 <col width="20%"></col>
                                 <col width="40%"></col>
@@ -63,25 +63,10 @@
                             </thead>
                             <tbody>
                             </tbody>
-                        </script>
-                        <table class="table" id="dataListTable">
-                            <colgroup>
-                                <col width="20%"></col>
-                                <col width="40%"></col>
-                                <col width="20%"></col>
-                                <col width="20%"></col>
-                            </colgroup>
-                            <thead>
-                                <tr>
-                                    <th>序号</th>
-                                    <th></th>
-                                    <th>ID</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
                         </table>
+                    </script>
+                    <div class="table-responsive" id="departmentTreeContainer">
+
                     </div>
                 </div>
                 <div class="panel-footer">
@@ -102,7 +87,7 @@
 
 <script type="text/javascript" src="${staticCommon}/vendor/plugins/fancytree2/jquery.fancytree-all.min.js"></script>
 <script type="text/javascript">
-    management_load_script('${staticManagement}/js','manage.department.js' ,'manage.department.add.js');
+    management_load_script('${staticManagement}/js','manage.department.js' ,'manage.department.add.js' ,'manage.department.edit.js');
 </script>
 
 <script type="text/javascript">
