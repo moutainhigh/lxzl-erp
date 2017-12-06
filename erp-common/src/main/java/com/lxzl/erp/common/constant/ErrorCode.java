@@ -83,6 +83,9 @@ public class ErrorCode {
     public static final String PRODUCT_MATERIAL_RADIATOR_NOT_ENOUGH = "J200037";
     public static final String PRODUCT_MATERIAL_SSD_NOT_ENOUGH = "J200038";
     public static final String PRODUCT_MATERIAL_BOX_NOT_ENOUGH = "J200039";
+    public static final String PRODUCT_EQUIPMENT_IS_NOT_BUSY = "J200040";
+    public static final String BULK_MATERIAL_IS_NOT_BUSY = "J200041";
+    public static final String BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT= "J200042";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -313,18 +316,18 @@ public class ErrorCode {
         MAP.put(PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS, "商品属性不存在");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_NOT_EXISTS, "商品属性值不存在");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_ALREADY_EXISTS, "商品属性值不存在");
-        MAP.put(PRODUCT_EQUIPMENT_NOT_EXISTS, "设备不存在");
+        MAP.put(PRODUCT_EQUIPMENT_NOT_EXISTS, "编号【%s 】的设备不存在");
         MAP.put(MATERIAL_NOT_EXISTS, "物料不存在");
         MAP.put(PRODUCT_EQUIPMENT_HAVE_NO_BULK_MATERIAL, "该设备没有散料，数据有误");
-        MAP.put(PRODUCT_EQUIPMENT_IS_NOT_IDLE, "该设备没有在空闲状态");
+        MAP.put(PRODUCT_EQUIPMENT_IS_NOT_IDLE, "编号【%s 】的设备不在闲置中");
         MAP.put(BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT, "散料在某设备上");
-        MAP.put(BULK_MATERIAL_NOT_EXISTS, "散料不存在");
-        MAP.put(PRODUCT_NOT_EXISTS, "商品不存在");
-        MAP.put(PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, "商品不在该库房");
+        MAP.put(BULK_MATERIAL_NOT_EXISTS, "编号【%s 】的物料不存在");
+        MAP.put(PRODUCT_NOT_EXISTS, "商品【%s 】不存在");
+        MAP.put(PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, "编号【%s 】的设备不在【%s 】库房中");
         MAP.put(PRODUCT_IS_NOT_RENT, "该商品已下架");
         MAP.put(MATERIAL_IN_USED, "物料正在被使用");
         MAP.put(PRODUCT_SKU_CAN_NOT_DELETE, "检测到您要删除商品SKU，目前SKU不支持删除。");
-        MAP.put(BULK_MATERIAL_IS_NOT_IDLE, "物料没有在闲置状态。");
+        MAP.put(BULK_MATERIAL_IS_NOT_IDLE, "编号【%s 】在没有在闲置状态。");
         MAP.put(PRODUCT_EQUIPMENT_STATUS_ERROR, "商品设备状态有误。");
         MAP.put(BULK_MATERIAL_STATUS_ERROR, "散料状态有误。");
         MAP.put(BULK_MATERIAL_NOT_IN_THIS_WAREHOUSE, "散料不在该库房。");
@@ -338,6 +341,9 @@ public class ErrorCode {
         MAP.put(PRODUCT_MATERIAL_RADIATOR_NOT_ENOUGH, "商品【散热器】物料不足");
         MAP.put(PRODUCT_MATERIAL_SSD_NOT_ENOUGH, "商品【固态硬盘】物料不足");
         MAP.put(PRODUCT_MATERIAL_BOX_NOT_ENOUGH, "商品【机箱】物料不足");
+        MAP.put(PRODUCT_EQUIPMENT_IS_NOT_BUSY, "编号【%s 】的设备不在租赁中");
+        MAP.put(BULK_MATERIAL_IS_NOT_BUSY, "编号【%s 】的物料不在租赁中");
+        MAP.put(BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT, "编号【%s 】在某订单或者某设备上");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
@@ -450,15 +456,15 @@ public class ErrorCode {
         MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_STOCK_NOT_ENOUGH, "货物调拨该库房该商品库存不足。");
         MAP.put(DEPLOYMENT_ORDER_BULK_MATERIAL_STOCK_NOT_ENOUGH, "货物调拨该库房该物料库存不足。");
         MAP.put(DEPLOYMENT_ORDER_STATUS_ERROR, "调配单状态有误。");
-        MAP.put(DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, "调拨单没有这个SKU或物料单项。");
+        MAP.put(DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, "编号【%s 】不在该调拨单项中。");
         MAP.put(ORDER_STATUS_NOT_PROCESSED, "订单未处于备货完成状态。");
         MAP.put(ORDER_PRODUCT_AMOUNT_ERROR, "订单商品价格有误。");
         MAP.put(ORDER_MATERIAL_AMOUNT_ERROR, "订单物料价格有误。");
-        MAP.put(ORDER_HAVE_NO_THIS_ITEM, "订单没有这个SKU或物料单项。");
-        MAP.put(ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, "订单商品项的设备数已经达到最大。");
-        MAP.put(ORDER_MATERIAL_BULK_COUNT_MAX, "订单物料项散料数已经达到最大。");
-        MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, "调拨单商品项的设备数已经达到最大。");
-        MAP.put(DEPLOYMENT_ORDER_MATERIAL_BULK_COUNT_MAX, "调拨单物料项的散料数已经达到最大。");
+        MAP.put(ORDER_HAVE_NO_THIS_ITEM, "编号【%s 】不在该订单项中。");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, "设备数超过了订单项最大数：%d");
+        MAP.put(ORDER_MATERIAL_BULK_COUNT_MAX, "物料数超过了订单项最大数：%d ");
+        MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, "设备数超过了调拨单项最大数：%d。");
+        MAP.put(DEPLOYMENT_ORDER_MATERIAL_BULK_COUNT_MAX, "物料数超过了调拨单项最大数：%d");
         MAP.put(DEPLOYMENT_ORDER_WAREHOUSE_NOT_SAME, "调拨单仓库不能为同一个。");
         MAP.put(DEPLOYMENT_ORDER_HAVE_LOCK_ITEM, "调拨单有锁定的商品或物料，请仔细检查。");
         MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_COUNT_NOT_ENOUGH, "调拨单商品备货不足");

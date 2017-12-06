@@ -308,7 +308,7 @@ public class ProductServiceImpl implements ProductService {
 
         ProductDO productDO = productMapper.findByProductId(productId);
         if (productDO == null) {
-            result.setErrorCode(ErrorCode.PRODUCT_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.PRODUCT_NOT_EXISTS,productId);
             return result;
         }
 
@@ -445,7 +445,7 @@ public class ProductServiceImpl implements ProductService {
         ServiceResult<String, ProductEquipment> result = new ServiceResult<>();
         ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(equipmentNo);
         if (productEquipmentDO == null) {
-            result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_EXISTS, equipmentNo);
             return result;
         }
         result.setErrorCode(ErrorCode.SUCCESS);
