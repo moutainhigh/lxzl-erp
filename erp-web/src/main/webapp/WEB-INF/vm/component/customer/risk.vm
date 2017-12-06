@@ -2,7 +2,7 @@
     <div class="panel-heading">
         <span class="panel-icon"><i class="fa fa-circle"></i>
         </span>
-        <span class="panel-title">客户风控信息</span>
+        <span class="panel-title">风控信息</span>
     </div>
     <div class="panel-body pn">
         <table class="table mbn tc-icon-1 tc-med-2 tc-bold-last">
@@ -14,44 +14,44 @@
             </tr>
             </thead>
             <script type="text/html" id="customerStatusTpl">
-                {{#customer}}
+                {{#customerRiskManagement}}
                 <tr>
                     <td>
                         <span class="fa fa-circle text-success"></span>
                     </td>
                     <td>授信额度</td>
-                    <td><span class='label label-success'>￥100.00</span></td>
+                    <td><span class='label label-success'>￥{{creditAmountFormat}}</span></td>
                 </tr>
                 <tr>
                     <td>
                         <span class="fa fa-circle text-primary"></span>
                     </td>
                     <td>已用授信额度</td>
-                    <td><span class='label label-primary'>￥100.00</span></td>
+                    <td><span class='label label-primary'>￥{{creditAmountUsedFormat}}</span></td>
                 </tr>
                 <tr>
                     <td>
                         <span class="fa fa-circle text-info"></span>
                     </td>
                     <td>押金期数</td>
-                    <td><span class='label label-info'>￥100.00</span></td>
+                    <td><span class='label label-info'>{{depositCycle}}</span></td>
                 </tr>
                 <tr>
                     <td>
                         <span class="fa fa-circle text-info"></span>
                     </td>
                     <td>付款期数</td>
-                    <td><span class='label label-info'>￥100.00</span></td>
+                    <td><span class='label label-info'>{{paymentCycle}}</span></td>
                 </tr>
                 <tr>
                     <td colspan="3">
                         <blockquote class="blockquote-system">
-                            <p>这是一个非常讲信用的客户.</p>
-                            <small>毛涛<em style="font-size: 12px; font-style: inherit; margin-left: 10px;">2017-12-06 18:18:18</em></small>
+                            <p>{{remark}}</p>
+##                            <small>毛涛<em style="font-size: 12px; font-style: inherit; margin-left: 10px;">2017-12-06 18:18:18</em></small>
                         </blockquote>
                     </td>
                 </tr>
-                {{/customer}}
+                {{/customerRiskManagement}}
             </script>
             <tbody id="customerStatus"></tbody>
         </table>
