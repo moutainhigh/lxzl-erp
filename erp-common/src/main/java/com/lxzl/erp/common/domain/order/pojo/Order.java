@@ -17,6 +17,7 @@ public class Order implements Serializable {
     private Integer depositCycle;
     private Integer paymentCycle;
     private BigDecimal totalDepositAmount;
+    private BigDecimal totalMustDepositAmount;
     private BigDecimal totalCreditDepositAmount;
     private BigDecimal totalInsuranceAmount;
     private Integer payMode;
@@ -25,6 +26,7 @@ public class Order implements Serializable {
     private Integer totalMaterialCount;
     private BigDecimal totalMaterialAmount;
     private BigDecimal totalOrderAmount;
+    private BigDecimal totalPaidOrderAmount;
     private BigDecimal totalDiscountAmount;
     private BigDecimal logisticsAmount;
     private Integer orderSellerId;
@@ -355,5 +357,21 @@ public class Order implements Serializable {
 
     public void setOrderSellerName(String orderSellerName) {
         this.orderSellerName = orderSellerName;
+    }
+
+    public BigDecimal getTotalMustDepositAmount() {
+        return totalMustDepositAmount;
+    }
+
+    public void setTotalMustDepositAmount(BigDecimal totalMustDepositAmount) {
+        this.totalMustDepositAmount = totalMustDepositAmount;
+    }
+
+    public BigDecimal getTotalPaidOrderAmount() {
+        return totalPaidOrderAmount;
+    }
+
+    public void setTotalPaidOrderAmount(BigDecimal totalPaidOrderAmount) {
+        this.totalPaidOrderAmount = totalPaidOrderAmount;
     }
 }

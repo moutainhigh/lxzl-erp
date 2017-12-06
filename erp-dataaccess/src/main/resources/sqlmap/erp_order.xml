@@ -13,6 +13,7 @@
         <result column="deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
         <result column="payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
         <result column="total_deposit_amount" jdbcType="DECIMAL" property="totalDepositAmount" />
+        <result column="total_must_deposit_amount" jdbcType="DECIMAL" property="totalMustDepositAmount" />
         <result column="total_credit_deposit_amount" jdbcType="DECIMAL" property="totalCreditDepositAmount" />
         <result column="total_insurance_amount" jdbcType="DECIMAL" property="totalInsuranceAmount" />
         <result column="pay_mode" jdbcType="INTEGER" property="payMode" />
@@ -21,6 +22,7 @@
         <result column="total_material_count" jdbcType="INTEGER" property="totalMaterialCount" />
         <result column="total_material_amount" jdbcType="DECIMAL" property="totalMaterialAmount" />
         <result column="total_order_amount" jdbcType="DECIMAL" property="totalOrderAmount" />
+        <result column="total_paid_order_amount" jdbcType="DECIMAL" property="totalPaidOrderAmount" />
         <result column="total_discount_amount" jdbcType="DECIMAL" property="totalDiscountAmount" />
         <result column="logistics_amount" jdbcType="DECIMAL" property="logisticsAmount" />
         <result column="order_seller_id" jdbcType="INTEGER" property="orderSellerId" />
@@ -111,7 +113,7 @@
     </resultMap>
 
     <sql id="column_List">
-		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.rent_start_time as rent_start_time,eo.deposit_cycle as deposit_cycle,eo.payment_cycle as payment_cycle,eo.total_deposit_amount as total_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.pay_mode as pay_mode,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_order_amount as total_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.buyer_remark as buyer_remark,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user
+		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.rent_start_time as rent_start_time,eo.deposit_cycle as deposit_cycle,eo.payment_cycle as payment_cycle,eo.total_deposit_amount as total_deposit_amount,eo.total_must_deposit_amount as total_must_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.pay_mode as pay_mode,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_order_amount as total_order_amount,eo.total_paid_order_amount as total_paid_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.buyer_remark as buyer_remark,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user
 	</sql>
 
     <sql id="product_column_List">
@@ -330,6 +332,9 @@
             <if test="totalDepositAmount != null">
                 total_deposit_amount = #{totalDepositAmount,jdbcType=DECIMAL},
             </if>
+            <if test="totalMustDepositAmount != null">
+                total_must_deposit_amount = #{totalMustDepositAmount,jdbcType=DECIMAL},
+            </if>
             <if test="totalCreditDepositAmount != null">
                 total_credit_deposit_amount = #{totalCreditDepositAmount,jdbcType=DECIMAL},
             </if>
@@ -353,6 +358,9 @@
             </if>
             <if test="totalOrderAmount != null">
                 total_order_amount = #{totalOrderAmount, jdbcType=DECIMAL},
+            </if>
+            <if test="totalPaidOrderAmount != null">
+                total_paid_order_amount = #{totalPaidOrderAmount, jdbcType=DECIMAL},
             </if>
             <if test="totalDiscountAmount != null">
                 total_discount_amount = #{totalDiscountAmount, jdbcType=DECIMAL},

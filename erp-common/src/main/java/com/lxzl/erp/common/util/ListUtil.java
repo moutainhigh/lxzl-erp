@@ -25,6 +25,32 @@ public class ListUtil {
         }
         return map;
     }
+
+    //list转化为map,多个key值，用-拼接组成一个新的key
+    public static <V> Map<String, V> listToMap(List<V> vList, String... kNames) {
+        Map<String, V> map = new HashMap();
+        if (vList == null || kNames == null || kNames.length == 0 || vList.size() == 0) {
+            return map;
+        }
+
+        String key = "";
+        for (V v : vList) {
+            try {
+                for (String kName : kNames) {
+                    Field kField = getField(v.getClass(), kName);
+                    key = key + kField.get(v) + "-";
+                }
+                key = key.substring(0, key.length() - 1);
+                map.put(key, v);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return map;
+    }
+
     private static <V> Field getField(Class<V> clazz, String kName) {
         if (clazz == null || kName == null) {
             return null;
@@ -39,9 +65,9 @@ public class ListUtil {
     }
 
 
-    public static <K, V> List<V> mapToList( Map<K, V> kvMap) {
+    public static <K, V> List<V> mapToList(Map<K, V> kvMap) {
         List<V> list = new ArrayList<>();
-        if(kvMap != null && kvMap.size() > 0){
+        if (kvMap != null && kvMap.size() > 0) {
             for (Map.Entry<K, V> entry : kvMap.entrySet()) {
                 list.add(entry.getValue());
             }

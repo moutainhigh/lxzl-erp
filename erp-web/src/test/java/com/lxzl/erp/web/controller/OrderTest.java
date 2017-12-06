@@ -34,7 +34,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
-        orderProduct.setRentType(OrderRentType.RENT_TYPE_DAY);
+        orderProduct.setRentType(OrderRentType.RENT_TYPE_MONTH);
         orderProduct.setRentTimeLength(6);
         orderProduct.setProductSkuId(40);
         orderProduct.setProductCount(2);
@@ -46,7 +46,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         List<OrderMaterial> orderMaterialList = new ArrayList<>();
 
         OrderMaterial orderMaterial = new OrderMaterial();
-        orderMaterial.setRentType(OrderRentType.RENT_TYPE_DAY);
+        orderMaterial.setRentType(OrderRentType.RENT_TYPE_MONTH);
         orderMaterial.setRentTimeLength(6);
         orderMaterial.setMaterialId(5);
         orderMaterial.setMaterialCount(3);
@@ -56,8 +56,8 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderMaterialList.add(orderMaterial);
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerNo("CC201711301106206721011");
-        order.setCustomerConsignId(1);
+        order.setBuyerCustomerNo("C201711152010206581143");
+        order.setCustomerConsignId(7);
         order.setRentStartTime(new Date());
         TestResult result = getJsonTestResult("/order/create", order);
     }
