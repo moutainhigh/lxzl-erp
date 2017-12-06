@@ -104,7 +104,7 @@
 <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
 <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
 <script type="text/javascript">
-    management_load_script('${staticManagement}/js','manage.customer.business.detail.js');
+    management_load_script('${staticManagement}/js','manage.customer.business.detail.js', 'manage.customer.risk.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化
