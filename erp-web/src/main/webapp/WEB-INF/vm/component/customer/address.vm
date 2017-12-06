@@ -1,0 +1,26 @@
+<div class="panel">
+    <div class="panel-heading">
+        <span class="panel-icon"><i class="glyphicon glyphicon-map-marker"></i>
+        </span>
+        <span class="panel-title">收货地址</span>
+    </div>
+    <div class="panel-body pb5">
+        <script type="text/html" id="customerAddressTpl">
+            {{#userConsignInfoList}}
+            <address>
+                <strong>{{consigneeName}}</strong>
+                <br>
+                {{provinceName}}{{cityName}}{{districtName}}{{address}}
+                <br>
+                <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{consigneePhone}}
+            </address>
+            {{/userConsignInfoList}}
+            {{^userConsignInfoList}}
+            <address>
+                还没有添加地址信息
+            </address>
+            {{/userConsignInfoList}}
+        </script>
+        <div class="well" id="customerAddress"></div>
+    </div>
+</div>

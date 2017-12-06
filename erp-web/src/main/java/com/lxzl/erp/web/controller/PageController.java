@@ -182,9 +182,9 @@ public class PageController extends BaseController {
     public String customerManageEdit() {
         return "/customerManage/customerEdit";
     }
-    @RequestMapping("/customer-manage/info")
+    @RequestMapping("/customer-manage/riskModal")
     public String customerManageInfo() {
-        return "/customerManage/customerInfo";
+        return "/component/customer/riskModal";
     }
 
     //企业客户

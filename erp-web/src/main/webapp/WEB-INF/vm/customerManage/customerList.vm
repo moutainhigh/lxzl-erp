@@ -113,7 +113,7 @@
                                     <td class="text-right">
                                         <div class="btn-group text-right">
                                             {{#rowActionButtons}}
-                                            <a href="${ctx}{{menuUrl}}?no={{customerNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-customerno="{{customerNo}}">{{text}}</a>
+                                            <a href="${ctx}{{menuUrl}}?no={{customerNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-customerno="{{customerNo}}" data-customertype="{{customerType}}">{{text}}</a>
                                             {{/rowActionButtons}}
                                         </div>
                                     </td>
@@ -148,7 +148,7 @@
     </div>
     #parse("layout/footer.vm")
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js', 'manage.customer.js', 'manage.customer.add.js', 'manage.customer.edit.js');
+        management_load_script('${staticManagement}/js', 'manage.customer.js', 'manage.customer.add.js', 'manage.customer.edit.js', 'manage.customer.risk.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
