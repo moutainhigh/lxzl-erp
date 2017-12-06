@@ -59,13 +59,6 @@
                                             <input type="text" name="customerNo" id="customerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户编号">
                                         </div>
                                     </div>
-                                    <script type="text/html" id="workflowTypeSelectTpl">
-                                        <option value="">全部（工作流类型）</option>
-                                        {{#workflowType}}
-                                        <option value={{num}}>{{value}}</option>
-                                        {{/workflowType}}
-                                    </script>
-                                    <select name="workflowType" id="workflowType" class="hide"></select>
                                 </form>
                             </div>
                         </div>

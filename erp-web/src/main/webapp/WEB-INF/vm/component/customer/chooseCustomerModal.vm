@@ -1,0 +1,88 @@
+<div class="popup-basic popup-xl admin-form mfp-with-anim theme-primary " id="chooseCustomerModal">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-search"></i>选择个人客户</span>
+        </div>
+        <div class="panel-menu p12">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <form  class="form-horizontal searchForm">
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                            <button type="reset" class="btn btn-default btn-sm">重置</button>
+                        </div>
+                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                            <div class="input-group">
+                                <input type="text" name="realName" id="realName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入真实姓名">
+                            </div>
+                        </div>
+                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                            <div class="input-group">
+                                <input type="text" name="phone" id="phone" class="form-control input-sm bradius" autocomplete="off" placeholder="输入手机号">
+                            </div>
+                        </div>
+                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                            <div class="input-group">
+                                <input type="text" name="customerNo" id="customerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户编号">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body pn">
+            <div class="table-responsive">
+                <script type="text/html" id="chooseCustomerDataListTpl">
+                    <thead>
+                    <tr>
+                        <th>客户编号</th>
+                        <th>真实姓名</th>
+                        <th>电子邮件</th>
+                        <th>手机号</th>
+                        <th>地址</th>
+                        <th>创建时间</th>
+                        <th>备注</th>
+                        <th class="text-right">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#dataSource}}
+                    {{#listData}}
+                    <tr data-rowdata="{{rowData}}">
+                        <td>{{customerNo}}</td>
+                        <td>{{customerPerson.realName}}</td>
+                        <td>{{customerPerson.email}}</td>
+                        <td>{{customerPerson.phone}}</td>
+                        <td>{{addressForamt}}</td>
+                        <td>{{createTimeFormat}}</td>
+                        <td>{{customerPerson.remark}}</td>
+                        <td class="text-right">
+                            <div class="btn-group text-right">
+                                <a href="#" type="button" class="btn btn-default btn-xs chooseButton" data-customerno="{{customerNo}}" data-customertype="{{customerType}}">选择</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {{/listData}}
+                    {{^listData}}
+                    <tr>
+                        <td valign="top" colspan="14" class="text-center">没有查询到客户信息</td>
+                    </tr>
+                    {{/listData}}
+                    {{/dataSource}}
+                    </tbody>
+                </script>
+                <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="chooseCustomerDataListTable"></table>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                    #parse("component/pager.vm")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
