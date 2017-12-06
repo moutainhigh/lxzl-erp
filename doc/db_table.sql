@@ -1305,11 +1305,49 @@ CREATE TABLE `erp_third_party_pay_record` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='第三方支付记录表';
 
+DROP TABLE if exists `erp_statement_order`;
+CREATE TABLE `erp_statement_order` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `statement_order_no` varchar(100) NOT NULL COMMENT '对账单编码',
+  `customer_id` int(20) NOT NULL COMMENT '客户ID',
+  `statement_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '对账单金额，对账单明细总和',
+  `statement_status` int(11) NOT NULL DEFAULT '0' COMMENT '结算状态，0未结算，1已结算',
+  `statement_start_time` datetime DEFAULT NULL COMMENT '对账开始时间，对账单明细最早的一个',
+  `statement_end_time` datetime DEFAULT NULL COMMENT '对账结束时间，对账单明细最晚的一个',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='对账单';
+
+DROP TABLE if exists `erp_statement_order_detail`;
+CREATE TABLE `erp_statement_order_detail` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `statement_order_id` int(20) NOT NULL COMMENT '对账单ID',
+  `customer_id` int(20) NOT NULL COMMENT '客户ID',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `statement_detail_amount` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '对账单金额',
+  `statement_detail_status` int(11) NOT NULL DEFAULT '0' COMMENT '结算状态，0未结算，1已结算',
+  `statement_start_time` datetime DEFAULT NULL COMMENT '对账开始时间',
+  `statement_end_time` datetime DEFAULT NULL COMMENT '对账结束时间',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='对账单明细';
+
+
 DROP TABLE if exists `erp_order_pay_plan`;
 CREATE TABLE `erp_order_pay_plan` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `pay_no` varchar(100) NOT NULL COMMENT '支付编号',
-  `parent_pay_no` varchar(100) COMMENT '关联的支付编号，从哪个生成的',
+  `pay_plan_no` varchar(100) NOT NULL COMMENT '支付编号',
+  `parent_pay_plan_no` varchar(100) COMMENT '关联的支付编号，从哪个生成的',
   `order_id` int(20) NOT NULL COMMENT '订单号',
   `pay_status` int(11) NOT NULL DEFAULT '0' COMMENT '支付状态，0未支付，1支付中，2已经支付，3付款失败，4付款失效',
   `pay_time` datetime COMMENT '发起支付时间',

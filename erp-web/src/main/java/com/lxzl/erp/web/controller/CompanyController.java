@@ -44,6 +44,12 @@ public class CompanyController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "getCompanyById", method = RequestMethod.POST)
+    public Result getCompanyById(@RequestBody SubCompanyQueryParam subCompanyQueryParam, BindingResult validResult) {
+        ServiceResult<String, SubCompany> serviceResult = companyService.getSubCompanyById(subCompanyQueryParam.getSubCompanyId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "getDepartmentList", method = RequestMethod.POST)
     public Result getDepartmentList(@RequestBody DepartmentQueryParam departmentQueryParam) {
         ServiceResult<String, List<Department>> serviceResult = companyService.getDepartmentList(departmentQueryParam);
