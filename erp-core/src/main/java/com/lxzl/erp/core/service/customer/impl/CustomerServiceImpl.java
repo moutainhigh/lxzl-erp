@@ -247,6 +247,7 @@ public class CustomerServiceImpl implements CustomerService {
             CustomerRiskManagementDO customerRiskManagementDO = CustomerRiskManagementConverter.convertCustomerRiskManagement(customerRiskManagement);
             customerRiskManagementDO.setCreditAmountUsed(BigDecimal.ZERO);
             customerRiskManagementDO.setCustomerId(customerDO.getId());
+            customerRiskManagementDO.setRemark(customerRiskManagement.getRemark());
             customerRiskManagementDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             customerRiskManagementDO.setCreateTime(now);
             customerRiskManagementDO.setUpdateTime(now);

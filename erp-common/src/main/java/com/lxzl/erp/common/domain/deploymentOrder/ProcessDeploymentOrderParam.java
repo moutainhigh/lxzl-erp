@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.deploymentOrder;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -11,7 +12,7 @@ import java.io.Serializable;
 public class ProcessDeploymentOrderParam implements Serializable {
     private String deploymentOrderNo;
     private String equipmentNo;
-    private String bulkMaterialNo;
+    private List<String> bulkMaterialNoList;
     private Integer operationType;
 
     public String getDeploymentOrderNo() {
@@ -30,12 +31,12 @@ public class ProcessDeploymentOrderParam implements Serializable {
         this.equipmentNo = equipmentNo;
     }
 
-    public String getBulkMaterialNo() {
-        return bulkMaterialNo;
+    public List<String> getBulkMaterialNoList() {
+        return bulkMaterialNoList;
     }
 
-    public void setBulkMaterialNo(String bulkMaterialNo) {
-        this.bulkMaterialNo = bulkMaterialNo;
+    public void setBulkMaterialNoList(List<String> bulkMaterialNoList) {
+        this.bulkMaterialNoList = bulkMaterialNoList;
     }
 
     public Integer getOperationType() {

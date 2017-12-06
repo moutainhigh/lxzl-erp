@@ -47,6 +47,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
@@ -177,6 +178,7 @@ public class OrderServiceImpl implements OrderService {
             if (isMeedVerifyResult.getResult()) {
                 ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, null);
                 if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     result.setErrorCode(workflowCommitResult.getErrorCode());
                     return result;
                 }
@@ -367,15 +369,17 @@ public class OrderServiceImpl implements OrderService {
 
 
         if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())) {
-            String errorCode = addOrderItem(orderDO, srcWarehouse.getWarehouseId(), param.getEquipmentNo(), param.getBulkMaterialNoList(), loginUser.getUserId(), currentTime);
-            if (!ErrorCode.SUCCESS.equals(errorCode)) {
-                result.setErrorCode(errorCode);
+            ServiceResult<String, Object> addOrderItemResult = addOrderItem(orderDO, srcWarehouse.getWarehouseId(), param.getEquipmentNo(), param.getBulkMaterialNoList(), loginUser.getUserId(), currentTime);
+            if (!ErrorCode.SUCCESS.equals(addOrderItemResult.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                result.setErrorCode(addOrderItemResult.getErrorCode(), addOrderItemResult.getFormatArgs());
                 return result;
             }
         } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(param.getOperationType())) {
-            String errorCode = removeOrderItem(orderDO, param.getEquipmentNo(), param.getBulkMaterialNoList(), loginUser.getUserId(), currentTime);
-            if (!ErrorCode.SUCCESS.equals(errorCode)) {
-                result.setErrorCode(errorCode);
+            ServiceResult<String, Object> removeOrderItemResult = removeOrderItem(orderDO, param.getEquipmentNo(), param.getBulkMaterialNoList(), loginUser.getUserId(), currentTime);
+            if (!ErrorCode.SUCCESS.equals(removeOrderItemResult.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                result.setErrorCode(removeOrderItemResult.getErrorCode(), removeOrderItemResult.getFormatArgs());
                 return result;
             }
         }
@@ -389,27 +393,33 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
-    private String addOrderItem(OrderDO orderDO, Integer srcWarehouseId, String equipmentNo, List<String> bulkMaterialNoList, Integer loginUserId, Date currentTime) {
+    private ServiceResult<String, Object> addOrderItem(OrderDO orderDO, Integer srcWarehouseId, String equipmentNo, List<String> bulkMaterialNoList, Integer loginUserId, Date currentTime) {
+        ServiceResult<String, Object> result = new ServiceResult<>();
         // 计算预计归还时间
         if (equipmentNo != null) {
             ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(equipmentNo);
             if (productEquipmentDO == null) {
-                return ErrorCode.PRODUCT_EQUIPMENT_NOT_EXISTS;
+                result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_EXISTS, equipmentNo);
+                return result;
             }
             if (!ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE.equals(productEquipmentDO.getEquipmentStatus())) {
-                return ErrorCode.PRODUCT_EQUIPMENT_IS_NOT_IDLE;
+                result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_IS_NOT_IDLE, equipmentNo);
+                return result;
             }
             if (!srcWarehouseId.equals(productEquipmentDO.getCurrentWarehouseId())) {
-                return ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE;
+                result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, equipmentNo, productEquipmentDO.getCurrentWarehouseId());
+                return result;
             }
             Map<Integer, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(), "productSkuId");
             OrderProductDO orderProductDO = orderProductDOMap.get(productEquipmentDO.getSkuId());
             if (orderProductDO == null) {
-                return ErrorCode.ORDER_HAVE_NO_THIS_ITEM;
+                result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
+                return result;
             }
             List<OrderProductEquipmentDO> orderProductEquipmentDOList = orderProductEquipmentMapper.findByOrderProductId(orderProductDO.getId());
             if (orderProductEquipmentDOList != null && orderProductEquipmentDOList.size() >= orderProductDO.getProductCount()) {
-                return ErrorCode.ORDER_PRODUCT_EQUIPMENT_COUNT_MAX;
+                result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, orderProductDO.getProductCount());
+                return result;
             }
 
             productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY);
@@ -441,27 +451,33 @@ public class OrderServiceImpl implements OrderService {
             for (String bulkMaterialNo : bulkMaterialNoList) {
                 BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(bulkMaterialNo);
                 if (bulkMaterialDO == null) {
-                    return ErrorCode.BULK_MATERIAL_NOT_EXISTS;
+                    result.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_EXISTS, bulkMaterialNo);
+                    return result;
                 }
-                if(StringUtil.isNotBlank(bulkMaterialDO.getOrderNo())
-                        || StringUtil.isNotBlank(bulkMaterialDO.getCurrentEquipmentNo())){
-                    return ErrorCode.BULK_MATERIAL_IS_NOT_IDLE;
+                if (StringUtil.isNotBlank(bulkMaterialDO.getOrderNo())
+                        || StringUtil.isNotBlank(bulkMaterialDO.getCurrentEquipmentNo())) {
+                    result.setErrorCode(ErrorCode.BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT, bulkMaterialNo);
+                    return result;
                 }
                 if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE.equals(bulkMaterialDO.getBulkMaterialStatus())) {
-                    return ErrorCode.BULK_MATERIAL_IS_NOT_IDLE;
+                    result.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NOT_IDLE, bulkMaterialNo);
+                    return result;
                 }
                 if (!srcWarehouseId.equals(bulkMaterialDO.getCurrentWarehouseId())) {
-                    return ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE;
+                    result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, bulkMaterialNo, bulkMaterialDO.getCurrentWarehouseId());
+                    return result;
                 }
 
                 Map<Integer, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId");
                 OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(bulkMaterialDO.getMaterialId());
                 if (orderMaterialDO == null) {
-                    return ErrorCode.ORDER_HAVE_NO_THIS_ITEM;
+                    result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
+                    return result;
                 }
                 List<OrderMaterialBulkDO> orderMaterialBulkDOList = orderMaterialBulkMapper.findByOrderMaterialId(orderMaterialDO.getId());
                 if (orderMaterialBulkDOList != null && orderMaterialBulkDOList.size() >= orderMaterialDO.getMaterialCount()) {
-                    return ErrorCode.ORDER_MATERIAL_BULK_COUNT_MAX;
+                    result.setErrorCode(ErrorCode.ORDER_MATERIAL_BULK_COUNT_MAX, orderMaterialDO.getMaterialCount());
+                    return result;
                 }
                 bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
                 bulkMaterialDO.setOrderNo(orderDO.getOrderNo());
@@ -488,22 +504,26 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        return ErrorCode.SUCCESS;
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
-    private String removeOrderItem(OrderDO orderDO, String equipmentNo, List<String> bulkMaterialNoList, Integer loginUserId, Date currentTime) {
-
+    private ServiceResult<String, Object> removeOrderItem(OrderDO orderDO, String equipmentNo, List<String> bulkMaterialNoList, Integer loginUserId, Date currentTime) {
+        ServiceResult<String, Object> result = new ServiceResult<>();
         if (equipmentNo != null) {
             ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(equipmentNo);
             if (productEquipmentDO == null) {
-                return ErrorCode.PRODUCT_EQUIPMENT_NOT_EXISTS;
+                result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_EXISTS, equipmentNo);
+                return result;
             }
             if (!ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY.equals(productEquipmentDO.getEquipmentStatus())) {
-                return ErrorCode.PRODUCT_EQUIPMENT_STATUS_ERROR;
+                result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_IS_NOT_BUSY, equipmentNo);
+                return result;
             }
             OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderIdAndEquipmentNo(orderDO.getId(), productEquipmentDO.getEquipmentNo());
             if (orderProductEquipmentDO == null) {
-                return ErrorCode.PARAM_IS_ERROR;
+                result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
+                return result;
             }
 
             productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
@@ -521,16 +541,19 @@ public class OrderServiceImpl implements OrderService {
             for (String bulkMaterialNo : bulkMaterialNoList) {
                 BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(bulkMaterialNo);
                 if (bulkMaterialDO == null) {
-                    return ErrorCode.BULK_MATERIAL_NOT_EXISTS;
+                    result.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_EXISTS, bulkMaterialNo);
+                    return result;
                 }
-                if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE.equals(bulkMaterialDO.getBulkMaterialStatus())) {
-                    return ErrorCode.BULK_MATERIAL_IS_NOT_IDLE;
+                if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY.equals(bulkMaterialDO.getBulkMaterialStatus())) {
+                    result.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NOT_BUSY, bulkMaterialNo);
+                    return result;
                 }
 
                 Map<Integer, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId");
                 OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(bulkMaterialDO.getMaterialId());
                 if (orderMaterialDO == null) {
-                    return ErrorCode.ORDER_HAVE_NO_THIS_ITEM;
+                    result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
+                    return result;
                 }
                 bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
                 bulkMaterialDO.setOrderNo("");
@@ -540,7 +563,8 @@ public class OrderServiceImpl implements OrderService {
 
                 OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderIdAndBulkMaterialNo(orderDO.getId(), bulkMaterialDO.getBulkMaterialNo());
                 if (orderMaterialBulkDO == null) {
-                    return ErrorCode.PARAM_IS_ERROR;
+                    result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
+                    return result;
                 }
 
                 orderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -552,7 +576,8 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        return ErrorCode.SUCCESS;
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
     @Override
