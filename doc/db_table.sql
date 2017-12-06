@@ -722,7 +722,7 @@ CREATE TABLE `erp_bulk_material` (
   `rent_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '租赁价格',
   `current_equipment_id` int(20) COMMENT '当前设备ID',
   `current_equipment_no` varchar(100) COMMENT '当前设备编号',
-  `bulk_material_status` int(11) NOT NULL DEFAULT '0' COMMENT '散料状态，0闲置，1租赁中，2报废',
+  `bulk_material_status` int(11) NOT NULL DEFAULT '0' COMMENT '散料状态，1散料空闲，2租赁中，3维修中，4报废，5调拨中',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',

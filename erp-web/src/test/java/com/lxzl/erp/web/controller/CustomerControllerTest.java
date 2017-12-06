@@ -81,10 +81,11 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
     @Test
     public void updateRisk() throws Exception {
         CustomerRiskManagement customerRiskManagement = new CustomerRiskManagement();
-        customerRiskManagement.setCustomerNo("C201711152010206581143");
-        customerRiskManagement.setPaymentCycle(3);
-        customerRiskManagement.setCreditAmount(new BigDecimal(10000d));
-        customerRiskManagement.setDepositCycle(3);
+        customerRiskManagement.setCustomerNo("CC201711301106206721011");
+        customerRiskManagement.setPaymentCycle(12);
+        customerRiskManagement.setCreditAmount(new BigDecimal(80000d));
+        customerRiskManagement.setDepositCycle(12);
+        customerRiskManagement.setRemark("这是一个备注");
         TestResult result = getJsonTestResult("/customer/updateRisk",customerRiskManagement);
     }
 

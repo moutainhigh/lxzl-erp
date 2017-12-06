@@ -107,4 +107,16 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest{
         returnOrder.setDamageCost(BigDecimal.ZERO);
         TestResult result = getJsonTestResult("/returnOrder/end",returnOrder);
     }
+    @Test
+    public void pageRentProduct() throws Exception {
+        RentProductSkuPageParam rentProductSkuPageParam = new RentProductSkuPageParam();
+        rentProductSkuPageParam.setCustomerNo("CC201711301106206721011");
+        TestResult result = getJsonTestResult("/returnOrder/pageRentProduct",rentProductSkuPageParam);
+    }
+    @Test
+    public void pageRentMaterial() throws Exception {
+        RentProductSkuPageParam rentProductSkuPageParam = new RentProductSkuPageParam();
+        rentProductSkuPageParam.setCustomerNo("CC201711301106206721011");
+        TestResult result = getJsonTestResult("/returnOrder/pageRentMaterial",rentProductSkuPageParam);
+    }
 }

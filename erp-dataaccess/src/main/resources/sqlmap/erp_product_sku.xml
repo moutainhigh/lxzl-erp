@@ -23,6 +23,9 @@
         <result column="create_time" property="createTime"/>
         <result column="update_user" property="updateUser"/>
         <result column="update_time" property="updateTime"/>
+
+        <result column="rent_count" property="rentCount"/>
+        <result column="can_return_count" property="canReturnCount"/>
         <collection property="productSkuPropertyDOList" resultMap="ProductSkuPropertyDO" />
         <collection property="productMaterialDOList" resultMap="ProductMaterialDO" />
     </resultMap>
@@ -75,7 +78,39 @@
     <sql id="product_material_column_List">
         epm.id AS product_material_id,epm.product_id AS product_material_product_id,epm.product_sku_id AS product_material_product_sku_id,epm.material_id AS product_material_material_id,epm.material_count AS product_material_material_count,epm.data_status AS product_material_data_status,epm.remark AS product_material_remark,epm.create_time AS product_material_create_time,epm.create_user AS product_material_create_user,epm.update_time AS product_material_update_time,epm.update_user AS product_material_update_user
     </sql>
+    <select id="findSkuRentCount" resultType="java.lang.Integer" parameterType="map">
+        SELECT COUNT(1) FROM (
+        SELECT DISTINCT epe.sku_id
+        FROM
+        erp_product_equipment epe
+        INNER JOIN erp_order eo
+        ON epe.order_no = eo.order_no AND eo.data_status=1
+        LEFT JOIN erp_return_order_product erop ON erop.return_product_sku_id = epe.sku_id AND erop.data_status=1
+        LEFT JOIN erp_return_order ero ON ero.id = erop.return_order_id AND ero.data_status=1
+        WHERE epe.order_no IS NOT NULL
+        AND epe.order_no != ""
+        <if test="maps.customerId != null">
+            AND eo.buyer_customer_id = #{maps.customerId}
+        </if>) epe
+    </select>
+    <select id="findSkuRent" resultMap="ProductSkuDO" parameterType="map">
+        SELECT epe.sku_id id,COUNT(1) rent_count ,COUNT(1)-SUM(CASE ero.return_order_status WHEN 1 OR 5
+        THEN IFNULL(erop.return_product_sku_count,0) WHEN 9 THEN IFNULL(erop.real_return_product_sku_count,0) ELSE 0 END ) can_return_count
+        FROM
+          erp_product_equipment epe
+          INNER JOIN erp_order eo
+            ON epe.order_no = eo.order_no AND eo.data_status=1
+            LEFT JOIN erp_return_order_product erop ON erop.return_product_sku_id = epe.sku_id AND erop.data_status=1
+        LEFT JOIN erp_return_order ero ON ero.id = erop.return_order_id AND ero.data_status=1
+        WHERE epe.order_no IS NOT NULL
+          AND epe.order_no != ""
+        <if test="maps.customerId != null">
+            AND eo.buyer_customer_id = #{maps.customerId}
+        </if>
+        GROUP BY epe.sku_id
+        LIMIT #{maps.start},#{maps.pageSize}
 
+    </select>
 
     <select id="findById" resultMap="ProductSkuDO" parameterType="java.lang.Integer">
         SELECT sku_main.*

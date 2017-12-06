@@ -3,10 +3,13 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.pojo.Material;
+import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
+import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.returnOrder.*;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderMaterialBulk;
+import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProduct;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProductEquipment;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
@@ -79,6 +82,29 @@ public class ReturnOrderController extends BaseController {
     @RequestMapping(value = "pageReturnBulk", method = RequestMethod.POST)
     public Result pageReturnBulk(@RequestBody @Validated(IdGroup.class)ReturnBulkPageParam returnBulkPageParam, BindingResult validResult) {
         ServiceResult<String,Page<ReturnOrderMaterialBulk>> serviceResult = returnOrderService.pageReturnBulk(returnBulkPageParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 在租商品列表
+     * @param rentProductSkuPageParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "pageRentProduct", method = RequestMethod.POST)
+    public Result pageRentProductSku(@RequestBody @Validated RentProductSkuPageParam rentProductSkuPageParam, BindingResult validResult) {
+        ServiceResult<String,Page<Product>> serviceResult = returnOrderService.pageRentProductSku(rentProductSkuPageParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+    /**
+     * 在租物料列表
+     * @param rentMaterialPageParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "pageRentMaterial", method = RequestMethod.POST)
+    public Result pageRentMaterial(@RequestBody @Validated RentMaterialPageParam rentMaterialPageParam, BindingResult validResult) {
+        ServiceResult<String,Page<Material>> serviceResult = returnOrderService.pageRentMaterial(rentMaterialPageParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
     @Autowired

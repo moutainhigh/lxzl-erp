@@ -247,6 +247,7 @@ public class CustomerServiceImpl implements CustomerService {
             CustomerRiskManagementDO customerRiskManagementDO = CustomerRiskManagementConverter.convertCustomerRiskManagement(customerRiskManagement);
             customerRiskManagementDO.setCreditAmountUsed(BigDecimal.ZERO);
             customerRiskManagementDO.setCustomerId(customerDO.getId());
+            customerRiskManagementDO.setRemark(customerRiskManagement.getRemark());
             customerRiskManagementDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             customerRiskManagementDO.setCreateTime(now);
             customerRiskManagementDO.setUpdateTime(now);
@@ -257,14 +258,15 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setResult(customerDO.getCustomerNo());
             return serviceResult;
         }else{//有风控信息则修改
-            CustomerRiskManagementDO newCustomerRiskManagementDO = new CustomerRiskManagementDO();
-            newCustomerRiskManagementDO.setId(customerDO.getCustomerRiskManagementDO().getId());
-            newCustomerRiskManagementDO.setUpdateTime(now);
-            newCustomerRiskManagementDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            newCustomerRiskManagementDO.setCreditAmount(customerRiskManagement.getCreditAmount());
-            newCustomerRiskManagementDO.setDepositCycle(customerRiskManagement.getDepositCycle());
-            newCustomerRiskManagementDO.setPaymentCycle(customerRiskManagement.getPaymentCycle());
-            customerRiskManagementMapper.update(newCustomerRiskManagementDO);
+            CustomerRiskManagementDO customerRiskManagementDOForUpdate = new CustomerRiskManagementDO();
+            customerRiskManagementDOForUpdate.setId(customerDO.getCustomerRiskManagementDO().getId());
+            customerRiskManagementDOForUpdate.setRemark(customerRiskManagement.getRemark());
+            customerRiskManagementDOForUpdate.setUpdateTime(now);
+            customerRiskManagementDOForUpdate.setUpdateUser(userSupport.getCurrentUserId().toString());
+            customerRiskManagementDOForUpdate.setCreditAmount(customerRiskManagement.getCreditAmount());
+            customerRiskManagementDOForUpdate.setDepositCycle(customerRiskManagement.getDepositCycle());
+            customerRiskManagementDOForUpdate.setPaymentCycle(customerRiskManagement.getPaymentCycle());
+            customerRiskManagementMapper.update(customerRiskManagementDOForUpdate);
             serviceResult.setErrorCode(ErrorCode.SUCCESS);
             serviceResult.setResult(customerDO.getCustomerNo());
         }
