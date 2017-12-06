@@ -5,6 +5,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -26,6 +27,13 @@ public class SubCompany implements Serializable {
     private String createUser;   //添加人
     private Date updateTime;   //添加时间
     private String updateUser;   //修改人
+
+    @Transient
+    private String provinceName;
+    @Transient
+    private String cityName;
+    @Transient
+    private String districtName;
 
     private List<Department> departmentList;
 
@@ -139,5 +147,29 @@ public class SubCompany implements Serializable {
 
     public void setSubCompanyType(Integer subCompanyType) {
         this.subCompanyType = subCompanyType;
+    }
+
+    public String getProvinceName() {
+        return provinceName;
+    }
+
+    public void setProvinceName(String provinceName) {
+        this.provinceName = provinceName;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName;
     }
 }

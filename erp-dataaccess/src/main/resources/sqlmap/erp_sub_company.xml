@@ -16,6 +16,9 @@
         <result column="create_user" jdbcType="VARCHAR" property="createUser" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
         <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+        <result column="province_name" jdbcType="INTEGER" property="provinceName" />
+        <result column="city_name" jdbcType="INTEGER" property="cityName" />
+        <result column="district_name" jdbcType="INTEGER" property="districtName" />
     </resultMap>
 
     <sql id="column_List">
@@ -23,8 +26,15 @@
     </sql>
 
     <select id="findById" resultMap="SubCompanyDO" parameterType="java.lang.Integer">
-        select <include refid="column_List"/> from erp_sub_company esc
-        where esc.id = #{id, jdbcType=INTEGER} and data_status = 1
+        SELECT <include refid="column_List"/>
+        <trim prefix=",">
+            eap.province_name AS province_name, eac.city_name AS city_name, ead.district_name AS district_name
+        </trim>
+        FROM erp_sub_company esc
+        LEFT JOIN erp_area_province eap ON eap.id = esc.province
+        LEFT JOIN erp_area_city eac ON eac.id = esc.city
+        LEFT JOIN erp_area_district ead ON ead.id = esc.district
+        WHERE esc.id = #{id, jdbcType=INTEGER} AND esc.data_status = 1
     </select>
 
     <sql id="set_column_sql">

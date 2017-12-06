@@ -22,6 +22,13 @@ public class CompanyTest extends ERPUnTransactionalTest {
     }
 
     @Test
+    public void getCompanyById() throws Exception {
+        SubCompanyQueryParam subCompanyQueryParam = new SubCompanyQueryParam();
+        subCompanyQueryParam.setSubCompanyId(1);
+        TestResult result = getJsonTestResult("/company/getCompanyById",subCompanyQueryParam);
+    }
+
+    @Test
     public void getDepartmentList() throws Exception {
         DepartmentQueryParam departmentQueryParam = new DepartmentQueryParam();
         TestResult result = getJsonTestResult("/company/getDepartmentList",departmentQueryParam);

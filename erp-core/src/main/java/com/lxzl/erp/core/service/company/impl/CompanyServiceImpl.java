@@ -12,6 +12,7 @@ import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.user.RoleQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.company.impl.support.CompanyConverter;
 import com.lxzl.erp.core.service.company.impl.support.DepartmentConverter;
@@ -48,6 +49,10 @@ public class CompanyServiceImpl implements CompanyService {
     public ServiceResult<String, Integer> addSubCompany(SubCompany subCompany) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        if (StringUtil.isBlank(subCompany.getSubCompanyName())) {
+            result.setErrorCode(ErrorCode.SUB_COMPANY_NAME_NOT_NULL);
+            return result;
+        }
 
         SubCompanyDO subCompanyDO = CompanyConverter.convertSubCompany(subCompany);
         subCompanyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -71,7 +76,16 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public ServiceResult<String, SubCompany> getSubCompanyById(Integer subCompanyId) {
-        return null;
+        ServiceResult<String, SubCompany> result = new ServiceResult<>();
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(subCompanyId);
+        if (subCompanyDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        result.setResult(ConverterUtil.convert(subCompanyDO, SubCompany.class));
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
     @Override
@@ -116,7 +130,7 @@ public class CompanyServiceImpl implements CompanyService {
     public ServiceResult<String, Department> getDepartmentById(Integer departmentId) {
         ServiceResult<String, Department> result = new ServiceResult<>();
         DepartmentDO departmentDO = departmentMapper.findById(departmentId);
-        if(departmentDO == null){
+        if (departmentDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }

@@ -247,19 +247,40 @@
 		<include refid="set_column_sql"/>
 	</insert>
 
-	<select id="findMaterialRentByCustomerId" resultMap="MaterialDO" parameterType="java.lang.Integer">
-		SELECT
-		<include refid="column_List"/> ,eb.rent_count,eb.material_can_return_count
-		FROM (SELECT
-		eom.material_id,SUM(1) AS rent_count ,SUM(1) + SUM(IFNULL(erom.real_return_material_count,0)) - SUM(IFNULL(erom.return_material_count, 0)) AS material_can_return_count
-		FROM erp_order eo
-		LEFT JOIN erp_order_material eom ON eo.id = eom.order_id AND eom.data_status=1
-		LEFT JOIN erp_order_material_bulk eomb ON eomb.order_material_id = eom.id AND eomb.data_status=1
-		LEFT JOIN erp_return_order_material erom ON erom.return_material_id = eom.material_id AND erom.data_status=1
-		WHERE eo.buyer_customer_id = #{customerId} AND eo.data_status = 1 AND eo.order_status = 20
-		AND eomb.actual_return_time IS NULL AND eomb.bulk_material_id IS NOT NULL
-		GROUP BY eom.material_id) eb
-		LEFT JOIN erp_material em
-		ON eb.material_id = em.id
+	<select id="findMaterialRentCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT COUNT(1) FROM (
+		SELECT DISTINCT ebm.material_id id
+		FROM
+		erp_bulk_material ebm
+		INNER JOIN erp_order eo
+		ON ebm.order_no = eo.order_no AND eo.data_status=1
+		LEFT JOIN erp_return_order_material erom ON erom.return_material_id = ebm.material_id AND erom.data_status=1
+		LEFT JOIN erp_return_order ero ON ero.id = erom.return_order_id AND ero.data_status=1
+		WHERE ebm.order_no IS NOT NULL
+		AND ebm.order_no != ""
+		<if test="maps.customerId != null">
+			AND eo.buyer_customer_id = #{maps.customerId}
+		</if>) material_main
+	</select>
+	<select id="findMaterialRent" resultMap="MaterialDO" parameterType="map">
+		SELECT <include refid="column_List"/>,<include refid="img_column_List"/>,material_main.rent_count,material_main.can_return_count FROM (
+		SELECT ebm.material_id id,COUNT(1) rent_count ,COUNT(1)-SUM(CASE ero.return_order_status WHEN 1 OR 5
+		THEN IFNULL(erom.return_material_count,0) WHEN 9 THEN IFNULL(erom.real_return_material_count,0) ELSE 0 END ) can_return_count
+		FROM
+		erp_bulk_material ebm
+		INNER JOIN erp_order eo
+		ON ebm.order_no = eo.order_no AND eo.data_status=1
+		LEFT JOIN erp_return_order_material erom ON erom.return_material_id = ebm.material_id AND erom.data_status=1
+		LEFT JOIN erp_return_order ero ON ero.id = erom.return_order_id AND ero.data_status=1
+		WHERE ebm.order_no IS NOT NULL
+		AND ebm.order_no != ""
+		<if test="maps.customerId != null">
+			AND eo.buyer_customer_id = #{maps.customerId}
+		</if>
+		GROUP BY ebm.material_id
+		LIMIT #{maps.start},#{maps.pageSize}
+		) material_main
+		LEFT JOIN erp_material em ON em.id =  material_main.id
+		LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status
 	</select>
 </mapper>
