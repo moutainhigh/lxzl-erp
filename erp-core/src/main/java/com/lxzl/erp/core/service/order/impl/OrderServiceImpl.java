@@ -3,7 +3,6 @@ package com.lxzl.erp.core.service.order.impl;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.Order;
@@ -11,7 +10,6 @@ import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
-import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.warehouse.ProductOutStockParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
@@ -21,13 +19,13 @@ import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderConverter;
 import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
@@ -49,7 +47,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -61,7 +58,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> createOrder(Order order) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         String verifyCreateOrderCode = verifyCreateOrder(order);
         if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
@@ -77,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
         // 校验客户风控信息
         verifyCustomerRiskInfo(orderDO);
 
-        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalDiscountAmount()));
+        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalMustDepositAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setOrderNo(GenerateNoUtil.generateOrderNo(currentTime));
         orderDO.setOrderSellerId(loginUser.getUserId());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
@@ -101,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
     public ServiceResult<String, String> commitOrder(String orderNo, Integer verifyUser) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus())) {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
@@ -204,7 +201,7 @@ public class OrderServiceImpl implements OrderService {
     public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
             Date currentTime = new Date();
-            User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+            User loginUser = userSupport.getCurrentUser();
             OrderDO orderDO = orderMapper.findByOrderNo(businessNo);
             if (orderDO == null || !OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())) {
                 return false;
@@ -226,7 +223,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ServiceResult<String, Order> queryOrderByNo(String orderNo) {
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, Order> result = new ServiceResult<>();
         if (orderNo == null) {
             result.setErrorCode(ErrorCode.ID_NOT_NULL);
@@ -262,7 +259,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> cancelOrder(String orderNo) {
         Date currentTime = new Date();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, String> result = new ServiceResult<>();
         if (orderNo == null) {
             result.setErrorCode(ErrorCode.ID_NOT_NULL);
@@ -311,7 +308,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ServiceResult<String, Page<Order>> queryOrderByUserId(OrderQueryParam orderQueryParam) {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
@@ -330,7 +327,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ServiceResult<String, String> processOrder(ProcessOrderParam param) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
 
         if (param == null) {
@@ -410,43 +407,52 @@ public class OrderServiceImpl implements OrderService {
                 result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, equipmentNo, productEquipmentDO.getCurrentWarehouseId());
                 return result;
             }
-            Map<Integer, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(), "productSkuId");
-            OrderProductDO orderProductDO = orderProductDOMap.get(productEquipmentDO.getSkuId());
-            if (orderProductDO == null) {
+
+            boolean isMatching = false;
+            Map<String, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(), "productSkuId", "rentType", "rentTimeLength");
+            for(Map.Entry<String, OrderProductDO> entry : orderProductDOMap.entrySet()){
+                String key = entry.getKey();
+                // 如果输入进来的设备skuID 为当前订单项需要的，那么就匹配
+                if (key.startsWith(productEquipmentDO.getSkuId().toString())){
+                    OrderProductDO orderProductDO = orderProductDOMap.get(key);
+                    List<OrderProductEquipmentDO> orderProductEquipmentDOList = orderProductEquipmentMapper.findByOrderProductId(orderProductDO.getId());
+                    // 如果这个订单项满了，那么就换下一个
+                    if (orderProductEquipmentDOList != null && orderProductEquipmentDOList.size() >= orderProductDO.getProductCount()) {
+                        continue;
+                    }
+
+                    productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY);
+                    productEquipmentDO.setOrderNo(orderDO.getOrderNo());
+                    productEquipmentDO.setUpdateTime(currentTime);
+                    productEquipmentDO.setUpdateUser(loginUserId.toString());
+                    productEquipmentMapper.update(productEquipmentDO);
+
+                    BigDecimal expectRentAmount = calculationOrderExpectRentAmount(orderProductDO.getProductUnitAmount(), orderProductDO.getRentType(), orderProductDO.getRentTimeLength());
+                    Date expectReturnTime = calculationOrderExpectReturnTime(orderDO.getRentStartTime(), orderProductDO.getRentType(), orderProductDO.getRentTimeLength());
+                    OrderProductEquipmentDO orderProductEquipmentDO = new OrderProductEquipmentDO();
+                    orderProductEquipmentDO.setOrderId(orderProductDO.getOrderId());
+                    orderProductEquipmentDO.setOrderProductId(orderProductDO.getId());
+                    orderProductEquipmentDO.setEquipmentId(productEquipmentDO.getId());
+                    orderProductEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
+                    orderProductEquipmentDO.setExpectReturnTime(expectReturnTime);
+                    orderProductEquipmentDO.setExpectRentAmount(expectRentAmount);
+                    orderProductEquipmentDO.setActualRentAmount(BigDecimal.ZERO);
+                    orderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    orderProductEquipmentDO.setCreateTime(currentTime);
+                    orderProductEquipmentDO.setCreateUser(loginUserId.toString());
+                    orderProductEquipmentDO.setUpdateTime(currentTime);
+                    orderProductEquipmentDO.setUpdateUser(loginUserId.toString());
+                    orderProductEquipmentMapper.save(orderProductEquipmentDO);
+                    isMatching = true;
+                    break;
+                }
+            }
+            if(!isMatching){
                 result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
                 return result;
             }
-            List<OrderProductEquipmentDO> orderProductEquipmentDOList = orderProductEquipmentMapper.findByOrderProductId(orderProductDO.getId());
-            if (orderProductEquipmentDOList != null && orderProductEquipmentDOList.size() >= orderProductDO.getProductCount()) {
-                result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, orderProductDO.getProductCount());
-                return result;
-            }
-
-            productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY);
-            productEquipmentDO.setOrderNo(orderDO.getOrderNo());
-            productEquipmentDO.setUpdateTime(currentTime);
-            productEquipmentDO.setUpdateUser(loginUserId.toString());
-            productEquipmentMapper.update(productEquipmentDO);
-
-            BigDecimal expectRentAmount = calculationOrderExpectRentAmount(orderProductDO.getProductUnitAmount(), orderProductDO.getRentType(), orderProductDO.getRentTimeLength());
-            Date expectReturnTime = calculationOrderExpectReturnTime(orderDO.getRentStartTime(), orderProductDO.getRentType(), orderProductDO.getRentTimeLength());
-            OrderProductEquipmentDO orderProductEquipmentDO = new OrderProductEquipmentDO();
-            orderProductEquipmentDO.setOrderId(orderProductDO.getOrderId());
-            orderProductEquipmentDO.setOrderProductId(orderProductDO.getId());
-            orderProductEquipmentDO.setEquipmentId(productEquipmentDO.getId());
-            orderProductEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
-            orderProductEquipmentDO.setExpectReturnTime(expectReturnTime);
-            orderProductEquipmentDO.setExpectRentAmount(expectRentAmount);
-            orderProductEquipmentDO.setActualRentAmount(BigDecimal.ZERO);
-            orderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            orderProductEquipmentDO.setCreateTime(currentTime);
-            orderProductEquipmentDO.setCreateUser(loginUserId.toString());
-            orderProductEquipmentDO.setUpdateTime(currentTime);
-            orderProductEquipmentDO.setUpdateUser(loginUserId.toString());
-            orderProductEquipmentMapper.save(orderProductEquipmentDO);
         }
 
-        // TODO 判定非闲置的物料，不能出库
         if (CollectionUtil.isNotEmpty(bulkMaterialNoList)) {
             for (String bulkMaterialNo : bulkMaterialNoList) {
                 BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(bulkMaterialNo);
@@ -468,39 +474,47 @@ public class OrderServiceImpl implements OrderService {
                     return result;
                 }
 
-                Map<Integer, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId");
-                OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(bulkMaterialDO.getMaterialId());
-                if (orderMaterialDO == null) {
+                boolean isMatching = false;
+                Map<String, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId", "rentType", "rentTimeLength");
+                for(Map.Entry<String, OrderMaterialDO> entry : orderMaterialDOMap.entrySet()) {
+                    String key = entry.getKey();
+                    // 如果输入进来的散料ID 为当前订单项需要的，那么就匹配
+                    if (key.startsWith(bulkMaterialDO.getMaterialId().toString())){
+                        OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(key);
+                        List<OrderMaterialBulkDO> orderMaterialBulkDOList = orderMaterialBulkMapper.findByOrderMaterialId(orderMaterialDO.getId());
+                        if (orderMaterialBulkDOList != null && orderMaterialBulkDOList.size() >= orderMaterialDO.getMaterialCount()) {
+                            continue;
+                        }
+                        bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
+                        bulkMaterialDO.setOrderNo(orderDO.getOrderNo());
+                        bulkMaterialDO.setUpdateTime(currentTime);
+                        bulkMaterialDO.setUpdateUser(loginUserId.toString());
+                        bulkMaterialMapper.update(bulkMaterialDO);
+
+                        BigDecimal expectRentAmount = calculationOrderExpectRentAmount(orderMaterialDO.getMaterialUnitAmount(), orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength());
+                        Date expectReturnTime = calculationOrderExpectReturnTime(orderDO.getRentStartTime(), orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength());
+                        OrderMaterialBulkDO orderMaterialBulkDO = new OrderMaterialBulkDO();
+                        orderMaterialBulkDO.setOrderId(orderMaterialDO.getOrderId());
+                        orderMaterialBulkDO.setOrderMaterialId(orderMaterialDO.getId());
+                        orderMaterialBulkDO.setBulkMaterialId(bulkMaterialDO.getId());
+                        orderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
+                        orderMaterialBulkDO.setExpectReturnTime(expectReturnTime);
+                        orderMaterialBulkDO.setExpectRentAmount(expectRentAmount);
+                        orderMaterialBulkDO.setActualRentAmount(BigDecimal.ZERO);
+                        orderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                        orderMaterialBulkDO.setCreateTime(currentTime);
+                        orderMaterialBulkDO.setCreateUser(loginUserId.toString());
+                        orderMaterialBulkDO.setUpdateTime(currentTime);
+                        orderMaterialBulkDO.setUpdateUser(loginUserId.toString());
+                        orderMaterialBulkMapper.save(orderMaterialBulkDO);
+                        isMatching = true;
+                        break;
+                    }
+                }
+                if (!isMatching) {
                     result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
                     return result;
                 }
-                List<OrderMaterialBulkDO> orderMaterialBulkDOList = orderMaterialBulkMapper.findByOrderMaterialId(orderMaterialDO.getId());
-                if (orderMaterialBulkDOList != null && orderMaterialBulkDOList.size() >= orderMaterialDO.getMaterialCount()) {
-                    result.setErrorCode(ErrorCode.ORDER_MATERIAL_BULK_COUNT_MAX, orderMaterialDO.getMaterialCount());
-                    return result;
-                }
-                bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
-                bulkMaterialDO.setOrderNo(orderDO.getOrderNo());
-                bulkMaterialDO.setUpdateTime(currentTime);
-                bulkMaterialDO.setUpdateUser(loginUserId.toString());
-                bulkMaterialMapper.update(bulkMaterialDO);
-
-                BigDecimal expectRentAmount = calculationOrderExpectRentAmount(orderMaterialDO.getMaterialUnitAmount(), orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength());
-                Date expectReturnTime = calculationOrderExpectReturnTime(orderDO.getRentStartTime(), orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength());
-                OrderMaterialBulkDO orderMaterialBulkDO = new OrderMaterialBulkDO();
-                orderMaterialBulkDO.setOrderId(orderMaterialDO.getOrderId());
-                orderMaterialBulkDO.setOrderMaterialId(orderMaterialDO.getId());
-                orderMaterialBulkDO.setBulkMaterialId(bulkMaterialDO.getId());
-                orderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
-                orderMaterialBulkDO.setExpectReturnTime(expectReturnTime);
-                orderMaterialBulkDO.setExpectRentAmount(expectRentAmount);
-                orderMaterialBulkDO.setActualRentAmount(BigDecimal.ZERO);
-                orderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                orderMaterialBulkDO.setCreateTime(currentTime);
-                orderMaterialBulkDO.setCreateUser(loginUserId.toString());
-                orderMaterialBulkDO.setUpdateTime(currentTime);
-                orderMaterialBulkDO.setUpdateUser(loginUserId.toString());
-                orderMaterialBulkMapper.save(orderMaterialBulkDO);
             }
         }
 
@@ -549,23 +563,18 @@ public class OrderServiceImpl implements OrderService {
                     return result;
                 }
 
-                Map<Integer, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId");
-                OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(bulkMaterialDO.getMaterialId());
-                if (orderMaterialDO == null) {
+                OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderIdAndBulkMaterialNo(orderDO.getId(), bulkMaterialDO.getBulkMaterialNo());
+                if (orderMaterialBulkDO == null) {
                     result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
                     return result;
                 }
+
                 bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
                 bulkMaterialDO.setOrderNo("");
                 bulkMaterialDO.setUpdateTime(currentTime);
                 bulkMaterialDO.setUpdateUser(loginUserId.toString());
                 bulkMaterialMapper.update(bulkMaterialDO);
 
-                OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderIdAndBulkMaterialNo(orderDO.getId(), bulkMaterialDO.getBulkMaterialNo());
-                if (orderMaterialBulkDO == null) {
-                    result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
-                    return result;
-                }
 
                 orderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderMaterialBulkDO.setCreateTime(currentTime);
@@ -584,7 +593,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> deliveryOrder(Order order) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         OrderDO dbRecordOrder = orderMapper.findByOrderNo(order.getOrderNo());
         if (dbRecordOrder == null) {
@@ -714,7 +723,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ServiceResult<String, String> confirmOrder(String orderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
 
         Date currentTime = new Date();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
@@ -785,11 +794,12 @@ public class OrderServiceImpl implements OrderService {
         Map<Integer, OrderProductDO> saveOrderProductDOMap = new HashMap<>();
         Map<Integer, OrderProductDO> updateOrderProductDOMap = new HashMap<>();
         List<OrderProductDO> dbOrderProductDOList = orderProductMapper.findByOrderId(orderId);
-        Map<Integer, OrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(dbOrderProductDOList, "productSkuId");
+        Map<String, OrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(dbOrderProductDOList, "productSkuId", "rentType", "rentTimeLength");
         for (OrderProductDO orderProductDO : orderProductDOList) {
-            if (dbOrderProductDOMap.get(orderProductDO.getProductSkuId()) != null) {
+            String key = orderProductDO.getProductSkuId() + "-" + orderProductDO.getRentType() + "-" + orderProductDO.getRentTimeLength();
+            if (dbOrderProductDOMap.get(key) != null) {
                 updateOrderProductDOMap.put(orderProductDO.getProductSkuId(), orderProductDO);
-                dbOrderProductDOMap.remove(orderProductDO.getProductSkuId());
+                dbOrderProductDOMap.remove(key);
             } else {
                 saveOrderProductDOMap.put(orderProductDO.getProductSkuId(), orderProductDO);
             }
@@ -820,7 +830,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (dbOrderProductDOMap.size() > 0) {
-            for (Map.Entry<Integer, OrderProductDO> entry : dbOrderProductDOMap.entrySet()) {
+            for (Map.Entry<String, OrderProductDO> entry : dbOrderProductDOMap.entrySet()) {
                 OrderProductDO orderProductDO = entry.getValue();
                 orderProductDO.setOrderId(orderId);
                 orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
@@ -836,11 +846,12 @@ public class OrderServiceImpl implements OrderService {
         Map<Integer, OrderMaterialDO> saveOrderMaterialDOMap = new HashMap<>();
         Map<Integer, OrderMaterialDO> updateOrderMaterialDOMap = new HashMap<>();
         List<OrderMaterialDO> dbOrderMaterialDOList = orderMaterialMapper.findByOrderId(orderId);
-        Map<Integer, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(dbOrderMaterialDOList, "materialId");
+        Map<String, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(dbOrderMaterialDOList, "materialId", "rentType", "rentTimeLength");
         for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
-            if (dbOrderMaterialDOMap.get(orderMaterialDO.getMaterialId()) != null) {
+            String key = orderMaterialDO.getMaterialId() + "-" + orderMaterialDO.getRentType() + "-" + orderMaterialDO.getRentTimeLength();
+            if (dbOrderMaterialDOMap.get(key) != null) {
                 updateOrderMaterialDOMap.put(orderMaterialDO.getMaterialId(), orderMaterialDO);
-                dbOrderMaterialDOMap.remove(orderMaterialDO.getMaterialId());
+                dbOrderMaterialDOMap.remove(key);
             } else {
                 saveOrderMaterialDOMap.put(orderMaterialDO.getMaterialId(), orderMaterialDO);
             }
@@ -871,7 +882,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (dbOrderMaterialDOMap.size() > 0) {
-            for (Map.Entry<Integer, OrderMaterialDO> entry : dbOrderMaterialDOMap.entrySet()) {
+            for (Map.Entry<String, OrderMaterialDO> entry : dbOrderMaterialDOMap.entrySet()) {
                 OrderMaterialDO orderMaterialDO = entry.getValue();
                 orderMaterialDO.setOrderId(orderId);
                 orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
@@ -943,6 +954,7 @@ public class OrderServiceImpl implements OrderService {
             orderDO.setTotalCreditDepositAmount(BigDecimalUtil.add(orderDO.getTotalCreditDepositAmount(), totalCreditDepositAmount));
             orderDO.setTotalInsuranceAmount(BigDecimalUtil.add(orderDO.getTotalInsuranceAmount(), totalInsuranceAmount));
             orderDO.setTotalDepositAmount(BigDecimalUtil.add(orderDO.getTotalDepositAmount(), totalDepositAmount));
+            orderDO.setTotalMustDepositAmount(BigDecimalUtil.add(orderDO.getTotalMustDepositAmount(), totalDepositAmount));
             orderDO.setTotalProductCount(productCount);
             orderDO.setTotalProductAmount(productAmountTotal);
         }
@@ -983,6 +995,7 @@ public class OrderServiceImpl implements OrderService {
             orderDO.setTotalCreditDepositAmount(BigDecimalUtil.add(orderDO.getTotalCreditDepositAmount(), totalCreditDepositAmount));
             orderDO.setTotalInsuranceAmount(BigDecimalUtil.add(orderDO.getTotalInsuranceAmount(), totalInsuranceAmount));
             orderDO.setTotalDepositAmount(BigDecimalUtil.add(orderDO.getTotalDepositAmount(), totalDepositAmount));
+            orderDO.setTotalMustDepositAmount(BigDecimalUtil.add(orderDO.getTotalMustDepositAmount(), totalDepositAmount));
             orderDO.setTotalMaterialCount(materialCount);
             orderDO.setTotalMaterialAmount(materialAmountTotal);
         }
@@ -1071,8 +1084,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    @Autowired(required = false)
-    private HttpSession session;
+    @Autowired
+    private UserSupport userSupport;
 
     @Autowired
     private OrderMapper orderMapper;

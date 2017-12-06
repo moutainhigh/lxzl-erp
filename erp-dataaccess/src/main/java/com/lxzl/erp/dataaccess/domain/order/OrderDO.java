@@ -18,6 +18,7 @@ public class OrderDO extends BaseDO {
     private Integer depositCycle;
     private Integer paymentCycle;
     private BigDecimal totalDepositAmount;
+    private BigDecimal totalMustDepositAmount;
     private BigDecimal totalCreditDepositAmount;
     private BigDecimal totalInsuranceAmount;
     private Integer payMode;
@@ -26,6 +27,7 @@ public class OrderDO extends BaseDO {
     private Integer totalMaterialCount;
     private BigDecimal totalMaterialAmount;
     private BigDecimal totalOrderAmount;
+    private BigDecimal totalPaidOrderAmount;
     private BigDecimal totalDiscountAmount;
     private BigDecimal logisticsAmount;
     private Integer orderSellerId;
@@ -106,6 +108,14 @@ public class OrderDO extends BaseDO {
 
     public void setTotalOrderAmount(BigDecimal totalOrderAmount) {
         this.totalOrderAmount = totalOrderAmount;
+    }
+
+    public BigDecimal getTotalPaidOrderAmount() {
+        return totalPaidOrderAmount;
+    }
+
+    public void setTotalPaidOrderAmount(BigDecimal totalPaidOrderAmount) {
+        this.totalPaidOrderAmount = totalPaidOrderAmount;
     }
 
     public BigDecimal getTotalDiscountAmount() {
@@ -330,5 +340,13 @@ public class OrderDO extends BaseDO {
 
     public void setBuyerCustomerName(String buyerCustomerName) {
         this.buyerCustomerName = buyerCustomerName;
+    }
+
+    public BigDecimal getTotalMustDepositAmount() {
+        return totalMustDepositAmount;
+    }
+
+    public void setTotalMustDepositAmount(BigDecimal totalMustDepositAmount) {
+        this.totalMustDepositAmount = totalMustDepositAmount;
     }
 }

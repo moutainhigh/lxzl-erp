@@ -460,7 +460,7 @@ public class ErrorCode {
         MAP.put(ORDER_STATUS_NOT_PROCESSED, "订单未处于备货完成状态。");
         MAP.put(ORDER_PRODUCT_AMOUNT_ERROR, "订单商品价格有误。");
         MAP.put(ORDER_MATERIAL_AMOUNT_ERROR, "订单物料价格有误。");
-        MAP.put(ORDER_HAVE_NO_THIS_ITEM, "编号【%s 】不在该订单项中。");
+        MAP.put(ORDER_HAVE_NO_THIS_ITEM, "编号【%s 】不在该订单项中或数量超过最大了。");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, "设备数超过了订单项最大数：%d");
         MAP.put(ORDER_MATERIAL_BULK_COUNT_MAX, "物料数超过了订单项最大数：%d ");
         MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, "设备数超过了调拨单项最大数：%d。");
