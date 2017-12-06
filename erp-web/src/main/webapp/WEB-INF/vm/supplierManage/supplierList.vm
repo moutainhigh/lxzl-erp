@@ -71,7 +71,7 @@
                                     </label>
                                 </th>
                                 {{/hasCommonActionButtons}}
-                                <th>ID</th>
+                                <th>编号</th>
                                 <th>供应商</th>
                                 <th>地址</th>
                                 <th>电话</th>
@@ -95,7 +95,7 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{supplierId}}</td>
+                                <td>{{supplierNo}}</td>
                                 <td>{{supplierName}}</td>
                                 <td>
                                     {{provinceName}}{{cityName}}{{districtName}}{{address}}
@@ -108,7 +108,7 @@
                                 <td class="text-right">
                                     <div class="btn-group text-right">
                                         {{#rowActionButtons}}
-                                        <a href="${ctx}{{menuUrl}}?no={{purchaseNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-purchaseno="{{purchaseNo}}" data-purchaseorderid="{{purchaseOrderId}}">{{text}}</a>
+                                        <a href="${ctx}{{menuUrl}}?no={{supplierNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-supplierno="{{supplierNo}}">{{text}}</a>
                                         {{/rowActionButtons}}
                                     </div>
                                 </td>
@@ -145,7 +145,7 @@
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.supplier.js');
+        management_load_script('${staticManagement}/js', 'manage.supplier.js', 'manage.supplier.add.js', 'manage.supplier.edit.js', 'manage.supplier.detail.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

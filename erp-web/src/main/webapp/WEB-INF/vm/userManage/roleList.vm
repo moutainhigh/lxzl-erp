@@ -16,7 +16,7 @@
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn table-layout">
 
-            <aside class="tray tray-left p20 tray350 va-t" data-tray-height="match">
+            <aside class="tray tray-left p20 va-t" data-tray-height="match">
                 <h4 class="mt5 mb20"> 组织架构</h4>
                 <div class="col-xs-12 col-md-12 companyDepartmentTree" id="roleListLeftCompanyDepartmentTree"></div>
             </aside>
@@ -141,7 +141,6 @@
         Rental.init();
         Layout.init();
         RoleManage.init();
-        DepartmentTree.init();
 
         //UI效果初始化
         Core.init();

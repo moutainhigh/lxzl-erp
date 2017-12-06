@@ -14,116 +14,124 @@
         <section id="content_wrapper">
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
-            <section id="content" class="animated fadeIn">
+            <section id="content" class="animated fadeIn table-layout">
 
-                #parse("component/loading.vm")
+                <aside class="tray tray-left p20 va-t" data-tray-height="match">
+                    <h4 class="mt5 mb20"> 组织架构</h4>
+                    <div class="col-xs-12 col-md-12 companyDepartmentTree" id="userListLeftCompanyDepartmentTree"></div>
+                </aside>
 
-                <div class="panel panel-primary panel-border top">
-                    <div class="panel-menu p12">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <script type="text/html" id="actionCommonButtonsTpl">
-                                    <button type="button" class="btn btn-sm btn-primary refreshButton"  title="刷新"><i class="fa fa-refresh"></i></button>
-                                    {{#acitonCommonButtons}}
-                                    <button type="button" class="btn btn-sm btn-primary {{class}}" title="{{text}}">
-                                        <i class="{{iClass}}"></i> {{text}}
-                                    </button>
-                                    {{/acitonCommonButtons}}
-                                </script>
-                                <div class="btn-group" id="actionCommonButtons"></div>
-                            </div>
-                            <div class="col-md-6 text-right">
-                                <form id="searchForm" class="form-horizontal">
-                                    <div class="form-group pull-right mn" style="width: 220px;">
-                                        <div class="input-group">
-                                            <input type="text" name="realName" id="realName" class="form-control input-sm bradiusL" autocomplete="off" placeholder="输入姓名...">
-                                            <span class="input-group-addon btn-search input-sm bradiusR" id="submitSearchForm"><i class="fa fa-search"></i> 查询</span>
+                <div class="tray tray-center p20 va-t posr">
+                    #parse("component/loading.vm")
+
+                    <div class="panel panel-primary panel-border top">
+                        <div class="panel-menu p12">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <script type="text/html" id="actionCommonButtonsTpl">
+                                        <button type="button" class="btn btn-sm btn-primary refreshButton"  title="刷新"><i class="fa fa-refresh"></i></button>
+                                        {{#acitonCommonButtons}}
+                                        <button type="button" class="btn btn-sm btn-primary {{class}}" title="{{text}}">
+                                            <i class="{{iClass}}"></i> {{text}}
+                                        </button>
+                                        {{/acitonCommonButtons}}
+                                    </script>
+                                    <div class="btn-group" id="actionCommonButtons"></div>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <form id="searchForm" class="form-horizontal">
+                                        <div class="form-group pull-right mn" style="width: 220px;">
+                                            <div class="input-group">
+                                                <input type="text" name="realName" id="realName" class="form-control input-sm bradiusL" autocomplete="off" placeholder="输入姓名...">
+                                                <span class="input-group-addon btn-search input-sm bradiusR" id="submitSearchForm"><i class="fa fa-search"></i> 查询</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="panel-body pn">
-                        <div class="table-responsive">
-                            <script type="text/html" id="dataListTpl">
-                                <thead>
-                                    <tr>
-                                        {{#hasCommonActionButtons}}
-                                        <th>
-                                            <label class="option block mn">
-                                                <input type="checkbox" name="checkAll" value="">
-                                                <span class="checkbox mn"></span>
-                                            </label>
-                                        </th>
-                                        {{/hasCommonActionButtons}}
-                                        <th>公司部门角色</th>
-                                        <th>姓名</th>
-                                        <th>用户名</th>
-                                        <th>邮箱</th>
-                                        <th>手机号</th>
-                                        <th>激活</th>
-                                        <th>禁用</th>
-                                        {{#hasRowActionButtons}}
-                                        <th width="16%" class="text-right">操作</th>
-                                        {{/hasRowActionButtons}}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {{#dataSource}}
-                                        {{#listData}}
+                        <div class="panel-body pn">
+                            <div class="table-responsive">
+                                <script type="text/html" id="dataListTpl">
+                                    <thead>
                                         <tr>
                                             {{#hasCommonActionButtons}}
-                                            <td>
+                                            <th>
                                                 <label class="option block mn">
-                                                    <input type="checkbox" name="checkItem" value="{{userId}}">
+                                                    <input type="checkbox" name="checkAll" value="">
                                                     <span class="checkbox mn"></span>
                                                 </label>
-                                            </td>
+                                            </th>
                                             {{/hasCommonActionButtons}}
-                                            <td>
-                                                {{#roleListData}}
-                                                {{role}}
-                                                <br />
-                                                {{/roleListData}}
-                                            </td>
-                                            <td class="">{{realName}}</td>
-                                            <td class="">{{userName}}</td>
-                                            <td class="">{{email}}</td>
-                                            <td class="">{{phone}}</td>
-                                            <td class="">{{isActivatedStr}}</td>
-                                            <td class="">{{isDisabledStr}}</td>
+                                            <th>公司部门角色</th>
+                                            <th>姓名</th>
+                                            <th>用户名</th>
+                                            <th>邮箱</th>
+                                            <th>手机号</th>
+                                            <th>激活</th>
+                                            <th>禁用</th>
                                             {{#hasRowActionButtons}}
-                                                <td class="text-right">
-                                                    <div class="btn-group text-right">
-                                                        {{#rowActionButtons}}
-                                                        <a href="${ctx}{{menuUrl}}" class="btn btn-default btn-xs {{class}}" data-userid="{{userId}}">{{text}}</a>
-                                                        {{/rowActionButtons}}
-                                                    </div>
-                                                </td>
+                                            <th width="16%" class="text-right">操作</th>
                                             {{/hasRowActionButtons}}
                                         </tr>
-                                        {{/listData}}
-                                        {{^listData}}
-                                        <tr>
-                                            <td valign="top" colspan="9" class="text-center">没有查询到用户</td>
-                                        </tr>
-                                        {{/listData}}
-                                    {{/dataSource}}
-                                </tbody>
-                            </script>
-                            <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
-                        </div>
-                    </div>
-                    <div class="panel-footer">
-                        <div class="row">
-                            <div class="col-xs-12 col-md-12 text-right mt10 mb10">
-                                #parse("component/pager.vm")
+                                    </thead>
+                                    <tbody>
+                                        {{#dataSource}}
+                                            {{#listData}}
+                                            <tr>
+                                                {{#hasCommonActionButtons}}
+                                                <td>
+                                                    <label class="option block mn">
+                                                        <input type="checkbox" name="checkItem" value="{{userId}}">
+                                                        <span class="checkbox mn"></span>
+                                                    </label>
+                                                </td>
+                                                {{/hasCommonActionButtons}}
+                                                <td>
+                                                    {{#roleListData}}
+                                                    {{role}}
+                                                    <br />
+                                                    {{/roleListData}}
+                                                </td>
+                                                <td class="">{{realName}}</td>
+                                                <td class="">{{userName}}</td>
+                                                <td class="">{{email}}</td>
+                                                <td class="">{{phone}}</td>
+                                                <td class="">{{isActivatedStr}}</td>
+                                                <td class="">{{isDisabledStr}}</td>
+                                                {{#hasRowActionButtons}}
+                                                    <td class="text-right">
+                                                        <div class="btn-group text-right">
+                                                            {{#rowActionButtons}}
+                                                            <a href="${ctx}{{menuUrl}}" class="btn btn-default btn-xs {{class}}" data-userid="{{userId}}">{{text}}</a>
+                                                            {{/rowActionButtons}}
+                                                        </div>
+                                                    </td>
+                                                {{/hasRowActionButtons}}
+                                            </tr>
+                                            {{/listData}}
+                                            {{^listData}}
+                                            <tr>
+                                                <td valign="top" colspan="9" class="text-center">没有查询到用户</td>
+                                            </tr>
+                                            {{/listData}}
+                                        {{/dataSource}}
+                                    </tbody>
+                                </script>
+                                <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                             </div>
                         </div>
-                    </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                                    #parse("component/pager.vm")
+                                </div>
+                            </div>
+                        </div>
 
+                    </div>
                 </div>
+
             </section>
         </section>
         #parse("layout/sidebarRight.vm")
@@ -133,7 +141,7 @@
 
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/fancytree2/jquery.fancytree-all.min.js"></script>
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.user.js','manage.user.add.js','manage.user.edit.js','manage.user.view.js','manage.user.access.data.js');
+        management_load_script('${staticManagement}/js','manage.user.js','manage.user.add.js','manage.user.edit.js','manage.user.view.js','manage.user.access.data.js', 'manage.department.tree.js');
     </script>
 
     <script type="text/javascript">

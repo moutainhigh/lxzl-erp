@@ -113,7 +113,7 @@
                                     <td class="text-right">
                                         <div class="btn-group text-right">
                                             {{#rowActionButtons}}
-                                            <a href="${ctx}{{menuUrl}}?no={{purchaseNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-customerno="{{customerNo}}">{{text}}</a>
+                                            <a href="${ctx}{{menuUrl}}?no={{customerNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-customerno="{{customerNo}}">{{text}}</a>
                                             {{/rowActionButtons}}
                                         </div>
                                     </td>

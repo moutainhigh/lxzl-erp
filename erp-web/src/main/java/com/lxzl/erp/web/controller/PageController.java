@@ -255,15 +255,15 @@ public class PageController extends BaseController {
     }
     @RequestMapping("/supplier-manage/detail")
     public String supplierManageDetail() {
-        return "/supplierManage/supplierList";
+        return "/supplierManage/supplierDetail";
     }
     @RequestMapping("/supplier-manage/add")
     public String supplierManageAdd() {
-        return "/supplierManage/supplierList";
+        return "/supplierManage/supplierAdd";
     }
     @RequestMapping("/supplier-manage/edit")
     public String supplierManageEdit() {
-        return "/supplierManage/supplierList";
+        return "/supplierManage/supplierEdit";
     }
 
     //仓库商管理
