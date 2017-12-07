@@ -19,6 +19,7 @@ public class CustomerCompany implements Serializable {
 	private String landline;   //座机电话
 	@NotBlank(message = ErrorCode.CUSTOMER_COMPANY_CONNECT_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
 	private String connectRealName;   //联系人
+	@NotBlank(message = ErrorCode.CUSTOMER_COMPANY_CONNECT_PHONE_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
 	private String connectPhone;   //联系人手机号
 	@NotBlank(message = ErrorCode.CUSTOMER_COMPANY_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
 	private String companyName;   //公司名称
@@ -26,6 +27,7 @@ public class CustomerCompany implements Serializable {
 	private Integer province;   //省份ID，省份ID
 	private Integer city;   //城市ID，对应城市ID
 	private Integer district;   //区ID，对应区ID
+	@NotBlank(message = ErrorCode.CUSTOMER_COMPANY_ADDRESS_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
 	private String address;   //详细地址
 	private String legalPerson;   //法人姓名
 	private String legalPersonNo;   //法人身份证号
@@ -37,9 +39,9 @@ public class CustomerCompany implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
-	private String provinceName;
-	private String cityName;
-	private String districtName;
+	private String provinceName;// 省名
+	private String cityName; //城市名
+	private String districtName; //地区名
 
 	public Integer getCustomerCompanyId(){
 		return customerCompanyId;

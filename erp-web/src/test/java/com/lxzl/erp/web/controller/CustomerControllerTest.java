@@ -19,6 +19,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCompanyName("清华同方");
         customerCompany.setConnectRealName("李四");
+        customerCompany.setConnectPhone("13888889999");
+        customerCompany.setAddress("企业信息详细地址测试");
         customer.setCustomerCompany(customerCompany);
         TestResult result = getJsonTestResult("/customer/addCompany",customer);
     }
@@ -29,6 +31,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         CustomerPerson customerPerson = new CustomerPerson();
         customerPerson.setRealName("张三");
         customerPerson.setEmail("zhangsan@163.com");
+        customerPerson.setPhone("13888886666");
+        customerPerson.setAddress("个人信息详细地址测试");
         customer.setCustomerPerson(customerPerson);
         TestResult result = getJsonTestResult("/customer/addPerson",customer);
     }
@@ -91,14 +95,14 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
     public void addCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
         customerConsignInfo.setCustomerNo("CP01711221151519901204");
-        customerConsignInfo.setConsigneeName("add测试联系人77");
+        customerConsignInfo.setConsigneeName("add测试联系人6677");
         customerConsignInfo.setConsigneePhone("13566253480");
         customerConsignInfo.setProvince(9);
         customerConsignInfo.setCity(90);
         customerConsignInfo.setDistrict(901);
-        customerConsignInfo.setAddress("测试地址77");
-        customerConsignInfo.setRemark("测试增加ismain=1");
-        customerConsignInfo.setIsMain(1);
+        customerConsignInfo.setAddress("测试地址6677");
+        customerConsignInfo.setRemark("测试增加");
+        customerConsignInfo.setIsMain(0);
 
         TestResult result = getJsonTestResult("/customer/addCustomerConsignInfo",customerConsignInfo);
     }
@@ -107,12 +111,12 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
     public void updateCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
         customerConsignInfo.setCustomerConsignInfoId(19);
-        customerConsignInfo.setConsigneeName("update测试联系人266");
+        customerConsignInfo.setConsigneeName("update测试联系人26622");
         customerConsignInfo.setConsigneePhone("13566253478");
         customerConsignInfo.setProvince(17);
         customerConsignInfo.setCity(172); //武汉市
-        customerConsignInfo.setDistrict(1682); //汉阳区
-        customerConsignInfo.setAddress("修改后的测试地址1");
+        customerConsignInfo.setDistrict(1685); //汉阳区
+        customerConsignInfo.setAddress("修改后的测试地址222");
         customerConsignInfo.setRemark("update备注");
 
 
@@ -122,7 +126,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
     @Test
     public void deleteCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setCustomerConsignInfoId(17);
+        customerConsignInfo.setCustomerConsignInfoId(18);
 
         TestResult result = getJsonTestResult("/customer/deleteCustomerConsignInfo",customerConsignInfo);
     }
@@ -130,10 +134,11 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
     @Test
     public void detailCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setCustomerConsignInfoId(7);
+        customerConsignInfo.setCustomerConsignInfoId(19);
 
         TestResult result = getJsonTestResult("/customer/detailCustomerConsignInfo",customerConsignInfo);
     }
+
 
     @Test
     public void pageCustomerConsignInfo() throws Exception {
@@ -143,6 +148,14 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
 //        customerConsignInfoQueryParam.setPageSize(3);
 
         TestResult result = getJsonTestResult("/customer/pageCustomerConsignInfo",customerConsignInfoQueryParam);
+    }
+
+    @Test
+    public void updateAddressIsMain() throws Exception {
+        CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
+        customerConsignInfo.setCustomerConsignInfoId(9);
+
+        TestResult result = getJsonTestResult("/customer/updateAddressIsMain",customerConsignInfo);
     }
 
 }

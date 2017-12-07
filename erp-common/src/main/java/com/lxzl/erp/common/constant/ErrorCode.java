@@ -263,6 +263,10 @@ public class ErrorCode {
     public static final String CUSTOMER_CONSIGN_INFO_IS_MAIN_NOT_NULL = "J500034";
     public static final String CUSTOMER_CONSIGN_INFO_IS_MAIN_ERROR = "J500035";
     public static final String CUSTOMER_CONSIGN_INFO_ID_NOT_NULL = "J500036";
+    public static final String CUSTOMER_COMPANY_CONNECT_PHONE_NOT_NULL = "J500037";
+    public static final String CUSTOMER_COMPANY_ADDRESS_NOT_NULL = "J500038";
+    public static final String CUSTOMER_PERSON_PHONE_NOT_NULL = "J500039";
+    public static final String CUSTOMER_PERSON_ADDRESS_NOT_NULL = "J500040";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -529,10 +533,14 @@ public class ErrorCode {
         MAP.put(RETURN_ORDER_STATUS_CAN_NOT_END, "只有处理中的退还单可以结束");
         MAP.put(RETURN_ORDER_STATUS_CAN_NOT_CANCEL, "只有待处理的退还单可以取消");
         MAP.put(RETURN_ORDER_END_YET, "该笔退还单已结束");
-        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_EXISTS,"收货信息不存在");
+        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_EXISTS,"收货地址信息不存在");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_MAIN_NOT_NULL,"是否是默认地址字段必填");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_MAIN_ERROR,"是否是默认地址填写错误");
         MAP.put(CUSTOMER_CONSIGN_INFO_ID_NOT_NULL,"收货地址信息ID不能为空");
+        MAP.put(CUSTOMER_COMPANY_CONNECT_PHONE_NOT_NULL,"企业客户联系人电话不能为空");
+        MAP.put(CUSTOMER_COMPANY_ADDRESS_NOT_NULL,"企业客户详细地址不能为空");
+        MAP.put(CUSTOMER_PERSON_PHONE_NOT_NULL,"个人客户联系电话不能为空");
+        MAP.put(CUSTOMER_PERSON_ADDRESS_NOT_NULL,"个人客户详细地址不能为空");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL,"站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL,"站内信内容不能为空");

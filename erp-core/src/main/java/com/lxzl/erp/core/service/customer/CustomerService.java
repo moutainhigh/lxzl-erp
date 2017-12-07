@@ -27,4 +27,6 @@ public interface CustomerService {
     ServiceResult<String,CustomerConsignInfo> detailCustomerConsignInfo(CustomerConsignInfo customerConsignInfo);
 
     ServiceResult<String,Page<CustomerConsignInfo>> pageCustomerConsignInfo(CustomerConsignInfoQueryParam customerConsignInfoQueryParam);
+
+    ServiceResult<String,Integer> updateAddressIsMain(CustomerConsignInfo customerConsignInfo);
 }

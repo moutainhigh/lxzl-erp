@@ -8,7 +8,6 @@ import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.*;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
-import com.lxzl.erp.common.domain.validGroup.QueryGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerPersonGroup;
@@ -113,5 +112,12 @@ public class CustomerController {
         ServiceResult<String, Page<CustomerConsignInfo>> serviceResult = customerService.pageCustomerConsignInfo(customerConsignInfoQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    @RequestMapping(value = "updateAddressIsMain", method = RequestMethod.POST)
+    public Result updateAddressIsMain(@RequestBody @Validated(IdGroup.class)CustomerConsignInfo customerConsignInfo, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = customerService.updateAddressIsMain(customerConsignInfo);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 
 }
