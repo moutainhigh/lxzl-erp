@@ -3,6 +3,7 @@
 <head>
     <title>爱租-运营管理系统-订单管理-订单列表-订单详细</title>
     #parse("layout/header.vm")
+    #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")

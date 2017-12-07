@@ -259,6 +259,10 @@ public class ErrorCode {
     public static final String MATERIAL_CAN_NOT_REPEAT = "J500030";
     public static final String CUSTOMER_CONSIGN_NOT_EXISTS = "J500031";
     public static final String CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW = "J500032";
+    public static final String CUSTOMER_CONSIGN_INFO_NOT_EXISTS = "J500033";
+    public static final String CUSTOMER_CONSIGN_INFO_IS_MAIN_NOT_NULL = "J500034";
+    public static final String CUSTOMER_CONSIGN_INFO_IS_MAIN_ERROR = "J500035";
+    public static final String CUSTOMER_CONSIGN_INFO_ID_NOT_NULL = "J500036";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -266,6 +270,7 @@ public class ErrorCode {
     public static final String MESSAGE_ID_NOT_NULL = "J600004";
     public static final String MESSAGE_NOT_EXISTS = "J600005";
     public static final String MESSAGE_CAN_NOT_SEND_SELF = "J600006";
+
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -440,6 +445,9 @@ public class ErrorCode {
         MAP.put(CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW, "客户授信额度超限");
 
 
+
+
+
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
         MAP.put(ORDER_PRODUCT_STOCK_INSUFFICIENT, "库存不足");
@@ -482,6 +490,7 @@ public class ErrorCode {
         MAP.put(ORDER_HAVE_NO_PAID, "订单未支付，不能操作");
 
 
+
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
         MAP.put(CUSTOMER_PERSON_NOT_NULL, "客户个人信息不能为空");
@@ -520,6 +529,10 @@ public class ErrorCode {
         MAP.put(RETURN_ORDER_STATUS_CAN_NOT_END, "只有处理中的退还单可以结束");
         MAP.put(RETURN_ORDER_STATUS_CAN_NOT_CANCEL, "只有待处理的退还单可以取消");
         MAP.put(RETURN_ORDER_END_YET, "该笔退还单已结束");
+        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_EXISTS,"收货信息不存在");
+        MAP.put(CUSTOMER_CONSIGN_INFO_IS_MAIN_NOT_NULL,"是否是默认地址字段必填");
+        MAP.put(CUSTOMER_CONSIGN_INFO_IS_MAIN_ERROR,"是否是默认地址填写错误");
+        MAP.put(CUSTOMER_CONSIGN_INFO_ID_NOT_NULL,"收货地址信息ID不能为空");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL,"站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL,"站内信内容不能为空");
@@ -527,6 +540,7 @@ public class ErrorCode {
         MAP.put(MESSAGE_ID_NOT_NULL,"站内信ID不能为空");
         MAP.put(MESSAGE_NOT_EXISTS,"站内信不存在");
         MAP.put(MESSAGE_CAN_NOT_SEND_SELF,"站内信不能发给自己");
+
 
     }
 

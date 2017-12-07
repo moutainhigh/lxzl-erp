@@ -1,6 +1,15 @@
 package com.lxzl.erp.common.domain.customer.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import com.lxzl.erp.common.util.validate.constraints.In;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -8,14 +17,22 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomerConsignInfo implements Serializable {
 
+	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups = {AddGroup.class})
+	private String customerNo;
+	@NotNull(message = ErrorCode.CUSTOMER_CONSIGN_INFO_ID_NOT_NULL,groups = {IdGroup.class,UpdateGroup.class})
 	private Integer customerConsignInfoId;   //唯一标识
 	private Integer customerId;   //用户ID
+	@NotBlank(message = ErrorCode.CONSIGNEE_NAME_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private String consigneeName;   //收货人姓名
+	@NotBlank(message = ErrorCode.CONSIGNEE_PHONE_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private String consigneePhone;   //收货人手机号
 	private Integer province;   //省份ID，省份ID
 	private Integer city;   //城市ID，对应城市ID
 	private Integer district;   //区ID，对应区ID
+	@NotBlank(message = ErrorCode.ADDRESS_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private String address;   //详细地址
+	@In(value = {CommonConstant.YES,CommonConstant.NO}, message=ErrorCode.CUSTOMER_CONSIGN_INFO_IS_MAIN_ERROR,groups = {AddGroup.class,UpdateGroup.class})
+	//@NotNull(message = ErrorCode.CUSTOMER_CONSIGN_INFO_IS_MAIN_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private Integer isMain;   //是否为默认地址，0否1是
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -23,6 +40,12 @@ public class CustomerConsignInfo implements Serializable {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+
+	private String provinceName;
+	private String cityName;
+	private String districtName;
+
+
 
 
 	public Integer getCustomerConsignInfoId(){
@@ -145,4 +168,35 @@ public class CustomerConsignInfo implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public String getCustomerNo() {
+		return customerNo;
+	}
+
+	public void setCustomerNo(String customerNo) {
+		this.customerNo = customerNo;
+	}
+
+	public String getProvinceName() {
+		return provinceName;
+	}
+
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getDistrictName() {
+		return districtName;
+	}
+
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
+	}
 }

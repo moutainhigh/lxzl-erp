@@ -24,9 +24,16 @@
                     <div class="panel-menu p12">
                         <div class="row">
                             <div class="col-md-3">
-                                <div class="btn-group" id="actionCommonButtons">
-                                    <button type="button" class="btn btn-sm btn-primary" id="btnRefresh"><i class="fa fa-refresh"></i></button>
-                                </div>
+                                <script type="text/html" id="actionCommonButtonsTpl">
+                                    <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                    {{#acitonCommonButtons}}
+                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
+                                        <i class="{{iClass}}"></i> {{text}}
+                                    </a>
+                                    {{/acitonCommonButtons}}
+                                </script>
+
+                                <div class="btn-group" id="actionCommonButtons"></div>
                             </div>
                             <div class="col-md-9 text-right">
                                 <form id="searchForm" class="form-horizontal">
@@ -122,7 +129,7 @@
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
                                                     {{#rowActionButtons}}
-                                                    <a href="${ctx}{{menuUrl}}?no={{orderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-orderno="{{orderNo}}"> <i class="{{iClass}}"></i> </a>
+                                                    <a href="${ctx}{{menuUrl}}?no={{orderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-orderno="{{orderNo}}">{{text}}</a>
                                                     {{/rowActionButtons}}
                                                 </div>
                                             </td>

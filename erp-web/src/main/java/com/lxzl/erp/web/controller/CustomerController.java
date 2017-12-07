@@ -3,11 +3,12 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
+import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
-import com.lxzl.erp.common.domain.customer.pojo.Customer;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
+import com.lxzl.erp.common.domain.customer.pojo.*;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.QueryGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerPersonGroup;
@@ -82,4 +83,35 @@ public class CustomerController {
         ServiceResult<String, String> serviceResult = customerService.updateRisk(customerRiskManagement);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    @RequestMapping(value = "addCustomerConsignInfo", method = RequestMethod.POST)
+    public Result addCustomerConsignInfo(@RequestBody @Validated(AddGroup.class)CustomerConsignInfo customerConsignInfo, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = customerService.addCustomerConsignInfo(customerConsignInfo);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "updateCustomerConsignInfo", method = RequestMethod.POST)
+    public Result updateCustomerConsignInfo(@RequestBody @Validated(UpdateGroup.class)CustomerConsignInfo CustomerConsignInfo, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = customerService.updateCustomerConsignInfo(CustomerConsignInfo);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "deleteCustomerConsignInfo", method = RequestMethod.POST)
+    public Result deleteCustomerConsignInfo(@RequestBody @Validated(IdGroup.class)CustomerConsignInfo CustomerConsignInfo, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = customerService.deleteCustomerConsignInfo(CustomerConsignInfo);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "detailCustomerConsignInfo", method = RequestMethod.POST)
+    public Result detailCustomerConsignInfo(@RequestBody @Validated(IdGroup.class)CustomerConsignInfo CustomerConsignInfo, BindingResult validResult) {
+        ServiceResult<String, CustomerConsignInfo> serviceResult = customerService.detailCustomerConsignInfo(CustomerConsignInfo);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "pageCustomerConsignInfo", method = RequestMethod.POST)
+    public Result pageCustomerConsignInfo(@RequestBody @Validated(IdGroup.class)CustomerConsignInfoQueryParam customerConsignInfoQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<CustomerConsignInfo>> serviceResult = customerService.pageCustomerConsignInfo(customerConsignInfoQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 }

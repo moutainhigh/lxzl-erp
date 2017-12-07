@@ -1,141 +1,120 @@
-<div id="detaiBusinessCustomerModal" class="popup-basic popup-xl admin-form mfp-with-anim "> ##mfp-hide
-    <div class="panel">
-        <div class="panel-heading">
-            <span class="panel-title"><i class="fa fa-pencil"></i>查看企业客户</span>
-        </div>
-        <form method="post" id="detailBusinessCustomerForm" description="查看企业客户">
-            <div class="panel-body p25">
-                <div class="section row">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-客户管理-企业客户列表-企业详细</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="profile-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="pn animated fadeIn">
+
+            <div class="pv30 ph40 bg-light dark br-b br-grey posr">
+                <script type="text/html" id="customerHeadTpl">
+                    {{#customer}}
+                    <div class="w200 text-center pr30 hidden-xs">
+                        <img src="${staticManagement}img/author.png" class="responsive" width="100%" />
+                    </div>
+                    <div class="va-t m30">
+                        <div class="col-md-4">
+                            <h2 class=""> {{customerCompany.companyName}} <small>{{customerNo}}</small></h2>
+                            <p class="fs15"><b>用户类型：</b>{{cutomerTypeValue}}</p>
+                            <p class="fs15"><b>是否禁用：</b>{{isDisabledValue}}</p>
+                            <p class="fs15"><b>联系方式：</b><span class="mr10">{{customerCompany.connectRealName}}</span><span>{{customerCompany.connectPhone}}</span></p>
+                            <p class="fs15"><b>创建时间：</b>{{createTimeFormat}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h2 style="visibility: hidden;">&nbsp;</h2>
+                            <p class="fs15"><b>营业执照号：</b>{{customerCompany.businessLicenseNo}}</p>
+                            <p class="fs15"><b>法人：</b>{{customerCompany.legalPerson}}</p>
+                            <p class="fs15"><b>法人身份证：</b>{{customerCompany.legalPersonNo}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h2 style="visibility: hidden;">&nbsp;</h2>
+                            <p class="fs15"><b>省份：</b>{{customerCompany.provinceName}}</p>
+                            <p class="fs15"><b>城市：</b>{{customerCompany.cityName}}</p>
+                            <p class="fs15"><b>地区：</b>{{customerCompany.districtName}}</p>
+                            <p class="fs15"><b>地址：</b>{{customerCompany.address}}</p>
+                            <p class="fs15"><b>备注：</b>{{customerCompany.remark}}</p>
+                        </div>
+                    </div>
+                    {{/customer}}
+                </script>
+                <div class="table-layout" id="customerHead"></div>
+            </div>
+
+            <div class="p25 pt35">
+                <div class="row">
                     <div class="col-md-4">
-                        <label for="companyName" class="field-label">公司名称</label>
-                        <label for="companyName" class="field prepend-icon">
-                            <input type="text" name="companyName" id="companyName" class="gui-input required" placeholder="请输入公司名称" />
-                            <label for="companyName" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
-                        </label>
+                        <h4 class="page-header mtn br-light text-muted hidden">用户信息</h4>
+                        #parse("component/customer/risk.vm")
+                        #parse("component/customer/address.vm")
                     </div>
-                    <div class="col-md-4">
-                        <label for="companyAbb" class="field-label">公司简称</label>
-                        <label for="companyAbb" class="field prepend-icon">
-                            <input type="text" name="companyAbb" id="companyAbb" class="gui-input required" placeholder="请输入公司简称" />
-                            <label for="companyAbb" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="businessLicenseNo" class="field-label">营业执照号</label>
-                        <label for="businessLicenseNo" class="field prepend-icon">
-                            <input type="text" name="businessLicenseNo" id="businessLicenseNo" class="gui-input required" placeholder="请输入营业执照号" />
-                            <label for="businessLicenseNo" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="legalPerson" class="field-label">法人姓名</label>
-                        <label for="legalPerson" class="field prepend-icon">
-                            <input type="text" name="legalPerson" id="legalPerson" class="gui-input required letterOrChinese" placeholder="请输入法人姓名" />
-                            <label for="legalPerson" class="field-icon"><i class="fa fa-user"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="legalPersonNo" class="field-label">法人身份证号</label>
-                        <label for="legalPersonNo" class="field prepend-icon">
-                            <input type="text" name="legalPersonNo" id="legalPersonNo" class="gui-input required" placeholder="请输入法人身份证号" />
-                            <label for="legalPersonNo" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="landline" class="field-label">座机电话</label>
-                        <label for="landline" class="field prepend-icon">
-                            <input type="text" name="landline" id="landline" class="gui-input required telephone" placeholder="请输入座机电话" />
-                            <label for="landline" class="field-icon"><i class="fa fa-phone"></i>
-                            </label>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="connectRealName" class="field-label">联系人姓名</label>
-                        <label for="connectRealName" class="field prepend-icon">
-                            <input type="text" name="connectRealName" id="connectRealName" class="gui-input required letterOrChinese" placeholder="请输入联系人姓名" />
-                            <label for="connectRealName" class="field-icon"><i class="fa fa-user"></i></label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="connectPhone" class="field-label">联系人手机号</label>
-                        <label for="connectPhone" class="field prepend-icon">
-                            <input type="text" name="connectPhone" id="connectPhone" class="gui-input required mobilephone" placeholder="请输入真实姓名..." />
-                            <label for="connectPhone" class="field-icon"><i class="fa fa-mobile"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="isDisabled" class="field-label">禁用</label>
-                        <label class="field select">
-                            <select id="isDisabled" name="isDisabled">
-                                <option value="0">否</option>
-                                <option value="1">是</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="province" class="field-label">省份</label>
-                        <label class="field select">
-                            <select id="province" name="province" class="required">
-                                <option value="">请选择</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="city" class="field-label">城市</label>
-                        <label class="field select">
-                            <select id="city" name="city" class="required">
-                                <option value="">请选择</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="district" class="field-label">地区</label>
-                        <label class="field select">
-                            <select id="district" name="district" class="required">
-                                <option value="">请选择</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <label for="address" class="field-label">详细地址</label>
-                        <label for="address" class="field prepend-icon">
-                            <textarea class="gui-textarea" id="address" name="address" placeholder="请输入详细地址"></textarea>
-                            <label for="address" class="field-icon"><i class="fa fa-map-marker"></i></label>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <label for="remark" class="field-label">备注</label>
-                        <label for="remark" class="field prepend-icon">
-                            <textarea class="gui-textarea" id="remark" name="remark" placeholder="请输入备注"></textarea>
-                            <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
-                        </label>
+                    <div class="col-md-8">
+
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
+                                    <li class="">
+                                        <a href="#tab2_1" data-toggle="tab" aria-expanded="false">订单</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="#tab2_2" data-toggle="tab" aria-expanded="false">维修单</a>
+                                    </li>
+                                    <li class="active">
+                                        <a href="#tab2_3" data-toggle="tab" aria-expanded="true">退货单</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="panel-body">
+                                <div class="tab-content pn br-n">
+                                    <div id="tab2_1" class="tab-pane">
+                                        <div class="row">
+
+                                        </div>
+                                    </div>
+                                    <div id="tab2_2" class="tab-pane">
+                                        <div class="row">
+
+                                        </div>
+                                    </div>
+                                    <div id="tab2_3" class="tab-pane active">
+                                        <div class="row">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="panel-footer text-right">
-##                <button type="submit" class="button btn-primary">确定</button>
-                <button type="button" class="button btn-default cancelButton">取消</button>
-            </div>
-        </form>
-    </div>
+
+        </section>
+    </section>
+    #parse("layout/sidebarRight.vm")
 </div>
+    #parse("layout/footer.vm")
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js','manage.customer.business.detail.js', 'manage.customer.risk.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    BusinessCustomerDetail.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+</script>
+</body>
+</html>

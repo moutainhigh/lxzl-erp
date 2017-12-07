@@ -18,6 +18,10 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="provinceName" jdbcType="VARCHAR" property="provinceName" />
+		<result column="cityName" jdbcType="VARCHAR" property="cityName" />
+		<result column="districtName" jdbcType="VARCHAR" property="districtName" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -25,7 +29,14 @@
 	</sql>
 
 	<select id="findById" resultMap="CustomerConsignInfoDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_customer_consign_info ecci 
+		SELECT <include refid="column_List"/>
+		,eap.province_name AS provinceName
+		,eac.city_name AS cityName
+		,ead.district_name AS districtName
+		FROM erp_customer_consign_info ecci
+		LEFT JOIN erp_area_province eap ON ecci.province=eap.id AND eap.data_status=1
+		LEFT JOIN erp_area_city eac ON ecci.city=eac.id AND eac.data_status=1
+		LEFT JOIN erp_area_district ead ON ecci.district=ead.id AND ead.data_status=1
 		WHERE ecci.id = #{id, jdbcType=INTEGER} AND ecci.data_status = 1 
 	</select>
 
@@ -102,4 +113,95 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO">
 		UPDATE erp_customer_consign_info <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="countByCustomerId" parameterType="Integer" resultType="Integer">
+		SELECT COUNT(*)
+		FROM erp_customer_consign_info
+		WHERE
+		customer_id = #{customerId} and data_status = 1
+	</select>
+
+	<update id="clearIsMainByCustomerId" parameterType="Integer">
+		UPDATE erp_customer_consign_info SET is_main = 0 WHERE customer_id = #{customerId, jdbcType=INTEGER}
+	</update>
+
+
+	<select id="findCustomerConsignInfoCountByParams" resultType="Integer" parameterType="map">
+		SELECT COUNT(*) FROM erp_customer_consign_info ecci
+		<where>
+			<if test="maps.queryParam.customerId != null">
+				AND ecci.customer_id = #{maps.queryParam.customerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.consigneeName != null &amp;&amp; maps.queryParam.consigneeName != ''">
+				AND ecci.consignee_name LIKE CONCAT('%','${maps.queryParam.consigneeName}','%' )
+			</if>
+			<if test="maps.queryParam.consigneePhone != null &amp;&amp; maps.queryParam.consigneePhone != ''">
+				AND ecci.consignee_phone LIKE CONCAT('%','${maps.queryParam.consigneePhone}','%' )
+			</if>
+			<if test="maps.queryParam.province != null">
+				AND ecci.province = #{maps.queryParam.province, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.city != null">
+				AND ecci.city = #{maps.queryParam.city, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.district != null">
+				AND ecci.district = #{maps.queryParam.district, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.address != null &amp;&amp; maps.queryParam.address != ''">
+				AND ecci.address LIKE CONCAT('%','${maps.queryParam.address}','%' )
+			</if>
+			<if test="maps.queryParam.isMain != null">
+				AND ecci.is_main = #{maps.queryParam.isMain, jdbcType=INTEGER}
+			</if>
+			<if test="true">
+				AND ecci.data_status = 1
+			</if>
+		</where>
+		ORDER BY ecci.create_time DESC
+	</select>
+
+	<select id="findCustomerConsignInfoByParams" resultMap="CustomerConsignInfoDO" parameterType="map">
+
+		SELECT <include refid="column_List"/>
+		,eap.province_name AS provinceName
+		,eac.city_name AS cityName
+		,ead.district_name AS districtName
+		FROM erp_customer_consign_info ecci
+		LEFT JOIN erp_area_province eap ON ecci.province=eap.id AND eap.data_status=1
+		LEFT JOIN erp_area_city eac ON ecci.city=eac.id AND eac.data_status=1
+		LEFT JOIN erp_area_district ead ON ecci.district=ead.id AND ead.data_status=1
+		<where>
+			<if test="maps.queryParam.customerId != null">
+				AND ecci.customer_id = #{maps.queryParam.customerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.consigneeName != null &amp;&amp; maps.queryParam.consigneeName != ''">
+				AND ecci.consignee_name LIKE CONCAT('%','${maps.queryParam.consigneeName}','%' )
+			</if>
+			<if test="maps.queryParam.consigneePhone != null &amp;&amp; maps.queryParam.consigneePhone != ''">
+				AND ecci.consignee_phone LIKE CONCAT('%','${maps.queryParam.consigneePhone}','%' )
+			</if>
+			<if test="maps.queryParam.province != null">
+				AND ecci.province = #{maps.queryParam.province, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.city != null">
+				AND ecci.city = #{maps.queryParam.city, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.district != null">
+				AND ecci.district = #{maps.queryParam.district, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.address != null &amp;&amp; maps.queryParam.address != ''">
+				AND ecci.address LIKE CONCAT('%','${maps.queryParam.address}','%' )
+			</if>
+			<if test="maps.queryParam.isMain != null">
+				AND ecci.is_main = #{maps.queryParam.isMain, jdbcType=INTEGER}
+			</if>
+			<if test="true">
+				AND ecci.data_status = 1
+			</if>
+		</where>
+		ORDER BY ecci.is_main DESC ,ecci.update_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+
+	</select>
+
 </mapper>

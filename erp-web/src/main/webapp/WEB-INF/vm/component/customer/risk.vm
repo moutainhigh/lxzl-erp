@@ -1,0 +1,65 @@
+<script type="text/html" id="customerRiskPanelTpl">
+    {{#customerRiskManagement}}
+    <div class="panel-heading">
+        <span class="panel-icon"><i class="fa fa-circle"></i>
+        </span>
+        <span class="panel-title">风控信息</span>
+        <div class="widget-menu pull-right">
+            {{#riskButton}}
+                <button class="btn btn-xs btn-default {{class}}">{{text}}</button>
+            {{/riskButton}}
+        </div>
+    </div>
+    <div class="panel-body pn">
+        <table class="table mbn tc-icon-1 tc-med-2 tc-bold-last">
+            <thead>
+            <tr class="hidden">
+                <th class="mw30">#</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <span class="fa fa-circle text-success"></span>
+                </td>
+                <td>授信额度</td>
+                <td><span class='text-success'>￥{{creditAmountFormat}}</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="fa fa-circle text-primary"></span>
+                </td>
+                <td>已用授信额度</td>
+                <td><span class='text-primary'>￥{{creditAmountUsedFormat}}</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="fa fa-circle text-info"></span>
+                </td>
+                <td>押金期数</td>
+                <td><span class='text-info'>{{depositCycle}}</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="fa fa-circle text-info"></span>
+                </td>
+                <td>付款期数</td>
+                <td><span class='text-info'>{{paymentCycle}}</span></td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <blockquote class="blockquote-system">
+                        <p>{{remark}}</p>
+                    ##                            <small>毛涛<em style="font-size: 12px; font-style: inherit; margin-left: 10px;">2017-12-06 18:18:18</em></small>
+                    </blockquote>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    {{/customerRiskManagement}}
+</script>
+
+<div class="panel" id="customerRiskPanel"></div>
