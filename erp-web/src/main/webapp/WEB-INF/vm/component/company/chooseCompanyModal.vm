@@ -1,0 +1,70 @@
+<div class="popup-basic popup-xl admin-form mfp-with-anim theme-primary " id="chooseCompanyModal">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-search"></i>选择公司</span>
+        </div>
+        <div class="panel-menu p12">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <form  class="form-horizontal searchForm">
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                            <button type="reset" class="btn btn-default btn-sm">重置</button>
+                        </div>
+                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                            <div class="input-group">
+                                <input type="text" name="realName" id="realName" class="form-control input-sm bradiusL" autocomplete="off" placeholder="输入姓名...">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body pn">
+            <div class="table-responsive">
+                <script type="text/html" id="chooseCompanyDataListTpl">
+                    <thead>
+                    <tr>
+                        <th>公司名</th>
+                        <th>类型</th>
+                        <th>地址</th>
+                        <th width="16%" class="text-right">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#dataSource}}
+                    {{#listData}}
+                    <tr data-rowdata="{{rowData}}">
+                        <td class="">{{subCompanyName}}</td>
+                        <td class="">{{subCompanyTypeValue}}</td>
+                        <td class="">{{address}}</td>
+                        <td class="text-right">
+                            <div class="btn-group text-right">
+                                <a href="#" class="btn btn-default btn-xs chooseButton">选择</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {{/listData}}
+                    {{^listData}}
+                    <tr>
+                        <td valign="top" colspan="9" class="text-center">没有查询到公司</td>
+                    </tr>
+                    {{/listData}}
+                    {{/dataSource}}
+                    </tbody>
+                </script>
+                <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="chooseCompanyDataListTable"></table>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                    #parse("component/pager.vm")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

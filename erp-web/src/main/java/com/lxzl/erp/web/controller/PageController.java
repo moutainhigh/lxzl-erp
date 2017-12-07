@@ -396,4 +396,17 @@ public class PageController extends BaseController {
     public String businessCustomerModalChoose() {
         return "/component/customer/chooseBusinessCustomerModal";
     }
+
+    //选择用户
+    @RequestMapping("/user-modal/choose")
+    public String chooseUserModal() {
+        return "/component/user/chooseUserModal";
+    }
+
+    //选择公司
+    @RequestMapping("/company-modal/chooseCompany")
+    public String chooseCompanyModal() {
+        return "/component/company/chooseCompanyModal";
+    }
+
 }
