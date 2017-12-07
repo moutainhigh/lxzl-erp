@@ -195,7 +195,7 @@
 			<if test="maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
 				AND ec.customer_no LIKE CONCAT('%','${maps.queryParam.customerNo}','%' )
 			</if>
-			<if test="maps.queryParam.connectRealName != null &amp;&amp; maps.queryParam.connectRealName != null">
+			<if test="maps.queryParam.connectRealName != null &amp;&amp; maps.queryParam.connectRealName != ''">
 				AND ecc.connect_real_name LIKE CONCAT('%','${maps.queryParam.connectRealName}','%' )
 			</if>
 			<if test="maps.queryParam.connectPhone != null &amp;&amp; maps.queryParam.connectPhone != ''">
@@ -214,7 +214,7 @@
 				AND ecc.district = #{maps.queryParam.district, jdbcType=INTEGER}
 			</if>
 			<if test="maps.queryParam.legalPerson != null &amp;&amp; maps.queryParam.legalPerson != ''">
-				AND ecc.legal_person LIKE CONCAT('%','${maps.queryParam.legalPerson}','%' )
+				AND ecc.legal_person LIKE CONCAT('%','${maps.queryParam.legalPerson}',jdbcType=VARCHAR )
 			</if>
 			<if test="maps.queryParam.legalPersonNo != null &amp;&amp; maps.queryParam.legalPersonNo != ''">
 				AND ecc.legal_person_no = #{maps.queryParam.legalPersonNo, jdbcType=VARCHAR}
@@ -243,7 +243,7 @@
 			<if test="maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
 				and ec.customer_no LIKE CONCAT('%','${maps.queryParam.customerNo}','%' )
 			</if>
-			<if test="maps.queryParam.connectRealName != null &amp;&amp; maps.queryParam.connectRealName != null">
+			<if test="maps.queryParam.connectRealName != null &amp;&amp; maps.queryParam.connectRealName != ''">
 				and ecc.connect_real_name LIKE CONCAT('%','${maps.queryParam.connectRealName}','%' )
 			</if>
 			<if test="maps.queryParam.connectPhone != null &amp;&amp; maps.queryParam.connectPhone != ''">

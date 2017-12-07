@@ -4,11 +4,9 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CustomerType;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
+import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
-import com.lxzl.erp.common.domain.customer.pojo.Customer;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerCompany;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerPerson;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
+import com.lxzl.erp.common.domain.customer.pojo.*;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -87,6 +85,64 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customerRiskManagement.setDepositCycle(12);
         customerRiskManagement.setRemark("这是一个备注");
         TestResult result = getJsonTestResult("/customer/updateRisk",customerRiskManagement);
+    }
+
+    @Test
+    public void addCustomerConsignInfo() throws Exception {
+        CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
+        customerConsignInfo.setCustomerNo("CP01711221151519901204");
+        customerConsignInfo.setConsigneeName("add测试联系人77");
+        customerConsignInfo.setConsigneePhone("13566253480");
+        customerConsignInfo.setProvince(9);
+        customerConsignInfo.setCity(90);
+        customerConsignInfo.setDistrict(901);
+        customerConsignInfo.setAddress("测试地址77");
+        customerConsignInfo.setRemark("测试增加ismain=1");
+        customerConsignInfo.setIsMain(1);
+
+        TestResult result = getJsonTestResult("/customer/addCustomerConsignInfo",customerConsignInfo);
+    }
+
+    @Test
+    public void updateCustomerConsignInfo() throws Exception {
+        CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
+        customerConsignInfo.setCustomerConsignInfoId(19);
+        customerConsignInfo.setConsigneeName("update测试联系人266");
+        customerConsignInfo.setConsigneePhone("13566253478");
+        customerConsignInfo.setProvince(17);
+        customerConsignInfo.setCity(172); //武汉市
+        customerConsignInfo.setDistrict(1682); //汉阳区
+        customerConsignInfo.setAddress("修改后的测试地址1");
+        customerConsignInfo.setRemark("update备注");
+
+
+        TestResult result = getJsonTestResult("/customer/updateCustomerConsignInfo",customerConsignInfo);
+    }
+
+    @Test
+    public void deleteCustomerConsignInfo() throws Exception {
+        CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
+        customerConsignInfo.setCustomerConsignInfoId(17);
+
+        TestResult result = getJsonTestResult("/customer/deleteCustomerConsignInfo",customerConsignInfo);
+    }
+
+    @Test
+    public void detailCustomerConsignInfo() throws Exception {
+        CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
+        customerConsignInfo.setCustomerConsignInfoId(7);
+
+        TestResult result = getJsonTestResult("/customer/detailCustomerConsignInfo",customerConsignInfo);
+    }
+
+    @Test
+    public void pageCustomerConsignInfo() throws Exception {
+        CustomerConsignInfoQueryParam customerConsignInfoQueryParam = new CustomerConsignInfoQueryParam();
+        customerConsignInfoQueryParam.setCustomerNo("C201711152010206581143");
+//        customerConsignInfoQueryParam.setPageNo(1);
+//        customerConsignInfoQueryParam.setPageSize(3);
+
+        TestResult result = getJsonTestResult("/customer/pageCustomerConsignInfo",customerConsignInfoQueryParam);
     }
 
 }
