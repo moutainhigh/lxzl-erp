@@ -35,9 +35,15 @@ public class OrderController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public Result update(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = orderService.updateOrder(order);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "commit", method = RequestMethod.POST)
     public Result commit(@RequestBody Order order, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = orderService.commitOrder(order.getOrderNo(), order.getVerifyUser());
+        ServiceResult<String, String> serviceResult = orderService.commitOrder(order.getOrderNo(), order.getVerifyUser(), order.getCommitRemark());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -74,6 +80,12 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "delivery", method = RequestMethod.POST)
     public Result delivery(@RequestBody Order order, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = orderService.deliveryOrder(order);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "isNeedVerify", method = RequestMethod.POST)
+    public Result isNeedVerify(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, Boolean> serviceResult = orderService.isNeedVerify(order.getOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

@@ -3,9 +3,9 @@ package com.lxzl.erp.core.service.customer;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
+import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
-import com.lxzl.erp.common.domain.customer.pojo.Customer;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
+import com.lxzl.erp.common.domain.customer.pojo.*;
 
 public interface CustomerService {
     ServiceResult<String,String> addCompany(Customer customer);
@@ -17,4 +17,16 @@ public interface CustomerService {
     ServiceResult<String,Customer> detailCustomerCompany(Customer customer);
     ServiceResult<String,Customer> detailCustomerPerson(Customer customer);
     ServiceResult<String,String> updateRisk(CustomerRiskManagement customerRiskManagement);
+
+    ServiceResult<String,Integer> addCustomerConsignInfo(CustomerConsignInfo customerConsignInfo);
+
+    ServiceResult<String,Integer> updateCustomerConsignInfo(CustomerConsignInfo customerConsignInfo);
+
+    ServiceResult<String,Integer> deleteCustomerConsignInfo(CustomerConsignInfo customerConsignInfo);
+
+    ServiceResult<String,CustomerConsignInfo> detailCustomerConsignInfo(CustomerConsignInfo customerConsignInfo);
+
+    ServiceResult<String,Page<CustomerConsignInfo>> pageCustomerConsignInfo(CustomerConsignInfoQueryParam customerConsignInfoQueryParam);
+
+    ServiceResult<String,Integer> updateAddressIsMain(CustomerConsignInfo customerConsignInfo);
 }

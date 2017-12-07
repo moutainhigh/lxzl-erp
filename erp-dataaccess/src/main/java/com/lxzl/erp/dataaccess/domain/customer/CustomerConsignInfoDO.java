@@ -18,6 +18,10 @@ public class CustomerConsignInfoDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
+	private String provinceName;
+	private String cityName;
+	private String districtName;
+
 	public Integer getId(){
 		return id;
 	}
@@ -106,4 +110,27 @@ public class CustomerConsignInfoDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public String getProvinceName() {
+		return provinceName;
+	}
+
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getDistrictName() {
+		return districtName;
+	}
+
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
+	}
 }

@@ -20,10 +20,12 @@ public class CustomerPerson implements Serializable {
 	private String realName;   //真实姓名
 	@Email(message = ErrorCode.EMAIL_ERROR,groups={AddCustomerPersonGroup.class,UpdateCustomerPersonGroup.class})
 	private String email;   //电子邮件
+	@NotBlank(message = ErrorCode.CUSTOMER_PERSON_PHONE_NOT_NULL,groups={AddCustomerPersonGroup.class})
 	private String phone;   //手机号
 	private Integer province;   //省份ID，省份ID
 	private Integer city;   //城市ID，对应城市ID
 	private Integer district;   //区ID，对应区ID
+	@NotBlank(message = ErrorCode.CUSTOMER_PERSON_ADDRESS_NOT_NULL,groups={AddCustomerPersonGroup.class})
 	private String address;   //详细地址
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注

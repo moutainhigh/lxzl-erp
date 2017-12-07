@@ -52,8 +52,9 @@ public class Order implements Serializable {
     private List<OrderMaterial> orderMaterialList;
     private OrderConsignInfo orderConsignInfo;
 
-    // 审核人,只提供给审核的时候用
+    // 审核人和提交审核信息,只提供给审核的时候用
     private Integer verifyUser;
+    private String commitRemark;
 
     public List<OrderProduct> getOrderProductList() {
         return orderProductList;
@@ -373,5 +374,13 @@ public class Order implements Serializable {
 
     public void setTotalPaidOrderAmount(BigDecimal totalPaidOrderAmount) {
         this.totalPaidOrderAmount = totalPaidOrderAmount;
+    }
+
+    public String getCommitRemark() {
+        return commitRemark;
+    }
+
+    public void setCommitRemark(String commitRemark) {
+        this.commitRemark = commitRemark;
     }
 }

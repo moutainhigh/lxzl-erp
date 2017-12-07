@@ -19,6 +19,7 @@ public class Customer implements Serializable {
 	private Integer customerType;   //用户类型,1为企业用户，2为个人用户
 	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL , groups = {IdGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class})
 	private String customerNo;   //客戶编号
+	private String customerName; //客户名称
 	private Integer isDisabled;   //是否禁用，0不可用；1可用
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -136,5 +137,13 @@ public class Customer implements Serializable {
 
 	public void setCustomerRiskManagement(CustomerRiskManagement customerRiskManagement) {
 		this.customerRiskManagement = customerRiskManagement;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
 	}
 }

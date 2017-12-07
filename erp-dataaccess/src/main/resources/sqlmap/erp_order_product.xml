@@ -23,11 +23,6 @@
         <result column="create_time" property="createTime"/>
         <result column="update_user" property="updateUser"/>
         <result column="update_time" property="updateTime"/>
-        <collection property="equipmentNoList" resultMap="ProductEquipmentDO"  />
-    </resultMap>
-
-    <resultMap id="ProductEquipmentDO" type="java.lang.String">
-        <result column="product_sku_equipment_no" property="equipmentNo"/>
     </resultMap>
 
     <sql id="column_List">
@@ -133,10 +128,6 @@
         </where>
     </select>
     <select id="findOrderProductByParams" resultMap="OrderProductDO" parameterType="map">
-        SELECT <include refid="column_List"/>
-        ,esr.equipment_no AS product_sku_equipment_no
-        FROM
-        (
         select
         <include refid="column_List"/>
         from erp_order_product eop left join erp_order mo on mo.id=eop.order_id
@@ -164,8 +155,6 @@
             </if>
         </where>
         LIMIT #{maps.start},#{maps.pageSize}
-        ) eop
-        LEFT JOIN erp_product_equipment_storage_record esr ON esr.order_product_id = eop.id
-        ORDER BY eop.create_time DESC
+        ORDER BY mo.create_time DESC
     </select>
 </mapper>

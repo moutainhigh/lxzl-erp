@@ -6,12 +6,15 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.message.MessageQueryParam;
 import com.lxzl.erp.common.domain.message.pojo.Message;
+import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.core.service.message.MessageService;
 import com.lxzl.erp.core.service.message.impl.support.MessageConverter;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.message.MessageMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.message.MessageDO;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,8 @@ public class MessageServiceImpl implements MessageService {
 	@Autowired
 	private MessageMapper messageMapper;
 
+	@Autowired
+	private UserMapper userMapper;
 	@Override
 	public ServiceResult<String, Integer> sendMessage(Message message) {
 		return sendMessageDetail(message,userSupport.getCurrentUserId());
@@ -57,6 +62,11 @@ public class MessageServiceImpl implements MessageService {
 		//去重后的收信人保存到数据库表中
 		for (Integer receiverId: receiverIdSet) {
 			if(!receiverId.equals(userSupport.getCurrentUserId())){
+				UserDO user =userMapper.findByUserId(receiverId);
+				if (user == null){
+					result.setErrorCode(ErrorCode.USER_NAME_NOT_FOUND);
+					return result;
+				}
 				MessageDO messageDO = new MessageDO();
 				messageDO.setSenderUserId(senderId);
 				messageDO.setReceiverUserId(receiverId);

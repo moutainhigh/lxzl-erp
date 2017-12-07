@@ -2,6 +2,7 @@ package com.lxzl.erp.dataaccess.domain.order;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
 import java.util.List;
