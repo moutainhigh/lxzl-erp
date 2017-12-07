@@ -346,6 +346,28 @@ CREATE TABLE `erp_customer_risk_management` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户风控信息';
 
+DROP TABLE if exists `erp_customer_risk_flow`;
+CREATE TABLE `erp_customer_risk_flow` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `customer_id` int(20) NOT NULL COMMENT '客户ID',
+  `flow_type` int(11) NOT NULL DEFAULT '0' COMMENT '流水类型，1人为修改，2租赁，3换货，4退还，',
+  `old_credit_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '原授信额度',
+  `old_credit_amount_used` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '原已用授信额度',
+  `old_deposit_cycle` int(11) COMMENT '原押金期数',
+  `old_payment_cycle` int(11) COMMENT '原付款期数',
+  `new_credit_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '现授信额度',
+  `new_credit_amount_used` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '现已用授信额度',
+  `new_deposit_cycle` int(11) COMMENT '现押金期数',
+  `new_payment_cycle` int(11) COMMENT '现付款期数',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户风控信息流水';
+
 DROP TABLE if exists `erp_customer_consign_info`;
 CREATE TABLE `erp_customer_consign_info` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',

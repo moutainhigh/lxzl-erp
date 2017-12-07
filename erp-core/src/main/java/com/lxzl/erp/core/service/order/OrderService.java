@@ -19,13 +19,22 @@ public interface OrderService extends VerifyReceiver {
     ServiceResult<String, String> createOrder(Order order);
 
     /**
+     * 编辑订单接口
+     *
+     * @param order 订单信息
+     * @return 订单编号
+     */
+    ServiceResult<String, String> updateOrder(Order order);
+
+    /**
      * 提交订单
      *
      * @param orderNo 订单编号
      * @param verifyUser 审核人
+     * @param commitRemark 提交备注
      * @return 订单编号
      */
-    ServiceResult<String, String> commitOrder(String orderNo,Integer verifyUser);
+    ServiceResult<String, String> commitOrder(String orderNo,Integer verifyUser, String commitRemark);
 
     /**
      * 根据订单编号查询单个订单
@@ -91,5 +100,13 @@ public interface OrderService extends VerifyReceiver {
      * @return 订单商品项列表
      */
     ServiceResult<String, Page<OrderProduct>> queryOrderProductInfo(OrderQueryProductParam param);
+
+
+    /**
+     * 订单是否需要审批
+     * @param orderNo 订单编号
+     * @return true是false否
+     */
+    ServiceResult<String, Boolean> isNeedVerify(String orderNo);
 
 }

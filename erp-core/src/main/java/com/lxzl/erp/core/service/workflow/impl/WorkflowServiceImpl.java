@@ -77,7 +77,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
         if (workflowTemplateDO == null) {
-            result.setErrorCode(ErrorCode.WORKFLOW_TYPE_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.WORKFLOW_HAVE_NO_CONFIG);
             return result;
         }
         List<WorkflowNodeDO> workflowNodeDOList = workflowTemplateDO.getWorkflowNodeDOList();

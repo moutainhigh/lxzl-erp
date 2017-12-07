@@ -9,9 +9,9 @@ public class ErrorCode {
      * 返回码
      */
     public static final String SUCCESS = "J000000";
-
-    public static final String SYSTEM_DEVELOPING = "J000992";
-    public static final String EMAIL_ERROR = "J000993";
+    public static final String SYSTEM_DEVELOPING = "J000001";
+    public static final String EMAIL_ERROR = "J000002";
+    public static final String DATA_NOT_BELONG_TO_YOU = "J000003";
     public static final String COMMIT_ONLY_SELF = "J000992";
     public static final String RECORD_USED_CAN_NOT_DELETE = "J000993";
     public static final String AMOUNT_MAST_MORE_THEN_ZERO = "J000994";
@@ -100,6 +100,7 @@ public class ErrorCode {
     public static final String WORKFLOW_VERIFY_USER_ERROR = "J800010";
     public static final String WORKFLOW_LINK_STATUS_ERROR = "J800011";
     public static final String WORKFLOW_TEMPLATE_NOT_EXISTS = "J800012";
+    public static final String WORKFLOW_HAVE_NO_CONFIG = "J800013";
 
     public static final String REMARK_PATTERN = "J900001";
     public static final String ID_NOT_NULL = "J900002";
@@ -224,6 +225,7 @@ public class ErrorCode {
     public static final String RETURN_ORDER_SERVICE_COST_ERROR = "J400045";
     public static final String RETURN_ORDER_DAMAGE_COST_NOT_NULL = "J400046";
     public static final String RETURN_ORDER_DAMAGE_COST_ERROR = "J400047";
+    public static final String ORDER_HAVE_NO_PAID = "J400048";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -275,6 +277,7 @@ public class ErrorCode {
         MAP.put(RECORD_ALREADY_EXISTS, "记录已经存在");
         MAP.put(SYSTEM_DEVELOPING, "开发中……");
         MAP.put(EMAIL_ERROR, "邮箱格式有误");
+        MAP.put(DATA_NOT_BELONG_TO_YOU, "数据不属于你，无法操作！");
         MAP.put(COMMIT_ONLY_SELF, "只能提交自己的数据");
         MAP.put(RECORD_USED_CAN_NOT_DELETE, "数据被使用，无法删除");
         MAP.put(AMOUNT_MAST_MORE_THEN_ZERO, "金额必须大于0");
@@ -357,6 +360,7 @@ public class ErrorCode {
         MAP.put(WORKFLOW_VERIFY_USER_ERROR, "此工作流审核人员有误");
         MAP.put(WORKFLOW_LINK_STATUS_ERROR, "此工作流状态有误");
         MAP.put(WORKFLOW_TEMPLATE_NOT_EXISTS, "工作流模板不存在或者已经禁用");
+        MAP.put(WORKFLOW_HAVE_NO_CONFIG, "审核工作流没有配置");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -457,7 +461,7 @@ public class ErrorCode {
         MAP.put(DEPLOYMENT_ORDER_BULK_MATERIAL_STOCK_NOT_ENOUGH, "货物调拨该库房该物料库存不足。");
         MAP.put(DEPLOYMENT_ORDER_STATUS_ERROR, "调配单状态有误。");
         MAP.put(DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, "编号【%s 】不在该调拨单项中。");
-        MAP.put(ORDER_STATUS_NOT_PROCESSED, "订单未处于备货完成状态。");
+        MAP.put(ORDER_STATUS_NOT_PROCESSED, "订单还没处理完。");
         MAP.put(ORDER_PRODUCT_AMOUNT_ERROR, "订单商品价格有误。");
         MAP.put(ORDER_MATERIAL_AMOUNT_ERROR, "订单物料价格有误。");
         MAP.put(ORDER_HAVE_NO_THIS_ITEM, "编号【%s 】不在该订单项中或数量超过最大了。");
@@ -475,6 +479,7 @@ public class ErrorCode {
         MAP.put(RETURN_ORDER_SERVICE_COST_ERROR, "服务费金额有误");
         MAP.put(RETURN_ORDER_DAMAGE_COST_NOT_NULL, "损坏费用不能为空");
         MAP.put(RETURN_ORDER_DAMAGE_COST_ERROR, "损坏费用金额有误");
+        MAP.put(ORDER_HAVE_NO_PAID, "订单未支付，不能操作");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
