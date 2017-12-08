@@ -13,9 +13,16 @@
     <div class="panel-body pb5 admin-form">
         {{#listData}}
          <div class="well">
-             {{#isDefault}}
-                <p><span class="fs11 text-muted"><i class="fa fa-circle text-info fs12 pr5"></i>默认地址</span></p>
-             {{/isDefault}}
+                <p>
+                    {{#isDefault}}
+                    <span class="fs11 text-muted"><i class="fa fa-circle text-info fs12 pr5"></i>默认地址</span>
+                    {{/isDefault}}
+                    {{#checkbox}}
+                    <label class="radio-inline mr10 pull-right">
+                        <input type="radio" name="customerConsignInfoId" value="{{customerConsignInfoId}}" class="required" />
+                    </label>
+                    {{/checkbox}}
+                </p>
             <address class="mn">
                 <strong>{{consigneeName}}</strong>
                 <br>
@@ -28,11 +35,6 @@
 ##                     <input type="checkbox" name="tools" id="defautAddrss-{{customerConsignInfoId}}" value="analytics" {{#checked}}checked{{/checked}} />
 ##                     <label for="defautAddrss-{{customerConsignInfoId}}" data-on="默认" data-off=""></label>
 ##                 </label>
-                {{#checkbox}}
-                    <label class="radio-inline mr10 pull-right">
-                        <input type="radio" name="customerConsignInfoId" value="{{customerConsignInfoId}}" class="required" />
-                    </label>
-                {{/checkbox}}
                  {{#editButton}}
                  <button class="btn btn-xs btn-default pull-right {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
                  {{/editButton}}
