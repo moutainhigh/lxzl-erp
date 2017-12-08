@@ -85,7 +85,8 @@ public class ErrorCode {
     public static final String PRODUCT_MATERIAL_BOX_NOT_ENOUGH = "J200039";
     public static final String PRODUCT_EQUIPMENT_IS_NOT_BUSY = "J200040";
     public static final String BULK_MATERIAL_IS_NOT_BUSY = "J200041";
-    public static final String BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT= "J200042";
+    public static final String BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT = "J200042";
+    public static final String BULK_MATERIAL_HAVE_NOT_ENOUGH = "J200043";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -356,6 +357,7 @@ public class ErrorCode {
         MAP.put(PRODUCT_EQUIPMENT_IS_NOT_BUSY, "编号【%s 】的设备不在租赁中");
         MAP.put(BULK_MATERIAL_IS_NOT_BUSY, "编号【%s 】的物料不在租赁中");
         MAP.put(BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT, "编号【%s 】在某订单或者某设备上");
+        MAP.put(BULK_MATERIAL_HAVE_NOT_ENOUGH, "物料库存不足！");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
@@ -449,9 +451,6 @@ public class ErrorCode {
         MAP.put(CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW, "客户授信额度超限");
 
 
-
-
-
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
         MAP.put(ORDER_PRODUCT_STOCK_INSUFFICIENT, "库存不足");
@@ -494,7 +493,6 @@ public class ErrorCode {
         MAP.put(ORDER_HAVE_NO_PAID, "订单未支付，不能操作");
 
 
-
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
         MAP.put(CUSTOMER_PERSON_NOT_NULL, "客户个人信息不能为空");
@@ -533,21 +531,21 @@ public class ErrorCode {
         MAP.put(RETURN_ORDER_STATUS_CAN_NOT_END, "只有处理中的退还单可以结束");
         MAP.put(RETURN_ORDER_STATUS_CAN_NOT_CANCEL, "只有待处理的退还单可以取消");
         MAP.put(RETURN_ORDER_END_YET, "该笔退还单已结束");
-        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_EXISTS,"收货地址信息不存在");
-        MAP.put(CUSTOMER_CONSIGN_INFO_IS_MAIN_NOT_NULL,"是否是默认地址字段必填");
-        MAP.put(CUSTOMER_CONSIGN_INFO_IS_MAIN_ERROR,"是否是默认地址填写错误");
-        MAP.put(CUSTOMER_CONSIGN_INFO_ID_NOT_NULL,"收货地址信息ID不能为空");
-        MAP.put(CUSTOMER_COMPANY_CONNECT_PHONE_NOT_NULL,"企业客户联系人电话不能为空");
-        MAP.put(CUSTOMER_COMPANY_ADDRESS_NOT_NULL,"企业客户详细地址不能为空");
-        MAP.put(CUSTOMER_PERSON_PHONE_NOT_NULL,"个人客户联系电话不能为空");
-        MAP.put(CUSTOMER_PERSON_ADDRESS_NOT_NULL,"个人客户详细地址不能为空");
+        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_EXISTS, "收货地址信息不存在");
+        MAP.put(CUSTOMER_CONSIGN_INFO_IS_MAIN_NOT_NULL, "是否是默认地址字段必填");
+        MAP.put(CUSTOMER_CONSIGN_INFO_IS_MAIN_ERROR, "是否是默认地址填写错误");
+        MAP.put(CUSTOMER_CONSIGN_INFO_ID_NOT_NULL, "收货地址信息ID不能为空");
+        MAP.put(CUSTOMER_COMPANY_CONNECT_PHONE_NOT_NULL, "企业客户联系人电话不能为空");
+        MAP.put(CUSTOMER_COMPANY_ADDRESS_NOT_NULL, "企业客户详细地址不能为空");
+        MAP.put(CUSTOMER_PERSON_PHONE_NOT_NULL, "个人客户联系电话不能为空");
+        MAP.put(CUSTOMER_PERSON_ADDRESS_NOT_NULL, "个人客户详细地址不能为空");
 
-        MAP.put(MESSAGE_TITLE_NOT_NULL,"站内信标题不能为空");
-        MAP.put(MESSAGE_CONTENT_NOT_NULL,"站内信内容不能为空");
-        MAP.put(MESSAGE_RECEIVER_NOT_NULL,"站内信收件人不能为空");
-        MAP.put(MESSAGE_ID_NOT_NULL,"站内信ID不能为空");
-        MAP.put(MESSAGE_NOT_EXISTS,"站内信不存在");
-        MAP.put(MESSAGE_CAN_NOT_SEND_SELF,"站内信不能发给自己");
+        MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
+        MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
+        MAP.put(MESSAGE_RECEIVER_NOT_NULL, "站内信收件人不能为空");
+        MAP.put(MESSAGE_ID_NOT_NULL, "站内信ID不能为空");
+        MAP.put(MESSAGE_NOT_EXISTS, "站内信不存在");
+        MAP.put(MESSAGE_CAN_NOT_SEND_SELF, "站内信不能发给自己");
 
 
     }

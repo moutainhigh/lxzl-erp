@@ -131,9 +131,6 @@ public class OrderTest extends ERPUnTransactionalTest {
         processOrderParam.setOrderNo("O201712051948457121036");
 //        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017120110036");
 //        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017120110037");
-        List<String> materialNoList = new ArrayList<>();
-        materialNoList.add("BM2017112017075511010113");
-        processOrderParam.setBulkMaterialNoList(materialNoList);
         processOrderParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
         TestResult result = getJsonTestResult("/order/process", processOrderParam);
     }

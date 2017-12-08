@@ -12,7 +12,8 @@ import java.util.List;
 public class ProcessDeploymentOrderParam implements Serializable {
     private String deploymentOrderNo;
     private String equipmentNo;
-    private List<String> bulkMaterialNoList;
+    private Integer materialId;
+    private Integer materialCount;
     private Integer operationType;
 
     public String getDeploymentOrderNo() {
@@ -31,12 +32,20 @@ public class ProcessDeploymentOrderParam implements Serializable {
         this.equipmentNo = equipmentNo;
     }
 
-    public List<String> getBulkMaterialNoList() {
-        return bulkMaterialNoList;
+    public Integer getMaterialId() {
+        return materialId;
     }
 
-    public void setBulkMaterialNoList(List<String> bulkMaterialNoList) {
-        this.bulkMaterialNoList = bulkMaterialNoList;
+    public void setMaterialId(Integer materialId) {
+        this.materialId = materialId;
+    }
+
+    public Integer getMaterialCount() {
+        return materialCount;
+    }
+
+    public void setMaterialCount(Integer materialCount) {
+        this.materialCount = materialCount;
     }
 
     public Integer getOperationType() {

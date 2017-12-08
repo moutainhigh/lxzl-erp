@@ -19,10 +19,12 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
 
     BulkMaterialDO findByNo(@Param("bulkMaterialNo") String bulkMaterialNo);
 
-    BulkMaterialDO findByMaterialTypeAndModelId(@Param("materialType") Integer materialType,
-                                                @Param("materialModelId") Integer materialModelId);
+    List<BulkMaterialDO> findByMaterialTypeAndModelId(@Param("materialType") Integer materialType,
+                                                      @Param("materialModelId") Integer materialModelId);
 
     List<BulkMaterialDO> findRentByCustomerId(@Param("customerId") Integer customerId);
 
     Integer getRentBulkCountByOrderNo(@Param("orderNo") String orderNo);
+
+    List<BulkMaterialDO> findByMaterialId(@Param("materialId") Integer materialId);
 }

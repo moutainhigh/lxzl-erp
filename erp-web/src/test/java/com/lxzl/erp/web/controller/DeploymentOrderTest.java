@@ -67,7 +67,6 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
         ProcessDeploymentOrderParam processDeploymentOrderParam = new ProcessDeploymentOrderParam();
         processDeploymentOrderParam.setDeploymentOrderNo("O201711301513586691582");
 //        processDeploymentOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017111110114");
-        processDeploymentOrderParam.setBulkMaterialNoList(new ArrayList<String>());
         processDeploymentOrderParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
         TestResult result = getJsonTestResult("/deploymentOrder/process", processDeploymentOrderParam);
     }

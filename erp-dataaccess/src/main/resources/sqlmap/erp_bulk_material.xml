@@ -107,6 +107,9 @@
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.currentWarehouseId != null &amp;&amp; maps.bulkMaterialQueryParam.currentWarehouseId != ''">
 				AND ebm.current_warehouse_id = #{maps.bulkMaterialQueryParam.currentWarehouseId, jdbcType=INTEGER}
 			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialStatus != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialStatus != ''">
+				AND ebm.bulk_material_status = #{maps.bulkMaterialQueryParam.bulkMaterialStatus, jdbcType=INTEGER}
+			</if>
 			<if test="maps.materialId != null">
 				and ebm.material_id = #{maps.materialId, jdbcType=INTEGER}
 			</if>

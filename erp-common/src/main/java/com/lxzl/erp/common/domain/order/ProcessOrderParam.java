@@ -12,7 +12,8 @@ import java.util.List;
 public class ProcessOrderParam implements Serializable {
     private String orderNo;
     private String equipmentNo;
-    private List<String> bulkMaterialNoList;
+    private Integer materialId;
+    private Integer materialCount;
     private Integer operationType;
 
     public String getOrderNo() {
@@ -31,19 +32,27 @@ public class ProcessOrderParam implements Serializable {
         this.equipmentNo = equipmentNo;
     }
 
-    public List<String> getBulkMaterialNoList() {
-        return bulkMaterialNoList;
-    }
-
-    public void setBulkMaterialNoList(List<String> bulkMaterialNoList) {
-        this.bulkMaterialNoList = bulkMaterialNoList;
-    }
-
     public Integer getOperationType() {
         return operationType;
     }
 
     public void setOperationType(Integer operationType) {
         this.operationType = operationType;
+    }
+
+    public Integer getMaterialId() {
+        return materialId;
+    }
+
+    public void setMaterialId(Integer materialId) {
+        this.materialId = materialId;
+    }
+
+    public Integer getMaterialCount() {
+        return materialCount;
+    }
+
+    public void setMaterialCount(Integer materialCount) {
+        this.materialCount = materialCount;
     }
 }

@@ -23,6 +23,7 @@ public class BulkMaterialQueryParam extends BasePageParam {
     private Date createEndTime;
     private Integer currentWarehouseId;
     private String orderNo;
+    private Integer bulkMaterialStatus;
 
     public Integer getMaterialId() {
         return materialId;
@@ -86,5 +87,13 @@ public class BulkMaterialQueryParam extends BasePageParam {
 
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
+    }
+
+    public Integer getBulkMaterialStatus() {
+        return bulkMaterialStatus;
+    }
+
+    public void setBulkMaterialStatus(Integer bulkMaterialStatus) {
+        this.bulkMaterialStatus = bulkMaterialStatus;
     }
 }

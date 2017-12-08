@@ -28,7 +28,7 @@
 
 	<select id="findDeploymentOrderByBulkMaterialNo" resultMap="DeploymentOrderMaterialBulkDO" parameterType="java.util.Map">
 		SELECT <include refid="column_List"/> FROM erp_deployment_order_material_bulk edomb
-		WHERE edomb.id = #{id, jdbcType=INTEGER} AND edomb.deployment_order_id = #{deploymentOrderId, jdbcType=INTEGER} AND edomb.data_status = 1
+		WHERE edomb.id = #{id, jdbcType=INTEGER} AND edomb.bulk_material_no = #{bulkMaterialNo, jdbcType=INTEGER} AND edomb.data_status = 1
 	</select>
 
 	<select id="findByDeploymentOrderMaterialId" resultMap="DeploymentOrderMaterialBulkDO" parameterType="java.lang.Integer">

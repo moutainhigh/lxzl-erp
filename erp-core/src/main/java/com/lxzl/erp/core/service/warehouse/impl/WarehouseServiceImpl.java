@@ -620,7 +620,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                         bulkMaterialDO.setOwnerWarehouseId(warehouseId);
                         bulkMaterialDO.setOwnerWarehousePositionId(warehousePositionId);
                         bulkMaterialDO.setCurrentEquipmentNo(productEquipmentDO.getEquipmentNo());
-                        bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+                        bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
                         bulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                         bulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
                         bulkMaterialDO.setCreateUser(loginUser.getUserId().toString());

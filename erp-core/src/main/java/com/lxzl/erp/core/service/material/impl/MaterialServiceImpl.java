@@ -548,8 +548,8 @@ public class MaterialServiceImpl implements MaterialService {
             return result;
         }
 
-        BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByMaterialTypeAndModelId(dbMaterialModelDO.getMaterialType(), dbMaterialModelDO.getId());
-        if (bulkMaterialDO != null) {
+        List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findByMaterialTypeAndModelId(dbMaterialModelDO.getMaterialType(), dbMaterialModelDO.getId());
+        if (CollectionUtil.isEmpty(bulkMaterialDOList)) {
             result.setErrorCode(ErrorCode.RECORD_USED_CAN_NOT_DELETE);
             return result;
         }

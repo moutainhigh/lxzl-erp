@@ -417,14 +417,14 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         }
 
         if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())) {
-            ServiceResult<String, Object> addDeploymentOrderItemResult = addDeploymentOrderItem(deploymentOrderDO, param.getEquipmentNo(), param.getBulkMaterialNoList(), loginUser.getUserId(), currentTime);
+            ServiceResult<String, Object> addDeploymentOrderItemResult = addDeploymentOrderItem(deploymentOrderDO, param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), loginUser.getUserId(), currentTime);
             if (!ErrorCode.SUCCESS.equals(addDeploymentOrderItemResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(addDeploymentOrderItemResult.getErrorCode(), addDeploymentOrderItemResult.getFormatArgs());
                 return result;
             }
         } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(param.getOperationType())) {
-            ServiceResult<String, Object> removeDeploymentOrderItemResult = removeDeploymentOrderItem(deploymentOrderDO, param.getEquipmentNo(), param.getBulkMaterialNoList(), loginUser.getUserId(), currentTime);
+            ServiceResult<String, Object> removeDeploymentOrderItemResult = removeDeploymentOrderItem(deploymentOrderDO, param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), loginUser.getUserId(), currentTime);
             if (!ErrorCode.SUCCESS.equals(removeDeploymentOrderItemResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(removeDeploymentOrderItemResult.getErrorCode(), removeDeploymentOrderItemResult.getFormatArgs());
@@ -524,7 +524,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         return result;
     }
 
-    private ServiceResult<String, Object> addDeploymentOrderItem(DeploymentOrderDO deploymentOrderDO, String equipmentNo, List<String> bulkMaterialNoList, Integer loginUserId, Date currentTime) {
+    private ServiceResult<String, Object> addDeploymentOrderItem(DeploymentOrderDO deploymentOrderDO, String equipmentNo, Integer materialId, Integer materialCount, Integer loginUserId, Date currentTime) {
         ServiceResult<String, Object> result = new ServiceResult<>();
         // 处理调拨设备业务
         if (equipmentNo != null) {
@@ -570,29 +570,28 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             deploymentOrderProductEquipmentMapper.save(deploymentOrderProductEquipmentDO);
         }
 
+        // 必须是当前库房闲置的物料
+        BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
+        bulkMaterialQueryParam.setMaterialId(materialId);
+        bulkMaterialQueryParam.setCurrentWarehouseId(deploymentOrderDO.getSrcWarehouseId());
+        bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+
+        Map<String, Object> bulkQueryParam = new HashMap<>();
+        bulkQueryParam.put("start", 0);
+        bulkQueryParam.put("pageSize", Integer.MAX_VALUE);
+        bulkQueryParam.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
+        List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(bulkQueryParam);
+        if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
+            result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
+            return result;
+        }
+
         // 处理调拨物料业务
-        if (CollectionUtil.isNotEmpty(bulkMaterialNoList)) {
-            for (String bulkMaterialNo : bulkMaterialNoList) {
-                BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(bulkMaterialNo);
-                if (bulkMaterialDO == null) {
-                    result.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_EXISTS, bulkMaterialNo);
-                    return result;
-                }
-                if (StringUtil.isNotBlank(bulkMaterialDO.getOrderNo())
-                        || StringUtil.isNotBlank(bulkMaterialDO.getCurrentEquipmentNo())) {
-                    result.setErrorCode(ErrorCode.BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT, bulkMaterialNo);
-                    return result;
-                }
-                if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE.equals(bulkMaterialDO.getBulkMaterialStatus())) {
-                    result.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NOT_IDLE, bulkMaterialNo);
-                    return result;
-                }
-                if (!deploymentOrderDO.getSrcWarehouseId().equals(bulkMaterialDO.getCurrentWarehouseId())) {
-                    result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, bulkMaterialNo, bulkMaterialDO.getCurrentWarehouseId());
-                    return result;
-                }
+        if (materialId != null) {
+            for (int i = 0; i < materialCount; i++) {
+                BulkMaterialDO bulkMaterialDO = bulkMaterialDOList.get(i);
                 Map<Integer, DeploymentOrderMaterialDO> deploymentOrderMaterialDOMap = ListUtil.listToMap(deploymentOrderDO.getDeploymentOrderMaterialDOList(), "deploymentMaterialId");
-                DeploymentOrderMaterialDO deploymentOrderMaterialDO = deploymentOrderMaterialDOMap.get(bulkMaterialDO.getMaterialId());
+                DeploymentOrderMaterialDO deploymentOrderMaterialDO = deploymentOrderMaterialDOMap.get(materialId);
                 if (deploymentOrderMaterialDO == null) {
                     result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
                     return result;
@@ -625,7 +624,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         return result;
     }
 
-    private ServiceResult<String, Object> removeDeploymentOrderItem(DeploymentOrderDO deploymentOrderDO, String equipmentNo, List<String> bulkMaterialNoList, Integer loginUserId, Date currentTime) {
+    private ServiceResult<String, Object> removeDeploymentOrderItem(DeploymentOrderDO deploymentOrderDO, String equipmentNo, Integer materialId, Integer materialCount, Integer loginUserId, Date currentTime) {
         ServiceResult<String, Object> result = new ServiceResult<>();
         // 处理调拨设备业务
         if (equipmentNo != null) {
@@ -653,25 +652,21 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             productEquipmentDO.setUpdateUser(loginUserId.toString());
             productEquipmentMapper.update(productEquipmentDO);
         }
-
+        DeploymentOrderMaterialDO deploymentOrderMaterialDO = deploymentOrderMaterialMapper.findByDeploymentOrderNoAndMaterialId(deploymentOrderDO.getDeploymentOrderNo(),materialId);
+        if(deploymentOrderMaterialDO == null){
+            result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM);
+            return result;
+        }
+        List<DeploymentOrderMaterialBulkDO> deploymentOrderMaterialBulkDOList = deploymentOrderMaterialBulkMapper.findByDeploymentOrderMaterialId(deploymentOrderMaterialDO.getDeploymentMaterialId());
+        if (CollectionUtil.isEmpty(deploymentOrderMaterialBulkDOList) || deploymentOrderMaterialBulkDOList.size() < materialCount) {
+            result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
+            return result;
+        }
         // 处理调拨物料业务
-        if (CollectionUtil.isNotEmpty(bulkMaterialNoList)) {
-            for (String bulkMaterialNo : bulkMaterialNoList) {
-                BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(bulkMaterialNo);
-                if (bulkMaterialDO == null) {
-                    result.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_EXISTS, bulkMaterialNo);
-                    return result;
-                }
-                if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_DEPLOYING.equals(bulkMaterialDO.getBulkMaterialStatus())) {
-                    result.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NOT_BUSY, bulkMaterialNo);
-                    return result;
-                }
-
-                DeploymentOrderMaterialBulkDO deploymentOrderMaterialBulkDO = deploymentOrderMaterialBulkMapper.findDeploymentOrderByBulkMaterialNo(bulkMaterialNo);
-                if (deploymentOrderMaterialBulkDO == null) {
-                    result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
-                    return result;
-                }
+        if (materialId != null) {
+            for (int i = 0; i < materialCount; i++) {
+                DeploymentOrderMaterialBulkDO deploymentOrderMaterialBulkDO = deploymentOrderMaterialBulkDOList.get(i);
+                BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(deploymentOrderMaterialBulkDO.getBulkMaterialNo());
                 deploymentOrderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 deploymentOrderMaterialBulkDO.setUpdateUser(loginUserId.toString());
                 deploymentOrderMaterialBulkDO.setUpdateTime(currentTime);
