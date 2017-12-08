@@ -141,7 +141,12 @@
     </div>
     #parse("layout/footer.vm")
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js', 'manage.customer.js', 'manage.customer.add.js', 'manage.customer.edit.js', 'manage.customer.risk.js', 'manage.customer.address.add.js');
+        management_load_script('${staticManagement}/js',
+                'manage.customer.js',
+                'manage.customer.add.js',
+                'manage.customer.edit.js',
+                'manage.customer.risk.js',
+                'manage.customer.address.add.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
