@@ -99,7 +99,7 @@
                                             <label class="col-md-3 control-label">起租日期</label>
                                             <div class="col-md-9">
                                                 <div class="input-group date" id="createTimePicker">
-                                                    <input id="rentStartTime" name="rentStartTime" class="form-control required" type="text" placeholder="请选择起租日期" />
+                                                    <input id="rentStartTime" name="rentStartTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择起租日期" />
                                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                                 </div>
                                             </div>
@@ -228,7 +228,7 @@
                                                                 </td>
                                                                 <td>
                                                                     <label class="field select">
-                                                                        <select name="rentType-{{skuId}}-{{rowKey}}" class="rentType" style="min-width: 130px;">
+                                                                        <select name="rentType-{{skuId}}-{{rowKey}}" class="rentType required" style="min-width: 130px;">
                                                                             <option value="">选择租赁类型</option>
                                                                             {{#rentTypeList}}
                                                                             <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
@@ -347,7 +347,7 @@
                                                     </td>
                                                     <td>
                                                         <label class="field select">
-                                                            <select name="rentType-{{materialNo}}" class="rentType" style="min-width: 130px;">
+                                                            <select name="rentType-{{materialNo}}" class="rentType required" style="min-width: 130px;">
                                                                 <option value="">选择租赁类型</option>
                                                                 {{#rentTypeList}}
                                                                 <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>

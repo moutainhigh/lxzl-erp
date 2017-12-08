@@ -1,0 +1,97 @@
+<div id="addCustomerAddressModal" class="popup-basic popup-lg admin-form mfp-with-anim "> ##mfp-hide
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i>添加收货地址</span>
+        </div>
+        <form method="post" id="addCustomerAddressForm" description="添加收货地址">
+            <div class="panel-body p25">
+                <div class="section row">
+                    <div class="col-md-6">
+                        <label for="consigneeName" class="field-label">收货人姓名</label>
+                        <label for="consigneeName" class="field prepend-icon">
+                            <input type="text" name="consigneeName" id="consigneeName" class="gui-input required letterOrChinese" placeholder="请输入收货人姓名" maxlength="10">
+                            <label for="lastname" class="field-icon"><i class="fa fa-user"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="consigneePhone" class="field-label">收货人手机号</label>
+                        <label for="consigneePhone" class="field prepend-icon">
+                            <input type="text" name="consigneePhone" id="consigneePhone" class="gui-input required mobilephone" placeholder="请输入收货人手机号">
+                            <label for="email" class="field-icon"><i class="fa fa-mobile"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-6">
+                        <div class="section row">
+                            <div class="col-md-12">
+                                <label for="province" class="field-label">选择省份/城市/地区</label>
+                                <label class="field select">
+                                    <select id="province" name="province" class="required">
+                                        <option value="">请选择</option>
+                                    </select>
+                                    <i class="arrow"></i>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="section row">
+                            <div class="col-md-12">
+##                                <label for="city" class="field-label">城市</label>
+                                <label class="field select">
+                                    <select id="city" name="city" class="required">
+                                        <option value="">请选择</option>
+                                    </select>
+                                    <i class="arrow"></i>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="section row">
+                            <div class="col-md-12">
+##                                <label for="district" class="field-label">地区</label>
+                                <label class="field select">
+                                    <select id="district" name="district" class="required">
+                                        <option value="">请选择</option>
+                                    </select>
+                                    <i class="arrow"></i>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="section row">
+                            <div class="col-md-12">
+                                <label for="address" class="field-label">详细地址</label>
+                                <label for="address" class="field prepend-icon">
+                                    <textarea class="gui-textarea required" id="address" name="address" placeholder="请输入详细地址" style="height: 170px;"></textarea>
+                                    <label for="address" class="field-icon"><i class="fa fa-map-marker"></i>
+                                    </label>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="remark" class="field-label">备注</label>
+                        <label for="remark" class="field prepend-icon">
+                            <textarea class="gui-textarea" id="remark" name="remark" placeholder="请输入备注"></textarea>
+                            <label for="remark" class="field-icon"><i class="fa fa-comments"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <label class="block mt15 switch switch-primary pull-left">
+                    <input type="checkbox" name="isMain" id="isMain" value="1">
+                    <label for="isMain" data-on="默认地址" data-off=""></label>
+                    <span>设为默认地址</span>
+                </label>
+                <button type="submit" class="button btn-primary">确定</button>
+                <button type="button" class="button btn-default cancelButton"">取消</button>
+            </div>
+        </form>
+    </div>
+</div>

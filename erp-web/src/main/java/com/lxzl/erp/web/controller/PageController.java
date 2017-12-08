@@ -236,6 +236,17 @@ public class PageController extends BaseController {
         return "/businessCustomerManage/businessCustomerEdit";
     }
 
+    @RequestMapping("/customer-consign-info/add")
+    public String customerConsignInfoAdd() {
+        return "/component/customerConsignInfo/add";
+    }
+
+    @RequestMapping("/customer-consign-info/edit")
+    public String customerConsignInfoEdit() {
+        return "/component/customerConsignInfo/edit";
+    }
+
+
     //采购管理
     @RequestMapping("/purchase-manage/list")
     public String purchaseManageList() {
