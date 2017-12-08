@@ -110,15 +110,15 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
     @Test
     public void updateCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setCustomerConsignInfoId(19);
+        customerConsignInfo.setCustomerConsignInfoId(29);
         customerConsignInfo.setConsigneeName("update测试联系人26622");
         customerConsignInfo.setConsigneePhone("13566253478");
-        customerConsignInfo.setProvince(17);
+        customerConsignInfo.setProvince(29);
         customerConsignInfo.setCity(172); //武汉市
         customerConsignInfo.setDistrict(1685); //汉阳区
         customerConsignInfo.setAddress("修改后的测试地址222");
         customerConsignInfo.setRemark("update备注");
-
+        customerConsignInfo.setIsMain(1);
 
         TestResult result = getJsonTestResult("/customer/updateCustomerConsignInfo",customerConsignInfo);
     }
@@ -127,6 +127,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
     public void deleteCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
         customerConsignInfo.setCustomerConsignInfoId(18);
+        customerConsignInfo.setIsMain(1);
 
         TestResult result = getJsonTestResult("/customer/deleteCustomerConsignInfo",customerConsignInfo);
     }
@@ -135,7 +136,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
     public void detailCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
         customerConsignInfo.setCustomerConsignInfoId(19);
-        customerConsignInfo.setIsMain(1);
+
 
         TestResult result = getJsonTestResult("/customer/detailCustomerConsignInfo",customerConsignInfo);
     }

@@ -353,22 +353,30 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
             return serviceResult;
         }
-//        customerConsignInfoDO.setConsigneeName(customerConsignInfo.getConsigneeName());
-//        customerConsignInfoDO.setConsigneePhone(customerConsignInfo.getConsigneePhone());
-//        customerConsignInfoDO.setProvince(customerConsignInfo.getProvince());
-//        customerConsignInfoDO.setCity(customerConsignInfo.getCity());
-//        customerConsignInfoDO.setDistrict(customerConsignInfo.getDistrict());
-//        customerConsignInfoDO.setAddress(customerConsignInfo.getAddress());
-//        customerConsignInfoDO.setRemark(customerConsignInfo.getRemark());
-        //将customerConsignInfo的值转化为CustomerConsignInfoDO的值
+
+        //如果传送过来的ismain是0
+        if (CommonConstant.COMMON_CONSTANT_NO.equals(customerConsignInfo.getIsMain())){
+            customerConsignInfoDO = ConverterUtil.convert(customerConsignInfo,CustomerConsignInfoDO.class);
+            customerConsignInfoDO.setIsMain(CommonConstant.COMMON_CONSTANT_NO);
+            customerConsignInfoDO.setUpdateTime(now);
+            customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            customerConsignInfoMapper.update(customerConsignInfoDO);
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            serviceResult.setResult(customerConsignInfoDO.getId());
+            return serviceResult;
+        }
+
+        //如果传送过来的ismain是1
+        customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
         customerConsignInfoDO = ConverterUtil.convert(customerConsignInfo,CustomerConsignInfoDO.class);
+        customerConsignInfoDO.setIsMain(CommonConstant.COMMON_CONSTANT_YES);
         customerConsignInfoDO.setUpdateTime(now);
         customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerConsignInfoMapper.update(customerConsignInfoDO);
-
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerConsignInfoDO.getId());
         return serviceResult;
+
     }
 
     /**
@@ -425,47 +433,9 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        //如果传送过来的ismain是0
-        if (CommonConstant.COMMON_CONSTANT_NO.equals(customerConsignInfo.getIsMain())){
-            customerConsignInfoDO.setIsMain(CommonConstant.COMMON_CONSTANT_NO);
-            customerConsignInfoDO.setUpdateTime(now);
-            customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            customerConsignInfoMapper.update(customerConsignInfoDO);
-            serviceResult.setErrorCode(ErrorCode.SUCCESS);
-            serviceResult.setResult(ConverterUtil.convert(customerConsignInfoDO,CustomerConsignInfo.class));
-            return serviceResult;
-        }
-
-
-        //如果传送过来的ismain是1
-        customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
-        customerConsignInfoDO.setIsMain(CommonConstant.COMMON_CONSTANT_YES);
-        customerConsignInfoDO.setUpdateTime(now);
-        customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        customerConsignInfoMapper.update(customerConsignInfoDO);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(ConverterUtil.convert(customerConsignInfoDO,CustomerConsignInfo.class));
         return serviceResult;
-
-
-//        //如果是默认地址，就直接返回成功结果
-//        if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsMain())){
-//            serviceResult.setErrorCode(ErrorCode.SUCCESS);
-//            serviceResult.setResult(ConverterUtil.convert(customerConsignInfoDO,CustomerConsignInfo.class));
-//            return serviceResult;
-//        }
-//
-//        customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
-//        customerConsignInfoDO.setIsMain(CommonConstant.COMMON_CONSTANT_YES);
-//        customerConsignInfoDO.setUpdateTime(now);
-//        customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-//        customerConsignInfoMapper.update(customerConsignInfoDO);
-
-
-//        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-//        serviceResult.setResult(ConverterUtil.convert(customerConsignInfoDO,CustomerConsignInfo.class));
-//
-//        return serviceResult;
     }
 
 
