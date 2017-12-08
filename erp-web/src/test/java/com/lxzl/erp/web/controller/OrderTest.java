@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
+import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -61,6 +62,33 @@ public class OrderTest extends ERPUnTransactionalTest {
         order.setCustomerConsignId(7);
         order.setRentStartTime(new Date());
         TestResult result = getJsonTestResult("/order/create", order);
+    }
+
+    @Test
+    public void testCreateOrderJSON() throws Exception{
+        String str = "{\n" +
+                "\t\"buyerCustomerNo\": \"CC201712071948510861631\",\n" +
+                "\t\"rentStartTime\": 1512691200000,\n" +
+                "\t\"payMode\": \"1\",\n" +
+                "\t\"logisticsAmount\": \"98\",\n" +
+                "\t\"orderSellerId\": 500013,\n" +
+                "\t\"orderSubCompanyId\": 1,\n" +
+                "\t\"buyerRemark\": \"第一次下单\",\n" +
+                "\t\"customerConsignId\": \"31\",\n" +
+                "\t\"orderProductList\": [{\n" +
+                "\t\t\"productId\": \"2000013\",\n" +
+                "\t\t\"productSkuId\": \"40\",\n" +
+                "\t\t\"productUnitAmount\": \"100\",\n" +
+                "\t\t\"productCount\": \"10\",\n" +
+                "\t\t\"rentType\": \"2\",\n" +
+                "\t\t\"rentTimeLength\": \"10\",\n" +
+                "\t\t\"insuranceAmount\": \"10\"\n" +
+                "\t}]\n" +
+                "}";
+        Order order= JSONUtil.convertJSONToBean(str, Order.class);
+
+        TestResult result = getJsonTestResult("/order/create", order);
+
     }
 
     @Test

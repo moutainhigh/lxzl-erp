@@ -715,6 +715,11 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_STATUS_NOT_PROCESSED);
             return result;
         }
+
+        if (DateUtil.getBeginOfDay(currentTime).getTime() < DateUtil.dateInterval(DateUtil.getBeginOfDay(dbRecordOrder.getRentStartTime()), -2).getTime()) {
+            result.setErrorCode(ErrorCode.ORDER_CAN_NOT_DELIVERY);
+            return result;
+        }
         // 即将出库的设备ID
         List<Integer> productEquipmentIdList = new ArrayList<>();
         // 即将出库的散料ID
@@ -765,8 +770,6 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 计算预计归还时间
-
-
         ProductOutStockParam productOutStockParam = new ProductOutStockParam();
         productOutStockParam.setSrcWarehouseId(srcWarehouseId);
         productOutStockParam.setTargetWarehouseId(targetWarehouseId);
