@@ -119,7 +119,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerConsignInfo.setConsigneeName(customerPersonDO.getRealName());
         customerConsignInfo.setConsigneePhone(customerPersonDO.getPhone());
         customerConsignInfo.setAddress(customerPersonDO.getAddress());
-        //调用新增企业地址信息方法
+        //调用新增个人用户地址信息方法
         addCustomerConsignInfo(customerConsignInfo);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -403,7 +403,6 @@ public class CustomerServiceImpl implements CustomerService {
             CustomerConsignInfoDO consignInfoDO = customerConignInfoDOList.get(0);
             consignInfoDO.setIsMain(CommonConstant.YES);
             customerConsignInfoMapper.update(consignInfoDO);
-
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -418,12 +417,28 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult<String, CustomerConsignInfo> detailCustomerConsignInfo(CustomerConsignInfo customerConsignInfo) {
         ServiceResult<String, CustomerConsignInfo> serviceResult = new ServiceResult<>();
+        Date now = new Date();
 
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfo.getCustomerConsignInfoId());
         if(customerConsignInfoDO==null){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
             return serviceResult;
         }
+
+        //如果是默认地址，就直接返回成功结果
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsMain())){
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            serviceResult.setResult(ConverterUtil.convert(customerConsignInfoDO,CustomerConsignInfo.class));
+            return serviceResult;
+        }
+
+        customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
+        customerConsignInfoDO.setIsMain(CommonConstant.COMMON_CONSTANT_YES);
+        customerConsignInfoDO.setUpdateTime(now);
+        customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerConsignInfoMapper.update(customerConsignInfoDO);
+
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(ConverterUtil.convert(customerConsignInfoDO,CustomerConsignInfo.class));
 
