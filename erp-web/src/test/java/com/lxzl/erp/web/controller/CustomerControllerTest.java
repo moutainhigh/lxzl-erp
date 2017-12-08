@@ -135,6 +135,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
     public void detailCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
         customerConsignInfo.setCustomerConsignInfoId(19);
+        customerConsignInfo.setIsMain(1);
 
         TestResult result = getJsonTestResult("/customer/detailCustomerConsignInfo",customerConsignInfo);
     }
