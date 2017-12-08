@@ -40,27 +40,9 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group field">
-                                            <label class="col-md-3 control-label">收货地址</label>
+                                            <label class="col-md-3 control-label" style="visibility: hidden;">收货地址</label>
                                             <div class="col-md-9">
-                                                <div class="panel">
-                                                    <div class="panel-heading">
-                                                        <span class="panel-icon"><i class="glyphicon glyphicon-map-marker"></i></span>
-                                                        <div class="widget-menu pull-right">
-                                                            <button class="btn btn-xs btn-default" id="chooseAddress">选择地址</button>
-                                                            <button class="btn btn-xs btn-default" id="createAddress">创建地址</button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="panel-body">
-                                                        <div class="well pv5"">
-                                                            <address>
-                                                                <strong>黎文彬</strong>
-                                                                <br>广东省深圳市福田区车公庙安华工业区5栋6楼
-                                                                <br>
-                                                                <abbr title="手机号" class="fa fa-mobile-phone">：</abbr> 18033402832
-                                                            </address>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                #parse("component/customer/address.vm")
                                             </div>
                                         </div>
                                     </div>
@@ -403,6 +385,7 @@
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
+                'manage.order.mixin.js',
                 'manage.order.add.js',
                 'modal.choose.product.js',
                 'modal.choose.material.js',
@@ -411,7 +394,10 @@
                 'modal.choose.user.js',
                 'modal.choose.company.js',
                 'manage.order.item.render.js',
-                'manage.order.util.js');
+                'manage.order.util.js',
+                'manage.customer.address.js',
+                'manage.customer.address.add.js',
+                'manage.customer.address.edit.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

@@ -41,7 +41,7 @@
                                 <span class="checkbox mn"></span>
                             </label>
                         </th>*#
-                        #*<th>商品ID</th>*#
+                        <th>商品ID</th>
                         <th>图片</th>
                         <th>商品名称</th>
                         <th>副标题</th>
@@ -62,7 +62,7 @@
                             </label>
                         </td>
                         *#
-                        #*<td>{{productId}}</td>*#
+                        <td>{{productId}}</td>
                         <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                         <td>{{productName}}</td>
                         <td>{{subtitle}}</td>
