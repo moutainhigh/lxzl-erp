@@ -13,9 +13,9 @@
     <div class="panel-body pb5 admin-form">
         {{#listData}}
          <div class="well">
-             {{#checked}}
+             {{#isDefault}}
                 <p><span class="fs11 text-muted"><i class="fa fa-circle text-info fs12 pr5"></i>默认地址</span></p>
-             {{/checked}}
+             {{/isDefault}}
             <address class="mn">
                 <strong>{{consigneeName}}</strong>
                 <br>
@@ -28,6 +28,11 @@
 ##                     <input type="checkbox" name="tools" id="defautAddrss-{{customerConsignInfoId}}" value="analytics" {{#checked}}checked{{/checked}} />
 ##                     <label for="defautAddrss-{{customerConsignInfoId}}" data-on="默认" data-off=""></label>
 ##                 </label>
+                {{#checkbox}}
+                    <label class="radio-inline mr10 pull-right">
+                        <input type="radio" name="customerConsignInfoId" value="{{customerConsignInfoId}}" class="required" />
+                    </label>
+                {{/checkbox}}
                  {{#editButton}}
                  <button class="btn btn-xs btn-default pull-right {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
                  {{/editButton}}
@@ -46,5 +51,16 @@
 </script>
 
 <div class="panel" id="customerAddressPannel">
-
+    <div class="panel-heading">
+        <span class="panel-icon"><i class="glyphicon glyphicon-map-marker"></i>
+        </span>
+        <span class="panel-title">收货地址</span>
+    </div>
+    <div class="panel-body pb5 admin-form">
+        <div class="well">
+            <address>
+                还没有添加地址信息
+            </address>
+        </div>
+    </div>
 </div>
