@@ -8,6 +8,7 @@ public class CustomerDO  extends BaseDO {
 	private Integer id;
 	private Integer customerType;
 	private String customerNo;
+	private String customerName;
 	private Integer isDisabled;
 	private Integer dataStatus;
 	private String remark;
@@ -89,5 +90,13 @@ public class CustomerDO  extends BaseDO {
 
 	public void setCustomerRiskManagementDO(CustomerRiskManagementDO customerRiskManagementDO) {
 		this.customerRiskManagementDO = customerRiskManagementDO;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
 	}
 }

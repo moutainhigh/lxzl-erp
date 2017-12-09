@@ -57,6 +57,7 @@ public class CustomerServiceImpl implements CustomerService {
         }else{
             customerDO.setIsDisabled(customer.getIsDisabled());
         }
+        customerDO.setCustomerName(customer.getCustomerName());
         customerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerDO.setCreateTime(now);
         customerDO.setUpdateTime(now);
@@ -66,6 +67,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerCompanyDO customerCompanyDO  = CustomerConverter.convertCustomerCompany(customer.getCustomerCompany());
         customerCompanyDO.setCustomerId(customerDO.getId());
+        customerCompanyDO.setCompanyName(customerDO.getCustomerName());
         customerCompanyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerCompanyDO.setCreateTime(now);
         customerCompanyDO.setUpdateTime(now);
@@ -98,6 +100,7 @@ public class CustomerServiceImpl implements CustomerService {
         }else{
             customerDO.setIsDisabled(customer.getIsDisabled());
         }
+        customerDO.setCustomerName(customer.getCustomerName());
         customerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerDO.setCreateTime(now);
         customerDO.setUpdateTime(now);
@@ -107,6 +110,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerPersonDO customerPersonDO  = CustomerConverter.convertCustomerPerson(customer.getCustomerPerson());
         customerPersonDO.setCustomerId(customerDO.getId());
+        customerPersonDO.setRealName(customerDO.getCustomerName());
         customerPersonDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerPersonDO.setCreateTime(now);
         customerPersonDO.setUpdateTime(now);
@@ -354,22 +358,13 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        //如果传送过来的ismain是0
-        if (CommonConstant.COMMON_CONSTANT_NO.equals(customerConsignInfo.getIsMain())){
-            customerConsignInfoDO = ConverterUtil.convert(customerConsignInfo,CustomerConsignInfoDO.class);
-            customerConsignInfoDO.setIsMain(CommonConstant.COMMON_CONSTANT_NO);
-            customerConsignInfoDO.setUpdateTime(now);
-            customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            customerConsignInfoMapper.update(customerConsignInfoDO);
-            serviceResult.setErrorCode(ErrorCode.SUCCESS);
-            serviceResult.setResult(customerConsignInfoDO.getId());
-            return serviceResult;
+        //如果传送过来的ismain是1
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsMain())){
+            customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
         }
 
-        //如果传送过来的ismain是1
-        customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
+        //如果传送过来的ismain是0
         customerConsignInfoDO = ConverterUtil.convert(customerConsignInfo,CustomerConsignInfoDO.class);
-        customerConsignInfoDO.setIsMain(CommonConstant.COMMON_CONSTANT_YES);
         customerConsignInfoDO.setUpdateTime(now);
         customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerConsignInfoMapper.update(customerConsignInfoDO);
@@ -478,21 +473,12 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        //如果传送过来的ismain是0
-        if (CommonConstant.COMMON_CONSTANT_NO.equals(customerConsignInfo.getIsMain())) {
-            customerConsignInfoDO.setIsMain(CommonConstant.COMMON_CONSTANT_NO);
-            customerConsignInfoDO.setUpdateTime(now);
-            customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            customerConsignInfoMapper.update(customerConsignInfoDO);
-            serviceResult.setErrorCode(ErrorCode.SUCCESS);
-            serviceResult.setResult(customerConsignInfoDO.getId());
-            return serviceResult;
+        //如果传送过来的ismain是1
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsMain())) {
+            customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
         }
 
-
-        //如果传送过来的ismain是1
-        customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
-        customerConsignInfoDO.setIsMain(CommonConstant.COMMON_CONSTANT_YES);
+        customerConsignInfoDO.setIsMain(customerConsignInfo.getIsMain());
         customerConsignInfoDO.setUpdateTime(now);
         customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerConsignInfoMapper.update(customerConsignInfoDO);
