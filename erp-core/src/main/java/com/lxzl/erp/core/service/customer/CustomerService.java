@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.*;
 
+
 public interface CustomerService {
     ServiceResult<String,String> addCompany(Customer customer);
     ServiceResult<String,String> addPerson(Customer customer);
@@ -30,5 +31,5 @@ public interface CustomerService {
 
     ServiceResult<String,Integer> updateAddressIsMain(CustomerConsignInfo customerConsignInfo);
 
-    ServiceResult<String,Integer> getLastUseTime(CustomerConsignInfo customerConsignInfo);
+    void updateLastUseTime(CustomerConsignInfo customerConsignInfo);
 }

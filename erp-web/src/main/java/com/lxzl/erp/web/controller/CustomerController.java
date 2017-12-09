@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 
+
 @RequestMapping("/customer")
 @Controller
 @ControllerLog
@@ -119,11 +120,8 @@ public class CustomerController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "getLastUseTime", method = RequestMethod.POST)
-    public Result getLastUseTime(@RequestBody @Validated(IdGroup.class)CustomerConsignInfo customerConsignInfo, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = customerService.getLastUseTime(customerConsignInfo);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    @RequestMapping(value = "updateLastUseTime", method = RequestMethod.POST)
+    public void updateLastUseTime(@RequestBody @Validated(IdGroup.class)CustomerConsignInfo customerConsignInfo, BindingResult validResult) {
+        customerService.updateLastUseTime(customerConsignInfo);
     }
-
-
 }

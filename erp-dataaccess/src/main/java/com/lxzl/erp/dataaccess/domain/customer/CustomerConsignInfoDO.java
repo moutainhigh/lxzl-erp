@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.customer;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 
 
@@ -19,8 +21,11 @@ public class CustomerConsignInfoDO  extends BaseDO {
 	private String remark;
 	private Date lastUseTime;
 
+	@Transient
 	private String provinceName;
+	@Transient
 	private String cityName;
+	@Transient
 	private String districtName;
 
 	public Integer getId(){

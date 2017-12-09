@@ -161,11 +161,10 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
     }
 
     @Test
-    public void getLastUseTime() throws Exception {
+    public void updateLastUseTime() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setCustomerConsignInfoId(7);
+//        customerConsignInfo.setCustomerConsignInfoId(7);
 
-        TestResult result = getJsonTestResult("/customer/getLastUseTime",customerConsignInfo);
+        TestResult result = getJsonTestResult("/customer/updateLastUseTime",customerConsignInfo);
     }
-
 }
