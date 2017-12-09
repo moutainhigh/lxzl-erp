@@ -334,10 +334,6 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
-        if (loginUser != null && !orderDO.getBuyerCustomerId().equals(loginUser.getUserId())) {
-            result.setErrorCode(ErrorCode.OPERATOR_IS_NOT_YOURSELF);
-            return result;
-        }
         if (orderDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
