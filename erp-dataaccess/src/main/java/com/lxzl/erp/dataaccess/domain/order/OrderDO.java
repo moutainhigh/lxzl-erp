@@ -50,9 +50,10 @@ public class OrderDO extends BaseDO {
 
     @Transient
     private String buyerCustomerName;
-
     @Transient
     private String orderSellerName;
+    @Transient
+    private String orderSubCompanyName;
 
     public Integer getId() {
         return id;
@@ -348,5 +349,13 @@ public class OrderDO extends BaseDO {
 
     public void setTotalMustDepositAmount(BigDecimal totalMustDepositAmount) {
         this.totalMustDepositAmount = totalMustDepositAmount;
+    }
+
+    public String getOrderSubCompanyName() {
+        return orderSubCompanyName;
+    }
+
+    public void setOrderSubCompanyName(String orderSubCompanyName) {
+        this.orderSubCompanyName = orderSubCompanyName;
     }
 }

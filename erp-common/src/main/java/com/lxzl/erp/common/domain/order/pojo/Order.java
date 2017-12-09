@@ -47,6 +47,8 @@ public class Order implements Serializable {
     private String buyerCustomerNo;
     private String buyerCustomerName;
     private String orderSellerName;
+    private String orderSubCompanyName;
+
 
     private List<OrderProduct> orderProductList;
     private List<OrderMaterial> orderMaterialList;
@@ -382,5 +384,13 @@ public class Order implements Serializable {
 
     public void setCommitRemark(String commitRemark) {
         this.commitRemark = commitRemark;
+    }
+
+    public String getOrderSubCompanyName() {
+        return orderSubCompanyName;
+    }
+
+    public void setOrderSubCompanyName(String orderSubCompanyName) {
+        this.orderSubCompanyName = orderSubCompanyName;
     }
 }
