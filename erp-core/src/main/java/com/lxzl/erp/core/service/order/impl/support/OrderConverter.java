@@ -38,18 +38,28 @@ public class OrderConverter {
         return orderProductDOList;
     }
 
+    public static List<OrderMaterial> convertOrderMaterialDOList(List<OrderMaterialDO> orderMaterialDOList) {
+        List<OrderMaterial> orderMaterialList = new ArrayList<>();
+        if (orderMaterialDOList != null && !orderMaterialDOList.isEmpty()) {
+            for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+                orderMaterialList.add(convertOrderMaterialDO(orderMaterialDO));
+            }
+        }
+        return orderMaterialList;
+    }
+
     public static List<OrderMaterialDO> convertOrderMaterialList(List<OrderMaterial> orderMaterialList) {
         List<OrderMaterialDO> orderMaterialDOList = new ArrayList<>();
         if (orderMaterialList != null && !orderMaterialList.isEmpty()) {
             for (OrderMaterial orderMaterial : orderMaterialList) {
-                orderMaterialDOList.add(convertOrderProduct(orderMaterial));
+                orderMaterialDOList.add(convertOrderMaterial(orderMaterial));
             }
         }
         return orderMaterialDOList;
     }
 
 
-    public static OrderMaterialDO convertOrderProduct(OrderMaterial orderMaterial) {
+    public static OrderMaterialDO convertOrderMaterial(OrderMaterial orderMaterial) {
         OrderMaterialDO orderMaterialDO = new OrderMaterialDO();
         if (orderMaterial.getOrderMaterialId() != null) {
             orderMaterialDO.setId(orderMaterial.getOrderMaterialId());
@@ -58,7 +68,14 @@ public class OrderConverter {
         return orderMaterialDO;
     }
 
-
+    public static OrderMaterial convertOrderMaterialDO(OrderMaterialDO orderMaterialDO) {
+        OrderMaterial orderMaterial = new OrderMaterial();
+        if (orderMaterialDO.getId() != null) {
+            orderMaterial.setOrderMaterialId(orderMaterialDO.getId());
+        }
+        BeanUtils.copyProperties(orderMaterialDO, orderMaterial);
+        return orderMaterial;
+    }
 
     public static Order convertOrderDO(OrderDO orderDO) {
         Order order = new Order();
@@ -68,6 +85,9 @@ public class OrderConverter {
         BeanUtils.copyProperties(orderDO, order);
         if (orderDO.getOrderProductDOList() != null && !orderDO.getOrderProductDOList().isEmpty()) {
             order.setOrderProductList(convertOrderProductDOList(orderDO.getOrderProductDOList()));
+        }
+        if (orderDO.getOrderMaterialDOList() != null && !orderDO.getOrderMaterialDOList().isEmpty()) {
+            order.setOrderMaterialList(convertOrderMaterialDOList(orderDO.getOrderMaterialDOList()));
         }
         if (orderDO.getOrderConsignInfoDO() != null) {
             order.setOrderConsignInfo(convertOrderConsignInfoDO(orderDO.getOrderConsignInfoDO()));

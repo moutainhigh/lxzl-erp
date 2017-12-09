@@ -1501,12 +1501,13 @@ CREATE TABLE `erp_third_party_pay_record` (
 DROP TABLE if exists `erp_statement_order`;
 CREATE TABLE `erp_statement_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `statement_order_no` varchar(100) NOT NULL COMMENT '对账单编码',
+  `statement_order_no` varchar(100) NOT NULL COMMENT '结算单编码',
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
-  `statement_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '对账单金额，对账单明细总和',
+  `statement_month` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '结算单金额，结算单明细总和',
+  `statement_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '结算单金额，结算单明细总和',
   `statement_status` int(11) NOT NULL DEFAULT '0' COMMENT '结算状态，0未结算，1已结算',
-  `statement_start_time` datetime DEFAULT NULL COMMENT '对账开始时间，对账单明细最早的一个',
-  `statement_end_time` datetime DEFAULT NULL COMMENT '对账结束时间，对账单明细最晚的一个',
+  `statement_start_time` datetime DEFAULT NULL COMMENT '结算开始时间，结算单明细最早的一个',
+  `statement_end_time` datetime DEFAULT NULL COMMENT '结算结束时间，结算单明细最晚的一个',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -1514,18 +1515,18 @@ CREATE TABLE `erp_statement_order` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='对账单';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='结算单';
 
 DROP TABLE if exists `erp_statement_order_detail`;
 CREATE TABLE `erp_statement_order_detail` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `statement_order_id` int(20) NOT NULL COMMENT '对账单ID',
+  `statement_order_id` int(20) NOT NULL COMMENT '结算单ID',
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
   `order_id` int(20) NOT NULL COMMENT '订单ID',
-  `statement_detail_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '对账单金额',
+  `statement_detail_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '结算单金额',
   `statement_detail_status` int(11) NOT NULL DEFAULT '0' COMMENT '结算状态，0未结算，1已结算',
-  `statement_start_time` datetime DEFAULT NULL COMMENT '对账开始时间',
-  `statement_end_time` datetime DEFAULT NULL COMMENT '对账结束时间',
+  `statement_start_time` datetime DEFAULT NULL COMMENT '结算开始时间',
+  `statement_end_time` datetime DEFAULT NULL COMMENT '结算结束时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -1533,7 +1534,7 @@ CREATE TABLE `erp_statement_order_detail` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='对账单明细';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='结算单明细';
 
 
 DROP TABLE if exists `erp_order_pay_plan`;

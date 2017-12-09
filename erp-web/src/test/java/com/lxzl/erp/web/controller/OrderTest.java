@@ -40,6 +40,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderProduct.setRentTimeLength(6);
         orderProduct.setProductSkuId(40);
         orderProduct.setProductCount(2);
+        orderProduct.setInsuranceAmount(new BigDecimal(15.0));
         orderProduct.setProductUnitAmount(new BigDecimal(20.0));
         orderProduct.setInsuranceAmount(new BigDecimal(15.0));
         orderProductList.add(orderProduct);
@@ -52,6 +53,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderMaterial.setRentTimeLength(6);
         orderMaterial.setMaterialId(5);
         orderMaterial.setMaterialCount(3);
+        orderMaterial.setInsuranceAmount(new BigDecimal(20));
         orderMaterial.setMaterialUnitAmount(new BigDecimal(18.0));
         orderMaterial.setInsuranceAmount(new BigDecimal(15.0));
 
@@ -183,7 +185,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712082024107471045");
+        order.setOrderNo("O201712091506212631627");
         TestResult result = getJsonTestResult("/order/queryOrderByNo", order);
     }
 }

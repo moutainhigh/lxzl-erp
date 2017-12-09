@@ -51,6 +51,8 @@ public class OrderDO extends BaseDO {
     @Transient
     private String buyerCustomerName;
     @Transient
+    private String buyerCustomerNo;
+    @Transient
     private String orderSellerName;
     @Transient
     private String orderSubCompanyName;
@@ -357,5 +359,13 @@ public class OrderDO extends BaseDO {
 
     public void setOrderSubCompanyName(String orderSubCompanyName) {
         this.orderSubCompanyName = orderSubCompanyName;
+    }
+
+    public String getBuyerCustomerNo() {
+        return buyerCustomerNo;
+    }
+
+    public void setBuyerCustomerNo(String buyerCustomerNo) {
+        this.buyerCustomerNo = buyerCustomerNo;
     }
 }

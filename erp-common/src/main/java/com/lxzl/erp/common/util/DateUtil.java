@@ -37,7 +37,7 @@ public class DateUtil {
 
     /**
      * 判断两个日期是否是同一天
-     * */
+     */
     public static boolean isSameDay(Date smdate, Date bdate) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         smdate = sdf.parse(sdf.format(smdate));
@@ -60,4 +60,19 @@ public class DateUtil {
         return Integer.parseInt(String.valueOf(between_days));
     }
 
+
+    /**
+     * 获取每月指定日期的当天开始时间
+     */
+    public static Date getNextMonthDayStartTime(int day) {
+        Date currentTime = new Date();
+        currentTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(currentTime,1);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentTime);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        return calendar.getTime();
+    }
 }

@@ -7,13 +7,15 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 import java.util.Map;
 
-public interface DataDictionaryMysqlMapper extends BaseMysqlDAO<DataDictionaryDO> {
+public interface DataDictionaryMapper extends BaseMysqlDAO<DataDictionaryDO> {
 
     List<DataDictionaryDO> findAllData(@Param("maps") Map<String, Object> paramMap);
 
     Integer findAllDataCount(@Param("maps") Map<String, Object> paramMap);
 
     List<DataDictionaryDO> findDataByType(@Param("dataType") Integer dataType);
+
+    DataDictionaryDO findDataByOnlyOneType(@Param("dataType") Integer dataType);
 
     List<DataDictionaryDO> findByParentId(@Param("parentDictionaryId") Integer parentDictionaryId);
 

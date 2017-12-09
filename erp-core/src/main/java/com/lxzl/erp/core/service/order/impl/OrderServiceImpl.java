@@ -199,7 +199,9 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
 
         // 扣除信用额度
-        customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
+        if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+            customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
+        }
 
         result.setResult(orderNo);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -313,7 +315,9 @@ public class OrderServiceImpl implements OrderService {
             } else {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
                 // 如果拒绝，则退还授信额度
-                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), orderDO.getTotalCreditDepositAmount());
+                if (BigDecimalUtil.compare(orderDO.getTotalCreditDepositAmount(), BigDecimal.ZERO) != 0) {
+                    customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), orderDO.getTotalCreditDepositAmount());
+                }
             }
             orderDO.setUpdateTime(currentTime);
             orderDO.setUpdateUser(loginUser.getUserId().toString());

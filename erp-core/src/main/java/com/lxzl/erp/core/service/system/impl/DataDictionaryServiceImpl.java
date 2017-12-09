@@ -9,7 +9,7 @@ import com.lxzl.erp.common.domain.system.DataDictionaryQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.core.service.system.DataDictionaryService;
 import com.lxzl.erp.core.service.system.impl.support.DataDictionaryConverter;
-import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMysqlMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
@@ -32,7 +32,7 @@ import java.util.*;
 public class DataDictionaryServiceImpl implements DataDictionaryService {
 
     @Autowired
-    private DataDictionaryMysqlMapper dataDictionaryMysqlMapper;
+    private DataDictionaryMapper dataDictionaryMysqlMapper;
 
     @Autowired(required = false)
     private HttpSession session;

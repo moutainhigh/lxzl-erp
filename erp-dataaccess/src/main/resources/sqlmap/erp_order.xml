@@ -8,6 +8,7 @@
         <id column="id" jdbcType="INTEGER" property="id" />
         <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
         <result column="buyer_customer_id" jdbcType="INTEGER" property="buyerCustomerId" />
+        <result column="buyer_customer_no" jdbcType="VARCHAR" property="buyerCustomerNo" />
         <result column="buyer_customer_name" jdbcType="VARCHAR" property="buyerCustomerName" />
         <result column="rent_start_time" jdbcType="VARCHAR" property="rentStartTime" />
         <result column="deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
@@ -61,6 +62,9 @@
         <result column="product_product_count" property="productCount"/>
         <result column="product_product_unit_amount" property="productUnitAmount"/>
         <result column="product_product_amount" property="productAmount"/>
+        <result column="product_deposit_amount" jdbcType="DECIMAL" property="depositAmount" />
+        <result column="product_credit_deposit_amount" jdbcType="DECIMAL" property="creditDepositAmount" />
+        <result column="product_insurance_amount" jdbcType="DECIMAL" property="insuranceAmount" />
         <result column="product_product_sku_snapshot" property="productSkuSnapshot"/>
         <result column="product_data_status" property="dataStatus"/>
         <result column="product_remark" property="remark"/>
@@ -118,7 +122,7 @@
 	</sql>
 
     <sql id="product_column_List">
-        eop.id as order_product_id,eop.order_id as product_order_id,eop.rent_type as product_rent_type,eop.rent_time_length as product_rent_time_length,eop.product_id as product_product_id,eop.product_name as product_product_name,eop.product_sku_id as product_product_sku_id,eop.product_sku_name as product_product_sku_name,eop.product_count as product_product_count,eop.product_unit_amount as product_product_unit_amount,eop.product_amount as product_product_amount,eop.product_sku_snapshot as product_product_sku_snapshot,eop.data_status as product_data_status,eop.remark as product_remark,eop.create_time as product_create_time,eop.create_user as product_create_user,eop.update_time as product_update_time,eop.update_user as product_update_user
+        eop.id as order_product_id,eop.order_id as product_order_id,eop.rent_type as product_rent_type,eop.rent_time_length as product_rent_time_length,eop.product_id as product_product_id,eop.product_name as product_product_name,eop.product_sku_id as product_product_sku_id,eop.product_sku_name as product_product_sku_name,eop.product_count as product_product_count,eop.product_unit_amount as product_product_unit_amount,eop.product_amount as product_product_amount,eom.deposit_amount as product_deposit_amount,eom.credit_deposit_amount as product_credit_deposit_amount,eom.insurance_amount as product_insurance_amount, eop.product_sku_snapshot as product_product_sku_snapshot,eop.data_status as product_data_status,eop.remark as product_remark,eop.create_time as product_create_time,eop.create_user as product_create_user,eop.update_time as product_update_time,eop.update_user as product_update_user
 	</sql>
 
     <sql id="consign_column_List">
@@ -150,7 +154,7 @@
                 <include refid="consign_column_List" />
             </trim>
             <trim prefix=",">
-                eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, ec.customer_name AS buyer_customer_name, esc.sub_company_name AS order_sub_company_name
+                eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, ec.customer_name AS buyer_customer_name, esc.sub_company_name AS order_sub_company_name, ec.customer_no AS buyer_customer_no
             </trim>
             FROM erp_order eo
             LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
@@ -181,7 +185,7 @@
                 <include refid="consign_column_List" />
             </trim>
             <trim prefix=",">
-                eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, ec.customer_name AS buyer_customer_name, esc.sub_company_name AS order_sub_company_name
+                eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, ec.customer_name AS buyer_customer_name, esc.sub_company_name AS order_sub_company_name, ec.customer_no AS buyer_customer_no
             </trim>
             FROM erp_order eo
             LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
@@ -212,7 +216,7 @@
             <include refid="consign_column_List" />
         </trim>
         <trim prefix=",">
-            eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, ec.customer_name AS buyer_customer_name, esc.sub_company_name AS order_sub_company_name
+            eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, ec.customer_name AS buyer_customer_name, esc.sub_company_name AS order_sub_company_name, ec.customer_no AS buyer_customer_no
         </trim>
         FROM erp_order eo
         LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
@@ -243,7 +247,7 @@
                 <include refid="consign_column_List" />
             </trim>
             <trim prefix=",">
-                eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, ec.customer_name AS buyer_customer_name, esc.sub_company_name AS order_sub_company_name
+                eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, ec.customer_name AS buyer_customer_name, esc.sub_company_name AS order_sub_company_name, ec.customer_no AS buyer_customer_no
             </trim>
             FROM erp_order eo
             LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
