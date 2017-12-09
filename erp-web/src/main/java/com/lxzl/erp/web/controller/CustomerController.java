@@ -120,8 +120,4 @@ public class CustomerController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "updateLastUseTime", method = RequestMethod.POST)
-    public void updateLastUseTime(@RequestBody @Validated(IdGroup.class)CustomerConsignInfo customerConsignInfo, BindingResult validResult) {
-        customerService.updateLastUseTime(customerConsignInfo);
-    }
 }

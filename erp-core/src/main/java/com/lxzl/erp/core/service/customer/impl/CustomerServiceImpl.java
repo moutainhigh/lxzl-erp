@@ -60,7 +60,7 @@ public class CustomerServiceImpl implements CustomerService {
         }else{
             customerDO.setIsDisabled(customer.getIsDisabled());
         }
-        customerDO.setCustomerName(customer.getCustomerName());
+        customerDO.setCustomerName(customer.getCustomerCompany().getCompanyName());
         customerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerDO.setCreateTime(now);
         customerDO.setUpdateTime(now);
@@ -70,7 +70,6 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerCompanyDO customerCompanyDO  = CustomerConverter.convertCustomerCompany(customer.getCustomerCompany());
         customerCompanyDO.setCustomerId(customerDO.getId());
-        customerCompanyDO.setCompanyName(customerDO.getCustomerName());
         customerCompanyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerCompanyDO.setCreateTime(now);
         customerCompanyDO.setUpdateTime(now);
@@ -103,7 +102,7 @@ public class CustomerServiceImpl implements CustomerService {
         }else{
             customerDO.setIsDisabled(customer.getIsDisabled());
         }
-        customerDO.setCustomerName(customer.getCustomerName());
+        customerDO.setCustomerName(customer.getCustomerPerson().getRealName());
         customerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerDO.setCreateTime(now);
         customerDO.setUpdateTime(now);
@@ -113,7 +112,6 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerPersonDO customerPersonDO  = CustomerConverter.convertCustomerPerson(customer.getCustomerPerson());
         customerPersonDO.setCustomerId(customerDO.getId());
-        customerPersonDO.setRealName(customerDO.getCustomerName());
         customerPersonDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerPersonDO.setCreateTime(now);
         customerPersonDO.setUpdateTime(now);
@@ -153,6 +151,7 @@ public class CustomerServiceImpl implements CustomerService {
         newCustomerCompanyDO.setId(customerCompanyDO.getId());
         customerCompanyMapper.update(newCustomerCompanyDO);
 
+        customerDO.setCustomerName(newCustomerCompanyDO.getCompanyName());
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerDO.setIsDisabled(customer.getIsDisabled());
@@ -182,6 +181,8 @@ public class CustomerServiceImpl implements CustomerService {
         newCustomerPersonDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         newCustomerPersonDO.setId(customerPersonDO.getId());
         customerPersonMapper.update(newCustomerPersonDO);
+
+        customerDO.setCustomerName(newCustomerPersonDO.getRealName());
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerDO.setIsDisabled(customer.getIsDisabled());
@@ -482,9 +483,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void updateLastUseTime(CustomerConsignInfo customerConsignInfo) {
+    public void updateLastUseTime(Integer customerConsignInfoId) {
         try{
-            CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfo.getCustomerConsignInfoId());
+            CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfoId);
             customerConsignInfoDO.setLastUseTime(new Date());
             customerConsignInfoMapper.update(customerConsignInfoDO);
         }catch (Exception e){

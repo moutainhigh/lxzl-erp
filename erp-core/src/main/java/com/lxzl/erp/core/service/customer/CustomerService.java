@@ -31,5 +31,5 @@ public interface CustomerService {
 
     ServiceResult<String,Integer> updateAddressIsMain(CustomerConsignInfo customerConsignInfo);
 
-    void updateLastUseTime(CustomerConsignInfo customerConsignInfo);
+    void updateLastUseTime(Integer customerConsignInfo);
 }
