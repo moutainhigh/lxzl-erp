@@ -18,7 +18,8 @@ import java.util.Date;
 public class CustomerConsignInfo implements Serializable {
 
 	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups = {AddGroup.class})
-	private String customerNo;
+	private String customerNo; //客户编号
+
 	@NotNull(message = ErrorCode.CUSTOMER_CONSIGN_INFO_ID_NOT_NULL,groups = {IdGroup.class,UpdateGroup.class})
 	private Integer customerConsignInfoId;   //唯一标识
 	private Integer customerId;   //用户ID
@@ -32,19 +33,18 @@ public class CustomerConsignInfo implements Serializable {
 	@NotBlank(message = ErrorCode.ADDRESS_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private String address;   //详细地址
 	@In(value = {CommonConstant.YES,CommonConstant.NO}, message=ErrorCode.CUSTOMER_CONSIGN_INFO_IS_MAIN_ERROR,groups = {AddGroup.class,UpdateGroup.class})
-	//@NotNull(message = ErrorCode.CUSTOMER_CONSIGN_INFO_IS_MAIN_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private Integer isMain;   //是否为默认地址，0否1是
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
+	private Date lastUseTime;  //最后使用时间
 	private String remark;   //备注
 	private Date createTime;   //添加时间
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
-	private String provinceName;
-	private String cityName;
-	private String districtName;
-
+	private String provinceName; //省名称
+	private String cityName; //城市名
+	private String districtName; //地区名
 
 
 
@@ -198,5 +198,13 @@ public class CustomerConsignInfo implements Serializable {
 
 	public void setDistrictName(String districtName) {
 		this.districtName = districtName;
+	}
+
+	public Date getLastUseTime() {
+		return lastUseTime;
+	}
+
+	public void setLastUseTime(Date lastUseTme) {
+		this.lastUseTime = lastUseTme;
 	}
 }

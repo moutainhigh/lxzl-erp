@@ -17,6 +17,7 @@ public class CustomerConsignInfoDO  extends BaseDO {
 	private Integer isMain;
 	private Integer dataStatus;
 	private String remark;
+	private Date lastUseTime;
 
 	private String provinceName;
 	private String cityName;
@@ -132,5 +133,13 @@ public class CustomerConsignInfoDO  extends BaseDO {
 
 	public void setDistrictName(String districtName) {
 		this.districtName = districtName;
+	}
+
+	public Date getLastUseTime() {
+		return lastUseTime;
+	}
+
+	public void setLastUseTime(Date lastUseTme) {
+		this.lastUseTime = lastUseTme;
 	}
 }

@@ -118,7 +118,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customerConsignInfo.setDistrict(1685); //汉阳区
         customerConsignInfo.setAddress("修改后的测试地址222");
         customerConsignInfo.setRemark("update备注");
-        customerConsignInfo.setIsMain(1);
+        customerConsignInfo.setIsMain(0);
 
         TestResult result = getJsonTestResult("/customer/updateCustomerConsignInfo",customerConsignInfo);
     }
@@ -158,6 +158,14 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customerConsignInfo.setCustomerConsignInfoId(9);
 
         TestResult result = getJsonTestResult("/customer/updateAddressIsMain",customerConsignInfo);
+    }
+
+    @Test
+    public void getLastUseTime() throws Exception {
+        CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
+        customerConsignInfo.setCustomerConsignInfoId(7);
+
+        TestResult result = getJsonTestResult("/customer/getLastUseTime",customerConsignInfo);
     }
 
 }

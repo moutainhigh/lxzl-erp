@@ -6,6 +6,7 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="customer_type" jdbcType="INTEGER" property="customerType" />
 		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+		<result column="customer_name" jdbcType="VARCHAR" property="customerName" />
 		<result column="is_disabled" jdbcType="INTEGER" property="isDisabled" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -83,7 +84,7 @@
 		<result column="districtName" jdbcType="VARCHAR" property="districtName" />
 	</resultMap>
 	<sql id="column_List">
-		ec.id,ec.customer_type,ec.customer_no,ec.is_disabled,ec.data_status,ec.remark,ec.create_time,ec.create_user,ec.update_time,ec.update_user
+		ec.id,ec.customer_type,ec.customer_no,ec.customer_name,ec.is_disabled,ec.data_status,ec.remark,ec.create_time,ec.create_user,ec.update_time,ec.update_user
 	</sql>
 	<sql id="company_column_List">
 		ecc.id AS ecc_id,ecc.customer_id AS ecc_customer_id,ecc.landline AS ecc_landline,ecc.connect_real_name AS ecc_connect_real_name,ecc.connect_phone AS ecc_connect_phone,ecc.company_name AS ecc_company_name,ecc.company_abb AS ecc_company_abb,ecc.province AS ecc_province,ecc.city AS ecc_city,ecc.district AS ecc_district,ecc.address AS ecc_address,ecc.legal_person AS ecc_legal_person,ecc.legal_person_no AS ecc_legal_person_no,ecc.business_license_no AS ecc_business_license_no,ecc.data_status AS ecc_data_status,ecc.remark AS ecc_remark,ecc.create_time AS ecc_create_time,ecc.create_user AS ecc_create_user,ecc.update_time AS ecc_update_time,ecc.update_user AS ecc_update_user
@@ -156,6 +157,9 @@
 			</if>
 			<if test="customerNo != null">
 				customer_no = #{customerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="customerName != null">
+				customer_name = #{customerName,jdbcType=VARCHAR},
 			</if>
 			<if test="isDisabled != null">
 				is_disabled = #{isDisabled,jdbcType=INTEGER},

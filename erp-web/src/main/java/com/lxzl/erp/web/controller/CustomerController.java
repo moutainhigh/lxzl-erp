@@ -119,5 +119,11 @@ public class CustomerController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "getLastUseTime", method = RequestMethod.POST)
+    public Result getLastUseTime(@RequestBody @Validated(IdGroup.class)CustomerConsignInfo customerConsignInfo, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = customerService.getLastUseTime(customerConsignInfo);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 
 }

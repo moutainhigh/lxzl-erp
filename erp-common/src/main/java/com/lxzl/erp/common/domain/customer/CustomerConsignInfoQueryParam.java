@@ -5,13 +5,15 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.util.Date;
+
 public class CustomerConsignInfoQueryParam extends BasePageParam {
 
 
     @NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups = {IdGroup.class})
-    private String customerNo;
-    private Integer customerConsignInfoId;
-    private Integer customerId;   //客户Id
+    private String customerNo;  //客户编号
+    private Integer customerConsignInfoId; //地址信息ID
+    private Integer customerId;   //客户ID
     private String consigneeName;   //收货人姓名
     private String consigneePhone;   //收货人手机号
     private Integer province;   //省份ID，省份ID
@@ -19,14 +21,14 @@ public class CustomerConsignInfoQueryParam extends BasePageParam {
     private Integer district;   //区ID，对应区ID
     private String address;   //详细地址
     private Integer isMain;   //是否为默认地址，0否1是
+    private Date lastUseTime;  //最后使用时间
+
 
     public Integer getCustomerConsignInfoId() {
         return customerConsignInfoId;
     }
 
-    public void setCustomerConsignInfoId(Integer customerConsignInfoId) {
-        this.customerConsignInfoId = customerConsignInfoId;
-    }
+    public void setCustomerConsignInfoId(Integer customerConsignInfoId) {this.customerConsignInfoId = customerConsignInfoId; }
 
     public Integer getCustomerId() {
         return customerId;
@@ -99,4 +101,13 @@ public class CustomerConsignInfoQueryParam extends BasePageParam {
     public void setCustomerNo(String customerNo) {
         this.customerNo = customerNo;
     }
+
+    public Date getLastUseTime() {
+        return lastUseTime;
+    }
+
+    public void setLastUseTime(Date lastUseTime) {
+        this.lastUseTime = lastUseTime;
+    }
+
 }

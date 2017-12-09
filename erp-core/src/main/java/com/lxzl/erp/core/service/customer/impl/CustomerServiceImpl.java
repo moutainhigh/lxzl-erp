@@ -392,21 +392,6 @@ public class CustomerServiceImpl implements CustomerService {
         customerConsignInfoDO.setUpdateTime(now);
         customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerConsignInfoMapper.update(customerConsignInfoDO);
-        //如果删除信息是该客户的默认地址，那么就需要在该客户其他地址信息中选择一条为默认地址
-        //判断该条信息是否为该客户的唯一信息
-        Integer customerConsignInfoCount =  customerConsignInfoMapper.countByCustomerId(customerConsignInfoDO.getCustomerId());
-        if (customerConsignInfoCount > 0 && CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsMain())){
-            CustomerConsignInfoQueryParam customerConsignInfoQueryParam = new CustomerConsignInfoQueryParam();
-            customerConsignInfoQueryParam.setCustomerId(customerConsignInfoDO.getCustomerId());
-            Map<String, Object> maps = new HashMap<>();
-            maps.put("start", 0);
-            maps.put("pageSize", 1);
-            maps.put("queryParam", customerConsignInfoQueryParam);
-            List<CustomerConsignInfoDO> customerConignInfoDOList = customerConsignInfoMapper.findCustomerConsignInfoByParams(maps);
-            CustomerConsignInfoDO consignInfoDO = customerConignInfoDOList.get(0);
-            consignInfoDO.setIsMain(CommonConstant.YES);
-            customerConsignInfoMapper.update(consignInfoDO);
-        }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
@@ -485,7 +470,25 @@ public class CustomerServiceImpl implements CustomerService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerConsignInfoDO.getId());
         return serviceResult;
+    }
 
+    @Override
+    public ServiceResult<String, Integer> getLastUseTime(CustomerConsignInfo customerConsignInfo) {
+        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
+        Date now = new Date();
 
+        CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfo.getCustomerConsignInfoId());
+        if (customerConsignInfoDO == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
+            return serviceResult;
+        }
+        customerConsignInfoDO.setLastUseTime(now);
+        customerConsignInfoDO.setUpdateTime(now);
+        customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerConsignInfoMapper.update(customerConsignInfoDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(customerConsignInfoDO.getId());
+        return serviceResult;
     }
 }
