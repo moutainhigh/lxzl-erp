@@ -15,12 +15,12 @@ public class OrderDO extends BaseDO {
     private String orderNo;
     private Integer buyerCustomerId;
     private Date rentStartTime;
-    private Integer depositCycle;
-    private Integer paymentCycle;
     private BigDecimal totalDepositAmount;
     private BigDecimal totalMustDepositAmount;
     private BigDecimal totalCreditDepositAmount;
     private BigDecimal totalInsuranceAmount;
+    private Integer depositCycle;
+    private Integer paymentCycle;
     private Integer payMode;
     private Integer totalProductCount;
     private BigDecimal totalProductAmount;

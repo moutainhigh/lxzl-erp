@@ -41,9 +41,6 @@ public class ProductConverter {
         if (productSku.getSkuPrice() != null) {
             productSkuDO.setSkuPrice(productSku.getSkuPrice());
         }
-        if (productSku.getTimeRentPrice() != null) {
-            productSkuDO.setTimeRentPrice(productSku.getTimeRentPrice());
-        }
         if (productSku.getDayRentPrice() != null) {
             productSkuDO.setDayRentPrice(productSku.getDayRentPrice());
         }
@@ -88,9 +85,6 @@ public class ProductConverter {
         }
         if (productSkuDO.getDayRentPrice() != null) {
             productSku.setDayRentPrice(productSkuDO.getDayRentPrice());
-        }
-        if (productSkuDO.getTimeRentPrice() != null) {
-            productSku.setTimeRentPrice(productSkuDO.getTimeRentPrice());
         }
         if (productSkuDO.getMonthRentPrice() != null) {
             productSku.setMonthRentPrice(productSkuDO.getMonthRentPrice());

@@ -9,10 +9,10 @@ import java.math.BigDecimal;
 public class StatementOrderDetail implements Serializable {
 
 	private Integer statementOrderDetailId;   //唯一标识
-	private Integer statementOrderId;   //对账单ID
+	private Integer statementOrderId;   //结算单ID
 	private Integer customerId;   //客户ID
 	private Integer orderId;   //订单ID
-	private BigDecimal statementDetailAmount;   //对账单金额
+	private BigDecimal statementDetailAmount;   //结算单金额
 	private Integer statementDetailStatus;   //结算状态，0未结算，1已结算
 	private Date statementStartTime;   //对账开始时间
 	private Date statementEndTime;   //对账结束时间

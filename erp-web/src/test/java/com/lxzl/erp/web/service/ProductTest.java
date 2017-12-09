@@ -73,7 +73,6 @@ public class ProductTest extends BaseUnTransactionalTest {
         List<ProductSku> productSkuList = new ArrayList<>();
         ProductSku productSku = new ProductSku();
         productSku.setSkuPrice(new BigDecimal(5000.00));
-        productSku.setTimeRentPrice(new BigDecimal(98.00));
         productSku.setDayRentPrice(new BigDecimal(98.00));
         productSku.setMonthRentPrice(new BigDecimal(98.00));
         productSku.setStock(500);
@@ -141,7 +140,6 @@ public class ProductTest extends BaseUnTransactionalTest {
             String disk = list.get(2);
 
             ProductSku productSku = new ProductSku();
-            productSku.setTimeRentPrice(new BigDecimal(98.00));
             productSku.setDayRentPrice(new BigDecimal(98.00));
             productSku.setMonthRentPrice(new BigDecimal(98.00));
             productSku.setSkuPrice(new BigDecimal(6500));

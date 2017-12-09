@@ -24,7 +24,6 @@ public class MaterialDO extends BaseDO {
     private Integer isRent;
     private BigDecimal materialPrice;
     private Integer stock;
-    private BigDecimal timeRentPrice;
     private BigDecimal dayRentPrice;
     private BigDecimal monthRentPrice;
     private String materialDesc;
@@ -108,14 +107,6 @@ public class MaterialDO extends BaseDO {
 
     public void setStock(Integer stock) {
         this.stock = stock;
-    }
-
-    public BigDecimal getTimeRentPrice() {
-        return timeRentPrice;
-    }
-
-    public void setTimeRentPrice(BigDecimal timeRentPrice) {
-        this.timeRentPrice = timeRentPrice;
     }
 
     public BigDecimal getDayRentPrice() {

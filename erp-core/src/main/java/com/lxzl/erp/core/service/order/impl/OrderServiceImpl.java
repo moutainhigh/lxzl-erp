@@ -241,9 +241,7 @@ public class OrderServiceImpl implements OrderService {
                 }
 
                 BigDecimal productUnitAmount = null;
-                if (OrderRentType.RENT_TYPE_TIME.equals(orderProductDO.getRentType())) {
-                    productUnitAmount = thisProductSku.getTimeRentPrice();
-                } else if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
                     productUnitAmount = thisProductSku.getDayRentPrice();
                 } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
                     productUnitAmount = thisProductSku.getMonthRentPrice();
@@ -268,9 +266,7 @@ public class OrderServiceImpl implements OrderService {
                     return result;
                 }
                 BigDecimal materialUnitAmount = null;
-                if (OrderRentType.RENT_TYPE_TIME.equals(orderMaterialDO.getRentType())) {
-                    materialUnitAmount = material.getTimeRentPrice();
-                } else if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())) {
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())) {
                     materialUnitAmount = material.getDayRentPrice();
                 } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
                     materialUnitAmount = material.getMonthRentPrice();
@@ -799,8 +795,6 @@ public class OrderServiceImpl implements OrderService {
             return DateUtil.dateInterval(rentStartTime, rentTimeLength);
         } else if (OrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
             return DateUtil.monthInterval(rentStartTime, rentTimeLength);
-        } else if (OrderRentType.RENT_TYPE_TIME.equals(rentType)) {
-            // TODO 按次的情况下，什么时候还
         }
         return null;
     }
@@ -810,8 +804,6 @@ public class OrderServiceImpl implements OrderService {
             return BigDecimalUtil.mul(unitAmount, new BigDecimal(rentTimeLength));
         } else if (OrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
             return BigDecimalUtil.mul(unitAmount, new BigDecimal(rentTimeLength));
-        } else if (OrderRentType.RENT_TYPE_TIME.equals(rentType)) {
-            return unitAmount;
         }
         return null;
     }

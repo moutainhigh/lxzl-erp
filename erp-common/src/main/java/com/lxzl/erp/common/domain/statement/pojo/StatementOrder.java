@@ -10,12 +10,12 @@ import java.util.List;
 public class StatementOrder implements Serializable {
 
 	private Integer statementOrderId;   //唯一标识
-	private String statementOrderNo;   //对账单编码
+	private String statementOrderNo;   //结算单编码
 	private Integer customerId;   //客户ID
-	private BigDecimal statementAmount;   //对账单金额，对账单明细总和
+	private BigDecimal statementAmount;   //结算单金额，结算单明细总和
 	private Integer statementStatus;   //结算状态，0未结算，1已结算
-	private Date statementStartTime;   //对账开始时间，对账单明细最早的一个
-	private Date statementEndTime;   //对账结束时间，对账单明细最晚的一个
+	private Date statementStartTime;   //对账开始时间，结算单明细最早的一个
+	private Date statementEndTime;   //对账结束时间，结算单明细最晚的一个
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间

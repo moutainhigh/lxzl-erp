@@ -7,8 +7,7 @@ public class OrderRentType {
 
     public static boolean inThisScope(Integer rentType) {
         if (rentType != null
-                && (RENT_TYPE_TIME.equals(rentType)
-                || RENT_TYPE_DAY.equals(rentType)
+                && (RENT_TYPE_DAY.equals(rentType)
                 || RENT_TYPE_MONTH.equals(rentType))) {
             return true;
         }

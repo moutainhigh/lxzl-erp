@@ -30,7 +30,6 @@ public class Material implements Serializable {
     private Integer isMainMaterial;         //是否四大件
     private Integer isRent;             // 是否在租
     private Integer stock;              // 库存
-    private BigDecimal timeRentPrice;   // 次租价格
     private BigDecimal dayRentPrice;    // 日租价格
     private BigDecimal monthRentPrice;  // 月租价格
     private String materialDesc;   //物料描述
@@ -120,14 +119,6 @@ public class Material implements Serializable {
 
     public void setStock(Integer stock) {
         this.stock = stock;
-    }
-
-    public BigDecimal getTimeRentPrice() {
-        return timeRentPrice;
-    }
-
-    public void setTimeRentPrice(BigDecimal timeRentPrice) {
-        this.timeRentPrice = timeRentPrice;
     }
 
     public BigDecimal getDayRentPrice() {

@@ -11,7 +11,6 @@
         <result column="product_id" property="productId"/>
         <result column="stock" property="stock"/>
         <result column="sku_price" property="skuPrice"/>
-        <result column="time_rent_price" property="timeRentPrice"/>
         <result column="day_rent_price" property="dayRentPrice"/>
         <result column="month_rent_price" property="monthRentPrice"/>
         <result column="custom_code" property="customCode"/>
@@ -68,7 +67,7 @@
     </resultMap>
 
     <sql id="column_List">
-		eps.id as id,eps.sku_name as sku_name,eps.product_id as product_id,eps.stock as stock,eps.sku_price as sku_price,eps.time_rent_price as time_rent_price,eps.day_rent_price as day_rent_price,eps.month_rent_price as month_rent_price,eps.custom_code as custom_code,eps.bar_code as bar_code,eps.properties as properties,eps.remark as remark,eps.data_status as data_status,eps.create_time as create_time,eps.create_user as create_user,eps.update_time as update_time,eps.update_user as update_user
+		eps.id as id,eps.sku_name as sku_name,eps.product_id as product_id,eps.stock as stock,eps.sku_price as sku_price,eps.day_rent_price as day_rent_price,eps.month_rent_price as month_rent_price,eps.custom_code as custom_code,eps.bar_code as bar_code,eps.properties as properties,eps.remark as remark,eps.data_status as data_status,eps.create_time as create_time,eps.create_user as create_user,eps.update_time as update_time,eps.update_user as update_user
 	</sql>
 
     <sql id="sku_property_column_List">
@@ -268,9 +267,6 @@
             </if>
             <if test="skuPrice != null">
                 sku_price = #{skuPrice, jdbcType=DECIMAL},
-            </if>
-            <if test="timeRentPrice != null">
-                time_rent_price = #{timeRentPrice, jdbcType=DECIMAL},
             </if>
             <if test="dayRentPrice != null">
                 day_rent_price = #{dayRentPrice, jdbcType=DECIMAL},

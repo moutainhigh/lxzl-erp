@@ -660,10 +660,6 @@ public class ProductServiceImpl implements ProductService {
                 return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
             }
 
-            if (productSku.getTimeRentPrice() == null || BigDecimalUtil.compare(productSku.getTimeRentPrice(), BigDecimal.ZERO) < 0) {
-                return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
-            }
-
             if (productSku.getDayRentPrice() == null || BigDecimalUtil.compare(productSku.getDayRentPrice(), BigDecimal.ZERO) < 0) {
                 return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
             }

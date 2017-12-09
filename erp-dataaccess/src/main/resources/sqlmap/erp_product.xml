@@ -67,7 +67,6 @@
         <result column="sku_stock" property="stock"/>
         <result column="sku_sku_price" property="skuPrice"/>
         <result column="sku_original_price" property="originalPrice"/>
-        <result column="sku_time_rent_price" property="timeRentPrice"/>
         <result column="sku_day_rent_price" property="dayRentPrice"/>
         <result column="sku_month_rent_price" property="monthRentPrice"/>
         <result column="sku_custom_code" property="customCode"/>
@@ -130,7 +129,7 @@
 	</sql>
 
     <sql id="sku_column_List">
-		eps.id AS sku_id,eps.sku_name AS sku_sku_name,eps.product_id AS sku_product_id,eps.stock AS sku_stock,eps.original_price AS sku_original_price,eps.sku_price AS sku_sku_price,eps.time_rent_price AS sku_time_rent_price,eps.day_rent_price AS sku_day_rent_price,eps.month_rent_price AS sku_month_rent_price,eps.custom_code AS sku_custom_code,eps.bar_code AS sku_bar_code,eps.properties AS sku_properties,eps.remark AS sku_remark,eps.data_status AS sku_data_status,eps.create_time AS sku_create_time,eps.create_user AS sku_create_user,eps.update_time AS sku_update_time,eps.update_user AS sku_update_user
+		eps.id AS sku_id,eps.sku_name AS sku_sku_name,eps.product_id AS sku_product_id,eps.stock AS sku_stock,eps.original_price AS sku_original_price,eps.sku_price AS sku_sku_price,eps.day_rent_price AS sku_day_rent_price,eps.month_rent_price AS sku_month_rent_price,eps.custom_code AS sku_custom_code,eps.bar_code AS sku_bar_code,eps.properties AS sku_properties,eps.remark AS sku_remark,eps.data_status AS sku_data_status,eps.create_time AS sku_create_time,eps.create_user AS sku_create_user,eps.update_time AS sku_update_time,eps.update_user AS sku_update_user
 	</sql>
 
     <sql id="property_column_List">

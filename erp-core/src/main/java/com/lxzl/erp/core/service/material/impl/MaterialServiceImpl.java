@@ -308,7 +308,6 @@ public class MaterialServiceImpl implements MaterialService {
         if (StringUtil.isBlank(material.getMaterialName())
                 || material.getMaterialType() == null
                 || material.getMaterialPrice() == null
-                || material.getTimeRentPrice() == null
                 || material.getDayRentPrice() == null
                 || material.getMonthRentPrice() == null) {
             return ErrorCode.PARAM_IS_NOT_ENOUGH;

@@ -18,9 +18,7 @@ public class AmountSupport {
      */
     public BigDecimal calculateRentCost(BigDecimal value , Date start , Date end , Integer rentType){
         BigDecimal cost = new BigDecimal(0);
-        if(OrderRentType.RENT_TYPE_TIME.equals(rentType)){
-            cost=calculateTime(value,start,end);
-        }else if(OrderRentType.RENT_TYPE_DAY.equals(rentType)){
+        if(OrderRentType.RENT_TYPE_DAY.equals(rentType)){
             cost=calculateDay(value,start,end);
         }else if(OrderRentType.RENT_TYPE_MONTH.equals(rentType)){
             cost=calculateMonth(value,start,end);

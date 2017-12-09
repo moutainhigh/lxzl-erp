@@ -33,7 +33,6 @@ public class MaterialTest extends ERPUnTransactionalTest {
         material.setMaterialPrice(new BigDecimal(5000.0));
         material.setDayRentPrice(new BigDecimal(5000.0));
         material.setMonthRentPrice(new BigDecimal(5000.0));
-        material.setTimeRentPrice(new BigDecimal(5000.0));
         material.setMaterialDesc("测试备注");
 
         List<MaterialImg> materialImgList = new ArrayList<>();

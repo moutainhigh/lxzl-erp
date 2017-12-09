@@ -66,9 +66,14 @@ public class DateUtil {
      */
     public static Date getNextMonthDayStartTime(int day) {
         Date currentTime = new Date();
-        currentTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(currentTime,1);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentTime);
+        calendar.add(Calendar.MONTH, 2);
+        calendar.set(Calendar.DAY_OF_MONTH, 0);
+        // 本月最后一天小于输入的
+        if(calendar.get(Calendar.DATE) < day){
+            day = calendar.get(Calendar.DATE);
+        }
         calendar.set(Calendar.DAY_OF_MONTH, day);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
