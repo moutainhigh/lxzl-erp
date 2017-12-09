@@ -29,4 +29,6 @@ public interface CustomerService {
     ServiceResult<String,Page<CustomerConsignInfo>> pageCustomerConsignInfo(CustomerConsignInfoQueryParam customerConsignInfoQueryParam);
 
     ServiceResult<String,Integer> updateAddressIsMain(CustomerConsignInfo customerConsignInfo);
+
+    ServiceResult<String,Integer> getLastUseTime(CustomerConsignInfo customerConsignInfo);
 }

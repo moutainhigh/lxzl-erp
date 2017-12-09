@@ -18,6 +18,8 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="last_use_time" jdbcType="TIMESTAMP" property="lastUseTime" />
+
 
 		<result column="provinceName" jdbcType="VARCHAR" property="provinceName" />
 		<result column="cityName" jdbcType="VARCHAR" property="cityName" />
@@ -25,7 +27,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ecci.id,ecci.customer_id,ecci.consignee_name,ecci.consignee_phone,ecci.province,ecci.city,ecci.district,ecci.address,ecci.is_main,ecci.data_status,ecci.remark,ecci.create_time,ecci.create_user,ecci.update_time,ecci.update_user
+		ecci.id,ecci.customer_id,ecci.consignee_name,ecci.consignee_phone,ecci.province,ecci.city,ecci.district,ecci.address,ecci.is_main,ecci.data_status,ecci.remark,ecci.create_time,ecci.create_user,ecci.update_time,ecci.update_user,ecci.last_use_time
 	</sql>
 
 	<select id="findById" resultMap="CustomerConsignInfoDO" parameterType="java.lang.Integer">
@@ -103,6 +105,9 @@
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
 			</if>
+			<if test="lastUseTime != null">
+				last_use_time = #{lastUseTime,jdbcType=TIMESTAMP},
+			</if>
 		</set>
 	</sql>
 
@@ -153,6 +158,9 @@
 			<if test="maps.queryParam.isMain != null">
 				AND ecci.is_main = #{maps.queryParam.isMain, jdbcType=INTEGER}
 			</if>
+			<if test="maps.queryParam.lastUseTime != null">
+				AND ecci.last_use_time = #{maps.queryParam.lastUseTime, jdbcType=TIMESTAMP}
+			</if>
 			<if test="true">
 				AND ecci.data_status = 1
 			</if>
@@ -195,13 +203,15 @@
 			<if test="maps.queryParam.isMain != null">
 				AND ecci.is_main = #{maps.queryParam.isMain, jdbcType=INTEGER}
 			</if>
+			<if test="maps.queryParam.lastUseTime != null">
+				AND ecci.last_use_time = #{maps.queryParam.lastUseTime, jdbcType=TIMESTAMP}
+			</if>
 			<if test="true">
 				AND ecci.data_status = 1
 			</if>
 		</where>
-		ORDER BY ecci.is_main DESC ,ecci.update_time DESC
+		ORDER BY ecci.update_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
-
 	</select>
 
 </mapper>
