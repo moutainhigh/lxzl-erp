@@ -50,6 +50,7 @@
         INNER JOIN erp_product_category_property epcp on epcp.id = epsp.property_id and epcp.data_status = 1
         INNER JOIN erp_product_category_property_value epcpv on epcpv.id = epsp.property_value_id and epcpv.data_status = 1
         where epsp.sku_id = #{skuId, jdbcType=INTEGER} and epsp.data_status = 1 and epsp.is_sku = 1
+        ORDER BY epcp.data_order DESC,epcpv.data_order DESC
     </select>
 
     <select id="findProductProperties" resultMap="ProductSkuPropertyDO" parameterType="java.lang.Integer">

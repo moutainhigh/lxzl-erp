@@ -726,8 +726,6 @@ public class ProductServiceImpl implements ProductService {
         if (dbSkuRecordMap != null && dbSkuRecordMap.size() > 0) {
             return ErrorCode.PRODUCT_SKU_CAN_NOT_DELETE;
         }
-        Integer skuId = null;
-
         if (!saveProductSkuList.isEmpty()) {
             for (ProductSku productSku : saveProductSkuList) {
                 ProductSkuDO productSkuDO = ProductConverter.convertProductSku(productSku);
@@ -738,8 +736,25 @@ public class ProductServiceImpl implements ProductService {
                 productSkuDO.setCreateTime(currentTime);
                 productSkuDO.setUpdateTime(currentTime);
                 productSkuMapper.save(productSkuDO);
-                skuId = productSkuDO.getId();
+                Integer skuId = productSkuDO.getId();
                 saveSkuProperties(productSku.getProductSkuPropertyList(), productId, skuId, CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD, loginUser, currentTime);
+
+                List<ProductSkuPropertyDO> productSkuPropertyDOList = productSkuPropertyMapper.findSkuProperties(skuId);
+                StringBuilder skuName = new StringBuilder();
+                for (int i = 0; i < productSkuPropertyDOList.size(); i++) {
+                    ProductSkuPropertyDO productSkuPropertyDO = productSkuPropertyDOList.get(i);
+                    skuName.append(productSkuPropertyDO.getPropertyName());
+                    skuName.append(":");
+                    skuName.append(productSkuPropertyDO.getPropertyValueName());
+                    if (i != (productSkuPropertyDOList.size() - 1)) {
+                        skuName.append("/");
+                    }
+                }
+
+                ProductSkuDO updateProductSkuName = new ProductSkuDO();
+                updateProductSkuName.setId(skuId);
+                updateProductSkuName.setSkuName(skuName.toString());
+                productSkuMapper.update(updateProductSkuName);
             }
         }
         if (!updateProductSkuList.isEmpty()) {
@@ -765,10 +780,27 @@ public class ProductServiceImpl implements ProductService {
                 productSkuDO.setUpdateUser(loginUser.getUserId().toString());
                 productSkuDO.setUpdateTime(currentTime);
                 productSkuMapper.update(productSkuDO);
-                skuId = productSkuDO.getId();
+                Integer skuId = productSkuDO.getId();
                 saveSkuProperties(productSku.getProductSkuPropertyList(), productId, skuId, CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD, loginUser, currentTime);
                 List<ProductSkuPropertyDO> deleteProductSkuPropertyList = ListUtil.mapToList(dbSkuPropertyMap);
                 saveSkuProperties(ProductConverter.convertProductSkuPropertyDOList(deleteProductSkuPropertyList), productId, skuId, CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE, loginUser, currentTime);
+
+                List<ProductSkuPropertyDO> nowProductSkuPropertyDOList = productSkuPropertyMapper.findSkuProperties(skuId);
+                StringBuilder skuName = new StringBuilder();
+                for (int i = 0; i < nowProductSkuPropertyDOList.size(); i++) {
+                    ProductSkuPropertyDO productSkuPropertyDO = nowProductSkuPropertyDOList.get(i);
+                    skuName.append(productSkuPropertyDO.getPropertyName());
+                    skuName.append(":");
+                    skuName.append(productSkuPropertyDO.getPropertyValueName());
+                    if (i != (nowProductSkuPropertyDOList.size() - 1)) {
+                        skuName.append("/");
+                    }
+                }
+
+                ProductSkuDO updateProductSkuName = new ProductSkuDO();
+                updateProductSkuName.setId(skuId);
+                updateProductSkuName.setSkuName(skuName.toString());
+                productSkuMapper.update(updateProductSkuName);
             }
         }
 
@@ -784,24 +816,6 @@ public class ProductServiceImpl implements ProductService {
                 saveSkuProperties(ProductConverter.convertProductSkuPropertyDOList(dbPropertiesRecord), productId, productSkuDO.getId(), CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE, loginUser, currentTime);
             }
         }*/
-
-        List<ProductSkuPropertyDO> productSkuPropertyDOList = productSkuPropertyMapper.findSkuProperties(skuId);
-        StringBuilder skuName = new StringBuilder();
-        for (int i = 0; i < productSkuPropertyDOList.size(); i++) {
-            ProductSkuPropertyDO productSkuPropertyDO = productSkuPropertyDOList.get(i);
-            skuName.append(productSkuPropertyDO.getPropertyName());
-            skuName.append(":");
-            skuName.append(productSkuPropertyDO.getPropertyValueName());
-            if (i != (productSkuPropertyDOList.size() - 1)) {
-                skuName.append("/");
-            }
-        }
-
-        ProductSkuDO updateProductSkuName = new ProductSkuDO();
-        updateProductSkuName.setId(skuId);
-        updateProductSkuName.setSkuName(skuName.toString());
-        productSkuMapper.update(updateProductSkuName);
-
         return ErrorCode.SUCCESS;
     }
 
