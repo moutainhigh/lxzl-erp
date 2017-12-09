@@ -19,6 +19,8 @@ import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
 import com.lxzl.erp.dataaccess.domain.customer.*;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -30,6 +32,7 @@ import java.util.*;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
+    private static final Logger logger = LoggerFactory.getLogger(ConverterUtil.class);
     @Autowired
     private CustomerMapper customerMapper;
     @Autowired
@@ -57,7 +60,7 @@ public class CustomerServiceImpl implements CustomerService {
         }else{
             customerDO.setIsDisabled(customer.getIsDisabled());
         }
-        customerDO.setCustomerName(customer.getCustomerName());
+        customerDO.setCustomerName(customer.getCustomerCompany().getCompanyName());
         customerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerDO.setCreateTime(now);
         customerDO.setUpdateTime(now);
@@ -67,7 +70,6 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerCompanyDO customerCompanyDO  = CustomerConverter.convertCustomerCompany(customer.getCustomerCompany());
         customerCompanyDO.setCustomerId(customerDO.getId());
-        customerCompanyDO.setCompanyName(customerDO.getCustomerName());
         customerCompanyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerCompanyDO.setCreateTime(now);
         customerCompanyDO.setUpdateTime(now);
@@ -100,7 +102,7 @@ public class CustomerServiceImpl implements CustomerService {
         }else{
             customerDO.setIsDisabled(customer.getIsDisabled());
         }
-        customerDO.setCustomerName(customer.getCustomerName());
+        customerDO.setCustomerName(customer.getCustomerPerson().getRealName());
         customerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerDO.setCreateTime(now);
         customerDO.setUpdateTime(now);
@@ -110,7 +112,6 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerPersonDO customerPersonDO  = CustomerConverter.convertCustomerPerson(customer.getCustomerPerson());
         customerPersonDO.setCustomerId(customerDO.getId());
-        customerPersonDO.setRealName(customerDO.getCustomerName());
         customerPersonDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerPersonDO.setCreateTime(now);
         customerPersonDO.setUpdateTime(now);
@@ -150,6 +151,7 @@ public class CustomerServiceImpl implements CustomerService {
         newCustomerCompanyDO.setId(customerCompanyDO.getId());
         customerCompanyMapper.update(newCustomerCompanyDO);
 
+        customerDO.setCustomerName(newCustomerCompanyDO.getCompanyName());
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerDO.setIsDisabled(customer.getIsDisabled());
@@ -179,6 +181,8 @@ public class CustomerServiceImpl implements CustomerService {
         newCustomerPersonDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         newCustomerPersonDO.setId(customerPersonDO.getId());
         customerPersonMapper.update(newCustomerPersonDO);
+
+        customerDO.setCustomerName(newCustomerPersonDO.getRealName());
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerDO.setIsDisabled(customer.getIsDisabled());
@@ -314,8 +318,8 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         CustomerConsignInfoDO customerConsignInfoDO =ConverterUtil.convert(customerConsignInfo,CustomerConsignInfoDO.class);
-        customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerConsignInfoDO.setCustomerId(customerDO.getId());
+        customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerConsignInfoDO.setCreateTime(now);
         customerConsignInfoDO.setUpdateTime(now);
         customerConsignInfoDO.setCreateUser(userSupport.getCurrentUserId().toString());
@@ -363,15 +367,21 @@ public class CustomerServiceImpl implements CustomerService {
             customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
         }
 
-        //如果传送过来的ismain是0
-        customerConsignInfoDO = ConverterUtil.convert(customerConsignInfo,CustomerConsignInfoDO.class);
+        customerConsignInfoDO.setConsigneeName(customerConsignInfo.getConsigneeName());
+        customerConsignInfoDO.setConsigneePhone(customerConsignInfo.getConsigneePhone());
+        customerConsignInfoDO.setProvince(customerConsignInfo.getProvince());
+        customerConsignInfoDO.setCity(customerConsignInfo.getCity());
+        customerConsignInfoDO.setDistrict(customerConsignInfo.getDistrict());
+        customerConsignInfoDO.setAddress(customerConsignInfo.getAddress());
+        customerConsignInfoDO.setIsMain(customerConsignInfo.getIsMain());
+        customerConsignInfoDO.setRemark(customerConsignInfo.getRemark());
+        customerConsignInfoDO.setDataStatus(customerConsignInfo.getDataStatus());
         customerConsignInfoDO.setUpdateTime(now);
         customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerConsignInfoMapper.update(customerConsignInfoDO);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerConsignInfoDO.getId());
         return serviceResult;
-
     }
 
     /**
@@ -473,22 +483,15 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult<String, Integer> getLastUseTime(CustomerConsignInfo customerConsignInfo) {
-        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
-        Date now = new Date();
-
-        CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfo.getCustomerConsignInfoId());
-        if (customerConsignInfoDO == null) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
-            return serviceResult;
+    public void updateLastUseTime(Integer customerConsignInfoId) {
+        try{
+            CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfoId);
+            customerConsignInfoDO.setLastUseTime(new Date());
+            customerConsignInfoMapper.update(customerConsignInfoDO);
+        }catch (Exception e){
+            logger.error("保存客户地址信息最后使用时间错误");
+        }catch (Throwable t){
+            logger.error("保存客户地址信息最后使用时间错误");
         }
-        customerConsignInfoDO.setLastUseTime(now);
-        customerConsignInfoDO.setUpdateTime(now);
-        customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        customerConsignInfoMapper.update(customerConsignInfoDO);
-
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(customerConsignInfoDO.getId());
-        return serviceResult;
     }
 }
