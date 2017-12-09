@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.product;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -23,6 +25,9 @@ public class ProductDO extends BaseDO {
     private List<ProductImgDO> productDescImgDOList;           // 商品详情图片
     private List<ProductSkuDO> productSkuDOList;
     private List<ProductSkuPropertyDO> productPropertyDOList;
+
+    @Transient
+    private String brandName;
 
     public Integer getId() {
         return id;
@@ -158,5 +163,13 @@ public class ProductDO extends BaseDO {
 
     public void setProductDescImgDOList(List<ProductImgDO> productDescImgDOList) {
         this.productDescImgDOList = productDescImgDOList;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
     }
 }

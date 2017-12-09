@@ -32,6 +32,12 @@ public class ProductTest extends ERPUnTransactionalTest {
         productQueryParam.setPageSize(15);
         TestResult result = getJsonTestResult("/product/queryAllProduct", productQueryParam);
     }
+    @Test
+    public void queryProductById() throws Exception {
+        Product product = new Product();
+        product.setProductId(2000013);
+        TestResult result = getJsonTestResult("/product/queryProductById", product);
+    }
 
 
     @Test

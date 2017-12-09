@@ -14,7 +14,7 @@ public class FileGenerator {
 
     public static void main(String[] args) throws Exception {
 //        generateDomains("erp_customer");
-        generateDomainsByDir("erp_statement_order_detail","statement");
+        generateDomainsByDir("erp_brand","basic");
 //        generateDomains("erp_purchase_delivery_order_material");
 //        String dir = "customer";
 //        String poDir = System.getProperty("user.dir")+"\\erp-common\\src\\main\\java\\com\\lxzl\\erp\\common\\domain\\"+dir+File.separator+"pojo"+File.separator;

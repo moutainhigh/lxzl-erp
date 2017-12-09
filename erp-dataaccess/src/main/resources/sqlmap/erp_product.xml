@@ -8,6 +8,7 @@
         <result column="id" property="id"/>
         <result column="product_name" property="productName"/>
         <result column="brand_id" property="brandId"/>
+        <result column="brand_name" property="brandName"/>
         <result column="category_id" property="categoryId"/>
         <result column="subtitle" property="subtitle"/>
         <result column="unit" property="unit"/>
@@ -153,8 +154,9 @@
         </trim>
         FROM (
             SELECT
-            <include refid="column_List"/>
+            <include refid="column_List"/>, eb.brand_name AS brand_name
             FROM erp_product ep
+            LEFT JOIN erp_brand eb ON eb.id = ep.brand_id AND eb.data_status = 1
             <where>
                 <if test="maps.productQueryParam.productId != null &amp;&amp; maps.productQueryParam.productId != ''">
                     and ep.id = #{maps.productQueryParam.productId, jdbcType=INTEGER}
@@ -209,8 +211,10 @@
         ,epcp.property_name property_property_name,epcpv.property_value_name property_property_value_name
         FROM (
             SELECT
-            <include refid="column_List"/>
-            FROM erp_product ep WHERE id = #{productId, jdbcType=INTEGER} and data_status = 1
+            <include refid="column_List"/>, eb.brand_name AS brand_name
+            FROM erp_product ep
+            LEFT JOIN erp_brand eb ON eb.id = ep.brand_id AND eb.data_status = 1
+            WHERE ep.id = #{productId, jdbcType=INTEGER} and ep.data_status = 1
         ) m_product
         LEFT JOIN erp_product_img epi ON epi.product_id = m_product.id AND epi.data_status = 1 AND epi.img_type = 1
         LEFT JOIN erp_product_img epidesc ON epidesc.product_id = m_product.id AND epidesc.data_status = 1 AND epidesc.img_type = 2

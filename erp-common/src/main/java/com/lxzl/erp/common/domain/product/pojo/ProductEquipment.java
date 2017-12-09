@@ -20,6 +20,7 @@ public class ProductEquipment implements Serializable {
     private Integer ownerWarehousePositionId;
     private BigDecimal equipmentPrice;
     private Integer equipmentStatus;
+    private Integer isNew;
     private Integer dataStatus;
     private String remark;
     private List<ProductImg> productImgList;           // 商品图片
@@ -153,5 +154,13 @@ public class ProductEquipment implements Serializable {
 
     public void setBulkMaterialList(List<BulkMaterial> bulkMaterialList) {
         this.bulkMaterialList = bulkMaterialList;
+    }
+
+    public Integer getIsNew() {
+        return isNew;
+    }
+
+    public void setIsNew(Integer isNew) {
+        this.isNew = isNew;
     }
 }

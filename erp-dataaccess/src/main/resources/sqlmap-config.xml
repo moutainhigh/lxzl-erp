@@ -19,7 +19,7 @@
         <mapper resource="sqlmap/erp_product_equipment_material.xml" />
         <mapper resource="sqlmap/erp_product_material.xml" />
         <mapper resource="sqlmap/erp_product.xml" />
-        <mapper resource="sqlmap/erp_product_brand.xml" />
+        <mapper resource="sqlmap/erp_brand.xml" />
         <mapper resource="sqlmap/erp_product_category.xml" />
         <mapper resource="sqlmap/erp_product_category_property.xml" />
         <mapper resource="sqlmap/erp_product_category_property_value.xml" />

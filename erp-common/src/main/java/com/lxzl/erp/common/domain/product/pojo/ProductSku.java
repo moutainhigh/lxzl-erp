@@ -12,7 +12,7 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductSku implements Serializable {
-    @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL,groups = {AddReturnOrderGroup.class})
+    @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL, groups = {AddReturnOrderGroup.class})
     private Integer skuId;
     private String skuName;
     private Integer productId;
@@ -37,12 +37,15 @@ public class ProductSku implements Serializable {
 
     //在租数量
     private Integer rentCount;
-    @NotNull(message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class})
-    @Min(value=0,message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class})
+    @NotNull(message = ErrorCode.RETURN_COUNT_ERROR, groups = {AddReturnOrderGroup.class})
+    @Min(value = 0, message = ErrorCode.RETURN_COUNT_ERROR, groups = {AddReturnOrderGroup.class})
     //退还数量
     private Integer returnCount;
     //退还数量
     private Integer canReturnCount;
+
+    private Integer newProductSkuCount;     // 全新SKU设备数量
+    private Integer oldProductSkuCount;     // 次新SKU设备数量
 
     public Integer getSkuId() {
         return skuId;
@@ -202,5 +205,21 @@ public class ProductSku implements Serializable {
 
     public void setCanReturnCount(Integer canReturnCount) {
         this.canReturnCount = canReturnCount;
+    }
+
+    public Integer getNewProductSkuCount() {
+        return newProductSkuCount;
+    }
+
+    public void setNewProductSkuCount(Integer newProductSkuCount) {
+        this.newProductSkuCount = newProductSkuCount;
+    }
+
+    public Integer getOldProductSkuCount() {
+        return oldProductSkuCount;
+    }
+
+    public void setOldProductSkuCount(Integer oldProductSkuCount) {
+        this.oldProductSkuCount = oldProductSkuCount;
     }
 }

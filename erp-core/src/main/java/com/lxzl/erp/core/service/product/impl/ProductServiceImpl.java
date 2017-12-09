@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.product.impl;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.MaterialType;
+import com.lxzl.erp.common.constant.ProductEquipmentStatus;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.*;
@@ -308,7 +309,7 @@ public class ProductServiceImpl implements ProductService {
 
         ProductDO productDO = productMapper.findByProductId(productId);
         if (productDO == null) {
-            result.setErrorCode(ErrorCode.PRODUCT_NOT_EXISTS,productId);
+            result.setErrorCode(ErrorCode.PRODUCT_NOT_EXISTS, productId);
             return result;
         }
 
@@ -322,6 +323,23 @@ public class ProductServiceImpl implements ProductService {
             propertyValueMaps.put("skuId", productSku.getSkuId());
             List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByParams(propertyValueMaps);
             productSku.setShouldProductCategoryPropertyValueList(ProductCategoryPropertyConverter.convertProductCategoryPropertyValueDOList(productCategoryPropertyValueDOList));
+
+            // 根据sku查询全新与次新的设备数量
+            ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
+            productEquipmentQueryParam.setSkuId(productSku.getSkuId());
+            productEquipmentQueryParam.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
+            productEquipmentQueryParam.setIsNew(CommonConstant.COMMON_CONSTANT_YES);
+
+            Map<String, Object> queryEquipmentCountParam = new HashMap<>();
+            queryEquipmentCountParam.put("start", 0);
+            queryEquipmentCountParam.put("pageSize", Integer.MAX_VALUE);
+            queryEquipmentCountParam.put("productEquipmentQueryParam", productEquipmentQueryParam);
+            Integer newProductSkuCount = productEquipmentMapper.listCount(queryEquipmentCountParam);
+            productEquipmentQueryParam.setIsNew(CommonConstant.COMMON_CONSTANT_NO);
+            queryEquipmentCountParam.put("productEquipmentQueryParam", productEquipmentQueryParam);
+            Integer oldProductSkuCount = productEquipmentMapper.listCount(queryEquipmentCountParam);
+            productSku.setNewProductSkuCount(newProductSkuCount);
+            productSku.setOldProductSkuCount(oldProductSkuCount);
         }
         Map<String, Object> maps = new HashMap<>();
         maps.put("productId", productId);
@@ -356,6 +374,23 @@ public class ProductServiceImpl implements ProductService {
             propertyValueMaps.put("skuId", productSku.getSkuId());
             List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByParams(propertyValueMaps);
             productSku.setShouldProductCategoryPropertyValueList(ProductCategoryPropertyConverter.convertProductCategoryPropertyValueDOList(productCategoryPropertyValueDOList));
+
+            // 根据sku查询全新与次新的设备数量
+            ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
+            productEquipmentQueryParam.setSkuId(productSku.getSkuId());
+            productEquipmentQueryParam.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
+            productEquipmentQueryParam.setIsNew(CommonConstant.COMMON_CONSTANT_YES);
+
+            Map<String, Object> queryEquipmentCountParam = new HashMap<>();
+            queryEquipmentCountParam.put("start", 0);
+            queryEquipmentCountParam.put("pageSize", Integer.MAX_VALUE);
+            queryEquipmentCountParam.put("productEquipmentQueryParam", productEquipmentQueryParam);
+            Integer newProductSkuCount = productEquipmentMapper.listCount(queryEquipmentCountParam);
+            productEquipmentQueryParam.setIsNew(CommonConstant.COMMON_CONSTANT_NO);
+            queryEquipmentCountParam.put("productEquipmentQueryParam", productEquipmentQueryParam);
+            Integer oldProductSkuCount = productEquipmentMapper.listCount(queryEquipmentCountParam);
+            productSku.setNewProductSkuCount(newProductSkuCount);
+            productSku.setOldProductSkuCount(oldProductSkuCount);
         }
         Map<String, Object> maps = new HashMap<>();
         maps.put("productId", productSkuDO.getProductId());

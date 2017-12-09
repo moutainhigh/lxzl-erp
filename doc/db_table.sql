@@ -491,8 +491,8 @@ CREATE TABLE `erp_product_category` (
 ) ENGINE=InnoDB AUTO_INCREMENT=800001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='产品分类表';
 
 
-DROP TABLE if exists `erp_product_brand`;
-CREATE TABLE `erp_product_brand` (
+DROP TABLE if exists `erp_brand`;
+CREATE TABLE `erp_brand` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `category_id` int(20) NOT NULL COMMENT '所属类目ID',
   `brand_name` varchar(20) NOT NULL DEFAULT '' COMMENT '品牌名称',
@@ -508,7 +508,7 @@ CREATE TABLE `erp_product_brand` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='产品品牌表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='品牌表';
 
 DROP TABLE if exists `erp_product_category_property`;
 CREATE TABLE `erp_product_category_property` (
@@ -697,6 +697,7 @@ CREATE TABLE `erp_product_equipment` (
   `owner_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '归属目前仓位ID',
   `equipment_price` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '设备本身价值',
   `equipment_status` int(11) NOT NULL DEFAULT '0' COMMENT '设备状态，1设备空闲，2租赁中，3维修中，4报废，5调拨中',
+  `is_new` int(11) NOT NULL DEFAULT '0' COMMENT '是否全新，1是，0否',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',

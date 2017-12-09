@@ -57,16 +57,10 @@ public class WarehouseServiceImpl implements WarehouseService {
     private WarehouseMapper warehouseMapper;
 
     @Autowired
-    private WarehousePositionMapper warehousePositionMapper;
-
-    @Autowired
     private HttpSession session;
 
     @Autowired
     private ProductEquipmentMapper productEquipmentMapper;
-
-    @Autowired
-    private ProductMapper productMapper;
 
     @Autowired
     private ProductSkuMapper productSkuMapper;

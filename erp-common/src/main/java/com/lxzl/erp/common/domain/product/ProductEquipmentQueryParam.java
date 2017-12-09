@@ -15,6 +15,7 @@ public class ProductEquipmentQueryParam extends PageQuery implements Serializabl
     private String productName;
     private Integer skuId;
     private Integer equipmentStatus;
+    private Integer isNew;
     private Date createStartTime;
     private Date createEndTime;
 
@@ -98,5 +99,13 @@ public class ProductEquipmentQueryParam extends PageQuery implements Serializabl
 
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
+    }
+
+    public Integer getIsNew() {
+        return isNew;
+    }
+
+    public void setIsNew(Integer isNew) {
+        this.isNew = isNew;
     }
 }

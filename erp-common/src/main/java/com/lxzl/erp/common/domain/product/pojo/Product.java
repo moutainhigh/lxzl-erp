@@ -12,6 +12,7 @@ public class Product implements Serializable {
     private String productNo;
     private String productName;
     private Integer brandId;
+    private String brandName;
     private Integer categoryId;
     private String subtitle;
     private Integer unit;
@@ -170,5 +171,13 @@ public class Product implements Serializable {
 
     public void setProductDescImgList(List<ProductImg> productDescImgList) {
         this.productDescImgList = productDescImgList;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
     }
 }
