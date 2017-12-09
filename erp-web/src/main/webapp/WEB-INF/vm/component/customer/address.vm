@@ -19,7 +19,7 @@
                     {{/isDefault}}
                     {{#checkbox}}
                     <label class="radio-inline mr10 pull-right">
-                        <input type="radio" name="customerConsignInfoId" value="{{customerConsignInfoId}}" class="required" />
+                        <input type="radio" name="customerConsignInfoId" value="{{customerConsignInfoId}}" class="required" {{#isDefault}}checked{{/isDefault}} />
                     </label>
                     {{/checkbox}}
                 </p>
@@ -31,13 +31,12 @@
                 <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{consigneePhone}}
             </address>
              <p class="pv10">
-##                 <label class="switch switch-default pull-left mn ">
-##                     <input type="checkbox" name="tools" id="defautAddrss-{{customerConsignInfoId}}" value="analytics" {{#checked}}checked{{/checked}} />
-##                     <label for="defautAddrss-{{customerConsignInfoId}}" data-on="默认" data-off=""></label>
-##                 </label>
                  {{#editButton}}
                  <button class="btn btn-xs btn-default pull-right {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
                  {{/editButton}}
+                 {{#deleteAuthor}}
+                 <button class="btn btn-xs btn-default pull-right mr5 {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
+                 {{/deleteAuthor}}
              </p>
          </div>
         {{/listData}}

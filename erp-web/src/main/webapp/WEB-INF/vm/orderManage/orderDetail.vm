@@ -1,276 +1,415 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>爱租-运营管理系统-订单管理-订单列表-订单详细</title>
+    <title>凌雄ERP-订单管理-订单列表-订单详细</title>
     #parse("layout/header.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
-    <div id="main">
-        #parse("layout/navbar.vm")
-        #parse("layout/sidebar.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
 
-        <section id="content_wrapper">
-            #parse("layout/topbarDropmenu.vm")
-            #parse("layout/topbar.vm")
-            <section id="content" class="animated fadeIn">
-
-                <div class="panel invoice-panel">
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+            <form class="" id="editOrderForm">
+                <div class="panel panel-primary panel-border top mb35">
                     <div class="panel-heading">
-                        <span class="panel-title">
-                           订单详细
-                        </span>
+                        <span class="panel-title">基本信息</span>
                     </div>
-                    <div class="panel-body p20" id="invoice-item">
-
-                        <script type="text/html" id="orderBaseInfoTpl">
-                            {{#order}}
-                            <div class="col-md-4">
-                                <div class="pull-left">
-                                    <h4 class="mt10"> 订单编号：{{orderNo}} </h4>
-                                    <p> <b>下单时间：</b> {{createTimeFromat}} </p>
-                                    <p> <b>订单状态：</b><b class="{{orderStatusClass}}">{{orderStatusStr}}</b> </p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="pull-left">
-                                    <h5> 支付类型: {{payModeStr}} </h5>
-                                    <h5 class="mt10"> 租赁方式：{{rentTypeStr}} </h5>
-                                    <h5> 租期: {{rentTimeLength}} </h5>
-                                </div>
-                            </div>
-
-                            #*<div class="col-md-4">
-                                <div class="pull-right text-right">
-                                    <h5> 跟单员: <b class="text-primary">毛涛</b> </h5>
-                                </div>
-                            </div>*#
-                            {{/order}}
-                        </script>
-                        <div class="row mb30" id="orderBaseInfo"></div>
-
-                        <div class="row" id="invoice-info">
-                            <div class="col-md-4">
-                                <div class="panel panel-alt">
-                                    <div class="panel-heading">
-                                        <span class="panel-title"> <i class="fa fa-info"></i> 订单时间节点 </span>
-                                        <div class="panel-btns pull-right ml10"> </div>
-                                    </div>
-                                    <script type="text/html" id="orderDateInfoTpl">
-                                        {{#order}}
-                                        <ul class="list-unstyled">
-                                            <li> <b>支付时间：</b> {{payTimeFromat}}</li>
-                                            <li> <b>发货时间：</b> {{deliveryTimeFromat}}</li>
-                                            <li> <b>确认收货时间：</b> {{confirmDeliveryTimeFromat}}</li>
-                                            <li> <b>预计归还时间：</b> {{expectReturnTimeFromat}}</li>
-                                            <li> <b>实际归还时间：</b> {{actualReturnTimeFromat}}</li>
-                                        </ul>
-                                        {{/order}}
-                                    </script>
-                                    <div class="panel-body" id="orderDateInfo"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="panel panel-alt">
-                                    <div class="panel-heading">
-                                        <span class="panel-title"> <i class="fa fa-user"></i> 客户信息</span>
-                                    </div>
-                                    <script type="text/html" id="orderCustomerInfoTpl">
-                                        {{#order}}
-                                        <address>
-                                            <strong>{{buyerRealName}}</strong>
-                                            <br><b>备注：</b> {{buyerRemark}}
-                                        </address>
-                                        {{/order}}
-                                    </script>
-                                    <div class="panel-body" id="orderCustomerInfo"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="panel panel-alt">
-                                    <div class="panel-heading">
-                                        <span class="panel-title"> <i class="fa fa-location-arrow"></i> 收货地址</span>
-                                    </div>
-                                    <script type="text/html" id="orderConsignInfoTpl">
-                                        {{#orderConsignInfo}}
-                                        <address>
-                                            <strong>{{consigneeName}}</strong>
-                                            <br> {{provinceName}}{{cityName}}{{districtName}}{{address}}
-                                            <br>
-                                            <abbr title="Phone">手机号：</abbr> {{consigneePhone}}
-                                        </address>
-                                        {{/orderConsignInfo}}
-                                    </script>
-                                    <div class="panel-body" id="orderConsignInfo"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row" >
-                            <div class="col-md-12">
-                                <div class="panel panel-alt">
-                                    <div class="panel-heading">
-                                        <span class="panel-title">商品信息</span>
-                                        <div class="panel-btns pull-right ml10"> </div>
-                                    </div>
-                                    <div class="panel-body pn">
-                                        <script type="text/html" id="orderProductListTpl">
-                                            {{#orderProductList}}
-                                            <tr>
-                                                <td></td>
-                                                <td>{{productId}}</td>
-                                                <td>{{productName}}</td>
-                                                <td>
-                                                    <a class="productImg open-img-popup" data-imgs={{productImgJSON}}>
-                                                        <img src="{{mainImg}}" />
-                                                    </a>
-                                                </td>
-                                                <td>{{productSkuId}}</td>
-                                                #*<td>SKU名称</td>*#
-                                                <td>{{productCount}}</td>
-                                                <td>{{productUnitAmountFixed}}</td>
-                                                <td>{{productAmountFixed}}</td>
-                                                <td>{{properties}}</td>
-                                                #*<td>设备号</td>*#
-                                                <td>{{remark}}</td>
-                                            </tr>
-                                            {{/orderProductList}}
-                                        </script>
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                            <thead>
-                                            <tr>
-                                                <th>序号</th>
-                                                <th>商品ID</th>
-                                                <th>商品名称</th>
-                                                <th>商品图片</th>
-                                                <th>SKUID</th>
-                                                #*<th>SKU名称</th>*#
-                                                <th>商品总数</th>
-                                                <th>商品单价</th>
-                                                <th>商品价格</th>
-                                                <th>属性值</th>
-                                                #*<th>设备号</th>*#
-                                                <th>备注</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody id="orderProductList"></tbody>
-                                        </table>
+                    <div class="form-horizontal panel-body bg-light dark">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group field">
+                                    <label class="col-md-3 control-label">客户</label>
+                                    <div class="col-md-9">
+                                        <div class="input-group bringContainer">
+                                            <input id="buyerCustomer" name="buyerCustomerName" bringFiled="buyerCustomerName" class="form-control required" type="text" readonly placeholder="请选择客户" />
+                                            <span class="input-group-addon cursor chooseSupplier" id="chooseBusinessCustomer"><i class="fa fa-search mr5"></i>企业客户</span>
+                                            <span class="input-group-addon cursor chooseSupplier" id="chooseCustomer"><i class="fa fa-search mr5"></i>个人客户</span>
                                         </div>
                                     </div>
                                 </div>
-
-                            </div>
-                        </div>
-                        <div class="row" >
-                            <div class="col-md-12">
-                                <div class="panel panel-alt">
-                                    <div class="panel-heading">
-                                        <span class="panel-title">缴租计划</span>
-                                        <div class="panel-btns pull-right ml10"> </div>
-                                    </div>
-                                    <div class="panel-body pn">
-                                        <div class="table-responsive">
-                                            <script type="text/html" id="orderPayPlanListTpl">
-                                                {{#orderPayPlanList}}
-                                                <tr>
-                                                    <td>{{num}}</td>
-                                                    <td>{{payNo}}</td>
-                                                    <td>{{payStatusStr}}</td>
-                                                    <td>{{payTimeFromat}}</td>
-                                                    <td>{{payTimePlanFromat}}</td>
-                                                    <td>{{payTimeRealFromat}}</td>
-                                                    <td>{{expectAmountFixed}}</td>
-                                                    <td>{{payAmountFixed}}</td>
-                                                    <td>{{expecoverdueAmountFixed}}</td>
-                                                    <td>{{dataStatusStr}}</td>
-                                                    <td>{{remark}}</td>
-                                                </tr>
-                                                {{/orderPayPlanList}}
-                                            </script>
-                                            <table class="table">
-                                                <thead>
-                                                <tr>
-                                                    <th>序号</th>
-                                                    <th>支付编号</th>
-                                                    <th>支付状态</th>
-                                                    <th>发起支付时间</th>
-                                                    <th>还款时间</th>
-                                                    <th>实际还款时间</th>
-                                                    <th>预计支付金额</th>
-                                                    <th>实际支付金额</th>
-                                                    <th>逾期金额</th>
-                                                    <th>状态</th>
-                                                    <th>备注</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody id="orderPayPlanList"></tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
-                                <div class="pull-right">
-                                    <script type="text/html" id="orderAmountInfoTpl">
-                                        {{#order}}
+                            <div class="col-md-6">
+                                <div class="form-group field">
+                                    <label class="col-md-3 control-label" style="visibility: hidden;">收货地址</label>
+                                    <div class="col-md-9">
+                                        #parse("component/customer/address.vm")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group field">
+                                    <label class="col-md-3 control-label">支付方式</label>
+                                    <div class="col-md-9">
+                                        <div>
+                                            <select class="form-control required" name="payMode">
+                                                <option value="">请选择</option>
+                                                <option value="1">先用后付</option>
+                                                <option value="2">现付后用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group field">
+                                    <label class="col-md-3 control-label">运费</label>
+                                    <div class="col-md-9">
+                                        <div>
+                                            <input id="logisticsAmount" name="logisticsAmount" class="form-control moneyNumber" type="text" placeholder="请输入运费" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group field">
+                                    <label class="col-md-3 control-label">起租日期</label>
+                                    <div class="col-md-9">
+                                        <div class="input-group date" id="createTimePicker">
+                                            <input id="rentStartTime" name="rentStartTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择起租日期" />
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group field">
+                                    <label class="col-md-3 control-label">购买人备注</label>
+                                    <div class="col-md-9">
+                                        <textarea class="form-control" id="buyerRemark" rows="3"  name="buyerRemark"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-horizontal panel-body bg-light dark">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group field">
+                                    <label class="col-md-3 control-label">销售员</label>
+                                    <div class="col-md-9">
+                                        <div class="input-group bringContainer">
+                                            <input id="orderSeller" name="orderSellerName" bringFiled="orderSellerName" class="form-control required" type="text" readonly placeholder="请选择销售员" />
+                                            <span class="input-group-addon cursor" id="chooseSeller"><i class="fa fa-search"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group field">
+                                    <label class="col-md-3 control-label">订单所属公司</label>
+                                    <div class="col-md-9">
+                                        <div class="input-group bringContainer">
+                                            <input id="orderSubCompanyName" name="orderSubCompanyName" bringFiled="orderSubCompanyName" class="form-control required" type="text" readonly placeholder="请选择订单所属公司" />
+                                            <span class="input-group-addon cursor" id="chooseSubCompany"><i class="fa fa-search"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-heading">
+                        <div class="row">
+                            <ul class="nav panel-tabs-border panel-tabs">
+                                <li class="active">
+                                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
+                                </li>
+                                <li>
+                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">物料项</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="panel-body dark pn">
+                        <div class="tab-content pn br-n">
+                            <div id="purchaseOrderProductItems" class="tab-pane active">
+                                <div class="panel-menu p12 br-n br-b">
+                                    <div class="row">
+                                        <div class="pull-left ml10">
+                                            <div class="btn-group" id="actionCommonButtons">
+                                                <button type="button" class="btn btn-primary btn-sm" id="batchAddProduct" title="选择商品">
+                                                    <i class="fa fa-plus"></i> 选择商品
+                                                </button>
+                                                <button type="button" class="btn btn-primary btn-sm" id="batchDeleteProduct" title="删除商品">
+                                                    <i class="fa fa-trash-o"></i> 删除
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <script type="text/html" id="dataListTpl">
                                         <thead>
-                                        <tr>
-                                            <th><b>商品总金额:</b>
+                                        <tr class="bg-light">
+                                            <th>
+                                                <label class="option block mn">
+                                                    <input type="checkbox" name="checkAll" value="">
+                                                    <span class="checkbox mn"></span>
+                                                </label>
                                             </th>
-                                            <th>￥{{productAmountTotal}}</th>
+                                            <th>商品ID</th>
+                                            <th>图片</th>
+                                            <th>商品名称</th>
+                                            <th>列表价格</th>
+                                            <th>SKU</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr>
-                                            <td><b>优惠金额</b>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr class="productRow" productRowKey="{{productId}}">
+                                            <td>
+                                                <label class="option block mn">
+                                                    <input type="checkbox" name="checkItem" value="{{productId}}">
+                                                    <span class="checkbox mn"></span>
+                                                </label>
                                             </td>
-                                            <td>(-){{discountAmountTotal}}</td>
+                                            <td>{{productId}}</td>
+                                            <td>
+                                                <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
+                                            </td>
+                                            <td>{{productName}}</td>
+                                            <td class="br-r">{{listPriceFixed}}</td>
+                                            <td class="pn">
+                                                <table class="table">
+                                                    {{#chooseSkuList}}
+                                                    {{#skuList}}
+                                                    <tr class="skuRow">
+                                                        <td width="15%">{{propertiesToStr}}</td>
+                                                        <td>
+                                                            <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
+                                                            <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+                                                            <label class="field prepend-icon mw200">
+                                                                <input type="text" name="productUnitAmount-{{skuId}}-{{rowKey}}" value="{{productUnitAmount}}" class="productUnitAmount form-control required moneyNumber" placeholder="输入商品单价" />
+                                                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                            </label>
+                                                        </td>
+                                                        <td>
+                                                            <label class="field prepend-icon mw200">
+                                                                <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入租赁数量" />
+                                                            </label>
+                                                        </td>
+                                                        <td>
+                                                            <label class="field select">
+                                                                <select name="rentType-{{skuId}}-{{rowKey}}" class="rentType required" style="min-width: 130px;">
+                                                                    <option value="">选择租赁类型</option>
+                                                                    {{#rentTypeList}}
+                                                                    <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                                                    {{/rentTypeList}}
+                                                                </select>
+                                                                <i class="arrow"></i>
+                                                            </label>
+                                                        </td>
+                                                        <td>
+                                                            <label class="field prepend-icon mw200">
+                                                                <input type="text" name="rentTimeLength-{{skuId}}-{{rowKey}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required number pl10" placeholder="租赁时长" />
+                                                            </label>
+                                                        </td>
+                                                        <td>
+                                                            <label class="field prepend-icon mw200">
+                                                                <input type="text" name="insuranceAmount-{{skuId}}-{{rowKey}}" value="{{insuranceAmount}}" class="insuranceAmount form-control required moneyNumber" placeholder="输入保险金额" />
+                                                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                            </label>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <div class="btn-group text-right">
+                                                                <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {{/skuList}}
+                                                    {{/chooseSkuList}}
+                                                </table>
+                                            </td>
                                         </tr>
+                                        {{/listData}}
+                                        {{^listData}}
                                         <tr>
-                                            <td><b>订单金额</b>
-                                            </td>
-                                            <td>￥{{orderAmountTotal}}</td>
+                                            <td valign="top" colspan="14" class="text-center">没有选择商品</td>
                                         </tr>
-                                        #*<tr>
-                                            <td><b>已支付金额:</b>
-                                            </td>
-                                            <td>$1375.98</td>
-                                        </tr>*#
+                                        {{/listData}}
+                                        {{/dataSource}}
                                         </tbody>
-                                        {{/order}}
                                     </script>
-                                    <table class="table" id="orderAmountInfo"></table>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                                 </div>
-                                <div class="clearfix"></div>
-
+                            </div>
+                            <div id="purchaseOrderMaterialItems" class="tab-pane">
+                                <div class="panel-menu p12 br-n br-b">
+                                    <div class="row">
+                                        <div class="pull-left ml10">
+                                            <div class="btn-group" id="actionCommonButtons">
+                                                <button type="button" class="btn btn-primary btn-sm" id="batchAddMaterial" title="选择物料">
+                                                    <i class="fa fa-plus"></i> 选择物料
+                                                </button>
+                                                <button type="button" class="btn btn-primary btn-sm" id="batchDeleteMaterial" title="删除物料">
+                                                    <i class="fa fa-trash-o"></i> 删除
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <script type="text/html" id="materialDataListTpl">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                <label class="option block mn">
+                                                    <input type="checkbox" name="checkAll" value="">
+                                                    <span class="checkbox mn"></span>
+                                                </label>
+                                            </th>
+                                            <th>编号</th>
+                                            <th>名称</th>
+                                            <th>类型</th>
+                                            <th>本身价值</th>
+                                            <th>租赁价格</th>
+                                            <th>描述</th>
+                                            <th>图片</th>
+                                            <th>物料单价</th>
+                                            <th>数量</th>
+                                            <th>租赁类型</th>
+                                            <th>租赁时长</th>
+                                            <th>保险金</th>
+                                            <th class="text-right">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr class="materialRow">
+                                            <td>
+                                                <label class="option block mn">
+                                                    <input type="checkbox" name="checkItem" value="{{materialNo}}">
+                                                    <span class="checkbox mn"></span>
+                                                </label>
+                                            </td>
+                                            <td>{{materialNo}}</td>
+                                            <td>{{materialName}}</td>
+                                            <td>{{materialTypeStr}}</td>
+                                            <td>{{materialPriceFormat}}</td>
+                                            <td>
+                                                <p>次租：￥{{timeRentPriceFormat}}</p>
+                                                <p>日租：￥{{dayRentPriceFormat}}</p>
+                                                <p>月租：￥{{monthRentPriceFormat}}</p>
+                                            </td>
+                                            <td>{{materialDesc}}</td>
+                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                                            <td>
+                                                <label class="field prepend-icon mw200">
+                                                    <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
+                                                    <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
+                                                    <input type="text" name="materialUnitAmount-{{materialNo}}" value="{{materialUnitAmount}}" class="materialUnitAmount form-control required moneyNumber" placeholder="输入物料单价" />
+                                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <label class="field prepend-icon mw200">
+                                                    <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入租赁数量" />
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <label class="field select">
+                                                    <select name="rentType-{{materialNo}}" class="rentType required" style="min-width: 130px;">
+                                                        <option value="">选择租赁类型</option>
+                                                        {{#rentTypeList}}
+                                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                                        {{/rentTypeList}}
+                                                    </select>
+                                                    <i class="arrow"></i>
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <label class="field prepend-icon mw200">
+                                                    <input type="text" name="rentTimeLength-{{materialNo}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required number pl10" placeholder="租赁时长" />
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <label class="field prepend-icon mw200">
+                                                    <input type="text" name="insuranceAmount-{{materialNo}}" value="{{insuranceAmount}}" class="insuranceAmount form-control required moneyNumber" placeholder="输入保险金" />
+                                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                </label>
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="btn-group text-right">
+                                                    <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}">删除</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">没有选择物料</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialDataListTable"></table>
+                                </div>
                             </div>
                         </div>
-
+                    </div>
+                    <div class="panel-footer clearfix">
+                        <button class="btn btn-default pull-right ml15 goback">返回</button>
+##                        <button class="btn btn-primary pull-right">保存</button>
                     </div>
                 </div>
-
-            </section>
+            </form>
         </section>
+    </section>
 
-        #parse("layout/sidebarRight.vm")
-    </div>
+    #parse("layout/sidebarRight.vm")
+</div>
     #parse("layout/footer.vm")
-    <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.order.detail.js');
-    </script>
-    <script type="text/javascript">
-        //功能事件初始化
-        Rental.init();
-        Layout.init();
-        OrderDetail.init();
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js',
+            'manage.order.mixin.js',
+            'manage.order.edit.js',
+            'modal.choose.product.js',
+            'modal.choose.material.js',
+            'modal.choose.customer.js',
+            'modal.choose.customer.business.js',
+            'modal.choose.user.js',
+            'modal.choose.company.js',
+            'manage.order.item.render.js',
+            'manage.order.util.js',
+            'manage.customer.address.js',
+            'manage.customer.address.add.js',
+            'manage.customer.address.edit.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
 
-        //UI效果初始化
-        Core.init();
-        Demo.init();
-    </script>
+    EditOrder.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+</script>
+
 </body>
 </html>
