@@ -1334,7 +1334,7 @@ CREATE TABLE `erp_change_order` (
   `change_reason_type` int(11) NOT NULL DEFAULT 0 COMMENT '换货原因类型,0-升级 ，1-损坏，2-其他',
   `change_reason` text COMMENT '换货原因',
   `change_mode` int(11) NOT NULL COMMENT '换货方式，1-上门取件，2邮寄',
-  `change_order_status` int(11) NOT NULL DEFAULT 1 COMMENT '换货订单状态，1-备货中，5-备货完成待取货，9-处理中，13-已完成',
+  `change_order_status` int(11) NOT NULL DEFAULT 1 COMMENT '换货订单状态，0-待提交，4-审核中，8-待备货，12-备货中，16-已发货待取货，20-处理中，24-已完成',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `owner` int(20) NOT NULL DEFAULT 0 COMMENT '换货跟单员',
