@@ -555,23 +555,22 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        // 必须是当前库房闲置的物料
-        BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
-        bulkMaterialQueryParam.setMaterialId(materialId);
-        bulkMaterialQueryParam.setCurrentWarehouseId(srcWarehouseId);
-        bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
-
-        Map<String, Object> bulkQueryParam = new HashMap<>();
-        bulkQueryParam.put("start", 0);
-        bulkQueryParam.put("pageSize", Integer.MAX_VALUE);
-        bulkQueryParam.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
-        List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(bulkQueryParam);
-        if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
-            result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
-            return result;
-        }
-
         if (materialId != null) {
+            // 必须是当前库房闲置的物料
+            BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
+            bulkMaterialQueryParam.setMaterialId(materialId);
+            bulkMaterialQueryParam.setCurrentWarehouseId(srcWarehouseId);
+            bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+
+            Map<String, Object> bulkQueryParam = new HashMap<>();
+            bulkQueryParam.put("start", 0);
+            bulkQueryParam.put("pageSize", Integer.MAX_VALUE);
+            bulkQueryParam.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(bulkQueryParam);
+            if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
+                result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
+                return result;
+            }
             for (int i = 0; i < materialCount; i++) {
                 BulkMaterialDO bulkMaterialDO = bulkMaterialDOList.get(i);
                 boolean isMatching = false;
@@ -652,21 +651,20 @@ public class OrderServiceImpl implements OrderService {
             orderProductEquipmentMapper.save(orderProductEquipmentDO);
         }
 
-        BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
-        bulkMaterialQueryParam.setMaterialId(materialId);
-        bulkMaterialQueryParam.setOrderNo(orderDO.getOrderNo());
-        bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
-        Map<String, Object> bulkQueryParam = new HashMap<>();
-        bulkQueryParam.put("start", 0);
-        bulkQueryParam.put("pageSize", Integer.MAX_VALUE);
-        bulkQueryParam.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
-        List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(bulkQueryParam);
-        if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
-            result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
-            return result;
-        }
-
         if (materialId != null) {
+            BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
+            bulkMaterialQueryParam.setMaterialId(materialId);
+            bulkMaterialQueryParam.setOrderNo(orderDO.getOrderNo());
+            bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
+            Map<String, Object> bulkQueryParam = new HashMap<>();
+            bulkQueryParam.put("start", 0);
+            bulkQueryParam.put("pageSize", Integer.MAX_VALUE);
+            bulkQueryParam.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(bulkQueryParam);
+            if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
+                result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
+                return result;
+            }
             for (int i = 0; i < materialCount; i++) {
                 BulkMaterialDO bulkMaterialDO = bulkMaterialDOList.get(i);
                 OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderIdAndBulkMaterialNo(orderDO.getId(), bulkMaterialDO.getBulkMaterialNo());
