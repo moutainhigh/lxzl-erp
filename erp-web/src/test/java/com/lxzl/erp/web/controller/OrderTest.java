@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.constant.OrderRentType;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.ProcessOrderParam;
@@ -35,6 +36,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
         orderProduct.setRentType(OrderRentType.RENT_TYPE_MONTH);
         orderProduct.setRentTimeLength(6);
         orderProduct.setProductSkuId(40);
@@ -48,6 +50,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         List<OrderMaterial> orderMaterialList = new ArrayList<>();
 
         OrderMaterial orderMaterial = new OrderMaterial();
+        orderMaterial.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
         orderMaterial.setRentType(OrderRentType.RENT_TYPE_MONTH);
         orderMaterial.setRentTimeLength(6);
         orderMaterial.setMaterialId(5);
@@ -142,8 +145,8 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712051948457121036");
-        order.setVerifyUser(500006);
+        order.setOrderNo("O201712111658417621539");
+        order.setVerifyUser(500006);//采购审核人员
         TestResult result = getJsonTestResult("/order/commit", order);
     }
 
@@ -158,15 +161,16 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testIsNeedVerify() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712071453234351744");
+        order.setOrderNo("O201712111523581951498");
         TestResult result = getJsonTestResult("/order/isNeedVerify", order);
     }
 
     @Test
     public void testProcessOrder() throws Exception {
         ProcessOrderParam processOrderParam = new ProcessOrderParam();
-        processOrderParam.setOrderNo("O201712051948457121036");
-//        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017120110036");
+        processOrderParam.setOrderNo("O201712111658417621539");
+        //select * from erp_product_equipment where sku_id=40 and equipment_status = 1 and data_status = 1 and order_no is null
+        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017111710001");
 //        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017120110037");
         processOrderParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
         TestResult result = getJsonTestResult("/order/process", processOrderParam);

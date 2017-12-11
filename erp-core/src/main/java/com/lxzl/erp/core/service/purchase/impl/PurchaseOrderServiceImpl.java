@@ -64,7 +64,7 @@ import java.util.*;
 @Service
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
-    private static final Logger log = LoggerFactory.getLogger(PurchaseOrderServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PurchaseOrderServiceImpl.class);
     @Autowired
     private UserSupport userSupport;
     @Autowired
@@ -670,6 +670,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     public ServiceResult<String, String> commit(PurchaseOrderCommitParam purchaseOrderCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
+        Date now = new Date();
         //校验采购单是否存在
         PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findByPurchaseNo(purchaseOrderCommitParam.getPurchaseNo());
         if(purchaseOrderDO==null){
@@ -681,7 +682,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return result;
         }
         if(!purchaseOrderDO.getCreateUser().equals(userSupport.getCurrentUserId().toString())){
-            //只有待提交状态的采购单可以提交
+            //只有创建采购单本人可以提交
             result.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
             return result;
         }
@@ -695,6 +696,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             //修改提交审核状态
             if(ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())){
                 purchaseOrderDO.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_VERIFYING);
+                purchaseOrderDO.setUpdateTime(now);
+                purchaseOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 purchaseOrderMapper.update(purchaseOrderDO);
                 return verifyResult;
             }else{
@@ -703,6 +706,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             }
         }else{
             purchaseOrderDO.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PURCHASING);
+            purchaseOrderDO.setUpdateTime(now);
+            purchaseOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             purchaseOrderMapper.update(purchaseOrderDO);
             result.setErrorCode(ErrorCode.SUCCESS);
             return result;
@@ -1359,14 +1364,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             purchaseOrderMapper.update(purchaseOrderDO);
             return true;
         }catch (Exception e){
-            log.error("【采购单审核后，业务处理异常，未生成发货单】",e);
+            logger.error("【采购单审核后，业务处理异常，未生成发货单】",e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            log.error("【数据已回滚】");
+            logger.error("【数据已回滚】");
             return false;
         }catch (Throwable t){
-            log.error("【采购单审核后，业务处理异常，未生成发货单】",t);
+            logger.error("【采购单审核后，业务处理异常，未生成发货单】",t);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            log.error("【数据已回滚】");
+            logger.error("【数据已回滚】");
             return false;
         }
     }

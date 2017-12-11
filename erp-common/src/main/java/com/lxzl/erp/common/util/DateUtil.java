@@ -1,5 +1,8 @@
 package com.lxzl.erp.common.util;
 
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.se.common.exception.BusinessException;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -21,18 +24,21 @@ public class DateUtil {
      * @return 相差天数
      * @throws ParseException
      */
-    public static int daysBetween(Date smdate, Date bdate) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        smdate = sdf.parse(sdf.format(smdate));
-        bdate = sdf.parse(sdf.format(bdate));
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(smdate);
-        long time1 = cal.getTimeInMillis();
-        cal.setTime(bdate);
-        long time2 = cal.getTimeInMillis();
-        long between_days = (time2 - time1) / (1000 * 3600 * 24);
-
-        return Integer.parseInt(String.valueOf(between_days));
+    public static int daysBetween(Date smdate, Date bdate) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            smdate = sdf.parse(sdf.format(smdate));
+            bdate = sdf.parse(sdf.format(bdate));
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(smdate);
+            long time1 = cal.getTimeInMillis();
+            cal.setTime(bdate);
+            long time2 = cal.getTimeInMillis();
+            long between_days = (time2 - time1) / (1000 * 3600 * 24);
+            return Integer.parseInt(String.valueOf(between_days));
+        }catch (ParseException e){
+            throw new BusinessException(ErrorCode.BUSINESS_EXCEPTION);
+        }
     }
 
     /**
@@ -62,16 +68,16 @@ public class DateUtil {
 
 
     /**
-     * 获取每月指定日期的当天开始时间
+     * 获取下月指定日期当天开始时间
      */
-    public static Date getNextMonthDayStartTime(int day) {
-        Date currentTime = new Date();
+    public static Date getNextMonthDayStartTime(Date currentTime, int day) {
+        currentTime = currentTime == null ? new Date() : currentTime;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentTime);
         calendar.add(Calendar.MONTH, 2);
         calendar.set(Calendar.DAY_OF_MONTH, 0);
         // 本月最后一天小于输入的
-        if(calendar.get(Calendar.DATE) < day){
+        if (calendar.get(Calendar.DATE) < day) {
             day = calendar.get(Calendar.DATE);
         }
         calendar.set(Calendar.DAY_OF_MONTH, day);
@@ -80,4 +86,40 @@ public class DateUtil {
         calendar.set(Calendar.SECOND, 0);
         return calendar.getTime();
     }
+
+    /**
+     * 获取该月有多少天
+     * */
+    public static int getActualMaximum(Date currentTime){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentTime);
+        return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
+    /**
+     * 该日期距离月底的天数
+     * */
+    public static int betweenActualMaximumDays(Date currentTime){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentTime);
+        int now = calendar.get(Calendar.DAY_OF_MONTH);
+        int actualMaximum = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        return actualMaximum - now;
+    }
+
+    /**
+     * 该月1日距离day的天数
+     * */
+    public static int betweenAppointDays(Date currentTime,int day){
+
+        currentTime = currentTime == null ? new Date() : currentTime;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentTime);
+        // 本月最后一天小于输入的
+        if (calendar.getActualMaximum(Calendar.DATE) < day) {
+            day = getActualMaximum(calendar.getTime());
+        }
+        return day ;
+    }
+
 }
