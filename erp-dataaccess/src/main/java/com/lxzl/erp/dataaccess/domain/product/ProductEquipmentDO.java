@@ -21,6 +21,7 @@ public class ProductEquipmentDO extends BaseDO {
     private Integer ownerWarehousePositionId;
     private BigDecimal equipmentPrice;
     private Integer equipmentStatus;
+    private Integer isNew;
     private Integer dataStatus;
     private String remark;
     private List<ProductImgDO> productImgDOList;           // 商品图片
@@ -158,5 +159,11 @@ public class ProductEquipmentDO extends BaseDO {
         this.bulkMaterialDOList = bulkMaterialDOList;
     }
 
+    public Integer getIsNew() {
+        return isNew;
+    }
 
+    public void setIsNew(Integer isNew) {
+        this.isNew = isNew;
+    }
 }

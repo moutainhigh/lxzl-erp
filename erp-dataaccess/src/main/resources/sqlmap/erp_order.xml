@@ -105,6 +105,7 @@
     <resultMap type="com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO" id="OrderConsignInfoDO">
         <id column="consign_id" property="id"/>
         <result column="consign_order_id" property="orderId"/>
+        <result column="consign_customer_consign_id" property="customerConsignId"/>
         <result column="consign_consignee_name" property="consigneeName"/>
         <result column="consign_consignee_phone" property="consigneePhone"/>
         <result column="consign_province" property="province"/>
@@ -131,7 +132,7 @@
 	</sql>
 
     <sql id="consign_column_List">
-        eoci.id as consign_id,eoci.order_id as consign_order_id,eoci.consignee_name as consign_consignee_name,eoci.consignee_phone as consign_consignee_phone,eoci.province as consign_province,eoci.city as consign_city,eoci.district as consign_district,eoci.address as consign_address,eoci.data_status as consign_data_status,eoci.remark as consign_remark,eoci.create_time as consign_create_time,eoci.create_user as consign_create_user,eoci.update_time as consign_update_time,eoci.update_user as consign_update_user
+        eoci.id as consign_id,eoci.order_id as consign_order_id,eoci.customer_consign_id as consign_customer_consign_id,eoci.consignee_name as consign_consignee_name,eoci.consignee_phone as consign_consignee_phone,eoci.province as consign_province,eoci.city as consign_city,eoci.district as consign_district,eoci.address as consign_address,eoci.data_status as consign_data_status,eoci.remark as consign_remark,eoci.create_time as consign_create_time,eoci.create_user as consign_create_user,eoci.update_time as consign_update_time,eoci.update_user as consign_update_user
 	</sql>
 
     <sql id="material_column_List">
