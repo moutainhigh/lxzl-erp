@@ -33,6 +33,12 @@ public class CustomerRiskManagement implements Serializable {
 	@Max(value = 120,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR , groups = {UpdateGroup.class})
 	@Min(value = 1,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR , groups = {UpdateGroup.class})
 	private Integer paymentCycle;   //付款期数
+	private Integer appleDepositCycle;	// 苹果设备租赁方案
+	private Integer applePaymentCycle;	// 全新设备租赁方案
+	private Integer newDepositCycle;	// 全新设备租赁方案
+	private Integer newPaymentCycle;	// 全新设备租赁方案
+	private Integer applePayMode;		// 苹果设备支付方式
+	private Integer newPayMode;			// 全新设备支付方式
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -153,5 +159,53 @@ public class CustomerRiskManagement implements Serializable {
 
 	public void setCustomerName(String customerName) {
 		this.customerName = customerName;
+	}
+
+	public Integer getAppleDepositCycle() {
+		return appleDepositCycle;
+	}
+
+	public void setAppleDepositCycle(Integer appleDepositCycle) {
+		this.appleDepositCycle = appleDepositCycle;
+	}
+
+	public Integer getApplePaymentCycle() {
+		return applePaymentCycle;
+	}
+
+	public void setApplePaymentCycle(Integer applePaymentCycle) {
+		this.applePaymentCycle = applePaymentCycle;
+	}
+
+	public Integer getNewDepositCycle() {
+		return newDepositCycle;
+	}
+
+	public void setNewDepositCycle(Integer newDepositCycle) {
+		this.newDepositCycle = newDepositCycle;
+	}
+
+	public Integer getNewPaymentCycle() {
+		return newPaymentCycle;
+	}
+
+	public void setNewPaymentCycle(Integer newPaymentCycle) {
+		this.newPaymentCycle = newPaymentCycle;
+	}
+
+	public Integer getApplePayMode() {
+		return applePayMode;
+	}
+
+	public void setApplePayMode(Integer applePayMode) {
+		this.applePayMode = applePayMode;
+	}
+
+	public Integer getNewPayMode() {
+		return newPayMode;
+	}
+
+	public void setNewPayMode(Integer newPayMode) {
+		this.newPayMode = newPayMode;
 	}
 }

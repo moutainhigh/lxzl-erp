@@ -31,6 +31,7 @@ public class OrderProductDO extends BaseDO {
     private Integer payMode;
     private Integer dataStatus;
     private String remark;
+    private Integer isNewProduct;
 
     public Integer getId() {
         return id;
@@ -206,5 +207,13 @@ public class OrderProductDO extends BaseDO {
 
     public void setPayMode(Integer payMode) {
         this.payMode = payMode;
+    }
+
+    public Integer getIsNewProduct() {
+        return isNewProduct;
+    }
+
+    public void setIsNewProduct(Integer isNewProduct) {
+        this.isNewProduct = isNewProduct;
     }
 }

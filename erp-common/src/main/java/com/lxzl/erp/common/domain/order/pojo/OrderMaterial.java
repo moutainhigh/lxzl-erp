@@ -23,6 +23,10 @@ public class OrderMaterial implements Serializable {
 	private BigDecimal insuranceAmount;   //保险金额
 	private String materialSnapshot;   //物料冗余信息，防止商品修改留存快照
 	private List<String> bulkMaterialNoList;
+	private Integer depositCycle;
+	private Integer paymentCycle;
+	private Integer payMode;
+	private Integer isNewProduct;
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -190,5 +194,37 @@ public class OrderMaterial implements Serializable {
 
 	public void setRentTimeLength(Integer rentTimeLength) {
 		this.rentTimeLength = rentTimeLength;
+	}
+
+	public Integer getIsNewProduct() {
+		return isNewProduct;
+	}
+
+	public void setIsNewProduct(Integer isNewProduct) {
+		this.isNewProduct = isNewProduct;
+	}
+
+	public Integer getDepositCycle() {
+		return depositCycle;
+	}
+
+	public void setDepositCycle(Integer depositCycle) {
+		this.depositCycle = depositCycle;
+	}
+
+	public Integer getPaymentCycle() {
+		return paymentCycle;
+	}
+
+	public void setPaymentCycle(Integer paymentCycle) {
+		this.paymentCycle = paymentCycle;
+	}
+
+	public Integer getPayMode() {
+		return payMode;
+	}
+
+	public void setPayMode(Integer payMode) {
+		this.payMode = payMode;
 	}
 }

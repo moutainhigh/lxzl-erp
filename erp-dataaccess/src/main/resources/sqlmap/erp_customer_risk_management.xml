@@ -9,6 +9,12 @@
 		<result column="credit_amount_used" jdbcType="DECIMAL" property="creditAmountUsed" />
 		<result column="deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
 		<result column="payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="apple_deposit_cycle" jdbcType="INTEGER" property="appleDepositCycle" />
+		<result column="apple_payment_cycle" jdbcType="INTEGER" property="applePaymentCycle" />
+		<result column="new_deposit_cycle" jdbcType="INTEGER" property="newDepositCycle" />
+		<result column="new_payment_cycle" jdbcType="INTEGER" property="newPaymentCycle" />
+		<result column="apple_pay_mode" jdbcType="INTEGER" property="applePayMode" />
+		<result column="new_pay_mode" jdbcType="INTEGER" property="newPayMode" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -18,7 +24,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ecrm.id,ecrm.customer_id,ecrm.credit_amount,ecrm.credit_amount_used,ecrm.deposit_cycle,ecrm.payment_cycle,ecrm.data_status,ecrm.remark,ecrm.create_time,ecrm.create_user,ecrm.update_time,ecrm.update_user
+		ecrm.id,ecrm.customer_id,ecrm.credit_amount,ecrm.credit_amount_used,ecrm.deposit_cycle,ecrm.payment_cycle,ecrm.apple_deposit_cycle,ecrm.apple_payment_cycle,ecrm.new_deposit_cycle,ecrm.new_payment_cycle,ecrm.apple_pay_mode,ecrm.new_pay_mode,ecrm.data_status,ecrm.remark,ecrm.create_time,ecrm.create_user,ecrm.update_time,ecrm.update_user
 	</sql>
 
 	<select id="findById" resultMap="CustomerRiskManagementDO" parameterType="java.lang.Integer">
@@ -66,6 +72,24 @@
 			</if>
 			<if test="paymentCycle != null">
 				payment_cycle = #{paymentCycle,jdbcType=INTEGER},
+			</if>
+			<if test="appleDepositCycle != null">
+				apple_deposit_cycle = #{appleDepositCycle,jdbcType=INTEGER},
+			</if>
+			<if test="applePaymentCycle != null">
+				apple_payment_cycle = #{applePaymentCycle,jdbcType=INTEGER},
+			</if>
+			<if test="newDepositCycle != null">
+				new_deposit_cycle = #{newDepositCycle,jdbcType=INTEGER},
+			</if>
+			<if test="newPaymentCycle != null">
+				new_payment_cycle = #{newPaymentCycle,jdbcType=INTEGER},
+			</if>
+			<if test="applePayMode != null">
+				apple_pay_mode = #{applePayMode,jdbcType=INTEGER},
+			</if>
+			<if test="newPayMode != null">
+				new_pay_mode = #{newPayMode,jdbcType=INTEGER},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
