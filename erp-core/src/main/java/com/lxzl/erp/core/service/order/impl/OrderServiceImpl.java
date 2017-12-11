@@ -365,10 +365,6 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
-        if (loginUser != null && !orderDO.getBuyerCustomerId().equals(loginUser.getUserId())) {
-            result.setErrorCode(ErrorCode.OPERATOR_IS_NOT_YOURSELF);
-            return result;
-        }
         if (orderDO.getOrderStatus() == null || !OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus())) {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
