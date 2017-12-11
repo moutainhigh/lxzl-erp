@@ -39,7 +39,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
-        Map<String, Object> map = customerOrderSupport.getCustomerCanChangeMap(rentProductSkuPageParam, customerDO.getId());
+        Map<String, Object> map = customerOrderSupport.getCustomerMap(rentProductSkuPageParam, customerDO.getId());
         Integer totalCount = productSkuMapper.findSkuRentCount(map);
         List<ProductSkuDO> productSkuList = productSkuMapper.findSkuRent(map);
         Map<Integer, Product> productMap = new HashMap<>();
@@ -90,7 +90,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
-        Map<String, Object> map = customerOrderSupport.getCustomerCanChangeMap(rentMaterialCanProcessPageParam, customerDO.getId());
+        Map<String, Object> map = customerOrderSupport.getCustomerMap(rentMaterialCanProcessPageParam, customerDO.getId());
         Integer totalCount = materialMapper.findMaterialRentCount(map);
         List<MaterialDO> materialDOList = materialMapper.findMaterialRent(map);
         Page<Material> page = new Page<>(ConverterUtil.convertList(materialDOList, Material.class), totalCount, rentMaterialCanProcessPageParam.getPageNo(), rentMaterialCanProcessPageParam.getPageSize());

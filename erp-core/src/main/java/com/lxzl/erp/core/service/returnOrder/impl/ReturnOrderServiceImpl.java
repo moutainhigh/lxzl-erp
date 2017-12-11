@@ -441,7 +441,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             orderMaterialBulkDOListForUpdate.add(orderMaterialBulkDO);
 
             //由于按天租赁无需授信额度，需交押金，所以当订单按月或按天租赁时，修改客户已用授信额度
-            if(OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())||OrderRentType.RENT_TYPE_TIME.equals(orderMaterialDO.getRentType())){
+            if(OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())){
                 customerRiskManagementDO.setCreditAmountUsed(BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(),bulkMaterialDO.getBulkMaterialPrice()));
             }
             ReturnOrderMaterialDO returnOrderMaterialDO = null;
