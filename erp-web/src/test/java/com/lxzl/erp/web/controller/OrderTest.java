@@ -30,7 +30,6 @@ public class OrderTest extends ERPUnTransactionalTest {
     public void testCreateOrder() throws Exception {
         Order order = new Order();
 
-        order.setPayMode(2);
         order.setLogisticsAmount(new BigDecimal(12));
         order.setBuyerRemark("仔细包装，别弄坏了");
 
@@ -69,22 +68,31 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCreateOrderJSON() throws Exception{
         String str = "{\n" +
-                "\t\"buyerCustomerNo\": \"CC201712071948510861631\",\n" +
-                "\t\"rentStartTime\": 1512691200000,\n" +
-                "\t\"payMode\": \"1\",\n" +
+                "\t\"buyerCustomerNo\": \"CP201712060843154191841\",\n" +
+                "\t\"rentStartTime\": 1513036800000,\n" +
                 "\t\"logisticsAmount\": \"98\",\n" +
-                "\t\"orderSellerId\": 500013,\n" +
+                "\t\"orderSellerId\": 500005,\n" +
                 "\t\"orderSubCompanyId\": 1,\n" +
-                "\t\"buyerRemark\": \"第一次下单\",\n" +
-                "\t\"customerConsignId\": \"31\",\n" +
+                "\t\"buyerRemark\": \"急用！\",\n" +
+                "\t\"customerConsignId\": \"37\",\n" +
                 "\t\"orderProductList\": [{\n" +
                 "\t\t\"productId\": \"2000013\",\n" +
                 "\t\t\"productSkuId\": \"40\",\n" +
                 "\t\t\"productUnitAmount\": \"100\",\n" +
-                "\t\t\"productCount\": \"10\",\n" +
-                "\t\t\"rentType\": \"2\",\n" +
+                "\t\t\"productCount\": \"1\",\n" +
+                "\t\t\"rentType\": \"3\",\n" +
                 "\t\t\"rentTimeLength\": \"10\",\n" +
-                "\t\t\"insuranceAmount\": \"10\"\n" +
+                "\t\t\"insuranceAmount\": \"1000\",\n" +
+                "\t\t\"payMode\": \"2\"\n" +
+                "\t}],\n" +
+                "\t\"orderMaterialList\": [{\n" +
+                "\t\t\"materialId\": \"5\",\n" +
+                "\t\t\"materialUnitAmount\": \"100\",\n" +
+                "\t\t\"materialCount\": \"1\",\n" +
+                "\t\t\"rentType\": \"3\",\n" +
+                "\t\t\"rentTimeLength\": \"10\",\n" +
+                "\t\t\"insuranceAmount\": \"1000\",\n" +
+                "\t\t\"payMode\": \"2\"\n" +
                 "\t}]\n" +
                 "}";
         Order order= JSONUtil.convertJSONToBean(str, Order.class);
@@ -97,7 +105,6 @@ public class OrderTest extends ERPUnTransactionalTest {
     public void testUpdateOrder() throws Exception {
         Order order = new Order();
 
-        order.setPayMode(2);
         order.setLogisticsAmount(new BigDecimal(12));
         order.setBuyerRemark("仔细包装，别弄坏了");
 
@@ -125,7 +132,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderMaterialList.add(orderMaterial);
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setOrderNo("O201712071453234351744");
+        order.setOrderNo("O201712111013379171126");
         order.setBuyerCustomerNo("C201711152010206581143");
         order.setCustomerConsignId(7);
         order.setRentStartTime(new Date());

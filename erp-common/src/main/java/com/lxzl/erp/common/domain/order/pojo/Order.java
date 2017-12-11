@@ -20,7 +20,6 @@ public class Order implements Serializable {
     private BigDecimal totalMustDepositAmount;
     private BigDecimal totalCreditDepositAmount;
     private BigDecimal totalInsuranceAmount;
-    private Integer payMode;
     private Integer totalProductCount;
     private BigDecimal totalProductAmount;
     private Integer totalMaterialCount;
@@ -224,14 +223,6 @@ public class Order implements Serializable {
 
     public void setBuyerCustomerId(Integer buyerCustomerId) {
         this.buyerCustomerId = buyerCustomerId;
-    }
-
-    public Integer getPayMode() {
-        return payMode;
-    }
-
-    public void setPayMode(Integer payMode) {
-        this.payMode = payMode;
     }
 
     public Date getCreateTime() {

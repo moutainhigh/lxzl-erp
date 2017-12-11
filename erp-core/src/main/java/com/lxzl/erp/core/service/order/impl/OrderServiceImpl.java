@@ -812,6 +812,35 @@ public class OrderServiceImpl implements OrderService {
         if (customerRiskManagementDO == null) {
             throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS);
         }
+        if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
+            for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
+                Product product = productServiceResult.getResult();
+                // TODO 商品品牌为苹果品牌
+                if (product.getBrandId().equals(1)) {
+                    orderProductDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
+                    orderProductDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
+                } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
+                    orderProductDO.setDepositCycle(customerRiskManagementDO.getNewDepositCycle());
+                    orderProductDO.setPaymentCycle(customerRiskManagementDO.getNewPaymentCycle());
+                } else {
+                    orderProductDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
+                    orderProductDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
+                }
+            }
+        }
+
+        if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
+            for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewProduct())) {
+                    orderMaterialDO.setDepositCycle(customerRiskManagementDO.getNewDepositCycle());
+                    orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getNewPaymentCycle());
+                } else {
+                    orderMaterialDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
+                    orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
+                }
+            }
+        }
     }
 
     @Override
@@ -1141,11 +1170,12 @@ public class OrderServiceImpl implements OrderService {
         if (order.getRentStartTime() == null) {
             return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
         }
-        if (order.getPayMode() == null) {
-            return ErrorCode.ORDER_PAY_MODE_NOT_NULL;
-        }
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
             for (OrderProduct orderProduct : order.getOrderProductList()) {
+
+                if (orderProduct.getPayMode() == null) {
+                    return ErrorCode.ORDER_PAY_MODE_NOT_NULL;
+                }
                 if (orderProduct.getRentType() == null || orderProduct.getRentTimeLength() == null || orderProduct.getRentTimeLength() <= 0) {
                     return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
                 }
@@ -1172,6 +1202,9 @@ public class OrderServiceImpl implements OrderService {
 
         if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
             for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
+                if (orderMaterial.getPayMode() == null) {
+                    return ErrorCode.ORDER_PAY_MODE_NOT_NULL;
+                }
                 if (orderMaterial.getRentType() == null || orderMaterial.getRentTimeLength() == null || orderMaterial.getRentTimeLength() <= 0) {
                     return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
                 }
