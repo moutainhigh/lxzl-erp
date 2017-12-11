@@ -252,8 +252,10 @@
 		ON ebm.order_no = eo.order_no AND eo.data_status=1
 		LEFT JOIN erp_return_order_material erom ON erom.return_material_id = ebm.material_id AND erom.data_status=1
 		LEFT JOIN erp_return_order ero ON ero.id = erom.return_order_id AND ero.data_status=1
-		WHERE ebm.order_no IS NOT NULL
-		AND ebm.order_no != ""
+		WHERE ebm.order_no IS NOT NULL AND ebm.order_no != "" AND ebm.data_status = 1
+		<if test="maps.onEquipment == 0">
+			AND ebm.current_equipment_id IS NULL
+		</if>
 		<if test="maps.customerId != null">
 			AND eo.buyer_customer_id = #{maps.customerId}
 		</if>) material_main
@@ -268,8 +270,10 @@
 		ON ebm.order_no = eo.order_no AND eo.data_status=1
 		LEFT JOIN erp_return_order_material erom ON erom.return_material_id = ebm.material_id AND erom.data_status=1
 		LEFT JOIN erp_return_order ero ON ero.id = erom.return_order_id AND ero.data_status=1
-		WHERE ebm.order_no IS NOT NULL
-		AND ebm.order_no != ""
+		WHERE ebm.order_no IS NOT NULL AND ebm.order_no != "" AND ebm.data_status = 1
+		<if test="maps.onEquipment == 0">
+			AND ebm.current_equipment_id IS NULL
+		</if>
 		<if test="maps.customerId != null">
 			AND eo.buyer_customer_id = #{maps.customerId}
 		</if>

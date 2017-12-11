@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.product.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.changeOrder.AddChangeOrderParam;
 import com.lxzl.erp.common.domain.validGroup.returnOrder.AddReturnOrderGroup;
 
 import javax.validation.constraints.Min;
@@ -34,14 +35,12 @@ public class ProductSku implements Serializable {
 
     private String productName;
 
-    //在租数量
-    private Integer rentCount;
-    @NotNull(message = ErrorCode.RETURN_COUNT_ERROR, groups = {AddReturnOrderGroup.class})
-    @Min(value = 0, message = ErrorCode.RETURN_COUNT_ERROR, groups = {AddReturnOrderGroup.class})
-    //退还数量
+    //退还数量换货数量
+    @NotNull(message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class,AddChangeOrderParam.class})
+    @Min(value=0,message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class,AddChangeOrderParam.class})
     private Integer returnCount;
-    //退还数量
-    private Integer canReturnCount;
+    //可退可换数量
+    private Integer canProcessCount;
 
     private Integer newProductSkuCount;     // 全新SKU设备数量
     private Integer oldProductSkuCount;     // 次新SKU设备数量
@@ -174,14 +173,6 @@ public class ProductSku implements Serializable {
         this.shouldProductCategoryPropertyValueList = shouldProductCategoryPropertyValueList;
     }
 
-    public Integer getRentCount() {
-        return rentCount;
-    }
-
-    public void setRentCount(Integer rentCount) {
-        this.rentCount = rentCount;
-    }
-
     public Integer getReturnCount() {
         return returnCount;
     }
@@ -190,12 +181,12 @@ public class ProductSku implements Serializable {
         this.returnCount = returnCount;
     }
 
-    public Integer getCanReturnCount() {
-        return canReturnCount;
+    public Integer getCanProcessCount() {
+        return canProcessCount;
     }
 
-    public void setCanReturnCount(Integer canReturnCount) {
-        this.canReturnCount = canReturnCount;
+    public void setCanProcessCount(Integer canProcessCount) {
+        this.canProcessCount = canProcessCount;
     }
 
     public Integer getNewProductSkuCount() {

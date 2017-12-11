@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.material.pojo;
 
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.changeOrder.AddChangeOrderParam;
 import com.lxzl.erp.common.domain.validGroup.returnOrder.AddReturnOrderGroup;
 
 import javax.validation.constraints.Min;
@@ -19,7 +20,7 @@ import java.util.List;
 public class Material implements Serializable {
 
     private Integer materialId;   //物料ID
-    @NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL,groups = {AddReturnOrderGroup.class})
+    @NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL,groups = {AddReturnOrderGroup.class, AddChangeOrderParam.class})
     private String materialNo;   //物料唯一编号
     private String materialName;   //物料名称，取属性与属性值全称
     private Integer materialType;   //物料类型
@@ -43,8 +44,8 @@ public class Material implements Serializable {
     private List<MaterialImg> materialImgList;
 
     private Integer rentCount;
-    @NotNull(message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class})
-    @Min(value = 1 , message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class})
+    @NotNull(message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class, AddChangeOrderParam.class})
+    @Min(value = 1 , message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class, AddChangeOrderParam.class})
     private Integer returnCount;
     private Integer canReturnCount;
     private String materialModelName;

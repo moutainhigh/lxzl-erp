@@ -34,7 +34,6 @@ import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseConverter;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.core.service.workflow.impl.support.WorkflowConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.*;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
@@ -46,7 +45,6 @@ import com.lxzl.erp.dataaccess.domain.purchase.*;
 import com.lxzl.erp.dataaccess.domain.supplier.SupplierDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
-import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -484,7 +482,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             //保存采购订单商品项快照
 //            ServiceResult<String,Product> productResult = productService.queryProductById(productSkuDO.getProductId());
             ServiceResult<String,Product> productResult = productService.queryProductBySkuId(productSkuDO.getId());
-            purchaseOrderProductDO.setProductSnapshot(JSON.toJSONString(productResult.getResult()));
+            purchaseOrderProductDO.setProductSnapshot(JSON.toJSONString(getProductBySkuId(productResult.getResult(),productSkuDO.getId(),purchaseOrderProduct.getProductMaterialList())));
             purchaseOrderProductDO.setProductId(productSkuDO.getProductId());
             purchaseOrderProductDO.setProductName(productSkuDO.getProductName());
             purchaseOrderProductDO.setProductSkuId(productSkuDO.getId());

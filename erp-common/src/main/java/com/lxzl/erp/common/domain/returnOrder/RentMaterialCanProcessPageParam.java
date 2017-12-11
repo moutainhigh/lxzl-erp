@@ -5,7 +5,7 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
 
 import javax.validation.constraints.NotNull;
 
-public class RentMaterialPageParam extends BasePageParam{
+public class RentMaterialCanProcessPageParam extends BasePageParam{
 
     @NotNull(message = ErrorCode.CUSTOMER_NO_NOT_NULL )
     private String customerNo;

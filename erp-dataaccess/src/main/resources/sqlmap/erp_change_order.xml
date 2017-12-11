@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMapper">
+
+	<resultMap id="ChangeOrderDO" type="com.lxzl.erp.dataaccess.domain.changeOrder.ChangeOrderDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="change_order_no" jdbcType="VARCHAR" property="changeOrderNo" />
+		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
+		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+		<result column="total_change_product_count" jdbcType="INTEGER" property="totalChangeProductCount" />
+		<result column="total_change_material_count" jdbcType="INTEGER" property="totalChangeMaterialCount" />
+		<result column="real_total_change_product_count" jdbcType="INTEGER" property="realTotalChangeProductCount" />
+		<result column="real_total_change_material_count" jdbcType="INTEGER" property="realTotalChangeMaterialCount" />
+		<result column="total_difference_price" jdbcType="DECIMAL" property="totalDifferencePrice" />
+		<result column="service_cost" jdbcType="DECIMAL" property="serviceCost" />
+		<result column="damage_cost" jdbcType="DECIMAL" property="damageCost" />
+		<result column="is_damage" jdbcType="INTEGER" property="isDamage" />
+		<result column="change_reason_type" jdbcType="INTEGER" property="changeReasonType" />
+		<result column="change_reason" jdbcType="VARCHAR" property="changeReason" />
+		<result column="change_mode" jdbcType="INTEGER" property="changeMode" />
+		<result column="change_order_status" jdbcType="INTEGER" property="changeOrderStatus" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="owner" jdbcType="INTEGER" property="owner" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		eco.id,eco.change_order_no,eco.customer_id,eco.customer_no,eco.total_change_product_count,eco.total_change_material_count,eco.real_total_change_product_count,eco.real_total_change_material_count,eco.total_difference_price,eco.service_cost,eco.damage_cost,eco.is_damage,eco.change_reason_type,eco.change_reason,eco.change_mode,eco.change_order_status,eco.data_status,eco.remark,eco.owner,eco.create_time,eco.create_user,eco.update_time,eco.update_user
+	</sql>
+
+	<select id="findById" resultMap="ChangeOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_change_order eco 
+		WHERE eco.id = #{id, jdbcType=INTEGER} AND eco.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eco.id) FROM erp_change_order eco 
+		<where>
+			<if test="true">
+				AND eco.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="ChangeOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_change_order eco 
+		<where>
+			<if test="true">
+				AND eco.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="changeOrderNo != null">
+				change_order_no = #{changeOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="customerId != null">
+				customer_id = #{customerId,jdbcType=INTEGER},
+			</if>
+			<if test="customerNo != null">
+				customer_no = #{customerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="totalChangeProductCount != null">
+				total_change_product_count = #{totalChangeProductCount,jdbcType=INTEGER},
+			</if>
+			<if test="totalChangeMaterialCount != null">
+				total_change_material_count = #{totalChangeMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="realTotalChangeProductCount != null">
+				real_total_change_product_count = #{realTotalChangeProductCount,jdbcType=INTEGER},
+			</if>
+			<if test="realTotalChangeMaterialCount != null">
+				real_total_change_material_count = #{realTotalChangeMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="totalDifferencePrice != null">
+				total_difference_price = #{totalDifferencePrice,jdbcType=DECIMAL},
+			</if>
+			<if test="serviceCost != null">
+				service_cost = #{serviceCost,jdbcType=DECIMAL},
+			</if>
+			<if test="damageCost != null">
+				damage_cost = #{damageCost,jdbcType=DECIMAL},
+			</if>
+			<if test="isDamage != null">
+				is_damage = #{isDamage,jdbcType=INTEGER},
+			</if>
+			<if test="changeReasonType != null">
+				change_reason_type = #{changeReasonType,jdbcType=INTEGER},
+			</if>
+			<if test="changeReason != null">
+				change_reason = #{changeReason,jdbcType=VARCHAR},
+			</if>
+			<if test="changeMode != null">
+				change_mode = #{changeMode,jdbcType=INTEGER},
+			</if>
+			<if test="changeOrderStatus != null">
+				change_order_status = #{changeOrderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="owner != null">
+				owner = #{owner,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.changeOrder.ChangeOrderDO">
+		INSERT INTO erp_change_order <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.changeOrder.ChangeOrderDO">
+		UPDATE erp_change_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
