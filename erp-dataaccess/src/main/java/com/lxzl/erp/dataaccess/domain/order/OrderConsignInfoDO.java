@@ -7,6 +7,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 public class OrderConsignInfoDO extends BaseDO {
     private Integer id;
     private Integer orderId;
+    private Integer customerConsignId;
     private String consigneeName;
     private String consigneePhone;
     private Integer province;
@@ -121,5 +122,13 @@ public class OrderConsignInfoDO extends BaseDO {
 
     public void setDistrictName(String districtName) {
         this.districtName = districtName;
+    }
+
+    public Integer getCustomerConsignId() {
+        return customerConsignId;
+    }
+
+    public void setCustomerConsignId(Integer customerConsignId) {
+        this.customerConsignId = customerConsignId;
     }
 }

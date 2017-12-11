@@ -228,6 +228,7 @@ public class ErrorCode {
     public static final String RETURN_ORDER_DAMAGE_COST_ERROR = "J400047";
     public static final String ORDER_HAVE_NO_PAID = "J400048";
     public static final String ORDER_CAN_NOT_DELIVERY = "J400049";
+    public static final String ORDER_PAY_MODE_ERROR = "J400050";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -493,6 +494,7 @@ public class ErrorCode {
         MAP.put(RETURN_ORDER_DAMAGE_COST_ERROR, "损坏费用金额有误");
         MAP.put(ORDER_HAVE_NO_PAID, "订单未支付，不能操作");
         MAP.put(ORDER_CAN_NOT_DELIVERY, "订单不能支付");
+        MAP.put(ORDER_PAY_MODE_ERROR, "您当前不支持这种支付方式。");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");

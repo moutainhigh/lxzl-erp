@@ -22,7 +22,7 @@ public class OrderMaterialDO  extends BaseDO {
 	private Integer depositCycle;
 	private Integer paymentCycle;
 	private Integer payMode;
-	private Integer isNewProduct;
+	private Integer isNewMaterial;
 	private Integer dataStatus;
 	private String remark;
 
@@ -170,11 +170,11 @@ public class OrderMaterialDO  extends BaseDO {
 		this.payMode = payMode;
 	}
 
-	public Integer getIsNewProduct() {
-		return isNewProduct;
+	public Integer getIsNewMaterial() {
+		return isNewMaterial;
 	}
 
-	public void setIsNewProduct(Integer isNewProduct) {
-		this.isNewProduct = isNewProduct;
+	public void setIsNewMaterial(Integer isNewMaterial) {
+		this.isNewMaterial = isNewMaterial;
 	}
 }

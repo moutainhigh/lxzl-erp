@@ -992,6 +992,7 @@ CREATE TABLE `erp_order_product` (
   `deposit_cycle` int(11) COMMENT '押金期数',
   `payment_cycle` int(11) COMMENT '付款期数',
   `pay_mode` int(11) NOT NULL DEFAULT '0' COMMENT '支付方式：1先用后付，2先付后用',
+  `is_new_product` int(11) NOT NULL DEFAULT '0' COMMENT '是否是全新机，1是0否',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -1039,6 +1040,7 @@ CREATE TABLE `erp_order_material` (
   `deposit_cycle` int(11) COMMENT '押金期数',
   `payment_cycle` int(11) COMMENT '付款期数',
   `pay_mode` int(11) NOT NULL DEFAULT '0' COMMENT '支付方式：1先用后付，2先付后用',
+  `is_new_material` int(11) NOT NULL DEFAULT '0' COMMENT '是否是全新机，1是0否',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -1072,6 +1074,7 @@ DROP TABLE if exists `erp_order_consign_info`;
 CREATE TABLE `erp_order_consign_info` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `customer_consign_id` int(20) NOT NULL COMMENT '客户关联地址ID',
   `consignee_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '收货人姓名',
   `consignee_phone` varchar(24) CHARACTER SET ascii DEFAULT NULL COMMENT '收货人手机号',
   `province` int(20) DEFAULT NULL COMMENT '省份ID，省份ID',
