@@ -229,6 +229,9 @@ public class ErrorCode {
     public static final String ORDER_HAVE_NO_PAID = "J400048";
     public static final String ORDER_CAN_NOT_DELIVERY = "J400049";
     public static final String ORDER_PAY_MODE_ERROR = "J400050";
+    public static final String RETURN_ORDER_IS_CHARGING_IS_NOT_NULL = "J400051";
+    public static final String CHANGE_COUNT_ERROR = "J400052";
+    public static final String RETURN_COUNT_ERROR = "J400053";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -256,8 +259,6 @@ public class ErrorCode {
     public static final String CITY_ID_NOT_NULL = "J500024";
     public static final String DISTRICT_ID_NOT_NULL = "J500025";
     public static final String ADDRESS_NOT_NULL = "J500026";
-    public static final String RETURN_COUNT_ERROR = "J500027";
-    public static final String RETURN_ORDER_IS_CHARGING_IS_NOT_NULL = "J500028";
     public static final String PRODUCT_SKU_CAN_NOT_REPEAT = "J500029";
     public static final String MATERIAL_CAN_NOT_REPEAT = "J500030";
     public static final String CUSTOMER_CONSIGN_NOT_EXISTS = "J500031";
@@ -495,6 +496,7 @@ public class ErrorCode {
         MAP.put(ORDER_HAVE_NO_PAID, "订单未支付，不能操作");
         MAP.put(ORDER_CAN_NOT_DELIVERY, "订单不能支付");
         MAP.put(ORDER_PAY_MODE_ERROR, "您当前不支持这种支付方式。");
+        MAP.put(CHANGE_COUNT_ERROR, "更换数量错误");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
