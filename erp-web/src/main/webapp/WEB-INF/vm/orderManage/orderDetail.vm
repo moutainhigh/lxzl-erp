@@ -3,13 +3,11 @@
 <head>
     <title>凌雄ERP-订单管理-订单列表-订单详细</title>
     #parse("layout/header.vm")
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
-<div id="main">
+    <div id="main">
     #parse("layout/navbar.vm")
     #parse("layout/sidebar.vm")
 
@@ -17,7 +15,7 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
-            <form class="" id="editOrderForm">
+            <form class="" id="orderDetailForm">
                 <div class="panel panel-primary panel-border top mb35">
                     <div class="panel-heading">
                         <span class="panel-title">基本信息</span>
@@ -308,7 +306,6 @@
                                             <td>{{materialTypeStr}}</td>
                                             <td>{{materialPriceFormat}}</td>
                                             <td>
-                                                <p>次租：￥{{timeRentPriceFormat}}</p>
                                                 <p>日租：￥{{dayRentPriceFormat}}</p>
                                                 <p>月租：￥{{monthRentPriceFormat}}</p>
                                             </td>
@@ -381,35 +378,23 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
-<script type="text/javascript">
-    management_load_script('${staticManagement}/js',
-            'manage.order.mixin.js',
-            'manage.order.edit.js',
-            'modal.choose.product.js',
-            'modal.choose.material.js',
-            'modal.choose.customer.js',
-            'modal.choose.customer.business.js',
-            'modal.choose.user.js',
-            'modal.choose.company.js',
-            'manage.order.item.render.js',
-            'manage.order.util.js',
-            'manage.customer.address.js',
-            'manage.customer.address.add.js',
-            'manage.customer.address.edit.js');
-</script>
-<script type="text/javascript">
-    //功能事件初始化
-    Rental.init();
-    Layout.init();
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js',
+                'manage.order.mixin.js',
+                'manage.order.detail.js',
+                'manage.order.item.render.js',
+                'manage.order.util.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
 
-    EditOrder.init();
+        EditOrder.init();
 
-    //UI效果初始化
-    Core.init();
-    Demo.init();
-</script>
-
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+    </script>
 </body>
 </html>
