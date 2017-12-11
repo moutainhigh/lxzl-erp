@@ -26,8 +26,8 @@
                 </div>
             </div>
             <div class="panel-footer text-right">
-                <button type="button" class="button btn-default cancelButton">取消</button>
                 <button type="submit" class="button btn-primary">确定</button>
+                <button type="button" class="button btn-default cancelButton">取消</button>
             </div>
         </form>
     </div>

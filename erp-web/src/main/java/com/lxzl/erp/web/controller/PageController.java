@@ -189,6 +189,12 @@ public class PageController extends BaseController {
         return "/orderManage/orderItem";
     }
 
+    //配货
+    @RequestMapping("/order-manage/picking")
+    public String orderManageDelivery() {
+        return "/component/order/picking";
+    }
+
     //个人客户管理
     @RequestMapping("/customer-manage/list")
     public String customerManageList() {
@@ -376,6 +382,12 @@ public class PageController extends BaseController {
     @RequestMapping("/product/choose")
     public String productChoose() {
         return "/component/product/chooseModal";
+    }
+
+    //提交审核选择审核人及填写审核备注
+    @RequestMapping("/submit-audit/modal")
+    public String submitAuditModal() {
+        return "/component/audit/submitModal";
     }
 
     //采购单选择审核人Modal

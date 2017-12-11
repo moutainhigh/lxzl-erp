@@ -3,34 +3,11 @@
         <div class="panel-heading">
             <span class="panel-title"><i class="fa fa-search"></i>选择审核人</span>
         </div>
-        #*<div class="panel-menu p12">
-            <div class="row">
-                <div class="col-md-12 text-right">
-                    <form id="chooseAuditUserSearchForm" class="form-horizontal">
-                        <div class="pull-right">
-                            <button type="submit" class="btn btn-primary btn-sm">查询</button>
-                            <button type="reset" class="btn btn-default btn-sm">重置</button>
-                        </div>
-                        <div class="form-group pull-right mn mr10" style="width: 120px;">
-                            <div class="input-group">
-                                <input type="text" name="realName" id="realName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入姓名" />
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>*#
         <div class="panel-body pn">
             <div class="table-responsive">
                 <script type="text/html" id="chooseAuditUserModalDataListTpl">
                     <thead>
                     <tr>
-                       #* <th>
-                            <label class="option block mn">
-                                <input type="checkbox" name="checkAll" value="">
-                                <span class="checkbox mn"></span>
-                            </label>
-                        </th>*#
                         <th>公司部门角色</th>
                         <th>姓名</th>
                         <th>用户名</th>
@@ -43,12 +20,6 @@
                     {{#dataSource}}
                     {{#listData}}
                     <tr data-rowdata="{{rowData}}">
-                        #*<td>
-                            <label class="option block mn">
-                                <input type="checkbox" name="checkItem" value="{{userId}}">
-                                <span class="checkbox mn"></span>
-                            </label>
-                        </td>*#
                         <td>
                             {{#roleListData}}
                             {{role}}
@@ -79,9 +50,6 @@
         </div>
         <div class="panel-footer">
             <div class="row">
-##                <div class="col-xs-12 col-md-12 text-right mt10 mb10">
-##                    #parse("component/pager.vm")
-##                </div>
             </div>
         </div>
     </div>
