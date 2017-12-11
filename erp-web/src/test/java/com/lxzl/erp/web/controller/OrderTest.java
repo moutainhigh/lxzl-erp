@@ -161,7 +161,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testIsNeedVerify() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712071453234351744");
+        order.setOrderNo("O201712111523581951498");
         TestResult result = getJsonTestResult("/order/isNeedVerify", order);
     }
 

@@ -15,6 +15,9 @@ import java.util.GregorianCalendar;
  */
 public class CommonTest {
     public static void main(String[] args) {
-        System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(DateUtil.getNextMonthDayStartTime(20)));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date(1511131194000L));
+        System.out.println(calendar.get(Calendar.MONTH));
+        System.out.println(calendar.get(Calendar.DAY_OF_MONTH));
     }
 }

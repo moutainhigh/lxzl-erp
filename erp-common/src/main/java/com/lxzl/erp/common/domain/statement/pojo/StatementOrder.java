@@ -12,6 +12,8 @@ public class StatementOrder implements Serializable {
 	private Integer statementOrderId;   //唯一标识
 	private String statementOrderNo;   //结算单编码
 	private Integer customerId;   //客户ID
+	private Date statementExpectPayTime; // 结算单预计支付时间
+	private Integer statementMonth;   //结算月份
 	private BigDecimal statementAmount;   //结算单金额，结算单明细总和
 	private Integer statementStatus;   //结算状态，0未结算，1已结算
 	private Date statementStartTime;   //对账开始时间，结算单明细最早的一个
@@ -136,5 +138,21 @@ public class StatementOrder implements Serializable {
 
 	public void setStatementOrderDetailList(List<StatementOrderDetail> statementOrderDetailList) {
 		this.statementOrderDetailList = statementOrderDetailList;
+	}
+
+	public Integer getStatementMonth() {
+		return statementMonth;
+	}
+
+	public void setStatementMonth(Integer statementMonth) {
+		this.statementMonth = statementMonth;
+	}
+
+	public Date getStatementExpectPayTime() {
+		return statementExpectPayTime;
+	}
+
+	public void setStatementExpectPayTime(Date statementExpectPayTime) {
+		this.statementExpectPayTime = statementExpectPayTime;
 	}
 }
