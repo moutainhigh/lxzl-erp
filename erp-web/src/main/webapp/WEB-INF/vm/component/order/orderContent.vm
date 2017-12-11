@@ -214,8 +214,9 @@
                                             <label class="field prepend-icon mw200">
                                                 <select name="payMode-{{skuId}}-{{rowKey}}" class="payMode form-control required">
                                                     <option value="">请选择</option>
-                                                    <option value="1">先用后付</option>
-                                                    <option value="2">现付后用</option>
+                                                    {{#payModeList}}
+                                                    <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                                    {{/payModeList}}
                                                 </select>
                                             </label>
                                         </td>
@@ -342,8 +343,9 @@
                                 <label class="field prepend-icon mw200">
                                     <select name="payMode-{{materialNo}}" class="payMode form-control required">
                                         <option value="">请选择</option>
-                                        <option value="1">先用后付</option>
-                                        <option value="2">现付后用</option>
+                                        {{#payModeList}}
+                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                        {{/payModeList}}
                                     </select>
                                 </label>
                             </td>
