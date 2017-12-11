@@ -27,22 +27,6 @@
                 </div>
             </div>
         </div>
-##        <div class="row">
-##            <div class="col-md-6">
-##                <div class="form-group field">
-##                    <label class="col-md-3 control-label">支付方式</label>
-##                    <div class="col-md-9">
-##                        <div>
-##                            <select class="form-control required" name="payMode">
-##                                <option value="">请选择</option>
-##                                <option value="1">先用后付</option>
-##                                <option value="2">现付后用</option>
-##                            </select>
-##                        </div>
-##                    </div>
-##                </div>
-##            </div>
-##        </div>
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group field">
