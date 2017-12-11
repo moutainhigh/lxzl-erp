@@ -19,6 +19,7 @@
 		<result column="deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
 		<result column="payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
 		<result column="pay_mode" jdbcType="INTEGER" property="payMode" />
+		<result column="is_new_material" jdbcType="INTEGER" property="isNewMaterial" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -28,7 +29,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eom.id,eom.order_id,eom.material_id,eom.rent_type as rent_type,eom.rent_time_length as rent_time_length,eom.material_name,eom.material_count,eom.material_unit_amount,eom.material_amount,eom.deposit_amount,eom.credit_deposit_amount,eom.insurance_amount,eom.material_snapshot,eom.deposit_cycle,eom.payment_cycle,eom.pay_mode,eom.data_status,eom.remark,eom.create_time,eom.create_user,eom.update_time,eom.update_user
+		eom.id,eom.order_id,eom.material_id,eom.rent_type as rent_type,eom.rent_time_length as rent_time_length,eom.material_name,eom.material_count,eom.material_unit_amount,eom.material_amount,eom.deposit_amount,eom.credit_deposit_amount,eom.insurance_amount,eom.material_snapshot,eom.deposit_cycle,eom.payment_cycle,eom.pay_mode,eom.is_new_material,eom.data_status,eom.remark,eom.create_time,eom.create_user,eom.update_time,eom.update_user
 	</sql>
 
 	<select id="findById" resultMap="OrderMaterialDO" parameterType="java.lang.Integer">
@@ -106,6 +107,9 @@
 			</if>
 			<if test="payMode != null">
 				pay_mode = #{payMode, jdbcType=INTEGER},
+			</if>
+			<if test="isNewMaterial != null">
+				is_new_material = #{isNewMaterial, jdbcType=INTEGER},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},

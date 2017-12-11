@@ -73,16 +73,16 @@ public class ErrorCode {
     public static final String BULK_MATERIAL_STATUS_ERROR = "J200027";
     public static final String PRODUCT_EQUIPMENT_STATUS_ERROR = "J200028";
     public static final String BULK_MATERIAL_NOT_IN_THIS_WAREHOUSE = "J200029";
-    public static final String PRODUCT_MATERIAL_NOT_ENOUGH = "J200030";
-    public static final String PRODUCT_MATERIAL_MEMORY_NOT_ENOUGH = "J200031";
-    public static final String PRODUCT_MATERIAL_MAIN_BOARD_NOT_ENOUGH = "J200032";
-    public static final String PRODUCT_MATERIAL_CPU_NOT_ENOUGH = "J200033";
-    public static final String PRODUCT_MATERIAL_HDD_NOT_ENOUGH = "J200034";
-    public static final String PRODUCT_MATERIAL_GRAPHICS_CARD_NOT_ENOUGH = "J200035";
-    public static final String PRODUCT_MATERIAL_POWER_SUPPLY_NOT_ENOUGH = "J200036";
-    public static final String PRODUCT_MATERIAL_RADIATOR_NOT_ENOUGH = "J200037";
-    public static final String PRODUCT_MATERIAL_SSD_NOT_ENOUGH = "J200038";
-    public static final String PRODUCT_MATERIAL_BOX_NOT_ENOUGH = "J200039";
+    public static final String PRODUCT_MATERIAL_NOT_MATCHING = "J200030";
+    public static final String PRODUCT_MATERIAL_MEMORY_NOT_MATCHING = "J200031";
+    public static final String PRODUCT_MATERIAL_MAIN_BOARD_NOT_MATCHING = "J200032";
+    public static final String PRODUCT_MATERIAL_CPU_NOT_MATCHING = "J200033";
+    public static final String PRODUCT_MATERIAL_HDD_NOT_MATCHING = "J200034";
+    public static final String PRODUCT_MATERIAL_GRAPHICS_CARD_NOT_MATCHING = "J200035";
+    public static final String PRODUCT_MATERIAL_POWER_SUPPLY_NOT_MATCHING = "J200036";
+    public static final String PRODUCT_MATERIAL_RADIATOR_NOT_MATCHING = "J200037";
+    public static final String PRODUCT_MATERIAL_SSD_NOT_MATCHING = "J200038";
+    public static final String PRODUCT_MATERIAL_BOX_NOT_MATCHING = "J200039";
     public static final String PRODUCT_EQUIPMENT_IS_NOT_BUSY = "J200040";
     public static final String BULK_MATERIAL_IS_NOT_BUSY = "J200041";
     public static final String BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT = "J200042";
@@ -228,6 +228,10 @@ public class ErrorCode {
     public static final String RETURN_ORDER_DAMAGE_COST_ERROR = "J400047";
     public static final String ORDER_HAVE_NO_PAID = "J400048";
     public static final String ORDER_CAN_NOT_DELIVERY = "J400049";
+    public static final String ORDER_PAY_MODE_ERROR = "J400050";
+    public static final String RETURN_ORDER_IS_CHARGING_IS_NOT_NULL = "J400051";
+    public static final String CHANGE_COUNT_ERROR = "J400052";
+    public static final String RETURN_COUNT_ERROR = "J400053";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -255,8 +259,6 @@ public class ErrorCode {
     public static final String CITY_ID_NOT_NULL = "J500024";
     public static final String DISTRICT_ID_NOT_NULL = "J500025";
     public static final String ADDRESS_NOT_NULL = "J500026";
-    public static final String RETURN_COUNT_ERROR = "J500027";
-    public static final String RETURN_ORDER_IS_CHARGING_IS_NOT_NULL = "J500028";
     public static final String PRODUCT_SKU_CAN_NOT_REPEAT = "J500029";
     public static final String MATERIAL_CAN_NOT_REPEAT = "J500030";
     public static final String CUSTOMER_CONSIGN_NOT_EXISTS = "J500031";
@@ -345,16 +347,16 @@ public class ErrorCode {
         MAP.put(PRODUCT_EQUIPMENT_STATUS_ERROR, "商品设备状态有误。");
         MAP.put(BULK_MATERIAL_STATUS_ERROR, "散料状态有误。");
         MAP.put(BULK_MATERIAL_NOT_IN_THIS_WAREHOUSE, "散料不在该库房。");
-        MAP.put(PRODUCT_MATERIAL_NOT_ENOUGH, "商品物料不足。");
-        MAP.put(PRODUCT_MATERIAL_MEMORY_NOT_ENOUGH, "商品【内存】物料不足");
-        MAP.put(PRODUCT_MATERIAL_MAIN_BOARD_NOT_ENOUGH, "商品【主板】物料不足");
-        MAP.put(PRODUCT_MATERIAL_CPU_NOT_ENOUGH, "商品【CPU】物料不足");
-        MAP.put(PRODUCT_MATERIAL_HDD_NOT_ENOUGH, "商品【机械硬盘】物料不足");
-        MAP.put(PRODUCT_MATERIAL_GRAPHICS_CARD_NOT_ENOUGH, "商品【显卡】物料不足");
-        MAP.put(PRODUCT_MATERIAL_POWER_SUPPLY_NOT_ENOUGH, "商品【电源】物料不足");
-        MAP.put(PRODUCT_MATERIAL_RADIATOR_NOT_ENOUGH, "商品【散热器】物料不足");
-        MAP.put(PRODUCT_MATERIAL_SSD_NOT_ENOUGH, "商品【固态硬盘】物料不足");
-        MAP.put(PRODUCT_MATERIAL_BOX_NOT_ENOUGH, "商品【机箱】物料不足");
+        MAP.put(PRODUCT_MATERIAL_NOT_MATCHING, "商品物料不足。");
+        MAP.put(PRODUCT_MATERIAL_MEMORY_NOT_MATCHING, "商品【内存】物料不匹配");
+        MAP.put(PRODUCT_MATERIAL_MAIN_BOARD_NOT_MATCHING, "商品【主板】物料不匹配");
+        MAP.put(PRODUCT_MATERIAL_CPU_NOT_MATCHING, "商品【CPU】物料不匹配");
+        MAP.put(PRODUCT_MATERIAL_HDD_NOT_MATCHING, "商品【机械硬盘】物料不匹配");
+        MAP.put(PRODUCT_MATERIAL_GRAPHICS_CARD_NOT_MATCHING, "商品【显卡】物料不匹配");
+        MAP.put(PRODUCT_MATERIAL_POWER_SUPPLY_NOT_MATCHING, "商品【电源】物料不匹配");
+        MAP.put(PRODUCT_MATERIAL_RADIATOR_NOT_MATCHING, "商品【散热器】物料不匹配");
+        MAP.put(PRODUCT_MATERIAL_SSD_NOT_MATCHING, "商品【固态硬盘】物料不匹配");
+        MAP.put(PRODUCT_MATERIAL_BOX_NOT_MATCHING, "商品【机箱】物料不匹配");
         MAP.put(PRODUCT_EQUIPMENT_IS_NOT_BUSY, "编号【%s 】的设备不在租赁中");
         MAP.put(BULK_MATERIAL_IS_NOT_BUSY, "编号【%s 】的物料不在租赁中");
         MAP.put(BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT, "编号【%s 】在某订单或者某设备上");
@@ -493,6 +495,8 @@ public class ErrorCode {
         MAP.put(RETURN_ORDER_DAMAGE_COST_ERROR, "损坏费用金额有误");
         MAP.put(ORDER_HAVE_NO_PAID, "订单未支付，不能操作");
         MAP.put(ORDER_CAN_NOT_DELIVERY, "订单不能支付");
+        MAP.put(ORDER_PAY_MODE_ERROR, "您当前不支持这种支付方式。");
+        MAP.put(CHANGE_COUNT_ERROR, "更换数量错误");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");

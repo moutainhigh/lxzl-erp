@@ -13,8 +13,12 @@ import com.lxzl.erp.common.domain.returnOrder.*;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderMaterialBulk;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProductEquipment;
-import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.common.util.BigDecimalUtil;
+import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
+import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductEquipmentConverter;
 import com.lxzl.erp.core.service.returnOrder.ReturnOrderService;
@@ -27,7 +31,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialBulkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
@@ -55,7 +58,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> create(AddReturnOrderParam addReturnOrderParam) {
+    public ServiceResult<String, String> add(AddReturnOrderParam addReturnOrderParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         CustomerDO customerDO = customerMapper.findCustomerPersonByNo(addReturnOrderParam.getCustomerNo());
         if(customerDO==null){
@@ -87,10 +90,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             }
         }
         //用户在租sku统计
-        Map<String,Object> findSkuRentMap = new HashMap<>();
-        findSkuRentMap.put("customerId",customerDO.getId());
-        findSkuRentMap.put("pageSize",Integer.MAX_VALUE);
-        findSkuRentMap.put("start",0);
+        Map<String,Object> findSkuRentMap = customerOrderSupport.getCustomerCanReturnAllMap(customerDO.getId());
         List<ProductSkuDO> oldProductSkuDOList = productSkuMapper.findSkuRent(findSkuRentMap);
         Map<Integer,ProductSkuDO> oldSkuCountMap = new HashMap<>();
         if(CollectionUtil.isNotEmpty(oldProductSkuDOList)){
@@ -99,11 +99,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             }
         }
         //用户在租物料统计
-        Map<String,Object> findMaterialRenMap = new HashMap<>();
-        findMaterialRenMap.put("customerId",customerDO.getId());
-        findMaterialRenMap.put("pageSize",Integer.MAX_VALUE);
-        findMaterialRenMap.put("start",0);
-        List<MaterialDO> oldMaterialDOList = materialMapper.findMaterialRent(findMaterialRenMap);
+        List<MaterialDO> oldMaterialDOList = materialMapper.findMaterialRent(findSkuRentMap);
         Map<String,MaterialDO> oldMaterialCountMap = new HashMap<>();
         if(CollectionUtil.isNotEmpty(oldMaterialDOList)){
             for(MaterialDO materialDO  : oldMaterialDOList){
@@ -688,63 +684,6 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         return result;
     }
 
-    @Override
-    public ServiceResult<String, Page<Product>> pageRentProductSku(RentProductSkuPageParam rentProductSkuPageParam) {
-        ServiceResult<String, Page<Product>> serviceResult = new ServiceResult<>();
-        CustomerDO customerDO = customerMapper.findByNo(rentProductSkuPageParam.getCustomerNo());
-        if(customerDO==null){
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
-            return serviceResult;
-        }
-        Map<String,Object> map = new HashMap<>();
-        map.put("customerId",customerDO.getId());
-        map.put("pageSize",rentProductSkuPageParam.getPageSize());
-        map.put("start",rentProductSkuPageParam.getStart());
-        Integer totalCount = productSkuMapper.findSkuRentCount(map);
-        List<ProductSkuDO> productSkuList = productSkuMapper.findSkuRent(map);
-        Map<Integer,Product> productMap = new HashMap<>();
-        for(ProductSkuDO productSkuDO : productSkuList){
-            Product product = productService.queryProductBySkuId(productSkuDO.getId()).getResult();
-            ProductSku productSku = product.getProductSkuList().get(0);
-            productSku.setReturnCount(productSkuDO.getRentCount());
-            productSku.setCanReturnCount(productSkuDO.getCanReturnCount());
-            Product p = productMap.get(product.getProductId());
-            if(p==null){
-                productMap.put(product.getProductId(),product);
-            }else{
-                p.getProductSkuList().add(productSku);
-            }
-        }
-        List<Product> productList = new ArrayList<>();
-        for(Integer productId : productMap.keySet()){
-            productList.add(productMap.get(productId));
-        }
-        Page<Product> page = new Page<>(productList, totalCount, rentProductSkuPageParam.getPageNo(), rentProductSkuPageParam.getPageSize());
-        serviceResult.setResult(page);
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        return serviceResult;
-    }
-
-    @Override
-    public ServiceResult<String, Page<Material>> pageRentMaterial(RentMaterialPageParam rentMaterialPageParam) {
-        ServiceResult<String, Page<Material>> serviceResult = new ServiceResult<>();
-        CustomerDO customerDO = customerMapper.findByNo(rentMaterialPageParam.getCustomerNo());
-        if(customerDO==null){
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
-            return serviceResult;
-        }
-        Map<String,Object> map = new HashMap<>();
-        map.put("customerId",customerDO.getId());
-        map.put("pageSize",rentMaterialPageParam.getPageSize());
-        map.put("start",rentMaterialPageParam.getStart());
-        Integer totalCount = materialMapper.findMaterialRentCount(map);
-        List<MaterialDO> materialDOList = materialMapper.findMaterialRent(map);
-        Page<Material> page = new Page<>(ConverterUtil.convertList(materialDOList,Material.class), totalCount, rentMaterialPageParam.getPageNo(), rentMaterialPageParam.getPageSize());
-        serviceResult.setResult(page);
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        return serviceResult;
-    }
-
 
     @Autowired
     private CustomerMapper customerMapper;
@@ -752,8 +691,6 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     private UserSupport userSupport;
     @Autowired
     private ReturnOrderMapper returnOrderMapper;
-    @Autowired
-    private ProductMapper productMapper;
     @Autowired
     private MaterialMapper materialMapper;
     @Autowired
@@ -784,4 +721,6 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     private ReturnOrderMaterialBulkMapper returnOrderMaterialBulkMapper;
     @Autowired
     private ProductSkuMapper productSkuMapper;
+    @Autowired
+    private CustomerOrderSupport customerOrderSupport;
 }

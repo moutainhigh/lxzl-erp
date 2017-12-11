@@ -8,6 +8,7 @@ import java.io.Serializable;
 public class OrderConsignInfo implements Serializable {
     private Integer orderConsignId;
     private Integer orderId;
+    private Integer customerConsignId;
     private String consigneeName;
     private String consigneePhone;
     private Integer province;
@@ -122,5 +123,13 @@ public class OrderConsignInfo implements Serializable {
 
     public void setDistrictName(String districtName) {
         this.districtName = districtName;
+    }
+
+    public Integer getCustomerConsignId() {
+        return customerConsignId;
+    }
+
+    public void setCustomerConsignId(Integer customerConsignId) {
+        this.customerConsignId = customerConsignId;
     }
 }

@@ -820,9 +820,15 @@ public class OrderServiceImpl implements OrderService {
                 if (product.getBrandId().equals(1)) {
                     orderProductDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
                     orderProductDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
+                    if (!orderProductDO.getPayMode().equals(customerRiskManagementDO.getApplePayMode())) {
+                        throw new BusinessException(ErrorCode.ORDER_PAY_MODE_ERROR);
+                    }
                 } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
                     orderProductDO.setDepositCycle(customerRiskManagementDO.getNewDepositCycle());
                     orderProductDO.setPaymentCycle(customerRiskManagementDO.getNewPaymentCycle());
+                    if (!orderProductDO.getPayMode().equals(customerRiskManagementDO.getNewPayMode())) {
+                        throw new BusinessException(ErrorCode.ORDER_PAY_MODE_ERROR);
+                    }
                 } else {
                     orderProductDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
                     orderProductDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
@@ -832,9 +838,12 @@ public class OrderServiceImpl implements OrderService {
 
         if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
             for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
-                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewProduct())) {
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
                     orderMaterialDO.setDepositCycle(customerRiskManagementDO.getNewDepositCycle());
                     orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getNewPaymentCycle());
+                    if (!orderMaterialDO.getPayMode().equals(customerRiskManagementDO.getNewPayMode())) {
+                        throw new BusinessException(ErrorCode.ORDER_PAY_MODE_ERROR);
+                    }
                 } else {
                     orderMaterialDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
                     orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
@@ -1022,6 +1031,7 @@ public class OrderServiceImpl implements OrderService {
         OrderConsignInfoDO dbOrderConsignInfoDO = orderConsignInfoMapper.findByOrderId(orderId);
         OrderConsignInfoDO orderConsignInfoDO = new OrderConsignInfoDO();
         orderConsignInfoDO.setOrderId(orderId);
+        orderConsignInfoDO.setCustomerConsignId(userConsignId);
         orderConsignInfoDO.setConsigneeName(userConsignInfoDO.getConsigneeName());
         orderConsignInfoDO.setConsigneePhone(userConsignInfoDO.getConsigneePhone());
         orderConsignInfoDO.setProvince(userConsignInfoDO.getProvince());
@@ -1037,7 +1047,7 @@ public class OrderServiceImpl implements OrderService {
             orderConsignInfoDO.setUpdateTime(currentTime);
             orderConsignInfoMapper.save(orderConsignInfoDO);
         } else {
-            if (!orderConsignInfoDO.getAddress().equals(dbOrderConsignInfoDO.getAddress())) {
+            if (!dbOrderConsignInfoDO.getCustomerConsignId().equals(userConsignId)) {
                 dbOrderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 dbOrderConsignInfoDO.setId(dbOrderConsignInfoDO.getId());
                 dbOrderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());

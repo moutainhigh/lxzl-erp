@@ -7,6 +7,7 @@
     <resultMap type="com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO" id="OrderConsignInfoDO">
         <id column="id" property="id"/>
         <result column="order_id" property="orderId"/>
+        <result column="customer_consign_id" property="customerConsignId"/>
         <result column="consignee_name" property="consigneeName"/>
         <result column="consignee_phone" property="consigneePhone"/>
         <result column="province" property="province"/>
@@ -22,7 +23,7 @@
     </resultMap>
 
     <sql id="column_List">
-		id,order_id,consignee_name,consignee_phone,province,city,district,address,data_status,remark,create_time,create_user,update_time,update_user
+		id,order_id,customer_consign_id,consignee_name,consignee_phone,province,city,district,address,data_status,remark,create_time,create_user,update_time,update_user
 	</sql>
 
     <select id="findById" resultMap="OrderConsignInfoDO" parameterType="java.lang.Integer">
@@ -41,6 +42,9 @@
         <set>
             <if test="orderId != null">
                 order_id = #{orderId, jdbcType=INTEGER},
+            </if>
+            <if test="customerConsignId != null">
+                customer_consign_id = #{customerConsignId, jdbcType=INTEGER},
             </if>
             <if test="consigneeName != null">
                 consignee_name = #{consigneeName, jdbcType=VARCHAR},

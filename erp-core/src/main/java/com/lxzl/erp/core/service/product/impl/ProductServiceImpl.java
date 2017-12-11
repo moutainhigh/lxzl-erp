@@ -611,25 +611,23 @@ public class ProductServiceImpl implements ProductService {
                 }
             }
             if (MaterialType.MATERIAL_TYPE_MEMORY.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_NOT_ENOUGH);
-            } else if (MaterialType.MATERIAL_TYPE_MEMORY.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_MEMORY_NOT_ENOUGH);
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_MEMORY_NOT_MATCHING);
             } else if (MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_MAIN_BOARD_NOT_ENOUGH);
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_MAIN_BOARD_NOT_MATCHING);
             } else if (MaterialType.MATERIAL_TYPE_CPU.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_CPU_NOT_ENOUGH);
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_CPU_NOT_MATCHING);
             } else if (MaterialType.MATERIAL_TYPE_HDD.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_HDD_NOT_ENOUGH);
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_HDD_NOT_MATCHING);
             } else if (MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_GRAPHICS_CARD_NOT_ENOUGH);
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_GRAPHICS_CARD_NOT_MATCHING);
             } else if (MaterialType.MATERIAL_TYPE_POWER_SUPPLY.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_POWER_SUPPLY_NOT_ENOUGH);
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_POWER_SUPPLY_NOT_MATCHING);
             } else if (MaterialType.MATERIAL_TYPE_RADIATOR.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_RADIATOR_NOT_ENOUGH);
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_RADIATOR_NOT_MATCHING);
             } else if (MaterialType.MATERIAL_TYPE_SSD.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_SSD_NOT_ENOUGH);
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_SSD_NOT_MATCHING);
             } else if (MaterialType.MATERIAL_TYPE_BOX.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_BOX_NOT_ENOUGH);
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_BOX_NOT_MATCHING);
             }
             return result;
         }
