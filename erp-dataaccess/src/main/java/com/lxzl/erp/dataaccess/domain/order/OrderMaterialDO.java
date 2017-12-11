@@ -19,6 +19,9 @@ public class OrderMaterialDO  extends BaseDO {
 	private BigDecimal creditDepositAmount;
 	private BigDecimal insuranceAmount;
 	private String materialSnapshot;
+	private Integer depositCycle;
+	private Integer paymentCycle;
+	private Integer payMode;
 	private Integer dataStatus;
 	private String remark;
 
@@ -140,5 +143,29 @@ public class OrderMaterialDO  extends BaseDO {
 
 	public void setRentTimeLength(Integer rentTimeLength) {
 		this.rentTimeLength = rentTimeLength;
+	}
+
+	public Integer getDepositCycle() {
+		return depositCycle;
+	}
+
+	public void setDepositCycle(Integer depositCycle) {
+		this.depositCycle = depositCycle;
+	}
+
+	public Integer getPaymentCycle() {
+		return paymentCycle;
+	}
+
+	public void setPaymentCycle(Integer paymentCycle) {
+		this.paymentCycle = paymentCycle;
+	}
+
+	public Integer getPayMode() {
+		return payMode;
+	}
+
+	public void setPayMode(Integer payMode) {
+		this.payMode = payMode;
 	}
 }

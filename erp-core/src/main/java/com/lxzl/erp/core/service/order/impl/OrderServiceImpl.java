@@ -168,8 +168,7 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         // TODO 先付后用的单子，如果没有付款就不能提交
-        if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderDO.getPayMode())
-                && !PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
+        if (PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
             result.setErrorCode(ErrorCode.ORDER_HAVE_NO_PAID);
             return result;
         }
@@ -812,9 +811,6 @@ public class OrderServiceImpl implements OrderService {
         CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
         if (customerRiskManagementDO == null) {
             throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS);
-        } else {
-            orderDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
-            orderDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
         }
     }
 
