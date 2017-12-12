@@ -32,6 +32,7 @@ public class OrderProduct implements Serializable {
     private Integer paymentCycle;
     private Integer payMode;
     private Integer isNewProduct;
+    private List<OrderProductEquipment> orderProductEquipmentList;
 
     public Integer getOrderProductId() {
         return orderProductId;
@@ -215,5 +216,13 @@ public class OrderProduct implements Serializable {
 
     public void setPayMode(Integer payMode) {
         this.payMode = payMode;
+    }
+
+    public List<OrderProductEquipment> getOrderProductEquipmentList() {
+        return orderProductEquipmentList;
+    }
+
+    public void setOrderProductEquipmentList(List<OrderProductEquipment> orderProductEquipmentList) {
+        this.orderProductEquipmentList = orderProductEquipmentList;
     }
 }

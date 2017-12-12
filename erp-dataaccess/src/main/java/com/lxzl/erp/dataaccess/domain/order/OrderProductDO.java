@@ -25,7 +25,6 @@ public class OrderProductDO extends BaseDO {
     private BigDecimal insuranceAmount;
     private String productSkuSnapshot;
     private List<String> equipmentNoList;
-    private List<String> bulkMaterialNoList;
     private Integer depositCycle;
     private Integer paymentCycle;
     private Integer payMode;
@@ -159,14 +158,6 @@ public class OrderProductDO extends BaseDO {
 
     public void setInsuranceAmount(BigDecimal insuranceAmount) {
         this.insuranceAmount = insuranceAmount;
-    }
-
-    public List<String> getBulkMaterialNoList() {
-        return bulkMaterialNoList;
-    }
-
-    public void setBulkMaterialNoList(List<String> bulkMaterialNoList) {
-        this.bulkMaterialNoList = bulkMaterialNoList;
     }
 
     public Integer getRentType() {

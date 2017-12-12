@@ -1538,6 +1538,8 @@ CREATE TABLE `erp_statement_order_detail` (
   `statement_order_id` int(20) NOT NULL COMMENT '结算单ID',
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
   `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `order_item_type` int(20) NOT NULL COMMENT '订单项类型，1为商品，2为物料',
+  `order_item_refer_id` int(20) NOT NULL COMMENT '订单项ID',
   `statement_month` int(20) NOT NULL COMMENT '结算月份',
   `statement_expect_pay_time` datetime NOT NULL COMMENT '结算单预计支付时间',
   `statement_detail_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '结算单金额',

@@ -12,6 +12,8 @@ public class StatementOrderDetail implements Serializable {
 	private Integer statementOrderId;   //结算单ID
 	private Integer customerId;   //客户ID
 	private Integer orderId;   //订单ID
+	private Integer orderItemType;		// 订单项类型，1为商品，2为物料
+	private Integer orderItemReferId;	// 订单项关联ID
 	private Integer statementMonth;		// 结算月份
 	private Date statementExpectPayTime;	// 结算单预计支付时间
 	private BigDecimal statementDetailAmount;   //结算单金额
@@ -170,5 +172,21 @@ public class StatementOrderDetail implements Serializable {
 
 	public void setStatementDetailOverdueAmount(BigDecimal statementDetailOverdueAmount) {
 		this.statementDetailOverdueAmount = statementDetailOverdueAmount;
+	}
+
+	public Integer getOrderItemType() {
+		return orderItemType;
+	}
+
+	public void setOrderItemType(Integer orderItemType) {
+		this.orderItemType = orderItemType;
+	}
+
+	public Integer getOrderItemReferId() {
+		return orderItemReferId;
+	}
+
+	public void setOrderItemReferId(Integer orderItemReferId) {
+		this.orderItemReferId = orderItemReferId;
 	}
 }

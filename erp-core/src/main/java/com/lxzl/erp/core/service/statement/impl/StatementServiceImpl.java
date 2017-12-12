@@ -77,20 +77,7 @@ public class StatementServiceImpl implements StatementService {
                 rentStartTimeCalendar.setTime(rentStartTime);
                 Integer statementMonthCount = calculateStatementMonthCount(orderProductDO.getRentType(), orderProductDO.getRentTimeLength(), orderProductDO.getPaymentCycle(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
                 if (statementMonthCount == 1) {
-                    Date statementEndTime = null, statementExpectPayTime = null;
-                    if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
-                        statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(rentStartTime, orderProductDO.getRentTimeLength());
-                    } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
-                        statementEndTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, orderProductDO.getRentTimeLength());
-                    }
-                    if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderProductDO.getPayMode())) {
-                        statementExpectPayTime = rentStartTime;
-                    } else {
-                        statementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, orderProductDO.getRentTimeLength());
-                    }
-                    // 当前月份的
-                    int thisMonth = rentStartTimeCalendar.get(Calendar.MONTH) + 1;
-                    StatementOrderDetailDO statementOrderDetailDO = buildStatementOrderDetailDO(orderDO.getBuyerCustomerId(), orderDO.getId(), thisMonth, statementExpectPayTime, rentStartTime, statementEndTime, orderProductDO.getProductAmount(), currentTime, loginUser.getUserId());
+                    StatementOrderDetailDO statementOrderDetailDO = calculateOneStatementOrderDetail(orderProductDO.getRentType(), orderProductDO.getRentTimeLength(), orderProductDO.getPayMode(), orderDO.getRentStartTime(), orderProductDO.getProductAmount(), orderDO.getBuyerCustomerId(), orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), currentTime, loginUser.getUserId());
                     statementOrderDetailDOList.add(statementOrderDetailDO);
                 } else {
                     Date lastCalculateDate = rentStartTime;
@@ -134,7 +121,7 @@ public class StatementServiceImpl implements StatementService {
                             Calendar calendar = Calendar.getInstance();
                             calendar.setTime(rentStartTime);
                             int thisMonth = calendar.get(Calendar.MONTH) + 1;
-                            StatementOrderDetailDO statementOrderDetailDO = buildStatementOrderDetailDO(orderDO.getBuyerCustomerId(), orderDO.getId(), thisMonth, statementExpectPayTime, rentStartTime, statementEndTime, firstPhaseAmount, currentTime, loginUser.getUserId());
+                            StatementOrderDetailDO statementOrderDetailDO = buildStatementOrderDetailDO(orderDO.getBuyerCustomerId(), orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), thisMonth, statementExpectPayTime, rentStartTime, statementEndTime, firstPhaseAmount, currentTime, loginUser.getUserId());
                             statementOrderDetailDOList.add(statementOrderDetailDO);
                             alreadyPaidAmount = BigDecimalUtil.add(alreadyPaidAmount, firstPhaseAmount);
                             // 计算到哪天
@@ -145,27 +132,11 @@ public class StatementServiceImpl implements StatementService {
                         } else if (statementMonthCount == i) {
                             // 最后一期
                             Date lastPhaseStartTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(lastCalculateDate, 1);
-                            Date lastPhaseDate = com.lxzl.se.common.util.date.DateUtil.monthInterval(lastCalculateDate, orderProductDO.getPaymentCycle());
                             // 订单的最后日期
                             Date orderLastDate = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, orderProductDO.getRentTimeLength());
                             Calendar orderLastPhaseCalendar = Calendar.getInstance();
                             orderLastPhaseCalendar.setTime(orderLastDate);
                             int surplusDays = DateUtil.daysBetween(lastPhaseStartTime, orderLastDate);
-
-                            // 最后一期总金额 注释行为按天计算的方式，现采用暴力减法的方式
-                            /*int surplusMonth = 0;
-                            for (int j = 0; j < orderProductDO.getPaymentCycle(); j++) {
-                                Date nextMonth = com.lxzl.se.common.util.date.DateUtil.monthInterval(lastPhaseDate, (i + 1));
-                                if (nextMonth.getTime() > orderLastDate.getTime()) {
-                                    break;
-                                }
-                                surplusMonth++;
-                            }
-                            // 本月天数
-                            lastPhaseDate = com.lxzl.se.common.util.date.DateUtil.monthInterval(lastPhaseDate, surplusMonth);
-                            int thisMonthDays = DateUtil.getActualMaximum(lastPhaseDate);
-                            BigDecimal oneDayAmount = BigDecimalUtil.div(orderProductDO.getProductUnitAmount(), new BigDecimal(thisMonthDays), 2);
-                            BigDecimal lastPhaseAmount = BigDecimalUtil.add(BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(surplusMonth)), BigDecimalUtil.mul(BigDecimalUtil.mul(oneDayAmount, new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(surplusDays)));*/
                             BigDecimal lastPhaseAmount = BigDecimalUtil.sub(orderProductDO.getProductAmount(), alreadyPaidAmount);
 
                             Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(lastPhaseStartTime, surplusDays);
@@ -178,7 +149,7 @@ public class StatementServiceImpl implements StatementService {
                             Calendar calendar = Calendar.getInstance();
                             calendar.setTime(lastPhaseStartTime);
                             int thisMonth = calendar.get(Calendar.MONTH) + 1;
-                            StatementOrderDetailDO statementOrderDetailDO = buildStatementOrderDetailDO(orderDO.getBuyerCustomerId(), orderDO.getId(), thisMonth, statementExpectPayTime, lastPhaseStartTime, statementEndTime, lastPhaseAmount, currentTime, loginUser.getUserId());
+                            StatementOrderDetailDO statementOrderDetailDO = buildStatementOrderDetailDO(orderDO.getBuyerCustomerId(), orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), thisMonth, statementExpectPayTime, lastPhaseStartTime, statementEndTime, lastPhaseAmount, currentTime, loginUser.getUserId());
                             statementOrderDetailDOList.add(statementOrderDetailDO);
                         } else {
                             // 中间期数
@@ -203,7 +174,7 @@ public class StatementServiceImpl implements StatementService {
                             Calendar calendar = Calendar.getInstance();
                             calendar.setTime(thisPhaseStartTime);
                             int thisMonth = calendar.get(Calendar.MONTH) + 1;
-                            StatementOrderDetailDO statementOrderDetailDO = buildStatementOrderDetailDO(orderDO.getBuyerCustomerId(), orderDO.getId(), thisMonth, statementExpectPayTime, thisPhaseStartTime, statementEndTime, middlePhaseAmount, currentTime, loginUser.getUserId());
+                            StatementOrderDetailDO statementOrderDetailDO = buildStatementOrderDetailDO(orderDO.getBuyerCustomerId(), orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), thisMonth, statementExpectPayTime, thisPhaseStartTime, statementEndTime, middlePhaseAmount, currentTime, loginUser.getUserId());
                             statementOrderDetailDOList.add(statementOrderDetailDO);
                             alreadyPaidAmount = BigDecimalUtil.add(alreadyPaidAmount, middlePhaseAmount);
                             lastCalculateDate = statementEndTime;
@@ -248,9 +219,12 @@ public class StatementServiceImpl implements StatementService {
         }
     }
 
-    StatementOrderDetailDO buildStatementOrderDetailDO(Integer customerId, Integer orderId, Integer statementMonth, Date statementExpectPayTime, Date startTime, Date endTime, BigDecimal statementDetailAmount, Date currentTime, Integer loginUserId) {
+    StatementOrderDetailDO buildStatementOrderDetailDO(Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Integer statementMonth, Date statementExpectPayTime, Date startTime, Date endTime, BigDecimal statementDetailAmount, Date currentTime, Integer loginUserId) {
         StatementOrderDetailDO statementOrderDetailDO = new StatementOrderDetailDO();
         statementOrderDetailDO.setCustomerId(customerId);
+        statementOrderDetailDO.setOrderId(orderId);
+        statementOrderDetailDO.setOrderItemType(orderItemType);
+        statementOrderDetailDO.setOrderItemReferId(orderItemReferId);
         statementOrderDetailDO.setOrderId(orderId);
         statementOrderDetailDO.setStatementOrderId(1);
         statementOrderDetailDO.setStatementMonth(statementMonth);
@@ -267,7 +241,7 @@ public class StatementServiceImpl implements StatementService {
         return statementOrderDetailDO;
     }
 
-    void calculateFirstAmount(Integer rentType, Integer rentTimeLength, Integer payMode, Date rentStartTime, BigDecimal productAmount, Integer customerId, Integer orderId) {
+    StatementOrderDetailDO calculateOneStatementOrderDetail(Integer rentType, Integer rentTimeLength, Integer payMode, Date rentStartTime, BigDecimal statementDetailAmount, Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date currentTime, Integer loginUserId) {
         Calendar rentStartTimeCalendar = Calendar.getInstance();
         rentStartTimeCalendar.setTime(rentStartTime);
         Date statementEndTime = null, statementExpectPayTime = null;
@@ -283,7 +257,7 @@ public class StatementServiceImpl implements StatementService {
         }
         // 当前月份的
         int thisMonth = rentStartTimeCalendar.get(Calendar.MONTH) + 1;
-        StatementOrderDetailDO statementOrderDetailDO = buildStatementOrderDetailDO(customerId, orderId, thisMonth, statementExpectPayTime, rentStartTime, statementEndTime, productAmount, null, null);
+        return buildStatementOrderDetailDO(customerId, orderId, orderItemType, orderItemReferId, thisMonth, statementExpectPayTime, rentStartTime, statementEndTime, statementDetailAmount, currentTime, loginUserId);
     }
 
     @Autowired

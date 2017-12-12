@@ -22,7 +22,6 @@ public class OrderMaterial implements Serializable {
 	private BigDecimal creditDepositAmount;   //授信押金金额
 	private BigDecimal insuranceAmount;   //保险金额
 	private String materialSnapshot;   //物料冗余信息，防止商品修改留存快照
-	private List<String> bulkMaterialNoList;
 	private Integer depositCycle;
 	private Integer paymentCycle;
 	private Integer payMode;
@@ -33,6 +32,8 @@ public class OrderMaterial implements Serializable {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+
+	private List<OrderMaterialBulk> orderMaterialBulkList;
 
 
 	public Integer getOrderMaterialId(){
@@ -171,13 +172,12 @@ public class OrderMaterial implements Serializable {
 		this.updateUser = updateUser;
 	}
 
-
-	public List<String> getBulkMaterialNoList() {
-		return bulkMaterialNoList;
+	public List<OrderMaterialBulk> getOrderMaterialBulkList() {
+		return orderMaterialBulkList;
 	}
 
-	public void setBulkMaterialNoList(List<String> bulkMaterialNoList) {
-		this.bulkMaterialNoList = bulkMaterialNoList;
+	public void setOrderMaterialBulkList(List<OrderMaterialBulk> orderMaterialBulkList) {
+		this.orderMaterialBulkList = orderMaterialBulkList;
 	}
 
 	public Integer getRentType() {

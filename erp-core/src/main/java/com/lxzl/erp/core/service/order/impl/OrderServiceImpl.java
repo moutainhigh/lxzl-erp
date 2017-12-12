@@ -6,9 +6,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.*;
-import com.lxzl.erp.common.domain.order.pojo.Order;
-import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
-import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
+import com.lxzl.erp.common.domain.order.pojo.*;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -326,7 +324,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ServiceResult<String, Order> queryOrderByNo(String orderNo) {
-        User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, Order> result = new ServiceResult<>();
         if (orderNo == null) {
             result.setErrorCode(ErrorCode.ID_NOT_NULL);
@@ -339,15 +336,27 @@ public class OrderServiceImpl implements OrderService {
         }
         Order order = OrderConverter.convertOrderDO(orderDO);
 
-        for (OrderProduct orderProduct : order.getOrderProductList()) {
-            Product product = FastJsonUtil.toBean(orderProduct.getProductSkuSnapshot(), Product.class);
-            for (ProductSku productSku : product.getProductSkuList()) {
-                if (orderProduct.getProductSkuId().equals(productSku.getSkuId())) {
-                    orderProduct.setProductSkuPropertyList(productSku.getProductSkuPropertyList());
-                    break;
+        if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
+            for (OrderProduct orderProduct : order.getOrderProductList()) {
+                Product product = FastJsonUtil.toBean(orderProduct.getProductSkuSnapshot(), Product.class);
+                for (ProductSku productSku : product.getProductSkuList()) {
+                    if (orderProduct.getProductSkuId().equals(productSku.getSkuId())) {
+                        orderProduct.setProductSkuPropertyList(productSku.getProductSkuPropertyList());
+                        break;
+                    }
                 }
+
+                List<OrderProductEquipmentDO> orderProductEquipmentDOList = orderProductEquipmentMapper.findByOrderProductId(orderProduct.getOrderProductId());
+                orderProduct.setOrderProductEquipmentList(ConverterUtil.convertList(orderProductEquipmentDOList, OrderProductEquipment.class));
             }
         }
+        if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
+            for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
+                List<OrderMaterialBulkDO> orderMaterialBulkDOList = orderMaterialBulkMapper.findByOrderMaterialId(orderMaterial.getOrderMaterialId());
+                orderMaterial.setOrderMaterialBulkList(ConverterUtil.convertList(orderMaterialBulkDOList, OrderMaterialBulk.class));
+            }
+        }
+
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
