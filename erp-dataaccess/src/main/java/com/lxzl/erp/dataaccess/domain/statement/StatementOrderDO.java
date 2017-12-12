@@ -13,6 +13,7 @@ public class StatementOrderDO  extends BaseDO {
 	private Integer statementMonth;
 	private Date statementExpectPayTime;
 	private BigDecimal statementAmount;
+	private BigDecimal statementPaidAmount;
 	private BigDecimal statementOverdueAmount;
 	private Integer statementStatus;
 	private Date statementStartTime;
@@ -123,5 +124,13 @@ public class StatementOrderDO  extends BaseDO {
 
 	public void setStatementExpectPayTime(Date statementExpectPayTime) {
 		this.statementExpectPayTime = statementExpectPayTime;
+	}
+
+	public BigDecimal getStatementPaidAmount() {
+		return statementPaidAmount;
+	}
+
+	public void setStatementPaidAmount(BigDecimal statementPaidAmount) {
+		this.statementPaidAmount = statementPaidAmount;
 	}
 }

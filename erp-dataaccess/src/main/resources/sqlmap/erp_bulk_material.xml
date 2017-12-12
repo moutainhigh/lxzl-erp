@@ -363,4 +363,8 @@
 		UPDATE erp_bulk_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
 
+	<update id="updateEquipmentOrderNo" parameterType="java.util.Map">
+		UPDATE erp_bulk_material SET order_no = #{orderNo, jdbcType=VARCHAR} WHERE current_equipment_no = #{equipmentNo, jdbcType=VARCHAR}
+	</update>
+
 </mapper>

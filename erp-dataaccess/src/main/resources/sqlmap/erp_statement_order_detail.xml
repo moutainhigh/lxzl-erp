@@ -10,6 +10,8 @@
 		<result column="statement_month" jdbcType="INTEGER" property="statementMonth" />
 		<result column="statement_expect_pay_time" jdbcType="TIMESTAMP" property="statementExpectPayTime" />
 		<result column="statement_detail_amount" jdbcType="DECIMAL" property="statementDetailAmount" />
+		<result column="statement_detail_paid_amount" jdbcType="DECIMAL" property="statementDetailPaidAmount" />
+		<result column="statement_detail_overdue_amount" jdbcType="DECIMAL" property="statementDetailOverdueAmount" />
 		<result column="statement_detail_status" jdbcType="INTEGER" property="statementDetailStatus" />
 		<result column="statement_start_time" jdbcType="TIMESTAMP" property="statementStartTime" />
 		<result column="statement_end_time" jdbcType="TIMESTAMP" property="statementEndTime" />
@@ -69,6 +71,12 @@
 			<if test="statementDetailAmount != null">
 				statement_detail_amount = #{statementDetailAmount,jdbcType=DECIMAL},
 			</if>
+			<if test="statementDetailPaidAmount != null">
+				statement_detail_paid_amount = #{statementDetailPaidAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementDetailOverdueAmount != null">
+				statement_detail_overdue_amount = #{statementDetailOverdueAmount,jdbcType=DECIMAL},
+			</if>
 			<if test="statementDetailStatus != null">
 				statement_detail_status = #{statementDetailStatus,jdbcType=INTEGER},
 			</if>
@@ -108,10 +116,10 @@
 	</update>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		INSERT INTO erp_statement_order_detail (statement_order_id,customer_id,order_id,statement_detail_amount,statement_detail_status,statement_start_time,statement_end_time,data_status,remark,create_time,create_user,update_time,update_user)
+		INSERT INTO erp_statement_order_detail (statement_order_id,customer_id,order_id,statement_month,statement_expect_pay_time,statement_detail_amount,statement_detail_paid_amount,statement_detail_overdue_amount,statement_detail_status,statement_start_time,statement_end_time,data_status,remark,create_time,create_user,update_time,update_user)
 		VALUES
 		<foreach item="statementOrderDetailDO" index="index" collection="statementOrderDetailDOList" separator=",">
-			(#{statementOrderDetailDO.statementOrderId},#{statementOrderDetailDO.customerId},#{statementOrderDetailDO.orderId},#{statementOrderDetailDO.statementDetailAmount},#{statementOrderDetailDO.statementDetailStatus},#{statementOrderDetailDO.statementStartTime},#{statementOrderDetailDO.statementEndTime},#{statementOrderDetailDO.dataStatus},#{statementOrderDetailDO.remark},#{statementOrderDetailDO.createTime},#{statementOrderDetailDO.createUser},#{statementOrderDetailDO.updateTime},#{statementOrderDetailDO.updateUser})
+			(#{statementOrderDetailDO.statementOrderId},#{statementOrderDetailDO.customerId},#{statementOrderDetailDO.orderId},#{statementOrderDetailDO.statementMonth},#{statementOrderDetailDO.statementExpectPayTime},#{statementOrderDetailDO.statementDetailAmount},#{statementOrderDetailDO.statementDetailPaidAmount},#{statementOrderDetailDO.statementDetailOverdueAmount},#{statementOrderDetailDO.statementDetailStatus},#{statementOrderDetailDO.statementStartTime},#{statementOrderDetailDO.statementEndTime},#{statementOrderDetailDO.dataStatus},#{statementOrderDetailDO.remark},#{statementOrderDetailDO.createTime},#{statementOrderDetailDO.createUser},#{statementOrderDetailDO.updateTime},#{statementOrderDetailDO.updateUser})
 		</foreach>
 	</insert>
 </mapper>

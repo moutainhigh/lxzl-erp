@@ -15,6 +15,8 @@ public class StatementOrder implements Serializable {
 	private Date statementExpectPayTime; // 结算单预计支付时间
 	private Integer statementMonth;   //结算月份
 	private BigDecimal statementAmount;   //结算单金额，结算单明细总和
+	private BigDecimal statementPaidAmount;	// 已支付金额
+	private BigDecimal statementOverdueAmount;	// 逾期金额
 	private Integer statementStatus;   //结算状态，0未结算，1已结算
 	private Date statementStartTime;   //对账开始时间，结算单明细最早的一个
 	private Date statementEndTime;   //对账结束时间，结算单明细最晚的一个
@@ -154,5 +156,21 @@ public class StatementOrder implements Serializable {
 
 	public void setStatementExpectPayTime(Date statementExpectPayTime) {
 		this.statementExpectPayTime = statementExpectPayTime;
+	}
+
+	public BigDecimal getStatementPaidAmount() {
+		return statementPaidAmount;
+	}
+
+	public void setStatementPaidAmount(BigDecimal statementPaidAmount) {
+		this.statementPaidAmount = statementPaidAmount;
+	}
+
+	public BigDecimal getStatementOverdueAmount() {
+		return statementOverdueAmount;
+	}
+
+	public void setStatementOverdueAmount(BigDecimal statementOverdueAmount) {
+		this.statementOverdueAmount = statementOverdueAmount;
 	}
 }

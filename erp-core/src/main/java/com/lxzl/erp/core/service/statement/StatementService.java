@@ -19,12 +19,12 @@ public interface StatementService extends BaseService {
      * @param endDate   结算结束时间
      * @return 结算单号
      */
-    ServiceResult<String, String> createStatement(Date startDate, Date endDate);
+    ServiceResult<String, String> createStatementOrder(Date startDate, Date endDate);
 
     /**
      * 创建新订单的对账单
      * @param orderNo 订单号
      * @return 对账单号
      */
-    ServiceResult<String, String> createNewOrderStatement(String orderNo);
+    ServiceResult<String, String> createNewStatementOrder(String orderNo);
 }

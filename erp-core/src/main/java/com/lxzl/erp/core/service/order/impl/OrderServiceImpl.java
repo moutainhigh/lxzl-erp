@@ -442,6 +442,10 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
+        if (!OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
         ServiceResult<String, List<Warehouse>> warehouseResult = warehouseService.getWarehouseByCurrentCompany();
         if (!ErrorCode.SUCCESS.equals(warehouseResult.getErrorCode())) {
             result.setErrorCode(warehouseResult.getErrorCode());
@@ -528,6 +532,9 @@ public class OrderServiceImpl implements OrderService {
                     productEquipmentDO.setUpdateTime(currentTime);
                     productEquipmentDO.setUpdateUser(loginUserId.toString());
                     productEquipmentMapper.update(productEquipmentDO);
+
+                    // 将该设备上的物料统一加上订单号
+                    bulkMaterialMapper.updateEquipmentOrderNo(productEquipmentDO.getEquipmentNo(), orderDO.getOrderNo());
 
                     BigDecimal expectRentAmount = calculationOrderExpectRentAmount(orderProductDO.getProductUnitAmount(), orderProductDO.getRentType(), orderProductDO.getRentTimeLength());
                     Date expectReturnTime = calculationOrderExpectReturnTime(orderDO.getRentStartTime(), orderProductDO.getRentType(), orderProductDO.getRentTimeLength());
@@ -644,6 +651,8 @@ public class OrderServiceImpl implements OrderService {
             productEquipmentDO.setUpdateTime(currentTime);
             productEquipmentDO.setUpdateUser(loginUserId.toString());
             productEquipmentMapper.update(productEquipmentDO);
+
+            bulkMaterialMapper.updateEquipmentOrderNo(productEquipmentDO.getEquipmentNo(), "");
 
             orderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
             orderProductEquipmentDO.setUpdateTime(currentTime);
