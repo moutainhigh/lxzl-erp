@@ -245,8 +245,46 @@
                                                         <td>
                                                             保险金：{{insuranceAmount}}
                                                         </td>
-                                                        <td class="text-right">
+                                                        <td>
                                                            支付方式：{{payModeValue}}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <div class="btn-group text-right">
+                                                                <a href="#" type="button" class="btn btn-default btn-xs viewAffix" >查看配货信息</a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="bg-light affixTr" style="height: 0;">
+                                                        <td colspan="8" class="pn br-n" style="height:0;">
+                                                            <div class="panel m15 affixPanel"  style="display: none;">
+                                                                <div class="panel-heading pn ph8">
+                                                                    <span>已配设备：设备编号列表</span>
+                                                                </div>
+                                                                <div class="panel-body pn">
+                                                                    <table class="table">
+##                                                                        <thead>
+##                                                                            <tr>
+##                                                                                <th>设备号</th>
+##                                                                            </tr>
+##                                                                        </thead>
+                                                                        {{#orderProductEquipmentList}}
+                                                                        <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
+                                                                            <td class="br-r">{{equipmentNo}}</td>
+                                                                        </tr>
+                                                                        {{/orderProductEquipmentList}}
+                                                                        {{^orderProductEquipmentList}}
+                                                                        <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
+                                                                            <td class="br-r">无配货信息</td>
+                                                                        </tr>
+                                                                        {{/orderProductEquipmentList}}
+                                                                    </table>
+                                                                </div>
+                                                                <div class="panel-footer pn pv5 ph15">
+                                                                    <div class="row">
+                                                                        <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                     {{/skuList}}
@@ -321,10 +359,45 @@
                                             </td>
                                            <td>
                                                <div class="btn-group text-right">
-                                                   <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}">配货</a>
-                                                   <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}">清货</a>
+                                                   {{#rowActionButtons}}
+                                                   <a href="#" type="button" class="btn btn-default btn-xs {{class}}" data-materialno="{{materialNo}}" data-materialid="{{materialId}}" data-orderno="{{orderNo}}" data-materialcount="{{materialCount}}">{{text}}</a>
+                                                   {{/rowActionButtons}}
+                                                   <a href="#" type="button" class="btn btn-default btn-xs viewAffix" >查看配货信息</a>
                                                </div>
                                            </td>
+                                        </tr>
+                                        <tr class="bg-light affixTr" style="height: 0;">
+                                            <td colspan="14" class="pn br-n" style="height:0;">
+                                                <div class="panel m15 affixPanel"  style="display: none;">
+                                                    <div class="panel-heading pn ph8">
+                                                        <span>已配散料：散料编号列表</span>
+                                                    </div>
+                                                    <div class="panel-body pn">
+                                                        <table class="table">
+##                                                            <thead>
+##                                                            <tr>
+##                                                                <th>散料编号</th>
+##                                                            </tr>
+##                                                            </thead>
+                                                            {{#orderMaterialBulkList}}
+                                                            <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
+                                                                <td class="br-r">{{bulkMaterialNo}}</td>
+                                                            </tr>
+                                                            {{/orderMaterialBulkList}}
+                                                            {{^orderMaterialBulkList}}
+                                                            <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
+                                                                <td class="br-r">无配货信息</td>
+                                                            </tr>
+                                                            {{/orderMaterialBulkList}}
+                                                        </table>
+                                                    </div>
+                                                    <div class="panel-footer pn pv5 ph15">
+                                                        <div class="row">
+                                                            <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
                                         </tr>
                                         {{/listData}}
                                         {{^listData}}
