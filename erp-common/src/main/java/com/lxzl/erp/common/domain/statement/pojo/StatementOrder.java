@@ -13,7 +13,6 @@ public class StatementOrder implements Serializable {
 	private String statementOrderNo;   //结算单编码
 	private Integer customerId;   //客户ID
 	private Date statementExpectPayTime; // 结算单预计支付时间
-	private Integer statementMonth;   //结算月份
 	private BigDecimal statementAmount;   //结算单金额，结算单明细总和
 	private BigDecimal statementPaidAmount;	// 已支付金额
 	private BigDecimal statementOverdueAmount;	// 逾期金额
@@ -140,14 +139,6 @@ public class StatementOrder implements Serializable {
 
 	public void setStatementOrderDetailList(List<StatementOrderDetail> statementOrderDetailList) {
 		this.statementOrderDetailList = statementOrderDetailList;
-	}
-
-	public Integer getStatementMonth() {
-		return statementMonth;
-	}
-
-	public void setStatementMonth(Integer statementMonth) {
-		this.statementMonth = statementMonth;
 	}
 
 	public Date getStatementExpectPayTime() {

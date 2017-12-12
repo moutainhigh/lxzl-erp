@@ -12,7 +12,6 @@ public class StatementOrderDetailDO  extends BaseDO {
 	private Integer orderId;
 	private Integer orderItemType;
 	private Integer orderItemReferId;
-	private Integer statementMonth;
 	private Date statementExpectPayTime;
 	private BigDecimal statementDetailAmount;
 	private BigDecimal statementDetailPaidAmount;
@@ -109,14 +108,6 @@ public class StatementOrderDetailDO  extends BaseDO {
 
 	public void setStatementDetailOverdueAmount(BigDecimal statementDetailOverdueAmount) {
 		this.statementDetailOverdueAmount = statementDetailOverdueAmount;
-	}
-
-	public Integer getStatementMonth() {
-		return statementMonth;
-	}
-
-	public void setStatementMonth(Integer statementMonth) {
-		this.statementMonth = statementMonth;
 	}
 
 	public Date getStatementExpectPayTime() {

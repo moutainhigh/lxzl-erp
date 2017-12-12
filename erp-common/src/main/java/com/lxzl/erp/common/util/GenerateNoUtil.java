@@ -95,4 +95,8 @@ public class GenerateNoUtil {
         Random random = new Random();
         return "CO" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
     }
+    public static String generateStatementNo(Date currentTime) {
+        Random random = new Random();
+        return "SN" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
+    }
 }

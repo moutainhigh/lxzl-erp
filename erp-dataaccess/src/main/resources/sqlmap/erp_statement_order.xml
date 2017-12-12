@@ -6,7 +6,6 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="statement_order_no" jdbcType="VARCHAR" property="statementOrderNo" />
 		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
-		<result column="statement_month" jdbcType="INTEGER" property="statementMonth" />
 		<result column="statement_expect_pay_time" jdbcType="TIMESTAMP" property="statementExpectPayTime" />
 		<result column="statement_amount" jdbcType="DECIMAL" property="statementAmount" />
 		<result column="statement_paid_amount" jdbcType="DECIMAL" property="statementPaidAmount" />
@@ -27,7 +26,6 @@
 		<result column="detail_statement_order_id" jdbcType="INTEGER" property="statementOrderId" />
 		<result column="detail_customer_id" jdbcType="INTEGER" property="customerId" />
 		<result column="detail_order_id" jdbcType="INTEGER" property="orderId" />
-		<result column="detail_statement_month" jdbcType="INTEGER" property="statementMonth" />
 		<result column="detail_statement_expect_pay_time" jdbcType="TIMESTAMP" property="statementExpectPayTime" />
 		<result column="detail_statement_detail_amount" jdbcType="DECIMAL" property="statementDetailAmount" />
 		<result column="detail_statement_detail_paid_amount" jdbcType="DECIMAL" property="statementDetailPaidAmount" />
@@ -44,11 +42,11 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eso.id,eso.statement_order_no,eso.customer_id,eso.statement_month,eso.statement_expect_pay_time,eso.statement_amount,eso.statement_paid_amount,eso.statement_overdue_amount,eso.statement_status,eso.statement_start_time,eso.statement_end_time,eso.data_status,eso.remark,eso.create_time,eso.create_user,eso.update_time,eso.update_user
+		eso.id,eso.statement_order_no,eso.customer_id,eso.statement_expect_pay_time,eso.statement_amount,eso.statement_paid_amount,eso.statement_overdue_amount,eso.statement_status,eso.statement_start_time,eso.statement_end_time,eso.data_status,eso.remark,eso.create_time,eso.create_user,eso.update_time,eso.update_user
 	</sql>
 
 	<sql id="detail_column_List">
-		esod.id as detail_id,esod.statement_order_id as detail_statement_order_id,esod.customer_id as detail_customer_id,esod.order_id as detail_order_id, esod.statement_month as detail_statement_month ,esod.statement_expect_pay_time as detail_statement_expect_pay_time, esod.statement_detail_amount as detail_statement_detail_amount,esod.statement_detail_paid_amount as detail_statement_detail_paid_amount, esod.statement_detail_overdue_amount as detail_statement_detail_overdue_amount,esod.statement_detail_status as detail_statement_detail_status,esod.statement_start_time as detail_statement_start_time,esod.statement_end_time as detail_statement_end_time,esod.data_status as detail_data_status,esod.remark as detail_remark,esod.create_time as detail_create_time,esod.create_user as detail_create_user,esod.update_time as detail_update_time,esod.update_user as detail_update_user
+		esod.id as detail_id,esod.statement_order_id as detail_statement_order_id,esod.customer_id as detail_customer_id,esod.order_id as detail_order_id ,esod.statement_expect_pay_time as detail_statement_expect_pay_time, esod.statement_detail_amount as detail_statement_detail_amount,esod.statement_detail_paid_amount as detail_statement_detail_paid_amount, esod.statement_detail_overdue_amount as detail_statement_detail_overdue_amount,esod.statement_detail_status as detail_statement_detail_status,esod.statement_start_time as detail_statement_start_time,esod.statement_end_time as detail_statement_end_time,esod.data_status as detail_data_status,esod.remark as detail_remark,esod.create_time as detail_create_time,esod.create_user as detail_create_user,esod.update_time as detail_update_time,esod.update_user as detail_update_user
 	</sql>
 
 	<select id="findById" resultMap="StatementOrderDO" parameterType="java.lang.Integer">
@@ -63,6 +61,11 @@
 		) statement_main
 		LEFT JOIN erp_statement_order_detail esod ON statement_main.id = esod.statement_order_id AND esod.data_status = 1
 		ORDER BY esod.id
+	</select>
+
+	<select id="findByCustomerAndPayTime" resultMap="StatementOrderDO" parameterType="java.util.Map">
+		SELECT <include refid="column_List"/> FROM erp_statement_order eso
+		WHERE eso.customer_id = #{customerId, jdbcType=INTEGER} AND TO_DAYS(eso.statement_expect_pay_time) = TO_DAYS(#{payTime, jdbcType=TIMESTAMP}) AND eso.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -100,9 +103,6 @@
 			</if>
 			<if test="customerId != null">
 				customer_id = #{customerId,jdbcType=INTEGER},
-			</if>
-			<if test="statementMonth != null">
-				statement_month = #{statementMonth,jdbcType=INTEGER},
 			</if>
 			<if test="statementExpectPayTime != null">
 				statement_expect_pay_time = #{statementExpectPayTime,jdbcType=TIMESTAMP},

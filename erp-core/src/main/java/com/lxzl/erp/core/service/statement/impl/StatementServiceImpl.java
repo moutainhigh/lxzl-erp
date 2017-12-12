@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.DateUtil;
+import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
@@ -15,6 +16,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
+import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import org.slf4j.Logger;
@@ -138,7 +140,39 @@ public class StatementServiceImpl implements StatementService {
                 }
             }
         }
-        statementOrderDetailMapper.saveList(statementOrderDetailDOList);
+
+        // 同一个时间的做归集
+        Map<Date, StatementOrderDO> statementOrderDOMap = new HashMap<>();
+        for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+            Date dateKey = com.lxzl.se.common.util.date.DateUtil.getBeginOfDay(statementOrderDetailDO.getStatementExpectPayTime());
+            StatementOrderDO statementOrderDO = statementOrderMapper.findByCustomerAndPayTime(orderDO.getBuyerCustomerId(), dateKey);
+            if (statementOrderDO != null) {
+                statementOrderDOMap.put(dateKey, statementOrderDO);
+            }
+
+            if (!statementOrderDOMap.containsKey(dateKey)) {
+                statementOrderDO = new StatementOrderDO();
+                statementOrderDO.setStatementOrderNo(GenerateNoUtil.generateStatementNo(currentTime));
+                statementOrderDO.setCustomerId(orderDO.getBuyerCustomerId());
+                statementOrderDO.setStatementExpectPayTime(dateKey);
+                statementOrderDO.setStatementAmount(statementOrderDetailDO.getStatementDetailAmount());
+                statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                statementOrderDO.setCreateUser(loginUser.getUserId().toString());
+                statementOrderDO.setUpdateUser(loginUser.getUserId().toString());
+                statementOrderDO.setCreateTime(currentTime);
+                statementOrderDO.setUpdateTime(currentTime);
+                statementOrderMapper.save(statementOrderDO);
+            } else {
+                statementOrderDO = statementOrderDOMap.get(dateKey);
+                statementOrderDO.setStatementAmount(BigDecimalUtil.add(statementOrderDO.getStatementAmount(), statementOrderDetailDO.getStatementDetailAmount()));
+                statementOrderMapper.update(statementOrderDO);
+            }
+            statementOrderDOMap.put(dateKey, statementOrderDO);
+            statementOrderDetailDO.setStatementOrderId(statementOrderDO.getId());
+        }
+        if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+            statementOrderDetailMapper.saveList(statementOrderDetailDOList);
+        }
 
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -181,9 +215,7 @@ public class StatementServiceImpl implements StatementService {
         } else if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
             statementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, rentTimeLength);
         }
-        // 当前月份的
-        int thisMonth = rentStartTimeCalendar.get(Calendar.MONTH) + 1;
-        return buildStatementOrderDetailDO(customerId, orderId, orderItemType, orderItemReferId, thisMonth, statementExpectPayTime, rentStartTime, statementEndTime, statementDetailAmount, currentTime, loginUserId);
+        return buildStatementOrderDetailDO(customerId, orderId, orderItemType, orderItemReferId, statementExpectPayTime, rentStartTime, statementEndTime, statementDetailAmount, currentTime, loginUserId);
     }
 
     /**
@@ -223,10 +255,7 @@ public class StatementServiceImpl implements StatementService {
         } else {
             statementExpectPayTime = statementEndTime;
         }
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(rentStartTime);
-        int thisMonth = calendar.get(Calendar.MONTH) + 1;
-        return buildStatementOrderDetailDO(customerId, orderId, orderItemType, orderItemReferId, thisMonth, statementExpectPayTime, rentStartTime, statementEndTime, firstPhaseAmount, currentTime, loginUserId);
+        return buildStatementOrderDetailDO(customerId, orderId, orderItemType, orderItemReferId, statementExpectPayTime, rentStartTime, statementEndTime, firstPhaseAmount, currentTime, loginUserId);
     }
 
     /**
@@ -237,11 +266,11 @@ public class StatementServiceImpl implements StatementService {
         Date lastPhaseStartTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(lastCalculateDate, 1);
         // 订单的最后日期
         Date orderLastDate = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, rentTimeLength);
-        Calendar orderLastPhaseCalendar = Calendar.getInstance();
-        orderLastPhaseCalendar.setTime(orderLastDate);
-        int surplusDays = DateUtil.daysBetween(lastPhaseStartTime, orderLastDate);
+        // 最后一期的金额
         BigDecimal lastPhaseAmount = BigDecimalUtil.sub(itemAllAmount, alreadyPaidAmount);
-
+        // 剩余的天数
+        int surplusDays = DateUtil.daysBetween(lastPhaseStartTime, orderLastDate);
+        // 最后一期的结束时间
         Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(lastPhaseStartTime, surplusDays);
         Date statementExpectPayTime;
         if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
@@ -249,10 +278,7 @@ public class StatementServiceImpl implements StatementService {
         } else {
             statementExpectPayTime = statementEndTime;
         }
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(lastPhaseStartTime);
-        int thisMonth = calendar.get(Calendar.MONTH) + 1;
-        return buildStatementOrderDetailDO(customerId, orderId, orderItemType, orderItemReferId, thisMonth, statementExpectPayTime, lastPhaseStartTime, statementEndTime, lastPhaseAmount, currentTime, loginUserId);
+        return buildStatementOrderDetailDO(customerId, orderId, orderItemType, orderItemReferId, statementExpectPayTime, lastPhaseStartTime, statementEndTime, lastPhaseAmount, currentTime, loginUserId);
     }
 
     /**
@@ -278,13 +304,10 @@ public class StatementServiceImpl implements StatementService {
         } else {
             statementExpectPayTime = statementEndTime;
         }
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(thisPhaseStartTime);
-        int thisMonth = calendar.get(Calendar.MONTH) + 1;
-        return buildStatementOrderDetailDO(customerId, orderId, orderItemType, orderItemReferId, thisMonth, statementExpectPayTime, thisPhaseStartTime, statementEndTime, middlePhaseAmount, currentTime, loginUserId);
+        return buildStatementOrderDetailDO(customerId, orderId, orderItemType, orderItemReferId, statementExpectPayTime, thisPhaseStartTime, statementEndTime, middlePhaseAmount, currentTime, loginUserId);
     }
 
-    StatementOrderDetailDO buildStatementOrderDetailDO(Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Integer statementMonth, Date statementExpectPayTime, Date startTime, Date endTime, BigDecimal statementDetailAmount, Date currentTime, Integer loginUserId) {
+    StatementOrderDetailDO buildStatementOrderDetailDO(Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date statementExpectPayTime, Date startTime, Date endTime, BigDecimal statementDetailAmount, Date currentTime, Integer loginUserId) {
         StatementOrderDetailDO statementOrderDetailDO = new StatementOrderDetailDO();
         statementOrderDetailDO.setCustomerId(customerId);
         statementOrderDetailDO.setOrderId(orderId);
@@ -292,7 +315,6 @@ public class StatementServiceImpl implements StatementService {
         statementOrderDetailDO.setOrderItemReferId(orderItemReferId);
         statementOrderDetailDO.setOrderId(orderId);
         statementOrderDetailDO.setStatementOrderId(1);
-        statementOrderDetailDO.setStatementMonth(statementMonth);
         statementOrderDetailDO.setStatementExpectPayTime(statementExpectPayTime);
         statementOrderDetailDO.setStatementStartTime(startTime);
         statementOrderDetailDO.setStatementEndTime(endTime);
