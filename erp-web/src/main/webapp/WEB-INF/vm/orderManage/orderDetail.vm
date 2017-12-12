@@ -45,17 +45,17 @@
                         <div class="form-horizontal panel-body bg-light dark">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="form-group field">
+                                    <div class="form-group field mbn">
                                         <label class="col-md-3 control-label">客户</label>
                                         <div class="col-md-9">
-                                            <p class="form-control-static text-muted">{{buyerCustomerName}}</p>
+                                            <p class="form-control-static text-muted">{{buyerCustomerName}}（客户编号：{{buyerCustomerNo}}）</p>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group field">
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">备注</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{buyerRemark}}</p></div>
+                                    </div>
+                                    <div class="form-group field mbn">
                                         <label class="col-md-3 control-label" style="visibility: hidden;">收货地址</label>
                                         <div class="col-md-9">
                                             <div class="panel">
@@ -78,28 +78,49 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-md-6">
-                                    <div class="form-group field">
-                                        <label class="col-md-3 control-label">运费</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{logisticsAmount}}</p></div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">订单状态</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{orderStatusValue}}</p></div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group field">
+                                    <div class="form-group field mbn">
                                         <label class="col-md-3 control-label">起租日期</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{rentStartTimeFormat}}</p></div>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{rentStartTimeFormat}}&nbsp;</p></div>
                                     </div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">支付时间</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{payTimeFormat}}&nbsp;</p></div>
+                                    </div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">发货时间</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{deliveryTimeFormat}}&nbsp;</p></div>
+                                    </div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">确认收货</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{confirmDeliveryTimeFormat}}&nbsp;</p></div>
+                                    </div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">预计归还</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{expectReturnTimeFormat}}&nbsp;</p></div>
+                                    </div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">实际归还</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{actualReturnTimeFormat}}&nbsp;</p></div>
+                                    </div>
+
                                 </div>
                             </div>
+                        </div>
+                        <div class="form-horizontal panel-body bg-light dark">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="form-group field">
-                                        <label class="col-md-3 control-label">购买人备注</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{buyerRemark}}</p></div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">销售员</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{orderSellerName}}</p></div>
+                                    </div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">订单所属公司</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{orderSubCompanyName}}</p></div>
                                     </div>
                                 </div>
                             </div>
@@ -107,17 +128,43 @@
                         <div class="form-horizontal panel-body bg-light dark">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="form-group field">
-                                        <label class="col-md-3 control-label">销售员</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{orderSellerName}}</p></div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">押金</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{totalDepositAmountFormat}}&nbsp;</p></div>
+                                    </div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">授信押金</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{totalCreditDepositAmountFormat}}&nbsp;</p></div>
+                                    </div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">保险金</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{totalInsuranceAmountFormat}}&nbsp;</p></div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="form-horizontal panel-body bg-light dark">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="form-group field">
-                                        <label class="col-md-3 control-label">订单所属公司</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{orderSubCompanyName}}</p></div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">商品总数</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{totalProductCount}}&nbsp;</p></div>
+                                    </div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">商品总价</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{totalProductAmountFormat}}&nbsp;</p></div>
+                                    </div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">实际支付</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{totalOrderAmountFormat}}&nbsp;</p></div>
+                                    </div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">共计优惠</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{totalDiscountAmountFormat}}&nbsp;</p></div>
+                                    </div>
+                                    <div class="form-group field mbn">
+                                        <label class="col-md-3 control-label">运费</label>
+                                        <div class="col-md-9"><p class="form-control-static text-muted">{{logisticsAmountFormat}}&nbsp;</p></div>
                                     </div>
                                 </div>
                             </div>
