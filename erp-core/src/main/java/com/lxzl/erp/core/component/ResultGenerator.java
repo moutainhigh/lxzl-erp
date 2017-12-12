@@ -34,7 +34,7 @@ public class ResultGenerator {
 
     public Result generate(ServiceResult serviceResult) {
         String code = (String)serviceResult.getErrorCode();
-        Object data = serviceResult.getErrorCode();
+        Object data = serviceResult.getResult();
         Object[] formatArgs = serviceResult.getFormatArgs();
         Result result = null;
         if (SUCCESS_CODE.equals(code)) {

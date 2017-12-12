@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.returnOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.returnOrder.AddReturnOrderGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.io.Serializable;
@@ -14,14 +15,14 @@ public class ReturnOrderConsignInfo implements Serializable {
 	private Integer returnOrderConsignInfoId;   //唯一标识
 	private Integer returnOrderId;   //退还ID
 	private String returnOrderNo;   //退还编号
-	@NotBlank(message = ErrorCode.CONSIGNEE_NAME_NOT_NULL)
+	@NotBlank(message = ErrorCode.CONSIGNEE_NAME_NOT_NULL,groups = {AddReturnOrderGroup.class})
 	private String consigneeName;   //收货人姓名
-	@NotBlank(message = ErrorCode.CONSIGNEE_PHONE_NOT_NULL)
+	@NotBlank(message = ErrorCode.CONSIGNEE_PHONE_NOT_NULL,groups = {AddReturnOrderGroup.class})
 	private String consigneePhone;   //收货人手机号
 	private Integer province;   //省份ID，省份ID
 	private Integer city;   //城市ID，对应城市ID
 	private Integer district;   //区ID，对应区ID
-	@NotBlank(message = ErrorCode.ADDRESS_NOT_NULL)
+	@NotBlank(message = ErrorCode.ADDRESS_NOT_NULL,groups = {AddReturnOrderGroup.class})
 	private String address;   //详细地址
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注

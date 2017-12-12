@@ -23,4 +23,8 @@ public class WorkflowType {
      * 换货单审批
      */
     public static Integer WORKFLOW_TYPE_CHANGE = 4;
+    /**
+     * 退货单审批
+     */
+    public static Integer WORKFLOW_TYPE_RETURN = 5;
 }

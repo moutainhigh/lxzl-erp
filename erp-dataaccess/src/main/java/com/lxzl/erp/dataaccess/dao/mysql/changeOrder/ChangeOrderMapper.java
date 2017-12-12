@@ -10,4 +10,6 @@ public interface ChangeOrderMapper extends BaseMysqlDAO<ChangeOrderDO> {
 	List<ChangeOrderDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+	ChangeOrderDO findByNo(@Param("changeOrderNo") String changeOrderNO);
 }

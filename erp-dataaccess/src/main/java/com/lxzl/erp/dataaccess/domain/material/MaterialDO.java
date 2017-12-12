@@ -30,10 +30,12 @@ public class MaterialDO extends BaseDO {
     private Integer dataStatus;
     private String remark;
     private List<MaterialImgDO> materialImgDOList;
-
+    @Transient
     private Integer rentCount;
+    @Transient
     private Integer returnCount;
-    private Integer canReturnCount;
+    @Transient
+    private Integer canProcessCount;
     @Transient
     private String materialModelName;
 
@@ -189,12 +191,12 @@ public class MaterialDO extends BaseDO {
         this.returnCount = returnCount;
     }
 
-    public Integer getCanReturnCount() {
-        return canReturnCount;
+    public Integer getCanProcessCount() {
+        return canProcessCount;
     }
 
-    public void setCanReturnCount(Integer canReturnCount) {
-        this.canReturnCount = canReturnCount;
+    public void setCanProcessCount(Integer canProcessCount) {
+        this.canProcessCount = canProcessCount;
     }
 
     public String getMaterialModelName() {

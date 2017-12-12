@@ -102,4 +102,18 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.changeOrder.ChangeOrderMaterialDO">
 		UPDATE erp_change_order_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<insert id="batchSave" parameterType="java.util.List">
+		insert into erp_change_order_material
+		(change_order_id,change_order_no,change_material_id_src,change_material_id_dest,change_material_count,real_change_material_count,change_material_snapshot_src,change_material_snapshot_dest,data_status,remark,create_time,create_user,update_time,update_user)
+		values
+		<foreach collection="changeOrderMaterialDOList" item="changeOrderMaterialDO" index="index" separator =",">
+			(
+			#{changeOrderId},#{changeOrderNo},#{changeOrderMaterialDO.changeMaterialIdSrc},#{changeOrderMaterialDO.changeMaterialIdDest},#{changeOrderMaterialDO.changeMaterialCount},
+			#{changeOrderMaterialDO.realChangeMaterialCount},#{changeOrderMaterialDO.changeMaterialSnapshotSrc},#{changeOrderMaterialDO.changeMaterialSnapshotDest},
+			#{changeOrderMaterialDO.dataStatus},#{changeOrderMaterialDO.remark},
+			#{changeOrderMaterialDO.createTime},#{changeOrderMaterialDO.createUser},#{changeOrderMaterialDO.updateTime},#{changeOrderMaterialDO.updateUser}
+			)
+		</foreach>
+	</insert>
 </mapper>

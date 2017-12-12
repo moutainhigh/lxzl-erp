@@ -36,6 +36,10 @@
 		SELECT <include refid="column_List"/> FROM erp_change_order eco 
 		WHERE eco.id = #{id, jdbcType=INTEGER} AND eco.data_status = 1 
 	</select>
+	<select id="findByNo" resultMap="ChangeOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_change_order eco
+		WHERE eco.change_order_no = #{changeOrderNo, jdbcType=VARCHAR} AND eco.data_status = 1
+	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(eco.id) FROM erp_change_order eco 

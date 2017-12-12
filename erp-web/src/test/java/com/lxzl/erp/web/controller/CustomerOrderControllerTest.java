@@ -11,21 +11,21 @@ public class CustomerOrderControllerTest extends ERPUnTransactionalTest{
     @Test
     public void pageRentProductSku() throws Exception {
         RentProductSkuPageParam rentProductSkuPageParam = new RentProductSkuPageParam();
-        rentProductSkuPageParam.setCustomerNo("CC201711301106206721011");
+        rentProductSkuPageParam.setCustomerNo("C201711152010206581143");
         TestResult result = getJsonTestResult("/customerOrder/pageRentProduct",rentProductSkuPageParam);
     }
 
     @Test
     public void pageRentMaterialCanReturn() throws Exception {
         RentMaterialCanProcessPageParam rentMaterialCanProcessPageParam = new RentMaterialCanProcessPageParam();
-        rentMaterialCanProcessPageParam.setCustomerNo("CC201711301106206721011");
+        rentMaterialCanProcessPageParam.setCustomerNo("C201711152010206581143");
         TestResult result = getJsonTestResult("/customerOrder/pageRentMaterialCanReturn",rentMaterialCanProcessPageParam);
     }
 
     @Test
     public void pageRentMaterialCanChange() throws Exception {
         RentMaterialCanProcessPageParam rentMaterialCanProcessPageParam = new RentMaterialCanProcessPageParam();
-        rentMaterialCanProcessPageParam.setCustomerNo("CC201711301106206721011");
+        rentMaterialCanProcessPageParam.setCustomerNo("C201711152010206581143");
         TestResult result = getJsonTestResult("/customerOrder/pageRentMaterialCanReturn",rentMaterialCanProcessPageParam);
     }
 

@@ -47,7 +47,7 @@ public class Material implements Serializable {
     @NotNull(message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class, AddChangeOrderParam.class})
     @Min(value = 1 , message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class, AddChangeOrderParam.class})
     private Integer returnCount;
-    private Integer canReturnCount;
+    private Integer canProcessCount;
     private String materialModelName;
 
     public Integer getMaterialId() {
@@ -234,12 +234,12 @@ public class Material implements Serializable {
         this.returnCount = returnCount;
     }
 
-    public Integer getCanReturnCount() {
-        return canReturnCount;
+    public Integer getCanProcessCount() {
+        return canProcessCount;
     }
 
-    public void setCanReturnCount(Integer canReturnCount) {
-        this.canReturnCount = canReturnCount;
+    public void setCanProcessCount(Integer canProcessCount) {
+        this.canProcessCount = canProcessCount;
     }
 
     public String getMaterialModelName() {

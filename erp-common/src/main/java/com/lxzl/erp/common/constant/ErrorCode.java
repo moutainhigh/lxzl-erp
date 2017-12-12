@@ -232,6 +232,10 @@ public class ErrorCode {
     public static final String RETURN_ORDER_IS_CHARGING_IS_NOT_NULL = "J400051";
     public static final String CHANGE_COUNT_ERROR = "J400052";
     public static final String RETURN_COUNT_ERROR = "J400053";
+    public static final String CHANGE_ORDER_NO_NOT_NULL = "J400054";
+    public static final String CHANGE_ORDER_NOT_EXISTS = "J400055";
+    public static final String CHANGE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN = "J400056";
+    public static final String CHANGE_ORDER_STATUS_CAN_NOT_STOCK_UP = "J400057";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -497,6 +501,10 @@ public class ErrorCode {
         MAP.put(ORDER_CAN_NOT_DELIVERY, "订单不能支付");
         MAP.put(ORDER_PAY_MODE_ERROR, "您当前不支持这种支付方式。");
         MAP.put(CHANGE_COUNT_ERROR, "更换数量错误");
+        MAP.put(CHANGE_ORDER_NO_NOT_NULL, "换货单编号不能为空");
+        MAP.put(CHANGE_ORDER_NOT_EXISTS, "换货单不存在");
+        MAP.put(CHANGE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的换货单可以提交");
+        MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_STOCK_UP, "当前换货单不允许备货");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");

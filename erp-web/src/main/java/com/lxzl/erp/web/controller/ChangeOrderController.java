@@ -2,7 +2,10 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.changeOrder.AddChangeOrderParam;
-import com.lxzl.erp.common.domain.validGroup.changeOrder.ChangeReturnOrderGroup;
+import com.lxzl.erp.common.domain.changeOrder.ChangeOrderCommitParam;
+import com.lxzl.erp.common.domain.changeOrder.StockUpByChangeParam;
+import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
+import com.lxzl.erp.common.domain.validGroup.changeOrder.AddChangeOrderGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.changeOrder.ChangeOrderService;
@@ -32,23 +35,32 @@ public class ChangeOrderController {
      * @return
      */
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public Result add(@RequestBody @Validated(ChangeReturnOrderGroup.class) AddChangeOrderParam addChangeOrderParam, BindingResult validResult) {
+    public Result add(@RequestBody @Validated(AddChangeOrderGroup.class) AddChangeOrderParam addChangeOrderParam, BindingResult validResult) {
 
         ServiceResult<String, String> serviceResult = changeOrderService.add(addChangeOrderParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+    /**
+     * 换货单提交
+     * @param changeOrderCommitParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "commit", method = RequestMethod.POST)
+    public Result commit(@RequestBody @Validated(ExtendGroup.class) ChangeOrderCommitParam changeOrderCommitParam, BindingResult validResult) {
+        return resultGenerator.generate(changeOrderService.commit(changeOrderCommitParam));
+    }
 
-//    /**
-//     * 换货备货接口
-//     * @param doReturnEquipmentParam
-//     * @param validResult
-//     * @return
-//     */
-//    @RequestMapping(value = " stockUpByChange", method = RequestMethod.POST)
-//    public Result stockUpByChange(@RequestBody @Validated DoReturnEquipmentParam doReturnEquipmentParam, BindingResult validResult) {
-//        ServiceResult<String, ProductEquipment> serviceResult = changeOrderService.stockUpByChange(doReturnEquipmentParam);
-//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-//    }
+    /**
+     * 换货备货接口
+     * @param stockUpByChangeParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = " stockUpByChange", method = RequestMethod.POST)
+    public Result stockUpByChange(@RequestBody @Validated StockUpByChangeParam stockUpByChangeParam, BindingResult validResult) {
+        return resultGenerator.generate( changeOrderService.stockUpByChange(stockUpByChangeParam));
+    }
 //    @RequestMapping(value = "doReturnMaterial", method = RequestMethod.POST)
 //    public Result doReturnMaterial(@RequestBody @Validated DoReturnMaterialParam doReturnMaterialParam, BindingResult validResult) {
 //        ServiceResult<String, Material> serviceResult = returnOrderService.doReturnMaterial(doReturnMaterialParam);

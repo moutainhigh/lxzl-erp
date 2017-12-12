@@ -27,7 +27,7 @@
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="rent_count" jdbcType="INTEGER" property="rentCount" />
-		<result column="material_can_return_count" jdbcType="INTEGER" property="canReturnCount" />
+		<result column="can_process_count" jdbcType="INTEGER" property="canProcessCount" />
 		<collection property="materialImgDOList" resultMap="MaterialImgDO" />
 	</resultMap>
 
@@ -250,8 +250,6 @@
 		erp_bulk_material ebm
 		INNER JOIN erp_order eo
 		ON ebm.order_no = eo.order_no AND eo.data_status=1
-		LEFT JOIN erp_return_order_material erom ON erom.return_material_id = ebm.material_id AND erom.data_status=1
-		LEFT JOIN erp_return_order ero ON ero.id = erom.return_order_id AND ero.data_status=1
 		WHERE ebm.order_no IS NOT NULL AND ebm.order_no != "" AND ebm.data_status = 1
 		<if test="maps.onEquipment == 0">
 			AND ebm.current_equipment_id IS NULL
@@ -261,15 +259,18 @@
 		</if>) material_main
 	</select>
 	<select id="findMaterialRent" resultMap="MaterialDO" parameterType="map">
-		SELECT <include refid="column_List"/>,<include refid="img_column_List"/>,material_main.rent_count,material_main.can_return_count FROM (
-		SELECT ebm.material_id id,COUNT(1) rent_count ,COUNT(1)-SUM(CASE ero.return_order_status WHEN 1 OR 5
-		THEN IFNULL(erom.return_material_count,0) WHEN 9 THEN IFNULL(erom.real_return_material_count,0) ELSE 0 END ) can_return_count
+		SELECT <include refid="column_List"/>,<include refid="img_column_List"/>,material_main.rent_count,material_main.can_process_count FROM (
+		SELECT ebm.material_id id,COUNT(1) rent_count ,COUNT(1)-SUM(CASE ero.return_order_status WHEN 8 OR 12
+		THEN IFNULL(erom.return_material_count,0)-IFNULL(erom.real_return_material_count,0)  ELSE 0 END )-SUM(CASE eco.change_order_status WHEN 8 OR 12 OR 16 OR 20
+		THEN IFNULL(ecom.change_material_count,0)-IFNULL(ecom.real_change_material_count,0)  ELSE 0 END ) can_process_count
 		FROM
 		erp_bulk_material ebm
 		INNER JOIN erp_order eo
 		ON ebm.order_no = eo.order_no AND eo.data_status=1
 		LEFT JOIN erp_return_order_material erom ON erom.return_material_id = ebm.material_id AND erom.data_status=1
 		LEFT JOIN erp_return_order ero ON ero.id = erom.return_order_id AND ero.data_status=1
+		LEFT JOIN erp_change_order_material ecom ON ecom.change_material_id_src = ebm.material_id AND ecom.data_status=1
+		LEFT JOIN erp_change_order eco ON eco.id = ecom.change_order_id AND eco.data_status=1
 		WHERE ebm.order_no IS NOT NULL AND ebm.order_no != "" AND ebm.data_status = 1
 		<if test="maps.onEquipment == 0">
 			AND ebm.current_equipment_id IS NULL

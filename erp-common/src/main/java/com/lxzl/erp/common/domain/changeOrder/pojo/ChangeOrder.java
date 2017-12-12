@@ -23,7 +23,7 @@ public class ChangeOrder implements Serializable {
 	private Integer changeReasonType;   //换货原因类型,0-升级 ，1-损坏，2-其他
 	private String changeReason;   //换货原因
 	private Integer changeMode;   //换货方式，1-上门取件，2邮寄
-	private Integer changeOrderStatus;   //换货订单状态，1-待取货，5-处理中，9-已完成
+	private Integer changeOrderStatus;   //换货订单状态，1-待提交，5-审核中，9-待备货，13-备货中，17-已发货待取货，21-处理中，25-已完成
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Integer owner;   //换货跟单员

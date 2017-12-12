@@ -121,7 +121,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
                if(oldSkuRent==null){//如果要退还的sku不在在租列表
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_RENT_THIS);
                    return serviceResult;
-               }else if(productSku.getReturnCount()>oldSkuRent.getCanReturnCount()){//退还的sku数量大于可租数量
+               }else if(productSku.getReturnCount()>oldSkuRent.getCanProcessCount()){//退还的sku数量大于可租数量
                    serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_TOO_MORE);
                    return serviceResult;
                }
@@ -152,7 +152,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
                 if(oldMaterialRent==null){//如果要退还的物料不在在租列表
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_RENT_THIS);
                     return serviceResult;
-                }else if(material.getReturnCount()>oldMaterialRent.getCanReturnCount()){//退还的物料数量大于可租数量
+                }else if(material.getReturnCount()>oldMaterialRent.getCanProcessCount()){//退还的物料数量大于可租数量
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_TOO_MORE);
                     return serviceResult;
                 }
@@ -178,7 +178,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         returnOrderDO.setIsCharging(addReturnOrderParam.getIsCharging());
         returnOrderDO.setTotalReturnProductCount(totalReturnProductCount);
         returnOrderDO.setTotalReturnMaterialCount(totalReturnMaterialCount);
-        returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAITING);
+        returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
         returnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         returnOrderDO.setOwner(userSupport.getCurrentUserId());
         returnOrderDO.setRemark(addReturnOrderParam.getRemark());
@@ -610,7 +610,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         return serviceResult;
     }
     /**
-     * 只有待处理订单可以取消
+     * 只有待提交订单可以取消
      * @param returnOrder
      * @return
      */
@@ -622,7 +622,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
             return serviceResult;
         }
-        if(ReturnOrderStatus.RETURN_ORDER_STATUS_WAITING.equals(returnOrderDO.getReturnOrderStatus())){
+        if(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(returnOrderDO.getReturnOrderStatus())){
             returnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
             returnOrderDO.setUpdateTime(new Date());
             returnOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());

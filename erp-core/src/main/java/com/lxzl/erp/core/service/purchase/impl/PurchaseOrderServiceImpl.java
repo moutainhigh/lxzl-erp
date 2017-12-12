@@ -691,6 +691,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             result.setErrorCode(needVerifyResult.getErrorCode());
             return result;
         }else if(needVerifyResult.getResult()){
+            if(purchaseOrderCommitParam.getVerifyUserId()==null){
+                result.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
+                return result;
+            }
             //调用提交审核服务
             ServiceResult<String, String>  verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE, purchaseOrderDO.getPurchaseNo(), purchaseOrderCommitParam.getVerifyUserId(), purchaseOrderCommitParam.getRemark());
             //修改提交审核状态

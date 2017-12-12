@@ -43,6 +43,7 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
         try {
 //            sessionResult = getLoginSession("lxcs","123456");//采购部审核人
+//            sessionResult = getLoginSession("weblee","123456");
             sessionResult = getLoginSession("maotao","123456");
             this.session = sessionResult.mockHttpSession;
         } catch (Exception e) {

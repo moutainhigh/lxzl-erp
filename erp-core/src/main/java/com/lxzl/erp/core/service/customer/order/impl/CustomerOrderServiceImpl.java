@@ -47,7 +47,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             Product product = productService.queryProductBySkuId(productSkuDO.getId()).getResult();
             ProductSku productSku = product.getProductSkuList().get(0);
             productSku.setReturnCount(productSkuDO.getRentCount());
-            productSku.setCanProcessCount(productSkuDO.getCanReturnCount());
+            productSku.setCanProcessCount(productSkuDO.getCanProcessCount());
             Product p = productMap.get(product.getProductId());
             if (p == null) {
                 productMap.put(product.getProductId(), product);
