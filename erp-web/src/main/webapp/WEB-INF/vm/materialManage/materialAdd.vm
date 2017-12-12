@@ -80,6 +80,8 @@
                                                     <i class="arrow"></i>
                                                 </label>
                                             </div>
+                                        </div>
+                                        <div class="section row">
                                             <div class="col-md-4">
                                                 <label for="materialPrice" class="field-label">本身价值</label>
                                                 <label for="materialPrice" class="field select prepend-icon">
@@ -87,16 +89,13 @@
                                                     <label for="materialPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                                 </label>
                                             </div>
-                                        </div>
-                                        <div class="section row">
-
-                                            <div class="col-md-4">
-                                                <label for="userName" class="field-label">次租价</label>
-                                                <label for="timeRentPrice" class="field prepend-icon">
-                                                    <input type="text" name="timeRentPrice" id="timeRentPrice" class="gui-input required moneyNumber" />
-                                                    <label for="timeRentPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                                                </label>
-                                            </div>
+##                                            <div class="col-md-4">
+##                                                <label for="userName" class="field-label">次租价</label>
+##                                                <label for="timeRentPrice" class="field prepend-icon">
+##                                                    <input type="text" name="timeRentPrice" id="timeRentPrice" class="gui-input required moneyNumber" />
+##                                                    <label for="timeRentPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+##                                                </label>
+##                                            </div>
                                             <div class="col-md-4">
                                                 <label for="userName" class="field-label">日租价</label>
                                                 <label for="dayRentPrice" class="field prepend-icon">
