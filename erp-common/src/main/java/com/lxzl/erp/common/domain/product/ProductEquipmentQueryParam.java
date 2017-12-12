@@ -1,5 +1,6 @@
 package com.lxzl.erp.common.domain.product;
 
+import com.lxzl.erp.common.domain.base.BasePageParam;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -7,7 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProductEquipmentQueryParam extends PageQuery implements Serializable {
+public class ProductEquipmentQueryParam extends BasePageParam implements Serializable {
     private Integer productEquipmentId;
     private String orderNo;
     private String equipmentNo;
@@ -20,6 +21,7 @@ public class ProductEquipmentQueryParam extends PageQuery implements Serializabl
     private Date createEndTime;
 
     private Integer currentWarehouseId;
+    private Integer ownerWarehouseId;
 
     public Integer getProductEquipmentId() {
         return productEquipmentId;
@@ -107,5 +109,13 @@ public class ProductEquipmentQueryParam extends PageQuery implements Serializabl
 
     public void setIsNew(Integer isNew) {
         this.isNew = isNew;
+    }
+
+    public Integer getOwnerWarehouseId() {
+        return ownerWarehouseId;
+    }
+
+    public void setOwnerWarehouseId(Integer ownerWarehouseId) {
+        this.ownerWarehouseId = ownerWarehouseId;
     }
 }

@@ -16,8 +16,10 @@ public class ProductEquipmentDO extends BaseDO {
     private Integer skuId;
     private String orderNo;
     private Integer currentWarehouseId;
+    private String currentWarehouseName;
     private Integer currentWarehousePositionId;
     private Integer ownerWarehouseId;
+    private String ownerWarehouseName;
     private Integer ownerWarehousePositionId;
     private BigDecimal equipmentPrice;
     private Integer equipmentStatus;
@@ -165,5 +167,21 @@ public class ProductEquipmentDO extends BaseDO {
 
     public void setIsNew(Integer isNew) {
         this.isNew = isNew;
+    }
+
+    public String getCurrentWarehouseName() {
+        return currentWarehouseName;
+    }
+
+    public void setCurrentWarehouseName(String currentWarehouseName) {
+        this.currentWarehouseName = currentWarehouseName;
+    }
+
+    public String getOwnerWarehouseName() {
+        return ownerWarehouseName;
+    }
+
+    public void setOwnerWarehouseName(String ownerWarehouseName) {
+        this.ownerWarehouseName = ownerWarehouseName;
     }
 }

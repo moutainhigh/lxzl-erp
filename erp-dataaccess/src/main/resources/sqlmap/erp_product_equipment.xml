@@ -10,8 +10,10 @@
         <result column="sku_id" jdbcType="INTEGER" property="skuId" />
         <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
         <result column="current_warehouse_id" jdbcType="INTEGER" property="currentWarehouseId" />
+        <result column="current_warehouse_name" jdbcType="VARCHAR" property="currentWarehouseName" />
         <result column="current_warehouse_position_id" jdbcType="INTEGER" property="currentWarehousePositionId" />
         <result column="owner_warehouse_id" jdbcType="INTEGER" property="ownerWarehouseId" />
+        <result column="owner_warehouse_name" jdbcType="VARCHAR" property="ownerWarehouseName" />
         <result column="owner_warehouse_position_id" jdbcType="INTEGER" property="ownerWarehousePositionId" />
         <result column="equipment_price" jdbcType="DECIMAL" property="equipmentPrice" />
         <result column="equipment_status" property="equipmentStatus"/>
@@ -92,8 +94,13 @@
         FROM
         (
             SELECT <include refid="column_List"/>
+            <trim prefix=",">
+                mp.product_name AS product_name, ewc.warehouse_name as current_warehouse_name, ewo.warehouse_name as owner_warehouse_name
+            </trim>
             FROM erp_product_equipment epe
             INNER JOIN erp_product mp ON epe.product_id = mp.id
+            INNER JOIN erp_warehouse ewc ON epe.current_warehouse_id = ewc.id
+            INNER JOIN erp_warehouse ewo ON epe.owner_warehouse_id = ewo.id
             where epe.id = #{id, jdbcType=INTEGER} and epe.data_status = 1
         ) equipment_main LEFT JOIN erp_product_equipment_bulk_material epebm ON equipment_main.id = epebm.equipment_id and epebm.data_status = 1
         LEFT JOIN erp_bulk_material ebm ON epebm.bulk_material_id = ebm.id AND ebm.data_status = 1
@@ -116,8 +123,13 @@
         FROM
         (
             SELECT <include refid="column_List"/>
+            <trim prefix=",">
+                mp.product_name AS product_name, ewc.warehouse_name as current_warehouse_name, ewo.warehouse_name as owner_warehouse_name
+            </trim>
             FROM erp_product_equipment epe
             INNER JOIN erp_product mp ON epe.product_id = mp.id
+            INNER JOIN erp_warehouse ewc ON epe.current_warehouse_id = ewc.id
+            INNER JOIN erp_warehouse ewo ON epe.owner_warehouse_id = ewo.id
             where epe.equipment_no = #{equipmentNo, jdbcType=INTEGER} and epe.data_status = 1
         ) equipment_main LEFT JOIN erp_product_equipment_bulk_material epebm ON equipment_main.id = epebm.equipment_id and epebm.data_status = 1
         LEFT JOIN erp_bulk_material ebm ON epebm.bulk_material_id = ebm.id AND ebm.data_status = 1
@@ -133,10 +145,14 @@
         (
             select
             <include refid="column_List"/>
-            , mp.product_name AS product_name
+            <trim prefix=",">
+                mp.product_name AS product_name, ewc.warehouse_name as current_warehouse_name, ewo.warehouse_name as owner_warehouse_name
+            </trim>
             from erp_product_equipment epe
             INNER JOIN erp_product mp ON epe.product_id = mp.id
-            <where>
+            INNER JOIN erp_warehouse ewc ON epe.current_warehouse_id = ewc.id
+            INNER JOIN erp_warehouse ewo ON epe.owner_warehouse_id = ewo.id
+        <where>
                 <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.productEquipmentId != null">
                     and epe.id = #{maps.productEquipmentQueryParam.productEquipmentId, jdbcType=INTEGER}
                 </if>
@@ -160,6 +176,9 @@
                 </if>
                 <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.currentWarehouseId != null">
                     and epe.current_warehouse_id = #{maps.productEquipmentQueryParam.currentWarehouseId, jdbcType=INTEGER}
+                </if>
+                <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.ownerWarehouseId != null">
+                    and epe.owner_warehouse_id = #{maps.productEquipmentQueryParam.ownerWarehouseId, jdbcType=INTEGER}
                 </if>
                 <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != ''">
                     <![CDATA[ AND epe.create_time >= #{maps.productEquipmentQueryParam.createStartTime} ]]>
@@ -205,6 +224,9 @@
             </if>
             <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.currentWarehouseId != null">
                 and epe.current_warehouse_id = #{maps.productEquipmentQueryParam.currentWarehouseId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.ownerWarehouseId != null">
+                and epe.owner_warehouse_id = #{maps.productEquipmentQueryParam.ownerWarehouseId, jdbcType=INTEGER}
             </if>
             <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.isNew != null">
                 and epe.is_new = #{maps.productEquipmentQueryParam.isNew, jdbcType=INTEGER}
