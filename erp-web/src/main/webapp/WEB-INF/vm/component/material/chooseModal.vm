@@ -59,7 +59,6 @@
                         <td>{{materialTypeStr}}</td>
                         <td>{{materialPriceFormat}}</td>
                         <td>
-                            <p>次租：￥{{timeRentPriceFormat}}</p>
                             <p>日租：￥{{dayRentPriceFormat}}</p>
                             <p>月租：￥{{monthRentPriceFormat}}</p>
                         </td>
