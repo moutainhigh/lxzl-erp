@@ -167,9 +167,9 @@
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
+                'manage.order.handle.mixin.js',
                 'manage.order.js',
-                'modal.submit.audit.js',
-                'manage.order.picking.js');
+                'modal.submit.audit.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

@@ -17,8 +17,28 @@
         <section id="content" class="animated fadeIn">
             <form class="" id="orderDetailForm">
                 <div class="panel panel-primary panel-border top mb35">
-                    <div class="panel-heading">
-                        <span class="panel-title">基本信息</span>
+##                    <div class="panel-heading">
+##                        <span class="panel-title">基本信息</span>
+##                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>订单编号：<small id="orderNo"></small></h5>
+                            </div>
+                            <div class="col-md-8 text-right">
+                                <script type="text/html" id="actionButtonsTpl">
+                                    {{#acitonButtons}}
+                                        {{#showButton}}
+                                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-orderno="{{orderNo}}">
+                                            <i class="{{iClass}}"></i> {{text}}
+                                        </a>
+                                        {{/showButton}}
+                                    {{/acitonButtons}}
+                                </script>
+
+                                <div class="btn-group" id="actionButtons"></div>
+                            </div>
+                        </div>
                     </div>
                     <script type="text/html" id="orderBaseInfoTpl">
                         {{#order}}
@@ -104,10 +124,10 @@
                         </div>
                         {{/order}}
                     </script>
-                    <div class="section row" id="orderBaseInfo"></div>
+                    <div id="orderBaseInfo"></div>
                     <div class="panel-heading">
                         <div class="row">
-                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
+                            <ul class="nav panel-tabs-border panel-tabs">
                                 <li class="active">
                                     <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
                                 </li>
@@ -120,16 +140,26 @@
                     <div class="panel-body dark pn">
                         <div class="tab-content pn br-n">
                             <div id="purchaseOrderProductItems" class="tab-pane active">
+                                <div class="panel-menu p12 br-n br-b">
+                                    <div class="row">
+                                        <div class="pull-left ml10">
+                                            <script type="text/html" id="pickingProductButtonsTpl">
+                                                {{#acitonButtons}}
+                                                {{#showButton}}
+                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-orderno="{{orderNo}}">
+                                                    <i class="{{iClass}}"></i> {{text}}
+                                                </a>
+                                                {{/showButton}}
+                                                {{/acitonButtons}}
+                                            </script>
+                                            <div class="btn-group actionCommonButtons" id="pickingProductButtons"></div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="table-responsive">
                                     <script type="text/html" id="dataListTpl">
                                         <thead>
                                         <tr class="bg-light">
-                                            <th>
-                                                <label class="option block mn">
-                                                    <input type="checkbox" name="checkAll" value="">
-                                                    <span class="checkbox mn"></span>
-                                                </label>
-                                            </th>
                                             <th>商品ID</th>
                                             <th>图片</th>
                                             <th>商品名称</th>
@@ -141,12 +171,6 @@
                                         {{#dataSource}}
                                         {{#listData}}
                                         <tr class="productRow" productRowKey="{{productId}}">
-                                            <td>
-                                                <label class="option block mn">
-                                                    <input type="checkbox" name="checkItem" value="{{productId}}">
-                                                    <span class="checkbox mn"></span>
-                                                </label>
-                                            </td>
                                             <td>{{productId}}</td>
                                             <td>
                                                 <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
@@ -200,12 +224,6 @@
                                     <script type="text/html" id="materialDataListTpl">
                                         <thead>
                                         <tr>
-                                            <th>
-                                                <label class="option block mn">
-                                                    <input type="checkbox" name="checkAll" value="">
-                                                    <span class="checkbox mn"></span>
-                                                </label>
-                                            </th>
                                             <th>编号</th>
                                             <th>名称</th>
                                             <th>类型</th>
@@ -219,18 +237,13 @@
                                             <th>租赁时长</th>
                                             <th>保险金</th>
                                             <th>支付方式</th>
+                                            <th>操作</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         {{#dataSource}}
                                         {{#listData}}
                                         <tr class="materialRow">
-                                            <td>
-                                                <label class="option block mn">
-                                                    <input type="checkbox" name="checkItem" value="{{materialNo}}">
-                                                    <span class="checkbox mn"></span>
-                                                </label>
-                                            </td>
                                             <td>{{materialNo}}</td>
                                             <td>{{materialName}}</td>
                                             <td>{{materialTypeStr}}</td>
@@ -259,6 +272,12 @@
                                             <td>
                                                 {{payModeValue}}
                                             </td>
+                                           <td>
+                                               <div class="btn-group text-right">
+                                                   <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}">配货</a>
+                                                   <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}">清货</a>
+                                               </div>
+                                           </td>
                                         </tr>
                                         {{/listData}}
                                         {{^listData}}
@@ -289,9 +308,12 @@
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'manage.order.mixin.js',
+                'manage.order.handle.mixin.js',
                 'manage.order.detail.js',
                 'manage.order.item.render.js',
-                'manage.order.util.js');
+                'manage.order.util.js',
+                'modal.submit.audit.js',
+                'manage.order.picking.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
