@@ -11,6 +11,8 @@ import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.core.service.changeOrder.ChangeOrderService;
+import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.core.service.user.UserService;
@@ -68,6 +70,12 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private ChangeOrderService changeOrderService;
+
+    @Autowired
+    private DeploymentOrderService deploymentOrderService;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -387,6 +395,20 @@ public class WorkflowServiceImpl implements WorkflowService {
                 }
             } else if (WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())) {
                 boolean receiveResult = orderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
+                if (!receiveResult) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
+                    result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+                    return result;
+                }
+            } else if (WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())) {
+                boolean receiveResult = deploymentOrderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
+                if (!receiveResult) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
+                    result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+                    return result;
+                }
+            } else if (WorkflowType.WORKFLOW_TYPE_CHANGE.equals(workflowLinkDO.getWorkflowType())) {
+                boolean receiveResult = changeOrderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
                 if (!receiveResult) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
                     result.setErrorCode(ErrorCode.SYSTEM_ERROR);
