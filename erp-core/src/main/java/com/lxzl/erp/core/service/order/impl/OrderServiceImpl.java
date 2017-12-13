@@ -10,7 +10,6 @@ import com.lxzl.erp.common.domain.order.pojo.*;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.domain.warehouse.ProductOutStockParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
@@ -327,7 +326,6 @@ public class OrderServiceImpl implements OrderService {
                     productLastMonthAmount = (BigDecimal) (map.get("product_unit_amount"));
                 }
             }
-            ;
             response.setProductSkuId(request.getProductSkuId());
             response.setProductSkuLastDayPrice(productLastDayAmount);
             response.setProductSkuLastMonthPrice(productLastMonthAmount);
@@ -359,6 +357,58 @@ public class OrderServiceImpl implements OrderService {
 
         result.setResult(response);
         result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> returnEquipment(String orderNo, String returnEquipmentNo, String changeEquipmentNo, Date returnDate) {
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+        ServiceResult<String, String> result = new ServiceResult<>();
+        if (orderNo == null || returnEquipmentNo == null || returnDate == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        if (orderDO == null) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderIdAndEquipmentNo(orderDO.getId(), returnEquipmentNo);
+        if (orderProductEquipmentDO == null) {
+            result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_NOT_EXISTS);
+            return result;
+        }
+        OrderProductDO orderProductDO = orderProductMapper.findById(orderProductEquipmentDO.getOrderProductId());
+        // 如果是换货，产生新的记录
+        if(StringUtil.isNotBlank(changeEquipmentNo)){
+            ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(changeEquipmentNo);
+            if(productEquipmentDO == null){
+                result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_EXISTS);
+                return result;
+            }
+            OrderProductEquipmentDO newOrderProductEquipmentDO = new OrderProductEquipmentDO();
+            newOrderProductEquipmentDO.setOrderId(orderProductEquipmentDO.getOrderId());
+            newOrderProductEquipmentDO.setOrderProductId(orderProductEquipmentDO.getOrderProductId());
+            newOrderProductEquipmentDO.setEquipmentId(productEquipmentDO.getId());
+            newOrderProductEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
+            newOrderProductEquipmentDO.setRentStartTime(returnDate);
+            newOrderProductEquipmentDO.setExpectReturnTime(orderProductEquipmentDO.getExpectReturnTime());
+            newOrderProductEquipmentDO.setExpectRentAmount(calculateEquipmentRentAmount(returnDate,orderProductEquipmentDO.getExpectReturnTime(),orderProductDO.getProductUnitAmount()));
+            newOrderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            newOrderProductEquipmentDO.setCreateTime(currentTime);
+            newOrderProductEquipmentDO.setUpdateTime(currentTime);
+            newOrderProductEquipmentDO.setCreateUser(loginUser.getUserId().toString());
+            newOrderProductEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+        }
+
+        orderProductEquipmentDO.setActualRentAmount(calculateEquipmentRentAmount(orderProductEquipmentDO.getRentStartTime(),returnDate, orderProductDO.getProductUnitAmount()));
+        orderProductEquipmentDO.setActualReturnTime(returnDate);
+        orderProductEquipmentDO.setUpdateTime(currentTime);
+        orderProductEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+        orderProductEquipmentMapper.update(orderProductEquipmentDO);
+        bulkMaterialMapper.updateEquipmentBulkMaterialStatus(returnEquipmentNo, BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
         return result;
     }
 
@@ -631,6 +681,7 @@ public class OrderServiceImpl implements OrderService {
                     orderProductEquipmentDO.setOrderProductId(orderProductDO.getId());
                     orderProductEquipmentDO.setEquipmentId(productEquipmentDO.getId());
                     orderProductEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
+                    orderProductEquipmentDO.setRentStartTime(orderDO.getRentStartTime());
                     orderProductEquipmentDO.setExpectReturnTime(expectReturnTime);
                     orderProductEquipmentDO.setExpectRentAmount(expectRentAmount);
                     orderProductEquipmentDO.setActualRentAmount(BigDecimal.ZERO);
@@ -745,7 +796,7 @@ public class OrderServiceImpl implements OrderService {
             orderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
             orderProductEquipmentDO.setUpdateTime(currentTime);
             orderProductEquipmentDO.setUpdateUser(loginUserId.toString());
-            orderProductEquipmentMapper.save(orderProductEquipmentDO);
+            orderProductEquipmentMapper.update(orderProductEquipmentDO);
         }
 
         if (materialId != null) {
@@ -1301,6 +1352,29 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return ErrorCode.SUCCESS;
+    }
+
+    private BigDecimal calculateEquipmentRentAmount(Date rentStartDate, Date returnDate, BigDecimal unitAmount) {
+        int monthSpace = com.lxzl.erp.common.util.DateUtil.getMonthSpace(returnDate, rentStartDate);
+        Calendar returnDateCalendar = Calendar.getInstance();
+        returnDateCalendar.setTime(returnDate);
+        Calendar rentStartDateCalendar = Calendar.getInstance();
+        rentStartDateCalendar.setTime(rentStartDate);
+
+        Integer previousSurplusDays = 0, nextSurplusDays = 0;
+        int returnDateDay = returnDateCalendar.get(Calendar.DAY_OF_MONTH);
+        int rentStartDateDay = rentStartDateCalendar.get(Calendar.DAY_OF_MONTH);
+        int previousAllDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(DateUtil.monthInterval(returnDate, -1));
+        int nextAllDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(returnDate);
+        if (returnDateDay > rentStartDateDay) {
+            nextSurplusDays = returnDateDay - rentStartDateDay;
+        } else {
+            previousSurplusDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(DateUtil.monthInterval(returnDate, -1)) - rentStartDateDay;
+            nextSurplusDays = rentStartDateDay;
+        }
+        BigDecimal surplusDaysAmount = BigDecimalUtil.add(BigDecimalUtil.mul(BigDecimalUtil.div(unitAmount, new BigDecimal(previousAllDays), 2), new BigDecimal(previousSurplusDays)), BigDecimalUtil.mul(BigDecimalUtil.div(unitAmount, new BigDecimal(nextAllDays), 2), new BigDecimal(nextSurplusDays)));
+
+        return BigDecimalUtil.add(BigDecimalUtil.mul(unitAmount, new BigDecimal(monthSpace)), surplusDaysAmount);
     }
 
 

@@ -8,6 +8,7 @@
 		<result column="order_product_id" jdbcType="INTEGER" property="orderProductId" />
 		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
 		<result column="equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
+		<result column="rent_start_time" jdbcType="TIMESTAMP" property="rentStartTime" />
 		<result column="expect_return_time" jdbcType="TIMESTAMP" property="expectReturnTime" />
 		<result column="actual_return_time" jdbcType="TIMESTAMP" property="actualReturnTime" />
 		<result column="expect_rent_amount" jdbcType="DECIMAL" property="expectRentAmount" />
@@ -21,7 +22,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eope.id,eope.order_id,eope.order_product_id,eope.equipment_id,eope.equipment_no,eope.expect_return_time,eope.actual_return_time,eope.expect_rent_amount,eope.actual_rent_amount,eope.data_status,eope.remark,eope.create_time,eope.create_user,eope.update_time,eope.update_user
+		eope.id,eope.order_id,eope.order_product_id,eope.equipment_id,eope.equipment_no,eope.rent_start_time,eope.expect_return_time,eope.actual_return_time,eope.expect_rent_amount,eope.actual_rent_amount,eope.data_status,eope.remark,eope.create_time,eope.create_user,eope.update_time,eope.update_user
 	</sql>
 
 	<select id="findById" resultMap="OrderProductEquipmentDO" parameterType="java.lang.Integer">
@@ -77,6 +78,9 @@
 			<if test="equipmentNo != null">
 				equipment_no = #{equipmentNo,jdbcType=VARCHAR},
 			</if>
+			<if test="rentStartTime != null">
+				rent_start_time = #{rentStartTime,jdbcType=TIMESTAMP},
+			</if>
 			<if test="expectReturnTime != null">
 				expect_return_time = #{expectReturnTime,jdbcType=TIMESTAMP},
 			</if>
@@ -119,9 +123,9 @@
 	</update>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_order_product_equipment (order_id,order_product_id,equipment_id,equipment_no,expect_return_time,actual_return_time,expect_rent_amount,actual_rent_amount,data_status,remark,create_time,create_user,update_time,update_user)
+		insert into erp_order_product_equipment (order_id,order_product_id,equipment_id,equipment_no,rent_start_time,expect_return_time,actual_return_time,expect_rent_amount,actual_rent_amount,data_status,remark,create_time,create_user,update_time,update_user)
 		<foreach item="orderProductEquipmentDO" collection="orderProductEquipmentDOList" separator="UNION ALL">
-			SELECT #{orderProductEquipmentDO.orderId},#{orderProductEquipmentDO.orderProductId},#{orderProductEquipmentDO.equipmentId},#{orderProductEquipmentDO.equipmentNo},#{orderProductEquipmentDO.expectReturnTime},#{orderProductEquipmentDO.actualReturnTime},#{orderProductEquipmentDO.expectRentAmount},#{orderProductEquipmentDO.actualRentAmount},#{orderProductEquipmentDO.dataStatus},#{orderProductEquipmentDO.remark},#{orderProductEquipmentDO.createTime},#{orderProductEquipmentDO.createUser},#{orderProductEquipmentDO.updateTime},#{orderProductEquipmentDO.updateUser}
+			SELECT #{orderProductEquipmentDO.orderId},#{orderProductEquipmentDO.orderProductId},#{orderProductEquipmentDO.equipmentId},#{orderProductEquipmentDO.equipmentNo},#{orderProductEquipmentDO.rentStartTime},#{orderProductEquipmentDO.expectReturnTime},#{orderProductEquipmentDO.actualReturnTime},#{orderProductEquipmentDO.expectRentAmount},#{orderProductEquipmentDO.actualRentAmount},#{orderProductEquipmentDO.dataStatus},#{orderProductEquipmentDO.remark},#{orderProductEquipmentDO.createTime},#{orderProductEquipmentDO.createUser},#{orderProductEquipmentDO.updateTime},#{orderProductEquipmentDO.updateUser}
 			FROM DUAL
 		</foreach>
 	</insert>

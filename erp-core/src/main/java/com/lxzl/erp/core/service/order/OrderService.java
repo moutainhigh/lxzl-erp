@@ -10,6 +10,8 @@ import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.core.service.VerifyReceiver;
 import com.lxzl.se.core.service.BaseService;
 
+import java.util.Date;
+
 public interface OrderService extends VerifyReceiver {
 
     /**
@@ -112,7 +114,20 @@ public interface OrderService extends VerifyReceiver {
 
     /**
      * 根据商品ID、物料ID，查询上次租赁的价格
+     *
+     * @param request 查询请求参数
+     * @return 查询上次租赁的结果
      */
     ServiceResult<String, LastRentPriceResponse> queryLastPrice(LastRentPriceRequest request);
 
+    /**
+     * 设备归还接口
+     *
+     * @param orderNo           订单编号
+     * @param returnEquipmentNo 退还设备编号
+     * @param changeEquipmentNo 更换设备编号
+     * @param returnDate        归还时间
+     * @return 操作结果
+     */
+    ServiceResult<String, String> returnEquipment(String orderNo, String returnEquipmentNo, String changeEquipmentNo, Date returnDate);
 }

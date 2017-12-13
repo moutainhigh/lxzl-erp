@@ -437,6 +437,16 @@ public class WarehouseServiceImpl implements WarehouseService {
                 if (productSkuDO == null || !productInStorage.getProductId().equals(productSkuDO.getProductId())) {
                     return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
                 }
+
+                if(CollectionUtil.isNotEmpty(productInStorage.getProductMaterialList())){
+                    for(ProductMaterial productMaterial : productInStorage.getProductMaterialList()){
+                        MaterialDO materialDO = materialMapper.findByNo(productMaterial.getMaterialNo());
+                        if(materialDO == null){
+                            return ErrorCode.MATERIAL_NOT_EXISTS;
+                        }
+                        productMaterial.setMaterialId(materialDO.getId());
+                    }
+                }
             }
         }
         if (CollectionUtil.isNotEmpty(materialInStorageList)) {

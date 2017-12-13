@@ -242,6 +242,7 @@ public class ErrorCode {
     public static final String CHANGE_ORDER_MATERIAL_ID_NOT_NULL = "J400060";
     public static final String CHANGE_ORDER_STATUS_CAN_NOT_DELIVERY = "J400061";
     public static final String CHANGE_ORDER_STATUS_CAN_NOT_END = "J400062";
+    public static final String ORDER_PRODUCT_EQUIPMENT_NOT_EXISTS = "J400063";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -518,6 +519,7 @@ public class ErrorCode {
         MAP.put(CHANGE_ORDER_MATERIAL_ID_NOT_NULL, "换货物料项ID不能为空");
         MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_DELIVERY, "不是备货中的换货单不能发货");
         MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_END, "不是处理中的换货单不允许结束");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_NOT_EXISTS, "该设备不在该订单里，请仔细检查");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");

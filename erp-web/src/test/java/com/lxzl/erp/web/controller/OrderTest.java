@@ -16,9 +16,7 @@ import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 描述: 订单测试类
@@ -210,5 +208,12 @@ public class OrderTest extends ERPUnTransactionalTest {
         Order order = new Order();
         order.setOrderNo("O201712111658417621539");
         TestResult result = getJsonTestResult("/order/queryOrderByNo", order);
+    }
+
+
+    @Test
+    public void returnEquipment() throws Exception {
+        Map<String,String> map= new HashMap<>();
+        TestResult result = getJsonTestResult("/order/returnEquipment", map);
     }
 }

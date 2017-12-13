@@ -11,6 +11,7 @@ public class OrderProductEquipmentDO  extends BaseDO {
 	private Integer orderProductId;
 	private Integer equipmentId;
 	private String equipmentNo;
+	private Date rentStartTime;
 	private Date expectReturnTime;
 	private Date actualReturnTime;
 	private BigDecimal expectRentAmount;
@@ -106,4 +107,11 @@ public class OrderProductEquipmentDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public Date getRentStartTime() {
+		return rentStartTime;
+	}
+
+	public void setRentStartTime(Date rentStartTime) {
+		this.rentStartTime = rentStartTime;
+	}
 }

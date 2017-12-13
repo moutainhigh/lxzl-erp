@@ -377,7 +377,7 @@
 	</update>
 
 	<update id="updateEquipmentBulkMaterialStatus" parameterType="java.util.Map">
-		UPDATE erp_bulk_material SET bulk_material_status = #{bulkMaterialStatus, jdbcType=VARCHAR}
+		UPDATE erp_bulk_material SET bulk_material_status = #{bulkMaterialStatus, jdbcType=INTEGER}
 		WHERE current_equipment_no = #{equipmentNo, jdbcType=VARCHAR}
 	</update>
 

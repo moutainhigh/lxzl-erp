@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.lxzl.se.common.domain.Result;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.Date;
+import java.util.Map;
+
 /**
  * 描述: 订单控制器
  *
@@ -94,6 +97,12 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "queryLastPrice", method = RequestMethod.POST)
     public Result queryLastPrice(@RequestBody LastRentPriceRequest request, BindingResult validResult) {
         ServiceResult<String, LastRentPriceResponse> serviceResult = orderService.queryLastPrice(request);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "returnEquipment", method = RequestMethod.POST)
+    public Result returnEquipment(@RequestBody Map<String, String> map, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = orderService.returnEquipment(map.get("orderNo"), map.get("returnEquipmentNo"), map.get("changeEquipmentNo"), new Date());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
