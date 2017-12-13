@@ -18,6 +18,7 @@ import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderConverter;
 import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
@@ -165,11 +166,6 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW);
             return result;
         }
-        // TODO 先付后用的单子，如果没有付款就不能提交
-        if (PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
-            result.setErrorCode(ErrorCode.ORDER_HAVE_NO_PAID);
-            return result;
-        }
 
         ServiceResult<String, Boolean> isNeedVerifyResult = isNeedVerify(orderNo);
         if (!ErrorCode.SUCCESS.equals(isNeedVerifyResult.getErrorCode())) {
@@ -189,17 +185,17 @@ public class OrderServiceImpl implements OrderService {
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_VERIFYING);
         } else {
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
+            // 只有审批通过才生成结算单
+            statementService.createNewStatementOrder(orderNo);
         }
 
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderDO.setUpdateTime(currentTime);
         orderMapper.update(orderDO);
-
         // 扣除信用额度
         if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
             customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
         }
-
         result.setResult(orderNo);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -326,11 +322,12 @@ public class OrderServiceImpl implements OrderService {
             List<Map<String, Object>> productSkuLastPriceMap = orderProductMapper.queryLastPrice(customerDO.getId(), request.getProductSkuId());
             for (Map<String, Object> map : productSkuLastPriceMap) {
                 if (map.get("rent_type") != null && OrderRentType.RENT_TYPE_DAY.equals(map.get("rent_type"))) {
-                    productLastDayAmount = (BigDecimal)(map.get("product_unit_amount"));
+                    productLastDayAmount = (BigDecimal) (map.get("product_unit_amount"));
                 } else if (map.get("rent_type") != null && OrderRentType.RENT_TYPE_MONTH.equals(map.get("rent_type"))) {
-                    productLastMonthAmount = (BigDecimal)(map.get("product_unit_amount"));
+                    productLastMonthAmount = (BigDecimal) (map.get("product_unit_amount"));
                 }
-            };
+            }
+            ;
             response.setProductSkuId(request.getProductSkuId());
             response.setProductSkuLastDayPrice(productLastDayAmount);
             response.setProductSkuLastMonthPrice(productLastMonthAmount);
@@ -348,9 +345,9 @@ public class OrderServiceImpl implements OrderService {
             List<Map<String, Object>> materialSkuLastPriceMap = orderMaterialMapper.queryLastPrice(customerDO.getId(), request.getProductSkuId());
             for (Map<String, Object> map : materialSkuLastPriceMap) {
                 if (map.get("rent_type") != null && OrderRentType.RENT_TYPE_DAY.equals(map.get("rent_type"))) {
-                    monthLastDayAmount = (BigDecimal)(map.get("product_unit_amount"));
+                    monthLastDayAmount = (BigDecimal) (map.get("product_unit_amount"));
                 } else if (map.get("rent_type") != null && OrderRentType.RENT_TYPE_MONTH.equals(map.get("rent_type"))) {
-                    monthLastMonthAmount = (BigDecimal)(map.get("product_unit_amount"));
+                    monthLastMonthAmount = (BigDecimal) (map.get("product_unit_amount"));
                 }
             }
             response.setMaterialId(request.getMaterialId());
@@ -377,6 +374,8 @@ public class OrderServiceImpl implements OrderService {
             }
             if (verifyResult) {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
+                // 只有审批通过的订单才生成结算单
+                statementService.createNewStatementOrder(orderDO.getOrderNo());
             } else {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
                 // 如果拒绝，则退还授信额度
@@ -528,6 +527,13 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
+
+        if (!PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())
+                && !PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_HAVE_NO_PAID);
+            return result;
+        }
+
         ServiceResult<String, List<Warehouse>> warehouseResult = warehouseService.getWarehouseByCurrentCompany();
         if (!ErrorCode.SUCCESS.equals(warehouseResult.getErrorCode())) {
             result.setErrorCode(warehouseResult.getErrorCode());
@@ -1303,6 +1309,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private StatementService statementService;
 
     @Autowired
     private OrderProductMapper orderProductMapper;
