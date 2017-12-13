@@ -138,7 +138,7 @@
 				material_no = #{materialNo,jdbcType=VARCHAR},
 			</if>
 			<if test="orderNo != null">
-				order_no = #{orderNo,jdbcType=VARCHAR},
+				order_no = CASE WHEN #{orderNo,jdbcType=VARCHAR}='' THEN NULL ELSE #{orderNo,jdbcType=VARCHAR} END,
 			</if>
 			<if test="currentWarehouseId != null">
 				current_warehouse_id = #{currentWarehouseId,jdbcType=INTEGER},

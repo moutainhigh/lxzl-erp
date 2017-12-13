@@ -87,6 +87,15 @@ public class ErrorCode {
     public static final String BULK_MATERIAL_IS_NOT_BUSY = "J200041";
     public static final String BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT = "J200042";
     public static final String BULK_MATERIAL_HAVE_NOT_ENOUGH = "J200043";
+    public static final String BULK_MATERIAL_ID_NOT_NULL = "J200044";
+    public static final String PRODUCT_EQUIPMENT_MATERIAL_COUNT_NOT_ENOUGH = "J200045";
+    public static final String PRODUCT_EQUIPMENT_BULK_MATERIAL_NOT_EXISTS = "J200046";
+    public static final String CURRENT_EQUIPMENT_ID_NOT_NULL = "J200047";
+    public static final String CURRENT_EQUIPMENT_NO_NOT_NULL = "J200048";
+    public static final String PRODUCT_EQUIPMENT_MATERIAL_NOT_EXISTS = "J200049";
+    public static final String PRODUCT_EQUIPMENT_AND_BULK_MATERIAL_NOT_WAREHOUSE = "J200050";
+    public static final String BULK_MATERIAL_IS_NOT_IN_PRODUCT_EQUIPMENT = "J200051";
+    public static final String INSTALL_AND_DISMANTLE_WAREHOUSE_NOT_EQUAL = "J200052";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -355,7 +364,7 @@ public class ErrorCode {
         MAP.put(PRODUCT_IS_NOT_RENT, "该商品已下架");
         MAP.put(MATERIAL_IN_USED, "物料正在被使用");
         MAP.put(PRODUCT_SKU_CAN_NOT_DELETE, "检测到您要删除商品SKU，目前SKU不支持删除。");
-        MAP.put(BULK_MATERIAL_IS_NOT_IDLE, "编号【%s 】在没有在闲置状态。");
+        MAP.put(BULK_MATERIAL_IS_NOT_IDLE, "编号【%s 】没有在闲置状态。");
         MAP.put(PRODUCT_EQUIPMENT_STATUS_ERROR, "商品设备状态有误。");
         MAP.put(BULK_MATERIAL_STATUS_ERROR, "散料状态有误。");
         MAP.put(BULK_MATERIAL_NOT_IN_THIS_WAREHOUSE, "散料不在该库房。");
@@ -373,6 +382,15 @@ public class ErrorCode {
         MAP.put(BULK_MATERIAL_IS_NOT_BUSY, "编号【%s 】的物料不在租赁中");
         MAP.put(BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT, "编号【%s 】在某订单或者某设备上");
         MAP.put(BULK_MATERIAL_HAVE_NOT_ENOUGH, "物料库存不足！");
+        MAP.put(BULK_MATERIAL_ID_NOT_NULL, "散料ID不能为空！");
+        MAP.put(PRODUCT_EQUIPMENT_MATERIAL_COUNT_NOT_ENOUGH, "该设备的此种物料不足");
+        MAP.put(PRODUCT_EQUIPMENT_BULK_MATERIAL_NOT_EXISTS, "该设备的此种散料不存在");
+        MAP.put(CURRENT_EQUIPMENT_ID_NOT_NULL, "当前设备的id不能为空");
+        MAP.put(CURRENT_EQUIPMENT_NO_NOT_NULL, "当前设备的编号不能为空");
+        MAP.put(PRODUCT_EQUIPMENT_AND_BULK_MATERIAL_NOT_WAREHOUSE, "设备和散料不在同一仓库");
+        MAP.put(BULK_MATERIAL_IS_NOT_IN_PRODUCT_EQUIPMENT, "散料不在某设备上");
+        MAP.put(INSTALL_AND_DISMANTLE_WAREHOUSE_NOT_EQUAL, "安装的散料和拆卸的散料不是同一个仓库");
+        MAP.put(PRODUCT_EQUIPMENT_MATERIAL_NOT_EXISTS, "编号【%s 】的设备物料不存在");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
