@@ -6,7 +6,7 @@ public class StockUpByChangeParam implements Serializable {
 
     private String changeOrderNo;
     private String equipmentNo;
-    private Integer materialId;
+    private String materialNo;
     private Integer materialCount;
     private Integer operationType;
 
@@ -26,12 +26,12 @@ public class StockUpByChangeParam implements Serializable {
         this.equipmentNo = equipmentNo;
     }
 
-    public Integer getMaterialId() {
-        return materialId;
+    public String getMaterialNo() {
+        return materialNo;
     }
 
-    public void setMaterialId(Integer materialId) {
-        this.materialId = materialId;
+    public void setMaterialNo(String materialNo) {
+        this.materialNo = materialNo;
     }
 
     public Integer getMaterialCount() {

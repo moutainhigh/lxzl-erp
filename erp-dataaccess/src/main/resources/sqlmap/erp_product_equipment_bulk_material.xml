@@ -2,115 +2,121 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentBulkMaterialMapper">
 
-	<resultMap id="ProductEquipmentBulkMaterialDO" type="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentBulkMaterialDO">
-		<id column="id" jdbcType="INTEGER" property="id" />
-		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
-		<result column="equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
-		<result column="bulk_material_id" jdbcType="INTEGER" property="bulkMaterialId" />
-		<result column="bulk_material_no" jdbcType="VARCHAR" property="bulkMaterialNo" />
-		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
-		<result column="remark" jdbcType="VARCHAR" property="remark" />
-		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
-		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
-	</resultMap>
+<resultMap id="ProductEquipmentBulkMaterialDO" type="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentBulkMaterialDO">
+	<id column="id" jdbcType="INTEGER" property="id" />
+	<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
+	<result column="equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
+	<result column="bulk_material_id" jdbcType="INTEGER" property="bulkMaterialId" />
+	<result column="bulk_material_no" jdbcType="VARCHAR" property="bulkMaterialNo" />
+	<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+	<result column="remark" jdbcType="VARCHAR" property="remark" />
+	<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+	<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+	<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+</resultMap>
 
-	<sql id="column_List">
-		epebm.id,epebm.equipment_id,epebm.equipment_no,epebm.bulk_material_id,epebm.bulk_material_no,epebm.data_status,epebm.remark,epebm.create_time,epebm.create_user,epebm.update_time,epebm.update_user
-	</sql>
+<sql id="column_List">
+	epebm.id,epebm.equipment_id,epebm.equipment_no,epebm.bulk_material_id,epebm.bulk_material_no,epebm.data_status,epebm.remark,epebm.create_time,epebm.create_user,epebm.update_time,epebm.update_user
+</sql>
 
-	<select id="findById" resultMap="ProductEquipmentBulkMaterialDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_product_equipment_bulk_material epebm 
-		WHERE epebm.id = #{id, jdbcType=INTEGER} AND data_status = 1 
-	</select>
+<select id="findById" resultMap="ProductEquipmentBulkMaterialDO" parameterType="java.lang.Integer">
+	SELECT <include refid="column_List"/> FROM erp_product_equipment_bulk_material epebm
+	WHERE epebm.id = #{id, jdbcType=INTEGER} AND data_status = 1
+</select>
 
-	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(epebm.id) FROM erp_product_equipment_bulk_material epebm 
-		<where>
-			<if test="maps.productEquipmentBulkMaterialQueryParam != null &amp;&amp; maps.productEquipmentBulkMaterialQueryParam.equipmentNo != null &amp;&amp; maps.productEquipmentBulkMaterialQueryParam.equipmentNo != ''">
-				AND epebm.equipment_no = #{maps.productEquipmentBulkMaterialQueryParam.equipmentNo, jdbcType=VARCHAR}
-			</if>
-			<if test="maps.productEquipmentBulkMaterialQueryParam != null &amp;&amp; maps.productEquipmentBulkMaterialQueryParam.equipmentId != null">
-				AND epebm.equipment_id = #{maps.productEquipmentBulkMaterialQueryParam.equipmentId, jdbcType=INTEGER}
-			</if>
-			<if test="true">
-				AND epebm.data_status = 1
-			</if>
-		</where>
-	</select>
+<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+	SELECT count(epebm.id) FROM erp_product_equipment_bulk_material epebm
+	<where>
+		<if test="maps.productEquipmentBulkMaterialQueryParam != null &amp;&amp; maps.productEquipmentBulkMaterialQueryParam.equipmentNo != null &amp;&amp; maps.productEquipmentBulkMaterialQueryParam.equipmentNo != ''">
+			AND epebm.equipment_no = #{maps.productEquipmentBulkMaterialQueryParam.equipmentNo, jdbcType=VARCHAR}
+		</if>
+		<if test="maps.productEquipmentBulkMaterialQueryParam != null &amp;&amp; maps.productEquipmentBulkMaterialQueryParam.equipmentId != null">
+			AND epebm.equipment_id = #{maps.productEquipmentBulkMaterialQueryParam.equipmentId, jdbcType=INTEGER}
+		</if>
+		<if test="true">
+			AND epebm.data_status = 1
+		</if>
+	</where>
+</select>
 
-	<select id="listPage" resultMap="ProductEquipmentBulkMaterialDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_product_equipment_bulk_material epebm 
-		<where>
-			<if test="maps.productEquipmentBulkMaterialQueryParam != null &amp;&amp; maps.productEquipmentBulkMaterialQueryParam.equipmentNo != null &amp;&amp; maps.productEquipmentBulkMaterialQueryParam.equipmentNo != ''">
-				AND epebm.equipment_no = #{maps.productEquipmentBulkMaterialQueryParam.equipmentNo, jdbcType=VARCHAR}
-			</if>
-			<if test="maps.productEquipmentBulkMaterialQueryParam != null &amp;&amp; maps.productEquipmentBulkMaterialQueryParam.equipmentId != null">
-				AND epebm.equipment_id = #{maps.productEquipmentBulkMaterialQueryParam.equipmentId, jdbcType=INTEGER}
-			</if>
-			<if test="true">
-				AND epebm.data_status = 1
-			</if>
-		</where>
-		LIMIT #{maps.start},#{maps.pageSize}
-	</select>
+<select id="listPage" resultMap="ProductEquipmentBulkMaterialDO" parameterType="map">
+	SELECT <include refid="column_List"/> FROM erp_product_equipment_bulk_material epebm
+	<where>
+		<if test="maps.productEquipmentBulkMaterialQueryParam != null &amp;&amp; maps.productEquipmentBulkMaterialQueryParam.equipmentNo != null &amp;&amp; maps.productEquipmentBulkMaterialQueryParam.equipmentNo != ''">
+			AND epebm.equipment_no = #{maps.productEquipmentBulkMaterialQueryParam.equipmentNo, jdbcType=VARCHAR}
+		</if>
+		<if test="maps.productEquipmentBulkMaterialQueryParam != null &amp;&amp; maps.productEquipmentBulkMaterialQueryParam.equipmentId != null">
+			AND epebm.equipment_id = #{maps.productEquipmentBulkMaterialQueryParam.equipmentId, jdbcType=INTEGER}
+		</if>
+		<if test="true">
+			AND epebm.data_status = 1
+		</if>
+	</where>
+	LIMIT #{maps.start},#{maps.pageSize}
+</select>
 
-	<select id="findByEquipmentId" resultMap="ProductEquipmentBulkMaterialDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_product_equipment_bulk_material epebm
-		WHERE equipment_id = #{equipmentId, jdbcType=INTEGER}
-	</select>
+<select id="findByEquipmentId" resultMap="ProductEquipmentBulkMaterialDO" parameterType="java.lang.Integer">
+	SELECT <include refid="column_List"/> FROM erp_product_equipment_bulk_material epebm
+	WHERE equipment_id = #{equipmentId, jdbcType=INTEGER}
+</select>
 
-	<sql id="set_column_sql">
-		<set>
-			<if test="equipmentId != null">
-				equipment_id = #{equipmentId,jdbcType=INTEGER},
-			</if>
-			<if test="equipmentNo != null">
-				equipment_no = #{equipmentNo,jdbcType=VARCHAR},
-			</if>
-			<if test="bulkMaterialId != null">
-				bulk_material_id = #{bulkMaterialId,jdbcType=INTEGER},
-			</if>
-			<if test="bulkMaterialNo != null">
-				bulk_material_no = #{bulkMaterialNo,jdbcType=VARCHAR},
-			</if>
-			<if test="dataStatus != null">
-				data_status = #{dataStatus,jdbcType=INTEGER},
-			</if>
-			<if test="remark != null">
-				remark = #{remark,jdbcType=VARCHAR},
-			</if>
-			<if test="createTime != null">
-				create_time = #{createTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="createUser != null">
-				create_user = #{createUser,jdbcType=VARCHAR},
-			</if>
-			<if test="updateTime != null">
-				update_time = #{updateTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="updateUser != null">
-				update_user = #{updateUser,jdbcType=VARCHAR},
-			</if>
-		</set>
-	</sql>
+<sql id="set_column_sql">
+	<set>
+		<if test="equipmentId != null">
+			equipment_id = #{equipmentId,jdbcType=INTEGER},
+		</if>
+		<if test="equipmentNo != null">
+			equipment_no = #{equipmentNo,jdbcType=VARCHAR},
+		</if>
+		<if test="bulkMaterialId != null">
+			bulk_material_id = #{bulkMaterialId,jdbcType=INTEGER},
+		</if>
+		<if test="bulkMaterialNo != null">
+			bulk_material_no = #{bulkMaterialNo,jdbcType=VARCHAR},
+		</if>
+		<if test="dataStatus != null">
+			data_status = #{dataStatus,jdbcType=INTEGER},
+		</if>
+		<if test="remark != null">
+			remark = #{remark,jdbcType=VARCHAR},
+		</if>
+		<if test="createTime != null">
+			create_time = #{createTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="createUser != null">
+			create_user = #{createUser,jdbcType=VARCHAR},
+		</if>
+		<if test="updateTime != null">
+			update_time = #{updateTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="updateUser != null">
+			update_user = #{updateUser,jdbcType=VARCHAR},
+		</if>
+	</set>
+</sql>
 
 
-	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_product_equipment_bulk_material (equipment_id,equipment_no,bulk_material_id,bulk_material_no,data_status,remark,create_time,create_user,update_time,update_user)
-		<foreach item="productEquipmentBulkMaterialDO" collection="productEquipmentBulkMaterialDOList" separator="UNION ALL">
-			SELECT epe.id,#{productEquipmentBulkMaterialDO.equipmentNo},ebm.id,#{productEquipmentBulkMaterialDO.bulkMaterialNo},#{productEquipmentBulkMaterialDO.dataStatus},#{productEquipmentBulkMaterialDO.remark},
-			#{productEquipmentBulkMaterialDO.createTime},#{productEquipmentBulkMaterialDO.createUser},#{productEquipmentBulkMaterialDO.updateTime},#{productEquipmentBulkMaterialDO.updateUser}
-			FROM erp_product_equipment epe,erp_bulk_material ebm WHERE epe.equipment_no = #{productEquipmentBulkMaterialDO.equipmentNo} AND ebm.bulk_material_no = #{productEquipmentBulkMaterialDO.bulkMaterialNo}
-		</foreach>
-	</insert>
+<insert id="saveList" parameterType="java.util.ArrayList">
+	insert into erp_product_equipment_bulk_material (equipment_id,equipment_no,bulk_material_id,bulk_material_no,data_status,remark,create_time,create_user,update_time,update_user)
+	<foreach item="productEquipmentBulkMaterialDO" collection="productEquipmentBulkMaterialDOList" separator="UNION ALL">
+		SELECT epe.id,#{productEquipmentBulkMaterialDO.equipmentNo},ebm.id,#{productEquipmentBulkMaterialDO.bulkMaterialNo},#{productEquipmentBulkMaterialDO.dataStatus},#{productEquipmentBulkMaterialDO.remark},
+		#{productEquipmentBulkMaterialDO.createTime},#{productEquipmentBulkMaterialDO.createUser},#{productEquipmentBulkMaterialDO.updateTime},#{productEquipmentBulkMaterialDO.updateUser}
+		FROM erp_product_equipment epe,erp_bulk_material ebm WHERE epe.equipment_no = #{productEquipmentBulkMaterialDO.equipmentNo} AND ebm.bulk_material_no = #{productEquipmentBulkMaterialDO.bulkMaterialNo}
+	</foreach>
+</insert>
 
-	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentBulkMaterialDO">
-		INSERT INTO erp_product_equipment_bulk_material <include refid="set_column_sql"/>
-	</insert>
+<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentBulkMaterialDO">
+	INSERT INTO erp_product_equipment_bulk_material <include refid="set_column_sql"/>
+</insert>
 
-	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentBulkMaterialDO">
-		UPDATE erp_product_equipment_bulk_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
-	</update>
+<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentBulkMaterialDO">
+	UPDATE erp_product_equipment_bulk_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+</update>
+
+<select id="findByBulkMaterialId" resultMap="ProductEquipmentBulkMaterialDO" parameterType="Integer">
+	SELECT  <include refid="column_List"/>  FROM erp_product_equipment_bulk_material epebm
+	WHERE epebm.bulk_material_id = #{bulkMaterialId, jdbcType=INTEGER} AND epebm.data_status = 1
+</select>
+
 </mapper>

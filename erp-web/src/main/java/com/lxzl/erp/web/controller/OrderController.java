@@ -4,6 +4,8 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.ProcessOrderParam;
+import com.lxzl.erp.common.domain.order.pojo.LastRentPriceRequest;
+import com.lxzl.erp.common.domain.order.pojo.LastRentPriceResponse;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -16,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.lxzl.se.common.domain.Result;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.Date;
+import java.util.Map;
 
 /**
  * 描述: 订单控制器
@@ -86,6 +91,18 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "isNeedVerify", method = RequestMethod.POST)
     public Result isNeedVerify(@RequestBody Order order, BindingResult validResult) {
         ServiceResult<String, Boolean> serviceResult = orderService.isNeedVerify(order.getOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "queryLastPrice", method = RequestMethod.POST)
+    public Result queryLastPrice(@RequestBody LastRentPriceRequest request, BindingResult validResult) {
+        ServiceResult<String, LastRentPriceResponse> serviceResult = orderService.queryLastPrice(request);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "returnEquipment", method = RequestMethod.POST)
+    public Result returnEquipment(@RequestBody Map<String, String> map, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = orderService.returnEquipment(map.get("orderNo"), map.get("returnEquipmentNo"), map.get("changeEquipmentNo"), new Date());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

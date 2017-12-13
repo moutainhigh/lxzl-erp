@@ -32,6 +32,12 @@
 		eom.id,eom.order_id,eom.material_id,eom.rent_type as rent_type,eom.rent_time_length as rent_time_length,eom.material_name,eom.material_count,eom.material_unit_amount,eom.material_amount,eom.deposit_amount,eom.credit_deposit_amount,eom.insurance_amount,eom.material_snapshot,eom.deposit_cycle,eom.payment_cycle,eom.pay_mode,eom.is_new_material,eom.data_status,eom.remark,eom.create_time,eom.create_user,eom.update_time,eom.update_user
 	</sql>
 
+	<select id="queryLastPrice" resultType="java.util.Map" parameterType="java.util.Map">
+		select eom_main.rent_type,eom_main.product_unit_amount from erp_order_product eom_main inner join
+		(select eom.rent_type,max(eom.id) as id from erp_order_material eom inner join erp_order eo on eo.id = eom.order_id where eo.buyer_customer_id = #{customerId, jdbcType=INTEGER} and eom.material_id = #{materialId, jdbcType=INTEGER} and eo.data_status = 1 and eom.data_status = 1 group by eom.rent_type) eom_max
+		on eom_max.id = eom_main.id
+	</select>
+
 	<select id="findById" resultMap="OrderMaterialDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_order_material eom
 		WHERE eom.id = #{id, jdbcType=INTEGER} AND eom.data_status = 1

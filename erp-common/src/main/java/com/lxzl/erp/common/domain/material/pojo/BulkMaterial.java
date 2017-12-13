@@ -1,6 +1,13 @@
 package com.lxzl.erp.common.domain.material.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.math.BigDecimal;
@@ -8,6 +15,7 @@ import java.math.BigDecimal;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BulkMaterial implements Serializable {
 
+	@NotNull(message = ErrorCode.BULK_MATERIAL_ID_NOT_NULL,groups = {IdGroup.class,AddGroup.class})
 	private Integer bulkMaterialId;   //散料ID
 	private String bulkMaterialNo;   //散料唯一编号
 	private Integer bulkMaterialType;	// 散料类型，来自于物料类型

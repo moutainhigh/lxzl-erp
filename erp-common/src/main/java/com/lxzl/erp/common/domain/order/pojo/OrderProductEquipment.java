@@ -13,6 +13,7 @@ public class OrderProductEquipment implements Serializable {
 	private Integer orderProductId;   //订单项ID
 	private Integer equipmentId;   //设备ID
 	private String equipmentNo;   //设备编号唯一
+	private String rentStartTime;   //起租时间
 	private Date expectReturnTime;   //预计归还时间
 	private Date actualReturnTime;   //实际归还时间
 	private BigDecimal expectRentAmount;   //预计租金
@@ -145,4 +146,11 @@ public class OrderProductEquipment implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public String getRentStartTime() {
+		return rentStartTime;
+	}
+
+	public void setRentStartTime(String rentStartTime) {
+		this.rentStartTime = rentStartTime;
+	}
 }

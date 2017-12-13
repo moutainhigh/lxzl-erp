@@ -12,4 +12,9 @@ public interface ChangeOrderMaterialMapper extends BaseMysqlDAO<ChangeOrderMater
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
     void batchSave(@Param("changeOrderId") Integer changeOrderId, @Param("changeOrderNo")String changeOrderNo, @Param("changeOrderMaterialDOList")List<ChangeOrderMaterialDO> changeOrderMaterialDOList);
+
+    void batchUpdate(@Param("changeOrderMaterialDOList")List<ChangeOrderMaterialDO> changeOrderMaterialDOList);
+
+	List<ChangeOrderMaterialDO> findByChangeOrderId(@Param("changeOrderId") Integer changeOrderId);
+
 }

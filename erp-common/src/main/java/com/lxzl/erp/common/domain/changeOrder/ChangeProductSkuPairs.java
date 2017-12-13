@@ -2,19 +2,30 @@ package com.lxzl.erp.common.domain.changeOrder;
 
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.validGroup.changeOrder.AddChangeOrderGroup;
+import com.lxzl.erp.common.domain.validGroup.changeOrder.UpdateChangeOrderGroup;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class ChangeProductSkuPairs {
 
-    @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL ,groups = {AddChangeOrderGroup.class})
+    @NotNull(message = ErrorCode.CHANGE_ORDER_PRODUCT_ID_NOT_NULL, groups = {UpdateChangeOrderGroup.class})
+    private Integer changeOrderProductId;
+    @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL, groups = {AddChangeOrderGroup.class, UpdateChangeOrderGroup.class})
     private Integer productSkuIdSrc;
-    @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL ,groups = {AddChangeOrderGroup.class})
+    @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL, groups = {AddChangeOrderGroup.class, UpdateChangeOrderGroup.class})
     private Integer productSkuIdDest;
-    @NotNull(message = ErrorCode.CHANGE_COUNT_ERROR ,groups = {AddChangeOrderGroup.class})
-    @Min(value = 0 , message = ErrorCode.CHANGE_COUNT_ERROR ,groups = {AddChangeOrderGroup.class})
+    @NotNull(message = ErrorCode.CHANGE_COUNT_ERROR, groups = {AddChangeOrderGroup.class, UpdateChangeOrderGroup.class})
+    @Min(value = 0, message = ErrorCode.CHANGE_COUNT_ERROR, groups = {AddChangeOrderGroup.class, UpdateChangeOrderGroup.class})
     private Integer changeCount;
+
+    public Integer getChangeOrderProductId() {
+        return changeOrderProductId;
+    }
+
+    public void setChangeOrderProductId(Integer changeOrderProductId) {
+        this.changeOrderProductId = changeOrderProductId;
+    }
 
     public Integer getProductSkuIdSrc() {
         return productSkuIdSrc;

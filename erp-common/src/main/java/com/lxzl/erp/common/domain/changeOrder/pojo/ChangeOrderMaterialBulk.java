@@ -3,18 +3,21 @@ package com.lxzl.erp.common.domain.changeOrder.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
-
+import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ChangeOrderMaterialBulkSrc implements Serializable {
+public class ChangeOrderMaterialBulk implements Serializable {
 
-	private Integer changeOrderMaterialBulkSrcId;   //唯一标识
+	private Integer changeOrderMaterialBulkId;   //唯一标识
 	private Integer changeOrderMaterialId;   //租赁换货物料项ID
 	private Integer changeOrderId;   //换货ID
 	private String changeOrderNo;   //换货编号
-	private Integer bulkMaterialId;   //散料ID
-	private String bulkMaterialNo;   //散料编号
+	private Integer srcBulkMaterialId;   //原散料ID
+	private String srcBulkMaterialNo;   //原散料编号
+	private Integer destBulkMaterialId;   //目标散料ID
+	private String destBulkMaterialNo;   //目标散料编号
 	private String orderNo;   //订单编号
+	private BigDecimal priceDiff;   //差价，可以是正值或负值，差价计算标准为每月
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -23,12 +26,12 @@ public class ChangeOrderMaterialBulkSrc implements Serializable {
 	private String updateUser;   //修改人
 
 
-	public Integer getChangeOrderMaterialBulkSrcId(){
-		return changeOrderMaterialBulkSrcId;
+	public Integer getChangeOrderMaterialBulkId(){
+		return changeOrderMaterialBulkId;
 	}
 
-	public void setChangeOrderMaterialBulkSrcId(Integer changeOrderMaterialBulkSrcId){
-		this.changeOrderMaterialBulkSrcId = changeOrderMaterialBulkSrcId;
+	public void setChangeOrderMaterialBulkId(Integer changeOrderMaterialBulkId){
+		this.changeOrderMaterialBulkId = changeOrderMaterialBulkId;
 	}
 
 	public Integer getChangeOrderMaterialId(){
@@ -55,20 +58,36 @@ public class ChangeOrderMaterialBulkSrc implements Serializable {
 		this.changeOrderNo = changeOrderNo;
 	}
 
-	public Integer getBulkMaterialId(){
-		return bulkMaterialId;
+	public Integer getSrcBulkMaterialId(){
+		return srcBulkMaterialId;
 	}
 
-	public void setBulkMaterialId(Integer bulkMaterialId){
-		this.bulkMaterialId = bulkMaterialId;
+	public void setSrcBulkMaterialId(Integer srcBulkMaterialId){
+		this.srcBulkMaterialId = srcBulkMaterialId;
 	}
 
-	public String getBulkMaterialNo(){
-		return bulkMaterialNo;
+	public String getSrcBulkMaterialNo(){
+		return srcBulkMaterialNo;
 	}
 
-	public void setBulkMaterialNo(String bulkMaterialNo){
-		this.bulkMaterialNo = bulkMaterialNo;
+	public void setSrcBulkMaterialNo(String srcBulkMaterialNo){
+		this.srcBulkMaterialNo = srcBulkMaterialNo;
+	}
+
+	public Integer getDestBulkMaterialId(){
+		return destBulkMaterialId;
+	}
+
+	public void setDestBulkMaterialId(Integer destBulkMaterialId){
+		this.destBulkMaterialId = destBulkMaterialId;
+	}
+
+	public String getDestBulkMaterialNo(){
+		return destBulkMaterialNo;
+	}
+
+	public void setDestBulkMaterialNo(String destBulkMaterialNo){
+		this.destBulkMaterialNo = destBulkMaterialNo;
 	}
 
 	public String getOrderNo(){
@@ -77,6 +96,14 @@ public class ChangeOrderMaterialBulkSrc implements Serializable {
 
 	public void setOrderNo(String orderNo){
 		this.orderNo = orderNo;
+	}
+
+	public BigDecimal getPriceDiff(){
+		return priceDiff;
+	}
+
+	public void setPriceDiff(BigDecimal priceDiff){
+		this.priceDiff = priceDiff;
 	}
 
 	public Integer getDataStatus(){

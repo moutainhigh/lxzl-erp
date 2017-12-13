@@ -4,8 +4,13 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.changeOrder.AddChangeOrderParam;
 import com.lxzl.erp.common.domain.changeOrder.ChangeOrderCommitParam;
 import com.lxzl.erp.common.domain.changeOrder.StockUpByChangeParam;
+import com.lxzl.erp.common.domain.changeOrder.UpdateChangeOrderParam;
+import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrder;
+import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderMaterialBulk;
+import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderProductEquipment;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.changeOrder.AddChangeOrderGroup;
+import com.lxzl.erp.common.domain.validGroup.changeOrder.UpdateChangeOrderGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.changeOrder.ChangeOrderService;
@@ -30,6 +35,7 @@ public class ChangeOrderController {
 
     /**
      * 创建换货单
+     *
      * @param addChangeOrderParam
      * @param validResult
      * @return
@@ -40,8 +46,24 @@ public class ChangeOrderController {
         ServiceResult<String, String> serviceResult = changeOrderService.add(addChangeOrderParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    /**
+     * 创建换货单
+     *
+     * @param updateChangeOrderParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public Result update(@RequestBody @Validated(UpdateChangeOrderGroup.class) UpdateChangeOrderParam updateChangeOrderParam, BindingResult validResult) {
+
+        ServiceResult<String, String> serviceResult = changeOrderService.update(updateChangeOrderParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     /**
      * 换货单提交
+     *
      * @param changeOrderCommitParam
      * @param validResult
      * @return
@@ -53,47 +75,121 @@ public class ChangeOrderController {
 
     /**
      * 换货备货接口
+     *
      * @param stockUpByChangeParam
      * @param validResult
      * @return
      */
     @RequestMapping(value = " stockUpByChange", method = RequestMethod.POST)
     public Result stockUpByChange(@RequestBody @Validated StockUpByChangeParam stockUpByChangeParam, BindingResult validResult) {
-        return resultGenerator.generate( changeOrderService.stockUpByChange(stockUpByChangeParam));
+        return resultGenerator.generate(changeOrderService.stockUpByChange(stockUpByChangeParam));
     }
-//    @RequestMapping(value = "doReturnMaterial", method = RequestMethod.POST)
-//    public Result doReturnMaterial(@RequestBody @Validated DoReturnMaterialParam doReturnMaterialParam, BindingResult validResult) {
-//        ServiceResult<String, Material> serviceResult = returnOrderService.doReturnMaterial(doReturnMaterialParam);
-//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-//    }
-//    @RequestMapping(value = "detail", method = RequestMethod.POST)
-//    public Result detail(@RequestBody @Validated(IdGroup.class) ReturnOrder returnOrder, BindingResult validResult) {
-//        ServiceResult<String, ReturnOrder> serviceResult = returnOrderService.detail(returnOrder);
-//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-//    }
-//    @RequestMapping(value = "page", method = RequestMethod.POST)
-//    public Result page(@RequestBody ReturnOrderPageParam returnOrderPageParam, BindingResult validResult) {
-//        ServiceResult<String, Page<ReturnOrder>> serviceResult = returnOrderService.page(returnOrderPageParam);
-//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-//    }
-//    @RequestMapping(value = "end", method = RequestMethod.POST)
-//    public Result end(@RequestBody @Validated(ExtendGroup.class)ReturnOrder returnOrder, BindingResult validResult) {
-//        ServiceResult<String,String> serviceResult = returnOrderService.end(returnOrder);
-//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-//    }
-//    @RequestMapping(value = "cancel", method = RequestMethod.POST)
-//    public Result cancel(@RequestBody @Validated(IdGroup.class)ReturnOrder returnOrder, BindingResult validResult) {
-//        ServiceResult<String,String> serviceResult = returnOrderService.cancel(returnOrder);
-//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-//    }
-//    @RequestMapping(value = "pageReturnEquipment", method = RequestMethod.POST)
-//    public Result pageReturnEquipment(@RequestBody @Validated(IdGroup.class)ReturnEquipmentPageParam returnEquipmentPageParam, BindingResult validResult) {
-//        ServiceResult<String,Page<ReturnOrderProductEquipment>> serviceResult = returnOrderService.pageReturnEquipment(returnEquipmentPageParam);
-//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-//    }
-//    @RequestMapping(value = "pageReturnBulk", method = RequestMethod.POST)
-//    public Result pageReturnBulk(@RequestBody @Validated(IdGroup.class)ReturnBulkPageParam returnBulkPageParam, BindingResult validResult) {
-//        ServiceResult<String,Page<ReturnOrderMaterialBulk>> serviceResult = returnOrderService.pageReturnBulk(returnBulkPageParam);
-//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-//    }
+
+    /**
+     * 换货发货接口
+     *
+     * @param changeOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = " delivery", method = RequestMethod.POST)
+    public Result delivery(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
+        return resultGenerator.generate(changeOrderService.delivery(changeOrder));
+    }
+
+    /**
+     * 换货完成接口
+     *
+     * @param changeOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = " end", method = RequestMethod.POST)
+    public Result end(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
+        return resultGenerator.generate(changeOrderService.end(changeOrder));
+    }
+
+    /**
+     * 换货取消接口
+     *
+     * @param changeOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = " cancel", method = RequestMethod.POST)
+    public Result cancel(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
+        return resultGenerator.generate(changeOrderService.cancel(changeOrder));
+    }
+
+    /**
+     * 换货单详情
+     *
+     * @param changeOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = " detail", method = RequestMethod.POST)
+    public Result detail(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
+        return resultGenerator.generate(changeOrderService.detail(changeOrder));
+    }
+
+    /**
+     * 换货单列表
+     *
+     * @param changeOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = " page", method = RequestMethod.POST)
+    public Result page(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
+        return resultGenerator.generate(changeOrderService.page(changeOrder));
+    }
+
+    /**
+     * 换货设备项列表
+     *
+     * @param changeOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = " pageChangeOrderProductEquipment", method = RequestMethod.POST)
+    public Result pageChangeOrderProductEquipment(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
+        return resultGenerator.generate(changeOrderService.pageChangeOrderProductEquipment(changeOrder));
+    }
+
+    /**
+     * 换货散料项列表
+     *
+     * @param changeOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = " pageChangeOrderMaterialBulk", method = RequestMethod.POST)
+    public Result pageChangeOrderMaterialBulk(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
+        return resultGenerator.generate(changeOrderService.pageChangeOrderMaterialBulk(changeOrder));
+    }
+
+    /**
+     * 删除换货设备项接口（处理中和待取货状态的换货单可修改）
+     *
+     * @param changeOrderProductEquipment
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = " deleteChangeOrderProductEquipment", method = RequestMethod.POST)
+    public Result deleteChangeOrderProductEquipment(@RequestBody @Validated ChangeOrderProductEquipment changeOrderProductEquipment, BindingResult validResult) {
+        return resultGenerator.generate(changeOrderService.deleteChangeOrderProductEquipment(changeOrderProductEquipment));
+    }
+
+    /**
+     * 删除换货散料项接口（处理中和待取货状态的换货单可修改）
+     *
+     * @param changeOrderMaterialBulk
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = " deleteChangeOrderMaterialBulk", method = RequestMethod.POST)
+    public Result deleteChangeOrderMaterialBulk(@RequestBody @Validated ChangeOrderMaterialBulk changeOrderMaterialBulk, BindingResult validResult) {
+        return resultGenerator.generate(changeOrderService.deleteChangeOrderMaterialBulk(changeOrderMaterialBulk));
+    }
 }

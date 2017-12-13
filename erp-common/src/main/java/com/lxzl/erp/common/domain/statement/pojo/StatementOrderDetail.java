@@ -11,10 +11,10 @@ public class StatementOrderDetail implements Serializable {
 	private Integer statementOrderDetailId;   //唯一标识
 	private Integer statementOrderId;   //结算单ID
 	private Integer customerId;   //客户ID
+	private Integer orderType;	// 单子类型，详见ORDER_TYPE
 	private Integer orderId;   //订单ID
 	private Integer orderItemType;		// 订单项类型，1为商品，2为物料
 	private Integer orderItemReferId;	// 订单项关联ID
-	private Integer statementMonth;		// 结算月份
 	private Date statementExpectPayTime;	// 结算单预计支付时间
 	private BigDecimal statementDetailAmount;   //结算单金额
 	private BigDecimal statementDetailPaidAmount;	// 已经支付金额
@@ -142,14 +142,6 @@ public class StatementOrderDetail implements Serializable {
 		this.updateUser = updateUser;
 	}
 
-	public Integer getStatementMonth() {
-		return statementMonth;
-	}
-
-	public void setStatementMonth(Integer statementMonth) {
-		this.statementMonth = statementMonth;
-	}
-
 	public Date getStatementExpectPayTime() {
 		return statementExpectPayTime;
 	}
@@ -188,5 +180,13 @@ public class StatementOrderDetail implements Serializable {
 
 	public void setOrderItemReferId(Integer orderItemReferId) {
 		this.orderItemReferId = orderItemReferId;
+	}
+
+	public Integer getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(Integer orderType) {
+		this.orderType = orderType;
 	}
 }

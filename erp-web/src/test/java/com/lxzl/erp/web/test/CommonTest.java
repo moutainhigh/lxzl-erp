@@ -15,9 +15,12 @@ import java.util.GregorianCalendar;
  */
 public class CommonTest {
     public static void main(String[] args) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date(1511131194000L));
-        System.out.println(calendar.get(Calendar.MONTH));
-        System.out.println(calendar.get(Calendar.DAY_OF_MONTH));
+        Calendar date1 = Calendar.getInstance();
+        date1.setTime(new Date());
+        date1.set(Calendar.MONTH, 10);
+        date1.set(Calendar.DAY_OF_MONTH, 13);
+        Calendar date2 = Calendar.getInstance();
+        date2.setTime(new Date());
+        int space = DateUtil.getMonthSpace(date1.getTime(), date2.getTime());
     }
 }

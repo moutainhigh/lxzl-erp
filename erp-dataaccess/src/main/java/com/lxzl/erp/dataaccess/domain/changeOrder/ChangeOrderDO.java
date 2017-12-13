@@ -1,181 +1,191 @@
 package com.lxzl.erp.dataaccess.domain.changeOrder;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import java.util.Date;
+
 import java.math.BigDecimal;
+import java.util.Date;
 
-public class ChangeOrderDO  extends BaseDO {
+public class ChangeOrderDO extends BaseDO {
 
-	private Integer id;
-	private String changeOrderNo;
-	private Integer customerId;
-	private String customerNo;
-	private Integer totalChangeProductCount;
-	private Integer totalChangeMaterialCount;
-	private Integer realTotalChangeProductCount;
-	private Integer realTotalChangeMaterialCount;
-	private BigDecimal totalDifferencePrice;
-	private BigDecimal serviceCost;
-	private BigDecimal damageCost;
-	private Integer isDamage;
-	private Integer changeReasonType;
-	private String changeReason;
-	private Integer changeMode;
-	private Integer changeOrderStatus;
-	private Integer dataStatus;
-	private String remark;
-	private Integer owner;
+    private Integer id;
+    private String changeOrderNo;
+    private Integer customerId;
+    private String customerNo;
+    private Date rentStartTime;
+    private Integer totalChangeProductCount;
+    private Integer totalChangeMaterialCount;
+    private Integer realTotalChangeProductCount;
+    private Integer realTotalChangeMaterialCount;
+    private BigDecimal totalPriceDiff;
+    private BigDecimal serviceCost;
+    private BigDecimal damageCost;
+    private Integer isDamage;
+    private Integer changeReasonType;
+    private String changeReason;
+    private Integer changeMode;
+    private Integer changeOrderStatus;
+    private Integer dataStatus;
+    private String remark;
+    private Integer owner;
 
-	public Integer getId(){
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setId(Integer id){
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getChangeOrderNo(){
-		return changeOrderNo;
-	}
+    public String getChangeOrderNo() {
+        return changeOrderNo;
+    }
 
-	public void setChangeOrderNo(String changeOrderNo){
-		this.changeOrderNo = changeOrderNo;
-	}
+    public void setChangeOrderNo(String changeOrderNo) {
+        this.changeOrderNo = changeOrderNo;
+    }
 
-	public Integer getCustomerId(){
-		return customerId;
-	}
+    public Integer getCustomerId() {
+        return customerId;
+    }
 
-	public void setCustomerId(Integer customerId){
-		this.customerId = customerId;
-	}
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
+    }
 
-	public String getCustomerNo(){
-		return customerNo;
-	}
+    public String getCustomerNo() {
+        return customerNo;
+    }
 
-	public void setCustomerNo(String customerNo){
-		this.customerNo = customerNo;
-	}
+    public void setCustomerNo(String customerNo) {
+        this.customerNo = customerNo;
+    }
 
-	public Integer getTotalChangeProductCount(){
-		return totalChangeProductCount;
-	}
+    public Date getRentStartTime() {
+        return rentStartTime;
+    }
 
-	public void setTotalChangeProductCount(Integer totalChangeProductCount){
-		this.totalChangeProductCount = totalChangeProductCount;
-	}
+    public void setRentStartTime(Date rentStartTime) {
+        this.rentStartTime = rentStartTime;
+    }
 
-	public Integer getTotalChangeMaterialCount(){
-		return totalChangeMaterialCount;
-	}
+    public Integer getTotalChangeProductCount() {
+        return totalChangeProductCount;
+    }
 
-	public void setTotalChangeMaterialCount(Integer totalChangeMaterialCount){
-		this.totalChangeMaterialCount = totalChangeMaterialCount;
-	}
+    public void setTotalChangeProductCount(Integer totalChangeProductCount) {
+        this.totalChangeProductCount = totalChangeProductCount;
+    }
 
-	public Integer getRealTotalChangeProductCount(){
-		return realTotalChangeProductCount;
-	}
+    public Integer getTotalChangeMaterialCount() {
+        return totalChangeMaterialCount;
+    }
 
-	public void setRealTotalChangeProductCount(Integer realTotalChangeProductCount){
-		this.realTotalChangeProductCount = realTotalChangeProductCount;
-	}
+    public void setTotalChangeMaterialCount(Integer totalChangeMaterialCount) {
+        this.totalChangeMaterialCount = totalChangeMaterialCount;
+    }
 
-	public Integer getRealTotalChangeMaterialCount(){
-		return realTotalChangeMaterialCount;
-	}
+    public Integer getRealTotalChangeProductCount() {
+        return realTotalChangeProductCount;
+    }
 
-	public void setRealTotalChangeMaterialCount(Integer realTotalChangeMaterialCount){
-		this.realTotalChangeMaterialCount = realTotalChangeMaterialCount;
-	}
+    public void setRealTotalChangeProductCount(Integer realTotalChangeProductCount) {
+        this.realTotalChangeProductCount = realTotalChangeProductCount;
+    }
 
-	public BigDecimal getTotalDifferencePrice(){
-		return totalDifferencePrice;
-	}
+    public Integer getRealTotalChangeMaterialCount() {
+        return realTotalChangeMaterialCount;
+    }
 
-	public void setTotalDifferencePrice(BigDecimal totalDifferencePrice){
-		this.totalDifferencePrice = totalDifferencePrice;
-	}
+    public void setRealTotalChangeMaterialCount(Integer realTotalChangeMaterialCount) {
+        this.realTotalChangeMaterialCount = realTotalChangeMaterialCount;
+    }
 
-	public BigDecimal getServiceCost(){
-		return serviceCost;
-	}
+    public BigDecimal getTotalPriceDiff() {
+        return totalPriceDiff;
+    }
 
-	public void setServiceCost(BigDecimal serviceCost){
-		this.serviceCost = serviceCost;
-	}
+    public void setTotalPriceDiff(BigDecimal totalPriceDiff) {
+        this.totalPriceDiff = totalPriceDiff;
+    }
 
-	public BigDecimal getDamageCost(){
-		return damageCost;
-	}
+    public BigDecimal getServiceCost() {
+        return serviceCost;
+    }
 
-	public void setDamageCost(BigDecimal damageCost){
-		this.damageCost = damageCost;
-	}
+    public void setServiceCost(BigDecimal serviceCost) {
+        this.serviceCost = serviceCost;
+    }
 
-	public Integer getIsDamage(){
-		return isDamage;
-	}
+    public BigDecimal getDamageCost() {
+        return damageCost;
+    }
 
-	public void setIsDamage(Integer isDamage){
-		this.isDamage = isDamage;
-	}
+    public void setDamageCost(BigDecimal damageCost) {
+        this.damageCost = damageCost;
+    }
 
-	public Integer getChangeReasonType(){
-		return changeReasonType;
-	}
+    public Integer getIsDamage() {
+        return isDamage;
+    }
 
-	public void setChangeReasonType(Integer changeReasonType){
-		this.changeReasonType = changeReasonType;
-	}
+    public void setIsDamage(Integer isDamage) {
+        this.isDamage = isDamage;
+    }
 
-	public String getChangeReason(){
-		return changeReason;
-	}
+    public Integer getChangeReasonType() {
+        return changeReasonType;
+    }
 
-	public void setChangeReason(String changeReason){
-		this.changeReason = changeReason;
-	}
+    public void setChangeReasonType(Integer changeReasonType) {
+        this.changeReasonType = changeReasonType;
+    }
 
-	public Integer getChangeMode(){
-		return changeMode;
-	}
+    public String getChangeReason() {
+        return changeReason;
+    }
 
-	public void setChangeMode(Integer changeMode){
-		this.changeMode = changeMode;
-	}
+    public void setChangeReason(String changeReason) {
+        this.changeReason = changeReason;
+    }
 
-	public Integer getChangeOrderStatus(){
-		return changeOrderStatus;
-	}
+    public Integer getChangeMode() {
+        return changeMode;
+    }
 
-	public void setChangeOrderStatus(Integer changeOrderStatus){
-		this.changeOrderStatus = changeOrderStatus;
-	}
+    public void setChangeMode(Integer changeMode) {
+        this.changeMode = changeMode;
+    }
 
-	public Integer getDataStatus(){
-		return dataStatus;
-	}
+    public Integer getChangeOrderStatus() {
+        return changeOrderStatus;
+    }
 
-	public void setDataStatus(Integer dataStatus){
-		this.dataStatus = dataStatus;
-	}
+    public void setChangeOrderStatus(Integer changeOrderStatus) {
+        this.changeOrderStatus = changeOrderStatus;
+    }
 
-	public String getRemark(){
-		return remark;
-	}
+    public Integer getDataStatus() {
+        return dataStatus;
+    }
 
-	public void setRemark(String remark){
-		this.remark = remark;
-	}
+    public void setDataStatus(Integer dataStatus) {
+        this.dataStatus = dataStatus;
+    }
 
-	public Integer getOwner(){
-		return owner;
-	}
+    public String getRemark() {
+        return remark;
+    }
 
-	public void setOwner(Integer owner){
-		this.owner = owner;
-	}
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public Integer getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Integer owner) {
+        this.owner = owner;
+    }
 
 }

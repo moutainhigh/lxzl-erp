@@ -3,18 +3,21 @@ package com.lxzl.erp.common.domain.changeOrder.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
-
+import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ChangeOrderProductEquipmentSrc implements Serializable {
+public class ChangeOrderProductEquipment implements Serializable {
 
-	private Integer changeOrderProductEquipmentSrcId;   //唯一标识
+	private Integer changeOrderProductEquipmentId;   //唯一标识
 	private Integer changeOrderProductId;   //租赁换货商品项ID
 	private Integer changeOrderId;   //换货ID
 	private String changeOrderNo;   //换货编号
 	private String orderNo;   //订单编号
-	private Integer equipmentId;   //设备ID
-	private String equipmentNo;   //设备编号
+	private Integer srcEquipmentId;   //原设备ID
+	private String srcEquipmentNo;   //原设备编号
+	private Integer destEquipmentId;   //目标设备ID
+	private String destEquipmentNo;   //目标设备编号
+	private BigDecimal priceDiff;   //差价，可以是正值或负值，差价计算标准为每月
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -23,12 +26,12 @@ public class ChangeOrderProductEquipmentSrc implements Serializable {
 	private String updateUser;   //修改人
 
 
-	public Integer getChangeOrderProductEquipmentSrcId(){
-		return changeOrderProductEquipmentSrcId;
+	public Integer getChangeOrderProductEquipmentId(){
+		return changeOrderProductEquipmentId;
 	}
 
-	public void setChangeOrderProductEquipmentSrcId(Integer changeOrderProductEquipmentSrcId){
-		this.changeOrderProductEquipmentSrcId = changeOrderProductEquipmentSrcId;
+	public void setChangeOrderProductEquipmentId(Integer changeOrderProductEquipmentId){
+		this.changeOrderProductEquipmentId = changeOrderProductEquipmentId;
 	}
 
 	public Integer getChangeOrderProductId(){
@@ -63,20 +66,44 @@ public class ChangeOrderProductEquipmentSrc implements Serializable {
 		this.orderNo = orderNo;
 	}
 
-	public Integer getEquipmentId(){
-		return equipmentId;
+	public Integer getSrcEquipmentId(){
+		return srcEquipmentId;
 	}
 
-	public void setEquipmentId(Integer equipmentId){
-		this.equipmentId = equipmentId;
+	public void setSrcEquipmentId(Integer srcEquipmentId){
+		this.srcEquipmentId = srcEquipmentId;
 	}
 
-	public String getEquipmentNo(){
-		return equipmentNo;
+	public String getSrcEquipmentNo(){
+		return srcEquipmentNo;
 	}
 
-	public void setEquipmentNo(String equipmentNo){
-		this.equipmentNo = equipmentNo;
+	public void setSrcEquipmentNo(String srcEquipmentNo){
+		this.srcEquipmentNo = srcEquipmentNo;
+	}
+
+	public Integer getDestEquipmentId(){
+		return destEquipmentId;
+	}
+
+	public void setDestEquipmentId(Integer destEquipmentId){
+		this.destEquipmentId = destEquipmentId;
+	}
+
+	public String getDestEquipmentNo(){
+		return destEquipmentNo;
+	}
+
+	public void setDestEquipmentNo(String destEquipmentNo){
+		this.destEquipmentNo = destEquipmentNo;
+	}
+
+	public BigDecimal getPriceDiff(){
+		return priceDiff;
+	}
+
+	public void setPriceDiff(BigDecimal priceDiff){
+		this.priceDiff = priceDiff;
 	}
 
 	public Integer getDataStatus(){

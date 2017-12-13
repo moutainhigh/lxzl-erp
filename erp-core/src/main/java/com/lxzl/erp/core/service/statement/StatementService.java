@@ -22,7 +22,8 @@ public interface StatementService extends BaseService {
     ServiceResult<String, String> createStatementOrder(Date startDate, Date endDate);
 
     /**
-     * 创建新订单的对账单
+     * 创建新订单的对账单, 在确认收货时生成。
+     *
      * @param orderNo 订单号
      * @return 对账单号
      */

@@ -9,6 +9,7 @@ public class StatementOrderDetailDO  extends BaseDO {
 	private Integer id;
 	private Integer statementOrderId;
 	private Integer customerId;
+	private Integer orderType;
 	private Integer orderId;
 	private Integer orderItemType;
 	private Integer orderItemReferId;
@@ -140,5 +141,13 @@ public class StatementOrderDetailDO  extends BaseDO {
 
 	public void setOrderItemReferId(Integer orderItemReferId) {
 		this.orderItemReferId = orderItemReferId;
+	}
+
+	public Integer getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(Integer orderType) {
+		this.orderType = orderType;
 	}
 }

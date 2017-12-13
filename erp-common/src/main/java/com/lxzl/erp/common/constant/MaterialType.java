@@ -25,6 +25,8 @@ public class MaterialType {
     public static final Integer MATERIAL_TYPE_SSD = 8;
     // 机箱
     public static final Integer MATERIAL_TYPE_BOX = 9;
+    // 其他配件
+    public static final Integer MATERIAL_TYPE_OTHER = 10;
 
     public static boolean inThisScope(Integer materialType) {
         if (materialType == null
@@ -36,7 +38,8 @@ public class MaterialType {
                 && !MATERIAL_TYPE_POWER_SUPPLY.equals(materialType)
                 && !MATERIAL_TYPE_RADIATOR.equals(materialType)
                 && !MATERIAL_TYPE_SSD.equals(materialType)
-                && !MATERIAL_TYPE_BOX.equals(materialType))) {
+                && !MATERIAL_TYPE_BOX.equals(materialType)
+                && !MATERIAL_TYPE_OTHER.equals(materialType))) {
             return false;
         }
         return true;

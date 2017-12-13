@@ -9,6 +9,10 @@ import java.util.Map;
 
 public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderDetailDO> {
 
+    List<StatementOrderDetailDO> findByOrderId(@Param("orderId") Integer orderId);
+
+    List<StatementOrderDetailDO> findByStatementOrderId(@Param("statementOrderId") Integer statementOrderId);
+
     List<StatementOrderDetailDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
     Integer listCount(@Param("maps") Map<String, Object> paramMap);

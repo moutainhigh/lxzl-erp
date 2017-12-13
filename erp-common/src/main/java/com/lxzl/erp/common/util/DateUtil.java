@@ -36,7 +36,7 @@ public class DateUtil {
             long time2 = cal.getTimeInMillis();
             long between_days = (time2 - time1) / (1000 * 3600 * 24);
             return Integer.parseInt(String.valueOf(between_days));
-        }catch (ParseException e){
+        } catch (ParseException e) {
             throw new BusinessException(ErrorCode.BUSINESS_EXCEPTION);
         }
     }
@@ -89,8 +89,8 @@ public class DateUtil {
 
     /**
      * 获取该月有多少天
-     * */
-    public static int getActualMaximum(Date currentTime){
+     */
+    public static int getActualMaximum(Date currentTime) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentTime);
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -98,8 +98,8 @@ public class DateUtil {
 
     /**
      * 该日期距离月底的天数
-     * */
-    public static int betweenActualMaximumDays(Date currentTime){
+     */
+    public static int betweenActualMaximumDays(Date currentTime) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentTime);
         int now = calendar.get(Calendar.DAY_OF_MONTH);
@@ -109,8 +109,8 @@ public class DateUtil {
 
     /**
      * 该月1日距离day的天数
-     * */
-    public static int betweenAppointDays(Date currentTime,int day){
+     */
+    public static int betweenAppointDays(Date currentTime, int day) {
 
         currentTime = currentTime == null ? new Date() : currentTime;
         Calendar calendar = Calendar.getInstance();
@@ -119,7 +119,29 @@ public class DateUtil {
         if (calendar.getActualMaximum(Calendar.DATE) < day) {
             day = getActualMaximum(calendar.getTime());
         }
-        return day ;
+        return day;
     }
 
+    /**
+     * 两个日期相差月数
+     *
+     * @param date1 开始日期
+     * @param date2 结束日期
+     * @return 相差天数
+     */
+    public static int getMonthSpace(Date date1, Date date2) {
+        int result = 0;
+        Calendar c1 = Calendar.getInstance();
+        Calendar c2 = Calendar.getInstance();
+        c1.setTime(date1);
+        c2.setTime(date2);
+        int year = c2.get(Calendar.YEAR) - c1.get(Calendar.YEAR);
+        result = c2.get(Calendar.MONTH) - c1.get(Calendar.MONTH);
+        result = year * 12 + result;
+        int days = c2.get(Calendar.DAY_OF_MONTH) - c1.get(Calendar.DAY_OF_MONTH);
+        if (days < 0) {
+            result--;
+        }
+        return result;
+    }
 }

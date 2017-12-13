@@ -942,11 +942,11 @@ CREATE TABLE `erp_order` (
   `total_deposit_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '应该支付的押金金额（系统生成）',
   `total_must_deposit_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '必须要支付的押金金额（系统先生成，支持修改）',
   `total_credit_deposit_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '授信押金金额',
-  `total_insurance_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '保险金额',
-  `total_product_count` int(11) NOT NULL DEFAULT '0' COMMENT '商品总数',
-  `total_product_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '商品总价',
-  `total_material_count` int(11) NOT NULL DEFAULT '0' COMMENT '物料总数',
-  `total_material_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '物料总价',
+  `total_insurance_amount` decimal(15,2) DEFAULT 0 COMMENT '保险金额',
+  `total_product_count` int(11) DEFAULT 0 COMMENT '商品总数',
+  `total_product_amount` decimal(15,2) DEFAULT 0 COMMENT '商品总价',
+  `total_material_count` int(11) DEFAULT 0 COMMENT '物料总数',
+  `total_material_amount` decimal(15,2) DEFAULT 0 COMMENT '物料总价',
   `total_order_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '订单总价，实际支付价格，商品金额+物料金额+运费-优惠',
   `total_paid_order_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '已经支付金额',
   `total_discount_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '共计优惠金额',
@@ -1009,6 +1009,7 @@ CREATE TABLE `erp_order_product_equipment` (
   `order_product_id` int(20) NOT NULL COMMENT '订单项ID',
   `equipment_id` int(20) NOT NULL COMMENT '设备ID',
   `equipment_no` varchar(100) NOT NULL COMMENT '设备编号唯一',
+  `rent_start_time` datetime DEFAULT NULL COMMENT '起租时间',
   `expect_return_time` datetime DEFAULT NULL COMMENT '预计归还时间',
   `actual_return_time` datetime DEFAULT NULL COMMENT '实际归还时间',
   `expect_rent_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '预计租金',
@@ -1323,11 +1324,12 @@ CREATE TABLE `erp_change_order` (
   `change_order_no` varchar(100) NOT NULL COMMENT '换货编号',
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
   `customer_no` varchar(100) NOT NULL COMMENT '客户编号',
+  `rent_start_time` datetime NOT NULL COMMENT '起租时间',
   `total_change_product_count` int(11) NOT NULL DEFAULT '0' COMMENT '换货商品总数',
   `total_change_material_count` int(11) NOT NULL DEFAULT '0' COMMENT '换货物料总数',
   `real_total_change_product_count` int(11) NOT NULL DEFAULT '0' COMMENT '实际换货商品总数',
   `real_total_change_material_count` int(11) NOT NULL DEFAULT '0' COMMENT '实际换货物料总数',
-  `total_difference_price` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '总差价（换货后总价格-换货前总价格）',
+  `total_price_diff` decimal(10,2) NOT NULL DEFAULT 0 COMMENT '总差价（换货后总价格-换货前总价格）',
   `service_cost` decimal(15,2) COMMENT '服务费',
   `damage_cost` decimal(15,2) COMMENT '损坏加收费用',
   `is_damage` int(11) COMMENT '是否有损坏，0否1是',
@@ -1351,12 +1353,12 @@ CREATE TABLE `erp_change_order_product` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `change_order_id` int(20) NOT NULL COMMENT '换货ID',
   `change_order_no` varchar(100) NOT NULL COMMENT '换货编号',
-  `change_product_sku_id_src` int(20) NOT NULL  COMMENT '换货前商品SKU_ID',
-  `change_product_sku_id_dest` int(20) NOT NULL  COMMENT '换货后商品SKU_ID',
+  `change_product_sku_id_src` int(20) NOT NULL  COMMENT '原商品SKU_ID',
+  `change_product_sku_id_dest` int(20) NOT NULL  COMMENT '目标商品SKU_ID',
   `change_product_sku_count` int(11) NOT NULL DEFAULT 0 COMMENT '换货商品SKU数量',
   `real_change_product_sku_count` int(11) NOT NULL DEFAULT 0 COMMENT '实际换货数量',
-  `change_product_sku_snapshot_src` text COMMENT '换货前商品SKU快照',
-  `change_product_sku_snapshot_dest` text COMMENT '换货后商品SKU快照',
+  `change_product_sku_snapshot_src` text COMMENT '原商品SKU快照',
+  `change_product_sku_snapshot_dest` text COMMENT '目标商品SKU快照',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -1366,15 +1368,18 @@ CREATE TABLE `erp_change_order_product` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁换货商品项表';
 
-DROP TABLE if exists `erp_change_order_product_equipment_src`;
-CREATE TABLE `erp_change_order_product_equipment_src` (
+DROP TABLE if exists `erp_change_order_product_equipment`;
+CREATE TABLE `erp_change_order_product_equipment` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `change_order_product_id` int(20) NOT NULL COMMENT '租赁换货商品项ID',
   `change_order_id` int(20) NOT NULL COMMENT '换货ID',
   `change_order_no` varchar(100) NOT NULL COMMENT '换货编号',
   `order_no` varchar(100) COMMENT '订单编号',
-  `equipment_id` int(20) NOT NULL COMMENT '设备ID',
-  `equipment_no` varchar(100) NOT NULL COMMENT '设备编号',
+  `src_equipment_id` int(20) NOT NULL COMMENT '原设备ID',
+  `src_equipment_no` varchar(100) NOT NULL COMMENT '原设备编号',
+  `dest_equipment_id` int(20) NOT NULL COMMENT '目标设备ID',
+  `dest_equipment_no` varchar(100) NOT NULL COMMENT '目标设备编号',
+  `price_diff` decimal(15,2) DEFAULT 0 COMMENT '差价，可以是正值或负值，差价计算标准为每月',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -1383,24 +1388,6 @@ CREATE TABLE `erp_change_order_product_equipment_src` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁换货前商品项设备表';
-
-DROP TABLE if exists `erp_change_order_product_equipment_dest`;
-CREATE TABLE `erp_change_order_product_equipment_dest` (
-  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `change_order_product_id` int(20) NOT NULL COMMENT '租赁换货商品项ID',
-  `change_order_id` int(20) NOT NULL COMMENT '换货ID',
-  `change_order_no` varchar(100) NOT NULL COMMENT '换货编号',
-  `order_no` varchar(100) COMMENT '订单编号',
-  `equipment_id` int(20) NOT NULL COMMENT '设备ID',
-  `equipment_no` varchar(100) NOT NULL COMMENT '设备编号',
-  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
-  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
-  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁换货后商品项设备表';
 
 DROP TABLE if exists `erp_change_order_material`;
 CREATE TABLE `erp_change_order_material` (
@@ -1422,15 +1409,18 @@ CREATE TABLE `erp_change_order_material` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁换货物料项表';
 
-DROP TABLE if exists `erp_change_order_material_bulk_src`;
-CREATE TABLE `erp_change_order_material_bulk_src` (
+DROP TABLE if exists `erp_change_order_material_bulk`;
+CREATE TABLE `erp_change_order_material_bulk` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `change_order_material_id` int(20) NOT NULL COMMENT '租赁换货物料项ID',
   `change_order_id` int(20) NOT NULL COMMENT '换货ID',
   `change_order_no` varchar(100) NOT NULL COMMENT '换货编号',
-  `bulk_material_id` int(20) NOT NULL COMMENT '散料ID',
-  `bulk_material_no` varchar(100) NOT NULL COMMENT '散料编号',
+  `src_bulk_material_id` int(20) NOT NULL COMMENT '原散料ID',
+  `src_bulk_material_no` varchar(100) NOT NULL COMMENT '原散料编号',
+  `dest_bulk_material_id` int(20) NOT NULL COMMENT '目标散料ID',
+  `dest_bulk_material_no` varchar(100) NOT NULL COMMENT '目标散料编号',
   `order_no` varchar(100) COMMENT '订单编号',
+  `price_diff` decimal(15,2) DEFAULT 0 COMMENT '差价，可以是正值或负值，差价计算标准为每月',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -1438,25 +1428,7 @@ CREATE TABLE `erp_change_order_material_bulk_src` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁换货前物料项散料表';
-
-DROP TABLE if exists `erp_change_order_material_bulk_dest`;
-CREATE TABLE `erp_change_order_material_bulk_dest` (
-  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `return_order_material_id` int(20) NOT NULL COMMENT '租赁换货物料项ID',
-  `return_order_id` int(20) NOT NULL COMMENT '换货ID',
-  `return_order_no` varchar(100) NOT NULL COMMENT '换货编号',
-  `bulk_material_id` int(20) NOT NULL COMMENT '散料ID',
-  `bulk_material_no` varchar(100) NOT NULL COMMENT '散料编号',
-  `order_no` varchar(100) COMMENT '订单编号',
-  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
-  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
-  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁换货后物料项散料表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁换货物料项散料表';
 
 DROP TABLE if exists `erp_change_order_consign_info`;
 CREATE TABLE `erp_change_order_consign_info` (
@@ -1537,6 +1509,7 @@ CREATE TABLE `erp_statement_order_detail` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `statement_order_id` int(20) NOT NULL COMMENT '结算单ID',
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
+  `order_type` int(20) NOT NULL COMMENT '单子类型，1是订单，2是调配单，3是换货单，4是退货单，5是维修单',
   `order_id` int(20) NOT NULL COMMENT '订单ID',
   `order_item_type` int(20) NOT NULL COMMENT '订单项类型，1为商品，2为物料',
   `order_item_refer_id` int(20) NOT NULL COMMENT '订单项ID',

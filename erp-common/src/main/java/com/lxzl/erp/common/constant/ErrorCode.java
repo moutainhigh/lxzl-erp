@@ -87,6 +87,15 @@ public class ErrorCode {
     public static final String BULK_MATERIAL_IS_NOT_BUSY = "J200041";
     public static final String BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT = "J200042";
     public static final String BULK_MATERIAL_HAVE_NOT_ENOUGH = "J200043";
+    public static final String BULK_MATERIAL_ID_NOT_NULL = "J200044";
+    public static final String PRODUCT_EQUIPMENT_MATERIAL_COUNT_NOT_ENOUGH = "J200045";
+    public static final String PRODUCT_EQUIPMENT_BULK_MATERIAL_NOT_EXISTS = "J200046";
+    public static final String CURRENT_EQUIPMENT_ID_NOT_NULL = "J200047";
+    public static final String CURRENT_EQUIPMENT_NO_NOT_NULL = "J200048";
+    public static final String PRODUCT_EQUIPMENT_MATERIAL_NOT_EXISTS = "J200049";
+    public static final String PRODUCT_EQUIPMENT_AND_BULK_MATERIAL_NOT_WAREHOUSE = "J200050";
+    public static final String BULK_MATERIAL_IS_NOT_IN_PRODUCT_EQUIPMENT = "J200051";
+    public static final String INSTALL_AND_DISMANTLE_WAREHOUSE_NOT_EQUAL = "J200052";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -177,6 +186,7 @@ public class ErrorCode {
     public static final String MATERIAL_MODEL_NOT_NULL = "J300052";
     public static final String MATERIAL_TYPE_HAVE_NO_MODEL = "J300053";
     public static final String PURCHASE_RECEIVE_ORDER_MATERIAL_NO_NOT_NULL = "J300054";
+    public static final String STOCK_NOT_MATCH = "J300055";
 
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
@@ -236,6 +246,13 @@ public class ErrorCode {
     public static final String CHANGE_ORDER_NOT_EXISTS = "J400055";
     public static final String CHANGE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN = "J400056";
     public static final String CHANGE_ORDER_STATUS_CAN_NOT_STOCK_UP = "J400057";
+    public static final String CHANGE_ORDER_CAN_NOT_UPDATE = "J400058";
+    public static final String CHANGE_ORDER_PRODUCT_ID_NOT_NULL = "J400059";
+    public static final String CHANGE_ORDER_MATERIAL_ID_NOT_NULL = "J400060";
+    public static final String CHANGE_ORDER_STATUS_CAN_NOT_DELIVERY = "J400061";
+    public static final String CHANGE_ORDER_STATUS_CAN_NOT_END = "J400062";
+    public static final String ORDER_PRODUCT_EQUIPMENT_NOT_EXISTS = "J400063";
+    public static final String ORDER_PRODUCT_EQUIPMENT_ALREADY_RETURN = "J400064";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -275,6 +292,7 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_ADDRESS_NOT_NULL = "J500038";
     public static final String CUSTOMER_PERSON_PHONE_NOT_NULL = "J500039";
     public static final String CUSTOMER_PERSON_ADDRESS_NOT_NULL = "J500040";
+    public static final String STATEMENT_ORDER_CREATE_ERROR = "J500041";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -347,7 +365,7 @@ public class ErrorCode {
         MAP.put(PRODUCT_IS_NOT_RENT, "该商品已下架");
         MAP.put(MATERIAL_IN_USED, "物料正在被使用");
         MAP.put(PRODUCT_SKU_CAN_NOT_DELETE, "检测到您要删除商品SKU，目前SKU不支持删除。");
-        MAP.put(BULK_MATERIAL_IS_NOT_IDLE, "编号【%s 】在没有在闲置状态。");
+        MAP.put(BULK_MATERIAL_IS_NOT_IDLE, "编号【%s 】没有在闲置状态。");
         MAP.put(PRODUCT_EQUIPMENT_STATUS_ERROR, "商品设备状态有误。");
         MAP.put(BULK_MATERIAL_STATUS_ERROR, "散料状态有误。");
         MAP.put(BULK_MATERIAL_NOT_IN_THIS_WAREHOUSE, "散料不在该库房。");
@@ -365,6 +383,15 @@ public class ErrorCode {
         MAP.put(BULK_MATERIAL_IS_NOT_BUSY, "编号【%s 】的物料不在租赁中");
         MAP.put(BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT, "编号【%s 】在某订单或者某设备上");
         MAP.put(BULK_MATERIAL_HAVE_NOT_ENOUGH, "物料库存不足！");
+        MAP.put(BULK_MATERIAL_ID_NOT_NULL, "散料ID不能为空！");
+        MAP.put(PRODUCT_EQUIPMENT_MATERIAL_COUNT_NOT_ENOUGH, "该设备的此种物料不足");
+        MAP.put(PRODUCT_EQUIPMENT_BULK_MATERIAL_NOT_EXISTS, "该设备的此种散料不存在");
+        MAP.put(CURRENT_EQUIPMENT_ID_NOT_NULL, "当前设备的id不能为空");
+        MAP.put(CURRENT_EQUIPMENT_NO_NOT_NULL, "当前设备的编号不能为空");
+        MAP.put(PRODUCT_EQUIPMENT_AND_BULK_MATERIAL_NOT_WAREHOUSE, "设备和散料不在同一仓库");
+        MAP.put(BULK_MATERIAL_IS_NOT_IN_PRODUCT_EQUIPMENT, "散料不在某设备上");
+        MAP.put(INSTALL_AND_DISMANTLE_WAREHOUSE_NOT_EQUAL, "安装的散料和拆卸的散料不是同一个仓库");
+        MAP.put(PRODUCT_EQUIPMENT_MATERIAL_NOT_EXISTS, "编号【%s 】的设备物料不存在");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
@@ -456,6 +483,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_NO_NOT_NULL, "采购收货单物料项物料编号不能为空");
         MAP.put(CUSTOMER_CONSIGN_NOT_EXISTS, "客户收货地址不存在");
         MAP.put(CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW, "客户授信额度超限");
+        MAP.put(STOCK_NOT_MATCH, "备货不匹配");
 
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
@@ -505,6 +533,13 @@ public class ErrorCode {
         MAP.put(CHANGE_ORDER_NOT_EXISTS, "换货单不存在");
         MAP.put(CHANGE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的换货单可以提交");
         MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_STOCK_UP, "当前换货单不允许备货");
+        MAP.put(CHANGE_ORDER_CAN_NOT_UPDATE, "当前换货单不允许修改");
+        MAP.put(CHANGE_ORDER_PRODUCT_ID_NOT_NULL, "换货商品项ID不能为空");
+        MAP.put(CHANGE_ORDER_MATERIAL_ID_NOT_NULL, "换货物料项ID不能为空");
+        MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_DELIVERY, "不是备货中的换货单不能发货");
+        MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_END, "不是处理中的换货单不允许结束");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_NOT_EXISTS, "该设备不在该订单里，请仔细检查");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_ALREADY_RETURN, "订单设备已经归还");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
@@ -553,6 +588,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_ADDRESS_NOT_NULL, "企业客户详细地址不能为空");
         MAP.put(CUSTOMER_PERSON_PHONE_NOT_NULL, "个人客户联系电话不能为空");
         MAP.put(CUSTOMER_PERSON_ADDRESS_NOT_NULL, "个人客户详细地址不能为空");
+        MAP.put(STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

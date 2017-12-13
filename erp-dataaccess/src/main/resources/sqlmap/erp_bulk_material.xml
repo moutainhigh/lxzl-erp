@@ -110,6 +110,12 @@
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialStatus != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialStatus != ''">
 				AND ebm.bulk_material_status = #{maps.bulkMaterialQueryParam.bulkMaterialStatus, jdbcType=INTEGER}
 			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.isOnEquipment != null &amp;&amp; maps.bulkMaterialQueryParam.isOnEquipment != '' &amp;&amp; maps.bulkMaterialQueryParam.isOnEquipment == 1">
+				AND ebm.current_equipment_id IS NOT NULL
+			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.isOnEquipment != null &amp;&amp; maps.bulkMaterialQueryParam.isOnEquipment != '' &amp;&amp; maps.bulkMaterialQueryParam.isOnEquipment == 0">
+				AND ebm.current_equipment_id IS NULL
+			</if>
 			<if test="maps.materialId != null">
 				and ebm.material_id = #{maps.materialId, jdbcType=INTEGER}
 			</if>
@@ -138,7 +144,7 @@
 				material_no = #{materialNo,jdbcType=VARCHAR},
 			</if>
 			<if test="orderNo != null">
-				order_no = #{orderNo,jdbcType=VARCHAR},
+				order_no = CASE WHEN #{orderNo,jdbcType=VARCHAR}='' THEN NULL ELSE #{orderNo,jdbcType=VARCHAR} END,
 			</if>
 			<if test="currentWarehouseId != null">
 				current_warehouse_id = #{currentWarehouseId,jdbcType=INTEGER},
@@ -364,7 +370,21 @@
 	</update>
 
 	<update id="updateEquipmentOrderNo" parameterType="java.util.Map">
-		UPDATE erp_bulk_material SET order_no = #{orderNo, jdbcType=VARCHAR} WHERE current_equipment_no = #{equipmentNo, jdbcType=VARCHAR}
+		UPDATE erp_bulk_material SET order_no = #{orderNo, jdbcType=VARCHAR}
+		<choose>
+			<when test="orderNo != null &amp;&amp; orderNo != ''">
+				,bulk_material_status=2
+			</when>
+			<otherwise>
+				,bulk_material_status=1
+			</otherwise>
+		</choose>
+		WHERE current_equipment_no = #{equipmentNo, jdbcType=VARCHAR}
+	</update>
+
+	<update id="updateEquipmentBulkMaterialStatus" parameterType="java.util.Map">
+		UPDATE erp_bulk_material SET bulk_material_status = #{bulkMaterialStatus, jdbcType=INTEGER}
+		WHERE current_equipment_no = #{equipmentNo, jdbcType=VARCHAR}
 	</update>
 
 </mapper>
