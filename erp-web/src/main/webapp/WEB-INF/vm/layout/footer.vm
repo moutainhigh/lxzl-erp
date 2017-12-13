@@ -15,7 +15,7 @@
 <script type="text/javascript" src="${staticCommon}vendor/plugins/magnific/jquery.magnific-popup.min.js"></script>
 
 <!-- Theme Javascript -->
-<script type="text/javascript" src="${staticCommon}assets/js/utility/utility.js?v=2017120702"></script>
+<script type="text/javascript" src="${staticCommon}assets/js/utility/utility.js?v=2017121301"></script>
 <script type="text/javascript" src="${staticCommon}assets/js/main.js"></script>
 <script type="text/javascript" src="${staticCommon}assets/js/demo.js"></script>
 
