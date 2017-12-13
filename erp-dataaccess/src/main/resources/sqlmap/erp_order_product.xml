@@ -44,6 +44,12 @@
         select <include refid="column_List"/> from erp_order_product as eop where order_id = #{orderId, jdbcType=INTEGER}
     </select>
 
+    <select id="queryLastPrice" resultType="java.util.Map" parameterType="java.util.Map">
+        select eop_main.rent_type,eop_main.product_unit_amount from erp_order_product eop_main inner join
+        (select eop.rent_type,max(eop.id) as id from erp_order_product eop inner join erp_order eo on eo.id = eop.order_id where eo.buyer_customer_id = #{customerId, jdbcType=INTEGER} and product_sku_id = #{productId, jdbcType=INTEGER} and eo.data_status = 1 and eop.data_status = 1 group by eop.rent_type) eop_max
+        on eop_max.id = eop_main.id
+    </select>
+
     <sql id="set_column_sql">
         <set>
             <if test="orderId != null">

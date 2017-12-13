@@ -3,6 +3,8 @@ package com.lxzl.erp.core.service.order;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.order.*;
+import com.lxzl.erp.common.domain.order.pojo.LastRentPriceRequest;
+import com.lxzl.erp.common.domain.order.pojo.LastRentPriceResponse;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.core.service.VerifyReceiver;
@@ -29,12 +31,12 @@ public interface OrderService extends VerifyReceiver {
     /**
      * 提交订单
      *
-     * @param orderNo 订单编号
-     * @param verifyUser 审核人
+     * @param orderNo      订单编号
+     * @param verifyUser   审核人
      * @param commitRemark 提交备注
      * @return 订单编号
      */
-    ServiceResult<String, String> commitOrder(String orderNo,Integer verifyUser, String commitRemark);
+    ServiceResult<String, String> commitOrder(String orderNo, Integer verifyUser, String commitRemark);
 
     /**
      * 根据订单编号查询单个订单
@@ -84,7 +86,6 @@ public interface OrderService extends VerifyReceiver {
      */
     ServiceResult<String, String> deliveryOrder(Order order);
 
-
     /**
      * 确认订单
      *
@@ -101,12 +102,17 @@ public interface OrderService extends VerifyReceiver {
      */
     ServiceResult<String, Page<OrderProduct>> queryOrderProductInfo(OrderQueryProductParam param);
 
-
     /**
      * 订单是否需要审批
+     *
      * @param orderNo 订单编号
      * @return true是false否
      */
     ServiceResult<String, Boolean> isNeedVerify(String orderNo);
+
+    /**
+     * 根据商品ID、物料ID，查询上次租赁的价格
+     */
+    ServiceResult<String, LastRentPriceResponse> queryLastPrice(LastRentPriceRequest request);
 
 }

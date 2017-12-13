@@ -49,6 +49,18 @@ public class StatementServiceImpl implements StatementService {
         return result;
     }
 
+    private void updateStatementOrder(String orderNo) {
+        Date currentTime = new Date();
+        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        if (orderDO == null) {
+            return;
+        }
+        List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
+        // 根据订单的变化，去掉退货的部分，增加差价的部分。就是剩余的每月的金额
+
+        // 查询订单项下的所有设备及物料，如果归还了，就不再算钱了，  如果没归还，就继续算钱
+    }
+
     @Override
     public ServiceResult<String, String> createNewStatementOrder(String orderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
@@ -57,9 +69,14 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
+        List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
+        if (CollectionUtil.isNotEmpty(dbStatementOrderDetailDOList)) {
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
+            return result;
+        }
+
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
-
         Date rentStartTime = orderDO.getRentStartTime();
         String statementDay;
         // 根据订单信息，生成订单的结算单
@@ -72,11 +89,12 @@ public class StatementServiceImpl implements StatementService {
         Integer statementDays = Integer.parseInt(statementDay);
 
         List<StatementOrderDetailDO> statementOrderDetailDOList = new ArrayList<>();
-        // 先确定订单需要结算几期
+        // 商品生成结算单
         if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
             for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
                 Calendar rentStartTimeCalendar = Calendar.getInstance();
                 rentStartTimeCalendar.setTime(rentStartTime);
+                // 先确定订单需要结算几期
                 Integer statementMonthCount = calculateStatementMonthCount(orderProductDO.getRentType(), orderProductDO.getRentTimeLength(), orderProductDO.getPaymentCycle(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
                 if (statementMonthCount == 1) {
                     StatementOrderDetailDO statementOrderDetailDO = calculateOneStatementOrderDetail(orderProductDO.getRentType(), orderProductDO.getRentTimeLength(), orderProductDO.getPayMode(), orderDO.getRentStartTime(), orderProductDO.getProductAmount(), orderDO.getBuyerCustomerId(), orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), currentTime, loginUser.getUserId());
@@ -107,10 +125,12 @@ public class StatementServiceImpl implements StatementService {
             }
         }
 
+        // 物料生成结算单
         if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
             for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
                 Calendar rentStartTimeCalendar = Calendar.getInstance();
                 rentStartTimeCalendar.setTime(rentStartTime);
+                // 先确定订单需要结算几期
                 Integer statementMonthCount = calculateStatementMonthCount(orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength(), orderMaterialDO.getPaymentCycle(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
                 if (statementMonthCount == 1) {
                     StatementOrderDetailDO statementOrderDetailDO = calculateOneStatementOrderDetail(orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength(), orderMaterialDO.getPayMode(), orderDO.getRentStartTime(), orderMaterialDO.getMaterialAmount(), orderDO.getBuyerCustomerId(), orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), currentTime, loginUser.getUserId());
@@ -215,7 +235,7 @@ public class StatementServiceImpl implements StatementService {
         } else if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
             statementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, rentTimeLength);
         }
-        return buildStatementOrderDetailDO(customerId, orderId, orderItemType, orderItemReferId, statementExpectPayTime, rentStartTime, statementEndTime, statementDetailAmount, currentTime, loginUserId);
+        return buildStatementOrderDetailDO(customerId, OrderType.ORDER_TYPE_ORDER, orderId, orderItemType, orderItemReferId, statementExpectPayTime, rentStartTime, statementEndTime, statementDetailAmount, currentTime, loginUserId);
     }
 
     /**
@@ -255,7 +275,7 @@ public class StatementServiceImpl implements StatementService {
         } else {
             statementExpectPayTime = statementEndTime;
         }
-        return buildStatementOrderDetailDO(customerId, orderId, orderItemType, orderItemReferId, statementExpectPayTime, rentStartTime, statementEndTime, firstPhaseAmount, currentTime, loginUserId);
+        return buildStatementOrderDetailDO(customerId, OrderType.ORDER_TYPE_ORDER, orderId, orderItemType, orderItemReferId, statementExpectPayTime, rentStartTime, statementEndTime, firstPhaseAmount, currentTime, loginUserId);
     }
 
     /**
@@ -278,7 +298,7 @@ public class StatementServiceImpl implements StatementService {
         } else {
             statementExpectPayTime = statementEndTime;
         }
-        return buildStatementOrderDetailDO(customerId, orderId, orderItemType, orderItemReferId, statementExpectPayTime, lastPhaseStartTime, statementEndTime, lastPhaseAmount, currentTime, loginUserId);
+        return buildStatementOrderDetailDO(customerId, OrderType.ORDER_TYPE_ORDER, orderId, orderItemType, orderItemReferId, statementExpectPayTime, lastPhaseStartTime, statementEndTime, lastPhaseAmount, currentTime, loginUserId);
     }
 
     /**
@@ -304,16 +324,16 @@ public class StatementServiceImpl implements StatementService {
         } else {
             statementExpectPayTime = statementEndTime;
         }
-        return buildStatementOrderDetailDO(customerId, orderId, orderItemType, orderItemReferId, statementExpectPayTime, thisPhaseStartTime, statementEndTime, middlePhaseAmount, currentTime, loginUserId);
+        return buildStatementOrderDetailDO(customerId, OrderType.ORDER_TYPE_ORDER, orderId, orderItemType, orderItemReferId, statementExpectPayTime, thisPhaseStartTime, statementEndTime, middlePhaseAmount, currentTime, loginUserId);
     }
 
-    StatementOrderDetailDO buildStatementOrderDetailDO(Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date statementExpectPayTime, Date startTime, Date endTime, BigDecimal statementDetailAmount, Date currentTime, Integer loginUserId) {
+    StatementOrderDetailDO buildStatementOrderDetailDO(Integer customerId, Integer orderType, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date statementExpectPayTime, Date startTime, Date endTime, BigDecimal statementDetailAmount, Date currentTime, Integer loginUserId) {
         StatementOrderDetailDO statementOrderDetailDO = new StatementOrderDetailDO();
         statementOrderDetailDO.setCustomerId(customerId);
+        statementOrderDetailDO.setOrderType(orderType);
         statementOrderDetailDO.setOrderId(orderId);
         statementOrderDetailDO.setOrderItemType(orderItemType);
         statementOrderDetailDO.setOrderItemReferId(orderItemReferId);
-        statementOrderDetailDO.setOrderId(orderId);
         statementOrderDetailDO.setStatementOrderId(1);
         statementOrderDetailDO.setStatementExpectPayTime(statementExpectPayTime);
         statementOrderDetailDO.setStatementStartTime(startTime);

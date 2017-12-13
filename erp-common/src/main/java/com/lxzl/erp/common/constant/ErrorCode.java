@@ -275,6 +275,7 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_ADDRESS_NOT_NULL = "J500038";
     public static final String CUSTOMER_PERSON_PHONE_NOT_NULL = "J500039";
     public static final String CUSTOMER_PERSON_ADDRESS_NOT_NULL = "J500040";
+    public static final String STATEMENT_ORDER_CREATE_ERROR = "J500041";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -553,6 +554,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_ADDRESS_NOT_NULL, "企业客户详细地址不能为空");
         MAP.put(CUSTOMER_PERSON_PHONE_NOT_NULL, "个人客户联系电话不能为空");
         MAP.put(CUSTOMER_PERSON_ADDRESS_NOT_NULL, "个人客户详细地址不能为空");
+        MAP.put(STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

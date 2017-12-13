@@ -4,6 +4,8 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.ProcessOrderParam;
+import com.lxzl.erp.common.domain.order.pojo.LastRentPriceRequest;
+import com.lxzl.erp.common.domain.order.pojo.LastRentPriceResponse;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -86,6 +88,12 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "isNeedVerify", method = RequestMethod.POST)
     public Result isNeedVerify(@RequestBody Order order, BindingResult validResult) {
         ServiceResult<String, Boolean> serviceResult = orderService.isNeedVerify(order.getOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "queryLastPrice", method = RequestMethod.POST)
+    public Result queryLastPrice(@RequestBody LastRentPriceRequest request, BindingResult validResult) {
+        ServiceResult<String, LastRentPriceResponse> serviceResult = orderService.queryLastPrice(request);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

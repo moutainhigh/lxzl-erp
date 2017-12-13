@@ -364,7 +364,16 @@
 	</update>
 
 	<update id="updateEquipmentOrderNo" parameterType="java.util.Map">
-		UPDATE erp_bulk_material SET order_no = #{orderNo, jdbcType=VARCHAR} WHERE current_equipment_no = #{equipmentNo, jdbcType=VARCHAR}
+		UPDATE erp_bulk_material SET order_no = #{orderNo, jdbcType=VARCHAR}
+		<choose>
+			<when test="orderNo != null &amp;&amp; orderNo != ''">
+				,bulk_material_status=2
+			</when>
+			<otherwise>
+				,bulk_material_status=1
+			</otherwise>
+		</choose>
+		WHERE current_equipment_no = #{equipmentNo, jdbcType=VARCHAR}
 	</update>
 
 </mapper>

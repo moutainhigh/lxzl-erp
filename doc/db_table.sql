@@ -1537,6 +1537,7 @@ CREATE TABLE `erp_statement_order_detail` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `statement_order_id` int(20) NOT NULL COMMENT '结算单ID',
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
+  `order_type` int(20) NOT NULL COMMENT '单子类型，1是订单，2是调配单，3是换货单，4是退货单，5是维修单',
   `order_id` int(20) NOT NULL COMMENT '订单ID',
   `order_item_type` int(20) NOT NULL COMMENT '订单项类型，1为商品，2为物料',
   `order_item_refer_id` int(20) NOT NULL COMMENT '订单项ID',

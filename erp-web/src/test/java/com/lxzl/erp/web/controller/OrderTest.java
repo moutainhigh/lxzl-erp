@@ -7,6 +7,7 @@ import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.constant.OrderRentType;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.ProcessOrderParam;
+import com.lxzl.erp.common.domain.order.pojo.LastRentPriceRequest;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
@@ -190,6 +191,17 @@ public class OrderTest extends ERPUnTransactionalTest {
         OrderQueryParam param = new OrderQueryParam();
 
         TestResult result = getJsonTestResult("/order/queryAllOrder", param);
+    }
+
+
+    @Test
+    public void queryLastPrice() throws Exception {
+        LastRentPriceRequest request = new LastRentPriceRequest();
+        request.setCustomerNo("CP201712060843154191841");
+        request.setProductSkuId(40);
+        request.setMaterialId(5);
+
+        TestResult result = getJsonTestResult("/order/queryLastPrice", request);
     }
 
 

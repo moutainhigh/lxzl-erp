@@ -294,6 +294,78 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public ServiceResult<String, LastRentPriceResponse> queryLastPrice(LastRentPriceRequest request) {
+        ServiceResult<String, LastRentPriceResponse> result = new ServiceResult<>();
+
+        if (request.getCustomerNo() == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NO_NOT_NULL);
+            return result;
+        }
+        if (request.getProductSkuId() == null && request.getMaterialId() == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
+            return result;
+        }
+
+        CustomerDO customerDO = customerMapper.findByNo(request.getCustomerNo());
+        if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+
+
+        LastRentPriceResponse response = new LastRentPriceResponse();
+        response.setCustomerNo(request.getCustomerNo());
+        BigDecimal productLastDayAmount = null, productLastMonthAmount = null, monthLastDayAmount = null, monthLastMonthAmount = null;
+        if (request.getProductSkuId() != null) {
+            ServiceResult<String, Product> queryProductResult = productService.queryProductBySkuId(request.getProductSkuId());
+            if (!ErrorCode.SUCCESS.equals(queryProductResult.getErrorCode())) {
+                result.setErrorCode(queryProductResult.getErrorCode());
+                return result;
+            }
+            Product product = queryProductResult.getResult();
+            List<Map<String, Object>> productSkuLastPriceMap = orderProductMapper.queryLastPrice(customerDO.getId(), request.getProductSkuId());
+            for (Map<String, Object> map : productSkuLastPriceMap) {
+                if (map.get("rent_type") != null && OrderRentType.RENT_TYPE_DAY.equals(map.get("rent_type"))) {
+                    productLastDayAmount = (BigDecimal)(map.get("product_unit_amount"));
+                } else if (map.get("rent_type") != null && OrderRentType.RENT_TYPE_MONTH.equals(map.get("rent_type"))) {
+                    productLastMonthAmount = (BigDecimal)(map.get("product_unit_amount"));
+                }
+            };
+            response.setProductSkuId(request.getProductSkuId());
+            response.setProductSkuLastDayPrice(productLastDayAmount);
+            response.setProductSkuLastMonthPrice(productLastMonthAmount);
+            response.setProductSkuDayPrice(product.getProductSkuList().get(0).getDayRentPrice());
+            response.setProductSkuMonthPrice(product.getProductSkuList().get(0).getMonthRentPrice());
+        }
+
+        if (request.getMaterialId() != null) {
+            ServiceResult<String, Material> queryMaterialResult = materialService.queryMaterialById(request.getMaterialId());
+            if (!ErrorCode.SUCCESS.equals(queryMaterialResult.getErrorCode())) {
+                result.setErrorCode(queryMaterialResult.getErrorCode());
+                return result;
+            }
+            Material material = queryMaterialResult.getResult();
+            List<Map<String, Object>> materialSkuLastPriceMap = orderMaterialMapper.queryLastPrice(customerDO.getId(), request.getProductSkuId());
+            for (Map<String, Object> map : materialSkuLastPriceMap) {
+                if (map.get("rent_type") != null && OrderRentType.RENT_TYPE_DAY.equals(map.get("rent_type"))) {
+                    monthLastDayAmount = (BigDecimal)(map.get("product_unit_amount"));
+                } else if (map.get("rent_type") != null && OrderRentType.RENT_TYPE_MONTH.equals(map.get("rent_type"))) {
+                    monthLastMonthAmount = (BigDecimal)(map.get("product_unit_amount"));
+                }
+            }
+            response.setMaterialId(request.getMaterialId());
+            response.setMaterialLastDayPrice(monthLastDayAmount);
+            response.setMaterialLastMonthPrice(monthLastMonthAmount);
+            response.setMaterialDayPrice(material.getDayRentPrice());
+            response.setMaterialMonthPrice(material.getMonthRentPrice());
+        }
+
+        result.setResult(response);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
@@ -729,13 +801,6 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_CAN_NOT_DELIVERY);
             return result;
         }
-        // 即将出库的设备ID
-        List<Integer> productEquipmentIdList = new ArrayList<>();
-        // 即将出库的散料ID
-        List<Integer> bulkMaterialIdList = new ArrayList<>();
-
-        Integer srcWarehouseId = null;
-        Integer targetWarehouseId = null;
         Date expectReturnTime = null;
         if (CollectionUtil.isNotEmpty(dbRecordOrder.getOrderProductDOList())) {
             for (OrderProductDO orderProductDO : dbRecordOrder.getOrderProductDOList()) {
@@ -743,13 +808,6 @@ public class OrderServiceImpl implements OrderService {
                 if (orderProductEquipmentDOList == null || orderProductDO.getProductCount() != orderProductEquipmentDOList.size()) {
                     result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR);
                     return result;
-                } else if (srcWarehouseId == null || targetWarehouseId == null) {
-                    ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(orderProductEquipmentDOList.get(0).getEquipmentNo());
-                    srcWarehouseId = productEquipmentDO.getCurrentWarehouseId();
-                    targetWarehouseId = productEquipmentDO.getCurrentWarehouseId();
-                }
-                for (OrderProductEquipmentDO orderProductEquipmentDO : orderProductEquipmentDOList) {
-                    productEquipmentIdList.add(orderProductEquipmentDO.getEquipmentId());
                 }
                 Date thisExpectReturnTime = calculationOrderExpectReturnTime(dbRecordOrder.getRentStartTime(), orderProductDO.getRentType(), orderProductDO.getRentTimeLength());
                 if (thisExpectReturnTime != null) {
@@ -763,13 +821,6 @@ public class OrderServiceImpl implements OrderService {
                 if (orderMaterialBulkDOList == null || orderMaterialDO.getMaterialCount() != orderMaterialBulkDOList.size()) {
                     result.setErrorCode(ErrorCode.ORDER_PRODUCT_BULK_MATERIAL_COUNT_ERROR);
                     return result;
-                } else if (srcWarehouseId == null || targetWarehouseId == null) {
-                    BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(orderMaterialBulkDOList.get(0).getBulkMaterialNo());
-                    srcWarehouseId = bulkMaterialDO.getCurrentWarehouseId();
-                    targetWarehouseId = bulkMaterialDO.getCurrentWarehouseId();
-                }
-                for (OrderMaterialBulkDO orderMaterialBulkDO : orderMaterialBulkDOList) {
-                    bulkMaterialIdList.add(orderMaterialBulkDO.getBulkMaterialId());
                 }
                 Date thisExpectReturnTime = calculationOrderExpectReturnTime(dbRecordOrder.getRentStartTime(), orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength());
                 if (thisExpectReturnTime != null) {
@@ -777,16 +828,6 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
-
-        // 计算预计归还时间
-        ProductOutStockParam productOutStockParam = new ProductOutStockParam();
-        productOutStockParam.setSrcWarehouseId(srcWarehouseId);
-        productOutStockParam.setTargetWarehouseId(targetWarehouseId);
-        productOutStockParam.setCauseType(StockCauseType.STOCK_CAUSE_TYPE_ORDER_DELIVERY);
-        productOutStockParam.setReferNo(dbRecordOrder.getOrderNo());
-        productOutStockParam.setProductEquipmentIdList(productEquipmentIdList);
-        productOutStockParam.setBulkMaterialIdList(bulkMaterialIdList);
-        warehouseService.productOutStock(productOutStockParam);
 
         dbRecordOrder.setDeliveryTime(currentTime);
         dbRecordOrder.setExpectReturnTime(expectReturnTime);

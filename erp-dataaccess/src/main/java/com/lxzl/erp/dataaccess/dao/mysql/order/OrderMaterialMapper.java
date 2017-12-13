@@ -14,4 +14,7 @@ public interface OrderMaterialMapper extends BaseMysqlDAO<OrderMaterialDO> {
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
     List<OrderMaterialDO> findByOrderId(@Param("orderId") Integer orderId);
+
+    List<Map<String, Object>> queryLastPrice(@Param("customerId") Integer customerId,
+                                             @Param("materialId") Integer materialId);
 }
