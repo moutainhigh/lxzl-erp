@@ -10,4 +10,11 @@ public interface ChangeOrderMaterialBulkMapper extends BaseMysqlDAO<ChangeOrderM
 	List<ChangeOrderMaterialBulkDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+	/**
+	 * 查询某收货单所有未录入src的散料
+	 * @param changeOrderNo
+	 * @return
+	 */
+	List<ChangeOrderMaterialBulkDO> listByChangeOrderPickUp(@Param("changeOrderNo") String changeOrderNo);
 }

@@ -2,11 +2,9 @@ package com.lxzl.erp.core.service.changeOrder;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.changeOrder.AddChangeOrderParam;
-import com.lxzl.erp.common.domain.changeOrder.ChangeOrderCommitParam;
-import com.lxzl.erp.common.domain.changeOrder.StockUpByChangeParam;
-import com.lxzl.erp.common.domain.changeOrder.UpdateChangeOrderParam;
+import com.lxzl.erp.common.domain.changeOrder.*;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrder;
+import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderMaterial;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderMaterialBulk;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderProductEquipment;
 import com.lxzl.erp.core.service.VerifyReceiver;
@@ -29,7 +27,7 @@ public interface ChangeOrderService extends VerifyReceiver {
 
     ServiceResult<String,ChangeOrder> detail(ChangeOrder changeOrder);
 
-    ServiceResult<String,Page<ChangeOrder>> page(ChangeOrder changeOrder);
+    ServiceResult<String,Page<ChangeOrder>> page(ChangeOrderPageParam changeOrderPageParam);
 
     ServiceResult<String,Page<ChangeOrderProductEquipment>> pageChangeOrderProductEquipment(ChangeOrder changeOrder);
 
@@ -38,4 +36,8 @@ public interface ChangeOrderService extends VerifyReceiver {
     ServiceResult<String,String> deleteChangeOrderProductEquipment(ChangeOrderProductEquipment changeOrderProductEquipment);
 
     ServiceResult<String,String> deleteChangeOrderMaterialBulk(ChangeOrderMaterialBulk changeOrderMaterialBulk);
+
+    ServiceResult<String,String> doChangeEquipment(ChangeOrderProductEquipment changeOrderProductEquipment);
+
+    ServiceResult<String,String> doChangeMaterial(ChangeOrderMaterial changeOrderMaterial);
 }

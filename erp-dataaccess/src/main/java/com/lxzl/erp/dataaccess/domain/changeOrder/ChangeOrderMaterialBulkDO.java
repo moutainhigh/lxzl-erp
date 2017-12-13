@@ -13,6 +13,8 @@ public class ChangeOrderMaterialBulkDO extends BaseDO {
     private Integer changeOrderMaterialId;
     private Integer changeOrderId;
     private String changeOrderNo;
+    private Integer srcEquipmentId;
+    private String srcEquipmentNo;
     private Integer srcBulkMaterialId;
     private String srcBulkMaterialNo;
     private Integer destBulkMaterialId;
@@ -139,4 +141,19 @@ public class ChangeOrderMaterialBulkDO extends BaseDO {
         this.destBulkMaterialDO = destBulkMaterialDO;
     }
 
+    public Integer getSrcEquipmentId() {
+        return srcEquipmentId;
+    }
+
+    public void setSrcEquipmentId(Integer srcEquipmentId) {
+        this.srcEquipmentId = srcEquipmentId;
+    }
+
+    public String getSrcEquipmentNo() {
+        return srcEquipmentNo;
+    }
+
+    public void setSrcEquipmentNo(String srcEquipmentNo) {
+        this.srcEquipmentNo = srcEquipmentNo;
+    }
 }

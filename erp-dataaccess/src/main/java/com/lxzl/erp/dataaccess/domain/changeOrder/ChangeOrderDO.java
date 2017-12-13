@@ -1,9 +1,11 @@
 package com.lxzl.erp.dataaccess.domain.changeOrder;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class ChangeOrderDO extends BaseDO {
 
@@ -27,6 +29,15 @@ public class ChangeOrderDO extends BaseDO {
     private Integer dataStatus;
     private String remark;
     private Integer owner;
+
+    @Transient
+    private String ownerName;
+    @Transient
+    private ChangeOrderConsignInfoDO changeOrderConsignInfoDO;
+    @Transient
+    private List<ChangeOrderProductDO> changeOrderProductDOList;
+    @Transient
+    private List<ChangeOrderMaterialDO> changeOrderMaterialDOList;
 
     public Integer getId() {
         return id;
@@ -188,4 +199,35 @@ public class ChangeOrderDO extends BaseDO {
         this.owner = owner;
     }
 
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public ChangeOrderConsignInfoDO getChangeOrderConsignInfoDO() {
+        return changeOrderConsignInfoDO;
+    }
+
+    public void setChangeOrderConsignInfoDO(ChangeOrderConsignInfoDO changeOrderConsignInfoDO) {
+        this.changeOrderConsignInfoDO = changeOrderConsignInfoDO;
+    }
+
+    public List<ChangeOrderProductDO> getChangeOrderProductDOList() {
+        return changeOrderProductDOList;
+    }
+
+    public void setChangeOrderProductDOList(List<ChangeOrderProductDO> changeOrderProductDOList) {
+        this.changeOrderProductDOList = changeOrderProductDOList;
+    }
+
+    public List<ChangeOrderMaterialDO> getChangeOrderMaterialDOList() {
+        return changeOrderMaterialDOList;
+    }
+
+    public void setChangeOrderMaterialDOList(List<ChangeOrderMaterialDO> changeOrderMaterialDOList) {
+        this.changeOrderMaterialDOList = changeOrderMaterialDOList;
+    }
 }
