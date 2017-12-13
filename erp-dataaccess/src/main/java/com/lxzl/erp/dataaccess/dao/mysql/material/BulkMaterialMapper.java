@@ -15,6 +15,8 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
 
     Integer updateEquipmentOrderNo(@Param("equipmentNo") String equipmentNo, @Param("orderNo") String orderNo);
 
+    Integer updateEquipmentBulkMaterialStatus(@Param("equipmentNo") String equipmentNo, @Param("bulkMaterialStatus") Integer bulkMaterialStatus);
+
     List<BulkMaterialDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
