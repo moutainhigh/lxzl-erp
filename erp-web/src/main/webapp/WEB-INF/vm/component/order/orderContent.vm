@@ -160,19 +160,6 @@
                                     <tr class="skuRow">
                                         <td width="15%">{{propertiesToStr}}</td>
                                         <td>
-                                            <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
-                                            <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
-                                            <label class="field prepend-icon mw200">
-                                                <input type="text" name="productUnitAmount-{{skuId}}-{{rowKey}}" value="{{productUnitAmount}}" class="productUnitAmount form-control required moneyNumber" placeholder="输入商品单价" />
-                                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="field prepend-icon mw200">
-                                                <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入租赁数量" />
-                                            </label>
-                                        </td>
-                                        <td>
                                             <label class="field select">
                                                 <select name="rentType-{{skuId}}-{{rowKey}}" class="rentType required" style="min-width: 130px;">
                                                     <option value="">选择租赁类型</option>
@@ -181,6 +168,22 @@
                                                     {{/rentTypeList}}
                                                 </select>
                                                 <i class="arrow"></i>
+                                            </label>
+                                        </td>
+                                        <td class="productUnitAmountTd">
+                                            <div class="smart-widget sm-right smr-50">
+                                                <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
+                                                <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+                                                <label class="field prepend-icon mw200">
+                                                    <input type="text" name="productUnitAmount-{{skuId}}-{{rowKey}}" value="{{productUnitAmount}}" class="productUnitAmount form-control required moneyNumber gui-input" placeholder="输入商品单价" />
+                                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                </label>
+                                                <button type="button" class="button btn-primary bradiusN chooseProductUnitAmount" data-productskuid="{{skuId}}"><i class="fa fa-search"></i></button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <label class="field prepend-icon mw200">
+                                                <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入租赁数量" />
                                             </label>
                                         </td>
                                         <td>
@@ -259,9 +262,9 @@
                             <th>租赁价格</th>
                             <th>描述</th>
                             <th>图片</th>
+                            <th>租赁类型</th>
                             <th>物料单价</th>
                             <th>数量</th>
-                            <th>租赁类型</th>
                             <th>租赁时长</th>
                             <th>保险金</th>
                             <th>支付方式</th>
@@ -289,19 +292,6 @@
                             <td>{{materialDesc}}</td>
                             <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                             <td>
-                                <label class="field prepend-icon mw200">
-                                    <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
-                                    <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
-                                    <input type="text" name="materialUnitAmount-{{materialNo}}" value="{{materialUnitAmount}}" class="materialUnitAmount form-control required moneyNumber" placeholder="输入物料单价" />
-                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                                </label>
-                            </td>
-                            <td>
-                                <label class="field prepend-icon mw200">
-                                    <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入租赁数量" />
-                                </label>
-                            </td>
-                            <td>
                                 <label class="field select">
                                     <select name="rentType-{{materialNo}}" class="rentType required" style="min-width: 130px;">
                                         <option value="">选择租赁类型</option>
@@ -310,6 +300,22 @@
                                         {{/rentTypeList}}
                                     </select>
                                     <i class="arrow"></i>
+                                </label>
+                            </td>
+                            <td class="materialUnitAmountTd">
+                                <div class="smart-widget sm-right smr-50">
+                                    <label class="field prepend-icon mw200">
+                                        <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
+                                        <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
+                                        <input type="text" name="materialUnitAmount-{{materialNo}}" value="{{materialUnitAmount}}" class="materialUnitAmount form-control required moneyNumber" placeholder="输入物料单价" />
+                                        <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                    </label>
+                                    <button type="button" class="button btn-primary bradiusN chooseMaterialUnitAmount" data-materialid="{{materialId}}"><i class="fa fa-search"></i></button>
+                                </div>
+                            </td>
+                            <td>
+                                <label class="field prepend-icon mw200">
+                                    <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入租赁数量" />
                                 </label>
                             </td>
                             <td>
