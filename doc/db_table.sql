@@ -1009,6 +1009,7 @@ CREATE TABLE `erp_order_product_equipment` (
   `order_product_id` int(20) NOT NULL COMMENT '订单项ID',
   `equipment_id` int(20) NOT NULL COMMENT '设备ID',
   `equipment_no` varchar(100) NOT NULL COMMENT '设备编号唯一',
+  `rent_start_time` datetime DEFAULT NULL COMMENT '起租时间',
   `expect_return_time` datetime DEFAULT NULL COMMENT '预计归还时间',
   `actual_return_time` datetime DEFAULT NULL COMMENT '实际归还时间',
   `expect_rent_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '预计租金',
