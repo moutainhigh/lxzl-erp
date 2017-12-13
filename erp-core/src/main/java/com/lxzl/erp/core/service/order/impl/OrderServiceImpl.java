@@ -156,7 +156,7 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         if (CollectionUtil.isEmpty(orderDO.getOrderProductDOList())
-                || CollectionUtil.isEmpty(orderDO.getOrderMaterialDOList())) {
+                && CollectionUtil.isEmpty(orderDO.getOrderMaterialDOList())) {
             result.setErrorCode(ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL);
             return result;
         }
