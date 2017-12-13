@@ -7,11 +7,12 @@
 		<result column="change_order_no" jdbcType="VARCHAR" property="changeOrderNo" />
 		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
 		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+		<result column="rent_start_time" jdbcType="TIMESTAMP" property="rentStartTime" />
 		<result column="total_change_product_count" jdbcType="INTEGER" property="totalChangeProductCount" />
 		<result column="total_change_material_count" jdbcType="INTEGER" property="totalChangeMaterialCount" />
 		<result column="real_total_change_product_count" jdbcType="INTEGER" property="realTotalChangeProductCount" />
 		<result column="real_total_change_material_count" jdbcType="INTEGER" property="realTotalChangeMaterialCount" />
-		<result column="total_difference_price" jdbcType="DECIMAL" property="totalDifferencePrice" />
+		<result column="total_price_diff" jdbcType="DECIMAL" property="totalPriceDiff" />
 		<result column="service_cost" jdbcType="DECIMAL" property="serviceCost" />
 		<result column="damage_cost" jdbcType="DECIMAL" property="damageCost" />
 		<result column="is_damage" jdbcType="INTEGER" property="isDamage" />
@@ -29,7 +30,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eco.id,eco.change_order_no,eco.customer_id,eco.customer_no,eco.total_change_product_count,eco.total_change_material_count,eco.real_total_change_product_count,eco.real_total_change_material_count,eco.total_difference_price,eco.service_cost,eco.damage_cost,eco.is_damage,eco.change_reason_type,eco.change_reason,eco.change_mode,eco.change_order_status,eco.data_status,eco.remark,eco.owner,eco.create_time,eco.create_user,eco.update_time,eco.update_user
+		eco.id,eco.change_order_no,eco.customer_id,eco.customer_no,eco.rent_start_time,eco.total_change_product_count,eco.total_change_material_count,eco.real_total_change_product_count,eco.real_total_change_material_count,eco.total_price_diff,eco.service_cost,eco.damage_cost,eco.is_damage,eco.change_reason_type,eco.change_reason,eco.change_mode,eco.change_order_status,eco.data_status,eco.remark,eco.owner,eco.create_time,eco.create_user,eco.update_time,eco.update_user
 	</sql>
 
 	<select id="findById" resultMap="ChangeOrderDO" parameterType="java.lang.Integer">
@@ -71,6 +72,9 @@
 			<if test="customerNo != null">
 				customer_no = #{customerNo,jdbcType=VARCHAR},
 			</if>
+			<if test="rentStartTime != null">
+				rent_start_time = #{rentStartTime,jdbcType=TIMESTAMP},
+			</if>
 			<if test="totalChangeProductCount != null">
 				total_change_product_count = #{totalChangeProductCount,jdbcType=INTEGER},
 			</if>
@@ -83,8 +87,8 @@
 			<if test="realTotalChangeMaterialCount != null">
 				real_total_change_material_count = #{realTotalChangeMaterialCount,jdbcType=INTEGER},
 			</if>
-			<if test="totalDifferencePrice != null">
-				total_difference_price = #{totalDifferencePrice,jdbcType=DECIMAL},
+			<if test="totalPriceDiff != null">
+				total_price_diff = #{totalPriceDiff,jdbcType=DECIMAL},
 			</if>
 			<if test="serviceCost != null">
 				service_cost = #{serviceCost,jdbcType=DECIMAL},

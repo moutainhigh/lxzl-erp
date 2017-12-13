@@ -177,6 +177,7 @@ public class ErrorCode {
     public static final String MATERIAL_MODEL_NOT_NULL = "J300052";
     public static final String MATERIAL_TYPE_HAVE_NO_MODEL = "J300053";
     public static final String PURCHASE_RECEIVE_ORDER_MATERIAL_NO_NOT_NULL = "J300054";
+    public static final String STOCK_NOT_MATCH = "J300055";
 
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
@@ -236,6 +237,11 @@ public class ErrorCode {
     public static final String CHANGE_ORDER_NOT_EXISTS = "J400055";
     public static final String CHANGE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN = "J400056";
     public static final String CHANGE_ORDER_STATUS_CAN_NOT_STOCK_UP = "J400057";
+    public static final String CHANGE_ORDER_CAN_NOT_UPDATE = "J400058";
+    public static final String CHANGE_ORDER_PRODUCT_ID_NOT_NULL = "J400059";
+    public static final String CHANGE_ORDER_MATERIAL_ID_NOT_NULL = "J400060";
+    public static final String CHANGE_ORDER_STATUS_CAN_NOT_DELIVERY = "J400061";
+    public static final String CHANGE_ORDER_STATUS_CAN_NOT_END = "J400062";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -457,6 +463,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_NO_NOT_NULL, "采购收货单物料项物料编号不能为空");
         MAP.put(CUSTOMER_CONSIGN_NOT_EXISTS, "客户收货地址不存在");
         MAP.put(CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW, "客户授信额度超限");
+        MAP.put(STOCK_NOT_MATCH, "备货不匹配");
 
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
@@ -506,6 +513,11 @@ public class ErrorCode {
         MAP.put(CHANGE_ORDER_NOT_EXISTS, "换货单不存在");
         MAP.put(CHANGE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的换货单可以提交");
         MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_STOCK_UP, "当前换货单不允许备货");
+        MAP.put(CHANGE_ORDER_CAN_NOT_UPDATE, "当前换货单不允许修改");
+        MAP.put(CHANGE_ORDER_PRODUCT_ID_NOT_NULL, "换货商品项ID不能为空");
+        MAP.put(CHANGE_ORDER_MATERIAL_ID_NOT_NULL, "换货物料项ID不能为空");
+        MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_DELIVERY, "不是备货中的换货单不能发货");
+        MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_END, "不是处理中的换货单不允许结束");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
