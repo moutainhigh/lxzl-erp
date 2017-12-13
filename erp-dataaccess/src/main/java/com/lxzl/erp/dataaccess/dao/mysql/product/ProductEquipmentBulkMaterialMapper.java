@@ -16,4 +16,7 @@ public interface ProductEquipmentBulkMaterialMapper extends BaseMysqlDAO<Product
     List<ProductEquipmentBulkMaterialDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+    ProductEquipmentBulkMaterialDO findByBulkMaterialId(@Param("bulkMaterialId")Integer bulkMaterialId);
+
 }

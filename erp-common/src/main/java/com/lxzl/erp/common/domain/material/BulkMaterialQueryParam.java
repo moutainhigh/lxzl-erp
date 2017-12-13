@@ -25,6 +25,10 @@ public class BulkMaterialQueryParam extends BasePageParam {
     private String orderNo;
     private Integer bulkMaterialStatus;
 
+    private Integer bulkMaterialId;
+    private String currentEquipmentNo;
+
+
     public Integer getMaterialId() {
         return materialId;
     }
@@ -95,5 +99,21 @@ public class BulkMaterialQueryParam extends BasePageParam {
 
     public void setBulkMaterialStatus(Integer bulkMaterialStatus) {
         this.bulkMaterialStatus = bulkMaterialStatus;
+    }
+
+    public String getCurrentEquipmentNo() {
+        return currentEquipmentNo;
+    }
+
+    public void setCurrentEquipmentNo(String currentEquipmentNo) {
+        this.currentEquipmentNo = currentEquipmentNo;
+    }
+
+    public Integer getBulkMaterialId() {
+        return bulkMaterialId;
+    }
+
+    public void setBulkMaterialId(Integer bulkMaterialId) {
+        this.bulkMaterialId = bulkMaterialId;
     }
 }
