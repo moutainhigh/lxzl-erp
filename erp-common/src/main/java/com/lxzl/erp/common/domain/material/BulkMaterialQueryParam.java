@@ -27,6 +27,7 @@ public class BulkMaterialQueryParam extends BasePageParam {
 
     private Integer bulkMaterialId;
     private String currentEquipmentNo;
+    private Integer isOnEquipment;
 
 
     public Integer getMaterialId() {
@@ -115,5 +116,13 @@ public class BulkMaterialQueryParam extends BasePageParam {
 
     public void setBulkMaterialId(Integer bulkMaterialId) {
         this.bulkMaterialId = bulkMaterialId;
+    }
+
+    public Integer getIsOnEquipment() {
+        return isOnEquipment;
+    }
+
+    public void setIsOnEquipment(Integer isOnEquipment) {
+        this.isOnEquipment = isOnEquipment;
     }
 }

@@ -135,7 +135,9 @@ public class DateUtil {
         Calendar c2 = Calendar.getInstance();
         c1.setTime(date1);
         c2.setTime(date2);
+        int year = c2.get(Calendar.YEAR) - c1.get(Calendar.YEAR);
         result = c2.get(Calendar.MONTH) - c1.get(Calendar.MONTH);
+        result = year * 12 + result;
         int days = c2.get(Calendar.DAY_OF_MONTH) - c1.get(Calendar.DAY_OF_MONTH);
         if (days < 0) {
             result--;
