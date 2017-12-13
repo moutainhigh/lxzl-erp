@@ -1,15 +1,20 @@
 package com.lxzl.erp.common.domain.changeOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import org.hibernate.validator.constraints.NotBlank;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ChangeOrder implements Serializable {
 
     private Integer changeOrderId;   //唯一标识
+    @NotBlank(message = ErrorCode.CHANGE_ORDER_NO_NOT_NULL,groups = {IdGroup.class})
     private String changeOrderNo;   //换货编号
     private Integer customerId;   //客户ID
     private String customerNo;   //客户编号
@@ -34,6 +39,10 @@ public class ChangeOrder implements Serializable {
     private Date updateTime;   //添加时间
     private String updateUser;   //修改人
 
+    private String ownerName;
+    private ChangeOrderConsignInfo changeOrderConsignInfo;
+    private List<ChangeOrderProduct> changeOrderProductList;
+    private List<ChangeOrderMaterial> changeOrderMaterialList;
 
     public Integer getChangeOrderId() {
         return changeOrderId;
@@ -227,4 +236,35 @@ public class ChangeOrder implements Serializable {
         this.updateUser = updateUser;
     }
 
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public ChangeOrderConsignInfo getChangeOrderConsignInfo() {
+        return changeOrderConsignInfo;
+    }
+
+    public void setChangeOrderConsignInfo(ChangeOrderConsignInfo changeOrderConsignInfo) {
+        this.changeOrderConsignInfo = changeOrderConsignInfo;
+    }
+
+    public List<ChangeOrderProduct> getChangeOrderProductList() {
+        return changeOrderProductList;
+    }
+
+    public void setChangeOrderProductList(List<ChangeOrderProduct> changeOrderProductList) {
+        this.changeOrderProductList = changeOrderProductList;
+    }
+
+    public List<ChangeOrderMaterial> getChangeOrderMaterialList() {
+        return changeOrderMaterialList;
+    }
+
+    public void setChangeOrderMaterialList(List<ChangeOrderMaterial> changeOrderMaterialList) {
+        this.changeOrderMaterialList = changeOrderMaterialList;
+    }
 }

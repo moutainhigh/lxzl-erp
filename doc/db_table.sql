@@ -1375,8 +1375,8 @@ CREATE TABLE `erp_change_order_product_equipment` (
   `change_order_id` int(20) NOT NULL COMMENT '换货ID',
   `change_order_no` varchar(100) NOT NULL COMMENT '换货编号',
   `order_no` varchar(100) COMMENT '订单编号',
-  `src_equipment_id` int(20) NOT NULL COMMENT '原设备ID',
-  `src_equipment_no` varchar(100) NOT NULL COMMENT '原设备编号',
+  `src_equipment_id` int(20) COMMENT '原设备ID',
+  `src_equipment_no` varchar(100)  COMMENT '原设备编号',
   `dest_equipment_id` int(20) NOT NULL COMMENT '目标设备ID',
   `dest_equipment_no` varchar(100) NOT NULL COMMENT '目标设备编号',
   `price_diff` decimal(15,2) DEFAULT 0 COMMENT '差价，可以是正值或负值，差价计算标准为每月',
@@ -1384,10 +1384,10 @@ CREATE TABLE `erp_change_order_product_equipment` (
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
-  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁换货前商品项设备表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁换货商品项设备表';
 
 DROP TABLE if exists `erp_change_order_material`;
 CREATE TABLE `erp_change_order_material` (
@@ -1415,8 +1415,10 @@ CREATE TABLE `erp_change_order_material_bulk` (
   `change_order_material_id` int(20) NOT NULL COMMENT '租赁换货物料项ID',
   `change_order_id` int(20) NOT NULL COMMENT '换货ID',
   `change_order_no` varchar(100) NOT NULL COMMENT '换货编号',
-  `src_bulk_material_id` int(20) NOT NULL COMMENT '原散料ID',
-  `src_bulk_material_no` varchar(100) NOT NULL COMMENT '原散料编号',
+  `src_equipment_id` int(20) COMMENT '原设备ID,如果更换的散料是租赁设备上的，此字段有值',
+  `src_equipment_no` varchar(100) COMMENT '原设备编号,如果更换的散料是租赁设备上的，此字段有值',
+  `src_bulk_material_id` int(20) COMMENT '原散料ID',
+  `src_bulk_material_no` varchar(100) COMMENT '原散料编号',
   `dest_bulk_material_id` int(20) NOT NULL COMMENT '目标散料ID',
   `dest_bulk_material_no` varchar(100) NOT NULL COMMENT '目标散料编号',
   `order_no` varchar(100) COMMENT '订单编号',

@@ -7,6 +7,8 @@
 		<result column="change_order_material_id" jdbcType="INTEGER" property="changeOrderMaterialId" />
 		<result column="change_order_id" jdbcType="INTEGER" property="changeOrderId" />
 		<result column="change_order_no" jdbcType="VARCHAR" property="changeOrderNo" />
+		<result column="src_equipment_id" jdbcType="INTEGER" property="srcEquipmentId" />
+		<result column="src_equipment_id" jdbcType="VARCHAR" property="srcEquipmentNo" />
 		<result column="src_bulk_material_id" jdbcType="INTEGER" property="srcBulkMaterialId" />
 		<result column="src_bulk_material_no" jdbcType="VARCHAR" property="srcBulkMaterialNo" />
 		<result column="dest_bulk_material_id" jdbcType="INTEGER" property="destBulkMaterialId" />
@@ -22,7 +24,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ecomb.id,ecomb.change_order_material_id,ecomb.change_order_id,ecomb.change_order_no,ecomb.src_bulk_material_id,ecomb.src_bulk_material_no,ecomb.dest_bulk_material_id,ecomb.dest_bulk_material_no,ecomb.order_no,ecomb.price_diff,ecomb.data_status,ecomb.remark,ecomb.create_time,ecomb.create_user,ecomb.update_time,ecomb.update_user
+		ecomb.id,ecomb.change_order_material_id,ecomb.change_order_id,ecomb.change_order_no,ecomb.src_equipment_id,ecomb.src_equipment_no,ecomb.src_bulk_material_id,ecomb.src_bulk_material_no,ecomb.dest_bulk_material_id,ecomb.dest_bulk_material_no,ecomb.order_no,ecomb.price_diff,ecomb.data_status,ecomb.remark,ecomb.create_time,ecomb.create_user,ecomb.update_time,ecomb.update_user
 	</sql>
 
 	<select id="findById" resultMap="ChangeOrderMaterialBulkDO" parameterType="java.lang.Integer">
@@ -59,6 +61,12 @@
 			</if>
 			<if test="changeOrderNo != null">
 				change_order_no = #{changeOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="srcEquipmentId != null">
+				src_equipment_id = #{srcEquipmentId,jdbcType=INTEGER},
+			</if>
+			<if test="srcEquipmentNo != null">
+				src_equipment_no = #{srcEquipmentNo,jdbcType=INTEGER},
 			</if>
 			<if test="srcBulkMaterialId != null">
 				src_bulk_material_id = #{srcBulkMaterialId,jdbcType=INTEGER},
