@@ -4,8 +4,10 @@ import com.lxzl.erp.common.constant.BulkMaterialStatus;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
+import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,10 +27,14 @@ public class BulkMaterialSupport {
     @Autowired
     private BulkMaterialMapper bulkMaterialMapper;
 
-    public List<BulkMaterialDO> queryFitBulkMaterialDOList(Integer srcWarehouseId, Integer materialId, Integer materialCount) {
+    @Autowired
+    private WarehouseSupport warehouseSupport;
+
+    public List<BulkMaterialDO> queryFitBulkMaterialDOList(Integer materialId, Integer materialCount) {
+        WarehouseDO warehouseDO = warehouseSupport.getCurrentWarehouse();
         BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
         bulkMaterialQueryParam.setMaterialId(materialId);
-        bulkMaterialQueryParam.setCurrentWarehouseId(srcWarehouseId);
+        bulkMaterialQueryParam.setCurrentWarehouseId(warehouseDO.getId());
         bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
         bulkMaterialQueryParam.setIsOnEquipment(CommonConstant.COMMON_CONSTANT_NO);
 
@@ -39,10 +45,11 @@ public class BulkMaterialSupport {
         return bulkMaterialMapper.listPage(bulkQueryParam);
     }
 
-    public BulkMaterialDO queryFitBulkMaterialDO(Integer srcWarehouseId, Integer materialId) {
+    public BulkMaterialDO queryFitBulkMaterialDO(Integer materialId) {
+        WarehouseDO warehouseDO = warehouseSupport.getCurrentWarehouse();
         BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
         bulkMaterialQueryParam.setMaterialId(materialId);
-        bulkMaterialQueryParam.setCurrentWarehouseId(srcWarehouseId);
+        bulkMaterialQueryParam.setCurrentWarehouseId(warehouseDO.getId());
         bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
         bulkMaterialQueryParam.setIsOnEquipment(CommonConstant.COMMON_CONSTANT_NO);
 
@@ -54,7 +61,7 @@ public class BulkMaterialSupport {
         return CollectionUtil.isNotEmpty(bulkMaterialDOList) ? bulkMaterialDOList.get(0) : null;
     }
 
-    public List<BulkMaterialDO> queryBusyBulkMaterialDOList(String orderNo, Integer materialId,Integer materialCount) {
+    public List<BulkMaterialDO> queryBusyBulkMaterialDOList(String orderNo, Integer materialId, Integer materialCount) {
         BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
         bulkMaterialQueryParam.setMaterialId(materialId);
         bulkMaterialQueryParam.setOrderNo(orderNo);

@@ -21,6 +21,7 @@ import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
+import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
@@ -34,6 +35,7 @@ import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.*;
+import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
@@ -612,34 +614,15 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_HAVE_NO_PAID);
             return result;
         }
-
-        ServiceResult<String, List<Warehouse>> warehouseResult = warehouseService.getWarehouseByCurrentCompany();
-        if (!ErrorCode.SUCCESS.equals(warehouseResult.getErrorCode())) {
-            result.setErrorCode(warehouseResult.getErrorCode());
-            return result;
-        }
-        // 取仓库，本公司的默认仓库和客户仓
-        List<Warehouse> warehouseList = warehouseResult.getResult();
-        Warehouse srcWarehouse = null;
-        for (Warehouse warehouse : warehouseList) {
-            if (WarehouseType.WAREHOUSE_TYPE_DEFAULT.equals(warehouse.getWarehouseType())) {
-                srcWarehouse = warehouse;
-            }
-        }
-        if (srcWarehouse == null) {
-            result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
-            return result;
-        }
-
         if (!CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())
                 && !CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(param.getOperationType())) {
             result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
             return result;
         }
 
-
+        WarehouseDO warehouseDO = warehouseSupport.getCurrentWarehouse();
         if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())) {
-            ServiceResult<String, Object> addOrderItemResult = addOrderItem(orderDO, srcWarehouse.getWarehouseId(), param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), loginUser.getUserId(), currentTime);
+            ServiceResult<String, Object> addOrderItemResult = addOrderItem(orderDO, warehouseDO.getId(), param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), loginUser.getUserId(), currentTime);
             if (!ErrorCode.SUCCESS.equals(addOrderItemResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(addOrderItemResult.getErrorCode(), addOrderItemResult.getFormatArgs());
@@ -732,7 +715,7 @@ public class OrderServiceImpl implements OrderService {
 
         if (materialId != null) {
             // 必须是当前库房闲置的物料
-            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(srcWarehouseId, materialId, materialCount);
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(materialId, materialCount);
             if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
                 result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
                 return result;
@@ -1436,9 +1419,6 @@ public class OrderServiceImpl implements OrderService {
     private CustomerRiskManagementMapper customerRiskManagementMapper;
 
     @Autowired
-    private WarehouseService warehouseService;
-
-    @Autowired
     private MaterialService materialService;
 
     @Autowired
@@ -1446,4 +1426,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private BulkMaterialSupport bulkMaterialSupport;
+
+    @Autowired
+    private WarehouseSupport warehouseSupport;
 }
