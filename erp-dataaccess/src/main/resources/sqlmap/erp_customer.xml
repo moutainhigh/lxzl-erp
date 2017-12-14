@@ -27,6 +27,12 @@
 		<result column="ecrm_credit_amount_used" jdbcType="DECIMAL" property="creditAmountUsed" />
 		<result column="ecrm_deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
 		<result column="ecrm_payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="ecrm_apple_deposit_cycle" jdbcType="INTEGER" property="appleDepositCycle" />
+		<result column="ecrm_apple_payment_cycle" jdbcType="INTEGER" property="applePaymentCycle" />
+		<result column="ecrm_new_deposit_cycle" jdbcType="INTEGER" property="newDepositCycle" />
+		<result column="ecrm_new_payment_cycle" jdbcType="INTEGER" property="newPaymentCycle" />
+		<result column="ecrm_apple_pay_mode" jdbcType="INTEGER" property="applePayMode" />
+		<result column="ecrm_new_pay_mode" jdbcType="INTEGER" property="newPayMode" />
 		<result column="ecrm_data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="ecrm_remark" jdbcType="VARCHAR" property="remark" />
 		<result column="ecrm_create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -93,7 +99,7 @@
 		ecp.id AS ecp_id,ecp.customer_id AS ecp_customer_id,ecp.real_name AS ecp_real_name,ecp.email AS ecp_email,ecp.phone AS ecp_phone,ecp.province AS ecp_province,ecp.city AS ecp_city,ecp.district AS ecp_district,ecp.address AS ecp_address,ecp.data_status AS ecp_data_status,ecp.remark AS ecp_remark,ecp.create_time AS ecp_create_time,ecp.create_user AS ecp_create_user,ecp.update_time AS ecp_update_time,ecp.update_user AS ecp_update_user
 	</sql>
 	<sql id="risk_column_List">
-		ecrm.id AS ecrm_id,ecrm.customer_id AS ecrm_customer_id,ecrm.credit_amount AS ecrm_credit_amount,ecrm.credit_amount_used AS ecrm_credit_amount_used,ecrm.deposit_cycle AS ecrm_deposit_cycle,ecrm.payment_cycle AS ecrm_payment_cycle,ecrm.data_status AS ecrm_data_status,ecrm.remark AS ecrm_remark,ecrm.create_time AS ecrm_create_time,ecrm.create_user AS ecrm_create_user,ecrm.update_time AS ecrm_update_time,ecrm.update_user AS ecrm_update_user
+		ecrm.id AS ecrm_id,ecrm.customer_id AS ecrm_customer_id,ecrm.credit_amount AS ecrm_credit_amount,ecrm.credit_amount_used AS ecrm_credit_amount_used,ecrm.deposit_cycle AS ecrm_deposit_cycle,ecrm.payment_cycle AS ecrm_payment_cycle,ecrm.apple_deposit_cycle AS ecrm_apple_deposit_cycle,ecrm.apple_payment_cycle AS ecrm_apple_payment_cycle,ecrm.new_deposit_cycle AS ecrm_new_deposit_cycle,ecrm.new_payment_cycle AS ecrm_new_payment_cycle,ecrm.apple_pay_mode AS ecrm_apple_pay_mode,ecrm.new_pay_mode AS ecrm_new_pay_mode,ecrm.data_status AS ecrm_data_status,ecrm.remark AS ecrm_remark,ecrm.create_time AS ecrm_create_time,ecrm.create_user AS ecrm_create_user,ecrm.update_time AS ecrm_update_time,ecrm.update_user AS ecrm_update_user
 	</sql>
 	<select id="findById" resultMap="CustomerDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/>,<include refid="risk_column_List"/> FROM erp_customer ec
