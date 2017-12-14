@@ -52,6 +52,12 @@ public class OrderController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "pay", method = RequestMethod.POST)
+    public Result pay(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = orderService.payOrder(order.getOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "queryOrderByNo", method = RequestMethod.POST)
     public Result queryOrderByNo(@RequestBody Order order, BindingResult validResult) {
         ServiceResult<String, Order> serviceResult = orderService.queryOrderByNo(order.getOrderNo());

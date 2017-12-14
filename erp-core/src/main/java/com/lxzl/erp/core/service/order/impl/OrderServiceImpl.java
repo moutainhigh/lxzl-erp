@@ -201,6 +201,28 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public ServiceResult<String, String> payOrder(String orderNo) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date currentTime = new Date();
+        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        if (orderDO == null) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        if (PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
+            return result;
+        }
+        orderDO.setPayStatus(PayStatus.PAY_STATUS_PAID);
+        orderDO.setPayTime(currentTime);
+        orderMapper.update(orderDO);
+
+        result.setResult(orderNo);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
     public ServiceResult<String, Boolean> isNeedVerify(String orderNo) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);

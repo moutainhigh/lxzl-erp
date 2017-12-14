@@ -40,6 +40,15 @@ public interface OrderService extends VerifyReceiver {
      */
     ServiceResult<String, String> commitOrder(String orderNo, Integer verifyUser, String commitRemark);
 
+
+    /**
+     * 支付订单
+     *
+     * @param orderNo 订单编号
+     * @return 支付结果
+     */
+    ServiceResult<String, String> payOrder(String orderNo);
+
     /**
      * 根据订单编号查询单个订单
      *
