@@ -800,7 +800,7 @@ CREATE TABLE `erp_product_img` (
 DROP TABLE if exists `erp_repair_order`;
 CREATE TABLE `erp_repair_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `repair_order_no` varchar(100) NOT NULL COMMENT '出入库单编号',
+  `repair_order_no` varchar(100) NOT NULL COMMENT '维修单编号',
   `repair_reason` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '维修原因，由发起人填写',
   `repair_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '维修单状态，0-初始化维修单,4-审核中,8-待维修,12-维修中,16-维修完成回库,20-取消维修',
   `order_id` int(20) DEFAULT NULL COMMENT '订单ID，如果是在客户手里出现的维修，此字段不能为空',
@@ -809,7 +809,7 @@ CREATE TABLE `erp_repair_order` (
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
-  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备维修单';
@@ -820,12 +820,12 @@ CREATE TABLE `erp_repair_order_equipment` (
   `repair_order_no` varchar(100) NOT NULL COMMENT '维修单编号',
   `equipment_id` int(20) NOT NULL COMMENT '设备ID',
   `equipment_no` varchar(100) NOT NULL COMMENT '设备编号唯一',
-  `repair_over_time` datetime DEFAULT NULL COMMENT '维修完成时间',
+  `repair_end_time` datetime DEFAULT NULL COMMENT '维修完成时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
-  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备维修单单明细';
@@ -836,12 +836,12 @@ CREATE TABLE `erp_repair_order_bulk_material` (
   `repair_order_no` varchar(100) NOT NULL COMMENT '维修单编号',
   `bulk_material_id` int(20) NOT NULL COMMENT '散料ID',
   `bulk_material_no` varchar(100) NOT NULL COMMENT '散料编号唯一',
-  `repair_over_time` datetime DEFAULT NULL COMMENT '维修完成时间',
+  `repair_end_time` datetime DEFAULT NULL COMMENT '维修完成时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
-  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='散料维修单明细';
@@ -1212,7 +1212,7 @@ CREATE TABLE `erp_return_order` (
   `damage_cost` decimal(15,2) COMMENT '损坏加收费用',
   `is_damage` int(11) COMMENT '是否有损坏',
   `return_mode` int(11) NOT NULL COMMENT '退还方式，1-上门取件，2邮寄',
-  `return_order_status` int(11) NOT NULL DEFAULT 0 COMMENT '归还订单状态，0-待提交，4-审核中，8-待取货，12-处理中，16-已完成',
+  `return_order_status` int(11) NOT NULL DEFAULT 0 COMMENT '归还订单状态，0-待提交，4-审核中，8-待取货，12-处理中，16-已取消，20-已完成',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
@@ -1324,7 +1324,7 @@ CREATE TABLE `erp_change_order` (
   `change_order_no` varchar(100) NOT NULL COMMENT '换货编号',
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
   `customer_no` varchar(100) NOT NULL COMMENT '客户编号',
-  `rent_start_time` datetime NOT NULL COMMENT '起租时间',
+  `rent_start_time` datetime COMMENT '起租时间',
   `total_change_product_count` int(11) NOT NULL DEFAULT '0' COMMENT '换货商品总数',
   `total_change_material_count` int(11) NOT NULL DEFAULT '0' COMMENT '换货物料总数',
   `real_total_change_product_count` int(11) NOT NULL DEFAULT '0' COMMENT '实际换货商品总数',
