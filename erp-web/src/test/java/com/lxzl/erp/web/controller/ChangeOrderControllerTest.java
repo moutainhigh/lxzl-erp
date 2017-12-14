@@ -1,16 +1,14 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
-import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.changeOrder.*;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrder;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderConsignInfo;
+import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
     @Test
@@ -30,7 +28,7 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
         changeProductSkuPairs.setChangeCount(1);
         changeProductSkuPairsList.add(changeProductSkuPairs);
         addChangeOrderParam.setChangeProductSkuPairsList(changeProductSkuPairsList);
-        TestResult testResult = getJsonTestResult("/changeOrder/add",addChangeOrderParam);
+        Result Result = getJsonTestResult("/changeOrder/add",addChangeOrderParam);
     }
     @Test
     public void addMaterial() throws Exception {
@@ -49,7 +47,7 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
         changeMaterialPairs.setChangeCount(1);
         changeMaterialPairsList.add(changeMaterialPairs);
         addChangeOrderParam.setChangeMaterialPairsList(changeMaterialPairsList);
-        TestResult testResult = getJsonTestResult("/changeOrder/add",addChangeOrderParam);
+        Result Result = getJsonTestResult("/changeOrder/add",addChangeOrderParam);
     }
     @Test
     public void update() throws Exception {
@@ -61,7 +59,7 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
         changeOrderCommitParam.setChangeOrderNo("CO201712121339447471266");
         changeOrderCommitParam.setVerifyUserId(500006);
         changeOrderCommitParam.setRemark("审核备注");
-        TestResult testResult = getJsonTestResult("/changeOrder/commit",changeOrderCommitParam);
+        Result Result = getJsonTestResult("/changeOrder/commit",changeOrderCommitParam);
     }
 
     @Test
@@ -91,13 +89,13 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
     public void detail() throws Exception {
         ChangeOrder changeOrder = new ChangeOrder();
         changeOrder.setChangeOrderNo("CO201712121349549021303");
-        TestResult testResult = getJsonTestResult("/changeOrder/detail",changeOrder);
+        Result Result = getJsonTestResult("/changeOrder/detail",changeOrder);
     }
     @Test
     public void page() throws Exception {
         ChangeOrderPageParam changeOrderPageParam = new ChangeOrderPageParam();
         changeOrderPageParam.setOwnerName("文");
-        TestResult testResult = getJsonTestResult("/changeOrder/page",changeOrderPageParam);
+        Result Result = getJsonTestResult("/changeOrder/page",changeOrderPageParam);
     }
     @Test
     public void pageChangeOrderProductEquipment() throws Exception {

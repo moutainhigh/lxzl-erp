@@ -1,7 +1,7 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
-import com.lxzl.erp.TestResult;
+import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 
 /**
@@ -15,11 +15,11 @@ public class DdlTest extends ERPUnTransactionalTest {
 
     @Test
     public void listDdlConfig() throws Exception {
-        TestResult result = getJsonTestResult("/ddl/listDdlConfig", null);
+        Result result = getJsonTestResult("/ddl/listDdlConfig", null);
     }
 
     @Test
     public void getDdlRoute() throws Exception {
-        TestResult result = getJsonTestResult("/ddl/getDdlRoute?table=erp_sub_company&columnValue=sub_company_name", null);
+        Result result = getJsonTestResult("/ddl/getDdlRoute?table=erp_sub_company&columnValue=sub_company_name", null);
     }
 }

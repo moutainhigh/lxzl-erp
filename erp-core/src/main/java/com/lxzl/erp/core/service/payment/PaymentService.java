@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.payment;
 
+import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.se.core.service.BaseService;
 
 /**
@@ -9,4 +10,5 @@ import com.lxzl.se.core.service.BaseService;
  * @date 2017-12-14 18:01
  */
 public interface PaymentService extends BaseService {
+    CustomerAccount queryCustomerAccount(String customerNo);
 }

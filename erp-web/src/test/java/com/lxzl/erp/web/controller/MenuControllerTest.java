@@ -1,13 +1,13 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
-import com.lxzl.erp.TestResult;
+import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 
 public class MenuControllerTest extends ERPUnTransactionalTest {
     @Test
     public void getMenu() throws Exception {
-        TestResult result = getJsonTestResult("/menu/getMenu",null);
+        Result result = getJsonTestResult("/menu/getMenu",null);
     }
 
     @Test

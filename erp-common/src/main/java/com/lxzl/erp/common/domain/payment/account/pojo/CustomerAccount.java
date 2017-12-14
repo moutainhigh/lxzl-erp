@@ -1,4 +1,4 @@
-package com.lxzl.erp.common.domain.payment.account;
+package com.lxzl.erp.common.domain.payment.account.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -10,7 +10,7 @@ import java.util.Date;
 public class CustomerAccount implements Serializable {
 
 	private Integer businessCustomerAccountId;   //唯一标识
-	private Integer customerId;   //客户ID
+	private String customerNo;   //客户ID
 	private BigDecimal balanceAmount;   //用户可用余额
 	private BigDecimal totalFrozenAmount;   //总冻结金额
 	private BigDecimal depositAmount;   //押金金额
@@ -28,12 +28,12 @@ public class CustomerAccount implements Serializable {
 		this.businessCustomerAccountId = businessCustomerAccountId;
 	}
 
-	public Integer getCustomerId(){
-		return customerId;
+	public String getCustomerNo() {
+		return customerNo;
 	}
 
-	public void setCustomerId(Integer customerId){
-		this.customerId = customerId;
+	public void setCustomerNo(String customerNo) {
+		this.customerNo = customerNo;
 	}
 
 	public BigDecimal getBalanceAmount(){

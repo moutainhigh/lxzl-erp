@@ -36,7 +36,7 @@ public class WarehouseSupport {
     private WarehouseMapper warehouseMapper;
 
     public WarehouseDO getCurrentWarehouse() {
-        WarehouseDO returnWarehouseDO = new WarehouseDO();
+        WarehouseDO returnWarehouseDO = null;
         WarehouseQueryParam param = new WarehouseQueryParam();
         User loginUser = userSupport.getCurrentUser();
         List<Integer> subCompanyIdList = new ArrayList<>();
