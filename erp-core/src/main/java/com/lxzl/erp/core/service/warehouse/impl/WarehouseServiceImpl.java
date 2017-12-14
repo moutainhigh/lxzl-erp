@@ -37,6 +37,7 @@ import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -85,6 +86,9 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Autowired
     private MaterialMapper materialMapper;
+
+    @Autowired
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
