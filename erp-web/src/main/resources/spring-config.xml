@@ -24,6 +24,17 @@
     <import resource="spring/spring-fastdfs.xml" />
 	<import resource="spring/spring-redis.xml" />
 	<import resource="spring/spring-filter.xml" />
+	<import resource="spring/spring-contant-properties.xml" />
+
+
+	<bean id="propertyConfigurer"
+		  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:payment.properties</value>
+			</list>
+		</property>
+	</bean>
 
     <!--
     <import resource="spring/spring-rpc/spring-rpc.xml" />

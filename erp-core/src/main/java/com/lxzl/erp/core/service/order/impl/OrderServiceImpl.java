@@ -14,6 +14,7 @@ import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
+import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderConverter;
 import com.lxzl.erp.core.service.product.ProductService;
@@ -731,17 +732,7 @@ public class OrderServiceImpl implements OrderService {
 
         if (materialId != null) {
             // 必须是当前库房闲置的物料
-            BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
-            bulkMaterialQueryParam.setMaterialId(materialId);
-            bulkMaterialQueryParam.setCurrentWarehouseId(srcWarehouseId);
-            bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
-            bulkMaterialQueryParam.setIsOnEquipment(CommonConstant.COMMON_CONSTANT_NO);
-
-            Map<String, Object> bulkQueryParam = new HashMap<>();
-            bulkQueryParam.put("start", 0);
-            bulkQueryParam.put("pageSize", materialCount);
-            bulkQueryParam.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
-            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(bulkQueryParam);
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(srcWarehouseId, materialId, materialCount);
             if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
                 result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
                 return result;
@@ -829,17 +820,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (materialId != null) {
-            BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
-            bulkMaterialQueryParam.setMaterialId(materialId);
-            bulkMaterialQueryParam.setOrderNo(orderDO.getOrderNo());
-            bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
-            bulkMaterialQueryParam.setIsOnEquipment(CommonConstant.COMMON_CONSTANT_NO);
-
-            Map<String, Object> bulkQueryParam = new HashMap<>();
-            bulkQueryParam.put("start", 0);
-            bulkQueryParam.put("pageSize", Integer.MAX_VALUE);
-            bulkQueryParam.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
-            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(bulkQueryParam);
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryBusyBulkMaterialDOList(orderDO.getOrderNo(), materialId, materialCount);
             if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
                 result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
                 return result;
@@ -1462,4 +1443,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private CustomerSupport customerSupport;
+
+    @Autowired
+    private BulkMaterialSupport bulkMaterialSupport;
 }
