@@ -2,10 +2,8 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
-import com.lxzl.erp.common.domain.changeOrder.AddChangeOrderParam;
-import com.lxzl.erp.common.domain.changeOrder.ChangeMaterialPairs;
-import com.lxzl.erp.common.domain.changeOrder.ChangeOrderCommitParam;
-import com.lxzl.erp.common.domain.changeOrder.ChangeProductSkuPairs;
+import com.lxzl.erp.common.domain.changeOrder.*;
+import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrder;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderConsignInfo;
 import org.junit.Test;
 
@@ -54,6 +52,10 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
         TestResult testResult = getJsonTestResult("/changeOrder/add",addChangeOrderParam);
     }
     @Test
+    public void update() throws Exception {
+
+    }
+    @Test
     public void commit() throws Exception {
         ChangeOrderCommitParam changeOrderCommitParam = new ChangeOrderCommitParam();
         changeOrderCommitParam.setChangeOrderNo("CO201712121339447471266");
@@ -64,6 +66,54 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
 
     @Test
     public void stockUpByChange() throws Exception {
+    }
+
+    @Test
+    public void delivery() throws Exception {
+    }
+    @Test
+    public void doChangeEquipment() throws Exception {
+
+    }
+    @Test
+    public void doChangeMaterial() throws Exception {
+
+    }
+    @Test
+    public void end() throws Exception {
+
+    }
+    @Test
+    public void cancel() throws Exception {
+
+    }
+    @Test
+    public void detail() throws Exception {
+        ChangeOrder changeOrder = new ChangeOrder();
+        changeOrder.setChangeOrderNo("CO201712121349549021303");
+        TestResult testResult = getJsonTestResult("/changeOrder/detail",changeOrder);
+    }
+    @Test
+    public void page() throws Exception {
+        ChangeOrderPageParam changeOrderPageParam = new ChangeOrderPageParam();
+        changeOrderPageParam.setOwnerName("文");
+        TestResult testResult = getJsonTestResult("/changeOrder/page",changeOrderPageParam);
+    }
+    @Test
+    public void pageChangeOrderProductEquipment() throws Exception {
+
+    }
+    @Test
+    public void pageChangeOrderMaterialBulk() throws Exception {
+
+    }
+    @Test
+    public void deleteChangeOrderProductEquipment() throws Exception {
+
+    }
+    @Test
+    public void deleteChangeOrderMaterialBulk() throws Exception {
+
     }
 
 }

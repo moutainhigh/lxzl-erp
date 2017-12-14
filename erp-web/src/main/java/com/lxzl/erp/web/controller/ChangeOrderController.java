@@ -1,14 +1,13 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.changeOrder.AddChangeOrderParam;
-import com.lxzl.erp.common.domain.changeOrder.ChangeOrderCommitParam;
-import com.lxzl.erp.common.domain.changeOrder.StockUpByChangeParam;
-import com.lxzl.erp.common.domain.changeOrder.UpdateChangeOrderParam;
+import com.lxzl.erp.common.domain.changeOrder.*;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrder;
+import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderMaterial;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderMaterialBulk;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderProductEquipment;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.changeOrder.AddChangeOrderGroup;
 import com.lxzl.erp.common.domain.validGroup.changeOrder.UpdateChangeOrderGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
@@ -48,7 +47,7 @@ public class ChangeOrderController {
     }
 
     /**
-     * 创建换货单
+     * 修改换货单
      *
      * @param updateChangeOrderParam
      * @param validResult
@@ -92,11 +91,32 @@ public class ChangeOrderController {
      * @param validResult
      * @return
      */
-    @RequestMapping(value = " delivery", method = RequestMethod.POST)
+    @RequestMapping(value = "delivery", method = RequestMethod.POST)
     public Result delivery(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
         return resultGenerator.generate(changeOrderService.delivery(changeOrder));
     }
-
+    /**
+     * 换设备接口
+     *
+     * @param changeOrderProductEquipment
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "doChangeEquipment", method = RequestMethod.POST)
+    public Result doChangeEquipment(@RequestBody @Validated ChangeOrderProductEquipment changeOrderProductEquipment, BindingResult validResult) {
+        return resultGenerator.generate(changeOrderService.doChangeEquipment(changeOrderProductEquipment));
+    }
+    /**
+     * 换散料接口
+     *
+     * @param changeOrderMaterial
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "doChangeMaterial", method = RequestMethod.POST)
+    public Result doChangeMaterial(@RequestBody @Validated ChangeOrderMaterial changeOrderMaterial, BindingResult validResult) {
+        return resultGenerator.generate(changeOrderService.doChangeMaterial(changeOrderMaterial));
+    }
     /**
      * 换货完成接口
      *
@@ -104,7 +124,7 @@ public class ChangeOrderController {
      * @param validResult
      * @return
      */
-    @RequestMapping(value = " end", method = RequestMethod.POST)
+    @RequestMapping(value = "end", method = RequestMethod.POST)
     public Result end(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
         return resultGenerator.generate(changeOrderService.end(changeOrder));
     }
@@ -116,7 +136,7 @@ public class ChangeOrderController {
      * @param validResult
      * @return
      */
-    @RequestMapping(value = " cancel", method = RequestMethod.POST)
+    @RequestMapping(value = "cancel", method = RequestMethod.POST)
     public Result cancel(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
         return resultGenerator.generate(changeOrderService.cancel(changeOrder));
     }
@@ -128,21 +148,21 @@ public class ChangeOrderController {
      * @param validResult
      * @return
      */
-    @RequestMapping(value = " detail", method = RequestMethod.POST)
-    public Result detail(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
+    @RequestMapping(value = "detail", method = RequestMethod.POST)
+    public Result detail(@RequestBody @Validated(IdGroup.class) ChangeOrder changeOrder, BindingResult validResult) {
         return resultGenerator.generate(changeOrderService.detail(changeOrder));
     }
 
     /**
      * 换货单列表
      *
-     * @param changeOrder
+     * @param changeOrderPageParam
      * @param validResult
      * @return
      */
-    @RequestMapping(value = " page", method = RequestMethod.POST)
-    public Result page(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
-        return resultGenerator.generate(changeOrderService.page(changeOrder));
+    @RequestMapping(value = "page", method = RequestMethod.POST)
+    public Result page(@RequestBody @Validated ChangeOrderPageParam changeOrderPageParam, BindingResult validResult) {
+        return resultGenerator.generate(changeOrderService.page(changeOrderPageParam));
     }
 
     /**
@@ -152,7 +172,7 @@ public class ChangeOrderController {
      * @param validResult
      * @return
      */
-    @RequestMapping(value = " pageChangeOrderProductEquipment", method = RequestMethod.POST)
+    @RequestMapping(value = "pageChangeOrderProductEquipment", method = RequestMethod.POST)
     public Result pageChangeOrderProductEquipment(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
         return resultGenerator.generate(changeOrderService.pageChangeOrderProductEquipment(changeOrder));
     }
@@ -164,7 +184,7 @@ public class ChangeOrderController {
      * @param validResult
      * @return
      */
-    @RequestMapping(value = " pageChangeOrderMaterialBulk", method = RequestMethod.POST)
+    @RequestMapping(value = "pageChangeOrderMaterialBulk", method = RequestMethod.POST)
     public Result pageChangeOrderMaterialBulk(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
         return resultGenerator.generate(changeOrderService.pageChangeOrderMaterialBulk(changeOrder));
     }
@@ -176,7 +196,7 @@ public class ChangeOrderController {
      * @param validResult
      * @return
      */
-    @RequestMapping(value = " deleteChangeOrderProductEquipment", method = RequestMethod.POST)
+    @RequestMapping(value = "deleteChangeOrderProductEquipment", method = RequestMethod.POST)
     public Result deleteChangeOrderProductEquipment(@RequestBody @Validated ChangeOrderProductEquipment changeOrderProductEquipment, BindingResult validResult) {
         return resultGenerator.generate(changeOrderService.deleteChangeOrderProductEquipment(changeOrderProductEquipment));
     }
@@ -188,7 +208,7 @@ public class ChangeOrderController {
      * @param validResult
      * @return
      */
-    @RequestMapping(value = " deleteChangeOrderMaterialBulk", method = RequestMethod.POST)
+    @RequestMapping(value = "deleteChangeOrderMaterialBulk", method = RequestMethod.POST)
     public Result deleteChangeOrderMaterialBulk(@RequestBody @Validated ChangeOrderMaterialBulk changeOrderMaterialBulk, BindingResult validResult) {
         return resultGenerator.generate(changeOrderService.deleteChangeOrderMaterialBulk(changeOrderMaterialBulk));
     }

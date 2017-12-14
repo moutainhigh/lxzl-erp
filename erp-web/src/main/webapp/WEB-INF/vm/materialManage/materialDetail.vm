@@ -51,7 +51,6 @@
                                                     <input type="hidden" value="" name="materialModelId" />
                                                     <input type="text" name="modelName" id="modelName" class="gui-input" readonly />
                                                 </label>
-##                                                <button type="button" class="button btn-primary bradiusN chooseMaterialModalButton"><i class="fa fa-search"></i></button>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -90,13 +89,6 @@
                                                 <label for="materialPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                             </label>
                                         </div>
-##                                        <div class="col-md-4">
-##                                            <label for="userName" class="field-label">次租价</label>
-##                                            <label for="timeRentPrice" class="field prepend-icon">
-##                                                <input type="text" name="timeRentPrice" id="timeRentPrice" class="gui-input" />
-##                                                <label for="timeRentPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-##                                            </label>
-##                                        </div>
                                         <div class="col-md-4">
                                             <label for="userName" class="field-label">日租价</label>
                                             <label for="dayRentPrice" class="field prepend-icon">
@@ -132,7 +124,6 @@
                                             <div class="dz-success-mark">
                                                     <span>âœ?/span>
                                             </div>
-                                            #*<a class="dz-remove" href="#" data-dz-remove>删除</a>*#
                                         </div>
                                         {{/imgs}}
                                     </script>
@@ -184,7 +175,6 @@
 
                                 </div>
                                 <div class="panel-footer text-right">
-                                    #*<button type="submit" class="button btn-primary"> 确定 </button>*#
                                     <button type="reset" class="button goBack"> 返回 </button>
                                 </div>
                             </form>

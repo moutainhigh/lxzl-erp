@@ -12,6 +12,8 @@ public class ChangeOrderMaterialBulk implements Serializable {
 	private Integer changeOrderMaterialId;   //租赁换货物料项ID
 	private Integer changeOrderId;   //换货ID
 	private String changeOrderNo;   //换货编号
+	private Integer srcEquipmentId;	//原设备ID,如果更换的散料是租赁设备上的，此字段有值
+	private String srcEquipmentNo;	//原设备编号,如果更换的散料是租赁设备上的，此字段有值
 	private Integer srcBulkMaterialId;   //原散料ID
 	private String srcBulkMaterialNo;   //原散料编号
 	private Integer destBulkMaterialId;   //目标散料ID
@@ -154,4 +156,19 @@ public class ChangeOrderMaterialBulk implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public Integer getSrcEquipmentId() {
+		return srcEquipmentId;
+	}
+
+	public void setSrcEquipmentId(Integer srcEquipmentId) {
+		this.srcEquipmentId = srcEquipmentId;
+	}
+
+	public String getSrcEquipmentNo() {
+		return srcEquipmentNo;
+	}
+
+	public void setSrcEquipmentNo(String srcEquipmentNo) {
+		this.srcEquipmentNo = srcEquipmentNo;
+	}
 }
