@@ -210,7 +210,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712111658417621539");
+        order.setOrderNo("O201712141340239931338");
         TestResult result = getJsonTestResult("/order/queryOrderByNo", order);
     }
 
