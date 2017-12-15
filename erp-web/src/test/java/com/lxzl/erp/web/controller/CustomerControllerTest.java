@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.*;
+import com.lxzl.erp.common.domain.payment.account.pojo.ManualChargeParam;
 import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 
@@ -174,5 +175,14 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customer.setCustomerNo("500008");
 
         Result result = getJsonTestResult("/payment/queryAccount",customer);
+    }
+
+    @Test
+    public void manualCharge() throws Exception {
+        ManualChargeParam customer = new ManualChargeParam();
+        customer.setBusinessCustomerNo("500008");
+        customer.setChargeAmount(new BigDecimal(100.50));
+
+        Result result = getJsonTestResult("/payment/manualCharge",customer);
     }
 }

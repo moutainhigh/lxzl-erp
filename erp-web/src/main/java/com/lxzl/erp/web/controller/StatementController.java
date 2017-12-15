@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.math.BigDecimal;
+
 /**
  * 描述: ${DESCRIPTION}
  *
@@ -33,7 +35,7 @@ public class StatementController extends BaseController {
 
     @RequestMapping(value = "createNew", method = RequestMethod.POST)
     public Result createNewOrderStatement(@RequestBody StatementOrderQueryParam param, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = statementService.createNewStatementOrder(param.getOrderNo());
+        ServiceResult<String, BigDecimal> serviceResult = statementService.createNewStatementOrder(param.getOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }

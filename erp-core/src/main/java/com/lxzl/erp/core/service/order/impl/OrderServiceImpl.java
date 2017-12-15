@@ -188,7 +188,13 @@ public class OrderServiceImpl implements OrderService {
         } else {
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
             // 只有审批通过才生成结算单
-            statementService.createNewStatementOrder(orderNo);
+            ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createNewStatementOrder(orderNo);
+            if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                result.setErrorCode(createStatementOrderResult.getErrorCode());
+                return result;
+            }
+            orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
         }
 
         orderDO.setUpdateUser(loginUser.getUserId().toString());
@@ -456,7 +462,12 @@ public class OrderServiceImpl implements OrderService {
             if (verifyResult) {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
                 // 只有审批通过的订单才生成结算单
-                statementService.createNewStatementOrder(orderDO.getOrderNo());
+                ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createNewStatementOrder(orderDO.getOrderNo());
+                if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return false;
+                }
+                orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
             } else {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
                 // 如果拒绝，则退还授信额度

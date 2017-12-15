@@ -9,8 +9,13 @@ package com.lxzl.erp.common.domain;
 public class PaymentSystemConfig {
 
     public static String paymentSystemQueryCustomerAccountURL;
+    public static String paymentSystemManualChargeURL;
     public static String paymentSystemAppId;
     public static String paymentSystemAppSecret;
+
+    public void setPaymentSystemManualChargeURL(String paymentSystemManualChargeURL) {
+        PaymentSystemConfig.paymentSystemManualChargeURL = paymentSystemManualChargeURL;
+    }
 
     public void setPaymentSystemQueryCustomerAccountURL(String paymentSystemQueryCustomerAccountURL) {
         PaymentSystemConfig.paymentSystemQueryCustomerAccountURL = paymentSystemQueryCustomerAccountURL;
