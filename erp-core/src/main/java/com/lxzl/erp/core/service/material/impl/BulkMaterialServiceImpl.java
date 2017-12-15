@@ -16,6 +16,7 @@ import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentBulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterialDO;
+import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -112,6 +113,7 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> installBulkMaterial(BulkMaterialQueryParam bulkMaterialQueryParam) {
+
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
 
@@ -143,7 +145,7 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
         //获取设备物料表
         ProductEquipmentMaterialDO productEquipmentMaterialDO = productEquipmentMaterialMapper.findByEquipmentIdAndMaterialId(productEquipmentDO.getId(),bulkMaterialDO.getMaterialId());
         if (productEquipmentMaterialDO == null){
-            serviceResult.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_MATERIAL_NOT_EXISTS,productEquipmentMaterialDO.getEquipmentNo());
+            serviceResult.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_MATERIAL_IS_NULL);
             return serviceResult;
         }
 
@@ -173,7 +175,6 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
         return serviceResult;
     }
 
-
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> changeProductDismantleAndInstall(Integer dismantleBulkMaterialId,Integer installBulkMaterialId) {
@@ -184,7 +185,7 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
         //拆卸,获取散料表
         BulkMaterialDO dismantlebulkMaterialDO = bulkMaterialMapper.findById(dismantleBulkMaterialId);
         if (dismantlebulkMaterialDO == null){
-            serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_EXISTS,dismantlebulkMaterialDO.getBulkMaterialNo());
+            serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NULL);
             return serviceResult;
         }
 
@@ -221,13 +222,17 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
         //安装,获取散料表
         BulkMaterialDO installbulkMaterialDO = bulkMaterialMapper.findById(installBulkMaterialId);
 
-        //散料数据判断
-        String resultBulkMaterial = judgeBulkMaterial(installbulkMaterialDO);
-        if(!ErrorCode.SUCCESS.equals(resultBulkMaterial)){
-            serviceResult.setErrorCode(resultBulkMaterial);
+        if (installbulkMaterialDO == null) {
+            serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NULL);
             return serviceResult;
         }
 
+        //首先判断状态
+        if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE.equals(installbulkMaterialDO.getBulkMaterialStatus()) ||
+                !(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY.equals(installbulkMaterialDO.getBulkMaterialStatus()) && StringUtil.isEmpty(installbulkMaterialDO.getOrderNo()))) {
+            serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NOT_IDLE, installbulkMaterialDO.getBulkMaterialNo());
+            return serviceResult;
+        }
 
         //散料处于空闲状态，判断该散料是否已经插在其他设备上
         if (installbulkMaterialDO.getCurrentEquipmentId() != null){
@@ -244,7 +249,7 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
         //获取设备物料表
         ProductEquipmentMaterialDO installproductEquipmentMaterialDO = productEquipmentMaterialMapper.findByEquipmentIdAndMaterialId(dismantlebulkMaterialDO.getCurrentEquipmentId(),installbulkMaterialDO.getMaterialId());
         if (installproductEquipmentMaterialDO == null){
-            serviceResult.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_MATERIAL_NOT_EXISTS,installproductEquipmentMaterialDO.getEquipmentNo());
+            serviceResult.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_MATERIAL_IS_NULL);
             return serviceResult;
         }
 
@@ -295,7 +300,7 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
 
     private String judgeBulkMaterial(BulkMaterialDO bulkMaterialDO){
         if (bulkMaterialDO == null){
-            return String.format(ErrorCode.BULK_MATERIAL_NOT_EXISTS,bulkMaterialDO.getBulkMaterialNo());
+            return String.format(ErrorCode.BULK_MATERIAL_IS_NULL);
         }
 
         //首先判断状态
@@ -309,7 +314,7 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
 
   private String judgeProductEquipment(ProductEquipmentDO productEquipmentDO, BulkMaterialDO bulkMaterialDO){
       if (productEquipmentDO == null){
-            return String.format(ErrorCode.PRODUCT_EQUIPMENT_NOT_EXISTS,productEquipmentDO.getEquipmentNo());
+          return String.format(ErrorCode.PRODUCT_EQUIPMENT_IS_NULL);
         }
 
         //判断设备的状态
@@ -326,7 +331,7 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
 
     private String judgeProductEquipmentMaterial(ProductEquipmentMaterialDO productEquipmentMaterialDO){
         if (productEquipmentMaterialDO == null){
-            return String.format(ErrorCode.PRODUCT_EQUIPMENT_MATERIAL_NOT_EXISTS,productEquipmentMaterialDO.getEquipmentNo());
+            return String.format(ErrorCode.PRODUCT_EQUIPMENT_MATERIAL_IS_NULL);
         }
 
         //通过物料ID查看当前设备的该物料是否还有数量，如果有的话就将设备的物料减少，
