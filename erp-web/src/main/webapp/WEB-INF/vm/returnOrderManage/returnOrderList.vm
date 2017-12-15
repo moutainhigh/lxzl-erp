@@ -42,11 +42,13 @@
                                     <button type="reset" class="btn btn-default btn-sm">重置</button>
                                 </div>
                                 <div class="form-group pull-right mn mr10" style="width: 120px;">
-                                    <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
+                                    <input type="text" name="returnOrderNo" id="returnOrderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="退还单编号">
                                 </div>
-
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                    <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
+                                    <input type="text" name="customerNo" id="customerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户编号">
+                                </div>
+                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                    <input type="text" name="ownerName" id="ownerName" class="form-control input-sm bradius" autocomplete="off" placeholder="跟单员姓名">
                                 </div>
                                 <div class="form-group pull-right mn mr10" style="width: 210px;">
                                     <input type="hidden" name="createStartTime" id="createStartTime" />
@@ -56,14 +58,7 @@
                                         <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                                     </div>
                                 </div>
-
-                                <script type="text/html" id="orderStatusSelectTpl">
-                                    <option value="">全部</option>
-                                    {{#orderStatus}}
-                                    <option value={{num}}>{{value}}</option>
-                                    {{/orderStatus}}
-                                </script>
-                                <select name="orderStatus" id="orderStatus" class="hide"></select>
+                                <select name="returnOrderStatus" id="returnOrderStatus" class="hide"></select>
                             </form>
                         </div>
                     </div>
@@ -82,19 +77,21 @@
                                     </label>
                                 </th>
                                 {{/hasCommonActionButtons}}
-                                <th class="">订单编号</th>
-                                <th class="">状态</th>
-                                <th class="">客户</th>
-                                <th class="">租赁方式</th>
-                                <th class="">租期</th>
-                                <th class="">商品总价</th>
-                                <th class="">订单总价</th>
-                                <th class="">优惠金额</th>
-                                <th class="">支付时间</th>
-                                <th class="">发货时间</th>
-                                <th class="">确认收货时间</th>
-                                <th class="">购买人备注</th>
-                                <th class="">订单备注</th>
+                                <th>退货单编号</th>
+                                <th>客户</th>
+                                <th>是否计租赁费用</th>
+                                <th>退还商品总数</th>
+                                <th>退还物料总数</th>
+                                <th>实际退还商品总数</th>
+                                <th>实际退还物料总数</th>
+                                <th>租赁期间总费用</th>
+                                <th>服务费</th>
+                                <th>损坏加收费</th>
+                                <th>状态</th>
+                                <th>备注</th>
+                                <th>创建时间</th>
+                                <th>创建人</th>
+                                <th>退还跟单员</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
                                 {{/hasRowActionButtons}}
@@ -112,26 +109,26 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td class="">{{orderNo}}</td>
-                                <td class="">{{orderStatusStr}}</td>
-                                <td class="">{{buyerRealName}}</td>
-                                <td class="">{{rentTypeStr}}</td>
-                                <td class="">{{rentTimeLength}}</td>
-                                <td class="">{{totalProductAmountFixed}}</td>
-                                <td class="">{{totalOrderAmountFixed}}</td>
-                                <td class="">{{totalDiscountAmountFixed}}</td>
-                                <td class="">{{payTimeFormat}}</td>
-                                <td class="">{{deliveryTimeFormat}}</td>
-                                <td class="">{{confirmDeliveryTimeFormat}}</td>
-                                <td class="">{{buyerRemark}}</td>
-                                <td class="">{{remark}}</td>
+                                <td>{{returnOrderNo}}</td>
+                                <td>{{customerNo}}</td>
+                                <td>{{isChargingStr}}</td>
+                                <td>{{totalReturnProductCount}}</td>
+                                <td>{{totalReturnMaterialCount}}</td>
+                                <td>{{realTotalReturnProductCount}}</td>
+                                <td>{{realTotalReturnMaterialCount}}</td>
+                                <td>{{totalRentCostFormat}}</td>
+                                <td>{{serviceCostFormat}}</td>
+                                <td>{{damageCostFormat}}</td>
+                                <td>{{returnOrderStatusValue}}</td>
+                                <td>{{remark}}</td>
+                                <td>{{createTimeFormat}}</td>
+                                <td>{{createUser}}</td>
+                                <td>{{owner}}</td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
                                     <div class="btn-group text-right">
                                         {{#rowActionButtons}}
-                                        {{#buttons}}
                                         <a href="${ctx}{{menuUrl}}?no={{orderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-orderno="{{orderNo}}">{{text}}</a>
-                                        {{/buttons}}
                                         {{/rowActionButtons}}
                                     </div>
                                 </td>
@@ -140,7 +137,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="14" class="text-center">没有查询到订单</td>
+                                <td valign="top" colspan="14" class="text-center">没有查询到退货单</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
@@ -167,6 +164,7 @@
 <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
+            'manage.return.order.handle.mixin.js',
             'manage.return.order.js');
 </script>
 <script type="text/javascript">

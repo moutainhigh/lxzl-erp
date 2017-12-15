@@ -450,4 +450,16 @@ public class PageController extends BaseController {
         return "/component/company/chooseCompanyModal";
     }
 
+    //选择客户可退换商品
+    @RequestMapping("/customer-rent-product-modal/choose")
+    public String chooseRentProductModal() {
+        return "/component/customer/chooseRentProductModal";
+    }
+
+    //选择客户可退物料
+    @RequestMapping("/customer-can-return-material-modal/choose")
+    public String chooseCustomerCanReturnMaterialModal() {
+        return "/component/customer/chooseCanReturnMaterial";
+    }
+
 }
