@@ -257,6 +257,8 @@ public class ErrorCode {
     public static final String CHANGE_ORDER_STATUS_CAN_NOT_DO_CHANGE = "J400066";
     public static final String CHANGE_ONLY_SAME_SKU = "J400067";
     public static final String ORDER_ALREADY_PAID = "J400068";
+    public static final String ORDER_MATERIAL_BULK_NOT_EXISTS = "J400069";
+    public static final String ORDER_MATERIAL_BULK_ALREADY_RETURN = "J400070";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -548,6 +550,8 @@ public class ErrorCode {
         MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_DO_CHANGE, "当前换货单不允许进行换货操作");
         MAP.put(CHANGE_ONLY_SAME_SKU, "目前仅支持更换相同SKU设备");
         MAP.put(ORDER_ALREADY_PAID, "订单已经支付");
+        MAP.put(ORDER_MATERIAL_BULK_NOT_EXISTS, "散料不在该订单里，请仔细检查");
+        MAP.put(ORDER_MATERIAL_BULK_ALREADY_RETURN, "订单散料已经归还了");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");

@@ -11,6 +11,7 @@
 		<result column="rent_start_time" jdbcType="TIMESTAMP" property="rentStartTime" />
 		<result column="expect_return_time" jdbcType="TIMESTAMP" property="expectReturnTime" />
 		<result column="actual_return_time" jdbcType="TIMESTAMP" property="actualReturnTime" />
+		<result column="product_equipment_unit_amount" jdbcType="DECIMAL" property="productEquipmentUnitAmount" />
 		<result column="expect_rent_amount" jdbcType="DECIMAL" property="expectRentAmount" />
 		<result column="actual_rent_amount" jdbcType="DECIMAL" property="actualRentAmount" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -22,7 +23,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eope.id,eope.order_id,eope.order_product_id,eope.equipment_id,eope.equipment_no,eope.rent_start_time,eope.expect_return_time,eope.actual_return_time,eope.expect_rent_amount,eope.actual_rent_amount,eope.data_status,eope.remark,eope.create_time,eope.create_user,eope.update_time,eope.update_user
+		eope.id,eope.order_id,eope.order_product_id,eope.equipment_id,eope.equipment_no,eope.rent_start_time,eope.expect_return_time,eope.actual_return_time,eope.expect_rent_amount,eope.product_equipment_unit_amount,eope.actual_rent_amount,eope.data_status,eope.remark,eope.create_time,eope.create_user,eope.update_time,eope.update_user
 	</sql>
 
 	<select id="findById" resultMap="OrderProductEquipmentDO" parameterType="java.lang.Integer">
@@ -86,6 +87,9 @@
 			</if>
 			<if test="actualReturnTime != null">
 				actual_return_time = #{actualReturnTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="productEquipmentUnitAmount != null">
+				product_equipment_unit_amount = #{productEquipmentUnitAmount,jdbcType=DECIMAL},
 			</if>
 			<if test="expectRentAmount != null">
 				expect_rent_amount = #{expectRentAmount,jdbcType=DECIMAL},

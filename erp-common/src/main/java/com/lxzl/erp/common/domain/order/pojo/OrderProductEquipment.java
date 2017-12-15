@@ -18,6 +18,7 @@ public class OrderProductEquipment implements Serializable {
 	private Date actualReturnTime;   //实际归还时间
 	private BigDecimal expectRentAmount;   //预计租金
 	private BigDecimal actualRentAmount;   //实际租金
+	private BigDecimal productEquipmentUnitAmount;	// 设备租金单价
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -152,5 +153,13 @@ public class OrderProductEquipment implements Serializable {
 
 	public void setRentStartTime(String rentStartTime) {
 		this.rentStartTime = rentStartTime;
+	}
+
+	public BigDecimal getProductEquipmentUnitAmount() {
+		return productEquipmentUnitAmount;
+	}
+
+	public void setProductEquipmentUnitAmount(BigDecimal productEquipmentUnitAmount) {
+		this.productEquipmentUnitAmount = productEquipmentUnitAmount;
 	}
 }

@@ -14,6 +14,7 @@ public class OrderProductEquipmentDO  extends BaseDO {
 	private Date rentStartTime;
 	private Date expectReturnTime;
 	private Date actualReturnTime;
+	private BigDecimal productEquipmentUnitAmount;
 	private BigDecimal expectRentAmount;
 	private BigDecimal actualRentAmount;
 	private Integer dataStatus;
@@ -113,5 +114,13 @@ public class OrderProductEquipmentDO  extends BaseDO {
 
 	public void setRentStartTime(Date rentStartTime) {
 		this.rentStartTime = rentStartTime;
+	}
+
+	public BigDecimal getProductEquipmentUnitAmount() {
+		return productEquipmentUnitAmount;
+	}
+
+	public void setProductEquipmentUnitAmount(BigDecimal productEquipmentUnitAmount) {
+		this.productEquipmentUnitAmount = productEquipmentUnitAmount;
 	}
 }

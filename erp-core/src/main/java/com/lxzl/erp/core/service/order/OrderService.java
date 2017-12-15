@@ -139,4 +139,15 @@ public interface OrderService extends VerifyReceiver {
      * @return 操作结果
      */
     ServiceResult<String, String> returnEquipment(String orderNo, String returnEquipmentNo, String changeEquipmentNo, Date returnDate);
+
+    /**
+     * 物料归还接口
+     *
+     * @param orderNo           订单编号
+     * @param returnNBulkMaterialNo 退还散料编号
+     * @param changeBulkMaterialNo 更换散料编号
+     * @param returnDate        归还时间
+     * @return 操作结果
+     */
+    ServiceResult<String, String> returnBulkMaterial(String orderNo, String returnNBulkMaterialNo, String changeBulkMaterialNo, Date returnDate);
 }
