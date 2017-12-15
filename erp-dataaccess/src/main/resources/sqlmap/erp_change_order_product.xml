@@ -28,6 +28,10 @@
 		SELECT <include refid="column_List"/> FROM erp_change_order_product ecop 
 		WHERE ecop.id = #{id, jdbcType=INTEGER} AND ecop.data_status = 1 
 	</select>
+	<select id="findByChangeOrderId" resultMap="ChangeOrderProductDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_change_order_product ecop
+		WHERE ecop.change_order_id = #{changeOrderId, jdbcType=INTEGER} AND ecop.data_status = 1
+	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ecop.id) FROM erp_change_order_product ecop 
@@ -116,4 +120,99 @@
 			)
 		</foreach>
 	</insert>
+
+
+	<update id="batchUpdate" parameterType="java.util.ArrayList">
+		update erp_change_order_product
+		SET
+		<trim>
+			change_order_id =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.changeOrderId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			change_order_no =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.changeOrderNo,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			change_product_sku_id_src =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.changeProductSkuIdSrc,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			change_product_sku_id_dest =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.changeProductSkuIdDest,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			change_product_sku_count =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.changeProductSkuCount,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			real_change_product_sku_count =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.realChangeProductSkuCount,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			change_product_sku_snapshot_src =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.changeProductSkuSnapshotSrc,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			change_product_sku_snapshot_dest =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.changeProductSkuSnapshotDest,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			data_status =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.dataStatus,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			remark =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.remark,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			remark =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.remark,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			create_time =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.createTime,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			create_user =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.createUser,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_user =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.updateUser,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.id,jdbcType=INTEGER}
+		</foreach>
+
+	</update>
 </mapper>

@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
 
 public class ChangeProductSkuPairs {
 
-    @NotNull(message = ErrorCode.CHANGE_ORDER_PRODUCT_ID_NOT_NULL, groups = {UpdateChangeOrderGroup.class})
     private Integer changeOrderProductId;
     @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL, groups = {AddChangeOrderGroup.class, UpdateChangeOrderGroup.class})
     private Integer productSkuIdSrc;

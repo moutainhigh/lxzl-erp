@@ -1,8 +1,8 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
-import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.basic.BrandQueryParam;
+import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 
 /**
@@ -16,6 +16,6 @@ public class BasicTest extends ERPUnTransactionalTest {
     @Test
     public void testQueryBrand() throws Exception {
         BrandQueryParam param = new BrandQueryParam();
-        TestResult result = getJsonTestResult("/basic/queryAllBrand", param);
+        Result result = getJsonTestResult("/basic/queryAllBrand", param);
     }
 }

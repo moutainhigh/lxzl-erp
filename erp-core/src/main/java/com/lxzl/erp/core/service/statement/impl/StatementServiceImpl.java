@@ -19,6 +19,7 @@ import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
+import com.lxzl.se.common.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -66,8 +68,8 @@ public class StatementServiceImpl implements StatementService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> createNewStatementOrder(String orderNo) {
-        ServiceResult<String, String> result = new ServiceResult<>();
+    public ServiceResult<String, BigDecimal> createNewStatementOrder(String orderNo) {
+        ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (orderDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
@@ -78,6 +80,8 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
             return result;
         }
+        // 生成单子后，本次需要付款的金额
+        BigDecimal thisNeedPayAmount = BigDecimal.ZERO;
 
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
@@ -193,11 +197,20 @@ public class StatementServiceImpl implements StatementService {
             }
             statementOrderDOMap.put(dateKey, statementOrderDO);
             statementOrderDetailDO.setStatementOrderId(statementOrderDO.getId());
+            // 核算本次应该交多少钱
+            try {
+                if (DateUtil.isSameDay(orderDO.getRentStartTime(), statementOrderDetailDO.getStatementExpectPayTime())) {
+                    thisNeedPayAmount = BigDecimalUtil.add(thisNeedPayAmount, statementOrderDetailDO.getStatementDetailAmount());
+                }
+            } catch (ParseException e) {
+                throw new BusinessException(ErrorCode.BUSINESS_EXCEPTION);
+            }
         }
         if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
             statementOrderDetailMapper.saveList(statementOrderDetailDOList);
         }
 
+        result.setResult(thisNeedPayAmount);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -231,8 +244,18 @@ public class StatementServiceImpl implements StatementService {
         Date statementEndTime = null, statementExpectPayTime = null;
         if (OrderRentType.RENT_TYPE_DAY.equals(rentType)) {
             statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(rentStartTime, rentTimeLength);
+            if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
+                statementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(rentStartTime, rentTimeLength);
+            }
         } else if (OrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
             statementEndTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, rentTimeLength);
+            if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
+                statementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, rentTimeLength);
+            }
+        }
+
+        if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
+            statementExpectPayTime = rentStartTime;
         }
         if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
             statementExpectPayTime = rentStartTime;

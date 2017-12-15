@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.statement;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.se.core.service.BaseService;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -25,7 +26,7 @@ public interface StatementService extends BaseService {
      * 创建新订单的对账单, 在确认收货时生成。
      *
      * @param orderNo 订单号
-     * @return 对账单号
+     * @return 发货前需要交多少钱
      */
-    ServiceResult<String, String> createNewStatementOrder(String orderNo);
+    ServiceResult<String, BigDecimal> createNewStatementOrder(String orderNo);
 }

@@ -75,13 +75,13 @@ public class ChangeOrderController {
     /**
      * 换货备货接口
      *
-     * @param stockUpByChangeParam
+     * @param stockUpForChangeParam
      * @param validResult
      * @return
      */
-    @RequestMapping(value = " stockUpByChange", method = RequestMethod.POST)
-    public Result stockUpByChange(@RequestBody @Validated StockUpByChangeParam stockUpByChangeParam, BindingResult validResult) {
-        return resultGenerator.generate(changeOrderService.stockUpByChange(stockUpByChangeParam));
+    @RequestMapping(value = " stockUpForChange", method = RequestMethod.POST)
+    public Result stockUpForChange(@RequestBody @Validated StockUpForChangeParam stockUpForChangeParam, BindingResult validResult) {
+        return resultGenerator.generate(changeOrderService.stockUpForChange(stockUpForChangeParam));
     }
 
     /**
@@ -92,7 +92,7 @@ public class ChangeOrderController {
      * @return
      */
     @RequestMapping(value = "delivery", method = RequestMethod.POST)
-    public Result delivery(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
+    public Result delivery(@RequestBody @Validated(IdGroup.class) ChangeOrder changeOrder, BindingResult validResult) {
         return resultGenerator.generate(changeOrderService.delivery(changeOrder));
     }
     /**
@@ -103,7 +103,7 @@ public class ChangeOrderController {
      * @return
      */
     @RequestMapping(value = "doChangeEquipment", method = RequestMethod.POST)
-    public Result doChangeEquipment(@RequestBody @Validated ChangeOrderProductEquipment changeOrderProductEquipment, BindingResult validResult) {
+    public Result doChangeEquipment(@RequestBody @Validated(ExtendGroup.class) ChangeOrderProductEquipment changeOrderProductEquipment, BindingResult validResult) {
         return resultGenerator.generate(changeOrderService.doChangeEquipment(changeOrderProductEquipment));
     }
     /**
@@ -190,26 +190,15 @@ public class ChangeOrderController {
     }
 
     /**
-     * 删除换货设备项接口（处理中和待取货状态的换货单可修改）
+     * 未换货扫码接口（处理中和待取货状态的换货单可操作）
      *
-     * @param changeOrderProductEquipment
+     * @param processNoChangeEquipmentParam
      * @param validResult
      * @return
      */
-    @RequestMapping(value = "deleteChangeOrderProductEquipment", method = RequestMethod.POST)
-    public Result deleteChangeOrderProductEquipment(@RequestBody @Validated ChangeOrderProductEquipment changeOrderProductEquipment, BindingResult validResult) {
-        return resultGenerator.generate(changeOrderService.deleteChangeOrderProductEquipment(changeOrderProductEquipment));
+    @RequestMapping(value = "processNoChangeEquipment", method = RequestMethod.POST)
+    public Result processNoChangeEquipment(@RequestBody @Validated ProcessNoChangeEquipmentParam processNoChangeEquipmentParam, BindingResult validResult) {
+        return resultGenerator.generate(changeOrderService.processNoChangeEquipment(processNoChangeEquipmentParam));
     }
 
-    /**
-     * 删除换货散料项接口（处理中和待取货状态的换货单可修改）
-     *
-     * @param changeOrderMaterialBulk
-     * @param validResult
-     * @return
-     */
-    @RequestMapping(value = "deleteChangeOrderMaterialBulk", method = RequestMethod.POST)
-    public Result deleteChangeOrderMaterialBulk(@RequestBody @Validated ChangeOrderMaterialBulk changeOrderMaterialBulk, BindingResult validResult) {
-        return resultGenerator.generate(changeOrderService.deleteChangeOrderMaterialBulk(changeOrderMaterialBulk));
-    }
 }

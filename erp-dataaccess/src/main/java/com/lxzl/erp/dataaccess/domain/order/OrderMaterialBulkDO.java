@@ -11,8 +11,10 @@ public class OrderMaterialBulkDO  extends BaseDO {
 	private Integer orderMaterialId;
 	private Integer bulkMaterialId;
 	private String bulkMaterialNo;
+	private Date rentStartTime;
 	private Date expectReturnTime;
 	private Date actualReturnTime;
+	private BigDecimal materialBulkUnitAmount;
 	private BigDecimal expectRentAmount;
 	private BigDecimal actualRentAmount;
 	private Integer dataStatus;
@@ -106,4 +108,19 @@ public class OrderMaterialBulkDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public Date getRentStartTime() {
+		return rentStartTime;
+	}
+
+	public void setRentStartTime(Date rentStartTime) {
+		this.rentStartTime = rentStartTime;
+	}
+
+	public BigDecimal getMaterialBulkUnitAmount() {
+		return materialBulkUnitAmount;
+	}
+
+	public void setMaterialBulkUnitAmount(BigDecimal materialBulkUnitAmount) {
+		this.materialBulkUnitAmount = materialBulkUnitAmount;
+	}
 }

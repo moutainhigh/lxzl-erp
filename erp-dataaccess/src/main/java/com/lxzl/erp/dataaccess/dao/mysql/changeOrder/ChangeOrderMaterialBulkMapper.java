@@ -17,4 +17,8 @@ public interface ChangeOrderMaterialBulkMapper extends BaseMysqlDAO<ChangeOrderM
 	 * @return
 	 */
 	List<ChangeOrderMaterialBulkDO> listByChangeOrderPickUp(@Param("changeOrderNo") String changeOrderNo);
+
+	List<ChangeOrderMaterialBulkDO> findByChangeOrderNo(@Param("changeOrderNo") String changeOrderNo);
+
+	List<ChangeOrderMaterialBulkDO> findByChangeOrderNoAndMaterialNo(@Param("changeOrderNo") String changeOrderNo,@Param("materialNo") String materialNo);
 }

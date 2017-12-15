@@ -25,6 +25,10 @@ public class ChangeOrderProductEquipmentDO extends BaseDO {
     private ProductEquipmentDO srcProductEquipmentDO;
     @Transient
     private ProductEquipmentDO destProductEquipmentDO;
+    @Transient
+    private Integer srcSkuId;
+    @Transient
+    private Integer destSkuId;
 
     public Integer getId() {
         return id;
@@ -136,5 +140,21 @@ public class ChangeOrderProductEquipmentDO extends BaseDO {
 
     public void setDestProductEquipmentDO(ProductEquipmentDO destProductEquipmentDO) {
         this.destProductEquipmentDO = destProductEquipmentDO;
+    }
+
+    public Integer getSrcSkuId() {
+        return srcSkuId;
+    }
+
+    public void setSrcSkuId(Integer srcSkuId) {
+        this.srcSkuId = srcSkuId;
+    }
+
+    public Integer getDestSkuId() {
+        return destSkuId;
+    }
+
+    public void setDestSkuId(Integer destSkuId) {
+        this.destSkuId = destSkuId;
     }
 }

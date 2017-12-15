@@ -1,13 +1,13 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
-import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.returnOrder.*;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderConsignInfo;
+import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -41,14 +41,14 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest{
         returnOrderConsignInfo.setAddress("深圳市宝安区");
         addReturnOrderParam.setReturnOrderConsignInfo(returnOrderConsignInfo);
         addReturnOrderParam.setIsCharging(CommonConstant.COMMON_CONSTANT_YES);
-        TestResult result = getJsonTestResult("/returnOrder/add",addReturnOrderParam);
+        Result result = getJsonTestResult("/returnOrder/add",addReturnOrderParam);
     }
     @Test
     public void doReturnEquipment() throws Exception {
         DoReturnEquipmentParam doReturnEquipmentParam = new DoReturnEquipmentParam();
         doReturnEquipmentParam.setReturnOrderNo("RO201712011933151931203");
         doReturnEquipmentParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010009");
-        TestResult result = getJsonTestResult("/returnOrder/doReturnEquipment",doReturnEquipmentParam);
+        Result result = getJsonTestResult("/returnOrder/doReturnEquipment",doReturnEquipmentParam);
     }
     @Test
     public void doReturnMaterial() throws Exception {
@@ -57,14 +57,14 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest{
         List<String> materialList = new ArrayList<>();
         materialList.add("BM2017112017070030810018");
         doReturnMaterialParam.setMaterialNoList(materialList);
-        TestResult result = getJsonTestResult("/returnOrder/doReturnMaterial",doReturnMaterialParam);
+        Result result = getJsonTestResult("/returnOrder/doReturnMaterial",doReturnMaterialParam);
     }
     @Test
     public void detail() throws Exception {
         DoReturnEquipmentParam doReturnEquipmentParam = new DoReturnEquipmentParam();
         doReturnEquipmentParam.setReturnOrderNo("RO201711291746283331383");
         doReturnEquipmentParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010006");
-        TestResult result = getJsonTestResult("/returnOrder/detail",doReturnEquipmentParam);
+        Result result = getJsonTestResult("/returnOrder/detail",doReturnEquipmentParam);
     }
 
     @Test
@@ -79,25 +79,25 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest{
 //        returnOrderPageParam.setCreateEndTime(new Date());
         returnOrderPageParam.setPageNo(1);
         returnOrderPageParam.setPageSize(1);
-        TestResult result = getJsonTestResult("/returnOrder/page",returnOrderPageParam);
+        Result result = getJsonTestResult("/returnOrder/page",returnOrderPageParam);
     }
     @Test
     public void pageReturnEquipment() throws Exception {
         ReturnEquipmentPageParam returnEquipmentPageParam = new ReturnEquipmentPageParam();
         returnEquipmentPageParam.setReturnOrderProductId(8);
-        TestResult result = getJsonTestResult("/returnOrder/pageReturnEquipment",returnEquipmentPageParam);
+        Result result = getJsonTestResult("/returnOrder/pageReturnEquipment",returnEquipmentPageParam);
     }
     @Test
     public void pageReturnBulk() throws Exception {
         ReturnBulkPageParam returnBulkPageParam = new ReturnBulkPageParam();
         returnBulkPageParam.setReturnOrderMaterialId(5);
-        TestResult result = getJsonTestResult("/returnOrder/pageReturnBulk",returnBulkPageParam);
+        Result result = getJsonTestResult("/returnOrder/pageReturnBulk",returnBulkPageParam);
     }
     @Test
     public void cancel() throws Exception {
         ReturnOrder returnOrder = new ReturnOrder();
         returnOrder.setReturnOrderNo("RO201712011933151931203");
-        TestResult result = getJsonTestResult("/returnOrder/cancel",returnOrder);
+        Result result = getJsonTestResult("/returnOrder/cancel",returnOrder);
     }
     @Test
     public void end() throws Exception {
@@ -105,7 +105,7 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest{
         returnOrder.setReturnOrderNo("RO201711291746283331383");
         returnOrder.setServiceCost(BigDecimal.ZERO);
         returnOrder.setDamageCost(BigDecimal.ZERO);
-        TestResult result = getJsonTestResult("/returnOrder/end",returnOrder);
+        Result result = getJsonTestResult("/returnOrder/end",returnOrder);
     }
 
 }

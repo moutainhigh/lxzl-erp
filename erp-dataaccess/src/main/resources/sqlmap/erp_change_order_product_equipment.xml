@@ -19,6 +19,9 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="src_sku_id" jdbcType="INTEGER" property="srcSkuId" />
+		<result column="dest_sku_id" jdbcType="INTEGER" property="destSkuId" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -28,6 +31,20 @@
 	<select id="findById" resultMap="ChangeOrderProductEquipmentDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_change_order_product_equipment ecope 
 		WHERE ecope.id = #{id, jdbcType=INTEGER} AND ecope.data_status = 1 
+	</select>
+	<select id="findByChangeOrderNo" resultMap="ChangeOrderProductEquipmentDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/>,eped.sku_id dest_sku_id,epes.sku_id src_sku_id FROM erp_change_order_product_equipment ecope
+		LEFT JOIN erp_product_equipment eped ON eped.id=ecope.dest_equipment_id AND eped.data_status = 1
+		LEFT JOIN erp_product_equipment epes ON epes.id=ecope.src_equipment_id AND epes.data_status = 1
+		WHERE ecope.change_order_no = #{changeOrderNo, jdbcType=VARCHAR} AND ecope.data_status = 1
+	</select>
+
+	<select id="findByChangeOrderNoAndEquipmentNo" resultMap="ChangeOrderProductEquipmentDO">
+		SELECT <include refid="column_List"/>,eped.sku_id dest_sku_id,epes.sku_id src_sku_id  FROM erp_change_order_product_equipment ecope
+		LEFT JOIN erp_product_equipment eped ON eped.id=ecope.dest_equipment_id AND eped.data_status = 1
+		LEFT JOIN erp_product_equipment epes ON epes.id=ecope.src_equipment_id AND epes.data_status = 1
+		WHERE ecope.change_order_no = #{changeOrderNo, jdbcType=VARCHAR} AND ecope.data_status = 1
+		AND ecope.dest_equipment_no = #{destEquipmentNo, jdbcType=VARCHAR}
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">

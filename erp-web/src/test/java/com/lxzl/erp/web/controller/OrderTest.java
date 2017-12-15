@@ -1,7 +1,6 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
-import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.constant.OrderRentType;
@@ -11,8 +10,8 @@ import com.lxzl.erp.common.domain.order.pojo.LastRentPriceRequest;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
-import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
 import com.lxzl.erp.common.util.JSONUtil;
+import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -64,7 +63,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         order.setBuyerCustomerNo("C201711152010206581143");
         order.setCustomerConsignId(7);
         order.setRentStartTime(new Date());
-        TestResult result = getJsonTestResult("/order/create", order);
+        Result result = getJsonTestResult("/order/create", order);
     }
 
     @Test
@@ -99,7 +98,7 @@ public class OrderTest extends ERPUnTransactionalTest {
                 "}";
         Order order = JSONUtil.convertJSONToBean(str, Order.class);
 
-        TestResult result = getJsonTestResult("/order/create", order);
+        Result result = getJsonTestResult("/order/create", order);
 
     }
 
@@ -140,7 +139,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         order.setBuyerCustomerNo("C201711152010206581143");
         order.setCustomerConsignId(7);
         order.setRentStartTime(new Date());
-        TestResult result = getJsonTestResult("/order/update", order);
+        Result result = getJsonTestResult("/order/update", order);
     }
 
     @Test
@@ -148,7 +147,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         Order order = new Order();
         order.setOrderNo("O201712131801330941574");
         order.setVerifyUser(500006);//采购审核人员
-        TestResult result = getJsonTestResult("/order/commit", order);
+        Result result = getJsonTestResult("/order/commit", order);
     }
 
     @Test
@@ -156,14 +155,14 @@ public class OrderTest extends ERPUnTransactionalTest {
         Order order = new Order();
         order.setOrderNo("O201711151901080841608");
         order.setVerifyUser(1);
-        TestResult result = getJsonTestResult("/order/cancel", order);
+        Result result = getJsonTestResult("/order/cancel", order);
     }
 
     @Test
     public void testIsNeedVerify() throws Exception {
         Order order = new Order();
         order.setOrderNo("O201712111523581951498");
-        TestResult result = getJsonTestResult("/order/isNeedVerify", order);
+        Result result = getJsonTestResult("/order/isNeedVerify", order);
     }
 
     @Test
@@ -176,7 +175,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         processOrderParam.setMaterialId(5);
         processOrderParam.setMaterialCount(1);
         processOrderParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
-        TestResult result = getJsonTestResult("/order/process", processOrderParam);
+        Result result = getJsonTestResult("/order/process", processOrderParam);
     }
 
 
@@ -184,7 +183,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     public void testDelivery() throws Exception {
         Order order = new Order();
         order.setOrderNo("O201712051948457121036");
-        TestResult result = getJsonTestResult("/order/delivery", order);
+        Result result = getJsonTestResult("/order/delivery", order);
     }
 
 
@@ -192,7 +191,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     public void queryAllOrder() throws Exception {
         OrderQueryParam param = new OrderQueryParam();
 
-        TestResult result = getJsonTestResult("/order/queryAllOrder", param);
+        Result result = getJsonTestResult("/order/queryAllOrder", param);
     }
 
 
@@ -203,7 +202,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         request.setProductSkuId(40);
         request.setMaterialId(5);
 
-        TestResult result = getJsonTestResult("/order/queryLastPrice", request);
+        Result result = getJsonTestResult("/order/queryLastPrice", request);
     }
 
 
@@ -211,7 +210,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     public void queryOrderByNo() throws Exception {
         Order order = new Order();
         order.setOrderNo("O201712141340239931338");
-        TestResult result = getJsonTestResult("/order/queryOrderByNo", order);
+        Result result = getJsonTestResult("/order/queryOrderByNo", order);
     }
 
 
@@ -221,6 +220,6 @@ public class OrderTest extends ERPUnTransactionalTest {
         map.put("orderNo", "O201712121749510561848");
         map.put("returnEquipmentNo", "LX-EQUIPMENT-4000001-2017120110015");
         map.put("changeEquipmentNo", "LX-EQUIPMENT-4000001-2017120110015");
-        TestResult result = getJsonTestResult("/order/returnEquipment", map);
+        Result result = getJsonTestResult("/order/returnEquipment", map);
     }
 }

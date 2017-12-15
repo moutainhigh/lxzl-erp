@@ -15,6 +15,7 @@ public class OrderMaterialBulk implements Serializable {
 	private String bulkMaterialNo;   //设备编号唯一
 	private Date expectReturnTime;   //预计归还时间
 	private Date actualReturnTime;   //实际归还时间
+	private BigDecimal materialBulkUnitAmount;	// 散料单价
 	private BigDecimal expectRentAmount;   //预计租金
 	private BigDecimal actualRentAmount;   //实际租金
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -145,4 +146,11 @@ public class OrderMaterialBulk implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public BigDecimal getMaterialBulkUnitAmount() {
+		return materialBulkUnitAmount;
+	}
+
+	public void setMaterialBulkUnitAmount(BigDecimal materialBulkUnitAmount) {
+		this.materialBulkUnitAmount = materialBulkUnitAmount;
+	}
 }
