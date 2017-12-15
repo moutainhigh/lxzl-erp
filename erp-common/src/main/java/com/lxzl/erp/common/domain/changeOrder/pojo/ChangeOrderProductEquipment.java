@@ -1,6 +1,10 @@
 package com.lxzl.erp.common.domain.changeOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
+
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.math.BigDecimal;
@@ -8,12 +12,15 @@ import java.math.BigDecimal;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ChangeOrderProductEquipment implements Serializable {
 
+
 	private Integer changeOrderProductEquipmentId;   //唯一标识
 	private Integer changeOrderProductId;   //租赁换货商品项ID
 	private Integer changeOrderId;   //换货ID
+	@NotNull(message = ErrorCode.CHANGE_ORDER_NO_NOT_NULL)
 	private String changeOrderNo;   //换货编号
 	private String orderNo;   //订单编号
 	private Integer srcEquipmentId;   //原设备ID
+	@NotNull(message = ErrorCode.CHANGE_ORDER_SRC_EQUIPMENT_NO_NOT_NULL,groups = {ExtendGroup.class})
 	private String srcEquipmentNo;   //原设备编号
 	private Integer destEquipmentId;   //目标设备ID
 	private String destEquipmentNo;   //目标设备编号

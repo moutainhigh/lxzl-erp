@@ -39,7 +39,9 @@ public class ProductSku implements Serializable {
     @NotNull(message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class,AddChangeOrderParam.class})
     @Min(value=0,message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class,AddChangeOrderParam.class})
     private Integer returnCount;
-    //可退可换数量
+    //在租数量
+    private Integer rentCount;
+    //可退换数量
     private Integer canProcessCount;
 
     private Integer newProductSkuCount;     // 全新SKU设备数量
@@ -203,5 +205,13 @@ public class ProductSku implements Serializable {
 
     public void setOldProductSkuCount(Integer oldProductSkuCount) {
         this.oldProductSkuCount = oldProductSkuCount;
+    }
+
+    public Integer getRentCount() {
+        return rentCount;
+    }
+
+    public void setRentCount(Integer rentCount) {
+        this.rentCount = rentCount;
     }
 }

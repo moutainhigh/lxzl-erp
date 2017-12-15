@@ -259,29 +259,27 @@
 		</if>) material_main
 	</select>
 	<select id="findMaterialRent" resultMap="MaterialDO" parameterType="map">
-		SELECT <include refid="column_List"/>,<include refid="img_column_List"/>,material_main.rent_count,material_main.can_process_count FROM (
-		SELECT ebm.material_id id,COUNT(1) rent_count ,COUNT(1)-SUM(CASE ero.return_order_status WHEN 8 OR 12
-		THEN IFNULL(erom.return_material_count,0)-IFNULL(erom.real_return_material_count,0)  ELSE 0 END )-SUM(CASE eco.change_order_status WHEN 8 OR 12 OR 16 OR 20
-		THEN IFNULL(ecom.change_material_count,0)-IFNULL(ecom.real_change_material_count,0)  ELSE 0 END ) can_process_count
-		FROM
-		erp_bulk_material ebm
-		INNER JOIN erp_order eo
-		ON ebm.order_no = eo.order_no AND eo.data_status=1
-		LEFT JOIN erp_return_order_material erom ON erom.return_material_id = ebm.material_id AND erom.data_status=1
-		LEFT JOIN erp_return_order ero ON ero.id = erom.return_order_id AND ero.data_status=1
-		LEFT JOIN erp_change_order_material ecom ON ecom.change_material_id_src = ebm.material_id AND ecom.data_status=1
-		LEFT JOIN erp_change_order eco ON eco.id = ecom.change_order_id AND eco.data_status=1
-		WHERE ebm.order_no IS NOT NULL AND ebm.order_no != "" AND ebm.data_status = 1
+		select <include refid="column_List"/>,<include refid="img_column_List"/>,ebm.rentCount AS rent_count, ebm.rentCount-IFNULL(ero.returnCount,0)-IFNULL(eco.returnCount,0) as can_process_count from
+		(
+		select ebm.material_id as id,count(1) rentCount from erp_bulk_material ebm left join erp_order eo on eo.order_no = ebm.order_no and eo.data_status = 1
+		where ebm.order_no is not null and ebm.order_no !=""
+		and ebm.data_status = 1 and eo.buyer_customer_id=#{maps.customerId}
 		<if test="maps.onEquipment == 0">
 			AND ebm.current_equipment_id IS NULL
 		</if>
-		<if test="maps.customerId != null">
-			AND eo.buyer_customer_id = #{maps.customerId}
-		</if>
-		GROUP BY ebm.material_id
+		group by ebm.material_id ) ebm
+		left join (
+		SELECT erom.return_material_id AS material_id , SUM(return_material_count) AS returnCount FROM erp_return_order ero LEFT JOIN erp_return_order_material erom ON ero.id=erom.return_order_id AND erom.data_status = 1
+		WHERE ero.customer_id = #{maps.customerId} AND ero.data_status = 1 AND ero.return_order_status !=16 AND ero.return_order_status !=20
+		GROUP BY erom.return_material_id ) ero on ero.material_id = ebm.id
+
+		LEFT JOIN (
+		select ecom.change_material_id_src as material_id , sum(change_material_count) as returnCount from erp_change_order eco left join erp_change_order_material ecom on eco.id=ecom.change_order_id and ecom.data_status = 1
+		where eco.customer_id = #{maps.customerId} and eco.data_status = 1 and eco.change_order_status !=24 and eco.change_order_status !=28
+		group by ecom.change_material_id_src ) eco on eco.material_id = ebm.id
+
+		LEFT JOIN erp_material em ON em.id =  ebm.id
+		LEFT JOIN erp_material_img emi ON ebm.id = emi.material_id AND emi.data_status
 		LIMIT #{maps.start},#{maps.pageSize}
-		) material_main
-		LEFT JOIN erp_material em ON em.id =  material_main.id
-		LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status
 	</select>
 </mapper>

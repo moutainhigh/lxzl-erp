@@ -14,7 +14,7 @@ public interface ChangeOrderProductMapper extends BaseMysqlDAO<ChangeOrderProduc
 
 	Integer batchSave(@Param("changeOrderId") Integer changeOrderId,@Param("changeOrderNo") String changeOrderNo, @Param("changeOrderProductDOList") List<ChangeOrderProductDO> changeOrderProductDOList);
 
-	Integer batchUpdate(@Param("changeOrderProductDOList") List<ChangeOrderProductDO> changeOrderProductDOList);
+	Integer batchUpdate(@Param("list") List<ChangeOrderProductDO> changeOrderProductDOList);
 
 	List<ChangeOrderProductDO> findByChangeOrderId(@Param("changeOrderId") Integer changeOrderId);
 }

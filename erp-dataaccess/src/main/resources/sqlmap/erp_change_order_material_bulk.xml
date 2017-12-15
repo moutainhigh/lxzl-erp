@@ -21,6 +21,10 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="src_material_id" jdbcType="INTEGER" property="srcMaterialId" />
+		<result column="dest_material_id" jdbcType="INTEGER" property="destMaterialId" />
+
 	</resultMap>
 
 	<sql id="column_List">
@@ -31,7 +35,22 @@
 		SELECT <include refid="column_List"/> FROM erp_change_order_material_bulk ecomb 
 		WHERE ecomb.id = #{id, jdbcType=INTEGER} AND ecomb.data_status = 1 
 	</select>
-
+	<select id="listByChangeOrderPickUp" resultMap="ChangeOrderMaterialBulkDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_change_order_material_bulk ecomb
+		WHERE ecomb.change_order_id = #{changeOrderId, jdbcType=INTEGER} AND ecomb.src_bulk_material_id IS NULL AND ecomb.data_status = 1
+	</select>
+	<select id="findByChangeOrderNo" resultMap="ChangeOrderMaterialBulkDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> ,emd.material_id AS dest_material_id,ems.material_id AS src_material_id  FROM erp_change_order_material_bulk ecomb
+		LEFT JOIN erp_material emd ON emd.id = ecomb.dest_material_id AND emd.data_status = 1
+		LEFT JOIN erp_material ems ON ems.id = ecomb.dest_material_id AND ems.data_status = 1
+		WHERE ecomb.change_order_no = #{changeOrderNo, jdbcType=VARCHAR} AND ecomb.data_status = 1
+	</select>
+	<select id="findByChangeOrderNoAndEquipmentNo" resultMap="ChangeOrderMaterialBulkDO">
+		SELECT <include refid="column_List"/> FROM erp_change_order_material_bulk ecomb
+		LEFT JOIN erp_bulk_material ebm ON ebm.bulk_material_id = ecomb.dest_bulk_material_id AND ebm.data_status =1
+		WHERE ecomb.change_order_no = #{changeOrderNo, jdbcType=VARCHAR} AND ecomb.data_status = 1
+		AND ebm.material_no = #{materialNo, jdbcType=VARCHAR}
+	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ecomb.id) FROM erp_change_order_material_bulk ecomb 
 		<where>

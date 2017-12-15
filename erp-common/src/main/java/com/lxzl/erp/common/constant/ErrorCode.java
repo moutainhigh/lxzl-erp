@@ -187,6 +187,7 @@ public class ErrorCode {
     public static final String MATERIAL_TYPE_HAVE_NO_MODEL = "J300053";
     public static final String PURCHASE_RECEIVE_ORDER_MATERIAL_NO_NOT_NULL = "J300054";
     public static final String STOCK_NOT_MATCH = "J300055";
+    public static final String STOCK_NOT_ENOUGH = "J300056";
 
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
@@ -259,6 +260,11 @@ public class ErrorCode {
     public static final String ORDER_ALREADY_PAID = "J400068";
     public static final String ORDER_MATERIAL_BULK_NOT_EXISTS = "J400069";
     public static final String ORDER_MATERIAL_BULK_ALREADY_RETURN = "J400070";
+    public static final String CHANGE_ORDER_SRC_EQUIPMENT_NO_NOT_NULL = "J400071";
+    public static final String CHANGE_ORDER_CAN_NOT_CHANGE = "J400072";
+    public static final String CHANGE_ORDER_SRC_MATERIAL_NO_NOT_NULL = "J400073";
+    public static final String CHANGE_ORDER_MATERIAL_CAN_NOT_MODIFY = "J400074";
+    public static final String CHANGE_ORDER_NOT_END = "J400075";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -490,7 +496,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONSIGN_NOT_EXISTS, "客户收货地址不存在");
         MAP.put(CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW, "客户授信额度超限");
         MAP.put(STOCK_NOT_MATCH, "备货不匹配");
-
+        MAP.put(STOCK_NOT_ENOUGH, "备货不足，请先继续备货");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
@@ -552,6 +558,11 @@ public class ErrorCode {
         MAP.put(ORDER_ALREADY_PAID, "订单已经支付");
         MAP.put(ORDER_MATERIAL_BULK_NOT_EXISTS, "散料不在该订单里，请仔细检查");
         MAP.put(ORDER_MATERIAL_BULK_ALREADY_RETURN, "订单散料已经归还了");
+        MAP.put(CHANGE_ORDER_SRC_EQUIPMENT_NO_NOT_NULL, "原设备编号不能为空");
+        MAP.put(CHANGE_ORDER_CAN_NOT_CHANGE, "此商品在本换货单中无法换货，您可尝试取消本退还单后，重新生成SKU相符的换货单，或进行退货再租操作");
+        MAP.put(CHANGE_ORDER_SRC_MATERIAL_NO_NOT_NULL, "原物料编号不能为空");
+        MAP.put(CHANGE_ORDER_MATERIAL_CAN_NOT_MODIFY, "此换货单物料项回库数已不可修改");
+        MAP.put(CHANGE_ORDER_NOT_END, "此换货单尚有未处理完成的设备");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
@@ -572,7 +583,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS, "风控信息不存在");
         MAP.put(CUSTOMER_HAVE_NO_RETURN, "客户没有可归还商品");
         MAP.put(CUSTOMER_NOT_RENT_THIS, "客户没有租赁该商品");
-        MAP.put(CUSTOMER_RETURN_TOO_MORE, "客户退还商品数超过限制");
+        MAP.put(CUSTOMER_RETURN_TOO_MORE, "客户退换商品数超过限制");
         MAP.put(CONSIGNEE_NAME_NOT_NULL, "收货人姓名不能为空");
         MAP.put(CONSIGNEE_PHONE_NOT_NULL, "收货人电话不能为空");
         MAP.put(PROVINCE_ID_NOT_NULL, "省份ID不能为空");

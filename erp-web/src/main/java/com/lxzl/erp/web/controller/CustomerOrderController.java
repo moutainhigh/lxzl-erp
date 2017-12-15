@@ -28,7 +28,7 @@ public class CustomerOrderController {
     private ResultGenerator resultGenerator;
 
     /**
-     * 在租商品列表-可退可换
+     * 在租商品列表-可退换
      *
      * @param rentProductSkuPageParam
      * @param validResult
