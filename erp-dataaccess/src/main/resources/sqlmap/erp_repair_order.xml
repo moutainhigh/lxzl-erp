@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.repairOrder.RepairOrderMapper">
+
+	<resultMap id="RepairOrderDO" type="com.lxzl.erp.dataaccess.domain.repairOrder.RepairOrderDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="repair_order_no" jdbcType="VARCHAR" property="repairOrderNo" />
+		<result column="repair_reason" jdbcType="VARCHAR" property="repairReason" />
+		<result column="repair_order_status" jdbcType="INTEGER" property="repairOrderStatus" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ero.id,ero.repair_order_no,ero.repair_reason,ero.repair_order_status,ero.data_status,ero.remark,ero.create_time,ero.create_user,ero.update_time,ero.update_user
+	</sql>
+
+	<select id="findById" resultMap="RepairOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_repair_order ero 
+		WHERE ero.id = #{id, jdbcType=INTEGER} AND ero.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ero.id) FROM erp_repair_order ero 
+		<where>
+			<if test="true">
+				AND ero.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="RepairOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_repair_order ero 
+		<where>
+			<if test="true">
+				AND ero.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="repairOrderNo != null">
+				repair_order_no = #{repairOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="repairReason != null">
+				repair_reason = #{repairReason,jdbcType=VARCHAR},
+			</if>
+			<if test="repairOrderStatus != null">
+				repair_order_status = #{repairOrderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.repairOrder.RepairOrderDO">
+		INSERT INTO erp_repair_order <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.repairOrder.RepairOrderDO">
+		UPDATE erp_repair_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<select id="findByRepairOrderNo" resultMap="RepairOrderDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> from erp_repair_order ero
+		WHERE ero.repair_order_no = #{repairOrderNo,jdbcType=VARCHAR} and ero.data_status = 1;
+	</select>
+</mapper>

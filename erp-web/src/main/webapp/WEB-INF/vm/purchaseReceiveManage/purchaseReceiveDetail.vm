@@ -223,7 +223,7 @@
                                                 <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                                 <td>
                                                     <label class="field prepend-icon mw200">
-                                                        数量：{{productCount}}
+                                                        {{materialCount}}
                                                     </label>
                                                 </td>
                                                 <td>

@@ -99,4 +99,10 @@ public class GenerateNoUtil {
         Random random = new Random();
         return "SN" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
     }
+
+    public static String generateRepairOrderNo(Date currentTime) {
+        Random random = new Random();
+        return "REPAIR-" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
+    }
+
 }
