@@ -102,7 +102,10 @@ public class ConverterUtil {
                         String type = field.getType().getName();
                         Class cl = Class.forName(type);
                         if(!isJavaClass(cl)){
-                            String poFieldName = firstLowName(cl.getSimpleName().substring(0,cl.getSimpleName().length()-2));
+//                            String poFieldName = firstLowName(cl.getSimpleName().substring(0,cl.getSimpleName().length()-2));
+//                            Field poField = clazz.getDeclaredField(poFieldName);
+                            int endIndex = field.getName().length()-2;
+                            String poFieldName = field.getName().substring(0,endIndex);
                             Field poField = clazz.getDeclaredField(poFieldName);
                             Class poClazz =  Class.forName(poField.getType().getName());
                             Object value = field.get(o);

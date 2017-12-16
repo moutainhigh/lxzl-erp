@@ -39,7 +39,7 @@
         select distinct epcp.id as property_id,epcp.property_name,epcpv.id as id,epcpv.property_value_name,epcpv.property_capacity_value,epcpv.material_model_id,epcp.category_id,epcp.material_type from erp_product_category_property epcp
         inner join erp_product_category_property_value epcpv on epcp.id = epcpv.property_id and epcpv.data_status = 1
         inner JOIN erp_product_sku_property epsp ON epsp.property_value_id = epcpv.id and epsp.data_status = 1
-        where epsp.product_id = #{maps.productId, jdbcType=INTEGER} and (epsp.sku_id = #{maps.skuId, jdbcType=INTEGER} or epsp.is_sku = 0 ) and epcp.material_type is not null;
+        where epsp.product_id = #{maps.productId, jdbcType=INTEGER} and (epsp.sku_id = #{maps.skuId, jdbcType=INTEGER} or epsp.is_sku = 0 ) and epcp.material_type is not null
     </select>
 
     <sql id="set_column_sql">

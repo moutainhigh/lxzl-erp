@@ -29,9 +29,9 @@ public interface ChangeOrderService extends VerifyReceiver {
 
     ServiceResult<String, Page<ChangeOrder>> page(ChangeOrderPageParam changeOrderPageParam);
 
-    ServiceResult<String, Page<ChangeOrderProductEquipment>> pageChangeOrderProductEquipment(ChangeOrder changeOrder);
+    ServiceResult<String, Page<ChangeOrderProductEquipment>> pageChangeOrderProductEquipment(ChangeEquipmentPageParam changeEquipmentPageParam);
 
-    ServiceResult<String, Page<ChangeOrderMaterialBulk>> pageChangeOrderMaterialBulk(ChangeOrder changeOrder);
+    ServiceResult<String, Page<ChangeOrderMaterialBulk>> pageChangeOrderMaterialBulk(ChangeBulkPageParam changeBulkPageParam);
 
     ServiceResult<String, String> doChangeEquipment(ChangeOrderProductEquipment changeOrderProductEquipment);
 

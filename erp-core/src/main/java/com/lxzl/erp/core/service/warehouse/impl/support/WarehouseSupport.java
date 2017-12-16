@@ -35,35 +35,9 @@ public class WarehouseSupport {
     @Autowired
     private WarehouseMapper warehouseMapper;
 
-    public WarehouseDO getCurrentWarehouse() {
-        WarehouseDO returnWarehouseDO = null;
-        WarehouseQueryParam param = new WarehouseQueryParam();
-        User loginUser = userSupport.getCurrentUser();
-        List<Integer> subCompanyIdList = new ArrayList<>();
-        for (Role role : loginUser.getRoleList()) {
-            if (SubCompanyType.SUB_COMPANY_TYPE_HEADER.equals(role.getSubCompanyType())) {
-                subCompanyIdList.clear();
-                break;
-            }
-            subCompanyIdList.add(role.getSubCompanyId());
-        }
-        param.setSubCompanyIdList(subCompanyIdList);
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("start", 0);
-        paramMap.put("pageSize", Integer.MAX_VALUE);
-        paramMap.put("warehouseQueryParam", param);
-        List<WarehouseDO> warehouseList = warehouseMapper.listPage(paramMap);
-        for (WarehouseDO warehouseDO : warehouseList) {
-            if (WarehouseType.WAREHOUSE_TYPE_DEFAULT.equals(warehouseDO.getWarehouseType())) {
-                returnWarehouseDO = warehouseDO;
-            }
-        }
-        return returnWarehouseDO;
-    }
-
-    public boolean haveWarehouseRole(Integer warehouseId) {
+    public WarehouseDO getAvailableWarehouse(Integer warehouseId) {
         if (warehouseId == null) {
-            return false;
+            return null;
         }
         WarehouseQueryParam param = new WarehouseQueryParam();
         User loginUser = userSupport.getCurrentUser();
@@ -79,10 +53,10 @@ public class WarehouseSupport {
         List<WarehouseDO> warehouseDOList = warehouseMapper.listPage(paramMap);
         for (WarehouseDO warehouseDO : warehouseDOList) {
             if (warehouseId.equals(warehouseDO.getId())) {
-                return true;
+                return warehouseDO;
             }
         }
-        return false;
+        return null;
     }
 
 }

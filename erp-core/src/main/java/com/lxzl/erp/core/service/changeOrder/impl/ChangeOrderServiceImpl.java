@@ -9,7 +9,10 @@ import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrder;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderMaterial;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderMaterialBulk;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderProductEquipment;
+import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.product.pojo.Product;
+import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
+import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderMaterialBulk;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.BigDecimalUtil;
@@ -42,6 +45,7 @@ import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
+import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderMaterialBulkDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -561,12 +565,6 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
             return result;
         }
-        // 取仓库，本公司的默认仓库和客户仓
-        WarehouseDO srcWarehouse = warehouseSupport.getCurrentWarehouse();
-        if (srcWarehouse == null) {
-            result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
-            return result;
-        }
 
         if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())) {
             //添加更换后设备，添加更换后物料
@@ -1030,14 +1028,64 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     }
 
     @Override
-    public ServiceResult<String, Page<ChangeOrderProductEquipment>> pageChangeOrderProductEquipment(ChangeOrder changeOrder) {
-        return null;
+    public ServiceResult<String, Page<ChangeOrderProductEquipment>> pageChangeOrderProductEquipment(ChangeEquipmentPageParam changeEquipmentPageParam) {
+        ServiceResult<String, Page<ChangeOrderProductEquipment>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(changeEquipmentPageParam.getPageNo(), changeEquipmentPageParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("queryParam", changeEquipmentPageParam);
+
+        Integer totalCount = changeOrderProductEquipmentMapper.listCount(maps);
+        List<ChangeOrderProductEquipmentDO> changeOrderProductEquipmentDOList = changeOrderProductEquipmentMapper.listPage(maps);
+        List<ChangeOrderProductEquipment> changeOrderProductEquipmentList = ConverterUtil.convertList(changeOrderProductEquipmentDOList,ChangeOrderProductEquipment.class);
+        for(ChangeOrderProductEquipment changeOrderProductEquipment : changeOrderProductEquipmentList){
+            if(StringUtil.isNotEmpty(changeOrderProductEquipment.getSrcEquipmentNo())){
+                ProductEquipmentDO srcProductEquipmentDO = productEquipmentMapper.findByEquipmentNo(changeOrderProductEquipment.getSrcEquipmentNo());
+                changeOrderProductEquipment.setSrcProductEquipment(ConverterUtil.convert(srcProductEquipmentDO,ProductEquipment.class));
+            }
+            if(StringUtil.isNotEmpty(changeOrderProductEquipment.getDestEquipmentNo())){
+                ProductEquipmentDO destProductEquipmentDO = productEquipmentMapper.findByEquipmentNo(changeOrderProductEquipment.getDestEquipmentNo());
+                changeOrderProductEquipment.setDestProductEquipment(ConverterUtil.convert(destProductEquipmentDO,ProductEquipment.class));
+            }
+        }
+        Page<ChangeOrderProductEquipment> page = new Page<>(changeOrderProductEquipmentList, totalCount, changeEquipmentPageParam.getPageNo(), changeEquipmentPageParam.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
     }
 
     @Override
-    public ServiceResult<String, Page<ChangeOrderMaterialBulk>> pageChangeOrderMaterialBulk(ChangeOrder changeOrder) {
-        return null;
+    public ServiceResult<String, Page<ChangeOrderMaterialBulk>> pageChangeOrderMaterialBulk(ChangeBulkPageParam changeBulkPageParam) {
+        ServiceResult<String, Page<ChangeOrderMaterialBulk>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(changeBulkPageParam.getPageNo(), changeBulkPageParam.getPageSize());
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("queryParam", changeBulkPageParam);
+
+        Integer totalCount = changeOrderMaterialBulkMapper.listCount(maps);
+        List<ChangeOrderMaterialBulkDO> changeOrderMaterialBulkDOList = changeOrderMaterialBulkMapper.listPage(maps);
+        List<ChangeOrderMaterialBulk> changeOrderMaterialBulkList = ConverterUtil.convertList(changeOrderMaterialBulkDOList,ChangeOrderMaterialBulk.class);
+        for(ChangeOrderMaterialBulk changeOrderMaterialBulk : changeOrderMaterialBulkList){
+            if(StringUtil.isNotEmpty(changeOrderMaterialBulk.getSrcBulkMaterialNo())){
+                BulkMaterialDO srcBulkMaterialDO = bulkMaterialMapper.findByNo(changeOrderMaterialBulk.getSrcBulkMaterialNo());
+                changeOrderMaterialBulk.setSrcBulkMaterial(ConverterUtil.convert(srcBulkMaterialDO,BulkMaterial.class));
+            }
+            if(StringUtil.isNotEmpty(changeOrderMaterialBulk.getDestBulkMaterialNo())){
+                BulkMaterialDO destBulkMaterialDO = bulkMaterialMapper.findByNo(changeOrderMaterialBulk.getDestBulkMaterialNo());
+                changeOrderMaterialBulk.setSrcBulkMaterial(ConverterUtil.convert(destBulkMaterialDO,BulkMaterial.class));
+            }
+        }
+        Page<ChangeOrderMaterialBulk> page = new Page<>(changeOrderMaterialBulkList, totalCount, changeBulkPageParam.getPageNo(), changeBulkPageParam.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
     }
+
 
     private ServiceResult<String, Object> addOrderDestItemResultDest(StockUpForChangeParam param, ChangeOrderDO changeOrderDO) {
 
