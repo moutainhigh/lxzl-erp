@@ -637,7 +637,7 @@ public class OrderServiceImpl implements OrderService {
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
             for (OrderProduct orderProduct : order.getOrderProductList()) {
                 Product product = FastJsonUtil.toBean(orderProduct.getProductSkuSnapshot(), Product.class);
-                if(product != null && CollectionUtil.isNotEmpty(product.getProductSkuList())){
+                if (product != null && CollectionUtil.isNotEmpty(product.getProductSkuList())) {
                     for (ProductSku productSku : product.getProductSkuList()) {
                         if (orderProduct.getProductSkuId().equals(productSku.getSkuId())) {
                             orderProduct.setProductSkuPropertyList(productSku.getProductSkuPropertyList());
@@ -1181,13 +1181,11 @@ public class OrderServiceImpl implements OrderService {
         Map<Integer, OrderProductDO> saveOrderProductDOMap = new HashMap<>();
         Map<Integer, OrderProductDO> updateOrderProductDOMap = new HashMap<>();
         List<OrderProductDO> dbOrderProductDOList = orderProductMapper.findByOrderId(orderId);
-        Map<String, OrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(dbOrderProductDOList, "productSkuId", "rentType", "rentTimeLength");
+        Map<Integer, OrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(dbOrderProductDOList, "id");
         for (OrderProductDO orderProductDO : orderProductDOList) {
-            String key = orderProductDO.getProductSkuId() + "-" + orderProductDO.getRentType() + "-" + orderProductDO.getRentTimeLength();
-            if (dbOrderProductDOMap.get(key) != null) {
-                orderProductDO.setId(dbOrderProductDOMap.get(key).getId());
+            if (dbOrderProductDOMap.get(orderProductDO.getId()) != null) {
                 updateOrderProductDOMap.put(orderProductDO.getProductSkuId(), orderProductDO);
-                dbOrderProductDOMap.remove(key);
+                dbOrderProductDOMap.remove(orderProductDO.getId());
             } else {
                 saveOrderProductDOMap.put(orderProductDO.getProductSkuId(), orderProductDO);
             }
@@ -1218,7 +1216,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (dbOrderProductDOMap.size() > 0) {
-            for (Map.Entry<String, OrderProductDO> entry : dbOrderProductDOMap.entrySet()) {
+            for (Map.Entry<Integer, OrderProductDO> entry : dbOrderProductDOMap.entrySet()) {
                 OrderProductDO orderProductDO = entry.getValue();
                 orderProductDO.setOrderId(orderId);
                 orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
@@ -1234,12 +1232,11 @@ public class OrderServiceImpl implements OrderService {
         Map<Integer, OrderMaterialDO> saveOrderMaterialDOMap = new HashMap<>();
         Map<Integer, OrderMaterialDO> updateOrderMaterialDOMap = new HashMap<>();
         List<OrderMaterialDO> dbOrderMaterialDOList = orderMaterialMapper.findByOrderId(orderId);
-        Map<String, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(dbOrderMaterialDOList, "materialId", "rentType", "rentTimeLength");
+        Map<Integer, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(dbOrderMaterialDOList, "id");
         for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
-            String key = orderMaterialDO.getMaterialId() + "-" + orderMaterialDO.getRentType() + "-" + orderMaterialDO.getRentTimeLength();
-            if (dbOrderMaterialDOMap.get(key) != null) {
+            if (dbOrderMaterialDOMap.get(orderMaterialDO.getId()) != null) {
                 updateOrderMaterialDOMap.put(orderMaterialDO.getMaterialId(), orderMaterialDO);
-                dbOrderMaterialDOMap.remove(key);
+                dbOrderMaterialDOMap.remove(orderMaterialDO.getId());
             } else {
                 saveOrderMaterialDOMap.put(orderMaterialDO.getMaterialId(), orderMaterialDO);
             }
@@ -1270,7 +1267,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (dbOrderMaterialDOMap.size() > 0) {
-            for (Map.Entry<String, OrderMaterialDO> entry : dbOrderMaterialDOMap.entrySet()) {
+            for (Map.Entry<Integer, OrderMaterialDO> entry : dbOrderMaterialDOMap.entrySet()) {
                 OrderMaterialDO orderMaterialDO = entry.getValue();
                 orderMaterialDO.setOrderId(orderId);
                 orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
@@ -1436,8 +1433,8 @@ public class OrderServiceImpl implements OrderService {
             return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
         }
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
+            Map<String, OrderProduct> orderProductMap = new HashMap<>();
             for (OrderProduct orderProduct : order.getOrderProductList()) {
-
                 if (orderProduct.getPayMode() == null) {
                     return ErrorCode.ORDER_PAY_MODE_NOT_NULL;
                 }
@@ -1462,10 +1459,18 @@ public class OrderServiceImpl implements OrderService {
                 if (productSku == null || productSku.getStock() == null || productSku.getStock() <= 0 || (productSku.getStock() - orderProduct.getProductCount()) < 0) {
                     return ErrorCode.ORDER_PRODUCT_STOCK_INSUFFICIENT;
                 }
+
+                String key = orderProduct.getProductSkuId() + "-" + orderProduct.getRentType() + "-" + orderProduct.getRentTimeLength();
+                if (orderProductMap.get(key) != null) {
+                    return ErrorCode.ORDER_PRODUCT_LIST_REPEAT;
+                } else {
+                    orderProductMap.put(key, orderProduct);
+                }
             }
         }
 
         if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
+            Map<String, OrderMaterial> orderMaterialMap = new HashMap<>();
             for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
                 if (orderMaterial.getPayMode() == null) {
                     return ErrorCode.ORDER_PAY_MODE_NOT_NULL;
@@ -1490,7 +1495,13 @@ public class OrderServiceImpl implements OrderService {
                 }
                 Material material = materialServiceResult.getResult();
                 if (material.getStock() == null || material.getStock() <= 0 || (material.getStock() - orderMaterial.getMaterialCount()) < 0) {
-                    return ErrorCode.ORDER_PRODUCT_STOCK_INSUFFICIENT;
+                    return ErrorCode.ORDER_MATERIAL_STOCK_INSUFFICIENT;
+                }
+                String key = orderMaterial.getMaterialId() + "-" + orderMaterial.getRentType() + "-" + orderMaterial.getRentTimeLength();
+                if (orderMaterialMap.get(key) != null) {
+                    return ErrorCode.ORDER_MATERIAL_LIST_REPEAT;
+                } else {
+                    orderMaterialMap.put(key, orderMaterial);
                 }
             }
         }
