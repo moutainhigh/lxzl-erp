@@ -268,6 +268,9 @@ public class ErrorCode {
     public static final String CHANGE_ORDER_SRC_MATERIAL_NO_NOT_NULL = "J400073";
     public static final String CHANGE_ORDER_MATERIAL_CAN_NOT_MODIFY = "J400074";
     public static final String CHANGE_ORDER_NOT_END = "J400075";
+    public static final String ORDER_PRODUCT_LIST_REPEAT = "J400076";
+    public static final String ORDER_MATERIAL_STOCK_INSUFFICIENT = "J400077";
+    public static final String ORDER_MATERIAL_LIST_REPEAT = "J400078";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -575,6 +578,9 @@ public class ErrorCode {
         MAP.put(CHANGE_ORDER_SRC_MATERIAL_NO_NOT_NULL, "原物料编号不能为空");
         MAP.put(CHANGE_ORDER_MATERIAL_CAN_NOT_MODIFY, "此换货单物料项回库数已不可修改");
         MAP.put(CHANGE_ORDER_NOT_END, "此换货单尚有未处理完成的设备");
+        MAP.put(ORDER_MATERIAL_STOCK_INSUFFICIENT, "订单物料项库存不足");
+        MAP.put(ORDER_PRODUCT_LIST_REPEAT, "订单商品项重复");
+        MAP.put(ORDER_MATERIAL_LIST_REPEAT, "订单物料项重复");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");

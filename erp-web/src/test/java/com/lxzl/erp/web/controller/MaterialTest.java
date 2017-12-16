@@ -119,4 +119,10 @@ public class MaterialTest extends ERPUnTransactionalTest {
         materialModelQueryParam.setMaterialModelId(2);
         TestResult testResult = getJsonTestResult("/material/queryModelById", materialModelQueryParam);
     }
+
+    @Test
+    public void queryAllBulkMaterial() throws Exception {
+        BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
+        TestResult testResult = getJsonTestResult("/material/queryAllBulkMaterial", bulkMaterialQueryParam);
+    }
 }
