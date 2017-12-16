@@ -34,11 +34,11 @@ public class WorkFlowManager {
         if (WorkflowType.WORKFLOW_TYPE_PURCHASE.equals(workflowType)){
             return purchaseOrderService;
         }else if(WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)){
-            return purchaseOrderService;
+            return orderService;
         }else if(WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO.equals(workflowType)){
-            return purchaseOrderService;
+            return deploymentOrderService;
         }else if(WorkflowType.WORKFLOW_TYPE_CHANGE.equals(workflowType)){
-            return purchaseOrderService;
+            return changeOrderService;
         }
         return null;
     }

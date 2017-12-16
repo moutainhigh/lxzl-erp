@@ -145,18 +145,89 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     public void updatePurchaseOrder2() throws Exception {
 
         PurchaseOrder purchaseOrder = JSON.parseObject("{\n" +
-                "\t\"purchaseNo\": \"PO201712012025099545000061068\",\n" +
-                "\t\"productSupplierId\": \"1\",\n" +
-                "\t\"warehouseNo\": \"W201708081508\",\n" +
-                "\t\"isInvoice\": \"0\",\n" +
-                "\t\"isNew\": \"0\",\n" +
-                "\t\"purchaseType\": \"2\",\n" +
-                "\t\"purchaseOrderProductList\": [{\n" +
-                "\t\t\"productId\": \"2000013\",\n" +
-                "\t\t\"productSkuId\": \"40\",\n" +
-                "\t\t\"productAmount\": \"100\",\n" +
-                "\t\t\"productCount\": \"10\",\n" +
+                "\t\"purchaseReceiveNo\": \"PR2017121616283882360001101490\",\n" +
+                "\t\"isNew\": \"1\",\n" +
+                "\t\"purchaseReceiveOrderProductList\": [{\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"167\",\n" +
+                "\t\t\"realProductSkuId\": \"75\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
                 "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711171838059981292\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201422478141693\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201712011508312131037\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}]\n" +
+                "\t}, {\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"168\",\n" +
+                "\t\t\"realProductSkuId\": \"73\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201356145971009\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291808329011520\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201457288791418\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}]\n" +
+                "\t}, {\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"169\",\n" +
+                "\t\t\"realProductSkuId\": \"77\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711171838059981292\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291808329011520\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201712011508312131037\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}]\n" +
+                "\t}, {\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"170\",\n" +
+                "\t\t\"realProductSkuId\": \"71\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
                 "\t\t\t\"materialNo\": \"M201711201356145971009\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
                 "\t\t}, {\n" +
@@ -166,26 +237,201 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
                 "\t\t\t\"materialNo\": \"M201711201457288791418\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
                 "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711201500267591516\",\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}]\n" +
+                "\t}, {\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"171\",\n" +
+                "\t\t\"realProductSkuId\": \"76\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711171838059981292\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291808329011520\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201457288791418\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}]\n" +
+                "\t}, {\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"172\",\n" +
+                "\t\t\"realProductSkuId\": \"70\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711171838059981292\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201422478141693\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201457288791418\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
                 "\t\t}, {\n" +
                 "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711291745413251585\",\n" +
+                "\t\t}]\n" +
+                "\t}, {\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"173\",\n" +
+                "\t\t\"realProductSkuId\": \"74\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
                 "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711291744581931681\",\n" +
+                "\t\t\t\"materialNo\": \"M201711201356145971009\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
                 "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711171838059981293\",\n" +
+                "\t\t\t\"materialNo\": \"M201711291808329011520\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201712011508312131037\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}]\n" +
+                "\t}, {\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"174\",\n" +
+                "\t\t\"realProductSkuId\": \"72\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201356145971009\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201422478141693\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201712011508312131037\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
                 "\t\t}]\n" +
                 "\t}],\n" +
-                "\t\"purchaseOrderMaterialList\": [{\n" +
-                "\t\t\"materialNo\": \"M201711171838059981293\",\n" +
-                "\t\t\"materialAmount\": 42,\n" +
-                "\t\t\"materialCount\": 2\n" +
+                "\t\"purchaseReceiveOrderMaterialList\": [{\n" +
+                "\t\t\"realMaterialNo\": \"M201711291745413251585\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291744581931681\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711251154081811299\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711231853213681267\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711212007516281673\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711201501547451898\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711201500267591516\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711201457288791418\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711201422478141693\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711201356145971009\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711200917156471667\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711171838059981293\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711171838059981292\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201712011508312131037\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711300902575761564\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291912454131862\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291912439731417\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291911003661287\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291808329011520\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291807447341672\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291753428101534\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
                 "\t}]\n" +
                 "}",PurchaseOrder.class);
         TestResult testResult = getJsonTestResult("/purchaseOrder/update",purchaseOrder);
@@ -195,8 +441,8 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void commit() throws Exception {
         PurchaseOrderCommitParam purchaseOrderCommitParam = new PurchaseOrderCommitParam();
-        purchaseOrderCommitParam.setPurchaseNo("PO201711292045413845000051167");
-        purchaseOrderCommitParam.setVerifyUserId(500006);
+        purchaseOrderCommitParam.setPurchaseNo("PO201712161659351135000061140");
+        purchaseOrderCommitParam.setVerifyUserId(500002);
         purchaseOrderCommitParam.setRemark("给我好好审");
         TestResult testResult = getJsonTestResult("/purchaseOrder/commit",purchaseOrderCommitParam);
     }
@@ -289,14 +535,89 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updatePurchaseReceiveOrder1() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = JSON.parseObject("{\n" +
-                "\t\"purchaseReceiveNo\": \"PR2017120111205435560000781724\",\n" +
+                "\t\"purchaseReceiveNo\": \"PR2017121616283882360001101490\",\n" +
                 "\t\"isNew\": \"1\",\n" +
                 "\t\"purchaseReceiveOrderProductList\": [{\n" +
-                "\t\t\"purchaseReceiveOrderProductId\": \"136\",\n" +
-                "\t\t\"realProductSkuId\": \"40\",\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"167\",\n" +
+                "\t\t\"realProductSkuId\": \"75\",\n" +
                 "\t\t\"realProductCount\": \"100\",\n" +
                 "\t\t\"remark\": \"\",\n" +
                 "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711171838059981292\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201422478141693\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201712011508312131037\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}]\n" +
+                "\t}, {\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"168\",\n" +
+                "\t\t\"realProductSkuId\": \"73\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201356145971009\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291808329011520\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201457288791418\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}]\n" +
+                "\t}, {\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"169\",\n" +
+                "\t\t\"realProductSkuId\": \"77\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711171838059981292\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291808329011520\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201712011508312131037\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}]\n" +
+                "\t}, {\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"170\",\n" +
+                "\t\t\"realProductSkuId\": \"71\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
                 "\t\t\t\"materialNo\": \"M201711201356145971009\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
                 "\t\t}, {\n" +
@@ -306,28 +627,203 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
                 "\t\t\t\"materialNo\": \"M201711201457288791418\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
                 "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711201500267591516\",\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}]\n" +
+                "\t}, {\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"171\",\n" +
+                "\t\t\"realProductSkuId\": \"76\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711171838059981292\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291808329011520\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201457288791418\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}]\n" +
+                "\t}, {\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"172\",\n" +
+                "\t\t\"realProductSkuId\": \"70\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711171838059981292\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201422478141693\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201457288791418\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
                 "\t\t}, {\n" +
                 "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711291745413251585\",\n" +
+                "\t\t}]\n" +
+                "\t}, {\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"173\",\n" +
+                "\t\t\"realProductSkuId\": \"74\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
                 "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711291744581931681\",\n" +
+                "\t\t\t\"materialNo\": \"M201711201356145971009\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
                 "\t\t}, {\n" +
-                "\t\t\t\"materialNo\": \"M201711171838059981293\",\n" +
+                "\t\t\t\"materialNo\": \"M201711291808329011520\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201712011508312131037\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}]\n" +
+                "\t}, {\n" +
+                "\t\t\"purchaseReceiveOrderProductId\": \"174\",\n" +
+                "\t\t\"realProductSkuId\": \"72\",\n" +
+                "\t\t\"realProductCount\": \"100\",\n" +
+                "\t\t\"remark\": \"\",\n" +
+                "\t\t\"productMaterialList\": [{\n" +
+                "\t\t\t\"materialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201356145971009\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711201422478141693\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201712011508312131037\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\t\"materialCount\": \"1\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"materialNo\": \"M201711291912439731417\",\n" +
                 "\t\t\t\"materialCount\": \"1\"\n" +
                 "\t\t}]\n" +
                 "\t}],\n" +
                 "\t\"purchaseReceiveOrderMaterialList\": [{\n" +
                 "\t\t\"realMaterialNo\": \"M201711291745413251585\",\n" +
-                "\t\t\"realMaterialCount\": \"10\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291744581931681\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291737346371109\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711251154081811299\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711231853213681267\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711212007516281673\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711211953291591494\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711201501547451898\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711201500267591516\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711201457288791418\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711201422478141693\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711201356145971009\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711200917156471667\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711171838059981293\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711171838059981292\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201712011508312131037\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711300902575761564\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291912454131862\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291912439731417\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291911003661287\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291808329011520\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291807447341672\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}, {\n" +
+                "\t\t\"realMaterialNo\": \"M201711291753428101534\",\n" +
+                "\t\t\"realMaterialCount\": \"20\",\n" +
                 "\t\t\"remark\": \"\"\n" +
                 "\t}]\n" +
-                "}\n",PurchaseReceiveOrder.class);
+                "}",PurchaseReceiveOrder.class);
         TestResult testResult = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder",purchaseReceiveOrder);
     }
 
