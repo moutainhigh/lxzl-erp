@@ -1,17 +1,16 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
+import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.user.RoleMenuQueryParam;
-import com.lxzl.erp.common.domain.user.pojo.*;
 import com.lxzl.erp.common.domain.user.RoleQueryParam;
 import com.lxzl.erp.common.domain.user.UserRoleQueryParam;
-import com.lxzl.se.common.domain.Result;
+import com.lxzl.erp.common.domain.user.pojo.*;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class UserRoleControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addRole() throws Exception {
@@ -20,7 +19,7 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
         role.setRoleDesc("市场经理描述");
         role.setRemark("市场经理备注");
         role.setDepartmentId(400007);
-        Result result = getJsonTestResult("/userRole/add",role);
+        TestResult testResult = getJsonTestResult("/userRole/add",role);
     }
 
     @Test
@@ -28,14 +27,14 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
         Role role = new Role();
         role.setRoleId(2);
         role.setRoleName("测试修改");
-        Result result = getJsonTestResult("/userRole/update",role);
+        TestResult testResult = getJsonTestResult("/userRole/update",role);
     }
 
     @Test
     public void deleteRole() throws Exception {
         Role role = new Role();
         role.setRoleId(3);
-        Result result = getJsonTestResult("/userRole/delete",role);
+        TestResult testResult = getJsonTestResult("/userRole/delete",role);
     }
 
     @Test
@@ -45,7 +44,7 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
         roleQueryParam.setPageSize(10);
 //        roleQueryParam.setRoleId(600005);
         roleQueryParam.setSubCompanyId(1);
-        Result result = getJsonTestResult("/userRole/page",roleQueryParam);
+        TestResult testResult = getJsonTestResult("/userRole/page",roleQueryParam);
     }
 
     @Test
@@ -62,7 +61,7 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
         roleList.add(role2);
         userRole.setRoleList(roleList);
 
-        Result result = getJsonTestResult("/userRole/saveUserRole",userRole);
+        TestResult testResult = getJsonTestResult("/userRole/saveUserRole",userRole);
     }
 
     @Test
@@ -72,7 +71,7 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
         userRoleQueryParam.setUserId(500001);
         userRoleQueryParam.setPageNo(1);
         userRoleQueryParam.setPageSize(10);
-        Result result = getJsonTestResult("/userRole/getUserRoleList",userRoleQueryParam);
+        TestResult testResult = getJsonTestResult("/userRole/getUserRoleList",userRoleQueryParam);
     }
 
     @Test
@@ -85,14 +84,14 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
         department.setDepartmentId(2);
         departmentList.add(department);
         roleDepartmentData.setDepartmentList(departmentList);
-        Result result = getJsonTestResult("/userRole/updateRoleDepartmentData",roleDepartmentData);
+        TestResult testResult = getJsonTestResult("/userRole/updateRoleDepartmentData",roleDepartmentData);
     }
     @Test
     public void getRoleDepartmentDataListByRole() throws Exception {
 
         Role role = new Role();
         role.setRoleId(1);
-        Result result = getJsonTestResult("/userRole/getRoleDepartmentDataListByRole",role);
+        TestResult testResult = getJsonTestResult("/userRole/getRoleDepartmentDataListByRole",role);
     }
 
     @Test
@@ -105,14 +104,14 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
         user.setUserId(500002);
 //        userList.add(user);
         roleUserData.setPassiveUserList(userList);
-        Result result = getJsonTestResult("/userRole/updateRoleUserData",roleUserData);
+        TestResult testResult = getJsonTestResult("/userRole/updateRoleUserData",roleUserData);
     }
     @Test
     public void getRoleUserDataListByRoleId() throws Exception {
 
         User user = new User();
         user.setUserId(500001);
-        Result result = getJsonTestResult("/userRole/getRoleUserDataListByRoleId",user);
+        TestResult testResult = getJsonTestResult("/userRole/getRoleUserDataListByRoleId",user);
     }
     @Test
     public void saveRoleMenu() throws Exception {
@@ -122,23 +121,23 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
     public void getRoleMenuList() throws Exception {
         RoleMenuQueryParam param = new RoleMenuQueryParam();
         param.setRoleId(600001);
-        Result result = getJsonTestResult("/userRole/getRoleMenuList",param);
+        TestResult testResult = getJsonTestResult("/userRole/getRoleMenuList",param);
     }
     @Test
     public void getRoleTree() throws Exception {
-        Result result = getJsonTestResult("/userRole/getRoleTree",null);
+        TestResult testResult = getJsonTestResult("/userRole/getRoleTree",null);
     }
 
     @Test
     public void rebuildFinalRoleUserData() throws Exception {
         RoleUserData roleUserData = new RoleUserData();
         roleUserData.setActiveUserId(500001);
-        Result result = getJsonTestResult("/userRole/rebuildFinalRoleUserData",roleUserData);
+        TestResult testResult = getJsonTestResult("/userRole/rebuildFinalRoleUserData",roleUserData);
     }
     @Test
     public void getFinalRoleUserData() throws Exception {
         RoleUserData roleUserData = new RoleUserData();
         roleUserData.setActiveUserId(500001);
-        Result result = getJsonTestResult("/userRole/getFinalRoleUserData",roleUserData);
+        TestResult testResult = getJsonTestResult("/userRole/getFinalRoleUserData",roleUserData);
     }
 }

@@ -1,10 +1,9 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
+import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.system.pojo.DataDictionary;
-import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
-
 /**
  * 描述: ${DESCRIPTION}
  *
@@ -18,6 +17,6 @@ public class DataDictionaryTest extends ERPUnTransactionalTest {
     public void getWarehousePage() throws Exception {
         DataDictionary dataDictionary = new DataDictionary();
         dataDictionary.setLabel("1");
-        Result result = getJsonTestResult("/data/addDictionary", dataDictionary);
+        TestResult result = getJsonTestResult("/data/addDictionary", dataDictionary);
     }
 }

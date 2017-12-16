@@ -1,14 +1,13 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
+import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.message.MessageQueryParam;
 import com.lxzl.erp.common.domain.message.pojo.Message;
-import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class MessageControllerTest extends ERPUnTransactionalTest{
     @Test
     public void sendMessage() throws Exception {
@@ -21,7 +20,7 @@ public class MessageControllerTest extends ERPUnTransactionalTest{
  //       receiverUserIdList.add(500006);
 
         message.setReceiverUserIdList(receiverUserIdList);
-        Result result = getJsonTestResult("/message/sendMessage",message);
+        TestResult testResult = getJsonTestResult("/message/sendMessage",message);
     }
 
     /**
@@ -35,7 +34,7 @@ public class MessageControllerTest extends ERPUnTransactionalTest{
         MessageQueryParam messageQueryParam = new MessageQueryParam();
         messageQueryParam.setPageNo(1);
         messageQueryParam.setPageSize(10);
-        Result result = getJsonTestResult("/message/pageSendMessage",messageQueryParam);
+        TestResult testResult = getJsonTestResult("/message/pageSendMessage",messageQueryParam);
     }
 
 
@@ -44,7 +43,7 @@ public class MessageControllerTest extends ERPUnTransactionalTest{
         Message message =new Message();
         message.setMessageId(5);
 
-        Result result = getJsonTestResult("/message/queryMessage",message);
+        TestResult testResult = getJsonTestResult("/message/queryMessage",message);
     }
 
     @Test
@@ -54,7 +53,7 @@ public class MessageControllerTest extends ERPUnTransactionalTest{
         messageQueryParam.setPageNo(1);
         messageQueryParam.setPageSize(10);
 
-        Result result = getJsonTestResult("/message/pageReceiveMessage",messageQueryParam);
+        TestResult testResult = getJsonTestResult("/message/pageReceiveMessage",messageQueryParam);
     }
 
     @Test
@@ -67,14 +66,14 @@ public class MessageControllerTest extends ERPUnTransactionalTest{
         receiverUserIdList.add(500003);
 
         message.setReceiverUserIdList(receiverUserIdList);
-        Result result = getJsonTestResult("/message/sendMessage",message);
+        TestResult testResult = getJsonTestResult("/message/sendMessage",message);
     }
 
     @Test
     public void noReadCount() throws Exception{
 
 
-        Result result = getJsonTestResult("/message/noReadCount",null);
+        TestResult testResult = getJsonTestResult("/message/noReadCount",null);
     }
 
 }

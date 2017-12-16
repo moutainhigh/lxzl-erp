@@ -1,6 +1,7 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
+import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.constant.OrderRentType;
@@ -11,12 +12,10 @@ import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.util.JSONUtil;
-import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.*;
-
 /**
  * 描述: 订单测试类
  *
@@ -38,7 +37,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderProduct.setRentType(OrderRentType.RENT_TYPE_MONTH);
         orderProduct.setRentTimeLength(6);
         orderProduct.setProductSkuId(40);
-        orderProduct.setProductCount(2);
+        orderProduct.setProductCount(5);
         orderProduct.setInsuranceAmount(new BigDecimal(15.0));
         orderProduct.setProductUnitAmount(new BigDecimal(20.0));
         orderProduct.setInsuranceAmount(new BigDecimal(15.0));
@@ -63,7 +62,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         order.setBuyerCustomerNo("C201711152010206581143");
         order.setCustomerConsignId(7);
         order.setRentStartTime(new Date());
-        Result result = getJsonTestResult("/order/create", order);
+        TestResult testResult = getJsonTestResult("/order/create", order);
     }
 
     @Test
@@ -98,7 +97,7 @@ public class OrderTest extends ERPUnTransactionalTest {
                 "}";
         Order order = JSONUtil.convertJSONToBean(str, Order.class);
 
-        Result result = getJsonTestResult("/order/create", order);
+        TestResult testResult = getJsonTestResult("/order/create", order);
 
     }
 
@@ -139,15 +138,15 @@ public class OrderTest extends ERPUnTransactionalTest {
         order.setBuyerCustomerNo("C201711152010206581143");
         order.setCustomerConsignId(7);
         order.setRentStartTime(new Date());
-        Result result = getJsonTestResult("/order/update", order);
+        TestResult testResult = getJsonTestResult("/order/update", order);
     }
 
     @Test
     public void testCommitOrder() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712131801330941574");
+        order.setOrderNo("O201712151714072971428");
         order.setVerifyUser(500006);//采购审核人员
-        Result result = getJsonTestResult("/order/commit", order);
+        TestResult testResult = getJsonTestResult("/order/commit", order);
     }
 
     @Test
@@ -155,35 +154,35 @@ public class OrderTest extends ERPUnTransactionalTest {
         Order order = new Order();
         order.setOrderNo("O201711151901080841608");
         order.setVerifyUser(1);
-        Result result = getJsonTestResult("/order/cancel", order);
+        TestResult testResult = getJsonTestResult("/order/cancel", order);
     }
 
     @Test
     public void testIsNeedVerify() throws Exception {
         Order order = new Order();
         order.setOrderNo("O201712111523581951498");
-        Result result = getJsonTestResult("/order/isNeedVerify", order);
+        TestResult testResult = getJsonTestResult("/order/isNeedVerify", order);
     }
 
     @Test
     public void testProcessOrder() throws Exception {
         ProcessOrderParam processOrderParam = new ProcessOrderParam();
-        processOrderParam.setOrderNo("O201712131801330941574");
+        processOrderParam.setOrderNo("O201712151714072971428");
         //select * from erp_product_equipment where sku_id=40 and equipment_status = 1 and data_status = 1 and order_no is null
-//        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017111710001");
+//        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010012");
 //        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017120110037");
         processOrderParam.setMaterialId(5);
-        processOrderParam.setMaterialCount(1);
+        processOrderParam.setMaterialCount(3);
         processOrderParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
-        Result result = getJsonTestResult("/order/process", processOrderParam);
+        TestResult testResult = getJsonTestResult("/order/process", processOrderParam);
     }
 
 
     @Test
     public void testDelivery() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712051948457121036");
-        Result result = getJsonTestResult("/order/delivery", order);
+        order.setOrderNo("O201712151714072971428");
+        TestResult testResult = getJsonTestResult("/order/delivery", order);
     }
 
 
@@ -191,7 +190,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     public void queryAllOrder() throws Exception {
         OrderQueryParam param = new OrderQueryParam();
 
-        Result result = getJsonTestResult("/order/queryAllOrder", param);
+        TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
 
 
@@ -202,7 +201,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         request.setProductSkuId(40);
         request.setMaterialId(5);
 
-        Result result = getJsonTestResult("/order/queryLastPrice", request);
+        TestResult testResult = getJsonTestResult("/order/queryLastPrice", request);
     }
 
 
@@ -210,7 +209,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     public void queryOrderByNo() throws Exception {
         Order order = new Order();
         order.setOrderNo("O201712141340239931338");
-        Result result = getJsonTestResult("/order/queryOrderByNo", order);
+        TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
     }
 
 
@@ -220,6 +219,6 @@ public class OrderTest extends ERPUnTransactionalTest {
         map.put("orderNo", "O201712121749510561848");
         map.put("returnEquipmentNo", "LX-EQUIPMENT-4000001-2017120110015");
         map.put("changeEquipmentNo", "LX-EQUIPMENT-4000001-2017120110015");
-        Result result = getJsonTestResult("/order/returnEquipment", map);
+        TestResult testResult = getJsonTestResult("/order/returnEquipment", map);
     }
 }

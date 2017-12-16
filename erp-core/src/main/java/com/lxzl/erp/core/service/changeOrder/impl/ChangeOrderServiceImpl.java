@@ -657,7 +657,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 if(!stockYetMap.containsKey(changeOrderMaterialBulkDO.getDestMaterialId())){
                     stockYetMap.put(changeOrderMaterialBulkDO.getDestMaterialId(),0);
                 }
-                stockYetMap.put(changeOrderMaterialBulkDO.getDestMaterialId(),skuShouldStockMap.get(changeOrderMaterialBulkDO.getDestMaterialId())+1);
+                stockYetMap.put(changeOrderMaterialBulkDO.getDestMaterialId(),stockYetMap.get(changeOrderMaterialBulkDO.getDestMaterialId())+1);
             }
 
             for(Integer materialId : skuShouldStockMap.keySet()){
@@ -787,13 +787,13 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             return serviceResult;
         }
         //判断更换数量是否大于客户在租数量
-        List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findRentByCustomerIdAndMaterialId(changeOrderDO.getCustomerId(), changeOrderMaterial.getChangeMaterialIdSrc());
-        if (changeOrderMaterial.getChangeMaterialCount() > bulkMaterialDOList.size()) {
+        List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findRentByCustomerIdAndMaterialId(changeOrderDO.getCustomerId(), srcMaterialDO.getId());
+        if (changeOrderMaterial.getRealChangeMaterialCount() > bulkMaterialDOList.size()) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_TOO_MORE);
             return serviceResult;
         }
         //更新租赁换货物料项表，实际换货数量
-        if(changeOrderMaterial.getRealChangeMaterialCount()!=null||changeOrderMaterial.getRealChangeMaterialCount()>0){
+        if(changeOrderMaterialDO.getRealChangeMaterialCount()>0){
             serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_MATERIAL_CAN_NOT_MODIFY);
             return serviceResult;
         }
@@ -824,7 +824,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 changeOrderMaterialBulkMapper.save(changeOrderMaterialBulkDO);
             }
         }
-        List<ChangeOrderMaterialBulkDO> changeOrderMaterialBulkDOList = changeOrderMaterialBulkMapper.listByChangeOrderPickUp(changeOrderDO.getChangeOrderNo());
+        List<ChangeOrderMaterialBulkDO> changeOrderMaterialBulkDOList = changeOrderMaterialBulkMapper.listByChangeOrderPickUp(changeOrderDO.getId());
         //一对一更新租赁换货散料表，订单编号，原散料编号，原设备编号，原设备ID，差价
         BigDecimal totalDiffPrice = changeOrderDO.getTotalPriceDiff();
         for (int i = 0; i < changeOrderMaterial.getRealChangeMaterialCount(); i++) {
@@ -833,7 +833,9 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             changeOrderMaterialBulkDO.setSrcBulkMaterialId(srcBulkMaterialDO.getId());
             changeOrderMaterialBulkDO.setSrcEquipmentId(srcBulkMaterialDO.getCurrentEquipmentId());
             changeOrderMaterialBulkDO.setSrcEquipmentNo(srcBulkMaterialDO.getCurrentEquipmentNo());
-            BulkMaterialDO destBulkMaterialDO = changeOrderMaterialBulkDO.getDestBulkMaterialDO();
+            //todo 这里暂时从数据库取，后面改成直接取对象
+//            BulkMaterialDO destBulkMaterialDO = changeOrderMaterialBulkDO.getDestBulkMaterialDO();
+            BulkMaterialDO destBulkMaterialDO = bulkMaterialMapper.findByNo(changeOrderMaterialBulkDO.getDestBulkMaterialNo());
             BigDecimal diffPrice = BigDecimalUtil.sub(destBulkMaterialDO.getBulkMaterialPrice(), srcBulkMaterialDO.getBulkMaterialPrice());
             totalDiffPrice = BigDecimalUtil.add(totalDiffPrice, diffPrice);
             changeOrderMaterialBulkDO.setPriceDiff(diffPrice);
@@ -842,7 +844,8 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             changeOrderMaterialBulkMapper.update(changeOrderMaterialBulkDO);
             //todo 更新订单物料散料表，实际归还时间，实际租金；添加订单物料散料，预计归还时间
 
-            //调用拆卸安装接口
+            //todo 如果原散料在设备上调用拆卸安装接口  否则直接修改散料状态
+            //todo 备货时寻找的散料在设备上--高超
             ServiceResult<String,Integer> dismantleAndInstallResult = bulkMaterialService.changeProductDismantleAndInstall(srcBulkMaterialDO.getId(),destBulkMaterialDO.getId());
             if(!dismantleAndInstallResult.getErrorCode().equals(ErrorCode.SUCCESS)){
                 serviceResult.setErrorCode(dismantleAndInstallResult.getErrorCode(),dismantleAndInstallResult.getFormatArgs());
@@ -1053,7 +1056,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             }
             //商品非在租则不可用
             ProductDO productDO = productMapper.findByProductId(productEquipmentDO.getProductId());
-            if(productDO==null||!CommonConstant.COMMON_CONSTANT_NO.equals(productDO.getIsRent())){
+            if(productDO==null||CommonConstant.COMMON_CONSTANT_NO.equals(productDO.getIsRent())){
                 serviceResult.setErrorCode(ErrorCode.PRODUCT_IS_NOT_RENT);
                 return serviceResult;
             }
@@ -1124,7 +1127,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             List<ChangeOrderMaterialBulkDO> changeOrderMaterialBulkDOList = changeOrderMaterialBulkMapper.findByChangeOrderNo(param.getChangeOrderNo());
             Map<Integer, Integer> changeOrderMaterialBulkMap = new HashMap<>();
             for (ChangeOrderMaterialBulkDO changeOrderMaterialBulkDO : changeOrderMaterialBulkDOList) {
-                Integer materialId = changeOrderMaterialBulkDO.getDestBulkMaterialDO().getMaterialId();
+                Integer materialId = changeOrderMaterialBulkDO.getDestMaterialId();
                 if (!changeOrderMaterialBulkMap.containsKey(materialId)) {
                     changeOrderMaterialBulkMap.put(materialId, 0);
                 }
@@ -1152,8 +1155,6 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 return serviceResult;
             }
             Date now = new Date();
-            //要更新的散料
-            List<BulkMaterialDO> bulkMaterialDOListForUpdate = new ArrayList<>();
             //保存换货单散料项
             for (int i = 0; i < param.getMaterialCount(); i++) {
                 ChangeOrderMaterialBulkDO changeOrderMaterialBulkDO = new ChangeOrderMaterialBulkDO();
@@ -1177,12 +1178,10 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 changeOrderMaterialBulkDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 changeOrderMaterialBulkMapper.save(changeOrderMaterialBulkDO);
 
-                //加入要更新的散料
+                //更新散料状态
                 bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
-                bulkMaterialDOListForUpdate.add(bulkMaterialDO);
+                bulkMaterialMapper.update(bulkMaterialDO);
             }
-            //批量更新散料状态
-            bulkMaterialMapper.updateList(bulkMaterialDOListForUpdate);
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;

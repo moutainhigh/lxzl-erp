@@ -45,6 +45,10 @@
 	<select id="findRentByCustomerId" resultMap="BulkMaterialDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> FROM erp_order eo INNER JOIN erp_bulk_material ebm ON eo.order_no=ebm.order_no WHERE eo.data_status=1 AND eo.buyer_customer_id = #{customerId}
 	</select>
+	<select id="findRentByCustomerIdAndMaterialId" resultMap="BulkMaterialDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_order eo INNER JOIN erp_bulk_material ebm ON eo.order_no=ebm.order_no WHERE eo.data_status=1
+		AND eo.buyer_customer_id = #{customerId} AND ebm.material_id = #{materialId}
+	</select>
 
 	<select id="findByMaterialTypeAndModelId" resultMap="BulkMaterialDO" parameterType="java.util.Map">
 		select

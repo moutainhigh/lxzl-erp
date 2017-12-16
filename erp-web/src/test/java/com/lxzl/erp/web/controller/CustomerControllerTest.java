@@ -11,7 +11,7 @@ import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-
+import com.lxzl.erp.TestResult;
 
 public class CustomerControllerTest extends ERPUnTransactionalTest{
     @Test
@@ -23,7 +23,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customerCompany.setConnectPhone("13888889999");
         customerCompany.setAddress("企业信息详细地址测试");
         customer.setCustomerCompany(customerCompany);
-        Result result = getJsonTestResult("/customer/addCompany",customer);
+        TestResult result = getJsonTestResult("/customer/addCompany",customer);
     }
     @Test
     public void addCustomerPerson() throws Exception {
@@ -35,7 +35,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customerPerson.setPhone("13888886666");
         customerPerson.setAddress("个人信息详细地址测试");
         customer.setCustomerPerson(customerPerson);
-        Result result = getJsonTestResult("/customer/addPerson",customer);
+        TestResult result = getJsonTestResult("/customer/addPerson",customer);
     }
     @Test
     public void updateCustomerCompany() throws Exception {
@@ -45,7 +45,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customerCompany.setConnectRealName("张三啊");
         customer.setCustomerCompany(customerCompany);
         customer.setCustomerNo("C201711221037203271636");
-        Result result = getJsonTestResult("/customer/updateCompany",customer);
+        TestResult result = getJsonTestResult("/customer/updateCompany",customer);
     }
     @Test
     public void updateCustomerPerson() throws Exception {
@@ -54,32 +54,32 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customerPerson.setRealName("我是一个小小人");
         customer.setCustomerPerson(customerPerson);
         customer.setCustomerNo("C201711221149433561458");
-        Result result = getJsonTestResult("/customer/updatePerson",customer);
+        TestResult result = getJsonTestResult("/customer/updatePerson",customer);
     }
     @Test
     public void pageCustomerCompany() throws Exception {
         CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
 //        customerCompanyQueryParam.setCompanyName("百");
-        Result result = getJsonTestResult("/customer/pageCustomerCompany",customerCompanyQueryParam);
+        TestResult result = getJsonTestResult("/customer/pageCustomerCompany",customerCompanyQueryParam);
     }
     @Test
     public void pageCustomerPerson() throws Exception {
         CustomerPersonQueryParam customerPersonQueryParam = new CustomerPersonQueryParam();
         customerPersonQueryParam.setCustomerNo("C201711221429052021353");
-        Result result = getJsonTestResult("/customer/pageCustomerPerson",customerPersonQueryParam);
+        TestResult result = getJsonTestResult("/customer/pageCustomerPerson",customerPersonQueryParam);
     }
 
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
         customer.setCustomerNo("CC201711221418540821486");
-        Result result = getJsonTestResult("/customer/detailCustomerCompany",customer);
+        TestResult result = getJsonTestResult("/customer/detailCustomerCompany",customer);
     }
     @Test
     public void detailCustomerPerson() throws Exception {
         Customer customer = new Customer();
         customer.setCustomerNo("C201711152010206581143");
-        Result result = getJsonTestResult("/customer/detailCustomerPerson",customer);
+        TestResult result = getJsonTestResult("/customer/detailCustomerPerson",customer);
     }
     @Test
     public void updateRisk() throws Exception {
@@ -89,7 +89,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customerRiskManagement.setCreditAmount(new BigDecimal(80000d));
         customerRiskManagement.setDepositCycle(12);
         customerRiskManagement.setRemark("这是一个备注");
-        Result result = getJsonTestResult("/customer/updateRisk",customerRiskManagement);
+        TestResult result = getJsonTestResult("/customer/updateRisk",customerRiskManagement);
     }
 
     @Test
@@ -105,7 +105,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customerConsignInfo.setRemark("测试增加");
         customerConsignInfo.setIsMain(0);
 
-        Result result = getJsonTestResult("/customer/addCustomerConsignInfo",customerConsignInfo);
+        TestResult result = getJsonTestResult("/customer/addCustomerConsignInfo",customerConsignInfo);
     }
 
     @Test
@@ -121,7 +121,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customerConsignInfo.setRemark("update备注");
         customerConsignInfo.setIsMain(0);
 
-        Result result = getJsonTestResult("/customer/updateCustomerConsignInfo",customerConsignInfo);
+        TestResult result = getJsonTestResult("/customer/updateCustomerConsignInfo",customerConsignInfo);
     }
 
     @Test
@@ -130,7 +130,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customerConsignInfo.setCustomerConsignInfoId(18);
         customerConsignInfo.setIsMain(1);
 
-        Result result = getJsonTestResult("/customer/deleteCustomerConsignInfo",customerConsignInfo);
+        TestResult result = getJsonTestResult("/customer/deleteCustomerConsignInfo",customerConsignInfo);
     }
 
     @Test
@@ -139,7 +139,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customerConsignInfo.setCustomerConsignInfoId(19);
 
 
-        Result result = getJsonTestResult("/customer/detailCustomerConsignInfo",customerConsignInfo);
+        TestResult result = getJsonTestResult("/customer/detailCustomerConsignInfo",customerConsignInfo);
     }
 
 
@@ -150,7 +150,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
 //        customerConsignInfoQueryParam.setPageNo(1);
 //        customerConsignInfoQueryParam.setPageSize(3);
 
-        Result result = getJsonTestResult("/customer/pageCustomerConsignInfo",customerConsignInfoQueryParam);
+        TestResult result = getJsonTestResult("/customer/pageCustomerConsignInfo",customerConsignInfoQueryParam);
     }
 
     @Test
@@ -158,7 +158,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
         customerConsignInfo.setCustomerConsignInfoId(9);
 
-        Result result = getJsonTestResult("/customer/updateAddressIsMain",customerConsignInfo);
+        TestResult result = getJsonTestResult("/customer/updateAddressIsMain",customerConsignInfo);
     }
 
     @Test
@@ -166,7 +166,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
 //        customerConsignInfo.setCustomerConsignInfoId(7);
 
-        Result result = getJsonTestResult("/customer/updateLastUseTime",customerConsignInfo);
+        TestResult result = getJsonTestResult("/customer/updateLastUseTime",customerConsignInfo);
     }
 
     @Test
@@ -174,7 +174,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         Customer customer = new Customer();
         customer.setCustomerNo("500008");
 
-        Result result = getJsonTestResult("/payment/queryAccount",customer);
+        TestResult result = getJsonTestResult("/payment/queryAccount",customer);
     }
 
     @Test
@@ -183,6 +183,6 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         customer.setBusinessCustomerNo("500008");
         customer.setChargeAmount(new BigDecimal(100.50));
 
-        Result result = getJsonTestResult("/payment/manualCharge",customer);
+        TestResult result = getJsonTestResult("/payment/manualCharge",customer);
     }
 }
