@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.repairOrder.RepairOrderEquipmentMapper">
+
+	<resultMap id="RepairOrderEquipmentDO" type="com.lxzl.erp.dataaccess.domain.repairOrder.RepairOrderEquipmentDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="repair_order_no" jdbcType="VARCHAR" property="repairOrderNo" />
+		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
+		<result column="equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
+		<result column="repair_end_time" jdbcType="TIMESTAMP" property="repairEndTime" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="order_id" jdbcType="INTEGER" property="orderId" />
+		<result column="order_product_id" jdbcType="INTEGER" property="orderProductId" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		eroe.id,eroe.repair_order_no,eroe.equipment_id,eroe.equipment_no,eroe.repair_end_time,eroe.data_status,eroe.order_id,eroe.order_product_id,eroe.remark,eroe.create_time,eroe.create_user,eroe.update_time,eroe.update_user
+	</sql>
+
+	<select id="findById" resultMap="RepairOrderEquipmentDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_repair_order_equipment eroe 
+		WHERE eroe.id = #{id, jdbcType=INTEGER} AND eroe.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eroe.id) FROM erp_repair_order_equipment eroe 
+		<where>
+			<if test="true">
+				AND eroe.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="RepairOrderEquipmentDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_repair_order_equipment eroe 
+		<where>
+			<if test="true">
+				AND eroe.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="repairOrderNo != null">
+				repair_order_no = #{repairOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="equipmentId != null">
+				equipment_id = #{equipmentId,jdbcType=INTEGER},
+			</if>
+			<if test="equipmentNo != null">
+				equipment_no = #{equipmentNo,jdbcType=VARCHAR},
+			</if>
+			<if test="repairEndTime != null">
+				repair_end_time = #{repairEndTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="orderId != null">
+				order_id = #{orderId,jdbcType=INTEGER},
+			</if>
+			<if test="orderProductId != null">
+				order_product_id = #{orderProductId,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.repairOrder.RepairOrderEquipmentDO">
+		INSERT INTO erp_repair_order_equipment <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.repairOrder.RepairOrderEquipmentDO">
+		UPDATE erp_repair_order_equipment <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+	
+	<select id="findByRepairOrderNo" resultMap="RepairOrderEquipmentDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_repair_order_equipment eroe
+		WHERE eroe.repair_order_no = #{repairOrderNo, jdbcType=VARCHAR} AND eroe.data_status = 1
+	</select>
+
+	<update id="clearDateStatus" parameterType="java.lang.String">
+		UPDATE erp_repair_order_equipment set data_status = 2  WHERE repair_order_no = #{repairOrderNo, jdbcType=VARCHAR};
+	</update>
+</mapper>

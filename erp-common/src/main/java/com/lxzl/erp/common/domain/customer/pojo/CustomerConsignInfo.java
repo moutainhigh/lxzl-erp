@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.util.validate.constraints.In;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.data.annotation.Transient;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -22,6 +23,7 @@ public class CustomerConsignInfo implements Serializable {
 
 	@NotNull(message = ErrorCode.CUSTOMER_CONSIGN_INFO_ID_NOT_NULL,groups = {IdGroup.class,UpdateGroup.class})
 	private Integer customerConsignInfoId;   //唯一标识
+
 	private Integer customerId;   //用户ID
 	@NotBlank(message = ErrorCode.CONSIGNEE_NAME_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private String consigneeName;   //收货人姓名
@@ -41,6 +43,7 @@ public class CustomerConsignInfo implements Serializable {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+
 
 	private String provinceName; //省名称
 	private String cityName; //城市名

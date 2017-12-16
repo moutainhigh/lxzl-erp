@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class UserControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addUser() throws Exception {
@@ -24,7 +23,7 @@ public class UserControllerTest extends ERPUnTransactionalTest {
         roleList.add(role);
         user.setRoleList(roleList);
 
-        TestResult result = getJsonTestResult("/user/add",user);
+        TestResult testResult = getJsonTestResult("/user/add",user);
     }
 
     @Test
@@ -36,7 +35,7 @@ public class UserControllerTest extends ERPUnTransactionalTest {
         role.setRoleId(600002);
         roleList.add(role);
         user.setRoleList(roleList);
-        TestResult result = getJsonTestResult("/user/update",user);
+        TestResult testResult = getJsonTestResult("/user/update",user);
     }
 
     @Test
@@ -48,14 +47,14 @@ public class UserControllerTest extends ERPUnTransactionalTest {
         LoginParam loginParam = new LoginParam();
         loginParam.setUserName("eddie");
         loginParam.setPassword("eddie");
-        TestResult result = getJsonTestResult("/user/login",loginParam);
+        TestResult testResult = getJsonTestResult("/user/login",loginParam);
     }
 
     @Test
     public void getUserById() throws Exception {
         UserQueryParam param = new UserQueryParam();
         param.setUserId(500003);
-        TestResult result = getJsonTestResult("/user/getUserById",param);
+        TestResult testResult = getJsonTestResult("/user/getUserById",param);
     }
 
     @Test
@@ -67,7 +66,7 @@ public class UserControllerTest extends ERPUnTransactionalTest {
         UserQueryParam userQueryParam = new UserQueryParam();
 //        userQueryParam.setRoleId(600001);
         userQueryParam.setDepartmentId(400007);
-        TestResult result = getJsonTestResult("/user/page",userQueryParam);
+        TestResult testResult = getJsonTestResult("/user/page",userQueryParam);
     }
 
     @Test

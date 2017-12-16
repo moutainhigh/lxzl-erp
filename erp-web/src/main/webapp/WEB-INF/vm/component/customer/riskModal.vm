@@ -1,4 +1,4 @@
-<div id="riskCustomerModal" class="popup-basic admin-form mfp-with-anim "> ##mfp-hide
+<div id="riskCustomerModal" class="popup-basic popup-lg admin-form mfp-with-anim "> ##mfp-hide
     <div class="panel">
         <div class="panel-heading">
             <span class="panel-title"><i class="fa fa-pencil"></i>风控授信</span>
@@ -6,32 +6,82 @@
         <form method="post" id="riskCustomerForm" description="风控授信">
             <div class="panel-body p25">
                 <div class="section row">
-                    <div class="col-md-12">
+                    <div class="col-md-4">
                         <label for="creditAmount" class="field-label">授信额度</label>
                         <label for="creditAmount" class="field prepend-icon">
-                            <input type="text" name="creditAmount" id="creditAmount" class="gui-input required moneyNumber" placeholder="请输入授信额度" maxlength="7">
+                            <input type="text" name="creditAmount" id="creditAmount" class="gui-input required moneyNumber" maxlength="7">
                             <label for="creditAmount" class="field-icon"><i class="fa fa-jpy"></i>
                             </label>
                         </label>
                     </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
+                    <div class="col-md-4">
                         <label for="depositCycle" class="field-label">押金期数</label>
                         <label for="depositCycle" class="field prepend-icon">
-                            <input type="text" name="depositCycle" id="depositCycle" class="gui-input required number" placeholder="请输入押金期数" maxlength="10">
+                            <input type="text" name="depositCycle" id="depositCycle" class="gui-input required number" maxlength="3">
                             <label for="depositCycle" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="paymentCycle" class="field-label">付款期数</label>
+                        <label for="paymentCycle" class="field prepend-icon">
+                            <input type="text" name="paymentCycle" id="paymentCycle" class="gui-input required number maxlength="3">
+                            <label for="paymentCycle" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
                     </div>
                 </div>
                 <div class="section row">
-                    <div class="col-md-12">
-                        <label for="paymentCycle" class="field-label">付款期数</label>
-                        <label for="paymentCycle" class="field prepend-icon">
-                            <input type="text" name="paymentCycle" id="paymentCycle" class="gui-input required number" placeholder="请输入付款期数" maxlength="10">
-                            <label for="paymentCycle" class="field-icon"><i class="fa fa-tag"></i>
+                    <div class="col-md-4">
+                        <label for="appleDepositCycle" class="field-label">苹果押金期数</label>
+                        <label for="appleDepositCycle" class="field prepend-icon">
+                            <input type="text" name="appleDepositCycle" id="appleDepositCycle" class="gui-input required number" maxlength="3">
+                            <label for="appleDepositCycle" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="applePaymentCycle" class="field-label">苹果付款期数</label>
+                        <label for="applePaymentCycle" class="field prepend-icon">
+                            <input type="text" name="applePaymentCycle" id="applePaymentCycle" class="gui-input required number" maxlength="3">
+                            <label for="applePaymentCycle" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="applePayMode" class="field-label">苹果设备支付方式</label>
+                        <label for="applePayMode" class="field select">
+                            <select class="required" name="applePayMode">
+                                <option value="">请选择</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-4">
+                        <label for="newDepositCycle" class="field-label">全新设备押金期数</label>
+                        <label for="newDepositCycle" class="field prepend-icon">
+                            <input type="text" name="newDepositCycle" id="newDepositCycle" class="gui-input required moneyNumber" maxlength="7">
+                            <label for="newDepositCycle" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="newPaymentCycle" class="field-label">全新设备付款期数</label>
+                        <label for="newPaymentCycle" class="field prepend-icon">
+                            <input type="text" name="newPaymentCycle" id="newPaymentCycle" class="gui-input required number" maxlength="10">
+                            <label for="newPaymentCycle" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="newPayMode" class="field-label">全新设备支付方式</label>
+                        <label for="newPayMode" class="field select">
+                            <select class="required" name="newPayMode">
+                                <option value="">请选择</option>
+                            </select>
+                            <i class="arrow"></i>
                         </label>
                     </div>
                 </div>

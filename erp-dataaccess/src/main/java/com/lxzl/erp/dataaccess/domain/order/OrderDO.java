@@ -30,6 +30,7 @@ public class OrderDO extends BaseDO {
     private Integer orderSellerId;
     private Integer orderSubCompanyId;
     private Integer orderStatus;
+    private BigDecimal firstNeedPayAmount;
     private Integer payStatus;
     private Date payTime;
     private Date deliveryTime;
@@ -340,5 +341,13 @@ public class OrderDO extends BaseDO {
 
     public void setBuyerCustomerNo(String buyerCustomerNo) {
         this.buyerCustomerNo = buyerCustomerNo;
+    }
+
+    public BigDecimal getFirstNeedPayAmount() {
+        return firstNeedPayAmount;
+    }
+
+    public void setFirstNeedPayAmount(BigDecimal firstNeedPayAmount) {
+        this.firstNeedPayAmount = firstNeedPayAmount;
     }
 }

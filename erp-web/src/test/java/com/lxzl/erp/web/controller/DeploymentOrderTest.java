@@ -4,23 +4,15 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.DeploymentType;
-import com.lxzl.erp.common.constant.OrderRentType;
 import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.deploymentOrder.ProcessDeploymentOrderParam;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrder;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrderProduct;
-import com.lxzl.erp.common.domain.order.ProcessOrderParam;
-import com.lxzl.erp.common.domain.order.pojo.Order;
-import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
-import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
-import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
 /**
  * 描述: 调拨单单测试类
  *
@@ -43,7 +35,7 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
         deploymentOrderProductList.add(deploymentOrderProduct);
         deploymentOrder.setDeploymentOrderProductList(deploymentOrderProductList);
 
-        TestResult result = getJsonTestResult("/deploymentOrder/create", deploymentOrder);
+        TestResult testResult = getJsonTestResult("/deploymentOrder/create", deploymentOrder);
     }
 
     @Test
@@ -51,7 +43,7 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
         DeploymentOrder deploymentOrder = new DeploymentOrder();
         deploymentOrder.setDeploymentOrderNo("DO201712011137331391559");
         deploymentOrder.setVerifyUser(500006);
-        TestResult result = getJsonTestResult("/deploymentOrder/commit", deploymentOrder);
+        TestResult testResult = getJsonTestResult("/deploymentOrder/commit", deploymentOrder);
     }
 
     @Test
@@ -59,7 +51,7 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
         DeploymentOrder deploymentOrder = new DeploymentOrder();
         deploymentOrder.setDeploymentOrderNo("O201711151901080841608");
         deploymentOrder.setVerifyUser(1);
-        TestResult result = getJsonTestResult("/deploymentOrder/cancel", deploymentOrder);
+        TestResult testResult = getJsonTestResult("/deploymentOrder/cancel", deploymentOrder);
     }
 
     @Test
@@ -68,7 +60,7 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
         processDeploymentOrderParam.setDeploymentOrderNo("O201711301513586691582");
 //        processDeploymentOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017111110114");
         processDeploymentOrderParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
-        TestResult result = getJsonTestResult("/deploymentOrder/process", processDeploymentOrderParam);
+        TestResult testResult = getJsonTestResult("/deploymentOrder/process", processDeploymentOrderParam);
     }
 
 
@@ -76,7 +68,7 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
     public void testDeliveryDeploymentOrder() throws Exception {
         DeploymentOrder deploymentOrder = new DeploymentOrder();
         deploymentOrder.setDeploymentOrderNo("O201711301513586691582");
-        TestResult result = getJsonTestResult("/deploymentOrder/delivery", deploymentOrder);
+        TestResult testResult = getJsonTestResult("/deploymentOrder/delivery", deploymentOrder);
     }
 
 
@@ -86,13 +78,13 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
         param.setPageNo(1);
         param.setPageSize(15);
 //        param.setDeploymentOrderNo("DO201712011137331391559");
-        TestResult result = getJsonTestResult("/deploymentOrder/queryPage", param);
+        TestResult testResult = getJsonTestResult("/deploymentOrder/queryPage", param);
     }
 
     @Test
     public void testQueryDetailDeploymentOrder() throws Exception {
         DeploymentOrder deploymentOrder = new DeploymentOrder();
         deploymentOrder.setDeploymentOrderNo("DO201712011137331391559");
-        TestResult result = getJsonTestResult("/deploymentOrder/queryDetail", deploymentOrder);
+        TestResult testResult = getJsonTestResult("/deploymentOrder/queryDetail", deploymentOrder);
     }
 }

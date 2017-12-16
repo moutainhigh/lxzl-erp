@@ -52,7 +52,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrderMaterialList.add(createPurchaseOrderMaterial("M201711171838059981292",2,new BigDecimal(42)));
         purchaseOrder.setPurchaseOrderMaterialList(purchaseOrderMaterialList);
 
-        TestResult result = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
     }
 
     private PurchaseOrderMaterial createPurchaseOrderMaterial(String materialNo,Integer materialCount,BigDecimal materialAmount){
@@ -100,7 +100,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrderMaterialList.add(createPurchaseOrderMaterial("M201711171838059981293",2,new BigDecimal(42)));
 
         purchaseOrder.setPurchaseOrderMaterialList(purchaseOrderMaterialList);
-        TestResult result = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
     }
     @Test
     public void updatePurchaseOrder() throws Exception {
@@ -139,7 +139,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrderProductList.add(purchaseOrderProduct2);
 
         purchaseOrder.setPurchaseOrderProductList(purchaseOrderProductList);
-        TestResult result = getJsonTestResult("/purchaseOrder/update",purchaseOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/update",purchaseOrder);
     }
     @Test
     public void updatePurchaseOrder2() throws Exception {
@@ -188,7 +188,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
                 "\t\t\"materialCount\": 2\n" +
                 "\t}]\n" +
                 "}",PurchaseOrder.class);
-        TestResult result = getJsonTestResult("/purchaseOrder/update",purchaseOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/update",purchaseOrder);
     }
 
 
@@ -198,13 +198,13 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrderCommitParam.setPurchaseNo("PO201711292045413845000051167");
         purchaseOrderCommitParam.setVerifyUserId(500006);
         purchaseOrderCommitParam.setRemark("给我好好审");
-        TestResult result = getJsonTestResult("/purchaseOrder/commit",purchaseOrderCommitParam);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/commit",purchaseOrderCommitParam);
     }
     @Test
     public void delete() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
 //        purchaseOrder.setPurchaseNo("PO201711181416106215000051764");
-        TestResult result = getJsonTestResult("/purchaseOrder/delete",purchaseOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/delete",purchaseOrder);
     }
     @Test
     public void page() throws Exception {
@@ -219,16 +219,16 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
 //        purchaseOrderQueryParam.setCreateEndTime(new Date());
 //        purchaseOrderQueryParam.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_WAIT_COMMIT);
 //        purchaseOrderQueryParam.setCommitStatus(CommonConstant.COMMON_CONSTANT_YES);
-        TestResult result = getJsonTestResult("/purchaseOrder/page",purchaseOrderQueryParam);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/page",purchaseOrderQueryParam);
     }
     @Test
     public void queryPurchaseOrderByNo() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setPurchaseNo("PO201712012025099545000061068");
-        TestResult result = getJsonTestResult("/purchaseOrder/queryPurchaseOrderByNo",purchaseOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/queryPurchaseOrderByNo",purchaseOrder);
     }
     @Test
-    public void receiveVerifyResult(){
+    public void receiveVerifyTestResult(){
         boolean flag = purchaseOrderService.receiveVerifyResult(true,"");
     }
 
@@ -242,14 +242,14 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
 //        purchaseOrderDeliveryQueryParam.setCreateEndTime(new Date());
 //        purchaseOrderDeliveryQueryParam.setCreateStartTime(new Date());
 //        purchaseOrderDeliveryQueryParam.setPurchaseDeliveryOrderStatus(0);
-        TestResult result = getJsonTestResult("/purchaseOrder/pagePurchaseDelivery",purchaseOrderDeliveryQueryParam);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/pagePurchaseDelivery",purchaseOrderDeliveryQueryParam);
     }
 
     @Test
     public void queryPurchaseDeliveryOrderByNo() throws Exception {
         PurchaseDeliveryOrder purchaseDeliveryOrder = new PurchaseDeliveryOrder();
         purchaseDeliveryOrder.setPurchaseDeliveryNo("PD2017111816030427860000471733");
-        TestResult result = getJsonTestResult("/purchaseOrder/queryPurchaseDeliveryOrderByNo",purchaseDeliveryOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/queryPurchaseDeliveryOrderByNo",purchaseDeliveryOrder);
     }
 
     @Test
@@ -283,7 +283,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseReceiveOrderProduct2.setProductMaterialList(productMaterialList1);
         purchaseOrderProductList.add(purchaseReceiveOrderProduct2);
         purchaseReceiveOrder.setPurchaseReceiveOrderProductList(purchaseOrderProductList);
-        TestResult result = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder",purchaseReceiveOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder",purchaseReceiveOrder);
      }
 
     @Test
@@ -328,14 +328,14 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
                 "\t\t\"remark\": \"\"\n" +
                 "\t}]\n" +
                 "}\n",PurchaseReceiveOrder.class);
-        TestResult result = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder",purchaseReceiveOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder",purchaseReceiveOrder);
     }
 
     @Test
     public void commitPurchaseReceiveOrder() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
-        purchaseReceiveOrder.setPurchaseReceiveNo("PR2017121312063849960000981506");
-        TestResult result = getJsonTestResult("/purchaseOrder/commitPurchaseReceiveOrder",purchaseReceiveOrder);
+        purchaseReceiveOrder.setPurchaseReceiveNo("PR2017121517274802260001011827");
+        TestResult testResult = getJsonTestResult("/purchaseOrder/commitPurchaseReceiveOrder",purchaseReceiveOrder);
     }
 
 
@@ -366,26 +366,26 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
 //        purchaseReceiveOrderQueryParam.setCreateEndTime(createEndTime.getTime());//创建收货单结束时间
 //        purchaseReceiveOrderQueryParam.setConfirmStartTime(confirmStartTime.getTime());//确认签单起始时间
 //        purchaseReceiveOrderQueryParam.setConfirmEndTime(confirmEndTime.getTime());//确认签单结束时间
-        TestResult result = getJsonTestResult("/purchaseOrder/pagePurchaseReceive",purchaseReceiveOrderQueryParam);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/pagePurchaseReceive",purchaseReceiveOrderQueryParam);
     }
 
     @Test
     public void queryPurchaseReceiveOrderByNo() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
         purchaseReceiveOrder.setPurchaseReceiveNo("PR2017112920291060160000701769");
-        TestResult result = getJsonTestResult("/purchaseOrder/queryPurchaseReceiveOrderByNo",purchaseReceiveOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/queryPurchaseReceiveOrderByNo",purchaseReceiveOrder);
     }
     @Test
     public void endPurchaseOrder() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setPurchaseNo("C201711091550440665000051897");
-        TestResult result = getJsonTestResult("/purchaseOrder/endPurchaseOrder",purchaseOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/endPurchaseOrder",purchaseOrder);
     }
     @Test
     public void continuePurchaseOrder() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setPurchaseNo("PO201711201619009825000051652");
-        TestResult result = getJsonTestResult("/purchaseOrder/continuePurchaseOrder",purchaseOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/continuePurchaseOrder",purchaseOrder);
     }
     @Test
     public void test() throws Exception {

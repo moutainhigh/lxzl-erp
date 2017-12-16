@@ -2,7 +2,7 @@ package com.lxzl.erp.common.domain.changeOrder;
 
 import java.io.Serializable;
 
-public class StockUpByChangeParam implements Serializable {
+public class StockUpForChangeParam implements Serializable {
 
     private String changeOrderNo;
     private String equipmentNo;

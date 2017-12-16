@@ -2,6 +2,7 @@ package com.lxzl.erp.web.test;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MvcResult;
 

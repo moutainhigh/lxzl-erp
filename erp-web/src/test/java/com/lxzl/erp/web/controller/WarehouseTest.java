@@ -3,7 +3,6 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.StockCauseType;
-import com.lxzl.erp.common.domain.product.pojo.ProductEquipmentOutStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
@@ -14,7 +13,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * 描述: ${DESCRIPTION}
  *
@@ -28,27 +26,27 @@ public class WarehouseTest extends ERPUnTransactionalTest {
         WarehouseQueryParam warehouseQueryParam = new WarehouseQueryParam();
         warehouseQueryParam.setPageNo(1);
         warehouseQueryParam.setPageSize(20);
-        TestResult result = getJsonTestResult("/warehouse/getWarehousePage", warehouseQueryParam);
+        TestResult testResult = getJsonTestResult("/warehouse/getWarehousePage", warehouseQueryParam);
     }
 
     @Test
     public void getWarehouseByCompany() throws Exception {
         WarehouseQueryParam warehouseQueryParam = new WarehouseQueryParam();
         warehouseQueryParam.setSubCompanyId(2);
-        TestResult result = getJsonTestResult("/warehouse/getWarehouseByCompany", warehouseQueryParam);
+        TestResult testResult = getJsonTestResult("/warehouse/getWarehouseByCompany", warehouseQueryParam);
     }
 
     @Test
     public void getWarehouseByCurrentCompany() throws Exception {
         WarehouseQueryParam warehouseQueryParam = new WarehouseQueryParam();
-        TestResult result = getJsonTestResult("/warehouse/getWarehouseByCurrentCompany", warehouseQueryParam);
+        TestResult testResult = getJsonTestResult("/warehouse/getWarehouseByCurrentCompany", warehouseQueryParam);
     }
 
     @Test
     public void getWarehouseById() throws Exception {
         WarehouseQueryParam warehouseQueryParam = new WarehouseQueryParam();
         warehouseQueryParam.setWarehouseId(4000001);
-        TestResult result = getJsonTestResult("/warehouse/getWarehouseById", warehouseQueryParam);
+        TestResult testResult = getJsonTestResult("/warehouse/getWarehouseById", warehouseQueryParam);
     }
 
     @Test
@@ -72,7 +70,7 @@ public class WarehouseTest extends ERPUnTransactionalTest {
         productInStockParam.setTargetWarehouseId(4000001);
         productInStockParam.setReferNo("C201711171720430652011252081");
         productInStockParam.setCauseType(StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE);
-        TestResult result = getJsonTestResult("/warehouse/productInStock", productInStockParam);
+        TestResult testResult = getJsonTestResult("/warehouse/productInStock", productInStockParam);
     }
 
     @Test
@@ -89,7 +87,7 @@ public class WarehouseTest extends ERPUnTransactionalTest {
         }
         productOutStockParam.setProductEquipmentIdList(productEquipmentIdList);
 
-        TestResult result = getJsonTestResult("/warehouse/productOutStock", productOutStockParam);
+        TestResult testResult = getJsonTestResult("/warehouse/productOutStock", productOutStockParam);
     }
 
 
@@ -98,6 +96,6 @@ public class WarehouseTest extends ERPUnTransactionalTest {
     public void getStockOrderPage() throws Exception {
         StockOrderQueryParam stockOrderQueryParam = new StockOrderQueryParam();
         stockOrderQueryParam.setCauseType(1);
-        TestResult result = getJsonTestResult("/warehouse/getStockOrderPage", stockOrderQueryParam);
+        TestResult testResult = getJsonTestResult("/warehouse/getStockOrderPage", stockOrderQueryParam);
     }
 }

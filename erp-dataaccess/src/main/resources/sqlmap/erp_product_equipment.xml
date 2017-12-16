@@ -434,4 +434,5 @@
         INSERT INTO erp_product_equipment
         <include refid="set_column_sql"/>
     </insert>
+
 </mapper>

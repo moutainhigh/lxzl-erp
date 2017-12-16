@@ -63,5 +63,12 @@ public class RepairOrderController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+   /* @RequestMapping(value = "detailRepairOrder", method = RequestMethod.POST)
+    public Result detailRepairOrder(@RequestBody @Validated({IdGroup.class,AddGroup.class})RepairOrder repairOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = repairOrderService.detailRepairOrder(repairOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }*/
+
+
 
 }

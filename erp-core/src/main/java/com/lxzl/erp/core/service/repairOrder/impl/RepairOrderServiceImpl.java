@@ -316,148 +316,102 @@ public class RepairOrderServiceImpl implements RepairOrderService {
             }
         }else{
             //如果传入的设备维修单明细有值
-            List<RepairOrderEquipmentDO> repairOrderEquipmentDOList = repairOrderEquipmentMapper.findByRepairOrderNo(repairOrder.getRepairOrderNo());
             //并且原设备维修单明细没有值
+            List<RepairOrderEquipmentDO> repairOrderEquipmentDOList = repairOrderEquipmentMapper.findByRepairOrderNo(repairOrder.getRepairOrderNo());
             if (CollectionUtil.isEmpty(repairOrderEquipmentDOList)) {
-                repairOrderEquipmentDOList = ConverterUtil.convertList(repairOrder.getRepairOrderEquipmentList(),RepairOrderEquipmentDO.class);
+                for (RepairOrderEquipment  repairOrderEquipment : repairOrder.getRepairOrderEquipmentList()){
+                    //获取设备维修单明细表
+                    RepairOrderEquipmentDO repairOrderEquipmentDO = ConverterUtil.convert(repairOrderEquipment, RepairOrderEquipmentDO.class);
 
+                    //获取订单商品设备表,判断设备是否处于租赁状态
+                    //获取设备
+                    ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(repairOrderEquipment.getEquipmentNo());
+                    if (productEquipmentDO == null) {
+                        serviceResult.setErrorCode(ErrorCode.EQUIPMENT_NOT_EXISTS);
+                        return serviceResult;
+                    }
+
+                    if (StringUtil.isNotEmpty(productEquipmentDO.getOrderNo())) {//设备处于租赁状态
+                        OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByEquipmentNo(repairOrderEquipment.getEquipmentNo());
+                        repairOrderEquipmentDO.setOrderId(orderProductEquipmentDO.getOrderId());
+                        repairOrderEquipmentDO.setOrderProductId(orderProductEquipmentDO.getOrderProductId());
+                    }
+
+                    repairOrderEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    repairOrderEquipmentDO.setCreateTime(now);
+                    repairOrderEquipmentDO.setUpdateTime(now);
+                    repairOrderEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    repairOrderEquipmentDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    repairOrderEquipmentMapper.save(repairOrderEquipmentDO);
+                }
+            }else{
+                //并且原设备维修单明细有值
+                if (CollectionUtil.isNotEmpty(repairOrderEquipmentDOList)){
+
+                }
             }
 
         }
 
-
-        return null;
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(dbrepairOrderDO.getRepairOrderNo());
+        return serviceResult;
     }
 
-//
-//        //判断原设备维修单明细是否有值
-//        if (CollectionUtil.isEmpty(repairOrderEquipmentDOList)){
-//            //如果传入的设备维修单明细有值
-//            if (CollectionUtil.isNotEmpty(repairOrder.getRepairOrderEquipmentList())){
-//                for (RepairOrderEquipment repairOrderEquipment:repairOrder.getRepairOrderEquipmentList()){
-//                    //获取设备维修单明细
-//                    RepairOrderEquipmentDO repairOrderEquipmentDO = ConverterUtil.convert(repairOrderEquipment,RepairOrderEquipmentDO.class);
-//                    //获取订单商品设备表,判断设备是否处于租赁状态
-//                    OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByEquipmentNo(repairOrderEquipment.getEquipmentNo());
-//                    //设备处于租赁状态
-//                    if (orderProductEquipmentDO != null){
-//                        repairOrderEquipmentDO.setOrderId(orderProductEquipmentDO.getOrderId());
-//                        repairOrderEquipmentDO.setOrderProductId(orderProductEquipmentDO.getOrderProductId());
-//                    }
-//
-//                    repairOrderEquipmentDO.setUpdateTime(now);
-//                    repairOrderEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-//                    repairOrderEquipmentMapper.save(repairOrderEquipmentDO);
-//                }
-//            }
-//        }else{
-//            //如果原来设备维修单明细中有值，并且传入的设备维修单明细有值
-//            if (CollectionUtil.isNotEmpty(repairOrder.getRepairOrderEquipmentList())){
-//                for (RepairOrderEquipment repairOrderEquipment:repairOrder.getRepairOrderEquipmentList()){
-//
-//                    RepairOrderEquipmentDO repairOrderEquipmentDO = repairOrderEquipmentMapper.findById(repairOrderEquipment.getEquipmentId());
-//                    //通过传入的设备维修单明细中的设备ID可以在原来设备维修单明细中查找到有值，说明该条数据没有改变
-//                    if (repairOrderEquipmentDO == null){
-//
-//                        //获取设备维修单明细
-//                        repairOrderEquipmentDO = ConverterUtil.convert(repairOrderEquipment,RepairOrderEquipmentDO.class);
-//
-//                        //获取订单商品设备表,判断设备是否处于租赁状态
-//                        OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByEquipmentNo(repairOrderEquipment.getEquipmentNo());
-//                        //设备处于租赁状态
-//                        if (orderProductEquipmentDO != null){
-//                            repairOrderEquipmentDO.setOrderId(orderProductEquipmentDO.getOrderId());
-//                            repairOrderEquipmentDO.setOrderProductId(orderProductEquipmentDO.getOrderProductId());
-//                        }
-//
-//                        repairOrderEquipmentDO.setUpdateTime(now);
-//                        repairOrderEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-//                        repairOrderEquipmentMapper.save(repairOrderEquipmentDO);
-//                    }
-//                }
-//            }else{
-//             //如果原来设备维修单明细中有值，并且传入的设备维修单明细没有值
-//                for (RepairOrderEquipmentDO repairOrderEquipmentDO:repairOrderEquipmentDOList){
-//                    //那么就删除原来的设备维修单明细的数据
-//                    repairOrderEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-//                    repairOrderEquipmentDO.setUpdateTime(now);
-//                    repairOrderEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-//                    repairOrderEquipmentMapper.update(repairOrderEquipmentDO);
-//                }
-//            }
-//        }
-//
-//        //处理散料维修明细单
-//        List<RepairOrderBulkMaterialDO> repairOrderBulkMaterialDOList = repairOrderBulkMaterialMapper.findByRepairOrderNo(repairOrder.getRepairOrderNo());
-//        //判断原散料维修明细单是否有值
-//        if (repairOrderBulkMaterialDOList == null){
-//            //如果传入的散料维修明细单有值
-//            if (CollectionUtil.isNotEmpty(repairOrder.getRepairOrderBulkMaterialList())){
-//                for (RepairOrderBulkMaterial repairOrderBulkMaterial:repairOrder.getRepairOrderBulkMaterialList()){
-//                    //获取散料维修明细单
-//                    RepairOrderBulkMaterialDO repairOrderBulkMaterialDO = ConverterUtil.convert(repairOrderBulkMaterial,RepairOrderBulkMaterialDO.class);
-//
-//                    //判断散料是否处于租赁状态
-//                    OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByBulkMaterialNo(repairOrderBulkMaterial.getBulkMaterialNo());
-//                    //设备处于租赁状态
-//                    if (orderMaterialBulkDO != null){
-//                        repairOrderBulkMaterialDO.setOrderId(orderMaterialBulkDO.getOrderId());
-//                        repairOrderBulkMaterialDO.setOrderMaterialId(orderMaterialBulkDO.getOrderMaterialId());
-//                    }
-//
-//                    repairOrderBulkMaterialDO.setUpdateTime(now);
-//                    repairOrderBulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-//                    repairOrderBulkMaterialMapper.save(repairOrderBulkMaterialDO);
-//                }
-//            }
-//        }else{
-//            //如果原来修改设备明细单中有值，并且传入的修改设备明细单有值
-//            if (CollectionUtil.isNotEmpty(repairOrder.getRepairOrderBulkMaterialList())){
-//                for (RepairOrderBulkMaterial repairOrderBulkMaterial:repairOrder.getRepairOrderBulkMaterialList()){
-//                    RepairOrderBulkMaterialDO repairOrderBulkMaterialDO = repairOrderBulkMaterialMapper.findById(repairOrderBulkMaterial.getBulkMaterialId());
-//                    //通过传入的修改设备明细单中的设备ID可以在原来修改设备明细单中查找到有值，说明该条数据没有改变
-//                    if (repairOrderBulkMaterialDO == null){
-//
-//                        //获取设备维修单明细表
-//                        repairOrderBulkMaterialDO = ConverterUtil.convert(repairOrderBulkMaterial,RepairOrderBulkMaterialDO.class);
-//                        //获取订单商品设备表,判断设备是否处于租赁状态
-//                        OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByBulkMaterialNo(repairOrderBulkMaterial.getBulkMaterialNo());
-//                        //设备处于租赁状态
-//                        if (orderMaterialBulkDO != null){
-//                            repairOrderBulkMaterialDO.setOrderId(orderMaterialBulkDO.getOrderId());
-//                            repairOrderBulkMaterialDO.setOrderMaterialId(orderMaterialBulkDO.getOrderMaterialId());
-//                        }
-//
-//                        repairOrderBulkMaterialDO.setUpdateTime(now);
-//                        repairOrderBulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-//                        repairOrderBulkMaterialMapper.save(repairOrderBulkMaterialDO);
-//                    }
-//                }
-//            }else{
-//                //如果原来修改设备明细单中有值，并且传入的修改设备明细单没有值
-//                for (RepairOrderBulkMaterialDO repairOrderBulkMaterialDO : repairOrderBulkMaterialDOList){
-//                    //那么就删除原来的设备明细单中的数据
-//                    repairOrderBulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-//                    repairOrderBulkMaterialDO.setUpdateTime(now);
-//                    repairOrderBulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-//                    repairOrderBulkMaterialMapper.update(repairOrderBulkMaterialDO);
-//                }
-//            }
-//        }
-//        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-//        serviceResult.setResult(repairOrderDO.getRepairOrderNo());
-//        return serviceResult;
-//    }
 
 
-    private void saveRepairOrderEquipmentInfo(List<RepairOrderEquipmentDO> repairOrderEquipmentDOList, String repairOrderNo, User loginUser, Date currentTime){
+
+
+    private String saveRepairOrderEquipmentInfo(List<RepairOrderEquipmentDO> repairOrderEquipmentDOList, String repairOrderNo, User loginUser, Date currentTime){
 
         Map<Integer, RepairOrderEquipmentDO> saveRepairOrderEquipmentDOMap = new HashMap<>();
         Map<Integer, RepairOrderEquipmentDO> updateRepairOrderEquipmentDOMap = new HashMap<>();
         List<RepairOrderEquipmentDO> dbRepairOrderEquipmentDOList = repairOrderEquipmentMapper.findByRepairOrderNo(repairOrderNo);
-        Map<String, RepairOrderEquipmentDO> dbRepairOrderEquipmentDOMap = ListUtil.listToMap(dbRepairOrderEquipmentDOList,  "EquipmentId");
+        Map<String, RepairOrderEquipmentDO> dbRepairOrderEquipmentDOMap = ListUtil.listToMap(dbRepairOrderEquipmentDOList,  "equipmentId");
 
+        for (RepairOrderEquipmentDO repairOrderEquipmentDO : repairOrderEquipmentDOList) {
+            Integer key = repairOrderEquipmentDO.getEquipmentId();
+            //如果原单中有现单中的数据
+            if (dbRepairOrderEquipmentDOMap.get(key) != null) {
+                //因为更改的是原来那一条数据，所以数据Id必须是一样的。
+                repairOrderEquipmentDO.setId(dbRepairOrderEquipmentDOMap.get(key).getId());
+                //将原单和现单中都存在的数据，存入此Map
+                updateRepairOrderEquipmentDOMap.put(repairOrderEquipmentDO.getEquipmentId(), repairOrderEquipmentDO);
+                //将原设备维修单明细中已经存入到updateRepairOrderEquipmentDOMap的数据删除
+                dbRepairOrderEquipmentDOMap.remove(key);
+            } else {
+                //如果原单中没有现单中的数据
+                saveRepairOrderEquipmentDOMap.put(repairOrderEquipmentDO.getEquipmentId(), repairOrderEquipmentDO);
+            }
+        }
 
+        if (saveRepairOrderEquipmentDOMap.size() > 0){
+            for (Map.Entry<Integer, RepairOrderEquipmentDO> entry : saveRepairOrderEquipmentDOMap.entrySet()){
+                RepairOrderEquipmentDO repairOrderEquipmentDO = entry.getValue();
+                //获取订单商品设备表,判断设备是否处于租赁状态
+                //获取设备
+                ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(repairOrderEquipmentDO.getEquipmentNo());
+                if (productEquipmentDO == null) {
+                    return (ErrorCode.EQUIPMENT_NOT_EXISTS);
+                }
+
+                if (StringUtil.isNotEmpty(productEquipmentDO.getOrderNo())) {//设备处于租赁状态
+                    OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByEquipmentNo(repairOrderEquipmentDO.getEquipmentNo());
+                    repairOrderEquipmentDO.setOrderId(orderProductEquipmentDO.getOrderId());
+                    repairOrderEquipmentDO.setOrderProductId(orderProductEquipmentDO.getOrderProductId());
+                }
+
+                repairOrderEquipmentDO.setRepairOrderNo(repairOrderEquipmentDO.getRepairOrderNo());
+                repairOrderEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                repairOrderEquipmentDO.setCreateUser(loginUser.getUserId().toString());
+                repairOrderEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+                repairOrderEquipmentDO.setCreateTime(currentTime);
+                repairOrderEquipmentDO.setUpdateTime(currentTime);
+                repairOrderEquipmentMapper.save(repairOrderEquipmentDO);
+            }
+        }
+
+        return null;
     }
 
 }

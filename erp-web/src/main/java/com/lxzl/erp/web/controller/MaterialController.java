@@ -120,7 +120,6 @@ public class MaterialController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-
     @Autowired
     private MaterialService materialService;
 

@@ -28,6 +28,10 @@ public class ChangeOrderMaterialBulkDO extends BaseDO {
     private BulkMaterialDO srcBulkMaterialDO;
     @Transient
     private BulkMaterialDO destBulkMaterialDO;
+    @Transient
+    private Integer srcMaterialId;
+    @Transient
+    private Integer destMaterialId;
 
     public Integer getId() {
         return id;
@@ -155,5 +159,21 @@ public class ChangeOrderMaterialBulkDO extends BaseDO {
 
     public void setSrcEquipmentNo(String srcEquipmentNo) {
         this.srcEquipmentNo = srcEquipmentNo;
+    }
+
+    public Integer getSrcMaterialId() {
+        return srcMaterialId;
+    }
+
+    public void setSrcMaterialId(Integer srcMaterialId) {
+        this.srcMaterialId = srcMaterialId;
+    }
+
+    public Integer getDestMaterialId() {
+        return destMaterialId;
+    }
+
+    public void setDestMaterialId(Integer destMaterialId) {
+        this.destMaterialId = destMaterialId;
     }
 }

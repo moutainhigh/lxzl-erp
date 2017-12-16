@@ -1,16 +1,14 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
-import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
-import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.material.BulkMaterialService;
-import com.lxzl.erp.core.service.material.impl.BulkMaterialServiceImpl;
+import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import com.lxzl.erp.TestResult;
 
 public class BulkMaterialControllerTest extends ERPUnTransactionalTest {
 

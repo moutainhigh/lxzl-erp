@@ -31,6 +31,7 @@ public class Order implements Serializable {
     private Integer orderSellerId;
     private Integer orderSubCompanyId;
     private Integer orderStatus;
+    private BigDecimal firstNeedPayAmount;
     private Integer payStatus;
     private Date payTime;
     private Date deliveryTime;
@@ -383,5 +384,13 @@ public class Order implements Serializable {
 
     public void setOrderSubCompanyName(String orderSubCompanyName) {
         this.orderSubCompanyName = orderSubCompanyName;
+    }
+
+    public BigDecimal getFirstNeedPayAmount() {
+        return firstNeedPayAmount;
+    }
+
+    public void setFirstNeedPayAmount(BigDecimal firstNeedPayAmount) {
+        this.firstNeedPayAmount = firstNeedPayAmount;
     }
 }

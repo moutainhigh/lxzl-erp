@@ -2,11 +2,8 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
-import com.lxzl.erp.common.constant.DataDictionaryType;
 import com.lxzl.erp.common.domain.system.pojo.DataDictionary;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 /**
  * 描述: ${DESCRIPTION}
  *

@@ -1,16 +1,17 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
-import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CustomerType;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.*;
+import com.lxzl.erp.common.domain.payment.account.pojo.ManualChargeParam;
+import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-
+import com.lxzl.erp.TestResult;
 
 public class CustomerControllerTest extends ERPUnTransactionalTest{
     @Test
@@ -166,5 +167,22 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
 //        customerConsignInfo.setCustomerConsignInfoId(7);
 
         TestResult result = getJsonTestResult("/customer/updateLastUseTime",customerConsignInfo);
+    }
+
+    @Test
+    public void queryAccount() throws Exception {
+        Customer customer = new Customer();
+        customer.setCustomerNo("500008");
+
+        TestResult result = getJsonTestResult("/payment/queryAccount",customer);
+    }
+
+    @Test
+    public void manualCharge() throws Exception {
+        ManualChargeParam customer = new ManualChargeParam();
+        customer.setBusinessCustomerNo("500008");
+        customer.setChargeAmount(new BigDecimal(100.50));
+
+        TestResult result = getJsonTestResult("/payment/manualCharge",customer);
     }
 }

@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 
 public class ChangeMaterialPairs {
 
-    @NotNull(message = ErrorCode.CHANGE_ORDER_MATERIAL_ID_NOT_NULL ,groups = {UpdateChangeOrderGroup.class})
     private Integer changeOrderMaterialId;
     @NotBlank(message = ErrorCode.MATERIAL_NO_NOT_NULL ,groups = {AddChangeOrderGroup.class,UpdateChangeOrderGroup.class})
     private String materialNoSrc;

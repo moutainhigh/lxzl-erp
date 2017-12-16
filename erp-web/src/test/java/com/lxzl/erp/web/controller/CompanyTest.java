@@ -1,12 +1,12 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
-import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.company.SubCompanyQueryParam;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
+import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
-
+import com.lxzl.erp.TestResult;
 public class CompanyTest extends ERPUnTransactionalTest {
     @Test
     public void addSubCompany() throws Exception {

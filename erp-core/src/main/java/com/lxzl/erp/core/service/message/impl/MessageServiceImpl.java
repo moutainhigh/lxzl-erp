@@ -55,7 +55,7 @@ public class MessageServiceImpl implements MessageService {
 		for (Integer receiverId : receiverIdList) {
 			receiverIdSet.add(receiverId);
 		}
-		if(receiverIdSet.size()==1&&receiverIdSet.iterator().next().equals(userSupport.getCurrentUserId())){
+		if(receiverIdSet.size() == 1 &&receiverIdSet.iterator().next().equals(userSupport.getCurrentUserId())){
 			result.setErrorCode(ErrorCode.MESSAGE_CAN_NOT_SEND_SELF);
 			return result;
 		}

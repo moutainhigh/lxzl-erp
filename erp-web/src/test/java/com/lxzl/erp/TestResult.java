@@ -1,33 +1,14 @@
 package com.lxzl.erp;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * User : LiuKe
- * Date : 2017/1/11
- * Time : 14:21
- */
-public class TestResult {
-    /**
-     * 结果码
-     */
+public class TestResult implements Serializable {
     private String code;
-
-    /**
-     * 描述
-     */
     private String description;
-
-    /**
-     * 成功标志
-     */
     private boolean isSuccess;
-
-    /**
-     * 自定义属性
-     */
-    private Map<String, Object> resultMap = new HashMap<String, Object>();
+    private Map<String, Object> resultMap = new HashMap();
 
     public String getCode() {
         return code;

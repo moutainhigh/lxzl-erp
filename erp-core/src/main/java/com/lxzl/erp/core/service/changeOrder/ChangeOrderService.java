@@ -11,33 +11,31 @@ import com.lxzl.erp.core.service.VerifyReceiver;
 
 public interface ChangeOrderService extends VerifyReceiver {
 
-    ServiceResult<String,String> add(AddChangeOrderParam addChangeOrderParam);
+    ServiceResult<String, String> add(AddChangeOrderParam addChangeOrderParam);
 
-    ServiceResult<String,String> update(UpdateChangeOrderParam updateChangeOrderParam);
+    ServiceResult<String, String> update(UpdateChangeOrderParam updateChangeOrderParam);
 
-    ServiceResult<String,String> commit(ChangeOrderCommitParam changeOrderCommitParam);
+    ServiceResult<String, String> commit(ChangeOrderCommitParam changeOrderCommitParam);
 
-    ServiceResult<String,String> stockUpByChange(StockUpByChangeParam stockUpByChangeParam);
+    ServiceResult<String, String> stockUpForChange(StockUpForChangeParam stockUpForChangeParam);
 
-    ServiceResult<String,String> delivery(ChangeOrder changeOrder);
+    ServiceResult<String, String> delivery(ChangeOrder changeOrder);
 
-    ServiceResult<String,String> end(ChangeOrder changeOrder);
+    ServiceResult<String, String> end(ChangeOrder changeOrder);
 
-    ServiceResult<String,String> cancel(ChangeOrder changeOrder);
+    ServiceResult<String, String> cancel(ChangeOrder changeOrder);
 
-    ServiceResult<String,ChangeOrder> detail(ChangeOrder changeOrder);
+    ServiceResult<String, ChangeOrder> detail(ChangeOrder changeOrder);
 
-    ServiceResult<String,Page<ChangeOrder>> page(ChangeOrderPageParam changeOrderPageParam);
+    ServiceResult<String, Page<ChangeOrder>> page(ChangeOrderPageParam changeOrderPageParam);
 
-    ServiceResult<String,Page<ChangeOrderProductEquipment>> pageChangeOrderProductEquipment(ChangeOrder changeOrder);
+    ServiceResult<String, Page<ChangeOrderProductEquipment>> pageChangeOrderProductEquipment(ChangeOrder changeOrder);
 
-    ServiceResult<String,Page<ChangeOrderMaterialBulk>> pageChangeOrderMaterialBulk(ChangeOrder changeOrder);
+    ServiceResult<String, Page<ChangeOrderMaterialBulk>> pageChangeOrderMaterialBulk(ChangeOrder changeOrder);
 
-    ServiceResult<String,String> deleteChangeOrderProductEquipment(ChangeOrderProductEquipment changeOrderProductEquipment);
+    ServiceResult<String, String> doChangeEquipment(ChangeOrderProductEquipment changeOrderProductEquipment);
 
-    ServiceResult<String,String> deleteChangeOrderMaterialBulk(ChangeOrderMaterialBulk changeOrderMaterialBulk);
+    ServiceResult<String, String> doChangeMaterial(ChangeOrderMaterial changeOrderMaterial);
 
-    ServiceResult<String,String> doChangeEquipment(ChangeOrderProductEquipment changeOrderProductEquipment);
-
-    ServiceResult<String,String> doChangeMaterial(ChangeOrderMaterial changeOrderMaterial);
+    ServiceResult<String, String> processNoChangeEquipment(ProcessNoChangeEquipmentParam processNoChangeEquipmentParam);
 }

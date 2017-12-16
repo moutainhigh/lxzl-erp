@@ -4,7 +4,6 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import org.junit.Test;
-
 /**
  * 描述: ${DESCRIPTION}
  *
@@ -17,6 +16,6 @@ public class StatementOrderControllerTest  extends ERPUnTransactionalTest {
     public void testCommitDeploymentOrder() throws Exception {
         StatementOrderQueryParam param = new StatementOrderQueryParam();
         param.setOrderNo("O201712111915479441688");
-        TestResult result = getJsonTestResult("/statementOrder/createNew", param);
+        TestResult testResult = getJsonTestResult("/statementOrder/createNew", param);
     }
 }

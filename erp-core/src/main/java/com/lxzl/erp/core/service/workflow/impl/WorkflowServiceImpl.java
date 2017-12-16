@@ -11,11 +11,13 @@ import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.core.service.VerifyReceiver;
 import com.lxzl.erp.core.service.changeOrder.ChangeOrderService;
 import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.core.service.user.UserService;
+import com.lxzl.erp.core.service.workflow.WorkFlowManager;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.core.service.workflow.impl.support.WorkflowConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkDetailMapper;
@@ -76,6 +78,9 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Autowired
     private DeploymentOrderService deploymentOrderService;
+
+    @Autowired
+    private WorkFlowManager workFlowManager;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -386,35 +391,46 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         if (noticeBusinessModule) {
             // 根据不同业务，回调业务系统
-            if (WorkflowType.WORKFLOW_TYPE_PURCHASE.equals(workflowLinkDO.getWorkflowType())) {
-                boolean receiveResult = purchaseOrderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
-                if (!receiveResult) {
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
-                    result.setErrorCode(ErrorCode.SYSTEM_ERROR);
-                    return result;
-                }
-            } else if (WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())) {
-                boolean receiveResult = orderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
-                if (!receiveResult) {
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
-                    result.setErrorCode(ErrorCode.SYSTEM_ERROR);
-                    return result;
-                }
-            } else if (WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())) {
-                boolean receiveResult = deploymentOrderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
-                if (!receiveResult) {
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
-                    result.setErrorCode(ErrorCode.SYSTEM_ERROR);
-                    return result;
-                }
-            } else if (WorkflowType.WORKFLOW_TYPE_CHANGE.equals(workflowLinkDO.getWorkflowType())) {
-                boolean receiveResult = changeOrderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
-                if (!receiveResult) {
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
-                    result.setErrorCode(ErrorCode.SYSTEM_ERROR);
-                    return result;
-                }
+            VerifyReceiver verifyReceiver = workFlowManager.getService(workflowLinkDO.getWorkflowType());
+            if (verifyReceiver == null){
+                result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+                return result;
             }
+            boolean receiveResult = verifyReceiver.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
+            if (!receiveResult) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
+                result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+                return result;
+            }
+//            if (WorkflowType.WORKFLOW_TYPE_PURCHASE.equals(workflowLinkDO.getWorkflowType())) {
+//                boolean receiveResult = purchaseOrderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
+//                if (!receiveResult) {
+//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
+//                    result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+//                    return result;
+//                }
+//            } else if (WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())) {
+//                boolean receiveResult = orderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
+//                if (!receiveResult) {
+//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
+//                    result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+//                    return result;
+//                }
+//            } else if (WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())) {
+//                boolean receiveResult = deploymentOrderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
+//                if (!receiveResult) {
+//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
+//                    result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+//                    return result;
+//                }
+//            } else if (WorkflowType.WORKFLOW_TYPE_CHANGE.equals(workflowLinkDO.getWorkflowType())) {
+//                boolean receiveResult = changeOrderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
+//                if (!receiveResult) {
+//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
+//                    result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+//                    return result;
+//                }
+//            }
         }
         workflowLinkDO.setUpdateUser(loginUser.getUserId().toString());
         workflowLinkDO.setUpdateTime(currentTime);

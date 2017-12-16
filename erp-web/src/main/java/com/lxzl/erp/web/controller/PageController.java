@@ -189,6 +189,24 @@ public class PageController extends BaseController {
         return "/orderManage/orderItem";
     }
 
+    //退货单
+    @RequestMapping("/order-return-manage/list")
+    public String returnOrderManageList() {
+        return "/returnOrderManage/returnOrderList";
+    }
+    @RequestMapping("/order-return-manage/detail")
+    public String returnOrderManageDtail() {
+        return "/returnOrderManage/returnOrderDetail";
+    }
+    @RequestMapping("/order-return-manage/add")
+    public String returnOrderManageAdd() {
+        return "/returnOrderManage/returnOrderAdd";
+    }
+    @RequestMapping("/order-return-manage/edit")
+    public String returnOrderManageEdit() {
+        return "/returnOrderManage/returnOrderEdit";
+    }
+
     //配货
     @RequestMapping("/order-manage/picking")
     public String orderManageDelivery() {
@@ -430,6 +448,18 @@ public class PageController extends BaseController {
     @RequestMapping("/company-modal/chooseCompany")
     public String chooseCompanyModal() {
         return "/component/company/chooseCompanyModal";
+    }
+
+    //选择客户可退换商品
+    @RequestMapping("/customer-rent-product-modal/choose")
+    public String chooseRentProductModal() {
+        return "/component/customer/chooseRentProductModal";
+    }
+
+    //选择客户可退物料
+    @RequestMapping("/customer-can-return-material-modal/choose")
+    public String chooseCustomerCanReturnMaterialModal() {
+        return "/component/customer/chooseCanReturnMaterial";
     }
 
 }
