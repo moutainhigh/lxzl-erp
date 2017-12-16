@@ -40,9 +40,9 @@
 		WHERE ecomb.change_order_id = #{changeOrderId, jdbcType=INTEGER} AND ecomb.src_bulk_material_id IS NULL AND ecomb.data_status = 1
 	</select>
 	<select id="findByChangeOrderNo" resultMap="ChangeOrderMaterialBulkDO" parameterType="java.lang.String">
-		SELECT <include refid="column_List"/> ,emd.material_id AS dest_material_id,ems.material_id AS src_material_id  FROM erp_change_order_material_bulk ecomb
-		LEFT JOIN erp_material emd ON emd.id = ecomb.dest_material_id AND emd.data_status = 1
-		LEFT JOIN erp_material ems ON ems.id = ecomb.dest_material_id AND ems.data_status = 1
+		SELECT <include refid="column_List"/> ,ebmd.material_id AS dest_material_id,ebms.material_id AS src_material_id  FROM erp_change_order_material_bulk ecomb
+		LEFT JOIN erp_bulk_material ebms ON ebms.id = ecomb.src_bulk_material_id AND ebms.data_status = 1
+		LEFT JOIN erp_bulk_material ebmd ON ebmd.id = ecomb.dest_bulk_material_id AND ebmd.data_status = 1
 		WHERE ecomb.change_order_no = #{changeOrderNo, jdbcType=VARCHAR} AND ecomb.data_status = 1
 	</select>
 	<select id="findByChangeOrderNoAndEquipmentNo" resultMap="ChangeOrderMaterialBulkDO">

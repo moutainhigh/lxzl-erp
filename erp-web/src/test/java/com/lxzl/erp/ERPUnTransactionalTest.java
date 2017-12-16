@@ -69,12 +69,12 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
      */
 
     class SessionResult {
-        private Result result;
+        private TestResult result;
         private MockHttpSession mockHttpSession;
         private String message;
         private boolean isGetSession;
 
-        public SessionResult(Result result, MockHttpSession mockHttpSession, String message, boolean isGetSession) {
+        public SessionResult(TestResult result, MockHttpSession mockHttpSession, String message, boolean isGetSession) {
             this.mockHttpSession = mockHttpSession;
             this.message = message;
             this.isGetSession = isGetSession;
@@ -93,7 +93,7 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
                         .param("userName", name).param("password", password)))
                 .andExpect(status().isOk())
                 .andReturn();
-        Result result = getJsonTestResult(mvcResult);
+        TestResult result = getJsonTestResult(mvcResult);
         if (!ErrorCode.SUCCESS.equals(result.getCode())) {
             return new SessionResult(result, null, result.getDescription(), false);
         }
@@ -122,22 +122,22 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
         return mvcResult;
     }
 
-    public Result getJsonTestResult(MvcResult mvcResult) throws UnsupportedEncodingException {
-        Result result = null;
+    public TestResult getJsonTestResult(MvcResult mvcResult) throws UnsupportedEncodingException {
+        TestResult result = null;
         String s = mvcResult.getResponse().getContentAsString();
         if (StringUtil.isEmpty(s)) {
             log.info("您的请求没有响应，请确认请求地址 " + mvcResult.getRequest().getRequestURI() + " 是正确的");
             return result;
         }
         try {
-            result = JSON.parseObject(s, Result.class);
+            result = JSON.parseObject(s, TestResult.class);
         } catch (Exception e) {
             log.info("JSON解析失败，此接口的返回类型不是Result对象！");
         }
         return result;
     }
 
-    public Result getJsonTestResult(String uri, Object o) throws Exception {
+    public TestResult getJsonTestResult(String uri, Object o) throws Exception {
         if (sessionResult.isGetSession) {
             return getJsonTestResult(jsonTestRequest(uri, o));
         } else {

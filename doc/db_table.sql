@@ -801,6 +801,11 @@ DROP TABLE if exists `erp_repair_order`;
 CREATE TABLE `erp_repair_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `repair_order_no` varchar(100) NOT NULL COMMENT '维修单编号',
+  `repair_equipment_count` int(11) NOT NULL DEFAULT 0 COMMENT '送修设备数量',
+  `repair_bulk_material_count` int(11) NOT NULL DEFAULT 0 COMMENT '送修物料数量',
+  `fix_equipment_count` int(11) NOT NULL DEFAULT 0 COMMENT '修复设备数量',
+  `fix_bulk_material_count` int(11) NOT NULL DEFAULT 0 COMMENT '修复物料数量',
+  `warehouse_no` varchar(100) NOT NULL COMMENT '仓库编号',
   `repair_reason` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '维修原因，由发起人填写',
   `repair_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '维修单状态，0-初始化维修单,4-审核中,8-待维修,12-维修中,16-维修完成回库,20-取消维修',
   `data_status` int(11) NOT NULL DEFAULT 0 COMMENT '状态：0不可用；1可用；2删除',
@@ -828,7 +833,7 @@ CREATE TABLE `erp_repair_order_equipment` (
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备维修单单明细';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备维修单明细';
 
 DROP TABLE if exists `erp_repair_order_bulk_material`;
 CREATE TABLE `erp_repair_order_bulk_material` (
@@ -1015,6 +1020,7 @@ CREATE TABLE `erp_order_product_equipment` (
   `rent_start_time` datetime DEFAULT NULL COMMENT '起租时间',
   `expect_return_time` datetime DEFAULT NULL COMMENT '预计归还时间',
   `actual_return_time` datetime DEFAULT NULL COMMENT '实际归还时间',
+  `product_equipment_unit_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '设备单价',
   `expect_rent_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '预计租金',
   `actual_rent_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '实际租金',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -1064,6 +1070,7 @@ CREATE TABLE `erp_order_material_bulk` (
   `rent_start_time` datetime DEFAULT NULL COMMENT '起租时间',
   `expect_return_time` datetime DEFAULT NULL COMMENT '预计归还时间',
   `actual_return_time` datetime DEFAULT NULL COMMENT '实际归还时间',
+  `material_bulk_unit_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '物料单价',
   `expect_rent_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '预计租金',
   `actual_rent_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '实际租金',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',

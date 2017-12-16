@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-
+import com.lxzl.erp.TestResult;
 /**
  * 描述: ${DESCRIPTION}
  *

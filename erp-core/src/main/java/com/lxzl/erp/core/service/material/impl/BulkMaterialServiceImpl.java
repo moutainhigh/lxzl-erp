@@ -16,6 +16,7 @@ import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentBulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterialDO;
+import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -221,13 +222,17 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
         //安装,获取散料表
         BulkMaterialDO installbulkMaterialDO = bulkMaterialMapper.findById(installBulkMaterialId);
 
-        //散料数据判断
-        String resultBulkMaterial = judgeBulkMaterial(installbulkMaterialDO);
-        if(!ErrorCode.SUCCESS.equals(resultBulkMaterial)){
-            serviceResult.setErrorCode(resultBulkMaterial);
+        if (installbulkMaterialDO == null) {
+//            serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NULL);
             return serviceResult;
         }
 
+        //首先判断状态
+        if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE.equals(installbulkMaterialDO.getBulkMaterialStatus()) &&
+                !(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY.equals(installbulkMaterialDO.getBulkMaterialStatus()) && StringUtil.isEmpty(installbulkMaterialDO.getOrderNo()))) {
+            serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NOT_IDLE, installbulkMaterialDO.getBulkMaterialNo());
+            return serviceResult;
+        }
 
         //散料处于空闲状态，判断该散料是否已经插在其他设备上
         if (installbulkMaterialDO.getCurrentEquipmentId() != null){

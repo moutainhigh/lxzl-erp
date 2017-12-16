@@ -114,7 +114,7 @@ public class ChangeOrderController {
      * @return
      */
     @RequestMapping(value = "doChangeMaterial", method = RequestMethod.POST)
-    public Result doChangeMaterial(@RequestBody @Validated ChangeOrderMaterial changeOrderMaterial, BindingResult validResult) {
+    public Result doChangeMaterial(@RequestBody @Validated(ExtendGroup.class) ChangeOrderMaterial changeOrderMaterial, BindingResult validResult) {
         return resultGenerator.generate(changeOrderService.doChangeMaterial(changeOrderMaterial));
     }
     /**

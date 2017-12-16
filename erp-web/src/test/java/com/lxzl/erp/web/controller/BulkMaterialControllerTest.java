@@ -8,7 +8,7 @@ import com.lxzl.erp.core.service.material.BulkMaterialService;
 import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import com.lxzl.erp.TestResult;
 
 public class BulkMaterialControllerTest extends ERPUnTransactionalTest {
 
@@ -20,7 +20,7 @@ public class BulkMaterialControllerTest extends ERPUnTransactionalTest {
         BulkMaterial bulkMaterial = new BulkMaterial();
         bulkMaterial.setBulkMaterialId(477);
 
-        Result result = getJsonTestResult("/bulkMaterial/dismantleBulkMaterial",bulkMaterial);
+        TestResult result = getJsonTestResult("/bulkMaterial/dismantleBulkMaterial",bulkMaterial);
     }
 
     @Test
@@ -29,7 +29,7 @@ public class BulkMaterialControllerTest extends ERPUnTransactionalTest {
         bulkMaterialQueryParam.setBulkMaterialId(477);
         bulkMaterialQueryParam.setCurrentEquipmentNo("LX-EQUIPMENT-4000001-2017120110049");
 
-        Result result = getJsonTestResult("/bulkMaterial/installBulkMaterial",bulkMaterialQueryParam);
+        TestResult result = getJsonTestResult("/bulkMaterial/installBulkMaterial",bulkMaterialQueryParam);
     }
 
 
