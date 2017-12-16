@@ -434,6 +434,7 @@ public class ErrorCode {
         MAP.put(WORKFLOW_TEMPLATE_NOT_EXISTS, "工作流模板不存在或者已经禁用");
         MAP.put(WORKFLOW_HAVE_NO_CONFIG, "审核工作流没有配置");
 
+
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
         MAP.put(MONEY_MORE_THAN_ZERO, "金额不能小于0");
