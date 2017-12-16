@@ -33,8 +33,8 @@ public class ListUtil {
             return map;
         }
 
-        String key = "";
         for (V v : vList) {
+            String key = "";
             try {
                 for (String kName : kNames) {
                     Field kField = getField(v.getClass(), kName);

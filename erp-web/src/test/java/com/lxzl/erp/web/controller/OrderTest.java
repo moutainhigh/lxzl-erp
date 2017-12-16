@@ -144,7 +144,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712151714072971428");
+        order.setOrderNo("O201712161335564681382");
         order.setVerifyUser(500006);//采购审核人员
         TestResult testResult = getJsonTestResult("/order/commit", order);
     }
@@ -167,12 +167,12 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testProcessOrder() throws Exception {
         ProcessOrderParam processOrderParam = new ProcessOrderParam();
-        processOrderParam.setOrderNo("O201712151714072971428");
+        processOrderParam.setOrderNo("O201712161345332381669");
         //select * from erp_product_equipment where sku_id=40 and equipment_status = 1 and data_status = 1 and order_no is null
 //        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010012");
 //        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017120110037");
-        processOrderParam.setMaterialId(5);
-        processOrderParam.setMaterialCount(3);
+        processOrderParam.setMaterialId(24);
+        processOrderParam.setMaterialCount(2);
         processOrderParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
         TestResult testResult = getJsonTestResult("/order/process", processOrderParam);
     }
@@ -208,7 +208,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712141340239931338");
+        order.setOrderNo("O201712161345332381669");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
     }
 

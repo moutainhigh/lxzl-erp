@@ -60,4 +60,23 @@ public class WarehouseSupport {
         }
         return returnWarehouseDO;
     }
+
+    public WarehouseDO getSubCompanyWarehouse(Integer subCompanyId) {
+        WarehouseDO returnWarehouseDO = null;
+        WarehouseQueryParam param = new WarehouseQueryParam();
+        List<Integer> subCompanyIdList = new ArrayList<>();
+        subCompanyIdList.add(subCompanyId);
+        param.setSubCompanyIdList(subCompanyIdList);
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("start", 0);
+        paramMap.put("pageSize", Integer.MAX_VALUE);
+        paramMap.put("warehouseQueryParam", param);
+        List<WarehouseDO> warehouseList = warehouseMapper.listPage(paramMap);
+        for (WarehouseDO warehouseDO : warehouseList) {
+            if (WarehouseType.WAREHOUSE_TYPE_DEFAULT.equals(warehouseDO.getWarehouseType())) {
+                returnWarehouseDO = warehouseDO;
+            }
+        }
+        return returnWarehouseDO;
+    }
 }

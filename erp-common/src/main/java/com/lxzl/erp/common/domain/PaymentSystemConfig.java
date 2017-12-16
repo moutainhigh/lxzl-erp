@@ -10,6 +10,7 @@ public class PaymentSystemConfig {
 
     public static String paymentSystemQueryCustomerAccountURL;
     public static String paymentSystemManualChargeURL;
+    public static String paymentSystemBalancePayURL;
     public static String paymentSystemAppId;
     public static String paymentSystemAppSecret;
 
@@ -19,6 +20,10 @@ public class PaymentSystemConfig {
 
     public void setPaymentSystemQueryCustomerAccountURL(String paymentSystemQueryCustomerAccountURL) {
         PaymentSystemConfig.paymentSystemQueryCustomerAccountURL = paymentSystemQueryCustomerAccountURL;
+    }
+
+    public void setPaymentSystemBalancePayURL(String paymentSystemBalancePayURL) {
+        PaymentSystemConfig.paymentSystemBalancePayURL = paymentSystemBalancePayURL;
     }
 
     public void setPaymentSystemAppId(String paymentSystemAppId) {

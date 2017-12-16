@@ -15,6 +15,7 @@ import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderConverter;
+import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -220,6 +221,14 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;
         }
+        if (BigDecimalUtil.compare(orderDO.getFirstNeedPayAmount(), BigDecimal.ZERO) > 0) {
+            ServiceResult<String, Boolean> payResult = paymentService.balancePay(orderDO.getBuyerCustomerNo(), orderDO.getFirstNeedPayAmount());
+            if (!ErrorCode.SUCCESS.equals(payResult.getErrorCode()) || !payResult.getResult()) {
+                result.setErrorCode(payResult.getErrorCode());
+                return result;
+            }
+        }
+
         orderDO.setPayStatus(PayStatus.PAY_STATUS_PAID);
         orderDO.setPayTime(currentTime);
         orderMapper.update(orderDO);
@@ -767,7 +776,7 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
-        WarehouseDO warehouseDO = warehouseSupport.getCurrentWarehouse();
+        WarehouseDO warehouseDO = warehouseSupport.getSubCompanyWarehouse(orderDO.getOrderSubCompanyId());
         if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())) {
             ServiceResult<String, Object> addOrderItemResult = addOrderItem(orderDO, warehouseDO.getId(), param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), loginUser.getUserId(), currentTime);
             if (!ErrorCode.SUCCESS.equals(addOrderItemResult.getErrorCode())) {
@@ -1588,4 +1597,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private WarehouseSupport warehouseSupport;
+
+    @Autowired
+    private PaymentService paymentService;
 }

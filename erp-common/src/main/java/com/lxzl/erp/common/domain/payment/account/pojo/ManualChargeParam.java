@@ -1,5 +1,6 @@
 package com.lxzl.erp.common.domain.payment.account.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.payment.PaymentIdentityParam;
 
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
  * @author gaochao
  * @date 2017-12-15 10:43
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ManualChargeParam extends PaymentIdentityParam {
     private String businessCustomerNo;
     private BigDecimal chargeAmount;
