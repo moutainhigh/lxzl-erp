@@ -95,4 +95,10 @@ public class WarehouseController extends BaseController {
         ServiceResult<String, Page<StockOrder>> serviceResult = warehouseService.getStockOrderPage(stockOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    @RequestMapping(value = "getAvailableWarehouse", method = RequestMethod.POST)
+    public Result getAvailableWarehouse(@RequestBody StockOrderQueryParam stockOrderQueryParam) {
+        ServiceResult<String, List<Warehouse>> serviceResult = warehouseService.getAvailableWarehouse();
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }

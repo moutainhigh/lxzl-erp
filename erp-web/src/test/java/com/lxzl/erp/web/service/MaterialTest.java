@@ -19,6 +19,6 @@ public class MaterialTest  extends BaseUnTransactionalTest {
 
     @Test
     public void testQuery(){
-        BulkMaterialDO bulkMaterialDO = bulkMaterialSupport.queryFitBulkMaterialDO(23);
+        BulkMaterialDO bulkMaterialDO = bulkMaterialSupport.queryFitBulkMaterialDO(null,23);
     }
 }

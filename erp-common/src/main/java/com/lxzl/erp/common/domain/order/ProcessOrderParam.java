@@ -14,6 +14,7 @@ public class ProcessOrderParam implements Serializable {
     private String equipmentNo;
     private Integer materialId;
     private Integer materialCount;
+    private Integer warehouseId;
     private Integer operationType;
 
     public String getOrderNo() {
@@ -54,5 +55,13 @@ public class ProcessOrderParam implements Serializable {
 
     public void setMaterialCount(Integer materialCount) {
         this.materialCount = materialCount;
+    }
+
+    public Integer getWarehouseId() {
+        return warehouseId;
+    }
+
+    public void setWarehouseId(Integer warehouseId) {
+        this.warehouseId = warehouseId;
     }
 }
