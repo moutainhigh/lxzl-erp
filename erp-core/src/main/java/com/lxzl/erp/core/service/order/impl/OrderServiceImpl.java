@@ -816,7 +816,7 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
             if (!srcWarehouseId.equals(productEquipmentDO.getCurrentWarehouseId())) {
-                result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, equipmentNo, productEquipmentDO.getCurrentWarehouseId());
+                result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, equipmentNo, srcWarehouseId);
                 return result;
             }
 
