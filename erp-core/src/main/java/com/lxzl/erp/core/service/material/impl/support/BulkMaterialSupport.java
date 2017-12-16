@@ -46,10 +46,10 @@ public class BulkMaterialSupport {
     }
 
     public BulkMaterialDO queryFitBulkMaterialDO(Integer materialId) {
-        WarehouseDO warehouseDO = warehouseSupport.getCurrentWarehouse();
+//        WarehouseDO warehouseDO = warehouseSupport.getCurrentWarehouse();
         BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
         bulkMaterialQueryParam.setMaterialId(materialId);
-        bulkMaterialQueryParam.setCurrentWarehouseId(warehouseDO.getId());
+        bulkMaterialQueryParam.setCurrentWarehouseId(4000002);
         bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
         bulkMaterialQueryParam.setIsOnEquipment(CommonConstant.COMMON_CONSTANT_NO);
 

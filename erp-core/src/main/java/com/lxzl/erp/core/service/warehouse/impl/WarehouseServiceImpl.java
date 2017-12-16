@@ -442,10 +442,10 @@ public class WarehouseServiceImpl implements WarehouseService {
                     return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
                 }
 
-                if(CollectionUtil.isNotEmpty(productInStorage.getProductMaterialList())){
-                    for(ProductMaterial productMaterial : productInStorage.getProductMaterialList()){
+                if (CollectionUtil.isNotEmpty(productInStorage.getProductMaterialList())) {
+                    for (ProductMaterial productMaterial : productInStorage.getProductMaterialList()) {
                         MaterialDO materialDO = materialMapper.findByNo(productMaterial.getMaterialNo());
-                        if(materialDO == null){
+                        if (materialDO == null) {
                             return ErrorCode.MATERIAL_NOT_EXISTS;
                         }
                         productMaterial.setMaterialId(materialDO.getId());
@@ -691,7 +691,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         Map<Integer, Integer> bulkMaterialStockMap = new HashMap<>();
         for (Integer bulkMaterialId : bulkMaterialIdList) {
             BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findById(bulkMaterialId);
-            if(bulkMaterialDO == null){
+            if (bulkMaterialDO == null) {
                 throw new BusinessException(ErrorCode.BULK_MATERIAL_NOT_EXISTS);
             }
             // 出货时，当前库房和出货库房必须是同一个
@@ -699,7 +699,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                 throw new BusinessException(ErrorCode.STOCK_ALLOCATION_WAREHOUSE_IS_NOT_SAME);
             }
             // 散料如果在设备上，则不允许走这种出库
-            if(bulkMaterialDO.getCurrentEquipmentId() != null){
+            if (bulkMaterialDO.getCurrentEquipmentId() != null) {
                 throw new BusinessException(ErrorCode.BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT);
             }
 
