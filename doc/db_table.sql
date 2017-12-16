@@ -759,7 +759,8 @@ CREATE TABLE `erp_bulk_material` (
   `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_bulk_material_no` (`bulk_material_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='散料表';
 
 DROP TABLE if exists `erp_product_equipment_bulk_material`;
@@ -961,7 +962,7 @@ CREATE TABLE `erp_order` (
   `order_seller_id` int(20) NOT NULL COMMENT '订单销售员',
   `order_sub_company_id` int(20) DEFAULT NULL COMMENT '订单所属分公司',
   `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '订单状态，0-待提交,4-审核中,8-待发货,12-处理中,16-已发货,20-确认收货,24-全部归还,28-取消,32-结束',
-  `first_need_pay_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '运费',
+  `first_need_pay_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '首次需要交金额',
   `pay_status` int(11) NOT NULL DEFAULT '0' COMMENT '支付状态，0未支付，1已支付，2已退款,3逾期中',
   `pay_time` datetime DEFAULT NULL COMMENT '支付时间',
   `delivery_time` datetime DEFAULT NULL COMMENT '发货时间',

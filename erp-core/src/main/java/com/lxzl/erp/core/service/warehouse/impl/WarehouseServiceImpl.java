@@ -302,11 +302,32 @@ public class WarehouseServiceImpl implements WarehouseService {
         stockOrderDO.setCreateTime(currentTime);
         stockOrderMapper.save(stockOrderDO);
 
+        BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
+        bulkMaterialQueryParam.setCreateStartTime(DateUtil.getBeginOfDay(currentTime));
+        bulkMaterialQueryParam.setCreateEndTime(DateUtil.getEndOfDay(currentTime));
+        Map<String, Object> paramMaps = new HashMap<>();
+        paramMaps.put("start", 0);
+        paramMaps.put("pageSize", Integer.MAX_VALUE);
+        paramMaps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
+        Integer bulkCount = bulkMaterialMapper.listCount(paramMaps);
+        bulkCount = bulkCount == null ? 0 : bulkCount;
+
         // 目前支持采购
         if (StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE.equals(causeType)) {
             if (CollectionUtil.isNotEmpty(productInStorageList)) {
+                ProductEquipmentQueryParam param = new ProductEquipmentQueryParam();
+                param.setCreateStartTime(DateUtil.getBeginOfDay(currentTime));
+                param.setCreateEndTime(DateUtil.getEndOfDay(currentTime));
+                Map<String, Object> maps = new HashMap<>();
+                maps.put("start", 0);
+                maps.put("pageSize", Integer.MAX_VALUE);
+                maps.put("productEquipmentQueryParam", param);
+                Integer productEquipmentCount = productEquipmentMapper.listCount(maps);
+                productEquipmentCount = productEquipmentCount == null ? 0 : productEquipmentCount;
+
+
                 for (ProductInStorage productInStorage : productInStorageList) {
-                    saveProductEquipment(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, productInStorage, currentTime);
+                    saveProductEquipment(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, productInStorage, currentTime, productEquipmentCount, bulkCount);
                     ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
                     productSkuDO.setStock(productSkuDO.getStock() + productInStorage.getProductCount());
                     productSkuDO.setUpdateUser(loginUser.getUserId().toString());
@@ -316,7 +337,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             }
             if (CollectionUtil.isNotEmpty(materialInStorageList)) {
                 for (MaterialInStorage materialInStorage : materialInStorageList) {
-                    saveBulkMaterial(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, materialInStorage, currentTime);
+                    saveBulkMaterial(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, materialInStorage, currentTime, bulkCount);
                     MaterialDO materialDO = materialMapper.findById(materialInStorage.getMaterialId());
                     materialDO.setStock(materialDO.getStock() + materialInStorage.getMaterialCount());
                     materialDO.setUpdateUser(loginUser.getUserId().toString());
@@ -491,25 +512,15 @@ public class WarehouseServiceImpl implements WarehouseService {
         return ErrorCode.SUCCESS;
     }
 
-    private void saveBulkMaterial(String stockOrderNo, Integer warehouseId, Integer warehousePositionId, MaterialInStorage materialInStorage, Date currentTime) {
+    private void saveBulkMaterial(String stockOrderNo, Integer warehouseId, Integer warehousePositionId, MaterialInStorage materialInStorage, Date currentTime, int bulkCount) {
         // 入库散料（由物料产生散料）
         List<BulkMaterialDO> allBulkMaterialDOList = new ArrayList<>();
         // 入库物料记录
         List<StockOrderBulkMaterialDO> allStockOrderBulkMaterialDOList = new ArrayList<>();
-
-        BulkMaterialQueryParam param = new BulkMaterialQueryParam();
-        param.setCreateStartTime(DateUtil.getBeginOfDay(currentTime));
-        param.setCreateEndTime(DateUtil.getEndOfDay(currentTime));
-        Map<String, Object> maps = new HashMap<>();
-        maps.put("start", 0);
-        maps.put("pageSize", Integer.MAX_VALUE);
-        maps.put("bulkMaterialQueryParam", param);
-        Integer oldCount = bulkMaterialMapper.listCount(maps);
-        oldCount = oldCount == null ? 0 : oldCount;
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         for (int i = 0; i < materialInStorage.getMaterialCount(); i++) {
             BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
-            bulkMaterialDO.setBulkMaterialNo(GenerateNoUtil.generateBulkMaterialNo(currentTime, (oldCount + i + 1)));
+            bulkMaterialDO.setBulkMaterialNo(GenerateNoUtil.generateBulkMaterialNo(currentTime, (bulkCount + 1)));
             bulkMaterialDO.setMaterialId(materialInStorage.getMaterialId());
             bulkMaterialDO.setCurrentWarehouseId(warehouseId);
             bulkMaterialDO.setCurrentWarehousePositionId(warehousePositionId);
@@ -522,6 +533,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             bulkMaterialDO.setUpdateTime(currentTime);
             bulkMaterialDO.setCreateTime(currentTime);
             allBulkMaterialDOList.add(bulkMaterialDO);
+            bulkCount++;
 
             StockOrderBulkMaterialDO stockOrderBulkMaterialDO = new StockOrderBulkMaterialDO();
             stockOrderBulkMaterialDO.setStockOrderNo(stockOrderNo);
@@ -543,28 +555,8 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
 
-    private void saveProductEquipment(String stockOrderNo, Integer warehouseId, Integer warehousePositionId, ProductInStorage productInStorage, Date currentTime) {
+    private void saveProductEquipment(String stockOrderNo, Integer warehouseId, Integer warehousePositionId, ProductInStorage productInStorage, Date currentTime, int productEquipmentCount, int bulkCount) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        ProductEquipmentQueryParam param = new ProductEquipmentQueryParam();
-        param.setCreateStartTime(DateUtil.getBeginOfDay(currentTime));
-        param.setCreateEndTime(DateUtil.getEndOfDay(currentTime));
-        Map<String, Object> maps = new HashMap<>();
-        maps.put("start", 0);
-        maps.put("pageSize", Integer.MAX_VALUE);
-        maps.put("productEquipmentQueryParam", param);
-        Integer productEquipmentOldCount = productEquipmentMapper.listCount(maps);
-        productEquipmentOldCount = productEquipmentOldCount == null ? 0 : productEquipmentOldCount;
-
-
-        BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
-        bulkMaterialQueryParam.setCreateStartTime(DateUtil.getBeginOfDay(currentTime));
-        bulkMaterialQueryParam.setCreateEndTime(DateUtil.getEndOfDay(currentTime));
-        Map<String, Object> paramMaps = new HashMap<>();
-        paramMaps.put("start", 0);
-        paramMaps.put("pageSize", Integer.MAX_VALUE);
-        paramMaps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
-        Integer bulkMaterialOldCount = bulkMaterialMapper.listCount(paramMaps);
-        bulkMaterialOldCount = bulkMaterialOldCount == null ? 0 : bulkMaterialOldCount;
 
         // 入库设备
         List<ProductEquipmentDO> allProductEquipmentDOList = new ArrayList<>();
@@ -582,7 +574,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
         for (int i = 0; i < productInStorage.getProductCount(); i++) {
             ProductEquipmentDO productEquipmentDO = new ProductEquipmentDO();
-            productEquipmentDO.setEquipmentNo(GenerateNoUtil.generateEquipmentNo(currentTime, warehouseId, (productEquipmentOldCount + i + 1)));
+            productEquipmentDO.setEquipmentNo(GenerateNoUtil.generateEquipmentNo(currentTime, warehouseId, (productEquipmentCount + 1)));
             productEquipmentDO.setProductId(productInStorage.getProductId());
             productEquipmentDO.setSkuId(productInStorage.getProductSkuId());
             productEquipmentDO.setCurrentWarehouseId(warehouseId);
@@ -596,6 +588,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             productEquipmentDO.setUpdateTime(currentTime);
             productEquipmentDO.setCreateTime(currentTime);
             allProductEquipmentDOList.add(productEquipmentDO);
+            productEquipmentCount++;
 
             StockOrderEquipmentDO stockOrderEquipmentDO = new StockOrderEquipmentDO();
             stockOrderEquipmentDO.setStockOrderNo(stockOrderNo);
@@ -621,7 +614,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                     allProductEquipmentMaterialDOList.add(productEquipmentMaterialDO);
                     for (int j = 0; j < productMaterial.getMaterialCount(); j++) {
                         BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
-                        bulkMaterialDO.setBulkMaterialNo(GenerateNoUtil.generateBulkMaterialNo(currentTime, bulkMaterialOldCount));
+                        bulkMaterialDO.setBulkMaterialNo(GenerateNoUtil.generateBulkMaterialNo(currentTime, bulkCount));
                         bulkMaterialDO.setMaterialId(productMaterial.getMaterialId());
                         bulkMaterialDO.setCurrentWarehouseId(warehouseId);
                         bulkMaterialDO.setCurrentWarehousePositionId(warehousePositionId);
@@ -635,7 +628,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                         bulkMaterialDO.setUpdateTime(currentTime);
                         bulkMaterialDO.setCreateTime(currentTime);
                         allBulkMaterialDOList.add(bulkMaterialDO);
-                        bulkMaterialOldCount++;
+                        bulkCount++;
 
                         StockOrderBulkMaterialDO stockOrderBulkMaterialDO = new StockOrderBulkMaterialDO();
                         stockOrderBulkMaterialDO.setStockOrderNo(stockOrderNo);

@@ -212,6 +212,13 @@ public class OrderTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
     }
 
+    @Test
+    public void pay() throws Exception {
+        Order order = new Order();
+        order.setOrderNo("O201712161358517931662");
+        TestResult testResult = getJsonTestResult("/order/pay", order);
+    }
+
 
     @Test
     public void returnEquipment() throws Exception {
