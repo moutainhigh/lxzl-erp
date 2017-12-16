@@ -1036,6 +1036,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             realMaterialMap.put(purchaseReceiveOrderMaterialDO.getRealMaterialId(),purchaseReceiveOrderMaterialDO);
         }
         productInStockParam.setProductInStorageList(productInStorageList);
+        productInStockParam.setMaterialInStorageList(materialInStorageList);
 
         Date now  = new Date();
         //更新采购收货单状态
