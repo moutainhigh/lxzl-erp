@@ -92,4 +92,11 @@ public interface WarehouseService extends BaseService {
      * @return 出入库列表
      */
     ServiceResult<String, Page<StockOrder>> getStockOrderPage(StockOrderQueryParam stockOrderQueryParam);
+
+
+    /**
+     * 获取可用的仓库
+     * @return 可用仓库列表
+     */
+    ServiceResult<String, List<Warehouse>> getAvailableWarehouse();
 }

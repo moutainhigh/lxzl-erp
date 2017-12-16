@@ -193,6 +193,9 @@ public class StatementServiceImpl implements StatementService {
             } else {
                 statementOrderDO = statementOrderDOMap.get(dateKey);
                 statementOrderDO.setStatementAmount(BigDecimalUtil.add(statementOrderDO.getStatementAmount(), statementOrderDetailDO.getStatementDetailAmount()));
+                if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())) {
+                    statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
+                }
                 statementOrderMapper.update(statementOrderDO);
             }
             statementOrderDOMap.put(dateKey, statementOrderDO);

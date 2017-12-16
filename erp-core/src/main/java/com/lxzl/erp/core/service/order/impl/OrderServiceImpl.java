@@ -31,7 +31,6 @@ import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
-import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.*;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
@@ -222,7 +221,7 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         if (BigDecimalUtil.compare(orderDO.getFirstNeedPayAmount(), BigDecimal.ZERO) > 0) {
-            ServiceResult<String, Boolean> payResult = paymentService.balancePay(orderDO.getBuyerCustomerNo(), orderDO.getFirstNeedPayAmount());
+            ServiceResult<String, Boolean> payResult = paymentService.balancePay(orderDO.getBuyerCustomerNo(), orderDO.getOrderNo(), null, null, orderDO.getFirstNeedPayAmount());
             if (!ErrorCode.SUCCESS.equals(payResult.getErrorCode()) || !payResult.getResult()) {
                 result.setErrorCode(payResult.getErrorCode());
                 return result;
@@ -776,9 +775,8 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
-        WarehouseDO warehouseDO = warehouseSupport.getSubCompanyWarehouse(orderDO.getOrderSubCompanyId());
         if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())) {
-            ServiceResult<String, Object> addOrderItemResult = addOrderItem(orderDO, warehouseDO.getId(), param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), loginUser.getUserId(), currentTime);
+            ServiceResult<String, Object> addOrderItemResult = addOrderItem(orderDO, param.getWarehouseId(), param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), loginUser.getUserId(), currentTime);
             if (!ErrorCode.SUCCESS.equals(addOrderItemResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(addOrderItemResult.getErrorCode(), addOrderItemResult.getFormatArgs());
@@ -815,7 +813,8 @@ public class OrderServiceImpl implements OrderService {
                 result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_IS_NOT_IDLE, equipmentNo);
                 return result;
             }
-            if (!srcWarehouseId.equals(productEquipmentDO.getCurrentWarehouseId())) {
+            WarehouseDO currentWarehouse = warehouseSupport.getAvailableWarehouse(productEquipmentDO.getCurrentWarehouseId());
+            if (currentWarehouse == null) {
                 result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, equipmentNo, productEquipmentDO.getCurrentWarehouseId());
                 return result;
             }
@@ -872,13 +871,18 @@ public class OrderServiceImpl implements OrderService {
 
         if (materialId != null) {
             // 必须是当前库房闲置的物料
-            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(materialId, materialCount);
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(srcWarehouseId, materialId, materialCount);
             if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
                 result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
                 return result;
             }
             for (int i = 0; i < materialCount; i++) {
                 BulkMaterialDO bulkMaterialDO = bulkMaterialDOList.get(i);
+                if (!srcWarehouseId.equals(bulkMaterialDO.getCurrentWarehouseId())) {
+                    result.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_IN_THIS_WAREHOUSE, equipmentNo, bulkMaterialDO.getCurrentWarehouseId());
+                    return result;
+                }
+
                 boolean isMatching = false;
                 Map<String, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId", "rentType", "rentTimeLength");
                 for (Map.Entry<String, OrderMaterialDO> entry : orderMaterialDOMap.entrySet()) {

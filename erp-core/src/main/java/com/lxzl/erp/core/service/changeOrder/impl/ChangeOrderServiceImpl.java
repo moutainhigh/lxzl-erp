@@ -565,12 +565,6 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
             return result;
         }
-        // 取仓库，本公司的默认仓库和客户仓
-        WarehouseDO srcWarehouse = warehouseSupport.getCurrentWarehouse();
-        if (srcWarehouse == null) {
-            result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
-            return result;
-        }
 
         if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())) {
             //添加更换后设备，添加更换后物料
@@ -812,7 +806,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 changeOrderMaterialBulkDO.setChangeOrderId(changeOrderDO.getId());
                 changeOrderMaterialBulkDO.setChangeOrderNo(changeOrderDO.getChangeOrderNo());
                 //随机找一个符合的散料-超
-                BulkMaterialDO bulkMaterialDO = bulkMaterialSupport.queryFitBulkMaterialDO(changeOrderMaterialDO.getChangeMaterialIdDest());
+                BulkMaterialDO bulkMaterialDO = bulkMaterialSupport.queryFitBulkMaterialDO(null,changeOrderMaterialDO.getChangeMaterialIdDest());
                 if(bulkMaterialDO==null){
                     serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -1217,7 +1211,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 changeOrderMaterialBulkDO.setChangeOrderId(changeOrderMaterialDO.getChangeOrderId());
                 changeOrderMaterialBulkDO.setChangeOrderNo(changeOrderMaterialDO.getChangeOrderNo());
                 //随机找一个可用散料
-                BulkMaterialDO bulkMaterialDO = bulkMaterialSupport.queryFitBulkMaterialDO(materialDO.getId());
+                BulkMaterialDO bulkMaterialDO = bulkMaterialSupport.queryFitBulkMaterialDO(null,materialDO.getId());
                 if(bulkMaterialDO==null){
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);

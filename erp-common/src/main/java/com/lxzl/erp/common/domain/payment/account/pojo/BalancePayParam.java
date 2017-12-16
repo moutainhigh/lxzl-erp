@@ -15,7 +15,10 @@ import java.math.BigDecimal;
 public class BalancePayParam extends PaymentIdentityParam {
 
     private String businessCustomerNo;
+    private String businessOrderNo;
     private BigDecimal businessOrderAmount;
+    private String businessOrderRemark;
+    private String businessNotifyUrl;
 
     public BigDecimal getBusinessOrderAmount() {
         return businessOrderAmount;
@@ -31,5 +34,29 @@ public class BalancePayParam extends PaymentIdentityParam {
 
     public void setBusinessCustomerNo(String businessCustomerNo) {
         this.businessCustomerNo = businessCustomerNo;
+    }
+
+    public String getBusinessOrderNo() {
+        return businessOrderNo;
+    }
+
+    public void setBusinessOrderNo(String businessOrderNo) {
+        this.businessOrderNo = businessOrderNo;
+    }
+
+    public String getBusinessOrderRemark() {
+        return businessOrderRemark;
+    }
+
+    public void setBusinessOrderRemark(String businessOrderRemark) {
+        this.businessOrderRemark = businessOrderRemark;
+    }
+
+    public String getBusinessNotifyUrl() {
+        return businessNotifyUrl;
+    }
+
+    public void setBusinessNotifyUrl(String businessNotifyUrl) {
+        this.businessNotifyUrl = businessNotifyUrl;
     }
 }

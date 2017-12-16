@@ -17,7 +17,9 @@ import com.lxzl.erp.common.domain.warehouse.WarehouseQueryParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.StockOrder;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.core.service.warehouse.impl.support.StockOrderConverter;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseConverter;
@@ -58,9 +60,6 @@ public class WarehouseServiceImpl implements WarehouseService {
     private WarehouseMapper warehouseMapper;
 
     @Autowired
-    private HttpSession session;
-
-    @Autowired
     private ProductEquipmentMapper productEquipmentMapper;
 
     @Autowired
@@ -88,13 +87,16 @@ public class WarehouseServiceImpl implements WarehouseService {
     private MaterialMapper materialMapper;
 
     @Autowired
+    private UserSupport userSupport;
+
+    @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> addWarehouse(Warehouse warehouse) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
 
         String verifyCode = verifyAddWarehouse(warehouse);
@@ -127,7 +129,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateWarehouse(Warehouse warehouse) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
 
         String verifyCode = verifyAddWarehouse(warehouse);
@@ -201,11 +203,31 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
+    public ServiceResult<String, List<Warehouse>> getAvailableWarehouse() {
+        ServiceResult<String, List<Warehouse>> result = new ServiceResult<>();
+        WarehouseQueryParam param = new WarehouseQueryParam();
+        User loginUser = userSupport.getCurrentUser();
+        List<Integer> subCompanyIdList = new ArrayList<>();
+        for (Role role : loginUser.getRoleList()) {
+            subCompanyIdList.add(role.getSubCompanyId());
+        }
+        param.setSubCompanyIdList(subCompanyIdList);
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("start", 0);
+        paramMap.put("pageSize", Integer.MAX_VALUE);
+        paramMap.put("warehouseQueryParam", param);
+        List<WarehouseDO> warehouseDOList = warehouseMapper.listPage(paramMap);
+        result.setResult(ConverterUtil.convertList(warehouseDOList, Warehouse.class));
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
     public ServiceResult<String, List<Warehouse>> getWarehouseByCurrentCompany() {
 
         ServiceResult<String, List<Warehouse>> result = new ServiceResult<>();
         WarehouseQueryParam param = new WarehouseQueryParam();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
 
         List<Integer> subCompanyIdList = new ArrayList<>();
         for (Role role : loginUser.getRoleList()) {
@@ -265,7 +287,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         Integer targetWarehouseId = productInStockParam.getTargetWarehouseId();
         Integer causeType = productInStockParam.getCauseType();
         String referNo = productInStockParam.getReferNo();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, Integer> result = new ServiceResult<>();
         Date currentTime = new Date();
         String errorCode = verifyProductAndMaterialInfo(productInStorageList, materialInStorageList);
@@ -387,7 +409,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         Integer targetWarehouseId = productOutStockParam.getTargetWarehouseId();
         Integer causeType = productOutStockParam.getCauseType();
         String referNo = productOutStockParam.getReferNo();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, Integer> result = new ServiceResult<>();
         Date currentTime = new Date();
         String errorCode = verifyProductEquipmentAndBulkMaterialInfo(productEquipmentIdList, bulkMaterialIdList);
@@ -541,7 +563,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         List<BulkMaterialDO> allBulkMaterialDOList = new ArrayList<>();
         // 入库物料记录
         List<StockOrderBulkMaterialDO> allStockOrderBulkMaterialDOList = new ArrayList<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         for (int i = 0; i < materialInStorage.getMaterialCount(); i++) {
             BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
             bulkMaterialDO.setBulkMaterialNo(GenerateNoUtil.generateBulkMaterialNo(currentTime, productInStockCounter.getBulkMaterialCount()));
@@ -580,7 +602,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
 
     private void saveProductEquipment(String stockOrderNo, Integer warehouseId, Integer warehousePositionId, ProductInStorage productInStorage, Date currentTime, ProductInStockCounter productInStockCounter) {
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
 
         // 入库设备
         List<ProductEquipmentDO> allProductEquipmentDOList = new ArrayList<>();
@@ -699,7 +721,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     private void updateBulkMaterial(String stockOrderNo, Integer srcWarehouseId, Integer srcWarehousePositionId, Integer targetWarehouseId, Integer targetWarehousePositionId, List<Integer> bulkMaterialIdList, Date currentTime) {
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         // 变更散料（由物料产生散料）
         List<BulkMaterialDO> allBulkMaterialDOList = new ArrayList<>();
         // 变更物料记录
@@ -765,7 +787,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     private void updateProductEquipment(String stockOrderNo, Integer srcWarehouseId, Integer srcWarehousePositionId, Integer targetWarehouseId, Integer targetWarehousePositionId, List<Integer> productEquipmentIdList, Date currentTime) {
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         // 变更设备
         List<ProductEquipmentDO> allProductEquipmentDOList = new ArrayList<>();
         // 变更设备记录

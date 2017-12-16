@@ -30,13 +30,21 @@ public interface PaymentService extends BaseService {
      */
     ServiceResult<String, Boolean> manualCharge(String customerNo, BigDecimal chargeAmount);
 
-
     /**
-     * 余额支付
      *
      * @param customerNo 客户编码
      * @param payAmount 余额
      * @return 充值结果
      */
-    ServiceResult<String,Boolean> balancePay(String customerNo, BigDecimal payAmount);
+
+    /**
+     * 余额支付
+     * @param customerNo 余额
+     * @param businessOrderNo 业务系统订单号
+     * @param businessOrderRemark 业务系统备注
+     * @param businessNotifyUrl 回调URL
+     * @param payAmount 支付金额
+     * @return 支付结果
+     */
+    ServiceResult<String, Boolean> balancePay(String customerNo,String businessOrderNo,String businessOrderRemark,String businessNotifyUrl, BigDecimal payAmount);
 }
