@@ -637,13 +637,14 @@ public class OrderServiceImpl implements OrderService {
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
             for (OrderProduct orderProduct : order.getOrderProductList()) {
                 Product product = FastJsonUtil.toBean(orderProduct.getProductSkuSnapshot(), Product.class);
-                for (ProductSku productSku : product.getProductSkuList()) {
-                    if (orderProduct.getProductSkuId().equals(productSku.getSkuId())) {
-                        orderProduct.setProductSkuPropertyList(productSku.getProductSkuPropertyList());
-                        break;
+                if(product != null && CollectionUtil.isNotEmpty(product.getProductSkuList())){
+                    for (ProductSku productSku : product.getProductSkuList()) {
+                        if (orderProduct.getProductSkuId().equals(productSku.getSkuId())) {
+                            orderProduct.setProductSkuPropertyList(productSku.getProductSkuPropertyList());
+                            break;
+                        }
                     }
                 }
-
                 List<OrderProductEquipmentDO> orderProductEquipmentDOList = orderProductEquipmentMapper.findByOrderProductId(orderProduct.getOrderProductId());
                 orderProduct.setOrderProductEquipmentList(ConverterUtil.convertList(orderProductEquipmentDOList, OrderProductEquipment.class));
             }

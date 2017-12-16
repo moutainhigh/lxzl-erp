@@ -117,7 +117,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                 }
                 Product product = productServiceResult.getResult();
                 deploymentOrderProductDO.setDeploymentProductAmount(BigDecimalUtil.mul(deploymentOrderProductDO.getDeploymentProductUnitAmount(), new BigDecimal(deploymentOrderProductDO.getDeploymentProductSkuCount())));
-                deploymentOrderProductDO.setDeploymentProductSkuSnapshot(JSONUtil.convertBeanToJSON(product));
+                deploymentOrderProductDO.setDeploymentProductSkuSnapshot(FastJsonUtil.toJSONString(product));
                 deploymentOrderProductDO.setDeploymentOrderNo(deploymentOrderNo);
                 deploymentOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 deploymentOrderProductDO.setUpdateUser(loginUser.getUserId().toString());
@@ -138,7 +138,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                 }
                 Product product = productServiceResult.getResult();
                 deploymentOrderProductDO.setDeploymentProductAmount(BigDecimalUtil.mul(deploymentOrderProductDO.getDeploymentProductUnitAmount(), new BigDecimal(deploymentOrderProductDO.getDeploymentProductSkuCount())));
-                deploymentOrderProductDO.setDeploymentProductSkuSnapshot(JSONUtil.convertBeanToJSON(product));
+                deploymentOrderProductDO.setDeploymentProductSkuSnapshot(FastJsonUtil.toJSONString(product));
                 deploymentOrderProductDO.setUpdateUser(loginUser.getUserId().toString());
                 deploymentOrderProductDO.setUpdateTime(currentTime);
                 deploymentOrderProductMapper.update(deploymentOrderProductDO);
@@ -181,7 +181,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                 }
                 Material material = materialServiceResult.getResult();
                 deploymentOrderMaterialDO.setDeploymentMaterialAmount(BigDecimalUtil.mul(deploymentOrderMaterialDO.getDeploymentMaterialUnitAmount(), new BigDecimal(deploymentOrderMaterialDO.getDeploymentProductMaterialCount())));
-                deploymentOrderMaterialDO.setDeploymentProductMaterialSnapshot(JSONUtil.convertBeanToJSON(material));
+                deploymentOrderMaterialDO.setDeploymentProductMaterialSnapshot(FastJsonUtil.toJSONString(material));
                 deploymentOrderMaterialDO.setDeploymentOrderNo(deploymentOrderNo);
                 deploymentOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 deploymentOrderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
@@ -202,7 +202,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                 }
                 Material material = materialServiceResult.getResult();
                 deploymentOrderMaterialDO.setDeploymentMaterialAmount(BigDecimalUtil.mul(deploymentOrderMaterialDO.getDeploymentMaterialUnitAmount(), new BigDecimal(deploymentOrderMaterialDO.getDeploymentProductMaterialCount())));
-                deploymentOrderMaterialDO.setDeploymentProductMaterialSnapshot(JSONUtil.convertBeanToJSON(material));
+                deploymentOrderMaterialDO.setDeploymentProductMaterialSnapshot(FastJsonUtil.toJSONString(material));
                 deploymentOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 deploymentOrderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
                 deploymentOrderMaterialDO.setUpdateTime(currentTime);
