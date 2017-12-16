@@ -48,7 +48,7 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
         ChangeMaterialPairs changeMaterialPairs = new ChangeMaterialPairs();
         changeMaterialPairs.setMaterialNoSrc("M201711201356145971009");
         changeMaterialPairs.setMaterialNoDest("M201711201356145971009");
-        changeMaterialPairs.setChangeCount(1);
+        changeMaterialPairs.setChangeCount(3);
         changeMaterialPairsList.add(changeMaterialPairs);
         addChangeOrderParam.setChangeMaterialPairsList(changeMaterialPairsList);
         TestResult testResult = getJsonTestResult("/changeOrder/add",addChangeOrderParam);
@@ -56,7 +56,7 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
     @Test
     public void update() throws Exception {
         UpdateChangeOrderParam addChangeOrderParam = new UpdateChangeOrderParam();
-        addChangeOrderParam.setChangeOrderNo("CO201712152003206021155");
+        addChangeOrderParam.setChangeOrderNo("CO201712161429229891595");
         ChangeOrderConsignInfo changeOrderConsignInfo = new ChangeOrderConsignInfo();
         changeOrderConsignInfo.setAddress("这是一个测试地址2");
         changeOrderConsignInfo.setConsigneePhone("13612342234");
@@ -65,6 +65,7 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
 
         List<ChangeProductSkuPairs> changeProductSkuPairsList = new ArrayList<>();
         ChangeProductSkuPairs changeProductSkuPairs = new ChangeProductSkuPairs();
+        //这里在每次【测试】时要修改
         changeProductSkuPairs.setChangeOrderProductId(4);
         changeProductSkuPairs.setProductSkuIdSrc(40);
         changeProductSkuPairs.setProductSkuIdDest(40);
@@ -84,7 +85,7 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
     @Test
     public void commit() throws Exception {
         ChangeOrderCommitParam changeOrderCommitParam = new ChangeOrderCommitParam();
-        changeOrderCommitParam.setChangeOrderNo("CO201712152003206021155");
+        changeOrderCommitParam.setChangeOrderNo("CO201712161429229891595");
         changeOrderCommitParam.setVerifyUserId(500006);
         changeOrderCommitParam.setRemark("审核备注");
         TestResult testResult = getJsonTestResult("/changeOrder/commit",changeOrderCommitParam);
@@ -93,11 +94,11 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
     @Test
     public void stockUpForChange() throws Exception {
         StockUpForChangeParam stockUpForChangeParam = new StockUpForChangeParam();
-        stockUpForChangeParam.setChangeOrderNo("CO201712152003206021155");
+        stockUpForChangeParam.setChangeOrderNo("CO201712161429229891595");
         //select * from erp_product_equipment where sku_id=40 and equipment_status = 1 and data_status = 1 and order_no is null and current_warehouse_id = 4000002
-//        stockUpForChangeParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010014");
+//        stockUpForChangeParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010016");
         stockUpForChangeParam.setMaterialNo("M201711201356145971009");
-        stockUpForChangeParam.setMaterialCount(1);
+        stockUpForChangeParam.setMaterialCount(3);
         stockUpForChangeParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
         TestResult testResult = getJsonTestResult("/changeOrder/stockUpForChange",stockUpForChangeParam);
     }
@@ -145,11 +146,15 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
     }
     @Test
     public void pageChangeOrderProductEquipment() throws Exception {
-
+        ChangeEquipmentPageParam changeEquipmentPageParam = new ChangeEquipmentPageParam();
+        changeEquipmentPageParam.setChangeOrderProductId(4);
+        TestResult testResult = getJsonTestResult("/changeOrder/pageChangeOrderProductEquipment",changeEquipmentPageParam);
     }
     @Test
     public void pageChangeOrderMaterialBulk() throws Exception {
-
+        ChangeBulkPageParam changeBulkPageParam = new ChangeBulkPageParam();
+        changeBulkPageParam.setChangeOrderMaterialId(4);
+        TestResult testResult = getJsonTestResult("/changeOrder/pageChangeOrderMaterialBulk",changeBulkPageParam);
     }
     @Test
     public void processNoChangeEquipment() throws Exception {

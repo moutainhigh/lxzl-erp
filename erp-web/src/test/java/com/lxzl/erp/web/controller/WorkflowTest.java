@@ -20,7 +20,7 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     public void verifyWorkFlow() throws Exception {
 
         VerifyWorkflowParam workflowParam = new VerifyWorkflowParam();
-        workflowParam.setWorkflowLinkNo("WL201712152007370701750");
+        workflowParam.setWorkflowLinkNo("WL201712161701216801294");
         workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
         workflowParam.setVerifyOpinion("允许换货");
 //        workflowParam.setNextVerifyUser(500003);
