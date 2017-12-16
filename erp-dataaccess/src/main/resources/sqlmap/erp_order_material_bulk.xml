@@ -238,4 +238,9 @@
 			#{orderMaterialBulkDO.id,jdbcType=INTEGER}
 		</foreach>
 	</update>
+
+	<select id="findByBulkMaterialNo" resultMap="OrderMaterialBulkDO" parameterType="String">
+		SELECT <include refid="column_List"/> FROM erp_order_material_bulk eomb
+		WHERE eomb.bulk_material_no = #{bulkMaterialNo,jdbcType=VARCHAR}  AND eomb.data_status = 1 AND eomb.actual_return_time IS NULL
+	</select>
 </mapper>

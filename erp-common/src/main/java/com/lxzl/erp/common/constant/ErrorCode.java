@@ -96,6 +96,9 @@ public class ErrorCode {
     public static final String PRODUCT_EQUIPMENT_AND_BULK_MATERIAL_NOT_WAREHOUSE = "J200050";
     public static final String BULK_MATERIAL_IS_NOT_IN_PRODUCT_EQUIPMENT = "J200051";
     public static final String INSTALL_AND_DISMANTLE_WAREHOUSE_NOT_EQUAL = "J200052";
+    public static final String BULK_MATERIAL_IS_NULL = "J200053";
+    public static final String PRODUCT_EQUIPMENT_IS_NULL = "J200054";
+    public static final String PRODUCT_EQUIPMENT_MATERIAL_IS_NULL = "J200055";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -313,6 +316,12 @@ public class ErrorCode {
     public static final String MESSAGE_NOT_EXISTS = "J600005";
     public static final String MESSAGE_CAN_NOT_SEND_SELF = "J600006";
 
+    public static final String EQUIPMENT_AND_BULK_MATERIAL_IS_NOT_NULL = "J700001";
+    public static final String REPAIR_REASON_IS_NOT_NULL = "J700002";
+    public static final String REPAIR_ORDER_NO_IS_NOT_NULL = "J700003";
+    public static final String REPAIR_ORDER_IS_NOT_EXISTS = "J700004";
+    public static final String REPAIR_ORDER_STATUS_ERROR = "J700005";
+
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -404,6 +413,9 @@ public class ErrorCode {
         MAP.put(BULK_MATERIAL_IS_NOT_IN_PRODUCT_EQUIPMENT, "散料不在某设备上");
         MAP.put(INSTALL_AND_DISMANTLE_WAREHOUSE_NOT_EQUAL, "安装的散料和拆卸的散料不是同一个仓库");
         MAP.put(PRODUCT_EQUIPMENT_MATERIAL_NOT_EXISTS, "编号【%s 】的设备物料不存在");
+        MAP.put(BULK_MATERIAL_IS_NULL, "该散料不存在");
+        MAP.put(PRODUCT_EQUIPMENT_IS_NULL, "该设备不存在");
+        MAP.put(PRODUCT_EQUIPMENT_MATERIAL_IS_NULL, "该设备物料不存在");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
@@ -618,6 +630,12 @@ public class ErrorCode {
         MAP.put(MESSAGE_ID_NOT_NULL, "站内信ID不能为空");
         MAP.put(MESSAGE_NOT_EXISTS, "站内信不存在");
         MAP.put(MESSAGE_CAN_NOT_SEND_SELF, "站内信不能发给自己");
+
+        MAP.put(EQUIPMENT_AND_BULK_MATERIAL_IS_NOT_NULL, "设备维修单明细表不能为空");
+        MAP.put(REPAIR_REASON_IS_NOT_NULL, "设备维修单的维修原因不能为空");
+        MAP.put(REPAIR_ORDER_NO_IS_NOT_NULL, "设备维修单编号不能为空");
+        MAP.put(REPAIR_ORDER_IS_NOT_EXISTS, "设备维修单不存在");
+        MAP.put(REPAIR_ORDER_STATUS_ERROR, "设备维修单状态出错，请重新检查");
 
 
     }
