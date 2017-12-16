@@ -317,6 +317,7 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
+        //获取地址信息的内容，存入客户地址信息表
         CustomerConsignInfoDO customerConsignInfoDO =ConverterUtil.convert(customerConsignInfo,CustomerConsignInfoDO.class);
         customerConsignInfoDO.setCustomerId(customerDO.getId());
         customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -353,6 +354,7 @@ public class CustomerServiceImpl implements CustomerService {
      * @return
      */
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> updateCustomerConsignInfo(CustomerConsignInfo customerConsignInfo) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -415,7 +417,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult<String, CustomerConsignInfo> detailCustomerConsignInfo(CustomerConsignInfo customerConsignInfo) {
         ServiceResult<String, CustomerConsignInfo> serviceResult = new ServiceResult<>();
-        Date now = new Date();
+
 
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfo.getCustomerConsignInfoId());
         if(customerConsignInfoDO==null){
