@@ -21,6 +21,7 @@
 		<result column="current_equipment_id" jdbcType="INTEGER" property="currentEquipmentId" />
 		<result column="current_equipment_no" jdbcType="VARCHAR" property="currentEquipmentNo" />
 		<result column="bulk_material_status" jdbcType="INTEGER" property="bulkMaterialStatus" />
+		<result column="is_new" property="isNew"/>
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -30,7 +31,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ebm.id,ebm.bulk_material_no,ebm.bulk_material_type,ebm.bulk_material_name,ebm.material_id,ebm.material_no,ebm.order_no,ebm.current_warehouse_id,ebm.current_warehouse_position_id,ebm.owner_warehouse_id,ebm.owner_warehouse_position_id,ebm.brand_id,ebm.material_model_id,ebm.material_capacity_value,ebm.bulk_material_price,ebm.current_equipment_id,ebm.current_equipment_no,ebm.bulk_material_status,ebm.data_status,ebm.remark,ebm.create_time,ebm.create_user,ebm.update_time,ebm.update_user
+		ebm.id,ebm.bulk_material_no,ebm.bulk_material_type,ebm.bulk_material_name,ebm.material_id,ebm.material_no,ebm.order_no,ebm.current_warehouse_id,ebm.current_warehouse_position_id,ebm.owner_warehouse_id,ebm.owner_warehouse_position_id,ebm.brand_id,ebm.material_model_id,ebm.material_capacity_value,ebm.bulk_material_price,ebm.current_equipment_id,ebm.current_equipment_no,ebm.bulk_material_status,ebm.is_new,ebm.data_status,ebm.remark,ebm.create_time,ebm.create_user,ebm.update_time,ebm.update_user
 	</sql>
 
 	<select id="findById" resultMap="BulkMaterialDO" parameterType="java.lang.Integer">
@@ -189,6 +190,9 @@
 			<if test="bulkMaterialStatus != null">
 				bulk_material_status = #{bulkMaterialStatus,jdbcType=INTEGER},
 			</if>
+			<if test="isNew != null">
+				is_new = #{isNew,jdbcType=INTEGER},
+			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
 			</if>
@@ -211,10 +215,10 @@
 	</sql>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_bulk_material (bulk_material_no,bulk_material_type,is_main_material,bulk_material_name,material_id,material_no,order_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,brand_id,material_model_id,material_capacity_value,bulk_material_price,current_equipment_id,current_equipment_no,bulk_material_status,data_status,remark,create_time,create_user,update_time,update_user)
+		insert into erp_bulk_material (bulk_material_no,bulk_material_type,is_main_material,bulk_material_name,material_id,material_no,order_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,brand_id,material_model_id,material_capacity_value,bulk_material_price,current_equipment_id,current_equipment_no,bulk_material_status,is_new,data_status,remark,create_time,create_user,update_time,update_user)
 		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList" separator="UNION ALL">
 			SELECT #{bulkMaterialDO.bulkMaterialNo},em.material_type, em.is_main_material, em.material_name ,#{bulkMaterialDO.materialId},em.material_no,#{bulkMaterialDO.orderNo},#{bulkMaterialDO.currentWarehouseId},#{bulkMaterialDO.currentWarehousePositionId},#{bulkMaterialDO.ownerWarehouseId},#{bulkMaterialDO.ownerWarehousePositionId},
-			em.brand_id,em.material_model_id,em.material_capacity_value,em.material_price,equipment_info.current_equipment_id ,#{bulkMaterialDO.currentEquipmentNo}, #{bulkMaterialDO.bulkMaterialStatus},#{bulkMaterialDO.dataStatus},#{bulkMaterialDO.remark},
+			em.brand_id,em.material_model_id,em.material_capacity_value,em.material_price,equipment_info.current_equipment_id ,#{bulkMaterialDO.currentEquipmentNo}, #{bulkMaterialDO.bulkMaterialStatus},#{bulkMaterialDO.isNew},#{bulkMaterialDO.dataStatus},#{bulkMaterialDO.remark},
 			#{bulkMaterialDO.createTime},#{bulkMaterialDO.createUser},#{bulkMaterialDO.updateTime},#{bulkMaterialDO.updateUser}
 			FROM erp_material em
 			LEFT JOIN (select epe.id as current_equipment_id from erp_product_equipment epe where epe.equipment_no = #{bulkMaterialDO.currentEquipmentNo}) equipment_info on 1=1
@@ -332,6 +336,12 @@
 			data_status =
 			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
 				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.dataStatus,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			is_new =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.isNew,jdbcType=INTEGER}
 			</foreach>
 		</trim>
 		<trim prefix=",">

@@ -35,6 +35,7 @@ public class BulkMaterial implements Serializable {
 	private Integer currentEquipmentId;	// 当前设备ID
 	private String currentEquipmentNo;	// 当前设备编号
 	private Integer bulkMaterialStatus;   //散料状态，0闲置，1租赁中，2报废
+	private Integer isNew;
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -241,5 +242,13 @@ public class BulkMaterial implements Serializable {
 
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
+	}
+
+	public Integer getIsNew() {
+		return isNew;
+	}
+
+	public void setIsNew(Integer isNew) {
+		this.isNew = isNew;
 	}
 }

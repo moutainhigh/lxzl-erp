@@ -14,6 +14,7 @@ import java.io.Serializable;
 public class MaterialInStorage implements Serializable {
     private Integer materialId;
     private Integer materialCount;
+    private Integer isNew;
 
     public Integer getMaterialId() {
         return materialId;
@@ -29,5 +30,13 @@ public class MaterialInStorage implements Serializable {
 
     public void setMaterialCount(Integer materialCount) {
         this.materialCount = materialCount;
+    }
+
+    public Integer getIsNew() {
+        return isNew;
+    }
+
+    public void setIsNew(Integer isNew) {
+        this.isNew = isNew;
     }
 }

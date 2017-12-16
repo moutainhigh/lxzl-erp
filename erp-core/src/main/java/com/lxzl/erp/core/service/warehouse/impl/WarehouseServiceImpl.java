@@ -527,6 +527,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             bulkMaterialDO.setOwnerWarehouseId(warehouseId);
             bulkMaterialDO.setOwnerWarehousePositionId(warehousePositionId);
             bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+            bulkMaterialDO.setIsNew(materialInStorage.getIsNew() == null ? CommonConstant.COMMON_CONSTANT_NO : materialInStorage.getIsNew());
             bulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             bulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
             bulkMaterialDO.setCreateUser(loginUser.getUserId().toString());
@@ -581,6 +582,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             productEquipmentDO.setCurrentWarehousePositionId(warehousePositionId);
             productEquipmentDO.setOwnerWarehouseId(warehouseId);
             productEquipmentDO.setOwnerWarehousePositionId(warehousePositionId);
+            productEquipmentDO.setIsNew(productInStorage.getIsNew() == null ? CommonConstant.COMMON_CONSTANT_NO : productInStorage.getIsNew());
             productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
             productEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             productEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
@@ -620,6 +622,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                         bulkMaterialDO.setCurrentWarehousePositionId(warehousePositionId);
                         bulkMaterialDO.setOwnerWarehouseId(warehouseId);
                         bulkMaterialDO.setOwnerWarehousePositionId(warehousePositionId);
+                        bulkMaterialDO.setIsNew(productInStorage.getIsNew() == null ? CommonConstant.COMMON_CONSTANT_NO : productInStorage.getIsNew());
                         bulkMaterialDO.setCurrentEquipmentNo(productEquipmentDO.getEquipmentNo());
                         bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
                         bulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
