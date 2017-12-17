@@ -46,6 +46,7 @@
                         <th>商品名称</th>
                         <th>副标题</th>
                         <th>列表价格</th>
+                        <th>总库存</th>
                         <th>是否在租</th>
                         <th class="text-right">操作</th>
                     </tr>
@@ -67,6 +68,7 @@
                         <td>{{productName}}</td>
                         <td>{{subtitle}}</td>
                         <td>{{listPriceFixed}}</td>
+                        <td>{{totalStock}}</td>
                         <td>{{isRentStr}}</td>
                         <td class="text-right">
                             <div class="btn-group text-right">
@@ -75,7 +77,9 @@
                         </td>
                     </tr>
                     <tr class="bg-light br-n" style="height: 0">
-                        <td colspan="7" class="pn mn br-n" style="height: 0"></td>
+                        <td colspan="7" class="pn mn br-n" style="height: 0">
+
+                        </td>
                     </tr>
                     {{/listData}}
                     {{^listData}}
@@ -98,7 +102,7 @@
                                         {{#skuList}}
                                         <label class="option block option-primary mb15">
                                             <input type="checkbox" name="sku" value="{{skuId}}">
-                                            <span class="checkbox"></span> {{propertiesToStr}}
+                                            <span class="checkbox"></span> <span class="mr20">{{propertiesToStr}}</span> <span>库存：{{stock}}</span>
                                         </label>
                                         {{/skuList}}
                                     </div>

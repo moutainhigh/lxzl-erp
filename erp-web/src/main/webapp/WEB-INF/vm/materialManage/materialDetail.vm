@@ -79,7 +79,15 @@
                                                 <i class="arrow"></i>
                                             </label>
                                         </div>
-
+                                        <div class="col-md-4">
+                                            <label for="isRent" class="field-label">品牌</label>
+                                            <label class="field select">
+                                                <select id="brandId" name="brandId" class="required">
+                                                    <option value="">请选择</option>
+                                                </select>
+                                                <i class="arrow"></i>
+                                            </label>
+                                        </div>
                                     </div>
                                     <div class="section row">
                                         <div class="col-md-4">
@@ -191,7 +199,9 @@
 </div>
     #parse("layout/footer.vm")
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.material.detail.js');
+        management_load_script('${staticManagement}/js',
+                'manage.material.util.js',
+                'manage.material.detail.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

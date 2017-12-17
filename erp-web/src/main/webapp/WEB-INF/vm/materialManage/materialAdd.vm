@@ -80,6 +80,15 @@
                                                     <i class="arrow"></i>
                                                 </label>
                                             </div>
+                                            <div class="col-md-4">
+                                                <label for="isRent" class="field-label">品牌</label>
+                                                <label class="field select">
+                                                    <select id="brandId" name="brandId" class="required">
+                                                        <option value="">请选择</option>
+                                                    </select>
+                                                    <i class="arrow"></i>
+                                                </label>
+                                            </div>
                                         </div>
                                         <div class="section row">
                                             <div class="col-md-4">
@@ -145,7 +154,10 @@
 
     <script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.material.add.js','modal.choose.material.modal.js');
+        management_load_script('${staticManagement}/js',
+                'manage.material.util.js',
+                'manage.material.add.js',
+                'modal.choose.material.modal.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

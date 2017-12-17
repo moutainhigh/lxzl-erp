@@ -64,19 +64,19 @@
         </div>
     </div>
     <div class="form-horizontal panel-body bg-light dark">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group field">
-                    <label class="col-md-3 control-label">销售员</label>
-                    <div class="col-md-9">
-                        <div class="input-group bringContainer">
-                            <input id="orderSeller" name="orderSellerName" bringFiled="orderSellerName" class="form-control required" type="text" readonly placeholder="请选择销售员" />
-                            <span class="input-group-addon cursor" id="chooseSeller"><i class="fa fa-search"></i></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+##        <div class="row">
+##            <div class="col-md-6">
+##                <div class="form-group field">
+##                    <label class="col-md-3 control-label">销售员</label>
+##                    <div class="col-md-9">
+##                        <div class="input-group bringContainer">
+##                            <input id="orderSeller" name="orderSellerName" bringFiled="orderSellerName" class="form-control required" type="text" readonly placeholder="请选择销售员" />
+##                            <span class="input-group-addon cursor" id="chooseSeller"><i class="fa fa-search"></i></span>
+##                        </div>
+##                    </div>
+##                </div>
+##            </div>
+##        </div>
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group field">
