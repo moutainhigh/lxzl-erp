@@ -72,7 +72,7 @@ public class StatementServiceImpl implements StatementService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, BigDecimal> createNewStatementOrder(String orderNo) {
+    public ServiceResult<String, BigDecimal> createOrderStatement(String orderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (orderDO == null) {
@@ -301,6 +301,16 @@ public class StatementServiceImpl implements StatementService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
+    }
+
+    @Override
+    public ServiceResult<String, BigDecimal> createReturnOrderStatement(String returnOrderNo) {
+        return null;
+    }
+
+    @Override
+    public ServiceResult<String, BigDecimal> createChangeOrderStatement(String changeOrderNo) {
+        return null;
     }
 
     Integer calculateStatementMonthCount(Integer rentType, Integer rentTimeLength, Integer paymentCycle, int startDay, int statementDay) {

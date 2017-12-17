@@ -31,7 +31,7 @@ public interface StatementService extends BaseService {
      * @param orderNo 订单号
      * @return 发货前需要交多少钱
      */
-    ServiceResult<String, BigDecimal> createNewStatementOrder(String orderNo);
+    ServiceResult<String, BigDecimal> createOrderStatement(String orderNo);
 
     /**
      * 支付结算单
@@ -44,8 +44,26 @@ public interface StatementService extends BaseService {
 
     /**
      * 查询结算单
+     *
      * @param statementOrderQueryParam 查询结算单参数
      * @return 结算单结果
      */
     ServiceResult<String, Page<StatementOrder>> queryStatementOrder(StatementOrderQueryParam statementOrderQueryParam);
+
+
+    /**
+     * 创建退货单结算单
+     *
+     * @param returnOrderNo 退货单编号
+     * @return 退货金额
+     */
+    ServiceResult<String, BigDecimal> createReturnOrderStatement(String returnOrderNo);
+
+    /**
+     * 创建换货单结算单
+     *
+     * @param changeOrderNo 换货单编号
+     * @return 差价
+     */
+    ServiceResult<String, BigDecimal> createChangeOrderStatement(String changeOrderNo);
 }

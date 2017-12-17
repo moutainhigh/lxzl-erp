@@ -38,7 +38,7 @@ public class StatementController extends BaseController {
 
     @RequestMapping(value = "createNew", method = RequestMethod.POST)
     public Result createNewOrderStatement(@RequestBody StatementOrderQueryParam param, BindingResult validResult) {
-        ServiceResult<String, BigDecimal> serviceResult = statementService.createNewStatementOrder(param.getStatementOrderNo());
+        ServiceResult<String, BigDecimal> serviceResult = statementService.createOrderStatement(param.getStatementOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

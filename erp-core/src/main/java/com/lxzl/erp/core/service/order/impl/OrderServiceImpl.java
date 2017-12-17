@@ -189,7 +189,7 @@ public class OrderServiceImpl implements OrderService {
         } else {
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
             // 只有审批通过才生成结算单
-            ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createNewStatementOrder(orderNo);
+            ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createOrderStatement(orderNo);
             if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(createStatementOrderResult.getErrorCode());
@@ -607,7 +607,7 @@ public class OrderServiceImpl implements OrderService {
             if (verifyResult) {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
                 // 只有审批通过的订单才生成结算单
-                ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createNewStatementOrder(orderDO.getOrderNo());
+                ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createOrderStatement(orderDO.getOrderNo());
                 if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return false;
