@@ -878,7 +878,7 @@ public class OrderServiceImpl implements OrderService {
             }
             for (int i = 0; i < materialCount; i++) {
                 BulkMaterialDO bulkMaterialDO = bulkMaterialDOList.get(i);
-                if (!srcWarehouseId.equals(bulkMaterialDO.getCurrentWarehouseId())) {
+                if (!bulkMaterialDO.getCurrentWarehouseId().equals(srcWarehouseId)) {
                     result.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_IN_THIS_WAREHOUSE, equipmentNo, bulkMaterialDO.getCurrentWarehouseId());
                     return result;
                 }
