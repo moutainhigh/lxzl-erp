@@ -1,7 +1,7 @@
 <div class="popup-basic popup-xl admin-form mfp-with-anim theme-primary " id="chooseMaterialModal">
     <div class="panel">
         <div class="panel-heading">
-            <span class="panel-title"><i class="fa fa-search"></i>选择物料</span>
+            <span class="panel-title"><i class="fa fa-search"></i>选择客户可退物料</span>
         </div>
 ##        <div class="panel-menu p12">
 ##            <div class="row">
