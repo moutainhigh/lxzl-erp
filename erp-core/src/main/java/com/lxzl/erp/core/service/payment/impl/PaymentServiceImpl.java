@@ -13,7 +13,6 @@ import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.service.payment.PaymentService;
-import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.common.exception.BusinessException;
 import org.springframework.stereotype.Service;
 

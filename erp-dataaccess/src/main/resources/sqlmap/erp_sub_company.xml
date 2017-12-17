@@ -125,7 +125,7 @@
                 and esc.sub_company_name like '%${maps.subCompanyQueryParam.subCompanyName}%'
             </if>
         </where>
-        order by esc.create_time desc
+        order by esc.data_order desc
         limit #{maps.start},#{maps.pageSize}
     </select>
 

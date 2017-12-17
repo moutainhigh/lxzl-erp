@@ -501,21 +501,20 @@ CREATE TABLE `erp_product_category` (
 DROP TABLE if exists `erp_brand`;
 CREATE TABLE `erp_brand` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `category_id` int(20) NOT NULL COMMENT '所属类目ID',
-  `brand_name` varchar(20) NOT NULL DEFAULT '' COMMENT '品牌名称',
-  `brand_english_name` varchar(20) NOT NULL DEFAULT '' COMMENT '品牌英文名称',
-  `brand_desc` varchar(500) COLLATE utf8_bin COMMENT '品牌描述',
-  `brand_story` varchar(500) COLLATE utf8_bin COMMENT '品牌故事',
-  `logo_url` varchar(200) NOT NULL DEFAULT '' COMMENT 'logo地址',
-  `home_url` varchar(200) NOT NULL DEFAULT '' COMMENT '官网地址',
+  `brand_name` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '品牌名称',
+  `brand_english_name` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '品牌英文名称',
+  `brand_desc` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '品牌描述',
+  `brand_story` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '品牌故事',
+  `logo_url` varchar(200) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT 'logo地址',
+  `home_url` varchar(200) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '官网地址',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `create_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='品牌表';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='品牌表';
 
 DROP TABLE if exists `erp_product_category_property`;
 CREATE TABLE `erp_product_category_property` (
@@ -545,6 +544,9 @@ CREATE TABLE `erp_product_category_property_value` (
   `property_id` int(20) NOT NULL COMMENT '所属属性ID',
   `category_id` int(20) NOT NULL COMMENT '所属类目ID',
   `data_order` int(11) NOT NULL DEFAULT '0' COMMENT '属性排序，越大排越前',
+  `property_capacity_value` double(11,2) DEFAULT NULL COMMENT '属性容量值',
+  `material_model_id` int(20) DEFAULT NULL COMMENT '物料型号',
+  `refer_id` int(11) DEFAULT NULL,
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -999,8 +1001,8 @@ CREATE TABLE `erp_order_product` (
   `credit_deposit_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '授信押金金额',
   `insurance_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '保险金额',
   `product_sku_snapshot` text COMMENT '商品冗余信息，防止商品修改留存快照',
-  `deposit_cycle` int(11) COMMENT '押金期数',
-  `payment_cycle` int(11) COMMENT '付款期数',
+  `deposit_cycle` int(11) NOT NULL DEFAULT 0 COMMENT '押金期数',
+  `payment_cycle` int(11) NOT NULL DEFAULT 0 COMMENT '付款期数',
   `pay_mode` int(11) NOT NULL DEFAULT '0' COMMENT '支付方式：1先用后付，2先付后用',
   `is_new_product` int(11) NOT NULL DEFAULT '0' COMMENT '是否是全新机，1是0否',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -1049,8 +1051,8 @@ CREATE TABLE `erp_order_material` (
   `credit_deposit_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '授信押金金额',
   `insurance_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '保险金额',
   `material_snapshot` text COMMENT '物料冗余信息，防止商品修改留存快照',
-  `deposit_cycle` int(11) COMMENT '押金期数',
-  `payment_cycle` int(11) COMMENT '付款期数',
+  `deposit_cycle` int(11) NOT NULL DEFAULT 0 COMMENT '押金期数',
+  `payment_cycle` int(11) NOT NULL DEFAULT 0 COMMENT '付款期数',
   `pay_mode` int(11) NOT NULL DEFAULT '0' COMMENT '支付方式：1先用后付，2先付后用',
   `is_new_material` int(11) NOT NULL DEFAULT '0' COMMENT '是否是全新机，1是0否',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',

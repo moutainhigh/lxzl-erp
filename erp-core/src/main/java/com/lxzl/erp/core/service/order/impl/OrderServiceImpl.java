@@ -74,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
         // 校验客户风控信息
         verifyCustomerRiskInfo(orderDO);
 
-        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalMustDepositAmount()), orderDO.getTotalDiscountAmount()));
+        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setOrderNo(GenerateNoUtil.generateOrderNo(currentTime));
         orderDO.setOrderSellerId(loginUser.getUserId());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
@@ -126,7 +126,7 @@ public class OrderServiceImpl implements OrderService {
         // 校验客户风控信息
         verifyCustomerRiskInfo(orderDO);
 
-        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalMustDepositAmount()), orderDO.getTotalDiscountAmount()));
+        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setId(dbOrderDO.getId());
         orderDO.setOrderNo(dbOrderDO.getOrderNo());
         orderDO.setOrderSellerId(loginUser.getUserId());
@@ -214,6 +214,12 @@ public class OrderServiceImpl implements OrderService {
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (orderDO == null) {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        if (OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getPayStatus())
+                || OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getPayStatus())
+                || OrderStatus.ORDER_STATUS_CANCEL.equals(orderDO.getPayStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
         if (PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
@@ -1342,28 +1348,31 @@ public class OrderServiceImpl implements OrderService {
                 }
                 Product product = productServiceResult.getResult();
                 orderProductDO.setProductName(product.getProductName());
-                ProductSku thisProductSku = CollectionUtil.isNotEmpty(product.getProductSkuList()) ? product.getProductSkuList().get(0) : null;
-                if (thisProductSku == null) {
+                ProductSku productSku = CollectionUtil.isNotEmpty(product.getProductSkuList()) ? product.getProductSkuList().get(0) : null;
+                if (productSku == null) {
                     throw new BusinessException(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                 }
                 BigDecimal depositAmount = BigDecimal.ZERO;
                 BigDecimal creditDepositAmount = BigDecimal.ZERO;
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
-                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, BigDecimalUtil.mul(thisProductSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount())));
-                    depositAmount = BigDecimalUtil.mul(thisProductSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
+                    depositAmount = BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
+                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
+                } else if (product.getBrandId().equals(1) || CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
+                    depositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderProductDO.getDepositCycle()));
+                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else {
-                    totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, BigDecimalUtil.mul(thisProductSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount())));
-                    creditDepositAmount = BigDecimalUtil.mul(thisProductSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
+                    creditDepositAmount = BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
+                    totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                 }
                 orderProductDO.setDepositAmount(depositAmount);
                 orderProductDO.setCreditDepositAmount(creditDepositAmount);
-                orderProductDO.setProductSkuName(thisProductSku.getSkuName());
+                orderProductDO.setProductSkuName(productSku.getSkuName());
                 orderProductDO.setProductAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderProductDO.getRentTimeLength())));
                 orderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(product));
-                orderProductDO.setInsuranceAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getInsuranceAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderProductDO.getRentTimeLength())));
+                BigDecimal thisOrderProductInsuranceAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getInsuranceAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderProductDO.getRentTimeLength()));
                 productCount += orderProductDO.getProductCount();
                 productAmountTotal = BigDecimalUtil.add(productAmountTotal, orderProductDO.getProductAmount());
-                totalInsuranceAmount = BigDecimalUtil.add(totalInsuranceAmount, orderProductDO.getInsuranceAmount());
+                totalInsuranceAmount = BigDecimalUtil.add(totalInsuranceAmount, thisOrderProductInsuranceAmount);
             }
             orderDO.setTotalCreditDepositAmount(BigDecimalUtil.add(orderDO.getTotalCreditDepositAmount(), totalCreditDepositAmount));
             orderDO.setTotalInsuranceAmount(BigDecimalUtil.add(orderDO.getTotalInsuranceAmount(), totalInsuranceAmount));
@@ -1395,22 +1404,25 @@ public class OrderServiceImpl implements OrderService {
                 BigDecimal depositAmount = BigDecimal.ZERO;
                 BigDecimal creditDepositAmount = BigDecimal.ZERO;
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())) {
-                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, BigDecimalUtil.mul(material.getMaterialPrice(), new BigDecimal(orderMaterialDO.getMaterialCount())));
                     depositAmount = BigDecimalUtil.mul(material.getMaterialPrice(), new BigDecimal(orderMaterialDO.getMaterialCount()));
+                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
+                } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
+                    depositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(material.getMaterialPrice(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getDepositCycle()));
+                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else {
-                    totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, material.getMaterialPrice());
                     creditDepositAmount = BigDecimalUtil.mul(material.getMaterialPrice(), new BigDecimal(orderMaterialDO.getMaterialCount()));
+                    totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                 }
 
                 orderMaterialDO.setDepositAmount(depositAmount);
                 orderMaterialDO.setCreditDepositAmount(creditDepositAmount);
                 orderMaterialDO.setMaterialName(material.getMaterialName());
                 orderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getRentTimeLength())));
-                orderMaterialDO.setInsuranceAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getInsuranceAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getRentTimeLength())));
                 orderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(material));
+                BigDecimal thisOrderMaterialInsuranceAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getInsuranceAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getRentTimeLength()));
                 materialCount += orderMaterialDO.getMaterialCount();
                 materialAmountTotal = BigDecimalUtil.add(materialAmountTotal, orderMaterialDO.getMaterialAmount());
-                totalInsuranceAmount = BigDecimalUtil.add(totalInsuranceAmount, orderMaterialDO.getInsuranceAmount());
+                totalInsuranceAmount = BigDecimalUtil.add(totalInsuranceAmount, thisOrderMaterialInsuranceAmount);
             }
             orderDO.setTotalCreditDepositAmount(BigDecimalUtil.add(orderDO.getTotalCreditDepositAmount(), totalCreditDepositAmount));
             orderDO.setTotalInsuranceAmount(BigDecimalUtil.add(orderDO.getTotalInsuranceAmount(), totalInsuranceAmount));
