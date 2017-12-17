@@ -69,10 +69,12 @@ public class OrderServiceImpl implements OrderService {
         List<OrderProductDO> orderProductDOList = OrderConverter.convertOrderProductList(order.getOrderProductList());
         List<OrderMaterialDO> orderMaterialDOList = OrderConverter.convertOrderMaterialList(order.getOrderMaterialList());
         OrderDO orderDO = OrderConverter.convertOrder(order);
-        calculateOrderProductInfo(orderProductDOList, orderDO);
-        calculateOrderMaterialInfo(orderMaterialDOList, orderDO);
+        orderDO.setOrderProductDOList(orderProductDOList);
+        orderDO.setOrderMaterialDOList(orderMaterialDOList);
         // 校验客户风控信息
         verifyCustomerRiskInfo(orderDO);
+        calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
+        calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setOrderNo(GenerateNoUtil.generateOrderNo(currentTime));
@@ -84,8 +86,8 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setCreateTime(currentTime);
         orderDO.setUpdateTime(currentTime);
         orderMapper.save(orderDO);
-        saveOrderProductInfo(orderProductDOList, orderDO.getId(), loginUser, currentTime);
-        saveOrderMaterialInfo(orderMaterialDOList, orderDO.getId(), loginUser, currentTime);
+        saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
+        saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -121,10 +123,12 @@ public class OrderServiceImpl implements OrderService {
         List<OrderProductDO> orderProductDOList = OrderConverter.convertOrderProductList(order.getOrderProductList());
         List<OrderMaterialDO> orderMaterialDOList = OrderConverter.convertOrderMaterialList(order.getOrderMaterialList());
         OrderDO orderDO = OrderConverter.convertOrder(order);
-        calculateOrderProductInfo(orderProductDOList, orderDO);
-        calculateOrderMaterialInfo(orderMaterialDOList, orderDO);
+        orderDO.setOrderProductDOList(orderProductDOList);
+        orderDO.setOrderMaterialDOList(orderMaterialDOList);
         // 校验客户风控信息
         verifyCustomerRiskInfo(orderDO);
+        calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
+        calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setId(dbOrderDO.getId());
@@ -135,8 +139,8 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderDO.setUpdateTime(currentTime);
         orderMapper.update(orderDO);
-        saveOrderProductInfo(orderProductDOList, orderDO.getId(), loginUser, currentTime);
-        saveOrderMaterialInfo(orderMaterialDOList, orderDO.getId(), loginUser, currentTime);
+        saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
+        saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -1091,7 +1095,7 @@ public class OrderServiceImpl implements OrderService {
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
                 Product product = productServiceResult.getResult();
                 // TODO 商品品牌为苹果品牌
-                if (product.getBrandId().equals(1)) {
+                if (1 == product.getBrandId()) {
                     orderProductDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
                     orderProductDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
                     if (!orderProductDO.getPayMode().equals(customerRiskManagementDO.getApplePayMode())) {
@@ -1357,7 +1361,7 @@ public class OrderServiceImpl implements OrderService {
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
                     depositAmount = BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
-                } else if (product.getBrandId().equals(1) || CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
+                } else if ((1 == product.getBrandId()) || CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
                     depositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderProductDO.getDepositCycle()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else {
