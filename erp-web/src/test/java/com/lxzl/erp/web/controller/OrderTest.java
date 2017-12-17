@@ -100,6 +100,13 @@ public class OrderTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/order/create", order);
 
     }
+    @Test
+    public void testUpdateOrderJSON() throws Exception {
+        String str = "{\"orderNo\":\"O201712171440529091845\",\"buyerCustomerNo\":\"CC201712091546467081096\",\"rentStartTime\":1513555200000,\"logisticsAmount\":\"1\",\"orderSellerId\":500001,\"orderSubCompanyId\":5,\"buyerRemark\":\"包装好好打着，别弄坏了\",\"customerConsignId\":\"40\",\"orderProductList\":[{\"productId\":\"2000013\",\"productSkuId\":\"40\",\"productUnitAmount\":\"150\",\"productCount\":\"2\",\"rentType\":\"2\",\"rentTimeLength\":\"12\",\"insuranceAmount\":\"1\",\"payMode\":\"2\"}]}";
+        Order order = JSONUtil.convertJSONToBean(str, Order.class);
+
+        TestResult testResult = getJsonTestResult("/order/update", order);
+    }
 
     @Test
     public void testUpdateOrder() throws Exception {
@@ -144,7 +151,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712161335564681382");
+        order.setOrderNo("O201712171440529091845");
         order.setVerifyUser(500006);//采购审核人员
         TestResult testResult = getJsonTestResult("/order/commit", order);
     }

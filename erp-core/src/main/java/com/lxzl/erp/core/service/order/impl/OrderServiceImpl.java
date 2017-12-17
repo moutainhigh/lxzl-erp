@@ -15,7 +15,6 @@ import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderConverter;
-import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -69,10 +68,12 @@ public class OrderServiceImpl implements OrderService {
         List<OrderProductDO> orderProductDOList = OrderConverter.convertOrderProductList(order.getOrderProductList());
         List<OrderMaterialDO> orderMaterialDOList = OrderConverter.convertOrderMaterialList(order.getOrderMaterialList());
         OrderDO orderDO = OrderConverter.convertOrder(order);
-        calculateOrderProductInfo(orderProductDOList, orderDO);
-        calculateOrderMaterialInfo(orderMaterialDOList, orderDO);
+        orderDO.setOrderProductDOList(orderProductDOList);
+        orderDO.setOrderMaterialDOList(orderMaterialDOList);
         // 校验客户风控信息
         verifyCustomerRiskInfo(orderDO);
+        calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
+        calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setOrderNo(GenerateNoUtil.generateOrderNo(currentTime));
@@ -84,8 +85,8 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setCreateTime(currentTime);
         orderDO.setUpdateTime(currentTime);
         orderMapper.save(orderDO);
-        saveOrderProductInfo(orderProductDOList, orderDO.getId(), loginUser, currentTime);
-        saveOrderMaterialInfo(orderMaterialDOList, orderDO.getId(), loginUser, currentTime);
+        saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
+        saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -121,10 +122,12 @@ public class OrderServiceImpl implements OrderService {
         List<OrderProductDO> orderProductDOList = OrderConverter.convertOrderProductList(order.getOrderProductList());
         List<OrderMaterialDO> orderMaterialDOList = OrderConverter.convertOrderMaterialList(order.getOrderMaterialList());
         OrderDO orderDO = OrderConverter.convertOrder(order);
-        calculateOrderProductInfo(orderProductDOList, orderDO);
-        calculateOrderMaterialInfo(orderMaterialDOList, orderDO);
+        orderDO.setOrderProductDOList(orderProductDOList);
+        orderDO.setOrderMaterialDOList(orderMaterialDOList);
         // 校验客户风控信息
         verifyCustomerRiskInfo(orderDO);
+        calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
+        calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setId(dbOrderDO.getId());
@@ -135,8 +138,8 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderDO.setUpdateTime(currentTime);
         orderMapper.update(orderDO);
-        saveOrderProductInfo(orderProductDOList, orderDO.getId(), loginUser, currentTime);
-        saveOrderMaterialInfo(orderMaterialDOList, orderDO.getId(), loginUser, currentTime);
+        saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
+        saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -186,7 +189,7 @@ public class OrderServiceImpl implements OrderService {
         } else {
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
             // 只有审批通过才生成结算单
-            ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createNewStatementOrder(orderNo);
+            ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createOrderStatement(orderNo);
             if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(createStatementOrderResult.getErrorCode());
@@ -225,13 +228,6 @@ public class OrderServiceImpl implements OrderService {
         if (PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;
-        }
-        if (BigDecimalUtil.compare(orderDO.getFirstNeedPayAmount(), BigDecimal.ZERO) > 0) {
-            ServiceResult<String, Boolean> payResult = paymentService.balancePay(orderDO.getBuyerCustomerNo(), orderDO.getOrderNo(), null, null, orderDO.getFirstNeedPayAmount());
-            if (!ErrorCode.SUCCESS.equals(payResult.getErrorCode()) || !payResult.getResult()) {
-                result.setErrorCode(payResult.getErrorCode());
-                return result;
-            }
         }
 
         orderDO.setPayStatus(PayStatus.PAY_STATUS_PAID);
@@ -611,7 +607,7 @@ public class OrderServiceImpl implements OrderService {
             if (verifyResult) {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
                 // 只有审批通过的订单才生成结算单
-                ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createNewStatementOrder(orderDO.getOrderNo());
+                ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createOrderStatement(orderDO.getOrderNo());
                 if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return false;
@@ -1091,7 +1087,7 @@ public class OrderServiceImpl implements OrderService {
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
                 Product product = productServiceResult.getResult();
                 // TODO 商品品牌为苹果品牌
-                if (product.getBrandId().equals(1)) {
+                if (1 == product.getBrandId()) {
                     orderProductDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
                     orderProductDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
                     if (!orderProductDO.getPayMode().equals(customerRiskManagementDO.getApplePayMode())) {
@@ -1357,7 +1353,7 @@ public class OrderServiceImpl implements OrderService {
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
                     depositAmount = BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
-                } else if (product.getBrandId().equals(1) || CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
+                } else if ((1 == product.getBrandId()) || CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
                     depositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderProductDO.getDepositCycle()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else {
@@ -1613,7 +1609,4 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private WarehouseSupport warehouseSupport;
-
-    @Autowired
-    private PaymentService paymentService;
 }

@@ -1,18 +1,21 @@
 package com.lxzl.erp.core.service.statement.impl;
 
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.DateUtil;
-import com.lxzl.erp.common.util.GenerateNoUtil;
+import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
@@ -20,6 +23,7 @@ import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import com.lxzl.se.common.exception.BusinessException;
+import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +72,7 @@ public class StatementServiceImpl implements StatementService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, BigDecimal> createNewStatementOrder(String orderNo) {
+    public ServiceResult<String, BigDecimal> createOrderStatement(String orderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (orderDO == null) {
@@ -184,6 +188,8 @@ public class StatementServiceImpl implements StatementService {
                 statementOrderDO.setCustomerId(orderDO.getBuyerCustomerId());
                 statementOrderDO.setStatementExpectPayTime(dateKey);
                 statementOrderDO.setStatementAmount(statementOrderDetailDO.getStatementDetailAmount());
+                statementOrderDO.setStatementStartTime(statementOrderDetailDO.getStatementStartTime());
+                statementOrderDO.setStatementEndTime(statementOrderDetailDO.getStatementEndTime());
                 statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 statementOrderDO.setCreateUser(loginUser.getUserId().toString());
                 statementOrderDO.setUpdateUser(loginUser.getUserId().toString());
@@ -195,6 +201,12 @@ public class StatementServiceImpl implements StatementService {
                 statementOrderDO.setStatementAmount(BigDecimalUtil.add(statementOrderDO.getStatementAmount(), statementOrderDetailDO.getStatementDetailAmount()));
                 if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())) {
                     statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
+                }
+                if(statementOrderDetailDO.getStatementStartTime().getTime() < statementOrderDO.getStatementStartTime().getTime()){
+                    statementOrderDO.setStatementStartTime(statementOrderDetailDO.getStatementStartTime());
+                }
+                if(statementOrderDetailDO.getStatementEndTime().getTime() > statementOrderDO.getStatementEndTime().getTime()){
+                    statementOrderDO.setStatementEndTime(statementOrderDetailDO.getStatementEndTime());
                 }
                 statementOrderMapper.update(statementOrderDO);
             }
@@ -216,6 +228,89 @@ public class StatementServiceImpl implements StatementService {
         result.setResult(thisNeedPayAmount);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, Boolean> payStatementOrder(String statementOrderNo) {
+        ServiceResult<String, Boolean> result = new ServiceResult<>();
+        StatementOrderDO statementOrderDO = statementOrderMapper.findByNo(statementOrderNo);
+        if (statementOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())) {
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_ERROR);
+            return result;
+        }
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+        CustomerDO customerDO = customerMapper.findById(statementOrderDO.getCustomerId());
+        BigDecimal payAmount = BigDecimalUtil.add(BigDecimalUtil.sub(statementOrderDO.getStatementAmount(), statementOrderDO.getStatementPaidAmount()), statementOrderDO.getStatementOverdueAmount());
+        ServiceResult<String, Boolean> paymentResult = paymentService.balancePay(customerDO.getCustomerNo(), statementOrderDO.getStatementOrderNo(), statementOrderDO.getRemark(), null, payAmount);
+        if (!ErrorCode.SUCCESS.equals(paymentResult.getErrorCode()) || !paymentResult.getResult()) {
+            result.setErrorCode(paymentResult.getErrorCode());
+            return result;
+        }
+
+        statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
+        statementOrderDO.setStatementPaidAmount(BigDecimalUtil.add(statementOrderDO.getStatementPaidAmount(), payAmount));
+        statementOrderDO.setStatementPaidTime(currentTime);
+        statementOrderDO.setUpdateTime(currentTime);
+        statementOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        statementOrderMapper.update(statementOrderDO);
+        Set<Integer> orderIdSet = new HashSet<>();
+        for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDO.getStatementOrderDetailDOList()) {
+            if (!StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
+                statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
+                statementOrderDetailDO.setStatementDetailPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailPaidAmount(), payAmount));
+                statementOrderDetailDO.setStatementDetailPaidTime(currentTime);
+                statementOrderDetailDO.setUpdateTime(currentTime);
+                statementOrderDetailDO.setUpdateUser(loginUser.getUserId().toString());
+                statementOrderDetailMapper.update(statementOrderDetailDO);
+                orderIdSet.add(statementOrderDetailDO.getOrderId());
+            }
+        }
+
+        for (Integer orderId : orderIdSet) {
+            OrderDO orderDO = orderMapper.findByOrderId(orderId);
+            if (!PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
+                orderDO.setOrderStatus(PayStatus.PAY_STATUS_PAID);
+                orderDO.setPayTime(currentTime);
+                orderMapper.update(orderDO);
+            }
+        }
+
+        result.setResult(true);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Page<StatementOrder>> queryStatementOrder(StatementOrderQueryParam statementOrderQueryParam) {
+        ServiceResult<String, Page<StatementOrder>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("statementOrderQueryParam", statementOrderQueryParam);
+        Integer totalCount = statementOrderMapper.listCount(maps);
+        List<StatementOrderDO> statementOrderDOList = statementOrderMapper.listPage(maps);
+        List<StatementOrder> statementOrderList = ConverterUtil.convertList(statementOrderDOList, StatementOrder.class);
+        Page<StatementOrder> page = new Page<>(statementOrderList, totalCount, statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, BigDecimal> createReturnOrderStatement(String returnOrderNo) {
+        return null;
+    }
+
+    @Override
+    public ServiceResult<String, BigDecimal> createChangeOrderStatement(String changeOrderNo) {
+        return null;
     }
 
     Integer calculateStatementMonthCount(Integer rentType, Integer rentTimeLength, Integer paymentCycle, int startDay, int statementDay) {
@@ -321,7 +416,7 @@ public class StatementServiceImpl implements StatementService {
         // 剩余的天数
         int surplusDays = DateUtil.daysBetween(lastPhaseStartTime, orderLastDate);
         // 最后一期的结束时间
-        Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(lastPhaseStartTime, surplusDays);
+        Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(lastPhaseStartTime, surplusDays - 1);
         Date statementExpectPayTime;
         if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
             statementExpectPayTime = lastPhaseStartTime;
@@ -393,4 +488,10 @@ public class StatementServiceImpl implements StatementService {
 
     @Autowired
     private DataDictionaryMapper dataDictionaryMapper;
+
+    @Autowired
+    private PaymentService paymentService;
+
+    @Autowired
+    private CustomerMapper customerMapper;
 }
