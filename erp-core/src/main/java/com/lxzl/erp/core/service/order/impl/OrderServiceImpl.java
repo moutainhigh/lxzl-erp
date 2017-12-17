@@ -15,7 +15,6 @@ import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderConverter;
-import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -229,13 +228,6 @@ public class OrderServiceImpl implements OrderService {
         if (PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;
-        }
-        if (BigDecimalUtil.compare(orderDO.getFirstNeedPayAmount(), BigDecimal.ZERO) > 0) {
-            ServiceResult<String, Boolean> payResult = paymentService.balancePay(orderDO.getBuyerCustomerNo(), orderDO.getOrderNo(), null, null, orderDO.getFirstNeedPayAmount());
-            if (!ErrorCode.SUCCESS.equals(payResult.getErrorCode()) || !payResult.getResult()) {
-                result.setErrorCode(payResult.getErrorCode());
-                return result;
-            }
         }
 
         orderDO.setPayStatus(PayStatus.PAY_STATUS_PAID);
@@ -1617,7 +1609,4 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private WarehouseSupport warehouseSupport;
-
-    @Autowired
-    private PaymentService paymentService;
 }

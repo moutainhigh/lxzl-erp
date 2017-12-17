@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import org.junit.Test;
 /**
@@ -13,9 +14,22 @@ import org.junit.Test;
 public class StatementOrderControllerTest  extends ERPUnTransactionalTest {
 
     @Test
-    public void testCommitDeploymentOrder() throws Exception {
+    public void createNew() throws Exception {
         StatementOrderQueryParam param = new StatementOrderQueryParam();
-        param.setOrderNo("O201712111915479441688");
+        param.setStatementOrderNo("O201712171555360681841");
         TestResult testResult = getJsonTestResult("/statementOrder/createNew", param);
+    }
+
+    @Test
+    public void pay() throws Exception {
+        StatementOrderPayParam param = new StatementOrderPayParam();
+        param.setStatementOrderNo("SN201712171607467471835");
+        TestResult testResult = getJsonTestResult("/statementOrder/pay", param);
+    }
+
+    @Test
+    public void page() throws Exception {
+        StatementOrderPayParam param = new StatementOrderPayParam();
+        TestResult testResult = getJsonTestResult("/statementOrder/page", param);
     }
 }

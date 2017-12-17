@@ -13,6 +13,7 @@
 		<result column="statement_expect_pay_time" jdbcType="TIMESTAMP" property="statementExpectPayTime" />
 		<result column="statement_detail_amount" jdbcType="DECIMAL" property="statementDetailAmount" />
 		<result column="statement_detail_paid_amount" jdbcType="DECIMAL" property="statementDetailPaidAmount" />
+		<result column="statement_detail_paid_time" jdbcType="TIMESTAMP" property="statementDetailPaidTime" />
 		<result column="statement_detail_overdue_amount" jdbcType="DECIMAL" property="statementDetailOverdueAmount" />
 		<result column="statement_detail_status" jdbcType="INTEGER" property="statementDetailStatus" />
 		<result column="statement_start_time" jdbcType="TIMESTAMP" property="statementStartTime" />
@@ -26,7 +27,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		esod.id,esod.statement_order_id,esod.customer_id,esod.order_type,esod.order_id,esod.order_item_type,esod.order_item_refer_id, esod.statement_expect_pay_time,esod.statement_detail_amount,esod.statement_detail_status,esod.statement_start_time,esod.statement_end_time,esod.data_status,esod.remark,esod.create_time,esod.create_user,esod.update_time,esod.update_user
+		esod.id,esod.statement_order_id,esod.customer_id,esod.order_type,esod.order_id,esod.order_item_type,esod.order_item_refer_id, esod.statement_expect_pay_time,esod.statement_detail_amount,esod.statement_detail_paid_amount,esod.statement_detail_paid_time,esod.statement_detail_status,esod.statement_start_time,esod.statement_end_time,esod.data_status,esod.remark,esod.create_time,esod.create_user,esod.update_time,esod.update_user
 	</sql>
 
 	<select id="findById" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
@@ -97,6 +98,9 @@
 			<if test="statementDetailPaidAmount != null">
 				statement_detail_paid_amount = #{statementDetailPaidAmount,jdbcType=DECIMAL},
 			</if>
+			<if test="statementDetailPaidTime != null">
+				statement_detail_paid_time = #{statementDetailPaidTime,jdbcType=TIMESTAMP},
+			</if>
 			<if test="statementDetailOverdueAmount != null">
 				statement_detail_overdue_amount = #{statementDetailOverdueAmount,jdbcType=DECIMAL},
 			</if>
@@ -139,10 +143,10 @@
 	</update>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		INSERT INTO erp_statement_order_detail (statement_order_id,customer_id,order_type,order_id,order_item_type,order_item_refer_id,statement_expect_pay_time,statement_detail_amount,statement_detail_paid_amount,statement_detail_overdue_amount,statement_detail_status,statement_start_time,statement_end_time,data_status,remark,create_time,create_user,update_time,update_user)
+		INSERT INTO erp_statement_order_detail (statement_order_id,customer_id,order_type,order_id,order_item_type,order_item_refer_id,statement_expect_pay_time,statement_detail_amount,statement_detail_paid_amount,statement_detail_paid_time,statement_detail_overdue_amount,statement_detail_status,statement_start_time,statement_end_time,data_status,remark,create_time,create_user,update_time,update_user)
 		VALUES
 		<foreach item="statementOrderDetailDO" index="index" collection="statementOrderDetailDOList" separator=",">
-			(#{statementOrderDetailDO.statementOrderId},#{statementOrderDetailDO.customerId},#{statementOrderDetailDO.orderType},#{statementOrderDetailDO.orderId},#{statementOrderDetailDO.orderItemType},#{statementOrderDetailDO.orderItemReferId},#{statementOrderDetailDO.statementExpectPayTime},#{statementOrderDetailDO.statementDetailAmount},#{statementOrderDetailDO.statementDetailPaidAmount},#{statementOrderDetailDO.statementDetailOverdueAmount},#{statementOrderDetailDO.statementDetailStatus},#{statementOrderDetailDO.statementStartTime},#{statementOrderDetailDO.statementEndTime},#{statementOrderDetailDO.dataStatus},#{statementOrderDetailDO.remark},#{statementOrderDetailDO.createTime},#{statementOrderDetailDO.createUser},#{statementOrderDetailDO.updateTime},#{statementOrderDetailDO.updateUser})
+			(#{statementOrderDetailDO.statementOrderId},#{statementOrderDetailDO.customerId},#{statementOrderDetailDO.orderType},#{statementOrderDetailDO.orderId},#{statementOrderDetailDO.orderItemType},#{statementOrderDetailDO.orderItemReferId},#{statementOrderDetailDO.statementExpectPayTime},#{statementOrderDetailDO.statementDetailAmount},#{statementOrderDetailDO.statementDetailPaidAmount},#{statementOrderDetailDO.statementDetailPaidTime},#{statementOrderDetailDO.statementDetailOverdueAmount},#{statementOrderDetailDO.statementDetailStatus},#{statementOrderDetailDO.statementStartTime},#{statementOrderDetailDO.statementEndTime},#{statementOrderDetailDO.dataStatus},#{statementOrderDetailDO.remark},#{statementOrderDetailDO.createTime},#{statementOrderDetailDO.createUser},#{statementOrderDetailDO.updateTime},#{statementOrderDetailDO.updateUser})
 		</foreach>
 	</insert>
 </mapper>

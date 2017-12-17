@@ -18,10 +18,11 @@ public class StatementOrderDetail implements Serializable {
 	private Date statementExpectPayTime;	// 结算单预计支付时间
 	private BigDecimal statementDetailAmount;   //结算单金额
 	private BigDecimal statementDetailPaidAmount;	// 已经支付金额
+	private Date statementDetailPaidTime;			// 结算单支付时间
 	private BigDecimal statementDetailOverdueAmount;	// 逾期金额
 	private Integer statementDetailStatus;   //结算状态，0未结算，1已结算
-	private Date statementStartTime;   //对账开始时间
-	private Date statementEndTime;   //对账结束时间
+	private Date statementStartTime;   //结算开始时间
+	private Date statementEndTime;   //结算结束时间
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -188,5 +189,13 @@ public class StatementOrderDetail implements Serializable {
 
 	public void setOrderType(Integer orderType) {
 		this.orderType = orderType;
+	}
+
+	public Date getStatementDetailPaidTime() {
+		return statementDetailPaidTime;
+	}
+
+	public void setStatementDetailPaidTime(Date statementDetailPaidTime) {
+		this.statementDetailPaidTime = statementDetailPaidTime;
 	}
 }

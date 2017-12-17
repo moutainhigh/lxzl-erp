@@ -1,7 +1,10 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.statement.StatementService;
@@ -35,7 +38,19 @@ public class StatementController extends BaseController {
 
     @RequestMapping(value = "createNew", method = RequestMethod.POST)
     public Result createNewOrderStatement(@RequestBody StatementOrderQueryParam param, BindingResult validResult) {
-        ServiceResult<String, BigDecimal> serviceResult = statementService.createNewStatementOrder(param.getOrderNo());
+        ServiceResult<String, BigDecimal> serviceResult = statementService.createNewStatementOrder(param.getStatementOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "pay", method = RequestMethod.POST)
+    public Result pay(@RequestBody StatementOrderPayParam param, BindingResult validResult) {
+        ServiceResult<String, Boolean> serviceResult = statementService.payStatementOrder(param.getStatementOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "page", method = RequestMethod.POST)
+    public Result page(@RequestBody StatementOrderQueryParam statementOrderQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<StatementOrder>> serviceResult = statementService.queryStatementOrder(statementOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }
