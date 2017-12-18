@@ -36,6 +36,8 @@ public class ReturnOrderDO  extends BaseDO {
 	private List<ReturnOrderMaterialDO> returnOrderMaterialDOList;
 	@Transient
 	private String ownerName;
+	@Transient
+	private String customerName;
 
 	public Integer getId(){
 		return id;
@@ -212,5 +214,13 @@ public class ReturnOrderDO  extends BaseDO {
 
 	public void setOwnerName(String ownerName) {
 		this.ownerName = ownerName;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
 	}
 }

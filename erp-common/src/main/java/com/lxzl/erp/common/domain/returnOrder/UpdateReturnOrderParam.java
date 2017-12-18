@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.ReturnOrChangeMode;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderConsignInfo;
+import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderMaterial;
+import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProduct;
 import com.lxzl.erp.common.util.validate.constraints.In;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -17,9 +19,9 @@ public class UpdateReturnOrderParam {
     @NotBlank(message = ErrorCode.RETURN_ORDER_NO_NOT_NULL)
     private String returnOrderNo;
     @Valid
-    private List<ReturnSkuParam> productSkuList;
+    private List<ReturnOrderProduct> returnOrderProductList;
     @Valid
-    private List<ReturnMaterialParam> materialList;
+    private List<ReturnOrderMaterial> returnOrderMaterialList;
     @Valid
     @NotNull(message = ErrorCode.ORDER_CUSTOMER_CONSIGN_NOT_NULL)
     private ReturnOrderConsignInfo returnOrderConsignInfo;
@@ -39,20 +41,20 @@ public class UpdateReturnOrderParam {
         this.returnOrderNo = returnOrderNo;
     }
 
-    public List<ReturnSkuParam> getProductSkuList() {
-        return productSkuList;
+    public List<ReturnOrderProduct> getReturnOrderProductList() {
+        return returnOrderProductList;
     }
 
-    public void setProductSkuList(List<ReturnSkuParam> productSkuList) {
-        this.productSkuList = productSkuList;
+    public void setReturnOrderProductList(List<ReturnOrderProduct> returnOrderProductList) {
+        this.returnOrderProductList = returnOrderProductList;
     }
 
-    public List<ReturnMaterialParam> getMaterialList() {
-        return materialList;
+    public List<ReturnOrderMaterial> getReturnOrderMaterialList() {
+        return returnOrderMaterialList;
     }
 
-    public void setMaterialList(List<ReturnMaterialParam> materialList) {
-        this.materialList = materialList;
+    public void setReturnOrderMaterialList(List<ReturnOrderMaterial> returnOrderMaterialList) {
+        this.returnOrderMaterialList = returnOrderMaterialList;
     }
 
     public ReturnOrderConsignInfo getReturnOrderConsignInfo() {

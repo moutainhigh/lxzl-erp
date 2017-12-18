@@ -1,9 +1,11 @@
 package com.lxzl.erp.common.domain.returnOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.util.validate.constraints.In;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Min;
@@ -32,6 +34,8 @@ public class ReturnOrder implements Serializable {
 	private BigDecimal serviceCost;   //服务费
 	@NotNull(message = ErrorCode.RETURN_ORDER_DAMAGE_COST_NOT_NULL , groups = {ExtendGroup.class})
 	private BigDecimal damageCost;   //损坏加收费用
+	@NotNull(message = ErrorCode.IS_DAMAGE_NOT_NULL, groups = {ExtendGroup.class})
+	@In(value={CommonConstant.NO,CommonConstant.YES} ,message = ErrorCode.IS_DAMAGE_ERROR, groups = {ExtendGroup.class})
 	private Integer isDamage;   //是否有损坏，0-否，1-是
 	private Integer returnMode;   //退还方式，1-上门取件，2邮寄
 	private Integer returnOrderStatus;   //归还订单状态，1-待取货，5-处理中，9-已完成
@@ -47,6 +51,7 @@ public class ReturnOrder implements Serializable {
 	private List<ReturnOrderProduct> returnOrderProductList;
 	private List<ReturnOrderMaterial> returnOrderMaterialList;
 	private String ownerName;
+	private String customerName;
 
 	public Integer getReturnOrderId(){
 		return returnOrderId;
@@ -254,5 +259,13 @@ public class ReturnOrder implements Serializable {
 
 	public void setOwnerName(String ownerName) {
 		this.ownerName = ownerName;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
 	}
 }

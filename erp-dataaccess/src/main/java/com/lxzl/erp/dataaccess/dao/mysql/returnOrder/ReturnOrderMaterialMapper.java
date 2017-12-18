@@ -19,4 +19,6 @@ public interface ReturnOrderMaterialMapper extends BaseMysqlDAO<ReturnOrderMater
 	void updateListForReturn(@Param("returnOrderMaterialDOList")List<ReturnOrderMaterialDO> returnOrderMaterialDOList);
 
 	ReturnOrderMaterialDO findByMaterialIdAndReturnOrderId(@Param("materialId") Integer materialId,@Param("returnOrderId") Integer returnOrderId);
+
+	List<ReturnOrderMaterialDO> findByReturnOrderId(@Param("returnOrderId") Integer returnOrderId);
 }

@@ -19,5 +19,5 @@ public interface ReturnOrderService {
     ServiceResult<String, String> cancel(ReturnOrder returnOrder);
     ServiceResult<String,Page<ReturnOrderProductEquipment>> pageReturnEquipment(ReturnEquipmentPageParam returnEquipmentPageParam);
     ServiceResult<String,Page<ReturnOrderMaterialBulk>> pageReturnBulk(ReturnBulkPageParam returnBulkPageParam);
-    ServiceResult<String,String> update(AddReturnOrderParam addReturnOrderParam);
+    ServiceResult<String,String> update(UpdateReturnOrderParam updateReturnOrderParam);
 }

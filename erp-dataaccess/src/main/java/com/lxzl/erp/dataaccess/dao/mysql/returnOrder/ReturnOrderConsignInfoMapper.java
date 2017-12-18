@@ -10,4 +10,6 @@ public interface ReturnOrderConsignInfoMapper extends BaseMysqlDAO<ReturnOrderCo
 	List<ReturnOrderConsignInfoDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+	ReturnOrderConsignInfoDO findByReturnOrderId(@Param("returnOrderId") Integer returnOrderId);
 }

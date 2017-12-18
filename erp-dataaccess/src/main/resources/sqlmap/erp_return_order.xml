@@ -27,6 +27,8 @@
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 
 		<result column="ownerName" jdbcType="VARCHAR" property="ownerName" />
+		<result column="customerName" jdbcType="VARCHAR" property="customerName" />
+
 		<association resultMap="ReturnOrderConsignInfoDO" property="returnOrderConsignInfoDO"/>
 		<collection resultMap="ReturnOrderProductDO" property="returnOrderProductDOList" />
 		<collection resultMap="ReturnOrderMaterialDO" property="returnOrderMaterialDOList" />
@@ -50,6 +52,10 @@
 		<result column="eroci_create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="eroci_update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="eroci_update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="eroci_cityName" jdbcType="VARCHAR" property="cityName" />
+		<result column="eroci_districtName" jdbcType="VARCHAR" property="districtName" />
+		<result column="eroci_provinceName" jdbcType="VARCHAR" property="provinceName" />
 	</resultMap>
 	<sql id="consign_info_column_List">
 		eroci.id AS eroci_id,eroci.return_order_id AS eroci_return_order_id,eroci.return_order_no AS eroci_return_order_no,eroci.consignee_name AS eroci_consignee_name,eroci.consignee_phone AS eroci_consignee_phone,eroci.province AS eroci_province,eroci.city AS eroci_city,eroci.district AS eroci_district,eroci.address AS eroci_address,eroci.data_status AS eroci_data_status,eroci.remark AS eroci_remark,eroci.create_time AS eroci_create_time,eroci.create_user AS eroci_create_user,eroci.update_time AS eroci_update_time,eroci.update_user AS eroci_update_user
@@ -92,21 +98,27 @@
 	</sql>
 
 	<select id="findById" resultMap="ReturnOrderDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_return_order ero 
-		WHERE ero.id = #{id, jdbcType=INTEGER} AND ero.data_status = 1 
+		SELECT <include refid="column_List"/> FROM erp_return_order ero
+		WHERE ero.id = #{id, jdbcType=INTEGER} AND ero.data_status = 1
 	</select>
 	<select id="findByNo" resultMap="ReturnOrderDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/>,<include refid="consign_info_column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>,eu.real_name AS ownerName
+		,eac.city_name AS eroci_cityName, ead.district_name AS eroci_districtName, eap.province_name AS eroci_provinceName,ec.customer_name AS customerName
 		FROM erp_return_order ero
 		LEFT JOIN erp_return_order_consign_info eroci ON eroci.return_order_id = ero.id AND eroci.data_status=1
 		LEFT JOIN erp_return_order_product erop ON erop.return_order_id = ero.id AND erop.data_status=1
 		LEFT JOIN erp_return_order_material erom ON erom.return_order_id = ero.id AND erom.data_status=1
+		LEFT JOIN erp_customer ec ON ec.id = ero.customer_id AND ec.data_status=1
+
+		LEFT JOIN erp_area_city eac ON eac.id = eroci.city AND eac.data_status=1
+		LEFT JOIN erp_area_district ead ON ead.id = eroci.district AND ead.data_status=1
+		LEFT JOIN erp_area_province eap ON eap.id = eroci.province AND ead.data_status=1
 		LEFT JOIN erp_user eu ON eu.id = ero.owner
 		WHERE ero.return_order_no = #{returnOrderNo, jdbcType=VARCHAR} AND ero.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(ero.id) FROM erp_return_order ero 
+		SELECT count(ero.id) FROM erp_return_order ero
 		<where>
 			<if test="true">
 				AND ero.data_status = 1
@@ -115,7 +127,7 @@
 	</select>
 
 	<select id="listPage" resultMap="ReturnOrderDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_return_order ero 
+		SELECT <include refid="column_List"/> FROM erp_return_order ero
 		<where>
 			<if test="true">
 				AND ero.data_status = 1
@@ -236,7 +248,7 @@
 	</select>
 	<select id="findReturnOrderByParams" resultMap="ReturnOrderDO" parameterType="map">
 		select <include refid="column_List"/>,<include refid="consign_info_column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>,eu.real_name AS ownerName
-		from (
+		,ec.customer_name AS customerName from (
 		SELECT <include refid="column_List"/>
 		FROM erp_return_order ero
 		left join erp_user eu on ero.owner = eu.id
@@ -269,6 +281,8 @@
 		LEFT JOIN erp_return_order_consign_info eroci ON eroci.return_order_id = ero.id AND eroci.data_status=1
 		LEFT JOIN erp_return_order_product erop ON erop.return_order_id = ero.id AND erop.data_status=1
 		LEFT JOIN erp_return_order_material erom ON erom.return_order_id = ero.id AND erom.data_status=1
+		LEFT JOIN erp_customer ec ON ec.id = ero.customer_id AND ec.data_status=1
+
 		LEFT JOIN erp_user eu ON eu.id = ero.owner
 		order by ero.create_time desc
 	</select>

@@ -44,8 +44,8 @@ public class ReturnOrderController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
     @RequestMapping(value = "update", method = RequestMethod.POST)
-    public Result update(@RequestBody @Validated(UpdateReturnOrderGroup.class) AddReturnOrderParam addReturnOrderParam, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = returnOrderService.update(addReturnOrderParam);
+    public Result update(@RequestBody @Validated UpdateReturnOrderParam updateReturnOrderParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = returnOrderService.update(updateReturnOrderParam);
         return resultGenerator.generate(serviceResult);
     }
     @RequestMapping(value = "doReturnEquipment", method = RequestMethod.POST)
