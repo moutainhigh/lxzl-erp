@@ -228,7 +228,7 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
         }
 
         //首先判断状态
-        if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE.equals(installbulkMaterialDO.getBulkMaterialStatus()) ||
+        if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE.equals(installbulkMaterialDO.getBulkMaterialStatus()) &&
                 !(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY.equals(installbulkMaterialDO.getBulkMaterialStatus()) && StringUtil.isEmpty(installbulkMaterialDO.getOrderNo()))) {
             serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NOT_IDLE, installbulkMaterialDO.getBulkMaterialNo());
             return serviceResult;
