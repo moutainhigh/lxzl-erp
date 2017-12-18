@@ -10,7 +10,9 @@ import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderMaterialBulk;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProductEquipment;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.changeOrder.UpdateChangeOrderGroup;
 import com.lxzl.erp.common.domain.validGroup.returnOrder.AddReturnOrderGroup;
+import com.lxzl.erp.common.domain.validGroup.returnOrder.UpdateReturnOrderGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.returnOrder.ReturnOrderService;
@@ -37,9 +39,14 @@ public class ReturnOrderController extends BaseController {
 
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public Result add(@RequestBody @Validated(AddReturnOrderGroup.class) AddReturnOrderParam addReturnOrderParam, BindingResult validResult) {
+    public Result add(@RequestBody @Validated AddReturnOrderParam addReturnOrderParam, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = returnOrderService.add(addReturnOrderParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public Result update(@RequestBody @Validated(UpdateReturnOrderGroup.class) AddReturnOrderParam addReturnOrderParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = returnOrderService.update(addReturnOrderParam);
+        return resultGenerator.generate(serviceResult);
     }
     @RequestMapping(value = "doReturnEquipment", method = RequestMethod.POST)
     public Result doReturnEquipment(@RequestBody @Validated DoReturnEquipmentParam doReturnEquipmentParam, BindingResult validResult) {

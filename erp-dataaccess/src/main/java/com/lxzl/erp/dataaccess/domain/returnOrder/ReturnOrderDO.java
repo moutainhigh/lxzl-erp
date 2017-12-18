@@ -21,6 +21,8 @@ public class ReturnOrderDO  extends BaseDO {
 	private BigDecimal totalRentCost;
 	private BigDecimal serviceCost;
 	private BigDecimal damageCost;
+	private Integer isDamage;
+	private Integer returnMode;
 	private Integer returnOrderStatus;
 	private Integer dataStatus;
 	private String remark;
@@ -129,6 +131,22 @@ public class ReturnOrderDO  extends BaseDO {
 
 	public void setDamageCost(BigDecimal damageCost){
 		this.damageCost = damageCost;
+	}
+
+	public Integer getIsDamage() {
+		return isDamage;
+	}
+
+	public void setIsDamage(Integer isDamage) {
+		this.isDamage = isDamage;
+	}
+
+	public Integer getReturnMode() {
+		return returnMode;
+	}
+
+	public void setReturnMode(Integer returnMode) {
+		this.returnMode = returnMode;
 	}
 
 	public Integer getReturnOrderStatus(){

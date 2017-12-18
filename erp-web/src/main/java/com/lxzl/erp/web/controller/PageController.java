@@ -163,6 +163,12 @@ public class PageController extends BaseController {
         return "/materialManage/materialEdit";
     }
 
+    //散料列表
+    @RequestMapping("/material-manage/bulk-list")
+    public String bulkMaterialManageMaterialList() {
+        return "/materialManage/bulkMaterialList";
+    }
+
     //订单管理
     @RequestMapping("/order-manage/list")
     public String orderManageList() {
