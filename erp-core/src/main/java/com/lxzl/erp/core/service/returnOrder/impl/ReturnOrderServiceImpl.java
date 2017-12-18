@@ -8,11 +8,8 @@ import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
-import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.returnOrder.*;
-import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
-import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderMaterialBulk;
-import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProductEquipment;
+import com.lxzl.erp.common.domain.returnOrder.pojo.*;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -66,25 +63,25 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             return serviceResult;
         }
         //校验退还商品项sku不能重复
-        List<ReturnSkuParam> returnSkuParamList = addReturnOrderParam.getProductSkuList();
+        List<ReturnOrderProduct> returnOrderProductList = addReturnOrderParam.getReturnOrderProductList();
         Set<Integer> skuIdSet = new HashSet<>();
-        if(CollectionUtil.isNotEmpty(returnSkuParamList)){
-            for(ReturnSkuParam returnSkuParam : returnSkuParamList){
-                skuIdSet.add(returnSkuParam.getSkuId());
+        if(CollectionUtil.isNotEmpty(returnOrderProductList)){
+            for(ReturnOrderProduct returnOrderProduct : returnOrderProductList){
+                skuIdSet.add(returnOrderProduct.getReturnProductSkuId());
             }
-            if(skuIdSet.size()<returnSkuParamList.size()){
+            if(skuIdSet.size()<returnOrderProductList.size()){
                 serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_CAN_NOT_REPEAT);
                 return serviceResult;
             }
         }
         //校验退还物料项sku不能重复
-        List<ReturnMaterialParam> returnMaterialParamList = addReturnOrderParam.getMaterialList();
+        List<ReturnOrderMaterial> returnOrderMaterialList = addReturnOrderParam.getReturnOrderMaterialList();
         Set<String> materialIdSet = new HashSet<>();
-        if(CollectionUtil.isNotEmpty(returnMaterialParamList)){
-            for(ReturnMaterialParam returnMaterialParam : returnMaterialParamList){
-                materialIdSet.add(returnMaterialParam.getMaterialNo());
+        if(CollectionUtil.isNotEmpty(returnOrderMaterialList)){
+            for(ReturnOrderMaterial returnOrderMaterial : returnOrderMaterialList){
+                materialIdSet.add(returnOrderMaterial.getReturnMaterialNo());
             }
-            if(materialIdSet.size()<returnMaterialParamList.size()){
+            if(materialIdSet.size()<returnOrderMaterialList.size()){
                 serviceResult.setErrorCode(ErrorCode.MATERIAL_CAN_NOT_REPEAT);
                 return serviceResult;
             }
@@ -116,24 +113,24 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         List<ReturnOrderProductDO> returnOrderProductDOList = new ArrayList<>();
         //如果要退还的sku不在在租列表，或者要退还的sku数量大于可退数量，返回相应错误
 
-        if(CollectionUtil.isNotEmpty(returnSkuParamList)){
-            for(ReturnSkuParam returnSkuParam : returnSkuParamList){
-                ProductSkuDO oldSkuRent = oldSkuCountMap.get(returnSkuParam.getSkuId());
+        if(CollectionUtil.isNotEmpty(returnOrderProductList)){
+            for(ReturnOrderProduct returnOrderProduct : returnOrderProductList){
+                ProductSkuDO oldSkuRent = oldSkuCountMap.get(returnOrderProduct.getReturnProductSkuId());
                if(oldSkuRent==null){//如果要退还的sku不在在租列表
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_RENT_THIS);
                    return serviceResult;
-               }else if(returnSkuParam.getReturnCount()>oldSkuRent.getCanProcessCount()){//退还的sku数量大于可租数量
+               }else if(returnOrderProduct.getReturnProductSkuCount()>oldSkuRent.getCanProcessCount()){//退还的sku数量大于可租数量
                    serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_TOO_MORE);
                    return serviceResult;
                }
-                totalReturnProductCount+=returnSkuParam.getReturnCount();
-                ServiceResult<String , Product> productSkuResult = productService.queryProductBySkuId(returnSkuParam.getSkuId());
+                totalReturnProductCount+=returnOrderProduct.getReturnProductSkuCount();
+                ServiceResult<String , Product> productSkuResult = productService.queryProductBySkuId(returnOrderProduct.getReturnProductSkuId());
                 if(!ErrorCode.SUCCESS.equals(productSkuResult.getErrorCode())||productSkuResult.getResult()==null){
                     serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                 }
                 ReturnOrderProductDO returnOrderProductDO = new ReturnOrderProductDO();
-                returnOrderProductDO.setReturnProductSkuId(returnSkuParam.getSkuId());
-                returnOrderProductDO.setReturnProductSkuCount(returnSkuParam.getReturnCount());
+                returnOrderProductDO.setReturnProductSkuId(returnOrderProduct.getReturnProductSkuId());
+                returnOrderProductDO.setReturnProductSkuCount(returnOrderProduct.getReturnProductSkuCount());
                 returnOrderProductDO.setReturnProductSkuSnapshot(JSON.toJSONString(productSkuResult.getResult()));
                 returnOrderProductDO.setRealReturnProductSkuCount(0);
                 returnOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -147,20 +144,20 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         //构造待保存退换单物料项
         List<ReturnOrderMaterialDO> returnOrderMaterialDOList = new ArrayList<>();
         //如果要退还的物料不在在租列表，或者要退还的物料数量大于在租数量，返回相应错误
-        if(CollectionUtil.isNotEmpty(returnMaterialParamList)){
-            for(ReturnMaterialParam returnMaterialParam : returnMaterialParamList){
-                MaterialDO oldMaterialRent = oldMaterialCountMap.get(returnMaterialParam.getMaterialNo());
+        if(CollectionUtil.isNotEmpty(returnOrderMaterialList)){
+            for(ReturnOrderMaterial returnOrderMaterial : returnOrderMaterialList){
+                MaterialDO oldMaterialRent = oldMaterialCountMap.get(returnOrderMaterial.getReturnMaterialNo());
                 if(oldMaterialRent==null){//如果要退还的物料不在在租列表
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_RENT_THIS);
                     return serviceResult;
-                }else if(returnMaterialParam.getReturnCount()>oldMaterialRent.getCanProcessCount()){//退还的物料数量大于可租数量
+                }else if(returnOrderMaterial.getReturnMaterialCount()>oldMaterialRent.getCanProcessCount()){//退还的物料数量大于可租数量
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_TOO_MORE);
                     return serviceResult;
                 }
-                totalReturnMaterialCount+=returnMaterialParam.getReturnCount();
+                totalReturnMaterialCount+=returnOrderMaterial.getReturnMaterialCount();
                 ReturnOrderMaterialDO returnOrderMaterialDO = new ReturnOrderMaterialDO();
                 returnOrderMaterialDO.setReturnMaterialId(oldMaterialRent.getId());
-                returnOrderMaterialDO.setReturnMaterialCount(returnMaterialParam.getReturnCount());
+                returnOrderMaterialDO.setReturnMaterialCount(returnOrderMaterial.getReturnMaterialCount());
                 returnOrderMaterialDO.setReturnMaterialSnapshot(JSON.toJSONString(oldMaterialRent));
                 returnOrderMaterialDO.setRealReturnMaterialCount(0);
                 returnOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -552,7 +549,41 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     public ServiceResult<String, ReturnOrder> detail(ReturnOrder returnOrder) {
         ServiceResult<String, ReturnOrder> serviceResult = new ServiceResult<>();
         ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(returnOrder.getReturnOrderNo());
-        serviceResult.setResult(ConverterUtil.convert(returnOrderDO,ReturnOrder.class));
+
+        //用户在租sku统计
+        Map<String,Object> findSkuRentMap = customerOrderSupport.getCustomerAllMap(returnOrderDO.getCustomerId());
+        List<ProductSkuDO> oldProductSkuDOList = productSkuMapper.findSkuRent(findSkuRentMap);
+        Map<Integer,ProductSkuDO> oldSkuCountMap = new HashMap<>();
+        if(CollectionUtil.isNotEmpty(oldProductSkuDOList)){
+            for(ProductSkuDO productSkuDO  : oldProductSkuDOList){
+                oldSkuCountMap.put(productSkuDO.getId(),productSkuDO);
+            }
+        }
+        //用户在租物料统计
+        findSkuRentMap = customerOrderSupport.getCustomerCanReturnAllMap(returnOrderDO.getCustomerId());
+        List<MaterialDO> oldMaterialDOList = materialMapper.findMaterialRent(findSkuRentMap);
+        Map<Integer,MaterialDO> oldMaterialCountMap = new HashMap<>();
+        if(CollectionUtil.isNotEmpty(oldMaterialDOList)){
+            for(MaterialDO materialDO  : oldMaterialDOList){
+                oldMaterialCountMap.put(materialDO.getId(),materialDO);
+            }
+        }
+        returnOrder = ConverterUtil.convert(returnOrderDO,ReturnOrder.class);
+        //填写退还商品项可退数量字段，用于修改接口提示
+        List<ReturnOrderProduct> returnOrderProductList = returnOrder.getReturnOrderProductList();
+        if(CollectionUtil.isNotEmpty(returnOrderProductList)){
+            for(ReturnOrderProduct returnOrderProduct : returnOrderProductList){
+                returnOrderProduct.setCanProcessCount(oldSkuCountMap.get(returnOrderProduct.getReturnProductSkuId()).getCanProcessCount()+returnOrderProduct.getReturnProductSkuCount());
+            }
+        }
+        //填写退还物料项可退数量字段，用于修改接口提示
+        List<ReturnOrderMaterial> returnOrderMaterialList = returnOrder.getReturnOrderMaterialList();
+        if(CollectionUtil.isNotEmpty(returnOrderMaterialList)){
+            for(ReturnOrderMaterial returnOrderMaterial : returnOrderMaterialList){
+                returnOrderMaterial.setCanProcessCount(oldMaterialCountMap.get(returnOrderMaterial.getReturnMaterialId()).getCanProcessCount()+returnOrderMaterial.getReturnMaterialCount());
+            }
+        }
+        serviceResult.setResult(returnOrder);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -601,6 +632,8 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             returnOrderDO.setUpdateTime(new Date());
             returnOrderDO.setServiceCost(returnOrder.getServiceCost());
             returnOrderDO.setDamageCost(returnOrder.getDamageCost());
+            returnOrderDO.setIsDamage(returnOrder.getIsDamage());
+            returnOrderDO.setRemark(returnOrder.getRemark());
             returnOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             returnOrderMapper.update(returnOrderDO);
         }else{
@@ -688,39 +721,43 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> update(AddReturnOrderParam addReturnOrderParam) {
+    public ServiceResult<String, String> update(UpdateReturnOrderParam updateReturnOrderParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        CustomerDO customerDO = customerMapper.findCustomerPersonByNo(addReturnOrderParam.getCustomerNo());
-        if(customerDO==null){
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+        ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(updateReturnOrderParam.getReturnOrderNo());
+        if(returnOrderDO==null){
+            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        if(!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(returnOrderDO.getReturnOrderStatus())){
+            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_CAN_NOT_UPDATE);
             return serviceResult;
         }
         //校验退还商品项sku不能重复
-        List<ReturnSkuParam> returnSkuParamList = addReturnOrderParam.getProductSkuList();
+        List<ReturnOrderProduct> returnOrderProductList = updateReturnOrderParam.getReturnOrderProductList();
         Set<Integer> skuIdSet = new HashSet<>();
-        if(CollectionUtil.isNotEmpty(returnSkuParamList)){
-            for(ReturnSkuParam returnSkuParam : returnSkuParamList){
-                skuIdSet.add(returnSkuParam.getSkuId());
+        if(CollectionUtil.isNotEmpty(returnOrderProductList)){
+            for(ReturnOrderProduct returnOrderProduct : returnOrderProductList){
+                skuIdSet.add(returnOrderProduct.getReturnProductSkuId());
             }
-            if(skuIdSet.size()<returnSkuParamList.size()){
+            if(skuIdSet.size()<returnOrderProductList.size()){
                 serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_CAN_NOT_REPEAT);
                 return serviceResult;
             }
         }
         //校验退还物料项sku不能重复
-        List<ReturnMaterialParam> returnMaterialParamList = addReturnOrderParam.getMaterialList();
+        List<ReturnOrderMaterial> returnOrderMaterialList = updateReturnOrderParam.getReturnOrderMaterialList();
         Set<String> materialIdSet = new HashSet<>();
-        if(CollectionUtil.isNotEmpty(returnMaterialParamList)){
-            for(ReturnMaterialParam returnMaterialParam : returnMaterialParamList){
-                materialIdSet.add(returnMaterialParam.getMaterialNo());
+        if(CollectionUtil.isNotEmpty(returnOrderMaterialList)){
+            for(ReturnOrderMaterial returnOrderMaterial : returnOrderMaterialList){
+                materialIdSet.add(returnOrderMaterial.getReturnMaterialNo());
             }
-            if(materialIdSet.size()<returnMaterialParamList.size()){
+            if(materialIdSet.size()<returnOrderMaterialList.size()){
                 serviceResult.setErrorCode(ErrorCode.MATERIAL_CAN_NOT_REPEAT);
                 return serviceResult;
             }
         }
         //用户在租sku统计
-        Map<String,Object> findSkuRentMap = customerOrderSupport.getCustomerAllMap(customerDO.getId());
+        Map<String,Object> findSkuRentMap = customerOrderSupport.getCustomerAllMap(returnOrderDO.getCustomerId());
         List<ProductSkuDO> oldProductSkuDOList = productSkuMapper.findSkuRent(findSkuRentMap);
         Map<Integer,ProductSkuDO> oldSkuCountMap = new HashMap<>();
         if(CollectionUtil.isNotEmpty(oldProductSkuDOList)){
@@ -729,7 +766,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             }
         }
         //用户在租物料统计
-        findSkuRentMap = customerOrderSupport.getCustomerCanReturnAllMap(customerDO.getId());
+        findSkuRentMap = customerOrderSupport.getCustomerCanReturnAllMap(returnOrderDO.getCustomerId());
         List<MaterialDO> oldMaterialDOList = materialMapper.findMaterialRent(findSkuRentMap);
         Map<String,MaterialDO> oldMaterialCountMap = new HashMap<>();
         if(CollectionUtil.isNotEmpty(oldMaterialDOList)){
@@ -743,109 +780,179 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         Integer totalReturnMaterialCount = 0;
         Date now = new Date();
         //构造待保存退换单商品项
-        List<ReturnOrderProductDO> returnOrderProductDOList = new ArrayList<>();
+        List<ReturnOrderProductDO> returnOrderProductDOListForSave = new ArrayList<>();
+        //定义要删除的列表
+        Map<Integer,ReturnOrderProductDO> returnOrderProductDOMapForDelete = new HashMap<>();
+
         //如果要退还的sku不在在租列表，或者要退还的sku数量大于可退数量，返回相应错误
 
-        if(CollectionUtil.isNotEmpty(returnSkuParamList)){
-            for(ReturnSkuParam returnSkuParam : returnSkuParamList){
-                ProductSkuDO oldSkuRent = oldSkuCountMap.get(returnSkuParam.getSkuId());
+        if(CollectionUtil.isNotEmpty(returnOrderProductList)){
+            //查找原退货单商品项列表
+            List<ReturnOrderProductDO> oldReturnOrderProductDOList = returnOrderProductMapper.findByReturnOrderId(returnOrderDO.getId());
+            Map<Integer,ReturnOrderProductDO> oldReturnOrderProductDOMap = new HashMap<>();
+            for(ReturnOrderProductDO returnOrderProductDO : oldReturnOrderProductDOList){
+                oldReturnOrderProductDOMap.put(returnOrderProductDO.getReturnProductSkuId(),returnOrderProductDO);
+                returnOrderProductDOMapForDelete.put(returnOrderProductDO.getId(),returnOrderProductDO);
+            }
+            for(ReturnOrderProduct returnOrderProduct : returnOrderProductList){
+                ProductSkuDO oldSkuRent = oldSkuCountMap.get(returnOrderProduct.getReturnProductSkuId());
+                //本退还单此sku占的退还数量
+                ReturnOrderProductDO returnOrderProductDO = oldReturnOrderProductDOMap.get(returnOrderProduct.getReturnProductSkuId());
+                Integer thisReturnOrderSkuCount = returnOrderProductDO==null?0:returnOrderProductDO.getReturnProductSkuCount();
                 if(oldSkuRent==null){//如果要退还的sku不在在租列表
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_RENT_THIS);
                     return serviceResult;
-                }else if(returnSkuParam.getReturnCount()>oldSkuRent.getCanProcessCount()){//退还的sku数量大于可租数量
+                }else if(returnOrderProduct.getReturnProductSkuCount()>oldSkuRent.getCanProcessCount()+thisReturnOrderSkuCount){//退还的sku数量大于可租数量
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_TOO_MORE);
                     return serviceResult;
                 }
-                totalReturnProductCount+=returnSkuParam.getReturnCount();
-                ServiceResult<String , Product> productSkuResult = productService.queryProductBySkuId(returnSkuParam.getSkuId());
+                totalReturnProductCount+=returnOrderProduct.getReturnProductSkuCount();
+                ServiceResult<String , Product> productSkuResult = productService.queryProductBySkuId(returnOrderProduct.getReturnProductSkuId());
                 if(!ErrorCode.SUCCESS.equals(productSkuResult.getErrorCode())||productSkuResult.getResult()==null){
                     serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                 }
-                ReturnOrderProductDO returnOrderProductDO = new ReturnOrderProductDO();
-                returnOrderProductDO.setReturnProductSkuId(returnSkuParam.getSkuId());
-                returnOrderProductDO.setReturnProductSkuCount(returnSkuParam.getReturnCount());
-                returnOrderProductDO.setReturnProductSkuSnapshot(JSON.toJSONString(productSkuResult.getResult()));
-                returnOrderProductDO.setRealReturnProductSkuCount(0);
-                returnOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                returnOrderProductDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                returnOrderProductDO.setCreateTime(now);
-                returnOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                returnOrderProductDO.setUpdateTime(now);
-                returnOrderProductDOList.add(returnOrderProductDO);
+                //如果没有此skuId项
+                if(returnOrderProductDO==null){
+                    returnOrderProductDO = new ReturnOrderProductDO();
+                    returnOrderProductDO.setReturnProductSkuId(returnOrderProduct.getReturnProductSkuId());
+                    returnOrderProductDO.setReturnProductSkuCount(returnOrderProduct.getRealReturnProductSkuCount());
+                    returnOrderProductDO.setReturnProductSkuSnapshot(JSON.toJSONString(productSkuResult.getResult()));
+                    returnOrderProductDO.setRealReturnProductSkuCount(0);
+                    returnOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    returnOrderProductDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    returnOrderProductDO.setCreateTime(now);
+                    returnOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    returnOrderProductDO.setUpdateTime(now);
+                    returnOrderProductDOListForSave.add(returnOrderProductDO);
+                }else{
+                    //修改删除时，总数量相应改变
+                    totalReturnProductCount = totalReturnProductCount-returnOrderProductDO.getReturnProductSkuCount()+returnOrderProduct.getReturnProductSkuCount();
+                    //有skuId项，则修改，并将待删除的列表此项删除
+                    returnOrderProductDO.setReturnProductSkuCount(returnOrderProduct.getReturnProductSkuCount());
+                    returnOrderProductDO.setReturnProductSkuSnapshot(JSON.toJSONString(productSkuResult.getResult()));
+                    returnOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    returnOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    returnOrderProductDO.setUpdateTime(now);
+                    //这里暂时没有做批量修改
+                    returnOrderProductMapper.update(returnOrderProductDO);
+                    returnOrderProductDOMapForDelete.remove(returnOrderProductDO.getId());
+                }
             }
         }
         //构造待保存退换单物料项
-        List<ReturnOrderMaterialDO> returnOrderMaterialDOList = new ArrayList<>();
+        List<ReturnOrderMaterialDO> returnOrderMaterialDOListForSave = new ArrayList<>();
+        //定义要删除的物料项列表
+        Map<Integer,ReturnOrderMaterialDO> returnOrderMaterialDOMapForDelete = new HashMap<>();
+
         //如果要退还的物料不在在租列表，或者要退还的物料数量大于在租数量，返回相应错误
-        if(CollectionUtil.isNotEmpty(returnMaterialParamList)){
-            for(ReturnMaterialParam returnMaterialParam : returnMaterialParamList){
-                MaterialDO oldMaterialRent = oldMaterialCountMap.get(returnMaterialParam.getMaterialNo());
+        if(CollectionUtil.isNotEmpty(returnOrderMaterialList)){
+            //查找原退货单商品项列表
+            List<ReturnOrderMaterialDO> oldReturnOrderMaterialDOList = returnOrderMaterialMapper.findByReturnOrderId(returnOrderDO.getId());
+            Map<Integer,ReturnOrderMaterialDO> oldReturnOrderMaterialDOMap = new HashMap<>();
+            for(ReturnOrderMaterialDO returnOrderMaterialDO : oldReturnOrderMaterialDOList){
+                oldReturnOrderMaterialDOMap.put(returnOrderMaterialDO.getReturnMaterialId(),returnOrderMaterialDO);
+                returnOrderMaterialDOMapForDelete.put(returnOrderMaterialDO.getId(),returnOrderMaterialDO);
+            }
+
+            for(ReturnOrderMaterial returnOrderMaterial : returnOrderMaterialList){
+                MaterialDO oldMaterialRent = oldMaterialCountMap.get(returnOrderMaterial.getReturnMaterialNo());
+                //本退还单此物料占的退还数量
+                Integer thisReturnOrderMaterialCount = 0;
+                if(oldMaterialRent!=null){
+                    thisReturnOrderMaterialCount = oldReturnOrderMaterialDOMap.get(oldMaterialRent.getId())==null?0:oldReturnOrderMaterialDOMap.get(oldMaterialRent.getId()).getReturnMaterialCount();
+                }
                 if(oldMaterialRent==null){//如果要退还的物料不在在租列表
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_RENT_THIS);
                     return serviceResult;
-                }else if(returnMaterialParam.getReturnCount()>oldMaterialRent.getCanProcessCount()){//退还的物料数量大于可租数量
+                }else if(returnOrderMaterial.getReturnMaterialCount()>oldMaterialRent.getCanProcessCount()+thisReturnOrderMaterialCount){
+                    //退还的物料数量大于可租数量
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_TOO_MORE);
                     return serviceResult;
                 }
-                totalReturnMaterialCount+=returnMaterialParam.getReturnCount();
-                ReturnOrderMaterialDO returnOrderMaterialDO = new ReturnOrderMaterialDO();
-                returnOrderMaterialDO.setReturnMaterialId(oldMaterialRent.getId());
-                returnOrderMaterialDO.setReturnMaterialCount(returnMaterialParam.getReturnCount());
-                returnOrderMaterialDO.setReturnMaterialSnapshot(JSON.toJSONString(oldMaterialRent));
-                returnOrderMaterialDO.setRealReturnMaterialCount(0);
-                returnOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                returnOrderMaterialDO.setCreateTime(now);
-                returnOrderMaterialDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                returnOrderMaterialDO.setUpdateTime(now);
-                returnOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                returnOrderMaterialDOList.add(returnOrderMaterialDO);
+                //如果原列表没有此物料项
+                if(oldReturnOrderMaterialDOMap.get(oldMaterialRent.getId())==null){
+                    totalReturnMaterialCount+=returnOrderMaterial.getReturnMaterialCount();
+                    ReturnOrderMaterialDO returnOrderMaterialDO = new ReturnOrderMaterialDO();
+                    returnOrderMaterialDO.setReturnMaterialId(oldMaterialRent.getId());
+                    returnOrderMaterialDO.setReturnMaterialCount(returnOrderMaterial.getReturnMaterialCount());
+                    returnOrderMaterialDO.setReturnMaterialSnapshot(JSON.toJSONString(oldMaterialRent));
+                    returnOrderMaterialDO.setRealReturnMaterialCount(0);
+                    returnOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    returnOrderMaterialDO.setCreateTime(now);
+                    returnOrderMaterialDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    returnOrderMaterialDO.setUpdateTime(now);
+                    returnOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    returnOrderMaterialDOListForSave.add(returnOrderMaterialDO);
+                }else{
+                    //有此物料项，则修改，并将待删除的列表此项删除
+                    ReturnOrderMaterialDO returnOrderMaterialDO = oldReturnOrderMaterialDOMap.get(oldMaterialRent.getId());
+                    //修改删除时，总数量相应改变
+                    totalReturnMaterialCount = totalReturnMaterialCount-returnOrderMaterialDO.getReturnMaterialCount()+returnOrderMaterial.getReturnMaterialCount();
+                    returnOrderMaterialDO.setRealReturnMaterialCount(returnOrderMaterial.getRealReturnMaterialCount());
+                    returnOrderMaterialDO.setReturnMaterialSnapshot(JSON.toJSONString(oldMaterialRent));
+                    returnOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    returnOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    returnOrderMaterialDO.setUpdateTime(now);
+                    //这里暂时没有做批量修改
+                    returnOrderMaterialMapper.update(returnOrderMaterialDO);
+                    returnOrderMaterialDOMapForDelete.remove(returnOrderMaterialDO.getId());
+                }
             }
         }
-        //创建租赁退换单
-        ReturnOrderDO returnOrderDO = new ReturnOrderDO();
-        returnOrderDO.setReturnOrderNo(GenerateNoUtil.generateReturnOrderNo(now));
-        returnOrderDO.setCustomerId(customerDO.getId());
-        returnOrderDO.setCustomerNo(customerDO.getCustomerNo());
-        returnOrderDO.setReturnMode(addReturnOrderParam.getReturnMode());
-        returnOrderDO.setIsCharging(addReturnOrderParam.getIsCharging());
+        //删除新列表中没有的商品项
+        for(Integer id : returnOrderProductDOMapForDelete.keySet()){
+            ReturnOrderProductDO returnOrderProductDO = returnOrderProductDOMapForDelete.get(id);
+            totalReturnProductCount = totalReturnProductCount-returnOrderProductDO.getReturnProductSkuCount();
+            returnOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            returnOrderProductDO.setUpdateTime(now);
+            returnOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            returnOrderProductMapper.update(returnOrderProductDO);
+        }
+        //删除新列表中没有的物料项
+        for(Integer id : returnOrderMaterialDOMapForDelete.keySet()){
+            ReturnOrderMaterialDO returnOrderMaterialDO = returnOrderMaterialDOMapForDelete.get(id);
+            totalReturnMaterialCount = totalReturnMaterialCount-returnOrderMaterialDO.getReturnMaterialCount();
+            returnOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            returnOrderMaterialDO.setUpdateTime(now);
+            returnOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            returnOrderMaterialMapper.update(returnOrderMaterialDO);
+        }
+        //修改租赁退换单
+        returnOrderDO.setReturnMode(updateReturnOrderParam.getReturnMode());
+        returnOrderDO.setIsCharging(updateReturnOrderParam.getIsCharging());
         returnOrderDO.setTotalReturnProductCount(totalReturnProductCount);
         returnOrderDO.setTotalReturnMaterialCount(totalReturnMaterialCount);
         returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
         returnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         returnOrderDO.setOwner(userSupport.getCurrentUserId());
-        returnOrderDO.setRemark(addReturnOrderParam.getRemark());
-        returnOrderDO.setCreateTime(now);
+        returnOrderDO.setRemark(updateReturnOrderParam.getRemark());
         returnOrderDO.setUpdateTime(now);
-        returnOrderDO.setCreateUser(userSupport.getCurrentUserId().toString());
         returnOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        returnOrderMapper.save(returnOrderDO);
+        returnOrderMapper.update(returnOrderDO);
 
         //保存取货地址信息
-        ReturnOrderConsignInfoDO returnOrderConsignInfoDO = new ReturnOrderConsignInfoDO();
-        returnOrderConsignInfoDO.setReturnOrderId(returnOrderDO.getId());
-        returnOrderConsignInfoDO.setReturnOrderNo(returnOrderDO.getReturnOrderNo());
-        returnOrderConsignInfoDO.setConsigneeName(addReturnOrderParam.getReturnOrderConsignInfo().getConsigneeName());
-        returnOrderConsignInfoDO.setConsigneePhone(addReturnOrderParam.getReturnOrderConsignInfo().getConsigneePhone());
-        returnOrderConsignInfoDO.setProvince(addReturnOrderParam.getReturnOrderConsignInfo().getProvince());
-        returnOrderConsignInfoDO.setCity(addReturnOrderParam.getReturnOrderConsignInfo().getCity());
-        returnOrderConsignInfoDO.setDistrict(addReturnOrderParam.getReturnOrderConsignInfo().getDistrict());
-        returnOrderConsignInfoDO.setAddress(addReturnOrderParam.getReturnOrderConsignInfo().getAddress());
+        ReturnOrderConsignInfoDO returnOrderConsignInfoDO = returnOrderDO.getReturnOrderConsignInfoDO();
+        returnOrderConsignInfoDO.setConsigneeName(updateReturnOrderParam.getReturnOrderConsignInfo().getConsigneeName());
+        returnOrderConsignInfoDO.setConsigneePhone(updateReturnOrderParam.getReturnOrderConsignInfo().getConsigneePhone());
+        returnOrderConsignInfoDO.setProvince(updateReturnOrderParam.getReturnOrderConsignInfo().getProvince());
+        returnOrderConsignInfoDO.setCity(updateReturnOrderParam.getReturnOrderConsignInfo().getCity());
+        returnOrderConsignInfoDO.setDistrict(updateReturnOrderParam.getReturnOrderConsignInfo().getDistrict());
+        returnOrderConsignInfoDO.setAddress(updateReturnOrderParam.getReturnOrderConsignInfo().getAddress());
         returnOrderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        returnOrderConsignInfoDO.setRemark(addReturnOrderParam.getReturnOrderConsignInfo().getRemark());
-        returnOrderConsignInfoDO.setCreateTime(now);
+        returnOrderConsignInfoDO.setRemark(updateReturnOrderParam.getReturnOrderConsignInfo().getRemark());
         returnOrderConsignInfoDO.setUpdateTime(now);
-        returnOrderConsignInfoDO.setCreateUser(userSupport.getCurrentUserId().toString());
         returnOrderConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        returnOrderConsignInfoMapper.save(returnOrderConsignInfoDO);
+        returnOrderConsignInfoMapper.update(returnOrderConsignInfoDO);
 
         //保存退还商品项
-        if(CollectionUtil.isNotEmpty(returnOrderProductDOList)){
-            returnOrderProductMapper.batchSave(returnOrderDO.getId(),returnOrderDO.getReturnOrderNo(),returnOrderProductDOList);
+        if(CollectionUtil.isNotEmpty(returnOrderProductDOListForSave)){
+            returnOrderProductMapper.batchSave(returnOrderDO.getId(),returnOrderDO.getReturnOrderNo(),returnOrderProductDOListForSave);
         }
         //保存退还物料项
-        if(CollectionUtil.isNotEmpty(returnOrderMaterialDOList)){
-            returnOrderMaterialMapper.batchSave(returnOrderDO.getId(),returnOrderDO.getReturnOrderNo(),returnOrderMaterialDOList);
+        if(CollectionUtil.isNotEmpty(returnOrderMaterialDOListForSave)){
+            returnOrderMaterialMapper.batchSave(returnOrderDO.getId(),returnOrderDO.getReturnOrderNo(),returnOrderMaterialDOListForSave);
         }
+
         serviceResult.setResult(returnOrderDO.getReturnOrderNo());
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;

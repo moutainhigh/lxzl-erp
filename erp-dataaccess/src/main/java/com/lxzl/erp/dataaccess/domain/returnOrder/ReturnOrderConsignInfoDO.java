@@ -1,109 +1,139 @@
 package com.lxzl.erp.dataaccess.domain.returnOrder;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import java.util.Date;
+import org.springframework.data.annotation.Transient;
 
 
-public class ReturnOrderConsignInfoDO  extends BaseDO {
+public class ReturnOrderConsignInfoDO extends BaseDO {
 
-	private Integer id;
-	private Integer returnOrderId;
-	private String returnOrderNo;
-	private String consigneeName;
-	private String consigneePhone;
-	private Integer province;
-	private Integer city;
-	private Integer district;
-	private String address;
-	private Integer dataStatus;
-	private String remark;
+    private Integer id;
+    private Integer returnOrderId;
+    private String returnOrderNo;
+    private String consigneeName;
+    private String consigneePhone;
+    private Integer province;
+    private Integer city;
+    private Integer district;
+    private String address;
+    private Integer dataStatus;
+    private String remark;
 
-	public Integer getId(){
-		return id;
-	}
+    @Transient
+    private String cityName;
+    @Transient
+    private String districtName;
+    @Transient
+    private String provinceName;
 
-	public void setId(Integer id){
-		this.id = id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public Integer getReturnOrderId(){
-		return returnOrderId;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setReturnOrderId(Integer returnOrderId){
-		this.returnOrderId = returnOrderId;
-	}
+    public Integer getReturnOrderId() {
+        return returnOrderId;
+    }
 
-	public String getReturnOrderNo(){
-		return returnOrderNo;
-	}
+    public void setReturnOrderId(Integer returnOrderId) {
+        this.returnOrderId = returnOrderId;
+    }
 
-	public void setReturnOrderNo(String returnOrderNo){
-		this.returnOrderNo = returnOrderNo;
-	}
+    public String getReturnOrderNo() {
+        return returnOrderNo;
+    }
 
-	public String getConsigneeName(){
-		return consigneeName;
-	}
+    public void setReturnOrderNo(String returnOrderNo) {
+        this.returnOrderNo = returnOrderNo;
+    }
 
-	public void setConsigneeName(String consigneeName){
-		this.consigneeName = consigneeName;
-	}
+    public String getConsigneeName() {
+        return consigneeName;
+    }
 
-	public String getConsigneePhone(){
-		return consigneePhone;
-	}
+    public void setConsigneeName(String consigneeName) {
+        this.consigneeName = consigneeName;
+    }
 
-	public void setConsigneePhone(String consigneePhone){
-		this.consigneePhone = consigneePhone;
-	}
+    public String getConsigneePhone() {
+        return consigneePhone;
+    }
 
-	public Integer getProvince(){
-		return province;
-	}
+    public void setConsigneePhone(String consigneePhone) {
+        this.consigneePhone = consigneePhone;
+    }
 
-	public void setProvince(Integer province){
-		this.province = province;
-	}
+    public Integer getProvince() {
+        return province;
+    }
 
-	public Integer getCity(){
-		return city;
-	}
+    public void setProvince(Integer province) {
+        this.province = province;
+    }
 
-	public void setCity(Integer city){
-		this.city = city;
-	}
+    public Integer getCity() {
+        return city;
+    }
 
-	public Integer getDistrict(){
-		return district;
-	}
+    public void setCity(Integer city) {
+        this.city = city;
+    }
 
-	public void setDistrict(Integer district){
-		this.district = district;
-	}
+    public Integer getDistrict() {
+        return district;
+    }
 
-	public String getAddress(){
-		return address;
-	}
+    public void setDistrict(Integer district) {
+        this.district = district;
+    }
 
-	public void setAddress(String address){
-		this.address = address;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public Integer getDataStatus(){
-		return dataStatus;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public void setDataStatus(Integer dataStatus){
-		this.dataStatus = dataStatus;
-	}
+    public Integer getDataStatus() {
+        return dataStatus;
+    }
 
-	public String getRemark(){
-		return remark;
-	}
+    public void setDataStatus(Integer dataStatus) {
+        this.dataStatus = dataStatus;
+    }
 
-	public void setRemark(String remark){
-		this.remark = remark;
-	}
+    public String getRemark() {
+        return remark;
+    }
 
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName;
+    }
+
+    public String getProvinceName() {
+        return provinceName;
+    }
+
+    public void setProvinceName(String provinceName) {
+        this.provinceName = provinceName;
+    }
 }

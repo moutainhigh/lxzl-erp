@@ -1061,9 +1061,9 @@ public class OrderServiceImpl implements OrderService {
      */
     private Date calculationOrderExpectReturnTime(Date rentStartTime, Integer rentType, Integer rentTimeLength) {
         if (OrderRentType.RENT_TYPE_DAY.equals(rentType)) {
-            return DateUtil.dateInterval(rentStartTime, rentTimeLength);
+            return DateUtil.dateInterval(rentStartTime, rentTimeLength - 1);
         } else if (OrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
-            return DateUtil.monthInterval(rentStartTime, rentTimeLength);
+            return DateUtil.dateInterval(DateUtil.monthInterval(rentStartTime, rentTimeLength), -1);
         }
         return null;
     }

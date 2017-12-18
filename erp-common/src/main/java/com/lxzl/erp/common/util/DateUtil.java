@@ -44,11 +44,15 @@ public class DateUtil {
     /**
      * 判断两个日期是否是同一天
      */
-    public static boolean isSameDay(Date smdate, Date bdate) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        smdate = sdf.parse(sdf.format(smdate));
-        bdate = sdf.parse(sdf.format(bdate));
-        return smdate.equals(bdate);
+    public static boolean isSameDay(Date smdate, Date bdate) {
+        try{
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            smdate = sdf.parse(sdf.format(smdate));
+            bdate = sdf.parse(sdf.format(bdate));
+            return smdate.equals(bdate);
+        }catch (ParseException e){
+            throw new BusinessException(ErrorCode.BUSINESS_EXCEPTION);
+        }
     }
 
     /**

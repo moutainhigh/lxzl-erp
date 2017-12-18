@@ -182,7 +182,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
     public void manualCharge() throws Exception {
         ManualChargeParam customer = new ManualChargeParam();
         customer.setBusinessCustomerNo("CC201712091546467081096");
-        customer.setChargeAmount(new BigDecimal(1500));
+        customer.setChargeAmount(new BigDecimal(2500));
         customer.setChargeRemark("测试手动加款1500元");
         TestResult result = getJsonTestResult("/payment/manualCharge",customer);
     }
