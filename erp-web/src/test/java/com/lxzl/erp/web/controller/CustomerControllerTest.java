@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.ManualChargeParam;
+import com.lxzl.erp.common.domain.payment.account.pojo.ManualDeductParam;
 import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 
@@ -182,7 +183,16 @@ public class CustomerControllerTest extends ERPUnTransactionalTest{
         ManualChargeParam customer = new ManualChargeParam();
         customer.setBusinessCustomerNo("CC201712091546467081096");
         customer.setChargeAmount(new BigDecimal(1500));
-
+        customer.setChargeRemark("测试手动加款1500元");
         TestResult result = getJsonTestResult("/payment/manualCharge",customer);
+    }
+
+    @Test
+    public void manualDeduct() throws Exception {
+        ManualDeductParam customer = new ManualDeductParam();
+        customer.setBusinessCustomerNo("CC201712091546467081096");
+        customer.setDeductAmount(new BigDecimal(1200));
+        customer.setDeductRemark("测试手动扣款款1200元");
+        TestResult result = getJsonTestResult("/payment/manualDeduct",customer);
     }
 }

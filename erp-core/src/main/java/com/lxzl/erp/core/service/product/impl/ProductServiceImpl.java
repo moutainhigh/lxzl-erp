@@ -510,39 +510,6 @@ public class ProductServiceImpl implements ProductService {
     public ServiceResult<String, Integer> verifyProductMaterial(ProductSku productSku) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
 
-        //校验传进来的物料类型总和
-        if (CollectionUtil.isEmpty(productSku.getProductMaterialList())) {
-            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
-            return result;
-        }
-
-        // 存储有容量的物料，key类型，value容量，比对下是否相等即可
-        Map<Integer, Double> propertyCapacityParamMap = new HashMap<>();
-        // 存储没有容量的物料，key为类型，value就一个物料
-        Map<Integer, MaterialDO> materialDOParamMap = new HashMap<>();
-
-        for (ProductMaterial productMaterial : productSku.getProductMaterialList()) {
-            MaterialDO materialDO = materialMapper.findByNo(productMaterial.getMaterialNo());
-            if (materialDO == null) {
-                result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
-                return result;
-            }
-            if (materialDO.getMaterialCapacityValue() == null) {
-                if (materialDOParamMap.get(materialDO.getMaterialType()) == null) {
-                    materialDOParamMap.put(materialDO.getMaterialType(), materialDO);
-                } else {
-                    result.setErrorCode(ErrorCode.MATERIAL_COUNT_ERROR);
-                    return result;
-                }
-            } else {
-                if (propertyCapacityParamMap.get(materialDO.getMaterialType()) == null) {
-                    propertyCapacityParamMap.put(materialDO.getMaterialType(), materialDO.getMaterialCapacityValue() * productMaterial.getMaterialCount());
-                } else {
-                    propertyCapacityParamMap.put(materialDO.getMaterialType(), BigDecimalUtil.add(propertyCapacityParamMap.get(materialDO.getMaterialType()), materialDO.getMaterialCapacityValue() * productMaterial.getMaterialCount()));
-                }
-            }
-        }
-
         // 查询SKU的属性
 
         // 存储有容量的物料，key类型，value容量，比对下是否相等即可
@@ -584,6 +551,36 @@ public class ProductServiceImpl implements ProductService {
                 }
             }
         }
+
+        // 存储有容量的物料，key类型，value容量，比对下是否相等即可
+        Map<Integer, Double> propertyCapacityParamMap = new HashMap<>();
+        // 存储没有容量的物料，key为类型，value就一个物料
+        Map<Integer, MaterialDO> materialDOParamMap = new HashMap<>();
+
+        if(CollectionUtil.isNotEmpty(productSku.getProductMaterialList())){
+            for (ProductMaterial productMaterial : productSku.getProductMaterialList()) {
+                MaterialDO materialDO = materialMapper.findByNo(productMaterial.getMaterialNo());
+                if (materialDO == null) {
+                    result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+                    return result;
+                }
+                if (materialDO.getMaterialCapacityValue() == null) {
+                    if (materialDOParamMap.get(materialDO.getMaterialType()) == null) {
+                        materialDOParamMap.put(materialDO.getMaterialType(), materialDO);
+                    } else {
+                        result.setErrorCode(ErrorCode.MATERIAL_COUNT_ERROR);
+                        return result;
+                    }
+                } else {
+                    if (propertyCapacityParamMap.get(materialDO.getMaterialType()) == null) {
+                        propertyCapacityParamMap.put(materialDO.getMaterialType(), materialDO.getMaterialCapacityValue() * productMaterial.getMaterialCount());
+                    } else {
+                        propertyCapacityParamMap.put(materialDO.getMaterialType(), BigDecimalUtil.add(propertyCapacityParamMap.get(materialDO.getMaterialType()), materialDO.getMaterialCapacityValue() * productMaterial.getMaterialCount()));
+                    }
+                }
+            }
+        }
+
 
         // 校验有容量的物料，是否匹配
         for (Map.Entry<Integer, Double> entry : propertyCapacityParamMap.entrySet()) {

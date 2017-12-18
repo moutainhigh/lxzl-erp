@@ -1087,7 +1087,7 @@ public class OrderServiceImpl implements OrderService {
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
                 Product product = productServiceResult.getResult();
                 // TODO 商品品牌为苹果品牌
-                if (1 == product.getBrandId()) {
+                if (BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) {
                     orderProductDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
                     orderProductDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
                     if (!orderProductDO.getPayMode().equals(customerRiskManagementDO.getApplePayMode())) {
@@ -1353,7 +1353,7 @@ public class OrderServiceImpl implements OrderService {
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
                     depositAmount = BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
-                } else if ((1 == product.getBrandId()) || CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
+                } else if ((BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) || CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
                     depositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderProductDO.getDepositCycle()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else {

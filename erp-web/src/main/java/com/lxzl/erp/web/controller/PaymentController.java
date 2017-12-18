@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.payment.account.pojo.ManualChargeParam;
+import com.lxzl.erp.common.domain.payment.account.pojo.ManualDeductParam;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.payment.PaymentService;
@@ -42,7 +43,13 @@ public class PaymentController extends BaseController {
 
     @RequestMapping(value = "manualCharge", method = RequestMethod.POST)
     public Result manualCharge(@RequestBody ManualChargeParam param, BindingResult validResult) {
-        ServiceResult<String, Boolean> result = paymentService.manualCharge(param.getBusinessCustomerNo(), param.getChargeAmount());
+        ServiceResult<String, Boolean> result = paymentService.manualCharge(param);
+        return resultGenerator.generate(result.getErrorCode(), result.getResult());
+    }
+
+    @RequestMapping(value = "manualDeduct", method = RequestMethod.POST)
+    public Result manualDeduct(@RequestBody ManualDeductParam param, BindingResult validResult) {
+        ServiceResult<String, Boolean> result = paymentService.manualDeduct(param);
         return resultGenerator.generate(result.getErrorCode(), result.getResult());
     }
 }
