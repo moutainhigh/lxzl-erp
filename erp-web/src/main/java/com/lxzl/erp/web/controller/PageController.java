@@ -468,4 +468,10 @@ public class PageController extends BaseController {
         return "/component/customer/chooseCanReturnMaterial";
     }
 
+    //选择客户地址
+    @RequestMapping("/customer-address-modal/choose")
+    public String chooseCustomerAddressModal() {
+        return "/component/customer/chooseCustomerAddressModal";
+    }
+
 }

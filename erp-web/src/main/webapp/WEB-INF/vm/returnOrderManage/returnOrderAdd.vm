@@ -36,10 +36,9 @@
                 'modal.choose.rent.product.js',
                 'modal.choose.can.return.material.js',
                 'manage.order.item.render.js',
-//                'modal.choose.product.js',
-//                'modal.choose.material.js',
                 'manage.order.util.js',
                 'manage.return.order.add.js',
+                'modal.choose.customer.address.js',
                 'manage.customer.address.js',
                 'manage.customer.address.add.js',
                 'manage.customer.address.edit.js');
