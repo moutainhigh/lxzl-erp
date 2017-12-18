@@ -180,7 +180,7 @@
                                             <label class="field prepend-icon mw200">
                                                 <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
                                                 <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
-                                                <input type="text" name="returnCount-{{skuId}}" value="{{returnCount}}" class="returnCount form-control required number pl10" placeholder="输入退货数量" />
+                                                <input type="text" name="returnProductSkuCount-{{skuId}}" value="{{returnProductSkuCount}}" class="returnProductSkuCount form-control required number pl10" placeholder="输入退货数量" />
                                             </label>
                                         </td>
                                         <td class="text-right">
@@ -270,7 +270,7 @@
                                 <label class="field prepend-icon mw200">
                                     <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
                                     <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
-                                    <input type="text" name="returnCount-{{materialNo}}" value="{{returnCount}}" class="returnCount form-control required number pl10" placeholder="输入退货数量" />
+                                    <input type="text" name="returnMaterialCount-{{materialNo}}" value="{{returnMaterialCount}}" class="returnMaterialCount form-control required number pl10" placeholder="输入退货数量" />
                                 </label>
                             </td>
                             <td class="text-right">
