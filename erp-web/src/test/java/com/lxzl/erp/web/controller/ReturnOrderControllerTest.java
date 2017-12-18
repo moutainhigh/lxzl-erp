@@ -1,13 +1,16 @@
 package com.lxzl.erp.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.domain.changeOrder.AddChangeOrderParam;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.returnOrder.*;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderConsignInfo;
+import com.lxzl.erp.common.domain.validGroup.returnOrder.AddReturnOrderGroup;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -19,19 +22,19 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest{
     public void create() throws Exception {
         AddReturnOrderParam addReturnOrderParam = new AddReturnOrderParam();
         addReturnOrderParam.setCustomerNo("CC201711301106206721011");
-        List<ProductSku> productSkuList = new ArrayList<>();
-        ProductSku productSku = new ProductSku();
-        productSku.setSkuId(40);
-        productSku.setReturnCount(1);
-        productSkuList.add(productSku);
-        addReturnOrderParam.setProductSkuList(productSkuList);
+        List<ReturnSkuParam> returnSkuParamList = new ArrayList<>();
+        ReturnSkuParam returnSkuParam = new ReturnSkuParam();
+        returnSkuParam.setSkuId(40);
+        returnSkuParam.setReturnCount(1);
+        returnSkuParamList.add(returnSkuParam);
+        addReturnOrderParam.setProductSkuList(returnSkuParamList);
 
-        List<Material> materialList = new ArrayList<>();
-        Material material = new Material();
-        material.setMaterialNo("M201711201356145971009");
-        material.setReturnCount(1);
-        materialList.add(material);
-        addReturnOrderParam.setMaterialList(materialList);
+        List<ReturnMaterialParam> returnMaterialParamList = new ArrayList<>();
+        ReturnMaterialParam returnMaterialParam = new ReturnMaterialParam();
+        returnMaterialParam.setMaterialNo("M201711201356145971009");
+        returnMaterialParam.setReturnCount(1);
+        returnMaterialParamList.add(returnMaterialParam);
+        addReturnOrderParam.setMaterialList(returnMaterialParamList);
         addReturnOrderParam.setRemark("这是一条备注");
 
         ReturnOrderConsignInfo returnOrderConsignInfo = new ReturnOrderConsignInfo();
@@ -41,7 +44,34 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest{
         addReturnOrderParam.setReturnOrderConsignInfo(returnOrderConsignInfo);
         addReturnOrderParam.setIsCharging(CommonConstant.COMMON_CONSTANT_YES);
         TestResult testResult = getJsonTestResult("/returnOrder/add",addReturnOrderParam);
+    }  @Test
+    public void create2() throws Exception {
+        AddReturnOrderParam addReturnOrderParam = JSON.parseObject("{\n" +
+                "  \"customerNo\": \"CP201712060843154191841\",\n" +
+                "  \"isCharging\": \"1\",\n" +
+                "  \"remark\": \"退货\",\n" +
+                "  \"returnMode\": \"1\",\n" +
+                "  \"returnOrderConsignInfo\": {\n" +
+                "    \"consigneeName\": \"黎文彬\",\n" +
+                "    \"consigneePhone\": \"18033402833\",\n" +
+                "    \"province\": 19,\n" +
+                "    \"city\": 202,\n" +
+                "    \"district\": 1956,\n" +
+                "    \"address\": \"车公庙安华工业区\"\n" +
+                "  },\n" +
+                "  \"productSkuList\": [{\n" +
+                "    \"skuId\": 76,\n" +
+                "    \"returnCount\": \"5\"\n" +
+                "  }],\n" +
+                "  \"materialList\": [{\n" +
+                "    \"materialNo\": \"M201711201356145971009\",\n" +
+                "    \"returnCount\": \"1\"\n" +
+                "  }]\n" +
+                "}",AddReturnOrderParam.class);
+        TestResult testResult = getJsonTestResult("/returnOrder/add",addReturnOrderParam);
     }
+
+
     @Test
     public void doReturnEquipment() throws Exception {
         DoReturnEquipmentParam doReturnEquipmentParam = new DoReturnEquipmentParam();

@@ -15,6 +15,8 @@
 		<result column="total_rent_cost" jdbcType="DECIMAL" property="totalRentCost" />
 		<result column="service_cost" jdbcType="DECIMAL" property="serviceCost" />
 		<result column="damage_cost" jdbcType="DECIMAL" property="damageCost" />
+		<result column="is_damage" jdbcType="INTEGER" property="isDamage" />
+		<result column="return_mode" jdbcType="INTEGER" property="returnMode" />
 		<result column="return_order_status" jdbcType="INTEGER" property="returnOrderStatus" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -30,7 +32,7 @@
 		<collection resultMap="ReturnOrderMaterialDO" property="returnOrderMaterialDOList" />
 	</resultMap>
 	<sql id="column_List">
-		ero.id,ero.return_order_no,ero.customer_id,ero.customer_no,ero.is_charging,ero.total_return_product_count,ero.total_return_material_count,ero.real_total_return_product_count,ero.real_total_return_material_count,ero.total_rent_cost,ero.service_cost,ero.damage_cost,ero.return_order_status,ero.data_status,ero.remark,ero.owner,ero.create_time,ero.create_user,ero.update_time,ero.update_user
+		ero.id,ero.return_order_no,ero.customer_id,ero.customer_no,ero.is_charging,ero.total_return_product_count,ero.total_return_material_count,ero.real_total_return_product_count,ero.real_total_return_material_count,ero.total_rent_cost,ero.service_cost,ero.damage_cost,ero.is_damage,ero.return_mode,ero.return_order_status,ero.data_status,ero.remark,ero.owner,ero.create_time,ero.create_user,ero.update_time,ero.update_user
 	</sql>
 	<resultMap id="ReturnOrderConsignInfoDO" type="com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderConsignInfoDO">
 		<id column="eroci_id" jdbcType="INTEGER" property="id" />
@@ -157,6 +159,12 @@
 			<if test="damageCost != null">
 				damage_cost = #{damageCost,jdbcType=DECIMAL},
 			</if>
+			<if test="isDamage != null">
+				is_damage = #{isDamage,jdbcType=INTEGER},
+			</if>
+			<if test="returnMode != null">
+				return_mode = #{returnMode,jdbcType=INTEGER},
+			</if>
 			<if test="returnOrderStatus != null">
 				return_order_status = #{returnOrderStatus,jdbcType=INTEGER},
 			</if>
@@ -205,6 +213,12 @@
 			</if>
 			<if test="maps.queryParam.returnOrderStatus != null">
 				and ero.return_order_status = #{maps.queryParam.returnOrderStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.isDamage != null">
+				and ero.is_damage = #{maps.queryParam.isDamage, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.returnMode != null">
+				and ero.return_mode = #{maps.queryParam.returnMode, jdbcType=INTEGER}
 			</if>
 			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.ownerName != null &amp;&amp; maps.queryParam.ownerName != ''">
 				and eu.real_name like CONCAT('%','${maps.queryParam.ownerName}','%' )

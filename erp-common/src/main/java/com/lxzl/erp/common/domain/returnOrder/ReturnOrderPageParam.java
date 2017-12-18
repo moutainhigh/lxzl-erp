@@ -6,11 +6,13 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ReturnOrderPageParam extends BasePageParam{
+public class ReturnOrderPageParam extends BasePageParam {
 
     private String returnOrderNo;
     private String customerNo;
     private Integer returnOrderStatus;
+    private Integer isDamage;
+    private Integer returnMode;
     private String ownerName;
     private Date createStartTime;
     private Date createEndTime;
@@ -37,6 +39,22 @@ public class ReturnOrderPageParam extends BasePageParam{
 
     public void setReturnOrderStatus(Integer returnOrderStatus) {
         this.returnOrderStatus = returnOrderStatus;
+    }
+
+    public Integer getIsDamage() {
+        return isDamage;
+    }
+
+    public void setIsDamage(Integer isDamage) {
+        this.isDamage = isDamage;
+    }
+
+    public Integer getReturnMode() {
+        return returnMode;
+    }
+
+    public void setReturnMode(Integer returnMode) {
+        this.returnMode = returnMode;
     }
 
     public String getOwnerName() {

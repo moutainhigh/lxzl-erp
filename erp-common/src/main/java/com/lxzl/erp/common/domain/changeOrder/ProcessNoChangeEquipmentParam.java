@@ -1,8 +1,10 @@
 package com.lxzl.erp.common.domain.changeOrder;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import org.hibernate.validator.constraints.NotBlank;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProcessNoChangeEquipmentParam {
 
     @NotBlank(message = ErrorCode.CHANGE_ORDER_NO_NOT_NULL)
