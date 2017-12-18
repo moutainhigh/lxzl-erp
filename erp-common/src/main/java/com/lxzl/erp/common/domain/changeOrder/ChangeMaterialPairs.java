@@ -1,5 +1,6 @@
 package com.lxzl.erp.common.domain.changeOrder;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.validGroup.changeOrder.AddChangeOrderGroup;
 import com.lxzl.erp.common.domain.validGroup.changeOrder.UpdateChangeOrderGroup;
@@ -8,6 +9,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChangeMaterialPairs {
 
     private Integer changeOrderMaterialId;

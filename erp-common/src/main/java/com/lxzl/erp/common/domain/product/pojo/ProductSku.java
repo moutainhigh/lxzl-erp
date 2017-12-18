@@ -1,19 +1,13 @@
 package com.lxzl.erp.common.domain.product.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.domain.changeOrder.AddChangeOrderParam;
-import com.lxzl.erp.common.domain.validGroup.returnOrder.AddReturnOrderGroup;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductSku implements Serializable {
-    @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL, groups = {AddReturnOrderGroup.class})
     private Integer skuId;
     private String skuName;
     private Integer productId;
@@ -35,10 +29,6 @@ public class ProductSku implements Serializable {
 
     private String productName;
 
-    //退还数量换货数量
-    @NotNull(message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class,AddChangeOrderParam.class})
-    @Min(value=0,message = ErrorCode.RETURN_COUNT_ERROR,groups = {AddReturnOrderGroup.class,AddChangeOrderParam.class})
-    private Integer returnCount;
     //在租数量
     private Integer rentCount;
     //可退换数量
@@ -79,12 +69,12 @@ public class ProductSku implements Serializable {
         this.stock = stock;
     }
 
-    public BigDecimal getMonthRentPrice() {
-        return monthRentPrice;
+    public BigDecimal getSkuPrice() {
+        return skuPrice;
     }
 
-    public void setMonthRentPrice(BigDecimal monthRentPrice) {
-        this.monthRentPrice = monthRentPrice;
+    public void setSkuPrice(BigDecimal skuPrice) {
+        this.skuPrice = skuPrice;
     }
 
     public BigDecimal getDayRentPrice() {
@@ -93,6 +83,14 @@ public class ProductSku implements Serializable {
 
     public void setDayRentPrice(BigDecimal dayRentPrice) {
         this.dayRentPrice = dayRentPrice;
+    }
+
+    public BigDecimal getMonthRentPrice() {
+        return monthRentPrice;
+    }
+
+    public void setMonthRentPrice(BigDecimal monthRentPrice) {
+        this.monthRentPrice = monthRentPrice;
     }
 
     public String getCustomCode() {
@@ -143,22 +141,6 @@ public class ProductSku implements Serializable {
         this.productSkuPropertyList = productSkuPropertyList;
     }
 
-    public BigDecimal getSkuPrice() {
-        return skuPrice;
-    }
-
-    public void setSkuPrice(BigDecimal skuPrice) {
-        this.skuPrice = skuPrice;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
     public List<ProductMaterial> getProductMaterialList() {
         return productMaterialList;
     }
@@ -175,12 +157,20 @@ public class ProductSku implements Serializable {
         this.shouldProductCategoryPropertyValueList = shouldProductCategoryPropertyValueList;
     }
 
-    public Integer getReturnCount() {
-        return returnCount;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setReturnCount(Integer returnCount) {
-        this.returnCount = returnCount;
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public Integer getRentCount() {
+        return rentCount;
+    }
+
+    public void setRentCount(Integer rentCount) {
+        this.rentCount = rentCount;
     }
 
     public Integer getCanProcessCount() {
@@ -205,13 +195,5 @@ public class ProductSku implements Serializable {
 
     public void setOldProductSkuCount(Integer oldProductSkuCount) {
         this.oldProductSkuCount = oldProductSkuCount;
-    }
-
-    public Integer getRentCount() {
-        return rentCount;
-    }
-
-    public void setRentCount(Integer rentCount) {
-        this.rentCount = rentCount;
     }
 }

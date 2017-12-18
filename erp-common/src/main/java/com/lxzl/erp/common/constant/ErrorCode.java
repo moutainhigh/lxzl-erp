@@ -271,6 +271,8 @@ public class ErrorCode {
     public static final String ORDER_PRODUCT_LIST_REPEAT = "J400076";
     public static final String ORDER_MATERIAL_STOCK_INSUFFICIENT = "J400077";
     public static final String ORDER_MATERIAL_LIST_REPEAT = "J400078";
+    public static final String RETURN_OR_CHANGE_MODE_NOT_NULL = "J400079";
+    public static final String RETURN_OR_CHANGE_MODE_ERROR = "J400080";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -561,7 +563,7 @@ public class ErrorCode {
         MAP.put(CHANGE_ORDER_NO_NOT_NULL, "换货单编号不能为空");
         MAP.put(CHANGE_ORDER_NOT_EXISTS, "换货单不存在");
         MAP.put(CHANGE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的换货单可以提交");
-        MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_STOCK_UP, "当前换货单不允许备货");
+        MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_STOCK_UP, "换货单审核通过后才可备货");
         MAP.put(CHANGE_ORDER_CAN_NOT_UPDATE, "当前换货单不允许修改");
         MAP.put(CHANGE_ORDER_PRODUCT_ID_NOT_NULL, "换货商品项ID不能为空");
         MAP.put(CHANGE_ORDER_MATERIAL_ID_NOT_NULL, "换货物料项ID不能为空");
@@ -569,7 +571,7 @@ public class ErrorCode {
         MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_END, "不是处理中的换货单不允许结束");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_NOT_EXISTS, "该设备不在该订单里，请仔细检查");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_ALREADY_RETURN, "订单设备已经归还");
-        MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_CANCEL, "不是处理中的换货单不允许取消");
+        MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_CANCEL, "此状态的换货单换货单不允许取消");
         MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_DO_CHANGE, "当前换货单不允许进行换货操作");
         MAP.put(CHANGE_ONLY_SAME_SKU, "目前仅支持更换相同SKU设备");
         MAP.put(ORDER_ALREADY_PAID, "订单已经支付");
@@ -583,6 +585,8 @@ public class ErrorCode {
         MAP.put(ORDER_MATERIAL_STOCK_INSUFFICIENT, "订单物料项库存不足");
         MAP.put(ORDER_PRODUCT_LIST_REPEAT, "订单商品项重复");
         MAP.put(ORDER_MATERIAL_LIST_REPEAT, "订单物料项重复");
+        MAP.put(RETURN_OR_CHANGE_MODE_NOT_NULL, "退换方式不能为空");
+        MAP.put(RETURN_OR_CHANGE_MODE_ERROR, "退换方式错误");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");

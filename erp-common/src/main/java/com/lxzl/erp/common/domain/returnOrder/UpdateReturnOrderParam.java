@@ -12,10 +12,10 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AddReturnOrderParam {
+public class UpdateReturnOrderParam {
 
-    @NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL)
-    private String customerNo;
+    @NotBlank(message = ErrorCode.RETURN_ORDER_NO_NOT_NULL)
+    private String returnOrderNo;
     @Valid
     private List<ReturnSkuParam> productSkuList;
     @Valid
@@ -31,12 +31,12 @@ public class AddReturnOrderParam {
     @NotNull(message = ErrorCode.RETURN_OR_CHANGE_MODE_NOT_NULL)
     private Integer returnMode;   //退还方式，1-上门取件，2邮寄
 
-    public String getCustomerNo() {
-        return customerNo;
+    public String getReturnOrderNo() {
+        return returnOrderNo;
     }
 
-    public void setCustomerNo(String customerNo) {
-        this.customerNo = customerNo;
+    public void setReturnOrderNo(String returnOrderNo) {
+        this.returnOrderNo = returnOrderNo;
     }
 
     public List<ReturnSkuParam> getProductSkuList() {

@@ -32,6 +32,8 @@ public class ReturnOrder implements Serializable {
 	private BigDecimal serviceCost;   //服务费
 	@NotNull(message = ErrorCode.RETURN_ORDER_DAMAGE_COST_NOT_NULL , groups = {ExtendGroup.class})
 	private BigDecimal damageCost;   //损坏加收费用
+	private Integer isDamage;   //是否有损坏，0-否，1-是
+	private Integer returnMode;   //退还方式，1-上门取件，2邮寄
 	private Integer returnOrderStatus;   //归还订单状态，1-待取货，5-处理中，9-已完成
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -140,6 +142,22 @@ public class ReturnOrder implements Serializable {
 
 	public void setDamageCost(BigDecimal damageCost){
 		this.damageCost = damageCost;
+	}
+
+	public Integer getIsDamage() {
+		return isDamage;
+	}
+
+	public void setIsDamage(Integer isDamage) {
+		this.isDamage = isDamage;
+	}
+
+	public Integer getReturnMode() {
+		return returnMode;
+	}
+
+	public void setReturnMode(Integer returnMode) {
+		this.returnMode = returnMode;
 	}
 
 	public Integer getReturnOrderStatus(){
