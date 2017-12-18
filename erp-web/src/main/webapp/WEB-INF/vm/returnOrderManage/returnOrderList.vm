@@ -128,7 +128,7 @@
                                 <td class="text-right">
                                     <div class="btn-group text-right">
                                         {{#rowActionButtons}}
-                                        <a href="${ctx}{{menuUrl}}?no={{orderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-orderno="{{orderNo}}">{{text}}</a>
+                                        <a href="${ctx}{{menuUrl}}?no={{returnOrderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-returnorderno="{{returnOrderNo}}">{{text}}</a>
                                         {{/rowActionButtons}}
                                     </div>
                                 </td>

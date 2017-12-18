@@ -474,4 +474,10 @@ public class PageController extends BaseController {
         return "/component/customer/chooseCustomerAddressModal";
     }
 
+    //输入地址
+    @RequestMapping("/address-modal/input")
+    public String inputAddressModal() {
+        return "/component/address/inputAddressModal";
+    }
+
 }

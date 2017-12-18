@@ -38,6 +38,8 @@
             'manage.order.item.render.js',
             'manage.order.util.js',
             'manage.return.order.edit.js',
+            'modal.input.address.js',
+            'modal.choose.customer.address.js',
             'manage.customer.address.js',
             'manage.customer.address.add.js',
             'manage.customer.address.edit.js');
@@ -46,7 +48,7 @@
     //功能事件初始化
     Rental.init();
     Layout.init();
-    AddReturnOrder.init();
+    EditReturnOrder.init();
 
     //UI效果初始化
     Core.init();

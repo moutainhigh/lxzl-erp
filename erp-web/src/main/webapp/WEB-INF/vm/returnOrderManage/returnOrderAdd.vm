@@ -38,6 +38,7 @@
                 'manage.order.item.render.js',
                 'manage.order.util.js',
                 'manage.return.order.add.js',
+                'modal.input.address.js',
                 'modal.choose.customer.address.js',
                 'manage.customer.address.js',
                 'manage.customer.address.add.js',

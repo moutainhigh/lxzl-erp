@@ -35,21 +35,26 @@
                                 </div>
                             </div>
                             <div class="panel-body pb5 admin-form">
-                                <script type="text/html">
+                                <script type="text/html" id="orderConsignInfoTpl">
+                                    {{#address}}
                                     <address class="mn">
-                                        <strong>黎文彬</strong>
+                                        <strong>{{consigneeName}}</strong>
                                         <br>
-                                        广东省深圳市福田区车公庙安华工业区
+                                        {{provinceName}}{{cityName}}{{districtName}}{{address}}
                                         <br>
-                                        <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>18033402833
+                                        <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{consigneePhone}}
                                     </address>
-                                </script>
-                                <div class="well">
+                                    {{/address}}
+                                    {{^address}}
                                     <address class="mn">
                                         还没有添加取货地址
                                     </address>
-                                    <p class="pv10">
-                                    </p>
+                                    {{/address}}
+                                </script>
+                                <div class="well" id="orderConsignInfo">
+                                    <address class="mn">
+                                        还没有添加取货地址
+                                    </address>
                                 </div>
                             </div>
                         </div>
@@ -77,7 +82,23 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group field">
-                    <label class="col-md-3 control-label">购买人备注</label>
+                    <label class="col-md-3 control-label">退还方式</label>
+                    <div class="col-md-9">
+                        <div class="input-group" style="width: 100%;">
+                            <select class="form-control required" name="returnMode">
+                                <option value="">请选择</option>
+                                <option value="1">上门取件</option>
+                                <option value="0">邮寄</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group field">
+                    <label class="col-md-3 control-label">备注</label>
                     <div class="col-md-9">
                         <textarea class="form-control" id="remark" rows="3"  name="remark"></textarea>
                     </div>
