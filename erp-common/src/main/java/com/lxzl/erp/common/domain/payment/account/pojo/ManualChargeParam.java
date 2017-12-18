@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 public class ManualChargeParam extends PaymentIdentityParam {
     private String businessCustomerNo;
     private BigDecimal chargeAmount;
+    private String chargeRemark;
 
     public String getBusinessCustomerNo() {
         return businessCustomerNo;
@@ -30,5 +31,13 @@ public class ManualChargeParam extends PaymentIdentityParam {
 
     public void setChargeAmount(BigDecimal chargeAmount) {
         this.chargeAmount = chargeAmount;
+    }
+
+    public String getChargeRemark() {
+        return chargeRemark;
+    }
+
+    public void setChargeRemark(String chargeRemark) {
+        this.chargeRemark = chargeRemark;
     }
 }

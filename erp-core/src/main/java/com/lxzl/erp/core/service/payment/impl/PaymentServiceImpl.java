@@ -5,10 +5,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.PaymentSystemConfig;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.base.PaymentResult;
-import com.lxzl.erp.common.domain.payment.account.pojo.BalancePayParam;
-import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
-import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccountQueryParam;
-import com.lxzl.erp.common.domain.payment.account.pojo.ManualChargeParam;
+import com.lxzl.erp.common.domain.payment.account.pojo.*;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
@@ -50,11 +47,8 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, Boolean> manualCharge(String customerNo, BigDecimal chargeAmount) {
+    public ServiceResult<String, Boolean> manualCharge(ManualChargeParam param) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
-        ManualChargeParam param = new ManualChargeParam();
-        param.setBusinessCustomerNo(customerNo);
-        param.setChargeAmount(chargeAmount);
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
         try {
@@ -75,7 +69,29 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, Boolean> balancePay(String customerNo,String businessOrderNo,String businessOrderRemark,String businessNotifyUrl, BigDecimal payAmount) {
+    public ServiceResult<String, Boolean> manualDeduct(ManualDeductParam param) {
+        ServiceResult<String, Boolean> result = new ServiceResult<>();
+        param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = FastJsonUtil.toJSONString(param);
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemManualDeductURL, requestJson, headerBuilder, "UTF-8");
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                result.setResult((Boolean) paymentResult.getResultMap().get("data"));
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ServiceResult<String, Boolean> balancePay(String customerNo, String businessOrderNo, String businessOrderRemark, String businessNotifyUrl, BigDecimal payAmount) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         BalancePayParam param = new BalancePayParam();
         param.setBusinessCustomerNo(customerNo);

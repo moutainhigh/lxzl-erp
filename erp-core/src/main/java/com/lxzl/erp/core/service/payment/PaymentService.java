@@ -2,6 +2,8 @@ package com.lxzl.erp.core.service.payment;
 
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
+import com.lxzl.erp.common.domain.payment.account.pojo.ManualChargeParam;
+import com.lxzl.erp.common.domain.payment.account.pojo.ManualDeductParam;
 import com.lxzl.se.core.service.BaseService;
 
 import java.math.BigDecimal;
@@ -24,11 +26,19 @@ public interface PaymentService extends BaseService {
     /**
      * 手动充值
      *
-     * @param customerNo   客户编码
-     * @param chargeAmount 充值金额
+     * @param param 手动充值参数
      * @return 充值結果
      */
-    ServiceResult<String, Boolean> manualCharge(String customerNo, BigDecimal chargeAmount);
+    ServiceResult<String, Boolean> manualCharge(ManualChargeParam param);
+
+
+    /**
+     * 手动扣款
+     *
+     * @param param 手动扣款参数
+     * @return 扣款结果
+     */
+    ServiceResult<String, Boolean> manualDeduct(ManualDeductParam param);
 
     /**
      *

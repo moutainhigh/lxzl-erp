@@ -10,6 +10,7 @@ public class PaymentSystemConfig {
 
     public static String paymentSystemQueryCustomerAccountURL;
     public static String paymentSystemManualChargeURL;
+    public static String paymentSystemManualDeductURL;
     public static String paymentSystemBalancePayURL;
     public static String paymentSystemAppId;
     public static String paymentSystemAppSecret;
@@ -32,5 +33,9 @@ public class PaymentSystemConfig {
 
     public void setPaymentSystemAppSecret(String paymentSystemAppSecret) {
         PaymentSystemConfig.paymentSystemAppSecret = paymentSystemAppSecret;
+    }
+
+    public void setPaymentSystemManualDeductURL(String paymentSystemManualDeductURL) {
+        PaymentSystemConfig.paymentSystemManualDeductURL = paymentSystemManualDeductURL;
     }
 }
