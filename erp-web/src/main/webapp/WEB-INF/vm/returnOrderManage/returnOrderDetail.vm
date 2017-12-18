@@ -15,8 +15,8 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
-            <form class="" id="editOrderForm">
-                #parse("component/returnOrder/editContent.vm")
+            <form class="" id="detailOrderForm">
+##                #parse("component/returnOrder/editContent.vm")
             </form>
         </section>
     </section>

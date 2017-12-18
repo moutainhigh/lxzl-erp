@@ -37,6 +37,8 @@
                         <th>类型</th>
                         <th>本身价值</th>
                         <th>租赁价格</th>
+                        <th>在租数量</th>
+                        <th>可退数量</th>
                         <th>描述</th>
                         <th class="text-right">操作</th>
                     </tr>
@@ -55,6 +57,8 @@
                             <p>日租：￥{{dayRentPriceFormat}}</p>
                             <p>月租：￥{{monthRentPriceFormat}}</p>
                         </td>
+                        <td>{{rentCount}}</td>
+                        <td>{{canProcessCount}}</td>
                         <td>{{materialDesc}}</td>
                         <td class="text-right">
                             <div class="btn-group text-right">
