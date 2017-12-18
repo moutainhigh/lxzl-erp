@@ -1,6 +1,11 @@
 package com.lxzl.erp.common.domain.returnOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -12,6 +17,10 @@ public class ReturnOrderMaterial implements Serializable {
 	private Integer returnOrderId;   //退还ID
 	private String returnOrderNo;   //退还编号
 	private Integer returnMaterialId;   //退还物料ID
+	@NotBlank(message = ErrorCode.MATERIAL_NO_NOT_NULL)
+	private String returnMaterialNo;   //退还物料编号
+	@NotNull(message = ErrorCode.RETURN_COUNT_ERROR)
+	@Min(value = 1, message = ErrorCode.RETURN_COUNT_ERROR)
 	private Integer returnMaterialCount;   //退还物料数量
 	private Integer realReturnMaterialCount;   //实际退还物料数量
 	private String returnMaterialSnapshot;   //退还物料快照
@@ -22,52 +31,61 @@ public class ReturnOrderMaterial implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
+	private Integer canProcessCount;
 
-	public Integer getReturnOrderMaterialId(){
+	public Integer getReturnOrderMaterialId() {
 		return returnOrderMaterialId;
 	}
 
-	public void setReturnOrderMaterialId(Integer returnOrderMaterialId){
+	public void setReturnOrderMaterialId(Integer returnOrderMaterialId) {
 		this.returnOrderMaterialId = returnOrderMaterialId;
 	}
 
-	public Integer getReturnOrderId(){
+	public Integer getReturnOrderId() {
 		return returnOrderId;
 	}
 
-	public void setReturnOrderId(Integer returnOrderId){
+	public void setReturnOrderId(Integer returnOrderId) {
 		this.returnOrderId = returnOrderId;
 	}
 
-	public String getReturnOrderNo(){
+	public String getReturnOrderNo() {
 		return returnOrderNo;
 	}
 
-	public void setReturnOrderNo(String returnOrderNo){
+	public void setReturnOrderNo(String returnOrderNo) {
 		this.returnOrderNo = returnOrderNo;
 	}
 
-	public Integer getReturnMaterialId(){
+	public Integer getReturnMaterialId() {
 		return returnMaterialId;
 	}
 
-	public void setReturnMaterialId(Integer returnMaterialId){
+	public void setReturnMaterialId(Integer returnMaterialId) {
 		this.returnMaterialId = returnMaterialId;
 	}
 
-	public Integer getReturnMaterialCount(){
+	public String getReturnMaterialNo() {
+		return returnMaterialNo;
+	}
+
+	public void setReturnMaterialNo(String returnMaterialNo) {
+		this.returnMaterialNo = returnMaterialNo;
+	}
+
+	public Integer getReturnMaterialCount() {
 		return returnMaterialCount;
 	}
 
-	public void setReturnMaterialCount(Integer returnMaterialCount){
+	public void setReturnMaterialCount(Integer returnMaterialCount) {
 		this.returnMaterialCount = returnMaterialCount;
 	}
 
-	public Integer getRealReturnMaterialCount(){
+	public Integer getRealReturnMaterialCount() {
 		return realReturnMaterialCount;
 	}
 
-	public void setRealReturnMaterialCount(Integer realReturnMaterialCount){
+	public void setRealReturnMaterialCount(Integer realReturnMaterialCount) {
 		this.realReturnMaterialCount = realReturnMaterialCount;
 	}
 
@@ -79,52 +97,59 @@ public class ReturnOrderMaterial implements Serializable {
 		this.returnMaterialSnapshot = returnMaterialSnapshot;
 	}
 
-	public Integer getDataStatus(){
+	public Integer getDataStatus() {
 		return dataStatus;
 	}
 
-	public void setDataStatus(Integer dataStatus){
+	public void setDataStatus(Integer dataStatus) {
 		this.dataStatus = dataStatus;
 	}
 
-	public String getRemark(){
+	public String getRemark() {
 		return remark;
 	}
 
-	public void setRemark(String remark){
+	public void setRemark(String remark) {
 		this.remark = remark;
 	}
 
-	public Date getCreateTime(){
+	public Date getCreateTime() {
 		return createTime;
 	}
 
-	public void setCreateTime(Date createTime){
+	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
 
-	public String getCreateUser(){
+	public String getCreateUser() {
 		return createUser;
 	}
 
-	public void setCreateUser(String createUser){
+	public void setCreateUser(String createUser) {
 		this.createUser = createUser;
 	}
 
-	public Date getUpdateTime(){
+	public Date getUpdateTime() {
 		return updateTime;
 	}
 
-	public void setUpdateTime(Date updateTime){
+	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
 
-	public String getUpdateUser(){
+	public String getUpdateUser() {
 		return updateUser;
 	}
 
-	public void setUpdateUser(String updateUser){
+	public void setUpdateUser(String updateUser) {
 		this.updateUser = updateUser;
 	}
 
+	public Integer getCanProcessCount() {
+		return canProcessCount;
+	}
+
+	public void setCanProcessCount(Integer canProcessCount) {
+		this.canProcessCount = canProcessCount;
+	}
 }

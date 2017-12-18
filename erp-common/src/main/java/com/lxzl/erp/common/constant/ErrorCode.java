@@ -273,6 +273,9 @@ public class ErrorCode {
     public static final String ORDER_MATERIAL_LIST_REPEAT = "J400078";
     public static final String RETURN_OR_CHANGE_MODE_NOT_NULL = "J400079";
     public static final String RETURN_OR_CHANGE_MODE_ERROR = "J400080";
+    public static final String RETURN_ORDER_CAN_NOT_UPDATE = "J400081";
+    public static final String IS_DAMAGE_NOT_NULL = "J400082";
+    public static final String IS_DAMAGE_ERROR = "J400083";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -587,6 +590,9 @@ public class ErrorCode {
         MAP.put(ORDER_MATERIAL_LIST_REPEAT, "订单物料项重复");
         MAP.put(RETURN_OR_CHANGE_MODE_NOT_NULL, "退换方式不能为空");
         MAP.put(RETURN_OR_CHANGE_MODE_ERROR, "退换方式错误");
+        MAP.put(RETURN_ORDER_CAN_NOT_UPDATE, "只有未提交审核的退还单可以修改");
+        MAP.put(IS_DAMAGE_NOT_NULL, "是否损坏字段必填");
+        MAP.put(IS_DAMAGE_ERROR, "是否损坏字段错误");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
