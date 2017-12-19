@@ -199,7 +199,6 @@ public class ReturnOrderDO  extends BaseDO {
 	public void setReturnOrderMaterialDOList(List<ReturnOrderMaterialDO> returnOrderMaterialDOList) {
 		this.returnOrderMaterialDOList = returnOrderMaterialDOList;
 	}
-
 	public ReturnOrderConsignInfoDO getReturnOrderConsignInfoDO() {
 		return returnOrderConsignInfoDO;
 	}

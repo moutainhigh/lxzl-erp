@@ -96,8 +96,8 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
         StockUpForChangeParam stockUpForChangeParam = new StockUpForChangeParam();
         stockUpForChangeParam.setChangeOrderNo("CO201712181114261141769");
         //select * from erp_product_equipment where sku_id=40 and equipment_status = 1 and data_status = 1 and order_no is null and current_warehouse_id = 4000002
-//        stockUpForChangeParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017121610007");
-        stockUpForChangeParam.setMaterialNo("M201711201356145971009");
+        stockUpForChangeParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017121610008");
+//        stockUpForChangeParam.setMaterialNo("M201711201356145971009");
         stockUpForChangeParam.setMaterialCount(1);
         stockUpForChangeParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
         TestResult testResult = getJsonTestResult("/changeOrder/stockUpForChange",stockUpForChangeParam);
@@ -113,20 +113,22 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
     public void doChangeEquipment() throws Exception {
         ChangeOrderProductEquipment changeOrderProductEquipment = new ChangeOrderProductEquipment();
         changeOrderProductEquipment.setChangeOrderNo("CO201712181114261141769");
-        changeOrderProductEquipment.setSrcEquipmentNo("LX-EQUIPMENT-4000002-2017121610008");
+        changeOrderProductEquipment.setSrcEquipmentNo("LX-EQUIPMENT-4000002-2017121610003");
         TestResult testResult = getJsonTestResult("/changeOrder/doChangeEquipment",changeOrderProductEquipment);
     }
     @Test
     public void doChangeMaterial() throws Exception {
         ChangeOrderMaterial changeOrderMaterial = new ChangeOrderMaterial();
-        changeOrderMaterial.setChangeOrderMaterialId(3);
+        changeOrderMaterial.setChangeOrderMaterialId(7);
         changeOrderMaterial.setSrcChangeMaterialNo("M201711201356145971009");
         changeOrderMaterial.setRealChangeMaterialCount(2);
         TestResult testResult = getJsonTestResult("/changeOrder/doChangeMaterial",changeOrderMaterial);
     }
     @Test
     public void end() throws Exception {
-
+        ChangeOrder changeOrder = new ChangeOrder();
+        changeOrder.setChangeOrderNo("CO201712181114261141769");
+        TestResult testResult = getJsonTestResult("/changeOrder/end",changeOrder);
     }
     @Test
     public void cancel() throws Exception {
