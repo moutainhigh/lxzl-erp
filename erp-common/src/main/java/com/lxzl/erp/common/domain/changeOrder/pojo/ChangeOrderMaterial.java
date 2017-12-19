@@ -35,6 +35,8 @@ public class ChangeOrderMaterial implements Serializable {
     private String updateUser;   //修改人
 
 
+    private Integer canProcessCount;
+
     public Integer getChangeOrderMaterialId() {
         return changeOrderMaterialId;
     }
@@ -161,5 +163,13 @@ public class ChangeOrderMaterial implements Serializable {
 
     public void setSrcChangeMaterialNo(String srcChangeMaterialNo) {
         this.srcChangeMaterialNo = srcChangeMaterialNo;
+    }
+
+    public Integer getCanProcessCount() {
+        return canProcessCount;
+    }
+
+    public void setCanProcessCount(Integer canProcessCount) {
+        this.canProcessCount = canProcessCount;
     }
 }

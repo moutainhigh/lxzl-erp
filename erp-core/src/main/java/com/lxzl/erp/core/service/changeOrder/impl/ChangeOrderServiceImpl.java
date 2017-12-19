@@ -5,14 +5,14 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.changeOrder.*;
-import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrder;
-import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderMaterial;
-import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderMaterialBulk;
-import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderProductEquipment;
+import com.lxzl.erp.common.domain.changeOrder.pojo.*;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
+import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
+import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderMaterial;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderMaterialBulk;
+import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProduct;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.BigDecimalUtil;
@@ -1024,8 +1024,39 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_NOT_EXISTS);
             return serviceResult;
         }
-
-        serviceResult.setResult(ConverterUtil.convert(changeOrderDO,ChangeOrder.class));
+        //用户在租sku统计
+        Map<String, Object> findSkuRentMap = customerOrderSupport.getCustomerAllMap(changeOrderDO.getCustomerId());
+        List<ProductSkuDO> oldProductSkuDOList = productSkuMapper.findSkuRent(findSkuRentMap);
+        Map<Integer, ProductSkuDO> oldSkuCountMap = new HashMap<>();
+        if (CollectionUtil.isNotEmpty(oldProductSkuDOList)) {
+            for (ProductSkuDO productSkuDO : oldProductSkuDOList) {
+                oldSkuCountMap.put(productSkuDO.getId(), productSkuDO);
+            }
+        }
+        //用户在租物料统计
+        List<MaterialDO> oldMaterialDOList = materialMapper.findMaterialRent(findSkuRentMap);
+        Map<Integer, MaterialDO> oldMaterialCountMap = new HashMap<>();
+        if (CollectionUtil.isNotEmpty(oldMaterialDOList)) {
+            for (MaterialDO materialDO : oldMaterialDOList) {
+                oldMaterialCountMap.put(materialDO.getId(), materialDO);
+            }
+        }
+        changeOrder = ConverterUtil.convert(changeOrderDO, ChangeOrder.class);
+        //填写退还商品项可换数量字段，用于修改接口提示
+        List<ChangeOrderProduct> changeOrderProductList = changeOrder.getChangeOrderProductList();
+        if (CollectionUtil.isNotEmpty(changeOrderProductList)) {
+            for (ChangeOrderProduct changeOrderProduct : changeOrderProductList) {
+                changeOrderProduct.setCanProcessCount(oldSkuCountMap.get(changeOrderProduct.getChangeProductSkuIdSrc()).getCanProcessCount() + changeOrderProduct.getChangeProductSkuCount());
+            }
+        }
+        //填写退还物料项可换数量字段，用于修改接口提示
+        List<ChangeOrderMaterial> changeOrderMaterialList = changeOrder.getChangeOrderMaterialList();
+        if (CollectionUtil.isNotEmpty(changeOrderMaterialList)) {
+            for (ChangeOrderMaterial changeOrderMaterial : changeOrderMaterialList) {
+                changeOrderMaterial.setCanProcessCount(oldMaterialCountMap.get(changeOrderMaterial.getChangeMaterialIdSrc()).getCanProcessCount() + changeOrderMaterial.getChangeMaterialCount());
+            }
+        }
+        serviceResult.setResult(changeOrder);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
