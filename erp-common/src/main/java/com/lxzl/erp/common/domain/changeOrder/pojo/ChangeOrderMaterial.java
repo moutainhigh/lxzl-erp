@@ -3,6 +3,8 @@ package com.lxzl.erp.common.domain.changeOrder.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
+import com.lxzl.erp.common.domain.validGroup.changeOrder.AddChangeOrderGroup;
+import com.lxzl.erp.common.domain.validGroup.changeOrder.UpdateChangeOrderGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Min;
@@ -13,14 +15,19 @@ import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ChangeOrderMaterial implements Serializable {
+
     @NotNull(message = ErrorCode.CHANGE_ORDER_MATERIAL_ID_NOT_NULL, groups = {ExtendGroup.class})
     private Integer changeOrderMaterialId;   //唯一标识
     private Integer changeOrderId;   //换货ID
     private String changeOrderNo;   //换货编号
-    @NotBlank(message = ErrorCode.CHANGE_ORDER_SRC_MATERIAL_NO_NOT_NULL, groups = {ExtendGroup.class})
-    private String srcChangeMaterialNo;   //原物料编号
+    @NotBlank(message = ErrorCode.CHANGE_ORDER_SRC_MATERIAL_NO_NOT_NULL, groups = {ExtendGroup.class,AddChangeOrderGroup.class,UpdateChangeOrderGroup.class})
+    private String changeMaterialNoSrc;   //原物料编号
     private Integer changeMaterialIdSrc;   //原物料ID
+    @NotBlank(message = ErrorCode.MATERIAL_NO_NOT_NULL ,groups = {AddChangeOrderGroup.class,UpdateChangeOrderGroup.class})
+    private String changeMaterialNoDest;   //目标后物料编号
     private Integer changeMaterialIdDest;   //目标后物料ID
+    @NotNull(message = ErrorCode.CHANGE_COUNT_ERROR ,groups = {AddChangeOrderGroup.class,UpdateChangeOrderGroup.class})
+    @Min(value = 0 , message = ErrorCode.CHANGE_COUNT_ERROR ,groups = {AddChangeOrderGroup.class,UpdateChangeOrderGroup.class})
     private Integer changeMaterialCount;   //换货物料数量
     @NotNull(message = ErrorCode.CHANGE_COUNT_ERROR, groups = {ExtendGroup.class})
     @Min(value = 0, message = ErrorCode.CHANGE_COUNT_ERROR, groups = {ExtendGroup.class})
@@ -157,19 +164,27 @@ public class ChangeOrderMaterial implements Serializable {
         this.updateUser = updateUser;
     }
 
-    public String getSrcChangeMaterialNo() {
-        return srcChangeMaterialNo;
-    }
-
-    public void setSrcChangeMaterialNo(String srcChangeMaterialNo) {
-        this.srcChangeMaterialNo = srcChangeMaterialNo;
-    }
-
     public Integer getCanProcessCount() {
         return canProcessCount;
     }
 
     public void setCanProcessCount(Integer canProcessCount) {
         this.canProcessCount = canProcessCount;
+    }
+
+    public String getChangeMaterialNoSrc() {
+        return changeMaterialNoSrc;
+    }
+
+    public void setChangeMaterialNoSrc(String changeMaterialNoSrc) {
+        this.changeMaterialNoSrc = changeMaterialNoSrc;
+    }
+
+    public String getChangeMaterialNoDest() {
+        return changeMaterialNoDest;
+    }
+
+    public void setChangeMaterialNoDest(String changeMaterialNoDest) {
+        this.changeMaterialNoDest = changeMaterialNoDest;
     }
 }

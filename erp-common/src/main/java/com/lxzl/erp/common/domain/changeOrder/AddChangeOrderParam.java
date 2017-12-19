@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.ReturnOrChangeMode;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderConsignInfo;
-import com.lxzl.erp.common.domain.validGroup.changeOrder.AddChangeOrderGroup;
+import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderMaterial;
+import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderProduct;
 import com.lxzl.erp.common.util.validate.constraints.In;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -18,9 +19,9 @@ public class AddChangeOrderParam {
     @NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL)
     private String customerNo;
     @Valid
-    private List<ChangeProductSkuPairs> changeProductSkuPairsList;
+    private List<ChangeOrderProduct> changeOrderProductList;
     @Valid
-    private List<ChangeMaterialPairs> changeMaterialPairsList;
+    private List<ChangeOrderMaterial> changeOrderMaterialList;
     @Valid
     @NotNull(message = ErrorCode.ORDER_CUSTOMER_CONSIGN_NOT_NULL)
     private ChangeOrderConsignInfo changeOrderConsignInfo;
@@ -38,20 +39,20 @@ public class AddChangeOrderParam {
         this.customerNo = customerNo;
     }
 
-    public List<ChangeProductSkuPairs> getChangeProductSkuPairsList() {
-        return changeProductSkuPairsList;
+    public List<ChangeOrderProduct> getChangeOrderProductList() {
+        return changeOrderProductList;
     }
 
-    public void setChangeProductSkuPairsList(List<ChangeProductSkuPairs> changeProductSkuPairsList) {
-        this.changeProductSkuPairsList = changeProductSkuPairsList;
+    public void setChangeOrderProductList(List<ChangeOrderProduct> changeOrderProductList) {
+        this.changeOrderProductList = changeOrderProductList;
     }
 
-    public List<ChangeMaterialPairs> getChangeMaterialPairsList() {
-        return changeMaterialPairsList;
+    public List<ChangeOrderMaterial> getChangeOrderMaterialList() {
+        return changeOrderMaterialList;
     }
 
-    public void setChangeMaterialPairsList(List<ChangeMaterialPairs> changeMaterialPairsList) {
-        this.changeMaterialPairsList = changeMaterialPairsList;
+    public void setChangeOrderMaterialList(List<ChangeOrderMaterial> changeOrderMaterialList) {
+        this.changeOrderMaterialList = changeOrderMaterialList;
     }
 
     public ChangeOrderConsignInfo getChangeOrderConsignInfo() {

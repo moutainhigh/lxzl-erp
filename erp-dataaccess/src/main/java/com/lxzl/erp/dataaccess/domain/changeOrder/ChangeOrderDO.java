@@ -31,6 +31,8 @@ public class ChangeOrderDO extends BaseDO {
     private Integer owner;
 
     @Transient
+    private String customerName;
+    @Transient
     private String ownerName;
     @Transient
     private ChangeOrderConsignInfoDO changeOrderConsignInfoDO;
@@ -229,5 +231,13 @@ public class ChangeOrderDO extends BaseDO {
 
     public void setChangeOrderMaterialDOList(List<ChangeOrderMaterialDO> changeOrderMaterialDOList) {
         this.changeOrderMaterialDOList = changeOrderMaterialDOList;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 }

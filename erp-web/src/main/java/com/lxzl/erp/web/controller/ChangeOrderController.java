@@ -40,7 +40,7 @@ public class ChangeOrderController {
      * @return
      */
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public Result add(@RequestBody @Validated(AddChangeOrderGroup.class) AddChangeOrderParam addChangeOrderParam, BindingResult validResult) {
+    public Result add(@RequestBody @Validated AddChangeOrderParam addChangeOrderParam, BindingResult validResult) {
 
         ServiceResult<String, String> serviceResult = changeOrderService.add(addChangeOrderParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
@@ -54,7 +54,7 @@ public class ChangeOrderController {
      * @return
      */
     @RequestMapping(value = "update", method = RequestMethod.POST)
-    public Result update(@RequestBody @Validated(UpdateChangeOrderGroup.class) UpdateChangeOrderParam updateChangeOrderParam, BindingResult validResult) {
+    public Result update(@RequestBody @Validated UpdateChangeOrderParam updateChangeOrderParam, BindingResult validResult) {
 
         ServiceResult<String, String> serviceResult = changeOrderService.update(updateChangeOrderParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
