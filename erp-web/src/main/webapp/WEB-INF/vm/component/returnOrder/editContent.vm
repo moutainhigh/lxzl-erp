@@ -174,7 +174,7 @@
                                     {{#skuList}}
                                     <tr class="skuRow">
                                         <td>{{propertiesToStr}}</td>
-                                        <td>在租：{{rentCount}}</td>
+##                                        <td>在租：{{rentCount}}</td>
                                         <td>可退：{{canProcessCount}}</td>
                                         <td>
                                             <label class="field prepend-icon mw200">
@@ -238,7 +238,7 @@
                             <th>租赁价格</th>
                             <th>描述</th>
                             <th>图片</th>
-                            <th>在租数量</th>
+##                            <th>在租数量</th>
                             <th>可退数量</th>
                             <th>退货数量</th>
                             <th class="text-right">操作</th>
@@ -264,7 +264,7 @@
                             </td>
                             <td>{{materialDesc}}</td>
                             <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-                            <td>{{rentCount}}</td>
+##                            <td>{{rentCount}}</td>
                             <td>{{canProcessCount}}</td>
                             <td>
                                 <label class="field prepend-icon mw200">

@@ -16,7 +16,360 @@
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
             <form class="" id="detailOrderForm">
-##                #parse("component/returnOrder/editContent.vm")
+                <div class="panel panel-primary panel-border top mb35">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>退还单编号：<small id="returnOrderNo"></small></h5>
+                            </div>
+                            <div class="col-md-8 text-right">
+                                <script type="text/html" id="actionButtonsTpl">
+                                    {{#acitonButtons}}
+                                    {{#showButton}}
+                                    <a href="${ctx}{{menuUrl}}?no={{returnOrderNo}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-returnorderno="{{returnOrderNo}}">
+                                        <i class="{{iClass}}"></i> {{text}}
+                                    </a>
+                                    {{/showButton}}
+                                    {{/acitonButtons}}
+                                </script>
+                                <div class="btn-group" id="actionButtons"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                   <script type="text/html" id="returnOrderBaseInfoTpl">
+                       {{#data}}
+                       <div class="form-horizontal panel-body bg-light dark br-t-n">
+                           <div class="row">
+                               <div class="col-md-6">
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">客户</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{customerName}}（客户编号：{{customerNo}}）</p>
+                                       </div>
+                                   </div>
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">退还方式</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{returnModeStr}}</p>
+                                       </div>
+                                   </div>
+                                   <div class="form-group field">
+                                       <label class="col-md-3 control-label" style="visibility: hidden;">收货地址</label>
+                                       <div class="col-md-9">
+                                           <div class="panel" id="customerAddressPannel">
+                                               <div class="panel-heading">
+                                                <span class="panel-icon"><i class="glyphicon glyphicon-map-marker"></i>
+                                                </span>
+                                                   <span class="panel-title">取货地址</span>
+                                               </div>
+                                               <div class="panel-body pb5 admin-form">
+                                                   <div class="well" id="orderConsignInfo">
+                                                       {{#returnOrderConsignInfo}}
+                                                       <address class="mn">
+                                                           <strong>{{consigneeName}}</strong>
+                                                           <br>
+                                                           {{provinceName}}{{cityName}}{{districtName}}{{address}}
+                                                           <br>
+                                                           <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{consigneePhone}}
+                                                       </address>
+                                                       {{/returnOrderConsignInfo}}
+                                                       {{^returnOrderConsignInfo}}
+                                                       <address class="mn">
+                                                           还没有添加取货地址
+                                                       </address>
+                                                       {{/returnOrderConsignInfo}}
+                                                   </div>
+                                               </div>
+                                           </div>
+
+                                       </div>
+                                   </div>
+                               </div>
+                               <div class="col-md-6">
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">订单状态</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{returnOrderStatusValue}}&nbsp;</p>
+                                       </div>
+                                   </div>
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">创建人</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{createUser}}&nbsp;</p>
+                                       </div>
+                                   </div>
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">创建时间</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{createTimeFormat}}&nbsp;</p>
+                                       </div>
+                                   </div>
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">修改人</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{updateUser}}&nbsp;</p>
+                                       </div>
+                                   </div>
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">修改时间</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{updateTimeFormat}}&nbsp;</p>
+                                       </div>
+                                   </div>
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">备注</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{remark}}</p>
+                                       </div>
+                                   </div>
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">是否计费</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{isChargingStr}}</p>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="form-horizontal panel-body bg-light dark">
+                           <div class="row">
+                               <div class="col-md-6">
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">退还商品总数</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{totalReturnProductCount}}</p>
+                                       </div>
+                                   </div>
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">实际退还商品总数</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{realTotalReturnProductCount}}</p>
+                                       </div>
+                                   </div>
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">退还物料总数</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{totalReturnMaterialCount}}</p>
+                                       </div>
+                                   </div>
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">实际退还物料总数</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{realTotalReturnMaterialCount}}</p>
+                                       </div>
+                                   </div>
+                               </div>
+                               <div class="col-md-6">
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">租赁期间产生总费用</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{totalRentCostFormat}}</p>
+                                       </div>
+                                   </div>
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">服务费</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{serviceCostFormat}}</p>
+                                       </div>
+                                   </div>
+                                   <div class="form-group field mn">
+                                       <label class="col-md-3 control-label">损坏加收费用</label>
+                                       <div class="col-md-9">
+                                           <p class="form-control-static text-muted">{{damageCostFormat}}</p>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       {{/data}}
+                   </script>
+
+                    <div id="returnOrderBaseInfo"></div>
+
+                    <div class="panel-heading">
+                        <div class="row">
+                            <ul class="nav panel-tabs-border panel-tabs">
+                                <li class="active">
+                                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
+                                </li>
+                                <li>
+                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">物料项</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="panel-body dark pn">
+                        <div class="tab-content pn br-n">
+                            <div id="purchaseOrderProductItems" class="tab-pane active">
+                                <div class="panel-menu p12 br-n br-b">
+                                    <div class="row">
+                                        <div class="pull-left ml10">
+                                            <script type="text/html" id="returnEquipmentButtonsTpl">
+                                                {{#acitonButtons}}
+                                                {{#showButton}}
+                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-returnorderno="{{returnOrderNo}}">
+                                                    <i class="{{iClass}}"></i> {{text}}
+                                                </a>
+                                                {{/showButton}}
+                                                {{/acitonButtons}}
+                                            </script>
+                                            <div class="btn-group actionCommonButtons" id="returnEquipmentButtons"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <script type="text/html" id="dataListTpl">
+                                        <thead>
+                                        <tr class="bg-light">
+##                                            <th>
+##                                                <label class="option block mn">
+##                                                    <input type="checkbox" name="checkAll" value="">
+##                                                    <span class="checkbox mn"></span>
+##                                                </label>
+##                                            </th>
+                                            <th>商品ID</th>
+                                            <th>图片</th>
+                                            <th>商品名称</th>
+                                            <th>列表价格</th>
+                                            <th>SKU</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr class="productRow" productRowKey="{{productId}}">
+##                                            <td>
+##                                                <label class="option block mn">
+##                                                    <input type="checkbox" name="checkItem" value="{{productId}}">
+##                                                    <span class="checkbox mn"></span>
+##                                                </label>
+##                                            </td>
+                                            <td>{{productId}}</td>
+                                            <td>
+                                                <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
+                                            </td>
+                                            <td>{{productName}}</td>
+                                            <td class="br-r">{{listPriceFixed}}</td>
+                                            <td class="pn">
+                                                <table class="table">
+                                                    {{#chooseSkuList}}
+                                                    {{#skuList}}
+                                                    <tr class="skuRow">
+                                                        <td>{{propertiesToStr}}</td>
+##                                                        <td>在租：{{rentCount}}</td>
+                                                        <td>可退：{{canProcessCount}}</td>
+                                                        <td>
+                                                            退货数量：{{returnProductSkuCount}}
+                                                        </td>
+##                                                        <td class="text-right">
+##                                                            <div class="btn-group text-right">
+##                                                                <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
+##                                                            </div>
+##                                                        </td>
+                                                    </tr>
+                                                    {{/skuList}}
+                                                    {{/chooseSkuList}}
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">没有选择商品</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                                </div>
+                            </div>
+                            <div id="purchaseOrderMaterialItems" class="tab-pane">
+##                                <div class="panel-menu p12 br-n br-b">
+##                                    <div class="row">
+##                                        <div class="pull-left ml10">
+##                                            <div class="btn-group" id="actionCommonButtons">
+##                                                <button type="button" class="btn btn-primary btn-sm" id="batchAddMaterial" title="退货">退货</button>
+##                                            </div>
+##                                        </div>
+##                                    </div>
+##                                </div>
+                                <div class="table-responsive">
+                                    <script type="text/html" id="materialDataListTpl">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                <label class="option block mn">
+                                                    <input type="checkbox" name="checkAll" value="">
+                                                    <span class="checkbox mn"></span>
+                                                </label>
+                                            </th>
+                                            <th>编号</th>
+                                            <th>名称</th>
+                                            <th>类型</th>
+                                            <th>本身价值</th>
+                                            <th>租赁价格</th>
+                                            <th>描述</th>
+                                            <th>图片</th>
+##                                            <th>在租数量</th>
+                                            <th>可退数量</th>
+                                            <th>退货数量</th>
+                                            <th class="text-right">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr class="materialRow">
+                                            <td>
+                                                <label class="option block mn">
+                                                    <input type="checkbox" name="checkItem" value="{{materialNo}}">
+                                                    <span class="checkbox mn"></span>
+                                                </label>
+                                            </td>
+                                            <td>{{materialNo}}</td>
+                                            <td>{{materialName}}</td>
+                                            <td>{{materialTypeStr}}</td>
+                                            <td>{{materialPriceFormat}}</td>
+                                            <td>
+                                                <p>日租：￥{{dayRentPriceFormat}}</p>
+                                                <p>月租：￥{{monthRentPriceFormat}}</p>
+                                            </td>
+                                            <td>{{materialDesc}}</td>
+                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+##                                            <td>{{rentCount}}</td>
+                                            <td>{{canProcessCount}}</td>
+                                            <td>
+                                                <label class="field prepend-icon mw200">
+                                                    {{returnMaterialCount}}
+                                                </label>
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="btn-group text-right">
+                                                    <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}">删除</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">没有选择物料</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialDataListTable"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer clearfix">
+                        <button class="btn btn-default pull-right ml15 goback">返回</button>
+                    </div>
+                </div>
+
             </form>
         </section>
     </section>
@@ -27,24 +380,17 @@
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'manage.return.order.mixin.js',
-                'modal.choose.customer.js',
-                'modal.choose.customer.business.js',
-                'modal.choose.rent.product.js',
-                'modal.choose.can.return.material.js',
                 'manage.order.item.render.js',
                 'manage.order.util.js',
-                'manage.return.order.edit.js',
-                'modal.input.address.js',
-                'modal.choose.customer.address.js',
-                'manage.customer.address.js',
-                'manage.customer.address.add.js',
-                'manage.customer.address.edit.js');
+                'manage.return.order.handle.mixin.js',
+                'manage.return.order.detail.js',
+                'manage.order.picking.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
         Rental.init();
         Layout.init();
-        EditReturnOrder.init();
+        ReturnOrderDetail.init();
 
         //UI效果初始化
         Core.init();
