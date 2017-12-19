@@ -31,6 +31,9 @@ public class ChangeOrderConsignInfo implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
+	private String cityName;
+	private String districtName;
+	private String provinceName;
 
 	public Integer getChangeOrderConsignInfoId(){
 		return changeOrderConsignInfoId;
@@ -152,4 +155,27 @@ public class ChangeOrderConsignInfo implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getDistrictName() {
+		return districtName;
+	}
+
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
+	}
+
+	public String getProvinceName() {
+		return provinceName;
+	}
+
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
+	}
 }

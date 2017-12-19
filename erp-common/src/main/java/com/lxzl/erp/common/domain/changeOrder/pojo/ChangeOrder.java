@@ -39,6 +39,7 @@ public class ChangeOrder implements Serializable {
     private Date updateTime;   //添加时间
     private String updateUser;   //修改人
 
+    private String customerName;
     private String ownerName;
     private ChangeOrderConsignInfo changeOrderConsignInfo;
     private List<ChangeOrderProduct> changeOrderProductList;
@@ -266,5 +267,13 @@ public class ChangeOrder implements Serializable {
 
     public void setChangeOrderMaterialList(List<ChangeOrderMaterial> changeOrderMaterialList) {
         this.changeOrderMaterialList = changeOrderMaterialList;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 }
