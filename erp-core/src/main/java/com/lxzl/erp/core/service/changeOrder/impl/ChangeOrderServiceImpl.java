@@ -850,19 +850,31 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             changeOrderMaterialBulkDO.setUpdateTime(now);
             changeOrderMaterialBulkDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             changeOrderMaterialBulkMapper.update(changeOrderMaterialBulkDO);
-            //todo 更新订单物料散料表，实际归还时间，实际租金；添加订单物料散料，预计归还时间
-
-            //todo 如果原散料在设备上调用拆卸安装接口  否则直接修改散料状态
-            //todo 备货时寻找的散料在设备上--高超
-            ServiceResult<String,Integer> dismantleAndInstallResult = bulkMaterialService.changeProductDismantleAndInstall(srcBulkMaterialDO.getId(),destBulkMaterialDO.getId());
-            if(!dismantleAndInstallResult.getErrorCode().equals(ErrorCode.SUCCESS)){
-                serviceResult.setErrorCode(dismantleAndInstallResult.getErrorCode(),dismantleAndInstallResult.getFormatArgs());
+            //更新订单物料散料表，实际归还时间，实际租金；添加订单物料散料，预计归还时间
+            ServiceResult<String,String> returnBulkMaterialResult = orderService.returnBulkMaterial(srcBulkMaterialDO.getOrderNo(),srcBulkMaterialDO.getBulkMaterialNo(),destBulkMaterialDO.getBulkMaterialNo(),now);
+            if(!ErrorCode.SUCCESS.equals(returnBulkMaterialResult.getErrorCode())){
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                return serviceResult;
+                return returnBulkMaterialResult;
+            }
+            //如果原散料在设备上调用拆卸安装接口  否则直接修改散料状态
+            if(srcBulkMaterialDO.getCurrentEquipmentId()!=null){
+                ServiceResult<String,Integer> dismantleAndInstallResult = bulkMaterialService.changeProductDismantleAndInstall(srcBulkMaterialDO.getId(),destBulkMaterialDO.getId());
+                if(!dismantleAndInstallResult.getErrorCode().equals(ErrorCode.SUCCESS)){
+                    serviceResult.setErrorCode(dismantleAndInstallResult.getErrorCode(),dismantleAndInstallResult.getFormatArgs());
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    return serviceResult;
+                }
+            }else{
+                destBulkMaterialDO.setOrderNo(srcBulkMaterialDO.getOrderNo());
+                destBulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
+                bulkMaterialMapper.update(destBulkMaterialDO);
+                srcBulkMaterialDO.setOrderNo("");
+                srcBulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+                bulkMaterialMapper.update(srcBulkMaterialDO);
             }
         }
         //更新换货单实际换货物料总数，总差价，状态
-        changeOrderDO.setRealTotalChangeMaterialCount(changeOrderDO.getRealTotalChangeMaterialCount() + changeOrderMaterial.getChangeMaterialCount());
+        changeOrderDO.setRealTotalChangeMaterialCount(changeOrderDO.getRealTotalChangeMaterialCount() + changeOrderMaterial.getRealChangeMaterialCount());
         changeOrderDO.setTotalPriceDiff(totalDiffPrice);
         changeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_PROCESS);
         changeOrderMapper.update(changeOrderDO);

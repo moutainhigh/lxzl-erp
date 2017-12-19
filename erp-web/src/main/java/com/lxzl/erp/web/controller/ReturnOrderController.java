@@ -10,9 +10,6 @@ import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderMaterialBulk;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProductEquipment;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
-import com.lxzl.erp.common.domain.validGroup.changeOrder.UpdateChangeOrderGroup;
-import com.lxzl.erp.common.domain.validGroup.returnOrder.AddReturnOrderGroup;
-import com.lxzl.erp.common.domain.validGroup.returnOrder.UpdateReturnOrderGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.returnOrder.ReturnOrderService;
@@ -43,49 +40,64 @@ public class ReturnOrderController extends BaseController {
         ServiceResult<String, String> serviceResult = returnOrderService.add(addReturnOrderParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public Result update(@RequestBody @Validated UpdateReturnOrderParam updateReturnOrderParam, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = returnOrderService.update(updateReturnOrderParam);
         return resultGenerator.generate(serviceResult);
     }
+
+    @RequestMapping(value = "commit", method = RequestMethod.POST)
+    public Result commit(@RequestBody @Validated ReturnOrderCommitParam returnOrderCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = returnOrderService.commit(returnOrderCommitParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "doReturnEquipment", method = RequestMethod.POST)
     public Result doReturnEquipment(@RequestBody @Validated DoReturnEquipmentParam doReturnEquipmentParam, BindingResult validResult) {
         ServiceResult<String, ProductEquipment> serviceResult = returnOrderService.doReturnEquipment(doReturnEquipmentParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     @RequestMapping(value = "doReturnMaterial", method = RequestMethod.POST)
     public Result doReturnMaterial(@RequestBody @Validated DoReturnMaterialParam doReturnMaterialParam, BindingResult validResult) {
         ServiceResult<String, Material> serviceResult = returnOrderService.doReturnMaterial(doReturnMaterialParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     @RequestMapping(value = "detail", method = RequestMethod.POST)
     public Result detail(@RequestBody @Validated(IdGroup.class) ReturnOrder returnOrder, BindingResult validResult) {
         ServiceResult<String, ReturnOrder> serviceResult = returnOrderService.detail(returnOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     @RequestMapping(value = "page", method = RequestMethod.POST)
     public Result page(@RequestBody ReturnOrderPageParam returnOrderPageParam, BindingResult validResult) {
         ServiceResult<String, Page<ReturnOrder>> serviceResult = returnOrderService.page(returnOrderPageParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     @RequestMapping(value = "end", method = RequestMethod.POST)
-    public Result end(@RequestBody @Validated(ExtendGroup.class)ReturnOrder returnOrder, BindingResult validResult) {
-        ServiceResult<String,String> serviceResult = returnOrderService.end(returnOrder);
+    public Result end(@RequestBody @Validated(ExtendGroup.class) ReturnOrder returnOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = returnOrderService.end(returnOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     @RequestMapping(value = "cancel", method = RequestMethod.POST)
-    public Result cancel(@RequestBody @Validated(IdGroup.class)ReturnOrder returnOrder, BindingResult validResult) {
-        ServiceResult<String,String> serviceResult = returnOrderService.cancel(returnOrder);
+    public Result cancel(@RequestBody @Validated(IdGroup.class) ReturnOrder returnOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = returnOrderService.cancel(returnOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     @RequestMapping(value = "pageReturnEquipment", method = RequestMethod.POST)
-    public Result pageReturnEquipment(@RequestBody @Validated(IdGroup.class)ReturnEquipmentPageParam returnEquipmentPageParam, BindingResult validResult) {
-        ServiceResult<String,Page<ReturnOrderProductEquipment>> serviceResult = returnOrderService.pageReturnEquipment(returnEquipmentPageParam);
+    public Result pageReturnEquipment(@RequestBody @Validated(IdGroup.class) ReturnEquipmentPageParam returnEquipmentPageParam, BindingResult validResult) {
+        ServiceResult<String, Page<ReturnOrderProductEquipment>> serviceResult = returnOrderService.pageReturnEquipment(returnEquipmentPageParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     @RequestMapping(value = "pageReturnBulk", method = RequestMethod.POST)
-    public Result pageReturnBulk(@RequestBody @Validated(IdGroup.class)ReturnBulkPageParam returnBulkPageParam, BindingResult validResult) {
-        ServiceResult<String,Page<ReturnOrderMaterialBulk>> serviceResult = returnOrderService.pageReturnBulk(returnBulkPageParam);
+    public Result pageReturnBulk(@RequestBody @Validated(IdGroup.class) ReturnBulkPageParam returnBulkPageParam, BindingResult validResult) {
+        ServiceResult<String, Page<ReturnOrderMaterialBulk>> serviceResult = returnOrderService.pageReturnBulk(returnBulkPageParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
