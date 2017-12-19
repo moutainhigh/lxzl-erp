@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.ReturnOrChangeMode;
 import com.lxzl.erp.common.domain.returnOrder.*;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderConsignInfo;
@@ -19,7 +20,8 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void create() throws Exception {
         AddReturnOrderParam addReturnOrderParam = new AddReturnOrderParam();
-        addReturnOrderParam.setCustomerNo("CC201711301106206721011");
+        addReturnOrderParam.setCustomerNo("C201711152010206581143");
+        addReturnOrderParam.setReturnMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
         List<ReturnOrderProduct> returnOrderProductList = new ArrayList<>();
         ReturnOrderProduct returnOrderProduct = new ReturnOrderProduct();
         returnOrderProduct.setReturnProductSkuId(40);
@@ -156,7 +158,7 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void cancel() throws Exception {
         ReturnOrder returnOrder = new ReturnOrder();
-        returnOrder.setReturnOrderNo("RO201712181436114891018");
+        returnOrder.setReturnOrderNo("RO201712181758392441854");
         TestResult testResult = getJsonTestResult("/returnOrder/cancel", returnOrder);
     }
 
@@ -167,6 +169,14 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
         returnOrder.setServiceCost(BigDecimal.ZERO);
         returnOrder.setDamageCost(BigDecimal.ZERO);
         TestResult testResult = getJsonTestResult("/returnOrder/end", returnOrder);
+    }
+    @Test
+    public void commit() throws Exception {
+        ReturnOrderCommitParam returnOrderCommitParam = new ReturnOrderCommitParam();
+        returnOrderCommitParam.setReturnOrderNo("RO201712191652428981484");
+        returnOrderCommitParam.setRemark("备注");
+        returnOrderCommitParam.setVerifyUserId(500006);
+        TestResult testResult = getJsonTestResult("/returnOrder/commit", returnOrderCommitParam);
     }
 
 }

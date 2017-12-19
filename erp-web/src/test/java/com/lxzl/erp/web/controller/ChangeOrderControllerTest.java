@@ -139,7 +139,7 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
     @Test
     public void detail() throws Exception {
         ChangeOrder changeOrder = new ChangeOrder();
-        changeOrder.setChangeOrderNo("CO201712121349549021303");
+        changeOrder.setChangeOrderNo("CO201712181114261141769");
         TestResult testResult = getJsonTestResult("/changeOrder/detail",changeOrder);
     }
     @Test

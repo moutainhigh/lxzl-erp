@@ -24,6 +24,8 @@ public class ChangeOrderProduct implements Serializable {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
+	private Integer canProcessCount;	//可换数量
+
 
 	public Integer getChangeOrderProductId(){
 		return changeOrderProductId;
@@ -145,4 +147,11 @@ public class ChangeOrderProduct implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public Integer getCanProcessCount() {
+		return canProcessCount;
+	}
+
+	public void setCanProcessCount(Integer canProcessCount) {
+		this.canProcessCount = canProcessCount;
+	}
 }
