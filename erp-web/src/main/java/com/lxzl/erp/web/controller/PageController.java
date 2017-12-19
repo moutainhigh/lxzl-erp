@@ -480,4 +480,10 @@ public class PageController extends BaseController {
         return "/component/address/inputAddressModal";
     }
 
+    //输入退还当服务费等信息
+    @RequestMapping("/return-order-end-info-modal/input")
+    public String inputReturnOrderEndInfoModal() {
+        return "/component/returnOrder/inputEndInfoModal";
+    }
+
 }
