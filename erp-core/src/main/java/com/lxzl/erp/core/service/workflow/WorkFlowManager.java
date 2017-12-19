@@ -7,6 +7,7 @@ import com.lxzl.erp.core.service.changeOrder.ChangeOrderService;
 import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
+import com.lxzl.erp.core.service.repairOrder.RepairOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +29,8 @@ public class WorkFlowManager {
     private DeploymentOrderService deploymentOrderService;
     @Autowired
     private ChangeOrderService changeOrderService;
+    @Autowired
+    private RepairOrderService repairOrderService;
 
 
     public VerifyReceiver getService(Integer workflowType){
@@ -39,6 +42,8 @@ public class WorkFlowManager {
             return deploymentOrderService;
         }else if(WorkflowType.WORKFLOW_TYPE_CHANGE.equals(workflowType)){
             return changeOrderService;
+        }else if(WorkflowType.WORKFLOW_TYPE_REPAIR.equals(workflowType)){
+            return repairOrderService;
         }
         return null;
     }
