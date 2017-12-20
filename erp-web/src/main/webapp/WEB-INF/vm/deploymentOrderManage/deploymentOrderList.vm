@@ -56,14 +56,13 @@
                                         <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                                     </div>
                                 </div>
-
-                                <script type="text/html" id="orderStatusSelectTpl">
-                                    <option value="">全部</option>
-                                    {{#orderStatus}}
-                                    <option value={{num}}>{{value}}</option>
-                                    {{/orderStatus}}
-                                </script>
-                                <select name="orderStatus" id="orderStatus" class="hide"></select>
+##                                <script type="text/html" id="orderStatusSelectTpl">
+##                                    <option value="">全部</option>
+##                                    {{#orderStatus}}
+##                                    <option value={{num}}>{{value}}</option>
+##                                    {{/orderStatus}}
+##                                </script>
+                                <select name="deploymentOrderStatus" id="deploymentOrderStatus" class="hide"></select>
                             </form>
                         </div>
                     </div>
