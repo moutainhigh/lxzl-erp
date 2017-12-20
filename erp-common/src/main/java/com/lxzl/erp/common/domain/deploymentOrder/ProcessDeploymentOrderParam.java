@@ -15,6 +15,8 @@ public class ProcessDeploymentOrderParam implements Serializable {
     private Integer materialId;
     private Integer materialCount;
     private Integer operationType;
+    private Integer verifyUser;
+    private String commitRemark;
 
     public String getDeploymentOrderNo() {
         return deploymentOrderNo;
@@ -54,5 +56,21 @@ public class ProcessDeploymentOrderParam implements Serializable {
 
     public void setOperationType(Integer operationType) {
         this.operationType = operationType;
+    }
+
+    public Integer getVerifyUser() {
+        return verifyUser;
+    }
+
+    public void setVerifyUser(Integer verifyUser) {
+        this.verifyUser = verifyUser;
+    }
+
+    public String getCommitRemark() {
+        return commitRemark;
+    }
+
+    public void setCommitRemark(String commitRemark) {
+        this.commitRemark = commitRemark;
     }
 }

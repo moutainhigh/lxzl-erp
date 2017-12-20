@@ -26,6 +26,7 @@ public class MaterialDO extends BaseDO {
     private Integer stock;
     private BigDecimal dayRentPrice;
     private BigDecimal monthRentPrice;
+    private Integer isConsumable;
     private String materialDesc;
     private Integer dataStatus;
     private String remark;
@@ -207,4 +208,11 @@ public class MaterialDO extends BaseDO {
         this.materialModelName = materialModelName;
     }
 
+    public Integer getIsConsumable() {
+        return isConsumable;
+    }
+
+    public void setIsConsumable(Integer isConsumable) {
+        this.isConsumable = isConsumable;
+    }
 }
