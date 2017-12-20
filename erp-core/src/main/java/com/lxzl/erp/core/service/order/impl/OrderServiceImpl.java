@@ -569,6 +569,7 @@ public class OrderServiceImpl implements OrderService {
             newOrderMaterialBulkDO.setBulkMaterialId(bulkMaterialDO.getId());
             newOrderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
             newOrderMaterialBulkDO.setRentStartTime(returnDate);
+            newOrderMaterialBulkDO.setMaterialBulkUnitAmount(orderMaterialDO.getMaterialUnitAmount());
             newOrderMaterialBulkDO.setExpectReturnTime(orderMaterialBulkDO.getExpectReturnTime());
             BigDecimal materialBulkUnitAmount = orderMaterialDO.getMaterialUnitAmount();
             if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())) {

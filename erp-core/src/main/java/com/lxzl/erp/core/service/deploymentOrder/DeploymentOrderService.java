@@ -36,9 +36,10 @@ public interface DeploymentOrderService extends VerifyReceiver {
      *
      * @param deploymentOrderNo 调拨单号
      * @param verifyUser        审核人
+     * @param commitRemark      提交备注
      * @return 调度单编号
      */
-    ServiceResult<String, String> commitDeploymentOrder(String deploymentOrderNo, Integer verifyUser);
+    ServiceResult<String, String> commitDeploymentOrder(String deploymentOrderNo, Integer verifyUser, String commitRemark);
 
 
     /**
@@ -60,6 +61,7 @@ public interface DeploymentOrderService extends VerifyReceiver {
 
     /**
      * 调拨单发货
+     *
      * @param deploymentOrderNo 调拨单编号
      * @return 调拨单编号
      */

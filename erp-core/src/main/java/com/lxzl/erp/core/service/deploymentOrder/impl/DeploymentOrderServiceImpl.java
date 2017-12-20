@@ -351,7 +351,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
     }
 
     @Override
-    public ServiceResult<String, String> commitDeploymentOrder(String deploymentOrderNo, Integer verifyUser) {
+    public ServiceResult<String, String> commitDeploymentOrder(String deploymentOrderNo, Integer verifyUser, String commitRemark) {
 
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -372,7 +372,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             return result;
         }
         if (isMeedVerifyResult.getResult()) {
-            ServiceResult<String, String> workFlowResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO, deploymentOrderNo, verifyUser, null);
+            ServiceResult<String, String> workFlowResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO, deploymentOrderNo, verifyUser, commitRemark);
             if (!ErrorCode.SUCCESS.equals(workFlowResult.getErrorCode())) {
                 result.setErrorCode(workFlowResult.getErrorCode());
                 return result;

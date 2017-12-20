@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.deploymentOrder.CommitDeploymentOrderParam;
 import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.deploymentOrder.ProcessDeploymentOrderParam;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrder;
@@ -47,8 +48,8 @@ public class DeploymentOrderController extends BaseController {
     }
 
     @RequestMapping(value = "commit", method = RequestMethod.POST)
-    public Result commit(@RequestBody DeploymentOrder deploymentOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = deploymentOrderService.commitDeploymentOrder(deploymentOrder.getDeploymentOrderNo(), deploymentOrder.getVerifyUser());
+    public Result commit(@RequestBody CommitDeploymentOrderParam param, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = deploymentOrderService.commitDeploymentOrder(param.getDeploymentOrderNo(), param.getVerifyUser(), param.getCommitRemark());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
