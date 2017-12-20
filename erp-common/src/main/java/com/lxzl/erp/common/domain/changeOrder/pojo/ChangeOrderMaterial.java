@@ -21,19 +21,19 @@ public class ChangeOrderMaterial implements Serializable {
     private Integer changeOrderId;   //换货ID
     private String changeOrderNo;   //换货编号
     @NotBlank(message = ErrorCode.CHANGE_ORDER_SRC_MATERIAL_NO_NOT_NULL, groups = {ExtendGroup.class,AddChangeOrderGroup.class,UpdateChangeOrderGroup.class})
-    private String changeMaterialNoSrc;   //原物料编号
-    private Integer changeMaterialIdSrc;   //原物料ID
+    private String srcChangeMaterialNo;   //原物料编号
+    private Integer srcChangeMaterialId;   //原物料ID
     @NotBlank(message = ErrorCode.MATERIAL_NO_NOT_NULL ,groups = {AddChangeOrderGroup.class,UpdateChangeOrderGroup.class})
-    private String changeMaterialNoDest;   //目标后物料编号
-    private Integer changeMaterialIdDest;   //目标后物料ID
+    private String destChangeMaterialNo;   //目标后物料编号
+    private Integer destChangeMaterialId;   //目标后物料ID
     @NotNull(message = ErrorCode.CHANGE_COUNT_ERROR ,groups = {AddChangeOrderGroup.class,UpdateChangeOrderGroup.class})
-    @Min(value = 0 , message = ErrorCode.CHANGE_COUNT_ERROR ,groups = {AddChangeOrderGroup.class,UpdateChangeOrderGroup.class})
+    @Min(value = 1 , message = ErrorCode.CHANGE_COUNT_ERROR ,groups = {AddChangeOrderGroup.class,UpdateChangeOrderGroup.class})
     private Integer changeMaterialCount;   //换货物料数量
     @NotNull(message = ErrorCode.CHANGE_COUNT_ERROR, groups = {ExtendGroup.class})
     @Min(value = 0, message = ErrorCode.CHANGE_COUNT_ERROR, groups = {ExtendGroup.class})
     private Integer realChangeMaterialCount;   //实际换货物料数量
-    private String changeMaterialSnapshotSrc;   //换货前物料快照
-    private String changeMaterialSnapshotDest;   //换货后物料快照
+    private String srcChangeMaterialSnapshot;   //原物料快照
+    private String destChangeMaterialSnapshot;   //目标物料快照
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注
     private Date createTime;   //添加时间
@@ -68,20 +68,36 @@ public class ChangeOrderMaterial implements Serializable {
         this.changeOrderNo = changeOrderNo;
     }
 
-    public Integer getChangeMaterialIdSrc() {
-        return changeMaterialIdSrc;
+    public String getSrcChangeMaterialNo() {
+        return srcChangeMaterialNo;
     }
 
-    public void setChangeMaterialIdSrc(Integer changeMaterialIdSrc) {
-        this.changeMaterialIdSrc = changeMaterialIdSrc;
+    public void setSrcChangeMaterialNo(String srcChangeMaterialNo) {
+        this.srcChangeMaterialNo = srcChangeMaterialNo;
     }
 
-    public Integer getChangeMaterialIdDest() {
-        return changeMaterialIdDest;
+    public Integer getSrcChangeMaterialId() {
+        return srcChangeMaterialId;
     }
 
-    public void setChangeMaterialIdDest(Integer changeMaterialIdDest) {
-        this.changeMaterialIdDest = changeMaterialIdDest;
+    public void setSrcChangeMaterialId(Integer srcChangeMaterialId) {
+        this.srcChangeMaterialId = srcChangeMaterialId;
+    }
+
+    public String getDestChangeMaterialNo() {
+        return destChangeMaterialNo;
+    }
+
+    public void setDestChangeMaterialNo(String destChangeMaterialNo) {
+        this.destChangeMaterialNo = destChangeMaterialNo;
+    }
+
+    public Integer getDestChangeMaterialId() {
+        return destChangeMaterialId;
+    }
+
+    public void setDestChangeMaterialId(Integer destChangeMaterialId) {
+        this.destChangeMaterialId = destChangeMaterialId;
     }
 
     public Integer getChangeMaterialCount() {
@@ -100,20 +116,20 @@ public class ChangeOrderMaterial implements Serializable {
         this.realChangeMaterialCount = realChangeMaterialCount;
     }
 
-    public String getChangeMaterialSnapshotSrc() {
-        return changeMaterialSnapshotSrc;
+    public String getSrcChangeMaterialSnapshot() {
+        return srcChangeMaterialSnapshot;
     }
 
-    public void setChangeMaterialSnapshotSrc(String changeMaterialSnapshotSrc) {
-        this.changeMaterialSnapshotSrc = changeMaterialSnapshotSrc;
+    public void setSrcChangeMaterialSnapshot(String srcChangeMaterialSnapshot) {
+        this.srcChangeMaterialSnapshot = srcChangeMaterialSnapshot;
     }
 
-    public String getChangeMaterialSnapshotDest() {
-        return changeMaterialSnapshotDest;
+    public String getDestChangeMaterialSnapshot() {
+        return destChangeMaterialSnapshot;
     }
 
-    public void setChangeMaterialSnapshotDest(String changeMaterialSnapshotDest) {
-        this.changeMaterialSnapshotDest = changeMaterialSnapshotDest;
+    public void setDestChangeMaterialSnapshot(String destChangeMaterialSnapshot) {
+        this.destChangeMaterialSnapshot = destChangeMaterialSnapshot;
     }
 
     public Integer getDataStatus() {
@@ -170,21 +186,5 @@ public class ChangeOrderMaterial implements Serializable {
 
     public void setCanProcessCount(Integer canProcessCount) {
         this.canProcessCount = canProcessCount;
-    }
-
-    public String getChangeMaterialNoSrc() {
-        return changeMaterialNoSrc;
-    }
-
-    public void setChangeMaterialNoSrc(String changeMaterialNoSrc) {
-        this.changeMaterialNoSrc = changeMaterialNoSrc;
-    }
-
-    public String getChangeMaterialNoDest() {
-        return changeMaterialNoDest;
-    }
-
-    public void setChangeMaterialNoDest(String changeMaterialNoDest) {
-        this.changeMaterialNoDest = changeMaterialNoDest;
     }
 }

@@ -26,6 +26,7 @@ public class AddChangeOrderParam {
     @NotNull(message = ErrorCode.ORDER_CUSTOMER_CONSIGN_NOT_NULL)
     private ChangeOrderConsignInfo changeOrderConsignInfo;
     private String remark;
+    private Integer changeReasonType;
     private String changeReason;
     @In(value = {ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR, ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_MAIL}, message = ErrorCode.RETURN_OR_CHANGE_MODE_ERROR)
     @NotNull(message = ErrorCode.RETURN_OR_CHANGE_MODE_NOT_NULL)
@@ -85,5 +86,13 @@ public class AddChangeOrderParam {
 
     public void setChangeMode(Integer changeMode) {
         this.changeMode = changeMode;
+    }
+
+    public Integer getChangeReasonType() {
+        return changeReasonType;
+    }
+
+    public void setChangeReasonType(Integer changeReasonType) {
+        this.changeReasonType = changeReasonType;
     }
 }

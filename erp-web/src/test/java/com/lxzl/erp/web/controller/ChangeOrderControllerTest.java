@@ -45,8 +45,8 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
 
         List<ChangeOrderMaterial> changeOrderMaterialList = new ArrayList<>();
         ChangeOrderMaterial changeOrderMaterial = new ChangeOrderMaterial();
-        changeOrderMaterial.setChangeMaterialNoSrc("M201711201356145971009");
-        changeOrderMaterial.setChangeMaterialNoDest("M201711201356145971009");
+        changeOrderMaterial.setSrcChangeMaterialNo("M201711201356145971009");
+        changeOrderMaterial.setDestChangeMaterialNo("M201711201356145971009");
         changeOrderMaterial.setChangeMaterialCount(3);
         changeOrderMaterialList.add(changeOrderMaterial);
         addChangeOrderParam.setChangeOrderMaterialList(changeOrderMaterialList);
@@ -75,8 +75,8 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
 
         List<ChangeOrderMaterial> changeOrderMaterialList = new ArrayList<>();
         ChangeOrderMaterial changeOrderMaterial = new ChangeOrderMaterial();
-        changeOrderMaterial.setChangeMaterialNoSrc("M201711201356145971009");
-        changeOrderMaterial.setChangeMaterialNoDest("M201711201356145971009");
+        changeOrderMaterial.setSrcChangeMaterialNo("M201711201356145971009");
+        changeOrderMaterial.setDestChangeMaterialNo("M201711201356145971009");
         changeOrderMaterial.setChangeMaterialCount(3);
         changeOrderMaterialList.add(changeOrderMaterial);
         addChangeOrderParam.setChangeOrderMaterialList(changeOrderMaterialList);
@@ -120,7 +120,7 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
     public void doChangeMaterial() throws Exception {
         ChangeOrderMaterial changeOrderMaterial = new ChangeOrderMaterial();
         changeOrderMaterial.setChangeOrderMaterialId(7);
-        changeOrderMaterial.setChangeMaterialNoSrc("M201711201356145971009");
+        changeOrderMaterial.setSrcChangeMaterialNo("M201711201356145971009");
         changeOrderMaterial.setRealChangeMaterialCount(2);
         TestResult testResult = getJsonTestResult("/changeOrder/doChangeMaterial",changeOrderMaterial);
     }

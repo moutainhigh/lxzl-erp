@@ -2,9 +2,12 @@ package com.lxzl.erp.common.domain.changeOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -14,21 +17,28 @@ import java.util.List;
 public class ChangeOrder implements Serializable {
 
     private Integer changeOrderId;   //唯一标识
-    @NotBlank(message = ErrorCode.CHANGE_ORDER_NO_NOT_NULL,groups = {IdGroup.class})
+    @NotBlank(message = ErrorCode.CHANGE_ORDER_NO_NOT_NULL, groups = {IdGroup.class, ExtendGroup.class})
     private String changeOrderNo;   //换货编号
     private Integer customerId;   //客户ID
     private String customerNo;   //客户编号
+    @NotNull(message = ErrorCode.ORDER_HAVE_NO_RENT_START_TIME, groups = {ExtendGroup.class})
     private Date rentStartTime; //起租时间
     private Integer totalChangeProductCount;   //换货商品总数
     private Integer totalChangeMaterialCount;   //换货物料总数
     private Integer realTotalChangeProductCount;   //实际换货商品总数
     private Integer realTotalChangeMaterialCount;   //实际换货物料总数
     private BigDecimal totalPriceDiff;   //总差价（换货后总价格-换货前总价格）
+    @NotNull(message = ErrorCode.RETURN_ORDER_SERVICE_COST_NOT_NULL, groups = {ExtendGroup.class})
+    @Min(value=0,message = ErrorCode.RETURN_ORDER_SERVICE_COST_ERROR, groups = {ExtendGroup.class})
     private BigDecimal serviceCost;   //服务费
+    @NotNull(message = ErrorCode.RETURN_ORDER_DAMAGE_COST_NOT_NULL, groups = {ExtendGroup.class})
+    @Min(value=0,message = ErrorCode.RETURN_ORDER_DAMAGE_COST_ERROR, groups = {ExtendGroup.class})
     private BigDecimal damageCost;   //损坏加收费用
+    @NotNull(message = ErrorCode.IS_DAMAGE_NOT_NULL, groups = {ExtendGroup.class})
     private Integer isDamage;   //是否有损坏，0否1是
     private Integer changeReasonType;   //换货原因类型,0-升级 ，1-损坏，2-其他
     private String changeReason;   //换货原因
+    @NotNull(message = ErrorCode.RETURN_OR_CHANGE_MODE_NOT_NULL, groups = {ExtendGroup.class})
     private Integer changeMode;   //换货方式，1-上门取件，2邮寄
     private Integer changeOrderStatus;   //换货订单状态，1-待提交，5-审核中，9-待备货，13-备货中，17-已发货待取货，21-处理中，25-已完成
     private Integer dataStatus;   //状态：0不可用；1可用；2删除

@@ -17,7 +17,7 @@ public class ChangeOrderProductEquipment implements Serializable {
     private Integer changeOrderProductEquipmentId;   //唯一标识
     private Integer changeOrderProductId;   //租赁换货商品项ID
     private Integer changeOrderId;   //换货ID
-    @NotNull(message = ErrorCode.CHANGE_ORDER_NO_NOT_NULL)
+    @NotNull(message = ErrorCode.CHANGE_ORDER_NO_NOT_NULL, groups = {ExtendGroup.class})
     private String changeOrderNo;   //换货编号
     private String orderNo;   //订单编号
     private Integer srcEquipmentId;   //原设备ID
