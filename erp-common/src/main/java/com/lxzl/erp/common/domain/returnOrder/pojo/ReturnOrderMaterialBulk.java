@@ -14,6 +14,7 @@ public class ReturnOrderMaterialBulk implements Serializable {
 	private Integer returnOrderMaterialId;   //租赁退还物料项ID
 	private Integer returnOrderId;   //退还ID
 	private String returnOrderNo;   //退还编号
+	private String orderNo;   //订单编号
 	private Integer bulkMaterialId;   //散料ID
 	private String bulkMaterialNo;   //散料编号
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -127,5 +128,13 @@ public class ReturnOrderMaterialBulk implements Serializable {
 
 	public void setBulkMaterial(BulkMaterial bulkMaterial) {
 		this.bulkMaterial = bulkMaterial;
+	}
+
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
 	}
 }

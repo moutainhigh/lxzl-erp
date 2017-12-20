@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ChangeEquipmentPageParam extends BasePageParam {
 
-    @NotNull(message = ErrorCode.CHANGE_ORDER_PRODUCT_ID_NOT_NULL,groups = {IdGroup.class})
+    @NotNull(message = ErrorCode.CHANGE_ORDER_PRODUCT_ID_NOT_NULL)
     private Integer changeOrderProductId;
 
     public Integer getChangeOrderProductId() {

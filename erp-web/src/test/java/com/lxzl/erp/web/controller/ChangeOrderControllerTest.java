@@ -26,8 +26,8 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
 
         List<ChangeOrderProduct> changeOrderProductList = new ArrayList<>();
         ChangeOrderProduct changeOrderProduct = new ChangeOrderProduct();
-        changeOrderProduct.setChangeProductSkuIdSrc(40);
-        changeOrderProduct.setChangeProductSkuIdDest(40);
+        changeOrderProduct.setSrcChangeProductSkuId(40);
+        changeOrderProduct.setDestChangeProductSkuId(40);
         changeOrderProduct.setChangeProductSkuCount(2);
         changeOrderProductList.add(changeOrderProduct);
         addChangeOrderParam.setChangeOrderProductList(changeOrderProductList);
@@ -67,8 +67,8 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
         ChangeOrderProduct changeOrderProduct = new ChangeOrderProduct();
         //这里在每次【测试】时要修改
         changeOrderProduct.setChangeOrderProductId(10);
-        changeOrderProduct.setChangeProductSkuIdSrc(40);
-        changeOrderProduct.setChangeProductSkuIdDest(40);
+        changeOrderProduct.setSrcChangeProductSkuId(40);
+        changeOrderProduct.setDestChangeProductSkuId(40);
         changeOrderProduct.setChangeProductSkuCount(3);
         changeOrderProductList.add(changeOrderProduct);
         addChangeOrderParam.setChangeOrderProductList(changeOrderProductList);

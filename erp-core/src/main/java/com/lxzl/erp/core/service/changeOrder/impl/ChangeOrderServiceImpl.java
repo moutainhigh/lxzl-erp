@@ -101,8 +101,8 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         //如果要更换的sku不在在租列表，或者要更换的sku数量大于可换数量，返回相应错误
         if (CollectionUtil.isNotEmpty(changeOrderProductList)) {
             for (ChangeOrderProduct changeOrderProduct : changeOrderProductList) {
-                ProductSkuDO oldSkuRent = oldSkuCountMap.get(changeOrderProduct.getChangeProductSkuIdSrc());
-                if (!changeOrderProduct.getChangeProductSkuIdDest().equals(changeOrderProduct.getChangeProductSkuIdSrc())) {//目前只支持相同sku更换
+                ProductSkuDO oldSkuRent = oldSkuCountMap.get(changeOrderProduct.getSrcChangeProductSkuId());
+                if (!changeOrderProduct.getDestChangeProductSkuId().equals(changeOrderProduct.getSrcChangeProductSkuId())) {//目前只支持相同sku更换
                     serviceResult.setErrorCode(ErrorCode.CHANGE_ONLY_SAME_SKU);
                     return serviceResult;
                 }
@@ -116,19 +116,19 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 }
 
                 totalChangeProductCount += changeOrderProduct.getChangeProductSkuCount();
-                ServiceResult<String, Product> productSkuSrcResult = productService.queryProductBySkuId(changeOrderProduct.getChangeProductSkuIdSrc());
+                ServiceResult<String, Product> productSkuSrcResult = productService.queryProductBySkuId(changeOrderProduct.getSrcChangeProductSkuId());
                 if (!ErrorCode.SUCCESS.equals(productSkuSrcResult.getErrorCode()) || productSkuSrcResult.getResult() == null) {
                     serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                     return serviceResult;
                 }
-                ServiceResult<String, Product> productSkuDestResult = productService.queryProductBySkuId(changeOrderProduct.getChangeProductSkuIdDest());
+                ServiceResult<String, Product> productSkuDestResult = productService.queryProductBySkuId(changeOrderProduct.getDestChangeProductSkuId());
                 if (!ErrorCode.SUCCESS.equals(productSkuDestResult.getErrorCode()) || productSkuDestResult.getResult() == null) {
                     serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                     return serviceResult;
                 }
                 ChangeOrderProductDO changeOrderProductDO = new ChangeOrderProductDO();
-                changeOrderProductDO.setChangeProductSkuIdSrc(changeOrderProduct.getChangeProductSkuIdSrc());
-                changeOrderProductDO.setChangeProductSkuIdDest(changeOrderProduct.getChangeProductSkuIdDest());
+                changeOrderProductDO.setSrcChangeProductSkuId(changeOrderProduct.getSrcChangeProductSkuId());
+                changeOrderProductDO.setDestChangeProductSkuId(changeOrderProduct.getDestChangeProductSkuId());
                 changeOrderProductDO.setChangeProductSkuCount(changeOrderProduct.getChangeProductSkuCount());
                 changeOrderProductDO.setRealChangeProductSkuCount(0);
                 changeOrderProductDO.setSrcChangeProductSkuSnapshot(JSON.toJSONString(productSkuSrcResult.getResult()));
@@ -147,14 +147,15 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         if (CollectionUtil.isNotEmpty(changeOrderMaterialList)) {
             for (ChangeOrderMaterial changeOrderMaterial : changeOrderMaterialList) {
                 MaterialDO srcMaterial = oldMaterialCountMap.get(changeOrderMaterial.getSrcChangeMaterialNo());
-                if (changeOrderMaterial.getChangeMaterialCount() > srcMaterial.getCanProcessCount()) {//退还的物料数量大于可租数量
-                    serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_TOO_MORE);
-                    return serviceResult;
-                }
                 if (srcMaterial == null) {//如果要退还的物料不在在租列表
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_RENT_THIS);
                     return serviceResult;
                 }
+                if (changeOrderMaterial.getChangeMaterialCount() > srcMaterial.getCanProcessCount()) {//退还的物料数量大于可租数量
+                    serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_TOO_MORE);
+                    return serviceResult;
+                }
+
                 totalChangeMaterialCount += changeOrderMaterial.getChangeMaterialCount();
                 MaterialDO destMaterial = materialMapper.findByNo(changeOrderMaterial.getDestChangeMaterialNo());
 
@@ -273,8 +274,8 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         if (CollectionUtil.isNotEmpty(changeOrderProductList)) {
             for (ChangeOrderProduct changeOrderProduct : changeOrderProductList) {
                 if (changeOrderProduct.getChangeOrderProductId() == null) {
-                    ProductSkuDO oldSkuRent = oldSkuCountMap.get(changeOrderProduct.getChangeProductSkuIdSrc());
-                    if (!changeOrderProduct.getChangeProductSkuIdDest().equals(changeOrderProduct.getChangeProductSkuIdSrc())) {//目前只支持相同sku更换
+                    ProductSkuDO oldSkuRent = oldSkuCountMap.get(changeOrderProduct.getSrcChangeProductSkuId());
+                    if (!changeOrderProduct.getDestChangeProductSkuId().equals(changeOrderProduct.getSrcChangeProductSkuId())) {//目前只支持相同sku更换
                         serviceResult.setErrorCode(ErrorCode.CHANGE_ONLY_SAME_SKU);
                         return serviceResult;
                     }
@@ -287,19 +288,19 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                         return serviceResult;
                     }
                     totalChangeProductCount += changeOrderProduct.getChangeProductSkuCount();
-                    ServiceResult<String, Product> productSkuSrcResult = productService.queryProductBySkuId(changeOrderProduct.getChangeProductSkuIdSrc());
+                    ServiceResult<String, Product> productSkuSrcResult = productService.queryProductBySkuId(changeOrderProduct.getSrcChangeProductSkuId());
                     if (!ErrorCode.SUCCESS.equals(productSkuSrcResult.getErrorCode()) || productSkuSrcResult.getResult() == null) {
                         serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                         return serviceResult;
                     }
-                    ServiceResult<String, Product> productSkuDestResult = productService.queryProductBySkuId(changeOrderProduct.getChangeProductSkuIdDest());
+                    ServiceResult<String, Product> productSkuDestResult = productService.queryProductBySkuId(changeOrderProduct.getDestChangeProductSkuId());
                     if (!ErrorCode.SUCCESS.equals(productSkuDestResult.getErrorCode()) || productSkuDestResult.getResult() == null) {
                         serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                         return serviceResult;
                     }
                     ChangeOrderProductDO changeOrderProductDO = new ChangeOrderProductDO();
-                    changeOrderProductDO.setChangeProductSkuIdSrc(changeOrderProduct.getChangeProductSkuIdSrc());
-                    changeOrderProductDO.setChangeProductSkuIdDest(changeOrderProduct.getChangeProductSkuIdDest());
+                    changeOrderProductDO.setSrcChangeProductSkuId(changeOrderProduct.getSrcChangeProductSkuId());
+                    changeOrderProductDO.setDestChangeProductSkuId(changeOrderProduct.getDestChangeProductSkuId());
                     changeOrderProductDO.setChangeProductSkuCount(changeOrderProduct.getChangeProductSkuCount());
                     changeOrderProductDO.setRealChangeProductSkuCount(0);
                     changeOrderProductDO.setSrcChangeProductSkuSnapshot(JSON.toJSONString(productSkuSrcResult.getResult()));
@@ -332,14 +333,15 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             for (ChangeOrderMaterial changeOrderMaterial : changeOrderMaterialList) {
                 if (changeOrderMaterial.getChangeOrderMaterialId() == null) {
                     MaterialDO srcMaterial = oldMaterialCountMap.get(changeOrderMaterial.getSrcChangeMaterialNo());
-                    if (changeOrderMaterial.getChangeMaterialCount() > srcMaterial.getCanProcessCount()) {//退还的物料数量大于可租数量
-                        serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_TOO_MORE);
-                        return serviceResult;
-                    }
                     if (srcMaterial == null) {//如果要退还的物料不在在租列表
                         serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_RENT_THIS);
                         return serviceResult;
                     }
+                    if (changeOrderMaterial.getChangeMaterialCount() > srcMaterial.getCanProcessCount()) {//退还的物料数量大于可租数量
+                        serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_TOO_MORE);
+                        return serviceResult;
+                    }
+
                     totalChangeMaterialCount += changeOrderMaterial.getChangeMaterialCount();
                     MaterialDO destMaterial = materialMapper.findByNo(changeOrderMaterial.getDestChangeMaterialNo());
 
@@ -616,10 +618,10 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             //按sku统计需备货数量
             Map<Integer, Integer> skuShouldStockMap = new HashMap<>();
             for (ChangeOrderProductDO changeOrderProductDO : changeOrderProductDOList) {
-                if (!skuShouldStockMap.containsKey(changeOrderProductDO.getChangeProductSkuIdDest())) {
-                    skuShouldStockMap.put(changeOrderProductDO.getChangeProductSkuIdDest(), 0);
+                if (!skuShouldStockMap.containsKey(changeOrderProductDO.getDestChangeProductSkuId())) {
+                    skuShouldStockMap.put(changeOrderProductDO.getDestChangeProductSkuId(), 0);
                 }
-                skuShouldStockMap.put(changeOrderProductDO.getChangeProductSkuIdDest(), skuShouldStockMap.get(changeOrderProductDO.getChangeProductSkuIdDest()) + changeOrderProductDO.getChangeProductSkuCount());
+                skuShouldStockMap.put(changeOrderProductDO.getDestChangeProductSkuId(), skuShouldStockMap.get(changeOrderProductDO.getDestChangeProductSkuId()) + changeOrderProductDO.getChangeProductSkuCount());
             }
 
             //按sku统计已备货sku数量
@@ -1047,7 +1049,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         List<ChangeOrderProduct> changeOrderProductList = changeOrder.getChangeOrderProductList();
         if (CollectionUtil.isNotEmpty(changeOrderProductList)) {
             for (ChangeOrderProduct changeOrderProduct : changeOrderProductList) {
-                changeOrderProduct.setCanProcessCount(oldSkuCountMap.get(changeOrderProduct.getChangeProductSkuIdSrc()).getCanProcessCount() + changeOrderProduct.getChangeProductSkuCount());
+                changeOrderProduct.setCanProcessCount(oldSkuCountMap.get(changeOrderProduct.getSrcChangeProductSkuId()).getCanProcessCount() + changeOrderProduct.getChangeProductSkuCount());
             }
         }
         //填写退还物料项可换数量字段，用于修改接口提示
@@ -1179,14 +1181,14 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             //按照destSku归集后的changeOrderProductDOList Map
             Map<Integer, List<ChangeOrderProductDO>> changeOrderProductDOListMap = new HashMap<>();
             for (ChangeOrderProductDO changeOrderProductDO : changeOrderProductDOList) {
-                if (!changeOrderProductCountMap.containsKey(changeOrderProductDO.getChangeProductSkuIdDest())) {
-                    changeOrderProductCountMap.put(changeOrderProductDO.getChangeProductSkuIdDest(), 0);
+                if (!changeOrderProductCountMap.containsKey(changeOrderProductDO.getDestChangeProductSkuId())) {
+                    changeOrderProductCountMap.put(changeOrderProductDO.getDestChangeProductSkuId(), 0);
                 }
-                changeOrderProductCountMap.put(changeOrderProductDO.getChangeProductSkuIdDest(), changeOrderProductDO.getChangeProductSkuCount() + changeOrderProductCountMap.get(changeOrderProductDO.getChangeProductSkuIdDest()));
-                if (!changeOrderProductDOListMap.containsKey(changeOrderProductDO.getChangeProductSkuIdDest())) {
-                    changeOrderProductDOListMap.put(changeOrderProductDO.getChangeProductSkuIdDest(), new ArrayList<ChangeOrderProductDO>());
+                changeOrderProductCountMap.put(changeOrderProductDO.getDestChangeProductSkuId(), changeOrderProductDO.getChangeProductSkuCount() + changeOrderProductCountMap.get(changeOrderProductDO.getDestChangeProductSkuId()));
+                if (!changeOrderProductDOListMap.containsKey(changeOrderProductDO.getDestChangeProductSkuId())) {
+                    changeOrderProductDOListMap.put(changeOrderProductDO.getDestChangeProductSkuId(), new ArrayList<ChangeOrderProductDO>());
                 }
-                changeOrderProductDOListMap.get(changeOrderProductDO.getChangeProductSkuIdDest()).add(changeOrderProductDO);
+                changeOrderProductDOListMap.get(changeOrderProductDO.getDestChangeProductSkuId()).add(changeOrderProductDO);
             }
             //计算是否可备货，可备货总数-已备货总数大于等于1可备货
             Integer canStock = changeOrderProductCountMap.get(productEquipmentDO.getSkuId()) == null ? 0 : changeOrderProductCountMap.get(productEquipmentDO.getSkuId());
@@ -1303,6 +1305,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             ChangeOrderProductEquipmentDO changeOrderProductEquipmentDO = changeOrderProductEquipmentMapper.findByChangeOrderNoAndEquipmentNo(changeOrderDO.getChangeOrderNo(), equipmentDO);
             if (changeOrderProductEquipmentDO == null) {
                 serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+                return serviceResult;
             }
             changeOrderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
             changeOrderProductEquipmentDO.setUpdateTime(now);
@@ -1315,6 +1318,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         if (StringUtil.isNotBlank(materialNo)) {
             if (materialCount == null || materialCount <= 0) {
                 serviceResult.setErrorCode(ErrorCode.MATERIAL_COUNT_ERROR);
+                return serviceResult;
             }
             MaterialDO materialDO = materialMapper.findByNo(materialNo);
             if (materialDO == null) {
@@ -1325,6 +1329,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             List<ChangeOrderMaterialBulkDO> changeOrderMaterialBulkDOList = changeOrderMaterialBulkMapper.findByChangeOrderNoAndMaterialNo(changeOrderDO.getChangeOrderNo(), materialNo);
             if (CollectionUtil.isEmpty(changeOrderMaterialBulkDOList) || changeOrderMaterialBulkDOList.size() < materialCount) {
                 serviceResult.setErrorCode(ErrorCode.PRODUCT_MATERIAL_NOT_MATCHING);
+                return serviceResult;
             }
             //待更新的散料
             List<BulkMaterialDO> bulkMaterialDOListForUpdate = new ArrayList<>();

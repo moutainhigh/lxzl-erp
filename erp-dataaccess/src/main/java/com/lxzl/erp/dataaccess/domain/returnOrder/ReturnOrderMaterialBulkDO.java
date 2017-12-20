@@ -9,6 +9,7 @@ public class ReturnOrderMaterialBulkDO  extends BaseDO {
 	private Integer id;
 	private Integer returnOrderMaterialId;
 	private Integer returnOrderId;
+	private String orderNo;
 	private String returnOrderNo;
 	private Integer bulkMaterialId;
 	private String bulkMaterialNo;
@@ -45,6 +46,14 @@ public class ReturnOrderMaterialBulkDO  extends BaseDO {
 
 	public void setReturnOrderNo(String returnOrderNo){
 		this.returnOrderNo = returnOrderNo;
+	}
+
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
 	}
 
 	public Integer getBulkMaterialId(){

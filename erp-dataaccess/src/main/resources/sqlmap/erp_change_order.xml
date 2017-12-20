@@ -67,8 +67,8 @@
 		<id column="ecop_id" jdbcType="INTEGER" property="id" />
 		<result column="ecop_change_order_id" jdbcType="INTEGER" property="changeOrderId" />
 		<result column="ecop_change_order_no" jdbcType="VARCHAR" property="changeOrderNo" />
-		<result column="ecop_src_change_product_sku_id" jdbcType="INTEGER" property="changeProductSkuIdSrc" />
-		<result column="ecop_dest_change_product_sku_id" jdbcType="INTEGER" property="changeProductSkuIdDest" />
+		<result column="ecop_src_change_product_sku_id" jdbcType="INTEGER" property="srcChangeProductSkuId" />
+		<result column="ecop_dest_change_product_sku_id" jdbcType="INTEGER" property="destChangeProductSkuId" />
 		<result column="ecop_change_product_sku_count" jdbcType="INTEGER" property="changeProductSkuCount" />
 		<result column="ecop_real_change_product_sku_count" jdbcType="INTEGER" property="realChangeProductSkuCount" />
 		<result column="ecop_src_change_product_sku_snapshot" jdbcType="VARCHAR" property="srcChangeProductSkuSnapshot" />

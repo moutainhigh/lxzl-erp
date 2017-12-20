@@ -6,8 +6,8 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="change_order_id" jdbcType="INTEGER" property="changeOrderId" />
 		<result column="change_order_no" jdbcType="VARCHAR" property="changeOrderNo" />
-		<result column="src_change_product_sku_id" jdbcType="INTEGER" property="changeProductSkuIdSrc" />
-		<result column="dest_change_product_sku_id" jdbcType="INTEGER" property="changeProductSkuIdDest" />
+		<result column="src_change_product_sku_id" jdbcType="INTEGER" property="srcChangeProductSkuId" />
+		<result column="dest_change_product_sku_id" jdbcType="INTEGER" property="destChangeProductSkuId" />
 		<result column="change_product_sku_count" jdbcType="INTEGER" property="changeProductSkuCount" />
 		<result column="real_change_product_sku_count" jdbcType="INTEGER" property="realChangeProductSkuCount" />
 		<result column="src_change_product_sku_snapshot" jdbcType="VARCHAR" property="srcChangeProductSkuSnapshot" />
@@ -60,11 +60,11 @@
 			<if test="changeOrderNo != null">
 				change_order_no = #{changeOrderNo,jdbcType=VARCHAR},
 			</if>
-			<if test="changeProductSkuIdSrc != null">
-				src_change_product_sku_id = #{changeProductSkuIdSrc,jdbcType=INTEGER},
+			<if test="srcChangeProductSkuId != null">
+				src_change_product_sku_id = #{srcChangeProductSkuId,jdbcType=INTEGER},
 			</if>
-			<if test="changeProductSkuIdDest != null">
-				dest_change_product_sku_id = #{changeProductSkuIdDest,jdbcType=INTEGER},
+			<if test="destChangeProductSkuId != null">
+				dest_change_product_sku_id = #{destChangeProductSkuId,jdbcType=INTEGER},
 			</if>
 			<if test="changeProductSkuCount != null">
 				change_product_sku_count = #{changeProductSkuCount,jdbcType=INTEGER},
@@ -113,7 +113,7 @@
 		values
 		<foreach collection="changeOrderProductDOList" item="changeOrderProductDO" index="index" separator =",">
 			(
-			#{changeOrderId},#{changeOrderNo},#{changeOrderProductDO.changeProductSkuIdSrc},#{changeOrderProductDO.changeProductSkuIdDest},#{changeOrderProductDO.changeProductSkuCount},
+			#{changeOrderId},#{changeOrderNo},#{changeOrderProductDO.srcChangeProductSkuId},#{changeOrderProductDO.destChangeProductSkuId},#{changeOrderProductDO.changeProductSkuCount},
 			#{changeOrderProductDO.realChangeProductSkuCount},#{changeOrderProductDO.srcChangeProductSkuSnapshot},#{changeOrderProductDO.destChangeProductSkuSnapshot},
 			#{changeOrderProductDO.dataStatus},#{changeOrderProductDO.remark},
 			#{changeOrderProductDO.createTime},#{changeOrderProductDO.createUser},#{changeOrderProductDO.updateTime},#{changeOrderProductDO.updateUser}
@@ -140,13 +140,13 @@
 		<trim prefix=",">
 			src_change_product_sku_id =
 			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
-				when #{item.id,jdbcType=INTEGER} then #{item.changeProductSkuIdSrc,jdbcType=INTEGER}
+				when #{item.id,jdbcType=INTEGER} then #{item.srcChangeProductSkuId,jdbcType=INTEGER}
 			</foreach>
 		</trim>
 		<trim prefix=",">
 			dest_change_product_sku_id =
 			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
-				when #{item.id,jdbcType=INTEGER} then #{item.changeProductSkuIdDest,jdbcType=INTEGER}
+				when #{item.id,jdbcType=INTEGER} then #{item.destChangeProductSkuId,jdbcType=INTEGER}
 			</foreach>
 		</trim>
 		<trim prefix=",">

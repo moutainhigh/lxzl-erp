@@ -623,6 +623,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findDetailByPurchaseNo(purchaseNo);
         if(purchaseOrderDO==null){
             serviceResult.setErrorCode(ErrorCode.PURCHASE_ORDER_NOT_EXISTS);
+            return serviceResult;
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         PurchaseOrder purchaseOrder = PurchaseOrderConverter.convertPurchaseOrderDO(purchaseOrderDO);
@@ -1306,7 +1307,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                         if(countNow==null){
                             skuCountMap.put(purchaseReceiveOrderProductDO.getRealProductSkuId(),0);
                         }
-                        skuCountMap.put(purchaseReceiveOrderProductDO.getRealProductSkuId(),countNow+purchaseReceiveOrderProductDO.getRealProductCount());
+                        skuCountMap.put(purchaseReceiveOrderProductDO.getRealProductSkuId(),skuCountMap.get(purchaseReceiveOrderProductDO.getRealProductSkuId())+purchaseReceiveOrderProductDO.getRealProductCount());
                     }
                     //找到所采购单物料项，累加数量
                     List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderMaterialDOList();

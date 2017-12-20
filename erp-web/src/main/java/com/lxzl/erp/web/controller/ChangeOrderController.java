@@ -154,7 +154,7 @@ public class ChangeOrderController {
     }
 
     /**
-     * 换货单列表
+     * 换货单分页
      *
      * @param changeOrderPageParam
      * @param validResult
@@ -173,7 +173,7 @@ public class ChangeOrderController {
      * @return
      */
     @RequestMapping(value = "pageChangeOrderProductEquipment", method = RequestMethod.POST)
-    public Result pageChangeOrderProductEquipment(@RequestBody @Validated(IdGroup.class) ChangeEquipmentPageParam changeEquipmentPageParam, BindingResult validResult) {
+    public Result pageChangeOrderProductEquipment(@RequestBody @Validated ChangeEquipmentPageParam changeEquipmentPageParam, BindingResult validResult) {
         return resultGenerator.generate(changeOrderService.pageChangeOrderProductEquipment(changeEquipmentPageParam));
     }
 
@@ -185,7 +185,7 @@ public class ChangeOrderController {
      * @return
      */
     @RequestMapping(value = "pageChangeOrderMaterialBulk", method = RequestMethod.POST)
-    public Result pageChangeOrderMaterialBulk(@RequestBody @Validated(IdGroup.class) ChangeBulkPageParam changeBulkPageParam, BindingResult validResult) {
+    public Result pageChangeOrderMaterialBulk(@RequestBody @Validated ChangeBulkPageParam changeBulkPageParam, BindingResult validResult) {
         return resultGenerator.generate(changeOrderService.pageChangeOrderMaterialBulk(changeBulkPageParam));
     }
 
