@@ -399,6 +399,23 @@ public class PageController extends BaseController {
         return "/component/audit/rejectModal";
     }
 
+    //调拨单
+    @RequestMapping("/order-deployment-manage/list")
+    public String deploymentOrderManageList() {
+        return "/deploymentOrderManage/deploymentOrderList";
+    }
+    @RequestMapping("/order-deployment-manage/add")
+    public String deploymentOrderManageAdd() {
+        return "/deploymentOrderManage/deploymentOrderAdd";
+    }
+    @RequestMapping("/order-deployment-manage/edit")
+    public String deploymentOrderManageEdit() {
+        return "/deploymentOrderManage/deploymentOrderEdit";
+    }
+    @RequestMapping("/order-deployment-manage/detail")
+    public String deploymentOrderManageDetail() {
+        return "/deploymentOrderManage/deploymentOrderDetail";
+    }
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")
