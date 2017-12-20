@@ -751,8 +751,6 @@ CREATE TABLE `erp_bulk_material` (
   `material_model_id` int(20) DEFAULT NULL COMMENT '物料型号ID',
   `material_capacity_value` double(11,2) DEFAULT NULL COMMENT '物料字面量',
   `bulk_material_price` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '散料本身的价值(单价)',
-  `original_price` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '原价',
-  `rent_price` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '租赁价格',
   `current_equipment_id` int(20) COMMENT '当前设备ID',
   `current_equipment_no` varchar(100) COMMENT '当前设备编号',
   `bulk_material_status` int(11) NOT NULL DEFAULT '0' COMMENT '散料状态，1散料空闲，2租赁中，3维修中，4报废，5调拨中',

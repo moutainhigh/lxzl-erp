@@ -18,8 +18,6 @@
 		<result column="material_model_id" jdbcType="INTEGER" property="materialModelId" />
 		<result column="material_capacity_value" jdbcType="DOUBLE" property="materialCapacityValue" />
 		<result column="bulk_material_price" jdbcType="DECIMAL" property="bulkMaterialPrice" />
-		<result column="original_price" jdbcType="DECIMAL" property="originalPrice" />
-		<result column="rent_price" jdbcType="DECIMAL" property="rentPrice" />
 		<result column="current_equipment_id" jdbcType="INTEGER" property="currentEquipmentId" />
 		<result column="current_equipment_no" jdbcType="VARCHAR" property="currentEquipmentNo" />
 		<result column="bulk_material_status" jdbcType="INTEGER" property="bulkMaterialStatus" />
@@ -33,7 +31,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ebm.id,ebm.bulk_material_no,ebm.bulk_material_type,ebm.bulk_material_name,ebm.material_id,ebm.material_no,ebm.order_no,ebm.current_warehouse_id,ebm.current_warehouse_position_id,ebm.owner_warehouse_id,ebm.owner_warehouse_position_id,ebm.brand_id,ebm.material_model_id,ebm.material_capacity_value,ebm.bulk_material_price,ebm.original_price,ebm.rent_price,ebm.current_equipment_id,ebm.current_equipment_no,ebm.bulk_material_status,ebm.is_new,ebm.data_status,ebm.remark,ebm.create_time,ebm.create_user,ebm.update_time,ebm.update_user
+		ebm.id,ebm.bulk_material_no,ebm.bulk_material_type,ebm.bulk_material_name,ebm.material_id,ebm.material_no,ebm.order_no,ebm.current_warehouse_id,ebm.current_warehouse_position_id,ebm.owner_warehouse_id,ebm.owner_warehouse_position_id,ebm.brand_id,ebm.material_model_id,ebm.material_capacity_value,ebm.bulk_material_price,ebm.current_equipment_id,ebm.current_equipment_no,ebm.bulk_material_status,ebm.is_new,ebm.data_status,ebm.remark,ebm.create_time,ebm.create_user,ebm.update_time,ebm.update_user
 	</sql>
 
 	<select id="findById" resultMap="BulkMaterialDO" parameterType="java.lang.Integer">
