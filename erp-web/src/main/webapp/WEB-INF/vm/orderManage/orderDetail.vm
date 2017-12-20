@@ -433,7 +433,8 @@
                 'manage.order.item.render.js',
                 'manage.order.util.js',
                 'modal.submit.audit.js',
-                'manage.order.picking.js');
+                'manage.order.picking.js',
+                'modal.input.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

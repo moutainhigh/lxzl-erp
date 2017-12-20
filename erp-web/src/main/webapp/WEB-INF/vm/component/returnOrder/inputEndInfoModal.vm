@@ -1,27 +1,40 @@
 <div id="inputEndInfoModal" class="popup-basic admin-form mfp-with-anim "> ##mfp-hide
     <div class="panel">
         <div class="panel-heading">
-            <span class="panel-title"><i class="fa fa-pencil"></i></span>
+            <span class="panel-title"><i class="fa fa-pencil"></i>结束退还单</span>
         </div>
         <form method="post" id="inputEndInfoForm" description="结束订单">
             <div class="panel-body p25">
                 <div class="section row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <label for="serviceCost" class="field-label">服务费</label>
                         <label for="serviceCost" class="field prepend-icon">
-                            <input type="text" name="serviceCost" id="serviceCost" class="gui-input required letterOrChinese moneyNumber" maxlength="10">
-                            <label for="serviceCost" class="field-icon"><i class="fa fa-user"></i>
+                            <input type="text" name="serviceCost" id="serviceCost" class="gui-input required moneyNumber" maxlength="10">
+                            <label for="serviceCost" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
                     </div>
                 </div>
                 <div class="section row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <label for="damageCost" class="field-label">折损费</label>
                         <label for="damageCost" class="field prepend-icon">
-                            <input type="text" name="damageCost" id="damageCost" class="gui-input required letterOrChinese moneyNumber" maxlength="10">
-                            <label for="damageCost" class="field-icon"><i class="fa fa-user"></i>
+                            <input type="text" name="damageCost" id="damageCost" class="gui-input required moneyNumber" maxlength="10">
+                            <label for="damageCost" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="isDamage" class="field-label">是否损坏</label>
+                        <label class="field select">
+                            <select id="isDamage" name="isDamage" class="required">
+                                <option value="">请选择</option>
+                                <option value="0">否</option>
+                                <option value="1">是</option>
+                            </select>
+                            <i class="arrow"></i>
                         </label>
                     </div>
                 </div>

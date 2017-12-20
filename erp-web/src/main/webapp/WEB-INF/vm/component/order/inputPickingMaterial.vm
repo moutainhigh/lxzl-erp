@@ -1,9 +1,9 @@
-<div id="pickingModal" class="popup-basic popup-lg admin-form mfp-with-anim">
+<div id="inputPickingModal" class="popup-basic popup-lg admin-form mfp-with-anim">
     <div class="panel">
         <div class="panel-heading">
             <span class="panel-title"><i class="fa fa-pencil"></i><span class="modalTitle"></span></span>
         </div>
-        <form method="post" id="pickingForm">
+        <form method="post" class="inputForm">
             <div class="panel-body p25">
                 <div class="section">
                     <label for="username" class="field-label">输入设备号</label>

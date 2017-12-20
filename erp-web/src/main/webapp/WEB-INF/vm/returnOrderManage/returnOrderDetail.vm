@@ -308,6 +308,22 @@
                                 </div>
                             </div>
                             <div id="purchaseOrderMaterialItems" class="tab-pane">
+                                <div class="panel-menu p12 br-n br-b">
+                                    <div class="row">
+                                        <div class="pull-left ml10">
+                                            <script type="text/html" id="returnMaterialButtonsTpl">
+                                                {{#acitonButtons}}
+                                                {{#showButton}}
+                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-returnorderno="{{returnOrderNo}}">
+                                                    <i class="{{iClass}}"></i> {{text}}
+                                                </a>
+                                                {{/showButton}}
+                                                {{/acitonButtons}}
+                                            </script>
+                                            <div class="btn-group actionCommonButtons" id="returnMaterialButtons"></div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="table-responsive">
                                     <script type="text/html" id="materialDataListTpl">
                                         <thead>
@@ -360,7 +376,7 @@
                                             </td>
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
-                                                    <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}">删除</a>
+                                                    <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}" data-returnorderno="{{orderNo}}">删除</a>
                                                 </div>
                                             </td>
                                         </tr>

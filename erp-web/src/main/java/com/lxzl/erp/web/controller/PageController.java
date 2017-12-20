@@ -195,6 +195,7 @@ public class PageController extends BaseController {
         return "/orderManage/orderItem";
     }
 
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
@@ -211,6 +212,11 @@ public class PageController extends BaseController {
     @RequestMapping("/order-return-manage/edit")
     public String returnOrderManageEdit() {
         return "/returnOrderManage/returnOrderEdit";
+    }
+    //输入退还当服务费等信息
+    @RequestMapping("/return-order-end-info-modal/input")
+    public String inputReturnOrderEndInfoModal() {
+        return "/component/returnOrder/inputEndInfoModal";
     }
 
     //配货
@@ -480,10 +486,5 @@ public class PageController extends BaseController {
         return "/component/address/inputAddressModal";
     }
 
-    //输入退还当服务费等信息
-    @RequestMapping("/return-order-end-info-modal/input")
-    public String inputReturnOrderEndInfoModal() {
-        return "/component/returnOrder/inputEndInfoModal";
-    }
 
 }
