@@ -102,11 +102,11 @@
         AND ero.customer_id=#{maps.customerId}
         GROUP BY erop.return_product_sku_id) ero ON ero.sku_id = epe.sku_id
         LEFT JOIN
-        (SELECT change_product_sku_id_src sku_id,SUM(change_product_sku_count) returnYet FROM erp_change_order eco
+        (SELECT src_change_product_sku_id sku_id,SUM(change_product_sku_count) returnYet FROM erp_change_order eco
         LEFT JOIN erp_change_order_product ecop ON ecop.change_order_id = eco.id AND ecop.data_status=1
         WHERE eco.data_status = 1 AND eco.change_order_status!=24 AND eco.change_order_status!=28
         AND eco.customer_id=#{maps.customerId}
-        GROUP BY ecop.change_product_sku_id_src) eco ON eco.sku_id = epe.sku_id
+        GROUP BY ecop.src_change_product_sku_id) eco ON eco.sku_id = epe.sku_id
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
 

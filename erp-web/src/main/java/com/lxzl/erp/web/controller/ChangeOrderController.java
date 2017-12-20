@@ -125,7 +125,7 @@ public class ChangeOrderController {
      * @return
      */
     @RequestMapping(value = "end", method = RequestMethod.POST)
-    public Result end(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
+    public Result end(@RequestBody @Validated({ExtendGroup.class}) ChangeOrder changeOrder, BindingResult validResult) {
         return resultGenerator.generate(changeOrderService.end(changeOrder));
     }
 
@@ -137,7 +137,7 @@ public class ChangeOrderController {
      * @return
      */
     @RequestMapping(value = "cancel", method = RequestMethod.POST)
-    public Result cancel(@RequestBody @Validated ChangeOrder changeOrder, BindingResult validResult) {
+    public Result cancel(@RequestBody @Validated(IdGroup.class) ChangeOrder changeOrder, BindingResult validResult) {
         return resultGenerator.generate(changeOrderService.cancel(changeOrder));
     }
 

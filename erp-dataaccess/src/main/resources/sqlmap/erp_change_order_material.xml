@@ -6,12 +6,12 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="change_order_id" jdbcType="INTEGER" property="changeOrderId" />
 		<result column="change_order_no" jdbcType="VARCHAR" property="changeOrderNo" />
-		<result column="change_material_id_src" jdbcType="INTEGER" property="changeMaterialIdSrc" />
-		<result column="change_material_id_dest" jdbcType="INTEGER" property="changeMaterialIdDest" />
+		<result column="src_change_material_id" jdbcType="INTEGER" property="srcChangeMaterialId" />
+		<result column="dest_change_material_id" jdbcType="INTEGER" property="destChangeMaterialId" />
 		<result column="change_material_count" jdbcType="INTEGER" property="changeMaterialCount" />
 		<result column="real_change_material_count" jdbcType="INTEGER" property="realChangeMaterialCount" />
-		<result column="change_material_snapshot_src" jdbcType="VARCHAR" property="changeMaterialSnapshotSrc" />
-		<result column="change_material_snapshot_dest" jdbcType="VARCHAR" property="changeMaterialSnapshotDest" />
+		<result column="src_change_material_snapshot" jdbcType="VARCHAR" property="srcChangeMaterialSnapshot" />
+		<result column="dest_change_material_snapshot" jdbcType="VARCHAR" property="destChangeMaterialSnapshot" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -22,7 +22,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ecom.id,ecom.change_order_id,ecom.change_order_no,ecom.change_material_id_src,ecom.change_material_id_dest,ecom.change_material_count,ecom.real_change_material_count,ecom.change_material_snapshot_src,ecom.change_material_snapshot_dest,ecom.data_status,ecom.remark,ecom.create_time,ecom.create_user,ecom.update_time,ecom.update_user
+		ecom.id,ecom.change_order_id,ecom.change_order_no,ecom.src_change_material_id,ecom.dest_change_material_id,ecom.change_material_count,ecom.real_change_material_count,ecom.src_change_material_snapshot,ecom.dest_change_material_snapshot,ecom.data_status,ecom.remark,ecom.create_time,ecom.create_user,ecom.update_time,ecom.update_user
 	</sql>
 
 	<select id="findById" resultMap="ChangeOrderMaterialDO" parameterType="java.lang.Integer">
@@ -61,11 +61,11 @@
 			<if test="changeOrderNo != null">
 				change_order_no = #{changeOrderNo,jdbcType=VARCHAR},
 			</if>
-			<if test="changeMaterialIdSrc != null">
-				change_material_id_src = #{changeMaterialIdSrc,jdbcType=INTEGER},
+			<if test="srcChangeMaterialId != null">
+				src_change_material_id = #{srcChangeMaterialId,jdbcType=INTEGER},
 			</if>
-			<if test="changeMaterialIdDest != null">
-				change_material_id_dest = #{changeMaterialIdDest,jdbcType=INTEGER},
+			<if test="destChangeMaterialId != null">
+				dest_change_material_id = #{destChangeMaterialId,jdbcType=INTEGER},
 			</if>
 			<if test="changeMaterialCount != null">
 				change_material_count = #{changeMaterialCount,jdbcType=INTEGER},
@@ -73,11 +73,11 @@
 			<if test="realChangeMaterialCount != null">
 				real_change_material_count = #{realChangeMaterialCount,jdbcType=INTEGER},
 			</if>
-			<if test="changeMaterialSnapshotSrc != null">
-				change_material_snapshot_src = #{changeMaterialSnapshotSrc,jdbcType=VARCHAR},
+			<if test="srcChangeMaterialSnapshot != null">
+				src_change_material_snapshot = #{srcChangeMaterialSnapshot,jdbcType=VARCHAR},
 			</if>
-			<if test="changeMaterialSnapshotDest != null">
-				change_material_snapshot_dest = #{changeMaterialSnapshotDest,jdbcType=VARCHAR},
+			<if test="destChangeMaterialSnapshot != null">
+				dest_change_material_snapshot = #{destChangeMaterialSnapshot,jdbcType=VARCHAR},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
@@ -110,12 +110,12 @@
 
 	<insert id="batchSave" parameterType="java.util.List">
 		insert into erp_change_order_material
-		(change_order_id,change_order_no,change_material_id_src,change_material_id_dest,change_material_count,real_change_material_count,change_material_snapshot_src,change_material_snapshot_dest,data_status,remark,create_time,create_user,update_time,update_user)
+		(change_order_id,change_order_no,src_change_material_id,dest_change_material_id,change_material_count,real_change_material_count,src_change_material_snapshot,dest_change_material_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
 		values
 		<foreach collection="changeOrderMaterialDOList" item="changeOrderMaterialDO" index="index" separator =",">
 			(
-			#{changeOrderId},#{changeOrderNo},#{changeOrderMaterialDO.changeMaterialIdSrc},#{changeOrderMaterialDO.changeMaterialIdDest},#{changeOrderMaterialDO.changeMaterialCount},
-			#{changeOrderMaterialDO.realChangeMaterialCount},#{changeOrderMaterialDO.changeMaterialSnapshotSrc},#{changeOrderMaterialDO.changeMaterialSnapshotDest},
+			#{changeOrderId},#{changeOrderNo},#{changeOrderMaterialDO.srcChangeMaterialId},#{changeOrderMaterialDO.destChangeMaterialId},#{changeOrderMaterialDO.changeMaterialCount},
+			#{changeOrderMaterialDO.realChangeMaterialCount},#{changeOrderMaterialDO.srcChangeMaterialSnapshot},#{changeOrderMaterialDO.destChangeMaterialSnapshot},
 			#{changeOrderMaterialDO.dataStatus},#{changeOrderMaterialDO.remark},
 			#{changeOrderMaterialDO.createTime},#{changeOrderMaterialDO.createUser},#{changeOrderMaterialDO.updateTime},#{changeOrderMaterialDO.updateUser}
 			)
@@ -137,15 +137,15 @@
 			</foreach>
 		</trim>
 		<trim prefix=",">
-			change_material_id_src =
+			src_change_material_id =
 			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
-				when #{item.id,jdbcType=INTEGER} then #{item.changeMaterialIdSrc,jdbcType=INTEGER}
+				when #{item.id,jdbcType=INTEGER} then #{item.srcChangeMaterialId,jdbcType=INTEGER}
 			</foreach>
 		</trim>
 		<trim prefix=",">
-			change_material_id_dest =
+			dest_change_material_id =
 			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
-				when #{item.id,jdbcType=INTEGER} then #{item.changeMaterialIdDest,jdbcType=INTEGER}
+				when #{item.id,jdbcType=INTEGER} then #{item.destChangeMaterialId,jdbcType=INTEGER}
 			</foreach>
 		</trim>
 		<trim prefix=",">
@@ -161,15 +161,15 @@
 			</foreach>
 		</trim>
 		<trim prefix=",">
-			change_material_snapshot_src =
+			src_change_material_snapshot =
 			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
-				when #{item.id,jdbcType=INTEGER} then #{item.changeMaterialSnapshotSrc,jdbcType=INTEGER}
+				when #{item.id,jdbcType=INTEGER} then #{item.srcChangeMaterialSnapshot,jdbcType=INTEGER}
 			</foreach>
 		</trim>
 		<trim prefix=",">
-			change_material_snapshot_dest =
+			dest_change_material_snapshot =
 			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
-				when #{item.id,jdbcType=INTEGER} then #{item.changeMaterialSnapshotDest,jdbcType=INTEGER}
+				when #{item.id,jdbcType=INTEGER} then #{item.destChangeMaterialSnapshot,jdbcType=INTEGER}
 			</foreach>
 		</trim>
 		<trim prefix=",">

@@ -6,12 +6,12 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="change_order_id" jdbcType="INTEGER" property="changeOrderId" />
 		<result column="change_order_no" jdbcType="VARCHAR" property="changeOrderNo" />
-		<result column="change_product_sku_id_src" jdbcType="INTEGER" property="changeProductSkuIdSrc" />
-		<result column="change_product_sku_id_dest" jdbcType="INTEGER" property="changeProductSkuIdDest" />
+		<result column="src_change_product_sku_id" jdbcType="INTEGER" property="changeProductSkuIdSrc" />
+		<result column="dest_change_product_sku_id" jdbcType="INTEGER" property="changeProductSkuIdDest" />
 		<result column="change_product_sku_count" jdbcType="INTEGER" property="changeProductSkuCount" />
 		<result column="real_change_product_sku_count" jdbcType="INTEGER" property="realChangeProductSkuCount" />
-		<result column="change_product_sku_snapshot_src" jdbcType="VARCHAR" property="changeProductSkuSnapshotSrc" />
-		<result column="change_product_sku_snapshot_dest" jdbcType="VARCHAR" property="changeProductSkuSnapshotDest" />
+		<result column="src_change_product_sku_snapshot" jdbcType="VARCHAR" property="srcChangeProductSkuSnapshot" />
+		<result column="dest_change_product_sku_snapshot" jdbcType="VARCHAR" property="destChangeProductSkuSnapshot" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -21,7 +21,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ecop.id,ecop.change_order_id,ecop.change_order_no,ecop.change_product_sku_id_src,ecop.change_product_sku_id_dest,ecop.change_product_sku_count,ecop.real_change_product_sku_count,ecop.change_product_sku_snapshot_src,ecop.change_product_sku_snapshot_dest,ecop.data_status,ecop.remark,ecop.create_time,ecop.create_user,ecop.update_time,ecop.update_user
+		ecop.id,ecop.change_order_id,ecop.change_order_no,ecop.src_change_product_sku_id,ecop.dest_change_product_sku_id,ecop.change_product_sku_count,ecop.real_change_product_sku_count,ecop.src_change_product_sku_snapshot,ecop.dest_change_product_sku_snapshot,ecop.data_status,ecop.remark,ecop.create_time,ecop.create_user,ecop.update_time,ecop.update_user
 	</sql>
 
 	<select id="findById" resultMap="ChangeOrderProductDO" parameterType="java.lang.Integer">
@@ -61,10 +61,10 @@
 				change_order_no = #{changeOrderNo,jdbcType=VARCHAR},
 			</if>
 			<if test="changeProductSkuIdSrc != null">
-				change_product_sku_id_src = #{changeProductSkuIdSrc,jdbcType=INTEGER},
+				src_change_product_sku_id = #{changeProductSkuIdSrc,jdbcType=INTEGER},
 			</if>
 			<if test="changeProductSkuIdDest != null">
-				change_product_sku_id_dest = #{changeProductSkuIdDest,jdbcType=INTEGER},
+				dest_change_product_sku_id = #{changeProductSkuIdDest,jdbcType=INTEGER},
 			</if>
 			<if test="changeProductSkuCount != null">
 				change_product_sku_count = #{changeProductSkuCount,jdbcType=INTEGER},
@@ -72,11 +72,11 @@
 			<if test="realChangeProductSkuCount != null">
 				real_change_product_sku_count = #{realChangeProductSkuCount,jdbcType=INTEGER},
 			</if>
-			<if test="changeProductSkuSnapshotSrc != null">
-				change_product_sku_snapshot_src = #{changeProductSkuSnapshotSrc,jdbcType=VARCHAR},
+			<if test="srcChangeProductSkuSnapshot != null">
+				src_change_product_sku_snapshot = #{srcChangeProductSkuSnapshot,jdbcType=VARCHAR},
 			</if>
-			<if test="changeProductSkuSnapshotDest != null">
-				change_product_sku_snapshot_dest = #{changeProductSkuSnapshotDest,jdbcType=VARCHAR},
+			<if test="destChangeProductSkuSnapshot != null">
+				dest_change_product_sku_snapshot = #{destChangeProductSkuSnapshot,jdbcType=VARCHAR},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
@@ -109,12 +109,12 @@
 
 	<insert id="batchSave" parameterType="java.util.List">
 		insert into erp_change_order_product
-		(change_order_id,change_order_no,change_product_sku_id_src,change_product_sku_id_dest,change_product_sku_count,real_change_product_sku_count,change_product_sku_snapshot_src,change_product_sku_snapshot_dest,data_status,remark,create_time,create_user,update_time,update_user)
+		(change_order_id,change_order_no,src_change_product_sku_id,dest_change_product_sku_id,change_product_sku_count,real_change_product_sku_count,src_change_product_sku_snapshot,dest_change_product_sku_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
 		values
 		<foreach collection="changeOrderProductDOList" item="changeOrderProductDO" index="index" separator =",">
 			(
 			#{changeOrderId},#{changeOrderNo},#{changeOrderProductDO.changeProductSkuIdSrc},#{changeOrderProductDO.changeProductSkuIdDest},#{changeOrderProductDO.changeProductSkuCount},
-			#{changeOrderProductDO.realChangeProductSkuCount},#{changeOrderProductDO.changeProductSkuSnapshotSrc},#{changeOrderProductDO.changeProductSkuSnapshotDest},
+			#{changeOrderProductDO.realChangeProductSkuCount},#{changeOrderProductDO.srcChangeProductSkuSnapshot},#{changeOrderProductDO.destChangeProductSkuSnapshot},
 			#{changeOrderProductDO.dataStatus},#{changeOrderProductDO.remark},
 			#{changeOrderProductDO.createTime},#{changeOrderProductDO.createUser},#{changeOrderProductDO.updateTime},#{changeOrderProductDO.updateUser}
 			)
@@ -138,13 +138,13 @@
 			</foreach>
 		</trim>
 		<trim prefix=",">
-			change_product_sku_id_src =
+			src_change_product_sku_id =
 			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
 				when #{item.id,jdbcType=INTEGER} then #{item.changeProductSkuIdSrc,jdbcType=INTEGER}
 			</foreach>
 		</trim>
 		<trim prefix=",">
-			change_product_sku_id_dest =
+			dest_change_product_sku_id =
 			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
 				when #{item.id,jdbcType=INTEGER} then #{item.changeProductSkuIdDest,jdbcType=INTEGER}
 			</foreach>
@@ -162,15 +162,15 @@
 			</foreach>
 		</trim>
 		<trim prefix=",">
-			change_product_sku_snapshot_src =
+			src_change_product_sku_snapshot =
 			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
-				when #{item.id,jdbcType=INTEGER} then #{item.changeProductSkuSnapshotSrc,jdbcType=INTEGER}
+				when #{item.id,jdbcType=INTEGER} then #{item.srcChangeProductSkuSnapshot,jdbcType=INTEGER}
 			</foreach>
 		</trim>
 		<trim prefix=",">
-			change_product_sku_snapshot_dest =
+			dest_change_product_sku_snapshot =
 			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
-				when #{item.id,jdbcType=INTEGER} then #{item.changeProductSkuSnapshotDest,jdbcType=INTEGER}
+				when #{item.id,jdbcType=INTEGER} then #{item.destChangeProductSkuSnapshot,jdbcType=INTEGER}
 			</foreach>
 		</trim>
 		<trim prefix=",">

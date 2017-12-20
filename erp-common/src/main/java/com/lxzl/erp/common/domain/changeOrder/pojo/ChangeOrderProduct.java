@@ -16,15 +16,15 @@ public class ChangeOrderProduct implements Serializable {
     private Integer changeOrderId;   //换货ID
     private String changeOrderNo;   //换货编号
     @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL)
-    private Integer changeProductSkuIdSrc;   //换货前商品SKU_ID
+    private Integer changeProductSkuIdSrc;   //原商品SKU_ID
     @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL)
-    private Integer changeProductSkuIdDest;   //换货后商品SKU_ID
+    private Integer changeProductSkuIdDest;   //目标商品SKU_ID
     @NotNull(message = ErrorCode.CHANGE_COUNT_ERROR)
-    @Min(value = 0, message = ErrorCode.CHANGE_COUNT_ERROR)
+    @Min(value = 1, message = ErrorCode.CHANGE_COUNT_ERROR)
     private Integer changeProductSkuCount;   //换货商品SKU数量
     private Integer realChangeProductSkuCount;   //实际换货数量
-    private String changeProductSkuSnapshotSrc;   //换货前商品SKU快照
-    private String changeProductSkuSnapshotDest;   //换货后商品SKU快照
+    private String srcChangeProductSkuSnapshot;   //原商品SKU快照
+    private String destChangeProductSkuSnapshot;   //目标商品SKU快照
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注
     private Date createTime;   //添加时间
@@ -91,20 +91,20 @@ public class ChangeOrderProduct implements Serializable {
         this.realChangeProductSkuCount = realChangeProductSkuCount;
     }
 
-    public String getChangeProductSkuSnapshotSrc() {
-        return changeProductSkuSnapshotSrc;
+    public String getSrcChangeProductSkuSnapshot() {
+        return srcChangeProductSkuSnapshot;
     }
 
-    public void setChangeProductSkuSnapshotSrc(String changeProductSkuSnapshotSrc) {
-        this.changeProductSkuSnapshotSrc = changeProductSkuSnapshotSrc;
+    public void setSrcChangeProductSkuSnapshot(String srcChangeProductSkuSnapshot) {
+        this.srcChangeProductSkuSnapshot = srcChangeProductSkuSnapshot;
     }
 
-    public String getChangeProductSkuSnapshotDest() {
-        return changeProductSkuSnapshotDest;
+    public String getDestChangeProductSkuSnapshot() {
+        return destChangeProductSkuSnapshot;
     }
 
-    public void setChangeProductSkuSnapshotDest(String changeProductSkuSnapshotDest) {
-        this.changeProductSkuSnapshotDest = changeProductSkuSnapshotDest;
+    public void setDestChangeProductSkuSnapshot(String destChangeProductSkuSnapshot) {
+        this.destChangeProductSkuSnapshot = destChangeProductSkuSnapshot;
     }
 
     public Integer getDataStatus() {

@@ -12,8 +12,8 @@ public class ChangeOrderProductDO  extends BaseDO {
 	private Integer changeProductSkuIdDest;
 	private Integer changeProductSkuCount;
 	private Integer realChangeProductSkuCount;
-	private String changeProductSkuSnapshotSrc;
-	private String changeProductSkuSnapshotDest;
+	private String srcChangeProductSkuSnapshot;
+	private String destChangeProductSkuSnapshot;
 	private Integer dataStatus;
 	private String remark;
 
@@ -73,20 +73,20 @@ public class ChangeOrderProductDO  extends BaseDO {
 		this.realChangeProductSkuCount = realChangeProductSkuCount;
 	}
 
-	public String getChangeProductSkuSnapshotSrc(){
-		return changeProductSkuSnapshotSrc;
+	public String getSrcChangeProductSkuSnapshot() {
+		return srcChangeProductSkuSnapshot;
 	}
 
-	public void setChangeProductSkuSnapshotSrc(String changeProductSkuSnapshotSrc){
-		this.changeProductSkuSnapshotSrc = changeProductSkuSnapshotSrc;
+	public void setSrcChangeProductSkuSnapshot(String srcChangeProductSkuSnapshot) {
+		this.srcChangeProductSkuSnapshot = srcChangeProductSkuSnapshot;
 	}
 
-	public String getChangeProductSkuSnapshotDest(){
-		return changeProductSkuSnapshotDest;
+	public String getDestChangeProductSkuSnapshot() {
+		return destChangeProductSkuSnapshot;
 	}
 
-	public void setChangeProductSkuSnapshotDest(String changeProductSkuSnapshotDest){
-		this.changeProductSkuSnapshotDest = changeProductSkuSnapshotDest;
+	public void setDestChangeProductSkuSnapshot(String destChangeProductSkuSnapshot) {
+		this.destChangeProductSkuSnapshot = destChangeProductSkuSnapshot;
 	}
 
 	public Integer getDataStatus(){
