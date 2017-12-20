@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.repairOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -15,7 +16,7 @@ public class RepairOrderBulkMaterial implements Serializable {
 	private Integer repairOrderBulkMaterialId;   //唯一标识
 	private String repairOrderNo;   //维修单编号
 	private Integer bulkMaterialId;   //散料ID
-	@NotBlank(message = ErrorCode.BULK_MATERIAL_ID_NOT_NULL,groups = {AddGroup.class})
+	@NotBlank(message = ErrorCode.BULK_MATERIAL_NO_NOT_NULL,groups = {AddGroup.class})
 	private String bulkMaterialNo;   //散料编号唯一
 	private Date repairEndTime;   //维修完成时间
 	private Integer orderId;   //订单ID，如果是在客户手里出现的维修，此字段不能为空
@@ -26,6 +27,8 @@ public class RepairOrderBulkMaterial implements Serializable {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+
+	private BulkMaterial bulkMaterial;
 
 
 	public Integer getRepairOrderBulkMaterialId(){

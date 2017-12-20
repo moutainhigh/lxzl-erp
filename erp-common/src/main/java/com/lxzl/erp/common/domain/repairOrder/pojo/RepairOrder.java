@@ -7,7 +7,6 @@ import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +27,14 @@ public class RepairOrder implements Serializable {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+	private Integer repairEquipmentCount; //送修设备数量
+	private Integer repairBulkMaterialCount; //送修物料数量
+	private Integer fixEquipmentCount; //修复设备数量
+	private Integer fixBulkMaterialCount; //修复物料数量
+	private String warehouseNo;//当前仓库编号
+
+
+	private String warehouseName;
 
 	@Valid
 	private List<RepairOrderEquipment> repairOrderEquipmentList;
@@ -148,5 +155,53 @@ public class RepairOrder implements Serializable {
 
 	public void setCommitRemark(String commitRemark) {
 		this.commitRemark = commitRemark;
+	}
+
+	public Integer getRepairEquipmentCount() {
+		return repairEquipmentCount;
+	}
+
+	public void setRepairEquipmentCount(Integer repairEquipmentCount) {
+		this.repairEquipmentCount = repairEquipmentCount;
+	}
+
+	public Integer getRepairBulkMaterialCount() {
+		return repairBulkMaterialCount;
+	}
+
+	public void setRepairBulkMaterialCount(Integer repairBulkMaterialCount) {
+		this.repairBulkMaterialCount = repairBulkMaterialCount;
+	}
+
+	public Integer getFixEquipmentCount() {
+		return fixEquipmentCount;
+	}
+
+	public void setFixEquipmentCount(Integer fixEquipmentCount) {
+		this.fixEquipmentCount = fixEquipmentCount;
+	}
+
+	public Integer getFixBulkMaterialCount() {
+		return fixBulkMaterialCount;
+	}
+
+	public void setFixBulkMaterialCount(Integer fixBulkMaterialCount) {
+		this.fixBulkMaterialCount = fixBulkMaterialCount;
+	}
+
+	public String getWarehouseNo() {
+		return warehouseNo;
+	}
+
+	public void setWarehouseNo(String warehouseNo) {
+		this.warehouseNo = warehouseNo;
+	}
+
+	public String getWarehouseName() {
+		return warehouseName;
+	}
+
+	public void setWarehouseName(String warehouseName) {
+		this.warehouseName = warehouseName;
 	}
 }

@@ -14,5 +14,9 @@ public interface RepairOrderEquipmentMapper extends BaseMysqlDAO<RepairOrderEqui
 
     List<RepairOrderEquipmentDO> findByRepairOrderNo(@Param("repairOrderNo")String repairOrderNo);
 
-    void clearDateStatus(String repairOrderNo);
+    void clearDateStatus(@Param("repairOrderNo")String repairOrderNo);
+
+    Integer findRepairOrderEquipmentCountByParams(@Param("maps")Map<String, Object> maps);
+
+    List<RepairOrderEquipmentDO> findRepairOrderEquipmentByParams(@Param("maps")Map<String, Object> maps);
 }

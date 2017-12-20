@@ -13,4 +13,9 @@ public interface RepairOrderBulkMaterialMapper extends BaseMysqlDAO<RepairOrderB
 
     List<RepairOrderBulkMaterialDO> findByRepairOrderNo(@Param("repairOrderNo")String repairOrderNo);
 
+    Integer findRepairOrderBulkMaterialCountByParams(@Param("maps")Map<String, Object> maps);
+
+    List<RepairOrderBulkMaterialDO> findRepairOrderBulkMaterialByParams(@Param("maps")Map<String, Object> maps);
+
+    void clearDateStatus(@Param("repairOrderNo")String repairOrderNo);
 }

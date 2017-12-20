@@ -1,8 +1,17 @@
 package com.lxzl.erp.core.service.repairOrder;
 
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.repairOrder.RepairOrderBulkMaterialQueryParam;
+import com.lxzl.erp.common.domain.repairOrder.RepairOrderEquipmentQueryParam;
+import com.lxzl.erp.common.domain.repairOrder.RepairOrderQueryParam;
 import com.lxzl.erp.common.domain.repairOrder.pojo.RepairOrder;
+import com.lxzl.erp.common.domain.repairOrder.pojo.RepairOrderBulkMaterial;
+import com.lxzl.erp.common.domain.repairOrder.pojo.RepairOrderEquipment;
 import com.lxzl.erp.core.service.VerifyReceiver;
+import com.lxzl.erp.dataaccess.domain.repairOrder.RepairOrderDO;
+
+import java.util.List;
 
 /**
  * @Author: your name
@@ -53,4 +62,54 @@ public interface RepairOrderService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String,String> updateRepairOrder(RepairOrder repairOrder);
+
+    /**
+     *设备详情页面
+     *
+     * @param repairOrderNo 设备维修单编号
+     * @return
+     */
+    ServiceResult<String,RepairOrder> queryRepairOrderByNo(String repairOrderNo);
+
+    /**
+     * 设备维修单分页
+     *
+     * @param repairOrderQueryParam
+     * @return
+     */
+    ServiceResult<String,Page<RepairOrder>> pageRepairOrder(RepairOrderQueryParam repairOrderQueryParam);
+
+    /**
+     * 设备维修单明细分页列表
+     *
+     * @param repairOrderEquipmentQueryParam
+     * @return
+     */
+    ServiceResult<String,Page<RepairOrderEquipment>> pageRepairEquipment(RepairOrderEquipmentQueryParam repairOrderEquipmentQueryParam);
+
+    /**
+     *散料维修单明单分页列表
+     *
+     * @param repairOrderBulkMaterialQueryParam
+     * @return
+     */
+    ServiceResult<String,Page<RepairOrderBulkMaterial>> pageRepairBulkMaterial(RepairOrderBulkMaterialQueryParam repairOrderBulkMaterialQueryParam);
+
+    /**
+     * 根据明细单Id来确认完成时间
+     *
+     * @param repairEquipmentIdList
+     * @param repairBulkMaterialIdList
+     * @return
+     */
+    ServiceResult<String,Integer> fix(List<Integer> repairEquipmentIdList, List<Integer> repairBulkMaterialIdList);
+
+
+    /**
+     * 设备维修单结束维修
+     *
+     * @param repairOrderNo
+     * @return
+     */
+    ServiceResult<String,String> end(String repairOrderNo);
 }

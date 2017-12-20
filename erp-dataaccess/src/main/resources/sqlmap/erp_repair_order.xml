@@ -6,7 +6,48 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="repair_order_no" jdbcType="VARCHAR" property="repairOrderNo" />
 		<result column="repair_reason" jdbcType="VARCHAR" property="repairReason" />
+		<result column="repair_equipment_count" jdbcType="INTEGER" property="repairEquipmentCount" />
+		<result column="repair_bulk_material_count" jdbcType="INTEGER" property="repairBulkMaterialCount" />
+		<result column="fix_equipment_count" jdbcType="INTEGER" property="fixEquipmentCount" />
+		<result column="fix_bulk_material_count" jdbcType="INTEGER" property="fixBulkMaterialCount" />
+		<result column="warehouse_no" jdbcType="VARCHAR" property="warehouseNo" />
 		<result column="repair_order_status" jdbcType="INTEGER" property="repairOrderStatus" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+		<collection property="repairOrderEquipmentDOList" resultMap="RepairOrderEquipmentDO" />
+		<collection property="repairOrderBulkMaterialDOList" resultMap="RepairOrderBulkMaterialDO" />
+	</resultMap>
+
+	<resultMap id="RepairOrderEquipmentDO" type="com.lxzl.erp.dataaccess.domain.repairOrder.RepairOrderEquipmentDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="repair_order_no" jdbcType="VARCHAR" property="repairOrderNo" />
+		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
+		<result column="equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
+		<result column="repair_end_time" jdbcType="TIMESTAMP" property="repairEndTime" />
+		<result column="order_id" jdbcType="INTEGER" property="orderId" />
+		<result column="order_product_id" jdbcType="INTEGER" property="orderProductId" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<resultMap id="RepairOrderBulkMaterialDO" type="com.lxzl.erp.dataaccess.domain.repairOrder.RepairOrderBulkMaterialDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="repair_order_no" jdbcType="VARCHAR" property="repairOrderNo" />
+		<result column="bulk_material_id" jdbcType="INTEGER" property="bulkMaterialId" />
+		<result column="bulk_material_no" jdbcType="VARCHAR" property="bulkMaterialNo" />
+		<result column="repair_end_time" jdbcType="TIMESTAMP" property="repairEndTime" />
+		<result column="order_id" jdbcType="INTEGER" property="orderId" />
+		<result column="order_material_id" jdbcType="INTEGER" property="orderMaterialId" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -15,8 +56,17 @@
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 	</resultMap>
 
+
 	<sql id="column_List">
-		ero.id,ero.repair_order_no,ero.repair_reason,ero.repair_order_status,ero.data_status,ero.remark,ero.create_time,ero.create_user,ero.update_time,ero.update_user
+		ero.id,ero.repair_order_no,ero.repair_reason,ero.repair_equipment_count,ero.repair_bulk_material_count,ero.fix_equipment_count,ero.fix_bulk_material_count,ero.warehouse_no,ero.repair_order_status,ero.data_status,ero.remark,ero.create_time,ero.create_user,ero.update_time,ero.update_user
+	</sql>
+
+	<sql id="equipment_column_List">
+		eroe.id,eroe.repair_order_no,eroe.equipment_id,eroe.equipment_no,eroe.repair_end_time,eroe.data_status,eroe.order_id,eroe.order_product_id,eroe.remark,eroe.create_time,eroe.create_user,eroe.update_time,eroe.update_user
+	</sql>
+
+	<sql id="bulkmaterial_column_List">
+		erobm.id,erobm.repair_order_no,erobm.bulk_material_id,erobm.bulk_material_no,erobm.repair_end_time,erobm.order_id,erobm.order_material_id,erobm.data_status,erobm.remark,erobm.create_time,erobm.create_user,erobm.update_time,erobm.update_user
 	</sql>
 
 	<select id="findById" resultMap="RepairOrderDO" parameterType="java.lang.Integer">
@@ -51,6 +101,21 @@
 			<if test="repairReason != null">
 				repair_reason = #{repairReason,jdbcType=VARCHAR},
 			</if>
+			<if test="repairEquipmentCount != null">
+				repair_equipment_count = #{repairEquipmentCount,jdbcType=INTEGER},
+			</if>
+			<if test="repairBulkMaterialCount != null">
+				repair_bulk_material_count = #{repairBulkMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="fixEquipmentCount != null">
+				fix_equipment_count = #{fixEquipmentCount,jdbcType=INTEGER},
+			</if>
+			<if test="fixBulkMaterialCount != null">
+				fix_bulk_material_count = #{fixBulkMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="warehouseNo != null">
+				warehouse_no = #{warehouseNo,jdbcType=VARCHAR},
+			</if>
 			<if test="repairOrderStatus != null">
 				repair_order_status = #{repairOrderStatus,jdbcType=INTEGER},
 			</if>
@@ -84,7 +149,80 @@
 	</update>
 
 	<select id="findByRepairOrderNo" resultMap="RepairOrderDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/>,<include refid="equipment_column_List"/>,<include refid="bulkmaterial_column_List"/>,ew.warehouse_name
+		from (
 		SELECT <include refid="column_List"/> from erp_repair_order ero
-		WHERE ero.repair_order_no = #{repairOrderNo,jdbcType=VARCHAR} and ero.data_status = 1;
+		WHERE ero.repair_order_no = #{repairOrderNo,jdbcType=VARCHAR} and ero.data_status = 1
+		) ero LEFT JOIN erp_repair_order_equipment eroe ON eroe.repair_order_no = ero.repair_order_no and eroe.data_status=1
+		LEFT JOIN erp_repair_order_bulk_material erobm ON erobm.repair_order_no = ero.repair_order_no and erobm.data_status=1
+		LEFT JOIN erp_warehouse ew ON ero.warehouse_no = ew.warehouse_no
+	</select>
+
+	<select id="findRepairOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ero.id) from erp_repair_order ero
+		<where>
+			<if test="maps.queryParam.repairOrderNo != null &amp;&amp; maps.queryParam.repairOrderNo != ''">
+				maps.queryParam.repair_order_no = #{maps.queryParam.repairOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="maps.queryParam.repairReason != null  &amp;&amp; maps.queryParam.repairReason != ''">
+				maps.queryParam.repair_reason = #{maps.queryParam.repairReason,jdbcType=VARCHAR},
+			</if>
+			<if test="maps.queryParam.repairEquipmentCount != null">
+				maps.queryParam.repair_equipment_count = #{maps.queryParam.repairEquipmentCount,jdbcType=INTEGER},
+			</if>
+			<if test="maps.queryParam.repairBulkMaterialCount != null">
+				maps.queryParam.repair_bulk_material_count = #{maps.queryParam.repairBulkMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="maps.queryParam.fixEquipmentCount != null">
+				maps.queryParam.fix_equipment_count = #{maps.queryParam.fixEquipmentCount,jdbcType=INTEGER},
+			</if>
+			<if test="maps.queryParam.fixBulkMaterialCount != null">
+				maps.queryParam.fix_bulk_material_count = #{maps.queryParam.fixBulkMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="maps.queryParam.warehouseNo != null &amp;&amp; maps.queryParam.warehouseNo != ''">
+				maps.queryParam.warehouse_no = #{maps.queryParam.warehouseNo,jdbcType=VARCHAR},
+			</if>
+			<if test="maps.queryParam.repairOrderStatus != null">
+				maps.queryParam.repair_order_status = #{maps.queryParam.repairOrderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="true">
+				AND ero.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="findRepairOrderByParams" resultMap="RepairOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/> from erp_repair_order ero
+		<where>
+			<if test="maps.queryParam.repairOrderNo != null &amp;&amp; maps.queryParam.repairOrderNo != ''">
+				maps.queryParam.repair_order_no = #{maps.queryParam.repairOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="maps.queryParam.repairReason != null  &amp;&amp; maps.queryParam.repairReason != ''">
+				maps.queryParam.repair_reason = #{maps.queryParam.repairReason,jdbcType=VARCHAR},
+			</if>
+			<if test="maps.queryParam.repairEquipmentCount != null">
+				maps.queryParam.repair_equipment_count = #{maps.queryParam.repairEquipmentCount,jdbcType=INTEGER},
+			</if>
+			<if test="maps.queryParam.repairBulkMaterialCount != null">
+				maps.queryParam.repair_bulk_material_count = #{maps.queryParam.repairBulkMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="maps.queryParam.fixEquipmentCount != null">
+				maps.queryParam.fix_equipment_count = #{maps.queryParam.fixEquipmentCount,jdbcType=INTEGER},
+			</if>
+			<if test="maps.queryParam.fixBulkMaterialCount != null">
+				maps.queryParam.fix_bulk_material_count = #{maps.queryParam.fixBulkMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="maps.queryParam.warehouseNo != null &amp;&amp; maps.queryParam.warehouseNo != ''">
+				maps.queryParam.warehouse_no = #{maps.queryParam.warehouseNo,jdbcType=VARCHAR},
+			</if>
+			<if test="maps.queryParam.repairOrderStatus != null">
+				maps.queryParam.repair_order_status = #{maps.queryParam.repairOrderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="true">
+				AND ero.data_status = 1
+			</if>
+		</where>
+		ORDER BY ero.create_time DESC
+		limit #{maps.start},#{maps.pageSize}
 	</select>
 </mapper>

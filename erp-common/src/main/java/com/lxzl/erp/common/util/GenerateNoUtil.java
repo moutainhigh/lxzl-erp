@@ -102,7 +102,7 @@ public class GenerateNoUtil {
 
     public static String generateRepairOrderNo(Date currentTime) {
         Random random = new Random();
-        return "REPAIR-" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
+        return "RE" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
     }
 
 }

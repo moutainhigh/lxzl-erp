@@ -1,7 +1,16 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
+import com.lxzl.erp.common.domain.purchase.pojo.PurchaseReceiveOrder;
+import com.lxzl.erp.common.domain.repairOrder.FixRepairOrderQueryParam;
+import com.lxzl.erp.common.domain.repairOrder.RepairOrderBulkMaterialQueryParam;
+import com.lxzl.erp.common.domain.repairOrder.RepairOrderEquipmentQueryParam;
+import com.lxzl.erp.common.domain.repairOrder.RepairOrderQueryParam;
 import com.lxzl.erp.common.domain.repairOrder.pojo.RepairOrder;
+import com.lxzl.erp.common.domain.repairOrder.pojo.RepairOrderBulkMaterial;
+import com.lxzl.erp.common.domain.repairOrder.pojo.RepairOrderEquipment;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
@@ -15,6 +24,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 /**
  * @Author: your name
@@ -60,15 +71,43 @@ public class RepairOrderController {
     @RequestMapping(value = "updateRepairOrder", method = RequestMethod.POST)
     public Result updateRepairOrder(@RequestBody @Validated({IdGroup.class,AddGroup.class})RepairOrder repairOrder, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = repairOrderService.updateRepairOrder(repairOrder);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    @RequestMapping(value = "queryRepairOrderByNo", method = RequestMethod.POST)
+    public Result queryRepairOrderByNo(@RequestBody  @Validated(IdGroup.class)RepairOrder repairOrder, BindingResult validResult) {
+        ServiceResult<String, RepairOrder> serviceResult = repairOrderService.queryRepairOrderByNo(repairOrder.getRepairOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-   /* @RequestMapping(value = "detailRepairOrder", method = RequestMethod.POST)
-    public Result detailRepairOrder(@RequestBody @Validated({IdGroup.class,AddGroup.class})RepairOrder repairOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = repairOrderService.detailRepairOrder(repairOrder);
+    @RequestMapping(value = "pageRepairOrder", method = RequestMethod.POST)
+    public Result pageRepairOrder(@RequestBody RepairOrderQueryParam repairOrderQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<RepairOrder>> serviceResult = repairOrderService.pageRepairOrder(repairOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }*/
+    }
 
+    @RequestMapping(value = "pageRepairEquipment", method = RequestMethod.POST)
+    public Result pageRepairEquipment(@RequestBody  RepairOrderEquipmentQueryParam repairOrderEquipmentQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<RepairOrderEquipment>> serviceResult = repairOrderService.pageRepairEquipment(repairOrderEquipmentQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 
+    @RequestMapping(value = "pageRepairBulkMaterial", method = RequestMethod.POST)
+    public Result pageRepairBulkMaterial(@RequestBody RepairOrderBulkMaterialQueryParam repairOrderBulkMaterialQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<RepairOrderBulkMaterial>> serviceResult = repairOrderService.pageRepairBulkMaterial(repairOrderBulkMaterialQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "fix", method = RequestMethod.POST)
+    public Result fix(@RequestBody FixRepairOrderQueryParam fixRepairOrderQueryParam, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = repairOrderService.fix(fixRepairOrderQueryParam.getRepairEquipmentIdList(),fixRepairOrderQueryParam.getRepairBulkMaterialIdList());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "end", method = RequestMethod.POST)
+    public Result end(@RequestBody @Validated(IdGroup.class)RepairOrder repairOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = repairOrderService.end(repairOrder.getRepairOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 
 }
