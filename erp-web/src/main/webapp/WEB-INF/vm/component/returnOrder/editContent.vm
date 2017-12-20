@@ -88,7 +88,7 @@
                             <select class="form-control required" name="returnMode">
                                 <option value="">请选择</option>
                                 <option value="1">上门取件</option>
-                                <option value="0">邮寄</option>
+                                <option value="2">邮寄</option>
                             </select>
                         </div>
                     </div>

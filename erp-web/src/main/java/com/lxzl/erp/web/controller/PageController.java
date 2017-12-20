@@ -194,6 +194,10 @@ public class PageController extends BaseController {
     public String orderManageOrderItem() {
         return "/orderManage/orderItem";
     }
+    @RequestMapping("/order-manage-input-picking-material/modal")
+    public String orderManageInputPickingMaterialModal() {
+        return "/component/order/inputPickingMaterial";
+    }
 
 
     //退货单
@@ -214,7 +218,7 @@ public class PageController extends BaseController {
         return "/returnOrderManage/returnOrderEdit";
     }
     //输入退还当服务费等信息
-    @RequestMapping("/return-order-end-info-modal/input")
+    @RequestMapping("/order-/input")
     public String inputReturnOrderEndInfoModal() {
         return "/component/returnOrder/inputEndInfoModal";
     }

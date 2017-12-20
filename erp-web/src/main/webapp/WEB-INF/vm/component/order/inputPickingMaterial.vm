@@ -1,17 +1,30 @@
-<div id="inputPickingModal" class="popup-basic popup-lg admin-form mfp-with-anim">
+<div id="inputPickingModal" class="popup-basic admin-form mfp-with-anim">
     <div class="panel">
         <div class="panel-heading">
             <span class="panel-title"><i class="fa fa-pencil"></i><span class="modalTitle"></span></span>
         </div>
         <form method="post" class="inputForm">
             <div class="panel-body p25">
-                <div class="section">
-                    <label for="username" class="field-label">输入设备号</label>
-                    <label for="remark" class="field prepend-icon">
-                        <textarea class="gui-textarea required" id="equipmentNo" name="equipmentNo" autofocus></textarea>
-                        <label for="comment" class="field-icon"><i class="fa fa-tag"></i>
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="warehouseId" class="field-label">仓库</label>
+                        <label class="field select">
+                            <select id="warehouseId" name="warehouseId" class="required">
+                                <option value="">请选择</option>
+                            </select>
+                            <i class="arrow"></i>
                         </label>
-                    </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="materialCount" class="field-label">备货数量</label>
+                        <label for="materialCount" class="field prepend-icon">
+                            <input type="text" name="materialCount" id="materialCount" class="gui-input required number" maxlength="10">
+                            <label for="materialCount" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
                 </div>
             </div>
             <div class="panel-footer text-right">
