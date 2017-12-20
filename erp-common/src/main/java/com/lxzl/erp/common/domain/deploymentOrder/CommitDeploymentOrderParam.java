@@ -12,6 +12,7 @@ public class CommitDeploymentOrderParam implements Serializable {
     private String deploymentOrderNo;
     private Integer verifyUser;
     private String commitRemark;
+    private String backup;
 
     public String getDeploymentOrderNo() {
         return deploymentOrderNo;
@@ -35,5 +36,13 @@ public class CommitDeploymentOrderParam implements Serializable {
 
     public void setCommitRemark(String commitRemark) {
         this.commitRemark = commitRemark;
+    }
+
+    public String getBackup() {
+        return backup;
+    }
+
+    public void setBackup(String backup) {
+        this.backup = backup;
     }
 }
