@@ -3,7 +3,7 @@ package com.lxzl.erp.dataaccess.domain.repairOrder;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
-import java.util.Date;
+import java.util.List;
 
 
 public class RepairOrderDO  extends BaseDO {
@@ -21,8 +21,14 @@ public class RepairOrderDO  extends BaseDO {
 	private Integer fixBulkMaterialCount; //修复物料数量
 	private String warehouseNo;//当前仓库编号
 
+
 	@Transient
 	private String warehouseName;
+	@Transient
+	private List<RepairOrderEquipmentDO> repairOrderEquipmentDOList;
+	@Transient
+	private  List<RepairOrderBulkMaterialDO> repairOrderBulkMaterialDOList;
+
 
 	public Integer getId(){
 		return id;
@@ -118,5 +124,21 @@ public class RepairOrderDO  extends BaseDO {
 
 	public void setWarehouseName(String warehouseName) {
 		this.warehouseName = warehouseName;
+	}
+
+	public List<RepairOrderEquipmentDO> getRepairOrderEquipmentDOList() {
+		return repairOrderEquipmentDOList;
+	}
+
+	public void setRepairOrderEquipmentDOList(List<RepairOrderEquipmentDO> repairOrderEquipmentDOList) {
+		this.repairOrderEquipmentDOList = repairOrderEquipmentDOList;
+	}
+
+	public List<RepairOrderBulkMaterialDO> getRepairOrderBulkMaterialDOList() {
+		return repairOrderBulkMaterialDOList;
+	}
+
+	public void setRepairOrderBulkMaterialDOList(List<RepairOrderBulkMaterialDO> repairOrderBulkMaterialDOList) {
+		this.repairOrderBulkMaterialDOList = repairOrderBulkMaterialDOList;
 	}
 }

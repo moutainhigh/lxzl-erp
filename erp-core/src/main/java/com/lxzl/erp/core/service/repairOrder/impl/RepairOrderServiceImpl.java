@@ -6,6 +6,8 @@ import com.lxzl.erp.common.constant.RepairOrderStatus;
 import com.lxzl.erp.common.constant.WorkflowType;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
+import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderBulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderEquipmentQueryParam;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderQueryParam;
@@ -402,8 +404,30 @@ public class RepairOrderServiceImpl implements RepairOrderService {
             serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_IS_NOT_EXISTS);
             return serviceResult;
         }
+
+        RepairOrder repairOrder = ConverterUtil.convert(repairOrderDO,RepairOrder.class);
+
+        List<RepairOrderEquipmentDO> repairOrderEquipmentDOList = repairOrderEquipmentMapper.findByRepairOrderNo(repairOrderNo);
+        for (RepairOrderEquipmentDO repairOrderEquipmentDO:repairOrderEquipmentDOList){
+            ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(repairOrderEquipmentDO.getEquipmentNo());
+            repairOrderEquipmentDO.setProductEquipmentDO(productEquipmentDO);
+        }
+
+        List<RepairOrderBulkMaterialDO> repairOrderBulkMaterialDOList = repairOrderBulkMaterialMapper.findByRepairOrderNo(repairOrderNo);
+        for (RepairOrderBulkMaterialDO repairOrderBulkMaterialDO : repairOrderBulkMaterialDOList){
+            BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(repairOrderBulkMaterialDO.getBulkMaterialNo());
+            repairOrderBulkMaterialDO.setBulkMaterialDO(bulkMaterialDO);
+        }
+
+        List<RepairOrderEquipment> repairOrderEquipmentList = ConverterUtil.convertList(repairOrderEquipmentDOList,RepairOrderEquipment.class);
+        List<RepairOrderBulkMaterial> repairOrderBulkMaterialList = ConverterUtil.convertList(repairOrderBulkMaterialDOList,RepairOrderBulkMaterial.class);
+
+
+        repairOrder.setRepairOrderEquipmentList(repairOrderEquipmentList);
+        repairOrder.setRepairOrderBulkMaterialList(repairOrderBulkMaterialList);
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(ConverterUtil.convert(repairOrderDO,RepairOrder.class));
+        serviceResult.setResult(repairOrder);
         return serviceResult;
     }
 

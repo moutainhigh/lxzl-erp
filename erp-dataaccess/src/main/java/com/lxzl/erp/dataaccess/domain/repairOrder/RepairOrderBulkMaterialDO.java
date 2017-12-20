@@ -1,6 +1,9 @@
 package com.lxzl.erp.dataaccess.domain.repairOrder;
 
+import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 
 
@@ -15,6 +18,9 @@ public class RepairOrderBulkMaterialDO  extends BaseDO {
 	private Integer orderMaterialId;
 	private Integer dataStatus;
 	private String remark;
+
+	@Transient
+	private BulkMaterialDO bulkMaterialDO;
 
 	public Integer getId(){
 		return id;
@@ -88,4 +94,11 @@ public class RepairOrderBulkMaterialDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public BulkMaterialDO getBulkMaterialDO() {
+		return bulkMaterialDO;
+	}
+
+	public void setBulkMaterialDO(BulkMaterialDO bulkMaterialDO) {
+		this.bulkMaterialDO = bulkMaterialDO;
+	}
 }

@@ -1,6 +1,9 @@
 package com.lxzl.erp.dataaccess.domain.repairOrder;
 
+import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 
 
@@ -15,6 +18,9 @@ public class RepairOrderEquipmentDO  extends BaseDO {
 	private Integer orderId;
 	private Integer orderProductId;
 	private String remark;
+
+	@Transient
+	private ProductEquipmentDO productEquipmentDO;
 
 	public Integer getId(){
 		return id;
@@ -88,4 +94,11 @@ public class RepairOrderEquipmentDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public ProductEquipmentDO getProductEquipmentDO() {
+		return productEquipmentDO;
+	}
+
+	public void setProductEquipmentDO(ProductEquipmentDO productEquipmentDO) {
+		this.productEquipmentDO = productEquipmentDO;
+	}
 }

@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.repairOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -27,6 +28,7 @@ public class RepairOrderEquipment implements Serializable {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 
+	private ProductEquipment productEquipment;
 
 	public Integer getRepairOrderEquipmentId(){
 		return repairOrderEquipmentId;
@@ -130,5 +132,13 @@ public class RepairOrderEquipment implements Serializable {
 
 	public void setUpdateUser(String updateUser) {
 		this.updateUser = updateUser;
+	}
+
+	public ProductEquipment getProductEquipment() {
+		return productEquipment;
+	}
+
+	public void setProductEquipment(ProductEquipment productEquipment) {
+		this.productEquipment = productEquipment;
 	}
 }

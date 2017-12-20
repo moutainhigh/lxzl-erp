@@ -45,7 +45,7 @@ public class RepairOrderControllerTest extends ERPUnTransactionalTest {
         List<RepairOrderBulkMaterial> repairOrderBulkMaterialList = new ArrayList<>();
 
         RepairOrderBulkMaterial repairOrderBulkMaterial1 = new RepairOrderBulkMaterial();
-        repairOrderBulkMaterial1.setBulkMaterialNo("BM2017121616120446910001");
+        repairOrderBulkMaterial1.setBulkMaterialNo("BM2017122011073198122546");
         repairOrderBulkMaterialList.add(repairOrderBulkMaterial1);
 
         RepairOrderBulkMaterial repairOrderBulkMaterial2 = new RepairOrderBulkMaterial();
@@ -132,7 +132,7 @@ public class RepairOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryRepairOrderByNo() throws Exception {
         RepairOrder repairOrder = new RepairOrder();
-        repairOrder.setRepairOrderNo("RE201712191429296181566");
+        repairOrder.setRepairOrderNo("RE201712201627324171066");
 
         TestResult result = getJsonTestResult("/repairOrder/queryRepairOrderByNo",repairOrder);
     }
