@@ -23,7 +23,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eomb.id,eomb.order_id,eomb.order_material_id,eomb.bulk_material_id,eomb.bulk_material_no,eomb.rent_start_time,eomb.expect_return_time,eomb.actual_return_time,eomb.expect_rent_amount,eomb.actual_rent_amount,eomb.data_status,eomb.remark,eomb.create_time,eomb.create_user,eomb.update_time,eomb.update_user
+		eomb.id,eomb.order_id,eomb.order_material_id,eomb.bulk_material_id,eomb.bulk_material_no,eomb.rent_start_time,eomb.expect_return_time,eomb.actual_return_time,eomb.material_bulk_unit_amount,eomb.expect_rent_amount,eomb.actual_rent_amount,eomb.data_status,eomb.remark,eomb.create_time,eomb.create_user,eomb.update_time,eomb.update_user
 	</sql>
 
 	<select id="findById" resultMap="OrderMaterialBulkDO" parameterType="java.lang.Integer">
