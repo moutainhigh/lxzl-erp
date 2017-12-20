@@ -20,6 +20,7 @@
 		<result column="day_rent_price" jdbcType="DECIMAL" property="dayRentPrice"/>
 		<result column="month_rent_price" jdbcType="DECIMAL" property="monthRentPrice"/>
 		<result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+		<result column="is_consumable" jdbcType="INTEGER" property="isConsumable" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -48,7 +49,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		em.id,em.material_no,em.material_name,em.material_type,em.material_capacity_value,em.material_model_id,em.is_main_material,em.brand_id,em.stock,em.is_rent,em.material_price,em.day_rent_price,em.month_rent_price,em.material_desc,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
+		em.id,em.material_no,em.material_name,em.material_type,em.material_capacity_value,em.material_model_id,em.is_main_material,em.brand_id,em.stock,em.is_rent,em.material_price,em.day_rent_price,em.month_rent_price,em.material_desc,em.is_consumable,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
 	</sql>
 
 	<sql id="img_column_List">
@@ -212,6 +213,9 @@
 			</if>
 			<if test="monthRentPrice != null">
 				month_rent_price = #{monthRentPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="isConsumable != null">
+				is_consumable = #{isConsumable,jdbcType=INTEGER},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},

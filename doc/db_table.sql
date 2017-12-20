@@ -635,6 +635,7 @@ CREATE TABLE `erp_material` (
   `day_rent_price` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '天租赁价格',
   `month_rent_price` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '月租赁价格',
   `material_desc` text COLLATE utf8_bin COMMENT '物料描述',
+  `is_consumable` int(20) NOT NULL DEFAULT 0 COMMENT '物料型号ID',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',

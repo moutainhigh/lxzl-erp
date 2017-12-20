@@ -33,6 +33,7 @@ public class Material implements Serializable {
     private Integer stock;              // 库存
     private BigDecimal dayRentPrice;    // 日租价格
     private BigDecimal monthRentPrice;  // 月租价格
+    private Integer isConsumable;       // 是否是消耗品
     private String materialDesc;   //物料描述
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注
@@ -248,5 +249,13 @@ public class Material implements Serializable {
 
     public void setMaterialModelName(String materialModelName) {
         this.materialModelName = materialModelName;
+    }
+
+    public Integer getIsConsumable() {
+        return isConsumable;
+    }
+
+    public void setIsConsumable(Integer isConsumable) {
+        this.isConsumable = isConsumable;
     }
 }
