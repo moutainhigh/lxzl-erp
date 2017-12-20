@@ -16,6 +16,7 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
+import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductEquipmentConverter;
 import com.lxzl.erp.core.service.returnOrder.ReturnOrderService;
@@ -232,7 +233,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         if (returnOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
             return serviceResult;
-        } else if (ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(returnOrderDO)) {
+        } else if (ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(returnOrderDO.getReturnOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_END_YET);
             return serviceResult;
         }
@@ -353,32 +354,26 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         if (returnOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
             return serviceResult;
-        } else if (ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(returnOrderDO)) {
+        } else if (ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(returnOrderDO.getReturnOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_END_YET);
             return serviceResult;
         }
-        List<String> materialNoList = doReturnMaterialParam.getMaterialNoList();
         //查询客户的所有在租散料，并保存到map以便后续使用
-        Map<String, BulkMaterialDO> rentMap = new HashMap<>();
+        Map<String, List<BulkMaterialDO>> rentMap = new HashMap<>();
 
         List<BulkMaterialDO> rentBulkMaterialDOList = bulkMaterialMapper.findRentByCustomerId(returnOrderDO.getCustomerId());
         for (BulkMaterialDO bulkMaterialDO : rentBulkMaterialDOList) {
-            rentMap.put(bulkMaterialDO.getBulkMaterialNo(), bulkMaterialDO);
-        }
-        //校验散料编号是否有重复的
-        Set<String> materialNoSet = new HashSet<>();
-        for (String materialNo : materialNoList) {
-            if (StringUtil.isBlank(materialNo)) {
-                serviceResult.setErrorCode(ErrorCode.MATERIAL_NO_NOT_NULL);
-                return serviceResult;
+            if(!rentMap.containsKey(bulkMaterialDO.getMaterialNo())){
+                rentMap.put(bulkMaterialDO.getMaterialNo(), new ArrayList<BulkMaterialDO>());
             }
-            if (!rentMap.containsKey(materialNo)) {
-                throw new BusinessException(String.format("用户貌似没有租散料编号为%s的散料吧！", materialNo));
-            }
-            materialNoSet.add(materialNo);
+            rentMap.get(bulkMaterialDO.getMaterialNo()).add(bulkMaterialDO);
         }
-        if (materialNoList.size() > materialNoSet.size()) {
-            serviceResult.setErrorCode(ErrorCode.MATERIAL_CAN_NOT_REPEAT);
+        if (!rentMap.containsKey(doReturnMaterialParam.getMaterialNo())) {
+            serviceResult.setErrorCode(ErrorCode.MATERIAL_NOT_RENT);
+            return serviceResult;
+        }
+        if (rentMap.get(doReturnMaterialParam.getMaterialNo()).size()<doReturnMaterialParam.getReturnCount()) {
+            serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
             return serviceResult;
         }
         Date now = new Date();
@@ -397,8 +392,6 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
 
         //待更新的散料列表
         List<BulkMaterialDO> bulkMaterialDOListForUpdate = new ArrayList<>();
-        //待更新的订单散料列表
-        List<OrderMaterialBulkDO> orderMaterialBulkDOListForUpdate = new ArrayList<>();
         //待更新的客户风控信息
         CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(returnOrderDO.getCustomerId());
         //待更新的退还物料项列表
@@ -409,8 +402,10 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         List<ReturnOrderMaterialBulkDO> returnOrderMaterialBulkDOListForSave = new ArrayList<>();
         //租赁期间送费用
         BigDecimal rentCostTotal = BigDecimal.ZERO;
-        for (String materialNo : materialNoList) {
-            BulkMaterialDO bulkMaterialDO = rentMap.get(materialNo);
+        List<BulkMaterialDO> bulkMaterialDOList = rentMap.get(doReturnMaterialParam.getMaterialNo());
+
+        for(int i = 0 ; i<doReturnMaterialParam.getReturnCount();i++ ){
+            BulkMaterialDO bulkMaterialDO = bulkMaterialDOList.get(i);
             //取得订单，并且把商品项存入map方便查找
             OrderDO orderDO = orderDOMap.get(bulkMaterialDO.getOrderNo());
             //这里统计订单的本次退还散料数+1
@@ -435,17 +430,14 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             bulkMaterialDOListForUpdate.add(bulkMaterialDO);
             //修改订单散料-实际归还时间，实际租金
             OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findRentByCustomerIdAndBulkMaterialId(returnOrderDO.getCustomerId(), bulkMaterialDO.getId());
-            OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(orderMaterialBulkDO.getOrderMaterialId());
-            //todo 计算该设备的租金
-            BigDecimal rentCost = CommonConstant.COMMON_CONSTANT_NO.equals(returnOrderDO.getIsCharging()) ?
-                    new BigDecimal(0) : amountSupport.calculateRentCost(orderMaterialDO.getMaterialUnitAmount(), orderDO.getRentStartTime(), now, orderMaterialDO.getRentType());
-            rentCostTotal = BigDecimalUtil.add(rentCost, rentCostTotal);
-            orderMaterialBulkDO.setActualRentAmount(rentCost);
-            orderMaterialBulkDO.setActualReturnTime(now);
-            orderMaterialBulkDOListForUpdate.add(orderMaterialBulkDO);
+            ServiceResult<String,String> returnResult = orderService.returnBulkMaterial(orderDO.getOrderNo(),bulkMaterialDO.getBulkMaterialNo(),null,now);
+            if(!ErrorCode.SUCCESS.equals(returnResult.getErrorCode())){
+                serviceResult.setErrorCode(returnResult.getErrorCode());
+                return serviceResult;
+            }
 
             //由于按天租赁无需授信额度，需交押金，所以当订单按月或按天租赁时，修改客户已用授信额度
-            if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
+            if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDOMap.get(orderMaterialBulkDO.getOrderMaterialId()).getRentType())) {
                 customerRiskManagementDO.setCreditAmountUsed(BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(), bulkMaterialDO.getBulkMaterialPrice()));
             }
             ReturnOrderMaterialDO returnOrderMaterialDO = null;
@@ -483,21 +475,23 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
                     returnOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     returnOrderMaterialDOMapForUpdate.put(returnOrderMaterialDO.getReturnMaterialId(), returnOrderMaterialDO);
                 }
+                //添加退还散料记录
+                ReturnOrderMaterialBulkDO returnOrderMaterialBulkDO = new ReturnOrderMaterialBulkDO();
+                returnOrderMaterialBulkDO.setReturnOrderMaterialId(returnOrderMaterialDO.getId());
+                returnOrderMaterialBulkDO.setReturnOrderId(returnOrderDO.getId());
+                returnOrderMaterialBulkDO.setReturnOrderNo(returnOrderDO.getReturnOrderNo());
+                returnOrderMaterialBulkDO.setOrderNo(orderDO.getOrderNo());
+                returnOrderMaterialBulkDO.setBulkMaterialId(bulkMaterialDO.getId());
+                returnOrderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
+                returnOrderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                returnOrderMaterialBulkDO.setCreateTime(now);
+                returnOrderMaterialBulkDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                returnOrderMaterialBulkDO.setUpdateTime(now);
+                returnOrderMaterialBulkDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                returnOrderMaterialBulkDOListForSave.add(returnOrderMaterialBulkDO);
             }
-            //添加退还散料记录
-            ReturnOrderMaterialBulkDO returnOrderMaterialBulkDO = new ReturnOrderMaterialBulkDO();
-            returnOrderMaterialBulkDO.setReturnOrderMaterialId(returnOrderMaterialDO.getId());
-            returnOrderMaterialBulkDO.setReturnOrderId(returnOrderDO.getId());
-            returnOrderMaterialBulkDO.setReturnOrderNo(returnOrderDO.getReturnOrderNo());
-            returnOrderMaterialBulkDO.setBulkMaterialId(bulkMaterialDO.getId());
-            returnOrderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
-            returnOrderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            returnOrderMaterialBulkDO.setCreateTime(now);
-            returnOrderMaterialBulkDO.setCreateUser(userSupport.getCurrentUserId().toString());
-            returnOrderMaterialBulkDO.setUpdateTime(now);
-            returnOrderMaterialBulkDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            returnOrderMaterialBulkDOListForSave.add(returnOrderMaterialBulkDO);
         }
+
         //待更新的订单列表
         List<OrderDO> orderDOListForUpdate = new ArrayList<>();
         for (String orderNo : rentBulkMaterialCountNowMap.keySet()) {
@@ -511,8 +505,6 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         }
         //批量更新散料列表
         bulkMaterialMapper.updateList(bulkMaterialDOListForUpdate);
-        //批量更新订单散料列表
-        orderMaterialBulkMapper.updateList(orderMaterialBulkDOListForUpdate);
         //批量更新退还物料项列表
         if (returnOrderMaterialDOMapForUpdate.size() > 0) {
             List<ReturnOrderMaterialDO> returnOrderMaterialDOListForUpdate = new ArrayList<>();
@@ -539,7 +531,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         //修改退还单，归还订单状态,租赁期间产生总费用,实际退还商品总数,修改时间，修改人
         returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
         returnOrderDO.setTotalRentCost(BigDecimalUtil.add(returnOrderDO.getTotalRentCost(), rentCostTotal));
-        returnOrderDO.setRealTotalReturnProductCount(returnOrderDO.getRealTotalReturnProductCount() + 1);
+        returnOrderDO.setRealTotalReturnMaterialCount(returnOrderDO.getRealTotalReturnMaterialCount() + doReturnMaterialParam.getReturnCount());
         returnOrderDO.setUpdateTime(now);
         returnOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         returnOrderMapper.update(returnOrderDO);
@@ -1090,6 +1082,8 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     private CustomerOrderSupport customerOrderSupport;
     @Autowired
     private WorkflowService workflowService;
+    @Autowired
+    private OrderService orderService;
 
 
 }

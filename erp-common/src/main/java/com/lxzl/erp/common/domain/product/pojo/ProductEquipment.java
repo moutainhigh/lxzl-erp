@@ -9,26 +9,26 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductEquipment implements Serializable {
-    private Integer productEquipmentId;
-    private String equipmentNo;
-    private Integer productId;
-    private Integer skuId;
-    private String orderNo;
-    private Integer currentWarehouseId;
-    private String currentWarehouseName;
-    private Integer currentWarehousePositionId;
-    private Integer ownerWarehouseId;
-    private String ownerWarehouseName;
-    private Integer ownerWarehousePositionId;
-    private BigDecimal equipmentPrice;
-    private Integer equipmentStatus;
-    private Integer isNew;
-    private Integer dataStatus;
-    private String remark;
+    private Integer productEquipmentId; //设备ID
+    private String equipmentNo; //设备编号唯一
+    private Integer productId;  //所属产品ID
+    private Integer skuId;  //所属SKU ID
+    private String orderNo;  //关联订单号，租赁中状态时有值
+    private Integer currentWarehouseId;  //目前仓库ID
+    private Integer currentWarehousePositionId;  //目前仓位ID
+    private Integer ownerWarehouseId;  //归属仓库ID
+    private Integer ownerWarehousePositionId;  //归属目前仓位ID
+    private BigDecimal equipmentPrice;  //设备本身价值
+    private Integer equipmentStatus;  //设备状态，1设备空闲，2租赁中，3维修中，4报废，5调拨中
+    private Integer isNew;  //是否全新，1是，0否
+    private Integer dataStatus;  //状态：0不可用；1可用；2删除
+    private String remark;  //备注
     private List<ProductImg> productImgList;           // 商品图片
-    private List<BulkMaterial> bulkMaterialList;        // 设备散料
+    private List<BulkMaterial> bulkMaterialList;        // 设备散料列表
 
-    private String productName;
+    private String ownerWarehouseName;  //归属仓库名称
+    private String currentWarehouseName;  //目前仓库名称
+    private String productName;  //商品名称
 
     public Integer getProductEquipmentId() {
         return productEquipmentId;

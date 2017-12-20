@@ -319,6 +319,7 @@ public class ErrorCode {
     public static final String CUSTOMER_PERSON_ADDRESS_NOT_NULL = "J500040";
     public static final String STATEMENT_ORDER_CREATE_ERROR = "J500041";
     public static final String STATEMENT_ORDER_STATUS_ERROR = "J500042";
+    public static final String MATERIAL_NOT_RENT = "J500043";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -526,6 +527,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW, "客户授信额度超限");
         MAP.put(STOCK_NOT_MATCH, "备货不匹配");
         MAP.put(STOCK_NOT_ENOUGH, "备货不足，请先继续备货");
+        MAP.put(MATERIAL_NOT_RENT, "不是客户在租物料，不能退还");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
@@ -601,6 +603,7 @@ public class ErrorCode {
         MAP.put(IS_DAMAGE_NOT_NULL, "是否损坏字段必填");
         MAP.put(IS_DAMAGE_ERROR, "是否损坏字段错误");
         MAP.put(RETURN_ORDER_CAN_NOT_COMMIT, "只有待提交的退还单可以提交审核");
+
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");

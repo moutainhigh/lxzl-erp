@@ -7,6 +7,7 @@
 		<result column="return_order_material_id" jdbcType="INTEGER" property="returnOrderMaterialId" />
 		<result column="return_order_id" jdbcType="INTEGER" property="returnOrderId" />
 		<result column="return_order_no" jdbcType="VARCHAR" property="returnOrderNo" />
+		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
 		<result column="bulk_material_id" jdbcType="INTEGER" property="bulkMaterialId" />
 		<result column="bulk_material_no" jdbcType="VARCHAR" property="bulkMaterialNo" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -18,7 +19,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eromb.id,eromb.return_order_material_id,eromb.return_order_id,eromb.return_order_no,eromb.bulk_material_id,eromb.bulk_material_no,eromb.data_status,eromb.remark,eromb.create_time,eromb.create_user,eromb.update_time,eromb.update_user
+		eromb.id,eromb.return_order_material_id,eromb.return_order_id,eromb.return_order_no,eromb.order_no,eromb.bulk_material_id,eromb.bulk_material_no,eromb.data_status,eromb.remark,eromb.create_time,eromb.create_user,eromb.update_time,eromb.update_user
 	</sql>
 
 	<select id="findById" resultMap="ReturnOrderMaterialBulkDO" parameterType="java.lang.Integer">

@@ -16,9 +16,9 @@ public class ChangeOrderProduct implements Serializable {
     private Integer changeOrderId;   //换货ID
     private String changeOrderNo;   //换货编号
     @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL)
-    private Integer changeProductSkuIdSrc;   //原商品SKU_ID
+    private Integer srcChangeProductSkuId;   //原商品SKU_ID
     @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL)
-    private Integer changeProductSkuIdDest;   //目标商品SKU_ID
+    private Integer destChangeProductSkuId;   //目标商品SKU_ID
     @NotNull(message = ErrorCode.CHANGE_COUNT_ERROR)
     @Min(value = 1, message = ErrorCode.CHANGE_COUNT_ERROR)
     private Integer changeProductSkuCount;   //换货商品SKU数量
@@ -59,20 +59,20 @@ public class ChangeOrderProduct implements Serializable {
         this.changeOrderNo = changeOrderNo;
     }
 
-    public Integer getChangeProductSkuIdSrc() {
-        return changeProductSkuIdSrc;
+    public Integer getSrcChangeProductSkuId() {
+        return srcChangeProductSkuId;
     }
 
-    public void setChangeProductSkuIdSrc(Integer changeProductSkuIdSrc) {
-        this.changeProductSkuIdSrc = changeProductSkuIdSrc;
+    public void setSrcChangeProductSkuId(Integer srcChangeProductSkuId) {
+        this.srcChangeProductSkuId = srcChangeProductSkuId;
     }
 
-    public Integer getChangeProductSkuIdDest() {
-        return changeProductSkuIdDest;
+    public Integer getDestChangeProductSkuId() {
+        return destChangeProductSkuId;
     }
 
-    public void setChangeProductSkuIdDest(Integer changeProductSkuIdDest) {
-        this.changeProductSkuIdDest = changeProductSkuIdDest;
+    public void setDestChangeProductSkuId(Integer destChangeProductSkuId) {
+        this.destChangeProductSkuId = destChangeProductSkuId;
     }
 
     public Integer getChangeProductSkuCount() {

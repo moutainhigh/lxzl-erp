@@ -2,19 +2,22 @@ package com.lxzl.erp.common.domain.returnOrder;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
 import org.hibernate.validator.constraints.NotBlank;
 
-import java.util.List;
-
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DoReturnMaterialParam {
 
     @NotBlank(message = ErrorCode.RETURN_ORDER_NO_NOT_NULL)
     private String returnOrderNo;
-    @CollectionNotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL)
-    private List<String> materialNoList;
+    @NotBlank(message = ErrorCode.MATERIAL_NO_NOT_NULL)
+    private String materialNo;
+    @NotNull(message = ErrorCode.CHANGE_COUNT_ERROR)
+    @Min(value = 1,message = ErrorCode.CHANGE_COUNT_ERROR)
+    private Integer returnCount;
+
 
     public String getReturnOrderNo() {
         return returnOrderNo;
@@ -24,11 +27,19 @@ public class DoReturnMaterialParam {
         this.returnOrderNo = returnOrderNo;
     }
 
-    public List<String> getMaterialNoList() {
-        return materialNoList;
+    public String getMaterialNo() {
+        return materialNo;
     }
 
-    public void setMaterialNoList(List<String> materialNoList) {
-        this.materialNoList = materialNoList;
+    public void setMaterialNo(String materialNo) {
+        this.materialNo = materialNo;
+    }
+
+    public Integer getReturnCount() {
+        return returnCount;
+    }
+
+    public void setReturnCount(Integer returnCount) {
+        this.returnCount = returnCount;
     }
 }
