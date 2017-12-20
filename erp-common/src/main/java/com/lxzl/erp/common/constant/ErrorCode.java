@@ -99,7 +99,8 @@ public class ErrorCode {
     public static final String BULK_MATERIAL_IS_NULL = "J200053";
     public static final String PRODUCT_EQUIPMENT_IS_NULL = "J200054";
     public static final String PRODUCT_EQUIPMENT_MATERIAL_IS_NULL = "J200055";
-
+    public static final String BULK_MATERIAL_NO_NOT_NULL = "J200056";
+    public static final String BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT_NOT_REPAIR = "J200057";
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
     public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
@@ -331,6 +332,9 @@ public class ErrorCode {
     public static final String REPAIR_ORDER_NO_IS_NOT_NULL = "J700003";
     public static final String REPAIR_ORDER_IS_NOT_EXISTS = "J700004";
     public static final String REPAIR_ORDER_STATUS_ERROR = "J700005";
+    public static final String REPAIR_ORDER_EQUIPMENT_NOT_EXISTS = "J700006";
+    public static final String REPAIR_ORDER_BULK_MATERRIAL_NOT_EXISTS = "J700007";
+    public static final String REPAIR_ORDER_DATA_STATUS_ERROR = "J700008";
 
 
     static {
@@ -426,6 +430,8 @@ public class ErrorCode {
         MAP.put(BULK_MATERIAL_IS_NULL, "该散料不存在");
         MAP.put(PRODUCT_EQUIPMENT_IS_NULL, "该设备不存在");
         MAP.put(PRODUCT_EQUIPMENT_MATERIAL_IS_NULL, "该设备物料不存在");
+        MAP.put(BULK_MATERIAL_NO_NOT_NULL, "散料编号不能为空");
+        MAP.put(BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT_NOT_REPAIR, "编号【%s 】的散料在某设备上，不能进行维修");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
@@ -657,6 +663,9 @@ public class ErrorCode {
         MAP.put(REPAIR_ORDER_NO_IS_NOT_NULL, "设备维修单编号不能为空");
         MAP.put(REPAIR_ORDER_IS_NOT_EXISTS, "设备维修单不存在");
         MAP.put(REPAIR_ORDER_STATUS_ERROR, "设备维修单状态出错，请重新检查");
+        MAP.put(REPAIR_ORDER_EQUIPMENT_NOT_EXISTS, "设备维修单明细不存在");
+        MAP.put(REPAIR_ORDER_BULK_MATERRIAL_NOT_EXISTS, "散料维修单明细不存在");
+        MAP.put(REPAIR_ORDER_DATA_STATUS_ERROR, "该设备维修单此状态不允许此操作");
 
 
     }

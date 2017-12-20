@@ -18,9 +18,9 @@ public class RepairOrderEquipment implements Serializable {
 	@NotBlank(message = ErrorCode.EQUIPMENT_NO_NOT_NULL,groups = {AddGroup.class})
 	private String equipmentNo;   //设备编号唯一
 	private Date repairEndTime;   //维修完成时间
-	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private Integer orderId;   //订单ID，如果是在客户手里出现的维修，此字段不能为空
 	private Integer orderProductId;   //订单商品项ID,如果是在客户手里出现的维修，此字段不能为空
+	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
 	private String createUser;   //添加人
@@ -68,14 +68,6 @@ public class RepairOrderEquipment implements Serializable {
 		this.repairEndTime = repairEndTime;
 	}
 
-	public Integer getDataStatus(){
-		return dataStatus;
-	}
-
-	public void setDataStatus(Integer dataStatus){
-		this.dataStatus = dataStatus;
-	}
-
 	public Integer getOrderId(){
 		return orderId;
 	}
@@ -92,44 +84,51 @@ public class RepairOrderEquipment implements Serializable {
 		this.orderProductId = orderProductId;
 	}
 
-	public String getRemark(){
+	public Integer getDataStatus() {
+		return dataStatus;
+	}
+
+	public void setDataStatus(Integer dataStatus) {
+		this.dataStatus = dataStatus;
+	}
+
+	public String getRemark() {
 		return remark;
 	}
 
-	public void setRemark(String remark){
+	public void setRemark(String remark) {
 		this.remark = remark;
 	}
 
-	public Date getCreateTime(){
+	public Date getCreateTime() {
 		return createTime;
 	}
 
-	public void setCreateTime(Date createTime){
+	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
 
-	public String getCreateUser(){
+	public String getCreateUser() {
 		return createUser;
 	}
 
-	public void setCreateUser(String createUser){
+	public void setCreateUser(String createUser) {
 		this.createUser = createUser;
 	}
 
-	public Date getUpdateTime(){
+	public Date getUpdateTime() {
 		return updateTime;
 	}
 
-	public void setUpdateTime(Date updateTime){
+	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
 
-	public String getUpdateUser(){
+	public String getUpdateUser() {
 		return updateUser;
 	}
 
-	public void setUpdateUser(String updateUser){
+	public void setUpdateUser(String updateUser) {
 		this.updateUser = updateUser;
 	}
-
 }
