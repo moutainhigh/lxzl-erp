@@ -20,6 +20,7 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private Integer orderStatus;
     private Date createStartTime;
     private Date createEndTime;
+    private Integer orderSellerId;
 
     public Integer getOrderId() {
         return orderId;
@@ -99,5 +100,13 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setConsigneePhone(String consigneePhone) {
         this.consigneePhone = consigneePhone;
+    }
+
+    public Integer getOrderSellerId() {
+        return orderSellerId;
+    }
+
+    public void setOrderSellerId(Integer orderSellerId) {
+        this.orderSellerId = orderSellerId;
     }
 }

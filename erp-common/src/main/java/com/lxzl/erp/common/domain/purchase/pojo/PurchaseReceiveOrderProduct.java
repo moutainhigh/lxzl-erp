@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -20,11 +21,13 @@ public class PurchaseReceiveOrderProduct implements Serializable {
 	private String productName;   //商品名称冗余，不可修改
 	private String productSnapshot;   //商品冗余信息，防止商品修改留存快照，不可修改
 	private Integer productCount;   //商品总数，来源（采购发货单），不可变更
+	private BigDecimal productAmount;   //商品单价
 	private Integer realProductId;   //实际商品ID
 	private String realProductName;   //商品名称冗余，可修改
 	private Integer realProductSkuId;   //商品SKU ID
 	private String realProductSnapshot;   //商品冗余信息，防止商品修改留存快照，可修改
 	private Integer realProductCount;   //实际商品总数
+	private BigDecimal realProductAmount;   //实际商品单价
 	private Integer isSrc;   //原单项标志，查原单时此标志要传入0，0-收货新添项，1-原单项
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -209,5 +212,21 @@ public class PurchaseReceiveOrderProduct implements Serializable {
 
 	public void setProductMaterialList(List<ProductMaterial> productMaterialList) {
 		this.productMaterialList = productMaterialList;
+	}
+
+	public BigDecimal getProductAmount() {
+		return productAmount;
+	}
+
+	public void setProductAmount(BigDecimal productAmount) {
+		this.productAmount = productAmount;
+	}
+
+	public BigDecimal getRealProductAmount() {
+		return realProductAmount;
+	}
+
+	public void setRealProductAmount(BigDecimal realProductAmount) {
+		this.realProductAmount = realProductAmount;
 	}
 }

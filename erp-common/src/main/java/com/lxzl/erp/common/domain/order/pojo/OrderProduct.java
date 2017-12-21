@@ -20,6 +20,7 @@ public class OrderProduct implements Serializable {
     private Integer productCount;
     private BigDecimal productUnitAmount;
     private BigDecimal productAmount;
+    private BigDecimal rentDepositAmount;
     private BigDecimal depositAmount;
     private BigDecimal creditDepositAmount;
     private BigDecimal insuranceAmount;
@@ -224,5 +225,13 @@ public class OrderProduct implements Serializable {
 
     public void setOrderProductEquipmentList(List<OrderProductEquipment> orderProductEquipmentList) {
         this.orderProductEquipmentList = orderProductEquipmentList;
+    }
+
+    public BigDecimal getRentDepositAmount() {
+        return rentDepositAmount;
+    }
+
+    public void setRentDepositAmount(BigDecimal rentDepositAmount) {
+        this.rentDepositAmount = rentDepositAmount;
     }
 }

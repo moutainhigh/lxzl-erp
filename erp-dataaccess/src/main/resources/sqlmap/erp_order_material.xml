@@ -12,6 +12,7 @@
 		<result column="material_count" jdbcType="INTEGER" property="materialCount" />
 		<result column="material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount" />
 		<result column="material_amount" jdbcType="DECIMAL" property="materialAmount" />
+		<result column="rent_deposit_amount" jdbcType="DECIMAL" property="rentDepositAmount" />
 		<result column="deposit_amount" jdbcType="DECIMAL" property="depositAmount" />
 		<result column="credit_deposit_amount" jdbcType="DECIMAL" property="creditDepositAmount" />
 		<result column="insurance_amount" jdbcType="DECIMAL" property="insuranceAmount" />
@@ -29,7 +30,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eom.id,eom.order_id,eom.material_id,eom.rent_type as rent_type,eom.rent_time_length as rent_time_length,eom.material_name,eom.material_count,eom.material_unit_amount,eom.material_amount,eom.deposit_amount,eom.credit_deposit_amount,eom.insurance_amount,eom.material_snapshot,eom.deposit_cycle,eom.payment_cycle,eom.pay_mode,eom.is_new_material,eom.data_status,eom.remark,eom.create_time,eom.create_user,eom.update_time,eom.update_user
+		eom.id,eom.order_id,eom.material_id,eom.rent_type as rent_type,eom.rent_time_length as rent_time_length,eom.material_name,eom.material_count,eom.material_unit_amount,eom.material_amount,eom.rent_deposit_amount,eom.deposit_amount,eom.credit_deposit_amount,eom.insurance_amount,eom.material_snapshot,eom.deposit_cycle,eom.payment_cycle,eom.pay_mode,eom.is_new_material,eom.data_status,eom.remark,eom.create_time,eom.create_user,eom.update_time,eom.update_user
 	</sql>
 
 	<select id="queryLastPrice" resultType="java.util.Map" parameterType="java.util.Map">
@@ -92,6 +93,9 @@
 			</if>
 			<if test="materialAmount != null">
 				material_amount = #{materialAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="rentDepositAmount != null">
+				rent_deposit_amount = #{rentDepositAmount,jdbcType=DECIMAL},
 			</if>
 			<if test="depositAmount != null">
 				deposit_amount = #{depositAmount,jdbcType=DECIMAL},

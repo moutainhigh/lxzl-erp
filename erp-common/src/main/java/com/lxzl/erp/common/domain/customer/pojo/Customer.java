@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.customer.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerPersonGroup;
@@ -34,6 +35,8 @@ public class Customer implements Serializable {
 	private CustomerCompany customerCompany;
 
 	private CustomerRiskManagement customerRiskManagement;
+
+	private CustomerAccount customerAccount;
 
 	public Integer getCustomerId(){
 		return customerId;
@@ -145,5 +148,13 @@ public class Customer implements Serializable {
 
 	public void setCustomerName(String customerName) {
 		this.customerName = customerName;
+	}
+
+	public CustomerAccount getCustomerAccount() {
+		return customerAccount;
+	}
+
+	public void setCustomerAccount(CustomerAccount customerAccount) {
+		this.customerAccount = customerAccount;
 	}
 }

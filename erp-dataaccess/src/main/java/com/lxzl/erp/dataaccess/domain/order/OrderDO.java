@@ -18,6 +18,7 @@ public class OrderDO extends BaseDO {
     private BigDecimal totalDepositAmount;
     private BigDecimal totalMustDepositAmount;
     private BigDecimal totalCreditDepositAmount;
+    private BigDecimal totalRentDepositAmount;
     private BigDecimal totalInsuranceAmount;
     private Integer totalProductCount;
     private BigDecimal totalProductAmount;
@@ -349,5 +350,13 @@ public class OrderDO extends BaseDO {
 
     public void setFirstNeedPayAmount(BigDecimal firstNeedPayAmount) {
         this.firstNeedPayAmount = firstNeedPayAmount;
+    }
+
+    public BigDecimal getTotalRentDepositAmount() {
+        return totalRentDepositAmount;
+    }
+
+    public void setTotalRentDepositAmount(BigDecimal totalRentDepositAmount) {
+        this.totalRentDepositAmount = totalRentDepositAmount;
     }
 }

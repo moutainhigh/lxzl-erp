@@ -1,8 +1,12 @@
 package com.lxzl.erp.common.domain.product.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
+import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -10,6 +14,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductEquipment implements Serializable {
     private Integer productEquipmentId; //设备ID
+    @NotNull(message = ErrorCode.EQUIPMENT_NO_NOT_NULL,groups = {ExtendGroup.class})
     private String equipmentNo; //设备编号唯一
     private Integer productId;  //所属产品ID
     private Integer skuId;  //所属SKU ID
@@ -19,6 +24,9 @@ public class ProductEquipment implements Serializable {
     private Integer ownerWarehouseId;  //归属仓库ID
     private Integer ownerWarehousePositionId;  //归属目前仓位ID
     private BigDecimal equipmentPrice;  //设备本身价值
+    @NotNull(message = ErrorCode.PURCHASE_PRICE_ERROR,groups = {ExtendGroup.class})
+    @Min(value = 0,message = ErrorCode.PURCHASE_PRICE_ERROR,groups = {ExtendGroup.class})
+    private BigDecimal purchasePrice;  //采购价格
     private Integer equipmentStatus;  //设备状态，1设备空闲，2租赁中，3维修中，4报废，5调拨中
     private Integer isNew;  //是否全新，1是，0否
     private Integer dataStatus;  //状态：0不可用；1可用；2删除
@@ -180,5 +188,13 @@ public class ProductEquipment implements Serializable {
 
     public void setOwnerWarehouseName(String ownerWarehouseName) {
         this.ownerWarehouseName = ownerWarehouseName;
+    }
+
+    public BigDecimal getPurchasePrice() {
+        return purchasePrice;
+    }
+
+    public void setPurchasePrice(BigDecimal purchasePrice) {
+        this.purchasePrice = purchasePrice;
     }
 }

@@ -192,7 +192,8 @@ public class ErrorCode {
     public static final String PURCHASE_RECEIVE_ORDER_MATERIAL_NO_NOT_NULL = "J300054";
     public static final String STOCK_NOT_MATCH = "J300055";
     public static final String STOCK_NOT_ENOUGH = "J300056";
-
+    public static final String EQUIPMENT_PURCHASE_PRICE_NOT_NULL = "J300057";
+    public static final String BULK_PURCHASE_PRICE_NOT_NULL = "J300057";
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
     public static final String ORDER_CUSTOMER_CONSIGN_NOT_NULL = "J400001";
@@ -234,7 +235,7 @@ public class ErrorCode {
     public static final String DEPLOYMENT_ORDER_MATERIAL_BULK_COUNT_NOT_ENOUGH = "J400038";
     public static final String RETURN_ORDER_STATUS_CAN_NOT_END = "J400039";
     public static final String RETURN_ORDER_STATUS_CAN_NOT_CANCEL = "J400040";
-    public static final String RETURN_ORDER_END_YET = "J400041";
+    public static final String RETURN_ORDER_STATUS_CAN_NOT_RETURN = "J400041";
     public static final String RETURN_ORDER_PRODUCT_ID_NOT_NULL = "J400042";
     public static final String RETURN_ORDER_MATERIAL_ID_NOT_NULL = "J400043";
     public static final String RETURN_ORDER_SERVICE_COST_NOT_NULL = "J400044";
@@ -279,6 +280,7 @@ public class ErrorCode {
     public static final String IS_DAMAGE_ERROR = "J400083";
     public static final String RETURN_ORDER_CAN_NOT_COMMIT = "J400084";
 
+
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
     public static final String CUSTOMER_PERSON_NOT_NULL = "J500003";
@@ -320,6 +322,7 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_CREATE_ERROR = "J500041";
     public static final String STATEMENT_ORDER_STATUS_ERROR = "J500042";
     public static final String MATERIAL_NOT_RENT = "J500043";
+    public static final String PURCHASE_PRICE_ERROR = "J500044";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -337,6 +340,31 @@ public class ErrorCode {
     public static final String REPAIR_ORDER_BULK_MATERRIAL_NOT_EXISTS = "J700007";
     public static final String REPAIR_ORDER_DATA_STATUS_ERROR = "J700008";
 
+    public static final String JOINT_PRODUCT_NAME_IS_NOT_NULL = "J800001";
+    public static final String JOINT_PRODUCT_IS_NO = "J800002";
+    public static final String JOINT_PRODUCT_IS_DEL = "J800003";
+    public static final String JOINT_PRODUCT_ID_IS_NOT_NULL = "J800004";
+    public static final String JOINT_PRODUCT_MATERIAL_ID_IS_NOT_NULL = "J800005";
+    public static final String JOINT_PRODUCT_SKU_ID_IS_NOT_NULL = "J800006";
+    public static final String JOINT_PRODUCT_MATERIAL_COUNT_IS_NOT_NULL = "J800007";
+    public static final String JOINT_PRODUCT_SKU_COUNT_IS_NOT_NULL = "J800008";
+    public static final String JOINT_PRODUCT_MATERIAL_MAJOR_KEY_ID_IS_NOT_NULL = "J800009";
+    public static final String JOINT_PRODUCT_SKU_MAJOR_KEY_ID_IS_NOT_NULL = "J800010";
+    public static final String JOINT_PRODUCT_MATERIAL_COUNT_MIN_IS_ZERO = "J800011";
+    public static final String JOINT_PRODUCT_SKU_COUNT_MIN_IS_ZERO = "J800012";
+    public static final String JOINT_PRODUCT_MATERIAL_ID_IS_NOT_EXIST = "J800013";
+    public static final String JOINT_PRODUCT_SKU_ID_IS_NOT_EXIST = "J800014";
+    public static final String JOINT_PRODUCT_SKU_AND_MATERIAL_IS_NULL = "J800015";
+    public static final String JOINT_PRODUCT_ID_IS_NOT_EXISTS= "J800016";
+    public static final String JOINT_PRODUCT_SKU_ID_IS_NOT_EXISTS = "J800017";
+    public static final String JOINT_PRODUCT_MATERIAL_ID_IS_NOT_EXISTS = "J800018";
+    public static final String PRODUCT_MATERIAL_ID_IS_NOT_EXISTS= "J800019";
+    public static final String PRODUCT_SKU_ID_IS_NOT_EXISTS= "J800020";
+    public static final String JOINT_PRODUCT_STATUS_IS_NO = "J800021";
+    public static final String JOINT_PRODUCT_NOT_EXISTS = "J800022";
+    public static final String JOINT_PRODUCT_ID_UPDATE_MATERIAL_ERROR = "J800024";
+    public static final String MATERIAL_ID_REPETITION = "J800025";
+    public static final String PRODUCT_SKU_ID_REPETITION = "J800026";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -513,7 +541,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_ORDER_MATERIAL_NOT_MAIN, "采购单物料项存在非四大件");
         MAP.put(PURCHASE_ORDER_MATERIAL_NOT_GADGET, "采购单物料项存在非小配件");
         MAP.put(PURCHASE_ORDER_MATERIAL_LIST_NOT_NULL, "采购订单物料项列表不能为空");
-        MAP.put(PURCHASE_ORDER_MATERIAL_CAN_NOT_CREATE, "采购的物料总额大于100元且没有发票");
+        MAP.put(PURCHASE_ORDER_MATERIAL_CAN_NOT_CREATE, "采购小配件总金额达到100元必须有发票");
         MAP.put(PURCHASE_ORDER_SKU_MATERIAL_ERROR, "SKU物料配置错误");
         MAP.put(MATERIAL_NO_NOT_NULL, "物料编号不能为空");
         MAP.put(STOCK_ALLOCATION_WAREHOUSE_IS_NOT_SAME, "库存调拨库房必须是同一间");
@@ -528,6 +556,9 @@ public class ErrorCode {
         MAP.put(STOCK_NOT_MATCH, "备货不匹配");
         MAP.put(STOCK_NOT_ENOUGH, "备货不足，请先继续备货");
         MAP.put(MATERIAL_NOT_RENT, "不是客户在租物料，不能退还");
+        MAP.put(EQUIPMENT_PURCHASE_PRICE_NOT_NULL, "编号为【%s】的设备没有填写价格，请确保所有设备及配件填写了采购价");
+        MAP.put(BULK_PURCHASE_PRICE_NOT_NULL, "编号为【%s】的配件没有填写价格，请确保所有设备及配件填写了采购价");
+        MAP.put(PURCHASE_PRICE_ERROR, "采购价格填写错误");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
@@ -642,7 +673,7 @@ public class ErrorCode {
         MAP.put(MATERIAL_CAN_NOT_REPEAT, "物料不能重复");
         MAP.put(RETURN_ORDER_STATUS_CAN_NOT_END, "只有处理中的退还单可以结束");
         MAP.put(RETURN_ORDER_STATUS_CAN_NOT_CANCEL, "只有待处理的退还单可以取消");
-        MAP.put(RETURN_ORDER_END_YET, "该笔退还单已结束");
+        MAP.put(RETURN_ORDER_STATUS_CAN_NOT_RETURN, "此退还单状态不允许退货");
         MAP.put(CUSTOMER_CONSIGN_INFO_NOT_EXISTS, "收货地址信息不存在");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_MAIN_NOT_NULL, "是否是默认地址字段必填");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_MAIN_ERROR, "是否是默认地址填写错误");
@@ -670,6 +701,31 @@ public class ErrorCode {
         MAP.put(REPAIR_ORDER_BULK_MATERRIAL_NOT_EXISTS, "散料维修单明细不存在");
         MAP.put(REPAIR_ORDER_DATA_STATUS_ERROR, "该设备维修单此状态不允许此操作");
 
+        MAP.put(JOINT_PRODUCT_NAME_IS_NOT_NULL, "组合商品名称不能为空");
+        MAP.put(JOINT_PRODUCT_IS_NO, "组合商品不可用");
+        MAP.put(JOINT_PRODUCT_IS_DEL, "组合商品已删除");
+        MAP.put(JOINT_PRODUCT_ID_IS_NOT_NULL, "组合商品表ID不能为空");
+        MAP.put(JOINT_PRODUCT_MATERIAL_ID_IS_NOT_NULL, "组合商品物料ID不能为空");
+        MAP.put(JOINT_PRODUCT_SKU_ID_IS_NOT_NULL, "组合商品SKU_ID不能为空");
+        MAP.put(JOINT_PRODUCT_MATERIAL_COUNT_IS_NOT_NULL, "组合商品物料数量不能为空");
+        MAP.put(JOINT_PRODUCT_SKU_COUNT_IS_NOT_NULL, "组合商品SKU数量不能为空");
+        MAP.put(JOINT_PRODUCT_MATERIAL_MAJOR_KEY_ID_IS_NOT_NULL, "组合商品物料项表项ID不能为空");
+        MAP.put(JOINT_PRODUCT_SKU_MAJOR_KEY_ID_IS_NOT_NULL, "组合商品SKU表项ID不能为空");
+        MAP.put(JOINT_PRODUCT_MATERIAL_COUNT_MIN_IS_ZERO, "组合商品物料数量最小为0");
+        MAP.put(JOINT_PRODUCT_SKU_COUNT_MIN_IS_ZERO, "组合商品SKU数量最小为0");
+        MAP.put(JOINT_PRODUCT_MATERIAL_ID_IS_NOT_EXIST, "组合商品物料ID不存在");
+        MAP.put(JOINT_PRODUCT_SKU_ID_IS_NOT_EXIST, "组合商品SKU_ID不存在");
+        MAP.put(JOINT_PRODUCT_SKU_AND_MATERIAL_IS_NULL, "组合商品SKU和物料都未添加");
+        MAP.put(JOINT_PRODUCT_ID_IS_NOT_EXISTS, "组合商品表ID不存在");
+        MAP.put(JOINT_PRODUCT_SKU_ID_IS_NOT_EXISTS, "组合商品SKU表ID不存在");
+        MAP.put(JOINT_PRODUCT_MATERIAL_ID_IS_NOT_EXISTS, "组合商品物料表ID不存在");
+        MAP.put(PRODUCT_MATERIAL_ID_IS_NOT_EXISTS, "SKU表ID不存在");
+        MAP.put(PRODUCT_SKU_ID_IS_NOT_EXISTS, "物料表ID不存在");
+        MAP.put(JOINT_PRODUCT_STATUS_IS_NO, "物料表状态是删除");
+        MAP.put(JOINT_PRODUCT_NOT_EXISTS, "物料表不存在");
+        MAP.put(JOINT_PRODUCT_ID_UPDATE_MATERIAL_ERROR, "跟新组合商品id与物料的组合商品id不同");
+        MAP.put(MATERIAL_ID_REPETITION, "跟新物料id相同");
+        MAP.put(JOINT_PRODUCT_ID_UPDATE_MATERIAL_ERROR, "跟新SKU id相同");
 
     }
 

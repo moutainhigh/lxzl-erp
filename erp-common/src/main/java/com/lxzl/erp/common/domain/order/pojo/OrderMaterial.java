@@ -18,6 +18,7 @@ public class OrderMaterial implements Serializable {
 	private Integer materialCount;   //物料总数
 	private BigDecimal materialUnitAmount;   //物料单价
 	private BigDecimal materialAmount;   //物料价格
+	private BigDecimal rentDepositAmount;	// 租赁押金
 	private BigDecimal depositAmount;   //押金金额
 	private BigDecimal creditDepositAmount;   //授信押金金额
 	private BigDecimal insuranceAmount;   //保险金额
@@ -226,5 +227,13 @@ public class OrderMaterial implements Serializable {
 
 	public void setPayMode(Integer payMode) {
 		this.payMode = payMode;
+	}
+
+	public BigDecimal getRentDepositAmount() {
+		return rentDepositAmount;
+	}
+
+	public void setRentDepositAmount(BigDecimal rentDepositAmount) {
+		this.rentDepositAmount = rentDepositAmount;
 	}
 }

@@ -314,4 +314,7 @@
         INSERT INTO erp_product_sku
         <include refid="set_column_sql"/>
     </insert>
+    <select id="findSkuIdCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM erp_product_sku WHERE id = #{skuId}
+    </select>
 </mapper>

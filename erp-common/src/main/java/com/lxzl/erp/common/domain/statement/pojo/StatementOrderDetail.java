@@ -17,7 +17,11 @@ public class StatementOrderDetail implements Serializable {
 	private Integer orderItemReferId;	// 订单项关联ID
 	private Date statementExpectPayTime;	// 结算单预计支付时间
 	private BigDecimal statementDetailAmount;   //结算单金额
-	private BigDecimal statementDetailPaidAmount;	// 已经支付金额
+	private BigDecimal statementDetailRentDepositAmount;	// 结算租金押金金额
+	private BigDecimal statementDetailRentDepositPaidAmount;	// 已付租金押金金额
+	private BigDecimal statementDetailRentDepositReturnAmount;	// 退还租金押金金额
+	private BigDecimal statementDetailRentAmount;				// 结算单租金金额
+	private BigDecimal statementDetailRentPaidAmount;			// 租金已付金额
 	private Date statementDetailPaidTime;			// 结算单支付时间
 	private BigDecimal statementDetailOverdueAmount;	// 逾期金额
 	private Integer statementDetailStatus;   //结算状态，0未结算，1已结算
@@ -151,12 +155,44 @@ public class StatementOrderDetail implements Serializable {
 		this.statementExpectPayTime = statementExpectPayTime;
 	}
 
-	public BigDecimal getStatementDetailPaidAmount() {
-		return statementDetailPaidAmount;
+	public BigDecimal getStatementDetailRentDepositAmount() {
+		return statementDetailRentDepositAmount;
 	}
 
-	public void setStatementDetailPaidAmount(BigDecimal statementDetailPaidAmount) {
-		this.statementDetailPaidAmount = statementDetailPaidAmount;
+	public void setStatementDetailRentDepositAmount(BigDecimal statementDetailRentDepositAmount) {
+		this.statementDetailRentDepositAmount = statementDetailRentDepositAmount;
+	}
+
+	public BigDecimal getStatementDetailRentDepositPaidAmount() {
+		return statementDetailRentDepositPaidAmount;
+	}
+
+	public void setStatementDetailRentDepositPaidAmount(BigDecimal statementDetailRentDepositPaidAmount) {
+		this.statementDetailRentDepositPaidAmount = statementDetailRentDepositPaidAmount;
+	}
+
+	public BigDecimal getStatementDetailRentDepositReturnAmount() {
+		return statementDetailRentDepositReturnAmount;
+	}
+
+	public void setStatementDetailRentDepositReturnAmount(BigDecimal statementDetailRentDepositReturnAmount) {
+		this.statementDetailRentDepositReturnAmount = statementDetailRentDepositReturnAmount;
+	}
+
+	public BigDecimal getStatementDetailRentAmount() {
+		return statementDetailRentAmount;
+	}
+
+	public void setStatementDetailRentAmount(BigDecimal statementDetailRentAmount) {
+		this.statementDetailRentAmount = statementDetailRentAmount;
+	}
+
+	public BigDecimal getStatementDetailRentPaidAmount() {
+		return statementDetailRentPaidAmount;
+	}
+
+	public void setStatementDetailRentPaidAmount(BigDecimal statementDetailRentPaidAmount) {
+		this.statementDetailRentPaidAmount = statementDetailRentPaidAmount;
 	}
 
 	public BigDecimal getStatementDetailOverdueAmount() {

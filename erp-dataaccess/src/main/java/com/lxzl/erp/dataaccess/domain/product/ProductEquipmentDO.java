@@ -1,8 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.product;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
@@ -22,6 +22,7 @@ public class ProductEquipmentDO extends BaseDO {
     private String ownerWarehouseName;
     private Integer ownerWarehousePositionId;
     private BigDecimal equipmentPrice;
+    private BigDecimal purchasePrice;
     private Integer equipmentStatus;
     private Integer isNew;
     private Integer dataStatus;
@@ -183,5 +184,13 @@ public class ProductEquipmentDO extends BaseDO {
 
     public void setOwnerWarehouseName(String ownerWarehouseName) {
         this.ownerWarehouseName = ownerWarehouseName;
+    }
+
+    public BigDecimal getPurchasePrice() {
+        return purchasePrice;
+    }
+
+    public void setPurchasePrice(BigDecimal purchasePrice) {
+        this.purchasePrice = purchasePrice;
     }
 }
