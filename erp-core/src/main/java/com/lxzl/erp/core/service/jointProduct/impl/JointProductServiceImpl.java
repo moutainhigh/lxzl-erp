@@ -68,6 +68,7 @@ public class JointProductServiceImpl implements JointProductService {
             for (JointProductSku jointProductSku : jointProductSkuList) {
                 ProductSkuDO productSkuDO = productSkuMapper.findById(jointProductSku.getSkuId());
                 if (productSkuDO == null) {
+                    //todo 事物回滚
                     serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                     return serviceResult;
                 }
@@ -89,6 +90,7 @@ public class JointProductServiceImpl implements JointProductService {
             for (JointMaterial jointMaterial : jointMaterialList) {
                 MaterialDO materialDO = materialMapper.findById(jointMaterial.getMaterialId());
                 if (materialDO == null) {
+                    //todo 事物回滚
                     serviceResult.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                     return serviceResult;
                 }
@@ -117,12 +119,15 @@ public class JointProductServiceImpl implements JointProductService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> updateJointProduct(JointProduct jointProduct) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult();
+        //todo 这里是否可以直接使用findDetailByJointProductId方法，后面就不用查了
         JointProductDO jointProductDO = jointProductMapper.findById(jointProduct.getJointProductId());
         if (jointProductDO == null) {
             serviceResult.setErrorCode(ErrorCode.JOINT_PRODUCT_ID_IS_NOT_EXISTS);
+            //todo 不需要result
             serviceResult.setResult(jointProduct.getJointProductId());
             return serviceResult;
         }
+        //todo 位置下移
         Date now = new Date();
 
         if (CollectionUtil.isEmpty(jointProduct.getJointProductSkuList()) && CollectionUtil.isEmpty(jointProduct.getJointMaterialList())) {
@@ -135,10 +140,13 @@ public class JointProductServiceImpl implements JointProductService {
         //数据库查到的
         List<JointProductSkuDO> jointProductSkuDOList = jointProductSkuMapper.findJointProductId(jointProductDO.getId());
         //待删除列表
+        //todo 这里可以使用ListUtil的toMap方法
         Map<Integer, JointProductSkuDO> skuDeleteMap = new HashMap<>();
+
         if (CollectionUtil.isNotEmpty(jointProductSkuList)) {
             //判断id是否相同
             //判断是否有重复id
+            //todo 变量名小写 ，前面的HashSet可以定义为Set
             HashSet<Integer> SkuIdSet = new HashSet<>();
             for (JointProductSku jointProductSku : jointProductSkuList) {
                 SkuIdSet.add(jointProductSku.getJointProductSkuId());
@@ -147,9 +155,11 @@ public class JointProductServiceImpl implements JointProductService {
                 serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_ID_REPETITION);
                 return serviceResult;
             }
+            //todo 如果在这里才放入待删除map的话，前端传入的sku列表项为空时，原数据会删不掉
             for (JointProductSkuDO jointProductSkuDO : jointProductSkuDOList) {
                 skuDeleteMap.put(jointProductSkuDO.getId(), jointProductSkuDO);
             }
+            //todo 为什么又判断一次
             if (CollectionUtil.isNotEmpty(jointProduct.getJointProductSkuList())) {
                 for (JointProductSku jointProductSku : jointProductSkuList) {
                     if (jointProductSku.getJointProductSkuId() == null) {
@@ -187,7 +197,7 @@ public class JointProductServiceImpl implements JointProductService {
             }
         }
 
-
+        //todo 下面按照上面的一样改
         //这是传过来的值
         List<JointMaterial> jointMaterialList = jointProduct.getJointMaterialList();
         //待删除的数据
@@ -278,6 +288,7 @@ public class JointProductServiceImpl implements JointProductService {
      */
     @Override
     public ServiceResult<String, Integer> deleteJointProduct(JointProduct jointProduct) {
+        //todo 没有加事物处理
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         //首先查看数据库中是否有此id
         JointProductDO jointProductDO = jointProductMapper.findById(jointProduct.getJointProductId());
@@ -317,6 +328,7 @@ public class JointProductServiceImpl implements JointProductService {
     @Override
     public ServiceResult<String, JointProduct> queryJointProductByJointProductId(Integer jointProductId) {
         ServiceResult<String, JointProduct> serviceResult = new ServiceResult<>();
+        //todo 不需要查两次，用findDetailByJointProductId方法就可以了
         JointProductDO jointProductDOFindById = jointProductMapper.findById(jointProductId);
         if(jointProductDOFindById.getDataStatus() != 1){
             serviceResult.setErrorCode(ErrorCode.JOINT_PRODUCT_ID_IS_NOT_EXISTS);
@@ -326,6 +338,7 @@ public class JointProductServiceImpl implements JointProductService {
         if (jointProductDO == null) {
             serviceResult.setErrorCode(ErrorCode.JOINT_PRODUCT_NOT_EXISTS);
         }
+        //todo success的赋值应该在最后
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         JointProduct jointProduct = ConverterUtil.convert(jointProductDO, JointProduct.class);
         List<JointProductSku> jointProductSkuList = ConverterUtil.convertList(jointProductDO.getJointProductSkuList(), JointProductSku.class);
@@ -341,6 +354,8 @@ public class JointProductServiceImpl implements JointProductService {
      */
     @Override
     public ServiceResult<String, Page<JointProduct>> pageJointProduct(JointProductQueryParam jointProductQueryParam) {
+
+        //todo JointProductQueryParam 类应该加入注解，仿照其他类
         ServiceResult<String, Page<JointProduct>> serviceResult = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(jointProductQueryParam.getPageNo(), jointProductQueryParam.getPageSize());
         HashMap<String, Object> maps = new HashMap<>();
