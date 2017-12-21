@@ -316,7 +316,12 @@ public class JointProductServiceImpl implements JointProductService {
      */
     @Override
     public ServiceResult<String, JointProduct> queryJointProductByJointProductId(Integer jointProductId) {
-        final ServiceResult<String, JointProduct> serviceResult = new ServiceResult<>();
+        ServiceResult<String, JointProduct> serviceResult = new ServiceResult<>();
+        JointProductDO jointProductDOFindById = jointProductMapper.findById(jointProductId);
+        if(jointProductDOFindById.getDataStatus() != 1){
+            serviceResult.setErrorCode(ErrorCode.JOINT_PRODUCT_ID_IS_NOT_EXISTS);
+            return serviceResult;
+        }
         JointProductDO jointProductDO = jointProductMapper.findDetailByJointProductId(jointProductId);
         if (jointProductDO == null) {
             serviceResult.setErrorCode(ErrorCode.JOINT_PRODUCT_NOT_EXISTS);

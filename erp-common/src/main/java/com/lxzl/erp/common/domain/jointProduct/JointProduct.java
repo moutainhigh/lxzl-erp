@@ -18,7 +18,7 @@ import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JointProduct extends BasePageParam implements Serializable {
+public class JointProduct implements Serializable {
     @NotNull(message = ErrorCode.JOINT_PRODUCT_ID_IS_NOT_NULL ,groups = {UpdateGroup.class,IdGroup.class})
     private Integer jointProductId;   //唯一标识
     @NotBlank(message = ErrorCode.JOINT_PRODUCT_NAME_IS_NOT_NULL, groups = {AddGroup.class,UpdateGroup.class})
