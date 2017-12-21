@@ -283,6 +283,9 @@
                 <if test="maps.orderQueryParam.buyerCustomerId != null &amp;&amp; maps.orderQueryParam.buyerCustomerId != ''">
                     and eo.buyer_customer_id = #{maps.orderQueryParam.buyerCustomerId, jdbcType=INTEGER}
                 </if>
+                <if test="maps.orderQueryParam.orderSellerId != null &amp;&amp; maps.orderQueryParam.orderSellerId != ''">
+                    and eo.order_seller_id = #{maps.orderQueryParam.orderSellerId, jdbcType=INTEGER}
+                </if>
                 <if test="maps.orderQueryParam.orderStatus != null">
                     and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
                 </if>
@@ -323,6 +326,9 @@
             </if>
             <if test="maps.orderQueryParam.buyerCustomerId != null &amp;&amp; maps.orderQueryParam.buyerCustomerId != ''">
                 and eo.buyer_customer_id = #{maps.orderQueryParam.buyerCustomerId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.orderSellerId != null &amp;&amp; maps.orderQueryParam.orderSellerId != ''">
+                and eo.order_seller_id = #{maps.orderQueryParam.orderSellerId, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.orderStatus != null">
                 and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}

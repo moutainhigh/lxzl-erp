@@ -703,11 +703,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(OrderQueryParam orderQueryParam) {
+        User user = userSupport.getCurrentUser();
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
+        if(!userSupport.isHeadUser()){
+            orderQueryParam.setOrderSellerId(user.getUserId());
+        }
         maps.put("orderQueryParam", orderQueryParam);
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
