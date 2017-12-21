@@ -1304,10 +1304,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return serviceResult;
         }
 
-        //todo 获取采购单下所有采购设备
-        List<ProductEquipmentDO> productEquipmentDOList = new ArrayList<>();
-        //todo 获取采购单下所有采购物料
-        List<BulkMaterialDO> bulkMaterialDOList = new ArrayList<>();
+        //获取采购单下所有采购设备
+        List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.findByPurchaseOrderNo(purchaseOrderDO.getPurchaseNo());
+        //获取采购单下所有采购物料
+        List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findByPurchaseOrderNo(purchaseOrderDO.getPurchaseNo());
 
         //全部收料定价后，才可结束
         if(CollectionUtil.isNotEmpty(productEquipmentDOList)){
