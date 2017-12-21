@@ -23,7 +23,7 @@ public class StatementOrderControllerTest  extends ERPUnTransactionalTest {
     @Test
     public void pay() throws Exception {
         StatementOrderPayParam param = new StatementOrderPayParam();
-        param.setStatementOrderNo("SN201712181720037051794");
+        param.setStatementOrderNo("SN201712211624375361012");
         TestResult testResult = getJsonTestResult("/statementOrder/pay", param);
     }
 

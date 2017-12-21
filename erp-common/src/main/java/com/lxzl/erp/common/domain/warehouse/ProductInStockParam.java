@@ -19,6 +19,7 @@ public class ProductInStockParam implements Serializable {
     private Integer targetWarehouseId;
     private Integer causeType;
     private String referNo;
+    private Integer itemReferId;
 
     public List<ProductInStorage> getProductInStorageList() {
         return productInStorageList;
@@ -66,5 +67,13 @@ public class ProductInStockParam implements Serializable {
 
     public void setMaterialInStorageList(List<MaterialInStorage> materialInStorageList) {
         this.materialInStorageList = materialInStorageList;
+    }
+
+    public Integer getItemReferId() {
+        return itemReferId;
+    }
+
+    public void setItemReferId(Integer itemReferId) {
+        this.itemReferId = itemReferId;
     }
 }

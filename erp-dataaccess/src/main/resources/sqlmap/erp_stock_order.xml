@@ -8,6 +8,7 @@
 		<result column="operation_type" jdbcType="INTEGER" property="operationType" />
 		<result column="cause_type" jdbcType="INTEGER" property="causeType" />
 		<result column="refer_no" jdbcType="VARCHAR" property="referNo" />
+		<result column="item_refer_id" jdbcType="INTEGER" property="itemReferId" />
 		<result column="stock_order_status" jdbcType="INTEGER" property="stockOrderStatus" />
 		<result column="src_warehouse_id" jdbcType="INTEGER" property="srcWarehouseId" />
 		<result column="src_warehouse_name" jdbcType="VARCHAR" property="srcWarehouseName" />
@@ -58,7 +59,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eso.id as id,eso.stock_order_no as stock_order_no,eso.operation_type as operation_type,eso.cause_type as cause_type,eso.refer_no as refer_no,eso.stock_order_status as stock_order_status,eso.src_warehouse_id as src_warehouse_id,eso.src_warehouse_position_id as src_warehouse_position_id,eso.target_warehouse_id as target_warehouse_id,eso.target_warehouse_position_id as target_warehouse_position_id,eso.owner as owner,eso.data_status as data_status,eso.remark asremark,eso.create_time as create_time,eso.create_user as create_user,eso.update_time as update_time,eso.update_user as update_user
+		eso.id as id,eso.stock_order_no as stock_order_no,eso.operation_type as operation_type,eso.cause_type as cause_type,eso.refer_no as refer_no,eso.item_refer_id as item_refer_id,eso.stock_order_status as stock_order_status,eso.src_warehouse_id as src_warehouse_id,eso.src_warehouse_position_id as src_warehouse_position_id,eso.target_warehouse_id as target_warehouse_id,eso.target_warehouse_position_id as target_warehouse_position_id,eso.owner as owner,eso.data_status as data_status,eso.remark asremark,eso.create_time as create_time,eso.create_user as create_user,eso.update_time as update_time,eso.update_user as update_user
 	</sql>
 
 	<sql id="equipment_column_List">
@@ -185,6 +186,9 @@
 			</if>
 			<if test="referNo != null">
 				refer_no = #{referNo,jdbcType=VARCHAR},
+			</if>
+			<if test="itemReferId != null">
+				item_refer_id = #{itemReferId,jdbcType=INTEGER},
 			</if>
 			<if test="stockOrderStatus != null">
 				stock_order_status = #{stockOrderStatus,jdbcType=INTEGER},

@@ -287,6 +287,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         Integer targetWarehouseId = productInStockParam.getTargetWarehouseId();
         Integer causeType = productInStockParam.getCauseType();
         String referNo = productInStockParam.getReferNo();
+        Integer itemReferId = productInStockParam.getItemReferId();
         User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, Integer> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -333,6 +334,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         stockOrderDO.setStockOrderNo(GenerateNoUtil.generateStockOrderNo(currentTime));
         stockOrderDO.setCauseType(causeType);
         stockOrderDO.setReferNo(referNo);
+        stockOrderDO.setItemReferId(itemReferId);
         stockOrderDO.setSrcWarehouseId(srcWarehouseId);
         stockOrderDO.setSrcWarehousePositionId(srcWarehousePositionId);
         stockOrderDO.setTargetWarehouseId(targetWarehouseId);

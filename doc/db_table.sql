@@ -895,6 +895,7 @@ CREATE TABLE `erp_stock_order` (
   `operation_type` int(11) NOT NULL COMMENT '操作类型，1入库，2出库',
   `cause_type` int(11) NOT NULL COMMENT '起因类型，1采购入库，2退货回库，3维修回库，4用户租赁',
   `refer_no` varchar(100) NOT NULL COMMENT '关联单号',
+  `item_refer_id` int(11) COMMENT '关联项ID',
   `stock_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '出入库单状态，1未出库，2已出库',
   `src_warehouse_id` int(20) COMMENT '源仓库ID',
   `src_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '源仓位ID',
