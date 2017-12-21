@@ -541,7 +541,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_ORDER_MATERIAL_NOT_MAIN, "采购单物料项存在非四大件");
         MAP.put(PURCHASE_ORDER_MATERIAL_NOT_GADGET, "采购单物料项存在非小配件");
         MAP.put(PURCHASE_ORDER_MATERIAL_LIST_NOT_NULL, "采购订单物料项列表不能为空");
-        MAP.put(PURCHASE_ORDER_MATERIAL_CAN_NOT_CREATE, "采购的物料总额大于100元且没有发票");
+        MAP.put(PURCHASE_ORDER_MATERIAL_CAN_NOT_CREATE, "采购小配件总金额达到100元必须有发票");
         MAP.put(PURCHASE_ORDER_SKU_MATERIAL_ERROR, "SKU物料配置错误");
         MAP.put(MATERIAL_NO_NOT_NULL, "物料编号不能为空");
         MAP.put(STOCK_ALLOCATION_WAREHOUSE_IS_NOT_SAME, "库存调拨库房必须是同一间");
