@@ -57,5 +57,5 @@ public interface PaymentService extends BaseService {
      * @param payAmount           支付金额
      * @return 支付结果
      */
-    ServiceResult<String, Boolean> balancePay(String customerNo, String businessOrderNo, String businessOrderRemark, String businessNotifyUrl, BigDecimal payAmount);
+    ServiceResult<String, Boolean> balancePay(String customerNo, String businessOrderNo, String businessOrderRemark, String businessNotifyUrl, BigDecimal payAmount, BigDecimal payRentDepositAmount);
 }

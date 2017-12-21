@@ -11,10 +11,12 @@ import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
+import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerRiskManagementConverter;
+import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
 import com.lxzl.erp.dataaccess.domain.customer.*;
@@ -47,6 +49,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private CustomerConsignInfoMapper customerConsignInfoMapper;
 
+    @Autowired
+    private PaymentService paymentService;
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addCompany(Customer customer) {
@@ -55,9 +60,9 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerDO customerDO = new CustomerDO();
         customerDO.setCustomerNo(GenerateNoUtil.generateCustomerCompanyNo(now));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_COMPANY);
-        if(customer.getIsDisabled()==null){
+        if (customer.getIsDisabled() == null) {
             customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);
-        }else{
+        } else {
             customerDO.setIsDisabled(customer.getIsDisabled());
         }
         customerDO.setCustomerName(customer.getCustomerCompany().getCompanyName());
@@ -68,7 +73,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerMapper.save(customerDO);
 
-        CustomerCompanyDO customerCompanyDO  = CustomerConverter.convertCustomerCompany(customer.getCustomerCompany());
+        CustomerCompanyDO customerCompanyDO = CustomerConverter.convertCustomerCompany(customer.getCustomerCompany());
         customerCompanyDO.setCustomerId(customerDO.getId());
         customerCompanyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerCompanyDO.setCreateTime(now);
@@ -89,6 +94,7 @@ public class CustomerServiceImpl implements CustomerService {
         serviceResult.setResult(customer.getCustomerNo());
         return serviceResult;
     }
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addPerson(Customer customer) {
@@ -97,9 +103,9 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerDO customerDO = new CustomerDO();
         customerDO.setCustomerNo(GenerateNoUtil.generateCustomerPersonNo(now));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
-        if(customer.getIsDisabled()==null){
+        if (customer.getIsDisabled() == null) {
             customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);
-        }else{
+        } else {
             customerDO.setIsDisabled(customer.getIsDisabled());
         }
         customerDO.setCustomerName(customer.getCustomerPerson().getRealName());
@@ -110,7 +116,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerMapper.save(customerDO);
 
-        CustomerPersonDO customerPersonDO  = CustomerConverter.convertCustomerPerson(customer.getCustomerPerson());
+        CustomerPersonDO customerPersonDO = CustomerConverter.convertCustomerPerson(customer.getCustomerPerson());
         customerPersonDO.setCustomerId(customerDO.getId());
         customerPersonDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerPersonDO.setCreateTime(now);
@@ -131,13 +137,14 @@ public class CustomerServiceImpl implements CustomerService {
         serviceResult.setResult(customer.getCustomerNo());
         return serviceResult;
     }
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> updateCompany(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerDO customerDO = customerMapper.findCustomerCompanyByNo(customer.getCustomerNo());
-        if(customerDO==null||!CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+        if (customerDO == null || !CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
@@ -162,13 +169,14 @@ public class CustomerServiceImpl implements CustomerService {
         serviceResult.setResult(customer.getCustomerNo());
         return serviceResult;
     }
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> updatePerson(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerDO customerDO = customerMapper.findCustomerPersonByNo(customer.getCustomerNo());
-        if(customerDO==null||!CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())){
+        if (customerDO == null || !CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
@@ -236,12 +244,16 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, Customer> detailCustomerCompany(Customer customer) {
         ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
         CustomerDO customerDO = customerMapper.findCustomerCompanyByNo(customer.getCustomerNo());
-        if(customerDO==null||!CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+        if (customerDO == null || !CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
+        CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
+        Customer customerResult = CustomerConverter.convertCustomerDO(customerDO);
+        customerResult.setCustomerAccount(customerAccount);
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(CustomerConverter.convertCustomerDO(customerDO));
+        serviceResult.setResult(customerResult);
         return serviceResult;
     }
 
@@ -249,12 +261,16 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, Customer> detailCustomerPerson(Customer customer) {
         ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
         CustomerDO customerDO = customerMapper.findCustomerPersonByNo(customer.getCustomerNo());
-        if(customerDO==null||!CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())){
+        if (customerDO == null || !CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
+        CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
+        Customer customerResult = CustomerConverter.convertCustomerDO(customerDO);
+        customerResult.setCustomerAccount(customerAccount);
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(CustomerConverter.convertCustomerDO(customerDO));
+        serviceResult.setResult(customerResult);
         return serviceResult;
     }
 
@@ -262,12 +278,12 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, String> updateRisk(CustomerRiskManagement customerRiskManagement) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         CustomerDO customerDO = customerMapper.findByNo(customerRiskManagement.getCustomerNo());
-        if(customerDO==null){
+        if (customerDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
         Date now = new Date();
-        if(customerDO.getCustomerRiskManagementDO()==null){//没有风控信息则添加
+        if (customerDO.getCustomerRiskManagementDO() == null) {//没有风控信息则添加
 
             CustomerRiskManagementDO customerRiskManagementDO = CustomerRiskManagementConverter.convertCustomerRiskManagement(customerRiskManagement);
             customerRiskManagementDO.setCreditAmountUsed(BigDecimal.ZERO);
@@ -282,7 +298,7 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.SUCCESS);
             serviceResult.setResult(customerDO.getCustomerNo());
             return serviceResult;
-        }else{//有风控信息则修改
+        } else {//有风控信息则修改
             CustomerRiskManagementDO customerRiskManagementDOForUpdate = new CustomerRiskManagementDO();
             customerRiskManagementDOForUpdate.setId(customerDO.getCustomerRiskManagementDO().getId());
             customerRiskManagementDOForUpdate.setRemark(customerRiskManagement.getRemark());
@@ -298,8 +314,10 @@ public class CustomerServiceImpl implements CustomerService {
 
         return serviceResult;
     }
+
     /**
      * 增加客户收货地址信息
+     *
      * @param customerConsignInfo
      * @return
      */
@@ -312,13 +330,13 @@ public class CustomerServiceImpl implements CustomerService {
 
         //通过CustomerNo来获取客户ID
         CustomerDO customerDO = customerMapper.findByNo(customerConsignInfo.getCustomerNo());
-        if (customerDO == null){
+        if (customerDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
             return serviceResult;
         }
 
         //获取地址信息的内容，存入客户地址信息表
-        CustomerConsignInfoDO customerConsignInfoDO =ConverterUtil.convert(customerConsignInfo,CustomerConsignInfoDO.class);
+        CustomerConsignInfoDO customerConsignInfoDO = ConverterUtil.convert(customerConsignInfo, CustomerConsignInfoDO.class);
         customerConsignInfoDO.setCustomerId(customerDO.getId());
         customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerConsignInfoDO.setCreateTime(now);
@@ -329,9 +347,9 @@ public class CustomerServiceImpl implements CustomerService {
         //新增收货默认地址如果设置为默认，那么该客户其他收货地址设置为非默认地址
         //如果该条地址信息为该客户的唯一一条地址，那么就设置为默认地址
         //判断该条信息是否为该客户的唯一信息
-        Integer customerConsignInfoCount =  customerConsignInfoMapper.countByCustomerId(customerDO.getId());
+        Integer customerConsignInfoCount = customerConsignInfoMapper.countByCustomerId(customerDO.getId());
         //如果新增地址信息是该客户的唯一收货信息，那么该地址信息为默认地址
-        if (customerConsignInfoCount == 0 ) {
+        if (customerConsignInfoCount == 0) {
             customerConsignInfoDO.setIsMain(CommonConstant.COMMON_CONSTANT_YES);
         }
         //客户有多个地址时，如果新增地址设置为默认地址，那么其他地址就不能为默认地址
@@ -350,6 +368,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 修改客户收货地址信息
+     *
      * @param customerConsignInfo
      * @return
      */
@@ -359,13 +378,13 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfo.getCustomerConsignInfoId());
-        if(customerConsignInfoDO==null){
+        if (customerConsignInfoDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
             return serviceResult;
         }
 
         //如果传送过来的ismain是1
-        if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsMain())){
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsMain())) {
             customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
         }
 
@@ -388,6 +407,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 删除客户收货信息
+     *
      * @param customerConsignInfo
      * @return
      */
@@ -396,7 +416,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfo.getCustomerConsignInfoId());
-        if(customerConsignInfoDO == null){
+        if (customerConsignInfoDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
             return serviceResult;
         }
@@ -411,6 +431,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 单个信息详情
+     *
      * @param customerConsignInfo
      * @return
      */
@@ -420,13 +441,13 @@ public class CustomerServiceImpl implements CustomerService {
 
 
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfo.getCustomerConsignInfoId());
-        if(customerConsignInfoDO==null){
+        if (customerConsignInfoDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
             return serviceResult;
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(ConverterUtil.convert(customerConsignInfoDO,CustomerConsignInfo.class));
+        serviceResult.setResult(ConverterUtil.convert(customerConsignInfoDO, CustomerConsignInfo.class));
         return serviceResult;
     }
 
@@ -436,7 +457,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, Page<CustomerConsignInfo>> serviceResult = new ServiceResult<>();
 
         CustomerDO customerDO = customerMapper.findByNo(customerConsignInfoQueryParam.getCustomerNo());
-        if (customerDO == null){
+        if (customerDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
             return serviceResult;
         }
@@ -451,7 +472,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         Integer totalCount = customerConsignInfoMapper.findCustomerConsignInfoCountByParams(maps);
         List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findCustomerConsignInfoByParams(maps);
-        List<CustomerConsignInfo> customerConsignInfoList = ConverterUtil.convertList(customerConsignInfoDOList,CustomerConsignInfo.class);
+        List<CustomerConsignInfo> customerConsignInfoList = ConverterUtil.convertList(customerConsignInfoDOList, CustomerConsignInfo.class);
         Page<CustomerConsignInfo> page = new Page<>(customerConsignInfoList, totalCount, customerConsignInfoQueryParam.getPageNo(), customerConsignInfoQueryParam.getPageSize());
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -486,13 +507,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void updateLastUseTime(Integer customerConsignInfoId) {
-        try{
+        try {
             CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfoId);
             customerConsignInfoDO.setLastUseTime(new Date());
             customerConsignInfoMapper.update(customerConsignInfoDO);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("保存客户地址信息最后使用时间错误");
-        }catch (Throwable t){
+        } catch (Throwable t) {
             logger.error("保存客户地址信息最后使用时间错误");
         }
     }
