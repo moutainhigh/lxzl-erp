@@ -292,4 +292,8 @@
 		LEFT JOIN erp_material_img emi ON ebm.id = emi.material_id AND emi.data_status
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
+
+	<select id="findMaterialIdCount" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM erp_material WHERE id = #{materialId}
+	</select>
 </mapper>

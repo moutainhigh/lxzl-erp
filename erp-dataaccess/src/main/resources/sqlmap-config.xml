@@ -95,6 +95,10 @@
         <mapper resource="sqlmap/erp_repair_order.xml" />
         <mapper resource="sqlmap/erp_repair_order_bulk_material.xml" />
         <mapper resource="sqlmap/erp_repair_order_equipment.xml" />
+
+        <mapper resource="sqlmap/erp_joint_product.xml" />
+        <mapper resource="sqlmap/erp_joint_material.xml" />
+        <mapper resource="sqlmap/erp_joint_product_sku.xml" />
     </mappers>
 
 </configuration>

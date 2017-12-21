@@ -23,4 +23,7 @@ public interface MaterialMapper extends BaseMysqlDAO<MaterialDO> {
 
     List<MaterialDO> findMaterialRent (@Param("maps") Map<String, Object> paramMap);
     Integer findMaterialRentCount (@Param("maps") Map<String, Object> paramMap);
+    //查找 materalId 是否存在
+    Integer findMaterialIdCount(@Param("materialId") Integer materialId);
+
 }
