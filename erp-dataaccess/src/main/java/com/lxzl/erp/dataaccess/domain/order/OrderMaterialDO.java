@@ -15,6 +15,7 @@ public class OrderMaterialDO  extends BaseDO {
 	private Integer materialCount;
 	private BigDecimal materialUnitAmount;
 	private BigDecimal materialAmount;
+	private BigDecimal rentDepositAmount;
 	private BigDecimal depositAmount;
 	private BigDecimal creditDepositAmount;
 	private BigDecimal insuranceAmount;
@@ -176,5 +177,13 @@ public class OrderMaterialDO  extends BaseDO {
 
 	public void setIsNewMaterial(Integer isNewMaterial) {
 		this.isNewMaterial = isNewMaterial;
+	}
+
+	public BigDecimal getRentDepositAmount() {
+		return rentDepositAmount;
+	}
+
+	public void setRentDepositAmount(BigDecimal rentDepositAmount) {
+		this.rentDepositAmount = rentDepositAmount;
 	}
 }

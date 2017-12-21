@@ -19,6 +19,7 @@ public class Order implements Serializable {
     private BigDecimal totalDepositAmount;
     private BigDecimal totalMustDepositAmount;
     private BigDecimal totalCreditDepositAmount;
+    private BigDecimal totalRentDepositAmount;
     private BigDecimal totalInsuranceAmount;
     private Integer totalProductCount;
     private BigDecimal totalProductAmount;
@@ -392,5 +393,13 @@ public class Order implements Serializable {
 
     public void setFirstNeedPayAmount(BigDecimal firstNeedPayAmount) {
         this.firstNeedPayAmount = firstNeedPayAmount;
+    }
+
+    public BigDecimal getTotalRentDepositAmount() {
+        return totalRentDepositAmount;
+    }
+
+    public void setTotalRentDepositAmount(BigDecimal totalRentDepositAmount) {
+        this.totalRentDepositAmount = totalRentDepositAmount;
     }
 }

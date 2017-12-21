@@ -20,6 +20,7 @@ public class OrderProductDO extends BaseDO {
     private Integer productCount;
     private BigDecimal productUnitAmount;
     private BigDecimal productAmount;
+    private BigDecimal rentDepositAmount;
     private BigDecimal depositAmount;
     private BigDecimal creditDepositAmount;
     private BigDecimal insuranceAmount;
@@ -206,5 +207,13 @@ public class OrderProductDO extends BaseDO {
 
     public void setIsNewProduct(Integer isNewProduct) {
         this.isNewProduct = isNewProduct;
+    }
+
+    public BigDecimal getRentDepositAmount() {
+        return rentDepositAmount;
+    }
+
+    public void setRentDepositAmount(BigDecimal rentDepositAmount) {
+        this.rentDepositAmount = rentDepositAmount;
     }
 }

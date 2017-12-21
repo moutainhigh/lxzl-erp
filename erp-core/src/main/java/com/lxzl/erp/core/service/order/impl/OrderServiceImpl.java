@@ -1334,10 +1334,16 @@ public class OrderServiceImpl implements OrderService {
     private void calculateOrderProductInfo(List<OrderProductDO> orderProductDOList, OrderDO orderDO) {
         if (orderProductDOList != null && !orderProductDOList.isEmpty()) {
             int productCount = 0;
+            // 商品租赁总额
             BigDecimal productAmountTotal = new BigDecimal(0.0);
+            // 保险总额
             BigDecimal totalInsuranceAmount = new BigDecimal(0.0);
+            // 设备该交押金总额
             BigDecimal totalDepositAmount = new BigDecimal(0.0);
+            // 设备信用押金总额
             BigDecimal totalCreditDepositAmount = new BigDecimal(0.0);
+            // 租赁押金总额
+            BigDecimal totalRentDepositAmount = new BigDecimal(0.0);
             for (OrderProductDO orderProductDO : orderProductDOList) {
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
                 if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
@@ -1351,16 +1357,24 @@ public class OrderServiceImpl implements OrderService {
                 }
                 BigDecimal depositAmount = BigDecimal.ZERO;
                 BigDecimal creditDepositAmount = BigDecimal.ZERO;
+                BigDecimal rentDepositAmount = BigDecimal.ZERO;
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
                     depositAmount = BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else if ((BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) || CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
-                    depositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderProductDO.getDepositCycle()));
-                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
+                    rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderProductDO.getDepositCycle()));
+                    totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
+
+                    creditDepositAmount = BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
+                    totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                 } else {
+                    rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderProductDO.getDepositCycle()));
+                    totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
+
                     creditDepositAmount = BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
                     totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                 }
+                orderProductDO.setRentDepositAmount(rentDepositAmount);
                 orderProductDO.setDepositAmount(depositAmount);
                 orderProductDO.setCreditDepositAmount(creditDepositAmount);
                 orderProductDO.setProductSkuName(productSku.getSkuName());
@@ -1371,6 +1385,7 @@ public class OrderServiceImpl implements OrderService {
                 productAmountTotal = BigDecimalUtil.add(productAmountTotal, orderProductDO.getProductAmount());
                 totalInsuranceAmount = BigDecimalUtil.add(totalInsuranceAmount, thisOrderProductInsuranceAmount);
             }
+            orderDO.setTotalRentDepositAmount(BigDecimalUtil.add(orderDO.getTotalRentDepositAmount(), totalRentDepositAmount));
             orderDO.setTotalCreditDepositAmount(BigDecimalUtil.add(orderDO.getTotalCreditDepositAmount(), totalCreditDepositAmount));
             orderDO.setTotalInsuranceAmount(BigDecimalUtil.add(orderDO.getTotalInsuranceAmount(), totalInsuranceAmount));
             orderDO.setTotalDepositAmount(BigDecimalUtil.add(orderDO.getTotalDepositAmount(), totalDepositAmount));
@@ -1384,10 +1399,16 @@ public class OrderServiceImpl implements OrderService {
         if (orderMaterialDOList != null && !orderMaterialDOList.isEmpty()) {
 
             int materialCount = 0;
+            // 商品租赁总额
             BigDecimal materialAmountTotal = new BigDecimal(0.0);
+            // 保险总额
             BigDecimal totalInsuranceAmount = new BigDecimal(0.0);
+            // 设备该交押金总额
             BigDecimal totalDepositAmount = new BigDecimal(0.0);
+            // 设备信用押金总额
             BigDecimal totalCreditDepositAmount = new BigDecimal(0.0);
+            // 租赁押金总额
+            BigDecimal totalRentDepositAmount = new BigDecimal(0.0);
             for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
                 ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
                 if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
@@ -1400,17 +1421,25 @@ public class OrderServiceImpl implements OrderService {
                 orderMaterialDO.setMaterialName(material.getMaterialName());
                 BigDecimal depositAmount = BigDecimal.ZERO;
                 BigDecimal creditDepositAmount = BigDecimal.ZERO;
+                BigDecimal rentDepositAmount = BigDecimal.ZERO;
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())) {
                     depositAmount = BigDecimalUtil.mul(material.getMaterialPrice(), new BigDecimal(orderMaterialDO.getMaterialCount()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
+                    rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getDepositCycle()));
+                    totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
+
                     depositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(material.getMaterialPrice(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getDepositCycle()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else {
+                    rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getDepositCycle()));
+                    totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
+
                     creditDepositAmount = BigDecimalUtil.mul(material.getMaterialPrice(), new BigDecimal(orderMaterialDO.getMaterialCount()));
                     totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                 }
 
+                orderMaterialDO.setRentDepositAmount(rentDepositAmount);
                 orderMaterialDO.setDepositAmount(depositAmount);
                 orderMaterialDO.setCreditDepositAmount(creditDepositAmount);
                 orderMaterialDO.setMaterialName(material.getMaterialName());
@@ -1421,6 +1450,7 @@ public class OrderServiceImpl implements OrderService {
                 materialAmountTotal = BigDecimalUtil.add(materialAmountTotal, orderMaterialDO.getMaterialAmount());
                 totalInsuranceAmount = BigDecimalUtil.add(totalInsuranceAmount, thisOrderMaterialInsuranceAmount);
             }
+            orderDO.setTotalRentDepositAmount(BigDecimalUtil.add(orderDO.getTotalRentDepositAmount(), totalRentDepositAmount));
             orderDO.setTotalCreditDepositAmount(BigDecimalUtil.add(orderDO.getTotalCreditDepositAmount(), totalCreditDepositAmount));
             orderDO.setTotalInsuranceAmount(BigDecimalUtil.add(orderDO.getTotalInsuranceAmount(), totalInsuranceAmount));
             orderDO.setTotalDepositAmount(BigDecimalUtil.add(orderDO.getTotalDepositAmount(), totalDepositAmount));
