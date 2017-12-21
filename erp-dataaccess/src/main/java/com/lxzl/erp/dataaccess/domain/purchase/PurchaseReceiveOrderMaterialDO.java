@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.purchase;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+
+import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -14,10 +16,12 @@ public class PurchaseReceiveOrderMaterialDO  extends BaseDO {
 	private String materialName;
 	private String materialSnapshot;
 	private Integer materialCount;
+	private BigDecimal materialAmount;
 	private Integer realMaterialId;
 	private String realMaterialName;
 	private String realMaterialSnapshot;
 	private Integer realMaterialCount;
+	private BigDecimal realMaterialAmount;
 	private Integer isSrc;
 	private Integer dataStatus;
 	private String remark;
@@ -142,4 +146,19 @@ public class PurchaseReceiveOrderMaterialDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public BigDecimal getMaterialAmount() {
+		return materialAmount;
+	}
+
+	public void setMaterialAmount(BigDecimal materialAmount) {
+		this.materialAmount = materialAmount;
+	}
+
+	public BigDecimal getRealMaterialAmount() {
+		return realMaterialAmount;
+	}
+
+	public void setRealMaterialAmount(BigDecimal realMaterialAmount) {
+		this.realMaterialAmount = realMaterialAmount;
+	}
 }

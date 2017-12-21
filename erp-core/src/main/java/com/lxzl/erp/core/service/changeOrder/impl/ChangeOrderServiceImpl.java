@@ -946,7 +946,8 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 changeOrderMaterialBulkMapper.update(changeOrderMaterialBulkDO);
             }
         }
-        //todo 结算插入数据
+        //todo 调用结算单接口
+
         changeOrderDO.setRentStartTime(changeOrder.getRentStartTime());
         changeOrderDO.setServiceCost(changeOrder.getServiceCost());
         changeOrderDO.setDamageCost(changeOrder.getDamageCost());

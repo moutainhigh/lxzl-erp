@@ -11,10 +11,12 @@
 		<result column="material_name" jdbcType="VARCHAR" property="materialName" />
 		<result column="material_snapshot" jdbcType="VARCHAR" property="materialSnapshot" />
 		<result column="material_count" jdbcType="INTEGER" property="materialCount" />
+		<result column="material_amount" jdbcType="DECIMAL" property="materialAmount" />
 		<result column="real_material_id" jdbcType="INTEGER" property="realMaterialId" />
 		<result column="real_material_name" jdbcType="VARCHAR" property="realMaterialName" />
 		<result column="real_material_snapshot" jdbcType="VARCHAR" property="realMaterialSnapshot" />
 		<result column="real_material_count" jdbcType="INTEGER" property="realMaterialCount" />
+		<result column="real_material_amount" jdbcType="DECIMAL" property="realMaterialAmount" />
 		<result column="is_src" jdbcType="INTEGER" property="isSrc" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -25,7 +27,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eprom.id,eprom.purchase_receive_order_id,eprom.purchase_order_material_id,eprom.purchase_delivery_order_material_id,eprom.material_id,eprom.material_name,eprom.material_snapshot,eprom.material_count,eprom.real_material_id,eprom.real_material_name,eprom.real_material_snapshot,eprom.real_material_count,eprom.is_src,eprom.data_status,eprom.remark,eprom.create_time,eprom.create_user,eprom.update_time,eprom.update_user
+		eprom.id,eprom.purchase_receive_order_id,eprom.purchase_order_material_id,eprom.purchase_delivery_order_material_id,eprom.material_id,eprom.material_name,eprom.material_snapshot,eprom.material_count,eprom.material_amount,eprom.real_material_id,eprom.real_material_name,eprom.real_material_snapshot,eprom.real_material_count,eprom.real_material_amount,eprom.is_src,eprom.data_status,eprom.remark,eprom.create_time,eprom.create_user,eprom.update_time,eprom.update_user
 	</sql>
 
 	<select id="findById" resultMap="PurchaseReceiveOrderMaterialDO" parameterType="java.lang.Integer">
@@ -75,6 +77,9 @@
 			<if test="materialCount != null">
 				material_count = #{materialCount,jdbcType=INTEGER},
 			</if>
+			<if test="materialAmount != null">
+				material_amount = #{materialAmount,jdbcType=INTEGER},
+			</if>
 			<if test="realMaterialId != null">
 				real_material_id = #{realMaterialId,jdbcType=INTEGER},
 			</if>
@@ -86,6 +91,9 @@
 			</if>
 			<if test="realMaterialCount != null">
 				real_material_count = #{realMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="realMaterialAmount != null">
+				real_material_amount = #{realMaterialAmount,jdbcType=INTEGER},
 			</if>
 			<if test="isSrc != null">
 				is_src = #{isSrc,jdbcType=INTEGER},

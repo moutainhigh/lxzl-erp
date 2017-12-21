@@ -3,6 +3,7 @@ package com.lxzl.erp.dataaccess.domain.purchase;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class PurchaseReceiveOrderDO  extends BaseDO {
 	private Integer autoAllotStatus;
 	private String autoAllotNo;
 	private Integer isNew;
+	private BigDecimal totalAmount;
 	private Integer purchaseReceiveOrderStatus;
 	private Date confirmTime;
 	private Integer dataStatus;
@@ -123,6 +125,14 @@ public class PurchaseReceiveOrderDO  extends BaseDO {
 
 	public void setIsNew(Integer isNew){
 		this.isNew = isNew;
+	}
+
+	public BigDecimal getTotalAmount() {
+		return totalAmount;
+	}
+
+	public void setTotalAmount(BigDecimal totalAmount) {
+		this.totalAmount = totalAmount;
 	}
 
 	public Integer getPurchaseReceiveOrderStatus(){
