@@ -785,6 +785,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             diff = BigDecimalUtil.sub(destProductSkuDO.getMonthRentPrice(), srcProductSkuDO.getMonthRentPrice());
             diff = diff.compareTo(BigDecimal.ZERO)<0?BigDecimal.ZERO:diff;
         }
+        return diff;
     }
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
