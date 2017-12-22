@@ -2,10 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
-import com.lxzl.erp.common.domain.purchase.PurchaseOrderCommitParam;
-import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
-import com.lxzl.erp.common.domain.purchase.PurchaseReceiveOrderQueryParam;
+import com.lxzl.erp.common.domain.purchase.*;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseDeliveryOrder;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseReceiveOrder;
@@ -195,6 +192,17 @@ public class PurchaseOrderController {
     @RequestMapping(value = "continuePurchaseOrder", method = RequestMethod.POST)
     public Result continuePurchaseOrder(@RequestBody @Validated(IdGroup.class) PurchaseOrder purchaseOrder, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = purchaseOrderService.continuePurchaseOrder(purchaseOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+    /**
+     * 修改采购收货单价格
+     * @param updatePurchaseReceiveOrderRealPriceParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "updatePurchaseReceiveOrderRealPrice", method = RequestMethod.POST)
+    public Result updatePurchaseReceiveOrderRealPrice(@RequestBody @Validated(ExtendGroup.class) UpdatePurchaseReceiveOrderRealPriceParam updatePurchaseReceiveOrderRealPriceParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = purchaseOrderService.updatePurchaseReceiveOrderRealPrice(updatePurchaseReceiveOrderRealPriceParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }

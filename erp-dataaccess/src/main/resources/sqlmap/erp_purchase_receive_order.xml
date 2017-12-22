@@ -14,6 +14,7 @@
 		<result column="auto_allot_status" jdbcType="INTEGER" property="autoAllotStatus" />
 		<result column="auto_allot_no" jdbcType="VARCHAR" property="autoAllotNo" />
 		<result column="is_new" jdbcType="INTEGER" property="isNew" />
+		<result column="total_amount" jdbcType="DECIMAL" property="totalAmount" />
 		<result column="purchase_receive_order_status" jdbcType="INTEGER" property="purchaseReceiveOrderStatus" />
 		<result column="confirm_time" jdbcType="TIMESTAMP" property="confirmTime" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -78,7 +79,7 @@
 		<result column="eprom_updateUser" jdbcType="VARCHAR" property="updateUser" />
 	</resultMap>
 	<sql id="column_List">
-		epro.id,epro.purchase_order_id,epro.purchase_delivery_order_id,epro.purchase_receive_no,epro.product_supplier_id,epro.warehouse_id,epro.warehouse_snapshot,epro.is_invoice,epro.auto_allot_status,epro.auto_allot_no,epro.is_new,epro.purchase_receive_order_status,epro.confirm_time,epro.data_status,epro.owner,epro.remark,epro.create_time,epro.create_user,epro.update_time,epro.update_user
+		epro.id,epro.purchase_order_id,epro.purchase_delivery_order_id,epro.purchase_receive_no,epro.product_supplier_id,epro.warehouse_id,epro.warehouse_snapshot,epro.is_invoice,epro.auto_allot_status,epro.auto_allot_no,epro.is_new,epro.total_amount,epro.purchase_receive_order_status,epro.confirm_time,epro.data_status,epro.owner,epro.remark,epro.create_time,epro.create_user,epro.update_time,epro.update_user
 	</sql>
 	<sql id="product_column_List">
 		eprop.id AS eprop_id,eprop.purchase_receive_order_id AS eprop_purchaseReceiveOrderId,eprop.purchase_order_product_id AS eprop_purchaseOrderProductId,eprop.purchase_delivery_order_product_id AS eprop_purchaseDeliveryOrderProductId,eprop.product_id AS eprop_productId,eprop.product_sku_id AS eprop_productSkuId,eprop.product_name AS eprop_productName,eprop.product_snapshot AS eprop_productSnapshot,eprop.product_count AS eprop_productCount,eprop.real_product_id AS eprop_realProductId,eprop.real_product_name AS eprop_realProductName,eprop.real_product_sku_id AS eprop_realProductSkuId,eprop.real_product_snapshot AS eprop_realProductSnapshot,eprop.real_product_count AS eprop_realProductCount,eprop.is_src AS eprop_isSrc,eprop.data_status AS eprop_dataStatus,eprop.remark AS eprop_remark,eprop.create_time AS eprop_createTime,eprop.create_user AS eprop_createUser,eprop.update_time AS eprop_updateUser,eprop.update_user AS eprop_updateTime
@@ -181,6 +182,9 @@
 			</if>
 			<if test="isNew != null">
 				is_new = #{isNew,jdbcType=INTEGER},
+			</if>
+			<if test="totalAmount != null">
+				total_amount = #{totalAmount,jdbcType=INTEGER},
 			</if>
 			<if test="purchaseReceiveOrderStatus != null">
 				purchase_receive_order_status = #{purchaseReceiveOrderStatus,jdbcType=INTEGER},

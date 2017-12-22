@@ -22,6 +22,7 @@ public class BulkMaterialDO  extends BaseDO {
 	private Integer materialModelId;
 	private Double materialCapacityValue;
 	private BigDecimal bulkMaterialPrice;
+	private BigDecimal purchasePrice;
 	private Integer currentEquipmentId;
 	private String currentEquipmentNo;
 	private Integer bulkMaterialStatus;
@@ -124,6 +125,14 @@ public class BulkMaterialDO  extends BaseDO {
 
 	public void setBulkMaterialPrice(BigDecimal bulkMaterialPrice){
 		this.bulkMaterialPrice = bulkMaterialPrice;
+	}
+
+	public BigDecimal getPurchasePrice() {
+		return purchasePrice;
+	}
+
+	public void setPurchasePrice(BigDecimal purchasePrice) {
+		this.purchasePrice = purchasePrice;
 	}
 
 	public Integer getBulkMaterialStatus(){

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
@@ -13,6 +14,7 @@ import org.springframework.data.annotation.Transient;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public class PurchaseReceiveOrder implements Serializable {
 	private Integer purchaseReceiveOrderId;   //唯一标识
 	private Integer purchaseOrderId;   //采购单ID
 	private Integer purchaseDeliveryOrderId;   //采购发货单ID
-	@NotEmpty(message = ErrorCode.PURCHASE_RECEIVE_ORDER_NO_NOT_NULL , groups = {IdGroup.class,UpdateGroup.class})
+	@NotEmpty(message = ErrorCode.PURCHASE_RECEIVE_ORDER_NO_NOT_NULL , groups = {IdGroup.class,UpdateGroup.class,ExtendGroup.class})
 	private String purchaseReceiveNo;   //采购收货单编号
 	private Integer productSupplierId;   //商品供应商ID
 	private Integer warehouseId;   //仓库ID
@@ -34,6 +36,7 @@ public class PurchaseReceiveOrder implements Serializable {
 	@NotNull(message = ErrorCode.IS_NEW_NOT_NULL , groups = {AddGroup.class,UpdateGroup.class})
 	@In(value = {CommonConstant.YES,CommonConstant.NO},message = ErrorCode.IS_INVOICE_VALUE_ERROR,groups = {UpdateGroup.class})
 	private Integer isNew;   //是否全新机，0否1是
+	private BigDecimal totalAmount;   //收料单采购总价
 	private Integer purchaseReceiveOrderStatus;   //采购单收货状态，0待收货，1已签单
 	private Date confirmTime;   //签单时间
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -136,6 +139,14 @@ public class PurchaseReceiveOrder implements Serializable {
 
 	public void setIsNew(Integer isNew){
 		this.isNew = isNew;
+	}
+
+	public BigDecimal getTotalAmount() {
+		return totalAmount;
+	}
+
+	public void setTotalAmount(BigDecimal totalAmount) {
+		this.totalAmount = totalAmount;
 	}
 
 	public Integer getPurchaseReceiveOrderStatus(){

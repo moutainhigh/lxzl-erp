@@ -18,6 +18,7 @@
 		<result column="material_model_id" jdbcType="INTEGER" property="materialModelId" />
 		<result column="material_capacity_value" jdbcType="DOUBLE" property="materialCapacityValue" />
 		<result column="bulk_material_price" jdbcType="DECIMAL" property="bulkMaterialPrice" />
+		<result column="purchase_price" jdbcType="DECIMAL" property="purchasePrice" />
 		<result column="current_equipment_id" jdbcType="INTEGER" property="currentEquipmentId" />
 		<result column="current_equipment_no" jdbcType="VARCHAR" property="currentEquipmentNo" />
 		<result column="bulk_material_status" jdbcType="INTEGER" property="bulkMaterialStatus" />
@@ -31,7 +32,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ebm.id,ebm.bulk_material_no,ebm.bulk_material_type,ebm.bulk_material_name,ebm.material_id,ebm.material_no,ebm.order_no,ebm.current_warehouse_id,ebm.current_warehouse_position_id,ebm.owner_warehouse_id,ebm.owner_warehouse_position_id,ebm.brand_id,ebm.material_model_id,ebm.material_capacity_value,ebm.bulk_material_price,ebm.current_equipment_id,ebm.current_equipment_no,ebm.bulk_material_status,ebm.is_new,ebm.data_status,ebm.remark,ebm.create_time,ebm.create_user,ebm.update_time,ebm.update_user
+		ebm.id,ebm.bulk_material_no,ebm.bulk_material_type,ebm.bulk_material_name,ebm.material_id,ebm.material_no,ebm.order_no,ebm.current_warehouse_id,ebm.current_warehouse_position_id,ebm.owner_warehouse_id,ebm.owner_warehouse_position_id,ebm.brand_id,ebm.material_model_id,ebm.material_capacity_value,ebm.bulk_material_price,ebm.purchase_price,ebm.current_equipment_id,ebm.current_equipment_no,ebm.bulk_material_status,ebm.is_new,ebm.data_status,ebm.remark,ebm.create_time,ebm.create_user,ebm.update_time,ebm.update_user
 	</sql>
 
 	<select id="findById" resultMap="BulkMaterialDO" parameterType="java.lang.Integer">
@@ -181,6 +182,9 @@
 			<if test="bulkMaterialPrice != null">
 				bulk_material_price = #{bulkMaterialPrice,jdbcType=DECIMAL},
 			</if>
+			<if test="purchasePrice != null">
+				purchase_price = #{purchasePrice,jdbcType=DECIMAL},
+			</if>
 			<if test="currentEquipmentId != null">
 				current_equipment_id = CASE WHEN #{currentEquipmentId,jdbcType=INTEGER}=0 THEN NULL ELSE #{currentEquipmentId,jdbcType=INTEGER} END,
 			</if>
@@ -215,7 +219,7 @@
 	</sql>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_bulk_material (bulk_material_no,bulk_material_type,is_main_material,bulk_material_name,material_id,material_no,order_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,brand_id,material_model_id,material_capacity_value,bulk_material_price,current_equipment_id,current_equipment_no,bulk_material_status,is_new,data_status,remark,create_time,create_user,update_time,update_user)
+		insert into erp_bulk_material (bulk_material_no,bulk_material_type,is_main_material,bulk_material_name,material_id,material_no,order_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,brand_id,material_model_id,material_capacity_value,bulk_material_price,purchase_price,current_equipment_id,current_equipment_no,bulk_material_status,is_new,data_status,remark,create_time,create_user,update_time,update_user)
 		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList" separator="UNION ALL">
 			SELECT #{bulkMaterialDO.bulkMaterialNo},em.material_type, em.is_main_material, em.material_name ,#{bulkMaterialDO.materialId},em.material_no,#{bulkMaterialDO.orderNo},#{bulkMaterialDO.currentWarehouseId},#{bulkMaterialDO.currentWarehousePositionId},#{bulkMaterialDO.ownerWarehouseId},#{bulkMaterialDO.ownerWarehousePositionId},
 			em.brand_id,em.material_model_id,em.material_capacity_value,em.material_price,equipment_info.current_equipment_id ,#{bulkMaterialDO.currentEquipmentNo}, #{bulkMaterialDO.bulkMaterialStatus},#{bulkMaterialDO.isNew},#{bulkMaterialDO.dataStatus},#{bulkMaterialDO.remark},
@@ -312,6 +316,12 @@
 			bulk_material_price =
 			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
 				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.bulkMaterialPrice,jdbcType=DECIMAL}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			purchase_price =
+			<foreach item="bulkMaterialDO" collection="bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.purchasePrice,jdbcType=DECIMAL}
 			</foreach>
 		</trim>
 		<trim prefix=",">
