@@ -116,9 +116,16 @@
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
                                         <div class="btn-group text-right">
+                                            <button type="button" class="btn btn-default dropdown-toggle">操作
+                                                <span class="caret ml5"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
                                             {{#rowActionButtons}}
-                                            <a href="${ctx}{{menuUrl}}?no={{customerNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-customerno="{{customerNo}}" data-customertype="{{customerType}}">{{text}}</a>
+                                                <li>
+                                                    <a href="${ctx}{{menuUrl}}?no={{customerNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-customerno="{{customerNo}}" data-customertype="{{customerType}}">{{text}}</a>
+                                                </li>
                                             {{/rowActionButtons}}
+                                            </ul>
                                         </div>
                                     </td>
                                     {{/hasRowActionButtons}}
