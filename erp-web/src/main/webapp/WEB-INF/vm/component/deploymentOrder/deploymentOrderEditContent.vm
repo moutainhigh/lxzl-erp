@@ -1,0 +1,262 @@
+<div class="panel panel-primary panel-border top mb35">
+    <div class="panel-heading">
+        <span class="panel-title">基本信息</span>
+    </div>
+    <div class="form-horizontal panel-body bg-light dark">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group field">
+                    <label class="col-md-3 control-label">调拨类型</label>
+                    <div class="col-md-9">
+                        <div class="input-group" style="width: 100%;">
+                            <select class="form-control required" name="deploymentType">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group field">
+                    <label class="col-md-3 control-label">源库房</label>
+                    <div class="col-md-9">
+                        <div class="input-group bringContainer">
+                            <input type="hidden" name="srcWarehouseId" />
+                            <input type="text" id="srcWarehouseName" name="srcWarehouseName" bringFiled="srcWarehouseName" class="form-control required" readonly placeholder="请选择源库房" />
+                            <span class="input-group-addon cursor chooseSupplier" id="chooseSrcWarehouseId"><i class="fa fa-search mr5"></i>选择</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group field">
+                    <label class="col-md-3 control-label">目标库房</label>
+                    <div class="col-md-9">
+                        <div class="input-group bringContainer">
+                            <input type="hidden" name="targetWarehouseId" />
+                            <input id="targetWarehouseId" name="targetWarehouseName" bringFiled="targetWarehouseName" class="form-control required" type="text" readonly placeholder="请选择目标库房" />
+                            <span class="input-group-addon cursor chooseSupplier" id="chooseTargetWarehouseId"><i class="fa fa-search mr5"></i>选择</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group field">
+                    <label class="col-md-3 control-label">起租日期</label>
+                    <div class="col-md-9">
+                        <div class="input-group date" id="expectReturnTime">
+                            <input id="expectReturnTime" name="expectReturnTime" class="form-control required" type="text" autocomplete="off"  placeholder="预计归还时间" />
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    ##                        <div class="row">
+    ##                            <div class="col-md-6">
+    ##                                <div class="form-group field">
+    ##                                    <label class="col-md-3 control-label">备注</label>
+    ##                                    <div class="col-md-9">
+    ##                                        <textarea class="form-control" id="remark" rows="3"  name="remark"></textarea>
+    ##                                    </div>
+    ##                                </div>
+    ##                            </div>
+    ##                        </div>
+    </div>
+    <div class="panel-heading">
+        <div class="row">
+            <ul class="nav panel-tabs-border panel-tabs">
+                <li class="active">
+                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
+                </li>
+                <li>
+                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">物料项</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="panel-body dark pn">
+        <div class="tab-content pn br-n">
+            <div id="purchaseOrderProductItems" class="tab-pane active">
+                <div class="panel-menu p12 br-n br-b">
+                    <div class="row">
+                        <div class="pull-left ml10">
+                            <div class="btn-group" id="actionCommonButtons">
+                                <button type="button" class="btn btn-primary btn-sm" id="batchAddProduct" title="选择商品">
+                                    <i class="fa fa-plus"></i> 选择商品
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" id="batchDeleteProduct" title="删除商品">
+                                    <i class="fa fa-trash-o"></i> 删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <script type="text/html" id="dataListTpl">
+                        <thead>
+                        <tr class="bg-light">
+                            <th>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkAll" value="">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </th>
+                            <th>商品ID</th>
+                            <th>图片</th>
+                            <th>商品名称</th>
+                            <th>列表价格</th>
+                            <th>SKU</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#dataSource}}
+                        {{#listData}}
+                        <tr class="productRow" productRowKey="{{productId}}">
+                            <td>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkItem" value="{{productId}}">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </td>
+                            <td>{{productId}}</td>
+                            <td>
+                                <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
+                            </td>
+                            <td>{{productName}}</td>
+                            <td class="br-r">{{listPriceFixed}}</td>
+                            <td class="pn">
+                                <table class="table">
+                                    {{#chooseSkuList}}
+                                    {{#skuList}}
+                                    <tr class="skuRow">
+                                        <td>{{propertiesToStr}}</td>
+                                        <td class="productUnitAmountTd">
+                                            <div class="smart-widget sm-right smr-50">
+                                                <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
+                                                <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+                                                <label class="field prepend-icon">
+                                                    <input type="text" name="deploymentProductUnitAmount-{{skuId}}-{{rowKey}}" value="{{deploymentProductUnitAmount}}" class="deploymentProductUnitAmount form-control required moneyNumber gui-input" placeholder="输入调拨商品单价" />
+                                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <label class="field prepend-icon">
+                                                <input type="text" name="deploymentProductSkuCount-{{skuId}}-{{rowKey}}" value="{{deploymentProductSkuCount}}" class="deploymentProductSkuCount form-control required number pl10" placeholder="输入调拨数量" />
+                                            </label>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="btn-group text-right">
+                                                <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {{/skuList}}
+                                    {{/chooseSkuList}}
+                                </table>
+                            </td>
+                        </tr>
+                        {{/listData}}
+                        {{^listData}}
+                        <tr>
+                            <td valign="top" colspan="14" class="text-center">没有选择商品</td>
+                        </tr>
+                        {{/listData}}
+                        {{/dataSource}}
+                        </tbody>
+                    </script>
+                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                </div>
+            </div>
+            <div id="purchaseOrderMaterialItems" class="tab-pane">
+                <div class="panel-menu p12 br-n br-b">
+                    <div class="row">
+                        <div class="pull-left ml10">
+                            <div class="btn-group" id="actionCommonButtons">
+                                <button type="button" class="btn btn-primary btn-sm" id="batchAddMaterial" title="选择物料">
+                                    <i class="fa fa-plus"></i> 选择物料
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" id="batchDeleteMaterial" title="删除物料">
+                                    <i class="fa fa-trash-o"></i> 删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <script type="text/html" id="materialDataListTpl">
+                        <thead>
+                        <tr>
+                            <th>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkAll" value="">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </th>
+                            <th>编号</th>
+                            <th>名称</th>
+                            <th>类型</th>
+                            <th>本身价值</th>
+                            <th>租赁价格</th>
+                            <th>描述</th>
+                            <th>图片</th>
+                            <th>调拨物料单价</th>
+                            <th>调拨数量</th>
+                            <th class="text-right">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#dataSource}}
+                        {{#listData}}
+                        <tr class="materialRow">
+                            <td>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkItem" value="{{materialNo}}">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </td>
+                            <td>{{materialNo}}</td>
+                            <td>{{materialName}}</td>
+                            <td>{{materialTypeStr}}</td>
+                            <td>{{materialPriceFormat}}</td>
+                            <td>
+                                <p>日租：￥{{dayRentPriceFormat}}</p>
+                                <p>月租：￥{{monthRentPriceFormat}}</p>
+                            </td>
+                            <td>{{materialDesc}}</td>
+                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                            <td class="materialUnitAmountTd">
+                                <div class="smart-widget sm-right smr-50">
+                                    <label class="field prepend-icon mw200">
+                                        <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
+                                        <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
+                                        <input type="text" name="deploymentMaterialUnitAmount-{{materialNo}}" value="{{deploymentMaterialUnitAmount}}" class="deploymentMaterialUnitAmount form-control required moneyNumber gui-input" placeholder="输入调拨物料单价" />
+                                        <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <label class="field prepend-icon">
+                                    <input type="text" name="deploymentProductMaterialCount-{{materialNo}}" value="{{deploymentProductMaterialCount}}" class="deploymentProductMaterialCount form-control required number pl10" placeholder="输入调拨数量" />
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <div class="btn-group text-right">
+                                    <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}">删除</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/listData}}
+                        {{^listData}}
+                        <tr>
+                            <td valign="top" colspan="14" class="text-center">没有选择物料</td>
+                        </tr>
+                        {{/listData}}
+                        {{/dataSource}}
+                        </tbody>
+                    </script>
+                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialDataListTable"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer clearfix">
+        <button class="btn btn-default pull-right ml15 goback">返回</button>
+        <button class="btn btn-primary pull-right">保存</button>
+    </div>
+</div>

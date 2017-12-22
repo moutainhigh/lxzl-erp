@@ -129,7 +129,7 @@
                                         <div class="btn-group text-right">
                                             {{#rowActionButtons}}
                                             {{#buttons}}
-                                            <a href="${ctx}{{menuUrl}}?no={{orderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-orderno="{{orderNo}}">{{text}}</a>
+                                            <a href="${ctx}{{menuUrl}}?no={{deploymentOrderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-no="{{deploymentOrderNo}}">{{text}}</a>
                                             {{/buttons}}
                                             {{/rowActionButtons}}
                                         </div>
