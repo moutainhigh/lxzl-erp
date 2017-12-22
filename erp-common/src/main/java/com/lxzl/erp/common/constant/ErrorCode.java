@@ -340,31 +340,10 @@ public class ErrorCode {
     public static final String REPAIR_ORDER_BULK_MATERRIAL_NOT_EXISTS = "J700007";
     public static final String REPAIR_ORDER_DATA_STATUS_ERROR = "J700008";
 
-    public static final String JOINT_PRODUCT_NAME_IS_NOT_NULL = "J1000001";
-    public static final String JOINT_PRODUCT_IS_NO = "J1000002";
-    public static final String JOINT_PRODUCT_IS_DEL = "J1000003";
-    public static final String JOINT_PRODUCT_ID_IS_NOT_NULL = "J1000004";
-    public static final String JOINT_PRODUCT_MATERIAL_ID_IS_NOT_NULL = "J1000005";
-    public static final String JOINT_PRODUCT_SKU_ID_IS_NOT_NULL = "J1000006";
-    public static final String JOINT_PRODUCT_MATERIAL_COUNT_IS_NOT_NULL = "J1000007";
-    public static final String JOINT_PRODUCT_SKU_COUNT_IS_NOT_NULL = "J1000008";
-    public static final String JOINT_PRODUCT_MATERIAL_MAJOR_KEY_ID_IS_NOT_NULL = "J1000009";
-    public static final String JOINT_PRODUCT_SKU_MAJOR_KEY_ID_IS_NOT_NULL = "J1000010";
-    public static final String JOINT_PRODUCT_MATERIAL_COUNT_MIN_IS_ZERO = "J1000011";
-    public static final String JOINT_PRODUCT_SKU_COUNT_MIN_IS_ZERO = "J1000012";
-    public static final String JOINT_PRODUCT_MATERIAL_ID_IS_NOT_EXIST = "J1000013";
-    public static final String JOINT_PRODUCT_SKU_ID_IS_NOT_EXIST = "J1000014";
-    public static final String JOINT_PRODUCT_SKU_AND_MATERIAL_IS_NULL = "J1000015";
-    public static final String JOINT_PRODUCT_ID_IS_NOT_EXISTS= "J1000016";
-    public static final String JOINT_PRODUCT_SKU_ID_IS_NOT_EXISTS = "J1000017";
-    public static final String JOINT_PRODUCT_MATERIAL_ID_IS_NOT_EXISTS = "J1000018";
-    public static final String PRODUCT_MATERIAL_ID_IS_NOT_EXISTS= "J1000019";
-    public static final String PRODUCT_SKU_ID_IS_NOT_EXISTS= "J1000020";
-    public static final String JOINT_PRODUCT_STATUS_IS_NO = "J1000021";
-    public static final String JOINT_PRODUCT_NOT_EXISTS = "J1000022";
-    public static final String JOINT_PRODUCT_ID_UPDATE_MATERIAL_ERROR = "J1000024";
-    public static final String MATERIAL_ID_REPETITION = "J1000025";
-    public static final String PRODUCT_SKU_ID_REPETITION = "J1000026";
+    public static final String JOINT_PRODUCT_ID_IS_NULL = "J1000001";
+    public static final String JOINT_PRODUCT_NAME_IS_NULL = "J1000002";
+    public static final String JOINT_PRODUCT_NOT_EXISTS = "J1000003";
+
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -701,31 +680,9 @@ public class ErrorCode {
         MAP.put(REPAIR_ORDER_BULK_MATERRIAL_NOT_EXISTS, "散料维修单明细不存在");
         MAP.put(REPAIR_ORDER_DATA_STATUS_ERROR, "该设备维修单此状态不允许此操作");
 
-        MAP.put(JOINT_PRODUCT_NAME_IS_NOT_NULL, "组合商品名称不能为空");
-        MAP.put(JOINT_PRODUCT_IS_NO, "组合商品不可用");
-        MAP.put(JOINT_PRODUCT_IS_DEL, "组合商品已删除");
-        MAP.put(JOINT_PRODUCT_ID_IS_NOT_NULL, "组合商品表ID不能为空");
-        MAP.put(JOINT_PRODUCT_MATERIAL_ID_IS_NOT_NULL, "组合商品物料ID不能为空");
-        MAP.put(JOINT_PRODUCT_SKU_ID_IS_NOT_NULL, "组合商品SKU_ID不能为空");
-        MAP.put(JOINT_PRODUCT_MATERIAL_COUNT_IS_NOT_NULL, "组合商品物料数量不能为空");
-        MAP.put(JOINT_PRODUCT_SKU_COUNT_IS_NOT_NULL, "组合商品SKU数量不能为空");
-        MAP.put(JOINT_PRODUCT_MATERIAL_MAJOR_KEY_ID_IS_NOT_NULL, "组合商品物料项表项ID不能为空");
-        MAP.put(JOINT_PRODUCT_SKU_MAJOR_KEY_ID_IS_NOT_NULL, "组合商品SKU表项ID不能为空");
-        MAP.put(JOINT_PRODUCT_MATERIAL_COUNT_MIN_IS_ZERO, "组合商品物料数量最小为0");
-        MAP.put(JOINT_PRODUCT_SKU_COUNT_MIN_IS_ZERO, "组合商品SKU数量最小为0");
-        MAP.put(JOINT_PRODUCT_MATERIAL_ID_IS_NOT_EXIST, "组合商品物料ID不存在");
-        MAP.put(JOINT_PRODUCT_SKU_ID_IS_NOT_EXIST, "组合商品SKU_ID不存在");
-        MAP.put(JOINT_PRODUCT_SKU_AND_MATERIAL_IS_NULL, "组合商品SKU和物料都未添加");
-        MAP.put(JOINT_PRODUCT_ID_IS_NOT_EXISTS, "组合商品表ID不存在");
-        MAP.put(JOINT_PRODUCT_SKU_ID_IS_NOT_EXISTS, "组合商品SKU表ID不存在");
-        MAP.put(JOINT_PRODUCT_MATERIAL_ID_IS_NOT_EXISTS, "组合商品物料表ID不存在");
-        MAP.put(PRODUCT_MATERIAL_ID_IS_NOT_EXISTS, "SKU表ID不存在");
-        MAP.put(PRODUCT_SKU_ID_IS_NOT_EXISTS, "物料表ID不存在");
-        MAP.put(JOINT_PRODUCT_STATUS_IS_NO, "物料表状态是删除");
-        MAP.put(JOINT_PRODUCT_NOT_EXISTS, "物料表不存在");
-        MAP.put(JOINT_PRODUCT_ID_UPDATE_MATERIAL_ERROR, "跟新组合商品id与物料的组合商品id不同");
-        MAP.put(MATERIAL_ID_REPETITION, "跟新物料id相同");
-        MAP.put(JOINT_PRODUCT_ID_UPDATE_MATERIAL_ERROR, "跟新SKU id相同");
+        MAP.put(JOINT_PRODUCT_ID_IS_NULL, "组合商品id为空");
+        MAP.put(JOINT_PRODUCT_NAME_IS_NULL, "组合商品名称为空");
+        MAP.put(JOINT_PRODUCT_NOT_EXISTS, "组合商品不存在");
 
     }
 

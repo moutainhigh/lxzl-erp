@@ -1,21 +1,10 @@
-<div id="inputPickingModal" class="popup-basic admin-form mfp-with-anim">
+<div id="stockUpMaterial" class="popup-basic admin-form mfp-with-anim">
     <div class="panel">
         <div class="panel-heading">
             <span class="panel-title"><i class="fa fa-pencil"></i><span class="modalTitle"></span></span>
         </div>
         <form method="post" class="inputForm">
             <div class="panel-body p25">
-                <div class="section row">
-                    <div class="col-md-12">
-                        <label for="warehouseId" class="field-label">仓库</label>
-                        <label class="field select">
-                            <select id="warehouseId" name="warehouseId" class="required">
-                                <option value="">请选择</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                </div>
                 <div class="section row">
                     <div class="col-md-12">
                         <label for="materialCount" class="field-label">数量</label>

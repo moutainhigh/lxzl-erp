@@ -21,6 +21,7 @@ public class JointProductDO  extends BaseDO {
 	@Transient
 	private List<JointProductSkuDO> jointProductSkuDOList;   //组合商品sku项表
 
+
 	public Integer getId(){
 		return id;
 	}
@@ -53,6 +54,7 @@ public class JointProductDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+
 	public List<JointMaterialDO> getJointMaterialDOList() {
 		return jointMaterialDOList;
 	}
@@ -61,7 +63,7 @@ public class JointProductDO  extends BaseDO {
 		this.jointMaterialDOList = jointMaterialDOList;
 	}
 
-	public List<JointProductSkuDO> getJointProductSkuList() {
+	public List<JointProductSkuDO> getJointProductSkuDOList() {
 		return jointProductSkuDOList;
 	}
 

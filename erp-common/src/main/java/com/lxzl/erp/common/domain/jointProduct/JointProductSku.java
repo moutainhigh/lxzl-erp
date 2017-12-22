@@ -2,10 +2,9 @@ package com.lxzl.erp.common.domain.jointProduct;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
-import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -15,99 +14,108 @@ import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class JointProductSku implements Serializable {
-	private Integer jointProductSkuId;   //唯一标识
-	private Integer jointProductId;   //组合商品ID
-	@NotNull(message = ErrorCode.JOINT_PRODUCT_SKU_ID_IS_NOT_NULL ,groups = {UpdateGroup.class,AddGroup.class})
-	private Integer skuId;   //SKU_ID
-	@Min(value=1,message = ErrorCode.JOINT_PRODUCT_SKU_COUNT_MIN_IS_ZERO ,groups = {AddGroup.class,UpdateGroup.class})
-	@NotNull(message = ErrorCode.JOINT_PRODUCT_SKU_COUNT_IS_NOT_NULL,groups = {UpdateGroup.class,AddGroup.class})
-	private Integer skuCount;   //sku数量
-	private Integer dataStatus;   //状态：0不可用；1可用；2删除
-	private String remark;   //备注
-	private Date createTime;   //添加时间
-	private String createUser;   //添加人
-	private Date updateTime;   //修改时间
-	private String updateUser;   //修改人
+    private Integer jointProductSkuId;   //唯一标识
+    private Integer jointProductId;   //组合商品ID
+    @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL, groups = {UpdateGroup.class, AddGroup.class})
+    private Integer skuId;   //SKU_ID
+    @Min(value = 1, message = ErrorCode.PRODUCT_SKU_COUNT_ERROR, groups = {AddGroup.class, UpdateGroup.class})
+    @NotNull(message = ErrorCode.PRODUCT_SKU_COUNT_ERROR, groups = {UpdateGroup.class, AddGroup.class})
+    private Integer skuCount;   //sku数量
+    private Integer dataStatus;   //状态：0不可用；1可用；2删除
+    private String remark;   //备注
+    private Date createTime;   //添加时间
+    private String createUser;   //添加人
+    private Date updateTime;   //修改时间
+    private String updateUser;   //修改人
 
+    private Product product;  //sku信息
 
-	public Integer getJointProductSkuId(){
-		return jointProductSkuId;
-	}
+    public Product getProduct() {
+        return product;
+    }
 
-	public void setJointProductSkuId(Integer jointProductSkuId){
-		this.jointProductSkuId = jointProductSkuId;
-	}
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 
-	public Integer getJointProductId(){
-		return jointProductId;
-	}
+    public Integer getJointProductSkuId() {
+        return jointProductSkuId;
+    }
 
-	public void setJointProductId(Integer jointProductId){
-		this.jointProductId = jointProductId;
-	}
+    public void setJointProductSkuId(Integer jointProductSkuId) {
+        this.jointProductSkuId = jointProductSkuId;
+    }
 
-	public Integer getSkuId(){
-		return skuId;
-	}
+    public Integer getJointProductId() {
+        return jointProductId;
+    }
 
-	public void setSkuId(Integer skuId){
-		this.skuId = skuId;
-	}
+    public void setJointProductId(Integer jointProductId) {
+        this.jointProductId = jointProductId;
+    }
 
-	public Integer getSkuCount(){
-		return skuCount;
-	}
+    public Integer getSkuId() {
+        return skuId;
+    }
 
-	public void setSkuCount(Integer skuCount){
-		this.skuCount = skuCount;
-	}
+    public void setSkuId(Integer skuId) {
+        this.skuId = skuId;
+    }
 
-	public Integer getDataStatus(){
-		return dataStatus;
-	}
+    public Integer getSkuCount() {
+        return skuCount;
+    }
 
-	public void setDataStatus(Integer dataStatus){
-		this.dataStatus = dataStatus;
-	}
+    public void setSkuCount(Integer skuCount) {
+        this.skuCount = skuCount;
+    }
 
-	public String getRemark(){
-		return remark;
-	}
+    public Integer getDataStatus() {
+        return dataStatus;
+    }
 
-	public void setRemark(String remark){
-		this.remark = remark;
-	}
+    public void setDataStatus(Integer dataStatus) {
+        this.dataStatus = dataStatus;
+    }
 
-	public Date getCreateTime(){
-		return createTime;
-	}
+    public String getRemark() {
+        return remark;
+    }
 
-	public void setCreateTime(Date createTime){
-		this.createTime = createTime;
-	}
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
-	public String getCreateUser(){
-		return createUser;
-	}
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-	public void setCreateUser(String createUser){
-		this.createUser = createUser;
-	}
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-	public Date getUpdateTime(){
-		return updateTime;
-	}
+    public String getCreateUser() {
+        return createUser;
+    }
 
-	public void setUpdateTime(Date updateTime){
-		this.updateTime = updateTime;
-	}
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
+    }
 
-	public String getUpdateUser(){
-		return updateUser;
-	}
+    public Date getUpdateTime() {
+        return updateTime;
+    }
 
-	public void setUpdateUser(String updateUser){
-		this.updateUser = updateUser;
-	}
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser;
+    }
 
 }
