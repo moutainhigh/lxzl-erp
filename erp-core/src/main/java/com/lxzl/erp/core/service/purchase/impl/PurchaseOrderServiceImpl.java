@@ -1041,6 +1041,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 productInStorage.setProductId(purchaseReceiveOrderProductDO.getRealProductId());
                 productInStorage.setProductSkuId(purchaseReceiveOrderProductDO.getRealProductSkuId());
                 productInStorage.setProductCount(purchaseReceiveOrderProductDO.getRealProductCount());
+                productInStorage.setItemReferId(purchaseReceiveOrderProductDO.getId());
                 String realProductSnapshot = purchaseReceiveOrderProductDO.getRealProductSnapshot();
                 Product product = JSON.parseObject(realProductSnapshot, Product.class);
                 productInStorage.setProductMaterialList(product.getProductSkuList().get(0).getProductMaterialList());
@@ -1058,6 +1059,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 MaterialInStorage materialInStorage = new MaterialInStorage();
                 materialInStorage.setMaterialId(purchaseReceiveOrderMaterialDO.getRealMaterialId());
                 materialInStorage.setMaterialCount(purchaseReceiveOrderMaterialDO.getRealMaterialCount());
+                materialInStorage.setItemReferId(purchaseReceiveOrderMaterialDO.getId());
                 materialInStorage.setIsNew(purchaseReceiveOrderDO.getIsNew());
                 materialInStorageList.add(materialInStorage);
             }
