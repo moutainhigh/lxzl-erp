@@ -418,7 +418,7 @@ public class PageController extends BaseController {
     }
     @RequestMapping("/order-deployment-manage/stock-up-material-modal")
     public String deploymentOrderManageStockUpMaterialModal() {
-        return "/component/deploymentOrder/stockUpMaterialModal.vm";
+        return "/component/deploymentOrder/stockUpMaterialModal";
     }
 
     //选择仓库Modal
