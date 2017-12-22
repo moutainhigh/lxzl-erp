@@ -128,7 +128,7 @@
         LEFT JOIN erp_stock_order eso ON epro.purchase_receive_no = eso.refer_no AND eso.data_status=1 AND eso.cause_type=1
         LEFT JOIN erp_stock_order_equipment esoe ON eso.stock_order_no = esoe.stock_order_no AND esoe.data_status=1
         LEFT JOIN erp_product_equipment epe ON epe.id=esoe.equipment_id AND epe.data_status=1
-        WHERE esoe.item_refer_id = #{maps.purchaseReceiveOrderProductId} AND epo.data_status = 1 AND auto_allot_status != 1
+        WHERE esobm.item_refer_id = #{maps.purchaseReceiveOrderProductId} AND epo.data_status = 1 AND auto_allot_status != 1
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
     <select id="listByPurchaseReceiveOrderProductIdCount" resultType="java.lang.Integer" parameterType="map">
@@ -336,7 +336,7 @@
 
 
     <insert id="saveList" parameterType="java.util.ArrayList">
-        insert into erp_product_equipment (equipment_no,product_id,sku_id,order_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,equipment_price,purchase_price,equipment_status,is_new,data_status,remark,create_time,create_user,update_time,update_user)
+        insert into erp_product_equipment (equipment_no,product_id,sku_id,order_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,equipment_price,equipment_status,is_new,data_status,remark,create_time,create_user,update_time,update_user)
         <foreach item="productEquipmentDO" collection="productEquipmentDOList" separator="UNION ALL">
             SELECT #{productEquipmentDO.equipmentNo},#{productEquipmentDO.productId},#{productEquipmentDO.skuId},#{productEquipmentDO.orderNo},#{productEquipmentDO.currentWarehouseId},#{productEquipmentDO.currentWarehousePositionId},#{productEquipmentDO.ownerWarehouseId},
             #{productEquipmentDO.ownerWarehousePositionId},eps.sku_price,#{productEquipmentDO.equipmentStatus},#{productEquipmentDO.isNew},#{productEquipmentDO.dataStatus},#{productEquipmentDO.remark},

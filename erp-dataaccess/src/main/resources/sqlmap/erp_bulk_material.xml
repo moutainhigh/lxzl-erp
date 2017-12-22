@@ -51,7 +51,15 @@
 		SELECT <include refid="column_List"/> FROM erp_order eo INNER JOIN erp_bulk_material ebm ON eo.order_no=ebm.order_no WHERE eo.data_status=1
 		AND eo.buyer_customer_id = #{customerId} AND ebm.material_id = #{materialId}
 	</select>
-
+	<select id="findByPurchaseOrderNo" resultMap="BulkMaterialDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/>
+		FROM erp_purchase_order epo
+		LEFT JOIN erp_purchase_receive_order  epro ON epro.purchase_order_id = epo.id AND epro.data_status=1
+		LEFT JOIN erp_stock_order eso ON epro.purchase_receive_no = eso.refer_no AND eso.data_status=1 AND eso.cause_type=1
+		LEFT JOIN erp_stock_order_bulk_material esobm ON eso.stock_order_no = esobm.stock_order_no AND esobm.data_status=1
+		LEFT JOIN erp_bulk_material ebm ON ebm.id=esobm.bulk_material_id AND ebm.data_status=1
+		WHERE epo.purchase_no = #{purchaseOrderNo} AND epo.data_status = 1 AND auto_allot_status != 1
+	</select>
 	<select id="findByMaterialTypeAndModelId" resultMap="BulkMaterialDO" parameterType="java.util.Map">
 		select
 		<include refid="column_List"/>
@@ -235,7 +243,7 @@
 	</sql>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_bulk_material (bulk_material_no,bulk_material_type,is_main_material,bulk_material_name,material_id,material_no,order_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,brand_id,material_model_id,material_capacity_value,bulk_material_price,purchase_price,current_equipment_id,current_equipment_no,bulk_material_status,is_new,data_status,remark,create_time,create_user,update_time,update_user)
+		insert into erp_bulk_material (bulk_material_no,bulk_material_type,is_main_material,bulk_material_name,material_id,material_no,order_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,brand_id,material_model_id,material_capacity_value,bulk_material_price,current_equipment_id,current_equipment_no,bulk_material_status,is_new,data_status,remark,create_time,create_user,update_time,update_user)
 		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList" separator="UNION ALL">
 			SELECT #{bulkMaterialDO.bulkMaterialNo},em.material_type, em.is_main_material, em.material_name ,#{bulkMaterialDO.materialId},em.material_no,#{bulkMaterialDO.orderNo},#{bulkMaterialDO.currentWarehouseId},#{bulkMaterialDO.currentWarehousePositionId},#{bulkMaterialDO.ownerWarehouseId},#{bulkMaterialDO.ownerWarehousePositionId},
 			em.brand_id,em.material_model_id,em.material_capacity_value,em.material_price,equipment_info.current_equipment_id ,#{bulkMaterialDO.currentEquipmentNo}, #{bulkMaterialDO.bulkMaterialStatus},#{bulkMaterialDO.isNew},#{bulkMaterialDO.dataStatus},#{bulkMaterialDO.remark},

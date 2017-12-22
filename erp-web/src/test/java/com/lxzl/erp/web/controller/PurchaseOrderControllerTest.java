@@ -41,12 +41,12 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrder.setProductSupplierId(1);//商品供应商ID不能为空
 
         List<PurchaseOrderProduct> purchaseOrderProductList = new ArrayList<>();//采购单商品项列表
-        purchaseOrderProductList.add(createPurchaseOrderProduct(40,10,new BigDecimal(1000)));
-        purchaseOrderProductList.add(createPurchaseOrderProduct(40,10,new BigDecimal(1100)));
+        purchaseOrderProductList.add(createPurchaseOrderProduct(65,100,new BigDecimal(5000)));
+        purchaseOrderProductList.add(createPurchaseOrderProduct(64,100,new BigDecimal(2200)));
         purchaseOrder.setPurchaseOrderProductList(purchaseOrderProductList);
 
         List<PurchaseOrderMaterial> purchaseOrderMaterialList = new ArrayList<>();//小配件采购单物料项列表不能为空
-        purchaseOrderMaterialList.add(createPurchaseOrderMaterial("M201711171838059981292",2,new BigDecimal(42)));
+        purchaseOrderMaterialList.add(createPurchaseOrderMaterial("M201711201500267591516",100,new BigDecimal(875)));
         purchaseOrder.setPurchaseOrderMaterialList(purchaseOrderMaterialList);
 
         TestResult testResult = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
@@ -827,7 +827,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void commitPurchaseReceiveOrder() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
-        purchaseReceiveOrder.setPurchaseReceiveNo("PR2017121517274802260001011827");
+        purchaseReceiveOrder.setPurchaseReceiveNo("PR2017122217345518360001461462");
         TestResult testResult = getJsonTestResult("/purchaseOrder/commitPurchaseReceiveOrder",purchaseReceiveOrder);
     }
 
@@ -871,7 +871,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void endPurchaseOrder() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setPurchaseNo("C201711091550440665000051897");
+        purchaseOrder.setPurchaseNo("PO201712221725210305000011528");
         TestResult testResult = getJsonTestResult("/purchaseOrder/endPurchaseOrder",purchaseOrder);
     }
     @Test
