@@ -570,24 +570,26 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             deploymentOrderProductEquipmentMapper.save(deploymentOrderProductEquipmentDO);
         }
 
-        // 必须是当前库房闲置的物料
-        BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
-        bulkMaterialQueryParam.setMaterialId(materialId);
-        bulkMaterialQueryParam.setCurrentWarehouseId(deploymentOrderDO.getSrcWarehouseId());
-        bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
-
-        Map<String, Object> bulkQueryParam = new HashMap<>();
-        bulkQueryParam.put("start", 0);
-        bulkQueryParam.put("pageSize", Integer.MAX_VALUE);
-        bulkQueryParam.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
-        List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(bulkQueryParam);
-        if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
-            result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
-            return result;
-        }
 
         // 处理调拨物料业务
         if (materialId != null) {
+
+            // 必须是当前库房闲置的物料
+            BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
+            bulkMaterialQueryParam.setMaterialId(materialId);
+            bulkMaterialQueryParam.setCurrentWarehouseId(deploymentOrderDO.getSrcWarehouseId());
+            bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+
+            Map<String, Object> bulkQueryParam = new HashMap<>();
+            bulkQueryParam.put("start", 0);
+            bulkQueryParam.put("pageSize", materialCount);
+            bulkQueryParam.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(bulkQueryParam);
+            if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
+                result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
+                return result;
+            }
+
             for (int i = 0; i < materialCount; i++) {
                 BulkMaterialDO bulkMaterialDO = bulkMaterialDOList.get(i);
                 Map<Integer, DeploymentOrderMaterialDO> deploymentOrderMaterialDOMap = ListUtil.listToMap(deploymentOrderDO.getDeploymentOrderMaterialDOList(), "deploymentMaterialId");

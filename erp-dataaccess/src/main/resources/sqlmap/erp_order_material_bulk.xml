@@ -36,6 +36,12 @@
 		WHERE eomb.order_id = #{orderId, jdbcType=INTEGER} AND eomb.bulk_material_no = #{bulkMaterialNo, jdbcType=VARCHAR} AND eomb.data_status = 1
 	</select>
 
+	<select id="findByOrderNoAndBulkMaterialNo" resultMap="OrderMaterialBulkDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_order_material_bulk eomb
+		INNER JOIN erp_order eo ON eomb.order_id = eo.id
+		WHERE eo.order_no = #{orderNo, jdbcType=VARCHAR} AND eomb.bulk_material_no = #{bulkMaterialNo, jdbcType=VARCHAR} AND eomb.data_status = 1
+	</select>
+
 	<select id="findByOrderMaterialId" resultMap="OrderMaterialBulkDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_order_material_bulk eomb
 		WHERE eomb.order_material_id = #{orderMaterialId, jdbcType=INTEGER} AND eomb.data_status = 1
