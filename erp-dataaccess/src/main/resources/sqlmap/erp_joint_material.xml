@@ -13,10 +13,11 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="material_no" jdbcType="VARCHAR" property="materialNo" />
 	</resultMap>
 
 	<sql id="column_List">
-		ejm.id,ejm.joint_product_id,ejm.material_id,ejm.material_count,ejm.data_status,ejm.remark,ejm.create_time,ejm.create_user,ejm.update_time,ejm.update_user
+		ejm.id,ejm.joint_product_id,ejm.material_id,ejm.material_count,ejm.data_status,ejm.remark,ejm.create_time,ejm.create_user,ejm.update_time,ejm.update_user,ejm.material_no
 	</sql>
 
 	<select id="findById" resultMap="JointMaterialDO" parameterType="java.lang.Integer">
@@ -71,6 +72,9 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="materialNo != null">
+				material_no = #{materialNo,jdbcType=VARCHAR},
 			</if>
 		</set>
 	</sql>

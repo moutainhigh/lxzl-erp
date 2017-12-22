@@ -61,7 +61,23 @@
 	<select id="getRentBulkCountByOrderNo" resultType="java.lang.Integer">
 		SELECT count(1) FROM erp_bulk_material ebm WHERE ebm.data_status=1 AND ebm.order_no = #{orderNo}
 	</select>
-
+	<select id="listByPurchaseReceiveOrderMaterialId" resultMap="BulkMaterialDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_purchase_order epo
+		LEFT JOIN erp_purchase_receive_order  epro ON epro.purchase_order_id = epo.id AND epro.data_status=1
+		LEFT JOIN erp_stock_order eso ON epro.purchase_receive_no = eso.refer_no AND eso.data_status=1 AND eso.cause_type=1
+		LEFT JOIN erp_stock_order_bulk_material esobm ON eso.stock_order_no = esobm.stock_order_no AND esobm.data_status=1
+		LEFT JOIN erp_bulk_material ebm ON ebm.id=esobm.bulk_material_id AND ebm.data_status=1
+		WHERE esobm.item_refer_id = #{maps.purchaseReceiveOrderMaterialId} AND epo.data_status = 1 AND auto_allot_status != 1
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+	<select id="listByPurchaseReceiveOrderMaterialIdCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(1) FROM erp_purchase_order epo
+		LEFT JOIN erp_purchase_receive_order  epro ON epro.purchase_order_id = epo.id AND epro.data_status=1
+		LEFT JOIN erp_stock_order eso ON epro.purchase_receive_no = eso.refer_no AND eso.data_status=1 AND eso.cause_type=1
+		LEFT JOIN erp_stock_order_bulk_material esobm ON eso.stock_order_no = esobm.stock_order_no AND esobm.data_status=1
+		LEFT JOIN erp_bulk_material ebm ON ebm.id=esobm.bulk_material_id AND ebm.data_status=1
+		WHERE esobm.item_refer_id = #{maps.purchaseReceiveOrderMaterialId} AND epo.data_status = 1 AND auto_allot_status != 1
+	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ebm.id) FROM erp_bulk_material ebm 
 		<where>

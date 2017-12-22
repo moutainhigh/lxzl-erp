@@ -37,10 +37,11 @@
         <result column="ejm_createUser" jdbcType="VARCHAR" property="createUser"/>
         <result column="ejm_updateTime" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="ejm_updateUser" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="ejm_materialNo" jdbcType="VARCHAR" property="materialNo"/>
     </resultMap>
 
     <sql id="material_column_List">
-        ejm.id AS ejm_id,ejm.joint_product_id AS ejm_jointProductId,ejm.material_id AS jm_materialId,ejm.material_count AS ejm_materialCount,ejm.data_status AS ejm_dataStatus,ejm.remark AS ejm_remark,ejm.create_time AS ejm_createTime,ejm.create_user AS ejm_createUser,ejm.update_time AS ejm_updateTime,ejm.update_user AS ejm_updateUser
+        ejm.id AS ejm_id,ejm.joint_product_id AS ejm_jointProductId,ejm.material_id AS ejm_materialId,ejm.material_count AS ejm_materialCount,ejm.data_status AS ejm_dataStatus,ejm.remark AS ejm_remark,ejm.create_time AS ejm_createTime,ejm.create_user AS ejm_createUser,ejm.update_time AS ejm_updateTime,ejm.update_user AS ejm_updateUser,ejm.material_no AS ejm_materialNo
     </sql>
     <sql id="sku_column_List">
         ejps.id AS ejps_id,ejps.joint_product_id AS ejps_jointProductId,ejps.sku_id AS ejps_skuId,ejps.sku_count AS ejps_skuCount,ejps.data_status AS ejps_dataStatus,ejps.remark AS ejps_remark,ejps.create_time AS ejps_createTime,ejps.create_user AS ejps_createUser,ejps.update_time AS ejps_updateTime,ejps.update_user AS ejps_updateUser
@@ -115,10 +116,6 @@
         WHERE id = #{id, jdbcType=INTEGER}
     </update>
 
-    <select id="findIdCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
-		SELECT COUNT(1) FROM erp_joint_product WHERE id = #{jointProductId}
-	</select>
-
     <select id="findDetailByJointProductId" resultMap="JointProductDO" parameterType="java.lang.Integer">
         SELECT <include refid="column_List"/>,<include refid="material_column_List"/>,
         <include refid="sku_column_List"/>
@@ -182,5 +179,4 @@
         LEFT JOIN erp_joint_material ejm on ejm.joint_product_id = ejp.id and ejm.data_status=1
         ORDER BY ejp.create_time DESC
     </select>
-
 </mapper>

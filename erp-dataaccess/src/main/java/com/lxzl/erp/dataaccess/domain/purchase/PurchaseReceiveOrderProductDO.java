@@ -23,7 +23,6 @@ public class PurchaseReceiveOrderProductDO  extends BaseDO {
 	private Integer realProductSkuId;
 	private String realProductSnapshot;
 	private Integer realProductCount;
-	private BigDecimal realProductAmount;
 	private Integer isSrc;
 	private Integer dataStatus;
 	private String remark;
@@ -170,13 +169,5 @@ public class PurchaseReceiveOrderProductDO  extends BaseDO {
 
 	public void setProductAmount(BigDecimal productAmount) {
 		this.productAmount = productAmount;
-	}
-
-	public BigDecimal getRealProductAmount() {
-		return realProductAmount;
-	}
-
-	public void setRealProductAmount(BigDecimal realProductAmount) {
-		this.realProductAmount = realProductAmount;
 	}
 }

@@ -27,6 +27,8 @@ import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductEquipmentMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
@@ -35,6 +37,8 @@ import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
@@ -737,7 +741,9 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         changeOrderProductEquipmentDO.setOrderNo(srcProductEquipmentDO.getOrderNo());
         changeOrderProductEquipmentDO.setSrcEquipmentId(srcProductEquipmentDO.getId());
         changeOrderProductEquipmentDO.setSrcEquipmentNo(srcProductEquipmentDO.getEquipmentNo());
-        BigDecimal diff = BigDecimalUtil.sub(destProductEquipmentDO.getEquipmentPrice(), srcProductEquipmentDO.getEquipmentPrice());
+
+        //计算差价
+        BigDecimal diff = getDiff(orderDO,srcProductEquipmentDO,destProductEquipmentDO);
         changeOrderProductEquipmentDO.setPriceDiff(diff);
         changeOrderProductEquipmentDO.setUpdateTime(now);
         changeOrderProductEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -766,7 +772,21 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
-
+    private BigDecimal getDiff(OrderDO orderDO , ProductEquipmentDO srcProductEquipmentDO,ProductEquipmentDO destProductEquipmentDO){
+        BigDecimal diff = BigDecimal.ZERO;
+        OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderIdAndEquipmentNo(orderDO.getId(),srcProductEquipmentDO.getEquipmentNo());
+        OrderProductDO orderProductDO = orderProductMapper.findById(orderProductEquipmentDO.getOrderProductId());
+        ProductSkuDO srcProductSkuDO = productSkuMapper.findById(srcProductEquipmentDO.getSkuId());
+        ProductSkuDO destProductSkuDO = productSkuMapper.findById(destProductEquipmentDO.getSkuId());
+        if(OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())){
+            diff = BigDecimalUtil.sub(destProductSkuDO.getDayRentPrice(), srcProductSkuDO.getDayRentPrice());
+            diff = diff.compareTo(BigDecimal.ZERO)<0?BigDecimal.ZERO:diff;
+        }else if(OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())){
+            diff = BigDecimalUtil.sub(destProductSkuDO.getMonthRentPrice(), srcProductSkuDO.getMonthRentPrice());
+            diff = diff.compareTo(BigDecimal.ZERO)<0?BigDecimal.ZERO:diff;
+        }
+        return diff;
+    }
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> doChangeMaterial(ChangeOrderMaterial changeOrderMaterial) {
@@ -1392,4 +1412,8 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     private BulkMaterialService bulkMaterialService;
     @Autowired
     private ProductMapper productMapper;
+    @Autowired
+    private OrderProductEquipmentMapper orderProductEquipmentMapper;
+    @Autowired
+    private OrderProductMapper orderProductMapper;
 }

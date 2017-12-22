@@ -10,15 +10,23 @@ import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMaterialBulkMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.*;
+import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMaterialBulkMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
+import com.lxzl.erp.dataaccess.domain.changeOrder.ChangeOrderDO;
+import com.lxzl.erp.dataaccess.domain.changeOrder.ChangeOrderMaterialBulkDO;
+import com.lxzl.erp.dataaccess.domain.changeOrder.ChangeOrderProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
+import com.lxzl.erp.dataaccess.domain.order.*;
+import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
@@ -91,15 +99,13 @@ public class StatementServiceImpl implements StatementService {
         Date rentStartTime = orderDO.getRentStartTime();
         Integer buyerCustomerId = orderDO.getBuyerCustomerId();
         Integer orderId = orderDO.getId();
-        String statementDay;
-        // 根据订单信息，生成订单的结算单
+        Integer statementDays;
         DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
         if (dataDictionaryDO == null) {
-            statementDay = "31";
+            statementDays = 31;
         } else {
-            statementDay = dataDictionaryDO.getDataName();
+            statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
         }
-        Integer statementDays = Integer.parseInt(statementDay);
         // 其他费用，包括运费、等费用
         BigDecimal otherAmount = orderDO.getLogisticsAmount();
 
@@ -315,11 +321,66 @@ public class StatementServiceImpl implements StatementService {
 
     @Override
     public ServiceResult<String, BigDecimal> createReturnOrderStatement(String returnOrderNo) {
+        ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(returnOrderNo);
         return null;
     }
 
     @Override
     public ServiceResult<String, BigDecimal> createChangeOrderStatement(String changeOrderNo) {
+        Date currentTime = new Date();
+        Calendar currentTimeCalendar = Calendar.getInstance();
+        currentTimeCalendar.setTime(currentTime);
+        ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(changeOrderNo);
+        List<ChangeOrderMaterialBulkDO> changeOrderMaterialBulkDOList = changeOrderMaterialBulkMapper.findByChangeOrderNo(changeOrderNo);
+        List<ChangeOrderProductEquipmentDO> changeOrderProductEquipmentDOList = changeOrderProductEquipmentMapper.findByChangeOrderNo(changeOrderNo);
+        if (CollectionUtil.isNotEmpty(changeOrderProductEquipmentDOList)) {
+            for (ChangeOrderProductEquipmentDO changeOrderProductEquipmentDO : changeOrderProductEquipmentDOList) {
+                if (changeOrderProductEquipmentDO.getPriceDiff() == null || BigDecimalUtil.compare(changeOrderProductEquipmentDO.getPriceDiff(), BigDecimal.ZERO) <= 0) {
+                    continue;
+                }
+                BigDecimal productEquipmentDiffAmount = changeOrderProductEquipmentDO.getPriceDiff();
+                OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderNoAndEquipmentNo(changeOrderProductEquipmentDO.getOrderNo(), changeOrderProductEquipmentDO.getSrcEquipmentNo());
+                OrderProductDO orderProductDO = orderProductMapper.findById(orderProductEquipmentDO.getOrderProductId());
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
+                    // TODO 如果按天换货，该如何付这个差价
+                } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
+                    List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
+                    if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+                        BigDecimal payDiffAmount = BigDecimal.ZERO;
+                        for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+                            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
+                                continue;
+                            }
+
+                            if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderProductDO.getPayMode())) {
+
+                            } else if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderProductDO.getPayMode())) {
+
+                            }
+
+                            // buildStatementOrderDetailDO(statementOrderDetailDO.getCustomerId(), OrderRentType.RENT_TYPE_MONTH, );
+                        }
+
+                        if (BigDecimalUtil.compare(payDiffAmount, productEquipmentDiffAmount) != 0) {
+                            // 如果没有处理完差价，统一当天交钱
+                        }
+                    }
+                }
+            }
+        }
+        if (CollectionUtil.isNotEmpty(changeOrderMaterialBulkDOList)) {
+            for (ChangeOrderMaterialBulkDO changeOrderMaterialBulkDO : changeOrderMaterialBulkDOList) {
+                OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderNoAndBulkMaterialNo(changeOrderMaterialBulkDO.getOrderNo(), changeOrderMaterialBulkDO.getSrcBulkMaterialNo());
+                OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(orderMaterialBulkDO.getOrderMaterialId());
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())) {
+
+                } else if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())) {
+
+                }
+            }
+        }
+
+
         return null;
     }
 
@@ -518,4 +579,34 @@ public class StatementServiceImpl implements StatementService {
 
     @Autowired
     private CustomerMapper customerMapper;
+
+    @Autowired
+    private OrderProductEquipmentMapper orderProductEquipmentMapper;
+
+    @Autowired
+    private OrderMaterialBulkMapper orderMaterialBulkMapper;
+
+    @Autowired
+    private OrderProductMapper orderProductMapper;
+
+    @Autowired
+    private OrderMaterialMapper orderMaterialMapper;
+
+    @Autowired
+    private ChangeOrderMapper changeOrderMapper;
+
+    @Autowired
+    private ChangeOrderMaterialBulkMapper changeOrderMaterialBulkMapper;
+
+    @Autowired
+    private ChangeOrderProductEquipmentMapper changeOrderProductEquipmentMapper;
+
+    @Autowired
+    private ReturnOrderMapper returnOrderMapper;
+
+    @Autowired
+    private ReturnOrderProductEquipmentMapper returnOrderProductEquipmentMapper;
+
+    @Autowired
+    private ReturnOrderMaterialBulkMapper returnOrderMaterialBulkMapper;
 }

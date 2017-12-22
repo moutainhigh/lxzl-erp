@@ -8,9 +8,12 @@ import com.lxzl.erp.common.domain.jointProduct.JointMaterial;
 import com.lxzl.erp.common.domain.jointProduct.JointProduct;
 import com.lxzl.erp.common.domain.jointProduct.JointProductQueryParam;
 import com.lxzl.erp.common.domain.jointProduct.JointProductSku;
+import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.jointProduct.JointProductService;
+import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointProductMapper;
@@ -22,7 +25,6 @@ import com.lxzl.erp.dataaccess.domain.jointProduct.JointProductDO;
 import com.lxzl.erp.dataaccess.domain.jointProduct.JointProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
-import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mongo.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,7 +70,8 @@ public class JointProductServiceImpl implements JointProductService {
             for (JointProductSku jointProductSku : jointProductSkuList) {
                 ProductSkuDO productSkuDO = productSkuMapper.findById(jointProductSku.getSkuId());
                 if (productSkuDO == null) {
-                    //todo 事物回滚
+                    //事物回滚
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                     return serviceResult;
                 }
@@ -88,15 +91,17 @@ public class JointProductServiceImpl implements JointProductService {
         List<JointMaterial> jointMaterialList = jointProduct.getJointMaterialList();
         if (CollectionUtil.isNotEmpty(jointMaterialList)) {
             for (JointMaterial jointMaterial : jointMaterialList) {
-                MaterialDO materialDO = materialMapper.findById(jointMaterial.getMaterialId());
+                MaterialDO materialDO = materialMapper.findByNo(jointMaterial.getMaterialNo());
                 if (materialDO == null) {
-                    //todo 事物回滚
+                    //事物回滚
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     serviceResult.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                     return serviceResult;
                 }
                 JointMaterialDO jointMaterialDO = new JointMaterialDO();
                 jointMaterialDO.setJointProductId(jointProductDO.getId());
-                jointMaterialDO.setMaterialId(jointMaterial.getMaterialId());
+                jointMaterialDO.setMaterialId(materialDO.getId());
+                jointMaterialDO.setMaterialNo(jointMaterial.getMaterialNo());
                 jointMaterialDO.setMaterialCount(jointMaterial.getMaterialCount());
                 jointMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 jointMaterialDO.setRemark(jointProductDO.getRemark());
@@ -119,89 +124,78 @@ public class JointProductServiceImpl implements JointProductService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> updateJointProduct(JointProduct jointProduct) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult();
-        //todo 这里是否可以直接使用findDetailByJointProductId方法，后面就不用查了
-        JointProductDO jointProductDO = jointProductMapper.findById(jointProduct.getJointProductId());
+        JointProductDO jointProductDO = jointProductMapper.findDetailByJointProductId(jointProduct.getJointProductId());
         if (jointProductDO == null) {
-            serviceResult.setErrorCode(ErrorCode.JOINT_PRODUCT_ID_IS_NOT_EXISTS);
-            //todo 不需要result
-            serviceResult.setResult(jointProduct.getJointProductId());
+            serviceResult.setErrorCode(ErrorCode.JOINT_PRODUCT_NOT_EXISTS);
             return serviceResult;
         }
-        //todo 位置下移
-        Date now = new Date();
 
         if (CollectionUtil.isEmpty(jointProduct.getJointProductSkuList()) && CollectionUtil.isEmpty(jointProduct.getJointMaterialList())) {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
+        Date now = new Date();
         // 这里是跟新 erp_joint_product_sku 表
         //这是传过来的值
         List<JointProductSku> jointProductSkuList = jointProduct.getJointProductSkuList();
         //数据库查到的
-        List<JointProductSkuDO> jointProductSkuDOList = jointProductSkuMapper.findJointProductId(jointProductDO.getId());
+        List<JointProductSkuDO> jointProductSkuDOList = jointProductDO.getJointProductSkuDOList();
         //待删除列表
-        //todo 这里可以使用ListUtil的toMap方法
-        Map<Integer, JointProductSkuDO> skuDeleteMap = new HashMap<>();
+        Map<Integer, JointProductSkuDO> skuDeleteMap = ListUtil.listToMap(jointProductSkuDOList, "id");
 
         if (CollectionUtil.isNotEmpty(jointProductSkuList)) {
             //判断id是否相同
             //判断是否有重复id
-            //todo 变量名小写 ，前面的HashSet可以定义为Set
-            HashSet<Integer> SkuIdSet = new HashSet<>();
+            Set<Integer> skuIdSet = new HashSet<>();
             for (JointProductSku jointProductSku : jointProductSkuList) {
-                SkuIdSet.add(jointProductSku.getJointProductSkuId());
+                skuIdSet.add(jointProductSku.getJointProductSkuId());
             }
-            if (jointProductSkuList.size() > SkuIdSet.size()) {
-                serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_ID_REPETITION);
+            if (jointProductSkuList.size() > skuIdSet.size()) {
+                serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_CAN_NOT_REPEAT);
                 return serviceResult;
             }
-            //todo 如果在这里才放入待删除map的话，前端传入的sku列表项为空时，原数据会删不掉
-            for (JointProductSkuDO jointProductSkuDO : jointProductSkuDOList) {
-                skuDeleteMap.put(jointProductSkuDO.getId(), jointProductSkuDO);
-            }
-            //todo 为什么又判断一次
-            if (CollectionUtil.isNotEmpty(jointProduct.getJointProductSkuList())) {
-                for (JointProductSku jointProductSku : jointProductSkuList) {
-                    if (jointProductSku.getJointProductSkuId() == null) {
-                        //新增
-                        JointProductSkuDO jointProductSkuDO = new JointProductSkuDO();
-                        jointProductSkuDO.setJointProductId(jointProductDO.getId());
-                        jointProductSkuDO.setSkuId(jointProductSku.getSkuId());
-                        jointProductSkuDO.setSkuCount(jointProductSku.getSkuCount());
-                        jointProductSkuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                        jointProductSkuDO.setCreateTime(now);
-                        jointProductSkuDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                        jointProductSkuDO.setUpdateTime(now);
-                        jointProductSkuDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                        jointProductSkuMapper.save(jointProductSkuDO);
-                    } else {
-                        //更新
-                        if (skuDeleteMap.get(jointProductSku.getJointProductSkuId()) == null) {
-                            serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_ID_IS_NOT_EXISTS);
-                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                            return serviceResult;
-                        }
-                        JointProductSkuDO jointProductSkuDO = new JointProductSkuDO();
-                        jointProductSkuDO.setId(jointProductSku.getJointProductSkuId());
-                        jointProductSkuDO.setJointProductId(jointProductDO.getId());
-                        jointProductSkuDO.setSkuId(jointProductSku.getSkuId());
-                        jointProductSkuDO.setSkuCount(jointProductSku.getSkuCount());
-                        jointProductSkuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                        jointProductSkuDO.setRemark(jointProductSku.getRemark());
-                        jointProductSkuDO.setUpdateTime(now);
-                        jointProductSkuDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                        jointProductSkuMapper.update(jointProductSkuDO);
-                        skuDeleteMap.remove(jointProductSku.getJointProductSkuId());
+
+            for (JointProductSku jointProductSku : jointProductSkuList) {
+                if (jointProductSku.getJointProductSkuId() == null) {
+                    //新增
+                    JointProductSkuDO jointProductSkuDO = new JointProductSkuDO();
+                    jointProductSkuDO.setJointProductId(jointProductDO.getId());
+                    jointProductSkuDO.setSkuId(jointProductSku.getSkuId());
+                    jointProductSkuDO.setSkuCount(jointProductSku.getSkuCount());
+                    jointProductSkuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    jointProductSkuDO.setCreateTime(now);
+                    jointProductSkuDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    jointProductSkuDO.setUpdateTime(now);
+                    jointProductSkuDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    jointProductSkuMapper.save(jointProductSkuDO);
+                } else {
+                    //更新
+                    if (skuDeleteMap.get(jointProductSku.getJointProductSkuId()) == null) {
+                        serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        return serviceResult;
                     }
+                    JointProductSkuDO jointProductSkuDO = skuDeleteMap.get(jointProductSku.getJointProductSkuId());
+                    jointProductSkuDO.setId(jointProductSku.getJointProductSkuId());
+                    jointProductSkuDO.setJointProductId(jointProductDO.getId());
+                    jointProductSkuDO.setSkuId(jointProductSku.getSkuId());
+                    jointProductSkuDO.setSkuCount(jointProductSku.getSkuCount());
+                    jointProductSkuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    jointProductSkuDO.setRemark(jointProductSku.getRemark());
+                    jointProductSkuDO.setUpdateTime(now);
+                    jointProductSkuDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    jointProductSkuMapper.update(jointProductSkuDO);
+                    skuDeleteMap.remove(jointProductSku.getJointProductSkuId());
                 }
             }
         }
 
-        //todo 下面按照上面的一样改
         //这是传过来的值
         List<JointMaterial> jointMaterialList = jointProduct.getJointMaterialList();
+        //数据库值
+        List<JointMaterialDO> jointMaterialDoList = jointProductDO.getJointMaterialDOList();
         //待删除的数据
-        Map<Integer, JointMaterialDO> materialDeleteMap = new HashMap<>();
+        Map<Integer, JointMaterialDO> materialDeleteMap = ListUtil.listToMap(jointMaterialDoList, "id");
         if (CollectionUtil.isNotEmpty(jointMaterialList)) {
             //以下是处理 erp_joint_material 的数据
             //判断是否有重复id
@@ -210,21 +204,18 @@ public class JointProductServiceImpl implements JointProductService {
                 MaterialIdSet.add(jointMaterial.getJointMaterialId());
             }
             if (jointMaterialList.size() > MaterialIdSet.size()) {
-                serviceResult.setErrorCode(ErrorCode.MATERIAL_ID_REPETITION);
+                serviceResult.setErrorCode(ErrorCode.MATERIAL_CAN_NOT_REPEAT);
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 return serviceResult;
-            }
-            //数据库查到的
-            List<JointMaterialDO> jointMaterialDoList = jointMaterialMapper.findJointMaterialId(jointProductDO.getId());
-            for (JointMaterialDO jointMaterialDO : jointMaterialDoList) {
-                materialDeleteMap.put(jointMaterialDO.getId(), jointMaterialDO);
             }
             for (JointMaterial jointMaterial : jointMaterialList) {
                 if (jointMaterial.getJointMaterialId() == null) {
                     //新增
+                    MaterialDO materialDO = materialMapper.findByNo(jointMaterial.getMaterialNo());
                     JointMaterialDO jointMaterialDO = new JointMaterialDO();
                     jointMaterialDO.setJointProductId(jointProductDO.getId());
-                    jointMaterialDO.setMaterialId(jointMaterial.getMaterialId());
+                    jointMaterialDO.setMaterialId(materialDO.getId());
+                    jointMaterialDO.setMaterialNo(jointMaterial.getMaterialNo());
                     jointMaterialDO.setMaterialCount(jointMaterial.getMaterialCount());
                     jointMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                     jointMaterialDO.setCreateTime(now);
@@ -239,9 +230,9 @@ public class JointProductServiceImpl implements JointProductService {
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                         return serviceResult;
                     }
-                    JointMaterialDO jointMaterialDO = new JointMaterialDO();
+                    JointMaterialDO jointMaterialDO = materialDeleteMap.get(jointMaterial.getJointMaterialId());
                     jointMaterialDO.setId(jointMaterial.getJointMaterialId());
-                    jointMaterialDO.setMaterialId(jointMaterial.getMaterialId());
+                    jointMaterialDO.setMaterialNo(jointMaterial.getMaterialNo());
                     jointMaterialDO.setMaterialCount(jointMaterial.getMaterialCount());
                     jointMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                     jointMaterialDO.setUpdateTime(now);
@@ -287,13 +278,13 @@ public class JointProductServiceImpl implements JointProductService {
      * 删除组合商品
      */
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> deleteJointProduct(JointProduct jointProduct) {
-        //todo 没有加事物处理
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         //首先查看数据库中是否有此id
         JointProductDO jointProductDO = jointProductMapper.findById(jointProduct.getJointProductId());
         if (jointProductDO == null) {
-            serviceResult.setErrorCode(ErrorCode.JOINT_PRODUCT_ID_IS_NOT_EXISTS);
+            serviceResult.setErrorCode(ErrorCode.JOINT_PRODUCT_NOT_EXISTS);
             return serviceResult;
         }
 
@@ -328,23 +319,31 @@ public class JointProductServiceImpl implements JointProductService {
     @Override
     public ServiceResult<String, JointProduct> queryJointProductByJointProductId(Integer jointProductId) {
         ServiceResult<String, JointProduct> serviceResult = new ServiceResult<>();
-        //todo 不需要查两次，用findDetailByJointProductId方法就可以了
-        JointProductDO jointProductDOFindById = jointProductMapper.findById(jointProductId);
-        if(jointProductDOFindById.getDataStatus() != 1){
-            serviceResult.setErrorCode(ErrorCode.JOINT_PRODUCT_ID_IS_NOT_EXISTS);
-            return serviceResult;
-        }
         JointProductDO jointProductDO = jointProductMapper.findDetailByJointProductId(jointProductId);
         if (jointProductDO == null) {
             serviceResult.setErrorCode(ErrorCode.JOINT_PRODUCT_NOT_EXISTS);
+            return serviceResult;
         }
-        //todo success的赋值应该在最后
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        List<JointMaterialDO> jointMaterialDOList = jointProductDO.getJointMaterialDOList();
+        if (CollectionUtil.isNotEmpty(jointMaterialDOList)) {
+            for (JointMaterialDO jointMaterialDO : jointMaterialDOList) {
+                MaterialDO materialDO = materialMapper.findById(jointMaterialDO.getMaterialId());
+                jointMaterialDO.setMaterialDO(materialDO);
+            }
+        }
         JointProduct jointProduct = ConverterUtil.convert(jointProductDO, JointProduct.class);
-        List<JointProductSku> jointProductSkuList = ConverterUtil.convertList(jointProductDO.getJointProductSkuList(), JointProductSku.class);
-        List<JointMaterial> jointMaterialList = ConverterUtil.convertList(jointProductDO.getJointMaterialDOList(), JointMaterial.class);
-        jointProduct.setJointProductSkuList(jointProductSkuList);
-        jointProduct.setJointMaterialList(jointMaterialList);
+        List<JointProductSku> jointProductSkuList = jointProduct.getJointProductSkuList();
+        if (CollectionUtil.isNotEmpty(jointProductSkuList)) {
+            for (JointProductSku jointProductSku : jointProductSkuList) {
+                ServiceResult<String, Product> productResult = productService.queryProductBySkuId(jointProductSku.getSkuId());
+                if (!ErrorCode.SUCCESS.equals(productResult.getErrorCode())) {
+                    serviceResult.setErrorCode(productResult.getErrorCode());
+                    return serviceResult;
+                }
+                jointProductSku.setProduct(productResult.getResult());
+            }
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(jointProduct);
         return serviceResult;
     }
@@ -355,7 +354,6 @@ public class JointProductServiceImpl implements JointProductService {
     @Override
     public ServiceResult<String, Page<JointProduct>> pageJointProduct(JointProductQueryParam jointProductQueryParam) {
 
-        //todo JointProductQueryParam 类应该加入注解，仿照其他类
         ServiceResult<String, Page<JointProduct>> serviceResult = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(jointProductQueryParam.getPageNo(), jointProductQueryParam.getPageSize());
         HashMap<String, Object> maps = new HashMap<>();
@@ -389,5 +387,7 @@ public class JointProductServiceImpl implements JointProductService {
 
     @Autowired
     private MaterialMapper materialMapper;
+    @Autowired
+    private ProductService productService;
 
 }

@@ -10,4 +10,6 @@ public interface ReturnOrderProductEquipmentMapper extends BaseMysqlDAO<ReturnOr
 	List<ReturnOrderProductEquipmentDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+	List<ReturnOrderProductEquipmentDO> findByReturnOrderNo(@Param("returnOrderNo") String returnOrderNo);
 }

@@ -21,7 +21,6 @@ public class PurchaseReceiveOrderMaterialDO  extends BaseDO {
 	private String realMaterialName;
 	private String realMaterialSnapshot;
 	private Integer realMaterialCount;
-	private BigDecimal realMaterialAmount;
 	private Integer isSrc;
 	private Integer dataStatus;
 	private String remark;
@@ -152,13 +151,5 @@ public class PurchaseReceiveOrderMaterialDO  extends BaseDO {
 
 	public void setMaterialAmount(BigDecimal materialAmount) {
 		this.materialAmount = materialAmount;
-	}
-
-	public BigDecimal getRealMaterialAmount() {
-		return realMaterialAmount;
-	}
-
-	public void setRealMaterialAmount(BigDecimal realMaterialAmount) {
-		this.realMaterialAmount = realMaterialAmount;
 	}
 }

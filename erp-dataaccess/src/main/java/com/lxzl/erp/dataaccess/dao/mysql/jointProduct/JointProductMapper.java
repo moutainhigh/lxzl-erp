@@ -13,10 +13,6 @@ public interface JointProductMapper extends BaseMysqlDAO<JointProductDO> {
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
-	void delete(Integer JointProductId);
-	//查看id是否存在
-	Integer findIdCount(@Param("jointProductId") Integer jointProductId);
-
     JointProductDO findDetailByJointProductId(@Param("jointProductId")Integer jointProductId);
 	//所有的要查询的记录数
     Integer findJointProductCountByParam(@Param("maps") HashMap<String, Object> maps);

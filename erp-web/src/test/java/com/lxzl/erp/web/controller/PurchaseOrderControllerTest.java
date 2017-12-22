@@ -7,10 +7,7 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.PurchaseType;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
-import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
-import com.lxzl.erp.common.domain.purchase.PurchaseOrderCommitParam;
-import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
-import com.lxzl.erp.common.domain.purchase.PurchaseReceiveOrderQueryParam;
+import com.lxzl.erp.common.domain.purchase.*;
 import com.lxzl.erp.common.domain.purchase.pojo.*;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
@@ -882,6 +879,18 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setPurchaseNo("PO201711201619009825000051652");
         TestResult testResult = getJsonTestResult("/purchaseOrder/continuePurchaseOrder",purchaseOrder);
+    }
+    @Test
+    public void pageReceiveOrderProductEquipment() throws Exception {
+        PurchaseReceiveOrderProductEquipmentPageParam purchaseReceiveOrderProductEquipmentPageParam = new PurchaseReceiveOrderProductEquipmentPageParam();
+        purchaseReceiveOrderProductEquipmentPageParam.setPurchaseReceiveOrderProductId(128);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/pageReceiveOrderProductEquipment",purchaseReceiveOrderProductEquipmentPageParam);
+    }
+    @Test
+    public void pageReceiveOrderMaterialBulk() throws Exception {
+        PurchaseReceiveOrderMaterialBulkPageParam purchaseReceiveOrderMaterialBulkPageParam = new PurchaseReceiveOrderMaterialBulkPageParam();
+        purchaseReceiveOrderMaterialBulkPageParam.setPurchaseReceiveOrderMaterialId(20);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/pageReceiveOrderMaterialBulk",purchaseReceiveOrderMaterialBulkPageParam);
     }
     @Test
     public void test() throws Exception {

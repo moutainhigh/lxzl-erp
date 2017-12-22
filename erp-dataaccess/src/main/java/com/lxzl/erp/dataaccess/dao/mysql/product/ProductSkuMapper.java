@@ -26,7 +26,5 @@ public interface ProductSkuMapper extends BaseMysqlDAO<ProductSkuDO> {
 
     List<ProductSkuDO> findSkuRent (@Param("maps") Map<String, Object> paramMap);
     Integer findSkuRentCount (@Param("maps") Map<String, Object> paramMap);
-    //查看id是否存在
-    Integer findSkuIdCount(@Param("skuId") Integer skuId);
 
 }

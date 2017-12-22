@@ -11,8 +11,6 @@ public interface JointProductSkuMapper extends BaseMysqlDAO<JointProductSkuDO> {
 	List<JointProductSkuDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
-	//判断SKU_ID 是否存在
-    List<JointProductSkuDO> findJointProductId(@Param("jointProductId")Integer jointProductId);
 
 	Integer deleteByJointProductId(JointProductSkuDO jointProductSkuDO);
 }
