@@ -16,7 +16,6 @@ public class StockOrder implements Serializable {
 	private Integer operationType;
 	private Integer causeType;
 	private String referNo;
-	private Integer itemReferId;
 	private Integer stockOrderStatus;
 	private Integer srcWarehouseId;
 	private Integer srcWarehousePositionId;
@@ -202,13 +201,5 @@ public class StockOrder implements Serializable {
 
 	public void setTargetWarehouseName(String targetWarehouseName) {
 		this.targetWarehouseName = targetWarehouseName;
-	}
-
-	public Integer getItemReferId() {
-		return itemReferId;
-	}
-
-	public void setItemReferId(Integer itemReferId) {
-		this.itemReferId = itemReferId;
 	}
 }

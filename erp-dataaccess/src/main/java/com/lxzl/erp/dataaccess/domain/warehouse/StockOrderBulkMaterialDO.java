@@ -12,6 +12,7 @@ public class StockOrderBulkMaterialDO  extends BaseDO {
 	private String stockOrderNo;
 	private Integer bulkMaterialId;
 	private String bulkMaterialNo;
+	private Integer itemReferId;
 	private Integer dataStatus;
 	private String remark;
 
@@ -73,5 +74,13 @@ public class StockOrderBulkMaterialDO  extends BaseDO {
 
 	public void setBulkMaterialName(String bulkMaterialName) {
 		this.bulkMaterialName = bulkMaterialName;
+	}
+
+	public Integer getItemReferId() {
+		return itemReferId;
+	}
+
+	public void setItemReferId(Integer itemReferId) {
+		this.itemReferId = itemReferId;
 	}
 }

@@ -110,7 +110,7 @@
 	</update>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_deployment_order_material (id,deployment_order_id,deployment_order_no,deployment_material_id,deployment_material_unit_amount,deployment_material_amount,deployment_product_material_count,deployment_product_material_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
+		insert into erp_deployment_order_material (deployment_order_id,deployment_order_no,deployment_material_id,deployment_material_unit_amount,deployment_material_amount,deployment_product_material_count,deployment_product_material_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
 		<foreach item="deploymentOrderMaterialDO" collection="deploymentOrderMaterialDOList" separator="UNION ALL">
 			SELECT edo.id,#{deploymentOrderMaterialDO.deploymentOrderNo},#{deploymentOrderMaterialDO.deploymentMaterialId},#{deploymentOrderMaterialDO.deploymentMaterialUnitAmount},#{deploymentOrderMaterialDO.deploymentMaterialAmount},#{deploymentOrderMaterialDO.deploymentProductMaterialCount},#{deploymentOrderMaterialDO.deploymentProductMaterialSnapshot},
 			#{deploymentOrderMaterialDO.dataStatus},#{deploymentOrderMaterialDO.remark},#{deploymentOrderMaterialDO.createTime},#{deploymentOrderMaterialDO.createUser},#{deploymentOrderMaterialDO.updateTime},#{deploymentOrderMaterialDO.updateUser}

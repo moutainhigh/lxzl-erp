@@ -13,6 +13,7 @@ public class ProductInStorage implements Serializable {
     private Integer productCount;
     private List<ProductMaterial> productMaterialList;
     private Integer isNew;
+    private Integer itemReferId;
 
     public Integer getProductId() {
         return productId;
@@ -52,5 +53,13 @@ public class ProductInStorage implements Serializable {
 
     public void setIsNew(Integer isNew) {
         this.isNew = isNew;
+    }
+
+    public Integer getItemReferId() {
+        return itemReferId;
+    }
+
+    public void setItemReferId(Integer itemReferId) {
+        this.itemReferId = itemReferId;
     }
 }

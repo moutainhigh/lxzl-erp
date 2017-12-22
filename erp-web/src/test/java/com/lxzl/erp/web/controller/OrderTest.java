@@ -196,8 +196,6 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void queryAllOrder() throws Exception {
         OrderQueryParam param = new OrderQueryParam();
-        param.setOrderSellerId(500013);
-
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
 

@@ -15,6 +15,7 @@ public class MaterialInStorage implements Serializable {
     private Integer materialId;
     private Integer materialCount;
     private Integer isNew;
+    private Integer itemReferId;
 
     public Integer getMaterialId() {
         return materialId;
@@ -38,5 +39,13 @@ public class MaterialInStorage implements Serializable {
 
     public void setIsNew(Integer isNew) {
         this.isNew = isNew;
+    }
+
+    public Integer getItemReferId() {
+        return itemReferId;
+    }
+
+    public void setItemReferId(Integer itemReferId) {
+        this.itemReferId = itemReferId;
     }
 }

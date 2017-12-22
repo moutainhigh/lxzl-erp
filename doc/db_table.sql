@@ -895,7 +895,6 @@ CREATE TABLE `erp_stock_order` (
   `operation_type` int(11) NOT NULL COMMENT '操作类型，1入库，2出库',
   `cause_type` int(11) NOT NULL COMMENT '起因类型，1采购入库，2退货回库，3维修回库，4用户租赁',
   `refer_no` varchar(100) NOT NULL COMMENT '关联单号',
-  `item_refer_id` int(11) COMMENT '关联项ID',
   `stock_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '出入库单状态，1未出库，2已出库',
   `src_warehouse_id` int(20) COMMENT '源仓库ID',
   `src_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '源仓位ID',
@@ -916,6 +915,7 @@ DROP TABLE if exists `erp_stock_order_equipment`;
 CREATE TABLE `erp_stock_order_equipment` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `stock_order_no` varchar(100) NOT NULL COMMENT '出入库单编号',
+  `item_refer_id` int(11) COMMENT '关联项ID',
   `equipment_id` int(20) NOT NULL COMMENT '设备ID',
   `equipment_no` varchar(100) NOT NULL COMMENT '设备编号唯一',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -931,6 +931,7 @@ DROP TABLE if exists `erp_stock_order_bulk_material`;
 CREATE TABLE `erp_stock_order_bulk_material` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `stock_order_no` varchar(100) NOT NULL COMMENT '出入库单编号',
+  `item_refer_id` int(11) COMMENT '关联项ID',
   `bulk_material_id` int(20) NOT NULL COMMENT '散料ID',
   `bulk_material_no` varchar(100) NOT NULL COMMENT '散料编号唯一',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',

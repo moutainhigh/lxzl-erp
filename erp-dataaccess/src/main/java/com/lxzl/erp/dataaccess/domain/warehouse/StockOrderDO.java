@@ -14,7 +14,6 @@ public class StockOrderDO  extends BaseDO {
 	private Integer operationType;
 	private Integer causeType;
 	private String referNo;
-	private Integer itemReferId;
 	private Integer stockOrderStatus;
 	private Integer srcWarehouseId;
 	private Integer srcWarehousePositionId;
@@ -168,11 +167,4 @@ public class StockOrderDO  extends BaseDO {
 		this.targetWarehouseName = targetWarehouseName;
 	}
 
-	public Integer getItemReferId() {
-		return itemReferId;
-	}
-
-	public void setItemReferId(Integer itemReferId) {
-		this.itemReferId = itemReferId;
-	}
 }

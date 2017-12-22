@@ -5,6 +5,7 @@
 	<resultMap id="StockOrderEquipmentDO" type="com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="stock_order_no" jdbcType="VARCHAR" property="stockOrderNo" />
+		<result column="item_refer_id" jdbcType="INTEGER" property="itemReferId" />
 		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
 		<result column="equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -16,7 +17,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		esoe.id,esoe.stock_order_no,esoe.equipment_id,esoe.equipment_no,esoe.data_status,esoe.remark,esoe.create_time,esoe.create_user,esoe.update_time,esoe.update_user
+		esoe.id,esoe.stock_order_no,esoe.item_refer_id,esoe.equipment_id,esoe.equipment_no,esoe.data_status,esoe.remark,esoe.create_time,esoe.create_user,esoe.update_time,esoe.update_user
 	</sql>
 
 	<select id="findById" resultMap="StockOrderEquipmentDO" parameterType="java.lang.Integer">
@@ -47,6 +48,9 @@
 		<set>
 			<if test="stockOrderNo != null">
 				stock_order_no = #{stockOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="itemReferId != null">
+				item_refer_id = #{itemReferId,jdbcType=INTEGER},
 			</if>
 			<if test="equipmentId != null">
 				equipment_id = #{equipmentId,jdbcType=INTEGER},
@@ -80,9 +84,9 @@
 	</insert>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_stock_order_equipment (stock_order_no, equipment_id, equipment_no, data_status, remark, create_time, create_user, update_time, update_user)
+		insert into erp_stock_order_equipment (stock_order_no,item_refer_id, equipment_id, equipment_no, data_status, remark, create_time, create_user, update_time, update_user)
 		<foreach item="stockOrderEquipmentDO" collection="stockOrderEquipmentDOList" separator="UNION ALL">
-			SELECT #{stockOrderEquipmentDO.stockOrderNo},epe.id,#{stockOrderEquipmentDO.equipmentNo},#{stockOrderEquipmentDO.dataStatus},#{stockOrderEquipmentDO.remark},
+			SELECT #{stockOrderEquipmentDO.stockOrderNo},#{stockOrderEquipmentDO.itemReferId},epe.id,#{stockOrderEquipmentDO.equipmentNo},#{stockOrderEquipmentDO.dataStatus},#{stockOrderEquipmentDO.remark},
 			#{stockOrderEquipmentDO.createTime},#{stockOrderEquipmentDO.createUser},#{stockOrderEquipmentDO.updateTime},#{stockOrderEquipmentDO.updateUser}
 			FROM erp_product_equipment epe WHERE epe.equipment_no = #{stockOrderEquipmentDO.equipmentNo}
 		</foreach>

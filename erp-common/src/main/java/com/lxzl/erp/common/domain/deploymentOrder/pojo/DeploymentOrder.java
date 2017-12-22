@@ -35,6 +35,8 @@ public class DeploymentOrder implements Serializable {
 	private List<DeploymentOrderMaterial> deploymentOrderMaterialList;
 
 	private Integer verifyUser;
+	private String srcWarehouseName;
+	private String targetWarehouseName;
 
 
 	public Integer getDeploymentOrderId(){
@@ -227,5 +229,21 @@ public class DeploymentOrder implements Serializable {
 
 	public void setVerifyUser(Integer verifyUser) {
 		this.verifyUser = verifyUser;
+	}
+
+	public String getSrcWarehouseName() {
+		return srcWarehouseName;
+	}
+
+	public void setSrcWarehouseName(String srcWarehouseName) {
+		this.srcWarehouseName = srcWarehouseName;
+	}
+
+	public String getTargetWarehouseName() {
+		return targetWarehouseName;
+	}
+
+	public void setTargetWarehouseName(String targetWarehouseName) {
+		this.targetWarehouseName = targetWarehouseName;
 	}
 }

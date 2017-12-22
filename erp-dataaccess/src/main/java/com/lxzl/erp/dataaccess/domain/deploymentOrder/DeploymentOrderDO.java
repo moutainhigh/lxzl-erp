@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.deploymentOrder;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 import java.math.BigDecimal;
 import java.util.List;
@@ -27,6 +29,11 @@ public class DeploymentOrderDO  extends BaseDO {
 
 	private List<DeploymentOrderProductDO> deploymentOrderProductDOList;
 	private List<DeploymentOrderMaterialDO> deploymentOrderMaterialDOList;
+
+	@Transient
+	private String srcWarehouseName;
+	@Transient
+	private String targetWarehouseName;
 
 
 	public Integer getId(){
@@ -179,5 +186,21 @@ public class DeploymentOrderDO  extends BaseDO {
 
 	public void setDeploymentOrderProductDOList(List<DeploymentOrderProductDO> deploymentOrderProductDOList) {
 		this.deploymentOrderProductDOList = deploymentOrderProductDOList;
+	}
+
+	public String getSrcWarehouseName() {
+		return srcWarehouseName;
+	}
+
+	public void setSrcWarehouseName(String srcWarehouseName) {
+		this.srcWarehouseName = srcWarehouseName;
+	}
+
+	public String getTargetWarehouseName() {
+		return targetWarehouseName;
+	}
+
+	public void setTargetWarehouseName(String targetWarehouseName) {
+		this.targetWarehouseName = targetWarehouseName;
 	}
 }

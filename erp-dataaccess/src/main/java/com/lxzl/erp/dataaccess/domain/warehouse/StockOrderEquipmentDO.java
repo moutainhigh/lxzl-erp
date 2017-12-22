@@ -10,6 +10,7 @@ public class StockOrderEquipmentDO  extends BaseDO {
 
 	private Integer id;
 	private String stockOrderNo;
+	private Integer itemReferId;
 	private Integer equipmentId;
 	private String equipmentNo;
 	private Integer dataStatus;
@@ -102,5 +103,13 @@ public class StockOrderEquipmentDO  extends BaseDO {
 
 	public void setProductSkuName(String productSkuName) {
 		this.productSkuName = productSkuName;
+	}
+
+	public Integer getItemReferId() {
+		return itemReferId;
+	}
+
+	public void setItemReferId(Integer itemReferId) {
+		this.itemReferId = itemReferId;
 	}
 }

@@ -7,8 +7,10 @@
 		<result column="deployment_order_no" jdbcType="VARCHAR" property="deploymentOrderNo" />
 		<result column="deployment_type" jdbcType="INTEGER" property="deploymentType" />
 		<result column="src_warehouse_id" jdbcType="INTEGER" property="srcWarehouseId" />
+		<result column="src_warehouse_name" jdbcType="VARCHAR" property="srcWarehouseName" />
 		<result column="src_warehouse_position_id" jdbcType="INTEGER" property="srcWarehousePositionId" />
 		<result column="target_warehouse_id" jdbcType="INTEGER" property="targetWarehouseId" />
+		<result column="target_warehouse_name" jdbcType="VARCHAR" property="targetWarehouseName" />
 		<result column="target_warehouse_position_id" jdbcType="INTEGER" property="targetWarehousePositionId" />
 		<result column="deployment_order_status" jdbcType="INTEGER" property="deploymentOrderStatus" />
 		<result column="total_product_count" jdbcType="INTEGER" property="totalProductCount" />
@@ -83,7 +85,13 @@
 			<include refid="material_column_List" />
 		</trim>
 		FROM (
-			SELECT <include refid="column_List"/> FROM erp_deployment_order edo
+			SELECT <include refid="column_List"/>
+			<trim prefix=",">
+				ews.warehouse_name AS src_warehouse_name, ewt.warehouse_name AS target_warehouse_name
+			</trim>
+			FROM erp_deployment_order edo
+			LEFT JOIN erp_warehouse ews ON ews.id = edo.src_warehouse_id AND ews.data_status = 1
+			LEFT JOIN erp_warehouse ewt ON ewt.id = edo.target_warehouse_id AND ewt.data_status = 1
 			WHERE edo.id = #{id, jdbcType=INTEGER} AND edo.data_status = 1
 		) deployment_order_main LEFT  JOIN erp_deployment_order_product edop ON edop.deployment_order_id = deployment_order_main.id AND edop.data_status = 1
 		LEFT  JOIN erp_deployment_order_material edom ON edom.deployment_order_id = deployment_order_main.id AND edom.data_status = 1
@@ -98,7 +106,13 @@
 			<include refid="material_column_List" />
 		</trim>
 		FROM (
-			SELECT <include refid="column_List"/> FROM erp_deployment_order edo
+			SELECT <include refid="column_List"/>
+			<trim prefix=",">
+				ews.warehouse_name AS src_warehouse_name, ewt.warehouse_name AS target_warehouse_name
+			</trim>
+			FROM erp_deployment_order edo
+			LEFT JOIN erp_warehouse ews ON ews.id = edo.src_warehouse_id AND ews.data_status = 1
+			LEFT JOIN erp_warehouse ewt ON ewt.id = edo.target_warehouse_id AND ewt.data_status = 1
 			WHERE edo.deployment_order_no = #{deploymentOrderNo, jdbcType=VARCHAR} AND edo.data_status = 1
 		) deployment_order_main LEFT  JOIN erp_deployment_order_product edop ON edop.deployment_order_id = deployment_order_main.id AND edop.data_status = 1
 		LEFT  JOIN erp_deployment_order_material edom ON edom.deployment_order_id = deployment_order_main.id AND edom.data_status = 1
@@ -139,7 +153,13 @@
 			<include refid="material_column_List" />
 		</trim>
 		FROM (
-			SELECT <include refid="column_List"/> FROM erp_deployment_order edo
+			SELECT <include refid="column_List"/>
+			<trim prefix=",">
+				ews.warehouse_name AS src_warehouse_name, ewt.warehouse_name AS target_warehouse_name
+			</trim>
+			FROM erp_deployment_order edo
+			LEFT JOIN erp_warehouse ews ON ews.id = edo.src_warehouse_id AND ews.data_status = 1
+			LEFT JOIN erp_warehouse ewt ON ewt.id = edo.target_warehouse_id AND ewt.data_status = 1
 			<where>
 				<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderId != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderId != ''">
 					and edo.id = #{maps.deploymentOrderQueryParam.deploymentOrderId, jdbcType=INTEGER}

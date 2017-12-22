@@ -5,6 +5,7 @@
 	<resultMap id="StockOrderBulkMaterialDO" type="com.lxzl.erp.dataaccess.domain.warehouse.StockOrderBulkMaterialDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="stock_order_no" jdbcType="VARCHAR" property="stockOrderNo" />
+		<result column="item_refer_id" jdbcType="INTEGER" property="itemReferId" />
 		<result column="bulk_material_id" jdbcType="INTEGER" property="bulkMaterialId" />
 		<result column="bulk_material_no" jdbcType="VARCHAR" property="bulkMaterialNo" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -16,7 +17,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		esobm.id,esobm.stock_order_no,esobm.bulk_material_id,esobm.bulk_material_no,esobm.data_status,esobm.remark,esobm.create_time,esobm.create_user,esobm.update_time,esobm.update_user
+		esobm.id,esobm.stock_order_no,esobm.item_refer_id,esobm.bulk_material_id,esobm.bulk_material_no,esobm.data_status,esobm.remark,esobm.create_time,esobm.create_user,esobm.update_time,esobm.update_user
 	</sql>
 
 	<select id="findById" resultMap="StockOrderBulkMaterialDO" parameterType="java.lang.Integer">
@@ -47,6 +48,9 @@
 		<set>
 			<if test="stockOrderNo != null">
 				stock_order_no = #{stockOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="itemReferId != null">
+				item_refer_id = #{itemReferId,jdbcType=INTEGER},
 			</if>
 			<if test="bulkMaterialId != null">
 				bulk_material_id = #{bulkMaterialId,jdbcType=INTEGER},
@@ -85,9 +89,9 @@
 
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_stock_order_bulk_material (stock_order_no, bulk_material_id, bulk_material_no, data_status, remark, create_time, create_user, update_time, update_user)
+		insert into erp_stock_order_bulk_material (stock_order_no,item_refer_id, bulk_material_id, bulk_material_no, data_status, remark, create_time, create_user, update_time, update_user)
 		<foreach item="stockOrderBulkMaterialDO" collection="stockOrderBulkMaterialDOList" separator="UNION ALL">
-			SELECT #{stockOrderBulkMaterialDO.stockOrderNo},ebm.id,ebm.bulk_material_no,#{stockOrderBulkMaterialDO.dataStatus},#{stockOrderBulkMaterialDO.remark},
+			SELECT #{stockOrderBulkMaterialDO.stockOrderNo},#{stockOrderBulkMaterialDO.itemReferId},ebm.id,ebm.bulk_material_no,#{stockOrderBulkMaterialDO.dataStatus},#{stockOrderBulkMaterialDO.remark},
 			#{stockOrderBulkMaterialDO.createTime},#{stockOrderBulkMaterialDO.createUser},#{stockOrderBulkMaterialDO.updateTime},#{stockOrderBulkMaterialDO.updateUser}
 			FROM erp_bulk_material ebm WHERE ebm.bulk_material_no = #{stockOrderBulkMaterialDO.bulkMaterialNo} OR ebm.id = #{stockOrderBulkMaterialDO.bulkMaterialId}
 		</foreach>
