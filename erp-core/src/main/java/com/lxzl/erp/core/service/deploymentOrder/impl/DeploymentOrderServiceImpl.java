@@ -563,6 +563,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             deploymentOrderProductEquipmentDO.setDeploymentOrderProductId(deploymentOrderProductDO.getId());
             deploymentOrderProductEquipmentDO.setEquipmentId(productEquipmentDO.getId());
             deploymentOrderProductEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
+            deploymentOrderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             deploymentOrderProductEquipmentDO.setCreateUser(loginUserId.toString());
             deploymentOrderProductEquipmentDO.setUpdateUser(loginUserId.toString());
             deploymentOrderProductEquipmentDO.setCreateTime(currentTime);
@@ -615,6 +616,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                 deploymentOrderMaterialBulkDO.setDeploymentOrderMaterialId(deploymentOrderMaterialDO.getId());
                 deploymentOrderMaterialBulkDO.setBulkMaterialId(bulkMaterialDO.getId());
                 deploymentOrderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
+                deploymentOrderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 deploymentOrderMaterialBulkDO.setCreateUser(loginUserId.toString());
                 deploymentOrderMaterialBulkDO.setUpdateUser(loginUserId.toString());
                 deploymentOrderMaterialBulkDO.setCreateTime(currentTime);

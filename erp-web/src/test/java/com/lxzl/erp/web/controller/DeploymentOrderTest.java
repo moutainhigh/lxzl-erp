@@ -90,10 +90,12 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void testProcessJson() throws Exception{
-        String str = "{\n" +
-                "  \"operationType\": 1,\n" +
+        String str = "\n" +
+                "{\n" +
+                "  \"operationType\": 2,\n" +
                 "  \"deploymentOrderNo\": \"DO201712221016337151726\",\n" +
-                "  \"equipmentNo\": \"LX-EQUIPMENT-4000002-2017121810001\"\n" +
+                "  \"materialId\": 23,\n" +
+                "  \"materialCount\": \"1\"\n" +
                 "}";
         ProcessDeploymentOrderParam processDeploymentOrderParam = JSONUtil.convertJSONToBean(str, ProcessDeploymentOrderParam.class);
         TestResult testResult = getJsonTestResult("/deploymentOrder/process", processDeploymentOrderParam);
@@ -120,7 +122,7 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
     @Test
     public void testQueryDetailDeploymentOrder() throws Exception {
         DeploymentOrder deploymentOrder = new DeploymentOrder();
-        deploymentOrder.setDeploymentOrderNo("DO201712011137331391559");
+        deploymentOrder.setDeploymentOrderNo("DO201712221016337151726");
         TestResult testResult = getJsonTestResult("/deploymentOrder/queryDetail", deploymentOrder);
     }
 }
