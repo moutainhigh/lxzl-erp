@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-调拨单管理-调拨单列表-调拨单详细</title>
+    #parse("layout/header.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+            <form class="" id="editDeploymentOrderForm">
+                <div class="panel panel-primary panel-border top mb35">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>调拨单编号：<small id="deploymentOrderNo"></small></h5>
+                            </div>
+                            <div class="col-md-8 text-right">
+                                <script type="text/html" id="actionButtonsTpl">
+                                    {{#acitonButtons}}
+                                    {{#showButton}}
+                                    <a href="${ctx}{{menuUrl}}?no={{no}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">{{text}}</a>
+                                    {{/showButton}}
+                                    {{/acitonButtons}}
+                                </script>
+                                <div class="btn-group" id="actionButtons"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script type="text/html" id="orderBaseInfoTpl">
+                        {{#data}}
+                        <div class="form-horizontal panel-body bg-light dark br-t-n">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group field">
+                                        <div class="form-group field mbn">
+                                            <label class="col-md-3 control-label">状态</label>
+                                            <div class="col-md-9">
+                                                <p class="form-control-static text-muted">{{deploymentOrderStatusValue}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group field">
+                                        <div class="form-group field mbn">
+                                            <label class="col-md-3 control-label">调拨类型</label>
+                                            <div class="col-md-9">
+                                                <p class="form-control-static text-muted">{{deploymentTypeValue}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group field">
+                                        <label class="col-md-3 control-label">源库房</label>
+                                        <div class="col-md-9">
+                                            <div class="input-group bringContainer">
+                                                <p class="form-control-static text-muted">{{srcWarehouseName}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group field">
+                                        <label class="col-md-3 control-label">目标库房</label>
+                                        <div class="col-md-9">
+                                            <div class="input-group bringContainer">
+                                                <p class="form-control-static text-muted">{{srcWarehouseName}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group field">
+                                        <label class="col-md-3 control-label">调拨日期</label>
+                                        <div class="col-md-9">
+                                            <div class="input-group date" id="expectReturnTime">
+                                                <p class="form-control-static text-muted">{{#time}}{{expectReturnTime}}{{/time}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+
+                                    <div class="form-group field">
+                                        <div class="form-group field mbn">
+                                            <label class="col-md-3 control-label">商品总数</label>
+                                            <div class="col-md-9">
+                                                <p class="form-control-static text-muted">{{totalProductCount}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group field">
+                                        <div class="form-group field mbn">
+                                            <label class="col-md-3 control-label">商品总价</label>
+                                            <div class="col-md-9">
+                                                <p class="form-control-static text-muted">{{#price}}{{totalProductAmount}}{{/price}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group field">
+                                        <div class="form-group field mbn">
+                                            <label class="col-md-3 control-label">物料总数</label>
+                                            <div class="col-md-9">
+                                                <p class="form-control-static text-muted">{{totalMaterialCount}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group field">
+                                        <div class="form-group field mbn">
+                                            <label class="col-md-3 control-label">物料总价</label>
+                                            <div class="col-md-9">
+                                                <p class="form-control-static text-muted">{{#price}}{{totalMaterialAmount}}{{/price}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group field">
+                                        <div class="form-group field mbn">
+                                            <label class="col-md-3 control-label">订单总价</label>
+                                            <div class="col-md-9">
+                                                <p class="form-control-static text-muted">{{#price}}{{totalOrderAmount}}{{/price}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group field">
+                                        <div class="form-group field mbn">
+                                            <label class="col-md-3 control-label">优惠金额</label>
+                                            <div class="col-md-9">
+                                                <p class="form-control-static text-muted">{{#price}}{{totalDiscountAmount}}{{/price}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{/data}}
+                    </script>
+
+                    <div id="orderBaseInfo"></div>
+
+                    <div class="panel-heading">
+                        <div class="row">
+                            <ul class="nav panel-tabs-border panel-tabs">
+                                <li class="active">
+                                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
+                                </li>
+                                <li>
+                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">物料项</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="panel-body dark pn">
+                        <div class="tab-content pn br-n">
+                            <div id="purchaseOrderProductItems" class="tab-pane active">
+                                <div class="panel-menu p12 br-n br-b">
+                                    <div class="row">
+                                        <div class="pull-left ml10">
+                                            <script type="text/html" id="stockUpProductButtonsTpl">
+                                                {{#acitonButtons}}
+                                                {{#showButton}}
+                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">{{text}}</a>
+                                                {{/showButton}}
+                                                {{/acitonButtons}}
+                                            </script>
+                                            <div class="btn-group actionCommonButtons" id="stockUpProductButtons"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <script type="text/html" id="dataListTpl">
+                                        <thead>
+                                        <tr class="bg-light">
+##                                            <th>
+##                                                <label class="option block mn">
+##                                                    <input type="checkbox" name="checkAll" value="">
+##                                                    <span class="checkbox mn"></span>
+##                                                </label>
+##                                            </th>
+                                            <th>商品ID</th>
+                                            <th>图片</th>
+                                            <th>商品名称</th>
+                                            <th>列表价格</th>
+                                            <th>SKU</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr class="productRow" productRowKey="{{productId}}">
+##                                            <td>
+##                                                <label class="option block mn">
+##                                                    <input type="checkbox" name="checkItem" value="{{productId}}">
+##                                                    <span class="checkbox mn"></span>
+##                                                </label>
+##                                            </td>
+                                            <td>{{productId}}</td>
+                                            <td>
+                                                <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
+                                            </td>
+                                            <td>{{productName}}</td>
+                                            <td class="br-r">{{listPriceFixed}}</td>
+                                            <td class="pn">
+                                                <table class="table">
+                                                    {{#chooseSkuList}}
+                                                    {{#skuList}}
+                                                    <tr class="skuRow">
+                                                        <td>{{propertiesToStr}}</td>
+                                                        <td class="productUnitAmountTd">
+                                                            调拨单价：{{deploymentProductUnitAmount}}
+                                                        </td>
+                                                        <td>
+                                                            <label class="field prepend-icon">
+                                                                调拨数量：{{deploymentProductSkuCount}}
+                                                            </label>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <div class="btn-group text-right">
+                                                                <a href="#" type="button" class="btn btn-default btn-xs viewAffix" >查看配货信息</a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="bg-light affixTr" style="height: 0;">
+                                                        <td colspan="8" class="pn br-n" style="height:0;">
+                                                            <div class="panel m15 affixPanel"  style="display: none;">
+                                                                <div class="panel-heading pn ph8">
+                                                                    <span>已备设备：设备编号列表</span>
+                                                                </div>
+                                                                <div class="panel-body pn">
+                                                                    <table class="table">
+                                                                        {{#deploymentOrderProductEquipmentList}}
+                                                                        <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
+                                                                            <td class="br-r">{{equipmentNo}}</td>
+                                                                        </tr>
+                                                                        {{/deploymentOrderProductEquipmentList}}
+                                                                        {{^deploymentOrderProductEquipmentList}}
+                                                                        <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
+                                                                            <td class="br-r">无备货信息</td>
+                                                                        </tr>
+                                                                        {{/deploymentOrderProductEquipmentList}}
+                                                                    </table>
+                                                                </div>
+                                                                <div class="panel-footer pn pv5 ph15">
+                                                                    <div class="row">
+                                                                        <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {{/skuList}}
+                                                    {{/chooseSkuList}}
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">没有选择商品</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                                </div>
+                            </div>
+                            <div id="purchaseOrderMaterialItems" class="tab-pane">
+                                <div class="table-responsive">
+                                    <script type="text/html" id="materialDataListTpl">
+                                        <thead>
+                                        <tr>
+                                            <th>编号</th>
+                                            <th>名称</th>
+                                            <th>类型</th>
+                                            <th>本身价值</th>
+                                            <th>租赁价格</th>
+                                            <th>描述</th>
+                                            <th>图片</th>
+                                            <th>调拨物料单价</th>
+                                            <th>调拨数量</th>
+                                            <th class="text-right">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr class="materialRow">
+                                            <td>{{materialNo}}</td>
+                                            <td>{{materialName}}</td>
+                                            <td>{{materialTypeStr}}</td>
+                                            <td>{{materialPriceFormat}}</td>
+                                            <td>
+                                                <p>日租：￥{{dayRentPriceFormat}}</p>
+                                                <p>月租：￥{{monthRentPriceFormat}}</p>
+                                            </td>
+                                            <td>{{materialDesc}}</td>
+                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                                            <td class="materialUnitAmountTd">
+                                                调拨单价：{{deploymentMaterialUnitAmount}}
+                                            </td>
+                                            <td>
+                                                <label class="field prepend-icon">
+                                                    调拨数量：{{deploymentProductMaterialCount}}
+                                                </label>
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="btn-group text-right">
+                                                    {{#rowActionButtons}}
+                                                    <a href="#" type="button" class="btn btn-default btn-xs {{class}}" data-materialno="{{materialNo}}" data-materialid="{{materialId}}" data-no="{{no}}" data-materialcount="{{deploymentProductMaterialCount}}">{{text}}</a>
+                                                    {{/rowActionButtons}}
+                                                    <a href="#" type="button" class="btn btn-default btn-xs viewAffix" >查看配货信息</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bg-light affixTr" style="height: 0;">
+                                            <td colspan="14" class="pn br-n" style="height:0;">
+                                                <div class="panel m15 affixPanel"  style="display: none;">
+                                                    <div class="panel-heading pn ph8">
+                                                        <span>已备散料：散料编号列表</span>
+                                                    </div>
+                                                    <div class="panel-body pn">
+                                                        <table class="table">
+                                                            {{#deploymentOrderMaterialBulkList}}
+                                                            <tr>
+                                                                <td class="br-r">{{bulkMaterialNo}}</td>
+                                                            </tr>
+                                                            {{/deploymentOrderMaterialBulkList}}
+                                                            {{^deploymentOrderMaterialBulkList}}
+                                                            <tr>
+                                                                <td class="br-r">无备货信息</td>
+                                                            </tr>
+                                                            {{/deploymentOrderMaterialBulkList}}
+                                                        </table>
+                                                    </div>
+                                                    <div class="panel-footer pn pv5 ph15">
+                                                        <div class="row">
+                                                            <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">没有选择配件</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialDataListTable"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer clearfix">
+                        <button class="btn btn-default pull-right ml15 goback">返回</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js',
+            'manage.deployment.order.handle.mixin.js',
+            'manage.deployment.order.mixin.js',
+            'manage.deployment.order.detail.js',
+            'manage.order.item.render.js',
+            'manage.order.util.js',
+            'modal.submit.audit.js',
+            'manage.order.picking.js',
+            'modal.input.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    DeploymentOrderDetails.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+</script>
+
+</body>
+</html>

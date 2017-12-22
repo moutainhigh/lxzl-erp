@@ -416,6 +416,10 @@ public class PageController extends BaseController {
     public String deploymentOrderManageDetail() {
         return "/deploymentOrderManage/deploymentOrderDetail";
     }
+    @RequestMapping("/order-deployment-manage/stock-up-material-modal")
+    public String deploymentOrderManageStockUpMaterialModal() {
+        return "/component/deploymentOrder/stockUpMaterialModal.vm";
+    }
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")

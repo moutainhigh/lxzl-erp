@@ -262,18 +262,13 @@
                                                                 </div>
                                                                 <div class="panel-body pn">
                                                                     <table class="table">
-##                                                                        <thead>
-##                                                                            <tr>
-##                                                                                <th>设备号</th>
-##                                                                            </tr>
-##                                                                        </thead>
                                                                         {{#orderProductEquipmentList}}
-                                                                        <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
+                                                                        <tr>
                                                                             <td class="br-r">{{equipmentNo}}</td>
                                                                         </tr>
                                                                         {{/orderProductEquipmentList}}
                                                                         {{^orderProductEquipmentList}}
-                                                                        <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
+                                                                        <tr>
                                                                             <td class="br-r">无配货信息</td>
                                                                         </tr>
                                                                         {{/orderProductEquipmentList}}

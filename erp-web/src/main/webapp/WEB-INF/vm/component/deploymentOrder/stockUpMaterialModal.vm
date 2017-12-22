@@ -1,4 +1,4 @@
-<div id="inputPickingModal" class="popup-basic admin-form mfp-with-anim">
+<div id="stockUpMaterial" class="popup-basic admin-form mfp-with-anim">
     <div class="panel">
         <div class="panel-heading">
             <span class="panel-title"><i class="fa fa-pencil"></i><span class="modalTitle"></span></span>
