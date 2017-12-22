@@ -19,9 +19,9 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class JointProduct implements Serializable {
-    @NotNull(message = ErrorCode.JOINT_PRODUCT_ID_IS_NOT_NULL ,groups = {UpdateGroup.class,IdGroup.class})
+    @NotNull(message = ErrorCode.JOINT_PRODUCT_ID_IS_NULL ,groups = {UpdateGroup.class,IdGroup.class})
     private Integer jointProductId;   //唯一标识
-    @NotBlank(message = ErrorCode.JOINT_PRODUCT_NAME_IS_NOT_NULL, groups = {AddGroup.class,UpdateGroup.class})
+    @NotBlank(message = ErrorCode.JOINT_PRODUCT_NAME_IS_NULL, groups = {AddGroup.class,UpdateGroup.class})
     private String jointProductName;   //组合商品名称
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注

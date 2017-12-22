@@ -1,7 +1,6 @@
 package com.lxzl.erp.dataaccess.domain.jointProduct;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import java.util.Date;
 
 
 public class JointProductSkuDO  extends BaseDO {

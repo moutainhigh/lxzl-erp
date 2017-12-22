@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.domain.jointProduct;
 
+import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import java.util.Date;
 
@@ -12,6 +13,25 @@ public class JointMaterialDO  extends BaseDO {
 	private Integer materialCount;
 	private Integer dataStatus;
 	private String remark;
+	private String materialNo;   //物料编号
+
+	private MaterialDO materialDO;
+
+	public String getMaterialNo() {
+		return materialNo;
+	}
+
+	public void setMaterialNo(String materialNo) {
+		this.materialNo = materialNo;
+	}
+
+	public MaterialDO getMaterialDO() {
+		return materialDO;
+	}
+
+	public void setMaterialDO(MaterialDO materialDO) {
+		this.materialDO = materialDO;
+	}
 
 	public Integer getId(){
 		return id;
