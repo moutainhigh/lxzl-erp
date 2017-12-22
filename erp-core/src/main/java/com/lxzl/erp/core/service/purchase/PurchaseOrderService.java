@@ -2,6 +2,8 @@ package com.lxzl.erp.core.service.purchase;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
+import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.purchase.*;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseDeliveryOrder;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
@@ -39,5 +41,9 @@ public interface PurchaseOrderService extends VerifyReceiver {
 
     ServiceResult<String, String> continuePurchaseOrder(PurchaseOrder purchaseOrder);
 
-    ServiceResult<String, String> updatePurchaseReceiveOrderRealPrice(UpdatePurchaseReceiveOrderRealPriceParam updatePurchaseReceiveOrderRealPriceParam);
+    ServiceResult<String, String> updatePurchaseReceiveOrderPrice(UpdatePurchaseReceiveOrderPriceParam updatePurchaseReceiveOrderPriceParam);
+
+    ServiceResult<String, Page<ProductEquipment>> pageReceiveOrderProductEquipment(PurchaseReceiveOrderProductEquipmentPageParam purchaseReceiveOrderProductEquipmentPageParam);
+
+    ServiceResult<String, Page<BulkMaterial>> pageReceiveOrderMaterialBulk(PurchaseReceiveOrderMaterialBulkPageParam purchaseReceiveOrderMaterialBulkPageParam);
 }

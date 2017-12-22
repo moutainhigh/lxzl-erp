@@ -12,12 +12,8 @@ import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.domain.purchase.*;
 import com.lxzl.erp.common.domain.purchase.pojo.*;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
-import com.lxzl.erp.common.domain.warehouse.pojo.StockOrder;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
-import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.GenerateNoUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.MaterialConverter;
@@ -36,8 +32,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.*;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderBulkMaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
@@ -1099,7 +1093,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 autoPurchaseReceiveOrderProductDO.setRealProductName(purchaseReceiveOrderProductDO.getRealProductName());
                 autoPurchaseReceiveOrderProductDO.setRealProductSkuId(purchaseReceiveOrderProductDO.getRealProductSkuId());
                 autoPurchaseReceiveOrderProductDO.setRealProductSnapshot(purchaseReceiveOrderProductDO.getRealProductSnapshot());
-                autoPurchaseReceiveOrderProductDO.setRealProductAmount(purchaseReceiveOrderProductDO.getRealProductAmount());
                 autoPurchaseReceiveOrderProductDO.setUpdateTime(now);
                 autoPurchaseReceiveOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 autoPurchaseReceiveOrderProductDO.setDataStatus(purchaseReceiveOrderProductDO.getDataStatus());
@@ -1129,7 +1122,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 purchaseReceiveOrderMaterialDO.setRealMaterialId(purchaseReceiveOrderMaterialDO.getRealMaterialId());
                 purchaseReceiveOrderMaterialDO.setRealMaterialName(purchaseReceiveOrderMaterialDO.getRealMaterialName());
                 purchaseReceiveOrderMaterialDO.setRealMaterialSnapshot(purchaseReceiveOrderMaterialDO.getRealMaterialSnapshot());
-                purchaseReceiveOrderMaterialDO.setRealMaterialAmount(purchaseReceiveOrderMaterialDO.getRealMaterialAmount());
                 purchaseReceiveOrderMaterialDO.setUpdateTime(now);
                 purchaseReceiveOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 purchaseReceiveOrderMaterialDO.setDataStatus(purchaseReceiveOrderMaterialDO.getDataStatus());
@@ -1310,18 +1302,18 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findByPurchaseOrderNo(purchaseOrderDO.getPurchaseNo());
 
         //全部收料定价后，才可结束
-        if(CollectionUtil.isNotEmpty(productEquipmentDOList)){
-            for(ProductEquipmentDO productEquipmentDO : productEquipmentDOList){
-                if(productEquipmentDO.getPurchasePrice()==null){
-                    serviceResult.setErrorCode(ErrorCode.EQUIPMENT_PURCHASE_PRICE_NOT_NULL,productEquipmentDO.getEquipmentNo());
+        if (CollectionUtil.isNotEmpty(productEquipmentDOList)) {
+            for (ProductEquipmentDO productEquipmentDO : productEquipmentDOList) {
+                if (productEquipmentDO.getPurchasePrice() == null) {
+                    serviceResult.setErrorCode(ErrorCode.EQUIPMENT_PURCHASE_PRICE_NOT_NULL, productEquipmentDO.getEquipmentNo());
                     return serviceResult;
                 }
             }
         }
-        if(CollectionUtil.isNotEmpty(bulkMaterialDOList)){
-            for(BulkMaterialDO bulkMaterialDO : bulkMaterialDOList){
-                if(bulkMaterialDO.getPurchasePrice()==null){
-                    serviceResult.setErrorCode(ErrorCode.BULK_PURCHASE_PRICE_NOT_NULL,bulkMaterialDO.getBulkMaterialNo());
+        if (CollectionUtil.isNotEmpty(bulkMaterialDOList)) {
+            for (BulkMaterialDO bulkMaterialDO : bulkMaterialDOList) {
+                if (bulkMaterialDO.getPurchasePrice() == null) {
+                    serviceResult.setErrorCode(ErrorCode.BULK_PURCHASE_PRICE_NOT_NULL, bulkMaterialDO.getBulkMaterialNo());
                     return serviceResult;
                 }
             }
@@ -1404,58 +1396,58 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> updatePurchaseReceiveOrderRealPrice(UpdatePurchaseReceiveOrderRealPriceParam updatePurchaseReceiveOrderRealPriceParam) {
+    public ServiceResult<String, String> updatePurchaseReceiveOrderPrice(UpdatePurchaseReceiveOrderPriceParam updatePurchaseReceiveOrderPriceParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        PurchaseReceiveOrderDO purchaseReceiveOrderDO = purchaseReceiveOrderMapper.findByNo(updatePurchaseReceiveOrderRealPriceParam.getPurchaseReceiveOrderNo());
-        if(purchaseReceiveOrderDO==null){
+        PurchaseReceiveOrderDO purchaseReceiveOrderDO = purchaseReceiveOrderMapper.findByNo(updatePurchaseReceiveOrderPriceParam.getPurchaseReceiveOrderNo());
+        if (purchaseReceiveOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_NOT_EXISTS);
             return serviceResult;
         }
-        List<ProductEquipment> productEquipmentList = updatePurchaseReceiveOrderRealPriceParam.getEquipmentList();
-        List<BulkMaterial> bulkMaterialList = updatePurchaseReceiveOrderRealPriceParam.getBulkMaterialList();
+        List<ProductEquipment> productEquipmentList = updatePurchaseReceiveOrderPriceParam.getEquipmentList();
+        List<BulkMaterial> bulkMaterialList = updatePurchaseReceiveOrderPriceParam.getBulkMaterialList();
 
-        if(CollectionUtil.isEmpty(productEquipmentList)&&
-                CollectionUtil.isEmpty(bulkMaterialList)){
+        if (CollectionUtil.isEmpty(productEquipmentList) &&
+                CollectionUtil.isEmpty(bulkMaterialList)) {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
-        StockOrderDO stockOrderDO = stockOrderMapper.findOrderByTypeAndRefer(StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE,purchaseReceiveOrderDO.getPurchaseReceiveNo());
+        StockOrderDO stockOrderDO = stockOrderMapper.findOrderByTypeAndRefer(StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE, purchaseReceiveOrderDO.getPurchaseReceiveNo());
         List<StockOrderEquipmentDO> stockOrderEquipmentDOList = stockOrderDO.getStockOrderEquipmentDOList();
         List<StockOrderBulkMaterialDO> stockOrderBulkMaterialDOList = stockOrderDO.getStockOrderBulkMaterialDOList();
 
-        Map<Integer,StockOrderEquipmentDO> purchaseOrderProductDOMap = ListUtil.listToMap(stockOrderEquipmentDOList,"equipmentNo");
-        Map<Integer,StockOrderBulkMaterialDO> purchaseOrderMaterialDOMap = ListUtil.listToMap(stockOrderBulkMaterialDOList,"bulkMaterialNo");
+        Map<Integer, StockOrderEquipmentDO> purchaseOrderProductDOMap = ListUtil.listToMap(stockOrderEquipmentDOList, "equipmentNo");
+        Map<Integer, StockOrderBulkMaterialDO> purchaseOrderMaterialDOMap = ListUtil.listToMap(stockOrderBulkMaterialDOList, "bulkMaterialNo");
         Date now = new Date();
         //累加总价
-        BigDecimal totalAmount = purchaseReceiveOrderDO.getTotalAmount()==null?BigDecimal.ZERO:purchaseReceiveOrderDO.getTotalAmount();
-        if(CollectionUtil.isNotEmpty(productEquipmentList)){
-            for(ProductEquipment productEquipment : productEquipmentList){
-                if(purchaseOrderProductDOMap.get(productEquipment.getEquipmentNo())==null){
+        BigDecimal totalAmount = purchaseReceiveOrderDO.getTotalAmount() == null ? BigDecimal.ZERO : purchaseReceiveOrderDO.getTotalAmount();
+        if (CollectionUtil.isNotEmpty(productEquipmentList)) {
+            for (ProductEquipment productEquipment : productEquipmentList) {
+                if (purchaseOrderProductDOMap.get(productEquipment.getEquipmentNo()) == null) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     serviceResult.setErrorCode(ErrorCode.EQUIPMENT_NOT_EXISTS);
                     return serviceResult;
                 }
                 ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(productEquipment.getEquipmentNo());
                 //累加原采购价，减去原采购价
-                totalAmount = BigDecimalUtil.add(totalAmount,productEquipment.getPurchasePrice());
-                totalAmount = BigDecimalUtil.sub(totalAmount,productEquipmentDO.getPurchasePrice());
+                totalAmount = BigDecimalUtil.add(totalAmount, productEquipment.getPurchasePrice());
+                totalAmount = BigDecimalUtil.sub(totalAmount, productEquipmentDO.getPurchasePrice());
                 productEquipmentDO.setPurchasePrice(productEquipment.getPurchasePrice());
                 productEquipmentDO.setUpdateTime(now);
                 productEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 productEquipmentMapper.update(productEquipmentDO);
             }
         }
-        if(CollectionUtil.isNotEmpty(bulkMaterialList)){
-            for(BulkMaterial bulkMaterial : bulkMaterialList){
-                if(purchaseOrderMaterialDOMap.get(bulkMaterial.getBulkMaterialNo())==null){
+        if (CollectionUtil.isNotEmpty(bulkMaterialList)) {
+            for (BulkMaterial bulkMaterial : bulkMaterialList) {
+                if (purchaseOrderMaterialDOMap.get(bulkMaterial.getBulkMaterialNo()) == null) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     serviceResult.setErrorCode(ErrorCode.EQUIPMENT_NOT_EXISTS);
                     return serviceResult;
                 }
                 BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(bulkMaterial.getBulkMaterialNo());
                 //累加原采购价，减去原采购价
-                totalAmount = BigDecimalUtil.add(totalAmount,bulkMaterial.getPurchasePrice());
-                totalAmount = BigDecimalUtil.sub(totalAmount,bulkMaterialDO.getPurchasePrice());
+                totalAmount = BigDecimalUtil.add(totalAmount, bulkMaterial.getPurchasePrice());
+                totalAmount = BigDecimalUtil.sub(totalAmount, bulkMaterialDO.getPurchasePrice());
                 bulkMaterialDO.setPurchasePrice(bulkMaterial.getPurchasePrice());
                 bulkMaterialDO.setUpdateTime(now);
                 bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -1468,6 +1460,44 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(purchaseReceiveOrderDO.getPurchaseReceiveNo());
         return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, Page<ProductEquipment>> pageReceiveOrderProductEquipment(PurchaseReceiveOrderProductEquipmentPageParam pageParam) {
+        ServiceResult<String, Page<ProductEquipment>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(pageParam.getPageNo(), pageParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("queryParam", pageParam);
+
+        Integer totalCount = productEquipmentMapper.listByPurchaseReceiveOrderProductIdCount(maps);
+        List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.listByPurchaseReceiveOrderProductId(maps);
+        List<ProductEquipment> productEquipmentList = ConverterUtil.convertList(productEquipmentDOList,ProductEquipment.class);
+        Page<ProductEquipment> page = new Page<>(productEquipmentList, totalCount, pageParam.getPageNo(), pageParam.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Page<BulkMaterial>> pageReceiveOrderMaterialBulk(PurchaseReceiveOrderMaterialBulkPageParam pageParam) {
+        ServiceResult<String, Page<BulkMaterial>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(pageParam.getPageNo(), pageParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("queryParam", pageParam);
+
+        Integer totalCount = bulkMaterialMapper.listByPurchaseReceiveOrderMaterialIdCount(maps);
+        List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listByPurchaseReceiveOrderMaterialId(maps);
+        List<BulkMaterial> bulkMaterialList = ConverterUtil.convertList(bulkMaterialDOList,BulkMaterial.class);
+        Page<BulkMaterial> page = new Page<>(bulkMaterialList, totalCount, pageParam.getPageNo(), pageParam.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
     }
 
     /**

@@ -2,6 +2,9 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
+import com.lxzl.erp.common.domain.material.pojo.Material;
+import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.purchase.*;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseDeliveryOrder;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
@@ -34,6 +37,7 @@ public class PurchaseOrderController {
 
     /**
      * 新增采购单
+     *
      * @param purchaseOrder
      * @param validResult
      * @return
@@ -43,8 +47,10 @@ public class PurchaseOrderController {
         ServiceResult<String, String> serviceResult = purchaseOrderService.add(purchaseOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     /**
      * 修改采购单
+     *
      * @param purchaseOrder
      * @param validResult
      * @return
@@ -57,6 +63,7 @@ public class PurchaseOrderController {
 
     /**
      * 删除采购单
+     *
      * @param purchaseOrder
      * @param validResult
      * @return
@@ -66,8 +73,10 @@ public class PurchaseOrderController {
         String errorCode = purchaseOrderService.delete(purchaseOrder);
         return resultGenerator.generate(errorCode);
     }
+
     /**
      * 采购单提交审核
+     *
      * @param purchaseOrderCommitParam
      * @param validResult
      * @return
@@ -80,6 +89,7 @@ public class PurchaseOrderController {
 
     /**
      * 采购单分页
+     *
      * @param purchaseOrderQueryParam
      * @param validResult
      * @return
@@ -92,18 +102,20 @@ public class PurchaseOrderController {
 
     /**
      * 采购单详情
+     *
      * @param purchaseOrder
      * @param validResult
      * @return
      */
     @RequestMapping(value = "queryPurchaseOrderByNo", method = RequestMethod.POST)
-    public Result queryPurchaseOrderByNo(@RequestBody @Validated(IdGroup.class)PurchaseOrder purchaseOrder, BindingResult validResult) {
+    public Result queryPurchaseOrderByNo(@RequestBody @Validated(IdGroup.class) PurchaseOrder purchaseOrder, BindingResult validResult) {
         ServiceResult<String, PurchaseOrder> serviceResult = purchaseOrderService.queryPurchaseOrderByNo(purchaseOrder.getPurchaseNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     /**
      * 发货通知单分页
+     *
      * @param purchaseDeliveryOrderQueryParam
      * @param validResult
      * @return
@@ -116,18 +128,20 @@ public class PurchaseOrderController {
 
     /**
      * 发货通知单详情
+     *
      * @param purchaseDeliveryOrder
      * @param validResult
      * @return
      */
     @RequestMapping(value = "queryPurchaseDeliveryOrderByNo", method = RequestMethod.POST)
-    public Result queryPurchaseDeliveryOrderByNo(@RequestBody @Validated(IdGroup.class)PurchaseDeliveryOrder purchaseDeliveryOrder, BindingResult validResult) {
+    public Result queryPurchaseDeliveryOrderByNo(@RequestBody @Validated(IdGroup.class) PurchaseDeliveryOrder purchaseDeliveryOrder, BindingResult validResult) {
         ServiceResult<String, PurchaseDeliveryOrder> serviceResult = purchaseOrderService.queryPurchaseDeliveryOrderByNo(purchaseDeliveryOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     /**
      * 修改采购收货单
+     *
      * @param purchaseReceiveOrder
      * @param validResult
      * @return
@@ -137,8 +151,10 @@ public class PurchaseOrderController {
         ServiceResult<String, String> serviceResult = purchaseOrderService.updatePurchaseReceiveOrder(purchaseReceiveOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     /**
      * 采购收货单签单
+     *
      * @param purchaseReceiveOrder
      * @param validResult
      * @return
@@ -148,8 +164,10 @@ public class PurchaseOrderController {
         ServiceResult<String, String> serviceResult = purchaseOrderService.commitPurchaseReceiveOrder(purchaseReceiveOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     /**
      * 采购收货单分页
+     *
      * @param purchaseReceiveOrderQueryParam
      * @param validResult
      * @return
@@ -159,8 +177,10 @@ public class PurchaseOrderController {
         ServiceResult<String, Page<PurchaseReceiveOrder>> serviceResult = purchaseOrderService.pagePurchaseReceive(purchaseReceiveOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     /**
      * 采购收货单详情
+     *
      * @param purchaseReceiveOrder
      * @param validResult
      * @return
@@ -173,6 +193,7 @@ public class PurchaseOrderController {
 
     /**
      * 采购单结束
+     *
      * @param purchaseOrder
      * @param validResult
      * @return
@@ -185,6 +206,7 @@ public class PurchaseOrderController {
 
     /**
      * 采购单继续采购
+     *
      * @param purchaseOrder
      * @param validResult
      * @return
@@ -194,15 +216,43 @@ public class PurchaseOrderController {
         ServiceResult<String, String> serviceResult = purchaseOrderService.continuePurchaseOrder(purchaseOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
     /**
      * 修改采购收货单价格
-     * @param updatePurchaseReceiveOrderRealPriceParam
+     *
+     * @param updatePurchaseReceiveOrderPriceParam
      * @param validResult
      * @return
      */
-    @RequestMapping(value = "updatePurchaseReceiveOrderRealPrice", method = RequestMethod.POST)
-    public Result updatePurchaseReceiveOrderRealPrice(@RequestBody @Validated(ExtendGroup.class) UpdatePurchaseReceiveOrderRealPriceParam updatePurchaseReceiveOrderRealPriceParam, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = purchaseOrderService.updatePurchaseReceiveOrderRealPrice(updatePurchaseReceiveOrderRealPriceParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    @RequestMapping(value = "updatePurchaseReceiveOrderPrice", method = RequestMethod.POST)
+    public Result updatePurchaseReceiveOrderPrice(@RequestBody @Validated(ExtendGroup.class) UpdatePurchaseReceiveOrderPriceParam updatePurchaseReceiveOrderPriceParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = purchaseOrderService.updatePurchaseReceiveOrderPrice(updatePurchaseReceiveOrderPriceParam);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 采购收货单商品项设备分页
+     *
+     * @param purchaseReceiveOrderProductEquipmentPageParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "pageReceiveOrderProductEquipment", method = RequestMethod.POST)
+    public Result pageReceiveOrderProductEquipment(@RequestBody @Validated PurchaseReceiveOrderProductEquipmentPageParam purchaseReceiveOrderProductEquipmentPageParam, BindingResult validResult) {
+        ServiceResult<String, Page<ProductEquipment>> serviceResult = purchaseOrderService.pageReceiveOrderProductEquipment(purchaseReceiveOrderProductEquipmentPageParam);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 采购收货单配件项散料分页
+     *
+     * @param purchaseReceiveOrderMaterialBulkPageParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "pageReceiveOrderMaterialBulk", method = RequestMethod.POST)
+    public Result pageReceiveOrderMaterialBulk(@RequestBody @Validated PurchaseReceiveOrderMaterialBulkPageParam purchaseReceiveOrderMaterialBulkPageParam, BindingResult validResult) {
+        ServiceResult<String, Page<BulkMaterial>> serviceResult = purchaseOrderService.pageReceiveOrderMaterialBulk(purchaseReceiveOrderMaterialBulkPageParam);
+        return resultGenerator.generate(serviceResult);
     }
 }

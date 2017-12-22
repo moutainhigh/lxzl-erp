@@ -23,7 +23,6 @@ public class PurchaseReceiveOrderMaterial implements Serializable {
 	private String realMaterialName;   //实际物料ID名称
 	private String realMaterialSnapshot;   //实际物料快照
 	private Integer realMaterialCount;   //实际物料总数
-	private BigDecimal realMaterialAmount;   //实际物料单价
 	private Integer isSrc;   //原单项标志，查原单时此标志要传入0，0-收货新添项，1-原单项
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -199,13 +198,5 @@ public class PurchaseReceiveOrderMaterial implements Serializable {
 
 	public void setMaterialAmount(BigDecimal materialAmount) {
 		this.materialAmount = materialAmount;
-	}
-
-	public BigDecimal getRealMaterialAmount() {
-		return realMaterialAmount;
-	}
-
-	public void setRealMaterialAmount(BigDecimal realMaterialAmount) {
-		this.realMaterialAmount = realMaterialAmount;
 	}
 }

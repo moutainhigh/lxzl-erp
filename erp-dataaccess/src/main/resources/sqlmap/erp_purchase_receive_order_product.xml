@@ -17,7 +17,6 @@
 		<result column="real_product_sku_id" jdbcType="INTEGER" property="realProductSkuId" />
 		<result column="real_product_snapshot" jdbcType="VARCHAR" property="realProductSnapshot" />
 		<result column="real_product_count" jdbcType="INTEGER" property="realProductCount" />
-		<result column="real_product_amount" jdbcType="INTEGER" property="realProductAmount" />
 		<result column="is_src" jdbcType="INTEGER" property="isSrc" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -28,7 +27,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eprop.id,eprop.purchase_receive_order_id,eprop.purchase_order_product_id,eprop.purchase_delivery_order_product_id,eprop.product_id,eprop.product_sku_id,eprop.product_name,eprop.product_snapshot,eprop.product_count,eprop.product_amount,eprop.real_product_id,eprop.real_product_name,eprop.real_product_sku_id,eprop.real_product_snapshot,eprop.real_product_count,eprop.real_product_amount,eprop.is_src,eprop.data_status,eprop.remark,eprop.create_time,eprop.create_user,eprop.update_time,eprop.update_user
+		eprop.id,eprop.purchase_receive_order_id,eprop.purchase_order_product_id,eprop.purchase_delivery_order_product_id,eprop.product_id,eprop.product_sku_id,eprop.product_name,eprop.product_snapshot,eprop.product_count,eprop.product_amount,eprop.real_product_id,eprop.real_product_name,eprop.real_product_sku_id,eprop.real_product_snapshot,eprop.real_product_count,eprop.is_src,eprop.data_status,eprop.remark,eprop.create_time,eprop.create_user,eprop.update_time,eprop.update_user
 	</sql>
 
 	<select id="findById" resultMap="PurchaseReceiveOrderProductDO" parameterType="java.lang.Integer">
@@ -98,9 +97,6 @@
 			</if>
 			<if test="realProductCount != null">
 				real_product_count = #{realProductCount,jdbcType=INTEGER},
-			</if>
-			<if test="realProductAmount != null">
-				real_product_amount = #{realProductAmount,jdbcType=INTEGER},
 			</if>
 			<if test="isSrc != null">
 				is_src = #{isSrc,jdbcType=INTEGER},

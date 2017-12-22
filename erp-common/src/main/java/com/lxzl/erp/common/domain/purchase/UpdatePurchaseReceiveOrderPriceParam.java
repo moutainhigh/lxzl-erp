@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UpdatePurchaseReceiveOrderRealPriceParam {
+public class UpdatePurchaseReceiveOrderPriceParam {
 
     @NotNull(message = ErrorCode.PURCHASE_RECEIVE_ORDER_NO_NOT_NULL, groups = {ExtendGroup.class})
     private String purchaseReceiveOrderNo;
