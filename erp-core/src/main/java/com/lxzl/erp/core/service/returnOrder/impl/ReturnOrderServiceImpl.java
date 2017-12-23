@@ -333,6 +333,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         returnOrderProductEquipmentDO.setReturnOrderProductId(returnOrderProductDO.getId());
         returnOrderProductEquipmentDO.setReturnOrderId(returnOrderDO.getId());
         returnOrderProductEquipmentDO.setReturnOrderNo(returnOrderDO.getReturnOrderNo());
+        returnOrderProductEquipmentDO.setEquipmentNo(orderDO.getOrderNo());
         returnOrderProductEquipmentDO.setEquipmentId(productEquipmentDO.getId());
         returnOrderProductEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
         returnOrderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);

@@ -1,8 +1,10 @@
 package com.lxzl.erp.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
+import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.core.service.material.BulkMaterialService;
 import com.lxzl.se.common.domain.Result;
@@ -38,5 +40,10 @@ public class BulkMaterialControllerTest extends ERPUnTransactionalTest {
     public void changeProductDismantleAndInstall() throws Exception{
 
         ServiceResult<String,Integer> ServiceResult= bulkMaterialService.changeProductDismantleAndInstall(476,478);
+    }
+    @Test
+    public void queryAllMaterial() throws Exception{
+        MaterialQueryParam materialQueryParam = JSON.parseObject("{pageNo: 1, pageSize: 15, materialType: 3, materialModelId: 4, materialName: \"\", materialNo: \"\"}",MaterialQueryParam.class);
+        TestResult result = getJsonTestResult("/material/queryAllMaterial",materialQueryParam);
     }
 }

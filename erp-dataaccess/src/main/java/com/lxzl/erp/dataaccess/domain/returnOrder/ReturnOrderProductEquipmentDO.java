@@ -10,6 +10,7 @@ public class ReturnOrderProductEquipmentDO  extends BaseDO {
 	private Integer returnOrderProductId;
 	private Integer returnOrderId;
 	private String returnOrderNo;
+	private String orderNo;
 	private Integer equipmentId;
 	private String equipmentNo;
 	private Integer dataStatus;
@@ -87,5 +88,13 @@ public class ReturnOrderProductEquipmentDO  extends BaseDO {
 
 	public void setProductEquipmentDO(ProductEquipmentDO productEquipmentDO) {
 		this.productEquipmentDO = productEquipmentDO;
+	}
+
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
 	}
 }

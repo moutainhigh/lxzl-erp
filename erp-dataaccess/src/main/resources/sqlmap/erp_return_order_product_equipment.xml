@@ -7,6 +7,7 @@
 		<result column="return_order_product_id" jdbcType="INTEGER" property="returnOrderProductId" />
 		<result column="return_order_id" jdbcType="INTEGER" property="returnOrderId" />
 		<result column="return_order_no" jdbcType="VARCHAR" property="returnOrderNo" />
+		<result column="order_no" jdbcType="VARCHAR" property="order_no" />
 		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
 		<result column="equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -18,7 +19,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		erope.id,erope.return_order_product_id,erope.return_order_id,erope.return_order_no,erope.equipment_id,erope.equipment_no,erope.data_status,erope.remark,erope.create_time,erope.create_user,erope.update_time,erope.update_user
+		erope.id,erope.return_order_product_id,erope.return_order_id,erope.return_order_no,erope.order_no,erope.equipment_id,erope.equipment_no,erope.data_status,erope.remark,erope.create_time,erope.create_user,erope.update_time,erope.update_user
 	</sql>
 	<select id="findByReturnOrderNo" resultMap="ReturnOrderProductEquipmentDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> FROM erp_return_order_product_equipment erope
@@ -64,6 +65,9 @@
 			</if>
 			<if test="returnOrderNo != null">
 				return_order_no = #{returnOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNo != null">
+				order_no = #{orderNo,jdbcType=VARCHAR},
 			</if>
 			<if test="equipmentId != null">
 				equipment_id = #{equipmentId,jdbcType=INTEGER},
