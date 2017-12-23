@@ -563,6 +563,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         List<BulkMaterialDO> allBulkMaterialDOList = new ArrayList<>();
         // 入库物料记录
         List<StockOrderBulkMaterialDO> allStockOrderBulkMaterialDOList = new ArrayList<>();
+        Integer itemReferId = materialInStorage.getItemReferId();
         User loginUser = userSupport.getCurrentUser();
         for (int i = 0; i < materialInStorage.getMaterialCount(); i++) {
             BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
@@ -583,6 +584,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
             StockOrderBulkMaterialDO stockOrderBulkMaterialDO = new StockOrderBulkMaterialDO();
             stockOrderBulkMaterialDO.setStockOrderNo(stockOrderNo);
+            stockOrderBulkMaterialDO.setItemReferId(itemReferId);
             stockOrderBulkMaterialDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
             stockOrderBulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             stockOrderBulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());

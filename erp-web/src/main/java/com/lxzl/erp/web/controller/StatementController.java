@@ -42,6 +42,12 @@ public class StatementController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "createChangeOrderStatement", method = RequestMethod.POST)
+    public Result createChangeOrderStatement(@RequestBody StatementOrderQueryParam param, BindingResult validResult) {
+        ServiceResult<String, BigDecimal> serviceResult = statementService.createChangeOrderStatement(param.getStatementOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "pay", method = RequestMethod.POST)
     public Result pay(@RequestBody StatementOrderPayParam param, BindingResult validResult) {
         ServiceResult<String, Boolean> serviceResult = statementService.payStatementOrder(param.getStatementOrderNo());

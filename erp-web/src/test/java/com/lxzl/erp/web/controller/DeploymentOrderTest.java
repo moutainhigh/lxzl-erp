@@ -92,7 +92,7 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
     public void testProcessJson() throws Exception{
         String str = "\n" +
                 "{\n" +
-                "  \"operationType\": 2,\n" +
+                "  \"operationType\": 3,\n" +
                 "  \"deploymentOrderNo\": \"DO201712221016337151726\",\n" +
                 "  \"materialId\": 23,\n" +
                 "  \"materialCount\": \"1\"\n" +

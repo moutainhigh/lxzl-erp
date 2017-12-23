@@ -41,12 +41,13 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrder.setProductSupplierId(1);//商品供应商ID不能为空
 
         List<PurchaseOrderProduct> purchaseOrderProductList = new ArrayList<>();//采购单商品项列表
-        purchaseOrderProductList.add(createPurchaseOrderProduct(65,100,new BigDecimal(5000)));
-        purchaseOrderProductList.add(createPurchaseOrderProduct(64,100,new BigDecimal(2200)));
+//        purchaseOrderProductList.add(createPurchaseOrderProduct(65,100,new BigDecimal(5000)));
+//        purchaseOrderProductList.add(createPurchaseOrderProduct(64,100,new BigDecimal(2200)));
+        purchaseOrderProductList.add(createPurchaseOrderProduct(63,100,new BigDecimal(2200)));
         purchaseOrder.setPurchaseOrderProductList(purchaseOrderProductList);
 
         List<PurchaseOrderMaterial> purchaseOrderMaterialList = new ArrayList<>();//小配件采购单物料项列表不能为空
-        purchaseOrderMaterialList.add(createPurchaseOrderMaterial("M201711201500267591516",100,new BigDecimal(875)));
+//        purchaseOrderMaterialList.add(createPurchaseOrderMaterial("M201711201500267591516",100,new BigDecimal(875)));
         purchaseOrder.setPurchaseOrderMaterialList(purchaseOrderMaterialList);
 
         TestResult testResult = getJsonTestResult("/purchaseOrder/add",purchaseOrder);

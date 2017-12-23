@@ -14,6 +14,7 @@ public class ReturnOrderProductEquipment implements Serializable {
 	private Integer returnOrderProductId;   //租赁退还商品项ID
 	private Integer returnOrderId;   //退还ID
 	private String returnOrderNo;   //退还编号
+	private String orderNo;   //订单编号
 	private Integer equipmentId;   //设备ID
 	private String equipmentNo;   //设备编号
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -127,5 +128,13 @@ public class ReturnOrderProductEquipment implements Serializable {
 
 	public void setProductEquipment(ProductEquipment productEquipment) {
 		this.productEquipment = productEquipment;
+	}
+
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
 	}
 }

@@ -16,18 +16,19 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
     @Test
     public void add() throws Exception {
         AddChangeOrderParam addChangeOrderParam = new AddChangeOrderParam();
-        addChangeOrderParam.setCustomerNo("C201711152010206581143");
+        addChangeOrderParam.setCustomerNo("CC201712222002354621424");
         addChangeOrderParam.setChangeMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
         ChangeOrderConsignInfo changeOrderConsignInfo = new ChangeOrderConsignInfo();
         changeOrderConsignInfo.setAddress("这是一个测试地址");
         changeOrderConsignInfo.setConsigneePhone("13612342234");
-        changeOrderConsignInfo.setConsigneeName("张武");
+        changeOrderConsignInfo.setConsigneeName("陈凯");
         addChangeOrderParam.setChangeOrderConsignInfo(changeOrderConsignInfo);
 
         List<ChangeOrderProduct> changeOrderProductList = new ArrayList<>();
         ChangeOrderProduct changeOrderProduct = new ChangeOrderProduct();
-        changeOrderProduct.setSrcChangeProductSkuId(40);
-        changeOrderProduct.setDestChangeProductSkuId(40);
+//        changeOrderProduct.setSrcChangeProductSkuId(65);
+        changeOrderProduct.setSrcChangeProductSkuId(63);
+        changeOrderProduct.setDestChangeProductSkuId(63);
         changeOrderProduct.setChangeProductSkuCount(2);
         changeOrderProductList.add(changeOrderProduct);
         addChangeOrderParam.setChangeOrderProductList(changeOrderProductList);
@@ -85,7 +86,7 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
     @Test
     public void commit() throws Exception {
         ChangeOrderCommitParam changeOrderCommitParam = new ChangeOrderCommitParam();
-        changeOrderCommitParam.setChangeOrderNo("CO201712181114261141769");
+        changeOrderCommitParam.setChangeOrderNo("CO201712231731362891843");
         changeOrderCommitParam.setVerifyUserId(500006);
         changeOrderCommitParam.setRemark("审核备注");
         TestResult testResult = getJsonTestResult("/changeOrder/commit",changeOrderCommitParam);
@@ -94,9 +95,12 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
     @Test
     public void stockUpForChange() throws Exception {
         StockUpForChangeParam stockUpForChangeParam = new StockUpForChangeParam();
-        stockUpForChangeParam.setChangeOrderNo("CO201712181114261141769");
+        stockUpForChangeParam.setChangeOrderNo("CO201712231731362891843");
         //select * from erp_product_equipment where sku_id=40 and equipment_status = 1 and data_status = 1 and order_no is null and current_warehouse_id = 4000002
-        stockUpForChangeParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017121610008");
+
+        //查询可用设备
+        //SELECT * FROM  `erp_stock_order_equipment`  esoe  LEFT JOIN `erp_product_equipment` epe ON esoe.equipment_no = epe.equipment_no WHERE epe.sku_id=63 AND epe.equipment_status=1
+        stockUpForChangeParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017122310024");
 //        stockUpForChangeParam.setMaterialNo("M201711201356145971009");
         stockUpForChangeParam.setMaterialCount(1);
         stockUpForChangeParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
@@ -106,14 +110,15 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
     @Test
     public void delivery() throws Exception {
         ChangeOrder changeOrder = new ChangeOrder();
-        changeOrder.setChangeOrderNo("CO201712181114261141769");
+        changeOrder.setChangeOrderNo("CO201712231731362891843");
         TestResult testResult = getJsonTestResult("/changeOrder/delivery",changeOrder);
     }
     @Test
     public void doChangeEquipment() throws Exception {
         ChangeOrderProductEquipment changeOrderProductEquipment = new ChangeOrderProductEquipment();
-        changeOrderProductEquipment.setChangeOrderNo("CO201712181114261141769");
-        changeOrderProductEquipment.setSrcEquipmentNo("LX-EQUIPMENT-4000002-2017121610003");
+        changeOrderProductEquipment.setChangeOrderNo("CO201712231731362891843");
+        //SELECT * FROM  `erp_stock_order_equipment`  esoe LEFT JOIN `erp_product_equipment` epe ON esoe.equipment_no = epe.equipment_no WHERE epe.sku_id=63 AND epe.equipment_status=2 and epe.order_no = 'O201712222007232111047'
+        changeOrderProductEquipment.setSrcEquipmentNo("LX-EQUIPMENT-4000001-2017122310019");
         TestResult testResult = getJsonTestResult("/changeOrder/doChangeEquipment",changeOrderProductEquipment);
     }
     @Test
