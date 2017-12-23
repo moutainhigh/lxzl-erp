@@ -95,7 +95,7 @@
                                 <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
                             </li>
                             <li>
-                                <a href="#purchaseOrderMaterialItems" data-toggle="tab">物料项</a>
+                                <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项</a>
                             </li>
                         </ul>
                     </div>
@@ -142,7 +142,7 @@
                                                     </td>
                                                     <td style="width:20%" class="text-right">
                                                         <div class="btn-group text-right">
-                                                            <a href="#" type="button" class="btn btn-default btn-xs showMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">查看物料</a>
+                                                            <a href="#" type="button" class="btn btn-default btn-xs showMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">查看配件</a>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -150,7 +150,7 @@
                                                     <td colspan="4" class="pn br-n" style="height:0;">
                                                         <div class="panel m15 editMaterialPannel" style="display: none;">
                                                             <div class="panel-heading pn ph8">
-                                                                <span>物料信息</span>
+                                                                <span>配件信息</span>
                                                             </div>
                                                             <div class="panel-body pn">
                                                                 <table class="table">
@@ -162,7 +162,7 @@
                                                                             <table class="table pn br-r materialInputTable" >
                                                                                 {{#materialList}}
                                                                                 <tr class="materialInputRow">
-                                                                                    <td style="width: 60%;">物料名：{{materialName}}</td>
+                                                                                    <td style="width: 60%;">配件名：{{materialName}}</td>
                                                                                     <td style="width: 40%;">数量：{{materialCount}}</td>
                                                                                 </tr>
                                                                                 {{/materialList}}
@@ -225,7 +225,7 @@
                                     {{/listData}}
                                     {{^listData}}
                                     <tr>
-                                        <td valign="top" colspan="14" class="text-center">没有选择物料</td>
+                                        <td valign="top" colspan="14" class="text-center">没有选择配件</td>
                                     </tr>
                                     {{/listData}}
                                     {{/dataSource}}

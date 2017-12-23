@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-物料管理-物料详情</title>
+    <title>凌雄ERP-配件管理-配件详情</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
     <script type="text/javascript">
@@ -30,7 +30,7 @@
                                     <div class="section-divider mb40 mt20"><span> 基本信息 </span></div>
                                     <div class="section row">
                                         <div class="col-md-4">
-                                            <label for="userName" class="field-label">物料类型</label>
+                                            <label for="userName" class="field-label">配件类型</label>
                                             <script type="text/html" id="materialSelectTpl">
                                                 <option value="">请选择</option>
                                                 {{#materialType}}
@@ -45,7 +45,7 @@
                                             </label>
                                         </div>
                                         <div class="col-md-4">
-                                            <label for="userName" class="field-label">物料型号</label>
+                                            <label for="userName" class="field-label">配件型号</label>
                                             <div class="smart-widget sm-right smr-50">
                                                 <label class="field">
                                                     <input type="hidden" value="" name="materialModelId" />
@@ -54,7 +54,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <label for="userName" class="field-label">物料名称</label>
+                                            <label for="userName" class="field-label">配件名称</label>
                                             <label for="materialName" class="field prepend-icon">
                                                 <input type="text" name="materialName" id="materialName" class="gui-input" />
                                                 <label for="materialName" class="field-icon"><i class="fa fa-tag"></i></label>
@@ -63,7 +63,7 @@
                                     </div>
                                     <div class="section row">
                                         <div class="col-md-4">
-                                            <label for="userName" class="field-label">物料值(例如内存大小数值)</label>
+                                            <label for="userName" class="field-label">配件值(例如内存大小数值)</label>
                                             <label for="materialCapacityValue" class="field prepend-icon">
                                                 <input type="text" name="materialCapacityValue" id="materialCapacityValue number" class="gui-input" />
                                                 <label for="materialCapacityValue" class="field-icon"><i class="fa fa-tag"></i></label>
@@ -149,7 +149,7 @@
                                     </div>
 
                                     <script type="text/html" id="materialPropertiesTpl">
-                                        <div class="section-divider mv40"><span> 物料属性  </span></div>
+                                        <div class="section-divider mv40"><span> 配件属性  </span></div>
                                         {{#properties}}
                                         <div class="col-md-3 pad-r40 border-right">
                                             <div class="panel">

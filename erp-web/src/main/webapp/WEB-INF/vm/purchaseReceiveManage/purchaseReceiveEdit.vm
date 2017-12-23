@@ -112,7 +112,7 @@
                                     <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
                                 </li>
                                 <li>
-                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">物料项</a>
+                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项</a>
                                 </li>
                             </ul>
                         </div>
@@ -187,7 +187,7 @@
                                                         </td>
                                                         <td style="width:20%" class="text-right">
                                                             <div class="btn-group text-right">
-                                                                <a href="#" type="button" class="btn btn-default btn-xs editMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">编辑物料</a>
+                                                                <a href="#" type="button" class="btn btn-default btn-xs editMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">编辑配件</a>
                                                                 <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
                                                             </div>
                                                         </td>
@@ -196,7 +196,7 @@
                                                         <td colspan="4" class="pn br-n" style="height:0;">
                                                             <div class="panel m15 editMaterialPannel" style="display: none;">
                                                                 <div class="panel-heading pn ph8">
-                                                                    <span>选择物料</span>
+                                                                    <span>选择配件</span>
                                                                 </div>
                                                                 <div class="panel-body pn">
                                                                     <table class="table">
@@ -213,7 +213,7 @@
                                                                                                 <div class="input-group bringContainer">
                                                                                                     <input type="hidden" name="materialCapacityValue" value="{{materialCapacityValue}}" class="materialCapacityValue" />
                                                                                                     <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
-                                                                                                    <input name="materialName-{{skuId}}-{{rowKey}}-{{materialType}}" value="{{materialName}}" bringfiled="warehouseName" class="materialName form-control required" type="text" readonly placeholder="选择物料" />
+                                                                                                    <input name="materialName-{{skuId}}-{{rowKey}}-{{materialType}}" value="{{materialName}}" bringfiled="warehouseName" class="materialName form-control required" type="text" readonly placeholder="选择配件" />
                                                                                                     <span class="input-group-addon cursor chooseMaterialButton" data-materialtype="{{materialType}}"><i class="fa fa-search"></i></span>
                                                                                                 </div>
                                                                                             </div>
@@ -271,7 +271,7 @@
                                         <div class="pull-left ml10">
                                             <div class="btn-group" id="actionCommonButtons">
                                                 <button type="button" class="btn btn-primary btn-sm" id="batchAddMaterial" title="选择商品">
-                                                    <i class="fa fa-plus"></i> 选择物料
+                                                    <i class="fa fa-plus"></i> 选择配件
                                                 </button>
                                                 <button type="button" class="btn btn-primary btn-sm" id="batchDeleteMaterial" title="删除商品">
                                                     <i class="fa fa-trash-o"></i> 删除
@@ -341,7 +341,7 @@
                                         {{/listData}}
                                         {{^listData}}
                                         <tr>
-                                            <td valign="top" colspan="14" class="text-center">没有选择物料</td>
+                                            <td valign="top" colspan="14" class="text-center">没有选择配件</td>
                                         </tr>
                                         {{/listData}}
                                         {{/dataSource}}

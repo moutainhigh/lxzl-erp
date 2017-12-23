@@ -64,7 +64,7 @@
                     <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
                 </li>
                 <li>
-                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">物料项</a>
+                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项</a>
                 </li>
             </ul>
         </div>
@@ -168,10 +168,10 @@
                     <div class="row">
                         <div class="pull-left ml10">
                             <div class="btn-group" id="actionCommonButtons">
-                                <button type="button" class="btn btn-primary btn-sm" id="batchAddMaterial" title="选择物料">
-                                    <i class="fa fa-plus"></i> 选择物料
+                                <button type="button" class="btn btn-primary btn-sm" id="batchAddMaterial" title="选择配件">
+                                    <i class="fa fa-plus"></i> 选择配件
                                 </button>
-                                <button type="button" class="btn btn-primary btn-sm" id="batchDeleteMaterial" title="删除物料">
+                                <button type="button" class="btn btn-primary btn-sm" id="batchDeleteMaterial" title="删除配件">
                                     <i class="fa fa-trash-o"></i> 删除
                                 </button>
                             </div>
@@ -195,7 +195,7 @@
                             <th>租赁价格</th>
                             <th>描述</th>
                             <th>图片</th>
-                            <th>调拨物料单价</th>
+                            <th>调拨配件单价</th>
                             <th>调拨数量</th>
                             <th class="text-right">操作</th>
                         </tr>
@@ -225,7 +225,7 @@
                                     <label class="field prepend-icon mw200">
                                         <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
                                         <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
-                                        <input type="text" name="deploymentMaterialUnitAmount-{{materialNo}}" value="{{deploymentMaterialUnitAmount}}" class="deploymentMaterialUnitAmount form-control required moneyNumber gui-input" placeholder="输入调拨物料单价" />
+                                        <input type="text" name="deploymentMaterialUnitAmount-{{materialNo}}" value="{{deploymentMaterialUnitAmount}}" class="deploymentMaterialUnitAmount form-control required moneyNumber gui-input" placeholder="输入调拨配件单价" />
                                         <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                     </label>
                                 </div>
@@ -244,7 +244,7 @@
                         {{/listData}}
                         {{^listData}}
                         <tr>
-                            <td valign="top" colspan="14" class="text-center">没有选择物料</td>
+                            <td valign="top" colspan="14" class="text-center">没有选择配件</td>
                         </tr>
                         {{/listData}}
                         {{/dataSource}}

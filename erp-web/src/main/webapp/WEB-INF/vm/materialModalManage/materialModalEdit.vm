@@ -1,21 +1,21 @@
 <div id="editMaterialModalDialog" class="popup-basic popup-lg admin-form mfp-with-anim">
     <div class="panel">
         <div class="panel-heading">
-            <span class="panel-title"><i class="fa fa-pencil"></i>编辑物料型号</span>
+            <span class="panel-title"><i class="fa fa-pencil"></i>编辑配件型号</span>
         </div>
-        <form id="editMaterialModalForm" description="编辑物料型号">
+        <form id="editMaterialModalForm" description="编辑配件型号">
             <div class="panel-body p25">
                 <div class="section row">
                     <div class="col-md-6">
                         <label for="modelName" class="field-label">型号名称</label>
                         <label for="modelName" class="field prepend-icon">
-                            <input type="text" name="modelName" id="modelName" class="gui-input required" placeholder="请输入物料名称" maxlength="20">
+                            <input type="text" name="modelName" id="modelName" class="gui-input required" placeholder="请输入配件名称" maxlength="20">
                             <label for="modelName" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
                     </div>
                     <div class="col-md-6">
-                        <label for="isActivated" class="field-label">物料类型</label>
+                        <label for="isActivated" class="field-label">配件类型</label>
                         <label class="field select">
                             <script type="text/html" id="materialTypeSelectTpl">
                                 <option value="">请选择</option>

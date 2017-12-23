@@ -148,13 +148,13 @@
                                        </div>
                                    </div>
                                    <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">退还物料总数</label>
+                                       <label class="col-md-3 control-label">退还配件总数</label>
                                        <div class="col-md-9">
                                            <p class="form-control-static text-muted">{{totalReturnMaterialCount}}</p>
                                        </div>
                                    </div>
                                    <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">实际退还物料总数</label>
+                                       <label class="col-md-3 control-label">实际退还配件总数</label>
                                        <div class="col-md-9">
                                            <p class="form-control-static text-muted">{{realTotalReturnMaterialCount}}</p>
                                        </div>
@@ -194,7 +194,7 @@
                                     <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
                                 </li>
                                 <li>
-                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">物料项</a>
+                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项</a>
                                 </li>
                             </ul>
                         </div>
@@ -391,7 +391,7 @@
                                             <td colspan="11" class="pn br-n" style="height:0;">
                                                 <div class="panel m15 affixPanel"  style="display: none;">
                                                     <div class="panel-heading pn ph8">
-                                                        <span>已退还物料：物料编号列表</span>
+                                                        <span>已退还配件：配件编号列表</span>
                                                     </div>
                                                     <div class="panel-body pn">
                                                         <table class="table">
@@ -409,7 +409,7 @@
                                         {{/listData}}
                                         {{^listData}}
                                         <tr>
-                                            <td valign="top" colspan="14" class="text-center">没有选择物料</td>
+                                            <td valign="top" colspan="14" class="text-center">没有选择配件</td>
                                         </tr>
                                         {{/listData}}
                                         {{/dataSource}}
@@ -421,7 +421,7 @@
                                         <tr><td class="br-r text-left">{{bulkMaterialNo}}</td></tr>
                                         {{/bulkMaterialList}}
                                         {{^bulkMaterialList}}
-                                        <tr><td class="br-r text-left">无退还物料信息</td></tr>
+                                        <tr><td class="br-r text-left">无退还配件信息</td></tr>
                                         {{/bulkMaterialList}}
                                     </script>
 
