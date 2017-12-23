@@ -218,9 +218,13 @@ public class PageController extends BaseController {
         return "/returnOrderManage/returnOrderEdit";
     }
     //输入退还当服务费等信息
-    @RequestMapping("/order-/input")
+    @RequestMapping("/return-order-end-info-modal/input")
     public String inputReturnOrderEndInfoModal() {
         return "/component/returnOrder/inputEndInfoModal";
+    }
+    @RequestMapping("/input-return-material-info-modal/input")
+    public String inputReturnMaterialModal() {
+        return "/component/returnOrder/inputReturnMaterialModal";
     }
 
     //配货

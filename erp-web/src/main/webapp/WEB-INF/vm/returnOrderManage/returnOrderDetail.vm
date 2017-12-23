@@ -377,7 +377,11 @@
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
                                                     {{#rowActionButtons}}
-                                                    <a href="#" type="button" class="btn btn-default btn-xs {{class}}" data-materialno="{{materialNo}}" data-returnorderno="{{returnOrderNo}}" data-returnordermaterialid="{{returnOrderMaterialId}}">{{text}}</a>
+                                                    <a href="#" type="button" class="btn btn-default btn-xs {{class}}"
+                                                       data-materialno="{{materialNo}}"
+                                                       data-returnorderno="{{returnOrderNo}}"
+                                                       data-returnCount="{{returnMaterialCount}}"
+                                                       data-returnordermaterialid="{{returnOrderMaterialId}}">{{text}}</a>
                                                     {{/rowActionButtons}}
                                                     <a href="#" type="button" class="btn btn-default btn-xs viewAffix viewReturnMaterial" data-returnordermaterialid="{{returnOrderMaterialId}}">查看配货信息</a>
                                                 </div>
@@ -446,7 +450,8 @@
                 'manage.return.order.handle.mixin.js',
                 'manage.return.order.detail.js',
                 'manage.order.picking.js',
-                'manage.return.order.end.input.modal.js',);
+                'manage.return.order.end.input.modal.js',
+                'modal.input.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
