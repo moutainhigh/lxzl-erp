@@ -425,6 +425,13 @@ public class PageController extends BaseController {
         return "/component/deploymentOrder/stockUpMaterialModal";
     }
 
+    //结算单
+    @RequestMapping("/statement-order/list")
+    public String statementOrderList() {
+        return "/statementOrderManage/statementOrderList";
+    }
+
+
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")
     public String warehouseChoose() {
