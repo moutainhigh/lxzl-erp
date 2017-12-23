@@ -10,4 +10,5 @@ public class OrderItemType {
     public static final Integer ORDER_ITEM_TYPE_PRODUCT = 1;
     public static final Integer ORDER_ITEM_TYPE_MATERIAL = 2;
     public static final Integer ORDER_ITEM_TYPE_CHANGE_PRODUCT = 3;
+    public static final Integer ORDER_ITEM_TYPE_CHANGE_MATERIAL = 4;
 }
