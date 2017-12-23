@@ -103,7 +103,7 @@
                                     </div>
                                     <div class="form-group field">
                                         <div class="form-group field mbn">
-                                            <label class="col-md-3 control-label">物料总数</label>
+                                            <label class="col-md-3 control-label">配件总数</label>
                                             <div class="col-md-9">
                                                 <p class="form-control-static text-muted">{{totalMaterialCount}}</p>
                                             </div>
@@ -111,7 +111,7 @@
                                     </div>
                                     <div class="form-group field">
                                         <div class="form-group field mbn">
-                                            <label class="col-md-3 control-label">物料总价</label>
+                                            <label class="col-md-3 control-label">配件总价</label>
                                             <div class="col-md-9">
                                                 <p class="form-control-static text-muted">{{#price}}{{totalMaterialAmount}}{{/price}}</p>
                                             </div>
@@ -148,7 +148,7 @@
                                     <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
                                 </li>
                                 <li>
-                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">物料项</a>
+                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项</a>
                                 </li>
                             </ul>
                         </div>
@@ -280,7 +280,7 @@
                                             <th>租赁价格</th>
                                             <th>描述</th>
                                             <th>图片</th>
-                                            <th>调拨物料单价</th>
+                                            <th>调拨配件单价</th>
                                             <th>调拨数量</th>
                                             <th class="text-right">操作</th>
                                         </tr>

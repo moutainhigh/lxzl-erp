@@ -200,8 +200,7 @@ public class PurchaseOrderController {
      */
     @RequestMapping(value = "endPurchaseOrder", method = RequestMethod.POST)
     public Result endPurchaseOrder(@RequestBody @Validated(IdGroup.class) PurchaseOrder purchaseOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = purchaseOrderService.endPurchaseOrder(purchaseOrder);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        return resultGenerator.generate(purchaseOrderService.endPurchaseOrder(purchaseOrder));
     }
 
     /**

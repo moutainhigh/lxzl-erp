@@ -179,7 +179,7 @@
                                     <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
                                 </li>
                                 <li>
-                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">物料项</a>
+                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项</a>
                                 </li>
                             </ul>
                         </div>
@@ -311,7 +311,7 @@
                                             <th>租赁价格</th>
                                             <th>描述</th>
                                             <th>图片</th>
-                                            <th>物料单价</th>
+                                            <th>配件单价</th>
                                             <th>数量</th>
                                             <th>租赁类型</th>
                                             <th>租赁时长</th>
@@ -397,7 +397,7 @@
                                         {{/listData}}
                                         {{^listData}}
                                         <tr>
-                                            <td valign="top" colspan="14" class="text-center">没有物料</td>
+                                            <td valign="top" colspan="14" class="text-center">没有配件</td>
                                         </tr>
                                         {{/listData}}
                                         {{/dataSource}}

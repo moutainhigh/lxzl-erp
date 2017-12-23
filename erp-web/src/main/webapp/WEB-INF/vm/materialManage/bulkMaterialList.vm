@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-物料管理-散料列表</title>
+    <title>凌雄ERP-配件管理-散料列表</title>
     #parse("layout/header.vm")
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
@@ -72,7 +72,7 @@
                                 <th>散料编号</th>
                                 <th>散料名称</th>
                                 <th>散料类型</th>
-                                <th>物料编号</th>
+                                <th>配件编号</th>
                                 <th>仓库</th>
                                 <th>仓位</th>
                                 <th>品牌</th>
@@ -121,7 +121,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="14" class="text-center">没有查询到物料信息</td>
+                                <td valign="top" colspan="14" class="text-center">没有查询到配件信息</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}

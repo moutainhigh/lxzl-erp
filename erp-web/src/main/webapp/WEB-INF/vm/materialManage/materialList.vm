@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-物料管理-物料列表</title>
+    <title>凌雄ERP-配件管理-配件列表</title>
     #parse("layout/header.vm")
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
@@ -46,16 +46,16 @@
                                 </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <div class="input-group">
-                                        <input type="text" name="materialName" id="materialName" class="form-control input-sm bradius number" autocomplete="off" placeholder="输入物料名称">
+                                        <input type="text" name="materialName" id="materialName" class="form-control input-sm bradius number" autocomplete="off" placeholder="输入配件名称">
                                     </div>
                                 </div>
                                 <div class="form-group pull-right mn mr10" style="width: 120px;">
                                     <div class="input-group">
-                                        <input type="text" name="materialNo" id="materialNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入物料编号">
+                                        <input type="text" name="materialNo" id="materialNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入配件编号">
                                     </div>
                                 </div>
                                 <script type="text/html" id="materialTypeSelectTpl">
-                                    <option value="">全部（物料类型）</option>
+                                    <option value="">全部（配件类型）</option>
                                     {{#materialType}}
                                     <option value={{num}}>{{value}}</option>
                                     {{/materialType}}
@@ -129,7 +129,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="14" class="text-center">没有查询到物料信息</td>
+                                <td valign="top" colspan="14" class="text-center">没有查询到配件信息</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
