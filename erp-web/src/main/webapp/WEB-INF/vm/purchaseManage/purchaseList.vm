@@ -108,7 +108,7 @@
                                     </td>
                                     {{/hasCommonActionButtons}}
                                     <td>{{purchaseNo}}</td>
-                                    <td>{{purchaseOrderAmountTotalFixed}}</td>
+                                    <td>{{#price}}{{purchaseOrderAmountTotal}}{{/price}}</td>
                                     <td>{{productSupplierName}}</td>
                                     <td>{{invoiceSupplierName}}</td>
                                     <td>{{warehouse}}</td>
@@ -117,7 +117,7 @@
                                     <td>{{purchaseOrderStatusStr}}</td>
                                     <td>{{ownerName}}</td>
                                     <td>{{}}</td>
-                                    <td>{{createTimeFormat}}</td>
+                                    <td>{{#time}}{{createTime}}{{/time}}</td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
                                         <div class="btn-group text-right">

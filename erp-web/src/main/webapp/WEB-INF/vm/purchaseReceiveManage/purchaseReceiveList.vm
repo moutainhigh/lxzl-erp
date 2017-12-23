@@ -118,8 +118,8 @@
                                 <td>{{autoAllotStatusStr}}</td>
                                 <td>{{isNewStr}}</td>
                                 <td>{{purchaseReceiveOrderStatusStr}}</td>
-                                <td>{{createTimeFormat}}</td>
-                                <td>{{confirmTimeFormat}}</td>
+                                <td>{{#time}}{{createTime}}{{/time}}</td>
+                                <td>{{#time}}{{confirmTime}}{{/time}}</td>
                                 <td>{{remark}}</td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
