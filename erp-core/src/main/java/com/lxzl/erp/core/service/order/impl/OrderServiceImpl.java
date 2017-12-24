@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
@@ -454,7 +455,7 @@ public class OrderServiceImpl implements OrderService {
                 productUnitAmount = productServiceResult.getResult().getProductSkuList().get(0).getMonthRentPrice();
             }
             newOrderProductEquipmentDO.setProductEquipmentUnitAmount(productUnitAmount);
-            newOrderProductEquipmentDO.setExpectRentAmount(calculateRentAmount(returnDate, orderProductEquipmentDO.getExpectReturnTime(), productUnitAmount));
+            newOrderProductEquipmentDO.setExpectRentAmount(amountSupport.calculateRentAmount(returnDate, orderProductEquipmentDO.getExpectReturnTime(), productUnitAmount));
             newOrderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             newOrderProductEquipmentDO.setCreateTime(currentTime);
             newOrderProductEquipmentDO.setUpdateTime(currentTime);
@@ -463,7 +464,7 @@ public class OrderServiceImpl implements OrderService {
             orderProductEquipmentMapper.save(newOrderProductEquipmentDO);
         }
 
-        orderProductEquipmentDO.setActualRentAmount(calculateRentAmount(orderProductEquipmentDO.getRentStartTime(), returnDate, orderProductEquipmentDO.getProductEquipmentUnitAmount()));
+        orderProductEquipmentDO.setActualRentAmount(amountSupport.calculateRentAmount(orderProductEquipmentDO.getRentStartTime(), returnDate, orderProductEquipmentDO.getProductEquipmentUnitAmount()));
         orderProductEquipmentDO.setActualReturnTime(returnDate);
         orderProductEquipmentDO.setUpdateTime(currentTime);
         orderProductEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
@@ -579,7 +580,7 @@ public class OrderServiceImpl implements OrderService {
             } else if ((OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType()))) {
                 materialBulkUnitAmount = materialServiceResult.getResult().getMonthRentPrice();
             }
-            newOrderMaterialBulkDO.setExpectRentAmount(calculateRentAmount(returnDate, orderMaterialBulkDO.getExpectReturnTime(), materialBulkUnitAmount));
+            newOrderMaterialBulkDO.setExpectRentAmount(amountSupport.calculateRentAmount(returnDate, orderMaterialBulkDO.getExpectReturnTime(), materialBulkUnitAmount));
             newOrderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             newOrderMaterialBulkDO.setCreateTime(currentTime);
             newOrderMaterialBulkDO.setUpdateTime(currentTime);
@@ -588,7 +589,7 @@ public class OrderServiceImpl implements OrderService {
             orderMaterialBulkMapper.save(newOrderMaterialBulkDO);
         }
 
-        orderMaterialBulkDO.setActualRentAmount(calculateRentAmount(orderMaterialBulkDO.getRentStartTime(), returnDate, orderMaterialBulkDO.getMaterialBulkUnitAmount()));
+        orderMaterialBulkDO.setActualRentAmount(amountSupport.calculateRentAmount(orderMaterialBulkDO.getRentStartTime(), returnDate, orderMaterialBulkDO.getMaterialBulkUnitAmount()));
         orderMaterialBulkDO.setActualReturnTime(returnDate);
         orderMaterialBulkDO.setUpdateTime(currentTime);
         orderMaterialBulkDO.setUpdateUser(loginUser.getUserId().toString());
@@ -1590,32 +1591,12 @@ public class OrderServiceImpl implements OrderService {
         return ErrorCode.SUCCESS;
     }
 
-    private BigDecimal calculateRentAmount(Date rentStartDate, Date returnDate, BigDecimal unitAmount) {
-        int monthSpace = com.lxzl.erp.common.util.DateUtil.getMonthSpace(rentStartDate, returnDate);
-        Calendar returnDateCalendar = Calendar.getInstance();
-        returnDateCalendar.setTime(returnDate);
-        Calendar rentStartDateCalendar = Calendar.getInstance();
-        rentStartDateCalendar.setTime(rentStartDate);
-
-        Integer previousSurplusDays = 0, nextSurplusDays = 0;
-        int returnDateDay = returnDateCalendar.get(Calendar.DAY_OF_MONTH);
-        int rentStartDateDay = rentStartDateCalendar.get(Calendar.DAY_OF_MONTH);
-        int previousAllDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(DateUtil.monthInterval(returnDate, -1));
-        int nextAllDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(returnDate);
-        if (returnDateDay > rentStartDateDay) {
-            nextSurplusDays = returnDateDay - rentStartDateDay;
-        } else {
-            previousSurplusDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(DateUtil.monthInterval(returnDate, -1)) - rentStartDateDay;
-            nextSurplusDays = rentStartDateDay;
-        }
-        BigDecimal surplusDaysAmount = BigDecimalUtil.add(BigDecimalUtil.mul(BigDecimalUtil.div(unitAmount, new BigDecimal(previousAllDays), 2), new BigDecimal(previousSurplusDays)), BigDecimalUtil.mul(BigDecimalUtil.div(unitAmount, new BigDecimal(nextAllDays), 2), new BigDecimal(nextSurplusDays)));
-
-        return BigDecimalUtil.add(BigDecimalUtil.mul(unitAmount, new BigDecimal(monthSpace)), surplusDaysAmount);
-    }
-
 
     @Autowired
     private UserSupport userSupport;
+
+    @Autowired
+    private AmountSupport amountSupport;
 
     @Autowired
     private OrderMapper orderMapper;

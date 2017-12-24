@@ -7,7 +7,7 @@
 		<result column="return_order_product_id" jdbcType="INTEGER" property="returnOrderProductId" />
 		<result column="return_order_id" jdbcType="INTEGER" property="returnOrderId" />
 		<result column="return_order_no" jdbcType="VARCHAR" property="returnOrderNo" />
-		<result column="order_no" jdbcType="VARCHAR" property="order_no" />
+		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
 		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
 		<result column="equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />

@@ -38,13 +38,19 @@ public class StatementController extends BaseController {
 
     @RequestMapping(value = "createNew", method = RequestMethod.POST)
     public Result createNewOrderStatement(@RequestBody StatementOrderQueryParam param, BindingResult validResult) {
-        ServiceResult<String, BigDecimal> serviceResult = statementService.createOrderStatement(param.getStatementOrderNo());
+        ServiceResult<String, BigDecimal> serviceResult = statementService.createOrderStatement(param.getOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     @RequestMapping(value = "createChangeOrderStatement", method = RequestMethod.POST)
     public Result createChangeOrderStatement(@RequestBody StatementOrderQueryParam param, BindingResult validResult) {
-        ServiceResult<String, BigDecimal> serviceResult = statementService.createChangeOrderStatement(param.getStatementOrderNo());
+        ServiceResult<String, BigDecimal> serviceResult = statementService.createChangeOrderStatement(param.getChangeOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "createReturnOrderStatement", method = RequestMethod.POST)
+    public Result createReturnOrderStatement(@RequestBody StatementOrderQueryParam param, BindingResult validResult) {
+        ServiceResult<String, BigDecimal> serviceResult = statementService.createReturnOrderStatement(param.getReturnOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
