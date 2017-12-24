@@ -13,9 +13,11 @@ import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
+import com.lxzl.erp.core.service.material.impl.support.MaterialSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderConverter;
 import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
@@ -709,7 +711,7 @@ public class OrderServiceImpl implements OrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        if(!userSupport.isHeadUser()){
+        if (!userSupport.isHeadUser()) {
             orderQueryParam.setOrderSellerId(user.getUserId());
         }
         maps.put("orderQueryParam", orderQueryParam);
@@ -874,6 +876,12 @@ public class OrderServiceImpl implements OrderService {
                 result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
                 return result;
             }
+
+            String operateSkuStockResult = productSupport.operateSkuStock(productEquipmentDO.getSkuId(), -1);
+            if (!ErrorCode.SUCCESS.equals(operateSkuStockResult)) {
+                result.setErrorCode(operateSkuStockResult);
+                return result;
+            }
         }
 
         if (materialId != null) {
@@ -932,6 +940,12 @@ public class OrderServiceImpl implements OrderService {
                     return result;
                 }
             }
+
+            String operateMaterialStockResult = materialSupport.operateMaterialStock(materialId, (materialCount * -1));
+            if (!ErrorCode.SUCCESS.equals(operateMaterialStockResult)) {
+                result.setErrorCode(operateMaterialStockResult);
+                return result;
+            }
         }
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -968,6 +982,12 @@ public class OrderServiceImpl implements OrderService {
             orderProductEquipmentDO.setUpdateTime(currentTime);
             orderProductEquipmentDO.setUpdateUser(loginUserId.toString());
             orderProductEquipmentMapper.update(orderProductEquipmentDO);
+
+            String operateSkuStockResult = productSupport.operateSkuStock(productEquipmentDO.getSkuId(), 1);
+            if (!ErrorCode.SUCCESS.equals(operateSkuStockResult)) {
+                result.setErrorCode(operateSkuStockResult);
+                return result;
+            }
         }
 
         if (materialId != null) {
@@ -994,6 +1014,12 @@ public class OrderServiceImpl implements OrderService {
                 orderMaterialBulkDO.setUpdateTime(currentTime);
                 orderMaterialBulkDO.setUpdateUser(loginUserId.toString());
                 orderMaterialBulkMapper.update(orderMaterialBulkDO);
+            }
+
+            String operateMaterialStockResult = materialSupport.operateMaterialStock(materialId, materialCount);
+            if (!ErrorCode.SUCCESS.equals(operateMaterialStockResult)) {
+                result.setErrorCode(operateMaterialStockResult);
+                return result;
             }
         }
 
@@ -1644,4 +1670,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private WarehouseSupport warehouseSupport;
+
+    @Autowired
+    private ProductSupport productSupport;
+
+    @Autowired
+    private MaterialSupport materialSupport;
 }
