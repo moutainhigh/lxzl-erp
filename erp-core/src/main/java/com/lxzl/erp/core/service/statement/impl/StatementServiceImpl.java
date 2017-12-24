@@ -27,6 +27,8 @@ import com.lxzl.erp.dataaccess.domain.changeOrder.ChangeOrderProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderDO;
+import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderMaterialBulkDO;
+import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
@@ -321,8 +323,76 @@ public class StatementServiceImpl implements StatementService {
 
     @Override
     public ServiceResult<String, BigDecimal> createReturnOrderStatement(String returnOrderNo) {
+        ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(returnOrderNo);
-        return null;
+        Date currentTime = new Date();
+        User loginUser = userSupport.getCurrentUser();
+        List<StatementOrderDetailDO> addStatementOrderDetailDOList = new ArrayList<>();
+        Integer buyerCustomerId = returnOrderDO.getCustomerId();
+        Date statementDetailStartTime = currentTime;
+        Date statementDetailEndTime = null;
+        // 其他的费用
+        BigDecimal otherAmount = BigDecimalUtil.add(returnOrderDO.getServiceCost(), returnOrderDO.getDamageCost());
+        List<ReturnOrderProductEquipmentDO> returnOrderProductEquipmentDOList = returnOrderProductEquipmentMapper.findByReturnOrderNo(returnOrderNo);
+        if (CollectionUtil.isNotEmpty(returnOrderProductEquipmentDOList)) {
+            for (ReturnOrderProductEquipmentDO returnOrderProductEquipmentDO : returnOrderProductEquipmentDOList) {
+                OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderNoAndEquipmentNo(returnOrderProductEquipmentDO.getOrderNo(), returnOrderProductEquipmentDO.getEquipmentNo());
+                OrderProductDO orderProductDO = orderProductMapper.findById(orderProductEquipmentDO.getOrderProductId());
+                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
+                if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+                    BigDecimal payReturnAmount = BigDecimal.ZERO;
+                    boolean lastStage = false;
+                    for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
+                        StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
+                        if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
+                            // 如果最后一期都交完了，那么就设定一个本期的最后一个时间点
+                            if (i == (statementOrderDetailDOList.size() - 1)) {
+                                statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
+                            }
+                            continue;
+                        }
+                        statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
+                        statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
+
+                        if (i == (statementOrderDetailDOList.size())) {
+                            // 最后一期
+                            int diffDays = DateUtil.daysBetween(statementDetailEndTime, statementDetailStartTime);
+                            int thisMonthDays = DateUtil.getActualMaximum(statementDetailStartTime);
+                            // 第一期，也是最后一期的情况
+                            if (BigDecimalUtil.compare(payReturnAmount, BigDecimal.ZERO) == 0) {
+                                payReturnAmount = otherAmount;
+                            }
+                            payReturnAmount = BigDecimalUtil.add(payReturnAmount, BigDecimalUtil.mul(BigDecimalUtil.div(orderProductEquipmentDO.getProductEquipmentUnitAmount(), new BigDecimal(thisMonthDays), 2), new BigDecimal(diffDays)));
+                        } else if (BigDecimalUtil.compare(payReturnAmount, BigDecimal.ZERO) == 0) {
+                            // 第一期
+                            payReturnAmount = BigDecimalUtil.add(orderProductEquipmentDO.getProductEquipmentUnitAmount(), otherAmount);
+                        } else {
+                            payReturnAmount = orderProductEquipmentDO.getProductEquipmentUnitAmount();
+                        }
+
+                        StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderProductEquipmentDO.getReturnOrderId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT, returnOrderProductEquipmentDO.getReturnOrderProductId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, payReturnAmount, BigDecimal.ZERO, currentTime, loginUser.getUserId());
+                        addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
+                        lastStage = true;
+                    }
+
+                    if (!lastStage && BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
+                        // 如果没有处理完差价，统一当天交钱
+                        StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderProductEquipmentDO.getReturnOrderId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL, returnOrderProductEquipmentDO.getReturnOrderProductId(), statementDetailStartTime, statementDetailStartTime, statementDetailEndTime, otherAmount, BigDecimal.ZERO, currentTime, loginUser.getUserId());
+                        addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
+                    }
+                }
+            }
+        }
+
+        List<ReturnOrderMaterialBulkDO> returnOrderMaterialBulkDOList = returnOrderMaterialBulkMapper.findByReturnOrderNo(returnOrderNo);
+        if (CollectionUtil.isNotEmpty(returnOrderMaterialBulkDOList)) {
+            for (ReturnOrderMaterialBulkDO returnOrderMaterialBulkDO : returnOrderMaterialBulkDOList) {
+
+            }
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
     @Override
@@ -334,16 +404,16 @@ public class StatementServiceImpl implements StatementService {
         currentTimeCalendar.setTime(currentTime);
         ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(changeOrderNo);
         List<ChangeOrderProductEquipmentDO> changeOrderProductEquipmentDOList = changeOrderProductEquipmentMapper.findByChangeOrderNo(changeOrderNo);
-        Integer buyerCustomerId = null;
+        Integer buyerCustomerId = changeOrderDO.getCustomerId();
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = new ArrayList<>();
         Date statementDetailStartTime = currentTime;
         Date statementDetailEndTime = null;
         if (CollectionUtil.isNotEmpty(changeOrderProductEquipmentDOList)) {
             for (ChangeOrderProductEquipmentDO changeOrderProductEquipmentDO : changeOrderProductEquipmentDOList) {
-                if (changeOrderProductEquipmentDO.getPriceDiff() == null || BigDecimalUtil.compare(changeOrderProductEquipmentDO.getPriceDiff(), BigDecimal.ZERO) <= 0) {
+                BigDecimal productEquipmentDiffAmount = changeOrderProductEquipmentDO.getPriceDiff();
+                if (productEquipmentDiffAmount == null || BigDecimalUtil.compare(productEquipmentDiffAmount, BigDecimal.ZERO) <= 0) {
                     continue;
                 }
-                BigDecimal productEquipmentDiffAmount = changeOrderProductEquipmentDO.getPriceDiff();
                 OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderNoAndEquipmentNo(changeOrderProductEquipmentDO.getOrderNo(), changeOrderProductEquipmentDO.getSrcEquipmentNo());
                 OrderProductDO orderProductDO = orderProductMapper.findById(orderProductEquipmentDO.getOrderProductId());
 
@@ -355,12 +425,8 @@ public class StatementServiceImpl implements StatementService {
                     List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
                     if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
                         BigDecimal payDiffAmount = BigDecimal.ZERO;
-                        BigDecimal thisDiffAmount;
                         for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
                             StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
-                            if (buyerCustomerId == null) {
-                                buyerCustomerId = statementOrderDetailDO.getCustomerId();
-                            }
                             if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                                 // 如果最后一期都交完了，那么就设定一个本期的最后一个时间点
                                 if (i == (statementOrderDetailDOList.size() - 1)) {
@@ -373,21 +439,22 @@ public class StatementServiceImpl implements StatementService {
                             if (i == 0) {
                                 int diffDays = DateUtil.daysBetween(statementDetailEndTime, statementDetailStartTime);
                                 int thisMonthDays = DateUtil.getActualMaximum(statementDetailStartTime);
-                                thisDiffAmount = BigDecimalUtil.mul(BigDecimalUtil.div(changeOrderProductEquipmentDO.getPriceDiff(), new BigDecimal(thisMonthDays), 2), new BigDecimal(diffDays));
+                                payDiffAmount = BigDecimalUtil.mul(BigDecimalUtil.div(productEquipmentDiffAmount, new BigDecimal(thisMonthDays), 2), new BigDecimal(diffDays));
                             } else if (i == (statementOrderDetailDOList.size() - 1)) {
                                 statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
-                                thisDiffAmount = BigDecimalUtil.sub(productEquipmentDiffAmount, payDiffAmount);
+                                int diffDays = DateUtil.daysBetween(statementDetailEndTime, statementDetailStartTime);
+                                int thisMonthDays = DateUtil.getActualMaximum(statementDetailStartTime);
+                                payDiffAmount = BigDecimalUtil.mul(BigDecimalUtil.div(productEquipmentDiffAmount, new BigDecimal(thisMonthDays), 2), new BigDecimal(diffDays));
                             } else {
                                 statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
-                                thisDiffAmount = changeOrderProductEquipmentDO.getPriceDiff();
+                                payDiffAmount = productEquipmentDiffAmount;
                             }
 
-                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(statementOrderDetailDO.getCustomerId(), OrderType.ORDER_TYPE_CHANGE, changeOrderProductEquipmentDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT, changeOrderProductEquipmentDO.getChangeOrderProductId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, thisDiffAmount, BigDecimal.ZERO, currentTime, loginUser.getUserId());
+                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderProductEquipmentDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT, changeOrderProductEquipmentDO.getChangeOrderProductId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, payDiffAmount, BigDecimal.ZERO, currentTime, loginUser.getUserId());
                             addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
-                            payDiffAmount = BigDecimalUtil.add(payDiffAmount, thisDiffAmount);
                         }
 
-                        if (BigDecimalUtil.compare(payDiffAmount, productEquipmentDiffAmount) != 0) {
+                        if (BigDecimalUtil.compare(payDiffAmount, BigDecimal.ZERO) == 0) {
                             // 如果没有处理完差价，统一当天交钱
                             StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderProductEquipmentDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT, changeOrderProductEquipmentDO.getChangeOrderProductId(), statementDetailStartTime, statementDetailStartTime, statementDetailEndTime, productEquipmentDiffAmount, BigDecimal.ZERO, currentTime, loginUser.getUserId());
                             addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
@@ -416,9 +483,6 @@ public class StatementServiceImpl implements StatementService {
                         BigDecimal thisDiffAmount;
                         for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
                             StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
-                            if (buyerCustomerId == null) {
-                                buyerCustomerId = statementOrderDetailDO.getCustomerId();
-                            }
                             if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                                 // 如果最后一期都交完了，那么就设定一个本期的最后一个时间点
                                 if (i == (statementOrderDetailDOList.size() - 1)) {
