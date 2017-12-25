@@ -6,6 +6,7 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="statement_order_no" jdbcType="VARCHAR" property="statementOrderNo" />
 		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
+		<result column="customer_name" jdbcType="VARCHAR" property="customerName" />
 		<result column="statement_expect_pay_time" jdbcType="TIMESTAMP" property="statementExpectPayTime" />
 		<result column="statement_amount" jdbcType="DECIMAL" property="statementAmount" />
 		<result column="statement_rent_deposit_amount" jdbcType="DECIMAL" property="statementRentDepositAmount" />
@@ -68,7 +69,12 @@
 		</trim>
 		FROM
 		(
-			SELECT <include refid="column_List"/> FROM erp_statement_order eso
+			SELECT <include refid="column_List"/>
+			<trim prefix=",">
+				ec.customer_name AS customer_name
+			</trim>
+			FROM erp_statement_order eso
+            INNER JOIN erp_customer ec ON eso.customer_id = ec.id
 			WHERE eso.id = #{id, jdbcType=INTEGER} AND eso.data_status = 1
 		) statement_main
 		LEFT JOIN erp_statement_order_detail esod ON statement_main.id = esod.statement_order_id AND esod.data_status = 1
@@ -82,7 +88,12 @@
 		</trim>
 		FROM
 		(
-			SELECT <include refid="column_List"/> FROM erp_statement_order eso
+			SELECT <include refid="column_List"/>
+			<trim prefix=",">
+				ec.customer_name AS customer_name
+			</trim>
+			FROM erp_statement_order eso
+			INNER JOIN erp_customer ec ON eso.customer_id = ec.id
 			WHERE eso.statement_order_no = #{statementOrderNo, jdbcType=INTEGER} AND eso.data_status = 1
 		) statement_main
 		LEFT JOIN erp_statement_order_detail esod ON statement_main.id = esod.statement_order_id AND esod.data_status = 1
@@ -127,6 +138,9 @@
 		FROM
 		(
 			SELECT <include refid="column_List"/>
+			<trim prefix=",">
+				ec.customer_name AS customer_name
+			</trim>
 			FROM erp_statement_order eso
 			INNER JOIN erp_customer ec on eso.customer_id = ec.id
 			<where>

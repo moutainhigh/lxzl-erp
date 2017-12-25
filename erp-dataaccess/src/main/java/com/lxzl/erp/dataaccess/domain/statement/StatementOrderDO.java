@@ -1,6 +1,7 @@
 package com.lxzl.erp.dataaccess.domain.statement;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
 
 import java.util.Date;
 import java.math.BigDecimal;
@@ -26,6 +27,9 @@ public class StatementOrderDO extends BaseDO {
     private Integer dataStatus;
     private String remark;
     private List<StatementOrderDetailDO> statementOrderDetailDOList;
+
+    @Transient
+    private String customerName;
 
     public Integer getId() {
         return id;
@@ -169,5 +173,13 @@ public class StatementOrderDO extends BaseDO {
 
     public void setStatementPaidTime(Date statementPaidTime) {
         this.statementPaidTime = statementPaidTime;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 }
