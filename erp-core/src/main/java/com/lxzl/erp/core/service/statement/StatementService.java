@@ -50,6 +50,14 @@ public interface StatementService extends BaseService {
      */
     ServiceResult<String, Page<StatementOrder>> queryStatementOrder(StatementOrderQueryParam statementOrderQueryParam);
 
+    /**
+     * 查询结算单详情
+     *
+     * @param statementOrderNo 结算单编号
+     * @return 结算单详情
+     */
+    ServiceResult<String, StatementOrder> queryStatementOrderDetail(String statementOrderNo);
+
 
     /**
      * 创建退货单结算单

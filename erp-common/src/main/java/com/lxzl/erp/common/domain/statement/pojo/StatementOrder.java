@@ -13,6 +13,7 @@ public class StatementOrder implements Serializable {
     private Integer statementOrderId;   //唯一标识
     private String statementOrderNo;   //结算单编码
     private Integer customerId;   //客户ID
+    private String customerName;    // 客户姓名
     private Date statementExpectPayTime; // 结算单预计支付时间
     private BigDecimal statementAmount;   //结算单金额，结算单明细总和
     private BigDecimal statementRentDepositAmount;      // 结算租金押金金额
@@ -209,5 +210,13 @@ public class StatementOrder implements Serializable {
 
     public void setStatementPaidTime(Date statementPaidTime) {
         this.statementPaidTime = statementPaidTime;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 }

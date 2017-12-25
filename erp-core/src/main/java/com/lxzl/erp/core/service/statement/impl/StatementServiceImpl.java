@@ -281,6 +281,19 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
+    public ServiceResult<String, StatementOrder> queryStatementOrderDetail(String statementOrderNo) {
+        ServiceResult<String, StatementOrder> result = new ServiceResult<>();
+        StatementOrderDO statementOrderDO = statementOrderMapper.findByNo(statementOrderNo);
+        if (statementOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        result.setResult(ConverterUtil.convert(statementOrderDO, StatementOrder.class));
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
     public ServiceResult<String, BigDecimal> createReturnOrderStatement(String returnOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(returnOrderNo);

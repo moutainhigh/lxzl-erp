@@ -65,4 +65,12 @@ public class StatementController extends BaseController {
         ServiceResult<String, Page<StatementOrder>> serviceResult = statementService.queryStatementOrder(statementOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    @RequestMapping(value = "detail", method = RequestMethod.POST)
+    public Result detail(@RequestBody StatementOrderQueryParam statementOrderQueryParam, BindingResult validResult) {
+        ServiceResult<String, StatementOrder> serviceResult = statementService.queryStatementOrderDetail(statementOrderQueryParam.getStatementOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+
 }

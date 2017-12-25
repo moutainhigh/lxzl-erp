@@ -324,7 +324,7 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
 
         //判断该散料是否与设备在同一个仓库
         if (!productEquipmentDO.getCurrentWarehouseId().equals(bulkMaterialDO.getCurrentWarehouseId())){
-            return ErrorCode.PRODUCT_EQUIPMENT_AND_BULK_MATERIAL_NOT_WAREHOUSE;
+            return ErrorCode.PRODUCT_EQUIPMENT_AND_BULK_MATERIAL_NOT_SAME_WAREHOUSE;
         }
         return ErrorCode.SUCCESS;
     }
