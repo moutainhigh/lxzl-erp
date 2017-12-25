@@ -18,6 +18,7 @@ import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.MaterialConverter;
 import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.core.service.product.impl.support.ProductEquipmentConverter;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.core.service.purchase.impl.support.PurchaseOrderConverter;
 import com.lxzl.erp.core.service.purchase.impl.support.PurchaseOrderSupport;
@@ -1475,7 +1476,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         Integer totalCount = productEquipmentMapper.listByPurchaseReceiveOrderProductIdCount(maps);
         List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.listByPurchaseReceiveOrderProductId(maps);
-        List<ProductEquipment> productEquipmentList = ConverterUtil.convertList(productEquipmentDOList,ProductEquipment.class);
+        List<ProductEquipment> productEquipmentList = ProductEquipmentConverter.convertProductEquipmentDOList(productEquipmentDOList);
         Page<ProductEquipment> page = new Page<>(productEquipmentList, totalCount, pageParam.getPageNo(), pageParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);

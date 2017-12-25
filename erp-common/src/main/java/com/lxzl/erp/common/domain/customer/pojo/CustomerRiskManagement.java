@@ -37,6 +37,7 @@ public class CustomerRiskManagement implements Serializable {
 	private Integer applePaymentCycle;	// 全新设备租赁方案
 	private Integer newDepositCycle;	// 全新设备租赁方案
 	private Integer newPaymentCycle;	// 全新设备租赁方案
+	private Integer payMode;			// 其他设备支付方式
 	private Integer applePayMode;		// 苹果设备支付方式
 	private Integer newPayMode;			// 全新设备支付方式
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -207,5 +208,13 @@ public class CustomerRiskManagement implements Serializable {
 
 	public void setNewPayMode(Integer newPayMode) {
 		this.newPayMode = newPayMode;
+	}
+
+	public Integer getPayMode() {
+		return payMode;
+	}
+
+	public void setPayMode(Integer payMode) {
+		this.payMode = payMode;
 	}
 }

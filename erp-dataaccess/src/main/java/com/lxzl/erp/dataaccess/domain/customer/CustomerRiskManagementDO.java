@@ -16,6 +16,7 @@ public class CustomerRiskManagementDO  extends BaseDO {
 	private Integer applePaymentCycle;
 	private Integer newDepositCycle;	// 全新设备租赁方案
 	private Integer newPaymentCycle;
+	private Integer payMode;			// 其他设备支付方式
 	private Integer applePayMode;		// 苹果设备支付方式
 	private Integer newPayMode;			// 全新设备支付方式
 	private Integer dataStatus;
@@ -131,5 +132,13 @@ public class CustomerRiskManagementDO  extends BaseDO {
 
 	public void setNewPayMode(Integer newPayMode) {
 		this.newPayMode = newPayMode;
+	}
+
+	public Integer getPayMode() {
+		return payMode;
+	}
+
+	public void setPayMode(Integer payMode) {
+		this.payMode = payMode;
 	}
 }
