@@ -411,6 +411,10 @@ public class ProductServiceImpl implements ProductService {
         }
 
         ProductDO productDO = productMapper.findByProductId(productId);
+        if(productDO == null){
+            result.setErrorCode(ErrorCode.PRODUCT_NOT_EXISTS);
+            return result;
+        }
         List<ProductSkuDO> productSkuDOList = productSkuMapper.findDetailByProductId(productId);
         productDO.setProductSkuDOList(productSkuDOList);
         Product product = ProductConverter.convertProductDO(productDO);

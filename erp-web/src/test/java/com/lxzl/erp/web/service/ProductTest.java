@@ -248,7 +248,7 @@ public class ProductTest extends BaseUnTransactionalTest {
 
     @Test
     public void queryProductDetailById() {
-        Integer productId = 2000001;
+        Integer productId = 2000005;
         ServiceResult<String, Product> result = productService.queryProductDetailById(productId);
     }
 
