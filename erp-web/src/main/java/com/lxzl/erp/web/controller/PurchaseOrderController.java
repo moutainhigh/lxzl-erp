@@ -13,9 +13,11 @@ import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import com.lxzl.erp.common.domain.validGroup.purchaseOrder.UpdateReceiveRemarkGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
+import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.se.common.domain.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -159,9 +161,9 @@ public class PurchaseOrderController {
      * @param validResult
      * @return
      */
-    @RequestMapping(value = "commitPurchaseReceiveOrder", method = RequestMethod.POST)
-    public Result commitPurchaseReceiveOrder(@RequestBody @Validated(IdGroup.class) PurchaseReceiveOrder purchaseReceiveOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = purchaseOrderService.commitPurchaseReceiveOrder(purchaseReceiveOrder);
+    @RequestMapping(value = "confirmPurchaseReceiveOrder", method = RequestMethod.POST)
+    public Result confirmPurchaseReceiveOrder(@RequestBody @Validated(IdGroup.class) PurchaseReceiveOrder purchaseReceiveOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = purchaseOrderService.confirmPurchaseReceiveOrder(purchaseReceiveOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -252,6 +254,32 @@ public class PurchaseOrderController {
     @RequestMapping(value = "pageReceiveOrderMaterialBulk", method = RequestMethod.POST)
     public Result pageReceiveOrderMaterialBulk(@RequestBody @Validated PurchaseReceiveOrderMaterialBulkPageParam purchaseReceiveOrderMaterialBulkPageParam, BindingResult validResult) {
         ServiceResult<String, Page<BulkMaterial>> serviceResult = purchaseOrderService.pageReceiveOrderMaterialBulk(purchaseReceiveOrderMaterialBulkPageParam);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 采购收货单设备备注修改
+     *
+     * @param updatePurchaseReceiveOrderRemarkParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "updateReceiveRemark", method = RequestMethod.POST)
+    public Result updateReceiveRemark(@RequestBody @Validated(UpdateReceiveRemarkGroup.class) UpdatePurchaseReceiveOrderRemarkParam updatePurchaseReceiveOrderRemarkParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = purchaseOrderService.updateReceiveRemark(updatePurchaseReceiveOrderRemarkParam);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 采购收货单提交
+     *
+     * @param purchaseReceiveOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "commitPurchaseReceiveOrder", method = RequestMethod.POST)
+    public Result commitPurchaseReceiveOrder(@RequestBody @Validated(IdGroup.class) PurchaseReceiveOrder purchaseReceiveOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = purchaseOrderService.commitPurchaseReceiveOrder(purchaseReceiveOrder);
         return resultGenerator.generate(serviceResult);
     }
 }

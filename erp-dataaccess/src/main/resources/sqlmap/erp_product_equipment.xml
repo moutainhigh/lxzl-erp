@@ -19,6 +19,7 @@
         <result column="purchase_price" jdbcType="DECIMAL" property="purchasePrice" />
         <result column="equipment_status" property="equipmentStatus"/>
         <result column="is_new" property="isNew"/>
+        <result column="purchase_receive_remark" property="purchaseReceiveRemark"/>
         <result column="data_status" property="dataStatus"/>
         <result column="remark" property="remark"/>
         <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
@@ -74,7 +75,7 @@
         <result column="img_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
     <sql id="column_List">
-        epe.id,epe.equipment_no,epe.product_id,epe.sku_id,epe.order_no,epe.current_warehouse_id,epe.current_warehouse_position_id,epe.owner_warehouse_id,epe.owner_warehouse_position_id,epe.equipment_price,epe.purchase_price,epe.equipment_status,epe.is_new,epe.data_status,epe.remark,epe.create_user,epe.create_time,epe.update_user,epe.update_time
+        epe.id,epe.equipment_no,epe.product_id,epe.sku_id,epe.order_no,epe.current_warehouse_id,epe.current_warehouse_position_id,epe.owner_warehouse_id,epe.owner_warehouse_position_id,epe.equipment_price,epe.purchase_price,epe.equipment_status,epe.is_new,epe.purchase_receive_remark,epe.data_status,epe.remark,epe.create_user,epe.create_time,epe.update_user,epe.update_time
     </sql>
     <sql id="img_column_List">
         epi.id as img_id,epi.img_type as img_img_type,epi.original_name as img_original_name,epi.product_id as img_product_id,epi.img_url as img_img_url,epi.data_status as img_data_status,epi.remark as img_remark,epi.is_main as img_is_main,epi.img_order as img_img_order,epi.create_user as img_create_user,epi.create_time as img_create_time,epi.update_user as img_update_user,epi.update_time as img_update_time
@@ -142,7 +143,7 @@
         LEFT JOIN erp_product_equipment epe ON epe.id=esoe.equipment_id AND epe.data_status=1
         WHERE esoe.item_refer_id = #{maps.queryParam.purchaseReceiveOrderProductId} AND epo.data_status = 1 AND auto_allot_status != 1
     </select>
-    <select id="getRentEquipmentCountByOrderNo" resultType="java.lang.String">
+    <select id="getRentEquipmentCountByOrderNo" resultType="java.lang.Integer">
         SELECT count(1) FROM erp_product_equipment epe WHERE epe.data_status=1 AND epe.order_no = #{orderNo}
     </select>
     <select id="findByEquipmentNo" resultMap="ProductEquipmentDO" parameterType="java.lang.String">
@@ -314,6 +315,9 @@
             </if>
             <if test="isNew != null">
                 is_new = #{isNew,jdbcType=INTEGER},
+            </if>
+            <if test="purchaseReceiveRemark != null">
+                purchase_receive_remark = #{purchaseReceiveRemark,jdbcType=INTEGER},
             </if>
             <if test="dataStatus != null">
                 data_status = #{dataStatus,jdbcType=INTEGER},

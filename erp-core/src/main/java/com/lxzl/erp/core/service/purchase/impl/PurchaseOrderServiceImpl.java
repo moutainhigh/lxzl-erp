@@ -1008,7 +1008,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> commitPurchaseReceiveOrder(PurchaseReceiveOrder purchaseReceiveOrder) {
+    public ServiceResult<String, String> confirmPurchaseReceiveOrder(PurchaseReceiveOrder purchaseReceiveOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         PurchaseReceiveOrderDO purchaseReceiveOrderDO = purchaseReceiveOrderMapper.findAllByNo(purchaseReceiveOrder.getPurchaseReceiveNo());
         if (purchaseReceiveOrderDO == null) {
@@ -1423,6 +1423,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         Date now = new Date();
         //累加总价
         BigDecimal totalAmount = purchaseReceiveOrderDO.getTotalAmount() == null ? BigDecimal.ZERO : purchaseReceiveOrderDO.getTotalAmount();
+        List<ProductEquipmentDO> productEquipmentDOListForUpdate = new ArrayList<>();
+        List<BulkMaterialDO> bulkMaterialDOListForUpdate = new ArrayList<>();
         if (CollectionUtil.isNotEmpty(productEquipmentList)) {
             for (ProductEquipment productEquipment : productEquipmentList) {
                 if (purchaseOrderProductDOMap.get(productEquipment.getEquipmentNo()) == null) {
@@ -1437,7 +1439,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 productEquipmentDO.setPurchasePrice(productEquipment.getPurchasePrice());
                 productEquipmentDO.setUpdateTime(now);
                 productEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                productEquipmentMapper.update(productEquipmentDO);
+                productEquipmentDOListForUpdate.add(productEquipmentDO);
             }
         }
         if (CollectionUtil.isNotEmpty(bulkMaterialList)) {
@@ -1454,12 +1456,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 bulkMaterialDO.setPurchasePrice(bulkMaterial.getPurchasePrice());
                 bulkMaterialDO.setUpdateTime(now);
                 bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                bulkMaterialMapper.update(bulkMaterialDO);
+                bulkMaterialDOListForUpdate.add(bulkMaterialDO);
             }
         }
         purchaseReceiveOrderDO.setTotalAmount(totalAmount);
         purchaseReceiveOrderDO.setUpdateTime(now);
         purchaseReceiveOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        productEquipmentMapper.updateList(productEquipmentDOListForUpdate);
+        bulkMaterialMapper.updateList(bulkMaterialDOListForUpdate);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(purchaseReceiveOrderDO.getPurchaseReceiveNo());
         return serviceResult;
@@ -1501,6 +1505,55 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> updateReceiveRemark(UpdatePurchaseReceiveOrderRemarkParam updatePurchaseReceiveOrderRemarkParam) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        PurchaseReceiveOrderDO purchaseReceiveOrderDO = purchaseReceiveOrderMapper.findByNo(updatePurchaseReceiveOrderRemarkParam.getPurchaseReceiveOrderNo());
+        if(purchaseReceiveOrderDO==null){
+            serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        if(!PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_YET.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())&&
+                !PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_COMMITTED.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())){
+            serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_UPDATE);
+            return serviceResult;
+        }
+        ProductEquipment productEquipment = updatePurchaseReceiveOrderRemarkParam.getProductEquipment();
+        ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(productEquipment.getEquipmentNo());
+        if(productEquipmentDO==null){
+            serviceResult.setErrorCode(ErrorCode.EQUIPMENT_NOT_EXISTS);
+            return serviceResult;
+        }
+        productEquipmentDO.setPurchaseReceiveRemark(productEquipment.getPurchaseReceiveRemark());
+        productEquipmentDO.setUpdateTime(new Date());
+        productEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        productEquipmentMapper.update(productEquipmentDO);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(productEquipmentDO.getEquipmentNo());
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, String> commitPurchaseReceiveOrder(PurchaseReceiveOrder purchaseReceiveOrder) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        PurchaseReceiveOrderDO purchaseReceiveOrderDO = purchaseReceiveOrderMapper.findByNo(purchaseReceiveOrder.getPurchaseReceiveNo());
+        if(purchaseReceiveOrderDO==null){
+            serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        if(!PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_YET.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())){
+            serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_COMMIT);
+            return serviceResult;
+        }
+        purchaseReceiveOrderDO.setPurchaseReceiveOrderStatus(PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_COMMITTED);
+        purchaseReceiveOrderDO.setUpdateTime(new Date());
+        purchaseReceiveOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        purchaseReceiveOrderMapper.update(purchaseReceiveOrderDO);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(purchaseReceiveOrderDO.getPurchaseReceiveNo());
+        return serviceResult;
     }
 
     /**

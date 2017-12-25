@@ -195,7 +195,8 @@ public class ErrorCode {
     public static final String STOCK_NOT_MATCH = "J300055";
     public static final String STOCK_NOT_ENOUGH = "J300056";
     public static final String EQUIPMENT_PURCHASE_PRICE_NOT_NULL = "J300057";
-    public static final String BULK_PURCHASE_PRICE_NOT_NULL = "J300057";
+    public static final String BULK_PURCHASE_PRICE_NOT_NULL = "J300058";
+    public static final String PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_COMMIT = "J300059";
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
     public static final String ORDER_CUSTOMER_CONSIGN_NOT_NULL = "J400001";
@@ -327,6 +328,7 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_STATUS_ERROR = "J500042";
     public static final String MATERIAL_NOT_RENT = "J500043";
     public static final String PURCHASE_PRICE_ERROR = "J500044";
+    public static final String PURCHASE_RECEIVE_REMARK_ERROR = "J500045";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -508,7 +510,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_RECEIVE_ORDER_NO_NOT_NULL, "采购收货单编号不能为空");
         MAP.put(PURCHASE_RECEIVE_ORDER_NOT_EXISTS, "采购收货单不存在");
         MAP.put(PURCHASE_RECEIVE_ORDER_AUTO_ALLOT_YES_CAN_NOT_UPDATE, "自动流转到总仓的采购发货单不能修改");
-        MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_UPDATE, "已签单的采购发货单不能修改");
+        MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_UPDATE, "已签单的采购收货单不能修改");
         MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_LIST_NOT_NULL, "采购收货单商品项列表不能为空");
         MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_REAL_COUNT_NOT_NULL, "商品SKU实际数量填写不正确");
         MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_SKU_ID_NOT_NULL, "采购收货单商品项商品SKU_ID不能为空");
@@ -544,6 +546,7 @@ public class ErrorCode {
         MAP.put(EQUIPMENT_PURCHASE_PRICE_NOT_NULL, "编号为【%s】的设备没有填写价格，请确保所有设备及配件填写了采购价");
         MAP.put(BULK_PURCHASE_PRICE_NOT_NULL, "编号为【%s】的配件没有填写价格，请确保所有设备及配件填写了采购价");
         MAP.put(PURCHASE_PRICE_ERROR, "采购价格填写错误");
+        MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_COMMIT, "此采购收货单不能提交");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");

@@ -45,7 +45,26 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
         addReturnOrderParam.setIsCharging(CommonConstant.COMMON_CONSTANT_YES);
         TestResult testResult = getJsonTestResult("/returnOrder/add", addReturnOrderParam);
     }
+    @Test
+    public void create3() throws Exception {
+        AddReturnOrderParam addReturnOrderParam = new AddReturnOrderParam();
+        addReturnOrderParam.setCustomerNo("CC201712091546467081096");
+        addReturnOrderParam.setReturnMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
+        List<ReturnOrderProduct> returnOrderProductList = new ArrayList<>();
+        ReturnOrderProduct returnOrderProduct = new ReturnOrderProduct();
+        returnOrderProduct.setReturnProductSkuId(40);
+        returnOrderProduct.setReturnProductSkuCount(1);
+        returnOrderProductList.add(returnOrderProduct);
+        addReturnOrderParam.setReturnOrderProductList(returnOrderProductList);
 
+        ReturnOrderConsignInfo returnOrderConsignInfo = new ReturnOrderConsignInfo();
+        returnOrderConsignInfo.setConsigneeName("随便");
+        returnOrderConsignInfo.setConsigneePhone("13612342234");
+        returnOrderConsignInfo.setAddress("随便");
+        addReturnOrderParam.setReturnOrderConsignInfo(returnOrderConsignInfo);
+        addReturnOrderParam.setIsCharging(CommonConstant.COMMON_CONSTANT_YES);
+        TestResult testResult = getJsonTestResult("/returnOrder/add", addReturnOrderParam);
+    }
     @Test
     public void create2() throws Exception {
         AddReturnOrderParam addReturnOrderParam = JSON.parseObject("{\n" +
@@ -104,8 +123,8 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void doReturnEquipment() throws Exception {
         DoReturnEquipmentParam doReturnEquipmentParam = new DoReturnEquipmentParam();
-        doReturnEquipmentParam.setReturnOrderNo("RO201712011933151931203");
-        doReturnEquipmentParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010009");
+        doReturnEquipmentParam.setReturnOrderNo("RO201712252003510581416");
+        doReturnEquipmentParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017121610002");
         TestResult testResult = getJsonTestResult("/returnOrder/doReturnEquipment", doReturnEquipmentParam);
     }
 
@@ -121,7 +140,7 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detail() throws Exception {
         ReturnOrder returnOrder = new ReturnOrder();
-        returnOrder.setReturnOrderNo("RO201712181649257021207");
+        returnOrder.setReturnOrderNo("RO201712252003510581416");
         TestResult testResult = getJsonTestResult("/returnOrder/detail", returnOrder);
     }
 

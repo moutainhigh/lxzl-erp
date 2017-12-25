@@ -25,6 +25,7 @@ public class ProductEquipmentDO extends BaseDO {
     private BigDecimal purchasePrice;
     private Integer equipmentStatus;
     private Integer isNew;
+    private String purchaseReceiveRemark;
     private Integer dataStatus;
     private String remark;
     private List<ProductImgDO> productImgDOList;           // 商品图片
@@ -168,6 +169,14 @@ public class ProductEquipmentDO extends BaseDO {
 
     public void setIsNew(Integer isNew) {
         this.isNew = isNew;
+    }
+
+    public String getPurchaseReceiveRemark() {
+        return purchaseReceiveRemark;
+    }
+
+    public void setPurchaseReceiveRemark(String purchaseReceiveRemark) {
+        this.purchaseReceiveRemark = purchaseReceiveRemark;
     }
 
     public String getCurrentWarehouseName() {
