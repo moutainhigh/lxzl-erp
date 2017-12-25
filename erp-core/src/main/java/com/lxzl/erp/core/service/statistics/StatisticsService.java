@@ -12,5 +12,10 @@ import com.lxzl.se.core.service.BaseService;
  */
 public interface StatisticsService extends BaseService {
 
-    ServiceResult<String,StatisticsIndexInfo> queryIndexInfo();
+    /**
+     * 查询首页数据信息
+     *
+     * @return 首页数据信息
+     */
+    ServiceResult<String, StatisticsIndexInfo> queryIndexInfo();
 }
