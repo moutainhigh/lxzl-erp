@@ -180,7 +180,6 @@ public class JointProductServiceImpl implements JointProductService {
                     jointProductSkuDO.setSkuId(jointProductSku.getSkuId());
                     jointProductSkuDO.setSkuCount(jointProductSku.getSkuCount());
                     jointProductSkuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                    jointProductSkuDO.setRemark(jointProductSku.getRemark());
                     jointProductSkuDO.setUpdateTime(now);
                     jointProductSkuDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     jointProductSkuMapper.update(jointProductSkuDO);
