@@ -328,6 +328,18 @@ public class PageController extends BaseController {
         return "/purchaseReceiveManage/purchaseReceiveEdit";
     }
 
+    @RequestMapping("/purchase-receive-manage-product-equipment/edit")
+    public String purchaseReceiveManageEditEquipment() {
+        return "/component/purchaseReceiveOrder/purchaseReceiveOrderProductEquipment";
+    }
+
+    @RequestMapping("/purchase-receive-manage-material-bulk/edit")
+    public String purchaseReceiveManageEditMaterialBulk() {
+        return "/component/purchaseReceiveOrder/purchaseReceiveOrderProductMaterialBulk";
+    }
+
+
+
     //采购发货单
     @RequestMapping("/purchase-delivery-manage/list")
     public String purchaseDeliveryManageList() {

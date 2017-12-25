@@ -42,13 +42,13 @@
                                     <button type="reset" class="btn btn-default btn-sm">重置</button>
                                 </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                    <input type="text" name="purchaseNo" id="purchaseNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入采购单编号">
+                                    <input type="text" name="purchaseNo" id="purchaseNo" class="form-control input-sm bradius" autocomplete="off" placeholder="采购单编号">
                                 </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                    <input type="text" name="purchaseReceiveMo" id="purchaseReceiveMo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入采购收货单编号">
+                                    <input type="text" name="purchaseReceiveNo" id="purchaseReceiveNo" class="form-control input-sm bradius" autocomplete="off" placeholder="收货单编号">
                                 </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                    <input type="text" name="purchaseDeliveryNo" id="purchaseDeliveryNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入发货单编号">
+                                    <input type="text" name="purchaseDeliveryNo" id="purchaseDeliveryNo" class="form-control input-sm bradius" autocomplete="off" placeholder="发货单编号">
                                 </div>
                                 <div class="form-group pull-right mn mr10" style="width: 210px;">
                                     <input type="hidden" name="createStartTime" id="createStartTime" />

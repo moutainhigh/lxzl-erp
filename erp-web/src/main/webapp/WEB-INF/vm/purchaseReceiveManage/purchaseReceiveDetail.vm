@@ -48,15 +48,15 @@
                                 </div>
                                 <div class="col-md-3">
                                     <dl class="dl-horizontal">
-                                        <dt class="mb10">签单时间</dt><dd>{{confirmTimeFormat}}</dd>
+                                        <dt class="mb10">签单时间</dt><dd>{{#time}}{{confirmTime}}{{/time}}</dd>
                                         <dt class="mb10">签单人</dt><dd>{{ownerName}}</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-3">
                                     <dl class="dl-horizontal">
-                                        <dt class="mb10">创建时间</dt><dd>{{createTimeFormat}}</dd>
+                                        <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}</dd>
                                         <dt class="mb10">创建人</dt><dd>{{createUser}}</dd>
-                                        <dt class="mb10">修改时间</dt><dd>{{updateTimeFormat}}</dd>
+                                        <dt class="mb10">修改时间</dt><dd>{{#time}}{{updateTime}}{{/time}}</dd>
                                         <dt class="mb10">修改人</dt><dd>{{updateUser}}</dd>
                                     </dl>
                                 </div>
@@ -99,7 +99,7 @@
                                         <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
                                     </li>
                                     <li>
-                                        <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项</a>
+                                        <a href="#purchaseOrderMaterialItems" data-toggle="tab">物料项</a>
                                     </li>
                                 </ul>
                             </div>
@@ -144,7 +144,14 @@
                                                             </td>
                                                             <td style="width:20%" class="text-right">
                                                                 <div class="btn-group text-right">
-                                                                    <a href="#" type="button" class="btn btn-default btn-xs showMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">查看配件</a>
+                                                                    <a href="#" type="button" class="btn btn-default btn-xs showMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">查看物料</a>
+                                                                    {{#rowActionButtons}}
+                                                                    <a href="#" type="button"
+                                                                       class="btn btn-default btn-xs {{class}}"
+                                                                       data-skuid="{{skuId}}"
+                                                                       data-productid="{{productId}}"
+                                                                       data-purchasereceiveorderproductid="{{purchaseReceiveOrderProductId}}">{{text}}</a>
+                                                                    {{/rowActionButtons}}
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -152,7 +159,7 @@
                                                             <td colspan="4" class="pn br-n" style="height:0;">
                                                                 <div class="panel m15 editMaterialPannel" style="display: none;">
                                                                     <div class="panel-heading pn ph8">
-                                                                        <span>配件信息</span>
+                                                                        <span>物料信息</span>
                                                                     </div>
                                                                     <div class="panel-body pn">
                                                                         <table class="table">
@@ -164,7 +171,7 @@
                                                                                     <table class="table pn br-r materialInputTable" >
                                                                                         {{#materialList}}
                                                                                         <tr class="materialInputRow">
-                                                                                            <td style="width: 60%;">配件名：{{materialName}}</td>
+                                                                                            <td style="width: 60%;">物料名：{{materialName}}</td>
                                                                                             <td style="width: 40%;">数量：{{materialCount}}</td>
                                                                                         </tr>
                                                                                         {{/materialList}}
@@ -208,6 +215,9 @@
                                                 <th>图片</th>
                                                 <th>数量</th>
                                                 <th>备注</th>
+                                                {{#hasRowActionButtons}}
+                                                <th>操作</th>
+                                                {{/hasRowActionButtons}}
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -231,11 +241,18 @@
                                                         {{remark}}
                                                     </label>
                                                 </td>
+                                                {{#hasRowActionButtons}}
+                                                <td>
+                                                    {{#rowActionButtons}}
+                                                    <a href="#" type="button" class="btn btn-default btn-xs {{class}}" data-materialno="{{materialNo}}">{{text}}</a>
+                                                    {{/rowActionButtons}}
+                                                </td>
+                                                {{/hasRowActionButtons}}
                                             </tr>
                                             {{/listData}}
                                             {{^listData}}
                                             <tr>
-                                                <td valign="top" colspan="14" class="text-center">没有选择配件</td>
+                                                <td valign="top" colspan="14" class="text-center">没有选择物料</td>
                                             </tr>
                                             {{/listData}}
                                             {{/dataSource}}
@@ -248,7 +265,7 @@
                         </div>
                         <div class="panel-footer clearfix">
                             <button type="button" class="btn btn-default pull-right ml15 goBack">返回</button>
-                            <button type="submit" class="btn btn-primary pull-right">保存</button>
+##                            <button type="submit" class="btn btn-primary pull-right">保存</button>
                         </div>
                     </div>
                 </form>
@@ -262,7 +279,12 @@
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js', 'manage.purchase.util.js', 'manage.purchase.receive.detail.js', 'modal.choose.product.js', 'modal.choose.material.js');
+        management_load_script('${staticManagement}/js',
+                'manage.purchase.util.js',
+                'manage.purchase.receive.detail.js',
+                'modal.choose.product.js',
+                'modal.choose.material.js',
+                'manage.purchase.receive.edit.equipment.price.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
