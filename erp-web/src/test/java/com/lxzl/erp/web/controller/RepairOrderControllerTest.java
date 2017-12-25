@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -87,15 +88,16 @@ public class RepairOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateRepairOrder() throws Exception {
         RepairOrder repairOrder = new RepairOrder();
-        repairOrder.setRepairOrderNo("RE201712191429296181566");
+        repairOrder.setRepairOrderNo("RE201712231750266641293");
         repairOrder.setRepairReason("测试update");
         repairOrder.setRemark("测试update备注");//可有可无
 
         List<RepairOrderEquipment> repairOrderEquipmentList = new ArrayList<>();
         RepairOrderEquipment repairOrderEquipment1 = new RepairOrderEquipment();
-        repairOrderEquipment1.setRepairOrderEquipmentId(134);
-        repairOrderEquipment1.setEquipmentNo("LX-EQUIPMENT-4000002-2017121610008");
-//        repairOrderEquipment1.setRemark("update测试备注1");
+//        repairOrderEquipment1.setRepairOrderEquipmentId(151);
+        repairOrderEquipment1.setEquipmentNo("LX-EQUIPMENT-4000002-2017121610001");
+        repairOrderEquipment1.setRepairEndTime(new Date());
+        //        repairOrderEquipment1.setRemark("update测试备注1");
         repairOrderEquipmentList.add(repairOrderEquipment1);
 
         RepairOrderEquipment repairOrderEquipment2 = new RepairOrderEquipment();
@@ -115,7 +117,7 @@ public class RepairOrderControllerTest extends ERPUnTransactionalTest {
 
         List<RepairOrderBulkMaterial> repairOrderBulkMaterialList = new ArrayList<>();
         RepairOrderBulkMaterial repairOrderBulkMaterial1 = new RepairOrderBulkMaterial();
-        repairOrderBulkMaterial1.setRepairOrderBulkMaterialId(76);
+//        repairOrderBulkMaterial1.setRepairOrderBulkMaterialId(76);
         repairOrderBulkMaterial1.setBulkMaterialNo("BM2017121618064454121367");
         repairOrderBulkMaterialList.add(repairOrderBulkMaterial1);
 
@@ -132,7 +134,7 @@ public class RepairOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryRepairOrderByNo() throws Exception {
         RepairOrder repairOrder = new RepairOrder();
-        repairOrder.setRepairOrderNo("RE201712201627324171066");
+        repairOrder.setRepairOrderNo("RE201712231750266641293");
 
         TestResult result = getJsonTestResult("/repairOrder/queryRepairOrderByNo",repairOrder);
     }

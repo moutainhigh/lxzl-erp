@@ -93,14 +93,16 @@ public class ErrorCode {
     public static final String CURRENT_EQUIPMENT_ID_NOT_NULL = "J200047";
     public static final String CURRENT_EQUIPMENT_NO_NOT_NULL = "J200048";
     public static final String PRODUCT_EQUIPMENT_MATERIAL_NOT_EXISTS = "J200049";
-    public static final String PRODUCT_EQUIPMENT_AND_BULK_MATERIAL_NOT_WAREHOUSE = "J200050";
+    public static final String BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT_NOT_REPAIR = "J200050";
     public static final String BULK_MATERIAL_IS_NOT_IN_PRODUCT_EQUIPMENT = "J200051";
     public static final String INSTALL_AND_DISMANTLE_WAREHOUSE_NOT_EQUAL = "J200052";
     public static final String BULK_MATERIAL_IS_NULL = "J200053";
     public static final String PRODUCT_EQUIPMENT_IS_NULL = "J200054";
     public static final String PRODUCT_EQUIPMENT_MATERIAL_IS_NULL = "J200055";
     public static final String BULK_MATERIAL_NO_NOT_NULL = "J200056";
-    public static final String BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT_NOT_REPAIR = "J200057";
+    public static final String PRODUCT_EQUIPMENT_NOT_SAME_WAREHOUSE = "J200057";
+    public static final String BULK_MATERIAL_NOT_SAME_WAREHOUSE = "J200058";
+    public static final String PRODUCT_EQUIPMENT_AND_BULK_MATERIAL_NOT_SAME_WAREHOUSE = "J200059";
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
     public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
@@ -433,7 +435,7 @@ public class ErrorCode {
         MAP.put(PRODUCT_EQUIPMENT_BULK_MATERIAL_NOT_EXISTS, "该设备的此种散料不存在");
         MAP.put(CURRENT_EQUIPMENT_ID_NOT_NULL, "当前设备的id不能为空");
         MAP.put(CURRENT_EQUIPMENT_NO_NOT_NULL, "当前设备的编号不能为空");
-        MAP.put(PRODUCT_EQUIPMENT_AND_BULK_MATERIAL_NOT_WAREHOUSE, "设备和散料不在同一仓库");
+        MAP.put(BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT_NOT_REPAIR, "编号【%s 】的散料在某设备上，不能进行维修");
         MAP.put(BULK_MATERIAL_IS_NOT_IN_PRODUCT_EQUIPMENT, "散料不在某设备上");
         MAP.put(INSTALL_AND_DISMANTLE_WAREHOUSE_NOT_EQUAL, "安装的散料和拆卸的散料不是同一个仓库");
         MAP.put(PRODUCT_EQUIPMENT_MATERIAL_NOT_EXISTS, "编号【%s 】的设备配件不存在");
@@ -441,7 +443,9 @@ public class ErrorCode {
         MAP.put(PRODUCT_EQUIPMENT_IS_NULL, "该设备不存在");
         MAP.put(PRODUCT_EQUIPMENT_MATERIAL_IS_NULL, "该设备配件不存在");
         MAP.put(BULK_MATERIAL_NO_NOT_NULL, "散料编号不能为空");
-        MAP.put(BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT_NOT_REPAIR, "编号【%s 】的散料在某设备上，不能进行维修");
+        MAP.put(PRODUCT_EQUIPMENT_NOT_SAME_WAREHOUSE, "编号【%s 】的设备与其他设备不在同一仓库");
+        MAP.put(BULK_MATERIAL_NOT_SAME_WAREHOUSE, "编号【%s 】的散料与其他散料不在同一仓库");
+        MAP.put(PRODUCT_EQUIPMENT_AND_BULK_MATERIAL_NOT_SAME_WAREHOUSE, "设备和散料不在同一仓库");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");

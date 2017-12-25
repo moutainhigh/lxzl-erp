@@ -159,4 +159,13 @@
 		ORDER BY erobm.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
+
+	<select id="findByBulkMaterialNoAndRepairOrderNo" resultMap="RepairOrderBulkMaterialDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> from erp_repair_order_bulk_material erobm
+		where erobm.bulk_material_no = #{bulkMaterialNo,jdbcType=VARCHAR} AND erobm.repair_order_no =#{repairOrderNo,jdbcType=VARCHAR} AND erobm.data_status = 1
+	</select>
+	
+	<update id="clearDateStatusByBulkMaterialNo" parameterType="java.lang.String">
+		UPDATE erp_repair_order_bulk_material set data_status = 2  WHERE bulk_material_no = #{bulkMaterialNo, jdbcType=VARCHAR};
+	</update>
 </mapper>
