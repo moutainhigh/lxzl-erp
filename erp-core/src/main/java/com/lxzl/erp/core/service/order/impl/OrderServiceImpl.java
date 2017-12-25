@@ -1118,34 +1118,35 @@ public class OrderServiceImpl implements OrderService {
             for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
                 Product product = productServiceResult.getResult();
-                // TODO 商品品牌为苹果品牌
+                // 商品品牌为苹果品牌
                 if (BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) {
                     orderProductDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
                     orderProductDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
-                    if (!orderProductDO.getPayMode().equals(customerRiskManagementDO.getApplePayMode())) {
-                        throw new BusinessException(ErrorCode.ORDER_PAY_MODE_ERROR);
-                    }
+                    orderProductDO.setPayMode(customerRiskManagementDO.getApplePayMode());
                 } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
                     orderProductDO.setDepositCycle(customerRiskManagementDO.getNewDepositCycle());
                     orderProductDO.setPaymentCycle(customerRiskManagementDO.getNewPaymentCycle());
-                    if (!orderProductDO.getPayMode().equals(customerRiskManagementDO.getNewPayMode())) {
-                        throw new BusinessException(ErrorCode.ORDER_PAY_MODE_ERROR);
-                    }
+                    orderProductDO.setPayMode(customerRiskManagementDO.getNewPayMode());
                 } else {
                     orderProductDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
                     orderProductDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
+                    orderProductDO.setPayMode(customerRiskManagementDO.getPayMode());
                 }
             }
         }
 
         if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
             for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
-                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
+                ServiceResult<String, Material> materialResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
+                Material material = materialResult.getResult();
+                if (BrandId.BRAND_ID_APPLE.equals(material.getBrandId())) {
+                    orderMaterialDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
+                    orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
+                    orderMaterialDO.setPayMode(customerRiskManagementDO.getApplePayMode());
+                } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
                     orderMaterialDO.setDepositCycle(customerRiskManagementDO.getNewDepositCycle());
                     orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getNewPaymentCycle());
-                    if (!orderMaterialDO.getPayMode().equals(customerRiskManagementDO.getNewPayMode())) {
-                        throw new BusinessException(ErrorCode.ORDER_PAY_MODE_ERROR);
-                    }
+                    orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getNewPaymentCycle());
                 } else {
                     orderMaterialDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
                     orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
@@ -1518,9 +1519,6 @@ public class OrderServiceImpl implements OrderService {
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
             Map<String, OrderProduct> orderProductMap = new HashMap<>();
             for (OrderProduct orderProduct : order.getOrderProductList()) {
-                if (orderProduct.getPayMode() == null) {
-                    return ErrorCode.ORDER_PAY_MODE_NOT_NULL;
-                }
                 if (orderProduct.getRentType() == null || orderProduct.getRentTimeLength() == null || orderProduct.getRentTimeLength() <= 0) {
                     return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
                 }
@@ -1555,9 +1553,6 @@ public class OrderServiceImpl implements OrderService {
         if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
             Map<String, OrderMaterial> orderMaterialMap = new HashMap<>();
             for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
-                if (orderMaterial.getPayMode() == null) {
-                    return ErrorCode.ORDER_PAY_MODE_NOT_NULL;
-                }
                 if (orderMaterial.getRentType() == null || orderMaterial.getRentTimeLength() == null || orderMaterial.getRentTimeLength() <= 0) {
                     return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
                 }

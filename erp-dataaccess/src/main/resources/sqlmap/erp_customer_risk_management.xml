@@ -13,6 +13,7 @@
 		<result column="apple_payment_cycle" jdbcType="INTEGER" property="applePaymentCycle" />
 		<result column="new_deposit_cycle" jdbcType="INTEGER" property="newDepositCycle" />
 		<result column="new_payment_cycle" jdbcType="INTEGER" property="newPaymentCycle" />
+		<result column="pay_mode" jdbcType="INTEGER" property="payMode" />
 		<result column="apple_pay_mode" jdbcType="INTEGER" property="applePayMode" />
 		<result column="new_pay_mode" jdbcType="INTEGER" property="newPayMode" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -24,7 +25,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ecrm.id,ecrm.customer_id,ecrm.credit_amount,ecrm.credit_amount_used,ecrm.deposit_cycle,ecrm.payment_cycle,ecrm.apple_deposit_cycle,ecrm.apple_payment_cycle,ecrm.new_deposit_cycle,ecrm.new_payment_cycle,ecrm.apple_pay_mode,ecrm.new_pay_mode,ecrm.data_status,ecrm.remark,ecrm.create_time,ecrm.create_user,ecrm.update_time,ecrm.update_user
+		ecrm.id,ecrm.customer_id,ecrm.credit_amount,ecrm.credit_amount_used,ecrm.deposit_cycle,ecrm.payment_cycle,ecrm.apple_deposit_cycle,ecrm.apple_payment_cycle,ecrm.new_deposit_cycle,ecrm.new_payment_cycle,ecrm.pay_mode,ecrm.apple_pay_mode,ecrm.new_pay_mode,ecrm.data_status,ecrm.remark,ecrm.create_time,ecrm.create_user,ecrm.update_time,ecrm.update_user
 	</sql>
 
 	<select id="findById" resultMap="CustomerRiskManagementDO" parameterType="java.lang.Integer">
@@ -87,6 +88,9 @@
 			</if>
 			<if test="applePayMode != null">
 				apple_pay_mode = #{applePayMode,jdbcType=INTEGER},
+			</if>
+			<if test="payMode != null">
+				pay_mode = #{payMode,jdbcType=INTEGER},
 			</if>
 			<if test="newPayMode != null">
 				new_pay_mode = #{newPayMode,jdbcType=INTEGER},
