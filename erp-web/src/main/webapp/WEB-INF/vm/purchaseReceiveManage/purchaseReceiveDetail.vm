@@ -150,6 +150,7 @@
                                                                        class="btn btn-default btn-xs {{class}}"
                                                                        data-skuid="{{skuId}}"
                                                                        data-productid="{{productId}}"
+                                                                       data-productamount="{{productAmount}}"
                                                                        data-purchasereceiveorderproductid="{{purchaseReceiveOrderProductId}}">{{text}}</a>
                                                                     {{/rowActionButtons}}
                                                                 </div>
