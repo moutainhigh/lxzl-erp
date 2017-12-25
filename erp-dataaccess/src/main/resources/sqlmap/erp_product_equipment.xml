@@ -122,13 +122,15 @@
     </select>
 
     <select id="listByPurchaseReceiveOrderProductId" resultMap="ProductEquipmentDO" parameterType="map">
-        SELECT <include refid="column_List"/>
+        SELECT <include refid="column_List"/>,<include refid="img_column_List" />,ep.product_name
         FROM erp_purchase_order epo
         LEFT JOIN erp_purchase_receive_order  epro ON epro.purchase_order_id = epo.id AND epro.data_status=1
         LEFT JOIN erp_stock_order eso ON epro.purchase_receive_no = eso.refer_no AND eso.data_status=1 AND eso.cause_type=1
         LEFT JOIN erp_stock_order_equipment esoe ON eso.stock_order_no = esoe.stock_order_no AND esoe.data_status=1
         LEFT JOIN erp_product_equipment epe ON epe.id=esoe.equipment_id AND epe.data_status=1
-        WHERE esobm.item_refer_id = #{maps.purchaseReceiveOrderProductId} AND epo.data_status = 1 AND auto_allot_status != 1
+        LEFT JOIN erp_product_img epi ON epi.product_id = epe.product_id AND epi.data_status = 1 AND epi.img_type = 1
+        LEFT JOIN erp_product ep ON epe.product_id = ep.id
+        WHERE esoe.item_refer_id = #{maps.queryParam.purchaseReceiveOrderProductId} AND epo.data_status = 1 AND auto_allot_status != 1
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
     <select id="listByPurchaseReceiveOrderProductIdCount" resultType="java.lang.Integer" parameterType="map">
@@ -138,7 +140,7 @@
         LEFT JOIN erp_stock_order eso ON epro.purchase_receive_no = eso.refer_no AND eso.data_status=1 AND eso.cause_type=1
         LEFT JOIN erp_stock_order_equipment esoe ON eso.stock_order_no = esoe.stock_order_no AND esoe.data_status=1
         LEFT JOIN erp_product_equipment epe ON epe.id=esoe.equipment_id AND epe.data_status=1
-        WHERE esoe.item_refer_id = #{maps.purchaseReceiveOrderProductId} AND epo.data_status = 1 AND auto_allot_status != 1
+        WHERE esoe.item_refer_id = #{maps.queryParam.purchaseReceiveOrderProductId} AND epo.data_status = 1 AND auto_allot_status != 1
     </select>
     <select id="getRentEquipmentCountByOrderNo" resultType="java.lang.String">
         SELECT count(1) FROM erp_product_equipment epe WHERE epe.data_status=1 AND epe.order_no = #{orderNo}

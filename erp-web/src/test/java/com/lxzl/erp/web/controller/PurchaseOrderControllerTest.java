@@ -884,13 +884,13 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pageReceiveOrderProductEquipment() throws Exception {
         PurchaseReceiveOrderProductEquipmentPageParam purchaseReceiveOrderProductEquipmentPageParam = new PurchaseReceiveOrderProductEquipmentPageParam();
-        purchaseReceiveOrderProductEquipmentPageParam.setPurchaseReceiveOrderProductId(128);
+        purchaseReceiveOrderProductEquipmentPageParam.setPurchaseReceiveOrderProductId(204);
         TestResult testResult = getJsonTestResult("/purchaseOrder/pageReceiveOrderProductEquipment",purchaseReceiveOrderProductEquipmentPageParam);
     }
     @Test
     public void pageReceiveOrderMaterialBulk() throws Exception {
         PurchaseReceiveOrderMaterialBulkPageParam purchaseReceiveOrderMaterialBulkPageParam = new PurchaseReceiveOrderMaterialBulkPageParam();
-        purchaseReceiveOrderMaterialBulkPageParam.setPurchaseReceiveOrderMaterialId(20);
+        purchaseReceiveOrderMaterialBulkPageParam.setPurchaseReceiveOrderMaterialId(134);
         TestResult testResult = getJsonTestResult("/purchaseOrder/pageReceiveOrderMaterialBulk",purchaseReceiveOrderMaterialBulkPageParam);
     }
     @Test
