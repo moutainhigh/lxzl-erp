@@ -104,7 +104,6 @@ public class JointProductServiceImpl implements JointProductService {
                 jointMaterialDO.setMaterialNo(jointMaterial.getMaterialNo());
                 jointMaterialDO.setMaterialCount(jointMaterial.getMaterialCount());
                 jointMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                jointMaterialDO.setRemark(jointProductDO.getRemark());
                 jointMaterialDO.setUpdateTime(now);
                 jointMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 jointMaterialDO.setCreateTime(now);
@@ -181,7 +180,6 @@ public class JointProductServiceImpl implements JointProductService {
                     jointProductSkuDO.setSkuId(jointProductSku.getSkuId());
                     jointProductSkuDO.setSkuCount(jointProductSku.getSkuCount());
                     jointProductSkuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                    jointProductSkuDO.setRemark(jointProductSku.getRemark());
                     jointProductSkuDO.setUpdateTime(now);
                     jointProductSkuDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     jointProductSkuMapper.update(jointProductSkuDO);

@@ -52,6 +52,12 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
 
         TestResult testResult = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
     }
+    @Test
+    public void addPurchaseOrder3() throws Exception {
+
+        PurchaseOrder purchaseOrder = JSON.parseObject("{\"productSupplierId\":\"1\",\"warehouseNo\":\"W201708081508\",\"isInvoice\":\"1\",\"isNew\":\"1\",\"purchaseType\":\"1\",\"purchaseOrderProductList\":[{\"productId\":\"2000032\",\"productSkuId\":\"87\",\"productAmount\":\"100\",\"productCount\":\"10\",\"productMaterialList\":[{\"materialNo\":\"M201711201356145971009\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291808329011520\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711201457288791418\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711201500267591516\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291912439731417\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291753428101534\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291807447341672\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711171838059981293\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291744581931681\",\"materialCount\":\"1\"}]}]}",PurchaseOrder.class);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
+    }
 
     private PurchaseOrderMaterial createPurchaseOrderMaterial(String materialNo,Integer materialCount,BigDecimal materialAmount){
         PurchaseOrderMaterial purchaseOrderMaterial = new PurchaseOrderMaterial();

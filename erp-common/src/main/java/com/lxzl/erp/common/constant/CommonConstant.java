@@ -41,4 +41,5 @@ public class CommonConstant {
 
     public static final String COMMON_CONSTANT_SEPARATOR = ",";
 
+    public static final String NORMAL_STRING = "正常";
 }

@@ -333,7 +333,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         returnOrderProductEquipmentDO.setReturnOrderProductId(returnOrderProductDO.getId());
         returnOrderProductEquipmentDO.setReturnOrderId(returnOrderDO.getId());
         returnOrderProductEquipmentDO.setReturnOrderNo(returnOrderDO.getReturnOrderNo());
-        returnOrderProductEquipmentDO.setEquipmentNo(orderDO.getOrderNo());
+        returnOrderProductEquipmentDO.setOrderNo(orderDO.getOrderNo());
         returnOrderProductEquipmentDO.setEquipmentId(productEquipmentDO.getId());
         returnOrderProductEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
         returnOrderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -584,14 +584,22 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         List<ReturnOrderProduct> returnOrderProductList = returnOrder.getReturnOrderProductList();
         if (CollectionUtil.isNotEmpty(returnOrderProductList)) {
             for (ReturnOrderProduct returnOrderProduct : returnOrderProductList) {
-                returnOrderProduct.setCanProcessCount(oldSkuCountMap.get(returnOrderProduct.getReturnProductSkuId()).getCanProcessCount() + returnOrderProduct.getReturnProductSkuCount());
+                Integer canProcessCount = 0 ;
+                if(oldSkuCountMap.get(returnOrderProduct.getReturnProductSkuId())!=null){
+                    canProcessCount = oldSkuCountMap.get(returnOrderProduct.getReturnProductSkuId()).getCanProcessCount();
+                }
+                returnOrderProduct.setCanProcessCount( canProcessCount );
             }
         }
         //填写退还物料项可退数量字段，用于修改接口提示
         List<ReturnOrderMaterial> returnOrderMaterialList = returnOrder.getReturnOrderMaterialList();
         if (CollectionUtil.isNotEmpty(returnOrderMaterialList)) {
             for (ReturnOrderMaterial returnOrderMaterial : returnOrderMaterialList) {
-                returnOrderMaterial.setCanProcessCount(oldMaterialCountMap.get(returnOrderMaterial.getReturnMaterialId()).getCanProcessCount() + returnOrderMaterial.getReturnMaterialCount());
+                Integer canProcessCount = 0 ;
+                if(oldMaterialCountMap.get(returnOrderMaterial.getReturnMaterialId())!=null){
+                    canProcessCount = oldMaterialCountMap.get(returnOrderMaterial.getReturnMaterialId()).getCanProcessCount();
+                }
+                returnOrderMaterial.setCanProcessCount(canProcessCount );
             }
         }
         serviceResult.setResult(returnOrder);

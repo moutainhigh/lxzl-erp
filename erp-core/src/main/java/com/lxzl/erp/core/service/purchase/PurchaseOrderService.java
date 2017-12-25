@@ -31,7 +31,7 @@ public interface PurchaseOrderService extends VerifyReceiver {
 
     ServiceResult<String, String> updatePurchaseReceiveOrder(PurchaseReceiveOrder purchaseReceiveOrder);
 
-    ServiceResult<String, String> commitPurchaseReceiveOrder(PurchaseReceiveOrder purchaseReceiveOrder);
+    ServiceResult<String, String> confirmPurchaseReceiveOrder(PurchaseReceiveOrder purchaseReceiveOrder);
 
     ServiceResult<String, Page<PurchaseReceiveOrder>> pagePurchaseReceive(PurchaseReceiveOrderQueryParam purchaseReceiveOrderQueryParam);
 
@@ -46,4 +46,8 @@ public interface PurchaseOrderService extends VerifyReceiver {
     ServiceResult<String, Page<ProductEquipment>> pageReceiveOrderProductEquipment(PurchaseReceiveOrderProductEquipmentPageParam purchaseReceiveOrderProductEquipmentPageParam);
 
     ServiceResult<String, Page<BulkMaterial>> pageReceiveOrderMaterialBulk(PurchaseReceiveOrderMaterialBulkPageParam purchaseReceiveOrderMaterialBulkPageParam);
+
+    ServiceResult<String,String> updateReceiveRemark(UpdatePurchaseReceiveOrderRemarkParam updatePurchaseReceiveOrderRemarkParam);
+
+    ServiceResult<String,String> commitPurchaseReceiveOrder(PurchaseReceiveOrder purchaseReceiveOrder);
 }

@@ -4,9 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
+import com.lxzl.erp.common.domain.validGroup.purchaseOrder.UpdateReceiveRemarkGroup;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,7 +18,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductEquipment implements Serializable {
     private Integer productEquipmentId; //设备ID
-    @NotNull(message = ErrorCode.EQUIPMENT_NO_NOT_NULL,groups = {ExtendGroup.class})
+    @NotNull(message = ErrorCode.EQUIPMENT_NO_NOT_NULL,groups = {ExtendGroup.class,UpdateReceiveRemarkGroup.class})
     private String equipmentNo; //设备编号唯一
     private Integer productId;  //所属产品ID
     private Integer skuId;  //所属SKU ID
@@ -29,6 +33,9 @@ public class ProductEquipment implements Serializable {
     private BigDecimal purchasePrice;  //采购价格
     private Integer equipmentStatus;  //设备状态，1设备空闲，2租赁中，3维修中，4报废，5调拨中
     private Integer isNew;  //是否全新，1是，0否
+    @Size(max=500,message = ErrorCode.PURCHASE_RECEIVE_REMARK_ERROR,groups = {UpdateReceiveRemarkGroup.class})
+    @NotBlank(message = ErrorCode.PURCHASE_RECEIVE_REMARK_ERROR,groups = {UpdateReceiveRemarkGroup.class})
+    private String purchaseReceiveRemark;  //采购收料备注
     private Integer dataStatus;  //状态：0不可用；1可用；2删除
     private String remark;  //备注
     private List<ProductImg> productImgList;           // 商品图片
@@ -172,6 +179,14 @@ public class ProductEquipment implements Serializable {
 
     public void setIsNew(Integer isNew) {
         this.isNew = isNew;
+    }
+
+    public String getPurchaseReceiveRemark() {
+        return purchaseReceiveRemark;
+    }
+
+    public void setPurchaseReceiveRemark(String purchaseReceiveRemark) {
+        this.purchaseReceiveRemark = purchaseReceiveRemark;
     }
 
     public String getCurrentWarehouseName() {
