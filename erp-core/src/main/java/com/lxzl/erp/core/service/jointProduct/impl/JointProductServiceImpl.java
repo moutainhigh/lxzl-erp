@@ -104,7 +104,6 @@ public class JointProductServiceImpl implements JointProductService {
                 jointMaterialDO.setMaterialNo(jointMaterial.getMaterialNo());
                 jointMaterialDO.setMaterialCount(jointMaterial.getMaterialCount());
                 jointMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                jointMaterialDO.setRemark(jointProductDO.getRemark());
                 jointMaterialDO.setUpdateTime(now);
                 jointMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 jointMaterialDO.setCreateTime(now);
