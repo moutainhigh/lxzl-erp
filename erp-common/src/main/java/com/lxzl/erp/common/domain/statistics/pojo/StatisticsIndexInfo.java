@@ -26,7 +26,7 @@ public class StatisticsIndexInfo implements Serializable {
     private Integer totalCustomerCount;
 
     /**
-     * 平台总供应商数
+     * 平台总设备数量
      */
     private Integer totalProductEquipmentCount;
 
