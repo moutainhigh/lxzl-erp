@@ -194,11 +194,16 @@ public class PageController extends BaseController {
     public String orderManageOrderItem() {
         return "/orderManage/orderItem";
     }
+
     @RequestMapping("/order-manage-input-picking-material/modal")
     public String orderManageInputPickingMaterialModal() {
         return "/component/order/inputPickingMaterial";
     }
 
+    @RequestMapping("/order-manage/print")
+    public String orderManagePrint() {
+        return "/orderManage/orderPrint";
+    }
 
     //退货单
     @RequestMapping("/order-return-manage/list")
@@ -441,6 +446,10 @@ public class PageController extends BaseController {
     @RequestMapping("/statement-order/list")
     public String statementOrderList() {
         return "/statementOrderManage/statementOrderList";
+    }
+    @RequestMapping("/statement-order/detail")
+    public String statementOrderDetail() {
+        return "/statementOrderManage/statementOrderDetail";
     }
 
 

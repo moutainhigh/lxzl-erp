@@ -35,6 +35,8 @@
                                 <div class="btn-group" id="actionButtons"></div>
                             </div>
                         </div>
+                    </div>
+                    <div class="panel-body mt15">
                         <div id="orderBaseInfo"></div>
                     </div>
                     <script type="text/html" id="orderBaseInfoTpl">
@@ -133,22 +135,28 @@
                     <div class="panel-body light pn">
                         <div class="tab-content pn br-n">
                             <div id="purchaseOrderProductItems" class="tab-pane tab-pane-order active">
-                                <div class="panel-menu p12 br-n br-b">
-                                    <div class="row">
-                                        <div class="pull-right ml10">
-                                            <script type="text/html" id="pickingProductButtonsTpl">
-                                                {{#acitonButtons}}
-                                                    {{#showButton}}
-                                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-orderno="{{orderNo}}">
-                                                        <i class="{{iClass}}"></i> {{text}}
-                                                    </a>
-                                                    {{/showButton}}
-                                                {{/acitonButtons}}
-                                            </script>
-                                            <div class="btn-group actionCommonButtons" id="pickingProductButtons"></div>
+                                <script type="text/html" id="pickingProductButtonsTpl">
+                                    {{#hasActionButtons}}
+                                    {{#buttons}}
+                                    <div class="panel-menu p12 br-n br-b">
+                                        <div class="row">
+                                            <div class="pull-right ml10">
+                                                <div class="btn-group actionCommonButtons" >
+                                                    {{#acitonButtons}}
+                                                        {{#showButton}}
+                                                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-orderno="{{orderNo}}">
+                                                            <i class="{{iClass}}"></i> {{text}}
+                                                        </a>
+                                                        {{/showButton}}
+                                                    {{/acitonButtons}}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                    {{/buttons}}
+                                    {{/hasActionButtons}}
+                                </script>
+                                <div id="pickingProductButtons"></div>
                                 <div class="table-responsive">
                                     <script type="text/html" id="dataListTpl">
                                         <thead>
@@ -358,7 +366,6 @@
                         <button class="btn btn-default pull-right ml15 goBack">返回</button>
                     </div>
                 </div>
-
             </form>
         </section>
     </section>
