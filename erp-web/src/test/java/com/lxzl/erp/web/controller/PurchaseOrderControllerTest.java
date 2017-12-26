@@ -838,6 +838,12 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/purchaseOrder/commitPurchaseReceiveOrder",purchaseReceiveOrder);
     }
 
+    @Test
+    public void confirmPurchaseReceiveOrder() throws Exception {
+        PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
+        purchaseReceiveOrder.setPurchaseReceiveNo("PR2017122520530646960000051499");
+        TestResult testResult = getJsonTestResult("/purchaseOrder/confirmPurchaseReceiveOrder",purchaseReceiveOrder);
+    }
 
     @Test
     public void pagePurchaseReceive() throws Exception {
