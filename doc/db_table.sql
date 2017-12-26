@@ -421,7 +421,7 @@ CREATE TABLE `erp_workflow_node` (
   `workflow_step` int(20) NOT NULL COMMENT '流程步骤',
   `workflow_previous_node_id` int(20) COMMENT '上节点ID',
   `workflow_next_node_id` int(20) COMMENT '下节点ID',
-  `workflow_department_type` int(20) NOT NULL COMMENT '可审核的部门类型，如果没有指定部门，则由本公司的该部门审核',
+  `workflow_department_type` int(20) COMMENT '可审核的部门类型，如果没有指定部门，则由本公司的该部门审核',
   `workflow_department` int(20) COMMENT '本步骤可审批部门',
   `workflow_role` int(20) COMMENT '本步骤可审批角色',
   `workflow_user` int(20) COMMENT '本步骤可审批人员',

@@ -271,7 +271,7 @@ public class PurchaseOrderController {
     }
 
     /**
-     * 采购收货单提交
+     * ;
      *
      * @param purchaseReceiveOrder
      * @param validResult
@@ -282,4 +282,13 @@ public class PurchaseOrderController {
         ServiceResult<String, String> serviceResult = purchaseOrderService.commitPurchaseReceiveOrder(purchaseReceiveOrder);
         return resultGenerator.generate(serviceResult);
     }
+
+    /**
+     * 获取采购收货单物料价格
+     *
+     * @param purchaseReceiveOrder
+     * @param validResult
+     * @return
+     */
+
 }
