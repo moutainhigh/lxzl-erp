@@ -348,14 +348,7 @@ public class StatementServiceImpl implements StatementService {
                             needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, currentTime, orderProductEquipmentDO.getProductEquipmentUnitAmount());
                         }
                         // 正常全额退
-
-
-                        if (i == (statementOrderDetailDOList.size() - 1)) {
-                            // 最后一期
-                            payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
-                        } else {
-                            payReturnAmount = thisPhaseAmount;
-                        }
+                        payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
                         // 退款金额，除了租金以外，保险金额也不能收了
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, orderProductDO.getInsuranceAmount()));
                         // 退款金额，扣除未交款的部分
@@ -397,11 +390,7 @@ public class StatementServiceImpl implements StatementService {
                         if(currentTime.getTime() > statementDetailStartTime.getTime()){
                             needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, currentTime, orderMaterialBulkDO.getMaterialBulkUnitAmount());
                         }
-                        if (i == (statementOrderDetailDOList.size() - 1)) {
-                            payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
-                        } else {
-                            payReturnAmount = thisPhaseAmount;
-                        }
+                        payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
                         // 退款金额，除了租金以外，保险金额也不能收了
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, orderMaterialDO.getInsuranceAmount()));
                         // 退款金额，扣除未交款的部分
