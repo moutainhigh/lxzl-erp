@@ -266,9 +266,6 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             orderProductDOMap.put(orderProductDO.getId(), orderProductDO);
         }
 
-
-
-
         //修改订单商品设备-实际归还时间，实际租金
         Date now = new Date();
         OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findRentByCustomerIdAndEquipmentId(returnOrderDO.getCustomerId(), productEquipmentDO.getId());

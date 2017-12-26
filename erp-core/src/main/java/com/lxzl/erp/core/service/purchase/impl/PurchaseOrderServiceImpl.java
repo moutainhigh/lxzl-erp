@@ -1406,6 +1406,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_NOT_EXISTS);
             return serviceResult;
         }
+        if(!PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_COMMITTED.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())){
+            serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_UPDATE);
+            return serviceResult;
+        }
         List<ProductEquipment> productEquipmentList = updatePurchaseReceiveOrderPriceParam.getEquipmentList();
         List<BulkMaterial> bulkMaterialList = updatePurchaseReceiveOrderPriceParam.getBulkMaterialList();
 

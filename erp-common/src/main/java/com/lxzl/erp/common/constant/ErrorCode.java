@@ -510,7 +510,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_RECEIVE_ORDER_NO_NOT_NULL, "采购收货单编号不能为空");
         MAP.put(PURCHASE_RECEIVE_ORDER_NOT_EXISTS, "采购收货单不存在");
         MAP.put(PURCHASE_RECEIVE_ORDER_AUTO_ALLOT_YES_CAN_NOT_UPDATE, "自动流转到总仓的采购发货单不能修改");
-        MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_UPDATE, "已签单的采购收货单不能修改");
+        MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_UPDATE, "此采购收货单不能修改");
         MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_LIST_NOT_NULL, "采购收货单商品项列表不能为空");
         MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_REAL_COUNT_NOT_NULL, "商品SKU实际数量填写不正确");
         MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_SKU_ID_NOT_NULL, "采购收货单商品项商品SKU_ID不能为空");
