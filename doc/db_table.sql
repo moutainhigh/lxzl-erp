@@ -301,11 +301,11 @@ CREATE TABLE `erp_customer_person` (
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
-  '用户名',
-  '身份证号',
-  '收货地址',
-  '紧急联系人姓名',
-  '紧急联系人电话',
+  `user_name` varchar(64) NOT NULL COMMENT '用户名',
+  `person_no`varchar(64) NOT NULL COMMENT '身份证号',
+  `consign_address` varchar(200) DEFAULT NULL COMMENT '收货地址',
+  `connect_real_name` varchar(24) NOT NULL COMMENT  '紧急联系人姓名',
+  `connect_phone`varchar(24) NOT NULL COMMENT '紧急联系人电话',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='个人客户表';
 
@@ -331,7 +331,6 @@ CREATE TABLE `erp_customer_company` (
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
-  `company_name` varchar(128) NOT NULL COMMENT '公司名称',
   `company_origin` INT(20)  NOT NULL COMMENT  '客户来源,1转介绍,2老客户,3公司资源,4主动开发'
   `found_time` datetime NOT NULL COMMENT '企业成立时间',
   `industry` varchar(64) NOT NULL COMMENT '所属行业',
@@ -340,14 +339,11 @@ CREATE TABLE `erp_customer_company` (
   `product_purpose` varchar(24) DEFAULT NULL COMMENT '设备用途',
   `list_first_need_products` TEXT DEFAULT NULL COMMENT '首次所需设备',
   `list_later_need_products` TEXT DEFAULT NULL COMMENT '后期所需设备',
-  `connect_real_name` varchar(24) DEFAULT NULL COMMENT '联系人',
-  `connect_phone` varchar(24) DEFAULT NULL COMMENT '联系人手机号',
   `agent_person_name`varchar(24) DEFAULT NULL COMMENT '经办人姓名',
   `agent_person_phone`varchar(24) DEFAULT NULL COMMENT '经办人电话',
   `agent_person_no` varchar(64) DEFAULT NULL COMMENT'经办人身份证号码',
-  `unified_credit_code`varchar(64) DEFAULT NULL COMMENT '统一信用代码',
-  `business_license_no` varchar(64) DEFAULT NULL COMMENT '营业执照号',
   `consign_address` varchar(200) DEFAULT NULL COMMENT '收货地址',
+  `unified_credit_code`varchar(64) DEFAULT NULL COMMENT '统一信用代码',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=400001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='公司客户表';
 
