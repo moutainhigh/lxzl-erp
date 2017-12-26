@@ -301,6 +301,11 @@ CREATE TABLE `erp_customer_person` (
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  '用户名',
+  '身份证号',
+  '收货地址',
+  '紧急联系人姓名',
+  '紧急联系人电话',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='个人客户表';
 
@@ -332,8 +337,6 @@ CREATE TABLE `erp_customer_company` (
   `industry` varchar(64) NOT NULL COMMENT '所属行业',
   `registered_capital` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '注册资本',
   `office_number` int(20) NOT NULL COMMENT '办公人数',
-  `legal_person` varchar(64) NOT NULL COMMENT '法人姓名',
-  `legal_person_no` varchar(64) NOT NULL COMMENT '法人身份证号',
   `product_purpose` varchar(24) DEFAULT NULL COMMENT '设备用途',
   `list_first_need_products` TEXT DEFAULT NULL COMMENT '首次所需设备',
   `list_later_need_products` TEXT DEFAULT NULL COMMENT '后期所需设备',
