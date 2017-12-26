@@ -19,6 +19,9 @@ public class StatementOrder implements Serializable {
     private BigDecimal statementRentDepositAmount;      // 结算租金押金金额
     private BigDecimal statementRentDepositPaidAmount;  // 已付租金押金金额
     private BigDecimal statementRentDepositReturnAmount;    // 退还租金押金金额
+    private BigDecimal statementDepositAmount;   //结算押金金额
+    private BigDecimal statementDepositPaidAmount;   //已付押金金额
+    private BigDecimal statementDepositReturnAmount;   //退还押金金额
     private BigDecimal statementRentAmount;             // 结算单租金金额
     private BigDecimal statementRentPaidAmount;         // 租金已付金额
     private Date statementPaidTime;        // 结算单支付时间
@@ -218,5 +221,29 @@ public class StatementOrder implements Serializable {
 
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
+    }
+
+    public BigDecimal getStatementDepositAmount() {
+        return statementDepositAmount;
+    }
+
+    public void setStatementDepositAmount(BigDecimal statementDepositAmount) {
+        this.statementDepositAmount = statementDepositAmount;
+    }
+
+    public BigDecimal getStatementDepositPaidAmount() {
+        return statementDepositPaidAmount;
+    }
+
+    public void setStatementDepositPaidAmount(BigDecimal statementDepositPaidAmount) {
+        this.statementDepositPaidAmount = statementDepositPaidAmount;
+    }
+
+    public BigDecimal getStatementDepositReturnAmount() {
+        return statementDepositReturnAmount;
+    }
+
+    public void setStatementDepositReturnAmount(BigDecimal statementDepositReturnAmount) {
+        this.statementDepositReturnAmount = statementDepositReturnAmount;
     }
 }
