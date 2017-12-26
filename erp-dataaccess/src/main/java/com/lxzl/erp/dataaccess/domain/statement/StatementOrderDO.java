@@ -17,6 +17,9 @@ public class StatementOrderDO extends BaseDO {
     private BigDecimal statementRentDepositAmount;
     private BigDecimal statementRentDepositPaidAmount;
     private BigDecimal statementRentDepositReturnAmount;
+    private BigDecimal statementDepositAmount;   //结算押金金额
+    private BigDecimal statementDepositPaidAmount;   //已付押金金额
+    private BigDecimal statementDepositReturnAmount;   //退还押金金额
     private BigDecimal statementRentAmount;
     private BigDecimal statementRentPaidAmount;
     private Date statementPaidTime;
@@ -181,5 +184,29 @@ public class StatementOrderDO extends BaseDO {
 
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
+    }
+
+    public BigDecimal getStatementDepositAmount() {
+        return statementDepositAmount;
+    }
+
+    public void setStatementDepositAmount(BigDecimal statementDepositAmount) {
+        this.statementDepositAmount = statementDepositAmount;
+    }
+
+    public BigDecimal getStatementDepositPaidAmount() {
+        return statementDepositPaidAmount;
+    }
+
+    public void setStatementDepositPaidAmount(BigDecimal statementDepositPaidAmount) {
+        this.statementDepositPaidAmount = statementDepositPaidAmount;
+    }
+
+    public BigDecimal getStatementDepositReturnAmount() {
+        return statementDepositReturnAmount;
+    }
+
+    public void setStatementDepositReturnAmount(BigDecimal statementDepositReturnAmount) {
+        this.statementDepositReturnAmount = statementDepositReturnAmount;
     }
 }
