@@ -9,6 +9,8 @@ import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.util.AlgorithmUtil;
 import com.lxzl.erp.core.service.product.ProductCategoryService;
 import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
+import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderDO;
 import com.lxzl.se.unit.test.BaseUnTransactionalTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,11 @@ public class ProductTest extends BaseUnTransactionalTest {
 
     @Autowired
     private ProductCategoryService productCategoryService;
+
+    @Autowired
+    private StockOrderMapper stockOrderMapper;
+
+
 
     @Test
     public void testQueryAllProductCategory() {
@@ -279,5 +286,10 @@ public class ProductTest extends BaseUnTransactionalTest {
         productSkuQueryParam.setPageSize(10);
         ServiceResult<String, Page<ProductSku>> result = productService.queryProductSkuList(productSkuQueryParam);
         System.out.println(JSON.toJSONString(result, true));
+    }
+
+    @Test
+    public void testStockOrder(){
+        StockOrderDO stockOrderDO = stockOrderMapper.findOrderByTypeAndRefer(1,"PR2017122613482675460001641534");
     }
 }

@@ -26,6 +26,8 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+
+        <result column="src_purchase_price" jdbcType="DECIMAL" property="srcPurchasePrice" />
         <collection property="productImgDOList" resultMap="ProductImgDO" />
         <collection property="bulkMaterialDOList" resultMap="BulkMaterialDO" />
     </resultMap>
@@ -123,7 +125,7 @@
     </select>
 
     <select id="listByPurchaseReceiveOrderProductId" resultMap="ProductEquipmentDO" parameterType="map">
-        SELECT <include refid="column_List"/>,<include refid="img_column_List" />,ep.product_name
+        SELECT <include refid="column_List"/>,<include refid="img_column_List" />,ep.product_name,eprop.product_amount AS src_purchase_price
         FROM erp_purchase_order epo
         LEFT JOIN erp_purchase_receive_order  epro ON epro.purchase_order_id = epo.id AND epro.data_status=1
         LEFT JOIN erp_stock_order eso ON epro.purchase_receive_no = eso.refer_no AND eso.data_status=1 AND eso.cause_type=1
@@ -131,6 +133,7 @@
         LEFT JOIN erp_product_equipment epe ON epe.id=esoe.equipment_id AND epe.data_status=1
         LEFT JOIN erp_product_img epi ON epi.product_id = epe.product_id AND epi.data_status = 1 AND epi.img_type = 1
         LEFT JOIN erp_product ep ON epe.product_id = ep.id
+        LEFT JOIN erp_purchase_receive_order_product eprop ON eprop.id = esoe.item_refer_id AND eprop.data_status=1
         WHERE esoe.item_refer_id = #{maps.queryParam.purchaseReceiveOrderProductId} AND epo.data_status = 1 AND auto_allot_status != 1
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
@@ -340,7 +343,6 @@
         </set>
     </sql>
 
-
     <insert id="saveList" parameterType="java.util.ArrayList">
         insert into erp_product_equipment (equipment_no,product_id,sku_id,order_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,equipment_price,equipment_status,is_new,data_status,remark,create_time,create_user,update_time,update_user)
         <foreach item="productEquipmentDO" collection="productEquipmentDOList" separator="UNION ALL">
@@ -350,7 +352,6 @@
             FROM erp_product_sku eps WHERE eps.id = #{productEquipmentDO.skuId}
         </foreach>
     </insert>
-
     <update id="updateList" parameterType="java.util.ArrayList">
         update erp_product_equipment
         SET

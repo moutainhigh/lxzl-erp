@@ -80,7 +80,7 @@
 		<trim prefix=",">
 			ep.id AS equipment_product_id, ep.product_name AS equipment_product_name, eps.id as equipment_product_sku_id, eps.sku_name as equipment_product_sku_name, ebm.bulk_material_name as bulk_material_name
 		</trim>
-		FROM;
+		FROM
 		(
 			select <include refid="column_List"/>
 			<trim prefix=",">
@@ -96,7 +96,11 @@
 		LEFT JOIN erp_product_sku eps ON eps.id = epe.sku_id
 		LEFT JOIN erp_bulk_material ebm ON ebm.id = esobm.bulk_material_id
 	</select>
-
+	<select id="findNoByTypeAndRefer" resultType="java.lang.String" parameterType="map">
+		select eso.stock_order_no
+		from erp_stock_order eso
+		where eso.cause_type = #{causeType, jdbcType=INTEGER} and eso.refer_no = #{referNo, jdbcType=INTEGER} and eso.data_status = 1
+	</select>
 	<select id="findOrderByTypeAndRefer" resultMap="StockOrderDO" parameterType="map">
 		select order_main.*
 		<trim prefix=",">

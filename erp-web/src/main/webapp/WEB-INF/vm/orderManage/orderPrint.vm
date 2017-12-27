@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-订单管理-订单列表-打印订单</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+
+
+
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js',
+                'manage.order.mixin.js',
+                'manage.order.handle.mixin.js',
+                'manage.order.print.js',
+                'manage.order.item.render.js',
+                'manage.order.util.js',
+                'modal.submit.audit.js',
+                'manage.order.picking.js',
+                'modal.input.js');
+    </script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+
+    OrderPrint.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+</script>
+</body>
+</html>

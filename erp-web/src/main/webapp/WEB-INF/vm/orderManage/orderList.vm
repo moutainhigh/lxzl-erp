@@ -112,19 +112,19 @@
                                                 </label>
                                             </td>
                                             {{/hasCommonActionButtons}}
-                                            <td class="">{{orderNo}}</td>
-                                            <td class="">{{orderStatusStr}}</td>
-                                            <td class="">{{buyerRealName}}</td>
-                                            <td class="">{{rentTypeStr}}</td>
-                                            <td class="">{{rentTimeLength}}</td>
-                                            <td class="">{{totalProductAmountFixed}}</td>
-                                            <td class="">{{totalOrderAmountFixed}}</td>
-                                            <td class="">{{totalDiscountAmountFixed}}</td>
-                                            <td class="">{{payTimeFormat}}</td>
-                                            <td class="">{{deliveryTimeFormat}}</td>
-                                            <td class="">{{confirmDeliveryTimeFormat}}</td>
-                                            <td class="">{{buyerRemark}}</td>
-                                            <td class="">{{remark}}</td>
+                                            <td>{{orderNo}}</td>
+                                            <td>{{orderStatusStr}}</td>
+                                            <td>{{buyerRealName}}</td>
+                                            <td>{{rentTypeStr}}</td>
+                                            <td>{{rentTimeLength}}</td>
+                                            <td>{{#price}}{{totalProductAmount}}{{/price}}</td>
+                                            <td>{{#price}}{{totalOrderAmount}}{{/price}}</td>
+                                            <td>{{#price}}{{totalDiscountAmount}}{{/price}}</td>
+                                            <td>{{#time}}{{payTime}}{{/time}}</td>
+                                            <td>{{#time}}{{deliveryTime}}{{/time}}</td>
+                                            <td>{{#time}}{{confirmDeliveryTime}}{{/time}}</td>
+                                            <td>{{buyerRemark}}</td>
+                                            <td>{{remark}}</td>
                                             {{#hasRowActionButtons}}
                                             <td class="text-right">
                                                 <div class="btn-group text-right">

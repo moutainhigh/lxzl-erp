@@ -122,7 +122,7 @@ public class StatementServiceImpl implements StatementService {
                 // 先确定订单需要结算几期
                 Integer statementMonthCount = calculateStatementMonthCount(orderProductDO.getRentType(), orderProductDO.getRentTimeLength(), orderProductDO.getPaymentCycle(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
                 if (statementMonthCount == 1) {
-                    StatementOrderDetailDO statementOrderDetailDO = calculateOneStatementOrderDetail(orderProductDO.getRentType(), orderProductDO.getRentTimeLength(), orderProductDO.getPayMode(), rentStartTime, orderProductDO.getProductAmount(), orderProductDO.getProductCount(), orderProductDO.getInsuranceAmount(), orderProductDO.getRentDepositAmount(), otherAmount, buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), currentTime, loginUser.getUserId());
+                    StatementOrderDetailDO statementOrderDetailDO = calculateOneStatementOrderDetail(orderProductDO.getRentType(), orderProductDO.getRentTimeLength(), orderProductDO.getPayMode(), rentStartTime, orderProductDO.getProductAmount(), orderProductDO.getProductCount(), orderProductDO.getInsuranceAmount(), orderProductDO.getRentDepositAmount(), orderProductDO.getDepositAmount(), otherAmount, buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), currentTime, loginUser.getUserId());
                     addStatementOrderDetailDOList.add(statementOrderDetailDO);
                 } else {
                     Date lastCalculateDate = rentStartTime;
@@ -130,7 +130,7 @@ public class StatementServiceImpl implements StatementService {
                     for (int i = 1; i <= statementMonthCount; i++) {
                         // 第一期
                         if (i == 1) {
-                            StatementOrderDetailDO statementOrderDetailDO = calculateFirstStatementOrderDetail(statementDays, orderProductDO.getPaymentCycle(), orderProductDO.getPayMode(), rentStartTime, orderProductDO.getProductUnitAmount(), orderProductDO.getProductCount(), orderProductDO.getInsuranceAmount(), orderProductDO.getRentDepositAmount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), currentTime, loginUser.getUserId());
+                            StatementOrderDetailDO statementOrderDetailDO = calculateFirstStatementOrderDetail(statementDays, orderProductDO.getPaymentCycle(), orderProductDO.getPayMode(), rentStartTime, orderProductDO.getProductUnitAmount(), orderProductDO.getProductCount(), orderProductDO.getInsuranceAmount(), orderProductDO.getRentDepositAmount(), orderProductDO.getDepositAmount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), currentTime, loginUser.getUserId());
                             addStatementOrderDetailDOList.add(statementOrderDetailDO);
                             alreadyPaidAmount = BigDecimalUtil.add(alreadyPaidAmount, statementOrderDetailDO.getStatementDetailAmount());
                             lastCalculateDate = com.lxzl.se.common.util.date.DateUtil.getBeginOfDay(statementOrderDetailDO.getStatementEndTime());
@@ -159,7 +159,7 @@ public class StatementServiceImpl implements StatementService {
                 // 先确定订单需要结算几期
                 Integer statementMonthCount = calculateStatementMonthCount(orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength(), orderMaterialDO.getPaymentCycle(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
                 if (statementMonthCount == 1) {
-                    StatementOrderDetailDO statementOrderDetailDO = calculateOneStatementOrderDetail(orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength(), orderMaterialDO.getPayMode(), rentStartTime, orderMaterialDO.getMaterialAmount(), orderMaterialDO.getMaterialCount(), orderMaterialDO.getInsuranceAmount(), orderMaterialDO.getRentDepositAmount(), otherAmount, buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), currentTime, loginUser.getUserId());
+                    StatementOrderDetailDO statementOrderDetailDO = calculateOneStatementOrderDetail(orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength(), orderMaterialDO.getPayMode(), rentStartTime, orderMaterialDO.getMaterialAmount(), orderMaterialDO.getMaterialCount(), orderMaterialDO.getInsuranceAmount(), orderMaterialDO.getRentDepositAmount(), orderMaterialDO.getDepositAmount(), otherAmount, buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), currentTime, loginUser.getUserId());
                     addStatementOrderDetailDOList.add(statementOrderDetailDO);
                 } else {
                     Date lastCalculateDate = rentStartTime;
@@ -167,7 +167,7 @@ public class StatementServiceImpl implements StatementService {
                     for (int i = 1; i <= statementMonthCount; i++) {
                         // 第一期
                         if (i == 1) {
-                            StatementOrderDetailDO statementOrderDetailDO = calculateFirstStatementOrderDetail(statementDays, orderMaterialDO.getPaymentCycle(), orderMaterialDO.getPayMode(), rentStartTime, orderMaterialDO.getMaterialUnitAmount(), orderMaterialDO.getMaterialCount(), orderMaterialDO.getInsuranceAmount(), orderMaterialDO.getRentDepositAmount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), currentTime, loginUser.getUserId());
+                            StatementOrderDetailDO statementOrderDetailDO = calculateFirstStatementOrderDetail(statementDays, orderMaterialDO.getPaymentCycle(), orderMaterialDO.getPayMode(), rentStartTime, orderMaterialDO.getMaterialUnitAmount(), orderMaterialDO.getMaterialCount(), orderMaterialDO.getInsuranceAmount(), orderMaterialDO.getRentDepositAmount(), orderMaterialDO.getDepositAmount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), currentTime, loginUser.getUserId());
                             addStatementOrderDetailDOList.add(statementOrderDetailDO);
                             alreadyPaidAmount = BigDecimalUtil.add(alreadyPaidAmount, statementOrderDetailDO.getStatementDetailAmount());
                             lastCalculateDate = com.lxzl.se.common.util.date.DateUtil.getBeginOfDay(statementOrderDetailDO.getStatementEndTime());
@@ -221,7 +221,8 @@ public class StatementServiceImpl implements StatementService {
         CustomerDO customerDO = customerMapper.findById(statementOrderDO.getCustomerId());
         BigDecimal payRentAmount = BigDecimalUtil.add(BigDecimalUtil.sub(statementOrderDO.getStatementRentAmount(), statementOrderDO.getStatementRentPaidAmount()), statementOrderDO.getStatementOverdueAmount());
         BigDecimal payRentDepositAmount = BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositAmount(), statementOrderDO.getStatementRentDepositPaidAmount());
-        ServiceResult<String, Boolean> paymentResult = paymentService.balancePay(customerDO.getCustomerNo(), statementOrderDO.getStatementOrderNo(), statementOrderDO.getRemark(), null, payRentAmount, payRentDepositAmount);
+        BigDecimal payDepositAmount = BigDecimalUtil.sub(statementOrderDO.getStatementDepositAmount(), statementOrderDO.getStatementDepositPaidAmount());
+        ServiceResult<String, Boolean> paymentResult = paymentService.balancePay(customerDO.getCustomerNo(), statementOrderDO.getStatementOrderNo(), statementOrderDO.getRemark(), null, payRentAmount, payRentDepositAmount, payDepositAmount);
         if (!ErrorCode.SUCCESS.equals(paymentResult.getErrorCode()) || !paymentResult.getResult()) {
             result.setErrorCode(paymentResult.getErrorCode());
             return result;
@@ -306,16 +307,10 @@ public class StatementServiceImpl implements StatementService {
         User loginUser = userSupport.getCurrentUser();
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = new ArrayList<>();
         Integer buyerCustomerId = returnOrderDO.getCustomerId();
-        Date statementDetailStartTime = null;
-        Date statementDetailEndTime = null;
+        Date statementDetailStartTime;
+        Date statementDetailEndTime;
         // 其他的费用
         BigDecimal otherAmount = BigDecimalUtil.add(returnOrderDO.getServiceCost(), returnOrderDO.getDamageCost());
-
-        if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
-            // 如果没有处理完差价，统一当天交钱
-            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER, BigInteger.ZERO.intValue(), currentTime, currentTime, currentTime, otherAmount, BigDecimal.ZERO, currentTime, loginUser.getUserId());
-            addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
-        }
 
         List<ReturnOrderProductEquipmentDO> returnOrderProductEquipmentDOList = returnOrderProductEquipmentMapper.findByReturnOrderNo(returnOrderNo);
         if (CollectionUtil.isNotEmpty(returnOrderProductEquipmentDOList)) {
@@ -332,9 +327,8 @@ public class StatementServiceImpl implements StatementService {
                 }
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
                 if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
-                    BigDecimal thisPhaseAmount = BigDecimalUtil.mul(orderProductEquipmentDO.getProductEquipmentUnitAmount(), new BigDecimal(orderProductDO.getPaymentCycle()));
                     for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
-                        BigDecimal payReturnAmount;
+                        BigDecimal payReturnAmount = BigDecimal.ZERO;
                         StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
                         if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                             continue;
@@ -344,16 +338,20 @@ public class StatementServiceImpl implements StatementService {
 
                         BigDecimal needPayAmount = BigDecimal.ZERO;
                         // 如果开始时间在当前时间之前，证明先用后付，要计费。
-                        if(currentTime.getTime() > statementDetailStartTime.getTime()){
+                        if (currentTime.getTime() > statementDetailStartTime.getTime()) {
                             needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, currentTime, orderProductEquipmentDO.getProductEquipmentUnitAmount());
                         }
+                        if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
+                            payReturnAmount = BigDecimalUtil.add(payReturnAmount, otherAmount);
+                            otherAmount = BigDecimal.ZERO;
+                        }
                         // 正常全额退
-                        payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
+                        payReturnAmount = BigDecimalUtil.add(payReturnAmount, statementOrderDetailDO.getStatementDetailAmount());
                         // 退款金额，除了租金以外，保险金额也不能收了
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, orderProductDO.getInsuranceAmount()));
                         // 退款金额，扣除未交款的部分
                         payReturnAmount = BigDecimalUtil.sub(payReturnAmount, needPayAmount);
-                        StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderProductEquipmentDO.getReturnOrderId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT, returnOrderProductEquipmentDO.getReturnOrderProductId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, currentTime, loginUser.getUserId());
+                        StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderProductEquipmentDO.getReturnOrderId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT, returnOrderProductEquipmentDO.getReturnOrderProductId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId());
                         addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
                     }
                 }
@@ -375,9 +373,8 @@ public class StatementServiceImpl implements StatementService {
                 }
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId());
                 if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
-                    BigDecimal thisPhaseAmount = BigDecimalUtil.mul(orderMaterialBulkDO.getMaterialBulkUnitAmount(), new BigDecimal(orderMaterialDO.getPaymentCycle()));
                     for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
-                        BigDecimal payReturnAmount;
+                        BigDecimal payReturnAmount = BigDecimal.ZERO;
                         StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
                         if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                             continue;
@@ -387,20 +384,30 @@ public class StatementServiceImpl implements StatementService {
 
                         BigDecimal needPayAmount = BigDecimal.ZERO;
                         // 如果开始时间在当前时间之前，证明先用后付，要计费。
-                        if(currentTime.getTime() > statementDetailStartTime.getTime()){
+                        if (currentTime.getTime() > statementDetailStartTime.getTime()) {
                             needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, currentTime, orderMaterialBulkDO.getMaterialBulkUnitAmount());
                         }
-                        payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
+
+                        if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
+                            payReturnAmount = BigDecimalUtil.add(payReturnAmount, otherAmount);
+                            otherAmount = BigDecimal.ZERO;
+                        }
+                        payReturnAmount = BigDecimalUtil.add(payReturnAmount, statementOrderDetailDO.getStatementDetailAmount());
                         // 退款金额，除了租金以外，保险金额也不能收了
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, orderMaterialDO.getInsuranceAmount()));
                         // 退款金额，扣除未交款的部分
                         payReturnAmount = BigDecimalUtil.sub(payReturnAmount, needPayAmount);
 
-                        StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderMaterialBulkDO.getReturnOrderId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL, returnOrderMaterialBulkDO.getReturnOrderMaterialId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, currentTime, loginUser.getUserId());
+                        StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderMaterialBulkDO.getReturnOrderId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL, returnOrderMaterialBulkDO.getReturnOrderMaterialId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId());
                         addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
                     }
                 }
             }
+        }
+        if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
+            // 如果没有处理完差价，统一当天交钱
+            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER, BigInteger.ZERO.intValue(), currentTime, currentTime, currentTime, otherAmount, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId());
+            addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
         }
         saveStatementOrder(addStatementOrderDetailDOList, buyerCustomerId, currentTime, loginUser.getUserId());
 
@@ -424,14 +431,8 @@ public class StatementServiceImpl implements StatementService {
         Integer buyerCustomerId = changeOrderDO.getCustomerId();
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = new ArrayList<>();
         BigDecimal otherAmount = BigDecimalUtil.add(changeOrderDO.getServiceCost(), changeOrderDO.getDamageCost());
-
-        if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
-            // 如果没有处理完差价，统一当天交钱
-            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, changeOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_OTHER, BigInteger.ZERO.intValue(), currentTime, currentTime, currentTime, otherAmount, BigDecimal.ZERO, currentTime, loginUser.getUserId());
-            addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
-        }
         Date statementDetailStartTime = currentTime;
-        Date statementDetailEndTime = null;
+        Date statementDetailEndTime;
         if (CollectionUtil.isNotEmpty(changeOrderProductEquipmentDOList)) {
             for (ChangeOrderProductEquipmentDO changeOrderProductEquipmentDO : changeOrderProductEquipmentDOList) {
                 BigDecimal productEquipmentDiffAmount = changeOrderProductEquipmentDO.getPriceDiff();
@@ -451,7 +452,7 @@ public class StatementServiceImpl implements StatementService {
 
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
                     statementDetailEndTime = orderProductEquipmentDO.getExpectReturnTime();
-                    StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderProductEquipmentDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT, changeOrderProductEquipmentDO.getChangeOrderProductId(), statementDetailStartTime, statementDetailStartTime, statementDetailEndTime, productEquipmentDiffAmount, BigDecimal.ZERO, currentTime, loginUser.getUserId());
+                    StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderProductEquipmentDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT, changeOrderProductEquipmentDO.getChangeOrderProductId(), statementDetailStartTime, statementDetailStartTime, statementDetailEndTime, productEquipmentDiffAmount, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId());
                     addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
                 } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
                     List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
@@ -460,16 +461,16 @@ public class StatementServiceImpl implements StatementService {
                         for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
                             StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
                             if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
-                                // 如果最后一期都交完了，那么就设定一个本期的最后一个时间点
-                                if (i == (statementOrderDetailDOList.size() - 1)) {
-                                    statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
-                                }
                                 continue;
                             }
                             statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
-                            // 第一月差价
+                            // 第一月差价,其他费用跟着下期一起
                             if (BigDecimalUtil.compare(payDiffAmount, BigDecimal.ZERO) == 0) {
-                                payDiffAmount = amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, productEquipmentDiffAmount);
+                                if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
+                                    payDiffAmount = BigDecimalUtil.add(payDiffAmount, otherAmount);
+                                    otherAmount = BigDecimal.ZERO;
+                                }
+                                payDiffAmount = BigDecimalUtil.add(payDiffAmount, amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, productEquipmentDiffAmount));
                             } else if (i == (statementOrderDetailDOList.size() - 1)) {
                                 statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                                 payDiffAmount = amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, productEquipmentDiffAmount);
@@ -478,14 +479,7 @@ public class StatementServiceImpl implements StatementService {
                                 payDiffAmount = productEquipmentDiffAmount;
                             }
 
-                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderProductEquipmentDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT, changeOrderProductEquipmentDO.getChangeOrderProductId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, payDiffAmount, BigDecimal.ZERO, currentTime, loginUser.getUserId());
-                            addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
-                        }
-
-                        if (BigDecimalUtil.compare(payDiffAmount, BigDecimal.ZERO) == 0 || BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) == 0) {
-                            BigDecimal thisPayAmount = BigDecimalUtil.compare(payDiffAmount, BigDecimal.ZERO) == 0 ? BigDecimalUtil.add(productEquipmentDiffAmount, otherAmount) : otherAmount;
-                            // 如果没有处理完差价，统一当天交钱
-                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderProductEquipmentDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT, changeOrderProductEquipmentDO.getChangeOrderProductId(), statementDetailStartTime, statementDetailStartTime, statementDetailEndTime, thisPayAmount, BigDecimal.ZERO, currentTime, loginUser.getUserId());
+                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderProductEquipmentDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT, changeOrderProductEquipmentDO.getChangeOrderProductId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, payDiffAmount, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId());
                             addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
                         }
                     }
@@ -503,7 +497,7 @@ public class StatementServiceImpl implements StatementService {
                 OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(orderMaterialBulkDO.getOrderMaterialId());
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())) {
                     statementDetailEndTime = orderMaterialBulkDO.getExpectReturnTime();
-                    StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderMaterialBulkDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL, changeOrderMaterialBulkDO.getChangeOrderMaterialId(), statementDetailStartTime, statementDetailStartTime, statementDetailEndTime, materialBulkDiffAmount, BigDecimal.ZERO, currentTime, loginUser.getUserId());
+                    StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderMaterialBulkDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL, changeOrderMaterialBulkDO.getChangeOrderMaterialId(), statementDetailStartTime, statementDetailStartTime, statementDetailEndTime, materialBulkDiffAmount, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId());
                     addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
                 } else if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())) {
                     List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId());
@@ -512,16 +506,16 @@ public class StatementServiceImpl implements StatementService {
                         for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
                             StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
                             if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
-                                // 如果最后一期都交完了，那么就设定一个本期的最后一个时间点
-                                if (i == (statementOrderDetailDOList.size() - 1)) {
-                                    statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
-                                }
                                 continue;
                             }
                             statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
                             // 第一月差价
-                            if (i == 0) {
-                                payDiffAmount = amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, materialBulkDiffAmount);
+                            if (BigDecimalUtil.compare(payDiffAmount, BigDecimal.ZERO) == 0) {
+                                if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
+                                    payDiffAmount = BigDecimalUtil.add(payDiffAmount, otherAmount);
+                                    otherAmount = BigDecimal.ZERO;
+                                }
+                                payDiffAmount = BigDecimalUtil.add(payDiffAmount, amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, materialBulkDiffAmount));
                             } else if (i == (statementOrderDetailDOList.size() - 1)) {
                                 statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                                 payDiffAmount = BigDecimalUtil.sub(materialBulkDiffAmount, payDiffAmount);
@@ -529,18 +523,17 @@ public class StatementServiceImpl implements StatementService {
                                 statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                                 payDiffAmount = materialBulkDiffAmount;
                             }
-                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(statementOrderDetailDO.getCustomerId(), OrderType.ORDER_TYPE_CHANGE, changeOrderMaterialBulkDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL, changeOrderMaterialBulkDO.getChangeOrderMaterialId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, payDiffAmount, BigDecimal.ZERO, currentTime, loginUser.getUserId());
-                            addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
-                        }
-                        if (BigDecimalUtil.compare(payDiffAmount, BigDecimal.ZERO) == 0 || BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) == 0) {
-                            BigDecimal thisPayAmount = BigDecimalUtil.compare(payDiffAmount, BigDecimal.ZERO) == 0 ? BigDecimalUtil.add(materialBulkDiffAmount, otherAmount) : otherAmount;
-                            // 如果没有处理完差价，统一当天交钱
-                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_CHANGE, changeOrderMaterialBulkDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL, changeOrderMaterialBulkDO.getChangeOrderMaterialId(), statementDetailStartTime, statementDetailStartTime, statementDetailEndTime, thisPayAmount, BigDecimal.ZERO, currentTime, loginUser.getUserId());
+                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(statementOrderDetailDO.getCustomerId(), OrderType.ORDER_TYPE_CHANGE, changeOrderMaterialBulkDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL, changeOrderMaterialBulkDO.getChangeOrderMaterialId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, payDiffAmount, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId());
                             addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
                         }
                     }
                 }
             }
+        }
+        if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
+            // 如果没有处理完差价，统一当天交钱
+            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, changeOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_OTHER, BigInteger.ZERO.intValue(), currentTime, currentTime, currentTime, otherAmount, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId());
+            addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
         }
         saveStatementOrder(addStatementOrderDetailDOList, buyerCustomerId, currentTime, loginUser.getUserId());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -566,6 +559,7 @@ public class StatementServiceImpl implements StatementService {
                     statementOrderDO.setStatementExpectPayTime(dateKey);
                     statementOrderDO.setStatementAmount(statementOrderDetailDO.getStatementDetailAmount());
                     statementOrderDO.setStatementRentDepositAmount(statementOrderDetailDO.getStatementDetailRentDepositAmount());
+                    statementOrderDO.setStatementDepositAmount(statementOrderDetailDO.getStatementDetailDepositAmount());
                     statementOrderDO.setStatementRentAmount(statementOrderDetailDO.getStatementDetailRentAmount());
                     statementOrderDO.setStatementStartTime(statementOrderDetailDO.getStatementStartTime());
                     statementOrderDO.setStatementEndTime(statementOrderDetailDO.getStatementEndTime());
@@ -578,6 +572,7 @@ public class StatementServiceImpl implements StatementService {
                 } else {
                     statementOrderDO = statementOrderDOMap.get(dateKey);
                     statementOrderDO.setStatementAmount(BigDecimalUtil.add(statementOrderDO.getStatementAmount(), statementOrderDetailDO.getStatementDetailAmount()));
+                    statementOrderDO.setStatementDepositAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositAmount(), statementOrderDetailDO.getStatementDetailDepositAmount()));
                     statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositAmount()));
                     statementOrderDO.setStatementRentAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentAmount(), statementOrderDetailDO.getStatementDetailRentAmount()));
                     if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())) {
@@ -621,7 +616,7 @@ public class StatementServiceImpl implements StatementService {
     /**
      * 一次性付款时计算结算单明细
      */
-    StatementOrderDetailDO calculateOneStatementOrderDetail(Integer rentType, Integer rentTimeLength, Integer payMode, Date rentStartTime, BigDecimal statementDetailAmount, Integer itemCount, BigDecimal insuranceAmount, BigDecimal totalRentDepositAmount, BigDecimal otherAmount, Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date currentTime, Integer loginUserId) {
+    StatementOrderDetailDO calculateOneStatementOrderDetail(Integer rentType, Integer rentTimeLength, Integer payMode, Date rentStartTime, BigDecimal statementDetailAmount, Integer itemCount, BigDecimal insuranceAmount, BigDecimal totalRentDepositAmount, BigDecimal depositAmount, BigDecimal otherAmount, Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date currentTime, Integer loginUserId) {
         Calendar rentStartTimeCalendar = Calendar.getInstance();
         rentStartTimeCalendar.setTime(rentStartTime);
         Date statementEndTime = null, statementExpectPayTime = null;
@@ -653,13 +648,13 @@ public class StatementServiceImpl implements StatementService {
         }
         BigDecimal thisPhaseAmount = BigDecimalUtil.add(BigDecimalUtil.add(statementDetailAmount, totalInsuranceAmount), otherAmount);
 
-        return buildStatementOrderDetailDO(customerId, OrderType.ORDER_TYPE_ORDER, orderId, orderItemType, orderItemReferId, statementExpectPayTime, rentStartTime, statementEndTime, thisPhaseAmount, totalRentDepositAmount, currentTime, loginUserId);
+        return buildStatementOrderDetailDO(customerId, OrderType.ORDER_TYPE_ORDER, orderId, orderItemType, orderItemReferId, statementExpectPayTime, rentStartTime, statementEndTime, thisPhaseAmount, totalRentDepositAmount, depositAmount, currentTime, loginUserId);
     }
 
     /**
      * 计算多期中的第一期明细
      */
-    StatementOrderDetailDO calculateFirstStatementOrderDetail(Integer statementDays, Integer paymentCycle, Integer payMode, Date rentStartTime, BigDecimal unitAmount, Integer itemCount, BigDecimal insuranceAmount, BigDecimal totalRentDepositAmount, Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date currentTime, Integer loginUserId) {
+    StatementOrderDetailDO calculateFirstStatementOrderDetail(Integer statementDays, Integer paymentCycle, Integer payMode, Date rentStartTime, BigDecimal unitAmount, Integer itemCount, BigDecimal insuranceAmount, BigDecimal totalRentDepositAmount, BigDecimal depositAmount, Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date currentTime, Integer loginUserId) {
 
         Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, paymentCycle);
         Calendar statementEndTimeCalendar = Calendar.getInstance();
@@ -678,7 +673,7 @@ public class StatementServiceImpl implements StatementService {
         BigDecimal firstPhaseAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, BigDecimalUtil.mul(unitAmount, new BigDecimal(itemCount)));
         BigDecimal insuranceTotalAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, BigDecimalUtil.mul(insuranceAmount, new BigDecimal(itemCount)));
         firstPhaseAmount = BigDecimalUtil.add(firstPhaseAmount, insuranceTotalAmount);
-        return buildStatementOrderDetailDO(customerId, OrderType.ORDER_TYPE_ORDER, orderId, orderItemType, orderItemReferId, statementExpectPayTime, rentStartTime, statementEndTime, firstPhaseAmount, totalRentDepositAmount, currentTime, loginUserId);
+        return buildStatementOrderDetailDO(customerId, OrderType.ORDER_TYPE_ORDER, orderId, orderItemType, orderItemReferId, statementExpectPayTime, rentStartTime, statementEndTime, firstPhaseAmount, totalRentDepositAmount, depositAmount, currentTime, loginUserId);
     }
 
     /**
@@ -701,7 +696,7 @@ public class StatementServiceImpl implements StatementService {
         } else {
             statementExpectPayTime = statementEndTime;
         }
-        return buildStatementOrderDetailDO(customerId, OrderType.ORDER_TYPE_ORDER, orderId, orderItemType, orderItemReferId, statementExpectPayTime, lastPhaseStartTime, statementEndTime, lastPhaseAmount, BigDecimal.ZERO, currentTime, loginUserId);
+        return buildStatementOrderDetailDO(customerId, OrderType.ORDER_TYPE_ORDER, orderId, orderItemType, orderItemReferId, statementExpectPayTime, lastPhaseStartTime, statementEndTime, lastPhaseAmount, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId);
     }
 
     /**
@@ -727,10 +722,10 @@ public class StatementServiceImpl implements StatementService {
         } else {
             statementExpectPayTime = statementEndTime;
         }
-        return buildStatementOrderDetailDO(customerId, OrderType.ORDER_TYPE_ORDER, orderId, orderItemType, orderItemReferId, statementExpectPayTime, thisPhaseStartTime, statementEndTime, middlePhaseAmount, BigDecimal.ZERO, currentTime, loginUserId);
+        return buildStatementOrderDetailDO(customerId, OrderType.ORDER_TYPE_ORDER, orderId, orderItemType, orderItemReferId, statementExpectPayTime, thisPhaseStartTime, statementEndTime, middlePhaseAmount, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId);
     }
 
-    StatementOrderDetailDO buildStatementOrderDetailDO(Integer customerId, Integer orderType, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date statementExpectPayTime, Date startTime, Date endTime, BigDecimal statementDetailRentAmount, BigDecimal statementDetailRentDepositAmount, Date currentTime, Integer loginUserId) {
+    StatementOrderDetailDO buildStatementOrderDetailDO(Integer customerId, Integer orderType, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date statementExpectPayTime, Date startTime, Date endTime, BigDecimal statementDetailRentAmount, BigDecimal statementDetailRentDepositAmount, BigDecimal statementDetailDepositAmount, Date currentTime, Integer loginUserId) {
         StatementOrderDetailDO statementOrderDetailDO = new StatementOrderDetailDO();
         statementOrderDetailDO.setCustomerId(customerId);
         statementOrderDetailDO.setOrderType(orderType);
@@ -742,6 +737,7 @@ public class StatementServiceImpl implements StatementService {
         statementOrderDetailDO.setStatementEndTime(endTime);
         statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.add(statementDetailRentDepositAmount, statementDetailRentAmount));
         statementOrderDetailDO.setStatementDetailRentDepositAmount(statementDetailRentDepositAmount);
+        statementOrderDetailDO.setStatementDetailDepositAmount(statementDetailDepositAmount);
         statementOrderDetailDO.setStatementDetailRentAmount(statementDetailRentAmount);
         statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
         statementOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);

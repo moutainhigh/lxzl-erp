@@ -16,10 +16,7 @@
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
             <form class="" id="orderDetailForm">
-                <div class="panel panel-primary panel-border top mb35">
-##                    <div class="panel-heading">
-##                        <span class="panel-title">基本信息</span>
-##                    </div>
+                <div class="panel panel-primary panel-border top mb15">
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-4">
@@ -35,146 +32,97 @@
                                         {{/showButton}}
                                     {{/acitonButtons}}
                                 </script>
-
                                 <div class="btn-group" id="actionButtons"></div>
                             </div>
                         </div>
                     </div>
+                    <div class="panel-body mt15">
+                        <div id="orderBaseInfo"></div>
+                    </div>
                     <script type="text/html" id="orderBaseInfoTpl">
                         {{#order}}
-                        <div class="form-horizontal panel-body bg-light dark">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">客户</label>
-                                        <div class="col-md-9">
-                                            <p class="form-control-static text-muted">{{buyerCustomerName}}（客户编号：{{buyerCustomerNo}}）</p>
-                                        </div>
-                                    </div>
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">备注</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{buyerRemark}}</p></div>
-                                    </div>
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label" style="visibility: hidden;">收货地址</label>
-                                        <div class="col-md-9">
-                                            <div class="panel">
-                                                <div class="panel-heading">
-                                                    <span class="panel-icon"><i class="glyphicon glyphicon-map-marker"></i></span>
-                                                    <span class="panel-title">收货地址</span>
-                                                </div>
-                                                <div class="panel-body pb5 admin-form">
-                                                    <div class="well">
-                                                        <address class="mn">
-                                                            <strong>{{orderConsignInfo.consigneeName}}</strong>
-                                                            <br>
-                                                            {{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}
-                                                            <br>
-                                                            <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{orderConsignInfo.consigneePhone}}
-                                                        </address>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">订单状态</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{orderStatusValue}}</p></div>
-                                    </div>
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">起租日期</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{rentStartTimeFormat}}&nbsp;</p></div>
-                                    </div>
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">支付时间</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{payTimeFormat}}&nbsp;</p></div>
-                                    </div>
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">发货时间</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{deliveryTimeFormat}}&nbsp;</p></div>
-                                    </div>
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">确认收货</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{confirmDeliveryTimeFormat}}&nbsp;</p></div>
-                                    </div>
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">预计归还</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{expectReturnTimeFormat}}&nbsp;</p></div>
-                                    </div>
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">实际归还</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{actualReturnTimeFormat}}&nbsp;</p></div>
-                                    </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <dl class="dl-horizontal dl-horizontal-rental">
+                                    <dt class="mb5">销售员：</dt><dd>{{orderSellerName}}</dd>
+                                    <dt class="mb5">订单归属：</dt><dd>{{orderSubCompanyName}}</dd>
+                                    <dt class="mb5">创建日期：</dt><dd>{{#time}}{{createTime}}{{/time}}</dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-4">
+                                <dl class="dl-horizontal dl-horizontal-rental">
+                                    <dt class="mb5">支付日期：</dt><dd>{{#time}}{{payTime}}{{/time}}&nbsp;</dd>
+                                    <dt class="mb5">发货日期：</dt><dd>{{#time}}{{deliveryTime}}{{/time}}&nbsp;</dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-4">
+                                <dl class="dl-horizontal dl-horizontal-rental">
+                                    <dt class="mb5">起租日期：</dt><dd>{{#time}}{{rentStartTime}}{{/time}}&nbsp;</dd>
+                                    <dt class="mb5">预计归还：</dt><dd>{{#time}}{{expectReturnTime}}{{/time}}</dd>
+                                    <dt class="mb5">实际归还：</dt><dd>{{#time}}{{actualReturnTime}}{{/time}}&nbsp;</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        {{/order}}
+                    </script>
+                </div>
 
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-horizontal panel-body bg-light dark">
+                <div class="panel">
+                    <script type="text/html" id="orderDetailInfoTpl">
+                        {{#order}}
+                        <div class="dark">
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">销售员</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{orderSellerName}}</p></div>
-                                    </div>
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">订单所属公司</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{orderSubCompanyName}}</p></div>
-                                    </div>
+                                <div class="col-md-4">
+                                    <h4>客户信息</h4>
+                                    <dl class="dl-horizontal dl-horizontal-rental">
+                                        <dt class="mb5">客户：</dt><dd>{{buyerCustomerName}}（客户编号：{{buyerCustomerNo}}）</dd>
+                                        <dt class="mb5">备注：</dt><dd>{{remark}}</dd>
+                                    </dl>
+                                    <h4>收货地址</h4>
+                                    <dl class="dl-horizontal dl-horizontal-rental">
+                                        <dt class="mb5">收件人：</dt><dd>{{orderConsignInfo.consigneeName}}</dd>
+                                        <dt class="mb5">地址：</dt><dd>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}</dd>
+                                        <dt class="mb5">手机号：</dt><dd>{{orderConsignInfo.consigneePhone}}</dd>
+                                    </dl>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="form-horizontal panel-body bg-light dark">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">押金</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{totalDepositAmountFormat}}&nbsp;</p></div>
-                                    </div>
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">授信押金</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{totalCreditDepositAmountFormat}}&nbsp;</p></div>
-                                    </div>
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">保险金</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{totalInsuranceAmountFormat}}&nbsp;</p></div>
-                                    </div>
+                                <div class="col-md-4 br-l">
+                                    <h4 class="pl15">金额信息</h4>
+                                    <dl class="dl-horizontal dl-horizontal-rental pl15">
+                                        <dt class="mb10">授信押金：</dt><dd>￥{{#price}}{{totalCreditDepositAmount}}{{/price}}</dd>
+                                        <dt class="mb10">订单押金：</dt><dd>￥{{#price}}{{totalDepositAmount}}{{/price}}</dd>
+                                        <dt class="mb10">保险金：</dt><dd>￥{{#price}}{{totalInsuranceAmount}}{{/price}}</dd>
+                                        <dt class="mb10">商品总数：</dt><dd>{{totalProductCount}}</dd>
+                                        <dt class="mb10">商品总价：</dt><dd>￥{{#price}}{{totalProductAmount}}{{/price}}</dd>
+                                        <dt class="mb10">运费：</dt><dd>￥{{#price}}{{logisticsAmount}}{{/price}}</dd>
+                                        <dt class="mb10">实际支付：</dt><dd>￥{{#price}}{{totalOrderAmountFormat}}{{/price}}</dd>
+                                        <dt class="mb10">共计优惠：</dt><dd>￥{{#price}}{{totalDiscountAmount}}{{/price}}</dd>
+                                    </dl>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="form-horizontal panel-body bg-light dark">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">商品总数</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{totalProductCount}}&nbsp;</p></div>
-                                    </div>
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">商品总价</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{totalProductAmountFormat}}&nbsp;</p></div>
-                                    </div>
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">实际支付</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{totalOrderAmountFormat}}&nbsp;</p></div>
-                                    </div>
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">共计优惠</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{totalDiscountAmountFormat}}&nbsp;</p></div>
-                                    </div>
-                                    <div class="form-group field mbn">
-                                        <label class="col-md-3 control-label">运费</label>
-                                        <div class="col-md-9"><p class="form-control-static text-muted">{{logisticsAmountFormat}}&nbsp;</p></div>
+                                <div class="col-md-4 br-l">
+                                    <h4 class="pl15">订单状态</h4>
+                                    <div class="row pl30 mt15">
+                                        <ul class="Rental-timeline">
+                                            {{#orderStatusLine}}
+                                            <li class="Rental-timeline-item {{#isLastLine}}Rental-timeline-item-last{{/isLastLine}}">
+                                                <div class="Rental-timeline-item-tail"></div>
+                                                <div class="Rental-timeline-item-head {{inlineClass}}"></div>
+                                                <div class="Rental-timeline-item-content">{{value}}</div>
+                                            </li>
+                                            {{/orderStatusLine}}
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         {{/order}}
                     </script>
-                    <div id="orderBaseInfo"></div>
+                    <div class="panel-body" id="orderDetailInfo"></div>
+                </div>
+
+                <div class="panel">
                     <div class="panel-heading">
                         <div class="row">
-                            <ul class="nav panel-tabs-border panel-tabs">
+                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs">
                                 <li class="active">
                                     <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
                                 </li>
@@ -184,25 +132,31 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="panel-body dark pn">
+                    <div class="panel-body light pn">
                         <div class="tab-content pn br-n">
-                            <div id="purchaseOrderProductItems" class="tab-pane active">
-                                <div class="panel-menu p12 br-n br-b">
-                                    <div class="row">
-                                        <div class="pull-left ml10">
-                                            <script type="text/html" id="pickingProductButtonsTpl">
-                                                {{#acitonButtons}}
-                                                {{#showButton}}
-                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-orderno="{{orderNo}}">
-                                                    <i class="{{iClass}}"></i> {{text}}
-                                                </a>
-                                                {{/showButton}}
-                                                {{/acitonButtons}}
-                                            </script>
-                                            <div class="btn-group actionCommonButtons" id="pickingProductButtons"></div>
+                            <div id="purchaseOrderProductItems" class="tab-pane tab-pane-order active">
+                                <script type="text/html" id="pickingProductButtonsTpl">
+                                    {{#hasActionButtons}}
+                                    {{#buttons}}
+                                    <div class="panel-menu p12 br-n br-b">
+                                        <div class="row">
+                                            <div class="pull-right ml10">
+                                                <div class="btn-group actionCommonButtons" >
+                                                    {{#acitonButtons}}
+                                                        {{#showButton}}
+                                                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-orderno="{{orderNo}}">
+                                                            <i class="{{iClass}}"></i> {{text}}
+                                                        </a>
+                                                        {{/showButton}}
+                                                    {{/acitonButtons}}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                    {{/buttons}}
+                                    {{/hasActionButtons}}
+                                </script>
+                                <div id="pickingProductButtons"></div>
                                 <div class="table-responsive">
                                     <script type="text/html" id="dataListTpl">
                                         <thead>
@@ -246,7 +200,7 @@
                                                             保险金：{{insuranceAmount}}
                                                         </td>
                                                         <td>
-                                                           支付方式：{{payModeValue}}
+                                                            支付方式：{{payModeValue}}
                                                         </td>
                                                         <td class="text-right">
                                                             <div class="btn-group text-right">
@@ -299,7 +253,7 @@
                                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                                 </div>
                             </div>
-                            <div id="purchaseOrderMaterialItems" class="tab-pane">
+                            <div id="purchaseOrderMaterialItems" class="tab-pane tab-pane-order">
                                 <div class="table-responsive">
                                     <script type="text/html" id="materialDataListTpl">
                                         <thead>
@@ -352,14 +306,14 @@
                                             <td>
                                                 {{payModeValue}}
                                             </td>
-                                           <td>
-                                               <div class="btn-group text-right">
-                                                   {{#rowActionButtons}}
-                                                   <a href="#" type="button" class="btn btn-default btn-xs {{class}}" data-materialno="{{materialNo}}" data-materialid="{{materialId}}" data-orderno="{{orderNo}}" data-materialcount="{{materialCount}}">{{text}}</a>
-                                                   {{/rowActionButtons}}
-                                                   <a href="#" type="button" class="btn btn-default btn-xs viewAffix" >查看配货信息</a>
-                                               </div>
-                                           </td>
+                                            <td>
+                                                <div class="btn-group text-right">
+                                                    {{#rowActionButtons}}
+                                                    <a href="#" type="button" class="btn btn-default btn-xs {{class}}" data-materialno="{{materialNo}}" data-materialid="{{materialId}}" data-orderno="{{orderNo}}" data-materialcount="{{materialCount}}">{{text}}</a>
+                                                    {{/rowActionButtons}}
+                                                    <a href="#" type="button" class="btn btn-default btn-xs viewAffix" >查看配货信息</a>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <tr class="bg-light affixTr" style="height: 0;">
                                             <td colspan="14" class="pn br-n" style="height:0;">
@@ -369,11 +323,11 @@
                                                     </div>
                                                     <div class="panel-body pn">
                                                         <table class="table">
-##                                                            <thead>
-##                                                            <tr>
-##                                                                <th>散料编号</th>
-##                                                            </tr>
-##                                                            </thead>
+                                                        ##                                                            <thead>
+                                                        ##                                                            <tr>
+                                                        ##                                                                <th>散料编号</th>
+                                                        ##                                                            </tr>
+                                                        ##                                                            </thead>
                                                             {{#orderMaterialBulkList}}
                                                             <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
                                                                 <td class="br-r">{{bulkMaterialNo}}</td>
@@ -410,7 +364,6 @@
                     </div>
                     <div class="panel-footer clearfix">
                         <button class="btn btn-default pull-right ml15 goBack">返回</button>
-##                        <button class="btn btn-primary pull-right">保存</button>
                     </div>
                 </div>
             </form>

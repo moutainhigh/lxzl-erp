@@ -194,11 +194,16 @@ public class PageController extends BaseController {
     public String orderManageOrderItem() {
         return "/orderManage/orderItem";
     }
+
     @RequestMapping("/order-manage-input-picking-material/modal")
     public String orderManageInputPickingMaterialModal() {
         return "/component/order/inputPickingMaterial";
     }
 
+    @RequestMapping("/order-manage/print")
+    public String orderManagePrint() {
+        return "/orderManage/orderPrint";
+    }
 
     //退货单
     @RequestMapping("/order-return-manage/list")
@@ -328,6 +333,18 @@ public class PageController extends BaseController {
         return "/purchaseReceiveManage/purchaseReceiveEdit";
     }
 
+    @RequestMapping("/purchase-receive-manage-product-equipment/edit")
+    public String purchaseReceiveManageEditEquipment() {
+        return "/component/purchaseReceiveOrder/purchaseReceiveOrderProductEquipment";
+    }
+
+    @RequestMapping("/purchase-receive-manage-material-bulk/edit")
+    public String purchaseReceiveManageEditMaterialBulk() {
+        return "/component/purchaseReceiveOrder/purchaseReceiveOrderProductMaterialBulk";
+    }
+
+
+
     //采购发货单
     @RequestMapping("/purchase-delivery-manage/list")
     public String purchaseDeliveryManageList() {
@@ -429,6 +446,10 @@ public class PageController extends BaseController {
     @RequestMapping("/statement-order/list")
     public String statementOrderList() {
         return "/statementOrderManage/statementOrderList";
+    }
+    @RequestMapping("/statement-order/detail")
+    public String statementOrderDetail() {
+        return "/statementOrderManage/statementOrderDetail";
     }
 
 

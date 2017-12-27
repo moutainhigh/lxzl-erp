@@ -20,6 +20,9 @@ public class StatementOrderDetail implements Serializable {
 	private BigDecimal statementDetailRentDepositAmount;	// 结算租金押金金额
 	private BigDecimal statementDetailRentDepositPaidAmount;	// 已付租金押金金额
 	private BigDecimal statementDetailRentDepositReturnAmount;	// 退还租金押金金额
+	private BigDecimal statementDetailDepositAmount;   //结算押金金额
+	private BigDecimal statementDetailDepositPaidAmount;   //已付押金金额
+	private BigDecimal statementDetailDepositReturnAmount;   //退还押金金额
 	private BigDecimal statementDetailRentAmount;				// 结算单租金金额
 	private BigDecimal statementDetailRentPaidAmount;			// 租金已付金额
 	private Date statementDetailPaidTime;			// 结算单支付时间
@@ -233,5 +236,29 @@ public class StatementOrderDetail implements Serializable {
 
 	public void setStatementDetailPaidTime(Date statementDetailPaidTime) {
 		this.statementDetailPaidTime = statementDetailPaidTime;
+	}
+
+	public BigDecimal getStatementDetailDepositAmount() {
+		return statementDetailDepositAmount;
+	}
+
+	public void setStatementDetailDepositAmount(BigDecimal statementDetailDepositAmount) {
+		this.statementDetailDepositAmount = statementDetailDepositAmount;
+	}
+
+	public BigDecimal getStatementDetailDepositPaidAmount() {
+		return statementDetailDepositPaidAmount;
+	}
+
+	public void setStatementDetailDepositPaidAmount(BigDecimal statementDetailDepositPaidAmount) {
+		this.statementDetailDepositPaidAmount = statementDetailDepositPaidAmount;
+	}
+
+	public BigDecimal getStatementDetailDepositReturnAmount() {
+		return statementDetailDepositReturnAmount;
+	}
+
+	public void setStatementDetailDepositReturnAmount(BigDecimal statementDetailDepositReturnAmount) {
+		this.statementDetailDepositReturnAmount = statementDetailDepositReturnAmount;
 	}
 }

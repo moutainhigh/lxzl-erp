@@ -12,6 +12,9 @@
 		<result column="statement_rent_deposit_amount" jdbcType="DECIMAL" property="statementRentDepositAmount" />
 		<result column="statement_rent_deposit_paid_amount" jdbcType="DECIMAL" property="statementRentDepositPaidAmount" />
 		<result column="statement_rent_deposit_return_amount" jdbcType="DECIMAL" property="statementRentDepositReturnAmount" />
+		<result column="statement_deposit_amount" jdbcType="DECIMAL" property="statementDepositAmount" />
+		<result column="statement_deposit_paid_amount" jdbcType="DECIMAL" property="statementDepositPaidAmount" />
+		<result column="statement_deposit_return_amount" jdbcType="DECIMAL" property="statementDepositReturnAmount" />
 		<result column="statement_rent_amount" jdbcType="DECIMAL" property="statementRentAmount" />
 		<result column="statement_rent_paid_amount" jdbcType="DECIMAL" property="statementRentPaidAmount" />
 		<result column="statement_paid_time" jdbcType="TIMESTAMP" property="statementPaidTime" />
@@ -39,6 +42,9 @@
 		<result column="detail_statement_detail_rent_deposit_amount" jdbcType="DECIMAL" property="statementDetailRentDepositAmount" />
 		<result column="detail_statement_detail_rent_deposit_paid_amount" jdbcType="DECIMAL" property="statementDetailRentDepositPaidAmount" />
 		<result column="detail_statement_detail_rent_deposit_return_amount" jdbcType="DECIMAL" property="statementDetailRentDepositReturnAmount" />
+		<result column="detail_statement_detail_deposit_amount" jdbcType="DECIMAL" property="statementDetailDepositAmount" />
+		<result column="detail_statement_detail_deposit_paid_amount" jdbcType="DECIMAL" property="statementDetailDepositPaidAmount" />
+		<result column="detail_statement_detail_deposit_return_amount" jdbcType="DECIMAL" property="statementDetailDepositReturnAmount" />
 		<result column="detail_statement_detail_rent_amount" jdbcType="DECIMAL" property="statementDetailRentAmount" />
 		<result column="detail_statement_detail_rent_paid_amount" jdbcType="DECIMAL" property="statementDetailRentPaidAmount" />
 		<result column="detail_statement_detail_paid_time" jdbcType="TIMESTAMP" property="statementDetailPaidTime" />
@@ -55,11 +61,16 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eso.id,eso.statement_order_no,eso.customer_id,eso.statement_expect_pay_time,eso.statement_amount,eso.statement_rent_deposit_amount,eso.statement_rent_deposit_paid_amount,eso.statement_rent_deposit_return_amount,eso.statement_rent_amount,eso.statement_rent_paid_amount,eso.statement_paid_time,eso.statement_overdue_amount,eso.statement_status,eso.statement_start_time,eso.statement_end_time,eso.data_status,eso.remark,eso.create_time,eso.create_user,eso.update_time,eso.update_user
+		eso.id,eso.statement_order_no,eso.customer_id,eso.statement_expect_pay_time,eso.statement_amount,eso.statement_rent_deposit_amount,eso.statement_rent_deposit_paid_amount,eso.statement_rent_deposit_return_amount,
+		eso.statement_deposit_amount,eso.statement_deposit_paid_amount,eso.statement_deposit_return_amount,
+		eso.statement_rent_amount,eso.statement_rent_paid_amount,eso.statement_paid_time,eso.statement_overdue_amount,eso.statement_status,eso.statement_start_time,eso.statement_end_time,eso.data_status,eso.remark,eso.create_time,eso.create_user,eso.update_time,eso.update_user
 	</sql>
 
 	<sql id="detail_column_List">
-		esod.id as detail_id,esod.statement_order_id as detail_statement_order_id,esod.customer_id as detail_customer_id,esod.order_type as detail_order_type,esod.order_id as detail_order_id ,esod.statement_expect_pay_time as detail_statement_expect_pay_time, esod.statement_detail_amount as detail_statement_detail_amount,esod.statement_detail_rent_deposit_amount as detail_statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount as detail_statement_detail_rent_deposit_paid_amount,esod.statement_detail_rent_deposit_return_amount as detail_statement_detail_rent_deposit_return_amount,esod.statement_detail_rent_amount as detail_statement_detail_rent_amount,esod.statement_detail_rent_paid_amount as detail_statement_detail_rent_paid_amount, esod.statement_detail_paid_time as detail_statement_detail_paid_time, esod.statement_detail_overdue_amount as detail_statement_detail_overdue_amount,esod.statement_detail_status as detail_statement_detail_status,esod.statement_start_time as detail_statement_start_time,esod.statement_end_time as detail_statement_end_time,esod.data_status as detail_data_status,esod.remark as detail_remark,esod.create_time as detail_create_time,esod.create_user as detail_create_user,esod.update_time as detail_update_time,esod.update_user as detail_update_user
+		esod.id as detail_id,esod.statement_order_id as detail_statement_order_id,esod.customer_id as detail_customer_id,esod.order_type as detail_order_type,esod.order_id as detail_order_id ,esod.statement_expect_pay_time as detail_statement_expect_pay_time,
+		esod.statement_detail_amount as detail_statement_detail_amount,esod.statement_detail_rent_deposit_amount as detail_statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount as detail_statement_detail_rent_deposit_paid_amount,
+		esod.statement_detail_rent_deposit_return_amount as detail_statement_detail_rent_deposit_return_amount,esod.statement_detail_deposit_amount as detail_statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount as detail_statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount as detail_statement_detail_deposit_return_amount,
+		esod.statement_detail_rent_amount as detail_statement_detail_rent_amount,esod.statement_detail_rent_paid_amount as detail_statement_detail_rent_paid_amount, esod.statement_detail_paid_time as detail_statement_detail_paid_time, esod.statement_detail_overdue_amount as detail_statement_detail_overdue_amount,esod.statement_detail_status as detail_statement_detail_status,esod.statement_start_time as detail_statement_start_time,esod.statement_end_time as detail_statement_end_time,esod.data_status as detail_data_status,esod.remark as detail_remark,esod.create_time as detail_create_time,esod.create_user as detail_create_user,esod.update_time as detail_update_time,esod.update_user as detail_update_user
 	</sql>
 
 	<select id="findById" resultMap="StatementOrderDO" parameterType="java.lang.Integer">
@@ -192,6 +203,15 @@
             <if test="statementRentDepositReturnAmount != null">
                 statement_rent_deposit_return_amount = #{statementRentDepositReturnAmount, jdbcType=DECIMAL},
             </if>
+			<if test="statementDepositAmount != null">
+				statement_deposit_amount = #{statementDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementDepositPaidAmount != null">
+				statement_deposit_paid_amount = #{statementDepositPaidAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementDepositReturnAmount != null">
+				statement_deposit_return_amount = #{statementDepositReturnAmount,jdbcType=DECIMAL},
+			</if>
             <if test="statementRentAmount != null">
                 statement_rent_amount = #{statementRentAmount, jdbcType=DECIMAL},
             </if>

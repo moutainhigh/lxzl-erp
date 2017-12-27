@@ -3,12 +3,9 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
-import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.purchase.*;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseDeliveryOrder;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseReceiveOrder;
+import com.lxzl.erp.common.domain.purchase.pojo.*;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
@@ -17,7 +14,6 @@ import com.lxzl.erp.common.domain.validGroup.purchaseOrder.UpdateReceiveRemarkGr
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
-import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.se.common.domain.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +22,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 
 @RequestMapping("/purchaseOrder")
@@ -141,31 +139,6 @@ public class PurchaseOrderController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    /**
-     * 修改采购收货单
-     *
-     * @param purchaseReceiveOrder
-     * @param validResult
-     * @return
-     */
-    @RequestMapping(value = "updatePurchaseReceiveOrder", method = RequestMethod.POST)
-    public Result updatePurchaseReceiveOrder(@RequestBody @Validated(UpdateGroup.class) PurchaseReceiveOrder purchaseReceiveOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = purchaseOrderService.updatePurchaseReceiveOrder(purchaseReceiveOrder);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
-
-    /**
-     * 采购收货单签单
-     *
-     * @param purchaseReceiveOrder
-     * @param validResult
-     * @return
-     */
-    @RequestMapping(value = "confirmPurchaseReceiveOrder", method = RequestMethod.POST)
-    public Result confirmPurchaseReceiveOrder(@RequestBody @Validated(IdGroup.class) PurchaseReceiveOrder purchaseReceiveOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = purchaseOrderService.confirmPurchaseReceiveOrder(purchaseReceiveOrder);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
 
     /**
      * 采购收货单分页
@@ -219,15 +192,65 @@ public class PurchaseOrderController {
     }
 
     /**
-     * 修改采购收货单价格
+     * 修改采购收货单
      *
-     * @param updatePurchaseReceiveOrderPriceParam
+     * @param purchaseReceiveOrder
      * @param validResult
      * @return
      */
-    @RequestMapping(value = "updatePurchaseReceiveOrderPrice", method = RequestMethod.POST)
-    public Result updatePurchaseReceiveOrderPrice(@RequestBody @Validated(ExtendGroup.class) UpdatePurchaseReceiveOrderPriceParam updatePurchaseReceiveOrderPriceParam, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = purchaseOrderService.updatePurchaseReceiveOrderPrice(updatePurchaseReceiveOrderPriceParam);
+    @RequestMapping(value = "updatePurchaseReceiveOrder", method = RequestMethod.POST)
+    public Result updatePurchaseReceiveOrder(@RequestBody @Validated(UpdateGroup.class) PurchaseReceiveOrder purchaseReceiveOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = purchaseOrderService.updatePurchaseReceiveOrder(purchaseReceiveOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 采购收货单签单
+     *
+     * @param purchaseReceiveOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "confirmPurchaseReceiveOrder", method = RequestMethod.POST)
+    public Result confirmPurchaseReceiveOrder(@RequestBody @Validated(IdGroup.class) PurchaseReceiveOrder purchaseReceiveOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = purchaseOrderService.confirmPurchaseReceiveOrder(purchaseReceiveOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 采购收货单设备备注修改
+     *
+     * @param updateReceiveEquipmentRemarkParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "updateReceiveEquipmentRemark", method = RequestMethod.POST)
+    public Result updateReceiveEquipmentRemark(@RequestBody @Validated(UpdateReceiveRemarkGroup.class) UpdateReceiveEquipmentRemarkParam updateReceiveEquipmentRemarkParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = purchaseOrderService.updateReceiveEquipmentRemark(updateReceiveEquipmentRemarkParam);
+        return resultGenerator.generate(serviceResult);
+    }
+    /**
+     * 采购收货单物料备注修改
+     *
+     * @param updateReceiveMaterialRemarkParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "updatePurchaseReceiveMaterialRemark", method = RequestMethod.POST)
+    public Result updatePurchaseReceiveMaterialRemark(@RequestBody @Validated(IdGroup.class) UpdateReceiveMaterialRemarkParam updateReceiveMaterialRemarkParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = purchaseOrderService.updatePurchaseReceiveMaterialRemark(updateReceiveMaterialRemarkParam);
+        return resultGenerator.generate(serviceResult);
+    }
+    /**
+     * 采购收货单提交
+     *
+     * @param purchaseReceiveOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "commitPurchaseReceiveOrder", method = RequestMethod.POST)
+    public Result commitPurchaseReceiveOrder(@RequestBody @Validated(IdGroup.class) PurchaseReceiveOrder purchaseReceiveOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = purchaseOrderService.commitPurchaseReceiveOrder(purchaseReceiveOrder);
         return resultGenerator.generate(serviceResult);
     }
 
@@ -245,7 +268,20 @@ public class PurchaseOrderController {
     }
 
     /**
-     * 采购收货单配件项散料分页
+     * 修改采购收货单设备采购价格
+     *
+     * @param updatePurchaseReceiveEquipmentPriceParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "updatePurchaseReceiveEquipmentPrice", method = RequestMethod.POST)
+    public Result updateReceiveEquipmentPrice(@RequestBody @Validated(ExtendGroup.class) UpdatePurchaseReceiveEquipmentPriceParam updatePurchaseReceiveEquipmentPriceParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = purchaseOrderService.updateReceiveEquipmentPrice(updatePurchaseReceiveEquipmentPriceParam);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 采购收货单配件项散料分页(已废弃)
      *
      * @param purchaseReceiveOrderMaterialBulkPageParam
      * @param validResult
@@ -258,37 +294,28 @@ public class PurchaseOrderController {
     }
 
     /**
-     * 采购收货单设备备注修改
-     *
-     * @param updatePurchaseReceiveOrderRemarkParam
-     * @param validResult
-     * @return
-     */
-    @RequestMapping(value = "updateReceiveRemark", method = RequestMethod.POST)
-    public Result updateReceiveRemark(@RequestBody @Validated(UpdateReceiveRemarkGroup.class) UpdatePurchaseReceiveOrderRemarkParam updatePurchaseReceiveOrderRemarkParam, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = purchaseOrderService.updateReceiveRemark(updatePurchaseReceiveOrderRemarkParam);
-        return resultGenerator.generate(serviceResult);
-    }
-
-    /**
-     * ;
-     *
-     * @param purchaseReceiveOrder
-     * @param validResult
-     * @return
-     */
-    @RequestMapping(value = "commitPurchaseReceiveOrder", method = RequestMethod.POST)
-    public Result commitPurchaseReceiveOrder(@RequestBody @Validated(IdGroup.class) PurchaseReceiveOrder purchaseReceiveOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = purchaseOrderService.commitPurchaseReceiveOrder(purchaseReceiveOrder);
-        return resultGenerator.generate(serviceResult);
-    }
-
-    /**
      * 获取采购收货单物料价格
      *
-     * @param purchaseReceiveOrder
+     * @param purchaseReceiveOrderMaterial
      * @param validResult
      * @return
      */
+    @RequestMapping(value = "getPurchaseReceiveMaterialPriceList", method = RequestMethod.POST)
+    public Result getPurchaseReceiveMaterialPriceList(@RequestBody @Validated(IdGroup.class) PurchaseReceiveOrderMaterial purchaseReceiveOrderMaterial, BindingResult validResult) {
+        ServiceResult<String, List<PurchaseReceiveOrderMaterialPrice>> serviceResult = purchaseOrderService.getPurchaseReceiveMaterialPriceList(purchaseReceiveOrderMaterial);
+        return resultGenerator.generate(serviceResult);
+    }
 
+    /**
+     * 修改采购收货单物料价格
+     *
+     * @param updatePurchaseReceiveMaterialPriceParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "updatePurchaseReceiveMaterialPrice", method = RequestMethod.POST)
+    public Result updatePurchaseReceiveMaterialPrice(@RequestBody @Validated(UpdateGroup.class) UpdatePurchaseReceiveMaterialPriceParam updatePurchaseReceiveMaterialPriceParam, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = purchaseOrderService.updatePurchaseReceiveMaterialPrice(updatePurchaseReceiveMaterialPriceParam);
+        return resultGenerator.generate(serviceResult);
+    }
 }

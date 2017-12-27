@@ -24,7 +24,10 @@
 		select <include refid="column_List"/> from erp_stock_order_equipment esoe
 		where esoe.id = #{id, jdbcType=INTEGER} and data_status = 1
 	</select>
-
+	<select id="findByStockOrderNo" resultMap="StockOrderEquipmentDO" parameterType="java.lang.String">
+		select <include refid="column_List"/> from erp_stock_order_equipment esoe
+		where esoe.stock_order_no = #{stockOrderNo, jdbcType=VARCHAR} and data_status = 1
+	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(esoe.id) from erp_stock_order_equipment esoe
 		<where>

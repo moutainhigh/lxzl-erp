@@ -93,10 +93,10 @@ public class RepairOrderServiceImpl implements RepairOrderService {
 
         warehouseNo = wareHouseResult.getResult().getWarehouseNo();
 
-
         //如果存在设备需要维修
         if (CollectionUtil.isNotEmpty(repairOrder.getRepairOrderEquipmentList())) {
             String saveResult = saveRepairOrderEquipmentInfo(repairOrder.getRepairOrderEquipmentList(), repairOrderNo, userSupport.getCurrentUser(), now);
+            //todo 判断错误
             if (ErrorCode.BULK_MATERIAL_IS_NULL.equals(saveResult)){
                 serviceResult.setErrorCode(saveResult);
                 return serviceResult;
@@ -113,7 +113,6 @@ public class RepairOrderServiceImpl implements RepairOrderService {
             }
             bulkMaterialCount = repairOrder.getRepairOrderBulkMaterialList().size();//送修物料数量
         }
-
         //然后生成维修单
         RepairOrderDO repairOrderDO = new RepairOrderDO();
         repairOrderDO.setRepairOrderNo(repairOrderNo);
@@ -222,6 +221,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
                 return serviceResult;
             }
         }else{
+            //todo 这里代表不需要审核，状态设置错误
             repairOrderDO.setRepairOrderStatus(RepairOrderStatus.REPAIR_ORDER_STATUS_VERIFYING);
             repairOrderDO.setUpdateTime(new Date());
             repairOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -340,6 +340,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
 
         warehouseNo = wareHouseResult.getResult().getWarehouseNo();
 
+        //todo 这里没有改
         //判断设备维修单明细
         //如果传入的设备维修单明细没有值
         if (CollectionUtil.isEmpty(repairOrder.getRepairOrderEquipmentList())) {
@@ -359,7 +360,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
             }
             equipmentCount = Integer.parseInt(saveresult);
         }
-
+        //todo 这里没有改
         //判断散料维修单明细
         //如果传入的散料维修单明细没有值
         if (CollectionUtil.isEmpty(repairOrder.getRepairOrderBulkMaterialList())) {
@@ -379,7 +380,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
             }
             bulkMaterialCount = Integer.valueOf(serviceResult.getResult());
         }
-
+        //todo  维修单可能修改备注
         dbrepairOrderDO.setRepairEquipmentCount(equipmentCount);
         dbrepairOrderDO.setRepairBulkMaterialCount(bulkMaterialCount);
         dbrepairOrderDO.setRepairReason(repairOrder.getRepairReason());
@@ -490,12 +491,13 @@ public class RepairOrderServiceImpl implements RepairOrderService {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
-
+        //todo 考虑修复完成后是否可以填写维修备注
         //如果设备维修单明细不为空
         if (CollectionUtil.isNotEmpty(repairEquipmentIdList)){
             for (Integer repairOrderEquipmentId:repairEquipmentIdList){
                 RepairOrderEquipmentDO repairOrderEquipmentDO = repairOrderEquipmentMapper.findById(repairOrderEquipmentId);
                 if (repairOrderEquipmentDO == null){
+                    //todo 回滚
                     serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_EQUIPMENT_NOT_EXISTS,repairOrderEquipmentId);
                     return serviceResult;
                 }
@@ -507,6 +509,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
                 RepairOrderDO repairOrderDO = repairOrderMapper.findByRepairOrderNo(repairOrderEquipmentDO.getRepairOrderNo());
                 if (!RepairOrderStatus.REPAIR_ORDER_STATUS_REPAIRING.equals(repairOrderDO.getRepairOrderStatus())){
                     serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_DATA_STATUS_ERROR);
+                    //todo 回滚
                     return serviceResult;
                 }
                 //保存更改后的数据
@@ -538,6 +541,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
                 }
 
                 //判断该设散料维修单的维修单是否还是维修中的状态
+                //todo 这里可以做一下优化，将已经查到的维修单，放入一个map中，如果map有了就不再查，直接取
                 RepairOrderDO repairOrderDO = repairOrderMapper.findByRepairOrderNo(repairOrderBulkMaterialDO.getRepairOrderNo());
                 if (!RepairOrderStatus.REPAIR_ORDER_STATUS_REPAIRING.equals(repairOrderDO.getRepairOrderStatus())){
                     serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_DATA_STATUS_ERROR);
@@ -550,6 +554,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
                 repairOrderBulkMaterialMapper.update(repairOrderBulkMaterialDO);
 
                 //在设备维修单中增加 修复的物料数量
+                //todo 这里可以使用刚才那个维修单map临时保存这个数量，这样就避免了一个单的多次更新，在循环外每个单更新一次即可
                 repairOrderDO.setFixBulkMaterialCount(repairOrderDO.getFixBulkMaterialCount() + 1 );
                 repairOrderDO.setUpdateTime(now);
                 repairOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -563,6 +568,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
 
     @Override
     public ServiceResult<String, String> end(String repairOrderNo) {
+        //todo 结束维修单时，要同时改变设备状态
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
 
@@ -641,6 +647,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
                 repairOrderEquipmentDO.setCreateTime(currentTime);
                 repairOrderEquipmentDO.setUpdateTime(currentTime);
                 repairOrderEquipmentMapper.save(repairOrderEquipmentDO);
+                //todo 设备状态未改变
             }
         }
 
@@ -681,6 +688,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
 
             if (dbRepairOrderEquipmentDOMap.size() > 0){
                 for (String equipmentNo :dbRepairOrderEquipmentDOMap.keySet()){
+                    //todo 这里不用再查询
                     RepairOrderEquipmentDO dbrepairOrderEquipmentDO = repairOrderEquipmentMapper.findByEquipmentNoAndRepairOrderNo(equipmentNo,repairOrderNo);
                     dbrepairOrderEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
                     dbrepairOrderEquipmentDO.setUpdateTime(currentTime);
@@ -695,6 +703,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
 
 
     private ServiceResult<String,String> saveRepairOrderBulkMaterialInfo(List<RepairOrderBulkMaterial> repairOrderBulkMaterialList, String repairOrderNo, User loginUser, Date currentTime,Integer bulkMaterialCount) {
+        //todo 如果传来的数据有重复怎么办，如果想创建的时候加上维修备注怎么办
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
         Map<String, RepairOrderBulkMaterial> saveRepairOrderBulkMaterialMap = new HashMap<>();
         Map<String, RepairOrderBulkMaterial> updateRepairOrderBulkMaterialMap = new HashMap<>();
