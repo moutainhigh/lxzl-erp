@@ -50,12 +50,14 @@ public interface PaymentService extends BaseService {
     /**
      * 余额支付
      *
-     * @param customerNo          余额
-     * @param businessOrderNo     业务系统订单号
-     * @param businessOrderRemark 业务系统备注
-     * @param businessNotifyUrl   回调URL
-     * @param payAmount           支付金额
+     * @param customerNo           余额
+     * @param businessOrderNo      业务系统订单号
+     * @param businessOrderRemark  业务系统备注
+     * @param businessNotifyUrl    回调URL
+     * @param payAmount            支付金额
+     * @param payRentDepositAmount 租金押金
+     * @param payDepositAmount     设备押金
      * @return 支付结果
      */
-    ServiceResult<String, Boolean> balancePay(String customerNo, String businessOrderNo, String businessOrderRemark, String businessNotifyUrl, BigDecimal payAmount, BigDecimal payRentDepositAmount);
+    ServiceResult<String, Boolean> balancePay(String customerNo, String businessOrderNo, String businessOrderRemark, String businessNotifyUrl, BigDecimal payAmount, BigDecimal payRentDepositAmount, BigDecimal payDepositAmount);
 }
