@@ -3,6 +3,7 @@ package com.lxzl.erp.dataaccess.dao.mysql.user;
 import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Map;
  * Date: 2016/11/15.
  * Time: 11:19.
  */
+@Repository
 public interface RoleMapper extends BaseMysqlDAO<RoleDO> {
 
     RoleDO findByMapId(@Param("roleId") Integer roleId);

@@ -155,7 +155,7 @@ public class ErrorCode {
     public static final String WAREHOUSE_IN_STORAGE_LIST_NOT_NULL = "J300015";
     public static final String USER_CAN_NOT_OP_WAREHOUSE = "J300016";
     public static final String VERIFY_USER_NOT_NULL = "J300017";
-    public static final String PURCHASE_ORDER_COMMITTED_CAN_NOT_DELETE = "J300018";
+    public static final String PURCHASE_ORDER_COMMITTED_CAN_NOT_CANCEL = "J300018";
     public static final String PURCHASE_DELIVERY_ORDER_NO_NOT_NULL = "J300019";
     public static final String PURCHASE_DELIVERY_ORDER_NOT_EXISTS = "J300020";
     public static final String WAREHOUSE_NO_NOT_NULL = "J300021";
@@ -163,7 +163,7 @@ public class ErrorCode {
     public static final String PURCHASE_RECEIVE_ORDER_NO_NOT_NULL = "J300023";
     public static final String PURCHASE_RECEIVE_ORDER_NOT_EXISTS = "J300024";
     public static final String PURCHASE_RECEIVE_ORDER_AUTO_ALLOT_YES_CAN_NOT_UPDATE = "J300025";
-    public static final String PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_UPDATE = "J300026";
+    public static final String PURCHASE_RECEIVE_ORDER_STATUS_CAN_NOT_UPDATE = "J300026";
     public static final String PURCHASE_RECEIVE_ORDER_PRODUCT_LIST_NOT_NULL = "J300027";
     public static final String PURCHASE_RECEIVE_ORDER_PRODUCT_REAL_COUNT_NOT_NULL = "J300028";
     public static final String PURCHASE_RECEIVE_ORDER_PRODUCT_SKU_ID_NOT_NULL = "J300029";
@@ -329,6 +329,8 @@ public class ErrorCode {
     public static final String MATERIAL_NOT_RENT = "J500043";
     public static final String PURCHASE_PRICE_ERROR = "J500044";
     public static final String PURCHASE_RECEIVE_REMARK_ERROR = "J500045";
+    public static final String PURCHASE_RECEIVE_ORDER_MATERIAL_PRICE_NOT_NEED_UPDATE = "J500046";
+    public static final String UPDATE_ITEM_COUNT_ERROR = "J500047";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -502,7 +504,7 @@ public class ErrorCode {
         MAP.put(WAREHOUSE_OUT_STORAGE_LIST_NOT_NULL, "商品出仓数据不能为空");
         MAP.put(USER_CAN_NOT_OP_WAREHOUSE, "您没有该仓库的操作权限");
         MAP.put(VERIFY_USER_NOT_NULL, "审核人不能为空");
-        MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_DELETE, "已提交的采购单不能删除");
+        MAP.put(PURCHASE_ORDER_COMMITTED_CAN_NOT_CANCEL, "已提交的采购单不能取消");
         MAP.put(PURCHASE_DELIVERY_ORDER_NO_NOT_NULL, "采购发货单编号不能为空");
         MAP.put(PURCHASE_DELIVERY_ORDER_NOT_EXISTS, "采购发货单不存在");
         MAP.put(WAREHOUSE_NO_NOT_NULL, "仓库编号不能为空");
@@ -510,7 +512,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_RECEIVE_ORDER_NO_NOT_NULL, "采购收货单编号不能为空");
         MAP.put(PURCHASE_RECEIVE_ORDER_NOT_EXISTS, "采购收货单不存在");
         MAP.put(PURCHASE_RECEIVE_ORDER_AUTO_ALLOT_YES_CAN_NOT_UPDATE, "自动流转到总仓的采购发货单不能修改");
-        MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_UPDATE, "此采购收货单不能修改");
+        MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_CAN_NOT_UPDATE, "此采购收货单不能修改");
         MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_LIST_NOT_NULL, "采购收货单商品项列表不能为空");
         MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_REAL_COUNT_NOT_NULL, "商品SKU实际数量填写不正确");
         MAP.put(PURCHASE_RECEIVE_ORDER_PRODUCT_SKU_ID_NOT_NULL, "采购收货单商品项商品SKU_ID不能为空");
@@ -547,6 +549,8 @@ public class ErrorCode {
         MAP.put(BULK_PURCHASE_PRICE_NOT_NULL, "编号为【%s】的配件没有填写价格，请确保所有设备及配件填写了采购价");
         MAP.put(PURCHASE_PRICE_ERROR, "采购价格填写错误");
         MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_COMMIT, "此采购收货单不能提交");
+        MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_PRICE_NOT_NEED_UPDATE, "此采购单物料价格无需修改");
+        MAP.put(UPDATE_ITEM_COUNT_ERROR, "修改的配件数量不匹配");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
@@ -674,6 +678,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_PERSON_ADDRESS_NOT_NULL, "个人客户详细地址不能为空");
         MAP.put(STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败");
         MAP.put(STATEMENT_ORDER_STATUS_ERROR, "结算单状态异常");
+
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

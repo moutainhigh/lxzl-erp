@@ -4,6 +4,7 @@ import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.erp.dataaccess.domain.user.UserRoleDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -13,6 +14,8 @@ import java.util.List;
  * Date: 2016/12/26.
  * Time: 9:21.
  */
+
+@Repository
 public interface UserRoleMapper extends BaseMysqlDAO<UserRoleDO> {
 
     // 根据用户ID查找其拥有哪些角色

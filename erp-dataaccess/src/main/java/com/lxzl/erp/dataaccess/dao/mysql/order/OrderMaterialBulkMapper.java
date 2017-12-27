@@ -2,9 +2,11 @@ package com.lxzl.erp.dataaccess.dao.mysql.order;
 
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialBulkDO;import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Map;
-
+@Repository
 public interface OrderMaterialBulkMapper extends BaseMysqlDAO<OrderMaterialBulkDO> {
 
 	List<OrderMaterialBulkDO> listPage(@Param("maps") Map<String, Object> paramMap);

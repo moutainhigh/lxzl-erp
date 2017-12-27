@@ -9,7 +9,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UpdatePurchaseReceiveOrderRemarkParam {
+public class UpdateReceiveEquipmentRemarkParam {
 
     @NotNull(message = ErrorCode.PURCHASE_RECEIVE_ORDER_NO_NOT_NULL, groups = {UpdateReceiveRemarkGroup.class})
     private String purchaseReceiveOrderNo;
