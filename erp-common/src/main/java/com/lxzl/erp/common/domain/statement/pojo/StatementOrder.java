@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.statement.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.util.BigDecimalUtil;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -16,6 +17,7 @@ public class StatementOrder implements Serializable {
     private String customerName;    // 客户姓名
     private Date statementExpectPayTime; // 结算单预计支付时间
     private BigDecimal statementAmount;   //结算单金额，结算单明细总和
+    private BigDecimal statementPaidAmount;   //结算单已付金额
     private BigDecimal statementRentDepositAmount;      // 结算租金押金金额
     private BigDecimal statementRentDepositPaidAmount;  // 已付租金押金金额
     private BigDecimal statementRentDepositReturnAmount;    // 退还租金押金金额
@@ -245,5 +247,13 @@ public class StatementOrder implements Serializable {
 
     public void setStatementDepositReturnAmount(BigDecimal statementDepositReturnAmount) {
         this.statementDepositReturnAmount = statementDepositReturnAmount;
+    }
+
+    public BigDecimal getStatementPaidAmount() {
+        return statementPaidAmount == null || BigDecimal.ZERO.equals(statementPaidAmount) ? BigDecimalUtil.add(BigDecimalUtil.add(statementRentPaidAmount, statementDepositPaidAmount), statementRentDepositPaidAmount) : statementPaidAmount;
+    }
+
+    public void setStatementPaidAmount(BigDecimal statementPaidAmount) {
+        this.statementPaidAmount = statementPaidAmount;
     }
 }

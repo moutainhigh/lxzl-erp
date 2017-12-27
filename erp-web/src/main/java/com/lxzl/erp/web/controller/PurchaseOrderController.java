@@ -75,6 +75,19 @@ public class PurchaseOrderController {
     }
 
     /**
+     * 强制取消采购单
+     *
+     * @param purchaseOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "strongCancel", method = RequestMethod.POST)
+    public Result strongCancel(@RequestBody @Validated(IdGroup.class) PurchaseOrder purchaseOrder, BindingResult validResult) {
+        String errorCode = purchaseOrderService.strongCancel(purchaseOrder);
+        return resultGenerator.generate(errorCode);
+    }
+
+    /**
      * 采购单提交审核
      *
      * @param purchaseOrderCommitParam

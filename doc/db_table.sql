@@ -1646,7 +1646,7 @@ CREATE TABLE `erp_purchase_order` (
   `purchase_order_amount_total` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '采购单总价',
   `purchase_order_amount_real` decimal(15,2) COMMENT '采购单实收',
   `purchase_order_amount_statement` decimal(15,2) COMMENT '采购单结算金额',
-  `purchase_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '采购单状态，0-待提交，3-审核中，6-采购中，9-部分采购，12-全部采购，15-结束采购',
+  `purchase_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '采购单状态，0-待提交，3-审核中，6-采购中，9-部分采购，12-全部采购，15-结束采购，18-取消',
   `delivery_time` datetime DEFAULT NULL COMMENT '发货时间',
   `purchase_type` int(11) NOT NULL COMMENT '采购类型：1-整机及四大件，2-小配件',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',

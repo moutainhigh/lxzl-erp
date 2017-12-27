@@ -207,7 +207,10 @@ public class FileGenerator {
         String mapperName = table.poTableName+"Mapper";
         mapperSb.append("import org.apache.ibatis.annotations.Param;\n" +
                 "import java.util.List;\n" +
+                "import org.springframework.stereotype.Repository;\n" +
                 "import java.util.Map;\n\n");
+
+        mapperSb.append("@Repository\n");
         mapperSb.append("public interface "+mapperName+" extends BaseMysqlDAO<"+table.doTableName+"> {\n\n");
         mapperSb.append("\tList<"+table.doTableName+"> listPage(@Param(\"maps\") Map<String, Object> paramMap);\n\n");
         mapperSb.append("\tInteger listCount(@Param(\"maps\") Map<String, Object> paramMap);\n");
@@ -220,7 +223,10 @@ public class FileGenerator {
         String mapperName = table.poTableName+"Mapper";
         mapperSb.append("import org.apache.ibatis.annotations.Param;\n" +
                 "import java.util.List;\n" +
+                "import org.springframework.stereotype.Repository;\n" +
                 "import java.util.Map;\n\n");
+
+        mapperSb.append("@Repository\n");
         mapperSb.append("public interface "+mapperName+" extends BaseMysqlDAO<"+table.doTableName+"> {\n\n");
         mapperSb.append("\tList<"+table.doTableName+"> listPage(@Param(\"maps\") Map<String, Object> paramMap);\n\n");
         mapperSb.append("\tInteger listCount(@Param(\"maps\") Map<String, Object> paramMap);\n");

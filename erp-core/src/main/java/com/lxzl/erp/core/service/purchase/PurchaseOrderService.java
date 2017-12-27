@@ -25,6 +25,8 @@ public interface PurchaseOrderService extends VerifyReceiver {
 
     String cancel(PurchaseOrder purchaseOrder);
 
+    String strongCancel(PurchaseOrder purchaseOrder);
+
     ServiceResult<String, Page<PurchaseDeliveryOrder>> pagePurchaseDelivery(PurchaseDeliveryOrderQueryParam purchaseDeliveryOrderQueryParam);
 
     ServiceResult<String, PurchaseDeliveryOrder> queryPurchaseDeliveryOrderByNo(PurchaseDeliveryOrder purchaseDeliveryOrder);
@@ -56,4 +58,6 @@ public interface PurchaseOrderService extends VerifyReceiver {
     ServiceResult<String,Integer> updatePurchaseReceiveMaterialPrice(UpdatePurchaseReceiveMaterialPriceParam updatePurchaseReceiveMaterialPriceParam);
 
     ServiceResult<String,String> updatePurchaseReceiveMaterialRemark(UpdateReceiveMaterialRemarkParam updateReceiveMaterialRemarkParam);
+
+
 }
