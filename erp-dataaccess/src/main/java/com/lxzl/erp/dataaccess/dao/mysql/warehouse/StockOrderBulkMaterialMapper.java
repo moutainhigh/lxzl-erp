@@ -12,4 +12,6 @@ public interface StockOrderBulkMaterialMapper extends BaseMysqlDAO<StockOrderBul
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	Integer saveList(@Param("stockOrderBulkMaterialDOList")List<StockOrderBulkMaterialDO> stockOrderBulkMaterialDOList);
+
+    List<StockOrderBulkMaterialDO> findByStockOrderNo(String stockOrderNo);
 }

@@ -202,4 +202,5 @@ public class ProductEquipmentDO extends BaseDO {
     public void setPurchasePrice(BigDecimal purchasePrice) {
         this.purchasePrice = purchasePrice;
     }
+
 }

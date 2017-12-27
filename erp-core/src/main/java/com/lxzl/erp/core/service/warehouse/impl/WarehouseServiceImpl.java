@@ -38,6 +38,10 @@ import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -91,6 +95,9 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    @Autowired
+    private SqlSessionFactory sqlSessionFactory;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -620,12 +627,13 @@ public class WarehouseServiceImpl implements WarehouseService {
         List<ProductEquipmentBulkMaterialDO> allProductEquipmentBulkMaterialDOList = new ArrayList<>();
         Integer itemReferId = productInStorage.getItemReferId();
 
-
+        ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
         for (int i = 0; i < productInStorage.getProductCount(); i++) {
             ProductEquipmentDO productEquipmentDO = new ProductEquipmentDO();
             productEquipmentDO.setEquipmentNo(GenerateNoUtil.generateEquipmentNo(currentTime, warehouseId, productInStockCounter.getProductEquipmentCount()));
             productEquipmentDO.setProductId(productInStorage.getProductId());
             productEquipmentDO.setSkuId(productInStorage.getProductSkuId());
+            productEquipmentDO.setEquipmentPrice(productSkuDO.getSkuPrice());
             productEquipmentDO.setCurrentWarehouseId(warehouseId);
             productEquipmentDO.setCurrentWarehousePositionId(warehousePositionId);
             productEquipmentDO.setOwnerWarehouseId(warehouseId);
@@ -706,6 +714,12 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
 
         if (!allProductEquipmentDOList.isEmpty()) {
+//            long start = System.currentTimeMillis();
+//            SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH,false);
+//            session.insert("com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper.saveList", allProductEquipmentDOList);
+//            long end = System.currentTimeMillis();
+//            System.out.println("批量插入耗时:" + (end - start) + "ms");
+//            session.commit();
             productEquipmentMapper.saveList(allProductEquipmentDOList);
         }
         if (!allStockOrderEquipmentDOList.isEmpty()) {

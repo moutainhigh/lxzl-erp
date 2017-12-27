@@ -1891,7 +1891,6 @@ CREATE TABLE `erp_purchase_receive_order_product_material` (
   `real_material_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '物料名称冗余，可修改',
   `real_material_snapshot` text COMMENT '物料冗余信息，防止商品修改留存快照，可修改',
   `real_material_count` int(11) NOT NULL DEFAULT '1' COMMENT '实际物料总数',
-  `real_material_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '实际物料单价',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',

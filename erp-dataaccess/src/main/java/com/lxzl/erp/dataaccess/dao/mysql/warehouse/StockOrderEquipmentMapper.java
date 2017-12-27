@@ -13,4 +13,6 @@ public interface StockOrderEquipmentMapper extends BaseMysqlDAO<StockOrderEquipm
 	List<StockOrderEquipmentDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+    List<StockOrderEquipmentDO> findByStockOrderNo(@Param("stockOrderNo")String stockOrderNo);
 }

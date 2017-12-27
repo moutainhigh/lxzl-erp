@@ -5,10 +5,10 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.purchase.*;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseDeliveryOrder;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseReceiveOrder;
+import com.lxzl.erp.common.domain.purchase.pojo.*;
 import com.lxzl.erp.core.service.VerifyReceiver;
+
+import java.util.List;
 
 
 public interface PurchaseOrderService extends VerifyReceiver {
@@ -41,13 +41,19 @@ public interface PurchaseOrderService extends VerifyReceiver {
 
     ServiceResult<String, String> continuePurchaseOrder(PurchaseOrder purchaseOrder);
 
-    ServiceResult<String, String> updatePurchaseReceiveOrderPrice(UpdatePurchaseReceiveOrderPriceParam updatePurchaseReceiveOrderPriceParam);
+    ServiceResult<String, String> updateReceiveEquipmentPrice(UpdatePurchaseReceiveEquipmentPriceParam updatePurchaseReceiveEquipmentPriceParam);
 
     ServiceResult<String, Page<ProductEquipment>> pageReceiveOrderProductEquipment(PurchaseReceiveOrderProductEquipmentPageParam purchaseReceiveOrderProductEquipmentPageParam);
 
     ServiceResult<String, Page<BulkMaterial>> pageReceiveOrderMaterialBulk(PurchaseReceiveOrderMaterialBulkPageParam purchaseReceiveOrderMaterialBulkPageParam);
 
-    ServiceResult<String,String> updateReceiveRemark(UpdatePurchaseReceiveOrderRemarkParam updatePurchaseReceiveOrderRemarkParam);
+    ServiceResult<String,String> updateReceiveEquipmentRemark(UpdateReceiveEquipmentRemarkParam updateReceiveEquipmentRemarkParam);
 
     ServiceResult<String,String> commitPurchaseReceiveOrder(PurchaseReceiveOrder purchaseReceiveOrder);
+
+    ServiceResult<String,List<PurchaseReceiveOrderMaterialPrice>> getPurchaseReceiveMaterialPriceList(PurchaseReceiveOrderMaterial purchaseReceiveOrderMaterial);
+
+    ServiceResult<String,String> updateReceiveMaterialRemark(UpdateReceiveMaterialRemarkParam updateReceiveMaterialRemarkParam);
+
+    ServiceResult<String,Integer> updatePurchaseReceiveMaterialPrice(UpdatePurchaseReceiveMaterialPriceParam updatePurchaseReceiveMaterialPriceParam);
 }

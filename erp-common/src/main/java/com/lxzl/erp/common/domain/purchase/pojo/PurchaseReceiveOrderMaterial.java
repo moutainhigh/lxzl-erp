@@ -1,6 +1,10 @@
 package com.lxzl.erp.common.domain.purchase.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
+
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -9,6 +13,7 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PurchaseReceiveOrderMaterial implements Serializable {
 
+	@NotNull(message = ErrorCode.ID_NOT_NULL,groups = {IdGroup.class})
 	private Integer purchaseReceiveOrderMaterialId;   //唯一标识
 	private Integer purchaseReceiveOrderId;   //采购单ID
 	private Integer purchaseOrderMaterialId;   //采购单物料项ID
