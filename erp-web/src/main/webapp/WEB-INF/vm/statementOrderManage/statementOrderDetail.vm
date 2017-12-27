@@ -15,9 +15,127 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
+            <section id="content" class="animated fadeIn">
+                <form class="" id="statementOrderDetailForm">
+                    <div class="panel panel-primary panel-border top mb15">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h5>结算单编号：<small id="statementOrderNo"></small></h5>
+                                </div>
+                                <div class="col-md-8 text-right">
+                                    <script type="text/html" id="actionButtonsTpl">
+                                        {{#acitonButtons}}
+                                        {{#showButton}}
+                                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-orderno="{{orderNo}}">
+                                            <i class="{{iClass}}"></i> {{text}}
+                                        </a>
+                                        {{/showButton}}
+                                        {{/acitonButtons}}
+                                    </script>
+                                    <div class="btn-group" id="actionButtons"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div id="orderBaseInfo"></div>
+                        </div>
+                        <script type="text/html" id="orderBaseInfoTpl">
+                            {{#order}}
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal dl-horizontal-rental">
+                                        <dt class="mb5">状态：</dt><dd>{{statementOrderStatusValue}}&nbsp;</dd>
+                                        <dt class="mb5">客户名：</dt><dd>{{customerName}}</dd>
+                                        <dt class="mb5">预计支付时间：</dt><dd>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</dd>
+                                        <dt class="mb5">实际支付时间：</dt><dd>{{#shortTime}}{{statementPaidTime}}{{/shortTime}}</dd>
+                                        <dt class="mb5">结算开始时间：</dt><dd>{{#shortTime}}{{statementStartTime}}{{/shortTime}}</dd>
+                                        <dt class="mb5">结算结束时间：</dt><dd>{{#shortTime}}{{statementEndTime}}{{/shortTime}}&nbsp;</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal dl-horizontal-rental">
+                                        <dt class="mb5">租金押金：</dt><dd>￥{{#price}}{{statementRentDepositAmount}}{{/price}}&nbsp;</dd>
+                                        <dt class="mb5">已付租金押金：</dt><dd>￥{{#price}}{{statementRentDepositPaidAmount}}{{/price}}&nbsp;</dd>
+                                        <dt class="mb5">已退租金押金：</dt><dd>￥{{#price}}{{statementRentDepositReturnAmount}}{{/price}}&nbsp;</dd>
 
+                                        <dt class="mb5">设备押金：</dt><dd>￥{{#price}}{{statementDepositAmount}}{{/price}}&nbsp;</dd>
+                                        <dt class="mb5">已付设备押金：</dt><dd>￥{{#price}}{{statementDepositPaidAmount}}{{/price}}&nbsp;</dd>
+                                        <dt class="mb5">已退设备押金：</dt><dd>￥{{#price}}{{statementDepositReturnAmount}}{{/price}}&nbsp;</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal dl-horizontal-rental">
+                                        <dt class="mb5">租金：</dt><dd>￥{{#price}}{{statementRentAmount}}{{/price}}&nbsp;</dd>
+                                        <dt class="mb5">已付租金：</dt><dd>￥{{#price}}{{statementRentPaidAmount}}{{/price}}&nbsp;</dd>
+                                        <dt class="mb5">结算单总金额：</dt><dd class="text-danger">￥{{#price}}{{statementAmount}}{{/price}}&nbsp;</dd>
+                                        <dt class="mb5">已付总金额：</dt><dd class="text-danger">￥{{#price}}{{statementPaidAmount}}{{/price}}&nbsp;</dd>
+                                        <dt class="mb5">逾期金额：</dt><dd class="text-danger">￥{{#price}}{{statementOverdueAmount}}{{/price}}&nbsp;</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            {{/order}}
+                        </script>
+                    </div>
 
+                    <div class="panel">
+                        <div class="panel-body light pn">
+                            <div class="table-responsive">
+                                <script type="text/html" id="dataListTpl">
+                                    <thead>
+                                    <tr class="bg-light">
+                                        <th>ID</th>
+                                        <th>类型</th>
+                                        <th>订单ID</th>
+                                        <th>订单项类型</th>
+##                                        <th>订单项关联ID</th>
+                                        <th>预计支付时间</th>
+                                        <th>结算单金额</th>
+                                        <th>已经支付金额</th>
+                                        <th>结算支付时间</th>
+                                        <th>逾期金额</th>
+                                        <th>状态</th>
+                                        <th>结算开始时间</th>
+                                        <th>结算借宿时间</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {{#dataSource}}
+                                    {{#listData}}
+                                    <tr>
+                                        <td>{{statementOrderDetailId}}</td>
+                                        <td>{{orderTypeValue}}</td>
+                                        <td>{{orderId}}</td>
+                                        <td>{{orderItemTypeValue}}</td>
+##                                        <td>{{orderItemReferId}}</td>
+                                        <td>{{#time}}{{statementExpectPayTime}}{{/time}}</td>
+                                        <td>{{#price}}{{statementDetailAmount}}{{/price}}</td>
+                                        <td>{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>
+                                        <td>{{#time}}{{statementDetailPaidTime}}{{/time}}</td>
+                                        <td>{{#price}}{{statementDetailOverdueAmount}}{{/price}}</td>
+                                        <td>{{statementDetailStatusValue}}</td>
+                                        <td>{{#time}}{{statementStartTime}}{{/time}}</td>
+                                        <td>{{#time}}{{statementEndTime}}{{/time}}</td>
+                                    </tr>
+                                    {{/listData}}
+                                    {{^listData}}
+                                    <tr>
+                                        <td valign="top" colspan="14" class="text-center">无结算明细列表</td>
+                                    </tr>
+                                    {{/listData}}
+                                    {{/dataSource}}
+                                    </tbody>
+                                </script>
+                                <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                            </div>
+                        </div>
+                        <div class="panel-footer clearfix">
+                            <button class="btn btn-default pull-right ml15 goBack">返回</button>
+                        </div>
+                    </div>
 
+                </form>
+            </section>
         </section>
     </section>
 
@@ -32,7 +150,7 @@
     Rental.init();
     Layout.init();
 
-    OrderPrint.init();
+    StatementOrderDetail.init();
 
     //UI效果初始化
     Core.init();
