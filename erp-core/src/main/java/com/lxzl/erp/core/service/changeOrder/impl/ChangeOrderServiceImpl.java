@@ -19,8 +19,8 @@ import com.lxzl.erp.core.service.material.BulkMaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
-import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.*;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
@@ -555,7 +555,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     public ServiceResult<String, String> stockUpForChange(StockUpForChangeParam param) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
-        if(StringUtil.isEmpty(param.getEquipmentNo())&&StringUtil.isEmpty(param.getMaterialNo())){
+        if (StringUtil.isEmpty(param.getEquipmentNo()) && StringUtil.isEmpty(param.getMaterialNo())) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
@@ -743,7 +743,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         changeOrderProductEquipmentDO.setSrcEquipmentNo(srcProductEquipmentDO.getEquipmentNo());
 
         //计算差价
-        BigDecimal diff = getDiff(orderDO,srcProductEquipmentDO,destProductEquipmentDO);
+        BigDecimal diff = getDiff(orderDO, srcProductEquipmentDO, destProductEquipmentDO);
         changeOrderProductEquipmentDO.setPriceDiff(diff);
         changeOrderProductEquipmentDO.setUpdateTime(now);
         changeOrderProductEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -772,21 +772,23 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
-    private BigDecimal getDiff(OrderDO orderDO , ProductEquipmentDO srcProductEquipmentDO,ProductEquipmentDO destProductEquipmentDO){
+
+    private BigDecimal getDiff(OrderDO orderDO, ProductEquipmentDO srcProductEquipmentDO, ProductEquipmentDO destProductEquipmentDO) {
         BigDecimal diff = BigDecimal.ZERO;
-        OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderIdAndEquipmentNo(orderDO.getId(),srcProductEquipmentDO.getEquipmentNo());
+        OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderIdAndEquipmentNo(orderDO.getId(), srcProductEquipmentDO.getEquipmentNo());
         OrderProductDO orderProductDO = orderProductMapper.findById(orderProductEquipmentDO.getOrderProductId());
         ProductSkuDO srcProductSkuDO = productSkuMapper.findById(srcProductEquipmentDO.getSkuId());
         ProductSkuDO destProductSkuDO = productSkuMapper.findById(destProductEquipmentDO.getSkuId());
-        if(OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())){
+        if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
             diff = BigDecimalUtil.sub(destProductSkuDO.getDayRentPrice(), srcProductSkuDO.getDayRentPrice());
-            diff = diff.compareTo(BigDecimal.ZERO)<0?BigDecimal.ZERO:diff;
-        }else if(OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())){
+            diff = diff.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : diff;
+        } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
             diff = BigDecimalUtil.sub(destProductSkuDO.getMonthRentPrice(), srcProductSkuDO.getMonthRentPrice());
-            diff = diff.compareTo(BigDecimal.ZERO)<0?BigDecimal.ZERO:diff;
+            diff = diff.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : diff;
         }
         return diff;
     }
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> doChangeMaterial(ChangeOrderMaterial changeOrderMaterial) {
@@ -966,8 +968,13 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 changeOrderMaterialBulkMapper.update(changeOrderMaterialBulkDO);
             }
         }
-        //todo 调用结算单接口
-
+        //调用结算单接口
+        ServiceResult<String, BigDecimal> statementResult = statementService.createChangeOrderStatement(changeOrderDO.getChangeOrderNo());
+        if (!ErrorCode.SUCCESS.equals(statementResult.getErrorCode())) {
+            serviceResult.setErrorCode(statementResult.getErrorCode());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return serviceResult;
+        }
         changeOrderDO.setRentStartTime(changeOrder.getRentStartTime());
         changeOrderDO.setServiceCost(changeOrder.getServiceCost());
         changeOrderDO.setDamageCost(changeOrder.getDamageCost());
@@ -1416,4 +1423,6 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     private OrderProductEquipmentMapper orderProductEquipmentMapper;
     @Autowired
     private OrderProductMapper orderProductMapper;
+    @Autowired
+    private StatementService statementService;
 }
