@@ -104,14 +104,14 @@
                                     {{/hasCommonActionButtons}}
                                     <td>{{statementOrderNo}}</td>
                                     <td>{{customerId}}</td>
-                                    <td>{{#time}}{{statementExpectPayTime}}{{/time}}</td>
+                                    <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
                                     <td>{{#price}}{{statementAmount}}{{/price}}</td>
                                     <td>{{#price}}{{statementPaidAmount}}{{/price}}</td>
-                                    <td>{{#time}}{{statementPaidTime}}{{/time}}</td>
+                                    <td>{{#shortTime}}{{statementPaidTime}}{{/shortTime}}</td>
                                     <td>{{#price}}{{statementOverdueAmount}}{{/price}}</td>
                                     <td>{{statementOrderStatusValue}}</td>
-                                    <td>{{#time}}{{statementStartTime}}{{/time}}</td>
-                                    <td>{{#time}}{{statementEndTime}}{{/time}}</td>
+                                    <td>{{#shortTime}}{{statementStartTime}}{{/shortTime}}</td>
+                                    <td>{{#shortTime}}{{statementEndTime}}{{/shortTime}}</td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
                                         <div class="btn-group text-right">
