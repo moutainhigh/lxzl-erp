@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper">
+
+	<resultMap id="StatementOrderDetailDO" type="com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="statement_order_id" jdbcType="INTEGER" property="statementOrderId" />
+		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
+		<result column="order_type" jdbcType="INTEGER" property="orderType" />
+		<result column="order_id" jdbcType="INTEGER" property="orderId" />
+		<result column="order_item_type" jdbcType="INTEGER" property="orderItemType" />
+		<result column="order_item_refer_id" jdbcType="INTEGER" property="orderItemReferId" />
+		<result column="statement_detail_amount" jdbcType="DECIMAL" property="statementDetailAmount" />
+		<result column="statement_detail_rent_deposit_amount" jdbcType="DECIMAL" property="statementDetailRentDepositAmount" />
+		<result column="statement_detail_rent_deposit_paid_amount" jdbcType="DECIMAL" property="statementDetailRentDepositPaidAmount" />
+		<result column="statement_detail_rent_deposit_return_amount" jdbcType="DECIMAL" property="statementDetailRentDepositReturnAmount" />
+		<result column="statement_detail_deposit_amount" jdbcType="DECIMAL" property="statementDetailDepositAmount" />
+		<result column="statement_detail_deposit_paid_amount" jdbcType="DECIMAL" property="statementDetailDepositPaidAmount" />
+		<result column="statement_detail_deposit_return_amount" jdbcType="DECIMAL" property="statementDetailDepositReturnAmount" />
+		<result column="statement_detail_rent_amount" jdbcType="DECIMAL" property="statementDetailRentAmount" />
+		<result column="statement_detail_rent_paid_amount" jdbcType="DECIMAL" property="statementDetailRentPaidAmount" />
+		<result column="statement_detail_paid_time" jdbcType="DATE" property="statementDetailPaidTime" />
+		<result column="statement_detail_overdue_amount" jdbcType="DECIMAL" property="statementDetailOverdueAmount" />
+		<result column="statement_detail_status" jdbcType="INTEGER" property="statementDetailStatus" />
+		<result column="statement_expect_pay_time" jdbcType="TIMESTAMP" property="statementExpectPayTime" />
+		<result column="statement_start_time" jdbcType="DATE" property="statementStartTime" />
+		<result column="statement_end_time" jdbcType="DATE" property="statementEndTime" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		esod.id,esod.statement_order_id,esod.customer_id,esod.order_type,esod.order_id,esod.order_item_type,esod.order_item_refer_id,esod.statement_detail_amount,esod.statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount,esod.statement_detail_rent_deposit_return_amount,esod.statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount,esod.statement_detail_rent_amount,esod.statement_detail_rent_paid_amount,esod.statement_detail_paid_time,esod.statement_detail_overdue_amount,esod.statement_detail_status,esod.statement_expect_pay_time,esod.statement_start_time,esod.statement_end_time,esod.data_status,esod.remark,esod.create_time,esod.create_user,esod.update_time,esod.update_user
+	</sql>
+
+	<select id="findById" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statement_order_detail esod
+		WHERE esod.id = #{id, jdbcType=INTEGER} AND esod.data_status = 1
+	</select>
+
+	<select id="findByStatementOrderId" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statement_order_detail esod
+		WHERE esod.statement_order_id = #{statementOrderId, jdbcType=INTEGER} AND esod.data_status = 1
+	</select>
+
+	<select id="findByOrderId" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statement_order_detail esod
+		WHERE esod.order_id = #{orderId, jdbcType=INTEGER} AND order_type = 1  AND esod.data_status = 1
+	</select>
+
+	<select id="findByOrderItemTypeAndId" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statement_order_detail esod
+		WHERE esod.order_item_type = #{orderItemType, jdbcType=INTEGER} AND esod.order_item_refer_id = #{orderItemId, jdbcType=INTEGER} AND order_type = 1  AND esod.data_status = 1
+		ORDER BY esod.statement_expect_pay_time ASC
+	</select>
+
+	<select id="findByOrderNo" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statement_order_detail esod
+		WHERE esod.order_id = #{orderId, jdbcType=INTEGER} AND esod.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(esod.id) FROM erp_statement_order_detail esod 
+		<where>
+			<if test="true">
+				AND esod.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="StatementOrderDetailDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_statement_order_detail esod 
+		<where>
+			<if test="true">
+				AND esod.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="statementOrderId != null">
+				statement_order_id = #{statementOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="customerId != null">
+				customer_id = #{customerId,jdbcType=INTEGER},
+			</if>
+			<if test="orderType != null">
+				order_type = #{orderType,jdbcType=INTEGER},
+			</if>
+			<if test="orderId != null">
+				order_id = #{orderId,jdbcType=INTEGER},
+			</if>
+			<if test="orderItemType != null">
+				order_item_type = #{orderItemType,jdbcType=INTEGER},
+			</if>
+			<if test="orderItemReferId != null">
+				order_item_refer_id = #{orderItemReferId,jdbcType=INTEGER},
+			</if>
+			<if test="statementDetailAmount != null">
+				statement_detail_amount = #{statementDetailAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementDetailRentDepositAmount != null">
+				statement_detail_rent_deposit_amount = #{statementDetailRentDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementDetailRentDepositPaidAmount != null">
+				statement_detail_rent_deposit_paid_amount = #{statementDetailRentDepositPaidAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementDetailRentDepositReturnAmount != null">
+				statement_detail_rent_deposit_return_amount = #{statementDetailRentDepositReturnAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementDetailDepositAmount != null">
+				statement_detail_deposit_amount = #{statementDetailDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementDetailDepositPaidAmount != null">
+				statement_detail_deposit_paid_amount = #{statementDetailDepositPaidAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementDetailDepositReturnAmount != null">
+				statement_detail_deposit_return_amount = #{statementDetailDepositReturnAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementDetailRentAmount != null">
+				statement_detail_rent_amount = #{statementDetailRentAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementDetailRentPaidAmount != null">
+				statement_detail_rent_paid_amount = #{statementDetailRentPaidAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementDetailPaidTime != null">
+				statement_detail_paid_time = #{statementDetailPaidTime,jdbcType=DATE},
+			</if>
+			<if test="statementDetailOverdueAmount != null">
+				statement_detail_overdue_amount = #{statementDetailOverdueAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementDetailStatus != null">
+				statement_detail_status = #{statementDetailStatus,jdbcType=INTEGER},
+			</if>
+			<if test="statementExpectPayTime != null">
+				statement_expect_pay_time = #{statementExpectPayTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="statementStartTime != null">
+				statement_start_time = #{statementStartTime,jdbcType=DATE},
+			</if>
+			<if test="statementEndTime != null">
+				statement_end_time = #{statementEndTime,jdbcType=DATE},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO">
+		INSERT INTO erp_statement_order_detail <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO">
+		UPDATE erp_statement_order_detail <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<insert id="saveList" parameterType="java.util.ArrayList">
+		INSERT INTO erp_statement_order_detail (statement_order_id,customer_id,order_type,order_id,order_item_type,order_item_refer_id,statement_expect_pay_time,statement_detail_amount,statement_detail_rent_deposit_amount,statement_detail_rent_deposit_paid_amount,statement_detail_rent_deposit_return_amount,statement_detail_deposit_amount,statement_detail_deposit_paid_amount,statement_detail_deposit_return_amount,statement_detail_rent_amount,statement_detail_rent_paid_amount,statement_detail_paid_time,statement_detail_overdue_amount,statement_detail_status,statement_start_time,statement_end_time,data_status,remark,create_time,create_user,update_time,update_user)
+		VALUES
+		<foreach item="statementOrderDetailDO" index="index" collection="statementOrderDetailDOList" separator=",">
+			(#{statementOrderDetailDO.statementOrderId},#{statementOrderDetailDO.customerId},#{statementOrderDetailDO.orderType},#{statementOrderDetailDO.orderId},#{statementOrderDetailDO.orderItemType},#{statementOrderDetailDO.orderItemReferId},#{statementOrderDetailDO.statementExpectPayTime},#{statementOrderDetailDO.statementDetailAmount},#{statementOrderDetailDO.statementDetailRentDepositAmount},#{statementOrderDetailDO.statementDetailRentDepositPaidAmount},#{statementOrderDetailDO.statementDetailRentDepositReturnAmount},#{statementOrderDetailDO.statementDetailDepositAmount},#{statementOrderDetailDO.statementDetailDepositPaidAmount},#{statementOrderDetailDO.statementDetailDepositReturnAmount},#{statementOrderDetailDO.statementDetailRentAmount},#{statementOrderDetailDO.statementDetailRentPaidAmount},#{statementOrderDetailDO.statementDetailPaidTime},#{statementOrderDetailDO.statementDetailOverdueAmount},#{statementOrderDetailDO.statementDetailStatus},#{statementOrderDetailDO.statementStartTime},#{statementOrderDetailDO.statementEndTime},#{statementOrderDetailDO.dataStatus},#{statementOrderDetailDO.remark},#{statementOrderDetailDO.createTime},#{statementOrderDetailDO.createUser},#{statementOrderDetailDO.updateTime},#{statementOrderDetailDO.updateUser})
+		</foreach>
+	</insert>
+</mapper>
