@@ -25,20 +25,18 @@ import java.util.Map;
 public class RedisTest extends BaseUnTransactionalTest {
     @Test
     public void addUser() {
-        {
-            UserQueryParam userQueryParam = new UserQueryParam();
-            ServiceResult<String, List<User>> getUserResult = userService.getUserListByParam(userQueryParam);
-            if (ErrorCode.SUCCESS.equals(getUserResult.getErrorCode())) {
-                List<User> userList = getUserResult.getResult();
-                Map<Integer, User> userMap = ListUtil.listToMap(userList, "userId");
-                redisManager.add(RedisKeyConstant.USER_KEY, userMap);
-            }
+        UserQueryParam userQueryParam = new UserQueryParam();
+        ServiceResult<String, List<User>> getUserResult = userService.getUserListByParam(userQueryParam);
+        if (ErrorCode.SUCCESS.equals(getUserResult.getErrorCode())) {
+            List<User> userList = getUserResult.getResult();
+            Map<Integer, User> userMap = ListUtil.listToMap(userList, "userId");
+            redisManager.add(RedisKeyConstant.USER_KEY, userMap);
         }
     }
 
     @Test
-    public void getUser(){
-        String str = redisManager.get(RedisKeyConstant.USER_KEY);
+    public void getUser() {
+        Map<Integer, User> userMap = redisManager.get(RedisKeyConstant.USER_KEY, Map.class);
     }
 
 

@@ -8,14 +8,15 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface UserMapper extends BaseMysqlDAO<UserDO> {
 
 	UserDO findByUsername(@Param("userName") String username);
 	UserDO findByUserId(@Param("userId") Integer userId);
-	List<UserDO> listPage(@Param("userQueryParam") UserQueryParam userQueryParam, @Param("pageQuery") PageQuery pageQuery);
-	Integer listCount(@Param("userQueryParam") UserQueryParam userQueryParam, @Param("pageQuery") PageQuery pageQuery);
+	List<UserDO> listPage(@Param("maps") Map<String, Object> paramMap);
+	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	List<UserDO> getPassiveUserByUser(@Param("userId") Integer userId);
 }

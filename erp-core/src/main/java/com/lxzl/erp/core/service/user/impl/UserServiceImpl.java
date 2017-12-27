@@ -283,8 +283,14 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     public ServiceResult<String, Page<User>> userPage(UserQueryParam userQueryParam) {
         ServiceResult<String, Page<User>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(userQueryParam.getPageNo(), userQueryParam.getPageSize());
-        Integer totalCount = userMapper.listCount(userQueryParam, pageQuery);
-        List<UserDO> list = userMapper.listPage(userQueryParam, pageQuery);
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("userQueryParam", userQueryParam);
+
+        Integer totalCount = userMapper.listCount(maps);
+        List<UserDO> list = userMapper.listPage(maps);
         List<User> userList = UserConverter.convertUserList(list);
         Page<User> page = new Page<>(userList, totalCount, userQueryParam.getPageNo(), userQueryParam.getPageSize());
         result.setResult(page);
@@ -295,8 +301,12 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     @Override
     public ServiceResult<String, List<User>> getUserListByParam(UserQueryParam userQueryParam) {
         ServiceResult<String, List<User>> result = new ServiceResult<>();
-        PageQuery pageQuery = new PageQuery(1, Integer.MAX_VALUE);
-        List<UserDO> userDoList = userMapper.listPage(userQueryParam, pageQuery);
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", 0);
+        maps.put("pageSize", Integer.MAX_VALUE);
+        maps.put("userQueryParam", userQueryParam);
+        List<UserDO> userDoList = userMapper.listPage(maps);
         result.setResult(UserConverter.convertUserList(userDoList));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
