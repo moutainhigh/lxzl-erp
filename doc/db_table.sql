@@ -311,18 +311,18 @@ CREATE TABLE `erp_customer_person` (
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='个人客户表';
 
 DROP TABLE if exists `erp_customer_company`;
-CREATE TABLE `erp_customer_company` (
+   CREATE TABLE `erp_customer_company` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
   `landline` varchar(64) DEFAULT NULL COMMENT '座机电话',
-  `connect_real_name` varchar(64) NOT NULL COMMENT '联系人',
-  `connect_phone` varchar(24) DEFAULT NULL COMMENT '联系人手机号',
+  `connect_real_name` varchar(64) NOT NULL COMMENT '紧急联系人',
+  `connect_phone` varchar(24) DEFAULT NULL COMMENT '紧急联系人手机号',
   `company_name` varchar(128) DEFAULT NULL COMMENT '公司名称',
   `company_abb` varchar(128) DEFAULT NULL COMMENT '公司简称',
   `province` int(20) DEFAULT NULL COMMENT '省份ID，省份ID',
   `city` int(20) DEFAULT NULL COMMENT '城市ID，对应城市ID',
   `district` int(20) DEFAULT NULL COMMENT '区ID，对应区ID',
-  `address` varchar(200) DEFAULT NULL COMMENT '详细地址',
+  `address` varchar(200) DEFAULT NULL COMMENT '公司地址',
   `legal_person` varchar(64) COMMENT '法人姓名',
   `legal_person_no` varchar(64) COMMENT '法人身份证号',
   `business_license_no` varchar(64) COMMENT '营业执照号',
@@ -332,19 +332,29 @@ CREATE TABLE `erp_customer_company` (
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
-  `company_origin` INT(20)  NOT NULL COMMENT  '客户来源,1转介绍,2老客户,3公司资源,4主动开发'
+  `company_origin` INT(20)  NOT NULL COMMENT  '客户来源,1地推活动，2展会了解，3业务联系，4百度推广，5朋友推荐，6其他广告'
   `found_time` datetime NOT NULL COMMENT '企业成立时间',
   `industry` varchar(64) NOT NULL COMMENT '所属行业',
   `registered_capital` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '注册资本',
   `office_number` int(20) NOT NULL COMMENT '办公人数',
   `product_purpose` varchar(24) DEFAULT NULL COMMENT '设备用途',
-  `list_first_need_products` TEXT DEFAULT NULL COMMENT '首次所需设备',
-  `list_later_need_products` TEXT DEFAULT NULL COMMENT '后期所需设备',
+  `first_need_products` TEXT NOT NULL COMMENT '首次所需设备',
+  `later_need_products` TEXT DEFAULT NULL COMMENT '后期所需设备',
   `agent_person_name`varchar(24) DEFAULT NULL COMMENT '经办人姓名',
   `agent_person_phone`varchar(24) DEFAULT NULL COMMENT '经办人电话',
   `agent_person_no` varchar(64) DEFAULT NULL COMMENT'经办人身份证号码',
   `consign_address` varchar(200) DEFAULT NULL COMMENT '收货地址',
   `unified_credit_code`varchar(64) DEFAULT NULL COMMENT '统一信用代码',
+
+   `customer_no` varchar(20) NOT NULL COMMENT '客户编码',
+   `sales_man` varchar(24) NOT NULL COMMENT '业务员（必填）',
+   `union_area` varchar(64) DEFAULT NULL COMMENT  '联合区域',
+   `union_sales_man` varchar(24) DEFAULT NULL COMMENT '联合业务员',
+   `is_legal_person_apple` INT(10) NOT NULL DEFAULT 0 COMMENT '是否法人代表申请， 0否，1是',
+   `legal_person_phone` varchar(24) NOT NULL COMMENT '法人手机号（必填）',
+   `operating_area` int(24) DEFAULT NULL COMMENT '经营面积',
+   `unit_insured_number` int(20) DEFAULT NULL COMMENT '单位参保人数'
+   `affiliated_enterprise` VARCHAR(128) DEFAULT NULL COMMENT '关联企业'
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=400001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='公司客户表';
 
