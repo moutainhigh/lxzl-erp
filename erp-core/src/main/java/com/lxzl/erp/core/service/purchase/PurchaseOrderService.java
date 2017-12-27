@@ -23,7 +23,7 @@ public interface PurchaseOrderService extends VerifyReceiver {
 
     ServiceResult<String, String> commit(PurchaseOrderCommitParam purchaseOrderCommitParam);
 
-    String delete(PurchaseOrder purchaseOrder);
+    String cancel(PurchaseOrder purchaseOrder);
 
     ServiceResult<String, Page<PurchaseDeliveryOrder>> pagePurchaseDelivery(PurchaseDeliveryOrderQueryParam purchaseDeliveryOrderQueryParam);
 

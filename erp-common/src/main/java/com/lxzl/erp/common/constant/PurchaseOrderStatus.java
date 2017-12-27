@@ -10,4 +10,5 @@ public class PurchaseOrderStatus {
     public static final Integer PURCHASE_ORDER_STATUS_PART = 9;          // 9-部分采购
     public static final Integer PURCHASE_ORDER_STATUS_ALL = 12;          // 12-全部采购
     public static final Integer PURCHASE_ORDER_STATUS_END = 15;          // 15-结束采购
+    public static final Integer PURCHASE_ORDER_STATUS_CANCEL = 18;          // 18-取消
 }

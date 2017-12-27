@@ -62,15 +62,15 @@ public class PurchaseOrderController {
     }
 
     /**
-     * 删除采购单
+     * 取消采购单
      *
      * @param purchaseOrder
      * @param validResult
      * @return
      */
-    @RequestMapping(value = "delete", method = RequestMethod.POST)
+    @RequestMapping(value = "cancel", method = RequestMethod.POST)
     public Result deletePurchaseOrder(@RequestBody @Validated(IdGroup.class) PurchaseOrder purchaseOrder, BindingResult validResult) {
-        String errorCode = purchaseOrderService.delete(purchaseOrder);
+        String errorCode = purchaseOrderService.cancel(purchaseOrder);
         return resultGenerator.generate(errorCode);
     }
 

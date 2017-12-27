@@ -748,14 +748,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public String delete(PurchaseOrder purchaseOrder) {
+    public String cancel(PurchaseOrder purchaseOrder) {
         PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findByPurchaseNo(purchaseOrder.getPurchaseNo());
         if (purchaseOrderDO == null) {
             return ErrorCode.PURCHASE_ORDER_NOT_EXISTS;
         }
         if (!PurchaseOrderStatus.PURCHASE_ORDER_STATUS_WAIT_COMMIT.equals(purchaseOrderDO.getPurchaseOrderStatus())) {
             //只有待提交状态的采购单可以删除
-            return ErrorCode.PURCHASE_ORDER_COMMITTED_CAN_NOT_DELETE;
+            return ErrorCode.PURCHASE_ORDER_COMMITTED_CAN_NOT_CANCEL;
         }
         Date now = new Date();
 
