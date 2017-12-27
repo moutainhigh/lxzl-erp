@@ -122,9 +122,7 @@
                                     <td class="text-right">
                                         <div class="btn-group text-right">
                                             {{#rowActionButtons}}
-                                            {{#buttons}}
                                             <a href="${ctx}{{menuUrl}}?no={{purchaseNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-purchaseno="{{purchaseNo}}" data-purchaseorderid="{{purchaseOrderId}}">{{text}}</a>
-                                            {{/buttons}}
                                             {{/rowActionButtons}}
                                         </div>
                                     </td>
@@ -164,7 +162,7 @@
         management_load_script('${staticManagement}/js',
                 'manage.purchase.handle.mixin.js',
                 'manage.purchase.js',
-                'modal.choose.audit.user.js',
+//                'modal.choose.audit.user.js',
                 'modal.submit.audit.js');
     </script>
     <script type="text/javascript">

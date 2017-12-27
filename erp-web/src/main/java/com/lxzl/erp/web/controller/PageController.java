@@ -343,6 +343,10 @@ public class PageController extends BaseController {
         return "/component/purchaseReceiveOrder/purchaseReceiveOrderProductMaterialBulk";
     }
 
+    @RequestMapping("/purchase-receive-manage-udpate-equipment-remark/modal")
+    public String purchaseReceiveManageUpdateEquipmentRemarkModal() {
+        return "/component/purchaseReceiveOrder/updateEquipmentRemarkModal";
+    }
 
 
     //采购发货单

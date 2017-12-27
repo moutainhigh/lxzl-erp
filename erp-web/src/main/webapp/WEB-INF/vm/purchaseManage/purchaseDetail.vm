@@ -15,13 +15,23 @@
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
             <section id="content" class="animated fadeIn">
-                <div class="panel panel-primary panel-border top mb35">
+                <form id="detailPurchaseForm">
+                    <div class="panel panel-primary panel-border top mb35">
                     <div class="panel-body">
                        <div class="row">
                            <div class="col-md-4">
                                <h5>采购单号：<small id="purchaseOrderNo"></small></h5>
                            </div>
-                           <div class="col-md-8"></div>
+                           <div class="col-md-8 text-right">
+                               <script type="text/html" id="actionButtonsTpl">
+                                   {{#acitonButtons}}
+                                   <a href="${ctx}{{menuUrl}}?no={{purchaseno}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-purchaseno="{{purchaseno}}">
+                                       <i class="{{iClass}}"></i> {{text}}
+                                   </a>
+                                   {{/acitonButtons}}
+                               </script>
+                               <div class="btn-group" id="actionButtons"></div>
+                           </div>
                        </div>
                     </div>
                     <div class="form-horizontal panel-body bg-light dark">
@@ -344,6 +354,7 @@
                         <button class="btn btn-default pull-right ml15 goBack">返回</button>
                     </div>
                 </div>
+                </form>
             </section>
         </section>
 
@@ -351,7 +362,11 @@
     </div>
     #parse("layout/footer.vm")
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js', 'manage.purchase.util.js', 'manage.purchase.detail.js');
+        management_load_script('${staticManagement}/js',
+                'manage.purchase.util.js',
+                'manage.purchase.handle.mixin.js',
+                'manage.purchase.detail.js',
+                'modal.submit.audit.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

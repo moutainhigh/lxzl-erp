@@ -125,7 +125,7 @@
                                 <td class="text-right">
                                     <div class="btn-group text-right">
                                         {{#rowActionButtons}}
-                                        <a href="${ctx}{{menuUrl}}?no={{purchaseReceiveNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-purchaseno="{{purchaseNo}}" data-purchasereceiveno="{{purchaseReceiveNo}}">{{text}}</a>
+                                        <a href="${ctx}{{menuUrl}}?no={{purchaseReceiveNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-purchaseno="{{purchaseNo}}" data-no="{{purchaseReceiveNo}}">{{text}}</a>
                                         {{/rowActionButtons}}
                                     </div>
                                 </td>
@@ -162,7 +162,9 @@
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.purchase.receive.js');
+        management_load_script('${staticManagement}/js',
+                'manage.purchase.receive.handle.mixin.js',
+                'manage.purchase.receive.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
