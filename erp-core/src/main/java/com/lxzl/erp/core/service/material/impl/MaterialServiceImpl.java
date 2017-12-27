@@ -395,6 +395,7 @@ public class MaterialServiceImpl implements MaterialService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
+        bulkMaterialQueryParam.setIsOnEquipment(CommonConstant.COMMON_CONSTANT_NO);
         maps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
 
         Integer totalCount = bulkMaterialMapper.listCount(maps);
