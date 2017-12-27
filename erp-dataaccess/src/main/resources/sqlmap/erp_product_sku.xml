@@ -132,7 +132,7 @@
         LEFT JOIN erp_product_sku_property epsps ON epsps.sku_id = sku_main.id AND epsps.data_status = 1 AND epsps.is_sku = 1
         LEFT JOIN erp_product_category_property mpcp ON epsps.property_id = mpcp.id
         LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id
-        LEFT JOIN erp_product_material epm ON epm.product_id = sku_main.product_id AND epm.data_status = 1
+        LEFT JOIN erp_product_material epm ON epm.product_sku_id = sku_main.id AND epm.data_status = 1
         LEFT JOIN erp_material em on epm.material_id = em.id
         ORDER BY mpcp.data_order DESC,mpcpv.data_order DESC
     </select>
@@ -158,7 +158,7 @@
         LEFT JOIN erp_product_sku_property epsps ON epsps.sku_id = sku_main.id AND epsps.data_status = 1 AND epsps.is_sku = 1
         LEFT JOIN erp_product_category_property mpcp ON epsps.property_id = mpcp.id
         LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id
-        LEFT JOIN erp_product_material epm ON epm.product_id = sku_main.product_id AND epm.data_status = 1
+        LEFT JOIN erp_product_material epm ON epm.product_sku_id = sku_main.id AND epm.data_status = 1
         LEFT JOIN erp_material em on epm.material_id = em.id
         ORDER BY mpcp.data_order DESC,mpcpv.data_order DESC
     </select>
@@ -184,7 +184,7 @@
         LEFT JOIN erp_product_sku_property epsps ON epsps.sku_id = sku_main.id AND epsps.data_status = 1 AND epsps.is_sku = 1
         LEFT JOIN erp_product_category_property mpcp ON epsps.property_id = mpcp.id
         LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id
-        LEFT JOIN erp_product_material epm ON epm.product_id = sku_main.product_id AND epm.data_status = 1
+        LEFT JOIN erp_product_material epm ON epm.product_sku_id = sku_main.id AND epm.data_status = 1
         LEFT JOIN erp_material em on epm.material_id = em.id
         ORDER BY mpcp.data_order DESC,mpcpv.data_order DESC
     </select>
@@ -247,7 +247,7 @@
         LEFT JOIN erp_product_sku_property epsps ON epsps.sku_id = eps.id AND epsps.data_status = 1
         LEFT JOIN erp_product_category_property mpcp ON epsps.property_id = mpcp.id AND mpcp.data_status = 1
         LEFT JOIN erp_product_category_property_value mpcpv ON epsps.property_value_id = mpcpv.id AND mpcpv.data_status = 1
-        LEFT JOIN erp_product_material epm ON epm.product_id = sku_main.product_id AND epm.data_status = 1
+        LEFT JOIN erp_product_material epm ON epm.product_sku_id = sku_main.id AND epm.data_status = 1
         LEFT JOIN erp_material em on epm.material_id = em.id
         ORDER BY eps.create_time DESC
     </select>
