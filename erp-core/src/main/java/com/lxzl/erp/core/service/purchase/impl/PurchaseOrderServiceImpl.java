@@ -747,39 +747,62 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String cancel(PurchaseOrder purchaseOrder) {
         PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findByPurchaseNo(purchaseOrder.getPurchaseNo());
         if (purchaseOrderDO == null) {
             return ErrorCode.PURCHASE_ORDER_NOT_EXISTS;
         }
         if (!PurchaseOrderStatus.PURCHASE_ORDER_STATUS_WAIT_COMMIT.equals(purchaseOrderDO.getPurchaseOrderStatus())) {
-            //只有待提交状态的采购单可以删除
+            //只有待提交状态的采购单可以取消
             return ErrorCode.PURCHASE_ORDER_COMMITTED_CAN_NOT_CANCEL;
         }
         Date now = new Date();
 
         purchaseOrderDO.setUpdateTime(now);
         purchaseOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        purchaseOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        purchaseOrderDO.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_CANCEL);
         purchaseOrderMapper.update(purchaseOrderDO);
-
-        PurchaseOrderProductDO purchaseOrderProductDO = new PurchaseOrderProductDO();
-        purchaseOrderProductDO.setPurchaseOrderId(purchaseOrderDO.getId());
-        purchaseOrderProductDO.setUpdateTime(now);
-        purchaseOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        purchaseOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-        purchaseOrderProductMapper.deleteByPurchaseOrderId(purchaseOrderProductDO);
-
-        PurchaseOrderMaterialDO purchaseOrderMaterialDO = new PurchaseOrderMaterialDO();
-        purchaseOrderMaterialDO.setPurchaseOrderId(purchaseOrderDO.getId());
-        purchaseOrderMaterialDO.setUpdateTime(now);
-        purchaseOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        purchaseOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-        purchaseOrderMaterialMapper.deleteByPurchaseOrderId(purchaseOrderMaterialDO);
         return ErrorCode.SUCCESS;
     }
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public String strongCancel(PurchaseOrder purchaseOrder) {
+        PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findByPurchaseNo(purchaseOrder.getPurchaseNo());
+        if (purchaseOrderDO == null) {
+            return ErrorCode.PURCHASE_ORDER_NOT_EXISTS;
+        }
+        if (!PurchaseOrderStatus.PURCHASE_ORDER_STATUS_WAIT_COMMIT.equals(purchaseOrderDO.getPurchaseOrderStatus())&&
+                !PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PURCHASING.equals(purchaseOrderDO.getPurchaseOrderStatus())) {
+            //待提交和审核通过的采购单可以取消
+            return ErrorCode.PURCHASE_ORDER_COMMITTED_CAN_NOT_CANCEL;
+        }
+        Date now = new Date();
+        purchaseOrderDO.setUpdateTime(now);
+        purchaseOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        purchaseOrderDO.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_CANCEL);
+        purchaseOrderMapper.update(purchaseOrderDO);
 
+        List<PurchaseDeliveryOrderDO> purchaseDeliveryOrderDOList = purchaseDeliveryOrderMapper.findListByPurchaseId(purchaseOrderDO.getId());
+        List<PurchaseReceiveOrderDO> purchaseReceiveOrderDOList = purchaseReceiveOrderMapper.findListByPurchaseId(purchaseOrderDO.getId());
+
+        if(CollectionUtil.isNotEmpty(purchaseDeliveryOrderDOList)){
+            for(PurchaseDeliveryOrderDO purchaseDeliveryOrderDO : purchaseDeliveryOrderDOList){
+                purchaseDeliveryOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                purchaseDeliveryOrderDO.setUpdateTime(now);
+                purchaseDeliveryOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                purchaseDeliveryOrderMapper.update(purchaseDeliveryOrderDO);
+            }
+        }
+        if(CollectionUtil.isNotEmpty(purchaseReceiveOrderDOList)){
+            for(PurchaseReceiveOrderDO purchaseReceiveOrderDO : purchaseReceiveOrderDOList){
+                purchaseReceiveOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                purchaseReceiveOrderDO.setUpdateTime(now);
+                purchaseReceiveOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                purchaseReceiveOrderMapper.update(purchaseReceiveOrderDO);
+            }
+        }
+        return ErrorCode.SUCCESS;
+    }
     @Override
     public ServiceResult<String, Page<PurchaseDeliveryOrder>> pagePurchaseDelivery(PurchaseDeliveryOrderQueryParam purchaseDeliveryOrderQueryParam) {
         ServiceResult<String, Page<PurchaseDeliveryOrder>> result = new ServiceResult<>();
