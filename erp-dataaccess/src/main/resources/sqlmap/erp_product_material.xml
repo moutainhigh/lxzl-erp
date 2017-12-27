@@ -35,6 +35,11 @@
 		where epm.product_sku_id = #{productSkuId, jdbcType=INTEGER} and data_status = 1
 	</select>
 
+	<select id="findByProductId" resultMap="ProductMaterialDO" parameterType="java.lang.Integer">
+		select <include refid="column_List"/> from erp_product_material epm
+		where epm.product_id = #{productId, jdbcType=INTEGER} and data_status = 1
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(epm.id) from erp_product_material epm 
 		<where>
