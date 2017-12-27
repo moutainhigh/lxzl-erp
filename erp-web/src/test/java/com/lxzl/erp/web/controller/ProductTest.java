@@ -33,7 +33,7 @@ public class ProductTest extends ERPUnTransactionalTest {
     @Test
     public void queryProductById() throws Exception {
         Product product = new Product();
-        product.setProductId(2000005);
+        product.setProductId(2000013);
         TestResult testResult = getJsonTestResult("/product/queryProductById", product);
     }
     @Test

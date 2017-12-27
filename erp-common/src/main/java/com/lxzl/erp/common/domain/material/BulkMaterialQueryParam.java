@@ -29,6 +29,8 @@ public class BulkMaterialQueryParam extends BasePageParam {
     private String currentEquipmentNo;
     private Integer isOnEquipment;
 
+    private Integer isNew;
+
 
     public Integer getMaterialId() {
         return materialId;
@@ -124,5 +126,13 @@ public class BulkMaterialQueryParam extends BasePageParam {
 
     public void setIsOnEquipment(Integer isOnEquipment) {
         this.isOnEquipment = isOnEquipment;
+    }
+
+    public Integer getIsNew() {
+        return isNew;
+    }
+
+    public void setIsNew(Integer isNew) {
+        this.isNew = isNew;
     }
 }

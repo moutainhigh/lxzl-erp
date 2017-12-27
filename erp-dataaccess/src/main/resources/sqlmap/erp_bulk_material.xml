@@ -11,10 +11,13 @@
 		<result column="material_no" jdbcType="VARCHAR" property="materialNo" />
 		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
 		<result column="current_warehouse_id" jdbcType="INTEGER" property="currentWarehouseId" />
+		<result column="current_warehouse_name" jdbcType="VARCHAR" property="currentWarehouseName" />
 		<result column="current_warehouse_position_id" jdbcType="INTEGER" property="currentWarehousePositionId" />
 		<result column="owner_warehouse_id" jdbcType="INTEGER" property="ownerWarehouseId" />
+		<result column="owner_warehouse_name" jdbcType="VARCHAR" property="ownerWarehouseName" />
 		<result column="owner_warehouse_position_id" jdbcType="INTEGER" property="ownerWarehousePositionId" />
 		<result column="brand_id" jdbcType="INTEGER" property="brandId" />
+		<result column="brand_name" jdbcType="VARCHAR" property="brandName" />
 		<result column="material_model_id" jdbcType="INTEGER" property="materialModelId" />
 		<result column="material_capacity_value" jdbcType="DOUBLE" property="materialCapacityValue" />
 		<result column="bulk_material_price" jdbcType="DECIMAL" property="bulkMaterialPrice" />
@@ -36,12 +39,26 @@
 	</sql>
 
 	<select id="findById" resultMap="BulkMaterialDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm 
+		SELECT <include refid="column_List"/>
+		<trim prefix=",">
+			ewc.warehouse_name as current_warehouse_name, ewo.warehouse_name as owner_warehouse_name, eb.brand_name as brand_name
+		</trim>
+		FROM erp_bulk_material ebm
+		INNER JOIN erp_warehouse ewc ON ebm.current_warehouse_id = ewc.id
+		INNER JOIN erp_warehouse ewo ON ebm.owner_warehouse_id = ewo.id
+		LEFT JOIN erp_brand eb ON eb.id = ebm.brand_id
 		WHERE ebm.id = #{id, jdbcType=INTEGER} AND data_status = 1 
 	</select>
 
 	<select id="findByNo" resultMap="BulkMaterialDO" parameterType="java.lang.String">
-		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm
+		SELECT <include refid="column_List"/>
+		<trim prefix=",">
+			ewc.warehouse_name as current_warehouse_name, ewo.warehouse_name as owner_warehouse_name, eb.brand_name as brand_name
+		</trim>
+		FROM erp_bulk_material ebm
+		INNER JOIN erp_warehouse ewc ON ebm.current_warehouse_id = ewc.id
+		INNER JOIN erp_warehouse ewo ON ebm.owner_warehouse_id = ewo.id
+		LEFT JOIN erp_brand eb ON eb.id = ebm.brand_id
 		WHERE ebm.bulk_material_no = #{bulkMaterialNo, jdbcType=VARCHAR} AND data_status = 1
 	</select>
 	<select id="findRentByCustomerId" resultMap="BulkMaterialDO" parameterType="java.lang.String">
@@ -107,6 +124,9 @@
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.currentWarehouseId != null &amp;&amp; maps.bulkMaterialQueryParam.currentWarehouseId != ''">
 				AND ebm.current_warehouse_id = #{maps.bulkMaterialQueryParam.currentWarehouseId, jdbcType=INTEGER}
 			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialStatus != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialStatus != ''">
+				AND ebm.bulk_material_status = #{maps.bulkMaterialQueryParam.bulkMaterialStatus, jdbcType=INTEGER}
+			</if>
 			<if test='maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.isOnEquipment != null &amp;&amp; maps.bulkMaterialQueryParam.isOnEquipment == 1'>
 				AND ebm.current_equipment_id IS NOT NULL
 			</if>
@@ -116,6 +136,9 @@
 			<if test="maps.materialId != null">
 				and ebm.material_id = #{maps.materialId, jdbcType=INTEGER}
 			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.isNew != null">
+				and ebm.is_new = #{maps.bulkMaterialQueryParam.isNew, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				AND ebm.data_status = 1
 			</if>
@@ -123,7 +146,14 @@
 	</select>
 
 	<select id="listPage" resultMap="BulkMaterialDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm 
+		SELECT <include refid="column_List"/>
+		<trim prefix=",">
+			ewc.warehouse_name as current_warehouse_name, ewo.warehouse_name as owner_warehouse_name, eb.brand_name as brand_name
+		</trim>
+		FROM erp_bulk_material ebm
+		INNER JOIN erp_warehouse ewc ON ebm.current_warehouse_id = ewc.id
+		INNER JOIN erp_warehouse ewo ON ebm.owner_warehouse_id = ewo.id
+		LEFT JOIN erp_brand eb ON eb.id = ebm.brand_id
 		<where>
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.materialId != null &amp;&amp; maps.bulkMaterialQueryParam.materialId != ''">
 				AND ebm.material_id = #{maps.bulkMaterialQueryParam.materialId, jdbcType=INTEGER}
@@ -151,6 +181,9 @@
 			</if>
 			<if test='maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.isOnEquipment != null &amp;&amp; maps.bulkMaterialQueryParam.isOnEquipment == 0'>
 				AND ebm.current_equipment_id IS NULL
+			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.isNew != null">
+				and ebm.is_new = #{maps.bulkMaterialQueryParam.isNew, jdbcType=INTEGER}
 			</if>
 			<if test="maps.materialId != null">
 				and ebm.material_id = #{maps.materialId, jdbcType=INTEGER}

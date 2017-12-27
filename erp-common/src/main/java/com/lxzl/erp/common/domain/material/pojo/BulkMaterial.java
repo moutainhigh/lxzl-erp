@@ -26,10 +26,13 @@ public class BulkMaterial implements Serializable {
     private String materialNo;   //物料编号，从哪个物料生成的
     private String orderNo;        // 订单编号
     private Integer currentWarehouseId;   //目前仓库ID
+    private String currentWarehouseName;   //目前仓库名称
     private Integer currentWarehousePositionId;   //目前仓位ID
+    private String ownerWarehouseName;   //归属仓库名称
     private Integer ownerWarehouseId;   //归属仓库ID
     private Integer ownerWarehousePositionId;   //归属目前仓位ID
     private Integer brandId;   //所属品牌ID
+    private String brandName;   //所属品牌名称
     private Integer materialModelId;        //散料型号
     private Double materialCapacityValue;    // 散料字面量值
     private BigDecimal bulkMaterialPrice;   //散料本身的价值(单价)
@@ -262,5 +265,29 @@ public class BulkMaterial implements Serializable {
 
     public void setIsNew(Integer isNew) {
         this.isNew = isNew;
+    }
+
+    public String getCurrentWarehouseName() {
+        return currentWarehouseName;
+    }
+
+    public void setCurrentWarehouseName(String currentWarehouseName) {
+        this.currentWarehouseName = currentWarehouseName;
+    }
+
+    public String getOwnerWarehouseName() {
+        return ownerWarehouseName;
+    }
+
+    public void setOwnerWarehouseName(String ownerWarehouseName) {
+        this.ownerWarehouseName = ownerWarehouseName;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
     }
 }

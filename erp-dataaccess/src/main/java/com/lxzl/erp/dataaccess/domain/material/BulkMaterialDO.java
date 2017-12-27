@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.material;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 import java.math.BigDecimal;
 
@@ -15,10 +17,16 @@ public class BulkMaterialDO  extends BaseDO {
 	private String materialNo;
 	private String orderNo;
 	private Integer currentWarehouseId;
+	@Transient
+	private String currentWarehouseName;
 	private Integer currentWarehousePositionId;
 	private Integer ownerWarehouseId;
+	@Transient
+	private String ownerWarehouseName;
 	private Integer ownerWarehousePositionId;
 	private Integer brandId;
+	@Transient
+	private String brandName;
 	private Integer materialModelId;
 	private Double materialCapacityValue;
 	private BigDecimal bulkMaterialPrice;
@@ -221,5 +229,29 @@ public class BulkMaterialDO  extends BaseDO {
 
 	public void setOriginalPrice(BigDecimal originalPrice) {
 		this.originalPrice = originalPrice;
+	}
+
+	public String getCurrentWarehouseName() {
+		return currentWarehouseName;
+	}
+
+	public void setCurrentWarehouseName(String currentWarehouseName) {
+		this.currentWarehouseName = currentWarehouseName;
+	}
+
+	public String getOwnerWarehouseName() {
+		return ownerWarehouseName;
+	}
+
+	public void setOwnerWarehouseName(String ownerWarehouseName) {
+		this.ownerWarehouseName = ownerWarehouseName;
+	}
+
+	public String getBrandName() {
+		return brandName;
+	}
+
+	public void setBrandName(String brandName) {
+		this.brandName = brandName;
 	}
 }

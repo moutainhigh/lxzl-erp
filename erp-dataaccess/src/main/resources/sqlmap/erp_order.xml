@@ -307,6 +307,15 @@
         ORDER BY m_order.create_time DESC
     </select>
 
+    <select id="querySubCompanyOrderAmount" resultType="java.util.HashMap" parameterType="java.util.Map">
+        SELECT esc.sub_company_name, sum(eo.total_order_amount) as total_order_amount
+        FROM erp_sub_company esc LEFT JOIN erp_department ed ON esc.id = ed.sub_company_id
+        LEFT JOIN erp_role er ON er.department_id = ed.id
+        LEFT JOIN erp_user_role eur ON er.id = eur.role_id
+        LEFT JOIN erp_user eu ON eur.user_id = eu.id
+        LEFT JOIN erp_order eo ON eu.id = eo.order_seller_id AND eo.pay_status = 8 GROUP BY esc.sub_company_name
+    </select>
+
     <select id="findOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
         SELECT count(eo.id)
         FROM erp_order eo

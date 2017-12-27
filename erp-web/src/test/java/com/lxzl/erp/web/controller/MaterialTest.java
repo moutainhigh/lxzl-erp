@@ -62,7 +62,6 @@ public class MaterialTest extends ERPUnTransactionalTest {
         MaterialQueryParam materialQueryParam = new MaterialQueryParam();
         materialQueryParam.setPageNo(1);
         materialQueryParam.setPageSize(15);
-        materialQueryParam.setBrandId(15);
         TestResult testResult = getJsonTestResult("/material/queryAllMaterial", materialQueryParam);
     }
 

@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.material.impl;
 
+import com.lxzl.erp.common.constant.BulkMaterialStatus;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.MaterialType;
@@ -13,10 +14,7 @@ import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.material.pojo.MaterialImg;
 import com.lxzl.erp.common.domain.material.pojo.MaterialModel;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.FileUtil;
-import com.lxzl.erp.common.util.GenerateNoUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.MaterialConverter;
@@ -364,9 +362,25 @@ public class MaterialServiceImpl implements MaterialService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
+        Material material = ConverterUtil.convert(materialDO, Material.class);
+
+        BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
+        bulkMaterialQueryParam.setMaterialId(materialDO.getId());
+        bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+
+        Map<String, Object> queryEquipmentCountParam = new HashMap<>();
+        queryEquipmentCountParam.put("start", 0);
+        queryEquipmentCountParam.put("pageSize", Integer.MAX_VALUE);
+        queryEquipmentCountParam.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
+        Integer newProductSkuCount = bulkMaterialMapper.listCount(queryEquipmentCountParam);
+        bulkMaterialQueryParam.setIsNew(CommonConstant.COMMON_CONSTANT_NO);
+        queryEquipmentCountParam.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
+        Integer oldProductSkuCount = bulkMaterialMapper.listCount(queryEquipmentCountParam);
+        material.setNewMaterialCount(newProductSkuCount);
+        material.setOldMaterialCount(oldProductSkuCount);
 
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(MaterialConverter.convertMaterialDO(materialDO));
+        result.setResult(material);
         return result;
     }
 
@@ -395,11 +409,12 @@ public class MaterialServiceImpl implements MaterialService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
+        bulkMaterialQueryParam.setIsOnEquipment(CommonConstant.COMMON_CONSTANT_NO);
         maps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
 
         Integer totalCount = bulkMaterialMapper.listCount(maps);
         List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(maps);
-        List<BulkMaterial> productList = MaterialConverter.convertProductBulkMaterialDOList(bulkMaterialDOList);
+        List<BulkMaterial> productList = ConverterUtil.convertList(bulkMaterialDOList, BulkMaterial.class);
         Page<BulkMaterial> page = new Page<>(productList, totalCount, bulkMaterialQueryParam.getPageNo(), bulkMaterialQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);

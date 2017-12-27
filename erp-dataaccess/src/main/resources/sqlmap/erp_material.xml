@@ -14,6 +14,7 @@
 		<result column="material_model_id" jdbcType="INTEGER" property="materialModelId" />
 		<result column="material_model_name" jdbcType="VARCHAR" property="materialModelName" />
 		<result column="brand_id" jdbcType="INTEGER" property="brandId" />
+		<result column="brand_name" jdbcType="VARCHAR" property="brandName" />
 		<result column="stock" jdbcType="INTEGER" property="stock"/>
 		<result column="is_rent" jdbcType="INTEGER" property="isRent"/>
 		<result column="material_price" jdbcType="DECIMAL" property="materialPrice" />
@@ -61,9 +62,13 @@
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
 			select
-			<include refid="column_List"/>,emm.model_name AS material_model_name
+			<include refid="column_List"/>
+			<trim prefix=",">
+				emm.model_name AS material_model_name, eb.brand_name as brand_name
+			</trim>
 			from erp_material em
 			LEFT JOIN erp_material_model emm ON em.material_model_id = emm.id
+			LEFT JOIN erp_brand eb ON eb.id = em.brand_id
 			where em.id = #{id, jdbcType=INTEGER} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
@@ -72,9 +77,13 @@
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
 			select
-			<include refid="column_List"/>,emm.model_name AS material_model_name
+			<include refid="column_List"/>
+			<trim prefix=",">
+				emm.model_name AS material_model_name, eb.brand_name as brand_name
+			</trim>
 			from erp_material em
 			LEFT JOIN erp_material_model emm ON em.material_model_id = emm.id
+			LEFT JOIN erp_brand eb ON eb.id = em.brand_id
 			where em.material_no = #{materialNo, jdbcType=INTEGER} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
@@ -83,9 +92,13 @@
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
 			select
-			<include refid="column_List"/>,emm.model_name AS material_model_name
+			<include refid="column_List"/>
+			<trim prefix=",">
+				emm.model_name AS material_model_name, eb.brand_name as brand_name
+			</trim>
 			from erp_material em
 			LEFT JOIN erp_material_model emm ON em.material_model_id = emm.id
+			LEFT JOIN erp_brand eb ON eb.id = em.brand_id
 			where em.material_type = #{materialType, jdbcType=INTEGER} and em.material_capacity_value = #{materialCapacityValue, jdbcType=DOUBLE} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
@@ -95,8 +108,12 @@
 		(
 			select
 			<include refid="column_List"/>
+			<trim prefix=",">
+				emm.model_name AS material_model_name, eb.brand_name as brand_name
+			</trim>
 			from erp_material em
 			LEFT JOIN erp_material_model emm ON em.material_model_id = emm.id
+			LEFT JOIN erp_brand eb ON eb.id = em.brand_id
 			where em.material_type = #{materialType, jdbcType=INTEGER} and em.material_model_id = #{materialModelId, jdbcType=INTEGER} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
@@ -138,9 +155,13 @@
 	<select id="listPage" resultMap="MaterialDO" parameterType="map">
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
-			SELECT <include refid="column_List"/>,emm.model_name AS material_model_name
+			SELECT <include refid="column_List"/>
+			<trim prefix=",">
+				emm.model_name AS material_model_name, eb.brand_name as brand_name
+			</trim>
 			FROM erp_material em
 			LEFT JOIN erp_material_model emm ON em.material_model_id = emm.id
+			LEFT JOIN erp_brand eb ON eb.id = em.brand_id
 			<where>
 				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialType != null &amp;&amp; maps.materialQueryParam.materialType != ''">
 					and em.material_type = #{maps.materialQueryParam.materialType, jdbcType=INTEGER}
