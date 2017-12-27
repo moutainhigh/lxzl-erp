@@ -13,6 +13,7 @@ public class CustomerAccount implements Serializable {
 	private String customerNo;   //客户ID
 	private BigDecimal balanceAmount;   //用户可用余额
 	private BigDecimal totalFrozenAmount;   //总冻结金额
+	private BigDecimal rentDepositAmount;   //租金押金金额
 	private BigDecimal depositAmount;   //押金金额
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -92,4 +93,11 @@ public class CustomerAccount implements Serializable {
 		this.updateTime = updateTime;
 	}
 
+	public BigDecimal getRentDepositAmount() {
+		return rentDepositAmount;
+	}
+
+	public void setRentDepositAmount(BigDecimal rentDepositAmount) {
+		this.rentDepositAmount = rentDepositAmount;
+	}
 }
