@@ -4,9 +4,11 @@ import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Map;
-
+@Repository
 public interface CustomerConsignInfoMapper extends BaseMysqlDAO<CustomerConsignInfoDO> {
 
 	List<CustomerConsignInfoDO> listPage(@Param("maps") Map<String, Object> paramMap);

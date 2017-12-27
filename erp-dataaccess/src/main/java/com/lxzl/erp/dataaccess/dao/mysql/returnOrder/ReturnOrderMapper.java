@@ -3,9 +3,11 @@ package com.lxzl.erp.dataaccess.dao.mysql.returnOrder;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderDO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Map;
-
+@Repository
 public interface ReturnOrderMapper extends BaseMysqlDAO<ReturnOrderDO> {
 
 	List<ReturnOrderDO> listPage(@Param("maps") Map<String, Object> paramMap);

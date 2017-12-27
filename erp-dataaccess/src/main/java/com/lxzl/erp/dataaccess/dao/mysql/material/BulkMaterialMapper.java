@@ -3,10 +3,11 @@ package com.lxzl.erp.dataaccess.dao.mysql.material;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
-
+@Repository
 public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
 
     Integer saveList(@Param("bulkMaterialDOList") List<BulkMaterialDO> bulkMaterialDOList);
