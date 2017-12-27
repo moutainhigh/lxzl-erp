@@ -21,6 +21,7 @@ public class MaterialDO extends BaseDO {
     private Double materialCapacityValue;
     private Integer materialModelId;
     private Integer brandId;
+    private String brandName;
     private Integer isRent;
     private BigDecimal materialPrice;
     private Integer stock;
@@ -214,5 +215,13 @@ public class MaterialDO extends BaseDO {
 
     public void setIsConsumable(Integer isConsumable) {
         this.isConsumable = isConsumable;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
     }
 }

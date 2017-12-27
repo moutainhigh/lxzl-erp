@@ -25,6 +25,7 @@ public class Material implements Serializable {
     private String materialName;   //物料名称，取属性与属性值全称
     private Integer materialType;   //物料类型
     private Integer brandId;   //所属品牌ID
+    private String brandName;   //所属品牌名称
     private BigDecimal materialPrice;   //物料本身的价值(单价)
     private Double materialCapacityValue;   //物料字面量
     private Integer materialModelId;    // 物料型号ID
@@ -257,5 +258,13 @@ public class Material implements Serializable {
 
     public void setIsConsumable(Integer isConsumable) {
         this.isConsumable = isConsumable;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
     }
 }

@@ -13,10 +13,7 @@ import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.material.pojo.MaterialImg;
 import com.lxzl.erp.common.domain.material.pojo.MaterialModel;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.FileUtil;
-import com.lxzl.erp.common.util.GenerateNoUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.MaterialConverter;
@@ -400,7 +397,7 @@ public class MaterialServiceImpl implements MaterialService {
 
         Integer totalCount = bulkMaterialMapper.listCount(maps);
         List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(maps);
-        List<BulkMaterial> productList = MaterialConverter.convertProductBulkMaterialDOList(bulkMaterialDOList);
+        List<BulkMaterial> productList = ConverterUtil.convertList(bulkMaterialDOList, BulkMaterial.class);
         Page<BulkMaterial> page = new Page<>(productList, totalCount, bulkMaterialQueryParam.getPageNo(), bulkMaterialQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
