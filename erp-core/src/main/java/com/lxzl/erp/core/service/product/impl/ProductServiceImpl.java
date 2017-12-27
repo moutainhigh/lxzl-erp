@@ -137,6 +137,12 @@ public class ProductServiceImpl implements ProductService {
             result.setErrorCode(errorCode);
             return result;
         }
+        errorCode = saveProductMaterial(productId, loginUser, currentTime);
+        if (!ErrorCode.SUCCESS.equals(errorCode)) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 商品物料未保存成功
+            result.setErrorCode(errorCode);
+            return result;
+        }
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(productId);
@@ -172,6 +178,12 @@ public class ProductServiceImpl implements ProductService {
         errorCode = saveProductProperties(product.getProductPropertyList(), productId, loginUser, currentTime);
         if (!ErrorCode.SUCCESS.equals(errorCode)) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 商品属性未保存成功回滚
+            result.setErrorCode(errorCode);
+            return result;
+        }
+        errorCode = saveProductMaterial(productId, loginUser, currentTime);
+        if (!ErrorCode.SUCCESS.equals(errorCode)) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 商品物料未保存成功
             result.setErrorCode(errorCode);
             return result;
         }
@@ -411,7 +423,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         ProductDO productDO = productMapper.findByProductId(productId);
-        if(productDO == null){
+        if (productDO == null) {
             result.setErrorCode(ErrorCode.PRODUCT_NOT_EXISTS);
             return result;
         }
@@ -561,7 +573,7 @@ public class ProductServiceImpl implements ProductService {
         // 存储没有容量的物料，key为类型，value就一个物料
         Map<Integer, MaterialDO> materialDOParamMap = new HashMap<>();
 
-        if(CollectionUtil.isNotEmpty(productSku.getProductMaterialList())){
+        if (CollectionUtil.isNotEmpty(productSku.getProductMaterialList())) {
             for (ProductMaterial productMaterial : productSku.getProductMaterialList()) {
                 MaterialDO materialDO = materialMapper.findByNo(productMaterial.getMaterialNo());
                 if (materialDO == null) {
@@ -909,6 +921,34 @@ public class ProductServiceImpl implements ProductService {
         return ErrorCode.SUCCESS;
     }
 
+    String saveProductMaterial(Integer productId, User loginUser, Date currentTime) {
+        List<ProductMaterialDO> dbProductMaterialDOList = productMaterialMapper.findByProductId(productId);
+        Map<Integer, ProductMaterialDO> dbProductMaterialDOMap = ListUtil.listToMap(dbProductMaterialDOList, "id");
+        // SKU物料
+        List<ProductSkuDO> dbSkuRecord = productSkuMapper.findByProductId(productId);
+        if (CollectionUtil.isNotEmpty(dbSkuRecord)) {
+            for (ProductSkuDO productSkuDO : dbSkuRecord) {
+                if (CollectionUtil.isNotEmpty(productSkuDO.getProductSkuPropertyDOList())) {
+                    for (ProductSkuPropertyDO productSkuPropertyDO : productSkuDO.getProductSkuPropertyDOList()) {
+                        Integer saveId = saveProductMaterial(productId, productSkuDO.getId(), productSkuPropertyDO.getPropertyValueId(), loginUser, currentTime);
+                        dbProductMaterialDOMap.remove(saveId);
+                    }
+                }
+            }
+        }
+
+        // 商品物料
+        List<ProductSkuPropertyDO> dbProductSkuPropertyRecord = productSkuPropertyMapper.findProductProperties(productId);
+        for (ProductSkuPropertyDO productSkuPropertyDO : dbProductSkuPropertyRecord) {
+            Integer saveId = saveProductMaterial(productId, productSkuPropertyDO.getSkuId(), productSkuPropertyDO.getPropertyValueId(), loginUser, currentTime);
+            dbProductMaterialDOMap.remove(saveId);
+        }
+        if (dbProductMaterialDOMap != null && dbProductMaterialDOMap.size() != 0) {
+            removeProductMaterial(dbProductMaterialDOMap, loginUser, currentTime);
+        }
+        return ErrorCode.SUCCESS;
+    }
+
     void saveSkuProperties(List<ProductSkuProperty> productSkuPropertyList, Integer productId, Integer skuId, Integer operationType, User loginUser, Date currentTime) {
         if (CollectionUtil.isEmpty(productSkuPropertyList)) {
             return;
@@ -930,10 +970,8 @@ public class ProductServiceImpl implements ProductService {
                 productSkuPropertyDO.setCreateTime(currentTime);
                 productSkuPropertyDO.setUpdateTime(currentTime);
                 productSkuPropertyMapper.save(productSkuPropertyDO);
-                saveProductMaterial(productId, skuId, productSkuPropertyDO.getPropertyValueId(), loginUser, currentTime);
             } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(operationType)) {
                 deleteProductSkuPropertyDO(productSkuPropertyDO, loginUser, currentTime);
-                deleteProductMaterial(skuId, productSkuPropertyDO.getPropertyValueId(), loginUser, currentTime);
             }
         }
     }
@@ -946,7 +984,7 @@ public class ProductServiceImpl implements ProductService {
      * @param loginUser              登录人
      * @param currentTime            当前时间
      */
-    public void saveProductMaterial(Integer productId, Integer skuId, Integer productPropertyValueId, User loginUser, Date currentTime) {
+    public Integer saveProductMaterial(Integer productId, Integer skuId, Integer productPropertyValueId, User loginUser, Date currentTime) {
         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productPropertyValueId);
         MaterialDO materialDO;
         if (productCategoryPropertyValueDO.getPropertyCapacityValue() != null) {
@@ -956,7 +994,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         if (materialDO == null) {
-            return;
+            return null;
         }
 
         ProductMaterialDO dbProductMaterialDO = productMaterialMapper.findBySkuAndMaterial(skuId, materialDO.getId());
@@ -972,24 +1010,24 @@ public class ProductServiceImpl implements ProductService {
             productMaterialDO.setCreateTime(currentTime);
             productMaterialDO.setUpdateTime(currentTime);
             productMaterialMapper.save(productMaterialDO);
+            return productMaterialDO.getId();
         }
+
+        return dbProductMaterialDO.getId();
     }
 
-    public void deleteProductMaterial(Integer skuId, Integer productPropertyValueId, User loginUser, Date currentTime) {
-        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = productCategoryPropertyValueMapper.findById(productPropertyValueId);
-
-        MaterialDO materialDO;
-        if (productCategoryPropertyValueDO.getPropertyCapacityValue() != null) {
-            materialDO = materialMapper.findByMaterialTypeAndCapacity(productCategoryPropertyValueDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
-        } else {
-            materialDO = materialMapper.findByMaterialTypeAndModelId(productCategoryPropertyValueDO.getMaterialType(), productCategoryPropertyValueDO.getMaterialModelId());
-        }
-        ProductMaterialDO productMaterialDO = productMaterialMapper.findBySkuAndMaterial(skuId, materialDO.getId());
-        if (productMaterialDO != null) {
-            productMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-            productMaterialDO.setUpdateUser(loginUser.getUserId().toString());
-            productMaterialDO.setUpdateTime(currentTime);
-            productMaterialMapper.update(productMaterialDO);
+    /**
+     * 移除商品物料
+     */
+    private void removeProductMaterial(Map<Integer, ProductMaterialDO> dbProductMaterialDOMap, User loginUser, Date currentTime) {
+        if (dbProductMaterialDOMap != null && dbProductMaterialDOMap.size() > 0) {
+            for (Map.Entry<Integer, ProductMaterialDO> entry : dbProductMaterialDOMap.entrySet()) {
+                ProductMaterialDO productMaterialDO = entry.getValue();
+                productMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                productMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+                productMaterialDO.setUpdateTime(currentTime);
+                productMaterialMapper.update(productMaterialDO);
+            }
         }
     }
 

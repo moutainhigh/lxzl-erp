@@ -18,4 +18,6 @@ public interface ProductMaterialMapper extends BaseMysqlDAO<ProductMaterialDO> {
                                            @Param("materialId") Integer materialId);
 
     List<ProductMaterialDO> findBySkuId(@Param("productSkuId") Integer productSkuId);
+
+    List<ProductMaterialDO> findByProductId(@Param("productId") Integer productId);
 }

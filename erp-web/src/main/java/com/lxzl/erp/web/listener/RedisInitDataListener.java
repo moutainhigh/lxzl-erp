@@ -10,9 +10,6 @@ import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.dataaccess.dao.redis.RedisManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
