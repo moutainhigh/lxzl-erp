@@ -53,7 +53,7 @@ public interface PurchaseOrderService extends VerifyReceiver {
 
     ServiceResult<String,List<PurchaseReceiveOrderMaterialPrice>> getPurchaseReceiveMaterialPriceList(PurchaseReceiveOrderMaterial purchaseReceiveOrderMaterial);
 
-    ServiceResult<String,String> updateReceiveMaterialRemark(UpdateReceiveMaterialRemarkParam updateReceiveMaterialRemarkParam);
-
     ServiceResult<String,Integer> updatePurchaseReceiveMaterialPrice(UpdatePurchaseReceiveMaterialPriceParam updatePurchaseReceiveMaterialPriceParam);
+
+    ServiceResult<String,String> updatePurchaseReceiveMaterialRemark(UpdateReceiveMaterialRemarkParam updateReceiveMaterialRemarkParam);
 }

@@ -839,7 +839,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void confirmPurchaseReceiveOrder() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
-        purchaseReceiveOrder.setPurchaseReceiveNo("PR2017122610310135960001631435");
+        purchaseReceiveOrder.setPurchaseReceiveNo("PR2017122709572487360001701666");
         TestResult testResult = getJsonTestResult("/purchaseOrder/confirmPurchaseReceiveOrder",purchaseReceiveOrder);
     }
 
@@ -876,7 +876,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryPurchaseReceiveOrderByNo() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
-        purchaseReceiveOrder.setPurchaseReceiveNo("PR2017122709365628460001691607");
+        purchaseReceiveOrder.setPurchaseReceiveNo("PR2017122709572487360001701666");
         TestResult testResult = getJsonTestResult("/purchaseOrder/queryPurchaseReceiveOrderByNo",purchaseReceiveOrder);
     }
     @Test
@@ -894,7 +894,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pageReceiveOrderProductEquipment() throws Exception {
         PurchaseReceiveOrderProductEquipmentPageParam purchaseReceiveOrderProductEquipmentPageParam = new PurchaseReceiveOrderProductEquipmentPageParam();
-        purchaseReceiveOrderProductEquipmentPageParam.setPurchaseReceiveOrderProductId(210);
+        purchaseReceiveOrderProductEquipmentPageParam.setPurchaseReceiveOrderProductId(212);
         TestResult testResult = getJsonTestResult("/purchaseOrder/pageReceiveOrderProductEquipment",purchaseReceiveOrderProductEquipmentPageParam);
     }
     @Test

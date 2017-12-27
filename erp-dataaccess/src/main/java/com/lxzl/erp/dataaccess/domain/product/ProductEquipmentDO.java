@@ -34,6 +34,8 @@ public class ProductEquipmentDO extends BaseDO {
 
     @Transient
     private String productName;
+    @Transient
+    private BigDecimal srcPurchasePrice;
 
     public Integer getId() {
         return id;
@@ -203,4 +205,11 @@ public class ProductEquipmentDO extends BaseDO {
         this.purchasePrice = purchasePrice;
     }
 
+    public BigDecimal getSrcPurchasePrice() {
+        return srcPurchasePrice;
+    }
+
+    public void setSrcPurchasePrice(BigDecimal srcPurchasePrice) {
+        this.srcPurchasePrice = srcPurchasePrice;
+    }
 }

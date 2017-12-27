@@ -1642,7 +1642,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> updateReceiveMaterialRemark(UpdateReceiveMaterialRemarkParam updateReceiveMaterialRemarkParam) {
+    public ServiceResult<String, String> updatePurchaseReceiveMaterialRemark(UpdateReceiveMaterialRemarkParam updateReceiveMaterialRemarkParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         PurchaseReceiveOrderDO purchaseReceiveOrderDO = purchaseReceiveOrderMapper.findAllByNo(updateReceiveMaterialRemarkParam.getPurchaseReceiveOrderNo());
         if(purchaseReceiveOrderDO==null){
@@ -1911,6 +1911,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 purchaseReceiveOrderProductDO.setProductSkuId(purchaseDeliveryOrderProductDO.getProductSkuId());
                 purchaseReceiveOrderProductDO.setProductSnapshot(purchaseDeliveryOrderProductDO.getProductSnapshot());
                 purchaseReceiveOrderProductDO.setProductCount(purchaseDeliveryOrderProductDO.getProductCount());
+                purchaseReceiveOrderProductDO.setProductAmount(purchaseDeliveryOrderProductDO.getProductAmount());
                 purchaseReceiveOrderProductDO.setRealProductId(purchaseDeliveryOrderProductDO.getProductId());
                 purchaseReceiveOrderProductDO.setRealProductName(purchaseDeliveryOrderProductDO.getProductName());
                 purchaseReceiveOrderProductDO.setRealProductSkuId(purchaseDeliveryOrderProductDO.getProductSkuId());
@@ -1940,6 +1941,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 purchaseReceiveOrderMaterialDO.setMaterialName(purchaseDeliveryOrderMaterialDO.getMaterialName());
                 purchaseReceiveOrderMaterialDO.setMaterialSnapshot(purchaseDeliveryOrderMaterialDO.getMaterialSnapshot());
                 purchaseReceiveOrderMaterialDO.setMaterialCount(purchaseDeliveryOrderMaterialDO.getMaterialCount());
+                purchaseReceiveOrderMaterialDO.setMaterialAmount(purchaseDeliveryOrderMaterialDO.getMaterialAmount());
                 purchaseReceiveOrderMaterialDO.setRealMaterialId(purchaseDeliveryOrderMaterialDO.getMaterialId());
                 purchaseReceiveOrderMaterialDO.setRealMaterialName(purchaseDeliveryOrderMaterialDO.getMaterialName());
                 purchaseReceiveOrderMaterialDO.setRealMaterialSnapshot(purchaseDeliveryOrderMaterialDO.getMaterialSnapshot());

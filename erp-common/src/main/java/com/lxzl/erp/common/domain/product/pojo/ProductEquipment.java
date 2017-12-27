@@ -44,6 +44,7 @@ public class ProductEquipment implements Serializable {
     private String ownerWarehouseName;  //归属仓库名称
     private String currentWarehouseName;  //目前仓库名称
     private String productName;  //商品名称
+    private BigDecimal srcPurchasePrice;
 
     public Integer getProductEquipmentId() {
         return productEquipmentId;
@@ -211,5 +212,13 @@ public class ProductEquipment implements Serializable {
 
     public void setPurchasePrice(BigDecimal purchasePrice) {
         this.purchasePrice = purchasePrice;
+    }
+
+    public BigDecimal getSrcPurchasePrice() {
+        return srcPurchasePrice;
+    }
+
+    public void setSrcPurchasePrice(BigDecimal srcPurchasePrice) {
+        this.srcPurchasePrice = srcPurchasePrice;
     }
 }

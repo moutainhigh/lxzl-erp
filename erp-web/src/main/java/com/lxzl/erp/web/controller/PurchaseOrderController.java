@@ -236,9 +236,9 @@ public class PurchaseOrderController {
      * @param validResult
      * @return
      */
-    @RequestMapping(value = "updateReceiveMaterialRemark", method = RequestMethod.POST)
-    public Result updateReceiveMaterialRemark(@RequestBody @Validated(IdGroup.class) UpdateReceiveMaterialRemarkParam updateReceiveMaterialRemarkParam, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = purchaseOrderService.updateReceiveMaterialRemark(updateReceiveMaterialRemarkParam);
+    @RequestMapping(value = "updatePurchaseReceiveMaterialRemark", method = RequestMethod.POST)
+    public Result updatePurchaseReceiveMaterialRemark(@RequestBody @Validated(IdGroup.class) UpdateReceiveMaterialRemarkParam updateReceiveMaterialRemarkParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = purchaseOrderService.updatePurchaseReceiveMaterialRemark(updateReceiveMaterialRemarkParam);
         return resultGenerator.generate(serviceResult);
     }
     /**
