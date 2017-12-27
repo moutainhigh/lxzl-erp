@@ -124,6 +124,9 @@
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.currentWarehouseId != null &amp;&amp; maps.bulkMaterialQueryParam.currentWarehouseId != ''">
 				AND ebm.current_warehouse_id = #{maps.bulkMaterialQueryParam.currentWarehouseId, jdbcType=INTEGER}
 			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialStatus != null &amp;&amp; maps.bulkMaterialQueryParam.bulkMaterialStatus != ''">
+				AND ebm.bulk_material_status = #{maps.bulkMaterialQueryParam.bulkMaterialStatus, jdbcType=INTEGER}
+			</if>
 			<if test='maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.isOnEquipment != null &amp;&amp; maps.bulkMaterialQueryParam.isOnEquipment == 1'>
 				AND ebm.current_equipment_id IS NOT NULL
 			</if>
@@ -132,6 +135,9 @@
 			</if>
 			<if test="maps.materialId != null">
 				and ebm.material_id = #{maps.materialId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.isNew != null">
+				and ebm.is_new = #{maps.bulkMaterialQueryParam.isNew, jdbcType=INTEGER}
 			</if>
 			<if test="true">
 				AND ebm.data_status = 1
@@ -175,6 +181,9 @@
 			</if>
 			<if test='maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.isOnEquipment != null &amp;&amp; maps.bulkMaterialQueryParam.isOnEquipment == 0'>
 				AND ebm.current_equipment_id IS NULL
+			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.isNew != null">
+				and ebm.is_new = #{maps.bulkMaterialQueryParam.isNew, jdbcType=INTEGER}
 			</if>
 			<if test="maps.materialId != null">
 				and ebm.material_id = #{maps.materialId, jdbcType=INTEGER}

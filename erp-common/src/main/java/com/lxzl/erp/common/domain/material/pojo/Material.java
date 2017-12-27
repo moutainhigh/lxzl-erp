@@ -52,6 +52,9 @@ public class Material implements Serializable {
     private Integer canProcessCount;
     private String materialModelName;
 
+    private Integer newMaterialCount;
+    private Integer oldMaterialCount;
+
     public Integer getMaterialId() {
         return materialId;
     }
@@ -266,5 +269,21 @@ public class Material implements Serializable {
 
     public void setBrandName(String brandName) {
         this.brandName = brandName;
+    }
+
+    public Integer getNewMaterialCount() {
+        return newMaterialCount;
+    }
+
+    public void setNewMaterialCount(Integer newMaterialCount) {
+        this.newMaterialCount = newMaterialCount;
+    }
+
+    public Integer getOldMaterialCount() {
+        return oldMaterialCount;
+    }
+
+    public void setOldMaterialCount(Integer oldMaterialCount) {
+        this.oldMaterialCount = oldMaterialCount;
     }
 }

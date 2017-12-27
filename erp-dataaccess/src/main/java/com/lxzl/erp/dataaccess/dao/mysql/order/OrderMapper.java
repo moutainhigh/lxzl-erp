@@ -5,6 +5,7 @@ import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 @Repository
@@ -16,4 +17,6 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     Integer findOrderCountByParams(@Param("maps") Map<String, Object> paramMap);
     List<OrderDO> findOrderByParams(@Param("maps") Map<String, Object> paramMap);
     void updateListForReturn(@Param("orderDOList") List<OrderDO> orderDOList);
+
+    List<Map<String,Object>> querySubCompanyOrderAmount(@Param("maps") Map<String, Object> paramMap);
 }

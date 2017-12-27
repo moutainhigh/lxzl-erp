@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,13 +43,25 @@ public class StatisticsServiceImpl implements StatisticsService {
         BigDecimal totalRentAmount = BigDecimal.ZERO;
         statisticsIndexInfo.setTotalRentAmount(totalRentAmount);
 
+        Map<String, Object> params = new HashMap<>();
+        List<Map<String, Object>> subCompanyRentAmountList = orderMapper.querySubCompanyOrderAmount(params);
+        Map<String, BigDecimal> subCompanyRentAmount = new HashMap<>();
+        for (Map<String, Object> subCompanyRentAmountMap : subCompanyRentAmountList) {
+            if (subCompanyRentAmountMap.get("total_order_amount") != null && subCompanyRentAmountMap.get("total_order_amount") instanceof BigDecimal) {
+                subCompanyRentAmount.put(subCompanyRentAmountMap.get("sub_company_name").toString(), (BigDecimal) subCompanyRentAmountMap.get("total_order_amount"));
+            } else {
+                subCompanyRentAmount.put(subCompanyRentAmountMap.get("sub_company_name").toString(), BigDecimal.ZERO);
+            }
+        }
+        statisticsIndexInfo.setSubCompanyRentAmount(subCompanyRentAmount);
+
+        Map<Integer, BigDecimal> monthRentAmount = new HashMap<>();
+        statisticsIndexInfo.setMonthRentAmount(monthRentAmount);
+
         result.setResult(statisticsIndexInfo);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
-
-    @Autowired
-    private OrderMapper orderMapper;
 
     @Autowired
     private CustomerMapper customerMapper;
@@ -58,4 +71,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Autowired
     private ProductEquipmentMapper productEquipmentMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
 }
