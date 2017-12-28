@@ -133,44 +133,25 @@ public class ConverterUtil {
                     }
 
                 }
-                Class parentDOClazz =o.getClass().getSuperclass();
-                Class parentPOClazz =clazz.getSuperclass();
-                Field[] baseDOFields = parentDOClazz.getDeclaredFields();
-                Field[] basePOFields = parentPOClazz.getDeclaredFields();
-                Map<String,Field> poFieldMap = new HashMap<>();
-                for(Field field : basePOFields){
-                    poFieldMap.put(field.getName(),field);
+                try{
+                    Class parentDOClazz =o.getClass().getSuperclass();
+                    Class parentPOClazz =clazz.getSuperclass();
+                    Field doField = parentDOClazz.getDeclaredField("createUser");
+                    Field poField = parentPOClazz.getDeclaredField("createUserRealName");
+                    Object createUserId = doField.get(o);
+                    setName(createUserId,poField,t);
+                }catch(Exception e){
+                    logger.error("======================="+o.getClass().getName()+"类，createUser字段转换异常========================");
                 }
-                for(Field field : baseDOFields){
-                    field.setAccessible(true);
-                    String fieldName = field.getName();
-                    if("createUser".equals(fieldName)){
-                        Object createUserId = field.get(o);
-                        if(createUserId!=null){
-                            User createUser = CommonCache.userMap.get(Integer.parseInt(createUserId.toString()));
-                            if(createUser!=null){
-                                Field userRealNameField = poFieldMap.get("createUserRealName");
-                                if(userRealNameField!=null){
-                                    userRealNameField.setAccessible(true);
-                                    userRealNameField.set(t,createUser.getRealName());
-                                }
-                            }
-                        }
-
-                    }
-                    if("updateUser".equals(fieldName)){
-                        Object updateUserId = field.get(o);
-                        if(updateUserId!=null){
-                            User updateUser = CommonCache.userMap.get(Integer.parseInt(updateUserId.toString()));
-                            if(updateUser!=null){
-                                Field userRealNameField = poFieldMap.get("updateUserRealName");
-                                if(userRealNameField!=null){
-                                    userRealNameField.setAccessible(true);
-                                    userRealNameField.set(t,updateUser.getRealName());
-                                }
-                            }
-                        }
-                    }
+                try{
+                    Class parentDOClazz =o.getClass().getSuperclass();
+                    Class parentPOClazz =clazz.getSuperclass();
+                    Field doField = parentDOClazz.getDeclaredField("updateUser");
+                    Field poField = parentPOClazz.getDeclaredField("updateUserRealName");
+                    Object updateUserId = doField.get(o);
+                    setName(updateUserId,poField,t);
+                }catch(Exception e){
+                    logger.error("======================="+o.getClass().getName()+"类，updateUser字段转换异常========================");
                 }
                 return t;
             }
@@ -178,6 +159,16 @@ public class ConverterUtil {
             e.printStackTrace();
             logger.error("error:",e);
             throw new BusinessException("数据转换错误");
+        }
+    }
+
+    private static void setName(Object userId,Field field,Object t ) throws IllegalAccessException {
+        if(userId!=null){
+            User user = CommonCache.userMap.get(Integer.parseInt(String.valueOf(userId)));
+            if(user!=null){
+                field.setAccessible(true);
+                field.set(t,user.getRealName());
+            }
         }
     }
     private static Class getWrapClass(String type) throws ClassNotFoundException {

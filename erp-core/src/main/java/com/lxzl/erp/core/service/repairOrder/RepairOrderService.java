@@ -53,7 +53,7 @@ public interface RepairOrderService extends VerifyReceiver {
      * @param repairOrderNo 设备维修单编号
      * @return 设备维修单编号
      */
-    ServiceResult<String,String> cancelRepairOrder(String repairOrderNo);
+    ServiceResult<String,String> cancelRepairOrder(RepairOrder repairOrder);
 
     /**
      * 修改设备维修单

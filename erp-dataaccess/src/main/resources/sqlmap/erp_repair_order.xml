@@ -26,37 +26,37 @@
 	</resultMap>
 
 	<resultMap id="RepairOrderEquipmentDO" type="com.lxzl.erp.dataaccess.domain.repairOrder.RepairOrderEquipmentDO">
-		<id column="id" jdbcType="INTEGER" property="id" />
-		<result column="repair_order_no" jdbcType="VARCHAR" property="repairOrderNo" />
-		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
-		<result column="equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
-		<result column="repair_end_time" jdbcType="TIMESTAMP" property="repairEndTime" />
-		<result column="order_id" jdbcType="INTEGER" property="orderId" />
-		<result column="order_product_id" jdbcType="INTEGER" property="orderProductId" />
-		<result column="remark" jdbcType="VARCHAR" property="remark" />
-		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
-		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
-		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
-		<result column="repair_end_remark" jdbcType="VARCHAR" property="repairEndRemark" />
+		<id column="eroe_id" jdbcType="INTEGER" property="id" />
+		<result column="eroe_repairOrderNo" jdbcType="VARCHAR" property="repairOrderNo" />
+		<result column="eroe_equipmentId" jdbcType="INTEGER" property="equipmentId" />
+		<result column="eroe_equipmentNo" jdbcType="VARCHAR" property="equipmentNo" />
+		<result column="eroe_repairEndTime" jdbcType="TIMESTAMP" property="repairEndTime" />
+		<result column="eroe_dataStatus" jdbcType="INTEGER" property="dataStatus" />
+		<result column="eroe_orderId" jdbcType="INTEGER" property="orderId" />
+		<result column="eroe_orderProductId" jdbcType="VARCHAR" property="orderProductId" />
+		<result column="eroe_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="eroe_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="eroe_createUser" jdbcType="VARCHAR" property="createUser" />
+		<result column="eroe_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="eroe_updateUser" jdbcType="VARCHAR" property="updateUser" />
+		<result column="eroe_repairEndRemark" jdbcType="VARCHAR" property="repairEndRemark" />
 	</resultMap>
 
 	<resultMap id="RepairOrderBulkMaterialDO" type="com.lxzl.erp.dataaccess.domain.repairOrder.RepairOrderBulkMaterialDO">
-		<id column="id" jdbcType="INTEGER" property="id" />
-		<result column="repair_order_no" jdbcType="VARCHAR" property="repairOrderNo" />
-		<result column="bulk_material_id" jdbcType="INTEGER" property="bulkMaterialId" />
-		<result column="bulk_material_no" jdbcType="VARCHAR" property="bulkMaterialNo" />
-		<result column="repair_end_time" jdbcType="TIMESTAMP" property="repairEndTime" />
-		<result column="order_id" jdbcType="INTEGER" property="orderId" />
-		<result column="order_material_id" jdbcType="INTEGER" property="orderMaterialId" />
-		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
-		<result column="remark" jdbcType="VARCHAR" property="remark" />
-		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
-		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
-		<result column="repair_end_remark" jdbcType="VARCHAR" property="repairEndRemark" />
+		<id column="erobm_id" jdbcType="INTEGER" property="id" />
+		<result column="erobm_repairOrderNo" jdbcType="VARCHAR" property="repairOrderNo" />
+		<result column="erobm_bulkMaterialId" jdbcType="INTEGER" property="bulkMaterialId" />
+		<result column="erobm_bulkMaterialNo" jdbcType="VARCHAR" property="bulkMaterialNo" />
+		<result column="erobm_repairEndTime" jdbcType="TIMESTAMP" property="repairEndTime" />
+		<result column="erobm_orderId" jdbcType="INTEGER" property="orderId" />
+		<result column="erobm_orderMaterialId" jdbcType="INTEGER" property="orderMaterialId" />
+		<result column="erobm_dataStatus" jdbcType="INTEGER" property="dataStatus" />
+		<result column="erobm_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="erobm_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="erobm_createUser" jdbcType="VARCHAR" property="createUser" />
+		<result column="erobm_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="erobm_updateUser" jdbcType="VARCHAR" property="updateUser" />
+		<result column="erobm_repairEndRemark" jdbcType="VARCHAR" property="repairEndRemark" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -64,11 +64,11 @@
 	</sql>
 
 	<sql id="equipment_column_List">
-		eroe.id,eroe.repair_order_no,eroe.equipment_id,eroe.equipment_no,eroe.repair_end_time,eroe.data_status,eroe.order_id,eroe.order_product_id,eroe.remark,eroe.create_time,eroe.create_user,eroe.update_time,eroe.update_user,ero.repair_end_remark
+		eroe.id as eroe_id,eroe.repair_order_no as eroe_repairOrderNo,eroe.equipment_id as eroe_equipmentId,eroe.equipment_no as eroe_equipmentNo,eroe.repair_end_time as eroe_repairEndTime,eroe.data_status as eroe_dataStatus,eroe.order_id as eroe_orderId,eroe.order_product_id as eroe_orderProductId,eroe.remark as eroe_remark,eroe.create_time as eroe_createTime,eroe.create_user as eroe_createUser,eroe.update_time as eroe_updateTime,eroe.update_user as eroe_updateUser,eroe.repair_end_remark as eroe_repairEndRemark
 	</sql>
 
-	<sql id="bulkmaterial_column_List">
-		erobm.id,erobm.repair_order_no,erobm.bulk_material_id,erobm.bulk_material_no,erobm.repair_end_time,erobm.order_id,erobm.order_material_id,erobm.data_status,erobm.remark,erobm.create_time,erobm.create_user,erobm.update_time,erobm.update_user,ero.repair_end_remark
+	<sql id="bulk_material_column_List">
+		erobm.id as erobm_id,erobm.repair_order_no as erobm_repairOrderNo,erobm.bulk_material_id as erobm_bulkMaterialId,erobm.bulk_material_no as erobm_bulkMaterialNo,erobm.repair_end_time as erobm_repairEndTime,erobm.order_id as erobm_orderId,erobm.order_material_id as erobm_orderMaterialId,erobm.data_status as erobm_dataStatus,erobm.remark as erobm_remark,erobm.create_time as erobm_createTime,erobm.create_user as erobm_createUser,erobm.update_time as erobm_updateTime,erobm.update_user as erobm_updateUser,erobm.repair_end_remark as erobm_repairEndRemark
 	</sql>
 
 	<select id="findById" resultMap="RepairOrderDO" parameterType="java.lang.Integer">
@@ -79,12 +79,6 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ero.id) FROM erp_repair_order ero
 		<where>
-			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
-				<![CDATA[ AND ero.create_time >= #{maps.queryParam.createStartTime} ]]>
-			</if>
-			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
-				<![CDATA[ AND ero.create_time <= #{maps.queryParam.createEndTime} ]]>
-			</if>
 			<if test="true">
 				AND ero.data_status = 1
 			</if>
@@ -160,7 +154,7 @@
 	</update>
 
 	<select id="findByRepairOrderNo" resultMap="RepairOrderDO" parameterType="java.lang.String">
-		SELECT <include refid="column_List"/>,<include refid="equipment_column_List"/>,<include refid="bulkmaterial_column_List"/>,ew.warehouse_name
+		SELECT <include refid="column_List"/>,<include refid="equipment_column_List"/>,<include refid="bulk_material_column_List"/>,ew.warehouse_name
 		from (
 		SELECT <include refid="column_List"/> from erp_repair_order ero
 		WHERE ero.repair_order_no = #{repairOrderNo,jdbcType=VARCHAR} and ero.data_status = 1
@@ -235,5 +229,9 @@
 		</where>
 		ORDER BY ero.create_time DESC
 		limit #{maps.start},#{maps.pageSize}
+	</select>
+
+	<select id="findRepairOrderCountByDate" resultType="java.lang.Integer">
+		<![CDATA[ SELECT COUNT(1) FROM erp_repair_order WHERE create_time > #{firstdayDate} AND create_time < #{lastdayDate} AND data_status = 1]]>
 	</select>
 </mapper>
