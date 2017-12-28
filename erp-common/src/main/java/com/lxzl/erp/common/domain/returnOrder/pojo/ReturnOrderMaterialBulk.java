@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.returnOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 
 import java.io.Serializable;
@@ -8,7 +9,7 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ReturnOrderMaterialBulk implements Serializable {
+public class ReturnOrderMaterialBulk extends BasePO {
 
 	private Integer returnOrderMaterialBulkId;   //唯一标识
 	private Integer returnOrderMaterialId;   //租赁退还物料项ID

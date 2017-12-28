@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.company.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
 
@@ -9,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Department implements Serializable {
+public class Department extends BasePO {
     private Integer departmentId;   //唯一标识
     private String departmentName;   //部门名称
     private Integer departmentType;   //部门类型，对应字典ID

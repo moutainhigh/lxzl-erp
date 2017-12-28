@@ -94,17 +94,15 @@ public class RepairOrderControllerTest extends ERPUnTransactionalTest {
 
         List<RepairOrderEquipment> repairOrderEquipmentList = new ArrayList<>();
         RepairOrderEquipment repairOrderEquipment1 = new RepairOrderEquipment();
-//        repairOrderEquipment1.setRepairOrderEquipmentId(151);
         repairOrderEquipment1.setEquipmentNo("LX-EQUIPMENT-4000002-2017121610001");
         repairOrderEquipment1.setRepairEndTime(new Date());
         //        repairOrderEquipment1.setRemark("update测试备注1");
         repairOrderEquipmentList.add(repairOrderEquipment1);
 
         RepairOrderEquipment repairOrderEquipment2 = new RepairOrderEquipment();
-//        repairOrderEquipment2.setRepairOrderEquipmentId(103);
-//        repairOrderEquipment2.setEquipmentNo("LX-EQUIPMENT-4000002-2017121610007");
-//        repairOrderEquipment2.setRemark("update测试备注2");
-//        repairOrderEquipmentList.add(repairOrderEquipment2);
+        repairOrderEquipment2.setEquipmentNo("LX-EQUIPMENT-4000002-2017121610007");
+        repairOrderEquipment2.setRemark("update测试备注2");
+        repairOrderEquipmentList.add(repairOrderEquipment2);
 
       RepairOrderEquipment repairOrderEquipment3 = new RepairOrderEquipment();
 //        repairOrderEquipment3.setRepairOrderEquipmentId(73);
@@ -117,12 +115,10 @@ public class RepairOrderControllerTest extends ERPUnTransactionalTest {
 
         List<RepairOrderBulkMaterial> repairOrderBulkMaterialList = new ArrayList<>();
         RepairOrderBulkMaterial repairOrderBulkMaterial1 = new RepairOrderBulkMaterial();
-//        repairOrderBulkMaterial1.setRepairOrderBulkMaterialId(76);
         repairOrderBulkMaterial1.setBulkMaterialNo("BM2017121618064454121367");
         repairOrderBulkMaterialList.add(repairOrderBulkMaterial1);
 
 //        RepairOrderBulkMaterial repairOrderBulkMaterial2 = new RepairOrderBulkMaterial();
-//        repairOrderBulkMaterial2.setRepairOrderBulkMaterialId(58);
 //        repairOrderBulkMaterial2.setBulkMaterialNo("BM2017121616120446910272");
 //        repairOrderBulkMaterialList.add(repairOrderBulkMaterial2);
 
@@ -172,23 +168,41 @@ public class RepairOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void fix() throws Exception {
         FixRepairOrderQueryParam fixRepairOrderQueryParam = new FixRepairOrderQueryParam();
-        List<Integer> repairEquipmentIdList = new ArrayList<>();
-        repairEquipmentIdList.add(106);
-        repairEquipmentIdList.add(107);
+        List<RepairOrderEquipment>  repairOrderEquipmentList = new ArrayList<>();
+        RepairOrderEquipment repairOrderEquipment1 = new RepairOrderEquipment();
+        repairOrderEquipment1.setRepairOrderEquipmentId(158);
+        repairOrderEquipment1.setRepairEndRemark("维修完成1");
 
-        List<Integer> repairBulkMaterialIdList = new ArrayList<>();
-        repairBulkMaterialIdList.add(59);
-        repairBulkMaterialIdList.add(60);
+        repairOrderEquipmentList.add(repairOrderEquipment1);
 
-        fixRepairOrderQueryParam.setRepairEquipmentIdList(repairEquipmentIdList);
-        fixRepairOrderQueryParam.setRepairBulkMaterialIdList(repairBulkMaterialIdList);
+        RepairOrderEquipment repairOrderEquipment2 = new RepairOrderEquipment();
+        repairOrderEquipment2.setRepairOrderEquipmentId(159);
+        repairOrderEquipment2.setRepairEndRemark("维修完成2");
+
+        repairOrderEquipmentList.add(repairOrderEquipment2);
+
+
+        List<RepairOrderBulkMaterial> repairOrderBulkMaterialList = new ArrayList<>();
+        RepairOrderBulkMaterial repairOrderBulkMaterial1 = new RepairOrderBulkMaterial();
+        repairOrderBulkMaterial1.setRepairOrderBulkMaterialId(89);
+        repairOrderBulkMaterial1.setRepairEndRemark("维修完成1");
+
+        repairOrderBulkMaterialList.add(repairOrderBulkMaterial1);
+        RepairOrderBulkMaterial repairOrderBulkMaterial2 = new RepairOrderBulkMaterial();
+        repairOrderBulkMaterial2.setRepairOrderBulkMaterialId(90);
+        repairOrderBulkMaterial2.setRepairEndRemark("维修完成2");
+
+        repairOrderBulkMaterialList.add(repairOrderBulkMaterial2);
+
+        fixRepairOrderQueryParam.setRepairOrderEquipmentList(repairOrderEquipmentList);
+        fixRepairOrderQueryParam.setRepairOrderBulkMaterialList(repairOrderBulkMaterialList);
         TestResult result = getJsonTestResult("/repairOrder/fix",fixRepairOrderQueryParam);
     }
 
     @Test
     public void end() throws Exception {
         RepairOrder repairOrder = new RepairOrder();
-        repairOrder.setRepairOrderNo("RE201712191152480581851");
+        repairOrder.setRepairOrderNo("RE201712251737417831752");
         TestResult result = getJsonTestResult("/repairOrder/end",repairOrder);
     }
 

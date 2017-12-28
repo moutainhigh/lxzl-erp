@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.returnOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -10,7 +11,7 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ReturnOrderProduct implements Serializable {
+public class ReturnOrderProduct extends BasePO {
 
     private Integer returnOrderProductId;   //唯一标识
     private Integer returnOrderId;   //退还ID

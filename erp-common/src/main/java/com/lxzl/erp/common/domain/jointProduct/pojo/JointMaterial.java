@@ -1,8 +1,9 @@
-package com.lxzl.erp.common.domain.jointProduct;
+package com.lxzl.erp.common.domain.jointProduct.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.domain.product.pojo.Product;
+import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 
@@ -13,14 +14,15 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JointProductSku implements Serializable {
-    private Integer jointProductSkuId;   //唯一标识
+public class JointMaterial extends BasePO {
+    private Integer jointMaterialId;   //唯一标识
     private Integer jointProductId;   //组合商品ID
-    @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL, groups = {UpdateGroup.class, AddGroup.class})
-    private Integer skuId;   //SKU_ID
-    @Min(value = 1, message = ErrorCode.PRODUCT_SKU_COUNT_ERROR, groups = {AddGroup.class, UpdateGroup.class})
-    @NotNull(message = ErrorCode.PRODUCT_SKU_COUNT_ERROR, groups = {UpdateGroup.class, AddGroup.class})
-    private Integer skuCount;   //sku数量
+    private Integer materialId;   //物料ID
+    @NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
+    private String materialNo;   //物料编号
+    @Min(value = 0, message = ErrorCode.MATERIAL_COUNT_ERROR, groups = {AddGroup.class, UpdateGroup.class})
+    @NotNull(message = ErrorCode.MATERIAL_COUNT_ERROR, groups = {AddGroup.class, UpdateGroup.class})
+    private Integer materialCount;   //物料数量
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注
     private Date createTime;   //添加时间
@@ -28,22 +30,22 @@ public class JointProductSku implements Serializable {
     private Date updateTime;   //修改时间
     private String updateUser;   //修改人
 
-    private Product product;  //sku信息
+    private Material material;  //物料信息
 
-    public Product getProduct() {
-        return product;
+    public Material getMaterial() {
+        return material;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setMaterial(Material material) {
+        this.material = material;
     }
 
-    public Integer getJointProductSkuId() {
-        return jointProductSkuId;
+    public Integer getJointMaterialId() {
+        return jointMaterialId;
     }
 
-    public void setJointProductSkuId(Integer jointProductSkuId) {
-        this.jointProductSkuId = jointProductSkuId;
+    public void setJointMaterialId(Integer jointMaterialId) {
+        this.jointMaterialId = jointMaterialId;
     }
 
     public Integer getJointProductId() {
@@ -54,20 +56,20 @@ public class JointProductSku implements Serializable {
         this.jointProductId = jointProductId;
     }
 
-    public Integer getSkuId() {
-        return skuId;
+    public Integer getMaterialId() {
+        return materialId;
     }
 
-    public void setSkuId(Integer skuId) {
-        this.skuId = skuId;
+    public void setMaterialId(Integer materialId) {
+        this.materialId = materialId;
     }
 
-    public Integer getSkuCount() {
-        return skuCount;
+    public Integer getMaterialCount() {
+        return materialCount;
     }
 
-    public void setSkuCount(Integer skuCount) {
-        this.skuCount = skuCount;
+    public void setMaterialCount(Integer materialCount) {
+        this.materialCount = materialCount;
     }
 
     public Integer getDataStatus() {
@@ -118,4 +120,11 @@ public class JointProductSku implements Serializable {
         this.updateUser = updateUser;
     }
 
+    public String getMaterialNo() {
+        return materialNo;
+    }
+
+    public void setMaterialNo(String materialNo) {
+        this.materialNo = materialNo;
+    }
 }

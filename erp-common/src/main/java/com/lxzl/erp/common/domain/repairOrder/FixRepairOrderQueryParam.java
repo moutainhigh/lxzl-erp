@@ -1,5 +1,8 @@
 package com.lxzl.erp.common.domain.repairOrder;
 
+import com.lxzl.erp.common.domain.repairOrder.pojo.RepairOrderBulkMaterial;
+import com.lxzl.erp.common.domain.repairOrder.pojo.RepairOrderEquipment;
+
 import java.util.List;
 
 /**
@@ -8,23 +11,25 @@ import java.util.List;
  * @Date: Created in 10:26 2017/12/19
  * @Modified By:
  */
+
 public class FixRepairOrderQueryParam {
-    private List<Integer> repairEquipmentIdList;
-    private List<Integer> repairBulkMaterialIdList;
+    //todo 如何进行前端校验
+    private List<RepairOrderEquipment> repairOrderEquipmentList;
+    private List<RepairOrderBulkMaterial> repairOrderBulkMaterialList;
 
-    public List<Integer> getRepairEquipmentIdList() {
-        return repairEquipmentIdList;
+    public List<RepairOrderEquipment> getRepairOrderEquipmentList() {
+        return repairOrderEquipmentList;
     }
 
-    public void setRepairEquipmentIdList(List<Integer> repairEquipmentIdList) {
-        this.repairEquipmentIdList = repairEquipmentIdList;
+    public void setRepairOrderEquipmentList(List<RepairOrderEquipment> repairOrderEquipmentIdList) {
+        this.repairOrderEquipmentList = repairOrderEquipmentIdList;
     }
 
-    public List<Integer> getRepairBulkMaterialIdList() {
-        return repairBulkMaterialIdList;
+    public List<RepairOrderBulkMaterial> getRepairOrderBulkMaterialList() {
+        return repairOrderBulkMaterialList;
     }
 
-    public void setRepairBulkMaterialIdList(List<Integer> repairBulkMaterialIdList) {
-        this.repairBulkMaterialIdList = repairBulkMaterialIdList;
+    public void setRepairOrderBulkMaterialList(List<RepairOrderBulkMaterial> repairOrderBulkMaterialIdList) {
+        this.repairOrderBulkMaterialList = repairOrderBulkMaterialIdList;
     }
 }

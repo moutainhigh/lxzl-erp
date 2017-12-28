@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.changeOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.changeOrder.AddChangeOrderGroup;
 import com.lxzl.erp.common.domain.validGroup.changeOrder.UpdateChangeOrderGroup;
@@ -14,7 +15,7 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ChangeOrderMaterial implements Serializable {
+public class ChangeOrderMaterial  extends BasePO {
 
     @NotNull(message = ErrorCode.CHANGE_ORDER_MATERIAL_ID_NOT_NULL, groups = {ExtendGroup.class})
     private Integer changeOrderMaterialId;   //唯一标识

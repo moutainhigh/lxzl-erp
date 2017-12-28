@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.repairOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import org.hibernate.validator.constraints.NotBlank;
@@ -13,7 +14,7 @@ import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RepairOrder implements Serializable {
+public class RepairOrder extends BasePO {
 
 	private Integer repairOrderId;   //唯一标识
 	@NotBlank(message = ErrorCode.REPAIR_ORDER_NO_IS_NOT_NULL,groups = {IdGroup.class})
@@ -32,6 +33,7 @@ public class RepairOrder implements Serializable {
 	private Integer fixEquipmentCount; //修复设备数量
 	private Integer fixBulkMaterialCount; //修复物料数量
 	private String warehouseNo;//当前仓库编号
+	private String repairEndRemark; //维修完成的备注
 
 
 	private String warehouseName;
@@ -203,5 +205,13 @@ public class RepairOrder implements Serializable {
 
 	public void setWarehouseName(String warehouseName) {
 		this.warehouseName = warehouseName;
+	}
+
+	public String getRepairEndRemark() {
+		return repairEndRemark;
+	}
+
+	public void setRepairEndRemark(String repairEndRemark) {
+		this.repairEndRemark = repairEndRemark;
 	}
 }

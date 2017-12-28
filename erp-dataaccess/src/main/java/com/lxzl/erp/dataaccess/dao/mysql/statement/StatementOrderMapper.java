@@ -19,4 +19,6 @@ public interface StatementOrderMapper extends BaseMysqlDAO<StatementOrderDO> {
                                               @Param("payTime") Date payTime);
 
     StatementOrderDO findByNo(@Param("statementOrderNo") String statementOrderNo);
+    //通过时间查找
+    Integer findStatementOrderCountByDate(@Param("firstdayDate") Date firstdayDate,@Param("lastdayDate") Date lastdayDate);
 }

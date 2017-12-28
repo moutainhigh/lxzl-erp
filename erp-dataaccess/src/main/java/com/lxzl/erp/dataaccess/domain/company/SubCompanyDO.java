@@ -9,6 +9,7 @@ public class SubCompanyDO extends BaseDO{
     private Integer id;
     private String subCompanyName;
     private Integer subCompanyType;
+    private String subCompanyCode;
     private Integer province;
     private Integer city;
     private Integer district;
@@ -21,6 +22,14 @@ public class SubCompanyDO extends BaseDO{
     private String districtName;
 
     private List<DepartmentDO> departmentDOList;
+
+    public String getSubCompanyCode() {
+        return subCompanyCode;
+    }
+
+    public void setSubCompanyCode(String subCompanyCode) {
+        this.subCompanyCode = subCompanyCode;
+    }
 
     public Integer getId() {
         return id;

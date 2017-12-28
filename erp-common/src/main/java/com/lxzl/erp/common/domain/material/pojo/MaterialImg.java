@@ -1,12 +1,14 @@
 package com.lxzl.erp.common.domain.material.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
+
 import java.io.Serializable;
 import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MaterialImg implements Serializable {
+public class MaterialImg extends BasePO {
 
 	private Integer materialImgId;   //图片ID，唯一
 	private Integer imgType;   //图片类型

@@ -14,13 +14,13 @@ import com.lxzl.erp.common.domain.purchase.pojo.*;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.MaterialConverter;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductEquipmentConverter;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
-import com.lxzl.erp.core.service.purchase.impl.support.PurchaseOrderConverter;
 import com.lxzl.erp.core.service.purchase.impl.support.PurchaseOrderSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
@@ -184,8 +184,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     private PurchaseOrderDO buildPurchaseOrder(Date now, PurchaseOrder purchaseOrder, PurchaseOrderDetail purchaseOrderDetail, WarehouseDO warehouseDO) {
         //保存采购单
-        PurchaseOrderDO purchaseOrderDO = PurchaseOrderConverter.convertPurchaseOrder(purchaseOrder);
-
+        PurchaseOrderDO purchaseOrderDO = ConverterUtil.convert(purchaseOrder,PurchaseOrderDO.class);
         //查询库房信息并保存库房快照
         purchaseOrderDO.setWarehouseSnapshot(JSON.toJSONString(WarehouseConverter.convertWarehouseDO(warehouseDO)));
         purchaseOrderDO.setPurchaseOrderAmountTotal(purchaseOrderDetail.totalAmount);
@@ -520,7 +519,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             purchaseOrderDetail.purchaseOrderProductDOList.add(purchaseOrderProductDO);
         }
         //发起者不是总公司 ，并且采购20000元以上全新机，则返回错误
-        if (!isHead && CommonConstant.COMMON_CONSTANT_YES.equals(isNew) && purchaseOrderDetail.totalAmount.compareTo(new BigDecimal(20000)) >= 0) {
+        if (!isHead && CommonConstant.COMMON_CONSTANT_YES.equals(isNew) && purchaseOrderDetail.totalAmount.compareTo(new BigDecimal(20000)) > 0) {
             return ErrorCode.PURCHASE_ORDER_CANNOT_CREATE_BY_NEW_AND_AMOUNT;
         }
         return ErrorCode.SUCCESS;
@@ -651,12 +650,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return serviceResult;
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        PurchaseOrder purchaseOrder = PurchaseOrderConverter.convertPurchaseOrderDO(purchaseOrderDO);
+        PurchaseOrder purchaseOrder = ConverterUtil.convert(purchaseOrderDO,PurchaseOrder.class);
         List<PurchaseDeliveryOrderDO> purchaseDeliveryOrderDOList = purchaseDeliveryOrderMapper.findListByPurchaseId(purchaseOrderDO.getId());
         List<PurchaseReceiveOrderDO> purchaseReceiveOrderDOList = purchaseReceiveOrderMapper.findListByPurchaseId(purchaseOrderDO.getId());
 
-        List<PurchaseDeliveryOrder> purchaseDeliveryOrderList = PurchaseOrderConverter.convertPurchaseDeliveryOrderDOList(purchaseDeliveryOrderDOList);
-        List<PurchaseReceiveOrder> purchaseReceiveOrderList = PurchaseOrderConverter.convertPurchaseReceiveOrderDOList(purchaseReceiveOrderDOList);
+        List<PurchaseDeliveryOrder> purchaseDeliveryOrderList = ConverterUtil.convertList(purchaseDeliveryOrderDOList,PurchaseDeliveryOrder.class);
+        List<PurchaseReceiveOrder> purchaseReceiveOrderList = ConverterUtil.convertList(purchaseReceiveOrderDOList,PurchaseReceiveOrder.class);
         purchaseOrder.setPurchaseDeliveryOrderList(purchaseDeliveryOrderList);
         purchaseOrder.setPurchaseReceiveOrderList(purchaseReceiveOrderList);
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(WorkflowType.WORKFLOW_TYPE_PURCHASE, purchaseNo);
@@ -687,7 +686,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         Integer totalCount = purchaseOrderMapper.findPurchaseOrderCountByParams(maps);
         List<PurchaseOrderDO> purchaseOrderDOList = purchaseOrderMapper.findPurchaseOrderByParams(maps);
-        List<PurchaseOrder> purchaseOrderList = PurchaseOrderConverter.convertPurchaseOrderDOList(purchaseOrderDOList);
+        List<PurchaseOrder> purchaseOrderList = ConverterUtil.convertList(purchaseOrderDOList,PurchaseOrder.class);
         Page<PurchaseOrder> page = new Page<>(purchaseOrderList, totalCount, purchaseOrderQueryParam.getPageNo(), purchaseOrderQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -772,6 +771,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return ErrorCode.PURCHASE_ORDER_NOT_EXISTS;
         }
         if (!PurchaseOrderStatus.PURCHASE_ORDER_STATUS_WAIT_COMMIT.equals(purchaseOrderDO.getPurchaseOrderStatus())&&
+                !PurchaseOrderStatus.PURCHASE_ORDER_STATUS_VERIFYING.equals(purchaseOrderDO.getPurchaseOrderStatus())&&
                 !PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PURCHASING.equals(purchaseOrderDO.getPurchaseOrderStatus())) {
             //待提交和审核通过的采购单可以取消
             return ErrorCode.PURCHASE_ORDER_COMMITTED_CAN_NOT_CANCEL;
@@ -836,7 +836,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         Integer totalCount = purchaseDeliveryOrderMapper.findPurchaseDeliveryOrderCountByParams(maps);
         List<PurchaseDeliveryOrderDO> purchaseDeliveryOrderDOList = purchaseDeliveryOrderMapper.findPurchaseDeliveryOrderByParams(maps);
-        List<PurchaseDeliveryOrder> purchaseDeliveryOrderList = PurchaseOrderConverter.convertPurchaseDeliveryOrderDOList(purchaseDeliveryOrderDOList);
+        List<PurchaseDeliveryOrder> purchaseDeliveryOrderList = ConverterUtil.convertList(purchaseDeliveryOrderDOList,PurchaseDeliveryOrder.class);
         Page<PurchaseDeliveryOrder> page = new Page<>(purchaseDeliveryOrderList, totalCount, purchaseDeliveryOrderQueryParam.getPageNo(), purchaseDeliveryOrderQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -853,7 +853,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return serviceResult;
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(PurchaseOrderConverter.convertPurchaseDeliveryOrderDO(purchaseDeliveryOrderDO));
+        serviceResult.setResult(ConverterUtil.convert(purchaseDeliveryOrderDO,PurchaseDeliveryOrder.class));
         return serviceResult;
     }
 
@@ -1284,7 +1284,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         Integer totalCount = purchaseReceiveOrderMapper.findPurchaseReceiveOrderCountByParams(maps);
         List<PurchaseReceiveOrderDO> purchaseReceiveOrderDOList = purchaseReceiveOrderMapper.findPurchaseReceiveOrderByParams(maps);
-        List<PurchaseReceiveOrder> purchaseReceiveOrderList = PurchaseOrderConverter.convertPurchaseReceiveOrderDOList(purchaseReceiveOrderDOList);
+        List<PurchaseReceiveOrder> purchaseReceiveOrderList = ConverterUtil.convertList(purchaseReceiveOrderDOList,PurchaseReceiveOrder.class);
         Page<PurchaseReceiveOrder> page = new Page<>(purchaseReceiveOrderList, totalCount, purchaseReceiveOrderQueryParam.getPageNo(), purchaseReceiveOrderQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -1301,7 +1301,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return serviceResult;
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(PurchaseOrderConverter.convertPurchaseReceiveOrderDO(purchaseReceiveOrderDO));
+        serviceResult.setResult(ConverterUtil.convert(purchaseReceiveOrderDO,PurchaseReceiveOrder.class));
         return serviceResult;
     }
 

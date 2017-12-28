@@ -1,27 +1,25 @@
-package com.lxzl.erp.common.domain.jointProduct;
+package com.lxzl.erp.common.domain.jointProduct.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.domain.material.pojo.Material;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.Min;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JointMaterial implements Serializable {
-    private Integer jointMaterialId;   //唯一标识
-    private Integer jointProductId;   //组合商品ID
-    private Integer materialId;   //物料ID
-    @NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
-    private String materialNo;   //物料编号
-    @Min(value = 0, message = ErrorCode.MATERIAL_COUNT_ERROR, groups = {AddGroup.class, UpdateGroup.class})
-    @NotNull(message = ErrorCode.MATERIAL_COUNT_ERROR, groups = {AddGroup.class, UpdateGroup.class})
-    private Integer materialCount;   //物料数量
+public class JointProduct extends BasePO {
+    @NotNull(message = ErrorCode.JOINT_PRODUCT_ID_IS_NULL ,groups = {UpdateGroup.class,IdGroup.class})
+    private Integer jointProductId;   //唯一标识
+    @NotBlank(message = ErrorCode.JOINT_PRODUCT_NAME_IS_NULL, groups = {AddGroup.class,UpdateGroup.class})
+    private String jointProductName;   //组合商品名称
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注
     private Date createTime;   //添加时间
@@ -29,23 +27,10 @@ public class JointMaterial implements Serializable {
     private Date updateTime;   //修改时间
     private String updateUser;   //修改人
 
-    private Material material;  //物料信息
-
-    public Material getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(Material material) {
-        this.material = material;
-    }
-
-    public Integer getJointMaterialId() {
-        return jointMaterialId;
-    }
-
-    public void setJointMaterialId(Integer jointMaterialId) {
-        this.jointMaterialId = jointMaterialId;
-    }
+    @Valid
+    private List<JointMaterial> jointMaterialList;   //组合商品物料项表
+    @Valid
+    private List<JointProductSku> jointProductSkuList;   //组合商品sku项表
 
     public Integer getJointProductId() {
         return jointProductId;
@@ -55,20 +40,12 @@ public class JointMaterial implements Serializable {
         this.jointProductId = jointProductId;
     }
 
-    public Integer getMaterialId() {
-        return materialId;
+    public String getJointProductName() {
+        return jointProductName;
     }
 
-    public void setMaterialId(Integer materialId) {
-        this.materialId = materialId;
-    }
-
-    public Integer getMaterialCount() {
-        return materialCount;
-    }
-
-    public void setMaterialCount(Integer materialCount) {
-        this.materialCount = materialCount;
+    public void setJointProductName(String jointProductName) {
+        this.jointProductName = jointProductName;
     }
 
     public Integer getDataStatus() {
@@ -119,11 +96,19 @@ public class JointMaterial implements Serializable {
         this.updateUser = updateUser;
     }
 
-    public String getMaterialNo() {
-        return materialNo;
+    public List<JointMaterial> getJointMaterialList() {
+        return jointMaterialList;
     }
 
-    public void setMaterialNo(String materialNo) {
-        this.materialNo = materialNo;
+    public void setJointMaterialList(List<JointMaterial> jointMaterialList) {
+        this.jointMaterialList = jointMaterialList;
+    }
+
+    public List<JointProductSku> getJointProductSkuList() {
+        return jointProductSkuList;
+    }
+
+    public void setJointProductSkuList(List<JointProductSku> jointProductSkuList) {
+        this.jointProductSkuList = jointProductSkuList;
     }
 }

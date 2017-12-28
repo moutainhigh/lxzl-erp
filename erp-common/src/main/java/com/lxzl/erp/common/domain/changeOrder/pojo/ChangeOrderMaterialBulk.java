@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.changeOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 
 import java.io.Serializable;
@@ -8,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ChangeOrderMaterialBulk implements Serializable {
+public class ChangeOrderMaterialBulk extends BasePO {
 
     private Integer changeOrderMaterialBulkId;   //唯一标识
     private Integer changeOrderMaterialId;   //租赁换货物料项ID

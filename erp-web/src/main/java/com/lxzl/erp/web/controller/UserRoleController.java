@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.user.pojo.CompanyRoleTree;
 import com.lxzl.erp.common.domain.user.RoleMenuQueryParam;
 import com.lxzl.erp.common.domain.user.RoleQueryParam;
 import com.lxzl.erp.common.domain.user.UserRoleQueryParam;

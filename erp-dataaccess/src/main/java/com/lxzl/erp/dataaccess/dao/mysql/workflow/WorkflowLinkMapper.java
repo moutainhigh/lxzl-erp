@@ -5,6 +5,7 @@ import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 @Repository
@@ -18,4 +19,6 @@ public interface WorkflowLinkMapper extends BaseMysqlDAO<WorkflowLinkDO> {
 												@Param("workflowReferNo") String workflowReferNo);
 
 	WorkflowLinkDO findByNo(@Param("workflowLinkNo") String workflowLinkNo);
+	//通过时间查数量
+	Integer findWorkflowLinkCountByDate(@Param("firstdayDate") Date firstdayDate,@Param("lastdayDate") Date lastdayDate);
 }

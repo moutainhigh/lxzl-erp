@@ -20,7 +20,7 @@ public class RepairOrderDO  extends BaseDO {
 	private Integer fixEquipmentCount; //修复设备数量
 	private Integer fixBulkMaterialCount; //修复物料数量
 	private String warehouseNo;//当前仓库编号
-
+	private String repairEndRemark; //维修完成的备注
 
 	@Transient
 	private String warehouseName;
@@ -140,5 +140,13 @@ public class RepairOrderDO  extends BaseDO {
 
 	public void setRepairOrderBulkMaterialDOList(List<RepairOrderBulkMaterialDO> repairOrderBulkMaterialDOList) {
 		this.repairOrderBulkMaterialDOList = repairOrderBulkMaterialDOList;
+	}
+
+	public String getRepairEndRemark() {
+		return repairEndRemark;
+	}
+
+	public void setRepairEndRemark(String repairEndRemark) {
+		this.repairEndRemark = repairEndRemark;
 	}
 }

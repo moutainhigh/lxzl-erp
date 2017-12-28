@@ -313,6 +313,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     }
 
 
+
     private String generateMD5Password(String username, String password, String md5Key) {
         String value = MD5Util.encryptWithKey(username + password, md5Key);
         return value;

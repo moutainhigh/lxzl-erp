@@ -2,7 +2,6 @@ package com.lxzl.erp.common.domain.purchase;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseReceiveOrderMaterialPrice;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
 

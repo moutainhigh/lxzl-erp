@@ -1,7 +1,8 @@
 package com.lxzl.erp.common.util;
 
 import com.alibaba.fastjson.JSON;
-import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
+import com.lxzl.erp.common.cache.CommonCache;
+import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.slf4j.Logger;
@@ -10,10 +11,10 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ConverterUtil {
 
@@ -113,7 +114,70 @@ public class ConverterUtil {
                                 poField.setAccessible(true);
                                 poField.set(t,convert(value,poClazz));
                             }
+                        }
+//                        else{
+//                            String poFieldName = field.getName();
+//                            Object value = field.get(o);
+//                            if("createUser".equals(poFieldName)&&value!=null){
+//                                User user = CommonCache.userMap.get(value);
+//                                if(user!=null){
+//                                    Field userRealNameField = clazz.getDeclaredField("createUserRealName");
+//                                    if(userRealNameField!=null){
+//                                        userRealNameField.setAccessible(true);
+//                                        userRealNameField.set(t,user.getRealName());
+//                                    }
+//                                }
+//
+//                            }
+//                            if("updateUser".equals(poFieldName)&&value!=null){
+//                                User user = CommonCache.userMap.get(value);
+//                                if(user!=null){
+//                                    Field userRealNameField = clazz.getDeclaredField("updateUserRealName");
+//                                    if(userRealNameField!=null){
+//                                        userRealNameField.setAccessible(true);
+//                                        userRealNameField.set(t,user.getRealName());
+//                                    }
+//                                }
+//                            }
+//                        }
+                    }
+                }
+                Class parentDOClazz =o.getClass().getSuperclass();
+                Class parentPOClazz =clazz.getSuperclass();
+                Field[] baseDOFields = parentDOClazz.getDeclaredFields();
+                Field[] basePOFields = parentPOClazz.getDeclaredFields();
+                Map<String,Field> poFieldMap = new HashMap<>();
+                for(Field field : basePOFields){
+                    poFieldMap.put(field.getName(),field);
+                }
+                for(Field field : baseDOFields){
+                    field.setAccessible(true);
+                    String fieldName = field.getName();
+                    if("createUser".equals(fieldName)){
+                        Object createUserId = field.get(o);
+                        if(createUserId!=null){
+                            User createUser = CommonCache.userMap.get(Integer.parseInt(createUserId.toString()));
+                            if(createUser!=null){
+                                Field userRealNameField = poFieldMap.get("createUserRealName");
+                                if(userRealNameField!=null){
+                                    userRealNameField.setAccessible(true);
+                                    userRealNameField.set(t,createUser.getRealName());
+                                }
+                            }
+                        }
 
+                    }
+                    if("updateUser".equals(fieldName)){
+                        Object updateUserId = field.get(o);
+                        if(updateUserId!=null){
+                            User updateUser = CommonCache.userMap.get(Integer.parseInt(updateUserId.toString()));
+                            if(updateUser!=null){
+                                Field userRealNameField = poFieldMap.get("updateUserRealName");
+                                if(userRealNameField!=null){
+                                    userRealNameField.setAccessible(true);
+                                    userRealNameField.set(t,updateUser.getRealName());
+                                }
+                            }
                         }
                     }
                 }
@@ -125,6 +189,7 @@ public class ConverterUtil {
             throw new BusinessException("数据转换错误");
         }
     }
+
     private static String firstLowName (String name ){
         String first = name.substring(0,1);
         String lowName = first.toLowerCase()+name.substring(1,name.length());

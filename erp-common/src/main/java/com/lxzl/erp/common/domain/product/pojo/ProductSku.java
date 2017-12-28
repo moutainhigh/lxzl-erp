@@ -1,13 +1,14 @@
 package com.lxzl.erp.common.domain.product.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProductSku implements Serializable {
+public class ProductSku extends BasePO {
     private Integer skuId;
     private String skuName;
     private Integer productId;

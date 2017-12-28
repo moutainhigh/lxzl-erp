@@ -2,8 +2,8 @@ package com.lxzl.erp.core.service.payment;
 
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
-import com.lxzl.erp.common.domain.payment.account.pojo.ManualChargeParam;
-import com.lxzl.erp.common.domain.payment.account.pojo.ManualDeductParam;
+import com.lxzl.erp.common.domain.payment.ManualChargeParam;
+import com.lxzl.erp.common.domain.payment.ManualDeductParam;
 import com.lxzl.se.core.service.BaseService;
 
 import java.math.BigDecimal;

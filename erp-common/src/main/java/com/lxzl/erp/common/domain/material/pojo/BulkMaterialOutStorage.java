@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.material.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 
 import java.io.Serializable;
 
@@ -11,7 +12,8 @@ import java.io.Serializable;
  * @date 2017-11-16 15:58
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BulkMaterialOutStorage implements Serializable {
+public class BulkMaterialOutStorage extends BasePO {
+
     private Integer bulkMaterialId;
     private Integer bulkMaterialCount;
 

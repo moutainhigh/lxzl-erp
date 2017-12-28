@@ -1,4 +1,4 @@
-package com.lxzl.erp.common.domain.order.pojo;
+package com.lxzl.erp.common.domain.order;
 
 import java.io.Serializable;
 

@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.purchase.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 
 import javax.validation.constraints.NotNull;
@@ -11,7 +12,7 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PurchaseReceiveOrderMaterial implements Serializable {
+public class PurchaseReceiveOrderMaterial extends BasePO {
 
 	@NotNull(message = ErrorCode.ID_NOT_NULL,groups = {IdGroup.class})
 	private Integer purchaseReceiveOrderMaterialId;   //唯一标识

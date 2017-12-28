@@ -5,6 +5,7 @@ import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 @Repository
@@ -40,4 +41,6 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
     List<BulkMaterialDO> listByPurchaseReceiveOrderMaterialId(@Param("maps") Map<String, Object> paramMap);
 
     Integer listByPurchaseReceiveOrderMaterialIdCount(@Param("maps") Map<String, Object> paramMap);
+    //时间查询数量
+    Integer findBulkMaterialCountByDate(@Param("firstdayDate") Date firstdayDate,@Param("lastdayDate") Date lastdayDate);
 }

@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.user.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  * Time: 9:21.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserRole implements Serializable {
+public class UserRole extends BasePO {
 
     private Integer userId;
 

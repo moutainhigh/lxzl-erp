@@ -191,4 +191,7 @@
 		<include refid="set_column_sql"/>
 	</insert>
 
+	<select id="findWarehouseCountByDate" resultType="java.lang.Integer">
+		<![CDATA[ SELECT COUNT(1) FROM erp_warehouse WHERE create_time > #{startDate} AND  create_time < #{endDate} ]]>
+	</select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.warehouse.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
@@ -9,7 +10,7 @@ import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class StockOrder implements Serializable {
+public class StockOrder extends BasePO {
 
 	private Integer stockOrderId;
 	private String stockOrderNo;

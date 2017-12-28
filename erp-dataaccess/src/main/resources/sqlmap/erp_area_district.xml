@@ -79,4 +79,25 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.area.AreaDistrictDO">
 		UPDATE erp_area_district <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="selectDistrictNames" resultType="java.lang.String">
+		SELECT city_name FROM erp_area_district ead
+	</select>
+
+	<update id="savePostCode">
+		update erp_area_district SET post_code = #{postCode} WHERE district_name = #{districtName}
+	</update>
+
+	<update id="updateAbbCnAndAbbEn">
+		update erp_area_district SET abb_cn = #{abbCn},abb_en = #{abbEn} WHERE district_name = #{districtName}
+	</update>
+
+	<select id="findCityIdByDistrictName" resultType="java.lang.Integer">
+		SELECT city_id FROM erp_area_district WHERE district_name = #{districtName}
+	</select>
+
+	<select id="selectPostCodeIsNull" resultType="java.lang.String">
+		SELECT district_name FROM erp_area_district WHERE post_code IS NULL OR trim(post_code)=''
+	</select>
+
 </mapper>

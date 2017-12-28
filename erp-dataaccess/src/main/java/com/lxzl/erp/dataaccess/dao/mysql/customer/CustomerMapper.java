@@ -5,6 +5,7 @@ import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 @Repository
@@ -27,4 +28,9 @@ public interface CustomerMapper extends BaseMysqlDAO<CustomerDO> {
 	CustomerDO findCustomerCompanyByNo(@Param("customerNo") String customerNo);
 
 	CustomerDO findCustomerPersonByNo(@Param("customerNo") String customerNo);
+
+	List<CustomerDO> findAllCustomer();
+
+	Integer findCustomerCountByDate(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
 }

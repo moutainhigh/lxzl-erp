@@ -3,6 +3,7 @@ package com.lxzl.erp.common.domain.user.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 
 import javax.validation.constraints.NotNull;
@@ -15,7 +16,7 @@ import java.io.Serializable;
  * Time: 13:54.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Role implements Serializable {
+public class Role extends BasePO {
 
     @NotNull(message = ErrorCode.ROLE_ID_NOT_NULL , groups = {IdGroup.class})
     private Integer roleId;

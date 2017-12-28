@@ -1,12 +1,14 @@
 package com.lxzl.erp.common.domain.supplier.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
+
 import java.io.Serializable;
 import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Supplier implements Serializable {
+public class Supplier extends BasePO {
 
 	private Integer supplierId;   //字典ID，唯一
 	private String supplierNo;   //供应商编号

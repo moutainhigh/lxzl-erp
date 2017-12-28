@@ -98,18 +98,18 @@ public interface RepairOrderService extends VerifyReceiver {
     /**
      * 根据明细单Id来确认完成时间
      *
-     * @param repairEquipmentIdList
-     * @param repairBulkMaterialIdList
+     * @param repairOrderEquipmentList
+     * @param repairOrderBulkMaterialList
      * @return
      */
-    ServiceResult<String,Integer> fix(List<Integer> repairEquipmentIdList, List<Integer> repairBulkMaterialIdList);
+    ServiceResult<String,Integer> fix(List<RepairOrderEquipment> repairOrderEquipmentList, List<RepairOrderBulkMaterial> repairOrderBulkMaterialList);
 
 
     /**
      * 设备维修单结束维修
      *
-     * @param repairOrderNo
+     * @param repairOrder
      * @return
      */
-    ServiceResult<String,String> end(String repairOrderNo);
+    ServiceResult<String,String> end(RepairOrder repairOrder);
 }

@@ -13,4 +13,8 @@ public interface AreaCityMapper extends BaseMysqlDAO<AreaCityDO> {
 	List<AreaCityDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+	//添加邮政编号
+	Integer savePostCode(@Param("postCode")String postCode,@Param("cityName")String cityName);
+	//查找city_name
+	List<String> selectCityNames();
 }

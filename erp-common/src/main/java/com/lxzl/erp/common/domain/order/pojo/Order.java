@@ -1,5 +1,6 @@
 package com.lxzl.erp.common.domain.order.pojo;
 
+import com.lxzl.erp.common.domain.base.BasePO;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.io.Serializable;
@@ -8,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Order implements Serializable {
+public class Order extends BasePO {
 
     private Integer orderId;
     private String orderNo;

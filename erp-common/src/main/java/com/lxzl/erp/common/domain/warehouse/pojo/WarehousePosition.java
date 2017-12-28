@@ -1,12 +1,13 @@
 package com.lxzl.erp.common.domain.warehouse.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 
 import java.io.Serializable;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WarehousePosition implements Serializable {
+public class WarehousePosition extends BasePO {
     private Integer warehousePositionId;
 
     private Integer warehouseId;

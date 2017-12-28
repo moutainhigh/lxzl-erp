@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.changeOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.changeOrder.AddChangeOrderGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -10,7 +11,7 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ChangeOrderConsignInfo implements Serializable {
+public class ChangeOrderConsignInfo  extends BasePO {
 
 	private Integer changeOrderConsignInfoId;   //唯一标识
 	private Integer changeOrderId;   //换货ID

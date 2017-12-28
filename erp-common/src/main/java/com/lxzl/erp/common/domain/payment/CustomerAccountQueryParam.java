@@ -1,4 +1,4 @@
-package com.lxzl.erp.common.domain.payment.account.pojo;
+package com.lxzl.erp.common.domain.payment;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.payment.PaymentIdentityParam;

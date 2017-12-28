@@ -5,6 +5,7 @@ import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -20,4 +21,6 @@ public interface RepairOrderMapper extends BaseMysqlDAO<RepairOrderDO> {
     Integer findRepairOrderCountByParams(@Param("maps") Map<String, Object> maps);
 
     List<RepairOrderDO> findRepairOrderByParams(@Param("maps") Map<String, Object> maps);
+    //通过时间查数量
+    Integer findRepairOrderCountByDate(@Param("firstdayDate") Date firstdayDate,@Param("lastdayDate") Date lastdayDate);
 }

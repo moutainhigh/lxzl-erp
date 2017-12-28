@@ -15,4 +15,6 @@ public interface DeploymentOrderMapper extends BaseMysqlDAO<DeploymentOrderDO> {
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
     DeploymentOrderDO findByNo(@Param("deploymentOrderNo") String deploymentOrderNo);
+
+    List<DeploymentOrderDO> findDeploymentOrderByParams(@Param("srcWarehouseId") Integer srcWarehouseId,@Param("targetWarehouseId") Integer targetWarehouseId);
 }

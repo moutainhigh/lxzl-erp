@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.purchase.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 
@@ -10,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PurchaseOrderProduct implements Serializable {
+public class PurchaseOrderProduct extends BasePO {
 
 	private Integer purchaseOrderProductId;   //唯一标识
 	private Integer purchaseOrderId;   //采购单ID

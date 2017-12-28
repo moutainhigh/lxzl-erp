@@ -1,11 +1,12 @@
 package com.lxzl.erp.common.domain.order.pojo;
 
+import com.lxzl.erp.common.domain.base.BasePO;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OrderConsignInfo implements Serializable {
+public class OrderConsignInfo extends BasePO {
     private Integer orderConsignId;
     private Integer orderId;
     private Integer customerConsignId;

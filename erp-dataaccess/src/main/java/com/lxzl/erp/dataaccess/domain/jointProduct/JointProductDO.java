@@ -1,12 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.jointProduct;
 
-import com.lxzl.erp.common.domain.jointProduct.JointMaterial;
-import com.lxzl.erp.common.domain.jointProduct.JointProductSku;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
-import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
 
 

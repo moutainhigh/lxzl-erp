@@ -18,6 +18,7 @@ public class RepairOrderBulkMaterialDO  extends BaseDO {
 	private Integer orderMaterialId;
 	private Integer dataStatus;
 	private String remark;
+	private String repairEndRemark; //维修完成的备注
 
 	@Transient
 	private BulkMaterialDO bulkMaterialDO;
@@ -100,5 +101,13 @@ public class RepairOrderBulkMaterialDO  extends BaseDO {
 
 	public void setBulkMaterialDO(BulkMaterialDO bulkMaterialDO) {
 		this.bulkMaterialDO = bulkMaterialDO;
+	}
+
+	public String getRepairEndRemark() {
+		return repairEndRemark;
+	}
+
+	public void setRepairEndRemark(String repairEndRemark) {
+		this.repairEndRemark = repairEndRemark;
 	}
 }

@@ -2,7 +2,7 @@ package com.lxzl.erp.core.service.jointProduct;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.jointProduct.JointProduct;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
 import com.lxzl.erp.common.domain.jointProduct.JointProductQueryParam;
 
 public interface JointProductService {

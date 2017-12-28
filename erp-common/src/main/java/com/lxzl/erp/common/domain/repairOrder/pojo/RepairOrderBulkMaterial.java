@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.repairOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import org.hibernate.validator.constraints.NotBlank;
@@ -11,7 +12,7 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RepairOrderBulkMaterial implements Serializable {
+public class RepairOrderBulkMaterial extends BasePO {
 
 	private Integer repairOrderBulkMaterialId;   //唯一标识
 	private String repairOrderNo;   //维修单编号
@@ -27,6 +28,7 @@ public class RepairOrderBulkMaterial implements Serializable {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+	private String repairEndRemark; //维修完成的备注
 
 	private BulkMaterial bulkMaterial;
 
@@ -135,4 +137,11 @@ public class RepairOrderBulkMaterial implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public String getRepairEndRemark() {
+		return repairEndRemark;
+	}
+
+	public void setRepairEndRemark(String repairEndRemark) {
+		this.repairEndRemark = repairEndRemark;
+	}
 }

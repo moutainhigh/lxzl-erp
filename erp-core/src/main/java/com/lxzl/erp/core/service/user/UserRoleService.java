@@ -3,13 +3,12 @@ package com.lxzl.erp.core.service.user;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.user.pojo.CompanyRoleTree;
 import com.lxzl.erp.common.domain.user.RoleMenuQueryParam;
 import com.lxzl.erp.common.domain.user.RoleQueryParam;
 import com.lxzl.erp.common.domain.user.UserRoleQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.*;
 import com.lxzl.se.core.service.BaseService;
-
-import java.util.List;
 
 
 /**

@@ -79,4 +79,12 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.area.AreaCityDO">
 		UPDATE erp_area_city <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="selectCityNames" resultType="java.lang.String">
+		SELECT city_name FROM erp_area_city
+	</select>
+
+	<update id="savePostCode">
+		update erp_area_city SET post_code = #{postCode} WHERE city_name = #{cityName}
+	</update>
 </mapper>
