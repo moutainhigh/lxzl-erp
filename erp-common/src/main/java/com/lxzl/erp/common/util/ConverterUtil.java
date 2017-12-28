@@ -40,6 +40,7 @@ public class ConverterUtil {
                 String idFiledName = firstLowName(name) +"Id";
                 Field[] fields = o.getClass().getDeclaredFields();
                 T t = JSON.parseObject(JSON.toJSONString(o),clazz);
+                processPOSpecialField(o,t,clazz);
                 for(Field field : fields){
                     try{
                         field.setAccessible(true);
@@ -95,10 +96,10 @@ public class ConverterUtil {
                     field.setAccessible(true);
                     poFiledMap.put(field.getName(),field);
                 }
+                processDOSpecialField(o,t,clazz);
                 for(Field field : fields){
                     try{
                         field.setAccessible(true);
-                        processSpecialField(o,t,clazz);
                         if("id".equals(field.getName())){
                             if(poFiledMap.get(idFiledName)!=null){
                                 Field poField = poFiledMap.get(idFiledName);
@@ -185,7 +186,7 @@ public class ConverterUtil {
     /**
      * 对本项目特殊转换需求进行特殊处理
      */
-    private static void processSpecialField(Object o ,Object t , Class clazz) throws NoSuchFieldException, IllegalAccessException {
+    private static void processDOSpecialField(Object o ,Object t , Class clazz) throws NoSuchFieldException, IllegalAccessException {
         if(o.getClass().getSimpleName().equals("ProductSkuDO")){
             Field doIdField = o.getClass().getDeclaredField("id");
             doIdField.setAccessible(true);
@@ -230,6 +231,34 @@ public class ConverterUtil {
                 if("imgDomain".equals(poIdField.getName())){
                     poIdField.setAccessible(true);
                     poIdField.set(t, ConstantConfig.imageDomain);
+                }
+            }
+        }
+    }
+    /**
+     * 对本项目特殊转换需求进行特殊处理
+     */
+    private static void processPOSpecialField(Object o ,Object t , Class clazz) throws NoSuchFieldException, IllegalAccessException {
+        if(o.getClass().getSimpleName().equals("ProductSku")){
+            Field doIdField = o.getClass().getDeclaredField("skuId");
+            doIdField.setAccessible(true);
+            Object value = doIdField.get(o);
+            Field[] poFields = clazz.getDeclaredFields();
+            for(Field poIdField : poFields){
+                if("id".equals(poIdField.getName())){
+                    poIdField.setAccessible(true);
+                    poIdField.set(t,value);
+                }
+            }
+        }else if(o.getClass().getSimpleName().equals("ProductSkuProperty")){
+            Field doIdField = o.getClass().getDeclaredField("skuPropertyId");
+            doIdField.setAccessible(true);
+            Object value = doIdField.get(o);
+            Field[] poFields = clazz.getDeclaredFields();
+            for(Field poIdField : poFields){
+                if("id".equals(poIdField.getName())){
+                    poIdField.setAccessible(true);
+                    poIdField.set(t,value);
                 }
             }
         }
