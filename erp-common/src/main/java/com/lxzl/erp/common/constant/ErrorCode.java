@@ -197,6 +197,7 @@ public class ErrorCode {
     public static final String EQUIPMENT_PURCHASE_PRICE_NOT_NULL = "J300057";
     public static final String BULK_PURCHASE_PRICE_NOT_NULL = "J300058";
     public static final String PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_COMMIT = "J300059";
+    public static final String SUB_COMPANY_NOT_EXISTS = "J300060";
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
     public static final String ORDER_CUSTOMER_CONSIGN_NOT_NULL = "J400001";
@@ -551,6 +552,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_COMMIT, "此采购收货单不能提交");
         MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_PRICE_NOT_NEED_UPDATE, "此采购单物料价格无需修改");
         MAP.put(UPDATE_ITEM_COUNT_ERROR, "修改的配件数量不匹配");
+        MAP.put(SUB_COMPANY_NOT_EXISTS, "分公司不存在");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");

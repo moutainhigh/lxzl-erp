@@ -274,6 +274,8 @@ CREATE TABLE `erp_customer` (
   `customer_type` int(11) DEFAULT NULL COMMENT '用户类型,1为企业用户，2为个人用户',
   `customer_no` varchar(100) NOT NULL COMMENT '客戶编码',
   `customer_name` varchar(64) NOT NULL COMMENT '客户名称',
+  `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人，跟单员',
+  `union_user` int(20) COMMENT '联合开发人',
   `is_disabled` int(4) NOT NULL DEFAULT '0' COMMENT '是否禁用，0不可用；1可用',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',

@@ -353,4 +353,9 @@
 		LIMIT #{maps.start},#{maps.pageSize}
 
 	</select>
+
+	<select id="findCustomerCountByDate" resultType="java.lang.Integer">
+		<![CDATA[ SELECT COUNT(1) FROM erp_customer WHERE create_time > #{startDate} AND  create_time < #{endDate} AND  data_status = 1 ]]>
+	</select>
+
 </mapper>

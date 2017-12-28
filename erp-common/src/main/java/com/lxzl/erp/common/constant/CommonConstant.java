@@ -23,6 +23,7 @@ public class CommonConstant {
     public static final Integer SUPER_DEPARTMENT_ID = 400000;
     public static final Integer SUPER_USER_ID = 500000;
     public static final Integer SUPER_ROLE_ID = 600000;
+    public static final Integer SUPER_CUSTOMER_ID = 700000;
     public static final Integer SUPER_PRODUCT_CATEGORY_ID = 800000;
 
     public static final String COMMUNITY_SESSION_KEY = "community_id";

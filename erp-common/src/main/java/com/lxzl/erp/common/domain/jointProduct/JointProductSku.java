@@ -28,7 +28,7 @@ public class JointProductSku implements Serializable {
     private Date updateTime;   //修改时间
     private String updateUser;   //修改人
 
-    private Product product;  //sku信息
+    private Product product;  //商品信息
 
     public Product getProduct() {
         return product;

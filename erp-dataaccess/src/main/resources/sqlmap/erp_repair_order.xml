@@ -225,4 +225,8 @@
 		ORDER BY ero.create_time DESC
 		limit #{maps.start},#{maps.pageSize}
 	</select>
+
+	<select id="findRepairOrderCountByDate" resultType="java.lang.Integer">
+		<![CDATA[ SELECT COUNT(1) FROM erp_repair_order WHERE create_time > #{firstdayDate} AND create_time < #{lastdayDate} AND data_status = 1]]>
+	</select>
 </mapper>

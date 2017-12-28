@@ -261,4 +261,9 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderDO">
 		UPDATE erp_deployment_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="findDeploymentOrderByParams" resultMap="DeploymentOrderDO">
+		SELECT * FROM erp_deployment_order WHERE src_warehouse_id = #{srcWarehouseId} AND  target_warehouse_id = #{targetWarehouseId}
+	</select>
+
 </mapper>

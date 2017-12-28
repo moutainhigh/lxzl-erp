@@ -261,4 +261,8 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO">
 		UPDATE erp_statement_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="findStatementOrderCountByDate" resultType="java.lang.Integer">
+		<![CDATA[ SELECT COUNT(1) FROM erp_statement_order WHERE create_time > #{firstdayDate} AND  create_time < #{lastdayDate} AND  data_status = 1 ]]>
+	</select>
 </mapper>

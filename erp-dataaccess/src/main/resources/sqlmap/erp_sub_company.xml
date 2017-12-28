@@ -6,6 +6,7 @@
         <id column="id" jdbcType="INTEGER" property="id" />
         <result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
         <result column="sub_company_type" jdbcType="INTEGER" property="subCompanyType" />
+        <result column="sub_company_code" jdbcType="VARCHAR" property="subCompanyCode" />
         <result column="province" jdbcType="INTEGER" property="province" />
         <result column="city" jdbcType="INTEGER" property="city" />
         <result column="district" jdbcType="INTEGER" property="district" />
@@ -22,7 +23,7 @@
     </resultMap>
 
     <sql id="column_List">
-        esc.id,esc.sub_company_name,esc.sub_company_type,esc.province,esc.city,esc.district,esc.data_order,esc.data_status,esc.remark,esc.create_time,esc.create_user,esc.update_time,esc.update_user
+        esc.id,esc.sub_company_name,esc.sub_company_type,esc.sub_company_code,esc.province,esc.city,esc.district,esc.data_order,esc.data_status,esc.remark,esc.create_time,esc.create_user,esc.update_time,esc.update_user
     </sql>
 
     <select id="findById" resultMap="SubCompanyDO" parameterType="java.lang.Integer">
@@ -44,6 +45,9 @@
             </if>
             <if test="subCompanyType != null">
                 sub_company_type = #{subCompanyType,jdbcType=INTEGER},
+            </if>
+            <if test="subCompanyCode != null">
+                sub_company_code = #{subCompanyCode,jdbcType=VARCHAR},
             </if>
             <if test="province != null">
                 province = #{province,jdbcType=INTEGER},

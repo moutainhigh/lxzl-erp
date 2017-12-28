@@ -474,4 +474,7 @@
 		WHERE current_equipment_no = #{equipmentNo, jdbcType=VARCHAR}
 	</update>
 
+	<select id="findBulkMaterialCountByDate" resultType="java.lang.Integer">
+		<![CDATA[ SELECT COUNT(1) FROM erp_bulk_material WHERE create_time > #{firstdayDate} AND create_time < #{lastdayDate} AND data_status = 1 ]]>
+	</select>
 </mapper>
