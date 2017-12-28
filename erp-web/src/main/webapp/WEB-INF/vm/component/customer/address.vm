@@ -19,7 +19,7 @@
                     {{/isDefault}}
                     {{#checkbox}}
                     <label class="radio-inline mr10 pull-right">
-                        <input type="radio" name="customerConsignInfoId" value="{{customerConsignInfoId}}" class="required" {{#isDefault}}checked{{/isDefault}} data-address="{{addressJson}}"  />
+                        <input type="radio" name="customerConsignInfoId" value="{{customerConsignInfoId}}" {{#isDefault}}checked{{/isDefault}} data-address="{{addressJson}}"  />
                     </label>
                     {{/checkbox}}
                 </p>

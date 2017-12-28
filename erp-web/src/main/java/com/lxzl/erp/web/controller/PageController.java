@@ -295,6 +295,10 @@ public class PageController extends BaseController {
         return "/component/customerConsignInfo/edit";
     }
 
+    @RequestMapping("/customer-manual-account/modal")
+    public String customerManualAccountModal() {
+        return "/component/customer/manualAccountAmountModal";
+    }
 
     //采购管理
     @RequestMapping("/purchase-manage/list")
