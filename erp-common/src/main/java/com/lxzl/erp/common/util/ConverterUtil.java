@@ -289,8 +289,8 @@ public class ConverterUtil {
             Field[] doFields = doClazz.getDeclaredFields();
             for(Field doIdField : doFields){
                 if("id".equals(doIdField.getName())){
-                    poIdField.setAccessible(true);
-                    poIdField.set(theDo,value);
+                    doIdField.setAccessible(true);
+                    doIdField.set(theDo,value);
                 }
             }
         }else if(thePo.getClass().getSimpleName().equals("ProductSkuProperty")){
@@ -300,8 +300,8 @@ public class ConverterUtil {
             Field[] doFields = doClazz.getDeclaredFields();
             for(Field doIdField : doFields){
                 if("id".equals(doIdField.getName())){
-                    poIdField.setAccessible(true);
-                    poIdField.set(theDo,value);
+                    doIdField.setAccessible(true);
+                    doIdField.set(theDo,value);
                 }
             }
         }else if(thePo.getClass().getSimpleName().equals("ProductCategoryProperty")){
@@ -311,8 +311,8 @@ public class ConverterUtil {
             Field[] doFields = doClazz.getDeclaredFields();
             for(Field doIdField : doFields){
                 if("id".equals(doIdField.getName())){
-                    poIdField.setAccessible(true);
-                    poIdField.set(theDo,value);
+                    doIdField.setAccessible(true);
+                    doIdField.set(theDo,value);
                 }
             }
         }else if(thePo.getClass().getSimpleName().equals("Menu")){
@@ -322,8 +322,8 @@ public class ConverterUtil {
             Field[] doFields = doClazz.getDeclaredFields();
             for(Field doIdField : doFields){
                 if("id".equals(doIdField.getName())){
-                    poIdField.setAccessible(true);
-                    poIdField.set(theDo,value);
+                    doIdField.setAccessible(true);
+                    doIdField.set(theDo,value);
                 }
             }
         }else if(thePo.getClass().getSimpleName().equals("ProductCategoryPropertyValue")){
@@ -333,8 +333,8 @@ public class ConverterUtil {
             Field[] doFields = doClazz.getDeclaredFields();
             for(Field doIdField : doFields){
                 if("id".equals(doIdField.getName())){
-                    poIdField.setAccessible(true);
-                    poIdField.set(theDo,value);
+                    doIdField.setAccessible(true);
+                    doIdField.set(theDo,value);
                 }
             }
         }
