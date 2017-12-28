@@ -67,34 +67,8 @@ public class OrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void testCreateOrderJSON() throws Exception {
-        String str = "{\n" +
-                "\t\"buyerCustomerNo\": \"CP201712060843154191841\",\n" +
-                "\t\"rentStartTime\": 1513036800000,\n" +
-                "\t\"logisticsAmount\": \"98\",\n" +
-                "\t\"orderSellerId\": 500005,\n" +
-                "\t\"orderSubCompanyId\": 1,\n" +
-                "\t\"buyerRemark\": \"急用！\",\n" +
-                "\t\"customerConsignId\": \"37\",\n" +
-                "\t\"orderProductList\": [{\n" +
-                "\t\t\"productId\": \"2000013\",\n" +
-                "\t\t\"productSkuId\": \"40\",\n" +
-                "\t\t\"productUnitAmount\": \"100\",\n" +
-                "\t\t\"productCount\": \"1\",\n" +
-                "\t\t\"rentType\": \"3\",\n" +
-                "\t\t\"rentTimeLength\": \"10\",\n" +
-                "\t\t\"insuranceAmount\": \"1000\",\n" +
-                "\t\t\"payMode\": \"2\"\n" +
-                "\t}],\n" +
-                "\t\"orderMaterialList\": [{\n" +
-                "\t\t\"materialId\": \"5\",\n" +
-                "\t\t\"materialUnitAmount\": \"100\",\n" +
-                "\t\t\"materialCount\": \"1\",\n" +
-                "\t\t\"rentType\": \"3\",\n" +
-                "\t\t\"rentTimeLength\": \"10\",\n" +
-                "\t\t\"insuranceAmount\": \"1000\",\n" +
-                "\t\t\"payMode\": \"2\"\n" +
-                "\t}]\n" +
-                "}";
+        String str = "{\"buyerCustomerNo\":\"CC201712261408524351576\",\"rentStartTime\":1514419200000,\"logisticsAmount\":\"123\",\"orderSubCompanyId\":1,\"buyerRemark\":\"\",\"customerConsignId\":\"64\",\"orderProductList\":[{\"productId\":\"2000050\",\"productSkuId\":\"178\",\"productUnitAmount\":\"500\",\"productCount\":\"10\",\"rentType\":\"2\",\"rentTimeLength\":\"6\",\"insuranceAmount\":\"\"}]}\n" +
+                "Name\n";
         Order order = JSONUtil.convertJSONToBean(str, Order.class);
 
         TestResult testResult = getJsonTestResult("/order/create", order);

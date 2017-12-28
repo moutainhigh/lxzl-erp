@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.user.RoleMenuQueryParam;
 import com.lxzl.erp.common.domain.user.RoleQueryParam;
 import com.lxzl.erp.common.domain.user.UserRoleQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.*;
+import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -115,6 +116,13 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
     }
     @Test
     public void saveRoleMenu() throws Exception {
+    }
+
+    @Test
+    public void saveRoleMenuJSON() throws Exception {
+        String jsonStr = "{\"menuList\":[{\"menuId\":\"200065\"},{\"menuId\":\"200071\"},{\"menuId\":\"200072\"},{\"menuId\":\"200057\"}],\"roleId\":600023}";
+        RoleMenu roleMenu = JSONUtil.convertJSONToBean(jsonStr,RoleMenu.class );
+        TestResult testResult = getJsonTestResult("/userRole/saveRoleMenu",roleMenu);
     }
 
     @Test

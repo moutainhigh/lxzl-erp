@@ -6,6 +6,7 @@
 
     <resultMap type="com.lxzl.erp.dataaccess.domain.product.ProductDO" id="ProductDO">
         <result column="id" property="id"/>
+        <result column="product_no" property="productNo"/>
         <result column="product_name" property="productName"/>
         <result column="brand_id" property="brandId"/>
         <result column="brand_name" property="brandName"/>
@@ -117,7 +118,7 @@
     </resultMap>
 
     <sql id="column_List">
-		ep.id AS id,ep.product_name AS product_name,ep.brand_id AS brand_id,ep.category_id AS category_id,ep.subtitle AS subtitle,ep.unit AS unit,ep.list_price AS list_price,ep.is_rent AS is_rent,ep.product_desc AS product_desc,ep.keyword AS keyword,ep.remark AS remark,ep.data_status AS data_status,ep.create_time AS create_time,ep.create_user AS create_user,ep.update_time AS update_time,ep.update_user AS update_user
+		ep.id AS id,ep.product_no AS product_no,ep.product_name AS product_name,ep.brand_id AS brand_id,ep.category_id AS category_id,ep.subtitle AS subtitle,ep.unit AS unit,ep.list_price AS list_price,ep.is_rent AS is_rent,ep.product_desc AS product_desc,ep.keyword AS keyword,ep.remark AS remark,ep.data_status AS data_status,ep.create_time AS create_time,ep.create_user AS create_user,ep.update_time AS update_time,ep.update_user AS update_user
 	</sql>
 
     <sql id="img_column_List">

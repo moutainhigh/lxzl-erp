@@ -9,7 +9,7 @@ package com.lxzl.erp.common.constant;
  * 7单位对公账户流水账单，8社保/公积金缴纳证明，9战略协议或合作协议，10法人学历证明，11法人职称证明，12现场核查表（附合影），13其他
  *
  */
-public class CustomerCompanyImgType {
+public class ImgType {
 
     public static final Integer BUSINESS_LICENSE_PICTURE_IMG_TYPE = 1;
     public static final Integer LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE = 2;

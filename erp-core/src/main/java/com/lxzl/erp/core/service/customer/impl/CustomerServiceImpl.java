@@ -73,7 +73,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerMapper.save(customerDO);
 
-        CustomerCompanyDO customerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
+        CustomerCompanyDO customerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(),CustomerCompanyDO.class);
         customerCompanyDO.setCustomerId(customerDO.getId());
         customerCompanyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerCompanyDO.setCreateTime(now);
@@ -116,7 +116,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerMapper.save(customerDO);
 
-        CustomerPersonDO customerPersonDO = ConverterUtil.convert(customer.getCustomerPerson(), CustomerPersonDO.class);
+        CustomerPersonDO customerPersonDO = ConverterUtil.convert(customer.getCustomerPerson(),CustomerPersonDO.class);
         customerPersonDO.setCustomerId(customerDO.getId());
         customerPersonDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerPersonDO.setCreateTime(now);
@@ -149,7 +149,7 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
         CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
-        CustomerCompanyDO newCustomerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
+        CustomerCompanyDO newCustomerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(),CustomerCompanyDO.class);
         newCustomerCompanyDO.setDataStatus(null);
         newCustomerCompanyDO.setCreateTime(null);
         newCustomerCompanyDO.setCreateUser(null);
@@ -181,7 +181,7 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
         CustomerPersonDO customerPersonDO = customerPersonMapper.findByCustomerId(customerDO.getId());
-        CustomerPersonDO newCustomerPersonDO = ConverterUtil.convert(customer.getCustomerPerson(), CustomerPersonDO.class);
+        CustomerPersonDO newCustomerPersonDO = ConverterUtil.convert(customer.getCustomerPerson(),CustomerPersonDO.class);
         newCustomerPersonDO.setDataStatus(null);
         newCustomerPersonDO.setCreateTime(null);
         newCustomerPersonDO.setCreateUser(null);
@@ -213,7 +213,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         Integer totalCount = customerMapper.findCustomerCompanyCountByParams(maps);
         List<CustomerDO> customerDOList = customerMapper.findCustomerCompanyByParams(maps);
-        List<Customer> customerList = ConverterUtil.convertList(customerDOList, Customer.class);
+        List<Customer> customerList = ConverterUtil.convertList(customerDOList,Customer.class);
         Page<Customer> page = new Page<>(customerList, totalCount, customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -284,6 +284,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
         Date now = new Date();
         if (customerDO.getCustomerRiskManagementDO() == null) {//没有风控信息则添加
+
             CustomerRiskManagementDO customerRiskManagementDO = CustomerRiskManagementConverter.convertCustomerRiskManagement(customerRiskManagement);
             customerRiskManagementDO.setCreditAmountUsed(BigDecimal.ZERO);
             customerRiskManagementDO.setCustomerId(customerDO.getId());
@@ -298,10 +299,14 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setResult(customerDO.getCustomerNo());
             return serviceResult;
         } else {//有风控信息则修改
-            CustomerRiskManagementDO customerRiskManagementDOForUpdate = CustomerRiskManagementConverter.convertCustomerRiskManagement(customerRiskManagement);
+            CustomerRiskManagementDO customerRiskManagementDOForUpdate = new CustomerRiskManagementDO();
             customerRiskManagementDOForUpdate.setId(customerDO.getCustomerRiskManagementDO().getId());
+            customerRiskManagementDOForUpdate.setRemark(customerRiskManagement.getRemark());
             customerRiskManagementDOForUpdate.setUpdateTime(now);
             customerRiskManagementDOForUpdate.setUpdateUser(userSupport.getCurrentUserId().toString());
+            customerRiskManagementDOForUpdate.setCreditAmount(customerRiskManagement.getCreditAmount());
+            customerRiskManagementDOForUpdate.setDepositCycle(customerRiskManagement.getDepositCycle());
+            customerRiskManagementDOForUpdate.setPaymentCycle(customerRiskManagement.getPaymentCycle());
             customerRiskManagementMapper.update(customerRiskManagementDOForUpdate);
             serviceResult.setErrorCode(ErrorCode.SUCCESS);
             serviceResult.setResult(customerDO.getCustomerNo());
