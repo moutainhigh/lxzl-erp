@@ -25,6 +25,7 @@
                                  <th>商品图</th>
                                  <th>SKUID</th>
                                  <th>设备状态</th>
+                                 <th>原采购价</th>
                                  <th>采购价格</th>
                                  <th>备注</th>
                                  {{#hasRowActionButtons}}
@@ -51,6 +52,7 @@
                                  <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                  <td>{{skuId}}</td>
                                  <td>{{equipmentStatusStr}}</td>
+                                 <td>{{#price}}{{srcPurchasePrice}}{{/price}}</td>
                                  <td>
                                      <input type="hidden" name="equipmentNo" value="{{equipmentNo}}" class="equipmentNo" />
                                      <label class="field prepend-icon">

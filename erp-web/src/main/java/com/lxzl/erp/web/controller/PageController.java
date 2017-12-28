@@ -547,5 +547,11 @@ public class PageController extends BaseController {
         return "/component/address/inputAddressModal";
     }
 
+    //输入地址
+    @RequestMapping("/common-modal/remark")
+    public String commonModalRemark() {
+        return "/component/common/remarkModal";
+    }
+
 
 }

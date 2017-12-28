@@ -1,0 +1,73 @@
+<div class="popup-basic popup-xl admin-form mfp-with-anim theme-primary">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-search"></i>编辑配件价格</span>
+        </div>
+        <form class="editForm">
+            <div class="form-horizontal panel-body bg-light dark">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal mn">
+                        <dt class="mb10">采购数量</dt><dd class="materialCount"></dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal mn">
+                        <dt class="mb10">原采购价格</dt><dd class="materialAmount"></dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="panel-body pn">
+                <div class="table-responsive">
+                    <script type="text/html" class="dataListTpl">
+                        <thead>
+                        <tr>
+                            <th>数量</th>
+                            <th>价格</th>
+                            <th class="text-right">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#dataSource}}
+                        {{#listData}}
+                        <tr class="materialRow">
+                            <td>
+                                <label class="field prepend-icon">
+                                    <input type="text" name="count-{{rowKey}}" value="{{count}}" class="count form-control required number" placeholder="输入采购数量" />
+                                    <label for="listPrice" class="field-icon"><i class="fa fa-tag"></i></label>
+                                </label>
+                            </td>
+                            <td>
+                                <label class="field prepend-icon">
+                                    <input type="text" name="price-{{rowKey}}" value="{{price}}" class="price form-control required moneyNumber" placeholder="输入采购价格" />
+                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <div class="btn-group text-right">
+                                    <button type="button" class="btn btn-default btn-xs addRow"></i>添加</button>
+                                    <button type="button" class="btn btn-default btn-xs delRow hide"></i>删除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/listData}}
+                        {{^listData}}
+                        <tr>
+                            <td valign="top" colspan="8" class="text-center">没有查询到配件</td>
+                        </tr>
+                        {{/listData}}
+                        {{/dataSource}}
+                        </tbody>
+                    </script>
+                    <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13 dataListTable"></table>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <button type="submit" class="button btn-primary">保存</button>
+                <button type="button" class="button btn-default cancelButton"">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
