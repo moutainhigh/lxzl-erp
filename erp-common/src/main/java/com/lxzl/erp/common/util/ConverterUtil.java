@@ -224,6 +224,14 @@ public class ConverterUtil {
                     poIdField.set(t, ConstantConfig.imageDomain);
                 }
             }
+        }else if(o.getClass().getSimpleName().equals("MaterialImgDO")){
+            Field[] poFields = clazz.getDeclaredFields();
+            for(Field poIdField : poFields){
+                if("imgDomain".equals(poIdField.getName())){
+                    poIdField.setAccessible(true);
+                    poIdField.set(t, ConstantConfig.imageDomain);
+                }
+            }
         }
     }
     private static void setName(Object userId,Field field,Object t ) throws IllegalAccessException {
