@@ -20,10 +20,8 @@
 
     <select id="findList" resultMap="RoleMenuDO" parameterType="map">
         select
-        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        <include refid="column_List"/>
         from erp_role_menu trm
-        left join erp_user tuc on tuc.id = trm.create_user
-        left join erp_user tuu on tuu.id = trm.update_user
         <where>
             <if test="maps.roleId != null">
                 and trm.role_id = #{maps.roleId, jdbcType=INTEGER}
@@ -57,19 +55,15 @@
 
     <select id="findByMapId" resultMap="RoleMenuDO" parameterType="java.lang.Integer">
         select
-        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        <include refid="column_List"/>
         from erp_role_menu trm
-        left join erp_user tuc on tuc.id = trm.create_user
-        left join erp_user tuu on tuu.id = trm.update_user
         where trm.id = #{id, jdbcType=INTEGER} and trm.data_status != 2
     </select>
 
     <select id="findRoleMenu" resultMap="RoleMenuDO" parameterType="map">
         select
-        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        <include refid="column_List"/>
         from erp_role_menu trm
-        left join erp_user tuc on tuc.id = trm.create_user
-        left join erp_user tuu on tuu.id = trm.update_user
         where trm.role_id = #{roleId, jdbcType=INTEGER} and trm.menu_Id = #{menuId, jdbcType=INTEGER} and trm.data_status != 2
     </select>
 
@@ -83,10 +77,8 @@
 
     <select id="findListByRoleSet" resultMap="RoleMenuDO" parameterType="java.lang.Integer">
         select
-        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        <include refid="column_List"/>
         from erp_role_menu trm
-        left join erp_user tuc on tuc.id = trm.create_user
-        left join erp_user tuu on tuu.id = trm.update_user
         where trm.role_id in
         <foreach collection="roleSet" open="(" close=")" separator="," item="roleId">#{roleId}</foreach> and trm.data_status != 2
     </select>
