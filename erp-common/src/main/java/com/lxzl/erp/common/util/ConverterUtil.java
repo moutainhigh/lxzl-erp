@@ -38,41 +38,47 @@ public class ConverterUtil {
                 Field[] fields = o.getClass().getDeclaredFields();
                 T t = JSON.parseObject(JSON.toJSONString(o),clazz);
                 for(Field field : fields){
-                    field.setAccessible(true);
-                    if(idFiledName.equals(field.getName())){
-                        Integer id = (Integer)field.get(o);
-                        Field doId = t.getClass().getDeclaredField("id");
-                        doId.setAccessible(true);
-                        doId.set(t,id);
-                    }else if(field.getName().endsWith("List")){
-                        List list = (List)field.get(o);
-                        Class poListGenericClazz = getGenericClazzForList(field);
-                        String doListFieldName = firstLowName(poListGenericClazz.getSimpleName())+"DOList";
-                        Field doField = clazz.getDeclaredField(doListFieldName);
-                        doField.setAccessible(true);
-                        Class doListGenericClazz = getGenericClazzForList(doField);
-                        List newList = new ArrayList();
-                        if(CollectionUtil.isNotEmpty(list)){
-                            for(Object oo : list){
-                                newList.add(convert(oo,doListGenericClazz));
+                    try{
+                        field.setAccessible(true);
+                        if(idFiledName.equals(field.getName())){
+                            Integer id = (Integer)field.get(o);
+                            Field doId = t.getClass().getDeclaredField("id");
+                            doId.setAccessible(true);
+                            doId.set(t,id);
+                        }else if(field.getName().endsWith("List")){
+                            List list = (List)field.get(o);
+                            Class poListGenericClazz = getGenericClazzForList(field);
+                            String doListFieldName = firstLowName(poListGenericClazz.getSimpleName())+"DOList";
+                            Field doField = clazz.getDeclaredField(doListFieldName);
+                            doField.setAccessible(true);
+                            Class doListGenericClazz = getGenericClazzForList(doField);
+                            List newList = new ArrayList();
+                            if(CollectionUtil.isNotEmpty(list)){
+                                for(Object oo : list){
+                                    newList.add(convert(oo,doListGenericClazz));
+                                }
+                            }
+                            doField.setAccessible(true);
+                            doField.set(t,newList);
+                        }else{
+                            String type = field.getType().getName();
+                            Class cl = getWrapClass(type);
+                            if(!isJavaClass(cl)){
+                                String doFieldName = firstLowName(cl.getSimpleName()+"DO");
+                                Field doField = clazz.getDeclaredField(doFieldName);
+                                Class doClazz =  getWrapClass(doField.getType().getName());
+                                Object value = field.get(o);
+                                if(value!=null){
+                                    doField.setAccessible(true);
+                                    doField.set(t,convert(value,doClazz));
+                                }
                             }
                         }
-                        doField.setAccessible(true);
-                        doField.set(t,newList);
-                    }else{
-                        String type = field.getType().getName();
-                        Class cl = Class.forName(type);
-                        if(!isJavaClass(cl)){
-                            String doFieldName = firstLowName(cl.getSimpleName()+"DO");
-                            Field doField = clazz.getDeclaredField(doFieldName);
-                            Class doClazz =  Class.forName(doField.getType().getName());
-                            Object value = field.get(o);
-                            if(value!=null){
-                                doField.setAccessible(true);
-                                doField.set(t,convert(value,doClazz));
-                            }
-                        }
+                    }catch(Exception e){
+                        logger.error("======================="+o.getClass().getName()+"类，"+field.getName()+"字段转换异常========================");
+                        continue;
                     }
+
                 }
                 return t;
             }else{//do 转 po
@@ -80,67 +86,52 @@ public class ConverterUtil {
                 String idFiledName = firstLowName(clazz.getSimpleName()) +"Id";
                 Field[] fields = o.getClass().getDeclaredFields();
                 for(Field field : fields){
-                    field.setAccessible(true);
-                    if("id".equals(field.getName())){
-                        Field poId = t.getClass().getDeclaredField(idFiledName);
-                        poId.setAccessible(true);
-                        poId.set(t,field.get(o));
-                    }else if(field.getName().endsWith("List")){
-                        List doList = (List)field.get(o);
-                        Class doListGenericClazz = getGenericClazzForList(field);
-                        String poListFieldName = firstLowName(doListGenericClazz.getSimpleName().substring(0,doListGenericClazz.getSimpleName().length()-2))+"List";
-                        Field poField = clazz.getDeclaredField(poListFieldName);
-                        poField.setAccessible(true);
-                        Class poListGenericClazz = getGenericClazzForList(poField);
-                        List newList = new ArrayList();
-                        if(CollectionUtil.isNotEmpty(doList)){
-                            for(Object oo : doList){
-                                newList.add(convert(oo,poListGenericClazz));
+                    try{
+                        field.setAccessible(true);
+                        if("id".equals(field.getName())){
+                            Field poId = t.getClass().getDeclaredField(idFiledName);
+                            poId.setAccessible(true);
+                            poId.set(t,field.get(o));
+                        }else if(field.getName().endsWith("List")){
+                            List doList = (List)field.get(o);
+                            Class doListGenericClazz = getGenericClazzForList(field);
+                            String poListFieldName = null;
+                            if(isJavaClass(doListGenericClazz)){
+                                poListFieldName = field.getName();
+                            }else{
+                                poListFieldName = firstLowName(doListGenericClazz.getSimpleName().substring(0,doListGenericClazz.getSimpleName().length()-2))+"List";
+                            }
+
+                            Field poField = clazz.getDeclaredField(poListFieldName);
+                            poField.setAccessible(true);
+                            Class poListGenericClazz = getGenericClazzForList(poField);
+                            List newList = new ArrayList();
+                            if(CollectionUtil.isNotEmpty(doList)){
+                                for(Object oo : doList){
+                                    newList.add(convert(oo,poListGenericClazz));
+                                }
+                            }
+                            poField.set(t,newList);
+                        }else {
+                            String type = field.getType().getName();
+                            Class cl = getWrapClass(type);
+                            if(!isJavaClass(cl)){
+                                int endIndex = field.getName().length()-2;
+                                String poFieldName = field.getName().substring(0,endIndex);
+                                Field poField = clazz.getDeclaredField(poFieldName);
+                                Class poClazz =  getWrapClass(poField.getType().getName());
+                                Object value = field.get(o);
+                                if(value!=null){
+                                    poField.setAccessible(true);
+                                    poField.set(t,convert(value,poClazz));
+                                }
                             }
                         }
-                        poField.set(t,newList);
-                    }else {
-                        String type = field.getType().getName();
-                        Class cl = Class.forName(type);
-                        if(!isJavaClass(cl)){
-//                            String poFieldName = firstLowName(cl.getSimpleName().substring(0,cl.getSimpleName().length()-2));
-//                            Field poField = clazz.getDeclaredField(poFieldName);
-                            int endIndex = field.getName().length()-2;
-                            String poFieldName = field.getName().substring(0,endIndex);
-                            Field poField = clazz.getDeclaredField(poFieldName);
-                            Class poClazz =  Class.forName(poField.getType().getName());
-                            Object value = field.get(o);
-                            if(value!=null){
-                                poField.setAccessible(true);
-                                poField.set(t,convert(value,poClazz));
-                            }
-                        }
-//                        else{
-//                            String poFieldName = field.getName();
-//                            Object value = field.get(o);
-//                            if("createUser".equals(poFieldName)&&value!=null){
-//                                User user = CommonCache.userMap.get(value);
-//                                if(user!=null){
-//                                    Field userRealNameField = clazz.getDeclaredField("createUserRealName");
-//                                    if(userRealNameField!=null){
-//                                        userRealNameField.setAccessible(true);
-//                                        userRealNameField.set(t,user.getRealName());
-//                                    }
-//                                }
-//
-//                            }
-//                            if("updateUser".equals(poFieldName)&&value!=null){
-//                                User user = CommonCache.userMap.get(value);
-//                                if(user!=null){
-//                                    Field userRealNameField = clazz.getDeclaredField("updateUserRealName");
-//                                    if(userRealNameField!=null){
-//                                        userRealNameField.setAccessible(true);
-//                                        userRealNameField.set(t,user.getRealName());
-//                                    }
-//                                }
-//                            }
-//                        }
+                    }catch (Exception e){
+                        logger.error("======================="+o.getClass().getName()+"类，"+field.getName()+"字段转换异常========================");
+                        continue;
                     }
+
                 }
                 Class parentDOClazz =o.getClass().getSuperclass();
                 Class parentPOClazz =clazz.getSuperclass();
@@ -189,7 +180,27 @@ public class ConverterUtil {
             throw new BusinessException("数据转换错误");
         }
     }
-
+    private static Class getWrapClass(String type) throws ClassNotFoundException {
+        if("int".equals(type)){
+            return Integer.class;
+        }else if("double".equals(type)){
+            return Double.class;
+        }else if("float".equals(type)){
+            return Float.class;
+        }else if("long".equals(type)){
+            return Long.class;
+        }else if("short".equals(type)){
+            return Short.class;
+        }else if("boolean".equals(type)){
+            return Boolean.class;
+        }else if("byte".equals(type)){
+            return Byte.class;
+        }else if("char".equals(type)){
+            return Character.class;
+        }else{
+            return Class.forName(type);
+        }
+    }
     private static String firstLowName (String name ){
         String first = name.substring(0,1);
         String lowName = first.toLowerCase()+name.substring(1,name.length());

@@ -49,7 +49,7 @@ public class PurchaseReceiveOrder extends BasePO {
 	private String updateUser;   //修改人
 
 	private List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList ;
-	private List<PurchaseReceiveOrderMaterial> PurchaseReceiveOrderMaterialList;
+	private List<PurchaseReceiveOrderMaterial> purchaseReceiveOrderMaterialList;
 	private String ownerName;
 	private String purchaseOrderNo;
 	private String productSupplierName;
@@ -255,10 +255,10 @@ public class PurchaseReceiveOrder extends BasePO {
 	}
 
 	public List<PurchaseReceiveOrderMaterial> getPurchaseReceiveOrderMaterialList() {
-		return PurchaseReceiveOrderMaterialList;
+		return purchaseReceiveOrderMaterialList;
 	}
 
 	public void setPurchaseReceiveOrderMaterialList(List<PurchaseReceiveOrderMaterial> purchaseReceiveOrderMaterialList) {
-		PurchaseReceiveOrderMaterialList = purchaseReceiveOrderMaterialList;
+		this.purchaseReceiveOrderMaterialList = purchaseReceiveOrderMaterialList;
 	}
 }
