@@ -69,6 +69,7 @@
                     <div class="panel-body pn">
                         <div class="table-responsive">
                             <script type="text/html" id="dataListTpl">
+                                <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" >
                                 <thead>
                                 <tr>
                                     {{#hasCommonActionButtons}}
@@ -136,8 +137,9 @@
                                 {{/listData}}
                                 {{/dataSource}}
                                 </tbody>
+                                </table>
                             </script>
-                            <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                            <div id="dataListTable"></div>
                         </div>
                     </div>
                     <div class="panel-footer">

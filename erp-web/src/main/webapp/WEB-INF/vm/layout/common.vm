@@ -13,17 +13,3 @@
         staticManagement:'$!constantConfig.getStaticDomain()'
     };
 </script>
-
-#*
-#set( $version = $!dateTool.getSystemTime())
-
-#set( $ctx = 'http://product.itrent.cn/manager/')
-#set( $staticCommon = 'http://static.itrent.cn/page-common/')
-#set( $staticManagement = 'http://static.itrent.cn/page-manager/')
-
-<script type="text/javascript">
-    var SitePath = {
-        base: 'http://product.itrent.cn/manager/',
-        service:'http://product.itrent.cn/manager/',
-    };
-</script>*#

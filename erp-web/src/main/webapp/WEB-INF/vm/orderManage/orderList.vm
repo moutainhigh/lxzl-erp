@@ -84,6 +84,7 @@
                                         {{/hasCommonActionButtons}}
                                         <th class="">订单编号</th>
                                         <th class="">状态</th>
+                                        <th class="">支付状态</th>
                                         <th class="">客户</th>
                                         <th class="">租赁方式</th>
                                         <th class="">租期</th>
@@ -114,6 +115,7 @@
                                             {{/hasCommonActionButtons}}
                                             <td>{{orderNo}}</td>
                                             <td>{{orderStatusStr}}</td>
+                                            <td>{{payStatusValue}}</td>
                                             <td>{{buyerRealName}}</td>
                                             <td>{{rentTypeStr}}</td>
                                             <td>{{rentTimeLength}}</td>

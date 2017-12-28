@@ -6,7 +6,7 @@
         <form method="post" id="riskCustomerForm" description="风控授信">
             <div class="panel-body p25">
                 <div class="section row">
-                    <div class="col-md-4">
+                    <div class="col-md-12">
                         <label for="creditAmount" class="field-label">授信额度</label>
                         <label for="creditAmount" class="field prepend-icon">
                             <input type="text" name="creditAmount" id="creditAmount" class="gui-input required moneyNumber" maxlength="7">
@@ -14,6 +14,8 @@
                             </label>
                         </label>
                     </div>
+                </div>
+                <div class="section row">
                     <div class="col-md-4">
                         <label for="depositCycle" class="field-label">押金期数</label>
                         <label for="depositCycle" class="field prepend-icon">
@@ -28,6 +30,15 @@
                             <input type="text" name="paymentCycle" id="paymentCycle" class="gui-input required number maxlength="3">
                             <label for="paymentCycle" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="applePayMode" class="field-label">支付方式</label>
+                        <label for="applePayMode" class="field select">
+                            <select class="required" name="payMode">
+                                <option value="">请选择</option>
+                            </select>
+                            <i class="arrow"></i>
                         </label>
                     </div>
                 </div>

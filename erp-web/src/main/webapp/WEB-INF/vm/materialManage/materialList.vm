@@ -84,8 +84,8 @@
                                 <th>型号</th>
                                 <th>类型</th>
                                 <th>库存</th>
-                                <th>本身价值</th>
-                                <th>租赁价格</th>
+                                <th>价值</th>
+                                <th>租金</th>
                                 <th>描述</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
@@ -110,10 +110,10 @@
                                 <td>{{materialModelName}}</td>
                                 <td>{{materialTypeStr}}</td>
                                 <td>{{stock}}</td>
-                                <td>{{materialPriceFormat}}</td>
+                                <td>{{#price}}{{materialPrice}}{{/price}}</td>
                                 <td>
-                                    <p>日租：￥{{dayRentPriceFormat}}</p>
-                                    <p>月租：￥{{monthRentPriceFormat}}</p>
+                                    <p>日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
+                                    <p>月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
                                 </td>
                                 <td>{{materialDesc}}</td>
                                 {{#hasRowActionButtons}}

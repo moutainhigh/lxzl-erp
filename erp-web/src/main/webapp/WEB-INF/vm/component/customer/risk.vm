@@ -52,6 +52,13 @@
                 <td>
                     <span class="fa fa-circle text-info"></span>
                 </td>
+                <td>支付方式</td>
+                <td><span class='text-info'>{{payModeValue}}</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="fa fa-circle text-info"></span>
+                </td>
                 <td>苹果押金期数</td>
                 <td><span class='text-info'>{{appleDepositCycle}}</span></td>
             </tr>
@@ -87,7 +94,7 @@
                 <td>
                     <span class="fa fa-circle text-info"></span>
                 </td>
-                <td>全新设备付款期数</td>
+                <td>全新设备支付方式</td>
                 <td><span class='text-info'>{{newPayModeValue}}</span></td>
             </tr>
             <tr>

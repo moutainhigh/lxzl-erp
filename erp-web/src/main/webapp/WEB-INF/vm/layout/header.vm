@@ -2,6 +2,7 @@
 #parse("layout/common.vm")
 
 <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/magnific/magnific-popup.css">
+<link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/fixedHeaderTable/css/defaultTheme.css">
 
 <link rel="shortcut icon" href="${staticCommon}/rental/img/lxzl-favicon.png">
 

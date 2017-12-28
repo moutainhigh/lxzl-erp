@@ -14,6 +14,9 @@
 <script type="text/javascript" src="${staticCommon}vendor/plugins/mustache/mustache.min.js"></script>
 <script type="text/javascript" src="${staticCommon}vendor/plugins/magnific/jquery.magnific-popup.min.js"></script>
 
+<!-- Fixed Header Table -->
+<script type="text/javascript" src="${staticCommon}vendor/plugins/fixedHeaderTable/jquery.fixedheadertable.min.js"></script>
+
 <!-- Theme Javascript -->
 <script type="text/javascript" src="${staticCommon}assets/js/utility/utility.js?v=2017121301"></script>
 <script type="text/javascript" src="${staticCommon}assets/js/main.js"></script>
