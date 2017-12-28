@@ -1,12 +1,13 @@
 package com.lxzl.erp.common.domain.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePageParam;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProductQueryParam extends PageQuery implements Serializable {
+public class ProductQueryParam extends BasePageParam {
 
     private Integer productId;
     private String productName;
