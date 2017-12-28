@@ -18,6 +18,7 @@ public class RepairOrderEquipmentDO  extends BaseDO {
 	private Integer orderId;
 	private Integer orderProductId;
 	private String remark;
+	private String repairEndRemark; //维修完成的备注
 
 	@Transient
 	private ProductEquipmentDO productEquipmentDO;
@@ -100,5 +101,13 @@ public class RepairOrderEquipmentDO  extends BaseDO {
 
 	public void setProductEquipmentDO(ProductEquipmentDO productEquipmentDO) {
 		this.productEquipmentDO = productEquipmentDO;
+	}
+
+	public String getRepairEndRemark() {
+		return repairEndRemark;
+	}
+
+	public void setRepairEndRemark(String repairEndRemark) {
+		this.repairEndRemark = repairEndRemark;
 	}
 }

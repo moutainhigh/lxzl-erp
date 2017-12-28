@@ -23,15 +23,30 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="company_origin" jdbcType="INTEGER" property="companyOrigin" />
+		<result column="found_time" jdbcType="TIMESTAMP" property="foundTime" />
+		<result column="industry" jdbcType="VARCHAR" property="industry" />
+		<result column="registered_capital" jdbcType="INTEGER" property="registeredCapital" />
+		<result column="office_number" jdbcType="INTEGER" property="officeNumber" />
+		<result column="product_purpose" jdbcType="VARCHAR" property="productPurpose" />
+		<result column="list_first_need_products" jdbcType="VARCHAR" property="listFirstNeedProducts" />
+		<result column="list_later_need_products" jdbcType="VARCHAR" property="listLaterNeedProducts" />
+		<result column="agent_person_name" jdbcType="VARCHAR" property="agentPersonName" />
+		<result column="agent_person_phone" jdbcType="VARCHAR" property="agentPersonPhone" />
+		<result column="agent_person_no" jdbcType="VARCHAR" property="agentPersonNo" />
+		<result column="consign_address" jdbcType="VARCHAR" property="consignAddress" />
+		<result column="unified_credit_code" jdbcType="VARCHAR" property="unifiedCreditCode" />
+
 	</resultMap>
 
 	<sql id="column_List">
-		ecc.id,ecc.customer_id,ecc.landline,ecc.connect_real_name,ecc.connect_phone,ecc.company_name,ecc.company_abb,ecc.province,ecc.city,ecc.district,ecc.address,ecc.legal_person,ecc.legal_person_no,ecc.business_license_no,ecc.data_status,ecc.remark,ecc.create_time,ecc.create_user,ecc.update_time,ecc.update_user
+		ecc.id,ecc.customer_id,ecc.landline,ecc.connect_real_name,ecc.connect_phone,ecc.company_name,ecc.company_abb,ecc.province,ecc.city,ecc.district,ecc.address,ecc.legal_person,ecc.legal_person_no,ecc.business_license_no,ecc.data_status,ecc.remark,ecc.create_time,ecc.create_user,ecc.update_time,ecc.update_user,ecc.company_origin,ecc.found_time,ecc.industry,ecc.registered_capital,ecc.office_number,ecc.product_purpose,ecc.list_first_need_products,ecc.list_later_need_products,ecc.agent_person_name,ecc.agent_person_phone,ecc.agent_person_no,ecc.consign_address,ecc.unified_credit_code
 	</sql>
 
 	<select id="findById" resultMap="CustomerCompanyDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_customer_company ecc 
-		WHERE ecc.id = #{id, jdbcType=INTEGER} AND ecc.data_status = 1 
+		SELECT <include refid="column_List"/> FROM erp_customer_company ecc
+		WHERE ecc.id = #{id, jdbcType=INTEGER} AND ecc.data_status = 1
 	</select>
 
 	<select id="findByCustomerId" resultMap="CustomerCompanyDO" parameterType="java.lang.Integer">
@@ -40,7 +55,7 @@
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(ecc.id) FROM erp_customer_company ecc 
+		SELECT count(ecc.id) FROM erp_customer_company ecc
 		<where>
 			<if test="true">
 				AND ecc.data_status = 1
@@ -49,7 +64,7 @@
 	</select>
 
 	<select id="listPage" resultMap="CustomerCompanyDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_customer_company ecc 
+		SELECT <include refid="column_List"/> FROM erp_customer_company ecc
 		<where>
 			<if test="true">
 				AND ecc.data_status = 1
@@ -117,8 +132,48 @@
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
 			</if>
+			<if test="companyOrigin != null">
+				company_origin = #{companyOrigin,jdbcType=INTEGER},
+			</if>
+			<if test="foundTime != null">
+				found_time = #{foundTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="industry != null">
+				industry = #{industry,jdbcType=VARCHAR},
+			</if>
+			<if test="registeredCapital != null">
+				registered_capital = #{registeredCapital,jdbcType=DECIMAL},
+			</if>
+			<if test="officeNumber != null">
+				office_number = #{officeNumber,jdbcType=INTEGER},
+			</if>
+			<if test="productPurpose != null">
+				product_purpose = #{productPurpose,jdbcType=VARCHAR},
+			</if>
+			<if test="listFirstNeedProducts != null">
+				list_first_need_products = #{listFirstNeedProducts,jdbcType=VARCHAR},
+			</if>
+			<if test="listLaterNeedProducts != null">
+				list_later_need_products = #{listLaterNeedProducts,jdbcType=VARCHAR},
+			</if>
+			<if test="agentPersonName != null">
+				agent_person_name = #{agentPersonName,jdbcType=VARCHAR},
+			</if>
+			<if test="agentPersonPhone != null">
+				agent_person_phone = #{agentPersonPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="agentPersonNo != null">
+				agent_person_no = #{agentPersonNo,jdbcType=VARCHAR},
+			</if>
+			<if test="consignAddress != null">
+				consign_address = #{consignAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="unifiedCreditCode != null">
+				unified_credit_code = #{unifiedCreditCode,jdbcType=VARCHAR},
+			</if>
 		</set>
 	</sql>
+
 
 	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.customer.CustomerCompanyDO">
 		INSERT INTO erp_customer_company <include refid="set_column_sql"/>

@@ -28,6 +28,7 @@ public class RepairOrderEquipment extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+	private String repairEndRemark; //维修完成的备注
 
 	private ProductEquipment productEquipment;
 
@@ -141,5 +142,13 @@ public class RepairOrderEquipment extends BasePO {
 
 	public void setProductEquipment(ProductEquipment productEquipment) {
 		this.productEquipment = productEquipment;
+	}
+
+	public String getRepairEndRemark() {
+		return repairEndRemark;
+	}
+
+	public void setRepairEndRemark(String repairEndRemark) {
+		this.repairEndRemark = repairEndRemark;
 	}
 }

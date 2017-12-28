@@ -849,6 +849,7 @@ CREATE TABLE `erp_repair_order` (
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  `repair_end_remark` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '维修完成的备注',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备维修单';
 
@@ -867,6 +868,7 @@ CREATE TABLE `erp_repair_order_equipment` (
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  `repair_end_remark` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '维修完成的备注',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备维修单明细';
 
@@ -885,6 +887,7 @@ CREATE TABLE `erp_repair_order_bulk_material` (
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  `repair_end_remark` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '维修完成的备注',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='散料维修单明细';
 

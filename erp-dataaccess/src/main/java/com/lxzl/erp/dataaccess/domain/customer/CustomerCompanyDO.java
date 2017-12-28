@@ -25,12 +25,28 @@ public class CustomerCompanyDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
+	private int   companyOrigin; //客户来源,1转介绍,2老客户,3公司资源,4主动开发
+	private Date   foundTime;  //企业成立时间'
+	private String   industry;  //所属行业'
+	private double   registeredCapital;  //注册资本'
+	private int   officeNumber;  //办公人数'
+	private String   productPurpose;  //设备用途'
+	private String   listFirstNeedProducts;  //首次所需设备'
+	private String   listLaterNeedProducts;  //后期所需设备'
+	private String   agentPersonName;  //经办人姓名'
+	private String   agentPersonPhone;  //经办人电话'
+	private String   agentPersonNo;  //经办人身份证号码'
+	private String   consignAddress;  //收货地址'
+	private String   unifiedCreditCode;  //统一信用代码'
+
 	@Transient
 	private String provinceName;
 	@Transient
 	private String cityName;
 	@Transient
 	private String districtName;
+
+
 
 	public Integer getId(){
 		return id;
@@ -182,5 +198,109 @@ public class CustomerCompanyDO  extends BaseDO {
 
 	public void setDistrictName(String districtName) {
 		this.districtName = districtName;
+	}
+
+	public int getCompanyOrigin() {
+		return companyOrigin;
+	}
+
+	public void setCompanyOrigin(int companyOrigin) {
+		this.companyOrigin = companyOrigin;
+	}
+
+	public Date getFoundTime() {
+		return foundTime;
+	}
+
+	public void setFoundTime(Date foundTime) {
+		this.foundTime = foundTime;
+	}
+
+	public String getIndustry() {
+		return industry;
+	}
+
+	public void setIndustry(String industry) {
+		this.industry = industry;
+	}
+
+	public double getRegisteredCapital() {
+		return registeredCapital;
+	}
+
+	public void setRegisteredCapital(double registeredCapital) {
+		this.registeredCapital = registeredCapital;
+	}
+
+	public int getOfficeNumber() {
+		return officeNumber;
+	}
+
+	public void setOfficeNumber(int officeNumber) {
+		this.officeNumber = officeNumber;
+	}
+
+	public String getProductPurpose() {
+		return productPurpose;
+	}
+
+	public void setProductPurpose(String productPurpose) {
+		this.productPurpose = productPurpose;
+	}
+
+	public String getListFirstNeedProducts() {
+		return listFirstNeedProducts;
+	}
+
+	public void setListFirstNeedProducts(String listFirstNeedProducts) {
+		this.listFirstNeedProducts = listFirstNeedProducts;
+	}
+
+	public String getListLaterNeedProducts() {
+		return listLaterNeedProducts;
+	}
+
+	public void setListLaterNeedProducts(String listLaterNeedProducts) {
+		this.listLaterNeedProducts = listLaterNeedProducts;
+	}
+
+	public String getAgentPersonName() {
+		return agentPersonName;
+	}
+
+	public void setAgentPersonName(String agentPersonName) {
+		this.agentPersonName = agentPersonName;
+	}
+
+	public String getAgentPersonPhone() {
+		return agentPersonPhone;
+	}
+
+	public void setAgentPersonPhone(String agentPersonPhone) {
+		this.agentPersonPhone = agentPersonPhone;
+	}
+
+	public String getAgentPersonNo() {
+		return agentPersonNo;
+	}
+
+	public void setAgentPersonNo(String agentPersonNo) {
+		this.agentPersonNo = agentPersonNo;
+	}
+
+	public String getConsignAddress() {
+		return consignAddress;
+	}
+
+	public void setConsignAddress(String consignAddress) {
+		this.consignAddress = consignAddress;
+	}
+
+	public String getUnifiedCreditCode() {
+		return unifiedCreditCode;
+	}
+
+	public void setUnifiedCreditCode(String unifiedCreditCode) {
+		this.unifiedCreditCode = unifiedCreditCode;
 	}
 }

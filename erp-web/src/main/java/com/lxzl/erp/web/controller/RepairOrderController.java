@@ -100,13 +100,13 @@ public class RepairOrderController {
 
     @RequestMapping(value = "fix", method = RequestMethod.POST)
     public Result fix(@RequestBody FixRepairOrderQueryParam fixRepairOrderQueryParam, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = repairOrderService.fix(fixRepairOrderQueryParam.getRepairEquipmentIdList(),fixRepairOrderQueryParam.getRepairBulkMaterialIdList());
+        ServiceResult<String, Integer> serviceResult = repairOrderService.fix(fixRepairOrderQueryParam.getRepairOrderEquipmentList(),fixRepairOrderQueryParam.getRepairOrderBulkMaterialList());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     @RequestMapping(value = "end", method = RequestMethod.POST)
     public Result end(@RequestBody @Validated(IdGroup.class)RepairOrder repairOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = repairOrderService.end(repairOrder.getRepairOrderNo());
+        ServiceResult<String, String> serviceResult = repairOrderService.end(repairOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

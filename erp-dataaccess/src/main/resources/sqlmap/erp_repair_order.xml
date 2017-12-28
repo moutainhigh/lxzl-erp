@@ -18,6 +18,7 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="repair_end_remark" jdbcType="VARCHAR" property="repairEndRemark" />
 
 		<result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
 		<collection property="repairOrderEquipmentDOList" resultMap="RepairOrderEquipmentDO" />
@@ -38,6 +39,7 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="repair_end_remark" jdbcType="VARCHAR" property="repairEndRemark" />
 	</resultMap>
 
 	<resultMap id="RepairOrderBulkMaterialDO" type="com.lxzl.erp.dataaccess.domain.repairOrder.RepairOrderBulkMaterialDO">
@@ -54,28 +56,28 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="repair_end_remark" jdbcType="VARCHAR" property="repairEndRemark" />
 	</resultMap>
 
-
 	<sql id="column_List">
-		ero.id,ero.repair_order_no,ero.repair_reason,ero.repair_equipment_count,ero.repair_bulk_material_count,ero.fix_equipment_count,ero.fix_bulk_material_count,ero.warehouse_no,ero.repair_order_status,ero.data_status,ero.remark,ero.create_time,ero.create_user,ero.update_time,ero.update_user
+		ero.id,ero.repair_order_no,ero.repair_reason,ero.repair_equipment_count,ero.repair_bulk_material_count,ero.fix_equipment_count,ero.fix_bulk_material_count,ero.warehouse_no,ero.repair_order_status,ero.data_status,ero.remark,ero.create_time,ero.create_user,ero.update_time,ero.update_user,ero.repair_end_remark
 	</sql>
 
 	<sql id="equipment_column_List">
-		eroe.id,eroe.repair_order_no,eroe.equipment_id,eroe.equipment_no,eroe.repair_end_time,eroe.data_status,eroe.order_id,eroe.order_product_id,eroe.remark,eroe.create_time,eroe.create_user,eroe.update_time,eroe.update_user
+		eroe.id,eroe.repair_order_no,eroe.equipment_id,eroe.equipment_no,eroe.repair_end_time,eroe.data_status,eroe.order_id,eroe.order_product_id,eroe.remark,eroe.create_time,eroe.create_user,eroe.update_time,eroe.update_user,ero.repair_end_remark
 	</sql>
 
 	<sql id="bulkmaterial_column_List">
-		erobm.id,erobm.repair_order_no,erobm.bulk_material_id,erobm.bulk_material_no,erobm.repair_end_time,erobm.order_id,erobm.order_material_id,erobm.data_status,erobm.remark,erobm.create_time,erobm.create_user,erobm.update_time,erobm.update_user
+		erobm.id,erobm.repair_order_no,erobm.bulk_material_id,erobm.bulk_material_no,erobm.repair_end_time,erobm.order_id,erobm.order_material_id,erobm.data_status,erobm.remark,erobm.create_time,erobm.create_user,erobm.update_time,erobm.update_user,ero.repair_end_remark
 	</sql>
 
 	<select id="findById" resultMap="RepairOrderDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_repair_order ero 
-		WHERE ero.id = #{id, jdbcType=INTEGER} AND ero.data_status = 1 
+		SELECT <include refid="column_List"/> FROM erp_repair_order ero
+		WHERE ero.id = #{id, jdbcType=INTEGER} AND ero.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(ero.id) FROM erp_repair_order ero 
+		SELECT count(ero.id) FROM erp_repair_order ero
 		<where>
 			<if test="true">
 				AND ero.data_status = 1
@@ -84,7 +86,7 @@
 	</select>
 
 	<select id="listPage" resultMap="RepairOrderDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_repair_order ero 
+		SELECT <include refid="column_List"/> FROM erp_repair_order ero
 		<where>
 			<if test="true">
 				AND ero.data_status = 1
@@ -136,6 +138,9 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="repairEndRemark != null">
+				repair_end_remark = #{repairEndRemark,jdbcType=VARCHAR},
 			</if>
 		</set>
 	</sql>

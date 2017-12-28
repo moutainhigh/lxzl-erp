@@ -28,6 +28,7 @@ public class RepairOrderBulkMaterial extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+	private String repairEndRemark; //维修完成的备注
 
 	private BulkMaterial bulkMaterial;
 
@@ -136,4 +137,11 @@ public class RepairOrderBulkMaterial extends BasePO {
 		this.updateUser = updateUser;
 	}
 
+	public String getRepairEndRemark() {
+		return repairEndRemark;
+	}
+
+	public void setRepairEndRemark(String repairEndRemark) {
+		this.repairEndRemark = repairEndRemark;
+	}
 }
