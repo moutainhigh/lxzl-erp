@@ -68,11 +68,11 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
-        List<OrderProductDO> orderProductDOList = ConverterUtil.convertList(order.getOrderProductList(), OrderProductDO.class);
-        List<OrderMaterialDO> orderMaterialDOList = ConverterUtil.convertList(order.getOrderMaterialList(), OrderMaterialDO.class);
+//        List<OrderProductDO> orderProductDOList = ConverterUtil.convertList(order.getOrderProductList(), OrderProductDO.class);
+//        List<OrderMaterialDO> orderMaterialDOList = ConverterUtil.convertList(order.getOrderMaterialList(), OrderMaterialDO.class);
         OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
-        orderDO.setOrderProductDOList(orderProductDOList);
-        orderDO.setOrderMaterialDOList(orderMaterialDOList);
+//        orderDO.setOrderProductDOList(orderProductDOList);
+//        orderDO.setOrderMaterialDOList(orderMaterialDOList);
         // 校验客户风控信息
         verifyCustomerRiskInfo(orderDO);
         calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);

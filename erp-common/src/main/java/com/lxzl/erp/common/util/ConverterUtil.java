@@ -41,16 +41,22 @@ public class ConverterUtil {
                 Field[] fields = o.getClass().getDeclaredFields();
                 T t = JSON.parseObject(JSON.toJSONString(o),clazz);
                 processPOSpecialField(o,t,clazz);
+                Field[] doFields = clazz.getDeclaredFields();
+                Map<String,Field> doFiledMap = new HashMap<>();
+                for( Field field : doFields){
+                    field.setAccessible(true);
+                    doFiledMap.put(field.getName(),field);
+                }
                 for(Field field : fields){
                     try{
                         field.setAccessible(true);
                         if(idFiledName.equals(field.getName())){
-                            Integer id = (Integer)field.get(o);
-                            Field doId = t.getClass().getDeclaredField("id");
-                            doId.setAccessible(true);
-                            doId.set(t,id);
+                            Field doField = doFiledMap.get("id");
+                            if(doField!=null){
+                                doField.set(t,field.get(o));
+                            }
                         }else if(field.getName().endsWith("List")){
-                            List list = (List)field.get(o);
+                            List poList = (List)field.get(o);
                             Class poListGenericClazz = getGenericClazzForList(field);
                             String doListFieldName = null;
                             if(isJavaClass(poListGenericClazz)){
@@ -58,28 +64,29 @@ public class ConverterUtil {
                             }else{
                                 doListFieldName = field.getName().replace("List","DOList");
                             }
-                            Field doField = clazz.getDeclaredField(doListFieldName);
-                            doField.setAccessible(true);
-                            Class doListGenericClazz = getGenericClazzForList(doField);
-                            List newList = new ArrayList();
-                            if(CollectionUtil.isNotEmpty(list)){
-                                for(Object oo : list){
-                                    newList.add(convert(oo,doListGenericClazz));
+                            Field doField = doFiledMap.get(doListFieldName);
+                            if(doField!=null){
+                                Class doListGenericClazz = getGenericClazzForList(doField);
+                                List newList = new ArrayList();
+                                if(CollectionUtil.isNotEmpty(poList)){
+                                    for(Object oo : poList){
+                                        newList.add(convert(oo,doListGenericClazz));
+                                    }
                                 }
+                                doField.set(t,newList);
                             }
-                            doField.setAccessible(true);
-                            doField.set(t,newList);
                         }else{
                             String type = field.getType().getName();
                             Class cl = getWrapClass(type);
                             if(!isJavaClass(cl)){
                                 String doFieldName = firstLowName(cl.getSimpleName()+"DO");
-                                Field doField = clazz.getDeclaredField(doFieldName);
-                                Class doClazz =  getWrapClass(doField.getType().getName());
-                                Object value = field.get(o);
-                                if(value!=null){
-                                    doField.setAccessible(true);
-                                    doField.set(t,convert(value,doClazz));
+                                Field doField = doFiledMap.get(doFieldName);
+                                if(doField!=null){
+                                    Class doClazz =  getWrapClass(doField.getType().getName());
+                                    Object value = field.get(o);
+                                    if(value!=null){
+                                        doField.set(t,convert(value,doClazz));
+                                    }
                                 }
                             }
                         }
@@ -118,11 +125,9 @@ public class ConverterUtil {
                                 poListFieldName = field.getName();
                             }else{
                                 poListFieldName = field.getName().replace("DOList","List");
-//                                poListFieldName = firstLowName(doListGenericClazz.getSimpleName().substring(0,doListGenericClazz.getSimpleName().length()-2))+"List";
                             }
-                            if(poFiledMap.get(poListFieldName)!=null){
-                                Field poField = poFiledMap.get(poListFieldName);
-//                                poField.set(t,field.get(o));
+                            Field poField = poFiledMap.get(poListFieldName);
+                            if(poField!=null){
                                 Class poListGenericClazz = getGenericClazzForList(poField);
                                 List newList = new ArrayList();
                                 if(CollectionUtil.isNotEmpty(doList)){
