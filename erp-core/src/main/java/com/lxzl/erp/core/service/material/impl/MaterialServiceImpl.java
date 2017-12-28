@@ -18,7 +18,6 @@ import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.material.MaterialService;
-import com.lxzl.erp.core.service.material.impl.support.MaterialConverter;
 import com.lxzl.erp.core.service.material.impl.support.MaterialImageConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialImgMapper;
@@ -168,7 +167,7 @@ public class MaterialServiceImpl implements MaterialService {
             result.setErrorCode(ErrorCode.RECORD_ALREADY_EXISTS);
             return result;
         }
-        MaterialDO materialDO = MaterialConverter.convertMaterial(material);
+        MaterialDO materialDO = ConverterUtil.convert(material, MaterialDO.class);
 
         if (MaterialType.isMainMaterial(materialDO.getMaterialType())) {
             materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_YES);
@@ -207,7 +206,7 @@ public class MaterialServiceImpl implements MaterialService {
             material.setMaterialModelId(null);
         }
 
-        MaterialDO materialDO = MaterialConverter.convertMaterial(material);
+        MaterialDO materialDO = ConverterUtil.convert(material, MaterialDO.class);
         // 以下两个值不能改
         materialDO.setId(dbRecord.getId());
         materialDO.setMaterialType(null);
@@ -343,7 +342,7 @@ public class MaterialServiceImpl implements MaterialService {
 
         Integer totalCount = materialMapper.listCount(maps);
         List<MaterialDO> materialDOList = materialMapper.listPage(maps);
-        List<Material> materialList = MaterialConverter.convertMaterialDOList(materialDOList);
+        List<Material> materialList = ConverterUtil.convertList(materialDOList, Material.class);
         Page<Material> page = new Page<>(materialList, totalCount, materialQueryParam.getPageNo(), materialQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -399,7 +398,7 @@ public class MaterialServiceImpl implements MaterialService {
         }
 
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(MaterialConverter.convertMaterialDO(materialDO));
+        result.setResult(ConverterUtil.convert(materialDO, Material.class));
         return result;
     }
 
@@ -435,7 +434,7 @@ public class MaterialServiceImpl implements MaterialService {
 
         Integer totalCount = bulkMaterialMapper.listCount(maps);
         List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(maps);
-        List<BulkMaterial> productList = MaterialConverter.convertProductBulkMaterialDOList(bulkMaterialDOList);
+        List<BulkMaterial> productList = ConverterUtil.convertList(bulkMaterialDOList, BulkMaterial.class);
         Page<BulkMaterial> page = new Page<>(productList, totalCount, bulkMaterialQueryParam.getPageNo(), bulkMaterialQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -503,7 +502,7 @@ public class MaterialServiceImpl implements MaterialService {
             return result;
         }
 
-        MaterialModelDO materialModelDO = MaterialConverter.convertMaterialModel(materialModel);
+        MaterialModelDO materialModelDO = ConverterUtil.convert(materialModel, MaterialModelDO.class);
         materialModelDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         materialModelDO.setUpdateUser(loginUser.getUserId().toString());
         materialModelDO.setCreateUser(loginUser.getUserId().toString());
@@ -532,7 +531,7 @@ public class MaterialServiceImpl implements MaterialService {
             return result;
         }
 
-        MaterialModelDO materialModelDO = MaterialConverter.convertMaterialModel(materialModel);
+        MaterialModelDO materialModelDO = ConverterUtil.convert(materialModel, MaterialModelDO.class);
         materialModelDO.setMaterialType(null);
         materialModelDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         materialModelDO.setUpdateUser(loginUser.getUserId().toString());
@@ -589,7 +588,7 @@ public class MaterialServiceImpl implements MaterialService {
         maps.put("materialModelQueryParam", materialModelQueryParam);
         Integer totalCount = materialModelMapper.listCount(maps);
         List<MaterialModelDO> materialModelDOList = materialModelMapper.listPage(maps);
-        List<MaterialModel> materialModelList = MaterialConverter.convertMaterialModelDOList(materialModelDOList);
+        List<MaterialModel> materialModelList = ConverterUtil.convertList(materialModelDOList,MaterialModel.class);
         Page<MaterialModel> page = new Page<>(materialModelList, totalCount, materialModelQueryParam.getPageNo(), materialModelQueryParam.getPageSize());
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -605,7 +604,7 @@ public class MaterialServiceImpl implements MaterialService {
             return result;
         }
 
-        result.setResult(MaterialConverter.convertMaterialModelDO(materialModelDO));
+        result.setResult(ConverterUtil.convert(materialModelDO,MaterialModel.class));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }

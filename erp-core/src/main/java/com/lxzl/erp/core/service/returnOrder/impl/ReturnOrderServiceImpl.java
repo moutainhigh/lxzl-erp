@@ -18,7 +18,6 @@ import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.product.ProductService;
-import com.lxzl.erp.core.service.product.impl.support.ProductEquipmentConverter;
 import com.lxzl.erp.core.service.returnOrder.ReturnOrderService;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -340,7 +339,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         returnOrderProductEquipmentMapper.save(returnOrderProductEquipmentDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(ProductEquipmentConverter.convertProductEquipmentDO(productEquipmentDO));
+        serviceResult.setResult(ConverterUtil.convert(productEquipmentDO,ProductEquipment.class));
         return serviceResult;
     }
 

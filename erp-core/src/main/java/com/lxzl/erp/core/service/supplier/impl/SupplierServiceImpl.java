@@ -7,9 +7,9 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.supplier.SupplierQueryParam;
 import com.lxzl.erp.common.domain.supplier.pojo.Supplier;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.supplier.SupplierService;
-import com.lxzl.erp.core.service.supplier.impl.support.SupplierConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
 import com.lxzl.erp.dataaccess.domain.supplier.SupplierDO;
 import com.lxzl.se.common.util.StringUtil;
@@ -48,7 +48,7 @@ public class SupplierServiceImpl implements SupplierService {
         paramMap.put("supplierQueryParam", supplierQueryParam);
         Integer dataCount = supplierMapper.listCount(paramMap);
         List<SupplierDO> dataList = supplierMapper.listPage(paramMap);
-        Page<Supplier> page = new Page<>(SupplierConverter.convertSupplierDOList(dataList), dataCount, supplierQueryParam.getPageNo(), supplierQueryParam.getPageSize());
+        Page<Supplier> page = new Page<>(ConverterUtil.convertList(dataList, Supplier.class), dataCount, supplierQueryParam.getPageNo(), supplierQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
@@ -62,7 +62,7 @@ public class SupplierServiceImpl implements SupplierService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        result.setResult(SupplierConverter.convertSupplierDO(supplierDO));
+        result.setResult(ConverterUtil.convert(supplierDO, Supplier.class));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -78,7 +78,7 @@ public class SupplierServiceImpl implements SupplierService {
             return result;
         }
 
-        SupplierDO supplierDO = SupplierConverter.convertSupplier(supplier);
+        SupplierDO supplierDO = ConverterUtil.convert(supplier, SupplierDO.class);
         supplierDO.setSupplierNo(GenerateNoUtil.generateSupplierNo(currentTime));
         supplierDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         supplierDO.setUpdateUser(loginUser.getUserId().toString());
@@ -103,7 +103,7 @@ public class SupplierServiceImpl implements SupplierService {
             return result;
         }
 
-        SupplierDO supplierDO = SupplierConverter.convertSupplier(supplier);
+        SupplierDO supplierDO = ConverterUtil.convert(supplier, SupplierDO.class);
         supplierDO.setId(dbSupplierDO.getId());
         supplierDO.setSupplierNo(dbSupplierDO.getSupplierNo());
         supplierDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);

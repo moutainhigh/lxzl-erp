@@ -16,7 +16,6 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
-import com.lxzl.erp.core.service.deploymentOrder.impl.support.DeploymentOrderConverter;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
@@ -62,7 +61,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             return result;
         }
 
-        DeploymentOrderDO deploymentOrderDO = DeploymentOrderConverter.convertDeploymentOrder(deploymentOrder);
+        DeploymentOrderDO deploymentOrderDO = ConverterUtil.convert(deploymentOrder, DeploymentOrderDO.class);
         deploymentOrderDO.setDeploymentOrderNo(GenerateNoUtil.generateDeploymentOrderNo(currentTime));
         deploymentOrderDO.setDeploymentOrderStatus(DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT);
         deploymentOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -71,8 +70,8 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         deploymentOrderDO.setUpdateTime(currentTime);
         deploymentOrderDO.setCreateTime(currentTime);
         deploymentOrderMapper.save(deploymentOrderDO);
-        saveDeploymentOrderProduct(deploymentOrderDO.getDeploymentOrderNo(), DeploymentOrderConverter.convertDeploymentOrderProductList(deploymentOrder.getDeploymentOrderProductList()), loginUser, currentTime);
-        saveDeploymentOrderMaterial(deploymentOrderDO.getDeploymentOrderNo(), DeploymentOrderConverter.convertDeploymentOrderMaterialList(deploymentOrder.getDeploymentOrderMaterialList()), loginUser, currentTime);
+        saveDeploymentOrderProduct(deploymentOrderDO.getDeploymentOrderNo(), ConverterUtil.convertList(deploymentOrder.getDeploymentOrderProductList(), DeploymentOrderProductDO.class), loginUser, currentTime);
+        saveDeploymentOrderMaterial(deploymentOrderDO.getDeploymentOrderNo(), ConverterUtil.convertList(deploymentOrder.getDeploymentOrderMaterialList(), DeploymentOrderMaterialDO.class), loginUser, currentTime);
 
         DeploymentOrderDO newestDeploymentOrderDO = deploymentOrderMapper.findByNo(deploymentOrderDO.getDeploymentOrderNo());
         for (DeploymentOrderProductDO deploymentOrderProductDO : newestDeploymentOrderDO.getDeploymentOrderProductDOList()) {
@@ -322,15 +321,15 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             return result;
         }
 
-        DeploymentOrderDO deploymentOrderDO = DeploymentOrderConverter.convertDeploymentOrder(deploymentOrder);
+        DeploymentOrderDO deploymentOrderDO = ConverterUtil.convert(deploymentOrder, DeploymentOrderDO.class);
         deploymentOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         deploymentOrderDO.setUpdateUser(loginUser.getUserId().toString());
         deploymentOrderDO.setCreateUser(loginUser.getUserId().toString());
         deploymentOrderDO.setUpdateTime(currentTime);
         deploymentOrderDO.setCreateTime(currentTime);
         deploymentOrderMapper.update(deploymentOrderDO);
-        saveDeploymentOrderProduct(deploymentOrderDO.getDeploymentOrderNo(), DeploymentOrderConverter.convertDeploymentOrderProductList(deploymentOrder.getDeploymentOrderProductList()), loginUser, currentTime);
-        saveDeploymentOrderMaterial(deploymentOrderDO.getDeploymentOrderNo(), DeploymentOrderConverter.convertDeploymentOrderMaterialList(deploymentOrder.getDeploymentOrderMaterialList()), loginUser, currentTime);
+        saveDeploymentOrderProduct(deploymentOrderDO.getDeploymentOrderNo(), ConverterUtil.convertList(deploymentOrder.getDeploymentOrderProductList(), DeploymentOrderProductDO.class), loginUser, currentTime);
+        saveDeploymentOrderMaterial(deploymentOrderDO.getDeploymentOrderNo(), ConverterUtil.convertList(deploymentOrder.getDeploymentOrderMaterialList(), DeploymentOrderMaterialDO.class), loginUser, currentTime);
 
         DeploymentOrderDO newestDeploymentOrderDO = deploymentOrderMapper.findByNo(deploymentOrderDO.getDeploymentOrderNo());
         for (DeploymentOrderProductDO deploymentOrderProductDO : newestDeploymentOrderDO.getDeploymentOrderProductDOList()) {
@@ -656,8 +655,8 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             productEquipmentDO.setUpdateUser(loginUserId.toString());
             productEquipmentMapper.update(productEquipmentDO);
         }
-        DeploymentOrderMaterialDO deploymentOrderMaterialDO = deploymentOrderMaterialMapper.findByDeploymentOrderNoAndMaterialId(deploymentOrderDO.getDeploymentOrderNo(),materialId);
-        if(deploymentOrderMaterialDO == null){
+        DeploymentOrderMaterialDO deploymentOrderMaterialDO = deploymentOrderMaterialMapper.findByDeploymentOrderNoAndMaterialId(deploymentOrderDO.getDeploymentOrderNo(), materialId);
+        if (deploymentOrderMaterialDO == null) {
             result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM);
             return result;
         }
@@ -722,7 +721,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         maps.put("deploymentOrderQueryParam", param);
         Integer totalCount = deploymentOrderMapper.listCount(maps);
         List<DeploymentOrderDO> list = deploymentOrderMapper.listPage(maps);
-        Page<DeploymentOrder> page = new Page<>(DeploymentOrderConverter.convertDeploymentOrderDOList(list), totalCount, param.getPageNo(), param.getPageSize());
+        Page<DeploymentOrder> page = new Page<>(ConverterUtil.convertList(list, DeploymentOrder.class), totalCount, param.getPageNo(), param.getPageSize());
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;

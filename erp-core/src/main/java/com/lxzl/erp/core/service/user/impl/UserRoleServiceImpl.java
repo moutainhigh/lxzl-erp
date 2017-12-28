@@ -9,8 +9,8 @@ import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.system.pojo.Menu;
 import com.lxzl.erp.common.domain.user.*;
 import com.lxzl.erp.common.domain.user.pojo.*;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;
-import com.lxzl.erp.core.service.company.impl.support.CompanyConverter;
 import com.lxzl.erp.core.service.company.impl.support.DepartmentConverter;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserRoleConverter;
@@ -158,7 +158,7 @@ public class UserRoleServiceImpl implements UserRoleService {
             result.setErrorCode(verifyCode);
             return result;
         }
-        RoleDO roleDO = UserRoleConverter.convertRole(role);
+        RoleDO roleDO = ConverterUtil.convert(role,RoleDO.class);
         roleDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         roleDO.setCreateUser(loginUser.getUserId().toString());
         roleDO.setUpdateUser(loginUser.getUserId().toString());
@@ -183,7 +183,7 @@ public class UserRoleServiceImpl implements UserRoleService {
             result.setErrorCode(verifyCode);
             return result;
         }
-        RoleDO roleDO = UserRoleConverter.convertRole(role);
+        RoleDO roleDO = ConverterUtil.convert(role,RoleDO.class);
         roleDO.setUpdateUser(loginUser.getUserId().toString());
         roleDO.setUpdateTime(new Date());
         roleMapper.update(roleDO);
@@ -234,7 +234,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         List<RoleDO> list = roleMapper.findList(params);
         Integer count = roleMapper.findListCount(params);
 
-        Page<Role> page = new Page<>(UserRoleConverter.convertRoleDOList(list), count, param.getPageNo(), param.getPageSize());
+        Page<Role> page = new Page<>(ConverterUtil.convertList(list,Role.class), count, param.getPageNo(), param.getPageSize());
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -257,7 +257,7 @@ public class UserRoleServiceImpl implements UserRoleService {
                     continue;
                 }
 
-                UserRoleDO userRoleDO = UserRoleConverter.convertUserRole(userRole);
+                UserRoleDO userRoleDO = ConverterUtil.convert(userRole,UserRoleDO.class);
                 userRoleDO.setRoleId(role.getRoleId());
                 userRoleDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 userRoleDO.setCreateUser(loginUser.getUserId().toString());
@@ -287,7 +287,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         List<RoleDO> roleDOList = userRoleMapper.findRoleListByUserId(param.getUserId());
         UserRole userRole = new UserRole();
         userRole.setUserId(param.getUserId());
-        userRole.setRoleList(UserRoleConverter.convertRoleDOList(roleDOList));
+        userRole.setRoleList(ConverterUtil.convertList(roleDOList,Role.class));
         result.setResult(userRole);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -306,7 +306,7 @@ public class UserRoleServiceImpl implements UserRoleService {
                 if (dbRecord != null) {
                     continue;
                 }
-                RoleMenuDO roleMenuDO = UserRoleConverter.convertRoleMenu(roleMenu);
+                RoleMenuDO roleMenuDO = ConverterUtil.convert(roleMenu,RoleMenuDO.class);
 
                 roleMenuDO.setMenuId(menu.getMenuId());
                 roleMenuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -356,14 +356,14 @@ public class UserRoleServiceImpl implements UserRoleService {
         List<SysMenuDO> nodeList = UserRoleConverter.convertTree(menuDOList);
         List<Menu> resultList = new ArrayList<>();
         for (SysMenuDO node1 : nodeList) {
-            resultList.add(UserRoleConverter.convert(node1));
+            resultList.add(ConverterUtil.convert(node1,Menu.class));
         }
 
         RoleDO roleDO = roleMapper.findByMapId(param.getRoleId());
         RoleMenu roleMenu = new RoleMenu();
         if (roleDO != null) {
             roleMenu.setRoleId(roleDO.getId());
-            roleMenu.setRole(UserRoleConverter.convertRoleDO(roleDO));
+            roleMenu.setRole(ConverterUtil.convert(roleDO,Role.class));
         }
         roleMenu.setMenuList(resultList);
 
@@ -585,7 +585,7 @@ public class UserRoleServiceImpl implements UserRoleService {
                 List<DepartmentDO> departmentDOList = departmentMapper.getRoleList(paramMap);
                 List<DepartmentDO> nodeList = DepartmentConverter.convertTree(departmentDOList);
                 subCompanyDO.setDepartmentDOList(nodeList);
-                subCompanyList.add(CompanyConverter.convertSubCompany(subCompanyDO));
+                subCompanyList.add(ConverterUtil.convert(subCompanyDO, SubCompany.class));
             }
         }
         roleTree.setSubCompanyList(subCompanyList);

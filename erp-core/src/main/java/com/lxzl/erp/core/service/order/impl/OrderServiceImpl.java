@@ -17,7 +17,6 @@ import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.material.impl.support.MaterialSupport;
 import com.lxzl.erp.core.service.order.OrderService;
-import com.lxzl.erp.core.service.order.impl.support.OrderConverter;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
@@ -69,9 +68,9 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
-        List<OrderProductDO> orderProductDOList = OrderConverter.convertOrderProductList(order.getOrderProductList());
-        List<OrderMaterialDO> orderMaterialDOList = OrderConverter.convertOrderMaterialList(order.getOrderMaterialList());
-        OrderDO orderDO = OrderConverter.convertOrder(order);
+        List<OrderProductDO> orderProductDOList = ConverterUtil.convertList(order.getOrderProductList(), OrderProductDO.class);
+        List<OrderMaterialDO> orderMaterialDOList = ConverterUtil.convertList(order.getOrderMaterialList(), OrderMaterialDO.class);
+        OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
         orderDO.setOrderProductDOList(orderProductDOList);
         orderDO.setOrderMaterialDOList(orderMaterialDOList);
         // 校验客户风控信息
@@ -123,9 +122,9 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
-        List<OrderProductDO> orderProductDOList = OrderConverter.convertOrderProductList(order.getOrderProductList());
-        List<OrderMaterialDO> orderMaterialDOList = OrderConverter.convertOrderMaterialList(order.getOrderMaterialList());
-        OrderDO orderDO = OrderConverter.convertOrder(order);
+        List<OrderProductDO> orderProductDOList = ConverterUtil.convertList(order.getOrderProductList(), OrderProductDO.class);
+        List<OrderMaterialDO> orderMaterialDOList = ConverterUtil.convertList(order.getOrderMaterialList(), OrderMaterialDO.class);
+        OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
         orderDO.setOrderProductDOList(orderProductDOList);
         orderDO.setOrderMaterialDOList(orderMaterialDOList);
         // 校验客户风控信息
@@ -647,7 +646,7 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        Order order = OrderConverter.convertOrderDO(orderDO);
+        Order order = ConverterUtil.convert(orderDO, Order.class);
 
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
             for (OrderProduct orderProduct : order.getOrderProductList()) {
@@ -720,7 +719,7 @@ public class OrderServiceImpl implements OrderService {
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
-        List<Order> orderList = OrderConverter.convertOrderDOList(orderDOList);
+        List<Order> orderList = ConverterUtil.convertList(orderDOList, Order.class);
         Page<Order> page = new Page<>(orderList, totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
@@ -740,7 +739,7 @@ public class OrderServiceImpl implements OrderService {
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
-        Page<Order> page = new Page<>(OrderConverter.convertOrderDOList(orderDOList), totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+        Page<Order> page = new Page<>(ConverterUtil.convertList(orderDOList, Order.class), totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
@@ -842,6 +841,9 @@ public class OrderServiceImpl implements OrderService {
                     if (orderProductEquipmentDOList != null && orderProductEquipmentDOList.size() >= orderProductDO.getProductCount()) {
                         continue;
                     }
+                    if (!productEquipmentDO.getIsNew().equals(orderProductDO.getIsNewProduct())) {
+                        continue;
+                    }
 
                     productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY);
                     productEquipmentDO.setOrderNo(orderDO.getOrderNo());
@@ -909,6 +911,9 @@ public class OrderServiceImpl implements OrderService {
                         OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(key);
                         List<OrderMaterialBulkDO> orderMaterialBulkDOList = orderMaterialBulkMapper.findByOrderMaterialId(orderMaterialDO.getId());
                         if (orderMaterialBulkDOList != null && orderMaterialBulkDOList.size() >= orderMaterialDO.getMaterialCount()) {
+                            continue;
+                        }
+                        if (!bulkMaterialDO.getIsNew().equals(orderMaterialDO.getIsNewMaterial())) {
                             continue;
                         }
                         bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
@@ -1209,7 +1214,7 @@ public class OrderServiceImpl implements OrderService {
 
         Integer totalCount = orderProductMapper.findOrderProductCountByParams(maps);
         List<OrderProductDO> orderProductDOList = orderProductMapper.findOrderProductByParams(maps);
-        List<OrderProduct> productSkuList = OrderConverter.convertOrderProductDOList(orderProductDOList);
+        List<OrderProduct> productSkuList = ConverterUtil.convertList(orderProductDOList, OrderProduct.class);
         for (OrderProduct orderProduct : productSkuList) {
             Product product = FastJsonUtil.toBean(orderProduct.getProductSkuSnapshot(), Product.class);
             for (ProductSku productSku : product.getProductSkuList()) {
@@ -1395,14 +1400,14 @@ public class OrderServiceImpl implements OrderService {
                     depositAmount = BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else if ((BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) || CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
-                    Integer depositCycle = orderProductDO.getDepositCycle() <= orderProductDO.getRentTimeLength() ? orderProductDO.getDepositCycle(): orderProductDO.getRentTimeLength();
+                    Integer depositCycle = orderProductDO.getDepositCycle() <= orderProductDO.getRentTimeLength() ? orderProductDO.getDepositCycle() : orderProductDO.getRentTimeLength();
                     rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(depositCycle));
                     totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
 
                     creditDepositAmount = BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
                     totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                 } else {
-                    Integer depositCycle = orderProductDO.getDepositCycle() <= orderProductDO.getRentTimeLength() ? orderProductDO.getDepositCycle(): orderProductDO.getRentTimeLength();
+                    Integer depositCycle = orderProductDO.getDepositCycle() <= orderProductDO.getRentTimeLength() ? orderProductDO.getDepositCycle() : orderProductDO.getRentTimeLength();
                     rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(depositCycle));
                     totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
 

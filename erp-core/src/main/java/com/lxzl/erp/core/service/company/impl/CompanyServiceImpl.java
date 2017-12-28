@@ -14,7 +14,6 @@ import com.lxzl.erp.common.domain.user.RoleQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.company.CompanyService;
-import com.lxzl.erp.core.service.company.impl.support.CompanyConverter;
 import com.lxzl.erp.core.service.company.impl.support.DepartmentConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
@@ -54,7 +53,7 @@ public class CompanyServiceImpl implements CompanyService {
             return result;
         }
 
-        SubCompanyDO subCompanyDO = CompanyConverter.convertSubCompany(subCompany);
+        SubCompanyDO subCompanyDO = ConverterUtil.convert(subCompany, SubCompanyDO.class);
         subCompanyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         if (loginUser != null) {
             subCompanyDO.setCreateUser(loginUser.getUserId().toString());
@@ -99,7 +98,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         Integer totalCount = subCompanyMapper.listCount(paramMap);
         List<SubCompanyDO> dolist = subCompanyMapper.listPage(paramMap);
-        List<SubCompany> list = CompanyConverter.convertSubCompanyDOList(dolist);
+        List<SubCompany> list = ConverterUtil.convertList(dolist, SubCompany.class);
         Page<SubCompany> page = new Page<>(list, totalCount, subCompanyQueryParam.getPageNo(), subCompanyQueryParam.getPageSize());
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -119,7 +118,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         List<Department> resultList = new ArrayList<>();
         for (DepartmentDO node1 : nodeList) {
-            resultList.add(DepartmentConverter.convertDepartmentDO(node1));
+            resultList.add(ConverterUtil.convert(node1, Department.class));
         }
         result.setResult(resultList);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -134,7 +133,7 @@ public class CompanyServiceImpl implements CompanyService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        result.setResult(DepartmentConverter.convertDepartmentDO(departmentDO));
+        result.setResult(ConverterUtil.convert(departmentDO, Department.class));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -162,7 +161,7 @@ public class CompanyServiceImpl implements CompanyService {
                 List<DepartmentDO> departmentDOList = departmentMapper.listPage(paramMap);
                 List<DepartmentDO> nodeList = DepartmentConverter.convertTree(departmentDOList);
                 subCompanyDO.setDepartmentDOList(nodeList);
-                subCompanyList.add(CompanyConverter.convertSubCompany(subCompanyDO));
+                subCompanyList.add(ConverterUtil.convert(subCompanyDO, SubCompany.class));
             }
         }
         companyDepartmentTree.setSubCompanyList(subCompanyList);
@@ -195,7 +194,7 @@ public class CompanyServiceImpl implements CompanyService {
                 List<DepartmentDO> departmentDOList = departmentMapper.getUserList(paramMap);
                 List<DepartmentDO> nodeList = DepartmentConverter.convertTree(departmentDOList);
                 subCompanyDO.setDepartmentDOList(nodeList);
-                subCompanyList.add(CompanyConverter.convertSubCompany(subCompanyDO));
+                subCompanyList.add(ConverterUtil.convert(subCompanyDO, SubCompany.class));
             }
         }
         companyDepartmentTree.setSubCompanyList(subCompanyList);
@@ -220,7 +219,7 @@ public class CompanyServiceImpl implements CompanyService {
             return result;
         }
 
-        result.setResult(CompanyConverter.convertSubCompany(subCompanyDOList.get(0)));
+        result.setResult(ConverterUtil.convert(subCompanyDOList.get(0), SubCompany.class));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -248,7 +247,7 @@ public class CompanyServiceImpl implements CompanyService {
             }
         }
 
-        DepartmentDO departmentDO = DepartmentConverter.convertDepartment(department);
+        DepartmentDO departmentDO = ConverterUtil.convert(department, DepartmentDO.class);
         departmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         departmentDO.setCreateTime(currentTime);
         departmentDO.setUpdateTime(currentTime);
@@ -275,7 +274,7 @@ public class CompanyServiceImpl implements CompanyService {
             }
         }
 
-        DepartmentDO departmentDO = DepartmentConverter.convertDepartment(department);
+        DepartmentDO departmentDO = ConverterUtil.convert(department, DepartmentDO.class);
         departmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         departmentDO.setUpdateTime(currentTime);
         departmentDO.setUpdateUser(loginUser.getUserId().toString());

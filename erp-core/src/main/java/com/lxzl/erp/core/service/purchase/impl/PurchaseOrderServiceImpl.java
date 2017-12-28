@@ -13,20 +13,17 @@ import com.lxzl.erp.common.domain.purchase.*;
 import com.lxzl.erp.common.domain.purchase.pojo.*;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.material.MaterialService;
-import com.lxzl.erp.core.service.material.impl.support.MaterialConverter;
 import com.lxzl.erp.core.service.product.ProductService;
-import com.lxzl.erp.core.service.product.impl.support.ProductEquipmentConverter;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.core.service.purchase.impl.support.PurchaseOrderSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
-import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseConverter;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
-import com.lxzl.erp.core.service.workflow.impl.support.WorkflowConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
@@ -184,9 +181,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     private PurchaseOrderDO buildPurchaseOrder(Date now, PurchaseOrder purchaseOrder, PurchaseOrderDetail purchaseOrderDetail, WarehouseDO warehouseDO) {
         //保存采购单
-        PurchaseOrderDO purchaseOrderDO = ConverterUtil.convert(purchaseOrder,PurchaseOrderDO.class);
+        PurchaseOrderDO purchaseOrderDO = ConverterUtil.convert(purchaseOrder, PurchaseOrderDO.class);
         //查询库房信息并保存库房快照
-        purchaseOrderDO.setWarehouseSnapshot(JSON.toJSONString(WarehouseConverter.convertWarehouseDO(warehouseDO)));
+        purchaseOrderDO.setWarehouseSnapshot(JSON.toJSONString(ConverterUtil.convert(warehouseDO,Warehouse.class)));
         purchaseOrderDO.setPurchaseOrderAmountTotal(purchaseOrderDetail.totalAmount);
         //创建采购单时，采购单实收金额和采购单结算金额为空
         purchaseOrderDO.setPurchaseOrderAmountReal(null);
@@ -441,7 +438,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             PurchaseOrderMaterialDO purchaseOrderMaterialDO = new PurchaseOrderMaterialDO();
 
 
-            Material material = MaterialConverter.convertMaterialDO(materialDO);
+            Material material = ConverterUtil.convert(materialDO, Material.class);
             materialList.add(material);
             purchaseOrderMaterialDO.setMaterialSnapshot(JSON.toJSONString(material));
             purchaseOrderMaterialDO.setMaterialId(materialDO.getId());
@@ -650,16 +647,16 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return serviceResult;
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        PurchaseOrder purchaseOrder = ConverterUtil.convert(purchaseOrderDO,PurchaseOrder.class);
+        PurchaseOrder purchaseOrder = ConverterUtil.convert(purchaseOrderDO, PurchaseOrder.class);
         List<PurchaseDeliveryOrderDO> purchaseDeliveryOrderDOList = purchaseDeliveryOrderMapper.findListByPurchaseId(purchaseOrderDO.getId());
         List<PurchaseReceiveOrderDO> purchaseReceiveOrderDOList = purchaseReceiveOrderMapper.findListByPurchaseId(purchaseOrderDO.getId());
 
-        List<PurchaseDeliveryOrder> purchaseDeliveryOrderList = ConverterUtil.convertList(purchaseDeliveryOrderDOList,PurchaseDeliveryOrder.class);
-        List<PurchaseReceiveOrder> purchaseReceiveOrderList = ConverterUtil.convertList(purchaseReceiveOrderDOList,PurchaseReceiveOrder.class);
+        List<PurchaseDeliveryOrder> purchaseDeliveryOrderList = ConverterUtil.convertList(purchaseDeliveryOrderDOList, PurchaseDeliveryOrder.class);
+        List<PurchaseReceiveOrder> purchaseReceiveOrderList = ConverterUtil.convertList(purchaseReceiveOrderDOList, PurchaseReceiveOrder.class);
         purchaseOrder.setPurchaseDeliveryOrderList(purchaseDeliveryOrderList);
         purchaseOrder.setPurchaseReceiveOrderList(purchaseReceiveOrderList);
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(WorkflowType.WORKFLOW_TYPE_PURCHASE, purchaseNo);
-        purchaseOrder.setWorkflowLink(WorkflowConverter.convertWorkflowLinkDO(workflowLinkDO));
+        purchaseOrder.setWorkflowLink(ConverterUtil.convert(workflowLinkDO, WorkflowLink.class));
         serviceResult.setResult(purchaseOrder);
         return serviceResult;
     }
@@ -686,7 +683,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         Integer totalCount = purchaseOrderMapper.findPurchaseOrderCountByParams(maps);
         List<PurchaseOrderDO> purchaseOrderDOList = purchaseOrderMapper.findPurchaseOrderByParams(maps);
-        List<PurchaseOrder> purchaseOrderList = ConverterUtil.convertList(purchaseOrderDOList,PurchaseOrder.class);
+        List<PurchaseOrder> purchaseOrderList = ConverterUtil.convertList(purchaseOrderDOList, PurchaseOrder.class);
         Page<PurchaseOrder> page = new Page<>(purchaseOrderList, totalCount, purchaseOrderQueryParam.getPageNo(), purchaseOrderQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -763,6 +760,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         purchaseOrderMapper.update(purchaseOrderDO);
         return ErrorCode.SUCCESS;
     }
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public String strongCancel(PurchaseOrder purchaseOrder) {
@@ -770,8 +768,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         if (purchaseOrderDO == null) {
             return ErrorCode.PURCHASE_ORDER_NOT_EXISTS;
         }
-        if (!PurchaseOrderStatus.PURCHASE_ORDER_STATUS_WAIT_COMMIT.equals(purchaseOrderDO.getPurchaseOrderStatus())&&
-                !PurchaseOrderStatus.PURCHASE_ORDER_STATUS_VERIFYING.equals(purchaseOrderDO.getPurchaseOrderStatus())&&
+        if (!PurchaseOrderStatus.PURCHASE_ORDER_STATUS_WAIT_COMMIT.equals(purchaseOrderDO.getPurchaseOrderStatus()) &&
+                !PurchaseOrderStatus.PURCHASE_ORDER_STATUS_VERIFYING.equals(purchaseOrderDO.getPurchaseOrderStatus()) &&
                 !PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PURCHASING.equals(purchaseOrderDO.getPurchaseOrderStatus())) {
             //待提交和审核通过的采购单可以取消
             return ErrorCode.PURCHASE_ORDER_COMMITTED_CAN_NOT_CANCEL;
@@ -785,16 +783,16 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         List<PurchaseDeliveryOrderDO> purchaseDeliveryOrderDOList = purchaseDeliveryOrderMapper.findListByPurchaseId(purchaseOrderDO.getId());
         List<PurchaseReceiveOrderDO> purchaseReceiveOrderDOList = purchaseReceiveOrderMapper.findListByPurchaseId(purchaseOrderDO.getId());
 
-        if(CollectionUtil.isNotEmpty(purchaseDeliveryOrderDOList)){
-            for(PurchaseDeliveryOrderDO purchaseDeliveryOrderDO : purchaseDeliveryOrderDOList){
+        if (CollectionUtil.isNotEmpty(purchaseDeliveryOrderDOList)) {
+            for (PurchaseDeliveryOrderDO purchaseDeliveryOrderDO : purchaseDeliveryOrderDOList) {
                 purchaseDeliveryOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 purchaseDeliveryOrderDO.setUpdateTime(now);
                 purchaseDeliveryOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 purchaseDeliveryOrderMapper.update(purchaseDeliveryOrderDO);
             }
         }
-        if(CollectionUtil.isNotEmpty(purchaseReceiveOrderDOList)){
-            for(PurchaseReceiveOrderDO purchaseReceiveOrderDO : purchaseReceiveOrderDOList){
+        if (CollectionUtil.isNotEmpty(purchaseReceiveOrderDOList)) {
+            for (PurchaseReceiveOrderDO purchaseReceiveOrderDO : purchaseReceiveOrderDOList) {
                 purchaseReceiveOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 purchaseReceiveOrderDO.setUpdateTime(now);
                 purchaseReceiveOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -803,6 +801,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
         return ErrorCode.SUCCESS;
     }
+
     @Override
     public ServiceResult<String, Page<PurchaseDeliveryOrder>> pagePurchaseDelivery(PurchaseDeliveryOrderQueryParam purchaseDeliveryOrderQueryParam) {
         ServiceResult<String, Page<PurchaseDeliveryOrder>> result = new ServiceResult<>();
@@ -836,7 +835,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         Integer totalCount = purchaseDeliveryOrderMapper.findPurchaseDeliveryOrderCountByParams(maps);
         List<PurchaseDeliveryOrderDO> purchaseDeliveryOrderDOList = purchaseDeliveryOrderMapper.findPurchaseDeliveryOrderByParams(maps);
-        List<PurchaseDeliveryOrder> purchaseDeliveryOrderList = ConverterUtil.convertList(purchaseDeliveryOrderDOList,PurchaseDeliveryOrder.class);
+        List<PurchaseDeliveryOrder> purchaseDeliveryOrderList = ConverterUtil.convertList(purchaseDeliveryOrderDOList, PurchaseDeliveryOrder.class);
         Page<PurchaseDeliveryOrder> page = new Page<>(purchaseDeliveryOrderList, totalCount, purchaseDeliveryOrderQueryParam.getPageNo(), purchaseDeliveryOrderQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -853,7 +852,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return serviceResult;
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(ConverterUtil.convert(purchaseDeliveryOrderDO,PurchaseDeliveryOrder.class));
+        serviceResult.setResult(ConverterUtil.convert(purchaseDeliveryOrderDO, PurchaseDeliveryOrder.class));
         return serviceResult;
     }
 
@@ -1284,7 +1283,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         Integer totalCount = purchaseReceiveOrderMapper.findPurchaseReceiveOrderCountByParams(maps);
         List<PurchaseReceiveOrderDO> purchaseReceiveOrderDOList = purchaseReceiveOrderMapper.findPurchaseReceiveOrderByParams(maps);
-        List<PurchaseReceiveOrder> purchaseReceiveOrderList = ConverterUtil.convertList(purchaseReceiveOrderDOList,PurchaseReceiveOrder.class);
+        List<PurchaseReceiveOrder> purchaseReceiveOrderList = ConverterUtil.convertList(purchaseReceiveOrderDOList, PurchaseReceiveOrder.class);
         Page<PurchaseReceiveOrder> page = new Page<>(purchaseReceiveOrderList, totalCount, purchaseReceiveOrderQueryParam.getPageNo(), purchaseReceiveOrderQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -1301,7 +1300,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return serviceResult;
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(ConverterUtil.convert(purchaseReceiveOrderDO,PurchaseReceiveOrder.class));
+        serviceResult.setResult(ConverterUtil.convert(purchaseReceiveOrderDO, PurchaseReceiveOrder.class));
         return serviceResult;
     }
 
@@ -1434,7 +1433,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_NOT_EXISTS);
             return serviceResult;
         }
-        if(!PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_COMMITTED.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())){
+        if (!PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_COMMITTED.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_STATUS_CAN_NOT_UPDATE);
             return serviceResult;
         }
@@ -1507,7 +1506,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         Integer totalCount = productEquipmentMapper.listByPurchaseReceiveOrderProductIdCount(maps);
         List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.listByPurchaseReceiveOrderProductId(maps);
-        List<ProductEquipment> productEquipmentList = ProductEquipmentConverter.convertProductEquipmentDOList(productEquipmentDOList);
+        List<ProductEquipment> productEquipmentList = ConverterUtil.convertList(productEquipmentDOList, ProductEquipment.class);
         Page<ProductEquipment> page = new Page<>(productEquipmentList, totalCount, pageParam.getPageNo(), pageParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -1526,7 +1525,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         Integer totalCount = bulkMaterialMapper.listByPurchaseReceiveOrderMaterialIdCount(maps);
         List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listByPurchaseReceiveOrderMaterialId(maps);
-        List<BulkMaterial> bulkMaterialList = ConverterUtil.convertList(bulkMaterialDOList,BulkMaterial.class);
+        List<BulkMaterial> bulkMaterialList = ConverterUtil.convertList(bulkMaterialDOList, BulkMaterial.class);
         Page<BulkMaterial> page = new Page<>(bulkMaterialList, totalCount, pageParam.getPageNo(), pageParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -1538,18 +1537,18 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     public ServiceResult<String, String> updateReceiveEquipmentRemark(UpdateReceiveEquipmentRemarkParam updateReceiveEquipmentRemarkParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         PurchaseReceiveOrderDO purchaseReceiveOrderDO = purchaseReceiveOrderMapper.findByNo(updateReceiveEquipmentRemarkParam.getPurchaseReceiveOrderNo());
-        if(purchaseReceiveOrderDO==null){
+        if (purchaseReceiveOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_NOT_EXISTS);
             return serviceResult;
         }
-        if(!PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_YET.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())&&
-                !PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_COMMITTED.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())){
+        if (!PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_YET.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus()) &&
+                !PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_COMMITTED.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_STATUS_CAN_NOT_UPDATE);
             return serviceResult;
         }
         ProductEquipment productEquipment = updateReceiveEquipmentRemarkParam.getProductEquipment();
         ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(productEquipment.getEquipmentNo());
-        if(productEquipmentDO==null){
+        if (productEquipmentDO == null) {
             serviceResult.setErrorCode(ErrorCode.EQUIPMENT_NOT_EXISTS);
             return serviceResult;
         }
@@ -1566,11 +1565,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     public ServiceResult<String, String> commitPurchaseReceiveOrder(PurchaseReceiveOrder purchaseReceiveOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         PurchaseReceiveOrderDO purchaseReceiveOrderDO = purchaseReceiveOrderMapper.findAllByNo(purchaseReceiveOrder.getPurchaseReceiveNo());
-        if(purchaseReceiveOrderDO==null){
+        if (purchaseReceiveOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_NOT_EXISTS);
             return serviceResult;
         }
-        if(!PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_YET.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())){
+        if (!PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_YET.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_COMMIT);
             return serviceResult;
         }
@@ -1587,22 +1586,22 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     public ServiceResult<String, List<PurchaseReceiveOrderMaterialPrice>> getPurchaseReceiveMaterialPriceList(PurchaseReceiveOrderMaterial purchaseReceiveOrderMaterial) {
         ServiceResult<String, List<PurchaseReceiveOrderMaterialPrice>> serviceResult = new ServiceResult<>();
         PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO = purchaseReceiveOrderMaterialMapper.findById(purchaseReceiveOrderMaterial.getPurchaseReceiveOrderMaterialId());
-        if(purchaseReceiveOrderMaterialDO==null){
+        if (purchaseReceiveOrderMaterialDO == null) {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
         List<BulkMaterialDO> bulkMaterialDOList = getBulkMaterialDOList(purchaseReceiveOrderMaterialDO.getId());
         List<PurchaseReceiveOrderMaterialPrice> purchaseReceiveOrderMaterialPriceList = new ArrayList<>();
-        Map<BigDecimal,Integer> purchaseReceiveOrderMaterialPriceMap = new HashMap<>();
-        for(BulkMaterialDO bulkMaterialDO : bulkMaterialDOList){
-            if(bulkMaterialDO.getPurchasePrice()!=null){
-                if(purchaseReceiveOrderMaterialPriceMap.get(bulkMaterialDO.getPurchasePrice())==null){
-                    purchaseReceiveOrderMaterialPriceMap.put(bulkMaterialDO.getPurchasePrice(),0);
+        Map<BigDecimal, Integer> purchaseReceiveOrderMaterialPriceMap = new HashMap<>();
+        for (BulkMaterialDO bulkMaterialDO : bulkMaterialDOList) {
+            if (bulkMaterialDO.getPurchasePrice() != null) {
+                if (purchaseReceiveOrderMaterialPriceMap.get(bulkMaterialDO.getPurchasePrice()) == null) {
+                    purchaseReceiveOrderMaterialPriceMap.put(bulkMaterialDO.getPurchasePrice(), 0);
                 }
-                purchaseReceiveOrderMaterialPriceMap.put(bulkMaterialDO.getPurchasePrice(),purchaseReceiveOrderMaterialPriceMap.get(bulkMaterialDO.getPurchasePrice())+1);
+                purchaseReceiveOrderMaterialPriceMap.put(bulkMaterialDO.getPurchasePrice(), purchaseReceiveOrderMaterialPriceMap.get(bulkMaterialDO.getPurchasePrice()) + 1);
             }
         }
-        for(BigDecimal bigDecimal : purchaseReceiveOrderMaterialPriceMap.keySet() ){
+        for (BigDecimal bigDecimal : purchaseReceiveOrderMaterialPriceMap.keySet()) {
             PurchaseReceiveOrderMaterialPrice purchaseReceiveOrderMaterialPrice = new PurchaseReceiveOrderMaterialPrice();
             purchaseReceiveOrderMaterialPrice.setPrice(bigDecimal);
             purchaseReceiveOrderMaterialPrice.setCount(purchaseReceiveOrderMaterialPriceMap.get(bigDecimal));
@@ -1617,26 +1616,26 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     public ServiceResult<String, Integer> updatePurchaseReceiveMaterialPrice(UpdatePurchaseReceiveMaterialPriceParam updatePurchaseReceiveMaterialPriceParam) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO = purchaseReceiveOrderMaterialMapper.findById(updatePurchaseReceiveMaterialPriceParam.getPurchaseReceiveOrderMaterialId());
-        if(purchaseReceiveOrderMaterialDO==null){
+        if (purchaseReceiveOrderMaterialDO == null) {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
         List<BulkMaterialDO> bulkMaterialDOList = getBulkMaterialDOList(purchaseReceiveOrderMaterialDO.getId());
-        if(CollectionUtil.isEmpty(bulkMaterialDOList)){
+        if (CollectionUtil.isEmpty(bulkMaterialDOList)) {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_MATERIAL_PRICE_NOT_NEED_UPDATE);
             return serviceResult;
         }
         PurchaseReceiveOrderDO purchaseReceiveOrderDO = purchaseReceiveOrderMapper.findById(purchaseReceiveOrderMaterialDO.getPurchaseReceiveOrderId());
-        if(PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_WAIT.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())){
+        if (PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_WAIT.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_STATUS_CAN_NOT_UPDATE);
             return serviceResult;
         }
         List<PurchaseReceiveOrderMaterialPrice> purchaseReceiveOrderMaterialPriceList = updatePurchaseReceiveMaterialPriceParam.getPurchaseReceiveOrderMaterialPriceList();
         Integer total = 0;
-        for(PurchaseReceiveOrderMaterialPrice purchaseReceiveOrderMaterialPrice : purchaseReceiveOrderMaterialPriceList){
-            total+=purchaseReceiveOrderMaterialPrice.getCount();
+        for (PurchaseReceiveOrderMaterialPrice purchaseReceiveOrderMaterialPrice : purchaseReceiveOrderMaterialPriceList) {
+            total += purchaseReceiveOrderMaterialPrice.getCount();
         }
-        if(!total.equals(bulkMaterialDOList.size())){
+        if (!total.equals(bulkMaterialDOList.size())) {
             serviceResult.setErrorCode(ErrorCode.UPDATE_ITEM_COUNT_ERROR);
             return serviceResult;
         }
@@ -1644,10 +1643,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         BigDecimal totalAmount = purchaseReceiveOrderDO.getTotalAmount() == null ? BigDecimal.ZERO : purchaseReceiveOrderDO.getTotalAmount();
 
-        int index = 0 ;
-        for(PurchaseReceiveOrderMaterialPrice purchaseReceiveOrderMaterialPrice : purchaseReceiveOrderMaterialPriceList){
+        int index = 0;
+        for (PurchaseReceiveOrderMaterialPrice purchaseReceiveOrderMaterialPrice : purchaseReceiveOrderMaterialPriceList) {
             int count = purchaseReceiveOrderMaterialPrice.getCount();
-            for(int i = 0 ; i < count ; i ++){
+            for (int i = 0; i < count; i++) {
                 BulkMaterialDO bulkMaterialDO = bulkMaterialDOList.get(index++);
                 //累加原采购价，减去原采购价
                 totalAmount = BigDecimalUtil.add(totalAmount, purchaseReceiveOrderMaterialPrice.getPrice());
@@ -1668,36 +1667,36 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     public ServiceResult<String, String> updatePurchaseReceiveMaterialRemark(UpdateReceiveMaterialRemarkParam updateReceiveMaterialRemarkParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         PurchaseReceiveOrderDO purchaseReceiveOrderDO = purchaseReceiveOrderMapper.findAllByNo(updateReceiveMaterialRemarkParam.getPurchaseReceiveOrderNo());
-        if(purchaseReceiveOrderDO==null){
+        if (purchaseReceiveOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_NOT_EXISTS);
             return serviceResult;
         }
-        if(PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_WAIT.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())){
+        if (PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_WAIT.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_STATUS_CAN_NOT_UPDATE);
             return serviceResult;
         }
         List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderMaterialDOList();
         //获取数据库采购收货单物料项
-        Map<Integer , PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOMap = ListUtil.listToMap(purchaseReceiveOrderMaterialDOList,"id");
+        Map<Integer, PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOMap = ListUtil.listToMap(purchaseReceiveOrderMaterialDOList, "id");
         //要修改的项
         List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOListForUpdate = purchaseReceiveOrderDO.getPurchaseReceiveOrderMaterialDOList();
         //传入修改的采购收货单物料项
         List<PurchaseReceiveOrderMaterial> purchaseReceiveOrderMaterialList = updateReceiveMaterialRemarkParam.getPurchaseReceiveOrderMaterialList();
         Date now = new Date();
-        for(PurchaseReceiveOrderMaterial purchaseReceiveOrderMaterial : purchaseReceiveOrderMaterialList){
+        for (PurchaseReceiveOrderMaterial purchaseReceiveOrderMaterial : purchaseReceiveOrderMaterialList) {
             PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO = purchaseReceiveOrderMaterialDOMap.get(purchaseReceiveOrderMaterial.getPurchaseReceiveOrderMaterialId());
-            if(purchaseReceiveOrderMaterialDO==null){
+            if (purchaseReceiveOrderMaterialDO == null) {
                 serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return serviceResult;
             }
-            if(StringUtil.isNotEmpty(purchaseReceiveOrderMaterial.getRemark())){
+            if (StringUtil.isNotEmpty(purchaseReceiveOrderMaterial.getRemark())) {
                 purchaseReceiveOrderMaterialDO.setRemark(purchaseReceiveOrderMaterial.getRemark());
                 purchaseReceiveOrderMaterialDO.setUpdateTime(now);
                 purchaseReceiveOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 purchaseReceiveOrderMaterialDOListForUpdate.add(purchaseReceiveOrderMaterialDO);
             }
         }
-        for(PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO : purchaseReceiveOrderMaterialDOListForUpdate){
+        for (PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO : purchaseReceiveOrderMaterialDOListForUpdate) {
             purchaseReceiveOrderMaterialMapper.update(purchaseReceiveOrderMaterialDO);
         }
         serviceResult.setResult(purchaseReceiveOrderDO.getPurchaseReceiveNo());
@@ -1705,7 +1704,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         return serviceResult;
     }
 
-    private List<BulkMaterialDO> getBulkMaterialDOList(Integer purchaseReceiveOrderMaterialId){
+    private List<BulkMaterialDO> getBulkMaterialDOList(Integer purchaseReceiveOrderMaterialId) {
         PurchaseReceiveOrderMaterialBulkPageParam purchaseReceiveOrderMaterialBulkPageParam = new PurchaseReceiveOrderMaterialBulkPageParam();
         purchaseReceiveOrderMaterialBulkPageParam.setPurchaseReceiveOrderMaterialId(purchaseReceiveOrderMaterialId);
         Map<String, Object> maps = new HashMap<>();
@@ -1714,6 +1713,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         maps.put("queryParam", purchaseReceiveOrderMaterialBulkPageParam);
         return bulkMaterialMapper.listByPurchaseReceiveOrderMaterialId(maps);
     }
+
     /**
      * 接收审核结果通知，审核通过生成发货单
      *

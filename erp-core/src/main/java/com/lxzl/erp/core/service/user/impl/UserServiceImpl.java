@@ -10,12 +10,11 @@ import com.lxzl.erp.common.domain.user.LoginParam;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.user.UserQueryParam;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
-import com.lxzl.erp.core.service.user.impl.support.UserConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.*;
-import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
 import com.lxzl.erp.dataaccess.domain.user.*;
 import com.lxzl.se.common.util.secret.MD5Util;
 import com.lxzl.se.core.service.impl.BaseServiceImpl;
@@ -67,7 +66,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         } else if (!userDO.getPassword().equals(generateMD5Password(userDO.getUserName(), loginParam.getPassword(), ApplicationConfig.authKey))) {
             result.setErrorCode(ErrorCode.USER_PASSWORD_ERROR);
         } else {
-            User user = UserConverter.convert(userDO);
+            User user = ConverterUtil.convert(userDO, User.class);
             userDO.setLastLoginIp(ip);
             userDO.setLastLoginTime(new Date());
             userMapper.update(userDO);
@@ -89,7 +88,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             result.setErrorCode(ErrorCode.USER_EXISTS);
             return result;
         }
-        userDO = UserConverter.convert(user);
+        userDO = ConverterUtil.convert(user, UserDO.class);
         List<Role> roleList = user.getRoleList();
         Map<Integer, String> finalRoleIdMap = new HashMap<Integer, String>();
         String validResult = validRoleIdList(roleList, finalRoleIdMap);
@@ -175,7 +174,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             result.setErrorCode(ErrorCode.USER_NOT_EXISTS);
             return result;
         }
-        userDO = UserConverter.convert(user);
+        userDO = ConverterUtil.convert(user, UserDO.class);
 
         List<Role> roleList = user.getRoleList();
         Map<Integer, String> finalRoleIdMap = new HashMap<Integer, String>();
@@ -275,7 +274,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         }
 
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(UserConverter.convert(userDO));
+        result.setResult(ConverterUtil.convert(userDO, User.class));
         return result;
     }
 
@@ -291,7 +290,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
         Integer totalCount = userMapper.listCount(maps);
         List<UserDO> list = userMapper.listPage(maps);
-        List<User> userList = UserConverter.convertUserList(list);
+        List<User> userList = ConverterUtil.convertList(list, User.class);
         Page<User> page = new Page<>(userList, totalCount, userQueryParam.getPageNo(), userQueryParam.getPageSize());
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -307,11 +306,10 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         maps.put("pageSize", Integer.MAX_VALUE);
         maps.put("userQueryParam", userQueryParam);
         List<UserDO> userDoList = userMapper.listPage(maps);
-        result.setResult(UserConverter.convertUserList(userDoList));
+        result.setResult(ConverterUtil.convertList(userDoList, User.class));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
-
 
 
     private String generateMD5Password(String username, String password, String md5Key) {

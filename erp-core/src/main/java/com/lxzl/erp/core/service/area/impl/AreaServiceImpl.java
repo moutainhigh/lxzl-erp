@@ -5,17 +5,14 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.area.AreaCity;
 import com.lxzl.erp.common.domain.area.AreaDistrict;
 import com.lxzl.erp.common.domain.area.AreaProvince;
-import com.lxzl.erp.common.util.ChineseCharToEn;
-import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.area.AreaService;
-import com.lxzl.erp.core.service.area.impl.support.AreaConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.area.AreaCityMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.area.AreaDistrictMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.area.AreaProvinceMapper;
 import com.lxzl.erp.dataaccess.domain.area.AreaCityDO;
 import com.lxzl.erp.dataaccess.domain.area.AreaDistrictDO;
 import com.lxzl.erp.dataaccess.domain.area.AreaProvinceDO;
-import com.lxzl.se.common.util.StringUtil;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
@@ -57,9 +54,9 @@ public class AreaServiceImpl implements AreaService {
         List<AreaCityDO> areaCityDOList = areaCityMapper.listPage(map);
         List<AreaDistrictDO> areaDistrictDOList = areaDistrictMapper.listPage(map);
 
-        List<AreaProvince> areaProvinceList = AreaConverter.convertAreaProvinceDOList(areaProvinceDOList);
-        List<AreaCity> areaCityList = AreaConverter.convertAreaCityDOList(areaCityDOList);
-        List<AreaDistrict> areaDistrictList = AreaConverter.convertAreaDistrictDOList(areaDistrictDOList);
+        List<AreaProvince> areaProvinceList = ConverterUtil.convertList(areaProvinceDOList, AreaProvince.class);
+        List<AreaCity> areaCityList = ConverterUtil.convertList(areaCityDOList, AreaCity.class);
+        List<AreaDistrict> areaDistrictList = ConverterUtil.convertList(areaDistrictDOList, AreaDistrict.class);
 
         Map<Integer, AreaProvince> provinceMap = new HashMap<>();
         for (AreaProvince areaProvince : areaProvinceList) {
@@ -116,7 +113,6 @@ public class AreaServiceImpl implements AreaService {
             // 创建Httpclient对象
 
 
-
             CloseableHttpClient httpclient = HttpClients.createDefault();
 //            if (districtName.equals("市辖区")) {
 //                List<Integer> cityIds = areaDistrictMapper.findCityIdByDistrictName(districtName);
@@ -157,7 +153,7 @@ public class AreaServiceImpl implements AreaService {
                     Elements opExactqaSAnswer = document.select(".op_post_content");
                     for (Element element : opExactqaSAnswer) {
                         String text = element.select(".op_post_content").text();
-                        String substring = text.substring(text.length()-6, text.length());
+                        String substring = text.substring(text.length() - 6, text.length());
                         Integer integer = areaDistrictMapper.savePostCode(substring, areaDistrictDO);
 //                            areaCityMapper.savePostCode(text, districtName);
                         System.out.println(text);

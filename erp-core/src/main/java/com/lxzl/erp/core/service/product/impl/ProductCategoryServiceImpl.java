@@ -11,10 +11,10 @@ import com.lxzl.erp.common.domain.product.pojo.ProductCategoryProperty;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategoryPropertyValue;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.product.ProductCategoryService;
 import com.lxzl.erp.core.service.product.impl.support.ProductCategoryConverter;
-import com.lxzl.erp.core.service.product.impl.support.ProductCategoryPropertyConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialModelMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryMapper;
@@ -57,7 +57,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("productCategoryQueryParam", productCategoryQueryParam);
         List<ProductCategoryDO> productCategoryDOList = productCategoryMapper.findAllCategory(maps);
-        List<ProductCategory> nodeList = ProductCategoryConverter.convertProductCategoryTree(ProductCategoryConverter.convertProductCategoryDOList(productCategoryDOList));
+        List<ProductCategory> nodeList = ProductCategoryConverter.convertProductCategoryTree(ConverterUtil.convertList(productCategoryDOList, ProductCategory.class));
         // 过滤没有下级且本身不是
         filterSurplusProductCategoryNode(nodeList);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -84,7 +84,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("categoryId", categoryId);
         List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findProductCategoryPropertyListByCategoryId(maps);
-        result.setResult(ProductCategoryPropertyConverter.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
+        result.setResult(ConverterUtil.convertList(productCategoryPropertyDOList, ProductCategoryProperty.class));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -95,7 +95,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("productId", productId);
         List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findProductCategoryPropertyListByProductId(maps);
-        result.setResult(ProductCategoryPropertyConverter.convertProductCategoryPropertyDOList(productCategoryPropertyDOList));
+        result.setResult(ConverterUtil.convertList(productCategoryPropertyDOList, ProductCategoryProperty.class));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -106,7 +106,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
-        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = ProductCategoryPropertyConverter.convertProductCategoryPropertyValue(productCategoryPropertyValue);
+        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = ConverterUtil.convert(productCategoryPropertyValue, ProductCategoryPropertyValueDO.class);
         ProductCategoryPropertyDO productCategoryPropertyDO = productCategoryPropertyMapper.findById(productCategoryPropertyValueDO.getPropertyId());
         if (productCategoryPropertyDO == null) {
             result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS);
@@ -154,12 +154,12 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             return;
         }
         MaterialDO dbMaterialDO = null;
-        if(MaterialType.isCapacityMaterial(productCategoryPropertyDO.getMaterialType())){
+        if (MaterialType.isCapacityMaterial(productCategoryPropertyDO.getMaterialType())) {
             dbMaterialDO = materialMapper.findByMaterialTypeAndCapacity(productCategoryPropertyDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
-        }else if(MaterialType.isModelMaterial(productCategoryPropertyDO.getMaterialType())){
+        } else if (MaterialType.isModelMaterial(productCategoryPropertyDO.getMaterialType())) {
             dbMaterialDO = materialMapper.findByMaterialTypeAndModelId(productCategoryPropertyDO.getMaterialType(), productCategoryPropertyValueDO.getMaterialModelId());
         }
-        if(dbMaterialDO != null){
+        if (dbMaterialDO != null) {
             return;
         }
 
@@ -194,7 +194,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = ProductCategoryPropertyConverter.convertProductCategoryPropertyValue(productCategoryPropertyValue);
+        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = ConverterUtil.convert(productCategoryPropertyValue, ProductCategoryPropertyValueDO.class);
         ProductCategoryPropertyDO productCategoryPropertyDO = productCategoryPropertyMapper.findById(productCategoryPropertyValueDO.getPropertyId());
         if (productCategoryPropertyDO == null) {
             result.setErrorCode(ErrorCode.PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS);

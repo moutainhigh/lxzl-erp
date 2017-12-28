@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.VerifyReceiver;
@@ -19,7 +20,6 @@ import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.workflow.WorkFlowManager;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
-import com.lxzl.erp.core.service.workflow.impl.support.WorkflowConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowNodeMapper;
@@ -190,7 +190,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
             return result;
         }
-        result.setResult(WorkflowConverter.convertWorkflowLinkDO(workflowLinkDO));
+        result.setResult(ConverterUtil.convert(workflowLinkDO,WorkflowLink.class));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -208,7 +208,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
             return result;
         }
-        result.setResult(WorkflowConverter.convertWorkflowLinkDO(workflowLinkDO));
+        result.setResult(ConverterUtil.convert(workflowLinkDO,WorkflowLink.class));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -224,7 +224,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         paramMap.put("workflowQueryParam", workflowLinkQueryParam);
         Integer dataCount = workflowLinkMapper.listCount(paramMap);
         List<WorkflowLinkDO> dataList = workflowLinkMapper.listPage(paramMap);
-        Page<WorkflowLink> page = new Page<>(WorkflowConverter.convertWorkflowLinkDOList(dataList), dataCount, workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
+        Page<WorkflowLink> page = new Page<>(ConverterUtil.convertList(dataList,WorkflowLink.class), dataCount, workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
 
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -244,7 +244,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         paramMap.put("workflowQueryParam", workflowLinkQueryParam);
         Integer dataCount = workflowLinkMapper.listCount(paramMap);
         List<WorkflowLinkDO> dataList = workflowLinkMapper.listPage(paramMap);
-        Page<WorkflowLink> page = new Page<>(WorkflowConverter.convertWorkflowLinkDOList(dataList), dataCount, workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
+        Page<WorkflowLink> page = new Page<>(ConverterUtil.convertList(dataList,WorkflowLink.class), dataCount, workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
 
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);

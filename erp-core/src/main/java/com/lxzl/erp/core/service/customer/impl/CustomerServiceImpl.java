@@ -73,7 +73,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerMapper.save(customerDO);
 
-        CustomerCompanyDO customerCompanyDO = CustomerConverter.convertCustomerCompany(customer.getCustomerCompany());
+        CustomerCompanyDO customerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
         customerCompanyDO.setCustomerId(customerDO.getId());
         customerCompanyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerCompanyDO.setCreateTime(now);
@@ -116,7 +116,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerMapper.save(customerDO);
 
-        CustomerPersonDO customerPersonDO = CustomerConverter.convertCustomerPerson(customer.getCustomerPerson());
+        CustomerPersonDO customerPersonDO = ConverterUtil.convert(customer.getCustomerPerson(), CustomerPersonDO.class);
         customerPersonDO.setCustomerId(customerDO.getId());
         customerPersonDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerPersonDO.setCreateTime(now);
@@ -149,7 +149,7 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
         CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
-        CustomerCompanyDO newCustomerCompanyDO = CustomerConverter.convertCustomerCompany(customer.getCustomerCompany());
+        CustomerCompanyDO newCustomerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
         newCustomerCompanyDO.setDataStatus(null);
         newCustomerCompanyDO.setCreateTime(null);
         newCustomerCompanyDO.setCreateUser(null);
@@ -181,7 +181,7 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
         CustomerPersonDO customerPersonDO = customerPersonMapper.findByCustomerId(customerDO.getId());
-        CustomerPersonDO newCustomerPersonDO = CustomerConverter.convertCustomerPerson(customer.getCustomerPerson());
+        CustomerPersonDO newCustomerPersonDO = ConverterUtil.convert(customer.getCustomerPerson(), CustomerPersonDO.class);
         newCustomerPersonDO.setDataStatus(null);
         newCustomerPersonDO.setCreateTime(null);
         newCustomerPersonDO.setCreateUser(null);
@@ -213,7 +213,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         Integer totalCount = customerMapper.findCustomerCompanyCountByParams(maps);
         List<CustomerDO> customerDOList = customerMapper.findCustomerCompanyByParams(maps);
-        List<Customer> customerList = CustomerConverter.convertCustomerDOList(customerDOList);
+        List<Customer> customerList = ConverterUtil.convertList(customerDOList, Customer.class);
         Page<Customer> page = new Page<>(customerList, totalCount, customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -232,7 +232,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         Integer totalCount = customerMapper.findCustomerPersonCountByParams(maps);
         List<CustomerDO> customerDOList = customerMapper.findCustomerPersonByParams(maps);
-        List<Customer> customerPersonList = CustomerConverter.convertCustomerDOList(customerDOList);
+        List<Customer> customerPersonList = ConverterUtil.convertList(customerDOList, Customer.class);
         Page<Customer> page = new Page<>(customerPersonList, totalCount, customerPersonQueryParam.getPageNo(), customerPersonQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -249,7 +249,7 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
-        Customer customerResult = CustomerConverter.convertCustomerDO(customerDO);
+        Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         customerResult.setCustomerAccount(customerAccount);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -266,7 +266,7 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
-        Customer customerResult = CustomerConverter.convertCustomerDO(customerDO);
+        Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         customerResult.setCustomerAccount(customerAccount);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);

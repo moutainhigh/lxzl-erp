@@ -21,8 +21,6 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
-import com.lxzl.erp.core.service.warehouse.impl.support.StockOrderConverter;
-import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
@@ -114,7 +112,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             return result;
         }
 
-        WarehouseDO warehouseDO = WarehouseConverter.convertWarehouse(warehouse);
+        WarehouseDO warehouseDO = ConverterUtil.convert(warehouse, WarehouseDO.class);
         warehouseDO.setWarehouseNo(GenerateNoUtil.generateWarehouseNo(currentTime));
         warehouseDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         warehouseDO.setUpdateUser(loginUser.getUserId().toString());
@@ -147,7 +145,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             return result;
         }
 
-        WarehouseDO warehouseDO = WarehouseConverter.convertWarehouse(warehouse);
+        WarehouseDO warehouseDO = ConverterUtil.convert(warehouse, WarehouseDO.class);
         warehouseDO.setWarehouseNo(GenerateNoUtil.generateWarehouseNo(currentTime));
         warehouseDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         warehouseDO.setUpdateUser(loginUser.getUserId().toString());
@@ -183,7 +181,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         paramMap.put("warehouseQueryParam", param);
         Integer dataCount = warehouseMapper.listCount(paramMap);
         List<WarehouseDO> dataList = warehouseMapper.listPage(paramMap);
-        Page<Warehouse> page = new Page<>(WarehouseConverter.convertWarehouseDOList(dataList), dataCount, param.getPageNo(), param.getPageSize());
+        Page<Warehouse> page = new Page<>(ConverterUtil.convertList(dataList, Warehouse.class), dataCount, param.getPageNo(), param.getPageSize());
 
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -201,7 +199,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         paramMap.put("warehouseQueryParam", param);
         List<WarehouseDO> dataList = warehouseMapper.listPage(paramMap);
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(WarehouseConverter.convertWarehouseDOList(dataList));
+        result.setResult(ConverterUtil.convertList(dataList, Warehouse.class));
         return result;
     }
 
@@ -247,7 +245,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         paramMap.put("warehouseQueryParam", param);
         List<WarehouseDO> dataList = warehouseMapper.listPage(paramMap);
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(WarehouseConverter.convertWarehouseDOList(dataList));
+        result.setResult(ConverterUtil.convertList(dataList, Warehouse.class));
         return result;
     }
 
@@ -256,7 +254,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         ServiceResult<String, Warehouse> result = new ServiceResult<>();
         WarehouseDO warehouseDO = warehouseMapper.findById(warehouseId);
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(WarehouseConverter.convertWarehouseDO(warehouseDO));
+        result.setResult(ConverterUtil.convert(warehouseDO, Warehouse.class));
         return result;
     }
 
@@ -492,7 +490,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         paramMap.put("stockOrderQueryParam", stockOrderQueryParam);
         Integer totalCount = stockOrderMapper.listCount(paramMap);
         List<StockOrderDO> stockOrderDOList = stockOrderMapper.listPage(paramMap);
-        Page<StockOrder> page = new Page<>(StockOrderConverter.convertStockOrderDOList(stockOrderDOList), totalCount, stockOrderQueryParam.getPageNo(), stockOrderQueryParam.getPageSize());
+        Page<StockOrder> page = new Page<>(ConverterUtil.convertList(stockOrderDOList,StockOrder.class), totalCount, stockOrderQueryParam.getPageNo(), stockOrderQueryParam.getPageSize());
 
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);

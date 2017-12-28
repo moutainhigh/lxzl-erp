@@ -8,8 +8,8 @@ import com.lxzl.erp.common.domain.message.MessageQueryParam;
 import com.lxzl.erp.common.domain.message.pojo.Message;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.message.MessageService;
-import com.lxzl.erp.core.service.message.impl.support.MessageConverter;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.message.MessageMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
@@ -106,7 +106,7 @@ public class MessageServiceImpl implements MessageService {
 		List<MessageDO> messageDOList = messageMapper.findSendMessageByParams(maps);
 
 		//将查询的数据转换为前端专用的数据
-		List<Message> messageList = MessageConverter.convertMessageDOList(messageDOList);
+		List<Message> messageList = ConverterUtil.convertList(messageDOList,Message.class);
 		Page<Message> page = new Page<>(messageList, totalCount, messageQueryParam.getPageNo(), messageQueryParam.getPageSize());
 
 		result.setErrorCode(ErrorCode.SUCCESS);
@@ -133,7 +133,7 @@ public class MessageServiceImpl implements MessageService {
 
         }
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(MessageConverter.convertMessageDO(messageDO));
+        result.setResult(ConverterUtil.convert(messageDO,Message.class));
         return result;
     }
 
@@ -155,7 +155,7 @@ public class MessageServiceImpl implements MessageService {
         List<MessageDO> messageDOList = messageMapper.findReceiveMessageByParams(maps);
 
 		//将查询的数据转换为前端专用的数据
-        List<Message> messageList = MessageConverter.convertMessageDOList(messageDOList);
+        List<Message> messageList = ConverterUtil.convertList(messageDOList,Message.class);
         Page<Message> page = new Page<>(messageList, totalCount, messageQueryParam.getPageNo(), messageQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);

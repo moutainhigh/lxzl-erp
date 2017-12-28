@@ -28,17 +28,6 @@ public class MaterialImageConverter {
         return materialImg;
     }
 
-    public static List<MaterialImg> convertMaterialImgDOList(List<MaterialImgDO> materialImgDOList) {
-        List<MaterialImg> materialImgList = new ArrayList<>();
-
-        if (materialImgDOList != null && !materialImgDOList.isEmpty()) {
-            for (MaterialImgDO materialImgDO : materialImgDOList) {
-                materialImgList.add(convertMaterialImgDO(materialImgDO));
-            }
-        }
-        return materialImgList;
-    }
-
     public static MaterialImgDO convertMaterialImg(MaterialImg materialImg) {
         MaterialImgDO materialImgDO = new MaterialImgDO();
         if (materialImg.getMaterialImgId() != null) {

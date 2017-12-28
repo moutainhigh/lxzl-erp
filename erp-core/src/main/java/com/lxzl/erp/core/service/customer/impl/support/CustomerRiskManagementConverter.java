@@ -10,15 +10,6 @@ import java.util.List;
 
 public class CustomerRiskManagementConverter {
 
-    public static List<CustomerRiskManagement> convertCustomerRiskManagementDOList(List<CustomerRiskManagementDO> customerRiskManagementDOList){
-        List<CustomerRiskManagement> customerRiskManagementList = new ArrayList<>();
-        if(CollectionUtil.isNotEmpty(customerRiskManagementDOList)){
-            for(CustomerRiskManagementDO customerRiskManagementDO : customerRiskManagementDOList){
-                customerRiskManagementList.add(convertCustomerRiskManagementDO(customerRiskManagementDO));
-            }
-        }
-        return customerRiskManagementList;
-    }
 
     public static CustomerRiskManagement convertCustomerRiskManagementDO(CustomerRiskManagementDO customerRiskManagementDO){
         if(customerRiskManagementDO==null) return null;
