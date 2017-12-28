@@ -3,6 +3,7 @@ package com.lxzl.erp.dataaccess.domain.customer;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -25,19 +26,28 @@ public class CustomerCompanyDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
-	private int   companyOrigin; //客户来源,1转介绍,2老客户,3公司资源,4主动开发
-	private Date   foundTime;  //企业成立时间'
-	private String   industry;  //所属行业'
-	private double   registeredCapital;  //注册资本'
-	private int   officeNumber;  //办公人数'
-	private String   productPurpose;  //设备用途'
-	private String   listFirstNeedProducts;  //首次所需设备'
-	private String   listLaterNeedProducts;  //后期所需设备'
-	private String   agentPersonName;  //经办人姓名'
-	private String   agentPersonPhone;  //经办人电话'
-	private String   agentPersonNo;  //经办人身份证号码'
-	private String   consignAddress;  //收货地址'
-	private String   unifiedCreditCode;  //统一信用代码'
+	private Integer customerOrigin; //客户来源,1地推活动，2展会了解，3业务联系，4百度推广，5朋友推荐，6其他广告
+	private Date companyFoundTime;  //企业成立时间
+	private String industry;  //所属行业'
+	private BigDecimal registeredCapital;  //注册资本'
+	private Integer officeNumber;  //办公人数'
+	private String productPurpose;  //设备用途'
+	private String listFirstNeedProducts;  //首次所需设备'
+	private String listLaterNeedProducts;  //后期所需设备'
+	private String agentPersonName;  //经办人姓名'
+	private String agentPersonPhone;  //经办人电话'
+	private String agentPersonNo;  //经办人身份证号码'
+	private String consignAddress;  //收货地址'
+	private String unifiedCreditCode;  //统一信用代码'
+	private String customerNo;  //客户编码
+	private Integer isLegalPersonApple;   //是否法人代表申请
+	private String legalPersonPhone;   //法人手机号
+	private String salesMan; //业务员
+	private String unionArea; //联合区域
+	private String unionSalesMan; //联合业务员
+	private Integer operatingArea; //经营面积
+	private Integer unitInsuredNumber; //单位参保人数
+	private String affiliatedEnterprise; //关联企业
 
 	@Transient
 	private String provinceName;
@@ -45,8 +55,6 @@ public class CustomerCompanyDO  extends BaseDO {
 	private String cityName;
 	@Transient
 	private String districtName;
-
-
 
 	public Integer getId(){
 		return id;
@@ -200,22 +208,6 @@ public class CustomerCompanyDO  extends BaseDO {
 		this.districtName = districtName;
 	}
 
-	public int getCompanyOrigin() {
-		return companyOrigin;
-	}
-
-	public void setCompanyOrigin(int companyOrigin) {
-		this.companyOrigin = companyOrigin;
-	}
-
-	public Date getFoundTime() {
-		return foundTime;
-	}
-
-	public void setFoundTime(Date foundTime) {
-		this.foundTime = foundTime;
-	}
-
 	public String getIndustry() {
 		return industry;
 	}
@@ -224,19 +216,19 @@ public class CustomerCompanyDO  extends BaseDO {
 		this.industry = industry;
 	}
 
-	public double getRegisteredCapital() {
+	public BigDecimal getRegisteredCapital() {
 		return registeredCapital;
 	}
 
-	public void setRegisteredCapital(double registeredCapital) {
+	public void setRegisteredCapital(BigDecimal registeredCapital) {
 		this.registeredCapital = registeredCapital;
 	}
 
-	public int getOfficeNumber() {
+	public Integer getOfficeNumber() {
 		return officeNumber;
 	}
 
-	public void setOfficeNumber(int officeNumber) {
+	public void setOfficeNumber(Integer officeNumber) {
 		this.officeNumber = officeNumber;
 	}
 
@@ -302,5 +294,93 @@ public class CustomerCompanyDO  extends BaseDO {
 
 	public void setUnifiedCreditCode(String unifiedCreditCode) {
 		this.unifiedCreditCode = unifiedCreditCode;
+	}
+
+	public String getCustomerNo() {
+		return customerNo;
+	}
+
+	public void setCustomerNo(String customerNo) {
+		this.customerNo = customerNo;
+	}
+
+	public Integer getIsLegalPersonApple() {
+		return isLegalPersonApple;
+	}
+
+	public void setIsLegalPersonApple(Integer isLegalPersonApple) {
+		this.isLegalPersonApple = isLegalPersonApple;
+	}
+
+	public String getLegalPersonPhone() {
+		return legalPersonPhone;
+	}
+
+	public void setLegalPersonPhone(String legalPersonPhone) {
+		this.legalPersonPhone = legalPersonPhone;
+	}
+
+	public Integer getCustomerOrigin() {
+		return customerOrigin;
+	}
+
+	public void setCustomerOrigin(Integer customerOrigin) {
+		this.customerOrigin = customerOrigin;
+	}
+
+	public Date getCompanyFoundTime() {
+		return companyFoundTime;
+	}
+
+	public void setCompanyFoundTime(Date companyFoundTime) {
+		this.companyFoundTime = companyFoundTime;
+	}
+
+	public String getSalesMan() {
+		return salesMan;
+	}
+
+	public void setSalesMan(String salesMan) {
+		this.salesMan = salesMan;
+	}
+
+	public String getUnionArea() {
+		return unionArea;
+	}
+
+	public void setUnionArea(String unionArea) {
+		this.unionArea = unionArea;
+	}
+
+	public String getUnionSalesMan() {
+		return unionSalesMan;
+	}
+
+	public void setUnionSalesMan(String unionSalesMan) {
+		this.unionSalesMan = unionSalesMan;
+	}
+
+	public Integer getOperatingArea() {
+		return operatingArea;
+	}
+
+	public void setOperatingArea(Integer operatingArea) {
+		this.operatingArea = operatingArea;
+	}
+
+	public Integer getUnitInsuredNumber() {
+		return unitInsuredNumber;
+	}
+
+	public void setUnitInsuredNumber(Integer unitInsuredNumber) {
+		this.unitInsuredNumber = unitInsuredNumber;
+	}
+
+	public String getAffiliatedEnterprise() {
+		return affiliatedEnterprise;
+	}
+
+	public void setAffiliatedEnterprise(String affiliatedEnterprise) {
+		this.affiliatedEnterprise = affiliatedEnterprise;
 	}
 }

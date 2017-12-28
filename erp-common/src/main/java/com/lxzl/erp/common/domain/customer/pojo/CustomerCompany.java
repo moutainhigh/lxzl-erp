@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -19,11 +20,12 @@ public class CustomerCompany implements Serializable {
 
 	private Integer customerCompanyId;   //唯一标识
 	private Integer customerId;   //客户ID
+	private String customerNo;  //客户编码
 	private String landline;   //座机电话
 	@NotBlank(message = ErrorCode.CUSTOMER_COMPANY_CONNECT_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
-	private String connectRealName;   //联系人
+	private String connectRealName;   //紧急联系人
 	@NotBlank(message = ErrorCode.CUSTOMER_COMPANY_CONNECT_PHONE_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
-	private String connectPhone;   //联系人手机号
+	private String connectPhone;   //紧急联系人手机号
 	@NotBlank(message = ErrorCode.CUSTOMER_COMPANY_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
 	private String companyName;   //公司名称
 	private String companyAbb;   //公司简称
@@ -32,10 +34,12 @@ public class CustomerCompany implements Serializable {
 	private Integer district;   //区ID，对应区ID
 	@NotBlank(message = ErrorCode.CUSTOMER_COMPANY_ADDRESS_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
 	private String address;   //详细地址
+	private Integer isLegalPersonApple;   //是否法人代表申请
 	@NotBlank(message = ErrorCode.LEGAL_PERSON_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
 	private String legalPerson;   //法人姓名
 	@NotBlank(message = ErrorCode.LEGAL_PERSON_NO_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
 	private String legalPersonNo;   //法人身份证号
+	private String legalPersonPhone;   //法人手机号
 	private String businessLicenseNo;   //营业执照号
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -45,15 +49,15 @@ public class CustomerCompany implements Serializable {
 	private String updateUser;   //修改人
 
 	@NotNull(message = ErrorCode.COMPANY_ORIGIN_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
-	private int companyOrigin; //客户来源,1转介绍,2老客户,3公司资源,4主动开发
+	private Integer customerOrigin; //客户来源,1地推活动，2展会了解，3业务联系，4百度推广，5朋友推荐，6其他广告
 	@NotNull(message = ErrorCode.FOUND_TIME_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
-	private Date foundTime;  //企业成立时间'
+	private Date companyFoundTime;  //企业成立时间'
 	@NotBlank(message = ErrorCode.INDUSTRY_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
 	private String industry;  //所属行业'
 	@NotNull(message = ErrorCode.REGISTERED_CAPITAL_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
-	private double registeredCapital;  //注册资本'
+	private BigDecimal registeredCapital;  //注册资本'
 	@NotNull(message = ErrorCode.OFFICE_NUMBER_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
-	private int officeNumber;  //办公人数'
+	private Integer officeNumber;  //办公人数'
 	private String productPurpose;  //设备用途'
 	private String listFirstNeedProducts;  //首次所需设备'
 	private String listLaterNeedProducts;  //后期所需设备'
@@ -62,6 +66,14 @@ public class CustomerCompany implements Serializable {
 	private String agentPersonNo;  //经办人身份证号码'
 	private String consignAddress;  //收货地址'
 	private String unifiedCreditCode;  //统一信用代码'
+	private String salesMan; //业务员
+	private String unionArea; //联合区域
+	private String unionSalesMan; //联合业务员
+	private Integer operatingArea; //经营面积
+	private Integer unitInsuredNumber; //单位参保人数
+	private String affiliatedEnterprise; //关联企业
+
+
 
 	private String provinceName;// 省名
 	private String cityName; //城市名
@@ -279,22 +291,6 @@ public class CustomerCompany implements Serializable {
 		this.districtName = districtName;
 	}
 
-	public int getCompanyOrigin() {
-		return companyOrigin;
-	}
-
-	public void setCompanyOrigin(int companyOrigin) {
-		this.companyOrigin = companyOrigin;
-	}
-
-	public Date getFoundTime() {
-		return foundTime;
-	}
-
-	public void setFoundTime(Date foundTime) {
-		this.foundTime = foundTime;
-	}
-
 	public String getIndustry() {
 		return industry;
 	}
@@ -303,19 +299,16 @@ public class CustomerCompany implements Serializable {
 		this.industry = industry;
 	}
 
-	public double getRegisteredCapital() {
+
+	public BigDecimal getRegisteredCapital() {
 		return registeredCapital;
 	}
 
-	public void setRegisteredCapital(double registeredCapital) {
+	public void setRegisteredCapital(BigDecimal registeredCapital) {
 		this.registeredCapital = registeredCapital;
 	}
 
-	public int getOfficeNumber() {
-		return officeNumber;
-	}
-
-	public void setOfficeNumber(int officeNumber) {
+	public void setOfficeNumber(Integer officeNumber) {
 		this.officeNumber = officeNumber;
 	}
 
@@ -485,5 +478,97 @@ public class CustomerCompany implements Serializable {
 
 	public void setOtherDateImgList(List<Img> otherDateImgList) {
 		this.otherDateImgList = otherDateImgList;
+	}
+
+	public String getCustomerNo() {
+		return customerNo;
+	}
+
+	public void setCustomerNo(String customerNo) {
+		this.customerNo = customerNo;
+	}
+
+	public Integer getIsLegalPersonApple() {
+		return isLegalPersonApple;
+	}
+
+	public void setIsLegalPersonApple(Integer isLegalPersonApple) {
+		this.isLegalPersonApple = isLegalPersonApple;
+	}
+
+	public Integer getOfficeNumber() {
+		return officeNumber;
+	}
+
+	public String getSalesMan() {
+		return salesMan;
+	}
+
+	public void setSalesMan(String salesMan) {
+		this.salesMan = salesMan;
+	}
+
+	public String getUnionArea() {
+		return unionArea;
+	}
+
+	public void setUnionArea(String unionArea) {
+		this.unionArea = unionArea;
+	}
+
+	public String getUnionSalesMan() {
+		return unionSalesMan;
+	}
+
+	public void setUnionSalesMan(String unionSalesMan) {
+		this.unionSalesMan = unionSalesMan;
+	}
+
+	public Integer getOperatingArea() {
+		return operatingArea;
+	}
+
+	public void setOperatingArea(Integer operatingArea) {
+		this.operatingArea = operatingArea;
+	}
+
+	public Integer getUnitInsuredNumber() {
+		return unitInsuredNumber;
+	}
+
+	public void setUnitInsuredNumber(Integer unitInsuredNumber) {
+		this.unitInsuredNumber = unitInsuredNumber;
+	}
+
+	public String getAffiliatedEnterprise() {
+		return affiliatedEnterprise;
+	}
+
+	public void setAffiliatedEnterprise(String affiliatedEnterprise) {
+		this.affiliatedEnterprise = affiliatedEnterprise;
+	}
+
+	public String getLegalPersonPhone() {
+		return legalPersonPhone;
+	}
+
+	public void setLegalPersonPhone(String legalPersonPhone) {
+		this.legalPersonPhone = legalPersonPhone;
+	}
+
+	public Integer getCustomerOrigin() {
+		return customerOrigin;
+	}
+
+	public void setCustomerOrigin(Integer customerOrigin) {
+		this.customerOrigin = customerOrigin;
+	}
+
+	public Date getCompanyFoundTime() {
+		return companyFoundTime;
+	}
+
+	public void setCompanyFoundTime(Date companyFoundTime) {
+		this.companyFoundTime = companyFoundTime;
 	}
 }
