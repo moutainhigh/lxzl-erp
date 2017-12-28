@@ -21,7 +21,6 @@ import com.lxzl.erp.core.service.material.impl.support.MaterialConverter;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductEquipmentConverter;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
-import com.lxzl.erp.core.service.purchase.impl.support.PurchaseOrderConverter;
 import com.lxzl.erp.core.service.purchase.impl.support.PurchaseOrderSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
@@ -185,8 +184,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     private PurchaseOrderDO buildPurchaseOrder(Date now, PurchaseOrder purchaseOrder, PurchaseOrderDetail purchaseOrderDetail, WarehouseDO warehouseDO) {
         //保存采购单
-        PurchaseOrderDO purchaseOrderDO = PurchaseOrderConverter.convertPurchaseOrder(purchaseOrder);
-
+        PurchaseOrderDO purchaseOrderDO = ConverterUtil.convert(purchaseOrder,PurchaseOrderDO.class);
         //查询库房信息并保存库房快照
         purchaseOrderDO.setWarehouseSnapshot(JSON.toJSONString(WarehouseConverter.convertWarehouseDO(warehouseDO)));
         purchaseOrderDO.setPurchaseOrderAmountTotal(purchaseOrderDetail.totalAmount);
@@ -652,12 +650,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return serviceResult;
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        PurchaseOrder purchaseOrder = PurchaseOrderConverter.convertPurchaseOrderDO(purchaseOrderDO);
+        PurchaseOrder purchaseOrder = ConverterUtil.convert(purchaseOrderDO,PurchaseOrder.class);
         List<PurchaseDeliveryOrderDO> purchaseDeliveryOrderDOList = purchaseDeliveryOrderMapper.findListByPurchaseId(purchaseOrderDO.getId());
         List<PurchaseReceiveOrderDO> purchaseReceiveOrderDOList = purchaseReceiveOrderMapper.findListByPurchaseId(purchaseOrderDO.getId());
 
-        List<PurchaseDeliveryOrder> purchaseDeliveryOrderList = PurchaseOrderConverter.convertPurchaseDeliveryOrderDOList(purchaseDeliveryOrderDOList);
-        List<PurchaseReceiveOrder> purchaseReceiveOrderList = PurchaseOrderConverter.convertPurchaseReceiveOrderDOList(purchaseReceiveOrderDOList);
+        List<PurchaseDeliveryOrder> purchaseDeliveryOrderList = ConverterUtil.convertList(purchaseDeliveryOrderDOList,PurchaseDeliveryOrder.class);
+        List<PurchaseReceiveOrder> purchaseReceiveOrderList = ConverterUtil.convertList(purchaseReceiveOrderDOList,PurchaseReceiveOrder.class);
         purchaseOrder.setPurchaseDeliveryOrderList(purchaseDeliveryOrderList);
         purchaseOrder.setPurchaseReceiveOrderList(purchaseReceiveOrderList);
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(WorkflowType.WORKFLOW_TYPE_PURCHASE, purchaseNo);
@@ -688,7 +686,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         Integer totalCount = purchaseOrderMapper.findPurchaseOrderCountByParams(maps);
         List<PurchaseOrderDO> purchaseOrderDOList = purchaseOrderMapper.findPurchaseOrderByParams(maps);
-        List<PurchaseOrder> purchaseOrderList = PurchaseOrderConverter.convertPurchaseOrderDOList(purchaseOrderDOList);
+        List<PurchaseOrder> purchaseOrderList = ConverterUtil.convertList(purchaseOrderDOList,PurchaseOrder.class);
         Page<PurchaseOrder> page = new Page<>(purchaseOrderList, totalCount, purchaseOrderQueryParam.getPageNo(), purchaseOrderQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -838,7 +836,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         Integer totalCount = purchaseDeliveryOrderMapper.findPurchaseDeliveryOrderCountByParams(maps);
         List<PurchaseDeliveryOrderDO> purchaseDeliveryOrderDOList = purchaseDeliveryOrderMapper.findPurchaseDeliveryOrderByParams(maps);
-        List<PurchaseDeliveryOrder> purchaseDeliveryOrderList = PurchaseOrderConverter.convertPurchaseDeliveryOrderDOList(purchaseDeliveryOrderDOList);
+        List<PurchaseDeliveryOrder> purchaseDeliveryOrderList = ConverterUtil.convertList(purchaseDeliveryOrderDOList,PurchaseDeliveryOrder.class);
         Page<PurchaseDeliveryOrder> page = new Page<>(purchaseDeliveryOrderList, totalCount, purchaseDeliveryOrderQueryParam.getPageNo(), purchaseDeliveryOrderQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -855,7 +853,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return serviceResult;
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(PurchaseOrderConverter.convertPurchaseDeliveryOrderDO(purchaseDeliveryOrderDO));
+        serviceResult.setResult(ConverterUtil.convert(purchaseDeliveryOrderDO,PurchaseDeliveryOrder.class));
         return serviceResult;
     }
 
@@ -1286,7 +1284,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         Integer totalCount = purchaseReceiveOrderMapper.findPurchaseReceiveOrderCountByParams(maps);
         List<PurchaseReceiveOrderDO> purchaseReceiveOrderDOList = purchaseReceiveOrderMapper.findPurchaseReceiveOrderByParams(maps);
-        List<PurchaseReceiveOrder> purchaseReceiveOrderList = PurchaseOrderConverter.convertPurchaseReceiveOrderDOList(purchaseReceiveOrderDOList);
+        List<PurchaseReceiveOrder> purchaseReceiveOrderList = ConverterUtil.convertList(purchaseReceiveOrderDOList,PurchaseReceiveOrder.class);
         Page<PurchaseReceiveOrder> page = new Page<>(purchaseReceiveOrderList, totalCount, purchaseReceiveOrderQueryParam.getPageNo(), purchaseReceiveOrderQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -1303,7 +1301,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return serviceResult;
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(PurchaseOrderConverter.convertPurchaseReceiveOrderDO(purchaseReceiveOrderDO));
+        serviceResult.setResult(ConverterUtil.convert(purchaseReceiveOrderDO,PurchaseReceiveOrder.class));
         return serviceResult;
     }
 

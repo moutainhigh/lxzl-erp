@@ -2,10 +2,10 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
-import com.lxzl.erp.common.domain.jointProduct.JointMaterial;
-import com.lxzl.erp.common.domain.jointProduct.JointProduct;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
 import com.lxzl.erp.common.domain.jointProduct.JointProductQueryParam;
-import com.lxzl.erp.common.domain.jointProduct.JointProductSku;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductSku;
 import org.junit.Test;
 
 import java.util.ArrayList;

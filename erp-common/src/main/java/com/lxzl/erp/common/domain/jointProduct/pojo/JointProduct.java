@@ -1,27 +1,25 @@
-package com.lxzl.erp.common.domain.jointProduct;
+package com.lxzl.erp.common.domain.jointProduct.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
-import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.Min;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JointProductSku extends BasePO {
-    private Integer jointProductSkuId;   //唯一标识
-    private Integer jointProductId;   //组合商品ID
-    @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL, groups = {UpdateGroup.class, AddGroup.class})
-    private Integer skuId;   //SKU_ID
-    @Min(value = 1, message = ErrorCode.PRODUCT_SKU_COUNT_ERROR, groups = {AddGroup.class, UpdateGroup.class})
-    @NotNull(message = ErrorCode.PRODUCT_SKU_COUNT_ERROR, groups = {UpdateGroup.class, AddGroup.class})
-    private Integer skuCount;   //sku数量
+public class JointProduct extends BasePO {
+    @NotNull(message = ErrorCode.JOINT_PRODUCT_ID_IS_NULL ,groups = {UpdateGroup.class,IdGroup.class})
+    private Integer jointProductId;   //唯一标识
+    @NotBlank(message = ErrorCode.JOINT_PRODUCT_NAME_IS_NULL, groups = {AddGroup.class,UpdateGroup.class})
+    private String jointProductName;   //组合商品名称
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注
     private Date createTime;   //添加时间
@@ -29,23 +27,10 @@ public class JointProductSku extends BasePO {
     private Date updateTime;   //修改时间
     private String updateUser;   //修改人
 
-    private Product product;  //商品信息
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public Integer getJointProductSkuId() {
-        return jointProductSkuId;
-    }
-
-    public void setJointProductSkuId(Integer jointProductSkuId) {
-        this.jointProductSkuId = jointProductSkuId;
-    }
+    @Valid
+    private List<JointMaterial> jointMaterialList;   //组合商品物料项表
+    @Valid
+    private List<JointProductSku> jointProductSkuList;   //组合商品sku项表
 
     public Integer getJointProductId() {
         return jointProductId;
@@ -55,20 +40,12 @@ public class JointProductSku extends BasePO {
         this.jointProductId = jointProductId;
     }
 
-    public Integer getSkuId() {
-        return skuId;
+    public String getJointProductName() {
+        return jointProductName;
     }
 
-    public void setSkuId(Integer skuId) {
-        this.skuId = skuId;
-    }
-
-    public Integer getSkuCount() {
-        return skuCount;
-    }
-
-    public void setSkuCount(Integer skuCount) {
-        this.skuCount = skuCount;
+    public void setJointProductName(String jointProductName) {
+        this.jointProductName = jointProductName;
     }
 
     public Integer getDataStatus() {
@@ -119,4 +96,19 @@ public class JointProductSku extends BasePO {
         this.updateUser = updateUser;
     }
 
+    public List<JointMaterial> getJointMaterialList() {
+        return jointMaterialList;
+    }
+
+    public void setJointMaterialList(List<JointMaterial> jointMaterialList) {
+        this.jointMaterialList = jointMaterialList;
+    }
+
+    public List<JointProductSku> getJointProductSkuList() {
+        return jointProductSkuList;
+    }
+
+    public void setJointProductSkuList(List<JointProductSku> jointProductSkuList) {
+        this.jointProductSkuList = jointProductSkuList;
+    }
 }

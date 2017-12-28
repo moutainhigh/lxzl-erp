@@ -1,12 +1,11 @@
 package com.lxzl.erp.common.domain.jointProduct;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
 import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JointProductQueryParam extends BasePO {
+public class JointProductQueryParam extends BasePageParam {
 
     private Integer jointProductId;  //组合商品id
     private String jointProductName;  //组合商品名称

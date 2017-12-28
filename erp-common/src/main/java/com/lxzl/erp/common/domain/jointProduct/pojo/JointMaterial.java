@@ -1,4 +1,4 @@
-package com.lxzl.erp.common.domain.jointProduct;
+package com.lxzl.erp.common.domain.jointProduct.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
