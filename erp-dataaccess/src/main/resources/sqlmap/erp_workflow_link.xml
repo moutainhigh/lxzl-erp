@@ -153,6 +153,12 @@
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.commitUserId != null &amp;&amp; maps.workflowQueryParam.commitUserId != ''">
 				and ewl.commit_user = #{maps.workflowQueryParam.commitUserId, jdbcType=INTEGER}
 			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.createStartTime != null &amp;&amp; maps.workflowQueryParam.createStartTime != ''">
+				<![CDATA[ AND ewl.create_time >= #{maps.workflowQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.createEndTime != null &amp;&amp; maps.workflowQueryParam.createEndTime != ''">
+				<![CDATA[ AND ewl.create_time <= #{maps.workflowQueryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				and ewl.data_status = 1
 			</if>
@@ -265,8 +271,4 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO">
 		update erp_workflow_link <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
-
-	<select id="findWorkflowLinkCountByDate" resultType="java.lang.Integer">
-		<![CDATA[ SELECT COUNT(1) FROM erp_workflow_link WHERE create_time > #{firstdayDate} AND create_time < #{lastdayDate} AND data_status = 1 ]]>
-	</select>
 </mapper>

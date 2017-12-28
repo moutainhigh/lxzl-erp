@@ -135,6 +135,12 @@
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayEndTime != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayEndTime != ''">
 				<![CDATA[ AND eso.statement_expect_pay_time <= #{maps.statementOrderQueryParam.statementExpectPayEndTime} ]]>
 			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.createStartTime != null &amp;&amp; maps.statementOrderQueryParam.createStartTime != ''">
+				<![CDATA[ AND eso.create_time >= #{maps.statementOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.createEndTime != null &amp;&amp; maps.statementOrderQueryParam.createEndTime != ''">
+				<![CDATA[ AND eso.create_time <= #{maps.statementOrderQueryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				AND eso.data_status = 1
 			</if>
@@ -261,8 +267,4 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO">
 		UPDATE erp_statement_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
-
-	<select id="findStatementOrderCountByDate" resultType="java.lang.Integer">
-		<![CDATA[ SELECT COUNT(1) FROM erp_statement_order WHERE create_time > #{firstdayDate} AND  create_time < #{lastdayDate} AND  data_status = 1 ]]>
-	</select>
 </mapper>

@@ -140,6 +140,12 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ec.id) FROM erp_customer ec 
 		<where>
+			<if test="maps.productEquipmentQueryParam.createStartTime != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != ''">
+				<![CDATA[ AND ec.create_time >= #{maps.productEquipmentQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.productEquipmentQueryParam.createEndTime != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != ''">
+				<![CDATA[ AND ec.create_time <= #{maps.productEquipmentQueryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				AND ec.data_status = 1
 			</if>
@@ -353,9 +359,4 @@
 		LIMIT #{maps.start},#{maps.pageSize}
 
 	</select>
-
-	<select id="findCustomerCountByDate" resultType="java.lang.Integer">
-		<![CDATA[ SELECT COUNT(1) FROM erp_customer WHERE create_time > #{startDate} AND  create_time < #{endDate} AND  data_status = 1 ]]>
-	</select>
-
 </mapper>

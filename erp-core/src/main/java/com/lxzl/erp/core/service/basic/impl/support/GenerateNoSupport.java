@@ -3,17 +3,23 @@ package com.lxzl.erp.core.service.basic.impl.support;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.CustomerType;
 import com.lxzl.erp.common.domain.changeOrder.ChangeOrderPageParam;
+import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
+import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseReceiveOrderQueryParam;
+import com.lxzl.erp.common.domain.repairOrder.RepairOrderQueryParam;
 import com.lxzl.erp.common.domain.returnOrder.ReturnOrderPageParam;
+import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.dataaccess.dao.mysql.area.AreaCityMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.deploymentOrder.DeploymentOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
@@ -64,11 +70,10 @@ public class GenerateNoSupport {
             orderQueryParam.setCreateEndTime(date.get("lastdayDate"));
             maps.put("orderQueryParam", orderQueryParam);
             Integer orderCount = orderMapper.findOrderCountByParams(maps);
-            CustomerDO customerDO = customerMapper.findById(buyerCustomerId);
             StringBuilder builder = new StringBuilder();
             builder.append("LXO");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
-            builder.append(customerDO.getCustomerNo());
+            builder.append(buyerCustomerId);
             builder.append(String.format("%05d", orderCount + 1));
             return builder.toString();
         }
@@ -88,7 +93,13 @@ public class GenerateNoSupport {
             //业务员所在的city_code
             String subCompanyCode = subCompanyMapper.findById(departmentDO.getSubCompanyId()).getSubCompanyCode();
             Map<String, Date> date = getMonthlongDate();
-            Integer customerCompanyCount = customerMapper.findCustomerCountByDate(date.get("firstdayDate"), date.get("lastdayDate"));
+            ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
+            productEquipmentQueryParam.setCreateStartTime(date.get("firstdayDate"));
+            productEquipmentQueryParam.setCreateEndTime(date.get("lastdayDate"));
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("productEquipmentQueryParam", productEquipmentQueryParam);
+            Integer count = customerMapper.listCount(maps);
+
             if (customerType.equals(CustomerType.CUSTOMER_TYPE_COMPANY)) {
                 builder.append("LXCC");
             }
@@ -97,7 +108,7 @@ public class GenerateNoSupport {
             }
             builder.append(subCompanyCode);
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
-            builder.append(String.format("%05d", customerCompanyCount + 1));
+            builder.append(String.format("%05d", count + 1));
             return builder.toString();
         }
     }
@@ -117,12 +128,17 @@ public class GenerateNoSupport {
             SubCompanyDO targetSubCompanyDO = subCompanyMapper.findById(targetWarehouseDO.getSubCompanyId());
             AreaCityDO targetAreaCityDO = areaCityMapper.findById(targetSubCompanyDO.getCity());
             Map<String, Date> date = getMonthlongDate();
-            Integer warehouseCount = warehouseMapper.findWarehouseCountByDate(date.get("firstdayDate"), date.get("lastdayDate"));
+            DeploymentOrderQueryParam deploymentOrderQueryParam = new DeploymentOrderQueryParam();
+            deploymentOrderQueryParam.setCreateStartTime(date.get("firstdayDate"));
+            deploymentOrderQueryParam.setCreateEndTime(date.get("lastdayDate"));
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("departmentQueryParam", deploymentOrderQueryParam);
+            Integer count = deploymentOrderMapper.listCount(maps);
             builder.append("LXC");
             builder.append(srcAreaCityDO.getCityCode());
             builder.append(targetAreaCityDO.getCityCode());
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
-            builder.append(String.format("%04d", warehouseCount + 1));
+            builder.append(String.format("%04d", count + 1));
             return builder.toString();
         }
     }
@@ -141,8 +157,6 @@ public class GenerateNoSupport {
             PurchaseOrderQueryParam purchaseOrderQueryParam = new PurchaseOrderQueryParam();
             purchaseOrderQueryParam.setCreateStartTime(date.get("firstdayDate"));
             purchaseOrderQueryParam.setCreateEndTime(date.get("lastdayDate"));
-            maps.put("start", 0);
-            maps.put("pageSize", Integer.MAX_VALUE);
             maps.put("queryParam", purchaseOrderQueryParam);
             Integer customerCompanyCount = purchaseOrderMapper.findPurchaseOrderCountByParams(maps);
             StringBuilder builder = new StringBuilder();
@@ -168,8 +182,6 @@ public class GenerateNoSupport {
             PurchaseDeliveryOrderQueryParam purchaseDeliveryOrderQueryParam = new PurchaseDeliveryOrderQueryParam();
             purchaseDeliveryOrderQueryParam.setCreateStartTime(date.get("firstdayDate"));
             purchaseDeliveryOrderQueryParam.setCreateEndTime(date.get("lastdayDate"));
-            maps.put("start", 0);
-            maps.put("pageSize", Integer.MAX_VALUE);
             maps.put("queryParam", purchaseDeliveryOrderQueryParam);
             Integer purchaseDeliveryOrderCount = purchaseDeliveryOrderMapper.findPurchaseDeliveryOrderCountByParams(maps);
 
@@ -197,8 +209,6 @@ public class GenerateNoSupport {
             PurchaseReceiveOrderQueryParam purchaseReceiveOrderQueryParam = new PurchaseReceiveOrderQueryParam();
             purchaseReceiveOrderQueryParam.setCreateStartTime(date.get("firstdayDate"));
             purchaseReceiveOrderQueryParam.setCreateEndTime(date.get("lastdayDate"));
-            maps.put("start", 0);
-            maps.put("pageSize", Integer.MAX_VALUE);
             maps.put("queryParam", purchaseReceiveOrderQueryParam);
             Integer purchaseReceiveOrderCount = purchaseReceiveOrderMapper.findPurchaseReceiveOrderCountByParams(maps);
 
@@ -220,8 +230,6 @@ public class GenerateNoSupport {
             param.setCreateStartTime(date.get("firstdayDate"));
             param.setCreateEndTime(date.get("lastdayDate"));
             Map<String, Object> maps = new HashMap<>();
-            maps.put("start", 0);
-            maps.put("pageSize", Integer.MAX_VALUE);
             maps.put("productEquipmentQueryParam", param);
             Integer listCount = productEquipmentMapper.listCount(maps);
             //仓库
@@ -260,7 +268,12 @@ public class GenerateNoSupport {
     public String generateWorkflowLinkNo(Date currentTime, Integer commitUserId) {
         synchronized (this) {
             Map<String, Date> date = getMonthlongDate();
-            Integer count = workflowLinkMapper.findWorkflowLinkCountByDate(date.get("firstdayDate"), date.get("lastdayDate"));
+            WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
+            workflowLinkQueryParam.setCreateStartTime(date.get("firstdayDate"));
+            workflowLinkQueryParam.setCreateEndTime(date.get("lastdayDate"));
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("queryParam", workflowLinkQueryParam);
+            Integer count = workflowLinkMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
             builder.append("LXWF");
             builder.append(commitUserId);
@@ -280,8 +293,6 @@ public class GenerateNoSupport {
             returnOrderPageParam.setCreateStartTime(date.get("firstdayDate"));
             returnOrderPageParam.setCreateEndTime(date.get("lastdayDate"));
             Map<String, Object> maps = new HashMap<>();
-            maps.put("start", 0);
-            maps.put("pageSize", Integer.MAX_VALUE);
             maps.put("queryParam", returnOrderPageParam);
             Integer returnOrderCount = returnOrderMapper.findReturnOrderCountByParams(maps);
             StringBuilder builder = new StringBuilder();
@@ -304,8 +315,6 @@ public class GenerateNoSupport {
             changeOrderPageParam.setCreateStartTime(date.get("firstdayDate"));
             changeOrderPageParam.setCreateEndTime(date.get("lastdayDate"));
             Map<String, Object> maps = new HashMap<>();
-            maps.put("start", 0);
-            maps.put("pageSize", Integer.MAX_VALUE);
             maps.put("queryParam", changeOrderPageParam);
             Integer changeOrderCount = changeOrderMapper.findChangeOrderCountByParams(maps);
             StringBuilder builder = new StringBuilder();
@@ -323,7 +332,12 @@ public class GenerateNoSupport {
     public String generateStatementOrderNo(Date expectPayTime, Integer customerId) {
         synchronized (this) {
             Map<String, Date> date = getMonthlongDate();
-            Integer count = statementOrderMapper.findStatementOrderCountByDate(date.get("firstdayDate"), date.get("lastdayDate"));
+            StatementOrderQueryParam statementOrderQueryParam = new StatementOrderQueryParam();
+            statementOrderQueryParam.setCreateStartTime(date.get("firstdayDate"));
+            statementOrderQueryParam.setCreateEndTime(date.get("lastdayDate"));
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("queryParam", statementOrderQueryParam);
+            Integer count = statementOrderMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
             builder.append("LXSO");
             builder.append(customerId);
@@ -339,7 +353,12 @@ public class GenerateNoSupport {
     public String generateRepairOrderNo(Date currentTime, String warehouseNo) {
         synchronized (this) {
             Map<String, Date> date = getMonthlongDate();
-            Integer count = repairOrderMapper.findRepairOrderCountByDate(date.get("firstdayDate"), date.get("lastdayDate"));
+            RepairOrderQueryParam repairOrderQueryParam = new RepairOrderQueryParam();
+            repairOrderQueryParam.setCreateStartTime(date.get("firstdayDate"));
+            repairOrderQueryParam.setCreateEndTime(date.get("lastdayDate"));
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("queryParam", repairOrderQueryParam);
+            Integer count = statementOrderMapper.listCount(maps);
             //仓库
             WarehouseDO warehouseDO = warehouseMapper.finByNo(warehouseNo);
             //分公司
@@ -359,7 +378,12 @@ public class GenerateNoSupport {
     public String generateBulkMaterialNo(Date currentTime, Integer warehouseId) {
         synchronized (this) {
             Map<String, Date> date = getMonthlongDate();
-            Integer count = bulkMaterialMapper.findBulkMaterialCountByDate(date.get("firstdayDate"), date.get("lastdayDate"));
+            BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
+            bulkMaterialQueryParam.setCreateStartTime(date.get("firstdayDate"));
+            bulkMaterialQueryParam.setCreateEndTime(date.get("lastdayDate"));
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("queryParam", bulkMaterialQueryParam);
+            Integer count = bulkMaterialMapper.listCount(maps);
             //仓库
             WarehouseDO warehouseDO = warehouseMapper.findById(warehouseId);
             //分公司
@@ -384,8 +408,6 @@ public class GenerateNoSupport {
             param.setCreateStartTime(date.get("firstdayDate"));
             param.setCreateEndTime(date.get("lastdayDate"));
             Map<String, Object> maps = new HashMap<>();
-            maps.put("start", 0);
-            maps.put("pageSize", Integer.MAX_VALUE);
             maps.put("productEquipmentQueryParam", param);
             Integer listCount = productEquipmentMapper.listCount(maps);
 
@@ -413,7 +435,12 @@ public class GenerateNoSupport {
     public List<String> generateBulkMaterialNo(Date currentTime, List<Integer> warehouseIds) {
         synchronized (this) {
             Map<String, Date> date = getMonthlongDate();
-            Integer count = bulkMaterialMapper.findBulkMaterialCountByDate(date.get("firstdayDate"), date.get("lastdayDate"));
+            BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
+            bulkMaterialQueryParam.setCreateStartTime(date.get("firstdayDate"));
+            bulkMaterialQueryParam.setCreateEndTime(date.get("lastdayDate"));
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("queryParam", bulkMaterialQueryParam);
+            Integer count = bulkMaterialMapper.listCount(maps);
 
             ArrayList<String> BulkMaterialNos = new ArrayList<>();
             for (Integer warehouseId : warehouseIds) {
@@ -440,8 +467,6 @@ public class GenerateNoSupport {
         synchronized (this) {
             AreaCityDO areaCityDO = areaCityMapper.findById(cityId);
             Map<String, Object> paramMap = new HashMap<>();
-            paramMap.put("start", 0);
-            paramMap.put("pageSize", Integer.MAX_VALUE);
             paramMap.put("supplierQueryParam", null);
             Integer count = supplierMapper.listCount(paramMap);
             StringBuilder builder = new StringBuilder();
@@ -524,5 +549,7 @@ public class GenerateNoSupport {
     private RepairOrderMapper repairOrderMapper;
     @Autowired
     private BulkMaterialMapper bulkMaterialMapper;
+    @Autowired
+    private DeploymentOrderMapper deploymentOrderMapper;
 
 }

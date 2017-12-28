@@ -2,6 +2,8 @@ package com.lxzl.erp.common.domain.deploymentOrder;
 
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
+import java.util.Date;
+
 /**
  * 描述: ${DESCRIPTION}
  *
@@ -16,6 +18,24 @@ public class DeploymentOrderQueryParam extends BasePageParam {
     private Integer srcWarehouseId;   //源仓库ID
     private Integer targetWarehouseId;   //目标仓库ID
     private Integer deploymentOrderStatus;   //调配单状态，0未提交，1审批中，2处理中，3确认收货
+    private Date createStartTime;
+    private Date createEndTime;
+
+    public Date getCreateStartTime() {
+        return createStartTime;
+    }
+
+    public void setCreateStartTime(Date createStartTime) {
+        this.createStartTime = createStartTime;
+    }
+
+    public Date getCreateEndTime() {
+        return createEndTime;
+    }
+
+    public void setCreateEndTime(Date createEndTime) {
+        this.createEndTime = createEndTime;
+    }
 
     public Integer getDeploymentOrderId() {
         return deploymentOrderId;

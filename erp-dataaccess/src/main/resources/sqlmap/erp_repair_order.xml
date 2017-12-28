@@ -79,6 +79,12 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ero.id) FROM erp_repair_order ero
 		<where>
+			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+				<![CDATA[ AND ero.create_time >= #{maps.queryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+				<![CDATA[ AND ero.create_time <= #{maps.queryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				AND ero.data_status = 1
 			</if>
@@ -229,9 +235,5 @@
 		</where>
 		ORDER BY ero.create_time DESC
 		limit #{maps.start},#{maps.pageSize}
-	</select>
-
-	<select id="findRepairOrderCountByDate" resultType="java.lang.Integer">
-		<![CDATA[ SELECT COUNT(1) FROM erp_repair_order WHERE create_time > #{firstdayDate} AND create_time < #{lastdayDate} AND data_status = 1]]>
 	</select>
 </mapper>

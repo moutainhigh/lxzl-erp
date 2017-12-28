@@ -27,10 +27,4 @@ public interface WarehouseMapper extends BaseMysqlDAO<WarehouseDO>{
     WarehouseDO finByCompanyAndType(@Param("subCompanyId") Integer subCompanyId,
                                     @Param("warehouseType") Integer warehouseType);
 
-
-    /**
-     * 时间查数据
-     * */
-    Integer findWarehouseCountByDate(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
-
 }

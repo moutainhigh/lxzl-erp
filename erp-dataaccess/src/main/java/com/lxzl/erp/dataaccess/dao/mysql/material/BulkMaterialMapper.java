@@ -41,6 +41,4 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
     List<BulkMaterialDO> listByPurchaseReceiveOrderMaterialId(@Param("maps") Map<String, Object> paramMap);
 
     Integer listByPurchaseReceiveOrderMaterialIdCount(@Param("maps") Map<String, Object> paramMap);
-    //时间查询数量
-    Integer findBulkMaterialCountByDate(@Param("firstdayDate") Date firstdayDate,@Param("lastdayDate") Date lastdayDate);
 }
