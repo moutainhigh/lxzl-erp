@@ -52,7 +52,12 @@ public class ConverterUtil {
                         }else if(field.getName().endsWith("List")){
                             List list = (List)field.get(o);
                             Class poListGenericClazz = getGenericClazzForList(field);
-                            String doListFieldName = firstLowName(poListGenericClazz.getSimpleName())+"DOList";
+                            String doListFieldName = null;
+                            if(isJavaClass(poListGenericClazz)){
+                                doListFieldName = field.getName();
+                            }else{
+                                doListFieldName = field.getName().replace("List","DOList");
+                            }
                             Field doField = clazz.getDeclaredField(doListFieldName);
                             doField.setAccessible(true);
                             Class doListGenericClazz = getGenericClazzForList(doField);
@@ -209,6 +214,17 @@ public class ConverterUtil {
                     poIdField.set(t,value);
                 }
             }
+        }else if(o.getClass().getSimpleName().equals("ProductCategoryPropertyDO")){
+            Field doIdField = o.getClass().getDeclaredField("id");
+            doIdField.setAccessible(true);
+            Object value = doIdField.get(o);
+            Field[] poFields = clazz.getDeclaredFields();
+            for(Field poIdField : poFields){
+                if("categoryPropertyId".equals(poIdField.getName())){
+                    poIdField.setAccessible(true);
+                    poIdField.set(t,value);
+                }
+            }
         }else if(o.getClass().getSimpleName().equals("ImageDO")){
             Field[] poFields = clazz.getDeclaredFields();
             for(Field poIdField : poFields){
@@ -252,6 +268,17 @@ public class ConverterUtil {
             }
         }else if(o.getClass().getSimpleName().equals("ProductSkuProperty")){
             Field doIdField = o.getClass().getDeclaredField("skuPropertyId");
+            doIdField.setAccessible(true);
+            Object value = doIdField.get(o);
+            Field[] poFields = clazz.getDeclaredFields();
+            for(Field poIdField : poFields){
+                if("id".equals(poIdField.getName())){
+                    poIdField.setAccessible(true);
+                    poIdField.set(t,value);
+                }
+            }
+        }else if(o.getClass().getSimpleName().equals("ProductCategoryProperty")){
+            Field doIdField = o.getClass().getDeclaredField("categoryPropertyId");
             doIdField.setAccessible(true);
             Object value = doIdField.get(o);
             Field[] poFields = clazz.getDeclaredFields();
