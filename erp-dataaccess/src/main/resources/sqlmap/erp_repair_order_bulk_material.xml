@@ -16,10 +16,12 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="repair_end_remark" jdbcType="VARCHAR" property="repairEndRemark" />
 	</resultMap>
 
 	<sql id="column_List">
-		erobm.id,erobm.repair_order_no,erobm.bulk_material_id,erobm.bulk_material_no,erobm.repair_end_time,erobm.order_id,erobm.order_material_id,erobm.data_status,erobm.remark,erobm.create_time,erobm.create_user,erobm.update_time,erobm.update_user
+		erobm.id,erobm.repair_order_no,erobm.bulk_material_id,erobm.bulk_material_no,erobm.repair_end_time,erobm.order_id,erobm.order_material_id,erobm.data_status,erobm.remark,erobm.create_time,erobm.create_user,erobm.update_time,erobm.update_user,erobm.repair_end_remark
 	</sql>
 
 	<select id="findById" resultMap="RepairOrderBulkMaterialDO" parameterType="java.lang.Integer">
@@ -83,6 +85,9 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="repairEndRemark != null">
+				repair_end_remark = #{repairEndRemark,jdbcType=VARCHAR},
 			</if>
 		</set>
 	</sql>

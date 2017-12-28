@@ -33,6 +33,7 @@ public class RepairOrder extends BasePO {
 	private Integer fixEquipmentCount; //修复设备数量
 	private Integer fixBulkMaterialCount; //修复物料数量
 	private String warehouseNo;//当前仓库编号
+	private String repairEndRemark; //维修完成的备注
 
 
 	private String warehouseName;
@@ -204,5 +205,13 @@ public class RepairOrder extends BasePO {
 
 	public void setWarehouseName(String warehouseName) {
 		this.warehouseName = warehouseName;
+	}
+
+	public String getRepairEndRemark() {
+		return repairEndRemark;
+	}
+
+	public void setRepairEndRemark(String repairEndRemark) {
+		this.repairEndRemark = repairEndRemark;
 	}
 }
