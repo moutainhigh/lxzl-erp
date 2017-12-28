@@ -230,6 +230,17 @@ public class ConverterUtil {
                     poIdField.set(t,value);
                 }
             }
+        }else if(o.getClass().getSimpleName().equals("SysMenuDO")){
+            Field doIdField = o.getClass().getDeclaredField("id");
+            doIdField.setAccessible(true);
+            Object value = doIdField.get(o);
+            Field[] poFields = clazz.getDeclaredFields();
+            for(Field poIdField : poFields){
+                if("menuId".equals(poIdField.getName())){
+                    poIdField.setAccessible(true);
+                    poIdField.set(t,value);
+                }
+            }
         }else if(o.getClass().getSimpleName().equals("ImageDO")){
             Field[] poFields = clazz.getDeclaredFields();
             for(Field poIdField : poFields){
@@ -289,6 +300,17 @@ public class ConverterUtil {
             Field[] poFields = clazz.getDeclaredFields();
             for(Field poIdField : poFields){
                 if("id".equals(poIdField.getName())){
+                    poIdField.setAccessible(true);
+                    poIdField.set(t,value);
+                }
+            }
+        }else if(o.getClass().getSimpleName().equals("Menu")){
+            Field doIdField = o.getClass().getDeclaredField("id");
+            doIdField.setAccessible(true);
+            Object value = doIdField.get(o);
+            Field[] poFields = clazz.getDeclaredFields();
+            for(Field poIdField : poFields){
+                if("categoryPropertyId".equals(poIdField.getName())){
                     poIdField.setAccessible(true);
                     poIdField.set(t,value);
                 }

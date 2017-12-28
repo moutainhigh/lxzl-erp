@@ -4,10 +4,7 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.product.ProductQueryParam;
-import com.lxzl.erp.common.domain.product.pojo.Product;
-import com.lxzl.erp.common.domain.product.pojo.ProductCategoryPropertyValue;
-import com.lxzl.erp.common.domain.product.pojo.ProductSku;
-import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
+import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import org.junit.Test;
 
@@ -33,7 +30,7 @@ public class ProductTest extends ERPUnTransactionalTest {
     @Test
     public void queryProductById() throws Exception {
         Product product = new Product();
-        product.setProductId(2000013);
+        product.setProductId(2000050);
         TestResult testResult = getJsonTestResult("/product/queryProductById", product);
     }
     @Test
@@ -90,6 +87,13 @@ public class ProductTest extends ERPUnTransactionalTest {
         productPropertyList.add(productProperty);
         product.setProductPropertyList(productPropertyList);
         TestResult testResult = getJsonTestResult("/product/add", product);
+    }
+
+    @Test
+    public void queryPropertiesByCategoryId() throws Exception {
+        ProductCategory productCategory = new ProductCategory();
+        productCategory.setCategoryId(800003);
+        TestResult testResult = getJsonTestResult("/product/queryPropertiesByCategoryId", productCategory);
     }
 
     @Test
