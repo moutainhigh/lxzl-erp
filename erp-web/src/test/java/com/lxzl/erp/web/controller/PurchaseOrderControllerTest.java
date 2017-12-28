@@ -11,7 +11,7 @@ import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.purchase.*;
 import com.lxzl.erp.common.domain.purchase.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.core.component.ConverterUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.domain.product.ProductMaterialDO;

@@ -17,7 +17,7 @@ import com.lxzl.erp.common.domain.warehouse.WarehouseQueryParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.StockOrder;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.core.component.ConverterUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;

@@ -14,7 +14,7 @@ import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
-import com.lxzl.erp.core.component.ConverterUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
 import com.lxzl.erp.core.service.deploymentOrder.impl.support.DeploymentOrderConverter;
 import com.lxzl.erp.core.service.material.MaterialService;

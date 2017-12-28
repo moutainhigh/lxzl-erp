@@ -10,7 +10,7 @@ import com.lxzl.erp.common.domain.jointProduct.JointProductQueryParam;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductSku;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.core.component.ConverterUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.jointProduct.JointProductService;
 import com.lxzl.erp.core.service.product.ProductService;

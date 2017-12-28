@@ -1,9 +1,8 @@
-package com.lxzl.erp.core.component;
+package com.lxzl.erp.common.util;
 
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.slf4j.Logger;

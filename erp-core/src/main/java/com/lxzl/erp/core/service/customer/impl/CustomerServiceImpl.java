@@ -12,7 +12,7 @@ import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
-import com.lxzl.erp.core.component.ConverterUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerRiskManagementConverter;
