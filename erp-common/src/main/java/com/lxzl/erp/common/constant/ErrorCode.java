@@ -338,13 +338,22 @@ public class ErrorCode {
     public static final String LEGAL_PERSON_NO_NOT_NULL = "J500049";
     public static final String COMPANY_ORIGIN_NOT_NULL = "J500050";
     public static final String FOUND_TIME_NOT_NULL = "J500051";
-    public static final String INDUSTRY_NOT_NULL = "J500052";
-    public static final String REGISTERED_CAPITAL_NOT_NULL = "J500053";
+    public static final String SALES_MAN_NOT_NULL = "J500052";
+    public static final String CUSTOMER_PERSON_CONNECT_PHONE_NOT_NULL = "J500053";
     public static final String OFFICE_NUMBER_NOT_NULL = "J500054";
     public static final String PERSON_NAME_NOT_NULL = "J500055";
     public static final String PERSON_NO_NOT_NULL = "J500056";
     public static final String CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_NULL = "J500057";
-    public static final String CUSTOMER_PERSON_CONNECT_PHONE_NOT_NULL = "J500058";
+    public static final String LEGAL_PERSON_PHONE_NOT_NULL = "J500058";
+    public static final String PRODUCT_PURPOSE_NOT_NULL = "J500059";
+    public static final String LIST_FIRST_NEED_PRODUCTS_NOT_NULL = "J500060";
+    public static final String AGENT_PERSON_NAME_NOT_NULL = "J500061";
+    public static final String AGENT_PERSON_PHONE_NOT_NULL = "J500062";
+    public static final String AGENT_PERSON_NO_NOT_NULL = "J500063";
+    public static final String CONSIGN_ADDRESS_NOT_NULL = "J500064";
+
+
+
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -366,36 +375,36 @@ public class ErrorCode {
     public static final String JOINT_PRODUCT_NAME_IS_NULL = "J1000002";
     public static final String JOINT_PRODUCT_NOT_EXISTS = "J1000003";
 
-    public static final String IMG_ID_NOT_NULL = "J1100001";
-    public static final String LEGAL_PERSON_NO_PICTURE_FRONT_IMG_NOT_NULL = "J110002";
-    public static final String LEGAL_PERSON_NO_PICTURE_BACK_IMG_NOT_NULL = "J1100003";
-    public static final String BUSINESS_LICENSE_PICTURE_IMG_NOT_NULL = "J1100004";
-    public static final String LEGAL_PERSON_NO_PICTURE_FRONT_IMG_NOT_EXISTS = "J1100005";
-    public static final String BUSINESS_LICENSE_PICTURE_IMG_NOT_EXISTS = "J1100006";
-    public static final String LEGAL_PERSON_NO_PICTURE_BACK_IMG_NOT_EXISTS = "J1100007";
-    public static final String BUSINESS_LICENSE_PICTURE_IMG_TYPE_IS_ERROR = "J1100008";
-    public static final String LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE_IS_ERROR = "J1100009";
-    public static final String LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE_IS_ERROR = "J1100010";
-    public static final String MANAGER_PLACE_RENT_CONTRACT_IMG_NOT_EXISTS = "J1100011";
-    public static final String MANAGER_PLACE_RENT_CONTRACT_IMG_TYPE_IS_ERROR = "J1100012";
-    public static final String LEGAL_PERSON_CREDIT_REPORT_IMG_NOT_EXISTS = "J1100013";
-    public static final String LEGAL_PERSON_CREDIT_REPORT_IMG_TYPE_IS_ERROR = "J1100014";
-    public static final String FIXED_ASSETS_PROVE_IMG_NOT_EXISTS = "J1100015";
-    public static final String FIXED_ASSETS_PROVE_IMG_TYPE_IS_ERROR = "J1100016";
-    public static final String PUBLIC_ACCOUNT_FLOW_BILL_IMG_NOT_EXISTS = "J1100017";
-    public static final String PUBLIC_ACCOUNT_FLOW_BILL_IMG_TYPE_IS_ERROR = "J1100018";
-    public static final String SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMG_NOT_EXISTS = "J1100019";
-    public static final String SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMG_TYPE_IS_ERROR = "J1100020";
-    public static final String COOPERATION_AGREEMENT_IMG_NOT_EXISTS = "J1100021";
-    public static final String COOPERATION_AGREEMENT_IMG_TYPE_IS_ERROR = "J1100022";
-    public static final String LEGAL_PERSON_EDUCATION_IMG_NOT_EXISTS = "J1100023";
-    public static final String LEGAL_PERSON_EDUCATION_IMG_TYPE_IS_ERROR = "J1100024";
-    public static final String LEGAL_PERSON_POSITIONAL_TITLE_IMG_NOT_EXISTS = "J1100025";
-    public static final String LEGAL_PERSON_POSITIONAL_TITLE_IMG_TYPE_IS_ERROR = "J1100026";
-    public static final String LOCALE_CHECKLISTS_IMG_NOT_EXISTS = "J1100027";
-    public static final String LOCALE_CHECKLISTS_IMG_TYPE_IS_ERROR = "J1100028";
-    public static final String OTHER_DATE_IMG_NOT_EXISTS = "J1100029";
-    public static final String OTHER_DATE_IMG_TYPE_IS_ERROR = "J1100030";
+    public static final String IMAGE_ID_NOT_NULL = "J1100001";
+    public static final String LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_NULL = "J110002";
+    public static final String LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_NULL = "J1100003";
+    public static final String BUSINESS_LICENSE_PICTURE_IMAGE_NOT_NULL = "J1100004";
+    public static final String LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS = "J1100005";
+    public static final String BUSINESS_LICENSE_PICTURE_IMAGE_NOT_EXISTS = "J1100006";
+    public static final String LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS = "J1100007";
+    public static final String BUSINESS_LICENSE_PICTURE_IMAGE_TYPE_IS_ERROR = "J1100008";
+    public static final String LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_TYPE_IS_ERROR = "J1100009";
+    public static final String LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_TYPE_IS_ERROR = "J1100010";
+    public static final String MANAGER_PLACE_RENT_CONTRACT_IMAGE_NOT_EXISTS = "J1100011";
+    public static final String MANAGER_PLACE_RENT_CONTRACT_IMAGE_TYPE_IS_ERROR = "J1100012";
+    public static final String LEGAL_PERSON_CREDIT_REPORT_IMAGE_NOT_EXISTS = "J1100013";
+    public static final String LEGAL_PERSON_CREDIT_REPORT_IMAGE_TYPE_IS_ERROR = "J1100014";
+    public static final String FIXED_ASSETS_PROVE_IMAGE_NOT_EXISTS = "J1100015";
+    public static final String FIXED_ASSETS_PROVE_IMAGE_TYPE_IS_ERROR = "J1100016";
+    public static final String PUBLIC_ACCOUNT_FLOW_BILL_IMAGE_NOT_EXISTS = "J1100017";
+    public static final String PUBLIC_ACCOUNT_FLOW_BILL_IMAGE_TYPE_IS_ERROR = "J1100018";
+    public static final String SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMAGE_NOT_EXISTS = "J1100019";
+    public static final String SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMAGE_TYPE_IS_ERROR = "J1100020";
+    public static final String COOPERATION_AGREEMENT_IMAGE_NOT_EXISTS = "J1100021";
+    public static final String COOPERATION_AGREEMENT_IMAGE_TYPE_IS_ERROR = "J1100022";
+    public static final String LEGAL_PERSON_EDUCATION_IMAGE_NOT_EXISTS = "J1100023";
+    public static final String LEGAL_PERSON_EDUCATION_IMAGE_TYPE_IS_ERROR = "J1100024";
+    public static final String LEGAL_PERSON_POSITIONAL_TITLE_IMAGE_NOT_EXISTS = "J1100025";
+    public static final String LEGAL_PERSON_POSITIONAL_TITLE_IMAGE_TYPE_IS_ERROR = "J1100026";
+    public static final String LOCALE_CHECKLISTS_IMAGE_NOT_EXISTS = "J1100027";
+    public static final String LOCALE_CHECKLISTS_IMAGE_TYPE_IS_ERROR = "J1100028";
+    public static final String OTHER_DATE_IMAGE_NOT_EXISTS = "J1100029";
+    public static final String OTHER_DATE_IMAGE_TYPE_IS_ERROR = "J1100030";
 
 
     static {
@@ -604,13 +613,21 @@ public class ErrorCode {
         MAP.put(LEGAL_PERSON_NO_NOT_NULL, "企业法人身份证号不能为空");
         MAP.put(COMPANY_ORIGIN_NOT_NULL, "客户来源不能为空");
         MAP.put(FOUND_TIME_NOT_NULL, "企业成立时间不能为空");
-        MAP.put(INDUSTRY_NOT_NULL, "企业所属行业不能为空");
-        MAP.put(REGISTERED_CAPITAL_NOT_NULL, "注册资本不能为空");
         MAP.put(OFFICE_NUMBER_NOT_NULL, "办公人数不能为空");
         MAP.put(PERSON_NAME_NOT_NULL, "个人客户的用户名不能为空");
         MAP.put(PERSON_NO_NOT_NULL, "个人客户的身份证号不能为空");
         MAP.put(CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_NULL, "个人客户紧急联系人姓名不能为空");
         MAP.put(CUSTOMER_PERSON_CONNECT_PHONE_NOT_NULL, "个人客户紧急联系人电话不能为空");
+        MAP.put(LEGAL_PERSON_PHONE_NOT_NULL, "法人电话电话不能为空");
+        MAP.put(PRODUCT_PURPOSE_NOT_NULL, "设备用途不能为空");
+        MAP.put(LIST_FIRST_NEED_PRODUCTS_NOT_NULL, "首次所需设备不能为空");
+        MAP.put(AGENT_PERSON_NAME_NOT_NULL, "经办人姓名不能为空");
+        MAP.put(AGENT_PERSON_PHONE_NOT_NULL, "经办人电话不能为空");
+        MAP.put(AGENT_PERSON_NO_NOT_NULL, "经办人身份证号码不能为空");
+        MAP.put(CONSIGN_ADDRESS_NOT_NULL, "收货地址不能为空");
+        MAP.put(SALES_MAN_NOT_NULL, "业务员不能为空");
+
+
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
@@ -760,36 +777,36 @@ public class ErrorCode {
         MAP.put(JOINT_PRODUCT_NAME_IS_NULL, "组合商品名称为空");
         MAP.put(JOINT_PRODUCT_NOT_EXISTS, "组合商品不存在");
 
-        MAP.put(IMG_ID_NOT_NULL, "传入的照片ID不能为空");
-        MAP.put(LEGAL_PERSON_NO_PICTURE_FRONT_IMG_NOT_NULL, "法人/股东身份证正面照片不能为空");
-        MAP.put(LEGAL_PERSON_NO_PICTURE_BACK_IMG_NOT_NULL, "法人/股东身份证反面照片不能为空");
-        MAP.put(BUSINESS_LICENSE_PICTURE_IMG_NOT_NULL, "企业营业执照不能为空");
-        MAP.put(LEGAL_PERSON_NO_PICTURE_FRONT_IMG_NOT_EXISTS, "法人/股东身份证正面照片不存在");
-        MAP.put(LEGAL_PERSON_NO_PICTURE_BACK_IMG_NOT_EXISTS, "法人/股东身份证反面照片不存在");
-        MAP.put(BUSINESS_LICENSE_PICTURE_IMG_NOT_EXISTS, "企业营业执照照片不存在");
-        MAP.put(BUSINESS_LICENSE_PICTURE_IMG_TYPE_IS_ERROR, "传入的不是营业执照照片，请重新传入");
-        MAP.put(LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE_IS_ERROR, "传入的并不是身份证正面照片，请重新传入");
-        MAP.put(LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE_IS_ERROR, "传入的并不是身份证反面照片，请重新传入");
-        MAP.put(MANAGER_PLACE_RENT_CONTRACT_IMG_NOT_EXISTS, "经营场所租赁合同不存在");
-        MAP.put(MANAGER_PLACE_RENT_CONTRACT_IMG_TYPE_IS_ERROR, "传入的不是经营场所租赁合同照片，请重新传入");
-        MAP.put(LEGAL_PERSON_CREDIT_REPORT_IMG_NOT_EXISTS, "法人个人征信报告或附（法人个人征信授权书）照片不存在");
-        MAP.put(LEGAL_PERSON_CREDIT_REPORT_IMG_TYPE_IS_ERROR, "传入的不是法人个人征信报告或附（法人个人征信授权书）照片，请重新传入");
-        MAP.put(FIXED_ASSETS_PROVE_IMG_NOT_EXISTS, "固定资产证明照片不存在");
-        MAP.put(FIXED_ASSETS_PROVE_IMG_TYPE_IS_ERROR, "传入的不是固定资产证明照片，请重新传入");
-        MAP.put(PUBLIC_ACCOUNT_FLOW_BILL_IMG_NOT_EXISTS, "单位对公账户流水账单照片不存在");
-        MAP.put(PUBLIC_ACCOUNT_FLOW_BILL_IMG_TYPE_IS_ERROR, "传入的不是单位对公账户流水账单照片，请重新传入");
-        MAP.put(SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMG_NOT_EXISTS, "社保/公积金缴纳证明照片不存在");
-        MAP.put(SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMG_TYPE_IS_ERROR, "传入的不是社保/公积金缴纳证明照片，请重新传入");
-        MAP.put(COOPERATION_AGREEMENT_IMG_NOT_EXISTS, "战略协议或合作协议照片不存在");
-        MAP.put(COOPERATION_AGREEMENT_IMG_TYPE_IS_ERROR, "传入的不是战略协议或合作协议照片，请重新传入");
-        MAP.put(LEGAL_PERSON_EDUCATION_IMG_NOT_EXISTS, "法人学历证明照片不存在");
-        MAP.put(LEGAL_PERSON_EDUCATION_IMG_TYPE_IS_ERROR, "传入的不是法人学历证明照片，请重新传入");
-        MAP.put(LEGAL_PERSON_POSITIONAL_TITLE_IMG_NOT_EXISTS, "法人职称证明照片不存在");
-        MAP.put(LEGAL_PERSON_POSITIONAL_TITLE_IMG_TYPE_IS_ERROR, "传入的不是法人职称证明照片，请重新传入");
-        MAP.put(LOCALE_CHECKLISTS_IMG_NOT_EXISTS, "现场核查表照片不存在");
-        MAP.put(LOCALE_CHECKLISTS_IMG_TYPE_IS_ERROR, "传入的不是现场核查表照片，请重新传入");
-        MAP.put(OTHER_DATE_IMG_NOT_EXISTS, "其他材料的照片不存在");
-        MAP.put(OTHER_DATE_IMG_TYPE_IS_ERROR, "传入的不是其他材料的照片，请重新传入");
+        MAP.put(IMAGE_ID_NOT_NULL, "传入的照片ID不能为空");
+        MAP.put(LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_NULL, "法人/股东身份证正面照片不能为空");
+        MAP.put(LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_NULL, "法人/股东身份证反面照片不能为空");
+        MAP.put(BUSINESS_LICENSE_PICTURE_IMAGE_NOT_NULL, "企业营业执照不能为空");
+        MAP.put(LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS, "法人/股东身份证正面照片不存在");
+        MAP.put(LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS, "法人/股东身份证反面照片不存在");
+        MAP.put(BUSINESS_LICENSE_PICTURE_IMAGE_NOT_EXISTS, "企业营业执照照片不存在");
+        MAP.put(BUSINESS_LICENSE_PICTURE_IMAGE_TYPE_IS_ERROR, "传入的不是营业执照照片，请重新传入");
+        MAP.put(LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_TYPE_IS_ERROR, "传入的并不是身份证正面照片，请重新传入");
+        MAP.put(LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_TYPE_IS_ERROR, "传入的并不是身份证反面照片，请重新传入");
+        MAP.put(MANAGER_PLACE_RENT_CONTRACT_IMAGE_NOT_EXISTS, "经营场所租赁合同不存在");
+        MAP.put(MANAGER_PLACE_RENT_CONTRACT_IMAGE_TYPE_IS_ERROR, "传入的不是经营场所租赁合同照片，请重新传入");
+        MAP.put(LEGAL_PERSON_CREDIT_REPORT_IMAGE_NOT_EXISTS, "法人个人征信报告或附（法人个人征信授权书）照片不存在");
+        MAP.put(LEGAL_PERSON_CREDIT_REPORT_IMAGE_TYPE_IS_ERROR, "传入的不是法人个人征信报告或附（法人个人征信授权书）照片，请重新传入");
+        MAP.put(FIXED_ASSETS_PROVE_IMAGE_NOT_EXISTS, "固定资产证明照片不存在");
+        MAP.put(FIXED_ASSETS_PROVE_IMAGE_TYPE_IS_ERROR, "传入的不是固定资产证明照片，请重新传入");
+        MAP.put(PUBLIC_ACCOUNT_FLOW_BILL_IMAGE_NOT_EXISTS, "单位对公账户流水账单照片不存在");
+        MAP.put(PUBLIC_ACCOUNT_FLOW_BILL_IMAGE_TYPE_IS_ERROR, "传入的不是单位对公账户流水账单照片，请重新传入");
+        MAP.put(SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMAGE_NOT_EXISTS, "社保/公积金缴纳证明照片不存在");
+        MAP.put(SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMAGE_TYPE_IS_ERROR, "传入的不是社保/公积金缴纳证明照片，请重新传入");
+        MAP.put(COOPERATION_AGREEMENT_IMAGE_NOT_EXISTS, "战略协议或合作协议照片不存在");
+        MAP.put(COOPERATION_AGREEMENT_IMAGE_TYPE_IS_ERROR, "传入的不是战略协议或合作协议照片，请重新传入");
+        MAP.put(LEGAL_PERSON_EDUCATION_IMAGE_NOT_EXISTS, "法人学历证明照片不存在");
+        MAP.put(LEGAL_PERSON_EDUCATION_IMAGE_TYPE_IS_ERROR, "传入的不是法人学历证明照片，请重新传入");
+        MAP.put(LEGAL_PERSON_POSITIONAL_TITLE_IMAGE_NOT_EXISTS, "法人职称证明照片不存在");
+        MAP.put(LEGAL_PERSON_POSITIONAL_TITLE_IMAGE_TYPE_IS_ERROR, "传入的不是法人职称证明照片，请重新传入");
+        MAP.put(LOCALE_CHECKLISTS_IMAGE_NOT_EXISTS, "现场核查表照片不存在");
+        MAP.put(LOCALE_CHECKLISTS_IMAGE_TYPE_IS_ERROR, "传入的不是现场核查表照片，请重新传入");
+        MAP.put(OTHER_DATE_IMAGE_NOT_EXISTS, "其他材料的照片不存在");
+        MAP.put(OTHER_DATE_IMAGE_TYPE_IS_ERROR, "传入的不是其他材料的照片，请重新传入");
 
     }
 

@@ -1,10 +1,12 @@
 package com.lxzl.erp.dataaccess.domain.customer;
 
+import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 
 public class CustomerCompanyDO  extends BaseDO {
@@ -383,4 +385,5 @@ public class CustomerCompanyDO  extends BaseDO {
 	public void setAffiliatedEnterprise(String affiliatedEnterprise) {
 		this.affiliatedEnterprise = affiliatedEnterprise;
 	}
+
 }

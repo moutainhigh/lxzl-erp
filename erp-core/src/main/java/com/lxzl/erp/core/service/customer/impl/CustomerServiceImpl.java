@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.customer.impl;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.CustomerType;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.ImgType;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
@@ -12,6 +13,8 @@ import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
+import com.lxzl.erp.common.domain.system.pojo.Image;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.customer.CustomerService;
@@ -19,7 +22,9 @@ import com.lxzl.erp.core.service.customer.impl.support.CustomerRiskManagementCon
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
+import com.lxzl.erp.dataaccess.dao.mysql.img.ImageMapper;
 import com.lxzl.erp.dataaccess.domain.customer.*;
+import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -51,6 +57,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private ImageMapper imageMapper;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
@@ -82,11 +91,265 @@ public class CustomerServiceImpl implements CustomerService {
         customerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerCompanyMapper.save(customerCompanyDO);
 
+        //对营业执照图片操作
+        ImageDO businessLicensePictureImageDO = imageMapper.findById(customer.getCustomerCompany().getBusinessLicensePictureImage().getImgId());
+        if (businessLicensePictureImageDO == null){
+            serviceResult.setErrorCode(ErrorCode.BUSINESS_LICENSE_PICTURE_IMAGE_NOT_EXISTS);
+            return serviceResult;
+        }
+        if(!ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE.equals(businessLicensePictureImageDO.getImgType())){
+            serviceResult.setErrorCode(ErrorCode.BUSINESS_LICENSE_PICTURE_IMAGE_TYPE_IS_ERROR);
+            return serviceResult;
+        }
+        businessLicensePictureImageDO.setRefId(customerCompanyDO.getId().toString());
+        businessLicensePictureImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        businessLicensePictureImageDO.setUpdateTime(now);
+        imageMapper.update(businessLicensePictureImageDO);
+
+        //对身份证正面图片操作
+        ImageDO legalPersonNoPictureFrontImageDO = imageMapper.findById(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage().getImgId());
+        if (legalPersonNoPictureFrontImageDO == null){
+            serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS);
+            return serviceResult;
+        }
+        if(!ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE.equals(legalPersonNoPictureFrontImageDO.getImgType())){
+            serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_TYPE_IS_ERROR);
+            return serviceResult;
+        }
+        legalPersonNoPictureFrontImageDO.setRefId(customerCompanyDO.getId().toString());
+        legalPersonNoPictureFrontImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        legalPersonNoPictureFrontImageDO.setUpdateTime(now);
+        imageMapper.update(legalPersonNoPictureFrontImageDO);
+
+        //对身份证反面图片操作
+        ImageDO legalPersonNoPictureBackimageDO = imageMapper.findById(customer.getCustomerCompany().getLegalPersonNoPictureBackImage().getImgId());
+        if (legalPersonNoPictureBackimageDO == null){
+            serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS);
+            return serviceResult;
+        }
+        if(!ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE.equals(legalPersonNoPictureBackimageDO.getImgType())){
+            serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_TYPE_IS_ERROR);
+            return serviceResult;
+        }
+        legalPersonNoPictureBackimageDO.setRefId(customerCompanyDO.getId().toString());
+        legalPersonNoPictureBackimageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        legalPersonNoPictureBackimageDO.setUpdateTime(now);
+        imageMapper.update(legalPersonNoPictureBackimageDO);
+
+        //对经营场所租赁合同图片操作
+        if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getManagerPlaceRentContractImageList())){
+            for (Image managerPlaceRentContractImage : customer.getCustomerCompany().getManagerPlaceRentContractImageList()){
+                ImageDO managerPlaceRentContractimageDO = imageMapper.findById(managerPlaceRentContractImage.getImgId());
+                if (managerPlaceRentContractimageDO == null){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.MANAGER_PLACE_RENT_CONTRACT_IMAGE_NOT_EXISTS);
+                    return serviceResult;
+                }
+                if(!ImgType.MANAGER_PLACE_RENT_CONTRACT_IMG_TYPE.equals(managerPlaceRentContractimageDO.getImgType())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.MANAGER_PLACE_RENT_CONTRACT_IMAGE_TYPE_IS_ERROR);
+                    return serviceResult;
+                }
+                managerPlaceRentContractimageDO.setRefId(customerCompanyDO.getId().toString());
+                managerPlaceRentContractimageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                managerPlaceRentContractimageDO.setUpdateTime(now);
+                imageMapper.update(managerPlaceRentContractimageDO);
+            }
+        }
+
+        //对//法人个人征信报告或附（法人个人征信授权书）图片操作
+        if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getLegalPersonCreditReportImageList())){
+            for (Image legalPersonCreditReportimage : customer.getCustomerCompany().getLegalPersonCreditReportImageList()){
+                ImageDO legalPersonCreditReportimageDO = imageMapper.findById(legalPersonCreditReportimage.getImgId());
+                if (legalPersonCreditReportimageDO == null){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_CREDIT_REPORT_IMAGE_NOT_EXISTS);
+                    return serviceResult;
+                }
+                if(!ImgType.LEGAL_PERSON_CREDIT_REPORT_IMG_TYPE.equals(legalPersonCreditReportimageDO.getImgType())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_CREDIT_REPORT_IMAGE_TYPE_IS_ERROR);
+                    return serviceResult;
+                }
+                legalPersonCreditReportimageDO.setRefId(customerCompanyDO.getId().toString());
+                legalPersonCreditReportimageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                legalPersonCreditReportimageDO.setUpdateTime(now);
+                imageMapper.update(legalPersonCreditReportimageDO);
+            }
+        }
+
+        //对固定资产证明图片操作
+        if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getFixedAssetsProveImageList())){
+            for (Image fixedAssetsProveimage : customer.getCustomerCompany().getFixedAssetsProveImageList()){
+                ImageDO fixedAssetsProveimageDO = imageMapper.findById(fixedAssetsProveimage.getImgId());
+                if (fixedAssetsProveimageDO == null){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.FIXED_ASSETS_PROVE_IMAGE_NOT_EXISTS);
+                    return serviceResult;
+                }
+                if(!ImgType.FIXED_ASSETS_PROVE_IMG_TYPE.equals(fixedAssetsProveimageDO.getImgType())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.FIXED_ASSETS_PROVE_IMAGE_TYPE_IS_ERROR);
+                    return serviceResult;
+                }
+                fixedAssetsProveimageDO.setRefId(customerCompanyDO.getId().toString());
+                fixedAssetsProveimageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                fixedAssetsProveimageDO.setUpdateTime(now);
+                imageMapper.update(fixedAssetsProveimageDO);
+            }
+        }
+
+        //对单位对公账户流水账单图片操作
+        if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getPublicAccountFlowBillImageList())){
+            for (Image publicAccountFlowBillimage : customer.getCustomerCompany().getPublicAccountFlowBillImageList()){
+                ImageDO publicAccountFlowBillimageDO = imageMapper.findById(publicAccountFlowBillimage.getImgId());
+                if (publicAccountFlowBillimageDO == null){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.PUBLIC_ACCOUNT_FLOW_BILL_IMAGE_NOT_EXISTS);
+                    return serviceResult;
+                }
+                if(!ImgType.PUBLIC_ACCOUNT_FLOW_BILL_IMG_TYPE.equals(publicAccountFlowBillimageDO.getImgType())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.PUBLIC_ACCOUNT_FLOW_BILL_IMAGE_TYPE_IS_ERROR);
+                    return serviceResult;
+                }
+                publicAccountFlowBillimageDO.setRefId(customerCompanyDO.getId().toString());
+                publicAccountFlowBillimageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                publicAccountFlowBillimageDO.setUpdateTime(now);
+                imageMapper.update(publicAccountFlowBillimageDO);
+            }
+        }
+
+        //对社保/公积金缴纳证明图片操作
+        if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getSocialSecurityRoProvidentFundImageList())){
+            for (Image socialSecurityRoProvidentFundimage : customer.getCustomerCompany().getSocialSecurityRoProvidentFundImageList()){
+                ImageDO socialSecurityRoProvidentFundimageDO = imageMapper.findById(socialSecurityRoProvidentFundimage.getImgId());
+                if (socialSecurityRoProvidentFundimageDO == null){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMAGE_NOT_EXISTS);
+                    return serviceResult;
+                }
+                if(!ImgType.SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMG_TYPE.equals(socialSecurityRoProvidentFundimageDO.getImgType())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMAGE_TYPE_IS_ERROR);
+                    return serviceResult;
+                }
+                socialSecurityRoProvidentFundimageDO.setRefId(customerCompanyDO.getId().toString());
+                socialSecurityRoProvidentFundimageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                socialSecurityRoProvidentFundimageDO.setUpdateTime(now);
+                imageMapper.update(socialSecurityRoProvidentFundimageDO);
+            }
+        }
+
+        //对战略协议或合作协议图片操作
+        if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getCooperationAgreementImageList())){
+            for (Image cooperationAgreementimage : customer.getCustomerCompany().getCooperationAgreementImageList()){
+                ImageDO cooperationAgreementimageDO = imageMapper.findById(cooperationAgreementimage.getImgId());
+                if (cooperationAgreementimageDO == null){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.COOPERATION_AGREEMENT_IMAGE_NOT_EXISTS);
+                    return serviceResult;
+                }
+                if(!ImgType.COOPERATION_AGREEMENT_IMG_TYPE.equals(cooperationAgreementimageDO.getImgType())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.COOPERATION_AGREEMENT_IMAGE_TYPE_IS_ERROR);
+                    return serviceResult;
+                }
+                cooperationAgreementimageDO.setRefId(customerCompanyDO.getId().toString());
+                cooperationAgreementimageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                cooperationAgreementimageDO.setUpdateTime(now);
+                imageMapper.update(cooperationAgreementimageDO);
+            }
+        }
+
+        //对法人学历证明图片操作
+        if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getLegalPersonEducationImageList())){
+            for (Image legalPersonEducationimage : customer.getCustomerCompany().getLegalPersonEducationImageList ()){
+                ImageDO legalPersonEducationimageDO = imageMapper.findById(legalPersonEducationimage.getImgId());
+                if (legalPersonEducationimageDO == null){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_EDUCATION_IMAGE_NOT_EXISTS);
+                    return serviceResult;
+                }
+                if(!ImgType.LEGAL_PERSON_EDUCATION_IMG_TYPE.equals(legalPersonEducationimageDO.getImgType())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_EDUCATION_IMAGE_TYPE_IS_ERROR);
+                    return serviceResult;
+                }
+                legalPersonEducationimageDO.setRefId(customerCompanyDO.getId().toString());
+                legalPersonEducationimageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                legalPersonEducationimageDO.setUpdateTime(now);
+                imageMapper.update(legalPersonEducationimageDO);
+            }
+        }
+
+        //对法人职称证明图片操作
+        if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getLegalPersonPositionalTitleImageList())){
+            for (Image legalPersonPositionalTitleimage : customer.getCustomerCompany().getLegalPersonPositionalTitleImageList ()){
+                ImageDO legalPersonPositionalTitleimageDO = imageMapper.findById(legalPersonPositionalTitleimage.getImgId());
+                if (legalPersonPositionalTitleimageDO == null){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_POSITIONAL_TITLE_IMAGE_NOT_EXISTS);
+                    return serviceResult;
+                }
+                if(!ImgType.LEGAL_PERSON_POSITIONAL_TITLE_IMG_TYPE.equals(legalPersonPositionalTitleimageDO.getImgType())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_POSITIONAL_TITLE_IMAGE_TYPE_IS_ERROR);
+                    return serviceResult;
+                }
+                legalPersonPositionalTitleimageDO.setRefId(customerCompanyDO.getId().toString());
+                legalPersonPositionalTitleimageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                legalPersonPositionalTitleimageDO.setUpdateTime(now);
+                imageMapper.update(legalPersonPositionalTitleimageDO);
+            }
+        }
+
+        //对现场核查表图片操作
+        if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getLocaleChecklistsImageList())){
+            for (Image localeChecklistsimage : customer.getCustomerCompany().getLocaleChecklistsImageList ()){
+                ImageDO localeChecklistsimageDO = imageMapper.findById(localeChecklistsimage.getImgId());
+                if (localeChecklistsimageDO == null){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.LOCALE_CHECKLISTS_IMAGE_NOT_EXISTS);
+                    return serviceResult;
+                }
+                if(!ImgType.LOCALE_CHECKLISTS_IMG_TYPE.equals(localeChecklistsimageDO.getImgType())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.LOCALE_CHECKLISTS_IMAGE_TYPE_IS_ERROR);
+                    return serviceResult;
+                }
+                localeChecklistsimageDO.setRefId(customerCompanyDO.getId().toString());
+                localeChecklistsimageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                localeChecklistsimageDO.setUpdateTime(now);
+                imageMapper.update(localeChecklistsimageDO);
+            }
+        }
+
+        //对其他材料图片操作
+        if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getOtherDateImageList())){
+            for (Image otherDateImage : customer.getCustomerCompany().getLocaleChecklistsImageList ()){
+                ImageDO otherDateImageDO = imageMapper.findById(otherDateImage.getImgId());
+                if (otherDateImageDO == null){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.OTHER_DATE_IMAGE_NOT_EXISTS);
+                    return serviceResult;
+                }
+                if(!ImgType.OTHER_DATE_IMG_TYPE.equals(otherDateImageDO.getImgType())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.OTHER_DATE_IMAGE_TYPE_IS_ERROR);
+                    return serviceResult;
+                }
+                otherDateImageDO.setRefId(customerCompanyDO.getId().toString());
+                otherDateImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                otherDateImageDO.setUpdateTime(now);
+                imageMapper.update(otherDateImageDO);
+            }
+        }
+
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setCustomerNo(customerDO.getCustomerNo());
         customerConsignInfo.setConsigneeName(customerCompanyDO.getConnectRealName());
         customerConsignInfo.setConsigneePhone(customerCompanyDO.getConnectPhone());
-        customerConsignInfo.setAddress(customerCompanyDO.getAddress());
+        customerConsignInfo.setAddress(customerCompanyDO.getConsignAddress());
         //调用新增企业地址信息方法
         addCustomerConsignInfo(customerConsignInfo);
 
@@ -129,7 +392,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerConsignInfo.setCustomerNo(customerDO.getCustomerNo());
         customerConsignInfo.setConsigneeName(customerPersonDO.getRealName());
         customerConsignInfo.setConsigneePhone(customerPersonDO.getPhone());
-        customerConsignInfo.setAddress(customerPersonDO.getAddress());
+        customerConsignInfo.setAddress(customerPersonDO.getConsignAddress());
         //调用新增个人用户地址信息方法
         addCustomerConsignInfo(customerConsignInfo);
 
@@ -148,8 +411,19 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
+
         CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
         CustomerCompanyDO newCustomerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
+
+        //todo 对附件的处理
+        if (!customerCompanyDO.getId().equals(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage().getRefId())){
+
+        }
+
+
+
+
+
         newCustomerCompanyDO.setDataStatus(null);
         newCustomerCompanyDO.setCreateTime(null);
         newCustomerCompanyDO.setCreateUser(null);
@@ -284,6 +558,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
         Date now = new Date();
         if (customerDO.getCustomerRiskManagementDO() == null) {//没有风控信息则添加
+
             CustomerRiskManagementDO customerRiskManagementDO = CustomerRiskManagementConverter.convertCustomerRiskManagement(customerRiskManagement);
             customerRiskManagementDO.setCreditAmountUsed(BigDecimal.ZERO);
             customerRiskManagementDO.setCustomerId(customerDO.getId());
@@ -298,10 +573,14 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setResult(customerDO.getCustomerNo());
             return serviceResult;
         } else {//有风控信息则修改
-            CustomerRiskManagementDO customerRiskManagementDOForUpdate = CustomerRiskManagementConverter.convertCustomerRiskManagement(customerRiskManagement);
+            CustomerRiskManagementDO customerRiskManagementDOForUpdate = new CustomerRiskManagementDO();
             customerRiskManagementDOForUpdate.setId(customerDO.getCustomerRiskManagementDO().getId());
+            customerRiskManagementDOForUpdate.setRemark(customerRiskManagement.getRemark());
             customerRiskManagementDOForUpdate.setUpdateTime(now);
             customerRiskManagementDOForUpdate.setUpdateUser(userSupport.getCurrentUserId().toString());
+            customerRiskManagementDOForUpdate.setCreditAmount(customerRiskManagement.getCreditAmount());
+            customerRiskManagementDOForUpdate.setDepositCycle(customerRiskManagement.getDepositCycle());
+            customerRiskManagementDOForUpdate.setPaymentCycle(customerRiskManagement.getPaymentCycle());
             customerRiskManagementMapper.update(customerRiskManagementDOForUpdate);
             serviceResult.setErrorCode(ErrorCode.SUCCESS);
             serviceResult.setResult(customerDO.getCustomerNo());

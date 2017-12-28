@@ -5,8 +5,6 @@ package com.lxzl.erp.common.domain.system.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePO;
 
-import java.io.Serializable;
-
 /**
  * Created by IntelliJ IDEA.
  * ManagementUser: gaochao
