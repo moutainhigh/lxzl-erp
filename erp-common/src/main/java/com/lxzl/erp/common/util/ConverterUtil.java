@@ -40,7 +40,7 @@ public class ConverterUtil {
                 String idFiledName = firstLowName(name) +"Id";
                 Field[] fields = o.getClass().getDeclaredFields();
                 T t = JSON.parseObject(JSON.toJSONString(o),clazz);
-                processPOSpecialField(o,t,clazz);
+                processPO2DOSpecialField(o,t,clazz);
                 Field[] doFields = clazz.getDeclaredFields();
                 Map<String,Field> doFiledMap = new HashMap<>();
                 for( Field field : doFields){
@@ -108,7 +108,7 @@ public class ConverterUtil {
                     field.setAccessible(true);
                     poFiledMap.put(field.getName(),field);
                 }
-                processDOSpecialField(o,t,clazz);
+                processDO2POSpecialField(o,t,clazz);
                 for(Field field : fields){
                     try{
                         field.setAccessible(true);
@@ -196,7 +196,7 @@ public class ConverterUtil {
     /**
      * 对本项目特殊转换需求进行特殊处理
      */
-    private static void processDOSpecialField(Object o ,Object t , Class clazz) throws NoSuchFieldException, IllegalAccessException {
+    private static void processDO2POSpecialField(Object o ,Object t , Class clazz) throws NoSuchFieldException, IllegalAccessException {
         if(o.getClass().getSimpleName().equals("ProductSkuDO")){
             Field doIdField = o.getClass().getDeclaredField("id");
             doIdField.setAccessible(true);
@@ -241,6 +241,17 @@ public class ConverterUtil {
                     poIdField.set(t,value);
                 }
             }
+        }else if(o.getClass().getSimpleName().equals("ProductCategoryPropertyValueDO")){
+            Field doIdField = o.getClass().getDeclaredField("id");
+            doIdField.setAccessible(true);
+            Object value = doIdField.get(o);
+            Field[] poFields = clazz.getDeclaredFields();
+            for(Field poIdField : poFields){
+                if("categoryPropertyValueId".equals(poIdField.getName())){
+                    poIdField.setAccessible(true);
+                    poIdField.set(t,value);
+                }
+            }
         }else if(o.getClass().getSimpleName().equals("ImageDO")){
             Field[] poFields = clazz.getDeclaredFields();
             for(Field poIdField : poFields){
@@ -270,49 +281,60 @@ public class ConverterUtil {
     /**
      * 对本项目特殊转换需求进行特殊处理
      */
-    private static void processPOSpecialField(Object o ,Object t , Class clazz) throws NoSuchFieldException, IllegalAccessException {
-        if(o.getClass().getSimpleName().equals("ProductSku")){
-            Field doIdField = o.getClass().getDeclaredField("skuId");
-            doIdField.setAccessible(true);
-            Object value = doIdField.get(o);
-            Field[] poFields = clazz.getDeclaredFields();
-            for(Field poIdField : poFields){
-                if("id".equals(poIdField.getName())){
+    private static void processPO2DOSpecialField(Object thePo ,Object theDo , Class doClazz) throws NoSuchFieldException, IllegalAccessException {
+        if(thePo.getClass().getSimpleName().equals("ProductSku")){
+            Field poIdField = thePo.getClass().getDeclaredField("skuId");
+            poIdField.setAccessible(true);
+            Object value = poIdField.get(thePo);
+            Field[] doFields = doClazz.getDeclaredFields();
+            for(Field doIdField : doFields){
+                if("id".equals(doIdField.getName())){
                     poIdField.setAccessible(true);
-                    poIdField.set(t,value);
+                    poIdField.set(theDo,value);
                 }
             }
-        }else if(o.getClass().getSimpleName().equals("ProductSkuProperty")){
-            Field doIdField = o.getClass().getDeclaredField("skuPropertyId");
-            doIdField.setAccessible(true);
-            Object value = doIdField.get(o);
-            Field[] poFields = clazz.getDeclaredFields();
-            for(Field poIdField : poFields){
-                if("id".equals(poIdField.getName())){
+        }else if(thePo.getClass().getSimpleName().equals("ProductSkuProperty")){
+            Field poIdField = thePo.getClass().getDeclaredField("skuPropertyId");
+            poIdField.setAccessible(true);
+            Object value = poIdField.get(thePo);
+            Field[] doFields = doClazz.getDeclaredFields();
+            for(Field doIdField : doFields){
+                if("id".equals(doIdField.getName())){
                     poIdField.setAccessible(true);
-                    poIdField.set(t,value);
+                    poIdField.set(theDo,value);
                 }
             }
-        }else if(o.getClass().getSimpleName().equals("ProductCategoryProperty")){
-            Field doIdField = o.getClass().getDeclaredField("categoryPropertyId");
-            doIdField.setAccessible(true);
-            Object value = doIdField.get(o);
-            Field[] poFields = clazz.getDeclaredFields();
-            for(Field poIdField : poFields){
-                if("id".equals(poIdField.getName())){
+        }else if(thePo.getClass().getSimpleName().equals("ProductCategoryProperty")){
+            Field poIdField = thePo.getClass().getDeclaredField("categoryPropertyId");
+            poIdField.setAccessible(true);
+            Object value = poIdField.get(thePo);
+            Field[] doFields = doClazz.getDeclaredFields();
+            for(Field doIdField : doFields){
+                if("id".equals(doIdField.getName())){
                     poIdField.setAccessible(true);
-                    poIdField.set(t,value);
+                    poIdField.set(theDo,value);
                 }
             }
-        }else if(o.getClass().getSimpleName().equals("Menu")){
-            Field doIdField = o.getClass().getDeclaredField("id");
-            doIdField.setAccessible(true);
-            Object value = doIdField.get(o);
-            Field[] poFields = clazz.getDeclaredFields();
-            for(Field poIdField : poFields){
-                if("categoryPropertyId".equals(poIdField.getName())){
+        }else if(thePo.getClass().getSimpleName().equals("Menu")){
+            Field poIdField = thePo.getClass().getDeclaredField("menuId");
+            poIdField.setAccessible(true);
+            Object value = poIdField.get(thePo);
+            Field[] doFields = doClazz.getDeclaredFields();
+            for(Field doIdField : doFields){
+                if("id".equals(doIdField.getName())){
                     poIdField.setAccessible(true);
-                    poIdField.set(t,value);
+                    poIdField.set(theDo,value);
+                }
+            }
+        }else if(thePo.getClass().getSimpleName().equals("ProductCategoryPropertyValue")){
+            Field poIdField = thePo.getClass().getDeclaredField("categoryPropertyValueId");
+            poIdField.setAccessible(true);
+            Object value = poIdField.get(thePo);
+            Field[] doFields = doClazz.getDeclaredFields();
+            for(Field doIdField : doFields){
+                if("id".equals(doIdField.getName())){
+                    poIdField.setAccessible(true);
+                    poIdField.set(theDo,value);
                 }
             }
         }
