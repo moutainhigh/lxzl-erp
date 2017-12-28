@@ -31,7 +31,7 @@ public class RepairOrderControllerTest extends ERPUnTransactionalTest {
     public void addRepairOrder() throws Exception {
         RepairOrder repairOrder = new RepairOrder();
         repairOrder.setRepairReason("测试");
-        repairOrder.setRemark("测试备注");//可有可无
+//        repairOrder.setRemark("测试备注");//可有可无
 
         List<RepairOrderEquipment> repairOrderEquipmentList = new ArrayList<>();
         RepairOrderEquipment repairOrderEquipment1= new RepairOrderEquipment();
@@ -72,7 +72,7 @@ public class RepairOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void receiveRepairOrder() throws Exception {
         RepairOrder repairOrder = new RepairOrder();
-        repairOrder.setRepairOrderNo("RE201712191152480581851");
+        repairOrder.setRepairOrderNo("RE201712231750266641293");
 
         TestResult result = getJsonTestResult("/repairOrder/receiveRepairOrder",repairOrder);
     }
@@ -80,7 +80,7 @@ public class RepairOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void cancelRepairOrder() throws Exception {
         RepairOrder repairOrder = new RepairOrder();
-        repairOrder.setRepairOrderNo("RE201712191152480581851");
+        repairOrder.setRepairOrderNo("RE201712231750266641293");
 
         TestResult result = getJsonTestResult("/repairOrder/cancelRepairOrder",repairOrder);
     }
@@ -88,20 +88,20 @@ public class RepairOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateRepairOrder() throws Exception {
         RepairOrder repairOrder = new RepairOrder();
-        repairOrder.setRepairOrderNo("RE201712231750266641293");
+        repairOrder.setRepairOrderNo("RE201712281508014851285");
         repairOrder.setRepairReason("测试update");
-        repairOrder.setRemark("测试update备注");//可有可无
+        repairOrder.setRemark("");//可有可无
 
         List<RepairOrderEquipment> repairOrderEquipmentList = new ArrayList<>();
         RepairOrderEquipment repairOrderEquipment1 = new RepairOrderEquipment();
         repairOrderEquipment1.setEquipmentNo("LX-EQUIPMENT-4000002-2017121610001");
         repairOrderEquipment1.setRepairEndTime(new Date());
-        //        repairOrderEquipment1.setRemark("update测试备注1");
+//        repairOrderEquipment1.setRemark("update测试备注1");
         repairOrderEquipmentList.add(repairOrderEquipment1);
 
         RepairOrderEquipment repairOrderEquipment2 = new RepairOrderEquipment();
         repairOrderEquipment2.setEquipmentNo("LX-EQUIPMENT-4000002-2017121610007");
-        repairOrderEquipment2.setRemark("update测试备注2");
+//        repairOrderEquipment2.setRemark("update测试备注2");
         repairOrderEquipmentList.add(repairOrderEquipment2);
 
       RepairOrderEquipment repairOrderEquipment3 = new RepairOrderEquipment();
