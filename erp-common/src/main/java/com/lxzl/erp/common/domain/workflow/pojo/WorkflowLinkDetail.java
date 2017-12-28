@@ -1,12 +1,14 @@
 package com.lxzl.erp.common.domain.workflow.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
+
 import java.io.Serializable;
 import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WorkflowLinkDetail implements Serializable {
+public class WorkflowLinkDetail extends BasePO {
 
 	private Integer workflowLinkDetailId;   //唯一标识
 	private Integer workflowLinkId;   //工作流线ID

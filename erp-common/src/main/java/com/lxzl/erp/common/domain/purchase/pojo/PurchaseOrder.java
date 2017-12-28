@@ -3,6 +3,7 @@ package com.lxzl.erp.common.domain.purchase.pojo;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.PurchaseType;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
@@ -18,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PurchaseOrder implements Serializable {
+public class PurchaseOrder extends BasePO {
 
     private Integer purchaseOrderId;   //唯一标识
     @NotEmpty(message = ErrorCode.PURCHASE_ORDER_NO_NOT_NULL , groups = {UpdateGroup.class,IdGroup.class})

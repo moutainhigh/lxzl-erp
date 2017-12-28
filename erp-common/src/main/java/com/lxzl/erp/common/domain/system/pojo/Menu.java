@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.system.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.io.Serializable;
@@ -13,7 +14,7 @@ import java.util.List;
  * Time: 9:58.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Menu implements Serializable {
+public class Menu extends BasePO {
 
     @JsonProperty("menuId")
     private Integer menuId;

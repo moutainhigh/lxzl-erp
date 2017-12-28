@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.repairOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import org.hibernate.validator.constraints.NotBlank;
@@ -11,7 +12,7 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RepairOrderEquipment implements Serializable {
+public class RepairOrderEquipment extends BasePO {
 
 	private Integer repairOrderEquipmentId;   //唯一标识
 	private String repairOrderNo;   //维修单编号

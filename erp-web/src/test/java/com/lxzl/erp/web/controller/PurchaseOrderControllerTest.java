@@ -10,16 +10,18 @@ import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.purchase.*;
 import com.lxzl.erp.common.domain.purchase.pojo.*;
+import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.core.component.ConverterUtil;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.domain.product.ProductMaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import org.junit.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -973,8 +975,21 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
                 "}", UpdatePurchaseReceiveEquipmentPriceParam.class);
         TestResult testResult = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrderPrice", updatePurchaseReceiveEquipmentPriceParam);
     }
+    @Test
+    public void testConvert() throws Exception {
+//        PurchaseOrderDO purchaseOrderDO = new PurchaseOrderDO();
+//        purchaseOrderDO.setCreateUser("500001");
+//        purchaseOrderDO.setUpdateUser("500001");
+//        purchaseOrderDO.setId(6000057);
+        UserDO userDO = new UserDO();
+        userDO.setCreateUser("500001");
+        userDO.setUpdateUser("500001");
+        userDO.setId(500001);
+        userDO.setRemark("备注");
 
+
+        User user =ConverterUtil.convert(userDO,User.class);
+    }
     @Autowired
     private PurchaseOrderService purchaseOrderService;
-
 }

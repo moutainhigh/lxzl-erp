@@ -1,12 +1,14 @@
 package com.lxzl.erp.common.domain.product.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
+
 import java.io.Serializable;
 import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProductEquipmentBulkMaterial implements Serializable {
+public class ProductEquipmentBulkMaterial extends BasePO {
 
 	private Integer productEquipmentBulkMaterialId;   //唯一标识
 	private Integer equipmentId;   //设备ID

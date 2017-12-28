@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.material.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BulkMaterial implements Serializable {
+public class BulkMaterial extends BasePO {
 
     @NotNull(message = ErrorCode.BULK_MATERIAL_ID_NOT_NULL, groups = {IdGroup.class, AddGroup.class})
     private Integer bulkMaterialId;   //散料ID

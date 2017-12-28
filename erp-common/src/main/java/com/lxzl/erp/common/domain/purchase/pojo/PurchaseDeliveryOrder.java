@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.purchase.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -10,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PurchaseDeliveryOrder implements Serializable {
+public class PurchaseDeliveryOrder extends BasePO {
 
 	private Integer purchaseDeliveryOrderId;   //唯一标识
 	private Integer purchaseOrderId;   //采购单ID

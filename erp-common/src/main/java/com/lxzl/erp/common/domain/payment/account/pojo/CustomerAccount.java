@@ -1,13 +1,14 @@
 package com.lxzl.erp.common.domain.payment.account.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerAccount implements Serializable {
+public class CustomerAccount extends BasePO {
 
 	private Integer businessCustomerAccountId;   //唯一标识
 	private String customerNo;   //客户ID

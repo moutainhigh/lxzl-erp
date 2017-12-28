@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.product.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
@@ -8,7 +9,7 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProductMaterial implements Serializable {
+public class ProductMaterial extends BasePO {
 
 	private Integer productMaterialId;   //唯一标识
 	private Integer productId;   //商品ID

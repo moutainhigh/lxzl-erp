@@ -7,7 +7,7 @@ import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.constant.OrderRentType;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.ProcessOrderParam;
-import com.lxzl.erp.common.domain.order.pojo.LastRentPriceRequest;
+import com.lxzl.erp.common.domain.order.LastRentPriceRequest;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;

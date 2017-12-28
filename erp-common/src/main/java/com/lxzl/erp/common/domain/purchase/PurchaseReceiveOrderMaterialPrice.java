@@ -1,4 +1,4 @@
-package com.lxzl.erp.common.domain.purchase.pojo;
+package com.lxzl.erp.common.domain.purchase;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
@@ -6,10 +6,11 @@ import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PurchaseReceiveOrderMaterialPrice {
+public class PurchaseReceiveOrderMaterialPrice implements Serializable {
     @NotNull(message = ErrorCode.MATERIAL_COUNT_ERROR,groups = {UpdateGroup.class})
     @Min(value =1 ,message = ErrorCode.COUNT_MORE_THAN_ZERO,groups = {UpdateGroup.class})
     private Integer count;

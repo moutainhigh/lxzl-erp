@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.warehouse.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  * @date 2017-11-02 15:45
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Warehouse implements Serializable {
+public class Warehouse extends BasePO {
     private Integer warehouseId;
 
     private String warehouseNo;

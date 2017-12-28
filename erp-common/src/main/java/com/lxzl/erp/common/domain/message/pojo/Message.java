@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.message.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
@@ -13,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Message implements Serializable {
+public class Message extends BasePO {
 
     @NotNull(message = ErrorCode.MESSAGE_ID_NOT_NULL ,groups = {IdGroup.class})
     private Integer messageId;//信息id

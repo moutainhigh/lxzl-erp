@@ -3,6 +3,7 @@ package com.lxzl.erp.common.domain.returnOrder.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.util.validate.constraints.In;
@@ -16,7 +17,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ReturnOrder implements Serializable {
+public class ReturnOrder extends BasePO {
 
 	private Integer returnOrderId;   //唯一标识
 	@NotBlank(message = ErrorCode.RETURN_ORDER_NO_NOT_NULL , groups = {IdGroup.class, ExtendGroup.class})

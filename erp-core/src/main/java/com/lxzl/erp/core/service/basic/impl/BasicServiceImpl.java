@@ -5,7 +5,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.basic.BrandQueryParam;
 import com.lxzl.erp.common.domain.basic.pojo.Brand;
-import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.core.component.ConverterUtil;
 import com.lxzl.erp.core.service.basic.BasicService;
 import com.lxzl.erp.dataaccess.dao.mysql.basic.BrandMapper;
 import com.lxzl.erp.dataaccess.domain.basic.BrandDO;

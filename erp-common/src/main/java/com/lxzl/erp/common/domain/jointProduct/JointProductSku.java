@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.jointProduct;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
@@ -13,7 +14,7 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JointProductSku implements Serializable {
+public class JointProductSku extends BasePO {
     private Integer jointProductSkuId;   //唯一标识
     private Integer jointProductId;   //组合商品ID
     @NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL, groups = {UpdateGroup.class, AddGroup.class})

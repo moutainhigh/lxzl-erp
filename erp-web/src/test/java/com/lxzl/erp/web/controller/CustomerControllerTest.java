@@ -6,9 +6,8 @@ import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.*;
-import com.lxzl.erp.common.domain.payment.account.pojo.ManualChargeParam;
-import com.lxzl.erp.common.domain.payment.account.pojo.ManualDeductParam;
-import com.lxzl.se.common.domain.Result;
+import com.lxzl.erp.common.domain.payment.ManualChargeParam;
+import com.lxzl.erp.common.domain.payment.ManualDeductParam;
 import org.junit.Test;
 
 import java.math.BigDecimal;

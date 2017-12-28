@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.company.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -12,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SubCompany implements Serializable {
+public class SubCompany extends BasePO {
     private Integer subCompanyId;   //唯一标识
     @NotEmpty(message = ErrorCode.SUB_COMPANY_NAME_NOT_NULL, groups = {AddGroup.class})
     private String subCompanyName;   //子公司名称

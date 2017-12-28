@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.system.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  * Time: 10:42.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DataDictionary implements Serializable {
+public class DataDictionary extends BasePO {
 
     private Integer value;
 

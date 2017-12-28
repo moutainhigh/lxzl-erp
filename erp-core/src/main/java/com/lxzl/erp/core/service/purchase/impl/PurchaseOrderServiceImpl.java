@@ -14,6 +14,7 @@ import com.lxzl.erp.common.domain.purchase.pojo.*;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.core.component.ConverterUtil;
 import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.MaterialConverter;
@@ -520,7 +521,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             purchaseOrderDetail.purchaseOrderProductDOList.add(purchaseOrderProductDO);
         }
         //发起者不是总公司 ，并且采购20000元以上全新机，则返回错误
-        if (!isHead && CommonConstant.COMMON_CONSTANT_YES.equals(isNew) && purchaseOrderDetail.totalAmount.compareTo(new BigDecimal(20000)) >= 0) {
+        if (!isHead && CommonConstant.COMMON_CONSTANT_YES.equals(isNew) && purchaseOrderDetail.totalAmount.compareTo(new BigDecimal(20000)) > 0) {
             return ErrorCode.PURCHASE_ORDER_CANNOT_CREATE_BY_NEW_AND_AMOUNT;
         }
         return ErrorCode.SUCCESS;
@@ -772,6 +773,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return ErrorCode.PURCHASE_ORDER_NOT_EXISTS;
         }
         if (!PurchaseOrderStatus.PURCHASE_ORDER_STATUS_WAIT_COMMIT.equals(purchaseOrderDO.getPurchaseOrderStatus())&&
+                !PurchaseOrderStatus.PURCHASE_ORDER_STATUS_VERIFYING.equals(purchaseOrderDO.getPurchaseOrderStatus())&&
                 !PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PURCHASING.equals(purchaseOrderDO.getPurchaseOrderStatus())) {
             //待提交和审核通过的采购单可以取消
             return ErrorCode.PURCHASE_ORDER_COMMITTED_CAN_NOT_CANCEL;

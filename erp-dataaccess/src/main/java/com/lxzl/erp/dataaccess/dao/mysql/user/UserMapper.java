@@ -1,9 +1,7 @@
 package com.lxzl.erp.dataaccess.dao.mysql.user;
 
-import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
-import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -13,10 +11,13 @@ import java.util.Map;
 @Repository
 public interface UserMapper extends BaseMysqlDAO<UserDO> {
 
-	UserDO findByUsername(@Param("userName") String username);
-	UserDO findByUserId(@Param("userId") Integer userId);
-	List<UserDO> listPage(@Param("maps") Map<String, Object> paramMap);
-	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+    UserDO findByUsername(@Param("userName") String username);
 
-	List<UserDO> getPassiveUserByUser(@Param("userId") Integer userId);
+    UserDO findByUserId(@Param("userId") Integer userId);
+
+    List<UserDO> listPage(@Param("maps") Map<String, Object> paramMap);
+
+    Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+    List<UserDO> getPassiveUserByUser(@Param("userId") Integer userId);
 }

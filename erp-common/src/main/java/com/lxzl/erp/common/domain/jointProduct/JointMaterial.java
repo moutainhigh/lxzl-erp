@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.jointProduct;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
@@ -13,7 +14,7 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JointMaterial implements Serializable {
+public class JointMaterial extends BasePO {
     private Integer jointMaterialId;   //唯一标识
     private Integer jointProductId;   //组合商品ID
     private Integer materialId;   //物料ID

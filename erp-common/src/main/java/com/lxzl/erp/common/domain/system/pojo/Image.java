@@ -3,6 +3,7 @@ package com.lxzl.erp.common.domain.system.pojo;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 
 import java.io.Serializable;
 
@@ -13,7 +14,7 @@ import java.io.Serializable;
  * Time: 9:26.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Image implements Serializable {
+public class Image extends BasePO {
 
     private Integer imgId;
 

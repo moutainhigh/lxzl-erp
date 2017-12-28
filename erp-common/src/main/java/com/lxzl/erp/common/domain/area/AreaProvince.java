@@ -1,12 +1,14 @@
 package com.lxzl.erp.common.domain.area;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
+
 import java.io.Serializable;
 import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AreaProvince implements Serializable {
+public class AreaProvince extends BasePO {
 
 	private Integer areaProvinceId;   //唯一标识
 	private String provinceName;   //地区名称

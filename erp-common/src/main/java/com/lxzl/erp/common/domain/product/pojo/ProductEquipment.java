@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.product.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.purchaseOrder.UpdateReceiveRemarkGroup;
@@ -16,7 +17,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProductEquipment implements Serializable {
+public class ProductEquipment extends BasePO {
     private Integer productEquipmentId; //设备ID
     @NotNull(message = ErrorCode.EQUIPMENT_NO_NOT_NULL,groups = {ExtendGroup.class,UpdateReceiveRemarkGroup.class})
     private String equipmentNo; //设备编号唯一

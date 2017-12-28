@@ -3,12 +3,11 @@ package com.lxzl.erp.core.service.order;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.order.*;
-import com.lxzl.erp.common.domain.order.pojo.LastRentPriceRequest;
-import com.lxzl.erp.common.domain.order.pojo.LastRentPriceResponse;
+import com.lxzl.erp.common.domain.order.LastRentPriceRequest;
+import com.lxzl.erp.common.domain.order.LastRentPriceResponse;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.core.service.VerifyReceiver;
-import com.lxzl.se.core.service.BaseService;
 
 import java.util.Date;
 

@@ -1,13 +1,14 @@
 package com.lxzl.erp.common.domain.user.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RoleUserFinal implements Serializable {
+public class RoleUserFinal extends BasePO {
 
     private Integer roleUserFinalId;
 

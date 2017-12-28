@@ -70,4 +70,5 @@ public interface UserService extends BaseService {
      * @return 用户列表
      */
     ServiceResult<String, List<User>> getUserListByParam(UserQueryParam userQueryParam);
+
 }

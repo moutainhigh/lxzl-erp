@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.repairOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import org.hibernate.validator.constraints.NotBlank;
@@ -13,7 +14,7 @@ import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RepairOrder implements Serializable {
+public class RepairOrder extends BasePO {
 
 	private Integer repairOrderId;   //唯一标识
 	@NotBlank(message = ErrorCode.REPAIR_ORDER_NO_IS_NOT_NULL,groups = {IdGroup.class})

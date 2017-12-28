@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.statement.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 
 import java.io.Serializable;
@@ -8,7 +9,7 @@ import java.util.Date;
 import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class StatementOrderDetail implements Serializable {
+public class StatementOrderDetail extends BasePO {
 
     private Integer statementOrderDetailId;   //唯一标识
     private Integer statementOrderId;   //结算单ID

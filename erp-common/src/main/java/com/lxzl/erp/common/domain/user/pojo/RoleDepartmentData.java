@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.user.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 
@@ -11,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RoleDepartmentData implements Serializable {
+public class RoleDepartmentData extends BasePO {
 
 
     private Integer roleDepartmentDataId;

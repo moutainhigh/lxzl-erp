@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.customer.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
 import org.hibernate.validator.constraints.NotBlank;
@@ -12,7 +13,7 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerCompany implements Serializable {
+public class CustomerCompany extends BasePO {
 
 	private Integer customerCompanyId;   //唯一标识
 	private Integer customerId;   //客户ID

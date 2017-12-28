@@ -3,6 +3,7 @@ package com.lxzl.erp.common.domain.customer.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
@@ -16,7 +17,7 @@ import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerConsignInfo implements Serializable {
+public class CustomerConsignInfo extends BasePO {
 
 	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups = {AddGroup.class})
 	private String customerNo; //客户编号

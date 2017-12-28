@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.material.pojo;
 
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.changeOrder.AddChangeOrderParam;
 import com.lxzl.erp.common.domain.validGroup.returnOrder.AddReturnOrderGroup;
 
@@ -17,7 +18,7 @@ import java.util.List;
  * @author gaochao
  * @date 2017-10-30 19:57
  */
-public class Material implements Serializable {
+public class Material extends BasePO {
 
     private Integer materialId;   //物料ID
     @NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL,groups = {AddReturnOrderGroup.class, AddChangeOrderParam.class})

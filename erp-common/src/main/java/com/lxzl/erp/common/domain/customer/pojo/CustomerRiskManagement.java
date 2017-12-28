@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.customer.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -13,7 +14,7 @@ import java.util.Date;
 import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerRiskManagement implements Serializable {
+public class CustomerRiskManagement extends BasePO {
 
 	private Integer customerRiskManagementId;   //唯一标识
 
