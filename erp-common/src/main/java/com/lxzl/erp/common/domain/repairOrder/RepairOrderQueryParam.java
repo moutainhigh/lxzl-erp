@@ -5,6 +5,8 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.util.Date;
+
 
 /**
  * @Author: your name
@@ -25,6 +27,24 @@ public class RepairOrderQueryParam extends BasePageParam {
     private Integer fixEquipmentCount; //修复设备数量
     private Integer fixBulkMaterialCount; //修复物料数量
     private String warehouseNo;//当前仓库编号
+    private Date createStartTime;
+    private Date createEndTime;
+
+    public Date getCreateStartTime() {
+        return createStartTime;
+    }
+
+    public void setCreateStartTime(Date createStartTime) {
+        this.createStartTime = createStartTime;
+    }
+
+    public Date getCreateEndTime() {
+        return createEndTime;
+    }
+
+    public void setCreateEndTime(Date createEndTime) {
+        this.createEndTime = createEndTime;
+    }
 
     public Integer getRepairOrderId() {
         return repairOrderId;

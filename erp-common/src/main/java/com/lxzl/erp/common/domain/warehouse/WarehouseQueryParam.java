@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,7 +28,27 @@ public class WarehouseQueryParam extends PageQuery implements Serializable {
 
     private String subCompanyName;
 
+    private Date createStartTime;
+
+    private Date createEndTime;
+
     private List<Integer> subCompanyIdList;
+
+    public Date getCreateStartTime() {
+        return createStartTime;
+    }
+
+    public void setCreateStartTime(Date createStartTime) {
+        this.createStartTime = createStartTime;
+    }
+
+    public Date getCreateEndTime() {
+        return createEndTime;
+    }
+
+    public void setCreateEndTime(Date createEndTime) {
+        this.createEndTime = createEndTime;
+    }
 
     public Integer getWarehouseId() {
         return warehouseId;

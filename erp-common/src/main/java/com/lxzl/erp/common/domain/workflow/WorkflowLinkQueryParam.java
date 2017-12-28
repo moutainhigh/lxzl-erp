@@ -3,6 +3,7 @@ package com.lxzl.erp.common.domain.workflow;
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 描述: 查询工作流
@@ -18,6 +19,24 @@ public class WorkflowLinkQueryParam extends BasePageParam implements Serializabl
     private Integer verifyStatus;
     private Integer commitUserId;
     private Integer currentVerifyUser;
+    private Date createStartTime;
+    private Date createEndTime;
+
+    public Date getCreateStartTime() {
+        return createStartTime;
+    }
+
+    public void setCreateStartTime(Date createStartTime) {
+        this.createStartTime = createStartTime;
+    }
+
+    public Date getCreateEndTime() {
+        return createEndTime;
+    }
+
+    public void setCreateEndTime(Date createEndTime) {
+        this.createEndTime = createEndTime;
+    }
 
     public Integer getWorkflowType() {
         return workflowType;

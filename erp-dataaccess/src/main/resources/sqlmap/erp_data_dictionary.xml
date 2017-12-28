@@ -22,10 +22,8 @@
 
     <select id="findByDictionaryId" resultMap="DataDictionaryDO" parameterType="java.lang.Integer">
         select
-        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        <include refid="column_List"/>
         from erp_data_dictionary td
-        left join erp_user tuc on tuc.id = td.create_user
-        left join erp_user tuu on tuu.id = td.update_user
         <where>
             <if test="dictionaryId != null">
                 and td.id = #{dictionaryId, jdbcType=INTEGER}
@@ -38,10 +36,8 @@
 
     <select id="findByParentId" resultMap="DataDictionaryDO" parameterType="java.lang.Integer">
         select
-        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        <include refid="column_List"/>
         from erp_data_dictionary td
-        left join erp_user tuc on tuc.id = td.create_user
-        left join erp_user tuu on tuu.id = td.update_user
         <where>
             <if test="parentDictionaryId != null">
                 and td.parent_dictionary_id = #{parentDictionaryId, jdbcType=INTEGER}
@@ -55,10 +51,8 @@
 
     <select id="findDataByType" resultMap="DataDictionaryDO" parameterType="java.lang.Integer">
         select
-        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        <include refid="column_List"/>
         from erp_data_dictionary td
-        left join erp_user tuc on tuc.id = td.create_user
-        left join erp_user tuu on tuu.id = td.update_user
         <where>
             <if test="dataType != null">
                 and td.data_type = #{dataType, jdbcType=INTEGER}
@@ -72,10 +66,8 @@
 
     <select id="findDataByOnlyOneType" resultMap="DataDictionaryDO" parameterType="java.lang.Integer">
         select
-        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        <include refid="column_List"/>
         from erp_data_dictionary td
-        left join erp_user tuc on tuc.id = td.create_user
-        left join erp_user tuu on tuu.id = td.update_user
         <where>
             <if test="dataType != null">
                 and td.data_type = #{dataType, jdbcType=INTEGER}
@@ -89,10 +81,8 @@
 
     <select id="findAllData" resultMap="DataDictionaryDO" parameterType="map">
         select
-        <include refid="column_List"/>, tuc.real_name as create_user, tuu.real_name as update_user
+        <include refid="column_List"/>
         from erp_data_dictionary td
-        left join erp_user tuc on tuc.id = td.create_user
-        left join erp_user tuu on tuu.id = td.update_user
         <where>
             <if test="maps.dictionaryId != null &amp;&amp; maps.dictionaryId != ''">
                 and (td.id = #{maps.dictionaryId, jdbcType=INTEGER} or td.parent_dictionary_id = #{maps.dictionaryId, jdbcType=INTEGER})

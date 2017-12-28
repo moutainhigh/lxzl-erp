@@ -139,6 +139,12 @@
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.isNew != null">
 				and ebm.is_new = #{maps.bulkMaterialQueryParam.isNew, jdbcType=INTEGER}
 			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.createStartTime != null &amp;&amp; maps.bulkMaterialQueryParam.createStartTime != ''">
+				<![CDATA[ AND ebm.create_time >= #{maps.bulkMaterialQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.createEndTime != null &amp;&amp; maps.bulkMaterialQueryParam.createEndTime != ''">
+				<![CDATA[ AND ebm.create_time <= #{maps.bulkMaterialQueryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				AND ebm.data_status = 1
 			</if>
@@ -473,8 +479,4 @@
 		UPDATE erp_bulk_material SET bulk_material_status = #{bulkMaterialStatus, jdbcType=INTEGER}
 		WHERE current_equipment_no = #{equipmentNo, jdbcType=VARCHAR}
 	</update>
-
-	<select id="findBulkMaterialCountByDate" resultType="java.lang.Integer">
-		<![CDATA[ SELECT COUNT(1) FROM erp_bulk_material WHERE create_time > #{firstdayDate} AND create_time < #{lastdayDate} AND data_status = 1 ]]>
-	</select>
 </mapper>
