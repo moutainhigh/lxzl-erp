@@ -1,9 +1,6 @@
 package com.lxzl.erp.core.service.repairOrder.impl;
 
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.RepairOrderStatus;
-import com.lxzl.erp.common.constant.WorkflowType;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderBulkMaterialQueryParam;
@@ -85,9 +82,9 @@ public class RepairOrderServiceImpl implements RepairOrderService {
         String warehouseNo = "";
 
         //判断所有维修设备是否是同一仓库
-        ServiceResult<String, WarehouseDO> wareHouseResult = verifyWarehouse(repairOrder.getRepairOrderEquipmentList(),repairOrder.getRepairOrderBulkMaterialList());
-        if (!ErrorCode.SUCCESS.equals(wareHouseResult.getErrorCode())){
-            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
+        ServiceResult<String, WarehouseDO> wareHouseResult = verifyWarehouse(repairOrder.getRepairOrderEquipmentList(), repairOrder.getRepairOrderBulkMaterialList());
+        if (!ErrorCode.SUCCESS.equals(wareHouseResult.getErrorCode())) {
+            serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
             return serviceResult;
         }
 
@@ -95,10 +92,10 @@ public class RepairOrderServiceImpl implements RepairOrderService {
 
         //如果存在设备需要维修
         if (CollectionUtil.isNotEmpty(repairOrder.getRepairOrderEquipmentList())) {
-            String saveResult = saveRepairOrderEquipmentInfo(repairOrder.getRepairOrderEquipmentList(), repairOrderNo, userSupport.getCurrentUser(), now);
-            //todo 判断错误
-            if (ErrorCode.BULK_MATERIAL_IS_NULL.equals(saveResult)){
-                serviceResult.setErrorCode(saveResult);
+            serviceResult = saveRepairOrderEquipmentInfo(repairOrder.getRepairOrderEquipmentList(), repairOrderNo, userSupport.getCurrentUser(), now, equipmentCount);
+            //todo 判断错误  已改
+            if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+                serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
                 return serviceResult;
             }
             equipmentCount = repairOrder.getRepairOrderEquipmentList().size();//送修设备数量
@@ -106,9 +103,9 @@ public class RepairOrderServiceImpl implements RepairOrderService {
 
         //如果存在散料需要维修
         if (CollectionUtil.isNotEmpty(repairOrder.getRepairOrderBulkMaterialList())) {
-            serviceResult = saveRepairOrderBulkMaterialInfo(repairOrder.getRepairOrderBulkMaterialList(),repairOrderNo,userSupport.getCurrentUser(),now,bulkMaterialCount);
-            if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-                serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
+            serviceResult = saveRepairOrderBulkMaterialInfo(repairOrder.getRepairOrderBulkMaterialList(), repairOrderNo, userSupport.getCurrentUser(), now, bulkMaterialCount);
+            if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+                serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
                 return serviceResult;
             }
             bulkMaterialCount = repairOrder.getRepairOrderBulkMaterialList().size();//送修物料数量
@@ -133,36 +130,36 @@ public class RepairOrderServiceImpl implements RepairOrderService {
         return serviceResult;
     }
 
-    private  ServiceResult<String, WarehouseDO> verifyWarehouse(List<RepairOrderEquipment> repairOrderEquipmentList, List<RepairOrderBulkMaterial> repairOrderBulkMaterialList) {
+    private ServiceResult<String, WarehouseDO> verifyWarehouse(List<RepairOrderEquipment> repairOrderEquipmentList, List<RepairOrderBulkMaterial> repairOrderBulkMaterialList) {
         ServiceResult<String, WarehouseDO> serviceResult = new ServiceResult<>();
-        Integer warehouseId = null ;
-        if (CollectionUtil.isNotEmpty(repairOrderEquipmentList)){
-            for (RepairOrderEquipment repairOrderEquipment:repairOrderEquipmentList){
+        Integer warehouseId = null;
+        if (CollectionUtil.isNotEmpty(repairOrderEquipmentList)) {
+            for (RepairOrderEquipment repairOrderEquipment : repairOrderEquipmentList) {
                 ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(repairOrderEquipment.getEquipmentNo());
                 if (productEquipmentDO == null) {
-                    serviceResult.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_EXISTS,repairOrderEquipment.getEquipmentNo());
+                    serviceResult.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_EXISTS, repairOrderEquipment.getEquipmentNo());
                     return serviceResult;
                 }
-                if (warehouseId == null){
+                if (warehouseId == null) {
                     warehouseId = productEquipmentDO.getCurrentWarehouseId();
-                }else if(!warehouseId.equals(productEquipmentDO.getCurrentWarehouseId())){
-                    serviceResult.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_SAME_WAREHOUSE,productEquipmentDO.getEquipmentNo());
+                } else if (!warehouseId.equals(productEquipmentDO.getCurrentWarehouseId())) {
+                    serviceResult.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_SAME_WAREHOUSE, productEquipmentDO.getEquipmentNo());
                     return serviceResult;
                 }
             }
         }
 
-        if (CollectionUtil.isNotEmpty(repairOrderBulkMaterialList)){
-            for (RepairOrderBulkMaterial repairOrderBulkMaterial:repairOrderBulkMaterialList){
+        if (CollectionUtil.isNotEmpty(repairOrderBulkMaterialList)) {
+            for (RepairOrderBulkMaterial repairOrderBulkMaterial : repairOrderBulkMaterialList) {
                 BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(repairOrderBulkMaterial.getBulkMaterialNo());
                 if (bulkMaterialDO == null) {
-                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_EXISTS,repairOrderBulkMaterial.getBulkMaterialNo());
+                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_EXISTS, repairOrderBulkMaterial.getBulkMaterialNo());
                     return serviceResult;
                 }
-                if (warehouseId == null){
+                if (warehouseId == null) {
                     warehouseId = bulkMaterialDO.getCurrentWarehouseId();
-                }else if(!warehouseId.equals(bulkMaterialDO.getCurrentWarehouseId())){
-                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_SAME_WAREHOUSE,bulkMaterialDO.getBulkMaterialNo());
+                } else if (!warehouseId.equals(bulkMaterialDO.getCurrentWarehouseId())) {
+                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_SAME_WAREHOUSE, bulkMaterialDO.getBulkMaterialNo());
                     return serviceResult;
                 }
             }
@@ -190,39 +187,38 @@ public class RepairOrderServiceImpl implements RepairOrderService {
             return serviceResult;
         }
 
-        if(!repairOrderDO.getCreateUser().equals(userSupport.getCurrentUserId().toString())){
+        if (!repairOrderDO.getCreateUser().equals(userSupport.getCurrentUserId().toString())) {
             //只有创建采购单本人可以提交
             serviceResult.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
             return serviceResult;
         }
 
         //提交审核判断
-        ServiceResult<String, Boolean>  needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_REPAIR);
-        if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())){
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_REPAIR);
+        if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
             serviceResult.setErrorCode(needVerifyResult.getErrorCode());
             return serviceResult;
-        }else if(needVerifyResult.getResult()){
-            if (verifyUser == null){
+        } else if (needVerifyResult.getResult()) {
+            if (verifyUser == null) {
                 serviceResult.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
                 return serviceResult;
             }
-
             //调用提交审核服务
-            ServiceResult<String, String>  verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_REPAIR, repairOrderDO.getRepairOrderNo(),verifyUser,commitRemark);
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_REPAIR, repairOrderDO.getRepairOrderNo(), verifyUser, commitRemark);
             //修改提交审核状态
-            if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())){
+            if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 repairOrderDO.setRepairOrderStatus(RepairOrderStatus.REPAIR_ORDER_STATUS_VERIFYING);
                 repairOrderDO.setUpdateTime(new Date());
                 repairOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 repairOrderMapper.update(repairOrderDO);
                 return verifyResult;
-            }else{
+            } else {
                 serviceResult.setErrorCode(verifyResult.getErrorCode());
                 return serviceResult;
             }
-        }else{
-            //todo 这里代表不需要审核，状态设置错误
-            repairOrderDO.setRepairOrderStatus(RepairOrderStatus.REPAIR_ORDER_STATUS_VERIFYING);
+        } else {
+            //todo 这里代表不需要审核，状态设置错误,  已改
+            repairOrderDO.setRepairOrderStatus(RepairOrderStatus.REPAIR_ORDER_STATUS_WAIT_REPAIR);
             repairOrderDO.setUpdateTime(new Date());
             repairOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             repairOrderMapper.update(repairOrderDO);
@@ -292,6 +288,8 @@ public class RepairOrderServiceImpl implements RepairOrderService {
             serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_STATUS_ERROR);
             return serviceResult;
         }
+
+
         repairOrderDO.setRepairOrderStatus(RepairOrderStatus.REPAIR_ORDER_STATUS_CANCEL);
         repairOrderDO.setUpdateTime(new Date());
         repairOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -332,18 +330,18 @@ public class RepairOrderServiceImpl implements RepairOrderService {
         String warehouseNo = "";
 
         //判断所有维修设备是否是同一仓库
-        ServiceResult<String, WarehouseDO> wareHouseResult = verifyWarehouse(repairOrder.getRepairOrderEquipmentList(),repairOrder.getRepairOrderBulkMaterialList());
-        if (!ErrorCode.SUCCESS.equals(wareHouseResult.getErrorCode())){
-            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
+        ServiceResult<String, WarehouseDO> wareHouseResult = verifyWarehouse(repairOrder.getRepairOrderEquipmentList(), repairOrder.getRepairOrderBulkMaterialList());
+        if (!ErrorCode.SUCCESS.equals(wareHouseResult.getErrorCode())) {
+            serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         warehouseNo = wareHouseResult.getResult().getWarehouseNo();
 
-        //todo 这里没有改
+        //todo 这里没有改 ,已改
         //判断设备维修单明细
         //如果传入的设备维修单明细没有值
-        if (CollectionUtil.isEmpty(repairOrder.getRepairOrderEquipmentList())) {
+      /*  if (CollectionUtil.isEmpty(repairOrder.getRepairOrderEquipmentList())) {
             List<RepairOrderEquipmentDO> repairOrderEquipmentDOList = repairOrderEquipmentMapper.findByRepairOrderNo(repairOrder.getRepairOrderNo());
             //并且原设备维修单明细有值
             if (CollectionUtil.isNotEmpty(repairOrderEquipmentDOList)) {
@@ -351,19 +349,19 @@ public class RepairOrderServiceImpl implements RepairOrderService {
                 repairOrderEquipmentMapper.clearDateStatus(repairOrder.getRepairOrderNo());
                 equipmentCount = 0;
             }
-        }else{
-            //如果传入的设备维修单明细有值
-            String saveresult = saveRepairOrderEquipmentInfo(repairOrder.getRepairOrderEquipmentList(), dbrepairOrderDO.getRepairOrderNo(), userSupport.getCurrentUser(), now);
-            if (ErrorCode.BULK_MATERIAL_IS_NULL.equals(saveresult)){
-                serviceResult.setErrorCode(saveresult);
-                return serviceResult;
-            }
-            equipmentCount = Integer.parseInt(saveresult);
+        }else{*/
+        //如果传入的设备维修单明细有值
+        serviceResult = saveRepairOrderEquipmentInfo(repairOrder.getRepairOrderEquipmentList(), dbrepairOrderDO.getRepairOrderNo(), userSupport.getCurrentUser(), now, equipmentCount);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
+            return serviceResult;
         }
-        //todo 这里没有改
+        equipmentCount = Integer.parseInt(serviceResult.getResult());
+//        }
+        //todo 这里没有改  已改
         //判断散料维修单明细
         //如果传入的散料维修单明细没有值
-        if (CollectionUtil.isEmpty(repairOrder.getRepairOrderBulkMaterialList())) {
+/*        if (CollectionUtil.isEmpty(repairOrder.getRepairOrderBulkMaterialList())) {
             List<RepairOrderBulkMaterialDO> repairOrderBulkMaterialDOList = repairOrderBulkMaterialMapper.findByRepairOrderNo(repairOrder.getRepairOrderNo());
             //并且原设备维修单明细有值
             if (CollectionUtil.isNotEmpty(repairOrderBulkMaterialDOList)) {
@@ -371,20 +369,21 @@ public class RepairOrderServiceImpl implements RepairOrderService {
                 repairOrderBulkMaterialMapper.clearDateStatus(repairOrder.getRepairOrderNo());
                 bulkMaterialCount = 0 ;
             }
-        }else{
-            //如果传入的设备维修单明细有值
-            serviceResult = saveRepairOrderBulkMaterialInfo(repairOrder.getRepairOrderBulkMaterialList(), dbrepairOrderDO.getRepairOrderNo(), userSupport.getCurrentUser(), now,bulkMaterialCount);
-            if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-                serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
-                return serviceResult;
-            }
-            bulkMaterialCount = Integer.valueOf(serviceResult.getResult());
+        }else{*/
+        //如果传入的设备维修单明细有值
+        serviceResult = saveRepairOrderBulkMaterialInfo(repairOrder.getRepairOrderBulkMaterialList(), dbrepairOrderDO.getRepairOrderNo(), userSupport.getCurrentUser(), now, bulkMaterialCount);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
+            return serviceResult;
         }
-        //todo  维修单可能修改备注
+        bulkMaterialCount = Integer.valueOf(serviceResult.getResult());
+//        }
+        //todo  维修单可能修改备注  已改
         dbrepairOrderDO.setRepairEquipmentCount(equipmentCount);
         dbrepairOrderDO.setRepairBulkMaterialCount(bulkMaterialCount);
         dbrepairOrderDO.setRepairReason(repairOrder.getRepairReason());
         dbrepairOrderDO.setWarehouseNo(warehouseNo);
+        dbrepairOrderDO.setRemark(repairOrder.getRemark());
         dbrepairOrderDO.setUpdateTime(now);
         dbrepairOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         repairOrderMapper.update(dbrepairOrderDO);
@@ -398,23 +397,23 @@ public class RepairOrderServiceImpl implements RepairOrderService {
     public ServiceResult<String, RepairOrder> queryRepairOrderByNo(String repairOrderNo) {
         ServiceResult<String, RepairOrder> serviceResult = new ServiceResult<>();
         RepairOrderDO repairOrderDO = repairOrderMapper.findByRepairOrderNo(repairOrderNo);
-        if (repairOrderDO == null){
+        if (repairOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_IS_NOT_EXISTS);
             return serviceResult;
         }
 
         List<RepairOrderEquipmentDO> repairOrderEquipmentDOList = repairOrderDO.getRepairOrderEquipmentDOList();
-        for (RepairOrderEquipmentDO repairOrderEquipmentDO:repairOrderEquipmentDOList){
+        for (RepairOrderEquipmentDO repairOrderEquipmentDO : repairOrderEquipmentDOList) {
             ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(repairOrderEquipmentDO.getEquipmentNo());
             repairOrderEquipmentDO.setProductEquipmentDO(productEquipmentDO);
         }
 
-        List<RepairOrderBulkMaterialDO> repairOrderBulkMaterialDOList =  repairOrderDO.getRepairOrderBulkMaterialDOList();
-        for (RepairOrderBulkMaterialDO repairOrderBulkMaterialDO : repairOrderBulkMaterialDOList){
+        List<RepairOrderBulkMaterialDO> repairOrderBulkMaterialDOList = repairOrderDO.getRepairOrderBulkMaterialDOList();
+        for (RepairOrderBulkMaterialDO repairOrderBulkMaterialDO : repairOrderBulkMaterialDOList) {
             BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(repairOrderBulkMaterialDO.getBulkMaterialNo());
             repairOrderBulkMaterialDO.setBulkMaterialDO(bulkMaterialDO);
         }
-        RepairOrder repairOrder = ConverterUtil.convert(repairOrderDO,RepairOrder.class);
+        RepairOrder repairOrder = ConverterUtil.convert(repairOrderDO, RepairOrder.class);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(repairOrder);
@@ -433,7 +432,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
 
         Integer totalCount = repairOrderMapper.findRepairOrderCountByParams(maps);
         List<RepairOrderDO> RepairOrderDOList = repairOrderMapper.findRepairOrderByParams(maps);
-        List<RepairOrder> repairOrderList = ConverterUtil.convertList(RepairOrderDOList,RepairOrder.class);
+        List<RepairOrder> repairOrderList = ConverterUtil.convertList(RepairOrderDOList, RepairOrder.class);
         Page<RepairOrder> page = new Page<>(repairOrderList, totalCount, repairOrderQueryParam.getPageNo(), repairOrderQueryParam.getPageSize());
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -453,7 +452,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
 
         Integer totalCount = repairOrderEquipmentMapper.findRepairOrderEquipmentCountByParams(maps);
         List<RepairOrderEquipmentDO> repairOrderEquipmentDOList = repairOrderEquipmentMapper.findRepairOrderEquipmentByParams(maps);
-        List<RepairOrderEquipment> repairOrderEquipmentList = ConverterUtil.convertList(repairOrderEquipmentDOList,RepairOrderEquipment.class);
+        List<RepairOrderEquipment> repairOrderEquipmentList = ConverterUtil.convertList(repairOrderEquipmentDOList, RepairOrderEquipment.class);
         Page<RepairOrderEquipment> page = new Page<>(repairOrderEquipmentList, totalCount, repairOrderEquipmentQueryParam.getPageNo(), repairOrderEquipmentQueryParam.getPageSize());
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -471,9 +470,9 @@ public class RepairOrderServiceImpl implements RepairOrderService {
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("queryParam", repairOrderBulkMaterialQueryParam);
 
-        Integer totalCount =  repairOrderBulkMaterialMapper.findRepairOrderBulkMaterialCountByParams(maps);
-        List<RepairOrderBulkMaterialDO> repairOrderBulkMaterialDOList =  repairOrderBulkMaterialMapper.findRepairOrderBulkMaterialByParams(maps);
-        List<RepairOrderBulkMaterial> repairOrderBulkMaterialList = ConverterUtil.convertList(repairOrderBulkMaterialDOList,RepairOrderBulkMaterial.class);
+        Integer totalCount = repairOrderBulkMaterialMapper.findRepairOrderBulkMaterialCountByParams(maps);
+        List<RepairOrderBulkMaterialDO> repairOrderBulkMaterialDOList = repairOrderBulkMaterialMapper.findRepairOrderBulkMaterialByParams(maps);
+        List<RepairOrderBulkMaterial> repairOrderBulkMaterialList = ConverterUtil.convertList(repairOrderBulkMaterialDOList, RepairOrderBulkMaterial.class);
         Page<RepairOrderBulkMaterial> page = new Page<>(repairOrderBulkMaterialList, totalCount, repairOrderBulkMaterialQueryParam.getPageNo(), repairOrderBulkMaterialQueryParam.getPageSize());
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -483,107 +482,182 @@ public class RepairOrderServiceImpl implements RepairOrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, Integer> fix(List<Integer> repairEquipmentIdList, List<Integer> repairBulkMaterialIdList) {
+    public ServiceResult<String, Integer> fix(List<RepairOrderEquipment> repairOrderEquipmentList, List<RepairOrderBulkMaterial> repairOrderBulkMaterialList) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
 
-        if (CollectionUtil.isEmpty(repairEquipmentIdList) && CollectionUtil.isEmpty(repairBulkMaterialIdList)){
+        if (CollectionUtil.isEmpty(repairOrderEquipmentList) && CollectionUtil.isEmpty(repairOrderBulkMaterialList)) {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
-        //todo 考虑修复完成后是否可以填写维修备注
+
+        Map<String, RepairOrderDO> repairOrderDOMap = new HashMap<>();
+        //todo 考虑修复完成后是否可以填写维修备注 已改
         //如果设备维修单明细不为空
-        if (CollectionUtil.isNotEmpty(repairEquipmentIdList)){
-            for (Integer repairOrderEquipmentId:repairEquipmentIdList){
-                RepairOrderEquipmentDO repairOrderEquipmentDO = repairOrderEquipmentMapper.findById(repairOrderEquipmentId);
-                if (repairOrderEquipmentDO == null){
-                    //todo 回滚
-                    serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_EQUIPMENT_NOT_EXISTS,repairOrderEquipmentId);
+        if (CollectionUtil.isNotEmpty(repairOrderEquipmentList)) {
+            for (RepairOrderEquipment repairOrderEquipment : repairOrderEquipmentList) {
+                RepairOrderEquipmentDO repairOrderEquipmentDO = repairOrderEquipmentMapper.findById(repairOrderEquipment.getRepairOrderEquipmentId());
+                if (repairOrderEquipmentDO == null) {
+                    //todo 回滚  已改
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_EQUIPMENT_NOT_EXISTS, repairOrderEquipment.getRepairOrderEquipmentId());
                     return serviceResult;
                 }
                 //如果传入的设备维修单明细的维修完成时间已经有值,就结束本次循环
-                if(repairOrderEquipmentDO.getRepairEndTime() != null){
+                if (repairOrderEquipmentDO.getRepairEndTime() != null) {
                     continue;
                 }
+
                 // 判断该设备维修单明细的维修单是否还是维修中的状态
-                RepairOrderDO repairOrderDO = repairOrderMapper.findByRepairOrderNo(repairOrderEquipmentDO.getRepairOrderNo());
-                if (!RepairOrderStatus.REPAIR_ORDER_STATUS_REPAIRING.equals(repairOrderDO.getRepairOrderStatus())){
-                    serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_DATA_STATUS_ERROR);
-                    //todo 回滚
-                    return serviceResult;
+//                RepairOrderDO repairOrderDO = repairOrderMapper.findByRepairOrderNo(repairOrderEquipmentDO.getRepairOrderNo());
+//                if (!RepairOrderStatus.REPAIR_ORDER_STATUS_REPAIRING.equals(repairOrderDO.getRepairOrderStatus())){
+//                    serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_DATA_STATUS_ERROR);
+//                    //todo 回滚  已改
+//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                    return serviceResult;
+//                }
+                RepairOrderDO repairOrderDO = repairOrderDOMap.get(repairOrderEquipmentDO.getRepairOrderNo());
+                if (repairOrderDO == null) {
+                    repairOrderDO = repairOrderMapper.findByRepairOrderNo(repairOrderEquipmentDO.getRepairOrderNo());
+                    if (!RepairOrderStatus.REPAIR_ORDER_STATUS_REPAIRING.equals(repairOrderDO.getRepairOrderStatus())) {
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_DATA_STATUS_ERROR);
+                        return serviceResult;
+                    }
+                    repairOrderDOMap.put(repairOrderDO.getRepairOrderNo(), repairOrderDO);
                 }
+                repairOrderDO.setFixEquipmentCount(repairOrderDO.getFixEquipmentCount() + 1);
+
                 //保存更改后的数据
                 repairOrderEquipmentDO.setRepairEndTime(now);
+                repairOrderEquipmentDO.setRepairEndRemark(repairOrderEquipment.getRepairEndRemark());
                 repairOrderEquipmentDO.setUpdateTime(now);
                 repairOrderEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 repairOrderEquipmentMapper.update(repairOrderEquipmentDO);
 
                 //在设备维修单中增加 修复的设备数量
-                repairOrderDO.setFixEquipmentCount(repairOrderDO.getFixEquipmentCount() + 1);
+                /*repairOrderDO.setFixEquipmentCount(repairOrderDO.getFixEquipmentCount() + 1);
                 repairOrderDO.setUpdateTime(now);
                 repairOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                repairOrderMapper.update(repairOrderDO);
+                repairOrderMapper.update(repairOrderDO);*/
             }
-       }
+        }
 
         //如果散料维修单明细不为空
-        if (CollectionUtil.isNotEmpty(repairBulkMaterialIdList)){
-            for (Integer repairOrderBulkMaterialId:repairBulkMaterialIdList){
-                RepairOrderBulkMaterialDO repairOrderBulkMaterialDO = repairOrderBulkMaterialMapper.findById(repairOrderBulkMaterialId);
-                if (repairOrderBulkMaterialDO == null){
-                    serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_BULK_MATERRIAL_NOT_EXISTS,repairOrderBulkMaterialId);
+        if (CollectionUtil.isNotEmpty(repairOrderBulkMaterialList)) {
+
+            for (RepairOrderBulkMaterial repairOrderBulkMaterial : repairOrderBulkMaterialList) {
+                RepairOrderBulkMaterialDO repairOrderBulkMaterialDO = repairOrderBulkMaterialMapper.findById(repairOrderBulkMaterial.getRepairOrderBulkMaterialId());
+                if (repairOrderBulkMaterialDO == null) {
+                    serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_BULK_MATERRIAL_NOT_EXISTS, repairOrderBulkMaterial.getRepairOrderBulkMaterialId());
                     return serviceResult;
                 }
 
                 //如果传入的设备维修单明细的维修完成时间已经有值,就跳出循环
-                if(repairOrderBulkMaterialDO.getRepairEndTime() != null){
+                if (repairOrderBulkMaterialDO.getRepairEndTime() != null) {
                     continue;
                 }
 
                 //判断该设散料维修单的维修单是否还是维修中的状态
-                //todo 这里可以做一下优化，将已经查到的维修单，放入一个map中，如果map有了就不再查，直接取
-                RepairOrderDO repairOrderDO = repairOrderMapper.findByRepairOrderNo(repairOrderBulkMaterialDO.getRepairOrderNo());
-                if (!RepairOrderStatus.REPAIR_ORDER_STATUS_REPAIRING.equals(repairOrderDO.getRepairOrderStatus())){
-                    serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_DATA_STATUS_ERROR);
-                    return serviceResult;
+                //todo 这里可以做一下优化，将已经查到的维修单，放入一个map中，如果map有了就不再查，直接取 已改
+                RepairOrderDO repairOrderDO = repairOrderDOMap.get(repairOrderBulkMaterialDO.getRepairOrderNo());
+                if (repairOrderDO == null) {
+                    repairOrderDO = repairOrderMapper.findByRepairOrderNo(repairOrderBulkMaterialDO.getRepairOrderNo());
+                    if (!RepairOrderStatus.REPAIR_ORDER_STATUS_REPAIRING.equals(repairOrderDO.getRepairOrderStatus())) {
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_DATA_STATUS_ERROR);
+                        return serviceResult;
+                    }
+                    repairOrderDOMap.put(repairOrderDO.getRepairOrderNo(), repairOrderDO);
                 }
+                repairOrderDO.setFixBulkMaterialCount(repairOrderDO.getFixBulkMaterialCount() + 1);
+
                 //保存更改后的数据
                 repairOrderBulkMaterialDO.setRepairEndTime(now);
+                repairOrderBulkMaterialDO.setRepairEndRemark(repairOrderBulkMaterial.getRepairEndRemark());
                 repairOrderBulkMaterialDO.setUpdateTime(now);
                 repairOrderBulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 repairOrderBulkMaterialMapper.update(repairOrderBulkMaterialDO);
 
-                //在设备维修单中增加 修复的物料数量
-                //todo 这里可以使用刚才那个维修单map临时保存这个数量，这样就避免了一个单的多次更新，在循环外每个单更新一次即可
+                /*//在设备维修单中增加 修复的物料数量
+                //todo 这里可以使用刚才那个维修单map临时保存这个数量，这样就避免了一个单的多次更新，在循环外每个单更新一次即可  已改
                 repairOrderDO.setFixBulkMaterialCount(repairOrderDO.getFixBulkMaterialCount() + 1 );
                 repairOrderDO.setUpdateTime(now);
                 repairOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                repairOrderMapper.update(repairOrderDO);
+                repairOrderMapper.update(repairOrderDO);*/
             }
         }
 
-       serviceResult.setErrorCode(ErrorCode.SUCCESS);
-       return serviceResult;
+        for (String repairOrderNo : repairOrderDOMap.keySet()) {
+            RepairOrderDO repairOrderDO = repairOrderDOMap.get(repairOrderNo);
+            repairOrderDO.setUpdateTime(now);
+            repairOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            repairOrderMapper.update(repairOrderDO);
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
     }
 
     @Override
-    public ServiceResult<String, String> end(String repairOrderNo) {
+    public ServiceResult<String, String> end(RepairOrder repairOrder) {
         //todo 结束维修单时，要同时改变设备状态
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
 
-        RepairOrderDO repairOrderDO = repairOrderMapper.findByRepairOrderNo(repairOrderNo);
-        if (repairOrderDO == null){
+        RepairOrderDO repairOrderDO = repairOrderMapper.findByRepairOrderNo(repairOrder.getRepairOrderNo());
+        if (repairOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_IS_NOT_EXISTS);
             return serviceResult;
         }
 
-        if (!RepairOrderStatus.REPAIR_ORDER_STATUS_REPAIRING.equals(repairOrderDO.getRepairOrderStatus())){
+        if (!RepairOrderStatus.REPAIR_ORDER_STATUS_REPAIRING.equals(repairOrderDO.getRepairOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_DATA_STATUS_ERROR);
             return serviceResult;
         }
 
+        if (repairOrderDO.getRepairEquipmentCount() > 0) {
+            List<RepairOrderEquipmentDO> repairOrderEquipmentDOList = repairOrderEquipmentMapper.findByRepairOrderNo(repairOrderDO.getRepairOrderNo());
+            for (RepairOrderEquipmentDO repairOrderEquipmentDO : repairOrderEquipmentDOList) {
+
+                ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(repairOrderEquipmentDO.getEquipmentNo());
+                if (productEquipmentDO == null) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.EQUIPMENT_NOT_EXISTS);
+                    return serviceResult;
+                }
+                //维修单中，还没有维修完成，暂时先进行报废
+                if (repairOrderEquipmentDO.getRepairEndTime() == null) {
+                    productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_SCRAP);
+                } else {
+                    productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
+                }
+                productEquipmentMapper.update(productEquipmentDO);
+            }
+        }
+
+        if (repairOrderDO.getRepairEquipmentCount() > 0) {
+            List<RepairOrderBulkMaterialDO> repairOrderBulkMaterialDOList = repairOrderBulkMaterialMapper.findByRepairOrderNo(repairOrderDO.getRepairOrderNo());
+            for (RepairOrderBulkMaterialDO repairOrderBulkMaterialDO : repairOrderBulkMaterialDOList) {
+
+                BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(repairOrderBulkMaterialDO.getBulkMaterialNo());
+                if (bulkMaterialDO == null) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_EXISTS);
+                    return serviceResult;
+                }
+
+                //维修单中，还没有维修完成，暂时先进行报废
+                if (repairOrderBulkMaterialDO.getRepairEndTime() == null) {
+                    bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_SCRAP);
+                } else {
+                    bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+                }
+                bulkMaterialMapper.update(bulkMaterialDO);
+            }
+        }
+
         repairOrderDO.setRepairOrderStatus(RepairOrderStatus.REPAIR_ORDER_STATUS_REPAIRED);
+        repairOrderDO.setRepairEndRemark(repairOrder.getRepairEndRemark());
         repairOrderDO.setUpdateTime(now);
         repairOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         repairOrderMapper.update(repairOrderDO);
@@ -593,13 +667,12 @@ public class RepairOrderServiceImpl implements RepairOrderService {
         return serviceResult;
     }
 
-
-
-    private String saveRepairOrderEquipmentInfo(List<RepairOrderEquipment> repairOrderEquipmentList, String repairOrderNo, User loginUser, Date currentTime){
+    private ServiceResult<String, String> saveRepairOrderEquipmentInfo(List<RepairOrderEquipment> repairOrderEquipmentList, String repairOrderNo, User loginUser, Date currentTime, Integer equipmentCount) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Map<String, RepairOrderEquipment> saveRepairOrderEquipmentMap = new HashMap<>();
         Map<String, RepairOrderEquipment> updateRepairOrderEquipmentMap = new HashMap<>();
         List<RepairOrderEquipmentDO> dbRepairOrderEquipmentDOList = repairOrderEquipmentMapper.findByRepairOrderNo(repairOrderNo);
-        Map<String, RepairOrderEquipmentDO> dbRepairOrderEquipmentDOMap = ListUtil.listToMap(dbRepairOrderEquipmentDOList,  "equipmentNo");
+        Map<String, RepairOrderEquipmentDO> dbRepairOrderEquipmentDOMap = ListUtil.listToMap(dbRepairOrderEquipmentDOList, "equipmentNo");
         for (RepairOrderEquipment repairOrderEquipment : repairOrderEquipmentList) {
             //如果原单中有现单中的数据
             if (dbRepairOrderEquipmentDOMap.get(repairOrderEquipment.getEquipmentNo()) != null) {
@@ -614,26 +687,39 @@ public class RepairOrderServiceImpl implements RepairOrderService {
         }
 
         //新增的数据
-        if (saveRepairOrderEquipmentMap.size() > 0){
-            for (String EquipmentNo : saveRepairOrderEquipmentMap.keySet()){
+        if (saveRepairOrderEquipmentMap.size() > 0) {
+            for (String EquipmentNo : saveRepairOrderEquipmentMap.keySet()) {
                 //获取订单商品设备表,判断设备是否处于租赁状态
                 //获取设备
                 ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(EquipmentNo);
                 if (productEquipmentDO == null) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    return (ErrorCode.EQUIPMENT_NOT_EXISTS);
+                    serviceResult.setErrorCode(ErrorCode.EQUIPMENT_NOT_EXISTS, EquipmentNo);
+                    return serviceResult;
                 }
+                //todo 设备状态未改变 已改
+                //如果设备不是处于空闲或者租赁中，就不能进行新增维修操作
+                if (!ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE.equals(productEquipmentDO.getEquipmentStatus()) ||
+                        !ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY.equals(productEquipmentDO.getEquipmentStatus())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_STATUS_NOT_REPAIR, productEquipmentDO.getEquipmentNo());
+                    return serviceResult;
+                }
+                productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_REPAIRING);
+                productEquipmentMapper.update(productEquipmentDO);
+
                 RepairOrderEquipmentDO repairOrderEquipmentDO = new RepairOrderEquipmentDO();
 
                 if (StringUtil.isNotEmpty(productEquipmentDO.getOrderNo())) {//设备处于租赁状态
                     //获取订单ID
                     OrderDO orderDO = orderMapper.findByOrderNo(productEquipmentDO.getOrderNo());
-                    if(orderDO.getId() == null){
+                    if (orderDO == null) {
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                        return ErrorCode.ORDER_NOT_EXISTS;
+                        serviceResult.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                        return serviceResult;
                     }
 
-                    OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderIdAndEquipmentNo(orderDO.getId(),EquipmentNo);
+                    OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderIdAndEquipmentNo(orderDO.getId(), EquipmentNo);
                     repairOrderEquipmentDO.setOrderId(orderProductEquipmentDO.getOrderId());
                     repairOrderEquipmentDO.setOrderProductId(orderProductEquipmentDO.getOrderProductId());
                 }
@@ -642,25 +728,27 @@ public class RepairOrderServiceImpl implements RepairOrderService {
                 repairOrderEquipmentDO.setEquipmentId(productEquipmentDO.getId());
                 repairOrderEquipmentDO.setEquipmentNo(EquipmentNo);
                 repairOrderEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                repairOrderEquipmentDO.setRemark(saveRepairOrderEquipmentMap.get(EquipmentNo).getRemark());
                 repairOrderEquipmentDO.setCreateUser(loginUser.getUserId().toString());
                 repairOrderEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
                 repairOrderEquipmentDO.setCreateTime(currentTime);
                 repairOrderEquipmentDO.setUpdateTime(currentTime);
                 repairOrderEquipmentMapper.save(repairOrderEquipmentDO);
-                //todo 设备状态未改变
+
             }
         }
 
         //传入的设备维修单明细单刚好更改的就是原来设备维修单明细单的数据
-        if (updateRepairOrderEquipmentMap.size() > 0 ){
-            for (String equipmentNo : updateRepairOrderEquipmentMap.keySet()){
-                RepairOrderEquipmentDO dbrepairOrderEquipmentDO = repairOrderEquipmentMapper.findByEquipmentNoAndRepairOrderNo(equipmentNo,repairOrderNo);
+        if (updateRepairOrderEquipmentMap.size() > 0) {
+            for (String equipmentNo : updateRepairOrderEquipmentMap.keySet()) {
+                RepairOrderEquipmentDO dbrepairOrderEquipmentDO = repairOrderEquipmentMapper.findByEquipmentNoAndRepairOrderNo(equipmentNo, repairOrderNo);
                 //获取订单商品设备表,判断设备是否处于租赁状态
                 //获取设备
                 ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(equipmentNo);
                 if (productEquipmentDO == null) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    return (ErrorCode.EQUIPMENT_NOT_EXISTS);
+                    serviceResult.setErrorCode(ErrorCode.EQUIPMENT_NOT_EXISTS);
+                    return serviceResult;
                 }
 
                 dbrepairOrderEquipmentDO.setOrderId(null);
@@ -669,42 +757,46 @@ public class RepairOrderServiceImpl implements RepairOrderService {
                 if (StringUtil.isNotEmpty(productEquipmentDO.getOrderNo())) {//设备处于租赁状态
                     //获取订单ID
                     OrderDO orderDO = orderMapper.findByOrderNo(productEquipmentDO.getOrderNo());
-                    if(orderDO.getId() == null){
+                    if (orderDO.getId() == null) {
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                        return ErrorCode.ORDER_NOT_EXISTS;
+                        serviceResult.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                        return serviceResult;
                     }
 
-                    OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderIdAndEquipmentNo(orderDO.getId(),equipmentNo);
+                    OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderIdAndEquipmentNo(orderDO.getId(), equipmentNo);
                     dbrepairOrderEquipmentDO.setOrderId(orderProductEquipmentDO.getOrderId());
                     dbrepairOrderEquipmentDO.setOrderProductId(orderProductEquipmentDO.getOrderProductId());
                 }
 
-                dbrepairOrderEquipmentDO.setEquipmentId(productEquipmentDO.getId());
-                dbrepairOrderEquipmentDO.setEquipmentNo(equipmentNo);
+                dbrepairOrderEquipmentDO.setRemark(updateRepairOrderEquipmentMap.get(equipmentNo).getRemark());
                 dbrepairOrderEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
                 dbrepairOrderEquipmentDO.setUpdateTime(currentTime);
                 repairOrderEquipmentMapper.update(dbrepairOrderEquipmentDO);
+
             }
 
-            if (dbRepairOrderEquipmentDOMap.size() > 0){
-                for (String equipmentNo :dbRepairOrderEquipmentDOMap.keySet()){
-                    //todo 这里不用再查询
-                    RepairOrderEquipmentDO dbrepairOrderEquipmentDO = repairOrderEquipmentMapper.findByEquipmentNoAndRepairOrderNo(equipmentNo,repairOrderNo);
-                    dbrepairOrderEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
-                    dbrepairOrderEquipmentDO.setUpdateTime(currentTime);
+            if (dbRepairOrderEquipmentDOMap.size() > 0) {
+                for (String equipmentNo : dbRepairOrderEquipmentDOMap.keySet()) {
+                    //todo 这里不用再查询 ,已改
+                    RepairOrderEquipmentDO dbRepairOrderEquipmentDO = dbRepairOrderEquipmentDOMap.get(equipmentNo);
+                    dbRepairOrderEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
+                    dbRepairOrderEquipmentDO.setUpdateTime(currentTime);
                     repairOrderEquipmentMapper.clearDateStatusByEquipmentNo(equipmentNo);
                 }
             }
 
         }
-        int count = saveRepairOrderEquipmentMap.size()+ updateRepairOrderEquipmentMap.size();
-        return count+"";
+        equipmentCount = saveRepairOrderEquipmentMap.size() + updateRepairOrderEquipmentMap.size();
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(equipmentCount + "");
+        return serviceResult;
+
     }
 
 
-    private ServiceResult<String,String> saveRepairOrderBulkMaterialInfo(List<RepairOrderBulkMaterial> repairOrderBulkMaterialList, String repairOrderNo, User loginUser, Date currentTime,Integer bulkMaterialCount) {
-        //todo 如果传来的数据有重复怎么办，如果想创建的时候加上维修备注怎么办
-        ServiceResult<String,String> serviceResult = new ServiceResult<>();
+    private ServiceResult<String, String> saveRepairOrderBulkMaterialInfo(List<RepairOrderBulkMaterial> repairOrderBulkMaterialList, String repairOrderNo, User loginUser, Date currentTime, Integer bulkMaterialCount) {
+        //todo 如果传来的数据有重复怎么办，如果想创建的时候加上维修备注怎么办  已改
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Map<String, RepairOrderBulkMaterial> saveRepairOrderBulkMaterialMap = new HashMap<>();
         Map<String, RepairOrderBulkMaterial> updateRepairOrderBulkMaterialMap = new HashMap<>();
         List<RepairOrderBulkMaterialDO> dbRepairOrderBulkMaterialDOList = repairOrderBulkMaterialMapper.findByRepairOrderNo(repairOrderNo);
@@ -729,34 +821,45 @@ public class RepairOrderServiceImpl implements RepairOrderService {
                 BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(bulkMaterialNo);
                 if (bulkMaterialDO == null) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NULL);
+                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_EXISTS);
                     return serviceResult;
                 }
+
+                //如果散料不是处于设备空闲中或者租赁中就不能进行新增维修操作
+                if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE.equals(bulkMaterialDO.getBulkMaterialStatus()) ||
+                        !BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY.equals(bulkMaterialDO.getBulkMaterialStatus())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_STATUS_NOT_REPAIR, bulkMaterialDO.getBulkMaterialNo());
+                    return serviceResult;
+                }
+                bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_REPAIRING);
+                bulkMaterialMapper.update(bulkMaterialDO);
+
                 RepairOrderBulkMaterialDO repairOrderBulkMaterialDO = new RepairOrderBulkMaterialDO();
                 //判断散料是否存在设备
-                if(StringUtil.isNotEmpty(bulkMaterialDO.getCurrentEquipmentNo())){
+                if (StringUtil.isNotEmpty(bulkMaterialDO.getCurrentEquipmentNo())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT_NOT_REPAIR,repairOrderBulkMaterialDO.getBulkMaterialNo());
+                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT_NOT_REPAIR, repairOrderBulkMaterialDO.getBulkMaterialNo());
                     return serviceResult;
                 }
 
                 if (StringUtil.isNotEmpty(bulkMaterialDO.getOrderNo())) {//设备处于租赁状态
                     //获取订单
                     OrderDO orderDO = orderMapper.findByOrderNo(bulkMaterialDO.getOrderNo());
-                    if(orderDO.getId() == null){
+                    if (orderDO.getId() == null) {
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                         serviceResult.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
                         return serviceResult;
                     }
-                    OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderIdAndBulkMaterialNo(orderDO.getId(),bulkMaterialNo);
+                    OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderIdAndBulkMaterialNo(orderDO.getId(), bulkMaterialNo);
                     repairOrderBulkMaterialDO.setOrderId(orderMaterialBulkDO.getOrderId());
                     repairOrderBulkMaterialDO.setOrderMaterialId(orderMaterialBulkDO.getOrderMaterialId());
                 }
-
                 repairOrderBulkMaterialDO.setRepairOrderNo(repairOrderNo);
                 repairOrderBulkMaterialDO.setBulkMaterialId(bulkMaterialDO.getId());
                 repairOrderBulkMaterialDO.setBulkMaterialNo(bulkMaterialNo);
                 repairOrderBulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                repairOrderBulkMaterialDO.setRemark(saveRepairOrderBulkMaterialMap.get(bulkMaterialNo).getRemark());
                 repairOrderBulkMaterialDO.setCreateUser(loginUser.getUserId().toString());
                 repairOrderBulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
                 repairOrderBulkMaterialDO.setCreateTime(currentTime);
@@ -768,7 +871,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
         //传入的设备维修单明细单刚好更改的就是原来设备维修单明细单的数据
         if (updateRepairOrderBulkMaterialMap.size() > 0) {
             for (String bulkMaterialNo : updateRepairOrderBulkMaterialMap.keySet()) {
-                RepairOrderBulkMaterialDO dbrepairOrderBulkMaterialDO = repairOrderBulkMaterialMapper.findByBulkMaterialNoAndRepairOrderNo(bulkMaterialNo,repairOrderNo);
+                RepairOrderBulkMaterialDO dbrepairOrderBulkMaterialDO = repairOrderBulkMaterialMapper.findByBulkMaterialNoAndRepairOrderNo(bulkMaterialNo, repairOrderNo);
                 //获取订单商品设备表,判断设备是否处于租赁状态
                 //获取设备
                 BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(bulkMaterialNo);
@@ -778,9 +881,9 @@ public class RepairOrderServiceImpl implements RepairOrderService {
                     return serviceResult;
 
                 }
-                if(StringUtil.isNotEmpty(bulkMaterialDO.getCurrentEquipmentNo())){
+                if (StringUtil.isNotEmpty(bulkMaterialDO.getCurrentEquipmentNo())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT_NOT_REPAIR,bulkMaterialDO.getBulkMaterialNo());
+                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT_NOT_REPAIR, bulkMaterialDO.getBulkMaterialNo());
                     return serviceResult;
 
                 }
@@ -789,26 +892,26 @@ public class RepairOrderServiceImpl implements RepairOrderService {
                 if (StringUtil.isNotEmpty(bulkMaterialDO.getOrderNo())) {//设备处于租赁状态
                     //获取订单ID
                     OrderDO orderDO = orderMapper.findByOrderNo(bulkMaterialDO.getOrderNo());
-                    if(orderDO.getId() == null){
+                    if (orderDO.getId() == null) {
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                         serviceResult.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
                         return serviceResult;
                     }
-                    OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderIdAndBulkMaterialNo(orderDO.getId(),bulkMaterialNo);
+                    OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderIdAndBulkMaterialNo(orderDO.getId(), bulkMaterialNo);
                     dbrepairOrderBulkMaterialDO.setOrderId(orderMaterialBulkDO.getOrderId());
                     dbrepairOrderBulkMaterialDO.setOrderMaterialId(orderMaterialBulkDO.getOrderMaterialId());
                 }
 
-                dbrepairOrderBulkMaterialDO.setBulkMaterialId(bulkMaterialDO.getId());
-                dbrepairOrderBulkMaterialDO.setBulkMaterialNo(bulkMaterialNo);
+                dbrepairOrderBulkMaterialDO.setRemark(saveRepairOrderBulkMaterialMap.get(bulkMaterialNo).getRemark());
                 dbrepairOrderBulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
                 dbrepairOrderBulkMaterialDO.setUpdateTime(currentTime);
                 repairOrderBulkMaterialMapper.update(dbrepairOrderBulkMaterialDO);
+
             }
         }
 
-        if (dbRepairOrderBulkMaterialDOMap.size() > 0 ){
-            for (String bulkMaterialNo :dbRepairOrderBulkMaterialDOMap.keySet()){
+        if (dbRepairOrderBulkMaterialDOMap.size() > 0) {
+            for (String bulkMaterialNo : dbRepairOrderBulkMaterialDOMap.keySet()) {
                 RepairOrderBulkMaterialDO dbRepairOrderBulkMaterialDO = dbRepairOrderBulkMaterialDOMap.get(bulkMaterialNo);
                 dbRepairOrderBulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
                 dbRepairOrderBulkMaterialDO.setUpdateTime(currentTime);
@@ -818,10 +921,9 @@ public class RepairOrderServiceImpl implements RepairOrderService {
         bulkMaterialCount = (saveRepairOrderBulkMaterialMap.size() + updateRepairOrderBulkMaterialMap.size());
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(bulkMaterialCount+"");
+        serviceResult.setResult(bulkMaterialCount + "");
         return serviceResult;
     }
-
 
 
     @Autowired
