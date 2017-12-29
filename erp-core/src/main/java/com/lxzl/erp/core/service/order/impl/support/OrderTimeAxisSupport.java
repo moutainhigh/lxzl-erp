@@ -33,7 +33,6 @@ public class OrderTimeAxisSupport {
         orderTimeAxisDO.setOrderId(orderId);
         orderTimeAxisDO.setOrderStatus(orderStatus);
         orderTimeAxisDO.setGenerationTime(currentTime);
-        orderTimeAxisDO.setOrderSnapshot(orderSnapshot);
         orderTimeAxisDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         orderTimeAxisDO.setCreateUser(loginUserId.toString());
         orderTimeAxisDO.setUpdateUser(loginUserId.toString());
