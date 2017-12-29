@@ -26,7 +26,7 @@
                                 <script type="text/html" id="actionButtonsTpl">
                                     {{#acitonButtons}}
                                         {{#showButton}}
-                                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-orderno="{{orderNo}}">
+                                        <a href="${ctx}{{menuUrl}}?no={{orderNo}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-orderno="{{orderNo}}">
                                             <i class="{{iClass}}"></i> {{text}}
                                         </a>
                                         {{/showButton}}
@@ -89,26 +89,30 @@
                                     <h4 class="pl15">金额信息</h4>
                                     <dl class="dl-horizontal dl-horizontal-rental pl15">
                                         <dt class="mb10">授信押金：</dt><dd>￥{{#price}}{{totalCreditDepositAmount}}{{/price}}</dd>
-                                        <dt class="mb10">订单押金：</dt><dd>￥{{#price}}{{totalDepositAmount}}{{/price}}</dd>
+                                        <dt class="mb10">订单总押金：</dt><dd>￥{{#price}}{{totalDepositAmount}}{{/price}}</dd>
                                         <dt class="mb10">保险金：</dt><dd>￥{{#price}}{{totalInsuranceAmount}}{{/price}}</dd>
                                         <dt class="mb10">商品总数：</dt><dd>{{totalProductCount}}</dd>
                                         <dt class="mb10">商品总价：</dt><dd>￥{{#price}}{{totalProductAmount}}{{/price}}</dd>
+                                        <dt class="mb10">配件总数：</dt><dd>{{totalMaterialCount}}</dd>
+                                        <dt class="mb10">配件总价：</dt><dd>￥{{#price}}{{totalMaterialAmount}}{{/price}}</dd>
+                                        <dt class="mb10">应付总价：</dt><dd class="text-danger">￥{{#price}}{{totalOrderAmount}}{{/price}}</dd>
                                         <dt class="mb10">运费：</dt><dd>￥{{#price}}{{logisticsAmount}}{{/price}}</dd>
-                                        <dt class="mb10">实际支付：</dt><dd>￥{{#price}}{{totalOrderAmountFormat}}{{/price}}</dd>
-                                        <dt class="mb10">共计优惠：</dt><dd>￥{{#price}}{{totalDiscountAmount}}{{/price}}</dd>
+                                        <dt class="mb10">共计优惠：</dt><dd>- ￥{{#price}}{{totalDiscountAmount}}{{/price}}</dd>
+                                        <dt class="mb10">已支付：</dt><dd>￥{{#price}}{{totalPaidOrderAmount}}{{/price}}</dd>
+
                                     </dl>
                                 </div>
                                 <div class="col-md-4 br-l">
                                     <h4 class="pl15">订单状态</h4>
                                     <div class="row pl30 mt15">
                                         <ul class="Rental-timeline">
-                                            {{#orderStatusLine}}
+                                            {{#orderTimeAxisTree}}
                                             <li class="Rental-timeline-item {{#isLastLine}}Rental-timeline-item-last{{/isLastLine}}">
                                                 <div class="Rental-timeline-item-tail"></div>
                                                 <div class="Rental-timeline-item-head {{inlineClass}}"></div>
-                                                <div class="Rental-timeline-item-content">{{value}}</div>
+                                                <div class="Rental-timeline-item-content"><span class="mr15">{{orderStatusValue}}</span><span>{{createTimeFormat}}</span></div>
                                             </li>
-                                            {{/orderStatusLine}}
+                                            {{/orderTimeAxisTree}}
                                         </ul>
                                     </div>
                                 </div>
