@@ -69,6 +69,7 @@
                                     <th>商品名</th>
                                     <th>商品图</th>
                                     <th>SKUID</th>
+                                    <th>SKU名称</th>
                                     <th>设备状态</th>
 ##                                    <th>可用状态</th>
                                     <th>备注</th>
@@ -95,6 +96,7 @@
                                         <td>{{productName}}</td>
                                         <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                         <td>{{skuId}}</td>
+                                        <td>{{skuName}}</td>
                                         <td>{{equipmentStatusStr}}</td>
 ##                                        <td>{{dataStatusStr}}</td>
                                         <td>{{remark}}</td>
