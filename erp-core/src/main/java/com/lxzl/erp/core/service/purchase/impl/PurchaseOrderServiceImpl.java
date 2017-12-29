@@ -162,7 +162,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
 
         PurchaseOrderDO purchaseOrderDO = buildPurchaseOrder(now, purchaseOrder, purchaseOrderDetail, warehouseDO);
-        purchaseOrderDO.setPurchaseNo(generateNoSupport.generatePurchaseOrderNo(now, purchaseOrderDO.getWarehouseId()));
+        purchaseOrderDO.setPurchaseNo(generateNoSupport.generatePurchaseOrderNo(now, warehouseDO.getId()));
         purchaseOrderDO.setCreateUser(userSupport.getCurrentUserId().toString());
         purchaseOrderDO.setCreateTime(now);
         purchaseOrderDO.setWarehouseId(warehouseDO.getId());
