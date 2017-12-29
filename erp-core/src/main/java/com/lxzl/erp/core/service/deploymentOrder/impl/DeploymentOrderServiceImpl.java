@@ -19,6 +19,7 @@ import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.deploymentOrder.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
@@ -533,12 +534,13 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                 result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_EXISTS, equipmentNo);
                 return result;
             }
+            WarehouseDO currentWarehouse = warehouseSupport.getAvailableWarehouse(productEquipmentDO.getCurrentWarehouseId());
             if (!ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE.equals(productEquipmentDO.getEquipmentStatus())) {
                 result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_IS_NOT_IDLE, equipmentNo);
                 return result;
             }
             if (!deploymentOrderDO.getSrcWarehouseId().equals(productEquipmentDO.getCurrentWarehouseId())) {
-                result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, equipmentNo, productEquipmentDO.getCurrentWarehouseId());
+                result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, equipmentNo, currentWarehouse.getWarehouseName());
                 return result;
             }
             Map<Integer, DeploymentOrderProductDO> deploymentOrderProductDOMap = ListUtil.listToMap(deploymentOrderDO.getDeploymentOrderProductDOList(), "deploymentProductSkuId");
@@ -810,4 +812,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
 
     @Autowired
     private GenerateNoSupport generateNoSupport;
+
+    @Autowired
+    private WarehouseSupport warehouseSupport;
 }

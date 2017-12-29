@@ -25,7 +25,7 @@ public class OrderTimeAxisSupport {
         if(CollectionUtil.isNotEmpty(orderTimeAxisDOList)){
             OrderTimeAxisDO lastRecord = orderTimeAxisDOList.get(orderTimeAxisDOList.size() - 1);
             // 如果最后的状态和当前状态相同，就没有必要再存一条
-            if(orderStatus.equals(lastRecord.getDataStatus())){
+            if(orderStatus.equals(lastRecord.getOrderStatus())){
                 return;
             }
         }
