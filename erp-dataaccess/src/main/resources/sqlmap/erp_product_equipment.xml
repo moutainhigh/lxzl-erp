@@ -204,7 +204,7 @@
                 and epe.product_id = #{maps.productEquipmentQueryParam.productId, jdbcType=INTEGER}
             </if>
             <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.productName != null &amp;&amp; maps.productEquipmentQueryParam.productName != ''">
-                and mp.product_name like CONCAT('%','${maps.productEquipmentQueryParam.productName}','%' )
+                and ep.product_name like CONCAT('%','${maps.productEquipmentQueryParam.productName}','%' )
             </if>
             <if test="maps.productEquipmentQueryParam.skuId != null">
                 and epe.sku_id = #{maps.productEquipmentQueryParam.skuId, jdbcType=INTEGER}
@@ -252,7 +252,7 @@
                 and epe.product_id = #{maps.productEquipmentQueryParam.productId, jdbcType=INTEGER}
             </if>
             <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.productName != null &amp;&amp; maps.productEquipmentQueryParam.productName != ''">
-                and mp.product_name like CONCAT('%','${maps.productEquipmentQueryParam.productName}','%' )
+                and ep.product_name like CONCAT('%','${maps.productEquipmentQueryParam.productName}','%' )
             </if>
             <if test="maps.productEquipmentQueryParam.skuId != null">
                 and epe.sku_id = #{maps.productEquipmentQueryParam.skuId, jdbcType=INTEGER}
