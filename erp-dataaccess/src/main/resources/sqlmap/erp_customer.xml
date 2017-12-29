@@ -141,10 +141,10 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ec.id) FROM erp_customer ec 
 		<where>
-			<if test="maps.productEquipmentQueryParam.createStartTime != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != ''">
+			<if test="maps.productEquipmentQueryParam.createStartTime != null ">
 				<![CDATA[ AND ec.create_time >= #{maps.productEquipmentQueryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.productEquipmentQueryParam.createEndTime != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != ''">
+			<if test="maps.productEquipmentQueryParam.createEndTime != null">
 				<![CDATA[ AND ec.create_time <= #{maps.productEquipmentQueryParam.createEndTime} ]]>
 			</if>
 			<if test="true">

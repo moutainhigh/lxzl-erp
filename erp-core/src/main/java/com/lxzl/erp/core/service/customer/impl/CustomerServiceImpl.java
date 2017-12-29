@@ -14,6 +14,7 @@ import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerRiskManagementConverter;
 import com.lxzl.erp.core.service.payment.PaymentService;
@@ -52,13 +53,16 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private PaymentService paymentService;
 
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addCompany(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerDO customerDO = new CustomerDO();
-        customerDO.setCustomerNo(GenerateNoUtil.generateCustomerCompanyNo(now));
+        customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now,userSupport.getCurrentUserId(),CustomerType.CUSTOMER_TYPE_COMPANY));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_COMPANY);
         if (customer.getIsDisabled() == null) {
             customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);
@@ -101,7 +105,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerDO customerDO = new CustomerDO();
-        customerDO.setCustomerNo(GenerateNoUtil.generateCustomerPersonNo(now));
+        customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now,userSupport.getCurrentUserId(),CustomerType.CUSTOMER_TYPE_PERSON));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
         if (customer.getIsDisabled() == null) {
             customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);

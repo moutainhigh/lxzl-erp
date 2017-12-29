@@ -15,6 +15,7 @@ import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.product.ProductService;
@@ -62,7 +63,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         }
 
         DeploymentOrderDO deploymentOrderDO = ConverterUtil.convert(deploymentOrder, DeploymentOrderDO.class);
-        deploymentOrderDO.setDeploymentOrderNo(GenerateNoUtil.generateDeploymentOrderNo(currentTime));
+        deploymentOrderDO.setDeploymentOrderNo(generateNoSupport.generateDeploymentOrderNo(currentTime,deploymentOrderDO.getSrcWarehouseId(),deploymentOrderDO.getTargetWarehouseId()));
         deploymentOrderDO.setDeploymentOrderStatus(DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT);
         deploymentOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         deploymentOrderDO.setUpdateUser(loginUser.getUserId().toString());
@@ -806,4 +807,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
 
     @Autowired
     private WorkflowService workflowService;
+
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
 }

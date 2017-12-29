@@ -30,8 +30,8 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     @Test
     public void queryNextVerifyUsers() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
-        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_RETURN);
-        workflowLinkQueryParam.setWorkflowReferNo("RO201712191652428981484");
+        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
+        workflowLinkQueryParam.setWorkflowReferNo("PO201712291657381525000021440");
         TestResult testResult = getJsonTestResult("/workflow/queryNextVerifyUsers", workflowLinkQueryParam);
     }
 

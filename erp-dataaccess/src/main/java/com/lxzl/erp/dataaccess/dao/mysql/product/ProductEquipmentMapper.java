@@ -7,20 +7,27 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+
 @Repository
 public interface ProductEquipmentMapper extends BaseMysqlDAO<ProductEquipmentDO> {
 
-    Integer saveList(@Param("productEquipmentDOList")List<ProductEquipmentDO> productEquipmentDOList);
+    Integer saveList(List<ProductEquipmentDO> productEquipmentDOList);
 
-    Integer updateList(@Param("productEquipmentDOList")List<ProductEquipmentDO> productEquipmentDOList);
+    Integer updateList(@Param("productEquipmentDOList") List<ProductEquipmentDO> productEquipmentDOList);
 
     ProductEquipmentDO findByEquipmentNo(@Param("equipmentNo") String equipmentNo);
 
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
     List<ProductEquipmentDO> listPage(@Param("maps") Map<String, Object> paramMap);
+
     List<ProductEquipmentDO> findRentByCustomerId(@Param("customerId") Integer customerId);
+
     Integer getRentEquipmentCountByOrderNo(@Param("orderNo") String orderNo);
+
     List<ProductEquipmentDO> findByPurchaseOrderNo(@Param("purchaseOrderNo") String purchaseOrderNo);
+
     List<ProductEquipmentDO> listByPurchaseReceiveOrderProductId(@Param("maps") Map<String, Object> paramMap);
+
     Integer listByPurchaseReceiveOrderProductIdCount(@Param("maps") Map<String, Object> paramMap);
 }

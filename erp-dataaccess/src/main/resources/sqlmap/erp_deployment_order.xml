@@ -139,10 +139,10 @@
 			<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderStatus != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderStatus != ''">
 				and edo.deployment_order_status = #{maps.deploymentOrderQueryParam.deploymentOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.createStartTime != null &amp;&amp; maps.deploymentOrderQueryParam.createStartTime != ''">
+			<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.createStartTime != null ">
 				<![CDATA[ AND edo.create_time >= #{maps.deploymentOrderQueryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.createEndTime != null &amp;&amp; maps.deploymentOrderQueryParam.createEndTime != ''">
+			<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.createEndTime != null">
 				<![CDATA[ AND edo.create_time <= #{maps.deploymentOrderQueryParam.createEndTime} ]]>
 			</if>
 			<if test="true">

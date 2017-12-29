@@ -89,10 +89,10 @@
 		left join erp_supplier es1 on epdo.owner_supplier_id = es1.id
 		left join erp_purchase_order epo on epo.id=epdo.purchase_order_id
 	</select>
-	<select id="findListByPurchaseId" resultMap="PurchaseDeliveryOrderDO" parameterType="java.lang.String">
+	<select id="findListByPurchaseId" resultMap="PurchaseDeliveryOrderDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>,es1.supplier_name,epo.purchase_no purchase_order_no FROM (
 		SELECT <include refid="column_List"/> FROM erp_purchase_delivery_order epdo
-		WHERE epdo.purchase_order_id = #{purchaseOrderId, jdbcType=INTEGER} AND epdo.data_status = 1
+		WHERE epdo.purchase_order_id = #{purchaseOrderId} AND epdo.data_status = 1
 		) epdo LEFT JOIN erp_purchase_delivery_order_product epdop ON epdop.purchase_delivery_order_id = epdo.id AND epdop.data_status = 1
 		left join erp_purchase_delivery_order_material epdom on epdo.id = epdom.purchase_delivery_order_id and epdom.data_status=1
 		left join erp_supplier es1 on epdo.owner_supplier_id = es1.id
@@ -185,10 +185,10 @@
 			<if test="maps.queryParam.purchaseDeliveryOrderStatus != null">
 				and epdo.purchase_delivery_order_status = #{maps.queryParam.purchaseDeliveryOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+			<if test="maps.queryParam.createStartTime != null ">
 				<![CDATA[ AND epdo.create_time >= #{maps.queryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+			<if test="maps.queryParam.createEndTime != null ">
 				<![CDATA[ AND epdo.create_time <= #{maps.queryParam.createEndTime} ]]>
 			</if>
 			<if test="true">
@@ -217,10 +217,10 @@
 			<if test="maps.queryParam.purchaseDeliveryOrderStatus != null">
 				and epdo.purchase_delivery_order_status = #{maps.queryParam.purchaseDeliveryOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+			<if test="maps.queryParam.createStartTime != null ">
 				<![CDATA[ AND epdo.create_time >= #{maps.queryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+			<if test="maps.queryParam.createEndTime != null ">
 				<![CDATA[ AND epdo.create_time <= #{maps.queryParam.createEndTime} ]]>
 			</if>
 			<if test="true">

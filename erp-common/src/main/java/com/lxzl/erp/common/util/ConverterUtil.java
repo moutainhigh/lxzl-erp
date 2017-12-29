@@ -75,6 +75,20 @@ public class ConverterUtil {
                                 }
                                 doField.set(t,newList);
                             }
+                        }else if(field.getName().equals("children")){
+                            List poList = (List)field.get(o);
+                            String doListFieldName = "children";
+                            Field doField = doFiledMap.get(doListFieldName);
+                            if(doField!=null){
+                                Class doListGenericClazz = getGenericClazzForList(doField);
+                                List newList = new ArrayList();
+                                if(CollectionUtil.isNotEmpty(poList)){
+                                    for(Object oo : poList){
+                                        newList.add(convert(oo,doListGenericClazz));
+                                    }
+                                }
+                                doField.set(t,newList);
+                            }
                         }else{
                             String type = field.getType().getName();
                             Class cl = getWrapClass(type);
@@ -126,6 +140,20 @@ public class ConverterUtil {
                             }else{
                                 poListFieldName = field.getName().replace("DOList","List");
                             }
+                            Field poField = poFiledMap.get(poListFieldName);
+                            if(poField!=null){
+                                Class poListGenericClazz = getGenericClazzForList(poField);
+                                List newList = new ArrayList();
+                                if(CollectionUtil.isNotEmpty(doList)){
+                                    for(Object oo : doList){
+                                        newList.add(convert(oo,poListGenericClazz));
+                                    }
+                                }
+                                poField.set(t,newList);
+                            }
+                        }else if(field.getName().equals("children")){
+                            List doList = (List)field.get(o);
+                            String poListFieldName = "children";
                             Field poField = poFiledMap.get(poListFieldName);
                             if(poField!=null){
                                 Class poListGenericClazz = getGenericClazzForList(poField);

@@ -153,10 +153,10 @@
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.commitUserId != null &amp;&amp; maps.workflowQueryParam.commitUserId != ''">
 				and ewl.commit_user = #{maps.workflowQueryParam.commitUserId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.createStartTime != null &amp;&amp; maps.workflowQueryParam.createStartTime != ''">
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.createStartTime != null ">
 				<![CDATA[ AND ewl.create_time >= #{maps.workflowQueryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.createEndTime != null &amp;&amp; maps.workflowQueryParam.createEndTime != ''">
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.createEndTime != null ">
 				<![CDATA[ AND ewl.create_time <= #{maps.workflowQueryParam.createEndTime} ]]>
 			</if>
 			<if test="true">

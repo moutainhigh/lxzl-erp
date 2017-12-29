@@ -139,10 +139,10 @@
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.isNew != null">
 				and ebm.is_new = #{maps.bulkMaterialQueryParam.isNew, jdbcType=INTEGER}
 			</if>
-			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.createStartTime != null &amp;&amp; maps.bulkMaterialQueryParam.createStartTime != ''">
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.createStartTime != null ">
 				<![CDATA[ AND ebm.create_time >= #{maps.bulkMaterialQueryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.createEndTime != null &amp;&amp; maps.bulkMaterialQueryParam.createEndTime != ''">
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.createEndTime != null">
 				<![CDATA[ AND ebm.create_time <= #{maps.bulkMaterialQueryParam.createEndTime} ]]>
 			</if>
 			<if test="true">
@@ -281,15 +281,18 @@
 		</set>
 	</sql>
 
-	<insert id="saveList" parameterType="java.util.ArrayList">
+	<insert id="saveList" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
 		insert into erp_bulk_material (bulk_material_no,bulk_material_type,is_main_material,bulk_material_name,material_id,material_no,order_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,brand_id,material_model_id,material_capacity_value,bulk_material_price,current_equipment_id,current_equipment_no,bulk_material_status,is_new,data_status,remark,create_time,create_user,update_time,update_user)
-		<foreach item="bulkMaterialDO" collection="bulkMaterialDOList" separator="UNION ALL">
-			SELECT #{bulkMaterialDO.bulkMaterialNo},em.material_type, em.is_main_material, em.material_name ,#{bulkMaterialDO.materialId},em.material_no,#{bulkMaterialDO.orderNo},#{bulkMaterialDO.currentWarehouseId},#{bulkMaterialDO.currentWarehousePositionId},#{bulkMaterialDO.ownerWarehouseId},#{bulkMaterialDO.ownerWarehousePositionId},
-			em.brand_id,em.material_model_id,em.material_capacity_value,em.material_price,equipment_info.current_equipment_id ,#{bulkMaterialDO.currentEquipmentNo}, #{bulkMaterialDO.bulkMaterialStatus},#{bulkMaterialDO.isNew},#{bulkMaterialDO.dataStatus},#{bulkMaterialDO.remark},
+		values
+		<foreach item="bulkMaterialDO" collection="list" separator=",">
+			(#{bulkMaterialDO.bulkMaterialNo},#{bulkMaterialDO.bulkMaterialType}, #{bulkMaterialDO.isMainMaterial},
+			#{bulkMaterialDO.bulkMaterialName},#{bulkMaterialDO.materialId},#{bulkMaterialDO.materialNo},#{bulkMaterialDO.orderNo},
+			#{bulkMaterialDO.currentWarehouseId},#{bulkMaterialDO.currentWarehousePositionId},#{bulkMaterialDO.ownerWarehouseId},
+			#{bulkMaterialDO.ownerWarehousePositionId},#{bulkMaterialDO.brandId},#{bulkMaterialDO.materialModelId},#{bulkMaterialDO.materialCapacityValue},
+			#{bulkMaterialDO.bulkMaterialPrice},#{bulkMaterialDO.currentEquipmentId},#{bulkMaterialDO.currentEquipmentNo},
+			#{bulkMaterialDO.bulkMaterialStatus},#{bulkMaterialDO.isNew},#{bulkMaterialDO.dataStatus},#{bulkMaterialDO.remark},
 			#{bulkMaterialDO.createTime},#{bulkMaterialDO.createUser},#{bulkMaterialDO.updateTime},#{bulkMaterialDO.updateUser}
-			FROM erp_material em
-			LEFT JOIN (select epe.id as current_equipment_id from erp_product_equipment epe where epe.equipment_no = #{bulkMaterialDO.currentEquipmentNo}) equipment_info on 1=1
-			WHERE em.id = #{bulkMaterialDO.materialId}
+			)
 		</foreach>
 	</insert>
 

@@ -7,12 +7,9 @@ import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.purchaseOrder.UpdateReceiveRemarkGroup;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -46,6 +43,8 @@ public class ProductEquipment extends BasePO {
     private String currentWarehouseName;  //目前仓库名称
     private String productName;  //商品名称
     private BigDecimal srcPurchasePrice;
+
+    private String skuName;
 
     public Integer getProductEquipmentId() {
         return productEquipmentId;
@@ -221,5 +220,14 @@ public class ProductEquipment extends BasePO {
 
     public void setSrcPurchasePrice(BigDecimal srcPurchasePrice) {
         this.srcPurchasePrice = srcPurchasePrice;
+    }
+
+
+    public String getSkuName() {
+        return skuName;
+    }
+
+    public void setSkuName(String skuName) {
+        this.skuName = skuName;
     }
 }

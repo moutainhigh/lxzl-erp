@@ -14,6 +14,7 @@ import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.repairOrder.RepairOrderService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
@@ -76,7 +77,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
             return serviceResult;
         }
 
-        String repairOrderNo = GenerateNoUtil.generateRepairOrderNo(now); //设备维修单编号
+        String repairOrderNo = generateNoSupport.generateRepairOrderNo(now,repairOrder.getWarehouseNo()); //设备维修单编号
         Integer equipmentCount = 0;
         Integer bulkMaterialCount = 0;
         String warehouseNo = "";
@@ -964,4 +965,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
 
     @Autowired
     private WarehouseMapper warehouseMapper;
+
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
 }

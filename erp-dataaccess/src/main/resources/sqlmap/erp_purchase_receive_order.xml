@@ -103,7 +103,7 @@
 		LEFT JOIN erp_supplier es1 ON epro.product_supplier_id = es1.id
 		LEFT JOIN erp_purchase_order epo ON epo.id=epro.purchase_order_id
 	</select>
-	<select id="findListByPurchaseId" resultMap="PurchaseReceiveOrderDO" parameterType="java.lang.String">
+	<select id="findListByPurchaseId" resultMap="PurchaseReceiveOrderDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>,eu.real_name AS ownerName,es1.supplier_name AS productSupplierName,epo.purchase_no AS purchaseOrderNo FROM (
 		SELECT <include refid="column_List"/> FROM erp_purchase_receive_order epro
 		WHERE epro.purchase_order_id = #{purchaseOrderId, jdbcType=INTEGER} AND epro.data_status = 1
@@ -256,16 +256,16 @@
 			<if test="maps.queryParam.purchaseReceiveOrderStatus != null">
 				AND epro.purchase_receive_order_status = #{maps.queryParam.purchaseReceiveOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+			<if test="maps.queryParam.createStartTime != null ">
 				<![CDATA[ AND epro.create_time >= #{maps.queryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+			<if test="maps.queryParam.createEndTime != null ">
 				<![CDATA[ AND epro.create_time <= #{maps.queryParam.createEndTime} ]]>
 			</if>
-			<if test="maps.queryParam.confirmStartTime != null &amp;&amp; maps.queryParam.confirmStartTime != ''">
+			<if test="maps.queryParam.confirmStartTime != null ">
 				<![CDATA[ AND epro.confirm_time >= #{maps.queryParam.confirmStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.confirmEndTime != null &amp;&amp; maps.queryParam.confirmEndTime != ''">
+			<if test="maps.queryParam.confirmEndTime != null ">
 				<![CDATA[ AND epro.confirm_time <= #{maps.queryParam.confirmEndTime} ]]>
 			</if>
 			<if test="true">
@@ -306,16 +306,16 @@
 			<if test="maps.queryParam.purchaseReceiveOrderStatus != null">
 				AND epro.purchase_receive_order_status = #{maps.queryParam.purchaseReceiveOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+			<if test="maps.queryParam.createStartTime != null ">
 				<![CDATA[ AND epro.create_time >= #{maps.queryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+			<if test="maps.queryParam.createEndTime != null ">
 				<![CDATA[ AND epro.create_time <= #{maps.queryParam.createEndTime} ]]>
 			</if>
-			<if test="maps.queryParam.confirmStartTime != null &amp;&amp; maps.queryParam.confirmStartTime != ''">
+			<if test="maps.queryParam.confirmStartTime != null ">
 				<![CDATA[ AND epro.confirm_time >= #{maps.queryParam.confirmStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.confirmEndTime != null &amp;&amp; maps.queryParam.confirmEndTime != ''">
+			<if test="maps.queryParam.confirmEndTime != null ">
 				<![CDATA[ AND epro.confirm_time <= #{maps.queryParam.confirmEndTime} ]]>
 			</if>
 			<if test="true">

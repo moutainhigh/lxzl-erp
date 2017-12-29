@@ -88,10 +88,12 @@
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
 		insert into erp_stock_order_equipment (stock_order_no,item_refer_id, equipment_id, equipment_no, data_status, remark, create_time, create_user, update_time, update_user)
-		<foreach item="stockOrderEquipmentDO" collection="stockOrderEquipmentDOList" separator="UNION ALL">
-			SELECT #{stockOrderEquipmentDO.stockOrderNo},#{stockOrderEquipmentDO.itemReferId},epe.id,#{stockOrderEquipmentDO.equipmentNo},#{stockOrderEquipmentDO.dataStatus},#{stockOrderEquipmentDO.remark},
-			#{stockOrderEquipmentDO.createTime},#{stockOrderEquipmentDO.createUser},#{stockOrderEquipmentDO.updateTime},#{stockOrderEquipmentDO.updateUser}
-			FROM erp_product_equipment epe WHERE epe.equipment_no = #{stockOrderEquipmentDO.equipmentNo}
+		VALUES
+		<foreach item="stockOrderEquipmentDO" collection="stockOrderEquipmentDOList" separator=",">
+			(
+			#{stockOrderEquipmentDO.stockOrderNo},#{stockOrderEquipmentDO.itemReferId},#{stockOrderEquipmentDO.equipmentId},#{stockOrderEquipmentDO.equipmentNo},#{stockOrderEquipmentDO.dataStatus},#{stockOrderEquipmentDO.remark},
+			#{stockOrderEquipmentDO.createTime},#{stockOrderEquipmentDO.createUser},#{stockOrderEquipmentDO.updateTime},#{stockOrderEquipmentDO.updateUser
+			})
 		</foreach>
 	</insert>
 

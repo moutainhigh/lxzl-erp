@@ -17,26 +17,6 @@ public class GenerateNoUtil {
         return "P" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
     }
 
-    public static String generateOrderNo(Date currentTime) {
-        Random random = new Random();
-        return "O" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
-    }
-
-    public static String generatePurchaseOrderNo(Date currentTime, Integer userId) {
-        Random random = new Random();
-        return "PO" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + userId + (1000 + random.nextInt(900));
-    }
-
-    public static String generatePurchaseDeliveryOrderNo(Date currentTime, Integer purchaseOrderId) {
-        Random random = new Random();
-        return "PD" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + purchaseOrderId + (1000 + random.nextInt(900));
-    }
-
-    public static String generatePurchaseReceiveOrderNo(Date currentTime, Integer purchaseOrderId) {
-        Random random = new Random();
-        return "PR" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + purchaseOrderId + (1000 + random.nextInt(900));
-    }
-
     public static String generateAutoAllotStatusOrderNo(Date currentTime, Integer purchaseOrderId) {
         Random random = new Random();
         return "AO" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + purchaseOrderId + (1000 + random.nextInt(900));
@@ -55,54 +35,12 @@ public class GenerateNoUtil {
         Random random = new Random();
         return "M" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
     }
-
-    public static String generateSupplierNo(Date currentTime) {
-        Random random = new Random();
-        return "S" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
-    }
-
-    public static String generateCustomerCompanyNo(Date currentTime) {
-        Random random = new Random();
-        return "CC" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
-    }
-    public static String generateCustomerPersonNo(Date currentTime) {
-        Random random = new Random();
-        return "CP" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
-    }
     public static String generateEquipmentNo(Date currentTime, Integer warehouseId, int no) {
-        return "LX-EQUIPMENT-" + warehouseId + "-" + new SimpleDateFormat("yyyyMMdd").format(currentTime) + (10000 + no);
-    }
-
-    public static String generateWarehouseNo(Date currentTime) {
-        Random random = new Random();
-        return "W" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
-    }
-
-    public static String generateWorkflowLinkNo(Date currentTime) {
-        Random random = new Random();
-        return "WL" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
-    }
-
-    public static String generateDeploymentOrderNo(Date currentTime) {
-        Random random = new Random();
-        return "DO" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
-    }
-    public static String generateReturnOrderNo(Date currentTime) {
-        Random random = new Random();
-        return "RO" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
-    }
-    public static String generateChangeOrderNo(Date currentTime) {
-        Random random = new Random();
-        return "CO" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
+        return "LX-E-" + warehouseId + "-" + new SimpleDateFormat("yyyyMMdd").format(currentTime) + (10000 + no);
     }
     public static String generateStatementNo(Date currentTime) {
         Random random = new Random();
         return "SN" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
-    }
-
-    public static String generateRepairOrderNo(Date currentTime) {
-        Random random = new Random();
-        return "RE" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
     }
 
 }
