@@ -240,7 +240,7 @@
     <select id="listCount" resultType="java.lang.Integer" parameterType="map">
         select count(epe.id)
         from erp_product_equipment epe
-        INNER JOIN erp_product mp ON epe.product_id = mp.id
+        INNER JOIN erp_product ep ON epe.product_id = ep.id
         <where>
             <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.productEquipmentId != null">
                 and epe.id = #{maps.productEquipmentQueryParam.productEquipmentId, jdbcType=INTEGER}
