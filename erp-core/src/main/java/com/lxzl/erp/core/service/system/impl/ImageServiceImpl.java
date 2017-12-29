@@ -58,8 +58,6 @@ public class ImageServiceImpl extends BaseServiceImpl implements ImageService {
                 imgDO.setOriginalName(file.getOriginalFilename());
                 imgDO.setImgUrl(fileId);
                 imgDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                imgDO.setCreateUser(loginUser.getUserId().toString());
-                imgDO.setUpdateUser(loginUser.getUserId().toString());
                 imgDO.setCreateTime(currentTime);
                 imgDO.setUpdateTime(currentTime);
                 imgMysqlMapper.save(imgDO);
