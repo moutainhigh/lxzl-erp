@@ -1299,12 +1299,14 @@ public class OrderServiceImpl implements OrderService {
         Map<Integer, OrderMaterialDO> updateOrderMaterialDOMap = new HashMap<>();
         List<OrderMaterialDO> dbOrderMaterialDOList = orderMaterialMapper.findByOrderId(orderId);
         Map<Integer, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(dbOrderMaterialDOList, "id");
-        for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
-            if (dbOrderMaterialDOMap.get(orderMaterialDO.getId()) != null) {
-                updateOrderMaterialDOMap.put(orderMaterialDO.getMaterialId(), orderMaterialDO);
-                dbOrderMaterialDOMap.remove(orderMaterialDO.getId());
-            } else {
-                saveOrderMaterialDOMap.put(orderMaterialDO.getMaterialId(), orderMaterialDO);
+        if(CollectionUtil.isNotEmpty(orderMaterialDOList)){
+            for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+                if (dbOrderMaterialDOMap.get(orderMaterialDO.getId()) != null) {
+                    updateOrderMaterialDOMap.put(orderMaterialDO.getMaterialId(), orderMaterialDO);
+                    dbOrderMaterialDOMap.remove(orderMaterialDO.getId());
+                } else {
+                    saveOrderMaterialDOMap.put(orderMaterialDO.getMaterialId(), orderMaterialDO);
+                }
             }
         }
 

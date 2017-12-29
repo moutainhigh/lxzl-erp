@@ -38,7 +38,7 @@ public class AmountSupport {
         int nextAllDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(returnEndDate);
 
         if (returnEndDateDay >= rentStartDateDay) {
-            nextSurplusDays = returnEndDateDay - rentStartDateDay;
+            nextSurplusDays = returnEndDateDay - rentStartDateDay + 1;
         } else {
             previousSurplusDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(DateUtil.monthInterval(returnEndDate, -1)) - rentStartDateDay;
             nextSurplusDays = rentStartDateDay;

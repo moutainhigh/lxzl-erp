@@ -16,7 +16,7 @@ public class StatementOrderControllerTest  extends ERPUnTransactionalTest {
     @Test
     public void createNew() throws Exception {
         StatementOrderQueryParam param = new StatementOrderQueryParam();
-        param.setOrderNo("O201712222007232111047");
+        param.setOrderNo("O201712291135160661321");
         TestResult testResult = getJsonTestResult("/statementOrder/createNew", param);
     }
 
