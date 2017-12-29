@@ -15,6 +15,7 @@ import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.product.ProductService;
@@ -174,7 +175,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         }
         //创建租赁退换单
         ReturnOrderDO returnOrderDO = new ReturnOrderDO();
-        returnOrderDO.setReturnOrderNo(GenerateNoUtil.generateReturnOrderNo(now));
+        returnOrderDO.setReturnOrderNo(generateNoSupport.generateReturnOrderNo(now,customerDO.getId()));
         returnOrderDO.setCustomerId(customerDO.getId());
         returnOrderDO.setCustomerNo(customerDO.getCustomerNo());
         returnOrderDO.setReturnMode(addReturnOrderParam.getReturnMode());
@@ -1112,6 +1113,8 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     private OrderService orderService;
     @Autowired
     private StatementService statementService;
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
 
 
 }

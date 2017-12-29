@@ -12,6 +12,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
@@ -80,7 +81,7 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
-        orderDO.setOrderNo(GenerateNoUtil.generateOrderNo(currentTime));
+        orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime,orderDO.getBuyerCustomerId()));
         orderDO.setOrderSellerId(loginUser.getUserId());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
         orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -1683,4 +1684,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderTimeAxisSupport orderTimeAxisSupport;
+
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
 }

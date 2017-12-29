@@ -13,6 +13,7 @@ import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.changeOrder.ChangeOrderService;
 import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
 import com.lxzl.erp.core.service.material.BulkMaterialService;
@@ -180,7 +181,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         }
         //创建租赁换货单
         ChangeOrderDO changeOrderDO = new ChangeOrderDO();
-        changeOrderDO.setChangeOrderNo(GenerateNoUtil.generateChangeOrderNo(now));
+        changeOrderDO.setChangeOrderNo(generateNoSupport.generateChangeOrderNo(now,customerDO.getId()));
         changeOrderDO.setCustomerId(customerDO.getId());
         changeOrderDO.setCustomerNo(customerDO.getCustomerNo());
         changeOrderDO.setTotalChangeProductCount(totalChangeProductCount);
@@ -1425,4 +1426,6 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     private OrderProductMapper orderProductMapper;
     @Autowired
     private StatementService statementService;
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
 }

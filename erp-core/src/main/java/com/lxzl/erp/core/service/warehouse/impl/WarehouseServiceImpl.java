@@ -20,6 +20,7 @@ import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
@@ -96,6 +97,9 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
 
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> addWarehouse(Warehouse warehouse) {
@@ -116,7 +120,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
 
         WarehouseDO warehouseDO = ConverterUtil.convert(warehouse, WarehouseDO.class);
-        warehouseDO.setWarehouseNo(GenerateNoUtil.generateWarehouseNo(currentTime));
+        warehouseDO.setWarehouseNo(generateNoSupport.generateWarehouseNo(warehouseDO.getSubCompanyId(),warehouseDO.getWarehouseType()));
         warehouseDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         warehouseDO.setUpdateUser(loginUser.getUserId().toString());
         warehouseDO.setCreateUser(loginUser.getUserId().toString());
@@ -149,7 +153,6 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
 
         WarehouseDO warehouseDO = ConverterUtil.convert(warehouse, WarehouseDO.class);
-        warehouseDO.setWarehouseNo(GenerateNoUtil.generateWarehouseNo(currentTime));
         warehouseDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         warehouseDO.setUpdateUser(loginUser.getUserId().toString());
         warehouseDO.setCreateUser(loginUser.getUserId().toString());

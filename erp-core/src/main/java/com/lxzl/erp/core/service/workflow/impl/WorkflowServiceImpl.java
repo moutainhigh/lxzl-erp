@@ -13,6 +13,7 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.VerifyReceiver;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.message.MessageService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.workflow.WorkFlowManager;
@@ -69,6 +70,9 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -439,7 +443,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         WorkflowNodeDO lastWorkflowNodeDO = workflowNodeDOList.get(workflowNodeDOList.size() - 1);
 
         WorkflowLinkDO workflowLinkDO = new WorkflowLinkDO();
-        workflowLinkDO.setWorkflowLinkNo(GenerateNoUtil.generateWorkflowLinkNo(currentTime));
+        workflowLinkDO.setWorkflowLinkNo(generateNoSupport.generateWorkflowLinkNo(currentTime, loginUser.getUserId()));
         workflowLinkDO.setWorkflowType(workflowTemplateDO.getWorkflowType());
         workflowLinkDO.setWorkflowTemplateId(workflowTemplateDO.getId());
         workflowLinkDO.setWorkflowReferNo(workflowReferNo);

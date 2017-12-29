@@ -16,6 +16,7 @@ import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.product.ProductService;
@@ -117,6 +118,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private ProductEquipmentMapper productEquipmentMapper;
     @Autowired
     private BulkMaterialMapper bulkMaterialMapper;
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
@@ -159,7 +162,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
 
         PurchaseOrderDO purchaseOrderDO = buildPurchaseOrder(now, purchaseOrder, purchaseOrderDetail, warehouseDO);
-        purchaseOrderDO.setPurchaseNo(GenerateNoUtil.generatePurchaseOrderNo(now, userSupport.getCurrentUserId()));
+        purchaseOrderDO.setPurchaseNo(generateNoSupport.generatePurchaseOrderNo(now, purchaseOrderDO.getWarehouseId()));
         purchaseOrderDO.setCreateUser(userSupport.getCurrentUserId().toString());
         purchaseOrderDO.setCreateTime(now);
         purchaseOrderDO.setWarehouseId(warehouseDO.getId());
@@ -1796,7 +1799,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         Date now = new Date();
         PurchaseDeliveryOrderDO purchaseDeliveryOrderDO = new PurchaseDeliveryOrderDO();
         purchaseDeliveryOrderDO.setPurchaseOrderId(purchaseOrderDO.getId());
-        purchaseDeliveryOrderDO.setPurchaseDeliveryNo(GenerateNoUtil.generatePurchaseDeliveryOrderNo(now, purchaseOrderDO.getId()));
+        purchaseDeliveryOrderDO.setPurchaseDeliveryNo(generateNoSupport.generatePurchaseDeliveryOrderNo(now, purchaseOrderDO.getWarehouseId()));
         purchaseDeliveryOrderDO.setWarehouseId(purchaseOrderDO.getWarehouseId());
         purchaseDeliveryOrderDO.setWarehouseSnapshot(purchaseOrderDO.getWarehouseSnapshot());
         purchaseDeliveryOrderDO.setIsInvoice(purchaseOrderDO.getIsInvoice());
@@ -1890,7 +1893,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         PurchaseReceiveOrderDO purchaseReceiveOrderDO = new PurchaseReceiveOrderDO();
         purchaseReceiveOrderDO.setPurchaseDeliveryOrderId(purchaseDeliveryOrderDO.getId());
         purchaseReceiveOrderDO.setPurchaseOrderId(purchaseDeliveryOrderDO.getPurchaseOrderId());
-        purchaseReceiveOrderDO.setPurchaseReceiveNo(GenerateNoUtil.generatePurchaseReceiveOrderNo(now, purchaseDeliveryOrderDO.getPurchaseOrderId()));
+        purchaseReceiveOrderDO.setPurchaseReceiveNo(generateNoSupport.generatePurchaseReceiveOrderNo(now, purchaseDeliveryOrderDO.getWarehouseId()));
         purchaseReceiveOrderDO.setWarehouseId(purchaseDeliveryOrderDO.getWarehouseId());
         purchaseReceiveOrderDO.setWarehouseSnapshot(purchaseDeliveryOrderDO.getWarehouseSnapshot());
         purchaseReceiveOrderDO.setIsInvoice(purchaseDeliveryOrderDO.getIsInvoice());
