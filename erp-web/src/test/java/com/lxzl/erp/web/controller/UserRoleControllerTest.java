@@ -120,7 +120,7 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void saveRoleMenuJSON() throws Exception {
-        String jsonStr = "{\"menuList\":[{\"menuId\":\"200065\"},{\"menuId\":\"200071\"},{\"menuId\":\"200072\"},{\"menuId\":\"200057\"}],\"roleId\":600023}";
+        String jsonStr = "{\"menuList\":[{\"menuId\":\"200065\"},{\"menuId\":\"200081\"},{\"menuId\":\"200083\"}],\"roleId\":600024}";
         RoleMenu roleMenu = JSONUtil.convertJSONToBean(jsonStr,RoleMenu.class );
         TestResult testResult = getJsonTestResult("/userRole/saveRoleMenu",roleMenu);
     }
@@ -128,7 +128,7 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
     @Test
     public void getRoleMenuList() throws Exception {
         RoleMenuQueryParam param = new RoleMenuQueryParam();
-        param.setRoleId(600001);
+        param.setRoleId(600024);
         TestResult testResult = getJsonTestResult("/userRole/getRoleMenuList",param);
     }
     @Test
