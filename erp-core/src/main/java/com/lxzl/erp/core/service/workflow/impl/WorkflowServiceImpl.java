@@ -371,7 +371,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDetailDO.setCreateTime(currentTime);
                 workflowLinkDetailMapper.save(workflowLinkDetailDO);
                 workflowLinkDO.setWorkflowStep(previousWorkflowNodeDO.getWorkflowStep());
-                messageService.superSendMessage(MessageContant.WORKFLOW_VERIFY_BACK_TITLE, MessageContant.WORKFLOW_VERIFY_BACK_CONTENT, nextVerifyUser);
+                messageService.superSendMessage(MessageContant.WORKFLOW_VERIFY_BACK_TITLE, MessageContant.WORKFLOW_VERIFY_BACK_CONTENT, workflowLinkDetailDO.getVerifyUser());
             } else {
                 // 如果第一步就驳回了，那么就相当于驳回到根部
                 noticeBusinessModule = true;
@@ -392,11 +392,6 @@ public class WorkflowServiceImpl implements WorkflowService {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
                 result.setErrorCode(ErrorCode.SYSTEM_ERROR);
                 return result;
-            }
-            if(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus)){
-                messageService.superSendMessage(MessageContant.WORKFLOW_VERIFY_PASS_TITLE, MessageContant.WORKFLOW_VERIFY_PASS_CONTENT, nextVerifyUser);
-            }else{
-                messageService.superSendMessage(MessageContant.WORKFLOW_VERIFY_BACK_TITLE, MessageContant.WORKFLOW_VERIFY_BACK_CONTENT, nextVerifyUser);
             }
         }
         workflowLinkDO.setUpdateUser(loginUser.getUserId().toString());
