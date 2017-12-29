@@ -303,14 +303,11 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setResult(customerDO.getCustomerNo());
             return serviceResult;
         } else {//有风控信息则修改
-            CustomerRiskManagementDO customerRiskManagementDOForUpdate = new CustomerRiskManagementDO();
+            CustomerRiskManagementDO customerRiskManagementDOForUpdate = CustomerRiskManagementConverter.convertCustomerRiskManagement(customerRiskManagement);
             customerRiskManagementDOForUpdate.setId(customerDO.getCustomerRiskManagementDO().getId());
             customerRiskManagementDOForUpdate.setRemark(customerRiskManagement.getRemark());
             customerRiskManagementDOForUpdate.setUpdateTime(now);
             customerRiskManagementDOForUpdate.setUpdateUser(userSupport.getCurrentUserId().toString());
-            customerRiskManagementDOForUpdate.setCreditAmount(customerRiskManagement.getCreditAmount());
-            customerRiskManagementDOForUpdate.setDepositCycle(customerRiskManagement.getDepositCycle());
-            customerRiskManagementDOForUpdate.setPaymentCycle(customerRiskManagement.getPaymentCycle());
             customerRiskManagementMapper.update(customerRiskManagementDOForUpdate);
             serviceResult.setErrorCode(ErrorCode.SUCCESS);
             serviceResult.setResult(customerDO.getCustomerNo());
