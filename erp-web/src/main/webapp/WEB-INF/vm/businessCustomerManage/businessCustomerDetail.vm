@@ -7,86 +7,113 @@
 </head>
 <body class="profile-page">
     #parse("layout/toolbox.vm")
-<div id="main">
+    <div id="main">
     #parse("layout/navbar.vm")
     #parse("layout/sidebar.vm")
     <section id="content_wrapper">
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="pn animated fadeIn">
+            <form id="customerDetailForm">
 
-            <div class="pv30 ph40 bg-light dark br-b br-grey posr">
-                <script type="text/html" id="customerHeadTpl">
-                    {{#customer}}
-                    <div class="w200 text-center pr30 hidden-xs">
-                        <img src="${staticManagement}img/author.png" class="responsive" width="100%" />
-                    </div>
-                    <div class="va-t m30">
-                        <div class="col-md-4">
-                            <h2 class=""> {{customerCompany.companyName}} <small>{{customerNo}}</small></h2>
-                            <p class="fs15"><b>用户类型：</b>{{cutomerTypeValue}}</p>
-                            <p class="fs15"><b>是否禁用：</b>{{isDisabledValue}}</p>
-                            <p class="fs15"><b>联系方式：</b><span class="mr10">{{customerCompany.connectRealName}}</span><span>{{customerCompany.connectPhone}}</span></p>
-                            <p class="fs15"><b>创建时间：</b>{{createTimeFormat}}</p>
+                <div class="pv30 ph40 bg-light dark br-b br-grey posr">
+                    <script type="text/html" id="customerHeadTpl">
+                        {{#customer}}
+                        <div class="w200 text-center pr30 hidden-xs">
+                            <img src="${staticManagement}img/author.png" class="responsive" width="100%" />
                         </div>
-                        <div class="col-md-4">
-                            <h2 style="visibility: hidden;">&nbsp;</h2>
-                            <p class="fs15"><b>营业执照号：</b>{{customerCompany.businessLicenseNo}}</p>
-                            <p class="fs15"><b>法人：</b>{{customerCompany.legalPerson}}</p>
-                            <p class="fs15"><b>法人身份证：</b>{{customerCompany.legalPersonNo}}</p>
-                        </div>
-                        <div class="col-md-4">
-                            <h2 style="visibility: hidden;">&nbsp;</h2>
-                            <p class="fs15"><b>省份：</b>{{customerCompany.provinceName}}</p>
-                            <p class="fs15"><b>城市：</b>{{customerCompany.cityName}}</p>
-                            <p class="fs15"><b>地区：</b>{{customerCompany.districtName}}</p>
-                            <p class="fs15"><b>地址：</b>{{customerCompany.address}}</p>
-                            <p class="fs15"><b>备注：</b>{{customerCompany.remark}}</p>
-                        </div>
-                    </div>
-                    {{/customer}}
-                </script>
-                <div class="table-layout" id="customerHead"></div>
-            </div>
-
-            <div class="p25 pt35">
-                <div class="row">
-                    <div class="col-md-4">
-                        <h4 class="page-header mtn br-light text-muted hidden">用户信息</h4>
-                        #parse("component/customer/risk.vm")
-                        #parse("component/customer/address.vm")
-                    </div>
-                    <div class="col-md-8">
-
-                        <div class="panel">
-                            <div class="panel-heading">
-                                <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
-                                    <li class="">
-                                        <a href="#tab2_1" data-toggle="tab" aria-expanded="false">订单</a>
-                                    </li>
-                                    <li class="">
-                                        <a href="#tab2_2" data-toggle="tab" aria-expanded="false">维修单</a>
-                                    </li>
-                                    <li class="active">
-                                        <a href="#tab2_3" data-toggle="tab" aria-expanded="true">退货单</a>
-                                    </li>
-                                </ul>
+                        <div class="va-t m30">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h2 class=""> {{customerCompany.companyName}} <small>{{customerNo}}</small></h2>
+                                    <p class="fs15"><b>用户类型：</b>{{cutomerTypeValue}}</p>
+                                    <p class="fs15"><b>是否禁用：</b>{{isDisabledValue}}</p>
+                                    <p class="fs15"><b>联系方式：</b><span class="mr10">{{customerCompany.connectRealName}}</span><span>{{customerCompany.connectPhone}}</span></p>
+                                    <p class="fs15"><b>创建时间：</b>{{#time}}{{createTime}}{{/time}}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h2 style="visibility: hidden;">&nbsp;</h2>
+                                    <p class="fs15"><b>营业执照号：</b>{{customerCompany.businessLicenseNo}}</p>
+                                    <p class="fs15"><b>法人：</b>{{customerCompany.legalPerson}}</p>
+                                    <p class="fs15"><b>法人身份证：</b>{{customerCompany.legalPersonNo}}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h2 style="visibility: hidden;">&nbsp;</h2>
+                                    <p class="fs15"><b>省份：</b>{{customerCompany.provinceName}}</p>
+                                    <p class="fs15"><b>城市：</b>{{customerCompany.cityName}}</p>
+                                    <p class="fs15"><b>地区：</b>{{customerCompany.districtName}}</p>
+                                    <p class="fs15"><b>地址：</b>{{customerCompany.address}}</p>
+                                    <p class="fs15"><b>备注：</b>{{customerCompany.remark}}</p>
+                                </div>
                             </div>
-                            <div class="panel-body">
-                                <div class="tab-content pn br-n">
-                                    <div id="tab2_1" class="tab-pane">
-                                        <div class="row">
-
-                                        </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <p class="fs15"><b>账户金额：</b>￥{{#price}}{{customerAccount.balanceAmount}}{{/price}}</p>
+                                    <div class="btn-group" id="actionButtons">
+                                        {{#manualActionButtons}}
+                                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-customerno="{{customerNo}}">
+                                            <i class="{{iClass}}"></i> {{text}}
+                                        </a>
+                                        {{/manualActionButtons}}
                                     </div>
-                                    <div id="tab2_2" class="tab-pane">
-                                        <div class="row">
+                                </div>
+                                <div class="col-md-3">
+                                    <p class="fs15"><b>冻结金额：</b>￥{{#price}}{{customerAccount.totalFrozenAmount}}{{/price}}</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p class="fs15"><b>租金押金：</b>￥{{#price}}{{customerAccount.rentDepositAmount}}{{/price}}</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p class="fs15"><b>设备押金：</b>￥{{#price}}{{customerAccount.depositAmount}}{{/price}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {{/customer}}
+                    </script>
+                    <div class="table-layout" id="customerHead"></div>
 
+                </div>
+
+                <div class="p25 pt35">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h4 class="page-header mtn br-light text-muted hidden">用户信息</h4>
+                            #parse("component/customer/risk.vm")
+                            #parse("component/customer/address.vm")
+                        </div>
+                        <div class="col-md-8">
+
+                            <div class="panel">
+                                <div class="panel-heading">
+                                    <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
+                                        <li class="">
+                                            <a href="#tab2_1" data-toggle="tab" aria-expanded="false">订单</a>
+                                        </li>
+                                        <li class="">
+                                            <a href="#tab2_2" data-toggle="tab" aria-expanded="false">维修单</a>
+                                        </li>
+                                        <li class="active">
+                                            <a href="#tab2_3" data-toggle="tab" aria-expanded="true">退货单</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="tab-content pn br-n">
+                                        <div id="tab2_1" class="tab-pane">
+                                            <div class="row">
+
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div id="tab2_3" class="tab-pane active">
-                                        <div class="row">
+                                        <div id="tab2_2" class="tab-pane">
+                                            <div class="row">
 
+                                            </div>
+                                        </div>
+                                        <div id="tab2_3" class="tab-pane active">
+                                            <div class="row">
+
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -94,32 +121,32 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
+            </form>
         </section>
     </section>
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
-<script type="text/javascript">
-    management_load_script('${staticManagement}/js',
-            'manage.customer.business.detail.js',
-            'manage.customer.risk.js',
-            'manage.customer.address.js',
-            'manage.customer.address.add.js',
-            'manage.customer.address.edit.js');
-</script>
-<script type="text/javascript">
-    //功能事件初始化
-    Rental.init();
-    Layout.init();
-    BusinessCustomerDetail.init();
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js',
+                'manage.customer.handle.mixin.js',
+                'manage.customer.business.detail.js',
+                'manage.customer.risk.js',
+                'manage.customer.address.js',
+                'manage.customer.address.add.js',
+                'manage.customer.address.edit.js',
+                'modal.input.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        BusinessCustomerDetail.init();
 
-    //UI效果初始化
-    Core.init();
-    Demo.init();
-</script>
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+    </script>
 </body>
 </html>

@@ -203,6 +203,7 @@
                                         {{/properties}}
 
                                     </script>
+
                                     <div class="section"><div class="col-md-12" id="skuPropertiesContainer"></div></div>
 
                                     <script type="text/html" id="skuTableTpl">

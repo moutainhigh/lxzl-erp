@@ -20,12 +20,6 @@ public class CustomerPersonDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
-	private String personName;//用户名'
-	private String personNo;//身份证号'
-	private String consignAddress;//收货地址'
-	private String connectRealName;//紧急联系人姓名'
-	private String connectPhone;//紧急联系人电话'
-
 	@Transient
 	private String provinceName;
 	@Transient
@@ -143,45 +137,5 @@ public class CustomerPersonDO  extends BaseDO {
 
 	public void setDistrictName(String districtName) {
 		this.districtName = districtName;
-	}
-
-	public String getPersonName() {
-		return personName;
-	}
-
-	public void setPersonName(String personName) {
-		this.personName = personName;
-	}
-
-	public String getPersonNo() {
-		return personNo;
-	}
-
-	public void setPersonNo(String personNo) {
-		this.personNo = personNo;
-	}
-
-	public String getConsignAddress() {
-		return consignAddress;
-	}
-
-	public void setConsignAddress(String consignAddress) {
-		this.consignAddress = consignAddress;
-	}
-
-	public String getConnectRealName() {
-		return connectRealName;
-	}
-
-	public void setConnectRealName(String connectRealName) {
-		this.connectRealName = connectRealName;
-	}
-
-	public String getConnectPhone() {
-		return connectPhone;
-	}
-
-	public void setConnectPhone(String connectPhone) {
-		this.connectPhone = connectPhone;
 	}
 }

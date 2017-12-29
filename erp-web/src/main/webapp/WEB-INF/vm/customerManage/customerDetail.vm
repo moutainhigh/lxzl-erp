@@ -14,7 +14,7 @@
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
             <section id="content" class="pn animated fadeIn">
-
+                <form id="customerDetail">
                 <div class="pv30 ph40 bg-light dark br-b br-grey posr">
                     <script type="text/html" id="customerHeadTpl">
                         {{#customer}}
@@ -22,26 +22,49 @@
                             <img src="${staticManagement}img/author.png" class="responsive" width="100%" />
                         </div>
                         <div class="va-t m30">
-                            <div class="col-md-6">
-                                <h2 class=""> {{customerPerson.realName}} <small>{{customerNo}}</small></h2>
-                                <p class="fs15"><b>用户类型：</b>{{cutomerTypeValue}}</p>
-                                <p class="fs15"><b>是否禁用：</b>{{isDisabledValue}}</p>
-                                <p class="fs15"><b>联系方式：</b><span class="mr10">{{customerPerson.email}}</span><span>{{customerPerson.phone}}</span></p>
-                                <p class="fs15"><b>创建时间：</b>{{createTimeFormat}}</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h2 class=""> {{customerPerson.realName}} <small>{{customerNo}}</small></h2>
+                                    <p class="fs15"><b>用户类型：</b>{{cutomerTypeValue}}</p>
+                                    <p class="fs15"><b>是否禁用：</b>{{isDisabledValue}}</p>
+                                    <p class="fs15"><b>联系方式：</b><span class="mr10">{{customerPerson.email}}</span><span>{{customerPerson.phone}}</span></p>
+                                    <p class="fs15"><b>创建时间：</b>{{createTimeFormat}}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="fs15"><b>省份：</b>{{customerPerson.provinceName}}</p>
+                                    <p class="fs15"><b>城市：</b>{{customerPerson.cityName}}</p>
+                                    <p class="fs15"><b>地区：</b>{{customerPerson.districtName}}</p>
+                                    <p class="fs15"><b>地址：</b>{{customerPerson.address}}</p>
+                                    <p class="fs15"><b>备注：</b>{{customerPerson.remark}}</p>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <p class="fs15"><b>省份：</b>{{customerPerson.provinceName}}</p>
-                                <p class="fs15"><b>城市：</b>{{customerPerson.cityName}}</p>
-                                <p class="fs15"><b>地区：</b>{{customerPerson.districtName}}</p>
-                                <p class="fs15"><b>地址：</b>{{customerPerson.address}}</p>
-                                <p class="fs15"><b>备注：</b>{{customerPerson.remark}}</p>
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <p class="fs15"><b>账户金额：</b>￥{{#price}}{{customerAccount.balanceAmount}}{{/price}}</p>
+                                    <div class="btn-group" id="actionButtons">
+                                        {{#manualActionButtons}}
+                                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-customerno="{{customerNo}}">
+                                            <i class="{{iClass}}"></i> {{text}}
+                                        </a>
+                                        {{/manualActionButtons}}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <p class="fs15"><b>冻结金额：</b>￥{{#price}}{{customerAccount.totalFrozenAmount}}{{/price}}</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p class="fs15"><b>租金押金：</b>￥{{#price}}{{customerAccount.rentDepositAmount}}{{/price}}</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p class="fs15"><b>设备押金：</b>￥{{#price}}{{customerAccount.depositAmount}}{{/price}}</p>
+                                </div>
                             </div>
                         </div>
                         {{/customer}}
                     </script>
                     <div class="table-layout" id="customerHead"></div>
                 </div>
-
                 <div class="p25 pt35">
                     <div class="row">
                         <div class="col-md-4">
@@ -88,7 +111,7 @@
                         </div>
                     </div>
                 </div>
-
+                </form>
             </section>
         </section>
         #parse("layout/sidebarRight.vm")
@@ -98,11 +121,13 @@
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
+                'manage.customer.handle.mixin.js',
                 'manage.customer.detail.js',
                 'manage.customer.risk.js',
                 'manage.customer.address.js',
                 'manage.customer.address.add.js',
-                'manage.customer.address.edit.js');
+                'manage.customer.address.edit.js',
+                'modal.input.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
