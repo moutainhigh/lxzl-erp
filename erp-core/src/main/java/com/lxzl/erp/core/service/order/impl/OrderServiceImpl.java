@@ -229,20 +229,6 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
-        if (OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getPayStatus())
-                || OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getPayStatus())
-                || OrderStatus.ORDER_STATUS_CANCEL.equals(orderDO.getPayStatus())) {
-            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
-            return result;
-        }
-        if (PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
-            result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
-            return result;
-        }
-
-        orderDO.setPayStatus(PayStatus.PAY_STATUS_PAID);
-        orderDO.setPayTime(currentTime);
-        orderMapper.update(orderDO);
 
         result.setResult(orderNo);
         result.setErrorCode(ErrorCode.SUCCESS);

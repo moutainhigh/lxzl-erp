@@ -235,7 +235,7 @@ public class StatementServiceImpl implements StatementService {
         statementOrderDO.setUpdateTime(currentTime);
         statementOrderDO.setUpdateUser(loginUser.getUserId().toString());
         statementOrderMapper.update(statementOrderDO);
-        Set<Integer> orderIdSet = new HashSet<>();
+        Map<Integer, BigDecimal> orderPaidMap = new HashMap<>();
         for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDO.getStatementOrderDetailDOList()) {
             if (!StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                 statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
@@ -249,14 +249,17 @@ public class StatementServiceImpl implements StatementService {
                 statementOrderDetailDO.setUpdateTime(currentTime);
                 statementOrderDetailDO.setUpdateUser(loginUser.getUserId().toString());
                 statementOrderDetailMapper.update(statementOrderDetailDO);
-                orderIdSet.add(statementOrderDetailDO.getOrderId());
+                orderPaidMap.put(statementOrderDetailDO.getOrderId(), BigDecimalUtil.add(orderPaidMap.get(statementOrderDetailDO.getOrderId()), needStatementDetailRentPayAmount));
             }
         }
 
-        for (Integer orderId : orderIdSet) {
+        for (Map.Entry<Integer, BigDecimal> entry : orderPaidMap.entrySet()) {
+            Integer orderId = entry.getKey();
+            BigDecimal paidAmount = entry.getValue();
             OrderDO orderDO = orderMapper.findByOrderId(orderId);
             if (!PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
                 orderDO.setPayStatus(PayStatus.PAY_STATUS_PAID);
+                orderDO.setTotalPaidOrderAmount(BigDecimalUtil.add(orderDO.getTotalPaidOrderAmount(), paidAmount));
                 orderDO.setPayTime(currentTime);
                 orderMapper.update(orderDO);
             }
