@@ -24,138 +24,108 @@ import java.util.*;
 @Service("messageService")
 public class MessageServiceImpl implements MessageService {
 
-	@Autowired
-	private UserSupport userSupport;
+    @Autowired
+    private UserSupport userSupport;
 
-	@Autowired
-	private MessageMapper messageMapper;
+    @Autowired
+    private MessageMapper messageMapper;
 
-	@Autowired
-	private UserMapper userMapper;
-	@Override
-	public ServiceResult<String, Integer> sendMessage(Message message) {
-		return sendMessageDetail(message,userSupport.getCurrentUserId());
-	}
-	@Override
-	public ServiceResult<String, Integer> superSendMessage(Message message) {
-		return sendMessageDetail(message,CommonConstant.SUPER_USER_ID);
-	}
+    @Autowired
+    private UserMapper userMapper;
 
-	private ServiceResult<String, Integer> sendMessageDetail(Message message , Integer senderId) {
-		Date currentTime = new Date();
-		ServiceResult<String, Integer> result = new ServiceResult<>();
+    @Override
+    public ServiceResult<String, Integer> sendMessage(Message message) {
+        return sendMessageDetail(message, userSupport.getCurrentUserId());
+    }
 
+    @Override
+    public ServiceResult<String, Integer> superSendMessage(Message message) {
+        return sendMessageDetail(message, CommonConstant.SUPER_USER_ID);
+    }
 
-		List<MessageDO> messageDOList = new ArrayList<>();
-		//获取收信人的列表
-		List<Integer> receiverIdList = message.getReceiverUserIdList();
-
-		//将收信人进行去重操作
-		Set<Integer> receiverIdSet = new HashSet<>();
-		for (Integer receiverId : receiverIdList) {
-			receiverIdSet.add(receiverId);
-		}
-		if(receiverIdSet.size() == 1 &&receiverIdSet.iterator().next().equals(userSupport.getCurrentUserId())){
-			result.setErrorCode(ErrorCode.MESSAGE_CAN_NOT_SEND_SELF);
-			return result;
-		}
-		//去重后的收信人保存到数据库表中
-		for (Integer receiverId: receiverIdSet) {
-			if(!receiverId.equals(userSupport.getCurrentUserId())){
-				UserDO user =userMapper.findByUserId(receiverId);
-				if (user == null){
-					result.setErrorCode(ErrorCode.USER_NAME_NOT_FOUND);
-					return result;
-				}
-				MessageDO messageDO = new MessageDO();
-				messageDO.setSenderUserId(senderId);
-				messageDO.setReceiverUserId(receiverId);
-				messageDO.setSendTime(currentTime);
-				messageDO.setTitle(message.getTitle());
-				messageDO.setMessageText(message.getMessageText());
-				messageDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-				messageDO.setCreateTime(currentTime);
-				messageDO.setCreateUser(userSupport.getCurrentUserId().toString());
-				messageDO.setUpdateTime(currentTime);
-				messageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-
-				messageDOList.add(messageDO);
-			}
-		}
-		if(CollectionUtil.isNotEmpty(messageDOList)){
-			messageMapper.batchSave(messageDOList);
-		}
-		result.setErrorCode(ErrorCode.SUCCESS);
-		return result;
-	}
-	@Override
-	public ServiceResult<String, Page<Message>> pageSendMessage(MessageQueryParam messageQueryParam) {
-		ServiceResult<String, Page<Message>> result = new ServiceResult<>();
-		//从分页参数中获取第几页，和每页页数的值，放入分页对象中
-		PageQuery pageQuery = new PageQuery(messageQueryParam.getPageNo(), messageQueryParam.getPageSize());
-
-		//将分页查询的条件存入map中
-		Map<String, Object> maps = new HashMap<>();
-		maps.put("start", pageQuery.getStart());
-		maps.put("pageSize", pageQuery.getPageSize());
-		maps.put("senderUserId",userSupport.getCurrentUserId());
-		maps.put("messageQueryParam", messageQueryParam);
-
-		//通过分页查询数据库，获取总的数据条数以及所有的数据
-		Integer totalCount = messageMapper.findSendMessageCountByParams(maps);
-		List<MessageDO> messageDOList = messageMapper.findSendMessageByParams(maps);
-
-		//将查询的数据转换为前端专用的数据
-		List<Message> messageList = ConverterUtil.convertList(messageDOList,Message.class);
-		Page<Message> page = new Page<>(messageList, totalCount, messageQueryParam.getPageNo(), messageQueryParam.getPageSize());
-
-		result.setErrorCode(ErrorCode.SUCCESS);
-		result.setResult(page);
-
-		return result;
-	}
-
-
-	@Override
-    public ServiceResult<String, Message> queryMessage(Message message) {
-        ServiceResult<String, Message> result = new ServiceResult<>();
-
-        //通过前端用户的Id来查询数据
-		MessageDO messageDO = messageMapper.findById(message.getMessageId());
-        if(messageDO == null){
-            result.setErrorCode(ErrorCode.MESSAGE_NOT_EXISTS);
+    @Override
+    public ServiceResult<String, Integer> superSendMessage(String title, String messageTest, Integer... userIds) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        if (userIds.length == 0) {
+            result.setErrorCode(ErrorCode.MESSAGE_RECEIVER_NOT_NULL);
             return result;
         }
-        //如果当前用户与收件人是同一个人，那么就将站内信的读取时间设置为现在时间
-		if (userSupport.getCurrentUserId().equals(messageDO.getReceiverUserId()) &&messageDO.getReadTime() == null){
-			messageDO.setReadTime(new Date());
-            messageMapper.update(messageDO);
+        Message message = new Message();
+        message.setTitle(title);
+        message.setMessageText(messageTest);
+        List<Integer> receiverUserIdList = new ArrayList<>();
+        Collections.addAll(receiverUserIdList, userIds);
+        message.setReceiverUserIdList(receiverUserIdList);
+        return sendMessageDetail(message, CommonConstant.SUPER_USER_ID);
+    }
 
+    private ServiceResult<String, Integer> sendMessageDetail(Message message, Integer senderId) {
+        Date currentTime = new Date();
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+
+
+        List<MessageDO> messageDOList = new ArrayList<>();
+        //获取收信人的列表
+        List<Integer> receiverIdList = message.getReceiverUserIdList();
+
+        //将收信人进行去重操作
+        Set<Integer> receiverIdSet = new HashSet<>();
+        for (Integer receiverId : receiverIdList) {
+            receiverIdSet.add(receiverId);
+        }
+        if (receiverIdSet.size() == 1 && receiverIdSet.iterator().next().equals(userSupport.getCurrentUserId())) {
+            result.setErrorCode(ErrorCode.MESSAGE_CAN_NOT_SEND_SELF);
+            return result;
+        }
+        //去重后的收信人保存到数据库表中
+        for (Integer receiverId : receiverIdSet) {
+            if (!receiverId.equals(userSupport.getCurrentUserId())) {
+                UserDO user = userMapper.findByUserId(receiverId);
+                if (user == null) {
+                    result.setErrorCode(ErrorCode.USER_NAME_NOT_FOUND);
+                    return result;
+                }
+                MessageDO messageDO = new MessageDO();
+                messageDO.setSenderUserId(senderId);
+                messageDO.setReceiverUserId(receiverId);
+                messageDO.setSendTime(currentTime);
+                messageDO.setTitle(message.getTitle());
+                messageDO.setMessageText(message.getMessageText());
+                messageDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                messageDO.setCreateTime(currentTime);
+                messageDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                messageDO.setUpdateTime(currentTime);
+                messageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+
+                messageDOList.add(messageDO);
+            }
+        }
+        if (CollectionUtil.isNotEmpty(messageDOList)) {
+            messageMapper.batchSave(messageDOList);
         }
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(ConverterUtil.convert(messageDO,Message.class));
         return result;
     }
 
     @Override
-    public ServiceResult<String, Page<Message>> pageReceiveMessage(MessageQueryParam messageQueryParam) {
+    public ServiceResult<String, Page<Message>> pageSendMessage(MessageQueryParam messageQueryParam) {
         ServiceResult<String, Page<Message>> result = new ServiceResult<>();
-		//从分页参数中获取第几页，和每页页数的值，放入分页对象中
+        //从分页参数中获取第几页，和每页页数的值，放入分页对象中
         PageQuery pageQuery = new PageQuery(messageQueryParam.getPageNo(), messageQueryParam.getPageSize());
 
-		//将分页查询的条件存入map中
+        //将分页查询的条件存入map中
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("receiverUserId",userSupport.getCurrentUserId());
+        maps.put("senderUserId", userSupport.getCurrentUserId());
         maps.put("messageQueryParam", messageQueryParam);
 
-		//通过分页查询数据库，获取总的数据条数以及所有的数据
-        Integer totalCount = messageMapper.findReceiveMessageCountByParams(maps);
-        List<MessageDO> messageDOList = messageMapper.findReceiveMessageByParams(maps);
+        //通过分页查询数据库，获取总的数据条数以及所有的数据
+        Integer totalCount = messageMapper.findSendMessageCountByParams(maps);
+        List<MessageDO> messageDOList = messageMapper.findSendMessageByParams(maps);
 
-		//将查询的数据转换为前端专用的数据
-        List<Message> messageList = ConverterUtil.convertList(messageDOList,Message.class);
+        //将查询的数据转换为前端专用的数据
+        List<Message> messageList = ConverterUtil.convertList(messageDOList, Message.class);
         Page<Message> page = new Page<>(messageList, totalCount, messageQueryParam.getPageNo(), messageQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -165,17 +135,65 @@ public class MessageServiceImpl implements MessageService {
     }
 
 
+    @Override
+    public ServiceResult<String, Message> queryMessage(Message message) {
+        ServiceResult<String, Message> result = new ServiceResult<>();
 
-	@Override
-	public ServiceResult<String, Integer> noReadCount() {
-		ServiceResult<String, Integer> result = new ServiceResult<>();
-		Integer noReadCount = messageMapper.findNotReadCount(userSupport.getCurrentUserId());
+        //通过前端用户的Id来查询数据
+        MessageDO messageDO = messageMapper.findById(message.getMessageId());
+        if (messageDO == null) {
+            result.setErrorCode(ErrorCode.MESSAGE_NOT_EXISTS);
+            return result;
+        }
+        //如果当前用户与收件人是同一个人，那么就将站内信的读取时间设置为现在时间
+        if (userSupport.getCurrentUserId().equals(messageDO.getReceiverUserId()) && messageDO.getReadTime() == null) {
+            messageDO.setReadTime(new Date());
+            messageMapper.update(messageDO);
 
-		result.setErrorCode(ErrorCode.SUCCESS);
-		result.setResult(noReadCount);
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(ConverterUtil.convert(messageDO, Message.class));
+        return result;
+    }
 
-		return result;
-	}
+    @Override
+    public ServiceResult<String, Page<Message>> pageReceiveMessage(MessageQueryParam messageQueryParam) {
+        ServiceResult<String, Page<Message>> result = new ServiceResult<>();
+        //从分页参数中获取第几页，和每页页数的值，放入分页对象中
+        PageQuery pageQuery = new PageQuery(messageQueryParam.getPageNo(), messageQueryParam.getPageSize());
+
+        //将分页查询的条件存入map中
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("receiverUserId", userSupport.getCurrentUserId());
+        maps.put("messageQueryParam", messageQueryParam);
+
+        //通过分页查询数据库，获取总的数据条数以及所有的数据
+        Integer totalCount = messageMapper.findReceiveMessageCountByParams(maps);
+        List<MessageDO> messageDOList = messageMapper.findReceiveMessageByParams(maps);
+
+        //将查询的数据转换为前端专用的数据
+        List<Message> messageList = ConverterUtil.convertList(messageDOList, Message.class);
+        Page<Message> page = new Page<>(messageList, totalCount, messageQueryParam.getPageNo(), messageQueryParam.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+
+        return result;
+    }
+
+
+    @Override
+    public ServiceResult<String, Integer> noReadCount() {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        Integer noReadCount = messageMapper.findNotReadCount(userSupport.getCurrentUserId());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(noReadCount);
+
+        return result;
+    }
 }
 
 

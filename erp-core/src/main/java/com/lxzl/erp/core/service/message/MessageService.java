@@ -9,12 +9,12 @@ import com.lxzl.se.core.service.BaseService;
 
 public interface MessageService extends BaseService {
     /**
-     *发送信息
+     * 发送信息
      *
      * @param message 发送信息的内容
      * @return
      */
-    ServiceResult<String,Integer> sendMessage(Message message);
+    ServiceResult<String, Integer> sendMessage(Message message);
 
     /**
      * 根据参数显示发送信息列表
@@ -22,7 +22,7 @@ public interface MessageService extends BaseService {
      * @param messageQueryParam 分页传递的参数
      * @return 信息列表
      */
-    ServiceResult<String,Page<Message>> pageSendMessage(MessageQueryParam messageQueryParam);
+    ServiceResult<String, Page<Message>> pageSendMessage(MessageQueryParam messageQueryParam);
 
 
     /**
@@ -31,7 +31,7 @@ public interface MessageService extends BaseService {
      * @param message 需要编辑的站内行信息
      * @return
      */
-    ServiceResult<String,Message> queryMessage(Message message);
+    ServiceResult<String, Message> queryMessage(Message message);
 
     /**
      * 收件箱分页显示内容
@@ -39,18 +39,22 @@ public interface MessageService extends BaseService {
      * @param messageQueryParam 分页传递的参数
      * @return
      */
-    ServiceResult<String,Page<Message>> pageReceiveMessage(MessageQueryParam messageQueryParam);
+    ServiceResult<String, Page<Message>> pageReceiveMessage(MessageQueryParam messageQueryParam);
 
     /**
-     *  管理者发送系统信息
+     * 管理者发送系统信息
+     *
      * @param message
      * @return
      */
-    ServiceResult<String,Integer> superSendMessage(Message message);
+    ServiceResult<String, Integer> superSendMessage(Message message);
+
+    ServiceResult<String, Integer> superSendMessage(String title, String messageTest, Integer... userIds);
 
     /**
      * 获取未阅读的站内信数量
-     *@return
+     *
+     * @return
      */
-    ServiceResult<String,Integer> noReadCount();
+    ServiceResult<String, Integer> noReadCount();
 }

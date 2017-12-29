@@ -13,10 +13,7 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.VerifyReceiver;
-import com.lxzl.erp.core.service.changeOrder.ChangeOrderService;
-import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
-import com.lxzl.erp.core.service.order.OrderService;
-import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
+import com.lxzl.erp.core.service.message.MessageService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.workflow.WorkFlowManager;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
@@ -68,19 +65,10 @@ public class WorkflowServiceImpl implements WorkflowService {
     private HttpSession session;
 
     @Autowired
-    private PurchaseOrderService purchaseOrderService;
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private ChangeOrderService changeOrderService;
-
-    @Autowired
-    private DeploymentOrderService deploymentOrderService;
-
-    @Autowired
     private WorkFlowManager workFlowManager;
+
+    @Autowired
+    private MessageService messageService;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -116,6 +104,8 @@ public class WorkflowServiceImpl implements WorkflowService {
             }
             workflowLinkNo = workflowLinkDO.getWorkflowLinkNo();
         }
+
+        messageService.superSendMessage(MessageContant.WORKFLOW_COMMIT_TITLE, MessageContant.WORKFLOW_COMMIT_CONTENT, verifyUser);
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(workflowLinkNo);
@@ -190,7 +180,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
             return result;
         }
-        result.setResult(ConverterUtil.convert(workflowLinkDO,WorkflowLink.class));
+        result.setResult(ConverterUtil.convert(workflowLinkDO, WorkflowLink.class));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -208,7 +198,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
             return result;
         }
-        result.setResult(ConverterUtil.convert(workflowLinkDO,WorkflowLink.class));
+        result.setResult(ConverterUtil.convert(workflowLinkDO, WorkflowLink.class));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -224,7 +214,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         paramMap.put("workflowQueryParam", workflowLinkQueryParam);
         Integer dataCount = workflowLinkMapper.listCount(paramMap);
         List<WorkflowLinkDO> dataList = workflowLinkMapper.listPage(paramMap);
-        Page<WorkflowLink> page = new Page<>(ConverterUtil.convertList(dataList,WorkflowLink.class), dataCount, workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
+        Page<WorkflowLink> page = new Page<>(ConverterUtil.convertList(dataList, WorkflowLink.class), dataCount, workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
 
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -244,7 +234,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         paramMap.put("workflowQueryParam", workflowLinkQueryParam);
         Integer dataCount = workflowLinkMapper.listCount(paramMap);
         List<WorkflowLinkDO> dataList = workflowLinkMapper.listPage(paramMap);
-        Page<WorkflowLink> page = new Page<>(ConverterUtil.convertList(dataList,WorkflowLink.class), dataCount, workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
+        Page<WorkflowLink> page = new Page<>(ConverterUtil.convertList(dataList, WorkflowLink.class), dataCount, workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
 
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -345,6 +335,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDetailDO.setCreateTime(currentTime);
                 workflowLinkDetailMapper.save(workflowLinkDetailDO);
                 workflowLinkDO.setWorkflowStep(nextWorkflowNodeDO.getWorkflowStep());
+                messageService.superSendMessage(MessageContant.WORKFLOW_COMMIT_TITLE, MessageContant.WORKFLOW_COMMIT_CONTENT, nextVerifyUser);
             } else {
                 workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
                 noticeBusinessModule = true;
@@ -372,7 +363,6 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDetailDO.setWorkflowPreviousNodeId(previousWorkflowNodeDO.getWorkflowPreviousNodeId());
                 workflowLinkDetailDO.setWorkflowCurrentNodeId(previousWorkflowNodeDO.getId());
                 workflowLinkDetailDO.setWorkflowNextNodeId(previousWorkflowNodeDO.getWorkflowNextNodeId());
-                workflowLinkDetailDO.setVerifyUser(nextVerifyUser);
                 workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
                 workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 workflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
@@ -381,6 +371,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDetailDO.setCreateTime(currentTime);
                 workflowLinkDetailMapper.save(workflowLinkDetailDO);
                 workflowLinkDO.setWorkflowStep(previousWorkflowNodeDO.getWorkflowStep());
+                messageService.superSendMessage(MessageContant.WORKFLOW_VERIFY_BACK_TITLE, MessageContant.WORKFLOW_VERIFY_BACK_CONTENT, nextVerifyUser);
             } else {
                 // 如果第一步就驳回了，那么就相当于驳回到根部
                 noticeBusinessModule = true;
@@ -392,7 +383,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         if (noticeBusinessModule) {
             // 根据不同业务，回调业务系统
             VerifyReceiver verifyReceiver = workFlowManager.getService(workflowLinkDO.getWorkflowType());
-            if (verifyReceiver == null){
+            if (verifyReceiver == null) {
                 result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
                 return result;
             }
@@ -402,35 +393,11 @@ public class WorkflowServiceImpl implements WorkflowService {
                 result.setErrorCode(ErrorCode.SYSTEM_ERROR);
                 return result;
             }
-//            if (WorkflowType.WORKFLOW_TYPE_PURCHASE.equals(workflowLinkDO.getWorkflowType())) {
-//                boolean receiveResult = purchaseOrderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
-//                if (!receiveResult) {
-//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
-//                    result.setErrorCode(ErrorCode.SYSTEM_ERROR);
-//                    return result;
-//                }
-//            } else if (WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())) {
-//                boolean receiveResult = orderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
-//                if (!receiveResult) {
-//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
-//                    result.setErrorCode(ErrorCode.SYSTEM_ERROR);
-//                    return result;
-//                }
-//            } else if (WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())) {
-//                boolean receiveResult = deploymentOrderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
-//                if (!receiveResult) {
-//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
-//                    result.setErrorCode(ErrorCode.SYSTEM_ERROR);
-//                    return result;
-//                }
-//            } else if (WorkflowType.WORKFLOW_TYPE_CHANGE.equals(workflowLinkDO.getWorkflowType())) {
-//                boolean receiveResult = changeOrderService.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
-//                if (!receiveResult) {
-//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
-//                    result.setErrorCode(ErrorCode.SYSTEM_ERROR);
-//                    return result;
-//                }
-//            }
+            if(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus)){
+                messageService.superSendMessage(MessageContant.WORKFLOW_VERIFY_PASS_TITLE, MessageContant.WORKFLOW_VERIFY_PASS_CONTENT, nextVerifyUser);
+            }else{
+                messageService.superSendMessage(MessageContant.WORKFLOW_VERIFY_BACK_TITLE, MessageContant.WORKFLOW_VERIFY_BACK_CONTENT, nextVerifyUser);
+            }
         }
         workflowLinkDO.setUpdateUser(loginUser.getUserId().toString());
         workflowLinkDO.setUpdateTime(currentTime);
