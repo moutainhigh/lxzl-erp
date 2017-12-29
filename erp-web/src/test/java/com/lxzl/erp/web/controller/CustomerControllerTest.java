@@ -103,20 +103,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void updateRiskJSON() throws Exception {
-        String jsonStr = "{\n" +
-                "\t\"creditAmount\": \"10000\",\n" +
-                "\t\"depositCycle\": \"12\",\n" +
-                "\t\"paymentCycle\": \"12\",\n" +
-                "\t\"payMode\": \"2\",\n" +
-                "\t\"appleDepositCycle\": \"12\",\n" +
-                "\t\"applePaymentCycle\": \"12\",\n" +
-                "\t\"applePayMode\": \"1\",\n" +
-                "\t\"newDepositCycle\": \"12\",\n" +
-                "\t\"newPaymentCycle\": \"12\",\n" +
-                "\t\"newPayMode\": \"2\",\n" +
-                "\t\"remark\": \"这是一个高级用户\",\n" +
-                "\t\"customerNo\": \"CC201712261408524351576\"\n" +
-                "}\n";
+        String jsonStr = "{\"creditAmount\":\"1000000\",\"depositCycle\":\"10\",\"paymentCycle\":\"10\",\"payMode\":\"1\",\"appleDepositCycle\":\"10\",\"applePaymentCycle\":\"10\",\"applePayMode\":\"1\",\"newDepositCycle\":\"10\",\"newPaymentCycle\":\"10\",\"newPayMode\":\"1\",\"remark\":\"这是一个优质客户, 可以考虑提高授信额度\",\"customerNo\":\"CP201712060843154191841\"}";
         TestResult result = getJsonTestResult("/customer/updateRisk", JSONUtil.convertJSONToBean(jsonStr, CustomerRiskManagement.class));
     }
 
