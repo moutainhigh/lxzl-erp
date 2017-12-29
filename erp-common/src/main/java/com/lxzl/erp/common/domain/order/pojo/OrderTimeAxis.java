@@ -1,12 +1,14 @@
 package com.lxzl.erp.common.domain.order.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
+
 import java.io.Serializable;
 import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OrderTimeAxis implements Serializable {
+public class OrderTimeAxis extends BasePO {
 
 	private Integer orderTimeAxisId;   //唯一标识
 	private Integer orderId;   //订单ID

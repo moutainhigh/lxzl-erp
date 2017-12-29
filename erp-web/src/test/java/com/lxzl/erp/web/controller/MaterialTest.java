@@ -79,7 +79,7 @@ public class MaterialTest extends ERPUnTransactionalTest {
         MaterialModel materialModel = new MaterialModel();
         materialModel.setMaterialModelId(11);
         materialModel.setMaterialType(2);
-        materialModel.setModelName("水冷机箱");
+        materialModel.setModelName("水冷机箱888");
         TestResult testResult = getJsonTestResult("/material/addModel", materialModel);
     }
 

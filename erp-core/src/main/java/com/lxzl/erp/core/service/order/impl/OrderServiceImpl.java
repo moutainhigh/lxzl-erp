@@ -1442,6 +1442,9 @@ public class OrderServiceImpl implements OrderService {
             orderDO.setTotalInsuranceAmount(BigDecimalUtil.add(orderDO.getTotalInsuranceAmount(), totalInsuranceAmount));
             orderDO.setTotalDepositAmount(BigDecimalUtil.add(orderDO.getTotalDepositAmount(), totalDepositAmount));
             orderDO.setTotalMustDepositAmount(BigDecimalUtil.add(orderDO.getTotalMustDepositAmount(), totalDepositAmount));
+            orderDO.setTotalProductDepositAmount(totalDepositAmount);
+            orderDO.setTotalProductCreditDepositAmount(totalCreditDepositAmount);
+            orderDO.setTotalProductRentDepositAmount(totalRentDepositAmount);
             orderDO.setTotalProductCount(productCount);
             orderDO.setTotalProductAmount(productAmountTotal);
         }
@@ -1507,6 +1510,9 @@ public class OrderServiceImpl implements OrderService {
             orderDO.setTotalInsuranceAmount(BigDecimalUtil.add(orderDO.getTotalInsuranceAmount(), totalInsuranceAmount));
             orderDO.setTotalDepositAmount(BigDecimalUtil.add(orderDO.getTotalDepositAmount(), totalDepositAmount));
             orderDO.setTotalMustDepositAmount(BigDecimalUtil.add(orderDO.getTotalMustDepositAmount(), totalDepositAmount));
+            orderDO.setTotalMaterialDepositAmount(totalDepositAmount);
+            orderDO.setTotalMaterialCreditDepositAmount(totalCreditDepositAmount);
+            orderDO.setTotalMaterialRentDepositAmount(totalRentDepositAmount);
             orderDO.setTotalMaterialCount(materialCount);
             orderDO.setTotalMaterialAmount(materialAmountTotal);
         }

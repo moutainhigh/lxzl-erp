@@ -22,8 +22,14 @@ public class OrderDO extends BaseDO {
     private BigDecimal totalInsuranceAmount;
     private Integer totalProductCount;
     private BigDecimal totalProductAmount;
+    private BigDecimal totalProductDepositAmount;
+    private BigDecimal totalProductCreditDepositAmount;
+    private BigDecimal totalProductRentDepositAmount;
     private Integer totalMaterialCount;
     private BigDecimal totalMaterialAmount;
+    private BigDecimal totalMaterialDepositAmount;
+    private BigDecimal totalMaterialCreditDepositAmount;
+    private BigDecimal totalMaterialRentDepositAmount;
     private BigDecimal totalOrderAmount;
     private BigDecimal totalPaidOrderAmount;
     private BigDecimal totalDiscountAmount;
@@ -367,5 +373,53 @@ public class OrderDO extends BaseDO {
 
     public void setOrderTimeAxisDOList(List<OrderTimeAxisDO> orderTimeAxisDOList) {
         this.orderTimeAxisDOList = orderTimeAxisDOList;
+    }
+
+    public BigDecimal getTotalProductDepositAmount() {
+        return totalProductDepositAmount;
+    }
+
+    public void setTotalProductDepositAmount(BigDecimal totalProductDepositAmount) {
+        this.totalProductDepositAmount = totalProductDepositAmount;
+    }
+
+    public BigDecimal getTotalProductCreditDepositAmount() {
+        return totalProductCreditDepositAmount;
+    }
+
+    public void setTotalProductCreditDepositAmount(BigDecimal totalProductCreditDepositAmount) {
+        this.totalProductCreditDepositAmount = totalProductCreditDepositAmount;
+    }
+
+    public BigDecimal getTotalProductRentDepositAmount() {
+        return totalProductRentDepositAmount;
+    }
+
+    public void setTotalProductRentDepositAmount(BigDecimal totalProductRentDepositAmount) {
+        this.totalProductRentDepositAmount = totalProductRentDepositAmount;
+    }
+
+    public BigDecimal getTotalMaterialDepositAmount() {
+        return totalMaterialDepositAmount;
+    }
+
+    public void setTotalMaterialDepositAmount(BigDecimal totalMaterialDepositAmount) {
+        this.totalMaterialDepositAmount = totalMaterialDepositAmount;
+    }
+
+    public BigDecimal getTotalMaterialCreditDepositAmount() {
+        return totalMaterialCreditDepositAmount;
+    }
+
+    public void setTotalMaterialCreditDepositAmount(BigDecimal totalMaterialCreditDepositAmount) {
+        this.totalMaterialCreditDepositAmount = totalMaterialCreditDepositAmount;
+    }
+
+    public BigDecimal getTotalMaterialRentDepositAmount() {
+        return totalMaterialRentDepositAmount;
+    }
+
+    public void setTotalMaterialRentDepositAmount(BigDecimal totalMaterialRentDepositAmount) {
+        this.totalMaterialRentDepositAmount = totalMaterialRentDepositAmount;
     }
 }

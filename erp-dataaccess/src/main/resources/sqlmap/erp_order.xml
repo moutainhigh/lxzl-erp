@@ -14,12 +14,18 @@
         <result column="total_deposit_amount" jdbcType="DECIMAL" property="totalDepositAmount" />
         <result column="total_must_deposit_amount" jdbcType="DECIMAL" property="totalMustDepositAmount" />
         <result column="total_credit_deposit_amount" jdbcType="DECIMAL" property="totalCreditDepositAmount" />
+        <result column="total_rent_deposit_amount" jdbcType="INTEGER" property="totalRentDepositAmount" />
         <result column="total_insurance_amount" jdbcType="DECIMAL" property="totalInsuranceAmount" />
         <result column="total_product_count" jdbcType="INTEGER" property="totalProductCount" />
-        <result column="total_rent_deposit_amount" jdbcType="INTEGER" property="totalRentDepositAmount" />
         <result column="total_product_amount" jdbcType="DECIMAL" property="totalProductAmount" />
+        <result column="total_product_deposit_amount" jdbcType="DECIMAL" property="totalProductDepositAmount" />
+        <result column="total_product_credit_deposit_amount" jdbcType="DECIMAL" property="totalProductCreditDepositAmount" />
+        <result column="total_product_rent_deposit_amount" jdbcType="DECIMAL" property="totalProductRentDepositAmount" />
         <result column="total_material_count" jdbcType="INTEGER" property="totalMaterialCount" />
         <result column="total_material_amount" jdbcType="DECIMAL" property="totalMaterialAmount" />
+        <result column="total_material_deposit_amount" jdbcType="DECIMAL" property="totalMaterialDepositAmount" />
+        <result column="total_material_credit_deposit_amount" jdbcType="DECIMAL" property="totalMaterialCreditDepositAmount" />
+        <result column="total_material_rent_deposit_amount" jdbcType="DECIMAL" property="totalMaterialRentDepositAmount" />
         <result column="total_order_amount" jdbcType="DECIMAL" property="totalOrderAmount" />
         <result column="total_paid_order_amount" jdbcType="DECIMAL" property="totalPaidOrderAmount" />
         <result column="total_discount_amount" jdbcType="DECIMAL" property="totalDiscountAmount" />
@@ -143,7 +149,7 @@
     </resultMap>
 
     <sql id="column_List">
-		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.rent_start_time as rent_start_time,eo.total_deposit_amount as total_deposit_amount,eo.total_must_deposit_amount as total_must_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.total_rent_deposit_amount,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_order_amount as total_order_amount,eo.total_paid_order_amount as total_paid_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status, eo.first_need_pay_amount as first_need_pay_amount,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.buyer_remark as buyer_remark,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user
+		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.rent_start_time as rent_start_time,eo.total_deposit_amount as total_deposit_amount,eo.total_must_deposit_amount as total_must_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.total_rent_deposit_amount,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_product_deposit_amount as total_product_deposit_amount,eo.total_product_credit_deposit_amount as total_product_credit_deposit_amount,eo.total_product_rent_deposit_amount as total_product_rent_deposit_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_material_deposit_amount as total_material_deposit_amount,eo.total_material_credit_deposit_amount as total_material_credit_deposit_amount,eo.total_material_rent_deposit_amount as total_material_rent_deposit_amount,eo.total_order_amount as total_order_amount,eo.total_paid_order_amount as total_paid_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status, eo.first_need_pay_amount as first_need_pay_amount,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.buyer_remark as buyer_remark,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user
 	</sql>
 
     <sql id="product_column_List">
@@ -433,11 +439,29 @@
             <if test="totalProductAmount != null">
                 total_product_amount = #{totalProductAmount, jdbcType=DECIMAL},
             </if>
+            <if test="totalProductDepositAmount != null">
+                total_product_deposit_amount = #{totalProductDepositAmount, jdbcType=DECIMAL},
+            </if>
+            <if test="totalProductCreditDepositAmount != null">
+                total_product_credit_deposit_amount = #{totalProductCreditDepositAmount, jdbcType=DECIMAL},
+            </if>
+            <if test="totalProductRentDepositAmount != null">
+                total_product_rent_deposit_amount = #{totalProductRentDepositAmount, jdbcType=DECIMAL},
+            </if>
             <if test="totalMaterialCount != null">
                 total_material_count = #{totalMaterialCount, jdbcType=INTEGER},
             </if>
             <if test="totalProductAmount != null">
                 total_material_amount = #{totalMaterialAmount, jdbcType=DECIMAL},
+            </if>
+            <if test="totalMaterialDepositAmount != null">
+                total_material_deposit_amount = #{totalMaterialDepositAmount, jdbcType=DECIMAL},
+            </if>
+            <if test="totalMaterialCreditDepositAmount != null">
+                total_material_credit_deposit_amount = #{totalMaterialCreditDepositAmount, jdbcType=DECIMAL},
+            </if>
+            <if test="totalMaterialRentDepositAmount != null">
+                total_material_rent_deposit_amount = #{totalMaterialRentDepositAmount, jdbcType=DECIMAL},
             </if>
             <if test="totalOrderAmount != null">
                 total_order_amount = #{totalOrderAmount, jdbcType=DECIMAL},
