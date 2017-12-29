@@ -241,10 +241,10 @@
 			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.ownerName != null &amp;&amp; maps.queryParam.ownerName != ''">
 				and eu.real_name like CONCAT('%','${maps.queryParam.ownerName}','%' )
 			</if>
-			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+			<if test="maps.queryParam.createStartTime != null ">
 				<![CDATA[ AND eco.create_time >= #{maps.queryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+			<if test="maps.queryParam.createEndTime != null ">
 				<![CDATA[ AND eco.create_time <= #{maps.queryParam.createEndTime} ]]>
 			</if>
 			<if test="true">
@@ -271,10 +271,10 @@
 			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.ownerName != null &amp;&amp; maps.queryParam.ownerName != ''">
 				and eu.real_name like CONCAT('%','${maps.queryParam.ownerName}','%' )
 			</if>
-			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+			<if test="maps.queryParam.createStartTime != null ">
 				<![CDATA[ AND eco.create_time >= #{maps.queryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+			<if test="maps.queryParam.createEndTime != null ">
 				<![CDATA[ AND eco.create_time <= #{maps.queryParam.createEndTime} ]]>
 			</if>
 			<if test="true">

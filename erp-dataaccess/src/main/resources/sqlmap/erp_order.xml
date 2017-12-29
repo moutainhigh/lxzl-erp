@@ -332,10 +332,10 @@
                 <if test="maps.orderQueryParam.orderStatus != null">
                     and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
                 </if>
-                <if test="maps.orderQueryParam.createStartTime != null &amp;&amp; maps.orderQueryParam.createStartTime != ''">
+                <if test="maps.orderQueryParam.createStartTime != null">
                     <![CDATA[ AND eo.create_time >= #{maps.orderQueryParam.createStartTime} ]]>
                 </if>
-                <if test="maps.orderQueryParam.createEndTime != null &amp;&amp; maps.orderQueryParam.createEndTime != ''">
+                <if test="maps.orderQueryParam.createEndTime != null ">
                     <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
                 </if>
                 <if test="true">
@@ -395,10 +395,10 @@
             <if test="maps.orderQueryParam.orderStatus != null">
                 and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.createStartTime != null &amp;&amp; maps.orderQueryParam.createStartTime != ''">
+            <if test="maps.orderQueryParam.createStartTime != null">
                 <![CDATA[ AND eo.create_time >= #{maps.orderQueryParam.createStartTime} ]]>
             </if>
-            <if test="maps.orderQueryParam.createEndTime != null &amp;&amp; maps.orderQueryParam.createEndTime != ''">
+            <if test="maps.orderQueryParam.createEndTime != null">
                 <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
             </if>
             <if test="true">

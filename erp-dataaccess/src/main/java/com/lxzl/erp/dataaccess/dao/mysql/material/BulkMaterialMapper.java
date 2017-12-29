@@ -11,7 +11,7 @@ import java.util.Map;
 @Repository
 public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
 
-    Integer saveList(@Param("bulkMaterialDOList") List<BulkMaterialDO> bulkMaterialDOList);
+    Integer saveList(List<BulkMaterialDO> bulkMaterialDOList);
 
     Integer updateList(@Param("bulkMaterialDOList") List<BulkMaterialDO> bulkMaterialDOList);
 

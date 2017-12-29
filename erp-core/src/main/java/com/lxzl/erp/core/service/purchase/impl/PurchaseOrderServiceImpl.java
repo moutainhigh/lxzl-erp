@@ -1231,6 +1231,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         //调用入库接口
         ServiceResult<String, Integer> inStockResult = warehouseService.productInStock(productInStockParam);
         if (!ErrorCode.SUCCESS.equals(inStockResult.getErrorCode())) {
+            System.out.println("inStockResult.getErrorCode())"+inStockResult.getErrorCode());
+            System.out.println("-----------------回滚-------------------");
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             serviceResult.setErrorCode(inStockResult.getErrorCode());
             return serviceResult;

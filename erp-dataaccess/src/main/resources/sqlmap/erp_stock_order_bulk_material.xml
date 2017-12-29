@@ -93,12 +93,13 @@
 	</update>
 
 
-	<insert id="saveList" parameterType="java.util.ArrayList">
+	<insert id="saveList" parameterType="java.util.List">
 		insert into erp_stock_order_bulk_material (stock_order_no,item_refer_id, bulk_material_id, bulk_material_no, data_status, remark, create_time, create_user, update_time, update_user)
-		<foreach item="stockOrderBulkMaterialDO" collection="stockOrderBulkMaterialDOList" separator="UNION ALL">
-			SELECT #{stockOrderBulkMaterialDO.stockOrderNo},#{stockOrderBulkMaterialDO.itemReferId},ebm.id,ebm.bulk_material_no,#{stockOrderBulkMaterialDO.dataStatus},#{stockOrderBulkMaterialDO.remark},
+		values
+		<foreach collection="list" item="stockOrderBulkMaterialDO" separator=",">
+			(#{stockOrderBulkMaterialDO.stockOrderNo},#{stockOrderBulkMaterialDO.itemReferId},#{stockOrderBulkMaterialDO.bulkMaterialId},#{stockOrderBulkMaterialDO.bulkMaterialNo},#{stockOrderBulkMaterialDO.dataStatus},#{stockOrderBulkMaterialDO.remark},
 			#{stockOrderBulkMaterialDO.createTime},#{stockOrderBulkMaterialDO.createUser},#{stockOrderBulkMaterialDO.updateTime},#{stockOrderBulkMaterialDO.updateUser}
-			FROM erp_bulk_material ebm WHERE ebm.bulk_material_no = #{stockOrderBulkMaterialDO.bulkMaterialNo} OR ebm.id = #{stockOrderBulkMaterialDO.bulkMaterialId}
+			)
 		</foreach>
 	</insert>
 </mapper>

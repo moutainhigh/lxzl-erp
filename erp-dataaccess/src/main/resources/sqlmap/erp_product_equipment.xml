@@ -217,10 +217,10 @@
                 <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.ownerWarehouseId != null">
                     and epe.owner_warehouse_id = #{maps.productEquipmentQueryParam.ownerWarehouseId, jdbcType=INTEGER}
                 </if>
-                <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != ''">
+                <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != null ">
                     <![CDATA[ AND epe.create_time >= #{maps.productEquipmentQueryParam.createStartTime} ]]>
                 </if>
-                <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != ''">
+                <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != null">
                     <![CDATA[ AND epe.create_time <= #{maps.productEquipmentQueryParam.createEndTime} ]]>
                 </if>
                 <if test="true">
@@ -268,10 +268,10 @@
             <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.isNew != null">
                 and epe.is_new = #{maps.productEquipmentQueryParam.isNew, jdbcType=INTEGER}
             </if>
-            <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != ''">
+            <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.createStartTime != null ">
                 <![CDATA[ AND epe.create_time >= #{maps.productEquipmentQueryParam.createStartTime} ]]>
             </if>
-            <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != ''">
+            <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != null">
                 <![CDATA[ AND epe.create_time <= #{maps.productEquipmentQueryParam.createEndTime} ]]>
             </if>
             <if test="true">
@@ -343,15 +343,17 @@
         </set>
     </sql>
 
-    <insert id="saveList" parameterType="java.util.ArrayList">
+    <insert id="saveList" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
         insert into erp_product_equipment (equipment_no,product_id,sku_id,order_no,current_warehouse_id,current_warehouse_position_id,owner_warehouse_id,owner_warehouse_position_id,equipment_price,equipment_status,is_new,data_status,remark,create_time,create_user,update_time,update_user)
-        <foreach item="productEquipmentDO" collection="productEquipmentDOList" separator="UNION ALL">
-            SELECT #{productEquipmentDO.equipmentNo},#{productEquipmentDO.productId},#{productEquipmentDO.skuId},#{productEquipmentDO.orderNo},#{productEquipmentDO.currentWarehouseId},#{productEquipmentDO.currentWarehousePositionId},#{productEquipmentDO.ownerWarehouseId},
-            #{productEquipmentDO.ownerWarehousePositionId},eps.sku_price,#{productEquipmentDO.equipmentStatus},#{productEquipmentDO.isNew},#{productEquipmentDO.dataStatus},#{productEquipmentDO.remark},
+        values
+        <foreach collection="list" item="productEquipmentDO" index="index" separator=",">
+            (#{productEquipmentDO.equipmentNo},#{productEquipmentDO.productId},#{productEquipmentDO.skuId},#{productEquipmentDO.orderNo},#{productEquipmentDO.currentWarehouseId},#{productEquipmentDO.currentWarehousePositionId},#{productEquipmentDO.ownerWarehouseId},
+            #{productEquipmentDO.ownerWarehousePositionId},#{productEquipmentDO.equipmentPrice},#{productEquipmentDO.equipmentStatus},#{productEquipmentDO.isNew},#{productEquipmentDO.dataStatus},#{productEquipmentDO.remark},
             #{productEquipmentDO.createTime},#{productEquipmentDO.createUser},#{productEquipmentDO.updateTime},#{productEquipmentDO.updateUser}
-            FROM erp_product_sku eps WHERE eps.id = #{productEquipmentDO.skuId}
+            )
         </foreach>
     </insert>
+
     <update id="updateList" parameterType="java.util.ArrayList">
         update erp_product_equipment
         SET

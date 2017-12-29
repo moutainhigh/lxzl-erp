@@ -221,10 +221,10 @@
 				and epo.purchase_order_status = #{maps.queryParam.purchaseOrderStatus, jdbcType=INTEGER}
 			</if>
 
-			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+			<if test="maps.queryParam.createStartTime != null ">
 				<![CDATA[ AND epo.create_time >= #{maps.queryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+			<if test="maps.queryParam.createEndTime != null ">
 				<![CDATA[ AND epo.create_time <= #{maps.queryParam.createEndTime} ]]>
 			</if>
 			<if test="true">
@@ -260,10 +260,10 @@
 			<if test="maps.queryParam.purchaseOrderStatus != null">
 				and epo.purchase_order_status = #{maps.queryParam.purchaseOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+			<if test="maps.queryParam.createStartTime != null ">
 				<![CDATA[ AND epo.create_time >= #{maps.queryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+			<if test="maps.queryParam.createEndTime != null ">
 				<![CDATA[ AND epo.create_time <= #{maps.queryParam.createEndTime} ]]>
 			</if>
 			<if test="true">

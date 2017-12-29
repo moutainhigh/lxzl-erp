@@ -134,7 +134,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             }
         }
 
-
         productCategoryPropertyValueDO.setCategoryId(productCategoryPropertyDO.getCategoryId());
         productCategoryPropertyValueDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         productCategoryPropertyValueDO.setCreateUser(loginUser.getUserId().toString());

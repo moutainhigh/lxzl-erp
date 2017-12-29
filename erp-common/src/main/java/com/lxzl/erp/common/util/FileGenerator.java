@@ -151,11 +151,11 @@ public class FileGenerator {
         StringBuffer poSb = new StringBuffer(
                 "package com.lxzl.erp.common.domain."+dir+".pojo;\n\n" +
                 "import com.fasterxml.jackson.annotation.JsonIgnoreProperties;\n" +
-                        "import java.io.Serializable;\n" +
+                        "import com.lxzl.erp.common.domain.base.BasePO;\n" +
                         dataImport+"\n" +bigDecimalImport+"\n" +
                         "\n" +
                         "@JsonIgnoreProperties(ignoreUnknown = true)\n" +
-                        "public class "+ table.poTableName+" implements Serializable {");
+                        "public class "+ table.poTableName+" extends BasePO {");
         appendAllPOParam(nameAndTypeList,poSb);
         appendPOSetterAndSetter(nameAndTypeList,poSb);
         poSb.append("\n}");
@@ -164,11 +164,11 @@ public class FileGenerator {
     public static String getPoString(String dataImport , String bigDecimalImport , List<NameAndType> nameAndTypeList , Table table){
         StringBuffer poSb = new StringBuffer(
                 "import com.fasterxml.jackson.annotation.JsonIgnoreProperties;\n" +
-                        "import java.io.Serializable;\n" +
+                        "import com.lxzl.erp.common.domain.base.BasePO;\n" +
                         dataImport+"\n" +bigDecimalImport+"\n" +
                         "\n" +
                         "@JsonIgnoreProperties(ignoreUnknown = true)\n" +
-                        "public class "+ table.poTableName+" implements Serializable {");
+                        "public class "+ table.poTableName+" extends BasePO {");
         appendAllPOParam(nameAndTypeList,poSb);
         appendPOSetterAndSetter(nameAndTypeList,poSb);
         poSb.append("\n}");

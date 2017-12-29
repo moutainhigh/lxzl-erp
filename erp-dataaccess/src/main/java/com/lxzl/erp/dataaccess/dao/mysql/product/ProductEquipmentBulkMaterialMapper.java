@@ -7,10 +7,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+
 @Repository
 public interface ProductEquipmentBulkMaterialMapper extends BaseMysqlDAO<ProductEquipmentBulkMaterialDO> {
 
-    Integer saveList(@Param("productEquipmentBulkMaterialDOList") List<ProductEquipmentBulkMaterialDO> productEquipmentBulkMaterialDOList);
+    Integer saveList(List<ProductEquipmentBulkMaterialDO> productEquipmentBulkMaterialDOList);
 
     List<ProductEquipmentBulkMaterialDO> findByEquipmentId(@Param("equipmentId") Integer equipmentId);
 
@@ -18,6 +19,6 @@ public interface ProductEquipmentBulkMaterialMapper extends BaseMysqlDAO<Product
 
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
-    ProductEquipmentBulkMaterialDO findByBulkMaterialId(@Param("bulkMaterialId")Integer bulkMaterialId);
+    ProductEquipmentBulkMaterialDO findByBulkMaterialId(@Param("bulkMaterialId") Integer bulkMaterialId);
 
 }
