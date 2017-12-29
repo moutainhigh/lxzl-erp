@@ -222,4 +222,15 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setDeductRemark("测试手动扣款款1200元");
         TestResult result = getJsonTestResult("/payment/manualDeduct", customer);
     }
+
+    @Test
+    public void manualDeductJSON() throws Exception {
+        String str = "{\n" +
+                "\t\"businessCustomerNo\": \"CC201712261408524351576\",\n" +
+                "\t\"deductAmount\": \"100\",\n" +
+                "\t\"deductRemark\": \"备注\"\n" +
+                "}";
+        ManualDeductParam customer = JSONUtil.convertJSONToBean(str , ManualDeductParam.class);
+        TestResult result = getJsonTestResult("/payment/manualDeduct", customer);
+    }
 }

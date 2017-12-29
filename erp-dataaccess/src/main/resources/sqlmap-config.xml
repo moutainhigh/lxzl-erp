@@ -99,6 +99,7 @@
         <mapper resource="sqlmap/erp_joint_product.xml" />
         <mapper resource="sqlmap/erp_joint_material.xml" />
         <mapper resource="sqlmap/erp_joint_product_sku.xml" />
+        <mapper resource="sqlmap/erp_order_time_axis.xml" />
     </mappers>
 
 </configuration>

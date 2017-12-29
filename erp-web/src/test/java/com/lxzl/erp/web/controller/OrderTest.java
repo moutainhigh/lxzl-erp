@@ -133,7 +133,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCancelOrder() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201711151901080841608");
+        order.setOrderNo("O201712290930356291065");
         order.setVerifyUser(1);
         TestResult testResult = getJsonTestResult("/order/cancel", order);
     }
@@ -196,7 +196,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712161345332381669");
+        order.setOrderNo("O201712290930356291065");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
     }
 

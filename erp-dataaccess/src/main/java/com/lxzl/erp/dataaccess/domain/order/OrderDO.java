@@ -46,6 +46,7 @@ public class OrderDO extends BaseDO {
     private List<OrderProductDO> orderProductDOList;
     private List<OrderMaterialDO> orderMaterialDOList;
     private OrderConsignInfoDO orderConsignInfoDO;
+    private List<OrderTimeAxisDO> orderTimeAxisDOList;
 
     @Transient
     private String buyerCustomerName;
@@ -358,5 +359,13 @@ public class OrderDO extends BaseDO {
 
     public void setTotalRentDepositAmount(BigDecimal totalRentDepositAmount) {
         this.totalRentDepositAmount = totalRentDepositAmount;
+    }
+
+    public List<OrderTimeAxisDO> getOrderTimeAxisDOList() {
+        return orderTimeAxisDOList;
+    }
+
+    public void setOrderTimeAxisDOList(List<OrderTimeAxisDO> orderTimeAxisDOList) {
+        this.orderTimeAxisDOList = orderTimeAxisDOList;
     }
 }

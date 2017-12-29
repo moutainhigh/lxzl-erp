@@ -1148,7 +1148,21 @@ CREATE TABLE `erp_order_consign_info` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单收货地址表';
 
-
+DROP TABLE if exists `erp_order_time_axis`;
+CREATE TABLE `erp_order_time_axis` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '订单状态，0-待提交,4-审核中,8-待发货,12-处理中,16-已发货,20-确认收货,24-全部归还,28-取消,32-结束',
+  `generation_time` datetime NOT NULL COMMENT '产生时间',
+  `order_snapshot` text COMMENT '订单当前状态PO',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单时间轴表';
 
 -- -------------------------------------货物调拨单（库房间调拨）-------------------------------------------------
 DROP TABLE if exists `erp_deployment_order`;

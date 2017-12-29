@@ -56,6 +56,8 @@ public class Order extends BasePO {
     private List<OrderMaterial> orderMaterialList;
     private OrderConsignInfo orderConsignInfo;
 
+    private List<OrderTimeAxis> orderTimeAxisList;
+
     // 审核人和提交审核信息,只提供给审核的时候用
     private Integer verifyUser;
     private String commitRemark;
@@ -402,5 +404,13 @@ public class Order extends BasePO {
 
     public void setTotalRentDepositAmount(BigDecimal totalRentDepositAmount) {
         this.totalRentDepositAmount = totalRentDepositAmount;
+    }
+
+    public List<OrderTimeAxis> getOrderTimeAxisList() {
+        return orderTimeAxisList;
+    }
+
+    public void setOrderTimeAxisList(List<OrderTimeAxis> orderTimeAxisList) {
+        this.orderTimeAxisList = orderTimeAxisList;
     }
 }

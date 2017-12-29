@@ -47,6 +47,7 @@
         <collection property="orderProductDOList" resultMap="OrderProductDO" />
         <collection property="orderMaterialDOList" resultMap="OrderMaterialDO" />
         <collection property="orderConsignInfoDO" resultMap="OrderConsignInfoDO" />
+        <collection property="orderTimeAxisDOList" resultMap="OrderTimeAxisDO" />
     </resultMap>
     
     <resultMap type="com.lxzl.erp.dataaccess.domain.order.OrderProductDO" id="OrderProductDO">
@@ -127,6 +128,20 @@
         <result column="consign_update_time" property="updateTime"/>
     </resultMap>
 
+    <resultMap id="OrderTimeAxisDO" type="com.lxzl.erp.dataaccess.domain.order.OrderTimeAxisDO">
+        <id column="time_axis_id" jdbcType="INTEGER" property="id" />
+        <result column="time_axis_order_id" jdbcType="INTEGER" property="orderId" />
+        <result column="time_axis_order_status" jdbcType="INTEGER" property="orderStatus" />
+        <result column="time_axis_generation_time" jdbcType="TIMESTAMP" property="generationTime" />
+        <result column="time_axis_order_snapshot" jdbcType="VARCHAR" property="orderSnapshot" />
+        <result column="time_axis_data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="time_axis_remark" jdbcType="VARCHAR" property="remark" />
+        <result column="time_axis_create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="time_axis_create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="time_axis_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="time_axis_update_user" jdbcType="VARCHAR" property="updateUser" />
+    </resultMap>
+
     <sql id="column_List">
 		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.rent_start_time as rent_start_time,eo.total_deposit_amount as total_deposit_amount,eo.total_must_deposit_amount as total_must_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.total_rent_deposit_amount,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_order_amount as total_order_amount,eo.total_paid_order_amount as total_paid_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status, eo.first_need_pay_amount as first_need_pay_amount,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.buyer_remark as buyer_remark,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user
 	</sql>
@@ -143,6 +158,10 @@
         eom.id as material_id,eom.order_id as material_order_id,eom.rent_type as material_rent_type,eom.rent_time_length as material_rent_time_length,eom.material_id as material_material_id,eom.material_name as material_material_name,eom.material_count as material_material_count,eom.material_unit_amount as material_material_unit_amount,eom.material_amount as material_material_amount,eom.deposit_amount as material_deposit_amount,eom.credit_deposit_amount as material_credit_deposit_amount,eom.insurance_amount as material_insurance_amount,eom.material_snapshot as material_material_snapshot,eom.rent_deposit_amount as material_rent_deposit_amount,eom.deposit_cycle as material_deposit_cycle,eom.payment_cycle as material_payment_cycle,eom.pay_mode as material_pay_mode,eom.is_new_material as material_is_new_material,eom.data_status as material_data_status,eom.remark as material_remark,eom.create_time as material_create_time,eom.create_user as material_create_user,eom.update_time as material_update_time,eom.update_user as material_update_user
     </sql>
 
+    <sql id="time_axis_column_List">
+        eota.id as time_axis_id,eota.order_id as time_axis_order_id,eota.order_status as time_axis_order_status,eota.generation_time as time_axis_generation_time,eota.order_snapshot as time_axis_order_snapshot,eota.data_status as time_axis_data_status,eota.remark as time_axis_remark,eota.create_time as time_axis_create_time,eota.create_user as time_axis_create_user,eota.update_time as time_axis_update_time,eota.update_user as time_axis_update_user
+    </sql>
+
     <select id="findById" resultMap="OrderDO" parameterType="java.lang.Integer">
         select
         <include refid="column_List"/>
@@ -156,6 +175,9 @@
         </trim>
         <trim prefix=",">
             <include refid="material_column_List" />
+        </trim>
+        <trim prefix=",">
+            <include refid="time_axis_column_List" />
         </trim>
         FROM (
             SELECT
@@ -178,6 +200,7 @@
         ) m_order
         LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
+        LEFT JOIN erp_order_time_axis eota ON m_order.id = eota.order_id and eota.data_status = 1
     </select>
 
     <select id="findByOrderNo" resultMap="OrderDO" parameterType="java.lang.String">
@@ -187,6 +210,9 @@
         </trim>
         <trim prefix=",">
             <include refid="material_column_List" />
+        </trim>
+        <trim prefix=",">
+            <include refid="time_axis_column_List" />
         </trim>
         FROM (
             SELECT
@@ -209,6 +235,7 @@
         ) m_order
         LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
+        LEFT JOIN erp_order_time_axis eota ON m_order.id = eota.order_id and eota.data_status = 1
     </select>
 
     <select id="findByCustomerId" resultMap="OrderDO" parameterType="java.lang.Integer">
@@ -218,6 +245,9 @@
         </trim>
         <trim prefix=",">
             <include refid="material_column_List" />
+        </trim>
+        <trim prefix=",">
+            <include refid="time_axis_column_List" />
         </trim>
         FROM (
         SELECT
@@ -240,6 +270,7 @@
         ) m_order
         LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
+        LEFT JOIN erp_order_time_axis eota ON m_order.id = eota.order_id and eota.data_status = 1
     </select>
 
     <select id="findOrderByParams" resultMap="OrderDO" parameterType="map">
@@ -249,6 +280,9 @@
         </trim>
         <trim prefix=",">
             <include refid="material_column_List" />
+        </trim>
+        <trim prefix=",">
+            <include refid="time_axis_column_List" />
         </trim>
         FROM (
             SELECT
@@ -307,6 +341,7 @@
         ) m_order
         LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
+        LEFT JOIN erp_order_time_axis eota ON m_order.id = eota.order_id and eota.data_status = 1
         ORDER BY m_order.create_time DESC
     </select>
 
