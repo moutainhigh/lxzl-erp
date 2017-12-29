@@ -20,4 +20,5 @@ public interface ImgMysqlMapper extends BaseMysqlDAO<ImageDO> {
     ImageDO findByImgId(@Param("id") Integer id);
     List<ImageDO> findByRefIdAndType(@Param("refId") String refId,
                                      @Param("imgType") Integer imgType);
+
 }

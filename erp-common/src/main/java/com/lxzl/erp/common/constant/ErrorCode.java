@@ -337,10 +337,10 @@ public class ErrorCode {
     public static final String LEGAL_PERSON_NOT_NULL = "J500048";
     public static final String LEGAL_PERSON_NO_NOT_NULL = "J500049";
     public static final String COMPANY_ORIGIN_NOT_NULL = "J500050";
-    public static final String FOUND_TIME_NOT_NULL = "J500051";
+    public static final String CONSIGN_ADDRESS_NOT_NULL = "J500051";
     public static final String SALES_MAN_NOT_NULL = "J500052";
     public static final String CUSTOMER_PERSON_CONNECT_PHONE_NOT_NULL = "J500053";
-    public static final String OFFICE_NUMBER_NOT_NULL = "J500054";
+    public static final String AGENT_PERSON_NO_NOT_NULL = "J500054";
     public static final String PERSON_NAME_NOT_NULL = "J500055";
     public static final String PERSON_NO_NOT_NULL = "J500056";
     public static final String CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_NULL = "J500057";
@@ -349,8 +349,6 @@ public class ErrorCode {
     public static final String LIST_FIRST_NEED_PRODUCTS_NOT_NULL = "J500060";
     public static final String AGENT_PERSON_NAME_NOT_NULL = "J500061";
     public static final String AGENT_PERSON_PHONE_NOT_NULL = "J500062";
-    public static final String AGENT_PERSON_NO_NOT_NULL = "J500063";
-    public static final String CONSIGN_ADDRESS_NOT_NULL = "J500064";
 
 
 
@@ -375,7 +373,7 @@ public class ErrorCode {
     public static final String JOINT_PRODUCT_NAME_IS_NULL = "J1000002";
     public static final String JOINT_PRODUCT_NOT_EXISTS = "J1000003";
 
-    public static final String IMAGE_ID_NOT_NULL = "J1100001";
+    public static final String IMG_ID_NOT_NULL = "J1100001";
     public static final String LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_NULL = "J110002";
     public static final String LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_NULL = "J1100003";
     public static final String BUSINESS_LICENSE_PICTURE_IMAGE_NOT_NULL = "J1100004";
@@ -612,8 +610,6 @@ public class ErrorCode {
         MAP.put(LEGAL_PERSON_NOT_NULL, "企业法人不能为空");
         MAP.put(LEGAL_PERSON_NO_NOT_NULL, "企业法人身份证号不能为空");
         MAP.put(COMPANY_ORIGIN_NOT_NULL, "客户来源不能为空");
-        MAP.put(FOUND_TIME_NOT_NULL, "企业成立时间不能为空");
-        MAP.put(OFFICE_NUMBER_NOT_NULL, "办公人数不能为空");
         MAP.put(PERSON_NAME_NOT_NULL, "个人客户的用户名不能为空");
         MAP.put(PERSON_NO_NOT_NULL, "个人客户的身份证号不能为空");
         MAP.put(CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_NULL, "个人客户紧急联系人姓名不能为空");
@@ -777,7 +773,7 @@ public class ErrorCode {
         MAP.put(JOINT_PRODUCT_NAME_IS_NULL, "组合商品名称为空");
         MAP.put(JOINT_PRODUCT_NOT_EXISTS, "组合商品不存在");
 
-        MAP.put(IMAGE_ID_NOT_NULL, "传入的照片ID不能为空");
+        MAP.put(IMG_ID_NOT_NULL, "传入的照片ID不能为空");
         MAP.put(LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_NULL, "法人/股东身份证正面照片不能为空");
         MAP.put(LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_NULL, "法人/股东身份证反面照片不能为空");
         MAP.put(BUSINESS_LICENSE_PICTURE_IMAGE_NOT_NULL, "企业营业执照不能为空");

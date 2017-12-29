@@ -720,7 +720,6 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-
         if (!updateProductImgList.isEmpty()) {
             for (ProductImg productImg : updateProductImgList) {
                 ProductImgDO productImgDO = ProductImageConverter.convertProductImg(productImg);

@@ -2,17 +2,17 @@ package com.lxzl.erp.common.domain.customer.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerPersonGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerPersonGroup;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.io.Serializable;
 import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerPerson extends BasePO {
+public class CustomerPerson implements Serializable {
 
 	private Integer customerPersonId;   //唯一标识
 	private Integer customerId;   //客户ID
@@ -33,6 +33,16 @@ public class CustomerPerson extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+
+	@NotBlank(message = ErrorCode.PERSON_NAME_NOT_NULL,groups={AddCustomerPersonGroup.class})
+	private String personName;//用户名'
+	@NotBlank(message = ErrorCode.PERSON_NO_NOT_NULL,groups={AddCustomerPersonGroup.class})
+	private String personNo;//身份证号'
+	private String consignAddress;//收货地址'
+	@NotBlank(message = ErrorCode.CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_NULL,groups={AddCustomerPersonGroup.class})
+	private String connectRealName;//紧急联系人姓名'
+	@NotBlank(message = ErrorCode.CUSTOMER_PERSON_CONNECT_PHONE_NOT_NULL,groups={AddCustomerPersonGroup.class})
+	private String connectPhone;//紧急联系人电话'
 
 	private String provinceName;
 	private String cityName;
@@ -182,5 +192,45 @@ public class CustomerPerson extends BasePO {
 
 	public void setDistrictName(String districtName) {
 		this.districtName = districtName;
+	}
+
+	public String getPersonName() {
+		return personName;
+	}
+
+	public void setPersonName(String personName) {
+		this.personName = personName;
+	}
+
+	public String getPersonNo() {
+		return personNo;
+	}
+
+	public void setPersonNo(String personNo) {
+		this.personNo = personNo;
+	}
+
+	public String getConsignAddress() {
+		return consignAddress;
+	}
+
+	public void setConsignAddress(String consignAddress) {
+		this.consignAddress = consignAddress;
+	}
+
+	public String getConnectRealName() {
+		return connectRealName;
+	}
+
+	public void setConnectRealName(String connectRealName) {
+		this.connectRealName = connectRealName;
+	}
+
+	public String getConnectPhone() {
+		return connectPhone;
+	}
+
+	public void setConnectPhone(String connectPhone) {
+		this.connectPhone = connectPhone;
 	}
 }

@@ -18,10 +18,16 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="person_name" jdbcType="VARCHAR" property="personName" />
+		<result column="person_no" jdbcType="VARCHAR" property="personNo" />
+		<result column="consign_address" jdbcType="VARCHAR" property="consignAddress" />
+		<result column="connect_real_name" jdbcType="VARCHAR" property="connectRealName" />
+		<result column="connect_phone" jdbcType="VARCHAR" property="connectPhone" />
 	</resultMap>
 
 	<sql id="column_List">
-		ecp.id,ecp.customer_id,ecp.real_name,ecp.email,ecp.phone,ecp.province,ecp.city,ecp.district,ecp.address,ecp.data_status,ecp.remark,ecp.create_time,ecp.create_user,ecp.update_time,ecp.update_user
+		ecp.id,ecp.customer_id,ecp.real_name,ecp.email,ecp.phone,ecp.province,ecp.city,ecp.district,ecp.address,ecp.data_status,ecp.remark,ecp.create_time,ecp.create_user,ecp.update_time,ecp.update_user,ecp.user_name,ecp.person_name,ecp.person_no,ecp.consign_address,ecp.connect_real_name,ecp.connect_phone
 	</sql>
 
 	<select id="findById" resultMap="CustomerPersonDO" parameterType="java.lang.Integer">
@@ -96,6 +102,21 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="personName != null">
+				person_name = #{personName,jdbcType=VARCHAR},
+			</if>
+			<if test="personNo != null">
+				person_no = #{personNo,jdbcType=VARCHAR},
+			</if>
+			<if test="consignAddress != null">
+				consign_address = #{consignAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="connectRealName != null">
+				connect_real_name = #{connectRealName,jdbcType=VARCHAR},
+			</if>
+			<if test="connectPhone != null">
+				connect_phone = #{connectPhone,jdbcType=VARCHAR},
 			</if>
 		</set>
 	</sql>
