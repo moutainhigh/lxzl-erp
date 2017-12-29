@@ -572,7 +572,16 @@ public class WarehouseServiceImpl implements WarehouseService {
         List<StockOrderBulkMaterialDO> allStockOrderBulkMaterialDOList = new ArrayList<>();
         Integer itemReferId = materialInStorage.getItemReferId();
         User loginUser = userSupport.getCurrentUser();
+        Map<Integer ,MaterialDO> materialMap = new HashMap<>();
+        Map<String,BulkMaterialDO> allBulkMaterialDOMap = new HashMap<>();
         for (int i = 0; i < materialInStorage.getMaterialCount(); i++) {
+
+            if(!materialMap.containsKey(materialInStorage.getMaterialId())){
+                MaterialDO materialDO = materialMapper.findById(materialInStorage.getMaterialId());
+                materialMap.put(materialDO.getId(),materialDO);
+            }
+            MaterialDO materialDO = materialMap.get(materialInStorage.getMaterialId());
+
             BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
             bulkMaterialDO.setBulkMaterialNo(GenerateNoUtil.generateBulkMaterialNo(currentTime, productInStockCounter.getBulkMaterialCount()));
             bulkMaterialDO.setMaterialId(materialInStorage.getMaterialId());
@@ -587,7 +596,17 @@ public class WarehouseServiceImpl implements WarehouseService {
             bulkMaterialDO.setCreateUser(loginUser.getUserId().toString());
             bulkMaterialDO.setUpdateTime(currentTime);
             bulkMaterialDO.setCreateTime(currentTime);
+
+            bulkMaterialDO.setBulkMaterialType(materialDO.getMaterialType());
+            bulkMaterialDO.setIsMainMaterial(materialDO.getIsMainMaterial());
+            bulkMaterialDO.setBulkMaterialName(materialDO.getMaterialName());
+            bulkMaterialDO.setMaterialNo(materialDO.getMaterialNo());
+            bulkMaterialDO.setBrandId(materialDO.getBrandId());
+            bulkMaterialDO.setMaterialModelId(materialDO.getMaterialModelId());
+            bulkMaterialDO.setMaterialCapacityValue(materialDO.getMaterialCapacityValue());
+            bulkMaterialDO.setBulkMaterialPrice(materialDO.getMaterialPrice());
             allBulkMaterialDOList.add(bulkMaterialDO);
+            allBulkMaterialDOMap.put(bulkMaterialDO.getBulkMaterialNo(),bulkMaterialDO);
 
             StockOrderBulkMaterialDO stockOrderBulkMaterialDO = new StockOrderBulkMaterialDO();
             stockOrderBulkMaterialDO.setStockOrderNo(stockOrderNo);
@@ -605,6 +624,11 @@ public class WarehouseServiceImpl implements WarehouseService {
             bulkMaterialMapper.saveList(allBulkMaterialDOList);
         }
         if (!allStockOrderBulkMaterialDOList.isEmpty()) {
+            for(StockOrderBulkMaterialDO stockOrderBulkMaterialDO : allStockOrderBulkMaterialDOList){
+                BulkMaterialDO bulkMaterialDO = allBulkMaterialDOMap.get(stockOrderBulkMaterialDO.getBulkMaterialNo());
+                stockOrderBulkMaterialDO.setBulkMaterialId(bulkMaterialDO.getId());
+                stockOrderBulkMaterialDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
+            }
             stockOrderBulkMaterialMapper.saveList(allStockOrderBulkMaterialDOList);
         }
     }
