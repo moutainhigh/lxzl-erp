@@ -14,7 +14,6 @@
         <result column="data_order" property="dataOrder"/>
         <result column="property_capacity_value" property="propertyCapacityValue"/>
         <result column="material_model_id" jdbcType="INTEGER" property="materialModelId" />
-        <result column="refer_id" property="referId"/>
         <result column="data_status" property="dataStatus"/>
         <result column="remark" property="remark"/>
         <result column="create_user" property="createUser"/>

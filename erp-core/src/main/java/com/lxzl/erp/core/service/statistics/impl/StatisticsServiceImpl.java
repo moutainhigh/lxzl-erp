@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.statistics.impl;
 
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIndexInfo;
 import com.lxzl.erp.common.domain.supplier.SupplierQueryParam;
@@ -40,11 +41,16 @@ public class StatisticsServiceImpl implements StatisticsService {
         Integer totalCustomerCount = customerMapper.listCount(paramMap);
         statisticsIndexInfo.setTotalCustomerCount(totalCustomerCount);
 
-        BigDecimal totalRentAmount = BigDecimal.ZERO;
+        BigDecimal totalRentAmount = orderMapper.findPaidOrderAmount();
         statisticsIndexInfo.setTotalRentAmount(totalRentAmount);
 
-        Map<String, Object> params = new HashMap<>();
-        List<Map<String, Object>> subCompanyRentAmountList = orderMapper.querySubCompanyOrderAmount(params);
+        // 空参数
+        paramMap.clear();
+        paramMap.put("orderQueryParam", new OrderQueryParam());
+        Integer totalOrderCount = orderMapper.findOrderCountByParams(paramMap);
+        statisticsIndexInfo.setTotalOrderCount(totalOrderCount);
+
+        List<Map<String, Object>> subCompanyRentAmountList = orderMapper.querySubCompanyOrderAmount(paramMap);
         Map<String, BigDecimal> subCompanyRentAmount = new HashMap<>();
         for (Map<String, Object> subCompanyRentAmountMap : subCompanyRentAmountList) {
             if (subCompanyRentAmountMap.get("total_order_amount") != null && subCompanyRentAmountMap.get("total_order_amount") instanceof BigDecimal) {

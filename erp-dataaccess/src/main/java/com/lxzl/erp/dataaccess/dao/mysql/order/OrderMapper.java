@@ -18,5 +18,10 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     List<OrderDO> findOrderByParams(@Param("maps") Map<String, Object> paramMap);
     void updateListForReturn(@Param("orderDOList") List<OrderDO> orderDOList);
 
+    /**
+     * 已支付的订单总金额
+     * */
+    BigDecimal findPaidOrderAmount();
+
     List<Map<String,Object>> querySubCompanyOrderAmount(@Param("maps") Map<String, Object> paramMap);
 }

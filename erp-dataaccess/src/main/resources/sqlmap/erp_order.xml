@@ -360,6 +360,11 @@
         LEFT JOIN erp_order eo ON eu.id = eo.order_seller_id AND eo.pay_status = 8 GROUP BY esc.sub_company_name
     </select>
 
+    <select id="findPaidOrderAmount" resultType="java.math.BigDecimal">
+        SELECT sum(eo.total_order_amount) as total_order_amount
+        FROM erp_order eo WHERE eo.pay_status = 8
+    </select>
+
     <select id="findOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
         SELECT count(eo.id)
         FROM erp_order eo

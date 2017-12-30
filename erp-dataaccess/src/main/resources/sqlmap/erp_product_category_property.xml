@@ -49,6 +49,17 @@
         from erp_product_category_property epcp where epcp.id = #{id, jdbcType=INTEGER} AND epcp.data_status = 1
     </select>
 
+
+    <select id="listPage" resultMap="ProductCategoryPropertyDO" parameterType="map">
+        select <include refid="column_List"/> from erp_product_category_property epcp
+        <where>
+            <if test="true">
+                and epcp.data_status = 1
+            </if>
+        </where>
+        LIMIT #{maps.start},#{maps.pageSize}
+    </select>
+
     <select id="findProductCategoryPropertyListByCategoryId" resultMap="ProductCategoryPropertyDO" parameterType="map">
         SELECT category_main.*
         <trim prefix=",">

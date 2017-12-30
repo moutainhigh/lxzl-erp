@@ -40,6 +40,11 @@ public class StatisticsIndexInfo implements Serializable {
      */
     private Map<Integer, BigDecimal> monthRentAmount;
 
+    /**
+     * 订单总量
+     * */
+    private Integer totalOrderCount;
+
     public BigDecimal getTotalRentAmount() {
         return totalRentAmount;
     }
@@ -78,5 +83,13 @@ public class StatisticsIndexInfo implements Serializable {
 
     public void setMonthRentAmount(Map<Integer, BigDecimal> monthRentAmount) {
         this.monthRentAmount = monthRentAmount;
+    }
+
+    public Integer getTotalOrderCount() {
+        return totalOrderCount;
+    }
+
+    public void setTotalOrderCount(Integer totalOrderCount) {
+        this.totalOrderCount = totalOrderCount;
     }
 }

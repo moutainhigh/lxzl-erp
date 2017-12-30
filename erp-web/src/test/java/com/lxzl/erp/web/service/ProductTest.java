@@ -1,6 +1,7 @@
 package com.lxzl.erp.web.service;
 
 import com.alibaba.fastjson.JSON;
+import com.lxzl.erp.common.constant.CategoryType;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -9,7 +10,11 @@ import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.util.AlgorithmUtil;
 import com.lxzl.erp.core.service.product.ProductCategoryService;
 import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyValueMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
+import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderDO;
 import com.lxzl.se.unit.test.BaseUnTransactionalTest;
 import org.junit.Test;
@@ -18,7 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProductTest extends BaseUnTransactionalTest {
 
@@ -30,7 +37,6 @@ public class ProductTest extends BaseUnTransactionalTest {
 
     @Autowired
     private StockOrderMapper stockOrderMapper;
-
 
 
     @Test
@@ -289,7 +295,52 @@ public class ProductTest extends BaseUnTransactionalTest {
     }
 
     @Test
-    public void testStockOrder(){
-        StockOrderDO stockOrderDO = stockOrderMapper.findOrderByTypeAndRefer(1,"PR2017122613482675460001641534");
+    public void testStockOrder() {
+        StockOrderDO stockOrderDO = stockOrderMapper.findOrderByTypeAndRefer(1, "PR2017122613482675460001641534");
     }
+
+
+    @Test
+    public void testSavePropertiesValue() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("start", 0);
+        params.put("pageSize", Integer.MAX_VALUE);
+        List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.listPage(params);
+
+        Map<Integer, String> categoryMap = new HashMap<>();
+        categoryMap.put(800002, "笔记本");
+
+        for (Map.Entry<Integer, String> entry : categoryMap.entrySet()) {
+            Integer key = entry.getKey();
+            String categoryName = entry.getValue();
+            for (ProductCategoryPropertyDO productCategoryPropertyDO : productCategoryPropertyDOList) {
+                if (key.equals(productCategoryPropertyDO.getCategoryId())) {
+                    if (productCategoryPropertyDO.getPropertyName().equals("屏幕尺寸")) {
+                        String[] valueName = new String[]{"11.6", "12.1", "13.3", "14.1", "15.4", "15.6"};
+                        for (String value : valueName) {
+                            ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId());
+                            productCategoryPropertyValueDO.setRemark(categoryName + productCategoryPropertyDO.getPropertyName() + value);
+                            productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private ProductCategoryPropertyValueDO buildProductCategoryPropertyValueDO(String name, Integer propertyId, Integer categoryId) {
+        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = new ProductCategoryPropertyValueDO();
+        productCategoryPropertyValueDO.setPropertyValueName(name);
+        productCategoryPropertyValueDO.setPropertyId(propertyId);
+        productCategoryPropertyValueDO.setCategoryId(categoryId);
+        productCategoryPropertyValueDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        return productCategoryPropertyValueDO;
+    }
+
+    @Autowired
+    private ProductCategoryPropertyMapper productCategoryPropertyMapper;
+
+    @Autowired
+    private ProductCategoryPropertyValueMapper productCategoryPropertyValueMapper;
 }

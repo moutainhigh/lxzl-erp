@@ -11,4 +11,6 @@ import java.util.Map;
 public interface ProductCategoryPropertyMapper extends BaseMysqlDAO<ProductCategoryPropertyDO> {
     List<ProductCategoryPropertyDO> findProductCategoryPropertyListByCategoryId(@Param("maps") Map<String, Object> paramMap);
     List<ProductCategoryPropertyDO> findProductCategoryPropertyListByProductId(@Param("maps") Map<String, Object> paramMap);
+
+    List<ProductCategoryPropertyDO> listPage(@Param("maps") Map<String, Object> paramMap);
 }
