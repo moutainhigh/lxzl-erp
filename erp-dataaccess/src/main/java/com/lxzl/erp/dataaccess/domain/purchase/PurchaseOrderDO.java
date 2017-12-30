@@ -17,6 +17,7 @@ public class PurchaseOrderDO extends BaseDO {
     private String warehouseSnapshot;
     private Integer isInvoice;
     private Integer isNew;
+    private Double taxRate;   //税率
     private BigDecimal purchaseOrderAmountTotal;
     private BigDecimal purchaseOrderAmountReal;
     private BigDecimal purchaseOrderAmountStatement;
@@ -89,6 +90,14 @@ public class PurchaseOrderDO extends BaseDO {
 
     public Integer getIsNew() {
         return isNew;
+    }
+
+    public Double getTaxRate() {
+        return taxRate;
+    }
+
+    public void setTaxRate(Double taxRate) {
+        this.taxRate = taxRate;
     }
 
     public void setIsNew(Integer isNew) {

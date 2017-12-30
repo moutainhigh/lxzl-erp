@@ -12,6 +12,8 @@ import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.validate.constraints.In;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -36,6 +38,10 @@ public class PurchaseOrder extends BasePO {
     @NotNull(message = ErrorCode.IS_NEW_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
     @In(value = {CommonConstant.YES, CommonConstant.NO}, message = ErrorCode.IS_INVOICE_VALUE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
     private Integer isNew;   //是否全新机
+    @NotNull(message = ErrorCode.PURCHASE_TAX_RATE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
+    @Min(value = 0 ,message = ErrorCode.PURCHASE_TAX_RATE_ERROR,groups = {AddGroup.class, UpdateGroup.class})
+    @Max(value = 1 ,message = ErrorCode.PURCHASE_TAX_RATE_ERROR,groups = {AddGroup.class, UpdateGroup.class})
+    private Double taxRate;   //税率
     private BigDecimal purchaseOrderAmountTotal;   //采购单总价
     private BigDecimal purchaseOrderAmountReal;   //采购单实收
     private BigDecimal purchaseOrderAmountStatement;   //采购单结算金额
@@ -125,6 +131,14 @@ public class PurchaseOrder extends BasePO {
 
     public void setIsNew(Integer isNew) {
         this.isNew = isNew;
+    }
+
+    public Double getTaxRate() {
+        return taxRate;
+    }
+
+    public void setTaxRate(Double taxRate) {
+        this.taxRate = taxRate;
     }
 
     public BigDecimal getPurchaseOrderAmountTotal() {

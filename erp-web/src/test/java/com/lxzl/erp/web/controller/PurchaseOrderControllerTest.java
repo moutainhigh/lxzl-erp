@@ -38,11 +38,12 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     public void addPurchaseOrder() throws Exception {
 
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setWarehouseNo("W201708081508");//仓库编号必填,这里为分公司
+        purchaseOrder.setWarehouseNo("LXW07551");//仓库编号必填,这里为分公司
         purchaseOrder.setIsInvoice(CommonConstant.COMMON_CONSTANT_NO);//是否有发票字段必填
         purchaseOrder.setIsNew(CommonConstant.COMMON_CONSTANT_NO);//是否是全新机
         purchaseOrder.setPurchaseType(PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN);
         purchaseOrder.setProductSupplierId(1);//商品供应商ID不能为空
+        purchaseOrder.setTaxRate(0.22);
 
         List<PurchaseOrderProduct> purchaseOrderProductList = new ArrayList<>();//采购单商品项列表
 //        purchaseOrderProductList.add(createPurchaseOrderProduct(65,100,new BigDecimal(5000)));
