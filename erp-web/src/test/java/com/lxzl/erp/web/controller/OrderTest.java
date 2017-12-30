@@ -160,7 +160,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void testProcessOrderJson() throws Exception{
-        String str = "{\"equipmentNo\":\"LX-EQUIPMENT-4000001-2017122210000\",\"orderNo\":\"O201712222007232111047\",\"operationType\":1}\n";
+        String str = "{\"equipmentNo\":\"LX-E-4000001-2017122918883\",\"orderNo\":\"LXO2017123070005600071\",\"operationType\":1}\n";
         ProcessOrderParam processOrderParam = JSONUtil.convertJSONToBean(str,ProcessOrderParam.class );
         TestResult testResult = getJsonTestResult("/order/process", processOrderParam);
     }
