@@ -202,6 +202,7 @@ public class ErrorCode {
     public static final String BULK_PURCHASE_PRICE_NOT_NULL = "J300058";
     public static final String PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_COMMIT = "J300059";
     public static final String SUB_COMPANY_NOT_EXISTS = "J300060";
+    public static final String PURCHASE_TAX_RATE_ERROR = "J300061";
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
     public static final String ORDER_CUSTOMER_CONSIGN_NOT_NULL = "J400001";
@@ -629,6 +630,7 @@ public class ErrorCode {
         MAP.put(AGENT_PERSON_NO_NOT_NULL, "经办人身份证号码不能为空");
         MAP.put(CONSIGN_ADDRESS_NOT_NULL, "收货地址不能为空");
         MAP.put(SALES_MAN_NOT_NULL, "业务员不能为空");
+        MAP.put(PURCHASE_TAX_RATE_ERROR, "采购单税率有误");
 
 
 
