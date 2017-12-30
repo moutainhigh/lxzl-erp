@@ -40,6 +40,7 @@ import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.returnOrder.*;
+import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -551,6 +552,9 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         customerRiskManagementMapper.update(customerRiskManagementDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        if(true){
+            throw new BusinessException();
+        }
         return serviceResult;
     }
 
@@ -559,45 +563,19 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         ServiceResult<String, ReturnOrder> serviceResult = new ServiceResult<>();
         ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(returnOrder.getReturnOrderNo());
 
-        //用户在租sku统计
-        Map<String, Object> findSkuRentMap = customerOrderSupport.getCustomerAllMap(returnOrderDO.getCustomerId());
-        List<ProductSkuDO> oldProductSkuDOList = productSkuMapper.findSkuRent(findSkuRentMap);
-        Map<Integer, ProductSkuDO> oldSkuCountMap = new HashMap<>();
-        if (CollectionUtil.isNotEmpty(oldProductSkuDOList)) {
-            for (ProductSkuDO productSkuDO : oldProductSkuDOList) {
-                oldSkuCountMap.put(productSkuDO.getId(), productSkuDO);
-            }
-        }
-        //用户在租物料统计
-        findSkuRentMap = customerOrderSupport.getCustomerCanReturnAllMap(returnOrderDO.getCustomerId());
-        List<MaterialDO> oldMaterialDOList = materialMapper.findMaterialRent(findSkuRentMap);
-        Map<Integer, MaterialDO> oldMaterialCountMap = new HashMap<>();
-        if (CollectionUtil.isNotEmpty(oldMaterialDOList)) {
-            for (MaterialDO materialDO : oldMaterialDOList) {
-                oldMaterialCountMap.put(materialDO.getId(), materialDO);
-            }
-        }
         returnOrder = ConverterUtil.convert(returnOrderDO, ReturnOrder.class);
         //填写退还商品项可退数量字段，用于修改接口提示
         List<ReturnOrderProduct> returnOrderProductList = returnOrder.getReturnOrderProductList();
         if (CollectionUtil.isNotEmpty(returnOrderProductList)) {
             for (ReturnOrderProduct returnOrderProduct : returnOrderProductList) {
-                Integer canProcessCount = 0;
-                if (oldSkuCountMap.get(returnOrderProduct.getReturnProductSkuId()) != null) {
-                    canProcessCount = oldSkuCountMap.get(returnOrderProduct.getReturnProductSkuId()).getCanProcessCount();
-                }
-                returnOrderProduct.setCanProcessCount(canProcessCount);
+                returnOrderProduct.setCanProcessCount(returnOrderProduct.getReturnProductSkuCount()-returnOrderProduct.getRealReturnProductSkuCount());
             }
         }
         //填写退还物料项可退数量字段，用于修改接口提示
         List<ReturnOrderMaterial> returnOrderMaterialList = returnOrder.getReturnOrderMaterialList();
         if (CollectionUtil.isNotEmpty(returnOrderMaterialList)) {
             for (ReturnOrderMaterial returnOrderMaterial : returnOrderMaterialList) {
-                Integer canProcessCount = 0;
-                if (oldMaterialCountMap.get(returnOrderMaterial.getReturnMaterialId()) != null) {
-                    canProcessCount = oldMaterialCountMap.get(returnOrderMaterial.getReturnMaterialId()).getCanProcessCount();
-                }
-                returnOrderMaterial.setCanProcessCount(canProcessCount);
+                returnOrderMaterial.setCanProcessCount(returnOrderMaterial.getReturnMaterialCount()-returnOrderMaterial.getRealReturnMaterialCount());
             }
         }
         serviceResult.setResult(returnOrder);

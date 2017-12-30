@@ -41,98 +41,30 @@
                         {{#data}}
                         <div class="form-horizontal panel-body bg-light dark br-t-n">
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group field">
-                                        <div class="form-group field mbn">
-                                            <label class="col-md-3 control-label">状态</label>
-                                            <div class="col-md-9">
-                                                <p class="form-control-static text-muted">{{deploymentOrderStatusValue}}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group field">
-                                        <div class="form-group field mbn">
-                                            <label class="col-md-3 control-label">调拨类型</label>
-                                            <div class="col-md-9">
-                                                <p class="form-control-static text-muted">{{deploymentTypeValue}}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group field">
-                                        <label class="col-md-3 control-label">源库房</label>
-                                        <div class="col-md-9">
-                                            <div class="input-group bringContainer">
-                                                <p class="form-control-static text-muted">{{srcWarehouseName}}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group field">
-                                        <label class="col-md-3 control-label">目标库房</label>
-                                        <div class="col-md-9">
-                                            <div class="input-group bringContainer">
-                                                <p class="form-control-static text-muted">{{srcWarehouseName}}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group field">
-                                        <label class="col-md-3 control-label">调拨日期</label>
-                                        <div class="col-md-9">
-                                            <div class="input-group date" id="expectReturnTime">
-                                                <p class="form-control-static text-muted">{{#time}}{{expectReturnTime}}{{/time}}</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">状态</dt><dd>{{deploymentOrderStatusValue}}</dd>
+                                        <dt class="mb10">调拨类型</dt><dd>{{deploymentTypeValue}}</dd>
+                                        <dt class="mb10">源库房</dt><dd>{{srcWarehouseName}}</dd>
+                                        <dt class="mb10">目标库房</dt><dd>{{targetWarehouseName}}</dd>
+                                        <dt class="mb10">调拨日期</dt><dd>{{#time}}{{expectReturnTime}}{{/time}}</dd>
+                                    </dl>
                                 </div>
-                                <div class="col-md-6">
-
-                                    <div class="form-group field">
-                                        <div class="form-group field mbn">
-                                            <label class="col-md-3 control-label">商品总数</label>
-                                            <div class="col-md-9">
-                                                <p class="form-control-static text-muted">{{totalProductCount}}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group field">
-                                        <div class="form-group field mbn">
-                                            <label class="col-md-3 control-label">商品总价</label>
-                                            <div class="col-md-9">
-                                                <p class="form-control-static text-muted">{{#price}}{{totalProductAmount}}{{/price}}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group field">
-                                        <div class="form-group field mbn">
-                                            <label class="col-md-3 control-label">配件总数</label>
-                                            <div class="col-md-9">
-                                                <p class="form-control-static text-muted">{{totalMaterialCount}}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group field">
-                                        <div class="form-group field mbn">
-                                            <label class="col-md-3 control-label">配件总价</label>
-                                            <div class="col-md-9">
-                                                <p class="form-control-static text-muted">{{#price}}{{totalMaterialAmount}}{{/price}}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group field">
-                                        <div class="form-group field mbn">
-                                            <label class="col-md-3 control-label">订单总价</label>
-                                            <div class="col-md-9">
-                                                <p class="form-control-static text-muted">{{#price}}{{totalOrderAmount}}{{/price}}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group field">
-                                        <div class="form-group field mbn">
-                                            <label class="col-md-3 control-label">优惠金额</label>
-                                            <div class="col-md-9">
-                                                <p class="form-control-static text-muted">{{#price}}{{totalDiscountAmount}}{{/price}}</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">商品总数</dt><dd>{{totalProductCount}}</dd>
+                                        <dt class="mb10">商品总价</dt><dd>￥{{#price}}{{totalProductAmount}}{{/price}}</dd>
+                                        <dt class="mb10">配件总数</dt><dd>{{totalMaterialCount}}</dd>
+                                        <dt class="mb10">配件总价</dt><dd>￥{{#price}}{{totalMaterialAmount}}{{/price}}</dd>
+                                        <dt class="mb10">订单总价</dt><dd>￥{{#price}}{{totalOrderAmount}}{{/price}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">创建人</dt><dd>{{createUserRealName}}</dd>
+                                        <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}</dd>
+                                        <dt class="mb10">调拨日期</dt><dd>{{#time}}{{expectReturnTime}}{{/time}}</dd>
+                                    </dl>
                                 </div>
                             </div>
                         </div>
@@ -143,7 +75,7 @@
 
                     <div class="panel-heading">
                         <div class="row">
-                            <ul class="nav panel-tabs-border panel-tabs">
+                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
                                 <li class="active">
                                     <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
                                 </li>
@@ -174,12 +106,6 @@
                                     <script type="text/html" id="dataListTpl">
                                         <thead>
                                         <tr class="bg-light">
-##                                            <th>
-##                                                <label class="option block mn">
-##                                                    <input type="checkbox" name="checkAll" value="">
-##                                                    <span class="checkbox mn"></span>
-##                                                </label>
-##                                            </th>
                                             <th>商品ID</th>
                                             <th>图片</th>
                                             <th>商品名称</th>
@@ -191,12 +117,6 @@
                                         {{#dataSource}}
                                         {{#listData}}
                                         <tr class="productRow" productRowKey="{{productId}}">
-##                                            <td>
-##                                                <label class="option block mn">
-##                                                    <input type="checkbox" name="checkItem" value="{{productId}}">
-##                                                    <span class="checkbox mn"></span>
-##                                                </label>
-##                                            </td>
                                             <td>{{productId}}</td>
                                             <td>
                                                 <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>

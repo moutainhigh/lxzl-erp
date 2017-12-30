@@ -7,7 +7,6 @@ import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
-import java.io.Serializable;
 import java.util.Date;
 
 

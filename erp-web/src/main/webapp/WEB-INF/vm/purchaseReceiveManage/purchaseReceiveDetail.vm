@@ -58,9 +58,9 @@
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
                                         <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}</dd>
-                                        <dt class="mb10">创建人</dt><dd>{{createUser}}</dd>
+                                        <dt class="mb10">创建人</dt><dd>{{createUserRealName}}</dd>
                                         <dt class="mb10">修改时间</dt><dd>{{#time}}{{updateTime}}{{/time}}</dd>
-                                        <dt class="mb10">修改人</dt><dd>{{updateUser}}</dd>
+                                        <dt class="mb10">修改人</dt><dd>{{updateUserRealName}}</dd>
                                         <dt class="mb10">签单时间</dt><dd>{{#time}}{{confirmTime}}{{/time}}</dd>
                                         <dt class="mb10">签单人</dt><dd>{{ownerName}}</dd>
                                     </dl>

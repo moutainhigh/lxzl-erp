@@ -19,5 +19,6 @@ public class ReturnEquipmentPageParam extends BasePageParam{
     public void setReturnOrderProductId(Integer returnOrderProductId) {
         this.returnOrderProductId = returnOrderProductId;
     }
+
 }
 

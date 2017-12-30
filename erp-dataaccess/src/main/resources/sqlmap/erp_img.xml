@@ -26,8 +26,8 @@
 		<include refid="column_List"/>
 		from erp_img
 		<where>
-			<if test="id != null">
-				and id = #{id, jdbcType=INTEGER}
+			<if test="_parameter != null">
+				and id = #{_parameter, jdbcType=INTEGER}
 			</if>
 			<if test="true">
 				and data_status = 1
@@ -46,7 +46,7 @@
 		select
 		<include refid="column_List"/>
 		from erp_img
-		where id = #{id, jdbcType=VARCHAR} and data_status = 1
+		where id = #{id, jdbcType=INTEGER} and data_status = 1
 	</select>
 
 	<select id="findByRefIdAndType" resultMap="ImageDO" parameterType="map">
@@ -60,6 +60,7 @@
 		INSERT INTO erp_img
 		<include refid="set_column_sql"/>
 	</insert>
+
 	<sql id="set_column_sql">
 		<set>
 			<if test="imgType != null">

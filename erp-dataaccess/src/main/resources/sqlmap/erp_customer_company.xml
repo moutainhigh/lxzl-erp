@@ -23,10 +23,33 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="customer_origin" jdbcType="INTEGER" property="customerOrigin" />
+		<result column="company_found_time" jdbcType="TIMESTAMP" property="companyFoundFime" />
+		<result column="industry" jdbcType="VARCHAR" property="industry" />
+		<result column="registered_capital" jdbcType="INTEGER" property="registeredCapital" />
+		<result column="office_number" jdbcType="INTEGER" property="officeNumber" />
+		<result column="product_purpose" jdbcType="VARCHAR" property="productPurpose" />
+		<result column="customer_company_need_first_json" jdbcType="VARCHAR" property="customerCompanyNeedFirstJson" />
+		<result column="customer_company_need_later_json" jdbcType="VARCHAR" property="customerCompanyNeedLaterJson" />
+		<result column="agent_person_name" jdbcType="VARCHAR" property="agentPersonName" />
+		<result column="agent_person_phone" jdbcType="VARCHAR" property="agentPersonPhone" />
+		<result column="agent_person_no" jdbcType="VARCHAR" property="agentPersonNo" />
+		<result column="consign_address" jdbcType="VARCHAR" property="consignAddress" />
+		<result column="unified_credit_code" jdbcType="VARCHAR" property="unifiedCreditCode" />
+		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+		<result column="is_legal_person_apple" jdbcType="INTEGER" property="isLegalPersonApple" />
+		<result column="legal_person_phone" jdbcType="VARCHAR" property="legalPersonPhone" />
+		<result column="sales_man" jdbcType="VARCHAR" property="salesMan" />
+		<result column="union_area" jdbcType="VARCHAR" property="unionArea" />
+		<result column="union_sales_man" jdbcType="VARCHAR" property="unionSalesMan" />
+		<result column="operating_area" jdbcType="DOUBLE" property="operatingArea" />
+		<result column="unit_insured_number" jdbcType="INTEGER" property="unitInsuredNumber" />
+		<result column="affiliated_enterprise" jdbcType="VARCHAR" property="affiliatedEnterprise" />
 	</resultMap>
 
 	<sql id="column_List">
-		ecc.id,ecc.customer_id,ecc.landline,ecc.connect_real_name,ecc.connect_phone,ecc.company_name,ecc.company_abb,ecc.province,ecc.city,ecc.district,ecc.address,ecc.legal_person,ecc.legal_person_no,ecc.business_license_no,ecc.data_status,ecc.remark,ecc.create_time,ecc.create_user,ecc.update_time,ecc.update_user
+		ecc.id,ecc.customer_id,ecc.landline,ecc.connect_real_name,ecc.connect_phone,ecc.company_name,ecc.company_abb,ecc.province,ecc.city,ecc.district,ecc.address,ecc.legal_person,ecc.legal_person_no,ecc.business_license_no,ecc.data_status,ecc.remark,ecc.create_time,ecc.create_user,ecc.update_time,ecc.update_user,ecc.customer_origin,ecc.company_found_time,ecc.industry,ecc.registered_capital,ecc.office_number,ecc.product_purpose,ecc.customer_company_need_first_json,ecc.customer_company_need_later_json,ecc.agent_person_name,ecc.agent_person_phone,ecc.agent_person_no,ecc.consign_address,ecc.unified_credit_code,ecc.customer_no,ecc.is_legal_person_apple,ecc.legal_person_phone,ecc.sales_man,ecc.union_area,ecc.union_sales_man,ecc.operating_area,ecc.unit_insured_number,ecc.affiliated_enterprise
 	</sql>
 
 	<select id="findById" resultMap="CustomerCompanyDO" parameterType="java.lang.Integer">
@@ -117,8 +140,75 @@
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
 			</if>
+			<if test="customerOrigin != null">
+				customer_origin = #{customerOrigin,jdbcType=INTEGER},
+			</if>
+			<if test="companyFoundTime != null">
+				company_found_time = #{companyFoundTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="industry != null">
+				industry = #{industry,jdbcType=VARCHAR},
+			</if>
+			<if test="registeredCapital != null">
+				registered_capital = #{registeredCapital,jdbcType=DECIMAL},
+			</if>
+			<if test="officeNumber != null">
+				office_number = #{officeNumber,jdbcType=INTEGER},
+			</if>
+			<if test="productPurpose != null">
+				product_purpose = #{productPurpose,jdbcType=VARCHAR},
+			</if>
+			<if test="customerCompanyNeedFirstJson != null">
+				customer_company_need_first_json = #{customerCompanyNeedFirstJson,jdbcType=VARCHAR},
+			</if>
+			<if test="customerCompanyNeedLaterJson != null">
+				customer_company_need_later_json = #{customerCompanyNeedLaterJson,jdbcType=VARCHAR},
+			</if>
+			<if test="agentPersonName != null">
+				agent_person_name = #{agentPersonName,jdbcType=VARCHAR},
+			</if>
+			<if test="agentPersonPhone != null">
+				agent_person_phone = #{agentPersonPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="agentPersonNo != null">
+				agent_person_no = #{agentPersonNo,jdbcType=VARCHAR},
+			</if>
+			<if test="consignAddress != null">
+				consign_address = #{consignAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="unifiedCreditCode != null">
+				unified_credit_code = #{unifiedCreditCode,jdbcType=VARCHAR},
+			</if>
+			<if test="customerNo != null">
+				customer_no = #{customerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="isLegalPersonApple != null">
+				is_legal_person_apple = #{isLegalPersonApple,jdbcType=INTEGER},
+			</if>
+			<if test="legalPersonPhone != null">
+				legal_person_phone = #{legalPersonPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="salesMan != null">
+				sales_man = #{salesMan,jdbcType=VARCHAR},
+			</if>
+			<if test="unionArea != null">
+				union_area = #{unionArea,jdbcType=VARCHAR},
+			</if>
+			<if test="unionSalesMan != null">
+				union_sales_man = #{unionSalesMan,jdbcType=VARCHAR},
+			</if>
+			<if test="operatingArea != null">
+				operating_area = #{operatingArea,jdbcType=DOUBLE},
+			</if>
+			<if test="unitInsuredNumber != null">
+				unit_insured_number = #{unitInsuredNumber,jdbcType=INTEGER},
+			</if>
+			<if test="affiliatedEnterprise != null">
+				affiliated_enterprise = #{affiliatedEnterprise,jdbcType=VARCHAR},
+			</if>
 		</set>
 	</sql>
+
 
 	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.customer.CustomerCompanyDO">
 		INSERT INTO erp_customer_company <include refid="set_column_sql"/>

@@ -3,7 +3,13 @@ package com.lxzl.erp.common.domain.system.pojo;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,12 +20,13 @@ import com.lxzl.erp.common.domain.base.BasePO;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Image extends BasePO {
 
+    @NotNull(message = ErrorCode.IMG_ID_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Integer imgId;
 
     private Integer imgType;
 
     private String originalName;
-
+    @NotBlank(message = ErrorCode.IMG_REF_ID_NOT_NULL,groups = {UpdateCustomerCompanyGroup.class})
     private String refId;
 
     private String imgUrl;
