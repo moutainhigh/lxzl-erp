@@ -1135,7 +1135,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             autoPurchaseReceiveOrderDO.setConfirmTime(now);
             autoPurchaseReceiveOrderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
             autoPurchaseReceiveOrderDO.setUpdateTime(now);
-            purchaseReceiveOrderMapper.update(purchaseReceiveOrderDO);
+            purchaseReceiveOrderMapper.update(autoPurchaseReceiveOrderDO);
             List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = autoPurchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList();
             //保存新列表的map，方便后面比对
             Map<Integer, PurchaseReceiveOrderProductDO> newSkuMap = new HashMap<>();
