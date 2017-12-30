@@ -231,7 +231,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 return checkErrorCode;
             }
             //小配件没发票的，100元及以上的，不允许创建采购单
-            if (CommonConstant.COMMON_CONSTANT_NO.equals(purchaseOrder.getIsInvoice()) && purchaseOrderDetail.totalMaterialAmount.compareTo(new BigDecimal(100)) >= 0) {
+            if (CommonConstant.COMMON_CONSTANT_NO.equals(purchaseOrder.getIsInvoice()) && purchaseOrderDetail.totalMaterialAmount.compareTo(new BigDecimal(100)) > 0) {
                 return ErrorCode.PURCHASE_ORDER_MATERIAL_CAN_NOT_CREATE;
             }
         }
