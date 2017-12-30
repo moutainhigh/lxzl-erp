@@ -39,12 +39,12 @@
                                         <input type="text" name="productName" id="productName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入商品名称">
                                     </div>
                                 </div>
-                                <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
                                         <select class="form-control input-sm bradius" name="currentWarehouseId" id="currentWarehouseId"></select>
                                     </div>
                                 </div>
-                                <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
                                         <select class="form-control input-sm bradius" name="ownerWarehouseId" id="ownerWarehouseId"></select>
                                     </div>
@@ -77,7 +77,7 @@
                                     <th>SKU名称</th>
                                     <th>设备状态</th>
 ##                                    <th>可用状态</th>
-                                    <th>备注</th>
+##                                    <th>备注</th>
                                     {{#hasRowActionButtons}}
                                     <th class="text-right">操作</th>
                                     {{/hasRowActionButtons}}
@@ -105,7 +105,7 @@
                                         <td>{{skuName}}</td>
                                         <td>{{equipmentStatusStr}}</td>
 ##                                        <td>{{dataStatusStr}}</td>
-                                        <td>{{remark}}</td>
+##                                        <td>{{remark}}</td>
                                         {{#hasRowActionButtons}}
                                         <td class="text-right">
                                             <div class="btn-group text-right">
