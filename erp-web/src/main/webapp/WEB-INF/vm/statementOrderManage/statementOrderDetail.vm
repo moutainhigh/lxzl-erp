@@ -96,7 +96,7 @@
                                         <th>逾期金额</th>
                                         <th>状态</th>
                                         <th>结算开始时间</th>
-                                        <th>结算借宿时间</th>
+                                        <th>结算结束时间</th>
                                     </tr>
                                     </thead>
                                     <tbody>

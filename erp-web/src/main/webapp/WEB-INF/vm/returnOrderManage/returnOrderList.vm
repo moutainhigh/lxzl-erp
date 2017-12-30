@@ -169,6 +169,7 @@
             'manage.return.order.handle.mixin.js',
             'manage.return.order.js',
             'manage.order.picking.js',
+            'manage.return.order.end.input.modal.js',
             'modal.submit.audit.js');
 </script>
 <script type="text/javascript">
