@@ -118,6 +118,7 @@ public class StatementServiceImpl implements StatementService {
             for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
                 Calendar rentStartTimeCalendar = Calendar.getInstance();
                 rentStartTimeCalendar.setTime(rentStartTime);
+                BigDecimal itemAllAmount = BigDecimalUtil.add(BigDecimalUtil.add(orderProductDO.getProductAmount(), orderProductDO.getRentDepositAmount()), otherAmount);
                 // 先确定订单需要结算几期
                 Integer statementMonthCount = calculateStatementMonthCount(orderProductDO.getRentType(), orderProductDO.getRentTimeLength(), orderProductDO.getPaymentCycle(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
                 if (statementMonthCount == 1) {
@@ -137,7 +138,6 @@ public class StatementServiceImpl implements StatementService {
                             otherAmount = BigDecimal.ZERO;
                         } else if (statementMonthCount == i) {
                             // 最后一期
-                            BigDecimal itemAllAmount = BigDecimalUtil.add(BigDecimalUtil.add(orderProductDO.getProductAmount(), orderProductDO.getRentDepositAmount()), otherAmount);
                             StatementOrderDetailDO statementOrderDetailDO = calculateLastStatementOrderDetail(buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), lastCalculateDate, rentStartTime, orderProductDO.getPayMode(), orderProductDO.getRentTimeLength(), itemAllAmount, alreadyPaidAmount, currentTime, loginUser.getUserId());
                             addStatementOrderDetailDOList.add(statementOrderDetailDO);
                         } else {
@@ -157,6 +157,7 @@ public class StatementServiceImpl implements StatementService {
             for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
                 Calendar rentStartTimeCalendar = Calendar.getInstance();
                 rentStartTimeCalendar.setTime(rentStartTime);
+                BigDecimal itemAllAmount = BigDecimalUtil.add(BigDecimalUtil.add(orderMaterialDO.getMaterialAmount(), orderMaterialDO.getRentDepositAmount()), otherAmount);
                 // 先确定订单需要结算几期
                 Integer statementMonthCount = calculateStatementMonthCount(orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength(), orderMaterialDO.getPaymentCycle(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
                 if (statementMonthCount == 1) {
@@ -176,7 +177,6 @@ public class StatementServiceImpl implements StatementService {
                             otherAmount = BigDecimal.ZERO;
                         } else if (statementMonthCount == i) {
                             // 最后一期
-                            BigDecimal itemAllAmount = BigDecimalUtil.add(BigDecimalUtil.add(orderMaterialDO.getMaterialAmount(), orderMaterialDO.getRentDepositAmount()), otherAmount);
                             StatementOrderDetailDO statementOrderDetailDO = calculateLastStatementOrderDetail(buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), lastCalculateDate, rentStartTime, orderMaterialDO.getPayMode(), orderMaterialDO.getRentTimeLength(), itemAllAmount, alreadyPaidAmount, currentTime, loginUser.getUserId());
                             addStatementOrderDetailDOList.add(statementOrderDetailDO);
                         } else {
@@ -338,8 +338,8 @@ public class StatementServiceImpl implements StatementService {
                     result.setErrorCode(ErrorCode.ORDER_PRODUCT_NOT_EXISTS);
                     return result;
                 }
-                totalReturnRentDepositAmount = BigDecimalUtil.add(totalReturnRentDepositAmount, BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), 2));
-                totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), 2));
+                totalReturnRentDepositAmount = BigDecimalUtil.add(totalReturnRentDepositAmount, BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE));
+                totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE));
 
                 Date returnTime = returnOrderProductEquipmentDO.getCreateTime();
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
@@ -700,7 +700,14 @@ public class StatementServiceImpl implements StatementService {
         Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, paymentCycle);
         Calendar statementEndTimeCalendar = Calendar.getInstance();
         statementEndTimeCalendar.setTime(statementEndTime);
-        statementEndTimeCalendar.set(Calendar.DAY_OF_MONTH, statementDays);
+        int statementEndMonthDays = DateUtil.getActualMaximum(statementEndTime);
+        if(statementDays > statementEndMonthDays){
+            statementEndTimeCalendar.set(Calendar.DAY_OF_MONTH, statementEndMonthDays);
+        }else{
+            statementEndTimeCalendar.set(Calendar.DAY_OF_MONTH, statementDays);
+        }
+
+
         statementEndTime = statementEndTimeCalendar.getTime();
 
         Date statementExpectPayTime;

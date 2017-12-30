@@ -1,13 +1,16 @@
 package com.lxzl.erp.web.test;
 
+import com.lxzl.erp.common.util.BigDecimalUtil;
+import com.lxzl.erp.common.util.DateUtil;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
 public class CommonTest {
 
     public static void main(String[] args) {
-        int value = 0;
-        for (int i = 0; i < 10; i++) {
-            add(value);
-            System.out.println(value);
-        }
+        System.out.println(BigDecimalUtil.div(new BigDecimal(5000), new BigDecimal(30), 2));
+        System.out.println(BigDecimalUtil.div(BigDecimalUtil.mul(new BigDecimal(5000), new BigDecimal(30)), new BigDecimal(30),2));
     }
 
     private static void add(int value) {
