@@ -82,7 +82,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime,orderDO.getBuyerCustomerId()));
-        orderDO.setBuyerCustomerId(userSupport.getCurrentUserCompanyId());
+        orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
         orderDO.setOrderSellerId(loginUser.getUserId());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
         orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
