@@ -498,14 +498,15 @@ public class MaterialServiceImpl implements MaterialService {
         }
         MaterialModelDO dbMaterialModelDO = materialModelMapper.findByTypeAndName(materialModel.getMaterialType(), materialModel.getModelName());
         if (dbMaterialModelDO != null) {
+            result.setResult(dbMaterialModelDO.getId());
             result.setErrorCode(ErrorCode.RECORD_ALREADY_EXISTS);
             return result;
         }
 
         MaterialModelDO materialModelDO = ConverterUtil.convert(materialModel, MaterialModelDO.class);
         materialModelDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        materialModelDO.setUpdateUser(loginUser.getUserId().toString());
-        materialModelDO.setCreateUser(loginUser.getUserId().toString());
+//        materialModelDO.setUpdateUser(loginUser.getUserId().toString());
+//        materialModelDO.setCreateUser(loginUser.getUserId().toString());
         materialModelDO.setUpdateTime(currentTime);
         materialModelDO.setCreateTime(currentTime);
         materialModelMapper.save(materialModelDO);
