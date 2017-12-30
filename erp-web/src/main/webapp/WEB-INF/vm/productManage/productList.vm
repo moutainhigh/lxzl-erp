@@ -52,6 +52,11 @@
                                             <input type="text" name="productId" id="productId" class="form-control input-sm bradius number" autocomplete="off" placeholder="输入商品ID">
                                         </div>
                                     </div>
+                                    <div class="form-group pull-right mn mr10">
+                                        <div class="input-group">
+                                            <select class="form-control input-sm bradius" name="brandId" id="brandId"></select>
+                                        </div>
+                                    </div>
                                     <select name="isRent" id="isRentMultiselect" class="hide"></select>
                                 </form>
                             </div>
@@ -74,6 +79,7 @@
                                         <th>图片</th>
                                         <th>商品名称</th>
                                         <th>副标题</th>
+                                        <th>品牌</th>
                                         <th>租金</th>
                                         <th>总库存</th>
                                         <th>是否在租</th>
@@ -99,6 +105,7 @@
                                             <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                             <td>{{productName}}</td>
                                             <td>{{subtitle}}</td>
+                                            <td>{{brandName}}</td>
                                             <td>
                                                 <p>日租：{{dayRentPriceRange}}</p>
                                                 <p>月租：{{monthRentPriceRang}}</p>
@@ -147,7 +154,10 @@
 
     <script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
     <script type="text/javascript">
-        management_load_script('${staticManagement}js','manage.product.js','manage.product.util.js','manage.product.add.js','manage.product.edit.js','manage.product.view.js');
+        management_load_script('${staticManagement}js',
+                'api.data.js',
+                'manage.product.js',
+                'manage.product.util.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

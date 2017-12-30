@@ -55,14 +55,14 @@
                                         </div>
                                     </div>
                                     <div class="section row">
-                                        <div class="col-md-4">
-                                            <label for="listPrice" class="field-label">列表展示价格</label>
-                                            <label for="listPrice" class="field prepend-icon">
-                                                <input type="text" name="listPrice" id="listPrice" class="gui-input required moneyNumber" />
-                                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i>
-                                                </label>
-                                            </label>
-                                        </div>
+##                                        <div class="col-md-4">
+##                                            <label for="listPrice" class="field-label">列表展示价格</label>
+##                                            <label for="listPrice" class="field prepend-icon">
+##                                                <input type="text" name="listPrice" id="listPrice" class="gui-input required moneyNumber" />
+##                                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i>
+##                                                </label>
+##                                            </label>
+##                                        </div>
                                         <div class="col-md-4">
                                             <label for="unit" class="field-label">单位</label>
                                             <label for="unit" class="field select">
@@ -80,8 +80,6 @@
                                                 <i class="arrow"></i>
                                             </label>
                                         </div>
-                                    </div>
-                                    <div class="section row">
                                         <div class="col-md-4">
                                             <label for="isRent" class="field-label">是否在租</label>
                                             <label class="field select">
@@ -270,7 +268,10 @@
 
     <script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.product.util.js', 'manage.product.edit.js');
+        management_load_script('${staticManagement}/js',
+                'api.data.js',
+                'manage.product.util.js',
+                'manage.product.edit.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

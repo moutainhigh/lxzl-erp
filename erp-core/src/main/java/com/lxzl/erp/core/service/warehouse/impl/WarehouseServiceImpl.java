@@ -38,6 +38,7 @@ import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import com.lxzl.se.dataaccess.mysql.source.interceptor.SqlLogInterceptor;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -621,6 +622,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
 
         if (!allBulkMaterialDOList.isEmpty()) {
+            SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.saveList  sql ......");
             bulkMaterialMapper.saveList(allBulkMaterialDOList);
         }
         if (!allStockOrderBulkMaterialDOList.isEmpty()) {
@@ -629,6 +631,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                 stockOrderBulkMaterialDO.setBulkMaterialId(bulkMaterialDO.getId());
                 stockOrderBulkMaterialDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
             }
+            SqlLogInterceptor.setExecuteSql("skip print stockOrderBulkMaterialMapper.saveList  sql ......");
             stockOrderBulkMaterialMapper.saveList(allStockOrderBulkMaterialDOList);
         }
     }
@@ -759,18 +762,21 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
 
         if (!allProductEquipmentDOList.isEmpty()) {
+            SqlLogInterceptor.setExecuteSql("skip print productEquipmentMapper.saveList  sql ......");
             productEquipmentMapper.saveList(allProductEquipmentDOList);
         }
         if(!allStockOrderEquipmentDOList.isEmpty()){
             for(StockOrderEquipmentDO stockOrderEquipmentDO : allStockOrderEquipmentDOList){
                 stockOrderEquipmentDO.setEquipmentId(allProductEquipmentDOMap.get(stockOrderEquipmentDO.getEquipmentNo()).getId());
             }
+            SqlLogInterceptor.setExecuteSql("skip print stockOrderEquipmentMapper.saveList  sql ......");
             stockOrderEquipmentMapper.saveList(allStockOrderEquipmentDOList);
         }
         if (!allProductEquipmentMaterialDOList.isEmpty()) {
             for(ProductEquipmentMaterialDO productEquipmentMaterialDO : allProductEquipmentMaterialDOList){
                 productEquipmentMaterialDO.setEquipmentId(allProductEquipmentDOMap.get(productEquipmentMaterialDO.getEquipmentNo()).getId());
             }
+            SqlLogInterceptor.setExecuteSql("skip print productEquipmentMaterialMapper.saveList  sql ......");
             productEquipmentMaterialMapper.saveList(allProductEquipmentMaterialDOList);
         }
         if (!allBulkMaterialDOList.isEmpty()) {
@@ -778,6 +784,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                 ProductEquipmentDO productEquipmentDO = allProductEquipmentDOMap.get(bulkMaterialDO.getCurrentEquipmentNo());
                 bulkMaterialDO.setCurrentEquipmentId(productEquipmentDO.getId());
             }
+            SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.saveList  sql ......");
             bulkMaterialMapper.saveList(allBulkMaterialDOList);
         }
         if (!allProductEquipmentBulkMaterialDOList.isEmpty()) {
@@ -785,6 +792,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                 productEquipmentBulkMaterialDO.setEquipmentId(allProductEquipmentDOMap.get(productEquipmentBulkMaterialDO.getEquipmentNo()).getId());
                 productEquipmentBulkMaterialDO.setBulkMaterialId(allBulkMaterialDOMap.get(productEquipmentBulkMaterialDO.getBulkMaterialNo()).getId());
             }
+            SqlLogInterceptor.setExecuteSql("skip print productEquipmentBulkMaterialMapper.saveList  sql ......");
             productEquipmentBulkMaterialMapper.saveList(allProductEquipmentBulkMaterialDOList);
         }
         if (!allStockOrderBulkMaterialDOList.isEmpty()) {
@@ -793,6 +801,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                 stockOrderBulkMaterialDO.setBulkMaterialId(bulkMaterialDO.getId());
                 stockOrderBulkMaterialDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
             }
+            SqlLogInterceptor.setExecuteSql("skip print stockOrderBulkMaterialMapper.saveList  sql ......");
             stockOrderBulkMaterialMapper.saveList(allStockOrderBulkMaterialDOList);
         }
 
