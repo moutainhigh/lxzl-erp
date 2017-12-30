@@ -48,7 +48,7 @@
                 and tr.data_status = 1
             </if>
         </where>
-        order by tr.id desc
+        order by tr.id
         limit #{maps.start},#{maps.pageSize}
     </select>
 

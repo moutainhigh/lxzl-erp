@@ -341,7 +341,9 @@ public class StatementServiceImpl implements StatementService {
                 totalReturnRentDepositAmount = BigDecimalUtil.add(totalReturnRentDepositAmount, BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), 2));
                 totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), 2));
 
+                Date returnTime = returnOrderProductEquipmentDO.getCreateTime();
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
+                BigDecimal thisPhaseAmount = BigDecimalUtil.mul(orderProductEquipmentDO.getProductEquipmentUnitAmount(), new BigDecimal(orderProductDO.getPaymentCycle()));
                 if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
                     for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
                         BigDecimal payReturnAmount = BigDecimal.ZERO;
@@ -351,18 +353,22 @@ public class StatementServiceImpl implements StatementService {
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
+                        // 如果退货时间在结束时间之后，证明本期都没缴，不用处理，等待交
+                        if (returnTime.getTime() > statementDetailEndTime.getTime()) {
+                            continue;
+                        }
 
                         BigDecimal needPayAmount = BigDecimal.ZERO;
-                        // 如果开始时间在当前时间之前，证明先用后付，要计费。
-                        if (currentTime.getTime() > statementDetailStartTime.getTime()) {
-                            needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, currentTime, orderProductEquipmentDO.getProductEquipmentUnitAmount());
+                        // 如果退货时间在本期开始时间之后，证明先用后付，要计未缴纳费用。
+                        if (returnTime.getTime() > statementDetailStartTime.getTime()) {
+                            needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderProductEquipmentDO.getProductEquipmentUnitAmount());
                         }
                         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
                             payReturnAmount = BigDecimalUtil.add(payReturnAmount, otherAmount);
                             otherAmount = BigDecimal.ZERO;
                         }
                         // 正常全额退
-                        payReturnAmount = BigDecimalUtil.add(payReturnAmount, statementOrderDetailDO.getStatementDetailAmount());
+                        payReturnAmount = BigDecimalUtil.add(payReturnAmount, thisPhaseAmount);
                         // 退款金额，除了租金以外，保险金额也不能收了
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, orderProductDO.getInsuranceAmount()));
                         // 退款金额，扣除未交款的部分
@@ -392,7 +398,9 @@ public class StatementServiceImpl implements StatementService {
                 totalReturnRentDepositAmount = BigDecimalUtil.add(totalReturnRentDepositAmount, BigDecimalUtil.div(orderMaterialDO.getRentDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), 2));
                 totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, BigDecimalUtil.div(orderMaterialDO.getDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), 2));
 
+                Date returnTime = returnOrderMaterialBulkDO.getCreateTime();
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId());
+                BigDecimal thisPhaseAmount = BigDecimalUtil.mul(orderMaterialBulkDO.getMaterialBulkUnitAmount(), new BigDecimal(orderMaterialDO.getPaymentCycle()));
                 if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
                     for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
                         BigDecimal payReturnAmount = BigDecimal.ZERO;
@@ -402,18 +410,22 @@ public class StatementServiceImpl implements StatementService {
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
+                        // 如果退货时间在结束时间之后，证明本期都没缴，不用处理，等待交
+                        if (returnTime.getTime() > statementDetailEndTime.getTime()) {
+                            continue;
+                        }
 
                         BigDecimal needPayAmount = BigDecimal.ZERO;
                         // 如果开始时间在当前时间之前，证明先用后付，要计费。
-                        if (currentTime.getTime() > statementDetailStartTime.getTime()) {
-                            needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, currentTime, orderMaterialBulkDO.getMaterialBulkUnitAmount());
+                        if (returnTime.getTime() > statementDetailStartTime.getTime()) {
+                            needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderMaterialBulkDO.getMaterialBulkUnitAmount());
                         }
 
                         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
                             payReturnAmount = BigDecimalUtil.add(payReturnAmount, otherAmount);
                             otherAmount = BigDecimal.ZERO;
                         }
-                        payReturnAmount = BigDecimalUtil.add(payReturnAmount, statementOrderDetailDO.getStatementDetailAmount());
+                        payReturnAmount = BigDecimalUtil.add(payReturnAmount, thisPhaseAmount);
                         // 退款金额，除了租金以外，保险金额也不能收了
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, orderMaterialDO.getInsuranceAmount()));
                         // 退款金额，扣除未交款的部分
