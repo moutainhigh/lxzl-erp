@@ -2,8 +2,10 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.common.domain.company.SubCompanyQueryParam;
+import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
+import com.lxzl.erp.common.util.JSONUtil;
 import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 import com.lxzl.erp.TestResult;
@@ -46,6 +48,13 @@ public class CompanyTest extends ERPUnTransactionalTest {
         DepartmentQueryParam departmentQueryParam = new DepartmentQueryParam();
         departmentQueryParam.setSubCompanyId(1);
         TestResult result = getJsonTestResult("/company/getCompanyDepartmentUserTree",departmentQueryParam);
+    }
+
+    @Test
+    public void updateDepartment() throws Exception {
+        String str = "{\"departmentId\":400049,\"departmentName\":\"财务一部\",\"departmentType\":\"300001\",\"parentDepartmentId\":\"400000\",\"subCompanyId\":\"2\"}";
+        Department department = JSONUtil.convertJSONToBean(str, Department.class);
+        TestResult result = getJsonTestResult("/company/updateDepartment",department);
     }
 
     @Test
