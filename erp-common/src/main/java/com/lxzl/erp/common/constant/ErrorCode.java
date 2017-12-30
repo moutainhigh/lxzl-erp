@@ -412,6 +412,7 @@ public class ErrorCode {
     public static final String OTHER_DATE_IMAGE_NOT_EXISTS = "J1100029";
     public static final String OTHER_DATE_IMAGE_TYPE_IS_ERROR = "J1100030";
     public static final String IMG_REF_ID_NOT_NULL = "J1100031";
+    public static final String IMG_REF_ID_NEED_NULL = "J1100032";
 
 
     static {
@@ -821,6 +822,7 @@ public class ErrorCode {
         MAP.put(OTHER_DATE_IMAGE_NOT_EXISTS, "其他材料的照片不存在");
         MAP.put(OTHER_DATE_IMAGE_TYPE_IS_ERROR, "传入的不是其他材料的照片，请重新传入");
         MAP.put(IMG_REF_ID_NOT_NULL, "图片的ref-ID不能为空");
+        MAP.put(IMG_REF_ID_NEED_NULL, "编号【%s 】的图片refID已经有值，不能进行该操作");
 
     }
 

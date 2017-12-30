@@ -26,7 +26,7 @@ public class Image extends BasePO {
     private Integer imgType;
 
     private String originalName;
-    @NotBlank(message = ErrorCode.IMG_REF_ID_NOT_NULL,groups = {UpdateCustomerCompanyGroup.class})
+//    @NotBlank(message = ErrorCode.IMG_REF_ID_NOT_NULL,groups = {UpdateCustomerCompanyGroup.class})
     private String refId;
 
     private String imgUrl;
