@@ -183,9 +183,10 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void end() throws Exception {
         ReturnOrder returnOrder = new ReturnOrder();
-        returnOrder.setReturnOrderNo("RO201711291746283331383");
-        returnOrder.setServiceCost(BigDecimal.ZERO);
+        returnOrder.setReturnOrderNo("LXRO7000722017122900009");
+        returnOrder.setServiceCost(new BigDecimal(100));
         returnOrder.setDamageCost(BigDecimal.ZERO);
+        returnOrder.setIsDamage(CommonConstant.YES);
         TestResult testResult = getJsonTestResult("/returnOrder/end", returnOrder);
     }
     @Test
