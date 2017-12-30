@@ -525,9 +525,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         return ErrorCode.SUCCESS;
     }
 
-    private ServiceResult<String, List<PurchaseReceiveOrderProductDO>> checkPurchaseReceiveOrderProductListForUpdate(List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList, String userId, Date now) {
+    private ServiceResult<String, List<PurchaseReceiveOrderProductDO>> checkPurchaseReceiveOrderProductListForUpdate(List<PurchaseReceiveOrderProductDO> oldPurchaseReceiveOrderProductDOList,List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList, String userId, Date now) {
         ServiceResult<String, List<PurchaseReceiveOrderProductDO>> result = new ServiceResult<>();
         List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = new ArrayList<>();
+        Set<Integer> productSet = new HashSet<>();
+        for(PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO : oldPurchaseReceiveOrderProductDOList){
+            productSet.add(purchaseReceiveOrderProductDO.getProductId());
+        }
         if (CollectionUtil.isNotEmpty(purchaseReceiveOrderProductList)) {
             // 验证采购单商品项是否合法
             for (PurchaseReceiveOrderProduct purchaseReceiveOrderProduct : purchaseReceiveOrderProductList) {
@@ -544,6 +548,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 ProductSkuDO productSkuDO = productSkuMapper.findById(purchaseReceiveOrderProduct.getRealProductSkuId());
                 if (productSkuDO == null) {
                     result.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                    return result;
+                }
+                //如果不是是采购单里面的商品
+                if(!productSet.contains(productSkuDO.getProductId())){
+                    result.setErrorCode(ErrorCode.PRODUCT_NOT_SAME);
                     return result;
                 }
                 //校验此sku是否可以使用productMaterialList的物料配置
@@ -576,10 +585,16 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         return result;
     }
 
-    private ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> checkPurchaseReceiveOrderMaterialListForUpdate(List<PurchaseReceiveOrderMaterial> purchaseReceiveOrderMaterialList, String userId, Date now) {
+    private ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> checkPurchaseReceiveOrderMaterialListForUpdate(List<PurchaseReceiveOrderMaterialDO> oldPurchaseReceiveOrderMaterialDOList,List<PurchaseReceiveOrderMaterial> purchaseReceiveOrderMaterialList, String userId, Date now) {
         ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> result = new ServiceResult<>();
         List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOList = new ArrayList<>();
         Set<Integer> materialIdSet = new HashSet<>();
+
+        //用来判断是否是原单中应有的配件
+        Set<Integer> materialSet = new HashSet<>();
+        for(PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO : oldPurchaseReceiveOrderMaterialDOList){
+            materialSet.add(purchaseReceiveOrderMaterialDO.getMaterialId());
+        }
         if (CollectionUtil.isNotEmpty(purchaseReceiveOrderMaterialList)) {
             // 验证采购收料单物料项是否合法
             for (PurchaseReceiveOrderMaterial purchaseReceiveOrderMaterial : purchaseReceiveOrderMaterialList) {
@@ -595,6 +610,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 MaterialDO materialDO = materialMapper.findByNo(purchaseReceiveOrderMaterial.getRealMaterialNo());
                 if (materialDO == null) {
                     result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+                    return result;
+                }
+                //如果不是是采购单里面的配件
+                if(!materialSet.contains(materialDO.getId())){
+                    result.setErrorCode(ErrorCode.MATERIAL_NOT_SAME);
                     return result;
                 }
                 PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO = new PurchaseReceiveOrderMaterialDO();
@@ -887,8 +907,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return serviceResult;
         }
         Date now = new Date();
-        ServiceResult<String, List<PurchaseReceiveOrderProductDO>> newProductResult = checkPurchaseReceiveOrderProductListForUpdate(purchaseReceiveOrder.getPurchaseReceiveOrderProductList(), userSupport.getCurrentUserId().toString(), now);
-        ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> newMaterialResult = checkPurchaseReceiveOrderMaterialListForUpdate(purchaseReceiveOrder.getPurchaseReceiveOrderMaterialList(), userSupport.getCurrentUserId().toString(), now);
+        ServiceResult<String, List<PurchaseReceiveOrderProductDO>> newProductResult = checkPurchaseReceiveOrderProductListForUpdate(purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList(),purchaseReceiveOrder.getPurchaseReceiveOrderProductList(), userSupport.getCurrentUserId().toString(), now);
+        ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> newMaterialResult = checkPurchaseReceiveOrderMaterialListForUpdate(purchaseReceiveOrderDO.getPurchaseReceiveOrderMaterialDOList(),purchaseReceiveOrder.getPurchaseReceiveOrderMaterialList(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(newProductResult.getErrorCode())) {
             serviceResult.setErrorCode(newProductResult.getErrorCode());
             return serviceResult;
@@ -927,6 +947,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 oldMap.put(purchaseReceiveOrderProductDO.getId(), purchaseReceiveOrderProductDO);
             }
         }
+
         //为方便比对，将新采购订单项列表存入map
         Map<Integer, PurchaseReceiveOrderProductDO> newMap = new HashMap<>();
         if (CollectionUtil.isNotEmpty(newPurchaseReceiveOrderProductDOList)) {

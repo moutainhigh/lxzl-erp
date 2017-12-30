@@ -105,6 +105,8 @@ public class ErrorCode {
     public static final String PRODUCT_EQUIPMENT_AND_BULK_MATERIAL_NOT_SAME_WAREHOUSE = "J200059";
     public static final String PRODUCT_EQUIPMENT_STATUS_NOT_REPAIR = "J200060";
     public static final String BULK_MATERIAL_STATUS_NOT_REPAIR = "J200061";
+    public static final String PRODUCT_NOT_SAME = "J200062";
+    public static final String MATERIAL_NOT_SAME = "J200063";
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
     public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
@@ -506,7 +508,8 @@ public class ErrorCode {
         MAP.put(PRODUCT_EQUIPMENT_AND_BULK_MATERIAL_NOT_SAME_WAREHOUSE, "设备和散料不在同一仓库");
         MAP.put(PRODUCT_EQUIPMENT_STATUS_NOT_REPAIR, "编号【%s 】的设备只有处于设备空闲或者租赁中,才能进行新增维修操作");
         MAP.put(BULK_MATERIAL_STATUS_NOT_REPAIR, "编号【%s 】的散料只有处于设备空闲或者租赁中,才能进行新增维修操作");
-
+        MAP.put(PRODUCT_NOT_SAME, "收货商品不一致");
+        MAP.put(MATERIAL_NOT_SAME, "收货配件不一致");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
@@ -606,7 +609,7 @@ public class ErrorCode {
         MAP.put(BULK_PURCHASE_PRICE_NOT_NULL, "编号为【%s】的配件没有填写价格，请确保所有设备及配件填写了采购价");
         MAP.put(PURCHASE_PRICE_ERROR, "采购价格填写错误");
         MAP.put(PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_COMMIT, "此采购收货单不能提交");
-        MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_PRICE_NOT_NEED_UPDATE, "此采购单物料价格无需修改");
+        MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_PRICE_NOT_NEED_UPDATE, "此采购单配件价格无需修改");
         MAP.put(UPDATE_ITEM_COUNT_ERROR, "修改的配件数量不匹配");
         MAP.put(SUB_COMPANY_NOT_EXISTS, "分公司不存在");
         MAP.put(LEGAL_PERSON_NOT_NULL, "企业法人不能为空");
