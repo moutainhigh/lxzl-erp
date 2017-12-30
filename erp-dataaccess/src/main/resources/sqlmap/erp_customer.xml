@@ -87,7 +87,7 @@
 		<result column="ecc_sales_man" jdbcType="VARCHAR" property="salesMan" />
 		<result column="ecc_union_area" jdbcType="VARCHAR" property="unionArea" />
 		<result column="ecc_union_sales_man" jdbcType="VARCHAR" property="unionSalesMan" />
-		<result column="ecc_operating_area" jdbcType="INTEGER" property="operatingArea" />
+		<result column="ecc_operating_area" jdbcType="DOUBLE" property="operatingArea" />
 		<result column="ecc_unit_insured_number" jdbcType="INTEGER" property="unitInsuredNumber" />
 		<result column="ecc_affiliated_enterprise" jdbcType="VARCHAR" property="affiliatedEnterprise" />
 

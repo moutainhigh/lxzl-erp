@@ -47,7 +47,7 @@ public class CustomerCompanyDO  extends BaseDO {
 	private String salesMan; //业务员
 	private String unionArea; //联合区域
 	private String unionSalesMan; //联合业务员
-	private Integer operatingArea; //经营面积
+	private Double operatingArea; //经营面积
 	private Integer unitInsuredNumber; //单位参保人数
 	private String affiliatedEnterprise; //关联企业
 
@@ -362,11 +362,11 @@ public class CustomerCompanyDO  extends BaseDO {
 		this.unionSalesMan = unionSalesMan;
 	}
 
-	public Integer getOperatingArea() {
+	public Double getOperatingArea() {
 		return operatingArea;
 	}
 
-	public void setOperatingArea(Integer operatingArea) {
+	public void setOperatingArea(Double operatingArea) {
 		this.operatingArea = operatingArea;
 	}
 

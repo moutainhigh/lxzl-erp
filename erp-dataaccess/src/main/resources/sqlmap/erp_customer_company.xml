@@ -43,7 +43,7 @@
 		<result column="sales_man" jdbcType="VARCHAR" property="salesMan" />
 		<result column="union_area" jdbcType="VARCHAR" property="unionArea" />
 		<result column="union_sales_man" jdbcType="VARCHAR" property="unionSalesMan" />
-		<result column="operating_area" jdbcType="INTEGER" property="operatingArea" />
+		<result column="operating_area" jdbcType="DOUBLE" property="operatingArea" />
 		<result column="unit_insured_number" jdbcType="INTEGER" property="unitInsuredNumber" />
 		<result column="affiliated_enterprise" jdbcType="VARCHAR" property="affiliatedEnterprise" />
 	</resultMap>
@@ -198,7 +198,7 @@
 				union_sales_man = #{unionSalesMan,jdbcType=VARCHAR},
 			</if>
 			<if test="operatingArea != null">
-				operating_area = #{operatingArea,jdbcType=INTEGER},
+				operating_area = #{operatingArea,jdbcType=DOUBLE},
 			</if>
 			<if test="unitInsuredNumber != null">
 				unit_insured_number = #{unitInsuredNumber,jdbcType=INTEGER},
