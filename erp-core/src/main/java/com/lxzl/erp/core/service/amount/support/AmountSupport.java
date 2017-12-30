@@ -43,7 +43,7 @@ public class AmountSupport {
             previousSurplusDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(DateUtil.monthInterval(returnEndDate, -1)) - rentStartDateDay;
             nextSurplusDays = rentStartDateDay;
         }
-        BigDecimal surplusDaysAmount = BigDecimalUtil.add(BigDecimalUtil.mul(BigDecimalUtil.div(unitAmount, new BigDecimal(previousAllDays), 2), new BigDecimal(previousSurplusDays)), BigDecimalUtil.mul(BigDecimalUtil.div(unitAmount, new BigDecimal(nextAllDays), 2), new BigDecimal(nextSurplusDays)));
+        BigDecimal surplusDaysAmount = BigDecimalUtil.add(BigDecimalUtil.div(BigDecimalUtil.mul(unitAmount, new BigDecimal(previousSurplusDays)), new BigDecimal(previousAllDays), BigDecimalUtil.SCALE), BigDecimalUtil.div(BigDecimalUtil.mul(unitAmount, new BigDecimal(nextSurplusDays)), new BigDecimal(nextAllDays), BigDecimalUtil.SCALE));
 
         // 两月相差月数总金额，加上前后两个月天数的总金额
         BigDecimal totalAmount = BigDecimalUtil.add(BigDecimalUtil.mul(unitAmount, new BigDecimal(monthSpace)), surplusDaysAmount);

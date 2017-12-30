@@ -1652,6 +1652,7 @@ CREATE TABLE `erp_purchase_order` (
   `warehouse_snapshot` text NOT NULL COMMENT '收货方仓库快照，JSON格式',
   `is_invoice` int(11) NOT NULL COMMENT '是否有发票，0否1是',
   `is_new` int(11) NOT NULL COMMENT '是否全新机',
+  `tax_rate` double NOT NULL DEFAULT 0 COMMENT '税率',
   `purchase_order_amount_total` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '采购单总价',
   `purchase_order_amount_real` decimal(15,2) COMMENT '采购单实收',
   `purchase_order_amount_statement` decimal(15,2) COMMENT '采购单结算金额',

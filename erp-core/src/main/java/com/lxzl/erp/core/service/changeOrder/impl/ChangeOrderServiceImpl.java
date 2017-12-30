@@ -760,13 +760,14 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             return updateResult;
         }
-        //更新设备散料锁定状态
-        bulkMaterialMapper.updateEquipmentOrderNo(srcProductEquipmentDO.getEquipmentNo(), "");
+        //更新设备散料锁定状态，次新
+        bulkMaterialMapper.returnEquipment(srcProductEquipmentDO.getEquipmentNo());
         bulkMaterialMapper.updateEquipmentOrderNo(destProductEquipmentDO.getEquipmentNo(), srcProductEquipmentDO.getOrderNo());
-        //更新设备锁定状态
+        //更新设备锁定状态，次新
         destProductEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY);
         destProductEquipmentDO.setOrderNo(srcProductEquipmentDO.getOrderNo());
         productEquipmentMapper.update(destProductEquipmentDO);
+        srcProductEquipmentDO.setIsNew(CommonConstant.COMMON_CONSTANT_NO);
         srcProductEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
         srcProductEquipmentDO.setOrderNo("");
         productEquipmentMapper.update(srcProductEquipmentDO);
@@ -887,6 +888,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 destBulkMaterialDO.setOrderNo(srcBulkMaterialDO.getOrderNo());
                 destBulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
                 bulkMaterialMapper.update(destBulkMaterialDO);
+                srcBulkMaterialDO.setIsNew(CommonConstant.COMMON_CONSTANT_NO);
                 srcBulkMaterialDO.setOrderNo("");
                 srcBulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
                 bulkMaterialMapper.update(srcBulkMaterialDO);

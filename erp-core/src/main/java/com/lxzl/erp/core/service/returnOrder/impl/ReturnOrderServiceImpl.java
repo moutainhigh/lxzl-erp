@@ -13,7 +13,6 @@ import com.lxzl.erp.common.domain.returnOrder.pojo.*;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
@@ -175,7 +174,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         }
         //创建租赁退换单
         ReturnOrderDO returnOrderDO = new ReturnOrderDO();
-        returnOrderDO.setReturnOrderNo(generateNoSupport.generateReturnOrderNo(now,customerDO.getId()));
+        returnOrderDO.setReturnOrderNo(generateNoSupport.generateReturnOrderNo(now, customerDO.getId()));
         returnOrderDO.setCustomerId(customerDO.getId());
         returnOrderDO.setCustomerNo(customerDO.getCustomerNo());
         returnOrderDO.setReturnMode(addReturnOrderParam.getReturnMode());
@@ -233,8 +232,8 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
             return serviceResult;
         }
-        if(!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_TAKEN.equals(returnOrderDO.getReturnOrderStatus())&&
-                !ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(returnOrderDO.getReturnOrderStatus()) ) {
+        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_TAKEN.equals(returnOrderDO.getReturnOrderStatus()) &&
+                !ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(returnOrderDO.getReturnOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_STATUS_CAN_NOT_RETURN);
             return serviceResult;
         }
@@ -269,15 +268,18 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         Date now = new Date();
         OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findRentByCustomerIdAndEquipmentId(returnOrderDO.getCustomerId(), productEquipmentDO.getId());
         //计算该设备的租金
-        ServiceResult<String,String> returnResult = orderService.returnEquipment(orderDO.getOrderNo(),productEquipmentDO.getEquipmentNo(),null,now);
-        if(!ErrorCode.SUCCESS.equals(returnResult.getErrorCode())){
+        ServiceResult<String, String> returnResult = orderService.returnEquipment(orderDO.getOrderNo(), productEquipmentDO.getEquipmentNo(), null, now);
+        if (!ErrorCode.SUCCESS.equals(returnResult.getErrorCode())) {
             serviceResult.setErrorCode(returnResult.getErrorCode());
             return serviceResult;
         }
-        //修改设备状态为闲置
+        //修改设备状态为闲置,次新
+        productEquipmentDO.setIsNew(CommonConstant.COMMON_CONSTANT_NO);
         productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
         productEquipmentDO.setOrderNo("");
         productEquipmentMapper.update(productEquipmentDO);
+        //修改设备散料状态，次新
+        bulkMaterialMapper.returnEquipment(productEquipmentDO.getEquipmentNo());
         //由于按天租赁无需授信额度，需交押金，所以当订单按月或按天租赁时，修改客户已用授信额度
         if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDOMap.get(orderProductEquipmentDO.getOrderProductId()).getRentType())) {
             CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(returnOrderDO.getCustomerId());
@@ -340,7 +342,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         returnOrderProductEquipmentMapper.save(returnOrderProductEquipmentDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(ConverterUtil.convert(productEquipmentDO,ProductEquipment.class));
+        serviceResult.setResult(ConverterUtil.convert(productEquipmentDO, ProductEquipment.class));
         return serviceResult;
     }
 
@@ -354,7 +356,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
             return serviceResult;
         }
-        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_TAKEN.equals(returnOrderDO.getReturnOrderStatus())&&
+        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_TAKEN.equals(returnOrderDO.getReturnOrderStatus()) &&
                 !ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(returnOrderDO.getReturnOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_STATUS_CAN_NOT_RETURN);
             return serviceResult;
@@ -363,20 +365,20 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         //查询客户的所有在租散料，并保存到map以便后续使用
         Map<String, List<BulkMaterialDO>> rentMap = new HashMap<>();
         //将在租物料按照订单划分，如果不需要退还的散料，不加入此map
-        Map<String,Map<Integer,BulkMaterialDO>> orderBulkMaterialNeedReturnMap = new HashMap<>();
+        Map<String, Map<Integer, BulkMaterialDO>> orderBulkMaterialNeedReturnMap = new HashMap<>();
         List<BulkMaterialDO> rentBulkMaterialDOList = bulkMaterialMapper.findRentByCustomerId(returnOrderDO.getCustomerId());
         for (BulkMaterialDO bulkMaterialDO : rentBulkMaterialDOList) {
-            if(!rentMap.containsKey(bulkMaterialDO.getMaterialNo())){
+            if (!rentMap.containsKey(bulkMaterialDO.getMaterialNo())) {
                 rentMap.put(bulkMaterialDO.getMaterialNo(), new ArrayList<BulkMaterialDO>());
             }
             rentMap.get(bulkMaterialDO.getMaterialNo()).add(bulkMaterialDO);
             MaterialDO materialDO = materialMapper.findByNo(bulkMaterialDO.getMaterialNo());
             //如果散料所属物料需要还
-            if(CommonConstant.COMMON_CONSTANT_NO.equals(materialDO.getIsConsumable())){
-                if(!orderBulkMaterialNeedReturnMap.containsKey(bulkMaterialDO.getOrderNo())){
+            if (CommonConstant.COMMON_CONSTANT_NO.equals(materialDO.getIsConsumable())) {
+                if (!orderBulkMaterialNeedReturnMap.containsKey(bulkMaterialDO.getOrderNo())) {
                     orderBulkMaterialNeedReturnMap.put(bulkMaterialDO.getOrderNo(), new HashMap<Integer, BulkMaterialDO>());
                 }
-                orderBulkMaterialNeedReturnMap.get(bulkMaterialDO.getOrderNo()).put(bulkMaterialDO.getId(),bulkMaterialDO);
+                orderBulkMaterialNeedReturnMap.get(bulkMaterialDO.getOrderNo()).put(bulkMaterialDO.getId(), bulkMaterialDO);
             }
 
         }
@@ -384,7 +386,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             serviceResult.setErrorCode(ErrorCode.MATERIAL_NOT_RENT);
             return serviceResult;
         }
-        if (rentMap.get(doReturnMaterialParam.getMaterialNo()).size()<doReturnMaterialParam.getReturnCount()) {
+        if (rentMap.get(doReturnMaterialParam.getMaterialNo()).size() < doReturnMaterialParam.getReturnCount()) {
             serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
             return serviceResult;
         }
@@ -410,11 +412,10 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         Map<Integer, ReturnOrderMaterialDO> returnOrderMaterialDOMapForSave = new HashMap<>();
         //待保存的退还散料列表
         List<ReturnOrderMaterialBulkDO> returnOrderMaterialBulkDOListForSave = new ArrayList<>();
-        //租赁期间送费用
-        BigDecimal rentCostTotal = BigDecimal.ZERO;
+
         List<BulkMaterialDO> bulkMaterialDOList = rentMap.get(doReturnMaterialParam.getMaterialNo());
 
-        for(int i = 0 ; i<doReturnMaterialParam.getReturnCount();i++ ){
+        for (int i = 0; i < doReturnMaterialParam.getReturnCount(); i++) {
             BulkMaterialDO bulkMaterialDO = bulkMaterialDOList.get(i);
             //取得订单，并且把商品项存入map方便查找
             OrderDO orderDO = orderDOMap.get(bulkMaterialDO.getOrderNo());
@@ -436,12 +437,13 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             }
             //修改设备状态为闲置
             bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+            bulkMaterialDO.setIsNew(CommonConstant.COMMON_CONSTANT_NO);
             bulkMaterialDO.setOrderNo("");
             bulkMaterialDOListForUpdate.add(bulkMaterialDO);
             //修改订单散料-实际归还时间，实际租金
             OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findRentByCustomerIdAndBulkMaterialId(returnOrderDO.getCustomerId(), bulkMaterialDO.getId());
-            ServiceResult<String,String> returnResult = orderService.returnBulkMaterial(orderDO.getOrderNo(),bulkMaterialDO.getBulkMaterialNo(),null,now);
-            if(!ErrorCode.SUCCESS.equals(returnResult.getErrorCode())){
+            ServiceResult<String, String> returnResult = orderService.returnBulkMaterial(orderDO.getOrderNo(), bulkMaterialDO.getBulkMaterialNo(), null, now);
+            if (!ErrorCode.SUCCESS.equals(returnResult.getErrorCode())) {
                 serviceResult.setErrorCode(returnResult.getErrorCode());
                 return serviceResult;
             }
@@ -506,7 +508,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         List<OrderDO> orderDOListForUpdate = new ArrayList<>();
         for (String orderNo : rentBulkMaterialCountNowMap.keySet()) {
             //修改订单,全部归还状态，最后一件归还时间
-            if (rentEquipmentCountMap.get(orderNo) == 0 && orderBulkMaterialNeedReturnMap.get(orderNo).size()==0) {
+            if (rentEquipmentCountMap.get(orderNo) == 0 && orderBulkMaterialNeedReturnMap.get(orderNo).size() == 0) {
                 OrderDO orderDO = orderDOMap.get(orderNo);
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
                 orderDO.setActualReturnTime(now);
@@ -580,22 +582,22 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         List<ReturnOrderProduct> returnOrderProductList = returnOrder.getReturnOrderProductList();
         if (CollectionUtil.isNotEmpty(returnOrderProductList)) {
             for (ReturnOrderProduct returnOrderProduct : returnOrderProductList) {
-                Integer canProcessCount = 0 ;
-                if(oldSkuCountMap.get(returnOrderProduct.getReturnProductSkuId())!=null){
+                Integer canProcessCount = 0;
+                if (oldSkuCountMap.get(returnOrderProduct.getReturnProductSkuId()) != null) {
                     canProcessCount = oldSkuCountMap.get(returnOrderProduct.getReturnProductSkuId()).getCanProcessCount();
                 }
-                returnOrderProduct.setCanProcessCount( canProcessCount );
+                returnOrderProduct.setCanProcessCount(canProcessCount);
             }
         }
         //填写退还物料项可退数量字段，用于修改接口提示
         List<ReturnOrderMaterial> returnOrderMaterialList = returnOrder.getReturnOrderMaterialList();
         if (CollectionUtil.isNotEmpty(returnOrderMaterialList)) {
             for (ReturnOrderMaterial returnOrderMaterial : returnOrderMaterialList) {
-                Integer canProcessCount = 0 ;
-                if(oldMaterialCountMap.get(returnOrderMaterial.getReturnMaterialId())!=null){
+                Integer canProcessCount = 0;
+                if (oldMaterialCountMap.get(returnOrderMaterial.getReturnMaterialId()) != null) {
                     canProcessCount = oldMaterialCountMap.get(returnOrderMaterial.getReturnMaterialId()).getCanProcessCount();
                 }
-                returnOrderMaterial.setCanProcessCount(canProcessCount );
+                returnOrderMaterial.setCanProcessCount(canProcessCount);
             }
         }
         serviceResult.setResult(returnOrder);
@@ -645,8 +647,8 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         }
 
         //调用结算单接口
-        ServiceResult<String,BigDecimal> statementResult = statementService.createReturnOrderStatement(returnOrderDO.getReturnOrderNo());
-        if(!ErrorCode.SUCCESS.equals(statementResult.getErrorCode())){
+        ServiceResult<String, BigDecimal> statementResult = statementService.createReturnOrderStatement(returnOrderDO.getReturnOrderNo());
+        if (!ErrorCode.SUCCESS.equals(statementResult.getErrorCode())) {
             serviceResult.setErrorCode(statementResult.getErrorCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             return serviceResult;
@@ -1035,6 +1037,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             return result;
         }
     }
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {

@@ -10,6 +10,7 @@
 		<result column="warehouse_snapshot" jdbcType="VARCHAR" property="warehouseSnapshot" />
 		<result column="is_invoice" jdbcType="INTEGER" property="isInvoice" />
 		<result column="is_new" jdbcType="INTEGER" property="isNew" />
+		<result column="tax_rate" jdbcType="DOUBLE" property="taxRate" />
 		<result column="purchase_order_amount_total" jdbcType="DECIMAL" property="purchaseOrderAmountTotal" />
 		<result column="purchase_order_amount_real" jdbcType="DECIMAL" property="purchaseOrderAmountReal" />
 		<result column="purchase_order_amount_statement" jdbcType="DECIMAL" property="purchaseOrderAmountStatement" />
@@ -68,7 +69,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		epo.id,epo.purchase_no,epo.product_supplier_id,epo.warehouse_id,epo.warehouse_snapshot,epo.is_invoice,epo.is_new,epo.purchase_order_amount_total,epo.purchase_order_amount_real,epo.purchase_order_amount_statement,epo.purchase_order_status,epo.delivery_time,epo.purchase_type,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user
+		epo.id,epo.purchase_no,epo.product_supplier_id,epo.warehouse_id,epo.warehouse_snapshot,epo.is_invoice,epo.is_new,epo.tax_rate,epo.purchase_order_amount_total,epo.purchase_order_amount_real,epo.purchase_order_amount_statement,epo.purchase_order_status,epo.delivery_time,epo.purchase_type,epo.data_status,epo.owner,epo.remark,epo.create_time,epo.create_user,epo.update_time,epo.update_user
 	</sql>
 
 	<sql id="product_column_List">
@@ -143,6 +144,9 @@
 			</if>
 			<if test="isNew != null">
 				is_new = #{isNew,jdbcType=INTEGER},
+			</if>
+			<if test="taxRate != null">
+				tax_rate = #{taxRate,jdbcType=INTEGER},
 			</if>
 			<if test="purchaseOrderAmountTotal != null">
 				purchase_order_amount_total = #{purchaseOrderAmountTotal,jdbcType=DECIMAL},
