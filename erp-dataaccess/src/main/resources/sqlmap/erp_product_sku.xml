@@ -95,14 +95,14 @@
         FROM erp_product_equipment epe LEFT JOIN erp_order eo ON eo.order_no = epe.order_no WHERE epe.order_no IS NOT NULL AND epe.order_no != ""
         AND epe.data_status=1 AND eo.buyer_customer_id=#{maps.customerId} GROUP BY epe.sku_id ) epe
         LEFT JOIN
-        (SELECT erop.return_product_sku_id AS sku_id,SUM(erop.return_product_sku_count) returnYet
+        (SELECT erop.return_product_sku_id AS sku_id,SUM(erop.return_product_sku_count-erop.real_return_product_sku_count) returnYet
         FROM erp_return_order ero
         LEFT JOIN erp_return_order_product erop ON erop.return_order_id = ero.id AND erop.data_status=1
         WHERE ero.data_status = 1 AND ero.return_order_status!=16 AND ero.return_order_status!=20
         AND ero.customer_id=#{maps.customerId}
         GROUP BY erop.return_product_sku_id) ero ON ero.sku_id = epe.sku_id
         LEFT JOIN
-        (SELECT src_change_product_sku_id sku_id,SUM(change_product_sku_count) returnYet FROM erp_change_order eco
+        (SELECT src_change_product_sku_id sku_id,SUM(change_product_sku_count-real_change_product_sku_count) returnYet FROM erp_change_order eco
         LEFT JOIN erp_change_order_product ecop ON ecop.change_order_id = eco.id AND ecop.data_status=1
         WHERE eco.data_status = 1 AND eco.change_order_status!=24 AND eco.change_order_status!=28
         AND eco.customer_id=#{maps.customerId}

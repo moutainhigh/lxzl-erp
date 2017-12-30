@@ -300,12 +300,12 @@
 		</if>
 		group by ebm.material_id ) ebm
 		left join (
-		SELECT erom.return_material_id AS material_id , SUM(return_material_count) AS returnCount FROM erp_return_order ero LEFT JOIN erp_return_order_material erom ON ero.id=erom.return_order_id AND erom.data_status = 1
+		SELECT erom.return_material_id AS material_id , SUM(return_material_count-real_return_material_count) AS returnCount FROM erp_return_order ero LEFT JOIN erp_return_order_material erom ON ero.id=erom.return_order_id AND erom.data_status = 1
 		WHERE ero.customer_id = #{maps.customerId} AND ero.data_status = 1 AND ero.return_order_status !=16 AND ero.return_order_status !=20
 		GROUP BY erom.return_material_id ) ero on ero.material_id = ebm.id
 
 		LEFT JOIN (
-		select ecom.src_change_material_id as material_id , sum(change_material_count) as returnCount from erp_change_order eco left join erp_change_order_material ecom on eco.id=ecom.change_order_id and ecom.data_status = 1
+		select ecom.src_change_material_id as material_id , sum(change_material_count-real_change_material_count) as returnCount from erp_change_order eco left join erp_change_order_material ecom on eco.id=ecom.change_order_id and ecom.data_status = 1
 		where eco.customer_id = #{maps.customerId} and eco.data_status = 1 and eco.change_order_status !=24 and eco.change_order_status !=28
 		group by ecom.src_change_material_id ) eco on eco.material_id = ebm.id
 
