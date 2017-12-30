@@ -2,21 +2,22 @@ package com.lxzl.erp.common.domain.customer.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerCompany implements Serializable {
+public class CustomerCompany extends BasePO {
 
     private Integer customerCompanyId;   //唯一标识
     private Integer customerId;   //客户ID
@@ -35,11 +36,11 @@ public class CustomerCompany implements Serializable {
     @NotBlank(message = ErrorCode.CUSTOMER_COMPANY_ADDRESS_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String address;   //详细地址
     private Integer isLegalPersonApple;   //是否法人代表申请
-    @NotBlank(message = ErrorCode.LEGAL_PERSON_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+//    @NotBlank(message = ErrorCode.LEGAL_PERSON_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String legalPerson;   //法人姓名
-    @NotBlank(message = ErrorCode.LEGAL_PERSON_NO_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+//    @NotBlank(message = ErrorCode.LEGAL_PERSON_NO_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String legalPersonNo;   //法人身份证号
-    @NotBlank(message = ErrorCode.LEGAL_PERSON_PHONE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+//    @NotBlank(message = ErrorCode.LEGAL_PERSON_PHONE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String legalPersonPhone;   //法人手机号
     private String businessLicenseNo;   //营业执照号
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -57,19 +58,20 @@ public class CustomerCompany implements Serializable {
     private Integer officeNumber;  //办公人数'
     @NotBlank(message = ErrorCode.PRODUCT_PURPOSE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String productPurpose;  //设备用途'
-    @NotBlank(message = ErrorCode.LIST_FIRST_NEED_PRODUCTS_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
-    private String listFirstNeedProducts;  //首次所需设备'
-    private String listLaterNeedProducts;  //后期所需设备'
-    @NotBlank(message = ErrorCode.AGENT_PERSON_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+    @Valid
+    @NotEmpty(message = ErrorCode.CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+    private List<CustomerCompanyNeed> customerCompanyNeedFirstList;  //首次所需设备
+    private List<CustomerCompanyNeed> customerCompanyNeedLaterList;  //后续所需设备
+//    @NotBlank(message = ErrorCode.AGENT_PERSON_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String agentPersonName;  //经办人姓名'
-    @NotBlank(message = ErrorCode.AGENT_PERSON_PHONE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+//    @NotBlank(message = ErrorCode.AGENT_PERSON_PHONE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String agentPersonPhone;  //经办人电话'
-    @NotBlank(message = ErrorCode.AGENT_PERSON_NO_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+//    @NotBlank(message = ErrorCode.AGENT_PERSON_NO_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String agentPersonNo;  //经办人身份证号码'
-    @NotBlank(message = ErrorCode.CONSIGN_ADDRESS_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+//    @NotBlank(message = ErrorCode.CONSIGN_ADDRESS_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String consignAddress;  //收货地址'
     private String unifiedCreditCode;  //统一信用代码'
-    @NotBlank(message = ErrorCode.SALES_MAN_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+//    @NotBlank(message = ErrorCode.SALES_MAN_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String salesMan; //业务员
     private String unionArea; //联合区域
     private String unionSalesMan; //联合业务员
@@ -325,20 +327,20 @@ public class CustomerCompany implements Serializable {
         this.productPurpose = productPurpose;
     }
 
-    public String getListFirstNeedProducts() {
-        return listFirstNeedProducts;
+    public List<CustomerCompanyNeed> getCustomerCompanyNeedFirstList() {
+        return customerCompanyNeedFirstList;
     }
 
-    public void setListFirstNeedProducts(String listFirstNeedProducts) {
-        this.listFirstNeedProducts = listFirstNeedProducts;
+    public void setCustomerCompanyNeedFirstList(List<CustomerCompanyNeed> customerCompanyNeedFirstList) {
+        this.customerCompanyNeedFirstList = customerCompanyNeedFirstList;
     }
 
-    public String getListLaterNeedProducts() {
-        return listLaterNeedProducts;
+    public List<CustomerCompanyNeed> getCustomerCompanyNeedLaterList() {
+        return customerCompanyNeedLaterList;
     }
 
-    public void setListLaterNeedProducts(String listLaterNeedProducts) {
-        this.listLaterNeedProducts = listLaterNeedProducts;
+    public void setCustomerCompanyNeedLaterList(List<CustomerCompanyNeed> customerCompanyNeedLaterList) {
+        this.customerCompanyNeedLaterList = customerCompanyNeedLaterList;
     }
 
     public String getAgentPersonName() {

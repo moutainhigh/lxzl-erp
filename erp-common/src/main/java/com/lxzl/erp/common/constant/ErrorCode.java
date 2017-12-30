@@ -107,6 +107,10 @@ public class ErrorCode {
     public static final String BULK_MATERIAL_STATUS_NOT_REPAIR = "J200061";
     public static final String PRODUCT_NOT_SAME = "J200062";
     public static final String MATERIAL_NOT_SAME = "J200063";
+    public static final String CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL = "J200064";
+    public static final String CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL = "J200065";
+    public static final String CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL = "J200066";
+    public static final String CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL = "J200067";
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
     public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
@@ -352,6 +356,7 @@ public class ErrorCode {
     public static final String LIST_FIRST_NEED_PRODUCTS_NOT_NULL = "J500060";
     public static final String AGENT_PERSON_NAME_NOT_NULL = "J500061";
     public static final String AGENT_PERSON_PHONE_NOT_NULL = "J500062";
+    public static final String CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL = "J500063";
 
 
 
@@ -406,6 +411,7 @@ public class ErrorCode {
     public static final String LOCALE_CHECKLISTS_IMAGE_TYPE_IS_ERROR = "J1100028";
     public static final String OTHER_DATE_IMAGE_NOT_EXISTS = "J1100029";
     public static final String OTHER_DATE_IMAGE_TYPE_IS_ERROR = "J1100030";
+    public static final String IMG_REF_ID_NOT_NULL = "J1100031";
 
 
     static {
@@ -509,6 +515,11 @@ public class ErrorCode {
         MAP.put(BULK_MATERIAL_STATUS_NOT_REPAIR, "编号【%s 】的散料只有处于设备空闲或者租赁中,才能进行新增维修操作");
         MAP.put(PRODUCT_NOT_SAME, "收货商品不一致");
         MAP.put(MATERIAL_NOT_SAME, "收货配件不一致");
+        MAP.put(CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL, "企业客户首次所需设备的sku的ID不能为空");
+        MAP.put(CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL, "企业客户首次所需设备的单台价值不能空");
+        MAP.put(CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL, "企业客户首次所需设备的总价值不能空");
+        MAP.put(CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL, "企业客户首次所需设备的租赁期限不能空");
+
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
@@ -627,6 +638,7 @@ public class ErrorCode {
         MAP.put(CONSIGN_ADDRESS_NOT_NULL, "收货地址不能为空");
         MAP.put(SALES_MAN_NOT_NULL, "业务员不能为空");
         MAP.put(PURCHASE_TAX_RATE_ERROR, "采购单税率有误");
+        MAP.put(CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL, "首次所需设备不能为空");
 
 
 
@@ -808,6 +820,7 @@ public class ErrorCode {
         MAP.put(LOCALE_CHECKLISTS_IMAGE_TYPE_IS_ERROR, "传入的不是现场核查表照片，请重新传入");
         MAP.put(OTHER_DATE_IMAGE_NOT_EXISTS, "其他材料的照片不存在");
         MAP.put(OTHER_DATE_IMAGE_TYPE_IS_ERROR, "传入的不是其他材料的照片，请重新传入");
+        MAP.put(IMG_REF_ID_NOT_NULL, "图片的ref-ID不能为空");
 
     }
 

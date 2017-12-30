@@ -27,7 +27,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ecp.id,ecp.customer_id,ecp.real_name,ecp.email,ecp.phone,ecp.province,ecp.city,ecp.district,ecp.address,ecp.data_status,ecp.remark,ecp.create_time,ecp.create_user,ecp.update_time,ecp.update_user,ecp.user_name,ecp.person_name,ecp.person_no,ecp.consign_address,ecp.connect_real_name,ecp.connect_phone
+		ecp.id,ecp.customer_id,ecp.real_name,ecp.email,ecp.phone,ecp.province,ecp.city,ecp.district,ecp.address,ecp.data_status,ecp.remark,ecp.create_time,ecp.create_user,ecp.update_time,ecp.update_user,ecp.person_name,ecp.person_name,ecp.person_no,ecp.consign_address,ecp.connect_real_name,ecp.connect_phone
 	</sql>
 
 	<select id="findById" resultMap="CustomerPersonDO" parameterType="java.lang.Integer">

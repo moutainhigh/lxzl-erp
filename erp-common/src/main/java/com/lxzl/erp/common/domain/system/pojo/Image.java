@@ -7,6 +7,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 
@@ -25,7 +26,7 @@ public class Image extends BasePO {
     private Integer imgType;
 
     private String originalName;
-
+    @NotBlank(message = ErrorCode.IMG_REF_ID_NOT_NULL,groups = {UpdateCustomerCompanyGroup.class})
     private String refId;
 
     private String imgUrl;
