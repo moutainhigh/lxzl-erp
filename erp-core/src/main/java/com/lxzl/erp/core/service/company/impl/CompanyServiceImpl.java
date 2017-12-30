@@ -266,7 +266,7 @@ public class CompanyServiceImpl implements CompanyService {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
 
-        if (department.getParentDepartmentId() != null) {
+        if (department.getParentDepartmentId() != null && !CommonConstant.SUPER_DEPARTMENT_ID.equals(department.getParentDepartmentId())) {
             DepartmentDO parentDepartment = departmentMapper.findById(department.getParentDepartmentId());
             if (parentDepartment == null) {
                 result.setErrorCode(ErrorCode.DEPARTMENT_NOT_EXISTS);

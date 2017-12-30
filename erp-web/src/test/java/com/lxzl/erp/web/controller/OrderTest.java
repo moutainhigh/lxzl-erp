@@ -125,7 +125,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712211337503711677");
+        order.setOrderNo("LXO2017123070007200068");
         order.setVerifyUser(500006);//采购审核人员
         TestResult testResult = getJsonTestResult("/order/commit", order);
     }
@@ -160,7 +160,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void testProcessOrderJson() throws Exception{
-        String str = "{\"equipmentNo\":\"LX-EQUIPMENT-4000001-2017122210000\",\"orderNo\":\"O201712222007232111047\",\"operationType\":1}\n";
+        String str = "{\"equipmentNo\":\"LX-E-4000001-2017122918883\",\"orderNo\":\"LXO2017123070005600071\",\"operationType\":1}\n";
         ProcessOrderParam processOrderParam = JSONUtil.convertJSONToBean(str,ProcessOrderParam.class );
         TestResult testResult = getJsonTestResult("/order/process", processOrderParam);
     }
@@ -169,7 +169,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testDelivery() throws Exception {
         Order order = new Order();
-        order.setOrderNo("O201712151714072971428");
+        order.setOrderNo("O201712291512335441732");
         TestResult testResult = getJsonTestResult("/order/delivery", order);
     }
 

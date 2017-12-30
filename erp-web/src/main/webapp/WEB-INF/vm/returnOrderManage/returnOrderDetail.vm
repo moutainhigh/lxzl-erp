@@ -25,11 +25,9 @@
                             <div class="col-md-8 text-right">
                                 <script type="text/html" id="actionButtonsTpl">
                                     {{#acitonButtons}}
-                                    {{#showButton}}
                                     <a href="${ctx}{{menuUrl}}?no={{returnOrderNo}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-returnorderno="{{returnOrderNo}}">
                                         <i class="{{iClass}}"></i> {{text}}
                                     </a>
-                                    {{/showButton}}
                                     {{/acitonButtons}}
                                 </script>
                                 <div class="btn-group" id="actionButtons"></div>
@@ -96,25 +94,25 @@
                                    <div class="form-group field mn">
                                        <label class="col-md-3 control-label">创建人</label>
                                        <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{createUser}}&nbsp;</p>
+                                           <p class="form-control-static text-muted">{{createUserRealName}}&nbsp;</p>
                                        </div>
                                    </div>
                                    <div class="form-group field mn">
                                        <label class="col-md-3 control-label">创建时间</label>
                                        <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{createTimeFormat}}&nbsp;</p>
+                                           <p class="form-control-static text-muted">{{#time}}{{createTime}}{{/time}}&nbsp;</p>
                                        </div>
                                    </div>
                                    <div class="form-group field mn">
                                        <label class="col-md-3 control-label">修改人</label>
                                        <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{updateUser}}&nbsp;</p>
+                                           <p class="form-control-static text-muted">{{updateUserRealName}}&nbsp;</p>
                                        </div>
                                    </div>
                                    <div class="form-group field mn">
                                        <label class="col-md-3 control-label">修改时间</label>
                                        <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{updateTimeFormat}}&nbsp;</p>
+                                           <p class="form-control-static text-muted">{{#time}}{{updateTime}}{{/time}}&nbsp;</p>
                                        </div>
                                    </div>
                                    <div class="form-group field mn">
@@ -164,19 +162,19 @@
                                    <div class="form-group field mn">
                                        <label class="col-md-3 control-label">租赁期间产生总费用</label>
                                        <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{totalRentCostFormat}}</p>
+                                           <p class="form-control-static text-muted">{{#price}}{{totalRentCost}}{{/price}}</p>
                                        </div>
                                    </div>
                                    <div class="form-group field mn">
                                        <label class="col-md-3 control-label">服务费</label>
                                        <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{serviceCostFormat}}</p>
+                                           <p class="form-control-static text-muted">{{#price}}{{serviceCost}}{{/price}}</p>
                                        </div>
                                    </div>
                                    <div class="form-group field mn">
                                        <label class="col-md-3 control-label">损坏加收费用</label>
                                        <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{damageCostFormat}}</p>
+                                           <p class="form-control-static text-muted">{{#price}}{{damageCost}}{{/price}}</p>
                                        </div>
                                    </div>
                                </div>
@@ -189,7 +187,7 @@
 
                     <div class="panel-heading">
                         <div class="row">
-                            <ul class="nav panel-tabs-border panel-tabs">
+                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
                                 <li class="active">
                                     <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
                                 </li>
@@ -202,22 +200,24 @@
                     <div class="panel-body dark pn">
                         <div class="tab-content pn br-n">
                             <div id="purchaseOrderProductItems" class="tab-pane active">
-                                <div class="panel-menu p12 br-n br-b">
-                                    <div class="row">
-                                        <div class="pull-left ml10">
-                                            <script type="text/html" id="returnEquipmentButtonsTpl">
-                                                {{#acitonButtons}}
-                                                {{#showButton}}
-                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-returnorderno="{{returnOrderNo}}">
-                                                    <i class="{{iClass}}"></i> {{text}}
-                                                </a>
-                                                {{/showButton}}
-                                                {{/acitonButtons}}
-                                            </script>
-                                            <div class="btn-group actionCommonButtons" id="returnEquipmentButtons"></div>
+                                <script type="text/html" id="returnEquipmentButtonsTpl">
+                                    {{#hasActionButtons}}
+                                    <div class="panel-menu p12 br-n br-b">
+                                        <div class="row">
+                                            <div class="pull-left ml10">
+                                                <div class="btn-group actionCommonButtons">
+                                                    {{#acitonButtons}}
+                                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-returnorderno="{{returnOrderNo}}">
+                                                        <i class="{{iClass}}"></i> {{text}}
+                                                    </a>
+                                                    {{/acitonButtons}}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                    {{/hasActionButtons}}
+                                </script>
+                                <div id="returnEquipmentButtons"></div>
                                 <div class="table-responsive">
                                     <script type="text/html" id="dataListTpl">
                                         <thead>
@@ -308,22 +308,22 @@
                                 </div>
                             </div>
                             <div id="purchaseOrderMaterialItems" class="tab-pane">
-                                <div class="panel-menu p12 br-n br-b">
-                                    <div class="row">
-                                        <div class="pull-left ml10">
-                                            <script type="text/html" id="returnMaterialButtonsTpl">
-                                                {{#acitonButtons}}
-                                                {{#showButton}}
-                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-returnorderno="{{returnOrderNo}}">
-                                                    <i class="{{iClass}}"></i> {{text}}
-                                                </a>
-                                                {{/showButton}}
-                                                {{/acitonButtons}}
-                                            </script>
-                                            <div class="btn-group actionCommonButtons" id="returnMaterialButtons"></div>
-                                        </div>
-                                    </div>
-                                </div>
+##                                <div class="panel-menu p12 br-n br-b">
+##                                    <div class="row">
+##                                        <div class="pull-left ml10">
+##                                            <script type="text/html" id="returnMaterialButtonsTpl">
+##                                                {{#acitonButtons}}
+##                                                {{#showButton}}
+##                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-returnorderno="{{returnOrderNo}}">
+##                                                    <i class="{{iClass}}"></i> {{text}}
+##                                                </a>
+##                                                {{/showButton}}
+##                                                {{/acitonButtons}}
+##                                            </script>
+##                                            <div class="btn-group actionCommonButtons" id="returnMaterialButtons"></div>
+##                                        </div>
+##                                    </div>
+##                                </div>
                                 <div class="table-responsive">
                                     <script type="text/html" id="materialDataListTpl">
                                         <thead>

@@ -3,6 +3,9 @@ package com.lxzl.erp.common.util;
 import java.math.BigDecimal;
 
 public class BigDecimalUtil {
+
+    public static final int SCALE = 2;
+
     /**
      * 提供精确加法计算的add方法
      *

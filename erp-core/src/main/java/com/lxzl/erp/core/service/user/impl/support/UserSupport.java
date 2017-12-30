@@ -44,6 +44,20 @@ public class UserSupport {
     }
 
     /**
+     * 判断用户是否属于总公司
+     * @return
+     */
+
+    public Integer getCurrentUserCompanyId(){
+        User user = (User) httpSession.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        List<Role> userRoleList = userService.getUserById(user.getUserId()).getResult().getRoleList();
+        for(Role role : userRoleList){
+            return role.getSubCompanyId();
+        }
+        return null;
+    }
+
+    /**
      * 判断当前用户是否属于总公司
      * @return
      */

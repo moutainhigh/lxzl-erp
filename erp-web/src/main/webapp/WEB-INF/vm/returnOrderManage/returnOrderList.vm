@@ -88,11 +88,11 @@
                                 <th>服务费</th>
                                 <th>损坏加收费</th>
                                 <th>状态</th>
-                                <th>备注</th>
-                                <th>创建时间</th>
                                 <th>创建人</th>
-                                <th>修改时间</th>
+                                <th>创建时间</th>
+##                                <th>修改时间</th>
                                 <th>退还跟单员</th>
+                                <th>备注</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
                                 {{/hasRowActionButtons}}
@@ -117,15 +117,15 @@
                                 <td>{{totalReturnMaterialCount}}</td>
                                 <td>{{realTotalReturnProductCount}}</td>
                                 <td>{{realTotalReturnMaterialCount}}</td>
-                                <td>{{totalRentCostFormat}}</td>
-                                <td>{{serviceCostFormat}}</td>
-                                <td>{{damageCostFormat}}</td>
+                                <td>{{#price}}{{totalRentCost}}{{/price}}</td>
+                                <td>{{#price}}{{serviceCost}}{{/price}}</td>
+                                <td>{{#price}}{{damageCost}}{{/price}}</td>
                                 <td>{{returnOrderStatusValue}}</td>
+                                <td>{{createUserRealName}}</td>
+                                <td>{{#time}}{{createTime}}{{/time}}</td>
+##                                <td>{{updateTimeFormat}}</td>
+                                <td>{{ownerName}}</td>
                                 <td>{{remark}}</td>
-                                <td>{{createTimeFormat}}</td>
-                                <td>{{createUser}}</td>
-                                <td>{{updateTimeFormat}}</td>
-                                <td>{{owner}}</td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
                                     <div class="btn-group text-right">
@@ -169,6 +169,7 @@
             'manage.return.order.handle.mixin.js',
             'manage.return.order.js',
             'manage.order.picking.js',
+            'manage.return.order.end.input.modal.js',
             'modal.submit.audit.js');
 </script>
 <script type="text/javascript">

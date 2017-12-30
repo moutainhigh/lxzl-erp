@@ -76,6 +76,7 @@
                                     <th>电子邮件</th>
                                     <th>手机号</th>
                                     <th>地址</th>
+                                    <th>创建人</th>
                                     <th>创建时间</th>
                                     <th>备注</th>
                                     {{#hasRowActionButtons}}
@@ -99,9 +100,18 @@
                                     <td>{{customerPerson.realName}}</td>
                                     <td>{{customerPerson.email}}</td>
                                     <td>{{customerPerson.phone}}</td>
-                                    <td>{{addressForamt}}</td>
+                                    <td>
+                                        <div class="mw200">
+                                            {{addressForamt}}
+                                        </div>
+                                    </td>
+                                    <td>{{createUserRealName}}</td>
                                     <td>{{createTimeFormat}}</td>
-                                    <td>{{customerPerson.remark}}</td>
+                                    <td>
+                                        <div class="mw200">
+                                            {{customerPerson.remark}}
+                                        </div>
+                                    </td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
                                         <div class="btn-group text-right">

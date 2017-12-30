@@ -82,6 +82,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime,orderDO.getBuyerCustomerId()));
+        orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
         orderDO.setOrderSellerId(loginUser.getUserId());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
         orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -441,15 +442,15 @@ public class OrderServiceImpl implements OrderService {
             newOrderProductEquipmentDO.setRentStartTime(returnDate);
             newOrderProductEquipmentDO.setExpectReturnTime(orderProductEquipmentDO.getExpectReturnTime());
 
-            // TODO 换货价格按照最新的价格来算
+            // TODO 换货价格按照最新的价格来算还是按照原来的价格来算，现在采用的是按照之前价格来算
             BigDecimal productUnitAmount = orderProductDO.getProductUnitAmount();
             if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
                 productUnitAmount = productServiceResult.getResult().getProductSkuList().get(0).getDayRentPrice();
             } else if ((OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType()))) {
                 productUnitAmount = productServiceResult.getResult().getProductSkuList().get(0).getMonthRentPrice();
             }
-            newOrderProductEquipmentDO.setProductEquipmentUnitAmount(productUnitAmount);
-            newOrderProductEquipmentDO.setExpectRentAmount(amountSupport.calculateRentAmount(returnDate, orderProductEquipmentDO.getExpectReturnTime(), productUnitAmount));
+            newOrderProductEquipmentDO.setProductEquipmentUnitAmount(orderProductEquipmentDO.getProductEquipmentUnitAmount());
+            newOrderProductEquipmentDO.setExpectRentAmount(amountSupport.calculateRentAmount(returnDate, orderProductEquipmentDO.getExpectReturnTime(), orderProductEquipmentDO.getProductEquipmentUnitAmount()));
             newOrderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             newOrderProductEquipmentDO.setCreateTime(currentTime);
             newOrderProductEquipmentDO.setUpdateTime(currentTime);
@@ -524,13 +525,13 @@ public class OrderServiceImpl implements OrderService {
                 } else if ((OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType()))) {
                     returnMaterialBulkUnitAmount = returnMaterialServiceResult.getResult().getMonthRentPrice();
                 }
-                // 计算差价 并且把单价提升
-                if (BigDecimalUtil.compare(changeMaterialBulkUnitAmount, returnMaterialBulkUnitAmount) > 0) {
+                //  TODO 计算差价 并且把单价提升 暂时不提升
+                /*if (BigDecimalUtil.compare(changeMaterialBulkUnitAmount, returnMaterialBulkUnitAmount) > 0) {
                     BigDecimal diffAmount = BigDecimalUtil.sub(changeMaterialBulkUnitAmount, returnMaterialBulkUnitAmount);
                     orderProductEquipmentDO.setProductEquipmentUnitAmount(BigDecimalUtil.add(orderProductEquipmentDO.getProductEquipmentUnitAmount(), diffAmount));
                     orderProductEquipmentDO.setUpdateTime(currentTime);
                     orderProductEquipmentMapper.update(orderProductEquipmentDO);
-                }
+                }*/
 
             }
             result.setErrorCode(ErrorCode.SUCCESS);

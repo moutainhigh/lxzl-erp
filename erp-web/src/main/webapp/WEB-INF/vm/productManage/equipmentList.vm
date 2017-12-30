@@ -39,12 +39,16 @@
                                         <input type="text" name="productName" id="productName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入商品名称">
                                     </div>
                                 </div>
-                                <script type="text/html" id="equipmentStatusSelectTpl">
-                                    <option value="">全部</option>
-                                    {{#equipmentStatus}}
-                                    <option value={{num}}>{{value}}</option>
-                                    {{/equipmentStatus}}
-                                </script>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="currentWarehouseId" id="currentWarehouseId"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="ownerWarehouseId" id="ownerWarehouseId"></select>
+                                    </div>
+                                </div>
                                 <select name="equipmentStatus" id="equipmentStatus" class="hide"></select>
                             </form>
                         </div>
@@ -64,7 +68,8 @@
                                     </th>
                                     {{/hasCommonActionButtons}}
                                     <th>设备编号</th>
-                                    <th>仓库</th>
+                                    <th>归属仓库</th>
+                                    <th>所在仓库</th>
                                     <th>商品ID</th>
                                     <th>商品名</th>
                                     <th>商品图</th>
@@ -72,7 +77,7 @@
                                     <th>SKU名称</th>
                                     <th>设备状态</th>
 ##                                    <th>可用状态</th>
-                                    <th>备注</th>
+##                                    <th>备注</th>
                                     {{#hasRowActionButtons}}
                                     <th class="text-right">操作</th>
                                     {{/hasRowActionButtons}}
@@ -92,6 +97,7 @@
                                         {{/hasCommonActionButtons}}
                                         <td>{{equipmentNo}}</td>
                                         <td>{{ownerWarehouseName}}</td>
+                                        <td>{{currentWarehouseName}}</td>
                                         <td>{{productId}}</td>
                                         <td>{{productName}}</td>
                                         <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
@@ -99,7 +105,7 @@
                                         <td>{{skuName}}</td>
                                         <td>{{equipmentStatusStr}}</td>
 ##                                        <td>{{dataStatusStr}}</td>
-                                        <td>{{remark}}</td>
+##                                        <td>{{remark}}</td>
                                         {{#hasRowActionButtons}}
                                         <td class="text-right">
                                             <div class="btn-group text-right">
@@ -139,7 +145,9 @@
     #parse("layout/footer.vm")
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/dropzone/dropzone.min.js"></script>
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.product.equipment.list.js');
+        management_load_script('${staticManagement}/js',
+                'api.data.js',
+                'manage.product.equipment.list.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

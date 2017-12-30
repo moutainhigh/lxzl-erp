@@ -50,6 +50,16 @@
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <input type="text" name="bulkMaterialName" id="bulkMaterialName" class="form-control input-sm bradius" autocomplete="off" placeholder="散料名称">
                                 </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="currentWarehouseId" id="currentWarehouseId"></select>
+                                    </div>
+                                </div>
+##                                <div class="form-group pull-right mn mr10" style="width: 120px;">
+##                                    <div class="input-group">
+##                                        <select class="form-control input-sm bradius" name="ownerWarehouseId" id="ownerWarehouseId"></select>
+##                                    </div>
+##                                </div>
                                 <select name="bulkMaterialType" id="bulkMaterialType" class="hide"></select>
                                 <select name="bulkMaterialStatus" id="bulkMaterialStatus" class="hide"></select>
                             </form>
@@ -71,11 +81,11 @@
                                 {{/hasCommonActionButtons}}
                                 <th>散料编号</th>
                                 <th>散料名称</th>
+                                <th>品牌</th>
                                 <th>散料类型</th>
                                 <th>配件编号</th>
-                                <th>仓库</th>
-                                <th>仓位</th>
-                                <th>品牌</th>
+                                <th>归属仓库</th>
+                                <th>当前仓库</th>
                                 <th>散料字面量</th>
                                 <th>散料价值</th>
                                 <th>当前设备编号</th>
@@ -99,11 +109,11 @@
                                 {{/hasCommonActionButtons}}
                                 <td>{{bulkMaterialNo}}</td>
                                 <td>{{bulkMaterialName}}</td>
+                                <td>{{brandName}}</td>
                                 <td>{{bulkMaterialTypeValue}}</td>
                                 <td>{{materialNo}}</td>
-                                <td>{{currentWarehouseId}}</td>
-                                <td>{{currentWarehousePositionId}}</td>
-                                <td>{{brandId}}</td>
+                                <td>{{ownerWarehouseName}}</td>
+                                <td>{{currentWarehouseName}}</td>
                                 <td>{{materialCapacityValue}}</td>
                                 <td>{{bulkMaterialPriceFormat}}</td>
                                 <td>{{currentEquipmentNo}}</td>
@@ -149,7 +159,9 @@
 <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
 <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
 <script type="text/javascript">
-    management_load_script('${staticManagement}/js','manage.material.bulk.list.js');
+    management_load_script('${staticManagement}/js',
+            'api.data.js',
+            'manage.material.bulk.list.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化

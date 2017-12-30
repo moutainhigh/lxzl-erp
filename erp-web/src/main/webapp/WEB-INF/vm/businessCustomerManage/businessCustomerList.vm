@@ -83,6 +83,7 @@
                                     <th>联系人手机号</th>
                                     <th>座机电话</th>
                                     <th>地址</th>
+                                    <th>创建人</th>
                                     <th>创建时间</th>
                                     <th>是否禁用</th>
                                     <th>备注</th>
@@ -109,10 +110,17 @@
                                     <td>{{customerCompany.connectRealName}}</td>
                                     <td>{{customerCompany.connectPhone}}</td>
                                     <td>{{customerCompany.landline}}</td>
-                                    <td>{{addressForamt}}</td>
+                                    <td>
+                                        <div class="mw200">{{addressForamt}}</div>
+                                    </td>
+                                    <td>{{createUserRealName}}</td>
                                     <td>{{createTimeFormat}}</td>
                                     <td>{{isDisabledStr}}</td>
-                                    <td>{{customerCompany.remark}}</td>
+                                    <td>
+                                        <div class="mw200">
+                                        {{customerCompany.remark}}
+                                        </div>
+                                    </td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
                                         <div class="btn-group text-right">
