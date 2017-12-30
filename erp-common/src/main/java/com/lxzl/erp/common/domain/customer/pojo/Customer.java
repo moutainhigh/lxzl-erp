@@ -10,7 +10,6 @@ import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerPersonGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
-import java.io.Serializable;
 import java.util.Date;
 
 
