@@ -25,11 +25,9 @@
                             <div class="col-md-8 text-right">
                                 <script type="text/html" id="actionButtonsTpl">
                                     {{#acitonButtons}}
-                                        {{#showButton}}
-                                        <a href="${ctx}{{menuUrl}}?no={{orderNo}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-orderno="{{orderNo}}">
-                                            <i class="{{iClass}}"></i> {{text}}
-                                        </a>
-                                        {{/showButton}}
+                                    <a href="${ctx}{{menuUrl}}?no={{orderNo}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-orderno="{{orderNo}}">
+                                        <i class="{{iClass}}"></i> {{text}}
+                                    </a>
                                     {{/acitonButtons}}
                                 </script>
                                 <div class="btn-group" id="actionButtons"></div>
