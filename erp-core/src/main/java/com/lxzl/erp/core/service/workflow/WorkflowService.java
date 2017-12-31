@@ -22,6 +22,7 @@ public interface WorkflowService extends BaseService {
      * @param workflowType    工作流类型，详见WorkflowType
      * @param workflowReferNo 工作流关联ID，业务NO
      * @param verifyUser      目标审核人
+     * @param commitRemark    提交备注
      * @return 错误代码，生成的工作流ID
      */
     ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser, String commitRemark);
@@ -47,7 +48,7 @@ public interface WorkflowService extends BaseService {
     /**
      * 获取当前工作流记录
      *
-     * @param workflowType 工作流类型
+     * @param workflowType    工作流类型
      * @param workflowReferNo 工作流关联ID
      * @return 错误代码，工作流记录
      */
@@ -84,7 +85,7 @@ public interface WorkflowService extends BaseService {
     /**
      * 是否需要审核
      *
-     * @param workflowType    工作流类型，详见WorkflowType
+     * @param workflowType 工作流类型，详见WorkflowType
      * @return true 是 false 否
      */
     ServiceResult<String, Boolean> isNeedVerify(Integer workflowType);

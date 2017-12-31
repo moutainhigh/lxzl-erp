@@ -81,6 +81,9 @@ public class MaterialServiceImpl implements MaterialService {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private ProductCategoryPropertyValueMapper productCategoryPropertyValueMapper;
+
     @Autowired(required = false)
     private HttpSession session;
 
@@ -505,8 +508,8 @@ public class MaterialServiceImpl implements MaterialService {
 
         MaterialModelDO materialModelDO = ConverterUtil.convert(materialModel, MaterialModelDO.class);
         materialModelDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-//        materialModelDO.setUpdateUser(loginUser.getUserId().toString());
-//        materialModelDO.setCreateUser(loginUser.getUserId().toString());
+        materialModelDO.setUpdateUser(loginUser.getUserId().toString());
+        materialModelDO.setCreateUser(loginUser.getUserId().toString());
         materialModelDO.setUpdateTime(currentTime);
         materialModelDO.setCreateTime(currentTime);
         materialModelMapper.save(materialModelDO);
@@ -569,6 +572,12 @@ public class MaterialServiceImpl implements MaterialService {
             return result;
         }
 
+        List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByMaterialModelId(dbMaterialModelDO.getId());
+        if (CollectionUtil.isNotEmpty(productCategoryPropertyValueDOList)) {
+            result.setErrorCode(ErrorCode.RECORD_USED_CAN_NOT_DELETE);
+            return result;
+        }
+
         dbMaterialModelDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
         dbMaterialModelDO.setUpdateUser(loginUser.getUserId().toString());
         dbMaterialModelDO.setUpdateTime(currentTime);
@@ -589,7 +598,7 @@ public class MaterialServiceImpl implements MaterialService {
         maps.put("materialModelQueryParam", materialModelQueryParam);
         Integer totalCount = materialModelMapper.listCount(maps);
         List<MaterialModelDO> materialModelDOList = materialModelMapper.listPage(maps);
-        List<MaterialModel> materialModelList = ConverterUtil.convertList(materialModelDOList,MaterialModel.class);
+        List<MaterialModel> materialModelList = ConverterUtil.convertList(materialModelDOList, MaterialModel.class);
         Page<MaterialModel> page = new Page<>(materialModelList, totalCount, materialModelQueryParam.getPageNo(), materialModelQueryParam.getPageSize());
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -605,7 +614,7 @@ public class MaterialServiceImpl implements MaterialService {
             return result;
         }
 
-        result.setResult(ConverterUtil.convert(materialModelDO,MaterialModel.class));
+        result.setResult(ConverterUtil.convert(materialModelDO, MaterialModel.class));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
