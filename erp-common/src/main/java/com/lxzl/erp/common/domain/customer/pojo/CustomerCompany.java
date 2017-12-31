@@ -55,7 +55,10 @@ public class CustomerCompany extends BasePO {
     private String industry;  //所属行业'
     private BigDecimal registeredCapital;  //注册资本'
     private Integer officeNumber;  //办公人数'
+    @NotBlank(message = ErrorCode.PRODUCT_PURPOSE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String productPurpose;  //设备用途'
+    @Valid
+    @NotEmpty(message = ErrorCode.CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private List<CustomerCompanyNeed> customerCompanyNeedFirstList;  //首次所需设备
     private List<CustomerCompanyNeed> customerCompanyNeedLaterList;  //后续所需设备
 //    @NotBlank(message = ErrorCode.AGENT_PERSON_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
@@ -79,8 +82,11 @@ public class CustomerCompany extends BasePO {
     private String cityName; //城市名
     private String districtName; //地区名
 
+    @Valid
     private Image businessLicensePictureImage;//营业执照
+    @Valid
     private Image legalPersonNoPictureFrontImage;//法人/股东身份证正面
+    @Valid
     private Image legalPersonNoPictureBackImage;//法人/股东身份证反面
     @Valid
     private List<Image> managerPlaceRentContractImageList;//经营场所租赁合同

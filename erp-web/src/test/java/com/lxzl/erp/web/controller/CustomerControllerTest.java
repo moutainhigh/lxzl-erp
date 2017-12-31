@@ -48,29 +48,29 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
 
         Image image1 = new Image();
-        image1.setImgId(28);
+        image1.setImgId(18);
         customerCompany.setBusinessLicensePictureImage(image1);
 
         Image image2 = new Image();
-        image2.setImgId(26);
+        image2.setImgId(16);
         customerCompany.setLegalPersonNoPictureFrontImage(image2);
 
         Image image3 = new Image();
-        image3.setImgId(27);
+        image3.setImgId(17);
         customerCompany.setLegalPersonNoPictureBackImage(image3);
 
         //加入经营场所租赁合同
-//        List<Image> managerPlaceRentContractImageList = new ArrayList<>();
-//        Image image4= new Image();
-//        image4.setImgId(19);
-//        Image image5= new Image();
-//        image5.setImgId(20);
-//        Image image6= new Image();
-//        image6.setImgId(21);
-//        managerPlaceRentContractImageList.add(image4);
-//        managerPlaceRentContractImageList.add(image5);
-//        managerPlaceRentContractImageList.add(image6);
-//        customerCompany.setManagerPlaceRentContractImageList(managerPlaceRentContractImageList);
+        List<Image> managerPlaceRentContractImageList = new ArrayList<>();
+        Image image4= new Image();
+        image4.setImgId(19);
+        Image image5= new Image();
+        image5.setImgId(20);
+        Image image6= new Image();
+        image6.setImgId(21);
+        managerPlaceRentContractImageList.add(image4);
+        managerPlaceRentContractImageList.add(image5);
+        managerPlaceRentContractImageList.add(image6);
+        customerCompany.setManagerPlaceRentContractImageList(managerPlaceRentContractImageList);
 
         customer.setCustomerCompany(customerCompany);
         TestResult result = getJsonTestResult("/customer/addCompany", customer);
@@ -95,7 +95,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC10002017123000029");
+        customer.setCustomerNo("LXCC10002017123101115");
         CustomerCompany customerCompany = new CustomerCompany();
 
         //首次所需设备
@@ -125,17 +125,17 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         //
         Image image1 = new Image();
-        image1.setImgId(16);
+        image1.setImgId(18);
 //        image1.setRefId("400041");
         customerCompany.setBusinessLicensePictureImage(image1);
 
         Image image2 = new Image();
-        image2.setImgId(17);
+        image2.setImgId(16);
 //        image2.setRefId("400043");
         customerCompany.setLegalPersonNoPictureFrontImage(image2);
 
         Image image3 = new Image();
-        image3.setImgId(18);
+        image3.setImgId(17);
 //        image3.setRefId("400041");
         customerCompany.setLegalPersonNoPictureBackImage(image3);
         customer.setCustomerCompany(customerCompany);
@@ -195,14 +195,14 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC10002017123000031");
+        customer.setCustomerNo("LXCC10002017123101115");
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }
 
     @Test
     public void detailCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCD10002017123000030");
+        customer.setCustomerNo("LXCD10002017123101114");
         TestResult result = getJsonTestResult("/customer/detailCustomerPerson", customer);
     }
 
