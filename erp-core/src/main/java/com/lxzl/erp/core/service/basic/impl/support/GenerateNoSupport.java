@@ -13,7 +13,10 @@ import com.lxzl.erp.common.domain.purchase.PurchaseReceiveOrderQueryParam;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderQueryParam;
 import com.lxzl.erp.common.domain.returnOrder.ReturnOrderPageParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
+import com.lxzl.erp.core.service.user.UserService;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.area.AreaCityMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
@@ -82,16 +85,12 @@ public class GenerateNoSupport {
     /**
      * 生成客户编号
      */
-    public String generateCustomerNo(Date currentTime, Integer owner, Integer customerType) {
+    public String generateCustomerNo(Date currentTime, Integer customerType) {
         synchronized (this) {
             StringBuilder builder = new StringBuilder();
-            UserRoleDO userRoleDO = userRoleMapper.findListByUserId(owner).get(0);
-            //角色id
-            RoleDepartmentDataDO roleDepartmentDataDO = roleDepartmentDataMapper.getRoleDepartmentDataListByRoleId(userRoleDO.getRoleId()).get(0);
-            //部门id
-            DepartmentDO departmentDO = departmentMapper.findById(roleDepartmentDataDO.getDepartmentId());
+            Integer subCompanyId = userSupport.getCurrentUserCompanyId();
             //业务员所在的city_code
-            String subCompanyCode = subCompanyMapper.findById(departmentDO.getSubCompanyId()).getSubCompanyCode();
+            String subCompanyCode = subCompanyMapper.findById(subCompanyId).getSubCompanyCode();
             Map<String, Date> date = getMonthlongDate();
             ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
             productEquipmentQueryParam.setCreateStartTime(date.get("firstdayDate"));
@@ -472,7 +471,7 @@ public class GenerateNoSupport {
             StringBuilder builder = new StringBuilder();
             builder.append("LXS");
             builder.append(areaCityDO.getCityCode());
-            builder.append(count+1);
+            builder.append(count + 1);
             return builder.toString();
         }
     }
@@ -551,5 +550,7 @@ public class GenerateNoSupport {
     private BulkMaterialMapper bulkMaterialMapper;
     @Autowired
     private DeploymentOrderMapper deploymentOrderMapper;
+    @Autowired
+    private UserSupport userSupport;
 
 }

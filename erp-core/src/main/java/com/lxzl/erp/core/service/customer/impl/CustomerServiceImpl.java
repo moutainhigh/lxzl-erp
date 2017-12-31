@@ -76,7 +76,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerDO customerDO = new CustomerDO();
-        customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now,userSupport.getCurrentUserId(),CustomerType.CUSTOMER_TYPE_COMPANY));
+        customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now,CustomerType.CUSTOMER_TYPE_COMPANY));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_COMPANY);
         if (customer.getIsDisabled() == null) {
             customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);
@@ -344,7 +344,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerDO customerDO = new CustomerDO();
-        customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now,userSupport.getCurrentUserId(),CustomerType.CUSTOMER_TYPE_PERSON));
+        customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now,CustomerType.CUSTOMER_TYPE_PERSON));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
         if (customer.getIsDisabled() == null) {
             customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);
