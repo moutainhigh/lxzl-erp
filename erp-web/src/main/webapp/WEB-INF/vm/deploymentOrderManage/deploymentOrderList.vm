@@ -23,7 +23,7 @@
                 <div class="panel panel-primary panel-border top">
                     <div class="panel-menu p12">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="pull-left ml10">
                                 <script type="text/html" id="actionCommonButtonsTpl">
                                     <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
                                     {{#acitonCommonButtons}}
@@ -35,7 +35,7 @@
 
                                 <div class="btn-group" id="actionCommonButtons"></div>
                             </div>
-                            <div class="col-md-9 text-right">
+                            <div class="pull-right text-right mr10">
                                 <form id="searchForm" class="form-horizontal">
                                     <div class="pull-right">
                                         <button type="submit" class="btn btn-primary btn-sm">查询</button>
@@ -45,13 +45,13 @@
                                         <input type="text" name="deploymentOrderNo" id="deploymentOrderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="调拨单编号">
                                     </div>
                                     <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                        <select class="form-control input-sm bradius" autocomplete="off" name="srcWarehouseId">
-                                            <option value="">请选择源仓库</option>
+                                        <select class="form-control input-sm bradius" autocomplete="off" name="srcWarehouseId" id="srcWarehouseId">
+                                            <option value="">源仓库</option>
                                         </select>
                                     </div>
                                     <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                        <select class="form-control input-sm bradius" autocomplete="off" name="srcWarehouseId">
-                                            <option value="">请选择目标仓库</option>
+                                        <select class="form-control input-sm bradius" autocomplete="off" name="targetWarehouseId" id="targetWarehouseId">
+                                            <option value="">目标仓库</option>
                                         </select>
                                     </div>
                                     <select name="deploymentOrderStatus" id="deploymentOrderStatus" class="hide"></select>
@@ -137,7 +137,7 @@
                                 {{/listData}}
                                 {{^listData}}
                                 <tr>
-                                    <td valign="top" colspan="14" class="text-center">没有查询到调拨订单</td>
+                                    <td valign="top" colspan="14" class="text-center">无调拨订单</td>
                                 </tr>
                                 {{/listData}}
                                 {{/dataSource}}
@@ -164,6 +164,7 @@
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
+                'api.data.js',
                 'manage.deployment.order.handle.mixin.js',
                 'manage.deployment.order.js',
                 'modal.submit.audit.js');

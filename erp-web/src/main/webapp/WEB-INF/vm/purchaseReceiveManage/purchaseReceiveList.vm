@@ -27,9 +27,9 @@
                             <script type="text/html" id="actionCommonButtonsTpl">
                                 <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
                                 {{#acitonCommonButtons}}
-                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
-                                    <i class="{{iClass}}"></i> {{text}}
-                                </a>
+                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
+                                        <i class="{{iClass}}"></i> {{text}}
+                                    </a>
                                 {{/acitonCommonButtons}}
                             </script>
 
@@ -134,7 +134,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="14" class="text-center">没有查询到收料通知</td>
+                                <td valign="top" colspan="14" class="text-center">没有查询到收货单</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
@@ -150,9 +150,7 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </section>
     </section>
 
