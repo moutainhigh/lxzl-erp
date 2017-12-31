@@ -26,7 +26,7 @@ public class MaterialType {
     // 机箱
     public static final Integer MATERIAL_TYPE_BOX = 9;
     // 其他配件
-    public static final Integer MATERIAL_TYPE_OTHER = 10;
+    public static final Integer MATERIAL_TYPE_OTHER = 100;
 
     public static boolean inThisScope(Integer materialType) {
         if (materialType == null

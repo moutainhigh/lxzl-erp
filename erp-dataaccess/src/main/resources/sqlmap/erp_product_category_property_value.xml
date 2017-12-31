@@ -55,9 +55,6 @@
             <if test="dataOrder != null">
                 data_order = #{dataOrder, jdbcType=INTEGER},
             </if>
-            <if test="dataOrder != null">
-                data_order = #{dataOrder, jdbcType=INTEGER},
-            </if>
             <if test="propertyCapacityValue != null">
                 property_capacity_value = #{propertyCapacityValue, jdbcType=DOUBLE},
             </if>
