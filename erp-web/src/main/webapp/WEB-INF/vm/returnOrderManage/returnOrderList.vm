@@ -111,7 +111,7 @@
                                 </td>
                                 {{/hasCommonActionButtons}}
                                 <td>{{returnOrderNo}}</td>
-                                <td>{{customerNo}}</td>
+                                <td>{{customerName}}</td>
                                 <td>{{isChargingStr}}</td>
                                 <td>{{totalReturnProductCount}}</td>
                                 <td>{{totalReturnMaterialCount}}</td>
