@@ -37,10 +37,10 @@
                     <tr>
                         <th>客户编号</th>
                         <th>真实姓名</th>
-                        <th>电子邮件</th>
-                        <th>手机号</th>
-                        <th>地址</th>
-                        <th>创建时间</th>
+##                        <th>电子邮件</th>
+##                        <th>手机号</th>
+##                        <th>地址</th>
+                        <th>联系方式</th>
                         <th>备注</th>
                         <th class="text-right">操作</th>
                     </tr>
@@ -51,10 +51,14 @@
                     <tr data-rowdata="{{rowData}}">
                         <td>{{customerNo}}</td>
                         <td>{{customerPerson.realName}}</td>
-                        <td>{{customerPerson.email}}</td>
-                        <td>{{customerPerson.phone}}</td>
-                        <td>{{addressForamt}}</td>
-                        <td>{{createTimeFormat}}</td>
+##                        <td>{{customerPerson.email}}</td>
+##                        <td>{{customerPerson.phone}}</td>
+##                        <td>{{addressForamt}}</td>
+                        <td>
+                            <p>{{customerPerson.email}}</p>
+                            <p>{{customerPerson.phone}}</p>
+                            <p>{{addressForamt}}</p>
+                        </td>
                         <td>{{customerPerson.remark}}</td>
                         <td class="text-right">
                             <div class="btn-group text-right">

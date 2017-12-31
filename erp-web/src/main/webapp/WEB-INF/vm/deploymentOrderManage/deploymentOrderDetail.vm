@@ -27,9 +27,7 @@
                             <div class="col-md-8 text-right">
                                 <script type="text/html" id="actionButtonsTpl">
                                     {{#acitonButtons}}
-                                    {{#showButton}}
                                     <a href="${ctx}{{menuUrl}}?no={{no}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">{{text}}</a>
-                                    {{/showButton}}
                                     {{/acitonButtons}}
                                 </script>
                                 <div class="btn-group" id="actionButtons"></div>
@@ -88,20 +86,21 @@
                     <div class="panel-body dark pn">
                         <div class="tab-content pn br-n">
                             <div id="purchaseOrderProductItems" class="tab-pane active">
-                                <div class="panel-menu p12 br-n br-b">
-                                    <div class="row">
-                                        <div class="pull-left ml10">
-                                            <script type="text/html" id="stockUpProductButtonsTpl">
-                                                {{#acitonButtons}}
-                                                {{#showButton}}
-                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">{{text}}</a>
-                                                {{/showButton}}
-                                                {{/acitonButtons}}
-                                            </script>
-                                            <div class="btn-group actionCommonButtons" id="stockUpProductButtons"></div>
+                                <script type="text/html" id="stockUpProductButtonsTpl">
+                                    <div class="panel-menu p12 br-n br-b">
+                                        <div class="row">
+                                            <div class="pull-left ml10">
+                                                <div class="btn-group actionCommonButtons" id="stockUpProductButtons">
+                                                    {{#acitonButtons}}
+                                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">{{text}}</a>
+                                                    {{/acitonButtons}}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </script>
+                                <div id="stockUpProductButtons"></div>
+
                                 <div class="table-responsive">
                                     <script type="text/html" id="dataListTpl">
                                         <thead>

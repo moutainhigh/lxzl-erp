@@ -18,12 +18,12 @@
             <div class="panel panel-primary panel-border top">
                 <div class="panel-menu p12">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="pull-left ml10">
                             <div class="btn-group" id="actionCommonButtons">
                                 <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
                             </div>
                         </div>
-                        <div class="col-md-8 text-right">
+                        <div class="pull-right text-right mr10">
                             <form id="searchForm" class="form-horizontal">
                                 <div class="pull-right">
                                     <button type="submit" class="btn btn-primary btn-sm">查询</button>
