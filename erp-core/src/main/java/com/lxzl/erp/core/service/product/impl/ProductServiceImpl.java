@@ -330,10 +330,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = ConverterUtil.convert(productDO, Product.class);
 
         for (ProductSku productSku : product.getProductSkuList()) {
-            Map<String, Object> propertyValueMaps = new HashMap<>();
-            propertyValueMaps.put("productId", productSku.getProductId());
-            propertyValueMaps.put("skuId", productSku.getSkuId());
-            List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByParams(propertyValueMaps);
+            List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByProductAndSkuId(productSku.getProductId(), productSku.getSkuId());
             productSku.setShouldProductCategoryPropertyValueList(ConverterUtil.convertList(productCategoryPropertyValueDOList, ProductCategoryPropertyValue.class));
 
             // 根据sku查询全新与次新的设备数量
@@ -381,10 +378,7 @@ public class ProductServiceImpl implements ProductService {
         productDO.setProductSkuDOList(productSkuDOList);
         Product product = ConverterUtil.convert(productDO, Product.class);
         for (ProductSku productSku : product.getProductSkuList()) {
-            Map<String, Object> propertyValueMaps = new HashMap<>();
-            propertyValueMaps.put("productId", productSku.getProductId());
-            propertyValueMaps.put("skuId", productSku.getSkuId());
-            List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByParams(propertyValueMaps);
+            List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByProductAndSkuId(productSku.getProductId(), productSku.getSkuId());
             productSku.setShouldProductCategoryPropertyValueList(ConverterUtil.convertList(productCategoryPropertyValueDOList, ProductCategoryPropertyValue.class));
 
             // 根据sku查询全新与次新的设备数量
@@ -432,10 +426,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = ConverterUtil.convert(productDO, Product.class);
 
         for (ProductSku productSku : product.getProductSkuList()) {
-            Map<String, Object> propertyValueMaps = new HashMap<>();
-            propertyValueMaps.put("productId", productSku.getProductId());
-            propertyValueMaps.put("skuId", productSku.getSkuId());
-            List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByParams(propertyValueMaps);
+            List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByProductAndSkuId(productSku.getProductId(), productSku.getSkuId());
             productSku.setShouldProductCategoryPropertyValueList(ConverterUtil.convertList(productCategoryPropertyValueDOList, ProductCategoryPropertyValue.class));
         }
 

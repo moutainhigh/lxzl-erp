@@ -7,8 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+
 @Repository
 public interface ProductCategoryPropertyValueMapper extends BaseMysqlDAO<ProductCategoryPropertyValueDO> {
 
-    List<ProductCategoryPropertyValueDO> findByParams(@Param("maps") Map<String, Object> paramMap);
+    List<ProductCategoryPropertyValueDO> findByProductAndSkuId(@Param("productId") Integer productId, @Param("skuId") Integer skuId);
+    List<ProductCategoryPropertyValueDO> findByMaterialModelId(@Param("materialModelId") Integer materialModelId);
 }
