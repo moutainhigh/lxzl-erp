@@ -48,29 +48,29 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
 
         Image image1 = new Image();
-        image1.setImgId(18);
+        image1.setImgId(28);
         customerCompany.setBusinessLicensePictureImage(image1);
 
         Image image2 = new Image();
-        image2.setImgId(16);
+        image2.setImgId(26);
         customerCompany.setLegalPersonNoPictureFrontImage(image2);
 
         Image image3 = new Image();
-        image3.setImgId(17);
+        image3.setImgId(27);
         customerCompany.setLegalPersonNoPictureBackImage(image3);
 
         //加入经营场所租赁合同
-        List<Image> managerPlaceRentContractImageList = new ArrayList<>();
-        Image image4= new Image();
-        image4.setImgId(19);
-        Image image5= new Image();
-        image5.setImgId(20);
-        Image image6= new Image();
-        image6.setImgId(21);
-        managerPlaceRentContractImageList.add(image4);
-        managerPlaceRentContractImageList.add(image5);
-        managerPlaceRentContractImageList.add(image6);
-        customerCompany.setManagerPlaceRentContractImageList(managerPlaceRentContractImageList);
+//        List<Image> managerPlaceRentContractImageList = new ArrayList<>();
+//        Image image4= new Image();
+//        image4.setImgId(19);
+//        Image image5= new Image();
+//        image5.setImgId(20);
+//        Image image6= new Image();
+//        image6.setImgId(21);
+//        managerPlaceRentContractImageList.add(image4);
+//        managerPlaceRentContractImageList.add(image5);
+//        managerPlaceRentContractImageList.add(image6);
+//        customerCompany.setManagerPlaceRentContractImageList(managerPlaceRentContractImageList);
 
         customer.setCustomerCompany(customerCompany);
         TestResult result = getJsonTestResult("/customer/addCompany", customer);
@@ -125,18 +125,18 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         //
         Image image1 = new Image();
-        image1.setImgId(18);
-        image1.setRefId("400041");
+        image1.setImgId(16);
+//        image1.setRefId("400041");
         customerCompany.setBusinessLicensePictureImage(image1);
 
         Image image2 = new Image();
-        image2.setImgId(16);
-        image2.setRefId("400041");
+        image2.setImgId(17);
+//        image2.setRefId("400043");
         customerCompany.setLegalPersonNoPictureFrontImage(image2);
 
         Image image3 = new Image();
-        image3.setImgId(17);
-        image3.setRefId("400041");
+        image3.setImgId(18);
+//        image3.setRefId("400041");
         customerCompany.setLegalPersonNoPictureBackImage(image3);
         customer.setCustomerCompany(customerCompany);
 
@@ -144,13 +144,13 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         List<Image> managerPlaceRentContractImageList = new ArrayList<>();
         Image image4= new Image();
         image4.setImgId(19);
-        image4.setRefId("400041");
+//        image4.setRefId("400041");
         Image image5= new Image();
         image5.setImgId(20);
-        image5.setRefId("400041");
+//        image5.setRefId("400041");
         Image image6= new Image();
         image6.setImgId(21);
-        image6.setRefId("400041");
+//        image6.setRefId("400041");
         managerPlaceRentContractImageList.add(image4);
         managerPlaceRentContractImageList.add(image5);
         managerPlaceRentContractImageList.add(image6);

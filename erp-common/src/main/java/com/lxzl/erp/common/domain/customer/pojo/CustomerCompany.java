@@ -91,7 +91,7 @@ public class CustomerCompany extends BasePO {
     private Image legalPersonNoPictureFrontImage;//法人/股东身份证正面
     @Valid
     @NotNull(message = ErrorCode.LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
-    private Image legalPersonNoPictureBackImage;//法人/股东身份证反
+    private Image legalPersonNoPictureBackImage;//法人/股东身份证反面
     @Valid
     private List<Image> managerPlaceRentContractImageList;//经营场所租赁合同
     @Valid
