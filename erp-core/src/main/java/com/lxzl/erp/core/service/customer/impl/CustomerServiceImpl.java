@@ -405,11 +405,13 @@ public class CustomerServiceImpl implements CustomerService {
 
         //判断首次所需设备 list转json
         List<CustomerCompanyNeed> customerCompanyNeedFirstList = customer.getCustomerCompany().getCustomerCompanyNeedFirstList();
-        for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedFirstList){
-            BigDecimal totalPrice = BigDecimalUtil.mul(customerCompanyNeed.getUnitPrice(),new BigDecimal(customerCompanyNeed.getRentCount()));
-            customerCompanyNeed.setTotalPrice(totalPrice);
+        if(CollectionUtil.isNotEmpty(customerCompanyNeedFirstList)){
+            for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedFirstList){
+                BigDecimal totalPrice = BigDecimalUtil.mul(customerCompanyNeed.getUnitPrice(),new BigDecimal(customerCompanyNeed.getRentCount()));
+                customerCompanyNeed.setTotalPrice(totalPrice);
+            }
+            newCustomerCompanyDO.setCustomerCompanyNeedFirstJson(JSON.toJSON(customerCompanyNeedFirstList).toString());
         }
-        newCustomerCompanyDO.setCustomerCompanyNeedFirstJson(JSON.toJSON(customerCompanyNeedFirstList).toString());
 
         //判断后续所需设备
         if(CollectionUtil.isNotEmpty(customer.getCustomerCompany().getCustomerCompanyNeedLaterList())){
@@ -431,63 +433,69 @@ public class CustomerServiceImpl implements CustomerService {
 
 
         //对营业执照图片操作
-        if (StringUtil.isEmpty(customer.getCustomerCompany().getBusinessLicensePictureImage().getRefId())){
-            ImageDO newBusinessLicensePictureImageDO = imgMysqlMapper.findById(customer.getCustomerCompany().getBusinessLicensePictureImage().getImgId());
-            if (newBusinessLicensePictureImageDO == null){
-                serviceResult.setErrorCode(ErrorCode.BUSINESS_LICENSE_PICTURE_IMAGE_NOT_EXISTS);
-                return serviceResult;
+        if(customer.getCustomerCompany().getBusinessLicensePictureImage() != null){
+            if (StringUtil.isEmpty(customer.getCustomerCompany().getBusinessLicensePictureImage().getRefId())){
+                ImageDO newBusinessLicensePictureImageDO = imgMysqlMapper.findById(customer.getCustomerCompany().getBusinessLicensePictureImage().getImgId());
+                if (newBusinessLicensePictureImageDO == null){
+                    serviceResult.setErrorCode(ErrorCode.BUSINESS_LICENSE_PICTURE_IMAGE_NOT_EXISTS);
+                    return serviceResult;
+                }
+
+                //先让原来图片状态变为不可用
+                List<ImageDO> dbBusinessLicensePictureImageDOList=imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getId().toString(),ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE);
+                dbBusinessLicensePictureImageDOList.get(0).setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                imgMysqlMapper.update(dbBusinessLicensePictureImageDOList.get(0));
+
+                newBusinessLicensePictureImageDO.setImgType(ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE);
+                newBusinessLicensePictureImageDO.setRefId(customerCompanyDO.getId().toString());
+                newBusinessLicensePictureImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                newBusinessLicensePictureImageDO.setUpdateTime(now);
+                imgMysqlMapper.update(newBusinessLicensePictureImageDO);
             }
-
-            //先让原来图片状态变为不可用
-            List<ImageDO> dbBusinessLicensePictureImageDOList=imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getId().toString(),ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE);
-            dbBusinessLicensePictureImageDOList.get(0).setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-            imgMysqlMapper.update(dbBusinessLicensePictureImageDOList.get(0));
-
-            newBusinessLicensePictureImageDO.setImgType(ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE);
-            newBusinessLicensePictureImageDO.setRefId(customerCompanyDO.getId().toString());
-            newBusinessLicensePictureImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            newBusinessLicensePictureImageDO.setUpdateTime(now);
-            imgMysqlMapper.update(newBusinessLicensePictureImageDO);
         }
 
-        //对身份证正面图片操作
-        if (StringUtil.isEmpty(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage().getRefId())){
-            ImageDO newLegalPersonNoPictureFrontImageDO = imgMysqlMapper.findById(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage().getImgId());
-            if (newLegalPersonNoPictureFrontImageDO == null){
-                serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS);
-                return serviceResult;
+        if(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage() != null){
+            //对身份证正面图片操作
+            if (StringUtil.isEmpty(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage().getRefId())){
+                ImageDO newLegalPersonNoPictureFrontImageDO = imgMysqlMapper.findById(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage().getImgId());
+                if (newLegalPersonNoPictureFrontImageDO == null){
+                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS);
+                    return serviceResult;
+                }
+
+                //先让原来图片状态变为不可用
+                List<ImageDO> dblegalPersonNoPictureFrontImageDOList=imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getId().toString(),ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
+                dblegalPersonNoPictureFrontImageDOList.get(0).setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                imgMysqlMapper.update(dblegalPersonNoPictureFrontImageDOList.get(0));
+
+                newLegalPersonNoPictureFrontImageDO.setImgType(ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
+                newLegalPersonNoPictureFrontImageDO.setRefId(customerCompanyDO.getId().toString());
+                newLegalPersonNoPictureFrontImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                newLegalPersonNoPictureFrontImageDO.setUpdateTime(now);
+                imgMysqlMapper.update(newLegalPersonNoPictureFrontImageDO);
             }
-
-            //先让原来图片状态变为不可用
-            List<ImageDO> dblegalPersonNoPictureFrontImageDOList=imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getId().toString(),ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
-            dblegalPersonNoPictureFrontImageDOList.get(0).setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-            imgMysqlMapper.update(dblegalPersonNoPictureFrontImageDOList.get(0));
-
-            newLegalPersonNoPictureFrontImageDO.setImgType(ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
-            newLegalPersonNoPictureFrontImageDO.setRefId(customerCompanyDO.getId().toString());
-            newLegalPersonNoPictureFrontImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            newLegalPersonNoPictureFrontImageDO.setUpdateTime(now);
-            imgMysqlMapper.update(newLegalPersonNoPictureFrontImageDO);
         }
 
         //对身份证反面图片操作
-        if (StringUtil.isEmpty(customer.getCustomerCompany().getLegalPersonNoPictureBackImage().getRefId())){
-            ImageDO newLegalPersonNoPictureBackimageDO= imgMysqlMapper.findById(customer.getCustomerCompany().getLegalPersonNoPictureBackImage().getImgId());
-            if (newLegalPersonNoPictureBackimageDO == null){
-                serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS);
-                return serviceResult;
-            }
-            //先让原来图片状态变为不可用
-            List<ImageDO> dbLegalPersonNoPictureBackimageDOList =imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getId().toString(),ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
-            dbLegalPersonNoPictureBackimageDOList.get(0).setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-            imgMysqlMapper.update(dbLegalPersonNoPictureBackimageDOList.get(0));
+        if(customer.getCustomerCompany().getLegalPersonNoPictureBackImage() != null){
+            if (StringUtil.isEmpty(customer.getCustomerCompany().getLegalPersonNoPictureBackImage().getRefId())){
+                ImageDO newLegalPersonNoPictureBackimageDO= imgMysqlMapper.findById(customer.getCustomerCompany().getLegalPersonNoPictureBackImage().getImgId());
+                if (newLegalPersonNoPictureBackimageDO == null){
+                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS);
+                    return serviceResult;
+                }
+                //先让原来图片状态变为不可用
+                List<ImageDO> dbLegalPersonNoPictureBackimageDOList =imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getId().toString(),ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
+                dbLegalPersonNoPictureBackimageDOList.get(0).setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                imgMysqlMapper.update(dbLegalPersonNoPictureBackimageDOList.get(0));
 
-            //让新的图片成为该企业客户的该类型图片
-            newLegalPersonNoPictureBackimageDO.setImgType(ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
-            newLegalPersonNoPictureBackimageDO.setRefId(customerCompanyDO.getId().toString());
-            newLegalPersonNoPictureBackimageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            newLegalPersonNoPictureBackimageDO.setUpdateTime(now);
-            imgMysqlMapper.update(newLegalPersonNoPictureBackimageDO);
+                //让新的图片成为该企业客户的该类型图片
+                newLegalPersonNoPictureBackimageDO.setImgType(ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
+                newLegalPersonNoPictureBackimageDO.setRefId(customerCompanyDO.getId().toString());
+                newLegalPersonNoPictureBackimageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                newLegalPersonNoPictureBackimageDO.setUpdateTime(now);
+                imgMysqlMapper.update(newLegalPersonNoPictureBackimageDO);
+            }
         }
 
         //对经营场所租赁合同图片操作
