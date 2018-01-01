@@ -31,12 +31,6 @@
                                         <div class="section row">
                                             <div class="col-md-4">
                                                 <label for="userName" class="field-label">配件类型</label>
-                                                <script type="text/html" id="materialSelectTpl">
-                                                    <option value="">请选择</option>
-                                                    {{#materialType}}
-                                                    <option value={{num}}>{{value}}</option>
-                                                    {{/materialType}}
-                                                </script>
                                                 <label class="field select">
                                                     <select id="materialType" name="materialType">
                                                         <option value="">请选择</option>
@@ -46,13 +40,10 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="userName" class="field-label">配件型号</label>
-                                                <div class="smart-widget sm-right smr-50">
-                                                    <label class="field">
-                                                        <input type="hidden" value="" name="materialModelId" />
-                                                        <input type="text" name="modelName" id="modelName" class="gui-input" placeholder="请选择配件型号" readonly />
-                                                    </label>
-                                                    <button type="button" class="button btn-primary bradiusN chooseMaterialModalButton"><i class="fa fa-search"></i></button>
-                                                </div>
+                                                <label class="field">
+                                                    <input type="hidden" value="" name="materialModelId" />
+                                                    <input type="text" name="materialModelName" id="materialModelName" class="gui-input" readonly />
+                                                </label>
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="userName" class="field-label">配件名称</label>
@@ -64,7 +55,7 @@
                                         </div>
                                         <div class="section row">
                                             <div class="col-md-4">
-                                                <label for="userName" class="field-label">配件值(例如内存大小数值)</label>
+                                                <label for="userName" class="field-label">配件值(单位：G)</label>
                                                 <label for="materialCapacityValue" class="field prepend-icon">
                                                     <input type="text" name="materialCapacityValue" id="materialCapacityValue number" class="gui-input" />
                                                     <label for="materialCapacityValue" class="field-icon"><i class="fa fa-tag"></i></label>
