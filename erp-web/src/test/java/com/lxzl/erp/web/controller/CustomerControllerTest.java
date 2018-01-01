@@ -159,8 +159,10 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pageCustomerCompany() throws Exception {
         CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
+        customerCompanyQueryParam.setCustomerNo("LXCC10002018010100005");
 //        customerCompanyQueryParam.setCompanyName("百");
-        customerCompanyQueryParam.setProductPurpose("测试");
+//        customerCompanyQueryParam.setProductPurpose("测试");
+
         TestResult result = getJsonTestResult("/customer/pageCustomerCompany", customerCompanyQueryParam);
     }
 
