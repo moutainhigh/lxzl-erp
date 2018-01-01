@@ -111,6 +111,7 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL = "J200065";
     public static final String CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL = "J200066";
     public static final String CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL = "J200067";
+    public static final String CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL = "J200068";
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
     public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
@@ -520,6 +521,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL, "企业客户首次所需设备的单台价值不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL, "企业客户首次所需设备的总价值不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL, "企业客户首次所需设备的租赁期限不能空");
+        MAP.put(CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL, "企业客户首次所需设备选项不能空");
 
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
@@ -791,7 +793,7 @@ public class ErrorCode {
         MAP.put(JOINT_PRODUCT_NAME_IS_NULL, "组合商品名称为空");
         MAP.put(JOINT_PRODUCT_NOT_EXISTS, "组合商品不存在");
 
-        MAP.put(IMG_ID_NOT_NULL, "传入的照片ID不能为空");
+        MAP.put(IMG_ID_NOT_NULL, "传入的图片的ID不能为空");
         MAP.put(LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_NULL, "法人/股东身份证正面照片不能为空");
         MAP.put(LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_NULL, "法人/股东身份证反面照片不能为空");
         MAP.put(BUSINESS_LICENSE_PICTURE_IMAGE_NOT_NULL, "企业营业执照不能为空");

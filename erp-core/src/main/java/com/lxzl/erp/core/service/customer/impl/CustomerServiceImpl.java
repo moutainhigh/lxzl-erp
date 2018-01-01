@@ -105,7 +105,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         //判断后续所需设备
         if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getCustomerCompanyNeedLaterList())){
-            List<CustomerCompanyNeed> customerCompanyNeedLaterList = customer.getCustomerCompany().getCustomerCompanyNeedFirstList();
+            List<CustomerCompanyNeed> customerCompanyNeedLaterList = customer.getCustomerCompany().getCustomerCompanyNeedLaterList();
             for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedLaterList){
                 BigDecimal totalPrice = BigDecimalUtil.mul(customerCompanyNeed.getUnitPrice(),new BigDecimal(customerCompanyNeed.getRentCount()));
                 customerCompanyNeed.setTotalPrice(totalPrice);
@@ -129,8 +129,12 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(ErrorCode.BUSINESS_LICENSE_PICTURE_IMAGE_NOT_EXISTS);
                 return serviceResult;
             }
+            if (StringUtil.isNotEmpty(businessLicensePictureImageDO.getRefId())){
+                serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,businessLicensePictureImageDO.getId() );
+                return serviceResult;
+            }
             businessLicensePictureImageDO.setImgType(ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE);
-            businessLicensePictureImageDO.setRefId(customerCompanyDO.getId().toString());
+            businessLicensePictureImageDO.setRefId(customerDO.getId().toString());
             businessLicensePictureImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             businessLicensePictureImageDO.setUpdateTime(now);
             imgMysqlMapper.update(businessLicensePictureImageDO);
@@ -143,8 +147,12 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS);
                 return serviceResult;
             }
+            if (StringUtil.isNotEmpty(legalPersonNoPictureFrontImageDO.getRefId())){
+                serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,legalPersonNoPictureFrontImageDO.getId() );
+                return serviceResult;
+            }
             legalPersonNoPictureFrontImageDO.setImgType(ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
-            legalPersonNoPictureFrontImageDO.setRefId(customerCompanyDO.getId().toString());
+            legalPersonNoPictureFrontImageDO.setRefId(customerDO.getId().toString());
             legalPersonNoPictureFrontImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             legalPersonNoPictureFrontImageDO.setUpdateTime(now);
             imgMysqlMapper.update(legalPersonNoPictureFrontImageDO);
@@ -157,8 +165,12 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS);
                 return serviceResult;
             }
+            if (StringUtil.isNotEmpty(legalPersonNoPictureBackImageDO.getRefId())){
+                serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,legalPersonNoPictureBackImageDO.getId() );
+                return serviceResult;
+            }
             legalPersonNoPictureBackImageDO.setImgType(ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
-            legalPersonNoPictureBackImageDO.setRefId(customerCompanyDO.getId().toString());
+            legalPersonNoPictureBackImageDO.setRefId(customerDO.getId().toString());
             legalPersonNoPictureBackImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             legalPersonNoPictureBackImageDO.setUpdateTime(now);
             imgMysqlMapper.update(legalPersonNoPictureBackImageDO);
@@ -173,8 +185,13 @@ public class CustomerServiceImpl implements CustomerService {
                     serviceResult.setErrorCode(ErrorCode.MANAGER_PLACE_RENT_CONTRACT_IMAGE_NOT_EXISTS);
                     return serviceResult;
                 }
+                if (StringUtil.isNotEmpty(managerPlaceRentContractImageDO.getRefId())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,managerPlaceRentContractImageDO.getId() );
+                    return serviceResult;
+                }
                 managerPlaceRentContractImageDO.setImgType(ImgType.MANAGER_PLACE_RENT_CONTRACT_IMG_TYPE);
-                managerPlaceRentContractImageDO.setRefId(customerCompanyDO.getId().toString());
+                managerPlaceRentContractImageDO.setRefId(customerDO.getId().toString());
                 managerPlaceRentContractImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 managerPlaceRentContractImageDO.setUpdateTime(now);
                 imgMysqlMapper.update(managerPlaceRentContractImageDO);
@@ -190,8 +207,13 @@ public class CustomerServiceImpl implements CustomerService {
                     serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_CREDIT_REPORT_IMAGE_NOT_EXISTS);
                     return serviceResult;
                 }
+                if (StringUtil.isNotEmpty(legalPersonCreditReportImageDO.getRefId())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,legalPersonCreditReportImageDO.getId() );
+                    return serviceResult;
+                }
                 legalPersonCreditReportImageDO.setImgType(ImgType.LEGAL_PERSON_CREDIT_REPORT_IMG_TYPE);
-                legalPersonCreditReportImageDO.setRefId(customerCompanyDO.getId().toString());
+                legalPersonCreditReportImageDO.setRefId(customerDO.getId().toString());
                 legalPersonCreditReportImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 legalPersonCreditReportImageDO.setUpdateTime(now);
                 imgMysqlMapper.update(legalPersonCreditReportImageDO);
@@ -207,8 +229,13 @@ public class CustomerServiceImpl implements CustomerService {
                     serviceResult.setErrorCode(ErrorCode.FIXED_ASSETS_PROVE_IMAGE_NOT_EXISTS);
                     return serviceResult;
                 }
+                if (StringUtil.isNotEmpty(fixedAssetsProveImageDO.getRefId())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,fixedAssetsProveImageDO.getId() );
+                    return serviceResult;
+                }
                 fixedAssetsProveImageDO.setImgType(ImgType.FIXED_ASSETS_PROVE_IMG_TYPE);
-                fixedAssetsProveImageDO.setRefId(customerCompanyDO.getId().toString());
+                fixedAssetsProveImageDO.setRefId(customerDO.getId().toString());
                 fixedAssetsProveImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 fixedAssetsProveImageDO.setUpdateTime(now);
                 imgMysqlMapper.update(fixedAssetsProveImageDO);
@@ -224,8 +251,13 @@ public class CustomerServiceImpl implements CustomerService {
                     serviceResult.setErrorCode(ErrorCode.PUBLIC_ACCOUNT_FLOW_BILL_IMAGE_NOT_EXISTS);
                     return serviceResult;
                 }
+                if (StringUtil.isNotEmpty(publicAccountFlowBillImageDO.getRefId())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,publicAccountFlowBillImageDO.getId() );
+                    return serviceResult;
+                }
                 publicAccountFlowBillImageDO.setImgType(ImgType.PUBLIC_ACCOUNT_FLOW_BILL_IMG_TYPE);
-                publicAccountFlowBillImageDO.setRefId(customerCompanyDO.getId().toString());
+                publicAccountFlowBillImageDO.setRefId(customerDO.getId().toString());
                 publicAccountFlowBillImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 publicAccountFlowBillImageDO.setUpdateTime(now);
                 imgMysqlMapper.update(publicAccountFlowBillImageDO);
@@ -241,8 +273,13 @@ public class CustomerServiceImpl implements CustomerService {
                     serviceResult.setErrorCode(ErrorCode.SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMAGE_NOT_EXISTS);
                     return serviceResult;
                 }
+                if (StringUtil.isNotEmpty(socialSecurityRoProvidentFundImageDO.getRefId())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,socialSecurityRoProvidentFundImageDO.getId() );
+                    return serviceResult;
+                }
                 socialSecurityRoProvidentFundImageDO.setImgType(ImgType.SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMG_TYPE);
-                socialSecurityRoProvidentFundImageDO.setRefId(customerCompanyDO.getId().toString());
+                socialSecurityRoProvidentFundImageDO.setRefId(customerDO.getId().toString());
                 socialSecurityRoProvidentFundImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 socialSecurityRoProvidentFundImageDO.setUpdateTime(now);
                 imgMysqlMapper.update(socialSecurityRoProvidentFundImageDO);
@@ -258,8 +295,13 @@ public class CustomerServiceImpl implements CustomerService {
                     serviceResult.setErrorCode(ErrorCode.COOPERATION_AGREEMENT_IMAGE_NOT_EXISTS);
                     return serviceResult;
                 }
+                if (StringUtil.isNotEmpty(cooperationAgreementImageDO.getRefId())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,cooperationAgreementImageDO.getId() );
+                    return serviceResult;
+                }
                 cooperationAgreementImageDO.setImgType(ImgType.COOPERATION_AGREEMENT_IMG_TYPE);
-                cooperationAgreementImageDO.setRefId(customerCompanyDO.getId().toString());
+                cooperationAgreementImageDO.setRefId(customerDO.getId().toString());
                 cooperationAgreementImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 cooperationAgreementImageDO.setUpdateTime(now);
                 imgMysqlMapper.update(cooperationAgreementImageDO);
@@ -275,8 +317,13 @@ public class CustomerServiceImpl implements CustomerService {
                     serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_EDUCATION_IMAGE_NOT_EXISTS);
                     return serviceResult;
                 }
+                if (StringUtil.isNotEmpty(legalPersonEducationImageDO.getRefId())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,legalPersonEducationImageDO.getId() );
+                    return serviceResult;
+                }
                 legalPersonEducationImageDO.setImgType(ImgType.LEGAL_PERSON_EDUCATION_IMG_TYPE);
-                legalPersonEducationImageDO.setRefId(customerCompanyDO.getId().toString());
+                legalPersonEducationImageDO.setRefId(customerDO.getId().toString());
                 legalPersonEducationImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 legalPersonEducationImageDO.setUpdateTime(now);
                 imgMysqlMapper.update(legalPersonEducationImageDO);
@@ -292,8 +339,13 @@ public class CustomerServiceImpl implements CustomerService {
                     serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_POSITIONAL_TITLE_IMAGE_NOT_EXISTS);
                     return serviceResult;
                 }
+                if (StringUtil.isNotEmpty(legalPersonPositionalTitleImageDO.getRefId())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,legalPersonPositionalTitleImageDO.getId() );
+                    return serviceResult;
+                }
                 legalPersonPositionalTitleImageDO.setImgType(ImgType.LEGAL_PERSON_POSITIONAL_TITLE_IMG_TYPE);
-                legalPersonPositionalTitleImageDO.setRefId(customerCompanyDO.getId().toString());
+                legalPersonPositionalTitleImageDO.setRefId(customerDO.getId().toString());
                 legalPersonPositionalTitleImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 legalPersonPositionalTitleImageDO.setUpdateTime(now);
                 imgMysqlMapper.update(legalPersonPositionalTitleImageDO);
@@ -309,8 +361,13 @@ public class CustomerServiceImpl implements CustomerService {
                     serviceResult.setErrorCode(ErrorCode.LOCALE_CHECKLISTS_IMAGE_NOT_EXISTS);
                     return serviceResult;
                 }
+                if (StringUtil.isNotEmpty(localeChecklistsImageDO.getRefId())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,localeChecklistsImageDO.getId() );
+                    return serviceResult;
+                }
                 localeChecklistsImageDO.setImgType(ImgType.LOCALE_CHECKLISTS_IMG_TYPE);
-                localeChecklistsImageDO.setRefId(customerCompanyDO.getId().toString());
+                localeChecklistsImageDO.setRefId(customerDO.getId().toString());
                 localeChecklistsImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 localeChecklistsImageDO.setUpdateTime(now);
                 imgMysqlMapper.update(localeChecklistsImageDO);
@@ -326,8 +383,13 @@ public class CustomerServiceImpl implements CustomerService {
                     serviceResult.setErrorCode(ErrorCode.OTHER_DATE_IMAGE_NOT_EXISTS);
                     return serviceResult;
                 }
+                if (StringUtil.isNotEmpty(otherDateImageDO.getRefId())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,otherDateImageDO.getId() );
+                    return serviceResult;
+                }
                 otherDateImageDO.setImgType(ImgType.OTHER_DATE_IMG_TYPE);
-                otherDateImageDO.setRefId(customerCompanyDO.getId().toString());
+                otherDateImageDO.setRefId(customerDO.getId().toString());
                 otherDateImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 otherDateImageDO.setUpdateTime(now);
                 imgMysqlMapper.update(otherDateImageDO);
@@ -433,7 +495,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
         //对营业执照图片操作
-        if(customer.getCustomerCompany().getBusinessLicensePictureImage() != null){
+       /* if(customer.getCustomerCompany().getBusinessLicensePictureImage() != null){
             if (StringUtil.isEmpty(customer.getCustomerCompany().getBusinessLicensePictureImage().getRefId())){
                 ImageDO newBusinessLicensePictureImageDO = imgMysqlMapper.findById(customer.getCustomerCompany().getBusinessLicensePictureImage().getImgId());
                 if (newBusinessLicensePictureImageDO == null){
@@ -452,61 +514,89 @@ public class CustomerServiceImpl implements CustomerService {
                 newBusinessLicensePictureImageDO.setUpdateTime(now);
                 imgMysqlMapper.update(newBusinessLicensePictureImageDO);
             }
+        }*/
+
+        //对营业执照图片操作
+        List<Image> businessLicensePictureImageList = new ArrayList<>();
+        businessLicensePictureImageList.add(customer.getCustomerCompany().getBusinessLicensePictureImage());
+        serviceResult = updateImage(businessLicensePictureImageList,ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
+            return serviceResult;
         }
 
-        if(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage() != null){
-            //对身份证正面图片操作
-            if (StringUtil.isEmpty(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage().getRefId())){
-                ImageDO newLegalPersonNoPictureFrontImageDO = imgMysqlMapper.findById(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage().getImgId());
-                if (newLegalPersonNoPictureFrontImageDO == null){
-                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS);
-                    return serviceResult;
-                }
-
-                //先让原来图片状态变为不可用
-                List<ImageDO> dblegalPersonNoPictureFrontImageDOList=imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getId().toString(),ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
-                dblegalPersonNoPictureFrontImageDOList.get(0).setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                imgMysqlMapper.update(dblegalPersonNoPictureFrontImageDOList.get(0));
-
-                newLegalPersonNoPictureFrontImageDO.setImgType(ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
-                newLegalPersonNoPictureFrontImageDO.setRefId(customerCompanyDO.getId().toString());
-                newLegalPersonNoPictureFrontImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                newLegalPersonNoPictureFrontImageDO.setUpdateTime(now);
-                imgMysqlMapper.update(newLegalPersonNoPictureFrontImageDO);
-            }
+        //对身份证正面图片操作
+        List<Image> legalPersonNoPictureFrontImageList = new ArrayList<>();
+        legalPersonNoPictureFrontImageList.add(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage());
+        serviceResult = updateImage(legalPersonNoPictureFrontImageList,ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
+            return serviceResult;
         }
 
         //对身份证反面图片操作
-        if(customer.getCustomerCompany().getLegalPersonNoPictureBackImage() != null){
-            if (StringUtil.isEmpty(customer.getCustomerCompany().getLegalPersonNoPictureBackImage().getRefId())){
-                ImageDO newLegalPersonNoPictureBackimageDO= imgMysqlMapper.findById(customer.getCustomerCompany().getLegalPersonNoPictureBackImage().getImgId());
-                if (newLegalPersonNoPictureBackimageDO == null){
-                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS);
-                    return serviceResult;
-                }
-                //先让原来图片状态变为不可用
-                List<ImageDO> dbLegalPersonNoPictureBackimageDOList =imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getId().toString(),ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
-                dbLegalPersonNoPictureBackimageDOList.get(0).setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                imgMysqlMapper.update(dbLegalPersonNoPictureBackimageDOList.get(0));
-
-                //让新的图片成为该企业客户的该类型图片
-                newLegalPersonNoPictureBackimageDO.setImgType(ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
-                newLegalPersonNoPictureBackimageDO.setRefId(customerCompanyDO.getId().toString());
-                newLegalPersonNoPictureBackimageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                newLegalPersonNoPictureBackimageDO.setUpdateTime(now);
-                imgMysqlMapper.update(newLegalPersonNoPictureBackimageDO);
-            }
+        List<Image> legalPersonNoPictureBackImageList = new ArrayList<>();
+        legalPersonNoPictureBackImageList.add(customer.getCustomerCompany().getLegalPersonNoPictureBackImage());
+        serviceResult = updateImage(legalPersonNoPictureBackImageList,ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
+            return serviceResult;
         }
 
+
+//        if(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage() != null){
+//            //对身份证正面图片操作
+//            if (StringUtil.isEmpty(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage().getRefId())){
+//                ImageDO newLegalPersonNoPictureFrontImageDO = imgMysqlMapper.findById(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage().getImgId());
+//                if (newLegalPersonNoPictureFrontImageDO == null){
+//                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS);
+//                    return serviceResult;
+//                }
+//
+//                //先让原来图片状态变为不可用
+//                List<ImageDO> dblegalPersonNoPictureFrontImageDOList=imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getId().toString(),ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
+//                dblegalPersonNoPictureFrontImageDOList.get(0).setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+//                imgMysqlMapper.update(dblegalPersonNoPictureFrontImageDOList.get(0));
+//
+//                newLegalPersonNoPictureFrontImageDO.setImgType(ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
+//                newLegalPersonNoPictureFrontImageDO.setRefId(customerCompanyDO.getId().toString());
+//                newLegalPersonNoPictureFrontImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+//                newLegalPersonNoPictureFrontImageDO.setUpdateTime(now);
+//                imgMysqlMapper.update(newLegalPersonNoPictureFrontImageDO);
+//            }
+//        }
+//
+//        //对身份证反面图片操作
+//        if(customer.getCustomerCompany().getLegalPersonNoPictureBackImage() != null){
+//            if (StringUtil.isEmpty(customer.getCustomerCompany().getLegalPersonNoPictureBackImage().getRefId())){
+//                ImageDO newLegalPersonNoPictureBackimageDO= imgMysqlMapper.findById(customer.getCustomerCompany().getLegalPersonNoPictureBackImage().getImgId());
+//                if (newLegalPersonNoPictureBackimageDO == null){
+//                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS);
+//                    return serviceResult;
+//                }
+//                //先让原来图片状态变为不可用
+//                List<ImageDO> dbLegalPersonNoPictureBackimageDOList =imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getId().toString(),ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
+//                dbLegalPersonNoPictureBackimageDOList.get(0).setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+//                imgMysqlMapper.update(dbLegalPersonNoPictureBackimageDOList.get(0));
+//
+//                //让新的图片成为该企业客户的该类型图片
+//                newLegalPersonNoPictureBackimageDO.setImgType(ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
+//                newLegalPersonNoPictureBackimageDO.setRefId(customerCompanyDO.getId().toString());
+//                newLegalPersonNoPictureBackimageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+//                newLegalPersonNoPictureBackimageDO.setUpdateTime(now);
+//                imgMysqlMapper.update(newLegalPersonNoPictureBackimageDO);
+//            }
+//        }
+
         //对经营场所租赁合同图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getManagerPlaceRentContractImageList(),ImgType.MANAGER_PLACE_RENT_CONTRACT_IMG_TYPE,customerCompanyDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
+        serviceResult = updateImage(customer.getCustomerCompany().getManagerPlaceRentContractImageList(),ImgType.MANAGER_PLACE_RENT_CONTRACT_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
         }
 
         //对法人个人征信报告或附（法人个人征信授权书）图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getLegalPersonCreditReportImageList(),ImgType.LEGAL_PERSON_CREDIT_REPORT_IMG_TYPE,customerCompanyDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
+        serviceResult = updateImage(customer.getCustomerCompany().getLegalPersonCreditReportImageList(),ImgType.LEGAL_PERSON_CREDIT_REPORT_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
@@ -520,49 +610,49 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //对单位对公账户流水账单图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getPublicAccountFlowBillImageList(),ImgType.PUBLIC_ACCOUNT_FLOW_BILL_IMG_TYPE,customerCompanyDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
+        serviceResult = updateImage(customer.getCustomerCompany().getPublicAccountFlowBillImageList(),ImgType.PUBLIC_ACCOUNT_FLOW_BILL_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
         }
 
         //对社保/公积金缴纳证明图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getSocialSecurityRoProvidentFundImageList(),ImgType.SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMG_TYPE,customerCompanyDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
+        serviceResult = updateImage(customer.getCustomerCompany().getSocialSecurityRoProvidentFundImageList(),ImgType.SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
         }
 
         //对战略协议或合作协议图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getCooperationAgreementImageList(),ImgType.COOPERATION_AGREEMENT_IMG_TYPE,customerCompanyDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
+        serviceResult = updateImage(customer.getCustomerCompany().getCooperationAgreementImageList(),ImgType.COOPERATION_AGREEMENT_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
         }
 
         //对法人学历证明图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getLegalPersonEducationImageList(),ImgType.LEGAL_PERSON_EDUCATION_IMG_TYPE,customerCompanyDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
+        serviceResult = updateImage(customer.getCustomerCompany().getLegalPersonEducationImageList(),ImgType.LEGAL_PERSON_EDUCATION_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
         }
 
         //对法人职称证明图片操作.
-        serviceResult = updateImage(customer.getCustomerCompany().getLegalPersonPositionalTitleImageList(),ImgType.LEGAL_PERSON_POSITIONAL_TITLE_IMG_TYPE,customerCompanyDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
+        serviceResult = updateImage(customer.getCustomerCompany().getLegalPersonPositionalTitleImageList(),ImgType.LEGAL_PERSON_POSITIONAL_TITLE_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
         }
 
         //对现场核查表图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getLocaleChecklistsImageList(),ImgType.LOCALE_CHECKLISTS_IMG_TYPE,customerCompanyDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
+        serviceResult = updateImage(customer.getCustomerCompany().getLocaleChecklistsImageList(),ImgType.LOCALE_CHECKLISTS_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
         }
 
         //对其他材料图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getOtherDateImageList(),ImgType.OTHER_DATE_IMG_TYPE,customerCompanyDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
+        serviceResult = updateImage(customer.getCustomerCompany().getOtherDateImageList(),ImgType.OTHER_DATE_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
@@ -675,90 +765,90 @@ public class CustomerServiceImpl implements CustomerService {
 
        //开始加入附件
         //加入营业执照
-        List<ImageDO> businessLicensePictureImageList = imgMysqlMapper.findByRefIdAndType(customerResult.getCustomerCompany().getCustomerCompanyId().toString(),ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE);
+        List<ImageDO> businessLicensePictureImageList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(),ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(businessLicensePictureImageList)){
             Image businessLicensePictureImage = ConverterUtil.convert(businessLicensePictureImageList.get(0),Image.class);
             customerResult.getCustomerCompany().setBusinessLicensePictureImage(businessLicensePictureImage);
         }
 
         //法人/股东身份证正面
-        List<ImageDO> legalPersonNoPictureFrontImageList = imgMysqlMapper.findByRefIdAndType(customerResult.getCustomerCompany().getCustomerCompanyId().toString(),ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
+        List<ImageDO> legalPersonNoPictureFrontImageList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(),ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(legalPersonNoPictureFrontImageList)){
             Image legalPersonNoPictureFrontImage = ConverterUtil.convert(legalPersonNoPictureFrontImageList.get(0),Image.class);
             customerResult.getCustomerCompany().setLegalPersonNoPictureFrontImage(legalPersonNoPictureFrontImage);
         }
 
         //法人/股东身份证反
-        List<ImageDO> legalPersonNoPictureBackImageList = imgMysqlMapper.findByRefIdAndType(customerResult.getCustomerCompany().getCustomerCompanyId().toString(),ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
+        List<ImageDO> legalPersonNoPictureBackImageList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(),ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(legalPersonNoPictureBackImageList)) {
             Image legalPersonNoPictureBackImage = ConverterUtil.convert(legalPersonNoPictureBackImageList.get(0),Image.class);
             customerResult.getCustomerCompany().setLegalPersonNoPictureBackImage(legalPersonNoPictureBackImage);
         }
 
         //经营场所租赁合同
-        List<ImageDO> managerPlaceRentContractImageDOList = imgMysqlMapper.findByRefIdAndType(customerResult.getCustomerCompany().getCustomerCompanyId().toString(),ImgType.MANAGER_PLACE_RENT_CONTRACT_IMG_TYPE);
+        List<ImageDO> managerPlaceRentContractImageDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(),ImgType.MANAGER_PLACE_RENT_CONTRACT_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(managerPlaceRentContractImageDOList)){
             List<Image> managerPlaceRentContractImageList = ConverterUtil.convertList(managerPlaceRentContractImageDOList,Image.class);
             customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(managerPlaceRentContractImageList);
         }
 
         //法人个人征信报告或附（法人个人征信授权书）
-        List<ImageDO> legalPersonCreditReportImageDOList = imgMysqlMapper.findByRefIdAndType(customerResult.getCustomerCompany().getCustomerCompanyId().toString(),ImgType.LEGAL_PERSON_CREDIT_REPORT_IMG_TYPE);
+        List<ImageDO> legalPersonCreditReportImageDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(),ImgType.LEGAL_PERSON_CREDIT_REPORT_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(legalPersonCreditReportImageDOList)){
             List<Image> legalPersonCreditReportImageList = ConverterUtil.convertList(legalPersonCreditReportImageDOList,Image.class);
             customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(legalPersonCreditReportImageList);
         }
 
         //固定资产证明
-        List<ImageDO> fixedAssetsProveImageDOList = imgMysqlMapper.findByRefIdAndType(customerResult.getCustomerCompany().getCustomerCompanyId().toString(),ImgType.FIXED_ASSETS_PROVE_IMG_TYPE);
+        List<ImageDO> fixedAssetsProveImageDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(),ImgType.FIXED_ASSETS_PROVE_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(fixedAssetsProveImageDOList)){
             List<Image> fixedAssetsProveImageList = ConverterUtil.convertList(fixedAssetsProveImageDOList,Image.class);
             customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(fixedAssetsProveImageList);
         }
 
         //单位对公账户流水账单
-        List<ImageDO> publicAccountFlowBillImageDOList = imgMysqlMapper.findByRefIdAndType(customerResult.getCustomerCompany().getCustomerCompanyId().toString(),ImgType.PUBLIC_ACCOUNT_FLOW_BILL_IMG_TYPE);
+        List<ImageDO> publicAccountFlowBillImageDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(),ImgType.PUBLIC_ACCOUNT_FLOW_BILL_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(publicAccountFlowBillImageDOList)){
             List<Image> publicAccountFlowBillImageList = ConverterUtil.convertList(publicAccountFlowBillImageDOList,Image.class);
             customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(publicAccountFlowBillImageList);
         }
 
         //社保/公积金缴纳证明
-        List<ImageDO> socialSecurityRoProvidentFundImageListDOList = imgMysqlMapper.findByRefIdAndType(customerResult.getCustomerCompany().getCustomerCompanyId().toString(),ImgType.SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMG_TYPE);
+        List<ImageDO> socialSecurityRoProvidentFundImageListDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(),ImgType.SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(socialSecurityRoProvidentFundImageListDOList)){
             List<Image> socialSecurityRoProvidentFundImageList = ConverterUtil.convertList(socialSecurityRoProvidentFundImageListDOList,Image.class);
             customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(socialSecurityRoProvidentFundImageList);
         }
         //战略协议或合作协议
-        List<ImageDO> cooperationAgreementImageListDOList = imgMysqlMapper.findByRefIdAndType(customerResult.getCustomerCompany().getCustomerCompanyId().toString(),ImgType.COOPERATION_AGREEMENT_IMG_TYPE);
+        List<ImageDO> cooperationAgreementImageListDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(),ImgType.COOPERATION_AGREEMENT_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(cooperationAgreementImageListDOList)){
             List<Image> cooperationAgreementImageList = ConverterUtil.convertList(cooperationAgreementImageListDOList,Image.class);
             customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(cooperationAgreementImageList);
         }
 
         //法人学历证明
-        List<ImageDO> legalPersonEducationImageListDOList = imgMysqlMapper.findByRefIdAndType(customerResult.getCustomerCompany().getCustomerCompanyId().toString(),ImgType.LEGAL_PERSON_EDUCATION_IMG_TYPE);
+        List<ImageDO> legalPersonEducationImageListDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(),ImgType.LEGAL_PERSON_EDUCATION_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(legalPersonEducationImageListDOList)){
             List<Image> legalPersonEducationImageList = ConverterUtil.convertList(legalPersonEducationImageListDOList,Image.class);
             customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(legalPersonEducationImageList);
         }
 
         //法人职称证明
-        List<ImageDO> legalPersonPositionalTitleImageListDOList = imgMysqlMapper.findByRefIdAndType(customerResult.getCustomerCompany().getCustomerCompanyId().toString(),ImgType.LEGAL_PERSON_POSITIONAL_TITLE_IMG_TYPE);
+        List<ImageDO> legalPersonPositionalTitleImageListDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(),ImgType.LEGAL_PERSON_POSITIONAL_TITLE_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(legalPersonPositionalTitleImageListDOList)){
             List<Image> legalPersonPositionalTitleImageList = ConverterUtil.convertList(legalPersonPositionalTitleImageListDOList,Image.class);
             customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(legalPersonPositionalTitleImageList);
         }
 
         //现场核查表
-        List<ImageDO> localeChecklistsImageListDOList = imgMysqlMapper.findByRefIdAndType(customerResult.getCustomerCompany().getCustomerCompanyId().toString(),ImgType.LOCALE_CHECKLISTS_IMG_TYPE);
+        List<ImageDO> localeChecklistsImageListDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(),ImgType.LOCALE_CHECKLISTS_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(localeChecklistsImageListDOList)){
             List<Image> localeChecklistsImageList = ConverterUtil.convertList(localeChecklistsImageListDOList,Image.class);
             customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(localeChecklistsImageList);
         }
 
         //其他材料
-        List<ImageDO> otherDateImageListDOList = imgMysqlMapper.findByRefIdAndType(customerResult.getCustomerCompany().getCustomerCompanyId().toString(),ImgType.OTHER_DATE_IMG_TYPE);
+        List<ImageDO> otherDateImageListDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(),ImgType.OTHER_DATE_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(otherDateImageListDOList)){
             List<Image> otherDateImageList = ConverterUtil.convertList(otherDateImageListDOList,Image.class);
             customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(otherDateImageList);
@@ -1046,6 +1136,73 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         if(CollectionUtil.isNotEmpty(updateImgList)){
+            //对营业执照图片操作
+            if (ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE.equals(imgType)){
+                for (Image businessLicensePictureImage : updateImgList){
+                    ImageDO businessLicensePictureImageDO = imgMysqlMapper.findById(businessLicensePictureImage.getImgId());
+                    if (businessLicensePictureImageDO == null){
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        serviceResult.setErrorCode(ErrorCode.BUSINESS_LICENSE_PICTURE_IMAGE_NOT_EXISTS);
+                        return serviceResult;
+                    }
+                    if (StringUtil.isNotEmpty(businessLicensePictureImageDO.getRefId())){
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,businessLicensePictureImageDO.getId());
+                        return serviceResult;
+                    }
+                    businessLicensePictureImageDO.setImgType(ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE);
+                    businessLicensePictureImageDO.setRefId(refId);
+                    businessLicensePictureImageDO.setUpdateUser(user);
+                    businessLicensePictureImageDO.setUpdateTime(now);
+                    imgMysqlMapper.update(businessLicensePictureImageDO);
+                }
+            }
+
+            //对法人/股东身份证正面图片操作
+            if (ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE.equals(imgType)){
+                for (Image legalPersonNoPictureFrontImage : updateImgList){
+                    ImageDO legalPersonNoPictureFrontImageDO = imgMysqlMapper.findById(legalPersonNoPictureFrontImage.getImgId());
+                    if (legalPersonNoPictureFrontImageDO == null){
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS);
+                        return serviceResult;
+                    }
+                    if (StringUtil.isNotEmpty(legalPersonNoPictureFrontImageDO.getRefId())){
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,legalPersonNoPictureFrontImageDO.getId());
+                        return serviceResult;
+                    }
+                    legalPersonNoPictureFrontImageDO.setImgType(ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
+                    legalPersonNoPictureFrontImageDO.setRefId(refId);
+                    legalPersonNoPictureFrontImageDO.setUpdateUser(user);
+                    legalPersonNoPictureFrontImageDO.setUpdateTime(now);
+                    imgMysqlMapper.update(legalPersonNoPictureFrontImageDO);
+                }
+            }
+
+            //对法人/股东身份证反面图片操作
+            if (ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE.equals(imgType)){
+                for (Image legalPersonNoPictureBackImage : updateImgList){
+                    ImageDO legalPersonNoPictureBackImageDO = imgMysqlMapper.findById(legalPersonNoPictureBackImage.getImgId());
+                    if (legalPersonNoPictureBackImageDO == null){
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS);
+                        return serviceResult;
+                    }
+                    if (StringUtil.isNotEmpty(legalPersonNoPictureBackImageDO.getRefId())){
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,legalPersonNoPictureBackImageDO.getId());
+                        return serviceResult;
+                    }
+                    legalPersonNoPictureBackImageDO.setImgType(ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
+                    legalPersonNoPictureBackImageDO.setRefId(refId);
+                    legalPersonNoPictureBackImageDO.setUpdateUser(user);
+                    legalPersonNoPictureBackImageDO.setUpdateTime(now);
+                    imgMysqlMapper.update(legalPersonNoPictureBackImageDO);
+                }
+            }
+
+
             //对经营场所租赁合同图片操作
             if (ImgType.MANAGER_PLACE_RENT_CONTRACT_IMG_TYPE.equals(imgType)){
                 for (Image managerPlaceRentContractImage : updateImgList){
