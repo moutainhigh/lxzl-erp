@@ -101,7 +101,6 @@
                 <td colspan="3">
                     <blockquote class="blockquote-system">
                         <p>{{remark}}</p>
-                    ##                            <small>毛涛<em style="font-size: 12px; font-style: inherit; margin-left: 10px;">2017-12-06 18:18:18</em></small>
                     </blockquote>
                 </td>
             </tr>

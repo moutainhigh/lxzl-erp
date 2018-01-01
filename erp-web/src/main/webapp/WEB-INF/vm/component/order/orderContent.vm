@@ -4,7 +4,7 @@
     </div>
     <div class="form-horizontal panel-body bg-light dark">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <div class="form-group field">
                     <label class="col-md-3 control-label">客户</label>
                     <div class="col-md-9">
@@ -15,20 +15,12 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
                 <div class="form-group field">
                     <label class="col-md-3 control-label" style="visibility: hidden;">收货地址</label>
                     <div class="col-md-9">
                         #parse("component/customer/address.vm")
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
                 <div class="form-group field">
                     <label class="col-md-3 control-label">税率</label>
                     <div class="col-md-9">
@@ -37,10 +29,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
                 <div class="form-group field">
                     <label class="col-md-3 control-label">运费</label>
                     <div class="col-md-9">
@@ -49,10 +37,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
                 <div class="form-group field">
                     <label class="col-md-3 control-label">起租日期</label>
                     <div class="col-md-9">
@@ -62,10 +46,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
                 <div class="form-group field">
                     <label class="col-md-3 control-label">购买人备注</label>
                     <div class="col-md-9">
@@ -73,33 +53,8 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="form-horizontal panel-body bg-light dark">
-##        <div class="row">
-##            <div class="col-md-6">
-##                <div class="form-group field">
-##                    <label class="col-md-3 control-label">销售员</label>
-##                    <div class="col-md-9">
-##                        <div class="input-group bringContainer">
-##                            <input id="orderSeller" name="orderSellerName" bringFiled="orderSellerName" class="form-control required" type="text" readonly placeholder="请选择销售员" />
-##                            <span class="input-group-addon cursor" id="chooseSeller"><i class="fa fa-search"></i></span>
-##                        </div>
-##                    </div>
-##                </div>
-##            </div>
-##        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group field">
-                    <label class="col-md-3 control-label">订单所属公司</label>
-                    <div class="col-md-9">
-                        <div class="input-group bringContainer">
-                            <input id="orderSubCompanyName" name="orderSubCompanyName" bringFiled="orderSubCompanyName" class="form-control required" type="text" readonly placeholder="请选择订单所属公司" />
-                            <span class="input-group-addon cursor" id="chooseSubCompany"><i class="fa fa-search"></i></span>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-md-4">
+                #parse("component/customer/risk.vm")
             </div>
         </div>
     </div>
