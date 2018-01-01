@@ -966,6 +966,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> commit(ReturnOrderCommitParam returnOrderCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date now = new Date();
@@ -984,7 +985,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             result.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
             return result;
         }
-        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_PURCHASE);
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_RETURN);
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
             result.setErrorCode(needVerifyResult.getErrorCode());
             return result;
