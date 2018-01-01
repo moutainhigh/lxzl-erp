@@ -342,24 +342,15 @@ public class ErrorCode {
     public static final String PURCHASE_RECEIVE_REMARK_ERROR = "J500045";
     public static final String PURCHASE_RECEIVE_ORDER_MATERIAL_PRICE_NOT_NEED_UPDATE = "J500046";
     public static final String UPDATE_ITEM_COUNT_ERROR = "J500047";
-    public static final String LEGAL_PERSON_NOT_NULL = "J500048";
-    public static final String LEGAL_PERSON_NO_NOT_NULL = "J500049";
-    public static final String COMPANY_ORIGIN_NOT_NULL = "J500050";
-    public static final String CONSIGN_ADDRESS_NOT_NULL = "J500051";
-    public static final String SALES_MAN_NOT_NULL = "J500052";
-    public static final String CUSTOMER_PERSON_CONNECT_PHONE_NOT_NULL = "J500053";
-    public static final String AGENT_PERSON_NO_NOT_NULL = "J500054";
-    public static final String PERSON_NAME_NOT_NULL = "J500055";
-    public static final String PERSON_NO_NOT_NULL = "J500056";
-    public static final String CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_NULL = "J500057";
-    public static final String LEGAL_PERSON_PHONE_NOT_NULL = "J500058";
-    public static final String PRODUCT_PURPOSE_NOT_NULL = "J500059";
-    public static final String LIST_FIRST_NEED_PRODUCTS_NOT_NULL = "J500060";
-    public static final String AGENT_PERSON_NAME_NOT_NULL = "J500061";
-    public static final String AGENT_PERSON_PHONE_NOT_NULL = "J500062";
-    public static final String CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL = "J500063";
-
-
+    public static final String COMPANY_ORIGIN_NOT_NULL = "J500048";
+    public static final String SALES_MAN_NOT_NULL = "J500049";
+    public static final String CUSTOMER_PERSON_CONNECT_PHONE_NOT_NULL = "J500050";
+    public static final String PERSON_NAME_NOT_NULL = "J500051";
+    public static final String PERSON_NO_NOT_NULL = "J500052";
+    public static final String CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_NULL = "J500053";
+    public static final String PRODUCT_PURPOSE_NOT_NULL = "J500054";
+    public static final String LIST_FIRST_NEED_PRODUCTS_NOT_NULL = "J500055";
+    public static final String CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL = "J500056";
 
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
@@ -625,20 +616,13 @@ public class ErrorCode {
         MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_PRICE_NOT_NEED_UPDATE, "此采购单配件价格无需修改");
         MAP.put(UPDATE_ITEM_COUNT_ERROR, "修改的配件数量不匹配");
         MAP.put(SUB_COMPANY_NOT_EXISTS, "分公司不存在");
-        MAP.put(LEGAL_PERSON_NOT_NULL, "企业法人不能为空");
-        MAP.put(LEGAL_PERSON_NO_NOT_NULL, "企业法人身份证号不能为空");
         MAP.put(COMPANY_ORIGIN_NOT_NULL, "客户来源不能为空");
         MAP.put(PERSON_NAME_NOT_NULL, "个人客户的用户名不能为空");
         MAP.put(PERSON_NO_NOT_NULL, "个人客户的身份证号不能为空");
         MAP.put(CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_NULL, "个人客户紧急联系人姓名不能为空");
         MAP.put(CUSTOMER_PERSON_CONNECT_PHONE_NOT_NULL, "个人客户紧急联系人电话不能为空");
-        MAP.put(LEGAL_PERSON_PHONE_NOT_NULL, "法人电话电话不能为空");
         MAP.put(PRODUCT_PURPOSE_NOT_NULL, "设备用途不能为空");
         MAP.put(LIST_FIRST_NEED_PRODUCTS_NOT_NULL, "首次所需设备不能为空");
-        MAP.put(AGENT_PERSON_NAME_NOT_NULL, "经办人姓名不能为空");
-        MAP.put(AGENT_PERSON_PHONE_NOT_NULL, "经办人电话不能为空");
-        MAP.put(AGENT_PERSON_NO_NOT_NULL, "经办人身份证号码不能为空");
-        MAP.put(CONSIGN_ADDRESS_NOT_NULL, "收货地址不能为空");
         MAP.put(SALES_MAN_NOT_NULL, "业务员不能为空");
         MAP.put(PURCHASE_TAX_RATE_ERROR, "采购单税率有误");
         MAP.put(CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL, "首次所需设备不能为空");

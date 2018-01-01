@@ -136,7 +136,6 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setManagerPlaceRentContractImageList(managerPlaceRentContractImageList);
 
 
-
         TestResult result = getJsonTestResult("/customer/updateCompany", customer);
     }
 
@@ -160,6 +159,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     public void pageCustomerCompany() throws Exception {
         CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
 //        customerCompanyQueryParam.setCompanyName("百");
+        customerCompanyQueryParam.setProductPurpose("测试");
         TestResult result = getJsonTestResult("/customer/pageCustomerCompany", customerCompanyQueryParam);
     }
 
