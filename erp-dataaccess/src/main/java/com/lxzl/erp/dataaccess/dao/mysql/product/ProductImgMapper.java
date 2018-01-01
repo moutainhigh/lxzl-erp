@@ -6,7 +6,10 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
 @Repository
 public interface ProductImgMapper extends BaseMysqlDAO<ProductImgDO> {
+    ProductImgDO findByImgId(@Param("imgId") Integer imgId);
+
     List<ProductImgDO> findByProductId(@Param("productId") Integer productId, @Param("imgType") Integer imgType);
 }

@@ -274,7 +274,7 @@ CREATE TABLE `erp_customer` (
   `customer_type` int(11) DEFAULT NULL COMMENT '用户类型,1为企业用户，2为个人用户',
   `customer_no` varchar(100) NOT NULL COMMENT '客戶编码',
   `customer_name` varchar(64) NOT NULL COMMENT '客户名称',
-  `owner` int(20) NOT NULL DEFAULT 0 COMMENT '开发人',
+  `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人，跟单员',
   `union_user` int(20) COMMENT '联合开发人',
   `is_disabled` int(4) NOT NULL DEFAULT '0' COMMENT '是否禁用，0不可用；1可用',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -285,7 +285,6 @@ CREATE TABLE `erp_customer` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=700001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户表';
-
 
 DROP TABLE if exists `erp_customer_person`;
 CREATE TABLE `erp_customer_person` (
@@ -309,7 +308,7 @@ CREATE TABLE `erp_customer_person` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=100027 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='个人客户表'
+) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='个人客户表';
 
 DROP TABLE if exists `erp_customer_company`;
 CREATE TABLE `erp_customer_company` (
@@ -335,17 +334,14 @@ CREATE TABLE `erp_customer_company` (
   `connect_real_name` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '紧急联系人',
   `connect_phone` varchar(24) COLLATE utf8_bin DEFAULT NULL COMMENT '紧急联系人手机号',
   `product_purpose` varchar(24) COLLATE utf8_bin DEFAULT NULL COMMENT '设备用途',
-  `customer_company_need_first_json` text COLLATE utf8_bin COMMENT '首次所需设备   ',
+  `customer_company_need_first_json` text COLLATE utf8_bin COMMENT '首次所需设备',
   `customer_company_need_later_json` text COLLATE utf8_bin COMMENT '后期所需设备',
-  `sales_man` varchar(24) COLLATE utf8_bin DEFAULT NULL COMMENT '业务员',
   `province` int(20) DEFAULT NULL COMMENT '省份ID，省份ID',
   `city` int(20) DEFAULT NULL COMMENT '城市ID，对应城市ID',
   `district` int(20) DEFAULT NULL COMMENT '区ID，对应区ID',
   `address` varchar(200) COLLATE utf8_bin DEFAULT NULL COMMENT '详细地址',
   `office_number` int(20) DEFAULT NULL COMMENT '办公人数',
   `unified_credit_code` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '统一信用代码',
-  `union_area` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '联合区域',
-  `union_sales_man` varchar(24) COLLATE utf8_bin DEFAULT NULL COMMENT '联合业务员',
   `operating_area` double DEFAULT NULL COMMENT '经营面积',
   `affiliated_enterprise` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT '关联企业',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -355,9 +351,7 @@ CREATE TABLE `erp_customer_company` (
   `update_time` datetime DEFAULT NULL COMMENT '添加时间',
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=400071 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='公司客户表'
-
-
+) ENGINE=InnoDB AUTO_INCREMENT=400001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='公司客户表';
 
 DROP TABLE if exists `erp_customer_risk_management`;
 CREATE TABLE `erp_customer_risk_management` (

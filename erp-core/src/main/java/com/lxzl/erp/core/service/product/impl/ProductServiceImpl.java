@@ -87,7 +87,7 @@ public class ProductServiceImpl implements ProductService {
     public ServiceResult<String, Integer> deleteImage(Integer imgId) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        ProductImgDO dbRecord = productImgMapper.findById(imgId);
+        ProductImgDO dbRecord = productImgMapper.findByImgId(imgId);
         if (dbRecord == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
@@ -713,7 +713,7 @@ public class ProductServiceImpl implements ProductService {
 
         if (!updateProductImgList.isEmpty()) {
             for (ProductImg productImg : updateProductImgList) {
-                ProductImgDO dbProductImgDO = productImgMapper.findById(productImg.getProductImgId());
+                ProductImgDO dbProductImgDO = productImgMapper.findByImgId(productImg.getProductImgId());
                 if(dbProductImgDO.getProductId() != null){
                     continue;
                 }
