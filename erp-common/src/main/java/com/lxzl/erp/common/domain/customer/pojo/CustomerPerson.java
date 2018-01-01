@@ -38,7 +38,6 @@ public class CustomerPerson extends BasePO {
 	private String personName;//用户名'
 	@NotBlank(message = ErrorCode.PERSON_NO_NOT_NULL,groups={AddCustomerPersonGroup.class})
 	private String personNo;//身份证号'
-	private String consignAddress;//收货地址'
 	@NotBlank(message = ErrorCode.CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_NULL,groups={AddCustomerPersonGroup.class})
 	private String connectRealName;//紧急联系人姓名'
 	@NotBlank(message = ErrorCode.CUSTOMER_PERSON_CONNECT_PHONE_NOT_NULL,groups={AddCustomerPersonGroup.class})
@@ -210,13 +209,6 @@ public class CustomerPerson extends BasePO {
 		this.personNo = personNo;
 	}
 
-	public String getConsignAddress() {
-		return consignAddress;
-	}
-
-	public void setConsignAddress(String consignAddress) {
-		this.consignAddress = consignAddress;
-	}
 
 	public String getConnectRealName() {
 		return connectRealName;

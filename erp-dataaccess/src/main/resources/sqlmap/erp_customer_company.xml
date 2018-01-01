@@ -35,7 +35,6 @@
 		<result column="agent_person_name" jdbcType="VARCHAR" property="agentPersonName" />
 		<result column="agent_person_phone" jdbcType="VARCHAR" property="agentPersonPhone" />
 		<result column="agent_person_no" jdbcType="VARCHAR" property="agentPersonNo" />
-		<result column="consign_address" jdbcType="VARCHAR" property="consignAddress" />
 		<result column="unified_credit_code" jdbcType="VARCHAR" property="unifiedCreditCode" />
 		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
 		<result column="is_legal_person_apple" jdbcType="INTEGER" property="isLegalPersonApple" />
@@ -49,7 +48,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ecc.id,ecc.customer_id,ecc.landline,ecc.connect_real_name,ecc.connect_phone,ecc.company_name,ecc.company_abb,ecc.province,ecc.city,ecc.district,ecc.address,ecc.legal_person,ecc.legal_person_no,ecc.business_license_no,ecc.data_status,ecc.remark,ecc.create_time,ecc.create_user,ecc.update_time,ecc.update_user,ecc.customer_origin,ecc.company_found_time,ecc.industry,ecc.registered_capital,ecc.office_number,ecc.product_purpose,ecc.customer_company_need_first_json,ecc.customer_company_need_later_json,ecc.agent_person_name,ecc.agent_person_phone,ecc.agent_person_no,ecc.consign_address,ecc.unified_credit_code,ecc.customer_no,ecc.is_legal_person_apple,ecc.legal_person_phone,ecc.sales_man,ecc.union_area,ecc.union_sales_man,ecc.operating_area,ecc.unit_insured_number,ecc.affiliated_enterprise
+		ecc.id,ecc.customer_id,ecc.landline,ecc.connect_real_name,ecc.connect_phone,ecc.company_name,ecc.company_abb,ecc.province,ecc.city,ecc.district,ecc.address,ecc.legal_person,ecc.legal_person_no,ecc.business_license_no,ecc.data_status,ecc.remark,ecc.create_time,ecc.create_user,ecc.update_time,ecc.update_user,ecc.customer_origin,ecc.company_found_time,ecc.industry,ecc.registered_capital,ecc.office_number,ecc.product_purpose,ecc.customer_company_need_first_json,ecc.customer_company_need_later_json,ecc.agent_person_name,ecc.agent_person_phone,ecc.agent_person_no,ecc.unified_credit_code,ecc.customer_no,ecc.is_legal_person_apple,ecc.legal_person_phone,ecc.sales_man,ecc.union_area,ecc.union_sales_man,ecc.operating_area,ecc.unit_insured_number,ecc.affiliated_enterprise
 	</sql>
 
 	<select id="findById" resultMap="CustomerCompanyDO" parameterType="java.lang.Integer">
@@ -172,9 +171,6 @@
 			</if>
 			<if test="agentPersonNo != null">
 				agent_person_no = #{agentPersonNo,jdbcType=VARCHAR},
-			</if>
-			<if test="consignAddress != null">
-				consign_address = #{consignAddress,jdbcType=VARCHAR},
 			</if>
 			<if test="unifiedCreditCode != null">
 				unified_credit_code = #{unifiedCreditCode,jdbcType=VARCHAR},

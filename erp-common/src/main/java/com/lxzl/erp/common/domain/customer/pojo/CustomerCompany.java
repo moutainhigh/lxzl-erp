@@ -68,7 +68,6 @@ public class CustomerCompany extends BasePO {
 //    @NotBlank(message = ErrorCode.AGENT_PERSON_NO_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String agentPersonNo;  //经办人身份证号码'
 //    @NotBlank(message = ErrorCode.CONSIGN_ADDRESS_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
-    private String consignAddress;  //收货地址'
     private String unifiedCreditCode;  //统一信用代码'
 //    @NotBlank(message = ErrorCode.SALES_MAN_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String salesMan; //业务员
@@ -361,14 +360,6 @@ public class CustomerCompany extends BasePO {
 
     public void setAgentPersonNo(String agentPersonNo) {
         this.agentPersonNo = agentPersonNo;
-    }
-
-    public String getConsignAddress() {
-        return consignAddress;
-    }
-
-    public void setConsignAddress(String consignAddress) {
-        this.consignAddress = consignAddress;
     }
 
     public String getUnifiedCreditCode() {

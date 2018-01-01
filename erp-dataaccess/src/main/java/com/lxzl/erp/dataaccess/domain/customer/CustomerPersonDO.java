@@ -22,7 +22,6 @@ public class CustomerPersonDO  extends BaseDO {
 
 	private String personName;//用户名'
 	private String personNo;//身份证号'
-	private String consignAddress;//收货地址'
 	private String connectRealName;//紧急联系人姓名'
 	private String connectPhone;//紧急联系人电话'
 
@@ -161,13 +160,6 @@ public class CustomerPersonDO  extends BaseDO {
 		this.personNo = personNo;
 	}
 
-	public String getConsignAddress() {
-		return consignAddress;
-	}
-
-	public void setConsignAddress(String consignAddress) {
-		this.consignAddress = consignAddress;
-	}
 
 	public String getConnectRealName() {
 		return connectRealName;

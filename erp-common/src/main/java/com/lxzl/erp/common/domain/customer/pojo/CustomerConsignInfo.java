@@ -19,12 +19,10 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomerConsignInfo extends BasePO {
 
-	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups = {AddGroup.class})
-	private String customerNo; //客户编号
-
 	@NotNull(message = ErrorCode.CUSTOMER_CONSIGN_INFO_ID_NOT_NULL,groups = {IdGroup.class,UpdateGroup.class})
 	private Integer customerConsignInfoId;   //唯一标识
-
+	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups = {AddGroup.class})
+	private String customerNo; //客户编号
 	private Integer customerId;   //用户ID
 	@NotBlank(message = ErrorCode.CONSIGNEE_NAME_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private String consigneeName;   //收货人姓名

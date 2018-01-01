@@ -39,7 +39,6 @@ public class CustomerCompanyDO  extends BaseDO {
 	private String agentPersonName;  //经办人姓名'
 	private String agentPersonPhone;  //经办人电话'
 	private String agentPersonNo;  //经办人身份证号码'
-	private String consignAddress;  //收货地址'
 	private String unifiedCreditCode;  //统一信用代码'
 	private String customerNo;  //客户编码
 	private Integer isLegalPersonApple;   //是否法人代表申请
@@ -280,14 +279,6 @@ public class CustomerCompanyDO  extends BaseDO {
 
 	public void setAgentPersonNo(String agentPersonNo) {
 		this.agentPersonNo = agentPersonNo;
-	}
-
-	public String getConsignAddress() {
-		return consignAddress;
-	}
-
-	public void setConsignAddress(String consignAddress) {
-		this.consignAddress = consignAddress;
 	}
 
 	public String getUnifiedCreditCode() {
