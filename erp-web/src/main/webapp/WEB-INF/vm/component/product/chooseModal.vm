@@ -35,17 +35,9 @@
                 <script type="text/html" id="chooseProductModalDataListTpl">
                     <thead>
                     <tr class="bg-light">
-                        #*<th>
-                            <label class="option block mn">
-                                <input type="checkbox" name="checkAll" value="">
-                                <span class="checkbox mn"></span>
-                            </label>
-                        </th>*#
                         <th>商品ID</th>
                         <th>图片</th>
                         <th>商品名称</th>
-##                        <th>副标题</th>
-##                        <th>列表价格</th>
                         <th>总库存</th>
                         <th>是否在租</th>
                         <th class="text-right">操作</th>
@@ -55,19 +47,9 @@
                     {{#dataSource}}
                     {{#listData}}
                     <tr>
-                        #*
-                        <td>
-                            <label class="option block mn">
-                                <input type="checkbox" name="checkItem" value="{{productId}}">
-                                <span class="checkbox mn"></span>
-                            </label>
-                        </td>
-                        *#
                         <td>{{productId}}</td>
                         <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                         <td>{{productName}}</td>
-##                        <td>{{subtitle}}</td>
-##                        <td>{{listPriceFixed}}</td>
                         <td>{{totalStock}}</td>
                         <td>{{isRentStr}}</td>
                         <td class="text-right">
@@ -77,9 +59,7 @@
                         </td>
                     </tr>
                     <tr class="bg-light br-n" style="height: 0">
-                        <td colspan="7" class="pn mn br-n" style="height: 0">
-
-                        </td>
+                        <td colspan="7" class="pn mn br-n" style="height: 0"></td>
                     </tr>
                     {{/listData}}
                     {{^listData}}
@@ -94,36 +74,97 @@
                     {{#product}}
                     <div class="productDetial row p15" data-product="{{productJSONString}}">
                         {{#skuListSource}}
-                        <div class="row ph15">
-                            <div class="col-md-12">
-                                <label class="col-md-2 control-label text-right">选择SKU</label>
-                                <div class="form-group col-md-10 mn">
-                                    <div class="option-group field">
-                                        {{#skuList}}
-                                        <label class="option block option-primary mb15">
-                                            <input type="checkbox" name="sku" value="{{skuId}}">
-                                            <span class="checkbox"></span> <span class="mr20">{{propertiesToStr}}</span>
-                                            <span class="mr20">库存：{{stock}}</span>
-                                            <span class="mr20">日租：{{#price}}{{dayRentPrice}}{{/price}}</span>
-                                            <span class="mr20">月租：{{#price}}{{monthRentPrice}}{{/price}}</span>
-                                        </label>
-                                        {{/skuList}}
+                        <div  class="row ph15">
+                            <div class="panel m15">
+                                <div class="panel-heading pn ph8">
+                                    <span>选择SKU</span>
+                                </div>
+                                <div class="panel-body pn">
+                                    <table class="table">
+                                        <thead>
+                                        <tr class="bg-light">
+                                            <th></th>
+                                            <th>选择新旧机器</th>
+                                            <th>SKU</th>
+                                            <th>总库存</th>
+                                            <th>新库存</th>
+                                            <th>旧库存</th>
+                                            <th>日租</th>
+                                            <th>月租</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#skuList}}
+                                            <tr class="skuTr">
+                                                <td>
+                                                    <label class="option block mn">
+                                                        <input type="checkbox" name="sku" value="{{skuId}}">
+                                                        <span class="checkbox mn"></span>
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="block mt15 switch switch-primary">
+                                                        <input type="checkbox" name="isNewProduct" id="isNewProduct-{{skuId}}" value="1">
+                                                        <label for="isNewProduct-{{skuId}}" data-on="新" data-off="旧"></label>
+                                                        <span></span>
+                                                    </label>
+                                                </td>
+                                                <td>{{propertiesToStr}}</td>
+                                                <td>{{stock}}</td>
+                                                <td>
+                                                    {{newProductSkuCount}}
+                                                </td>
+                                                <td>
+                                                    {{oldProductSkuCount}}
+                                                </td>
+                                                <td>{{#price}}{{dayRentPrice}}{{/price}}</td>
+                                                <td>{{#price}}{{monthRentPrice}}{{/price}}</td>
+                                            </tr>
+                                            {{/skuList}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="panel-footer pn pv5 ph15">
+                                    <div class="row">
+##                                        <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
+                                        <div class="form-group mn pull-right">
+                                            <button class="btn btn-xs btn-primary mr15 confirmChoose">确定</button>
+                                            <button class="btn btn-xs btn-default mr15 cancelChoose">取消</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+##                        <div class="row ph15">
+##                            <div class="col-md-12">
+##                                <label class="col-md-2 control-label text-right">选择SKU</label>
+##                                <div class="form-group col-md-10 mn">
+##                                    <div class="option-group field">
+##                                        {{#skuList}}
+##                                        <label class="option block option-primary mb15">
+##                                            <input type="checkbox" name="sku" value="{{skuId}}">
+##                                            <span class="checkbox"></span> <span class="mr20">{{propertiesToStr}}</span>
+##                                            <span class="mr20">库存：{{stock}}</span>
+##                                            <span class="mr20">日租：{{#price}}{{dayRentPrice}}{{/price}}</span>
+##                                            <span class="mr20">月租：{{#price}}{{monthRentPrice}}{{/price}}</span>
+##                                        </label>
+##                                        {{/skuList}}
+##                                    </div>
+##                                </div>
+##                            </div>
+##                        </div>
                         {{/skuListSource}}
-                        <div class="section-divider mtn mb15"></div>
-                        <div class="row ph15">
-                            <div class="col-md-12">
-                                <label class="col-md-2 control-label text-right hidden-xs" style="visibility: hidden">操作</label>
-                                <div class="form-group col-md-10 mn">
-                                    <button class="btn btn-xs btn-primary mr15 confirmChoose">确定</button>
-                                    <button class="btn btn-xs btn-default mr15 cancelChoose">取消</button>
-                                </div>
-                            </div>
-
-                        </div>
+##                        <div class="section-divider mtn mb15"></div>
+##                        <div class="row ph15">
+##                            <div class="col-md-12">
+##                                <label class="col-md-2 control-label text-right hidden-xs" style="visibility: hidden">操作</label>
+##                                <div class="form-group col-md-10 mn">
+##                                    <button class="btn btn-xs btn-primary mr15 confirmChoose">确定</button>
+##                                    <button class="btn btn-xs btn-default mr15 cancelChoose">取消</button>
+##                                </div>
+##                            </div>
+##
+##                        </div>
                     </div>
                     {{/product}}
                 </script>
