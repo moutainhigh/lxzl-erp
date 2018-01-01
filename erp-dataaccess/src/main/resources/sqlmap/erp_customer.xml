@@ -120,30 +120,6 @@
 		<result column="ecp_connect_phone" jdbcType="VARCHAR" property="connectPhone" />
 	</resultMap>
 
-	<!--<resultMap type="com.lxzl.erp.dataaccess.domain.user.UserDO" id="userResult">-->
-		<!--<id column="eu_id" property="id" />-->
-		<!--<result column="eu_user_type" property="userType" />-->
-		<!--<result column="eu_user_name" property="userName" />-->
-		<!--<result column="eu_real_name" property="realName" />-->
-		<!--<result column="eu_password" property="password" />-->
-		<!--<result column="eu_email" property="email" />-->
-		<!--<result column="eu_email_verify_code" property="emailVerifyCode" />-->
-		<!--<result column="eu_email_verify_time" property="emailVerifyTime" />-->
-		<!--<result column="eu_phone" property="phone" />-->
-		<!--<result column="eu_phone_verify_code" property="phoneVerifyCode" />-->
-		<!--<result column="eu_phone_verify_time" property="phoneVerifyTime" />-->
-		<!--<result column="eu_is_activated" property="isActivated" />-->
-		<!--<result column="eu_is_disabled" property="isDisabled" />-->
-		<!--<result column="eu_register_time" property="registerTime" />-->
-		<!--<result column="eu_last_login_time" property="lastLoginTime" />-->
-		<!--<result column="eu_last_login_ip" property="lastLoginIp" />-->
-		<!--<result column="eu_remark" property="remark" />-->
-		<!--<result column="eu_create_user" jdbcType="VARCHAR" property="createUser"/>-->
-		<!--<result column="eu_create_time" jdbcType="TIMESTAMP" property="createTime"/>-->
-		<!--<result column="eu_update_user" jdbcType="VARCHAR" property="updateUser"/>-->
-		<!--<result column="eu_update_time" jdbcType="TIMESTAMP" property="updateTime"/>-->
-	<!--</resultMap>-->
-
 	<sql id="column_List">
 		ec.id,ec.customer_type,ec.customer_no,ec.customer_name,ec.is_disabled,ec.data_status,ec.remark,ec.create_time,ec.create_user,ec.update_time,ec.update_user,ec.owner,ec.union_user
 	</sql>
@@ -154,10 +130,6 @@
 		ecp.id AS ecp_id,ecp.customer_id AS ecp_customer_id,ecp.real_name AS ecp_real_name,ecp.email AS ecp_email,ecp.phone AS ecp_phone,ecp.province AS ecp_province,ecp.city AS ecp_city,ecp.district AS ecp_district,ecp.address AS ecp_address,ecp.data_status AS ecp_data_status,ecp.remark AS ecp_remark,ecp.create_time AS ecp_create_time,ecp.create_user AS ecp_create_user,ecp.update_time AS ecp_update_time,ecp.update_user AS ecp_update_user,ecp.person_name AS ecp_person_name, ecp.person_no AS ecp_person_no, ecp.connect_real_name AS ecp_connect_real_name, ecp.connect_phone AS ecp_connect_phone
 
 	</sql>
-	<!--<sql id="user_column_List">-->
-		<!--eu.id AS eu_id,eu.user_type AS eu_user_type,eu.user_name AS eu_user_name,eu.real_name AS eu_real_name,eu.password AS eu_password,eu.email AS eu_email,eu.email_verify_code AS eu_email_verify_code,eu.email_verify_time AS eu_email_verify_time,eu.phone AS eu_phone,eu.phone_verify_code AS eu_phone_verify_code,eu.phone_verify_time AS eu_phone_verify_time,eu.is_activated AS eu_is_activated,eu.is_disabled AS eu_is_disabled,eu.register_time AS eu_register_time,eu.last_login_time AS eu_last_login_time,eu.last_login_ip AS eu_last_login_ip,eu.remar AS eu_kremar,eu.create_user AS eu_create_user,eu.create_time AS eu_create_time,eu.update_user AS eu_update_user,eu.update_time AS eu_update_time-->
-	<!--</sql>-->
-
 	<sql id="risk_column_List">
 		ecrm.id AS ecrm_id,ecrm.customer_id AS ecrm_customer_id,ecrm.credit_amount AS ecrm_credit_amount,ecrm.credit_amount_used AS ecrm_credit_amount_used,ecrm.deposit_cycle AS ecrm_deposit_cycle,ecrm.payment_cycle AS ecrm_payment_cycle,ecrm.apple_deposit_cycle AS ecrm_apple_deposit_cycle,ecrm.apple_payment_cycle AS ecrm_apple_payment_cycle,ecrm.new_deposit_cycle AS ecrm_new_deposit_cycle,ecrm.new_payment_cycle AS ecrm_new_payment_cycle,ecrm.apple_pay_mode AS ecrm_apple_pay_mode,ecrm.new_pay_mode AS ecrm_new_pay_mode,ecrm.pay_mode AS ecrm_pay_mode,ecrm.data_status AS ecrm_data_status,ecrm.remark AS ecrm_remark,ecrm.create_time AS ecrm_create_time,ecrm.create_user AS ecrm_create_user,ecrm.update_time AS ecrm_update_time,ecrm.update_user AS ecrm_update_user
 	</sql>
@@ -189,15 +161,20 @@
 		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>
 	<select id="findCustomerPersonByNo" resultMap="CustomerDO" parameterType="java.lang.String">
-		SELECT <include refid="column_List"/>,<include refid="person_column_List"/>,<include refid="risk_column_List"/>,eap.province_name AS provinceName
+		SELECT <include refid="column_List"/>,<include refid="person_column_List"/>,<include refid="risk_column_List"/>
+		,eap.province_name AS provinceName
 		,eac.city_name AS cityName
 		,ead.district_name AS districtName
+		,union_user.real_name AS unionUserName
+		,owner_user.real_name AS ownerName
 		FROM erp_customer ec
 		LEFT JOIN erp_customer_person ecp ON ec.id=ecp.customer_id AND ec.customer_type=2 AND ecp.data_status=1
 		LEFT JOIN erp_area_province eap ON ecp.province=eap.id AND eap.data_status=1
 		LEFT JOIN erp_area_city eac ON ecp.city=eac.id AND eac.data_status=1
 		LEFT JOIN erp_area_district ead ON ecp.district=ead.id AND ead.data_status=1
 		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id AND ecrm.data_status=1
+		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
+		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
 		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>
 
@@ -350,48 +327,6 @@
 			</if>
 			<if test="maps.queryParam.district != null">
 				AND ecc.district = #{maps.queryParam.district, jdbcType=INTEGER}
-			</if>
-			<if test="maps.queryParam.legalPerson != null &amp;&amp; maps.queryParam.legalPerson != ''">
-				AND ecc.legal_person LIKE CONCAT('%','${maps.queryParam.legalPerson}','%' )
-			</if>
-			<if test="maps.queryParam.legalPersonNo != null &amp;&amp; maps.queryParam.legalPersonNo != ''">
-				AND ecc.legal_person_no = #{maps.queryParam.legalPersonNo, jdbcType=VARCHAR}
-			</if>
-			<if test="maps.queryParam.businessLicenseNo != null &amp;&amp; maps.queryParam.businessLicenseNo != ''">
-				AND ecc.business_license_no = #{maps.queryParam.businessLicenseNo, jdbcType=VARCHAR}
-			</if>
-			<if test="maps.queryParam.industry != null &amp;&amp; maps.queryParam.industry != ''">
-				and ecc.industry like CONCAT('%','${maps.queryParam.industry}','%' )
-			</if>
-			<if test="maps.queryParam.productPurpose != null &amp;&amp; maps.queryParam.productPurpose != ''">
-				and ecc.product_purpose like CONCAT('%','${maps.queryParam.productPurpose}','%' )
-			</if>
-			<if test="maps.queryParam.officeNumber != null">
-				and ecc.office_number = #{maps.queryParam.officeNumber, jdbcType=INTEGER}
-			</if>
-			<if test="maps.queryParam.agentPersonName != null &amp;&amp; maps.queryParam.agentPersonName != ''">
-				and ecc.agent_person_name like CONCAT('%','${maps.queryParam.agentPersonName}','%' )
-			</if>
-			<if test="maps.queryParam.agentPersonPhone != null &amp;&amp; maps.queryParam.agentPersonPhone != ''">
-				and ecc.agent_person_phone = #{maps.queryParam.agentPersonPhone, jdbcType=VARCHAR}
-			</if>
-			<if test="maps.queryParam.agentPersonNo != null &amp;&amp; maps.queryParam.agentPersonNo != ''">
-				and ecc.agent_person_no = #{maps.queryParam.agentPersonNo, jdbcType=VARCHAR}
-			</if>
-			<if test="maps.queryParam.unifiedCreditCode != null &amp;&amp; maps.queryParam.unifiedCreditCode != ''">
-				and ecc.unified_credit_code = #{maps.queryParam.unifiedCreditCode, jdbcType=VARCHAR}
-			</if>
-			<!--<if test="maps.queryParam.salesMan != null &amp;&amp; maps.queryParam.salesMan != ''">-->
-				<!--and ecc.sales_man like CONCAT('%','${maps.queryParam.salesMan}','%' )-->
-			<!--</if>-->
-			<!--<if test="maps.queryParam.unionArea != null &amp;&amp; maps.queryParam.unionArea != ''">-->
-				<!--and ecc.union_area = #{maps.queryParam.unionArea, jdbcType=VARCHAR}-->
-			<!--</if>-->
-			<!--<if test="maps.queryParam.unionSalesMan != null &amp;&amp; maps.queryParam.unionSalesMan != ''">-->
-				<!--and ecc.union_sales_man = #{maps.queryParam.unionSalesMan, jdbcType=VARCHAR}-->
-			<!--</if>-->
-			<if test="maps.queryParam.affiliatedEnterprise != null &amp;&amp; maps.queryParam.affiliatedEnterprise != ''">
-				and ecc.affiliated_enterprise = #{maps.queryParam.affiliatedEnterprise, jdbcType=VARCHAR}
 			</if>
 			<if test="true">
 				AND ec.data_status = 1 AND ec.customer_type=1

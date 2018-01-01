@@ -88,7 +88,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC10002018010100002");
+        customer.setCustomerNo("LXCC10002018010100005");
         CustomerCompany customerCompany = new CustomerCompany();
 
         //首次所需设备
@@ -112,15 +112,15 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         Image image1 = new Image();
         image1.setImgId(28);
-        customerCompany.setBusinessLicensePictureImage(image1);
+//        customerCompany.setBusinessLicensePictureImage(image1);
 
         Image image2 = new Image();
         image2.setImgId(26);
-        customerCompany.setLegalPersonNoPictureFrontImage(image2);
+//        customerCompany.setLegalPersonNoPictureFrontImage(image2);
 
         Image image3 = new Image();
         image3.setImgId(27);
-        customerCompany.setLegalPersonNoPictureBackImage(image3);
+//        customerCompany.setLegalPersonNoPictureBackImage(image3);
         customer.setCustomerCompany(customerCompany);
 
         //加入经营场所租赁合同
@@ -184,7 +184,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCD10002017123000030");
+        customer.setCustomerNo("LXCD10002018010100007");
         TestResult result = getJsonTestResult("/customer/detailCustomerPerson", customer);
     }
 
