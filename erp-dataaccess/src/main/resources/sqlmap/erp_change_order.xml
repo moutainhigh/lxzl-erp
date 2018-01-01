@@ -247,7 +247,7 @@
 			<if test="maps.queryParam.createEndTime != null ">
 				<![CDATA[ AND eco.create_time <= #{maps.queryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
+			<if test="maps.queryParam.passiveUserIdList != null">
 				AND eco.create_user in
 				<foreach item="item" index="index" collection="maps.queryParam.passiveUserIdList" open="(" separator="," close=")">
 					#{item}
@@ -283,7 +283,7 @@
 			<if test="maps.queryParam.createEndTime != null ">
 				<![CDATA[ AND eco.create_time <= #{maps.queryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
+			<if test="maps.queryParam.passiveUserIdList != null">
 				AND eco.create_user in
 				<foreach item="item" index="index" collection="maps.queryParam.passiveUserIdList" open="(" separator="," close=")">
 					#{item}

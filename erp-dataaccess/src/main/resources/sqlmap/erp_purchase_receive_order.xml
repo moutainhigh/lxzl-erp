@@ -268,7 +268,7 @@
 			<if test="maps.queryParam.confirmEndTime != null ">
 				<![CDATA[ AND epro.confirm_time <= #{maps.queryParam.confirmEndTime} ]]>
 			</if>
-			<if test="true">
+			<if test="maps.queryParam.passiveUserIdList != null &amp;&amp;maps.queryParam.warehouseIdList != null ">
 				AND
 				(
 				(epro.create_user in
@@ -335,7 +335,7 @@
 			<if test="maps.queryParam.confirmEndTime != null ">
 				<![CDATA[ AND epro.confirm_time <= #{maps.queryParam.confirmEndTime} ]]>
 			</if>
-			<if test="true">
+			<if test="maps.queryParam.passiveUserIdList != null &amp;&amp;maps.queryParam.warehouseIdList != null ">
 				AND
 				(
 					(epro.create_user in
