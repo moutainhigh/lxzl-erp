@@ -36,11 +36,8 @@ public class CustomerCompany extends BasePO {
     @NotBlank(message = ErrorCode.CUSTOMER_COMPANY_ADDRESS_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String address;   //详细地址
     private Integer isLegalPersonApple;   //是否法人代表申请
-//    @NotBlank(message = ErrorCode.LEGAL_PERSON_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String legalPerson;   //法人姓名
-//    @NotBlank(message = ErrorCode.LEGAL_PERSON_NO_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String legalPersonNo;   //法人身份证号
-//    @NotBlank(message = ErrorCode.LEGAL_PERSON_PHONE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String legalPersonPhone;   //法人手机号
     private String businessLicenseNo;   //营业执照号
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -61,15 +58,10 @@ public class CustomerCompany extends BasePO {
     @NotEmpty(message = ErrorCode.CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private List<CustomerCompanyNeed> customerCompanyNeedFirstList;  //首次所需设备
     private List<CustomerCompanyNeed> customerCompanyNeedLaterList;  //后续所需设备
-//    @NotBlank(message = ErrorCode.AGENT_PERSON_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String agentPersonName;  //经办人姓名'
-//    @NotBlank(message = ErrorCode.AGENT_PERSON_PHONE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String agentPersonPhone;  //经办人电话'
-//    @NotBlank(message = ErrorCode.AGENT_PERSON_NO_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String agentPersonNo;  //经办人身份证号码'
-//    @NotBlank(message = ErrorCode.CONSIGN_ADDRESS_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String unifiedCreditCode;  //统一信用代码'
-//    @NotBlank(message = ErrorCode.SALES_MAN_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String salesMan; //业务员
     private String unionArea; //联合区域
     private String unionSalesMan; //联合业务员
@@ -82,10 +74,13 @@ public class CustomerCompany extends BasePO {
     private String districtName; //地区名
 
     @Valid
+    @NotNull(message = ErrorCode.BUSINESS_LICENSE_PICTURE_IMAGE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Image businessLicensePictureImage;//营业执照
     @Valid
+    @NotNull(message = ErrorCode.LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Image legalPersonNoPictureFrontImage;//法人/股东身份证正面
     @Valid
+    @NotNull(message = ErrorCode.LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Image legalPersonNoPictureBackImage;//法人/股东身份证反面
     @Valid
     private List<Image> managerPlaceRentContractImageList;//经营场所租赁合同

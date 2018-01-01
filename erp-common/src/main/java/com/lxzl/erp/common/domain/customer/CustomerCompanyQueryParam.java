@@ -6,8 +6,8 @@ public class CustomerCompanyQueryParam extends BasePageParam {
 
     private Integer customerId;
     private String customerNo;   //客户编号
-    private String connectRealName;   //联系人
-    private String connectPhone;   //联系人手机号
+    private String connectRealName;   //紧急联系人
+    private String connectPhone;   //紧急联系人手机号
     private String companyName;   //公司名称
     private Integer province;   //省份ID，省份ID
     private Integer city;   //城市ID，对应城市ID
@@ -15,6 +15,19 @@ public class CustomerCompanyQueryParam extends BasePageParam {
     private String legalPerson;   //法人姓名
     private String legalPersonNo;   //法人身份证号
     private String businessLicenseNo;   //营业执照号
+    private String industry;  //所属行业'
+    private Integer officeNumber;  //办公人数'
+    private String productPurpose;  //设备用途'
+    private String agentPersonName;  //经办人姓名'
+    private String agentPersonPhone;  //经办人电话'
+    private String agentPersonNo;  //经办人身份证号码'
+    private String unifiedCreditCode;  //统一信用代码'
+    private String salesMan; //业务员
+    private String unionArea; //联合区域
+    private String unionSalesMan; //联合业务员
+    private String affiliatedEnterprise; //关联企业
+
+
 
     public Integer getCustomerId() {
         return customerId;
@@ -102,5 +115,93 @@ public class CustomerCompanyQueryParam extends BasePageParam {
 
     public void setBusinessLicenseNo(String businessLicenseNo) {
         this.businessLicenseNo = businessLicenseNo;
+    }
+
+    public String getIndustry() {
+        return industry;
+    }
+
+    public void setIndustry(String industry) {
+        this.industry = industry;
+    }
+
+    public Integer getOfficeNumber() {
+        return officeNumber;
+    }
+
+    public void setOfficeNumber(Integer officeNumber) {
+        this.officeNumber = officeNumber;
+    }
+
+    public String getProductPurpose() {
+        return productPurpose;
+    }
+
+    public void setProductPurpose(String productPurpose) {
+        this.productPurpose = productPurpose;
+    }
+
+    public String getAgentPersonName() {
+        return agentPersonName;
+    }
+
+    public void setAgentPersonName(String agentPersonName) {
+        this.agentPersonName = agentPersonName;
+    }
+
+    public String getAgentPersonPhone() {
+        return agentPersonPhone;
+    }
+
+    public void setAgentPersonPhone(String agentPersonPhone) {
+        this.agentPersonPhone = agentPersonPhone;
+    }
+
+    public String getAgentPersonNo() {
+        return agentPersonNo;
+    }
+
+    public void setAgentPersonNo(String agentPersonNo) {
+        this.agentPersonNo = agentPersonNo;
+    }
+
+    public String getUnifiedCreditCode() {
+        return unifiedCreditCode;
+    }
+
+    public void setUnifiedCreditCode(String unifiedCreditCode) {
+        this.unifiedCreditCode = unifiedCreditCode;
+    }
+
+    public String getSalesMan() {
+        return salesMan;
+    }
+
+    public void setSalesMan(String salesMan) {
+        this.salesMan = salesMan;
+    }
+
+    public String getUnionArea() {
+        return unionArea;
+    }
+
+    public void setUnionArea(String unionArea) {
+        this.unionArea = unionArea;
+    }
+
+    public String getUnionSalesMan() {
+        return unionSalesMan;
+    }
+
+    public void setUnionSalesMan(String unionSalesMan) {
+        this.unionSalesMan = unionSalesMan;
+    }
+
+    public String getAffiliatedEnterprise() {
+        return affiliatedEnterprise;
+    }
+
+    public void setAffiliatedEnterprise(String affiliatedEnterprise) {
+        this.affiliatedEnterprise = affiliatedEnterprise;
     }
 }
