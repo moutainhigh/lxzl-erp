@@ -84,7 +84,9 @@
                                         <thead>
                                         <tr class="bg-light">
                                             <th></th>
+                                            {{#showIsNewCheckBox}}
                                             <th>选择新旧机器</th>
+                                            {{/showIsNewCheckBox}}
                                             <th>SKU</th>
                                             <th>总库存</th>
                                             <th>新库存</th>
@@ -102,6 +104,7 @@
                                                         <span class="checkbox mn"></span>
                                                     </label>
                                                 </td>
+                                                {{#showIsNewCheckBox}}
                                                 <td>
                                                     <label class="block mn switch switch-primary">
                                                         <input type="checkbox" name="isNewProduct" id="isNewProduct-{{skuId}}" value="1">
@@ -109,6 +112,7 @@
                                                         <span></span>
                                                     </label>
                                                 </td>
+                                                {{/showIsNewCheckBox}}
                                                 <td>{{propertiesToStr}}</td>
                                                 <td>{{stock}}</td>
                                                 <td>
