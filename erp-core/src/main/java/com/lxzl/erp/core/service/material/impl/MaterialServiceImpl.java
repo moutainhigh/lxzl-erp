@@ -282,6 +282,10 @@ public class MaterialServiceImpl implements MaterialService {
 
         if (!updateMaterialImgList.isEmpty()) {
             for (MaterialImg materialImg : updateMaterialImgList) {
+                MaterialImgDO dbMaterialImgDO = materialImgMapper.findById(materialImg.getMaterialImgId());
+                if(dbMaterialImgDO.getMaterialId() != null){
+                    continue;
+                }
                 MaterialImgDO materialImgDO = MaterialImageConverter.convertMaterialImg(materialImg);
                 materialImgDO.setMaterialId(materialId);
                 materialImgDO.setImgType(type);
