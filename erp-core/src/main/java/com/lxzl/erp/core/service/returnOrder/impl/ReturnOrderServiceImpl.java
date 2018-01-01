@@ -32,6 +32,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.*;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
@@ -40,6 +41,7 @@ import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.returnOrder.*;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -552,7 +554,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         customerRiskManagementMapper.update(customerRiskManagementDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        if(true){
+        if (true) {
             throw new BusinessException();
         }
         return serviceResult;
@@ -568,14 +570,14 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         List<ReturnOrderProduct> returnOrderProductList = returnOrder.getReturnOrderProductList();
         if (CollectionUtil.isNotEmpty(returnOrderProductList)) {
             for (ReturnOrderProduct returnOrderProduct : returnOrderProductList) {
-                returnOrderProduct.setCanProcessCount(returnOrderProduct.getReturnProductSkuCount()-returnOrderProduct.getRealReturnProductSkuCount());
+                returnOrderProduct.setCanProcessCount(returnOrderProduct.getReturnProductSkuCount() - returnOrderProduct.getRealReturnProductSkuCount());
             }
         }
         //填写退还物料项可退数量字段，用于修改接口提示
         List<ReturnOrderMaterial> returnOrderMaterialList = returnOrder.getReturnOrderMaterialList();
         if (CollectionUtil.isNotEmpty(returnOrderMaterialList)) {
             for (ReturnOrderMaterial returnOrderMaterial : returnOrderMaterialList) {
-                returnOrderMaterial.setCanProcessCount(returnOrderMaterial.getReturnMaterialCount()-returnOrderMaterial.getRealReturnMaterialCount());
+                returnOrderMaterial.setCanProcessCount(returnOrderMaterial.getReturnMaterialCount() - returnOrderMaterial.getRealReturnMaterialCount());
             }
         }
         serviceResult.setResult(returnOrder);
@@ -587,6 +589,23 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     public ServiceResult<String, Page<ReturnOrder>> page(ReturnOrderPageParam returnOrderPageParam) {
         ServiceResult<String, Page<ReturnOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(returnOrderPageParam.getPageNo(), returnOrderPageParam.getPageSize());
+
+        //数据级权限控制-查找用户可查看用户列表
+        Integer currentUserId = userSupport.getCurrentUserId();
+        //获取用户最【新的】最终可观察用户列表
+        List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
+        List<Integer> passiveUserIdList = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(userDOList)) {
+            for (UserDO userDO : userDOList) {
+                passiveUserIdList.add(userDO.getId());
+            }
+        } else {
+            result.setErrorCode(ErrorCode.SUCCESS);
+            Page<ReturnOrder> page = new Page<>(new ArrayList<ReturnOrder>(), 0, returnOrderPageParam.getPageNo(), returnOrderPageParam.getPageSize());
+            result.setResult(page);
+            return result;
+        }
+        returnOrderPageParam.setPassiveUserIdList(passiveUserIdList);
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -966,7 +985,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> commit(ReturnOrderCommitParam returnOrderCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date now = new Date();
@@ -1097,6 +1116,8 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     private StatementService statementService;
     @Autowired
     private GenerateNoSupport generateNoSupport;
+    @Autowired
+    private UserMapper userMapper;
 
 
 }

@@ -12,7 +12,6 @@ import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.changeOrder.ChangeOrderService;
 import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
@@ -33,6 +32,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.changeOrder.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
@@ -43,6 +43,7 @@ import com.lxzl.erp.dataaccess.domain.order.OrderProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -181,7 +182,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         }
         //创建租赁换货单
         ChangeOrderDO changeOrderDO = new ChangeOrderDO();
-        changeOrderDO.setChangeOrderNo(generateNoSupport.generateChangeOrderNo(now,customerDO.getId()));
+        changeOrderDO.setChangeOrderNo(generateNoSupport.generateChangeOrderNo(now, customerDO.getId()));
         changeOrderDO.setCustomerId(customerDO.getId());
         changeOrderDO.setCustomerNo(customerDO.getCustomerNo());
         changeOrderDO.setTotalChangeProductCount(totalChangeProductCount);
@@ -462,6 +463,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> commit(ChangeOrderCommitParam changeOrderCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date now = new Date();
@@ -480,7 +482,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             result.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
             return result;
         }
-        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_PURCHASE);
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_CHANGE);
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
             result.setErrorCode(needVerifyResult.getErrorCode());
             return result;
@@ -1081,7 +1083,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         if (CollectionUtil.isNotEmpty(changeOrderProductList)) {
             for (ChangeOrderProduct changeOrderProduct : changeOrderProductList) {
 //                changeOrderProduct.setCanProcessCount(oldSkuCountMap.get(changeOrderProduct.getSrcChangeProductSkuId()).getCanProcessCount() + changeOrderProduct.getChangeProductSkuCount());
-                changeOrderProduct.setCanProcessCount(changeOrderProduct.getChangeProductSkuCount()-changeOrderProduct.getRealChangeProductSkuCount());
+                changeOrderProduct.setCanProcessCount(changeOrderProduct.getChangeProductSkuCount() - changeOrderProduct.getRealChangeProductSkuCount());
             }
         }
         //填写退还物料项可换数量字段，用于修改接口提示
@@ -1089,7 +1091,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         if (CollectionUtil.isNotEmpty(changeOrderMaterialList)) {
             for (ChangeOrderMaterial changeOrderMaterial : changeOrderMaterialList) {
 //                changeOrderMaterial.setCanProcessCount(oldMaterialCountMap.get(changeOrderMaterial.getSrcChangeMaterialId()).getCanProcessCount() + changeOrderMaterial.getChangeMaterialCount());
-                changeOrderMaterial.setCanProcessCount(changeOrderMaterial.getChangeMaterialCount()-changeOrderMaterial.getRealChangeMaterialCount());
+                changeOrderMaterial.setCanProcessCount(changeOrderMaterial.getChangeMaterialCount() - changeOrderMaterial.getRealChangeMaterialCount());
             }
         }
         serviceResult.setResult(changeOrder);
@@ -1102,6 +1104,23 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
 
         ServiceResult<String, Page<ChangeOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(changeOrderPageParam.getPageNo(), changeOrderPageParam.getPageSize());
+
+        //数据级权限控制-查找用户可查看用户列表
+        Integer currentUserId = userSupport.getCurrentUserId();
+        //获取用户最【新的】最终可观察用户列表
+        List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
+        List<Integer> passiveUserIdList = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(userDOList)) {
+            for (UserDO userDO : userDOList) {
+                passiveUserIdList.add(userDO.getId());
+            }
+        } else {
+            result.setErrorCode(ErrorCode.SUCCESS);
+            Page<ChangeOrder> page = new Page<>(new ArrayList<ChangeOrder>(), 0, changeOrderPageParam.getPageNo(), changeOrderPageParam.getPageSize());
+            result.setResult(page);
+            return result;
+        }
+        changeOrderPageParam.setPassiveUserIdList(passiveUserIdList);
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -1432,4 +1451,6 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     private StatementService statementService;
     @Autowired
     private GenerateNoSupport generateNoSupport;
+    @Autowired
+    private UserMapper userMapper;
 }

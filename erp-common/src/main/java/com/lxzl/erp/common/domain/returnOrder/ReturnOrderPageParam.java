@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
 import java.util.Date;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ReturnOrderPageParam extends BasePageParam {
@@ -16,6 +17,8 @@ public class ReturnOrderPageParam extends BasePageParam {
     private String ownerName;
     private Date createStartTime;
     private Date createEndTime;
+
+    private List<Integer> passiveUserIdList;
 
     public String getReturnOrderNo() {
         return returnOrderNo;
@@ -79,5 +82,13 @@ public class ReturnOrderPageParam extends BasePageParam {
 
     public void setCreateEndTime(Date createEndTime) {
         this.createEndTime = createEndTime;
+    }
+
+    public List<Integer> getPassiveUserIdList() {
+        return passiveUserIdList;
+    }
+
+    public void setPassiveUserIdList(List<Integer> passiveUserIdList) {
+        this.passiveUserIdList = passiveUserIdList;
     }
 }

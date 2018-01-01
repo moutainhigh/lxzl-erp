@@ -242,6 +242,12 @@
 				<![CDATA[ AND ero.create_time <= #{maps.queryParam.createEndTime} ]]>
 			</if>
 			<if test="true">
+				AND ero.create_user in
+				<foreach item="item" index="index" collection="maps.queryParam.passiveUserIdList" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="true">
 				and ero.data_status = 1
 			</if>
 		</where>
@@ -270,6 +276,12 @@
 			</if>
 			<if test="maps.queryParam.createEndTime != null ">
 				<![CDATA[ AND ero.create_time <= #{maps.queryParam.createEndTime} ]]>
+			</if>
+			<if test="true">
+				AND ero.create_user in
+				<foreach item="item" index="index" collection="maps.queryParam.passiveUserIdList" open="(" separator="," close=")">
+					#{item}
+				</foreach>
 			</if>
 			<if test="true">
 				and ero.data_status = 1
