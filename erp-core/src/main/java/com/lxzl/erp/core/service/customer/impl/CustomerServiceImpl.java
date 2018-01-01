@@ -8,6 +8,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.ImgType;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
@@ -29,10 +30,14 @@ import com.lxzl.erp.core.service.customer.impl.support.CustomerRiskManagementCon
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.*;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -76,6 +81,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private SubCompanyMapper subCompanyMapper;
+
+
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addCompany(Customer customer) {
@@ -95,6 +105,11 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateTime(now);
         customerDO.setCreateUser(userSupport.getCurrentUserId().toString());
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        //加入跟单员和联合开发员
+        customerDO.setOwner(userSupport.getCurrentUserId());
+        if (customer.getUnionUser() != null){
+            customerDO.setUnionUser(customer.getUnionUser());
+        }
         customerMapper.save(customerDO);
 
         CustomerCompanyDO customerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
@@ -159,7 +174,7 @@ public class CustomerServiceImpl implements CustomerService {
         addCustomerConsignInfo(customerConsignInfo);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(customer.getCustomerNo());
+        serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
     }
 
@@ -225,6 +240,15 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
+        //更改联合开发人
+        if (customer.getUnionUser() != null){
+            customerDO.setUnionUser(customer.getUnionUser());
+            customerDO.setUpdateTime(now);
+            customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            customerMapper.update(customerDO);
+        }
+
+
         CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
         CustomerCompanyDO newCustomerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(),CustomerCompanyDO.class);
 
@@ -453,6 +477,14 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         customerResult.setCustomerAccount(customerAccount);
+
+        if (customerDO.getUnionUser() != null){
+            Integer companyId = userSupport.getCompanyIdByUser(customerDO.getUnionUser());
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(companyId);
+            customerResult.setUnionAreaProvinceName(subCompanyDO.getProvinceName());
+            customerResult.setUnionAreaCityName(subCompanyDO.getCityName());
+            customerResult.setUnionAreaDistrictName(subCompanyDO.getDistrictName());
+        }
 
         //首次所需设备，Json转list
         String customerCompanyNeedFirstJson = customerDO.getCustomerCompanyDO().getCustomerCompanyNeedFirstJson();
@@ -821,6 +853,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     private ServiceResult<String,String> saveImage(Customer customer,Date now){
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
+
+
         //对营业执照图片操作
         if(customer.getCustomerCompany().getBusinessLicensePictureImage() != null){
             ImageDO businessLicensePictureImageDO = imgMysqlMapper.findById(customer.getCustomerCompany().getBusinessLicensePictureImage().getImgId());

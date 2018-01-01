@@ -36,6 +36,20 @@
         </where>
     </select>
 
+    <select id="findByImgId" resultMap="ProductImgDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>
+        from erp_product_img
+        <where>
+            <if test="imgId != null">
+                and id = #{imgId, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and data_status = 1
+            </if>
+        </where>
+    </select>
+
     <select id="findByProductId" resultMap="ProductImgDO" parameterType="java.lang.Integer">
         select
         <include refid="column_List"/>

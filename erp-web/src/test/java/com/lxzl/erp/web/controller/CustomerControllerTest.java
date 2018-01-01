@@ -21,6 +21,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addCustomerCompany() throws Exception {
         Customer customer = new Customer();
+        customer.setUnionUser(500006);
 
         List<CustomerCompanyNeed> customerCompanyNeedFirstList= new ArrayList<>();
         CustomerCompanyNeed customerCompanyNeed = new CustomerCompanyNeed();
@@ -40,12 +41,12 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
 
         Image image1 = new Image();
-        image1.setImgId(18);
-        customerCompany.setBusinessLicensePictureImage(image1);
+//        image1.setImgId(18);
+//        customerCompany.setBusinessLicensePictureImage(image1);
 
         Image image2 = new Image();
-        image2.setImgId(16);
-        customerCompany.setLegalPersonNoPictureFrontImage(image2);
+//        image2.setImgId(16);
+//        customerCompany.setLegalPersonNoPictureFrontImage(image2);
 
         Image image3 = new Image();
         image3.setImgId(17);
@@ -158,8 +159,10 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pageCustomerCompany() throws Exception {
         CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
+        customerCompanyQueryParam.setCustomerNo("LXCC10002018010100005");
 //        customerCompanyQueryParam.setCompanyName("百");
-        customerCompanyQueryParam.setProductPurpose("测试");
+//        customerCompanyQueryParam.setProductPurpose("测试");
+
         TestResult result = getJsonTestResult("/customer/pageCustomerCompany", customerCompanyQueryParam);
     }
 
@@ -174,14 +177,14 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC10002018010100002");
+        customer.setCustomerNo("LXCC10002018010100005");
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }
 
     @Test
     public void detailCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCD10002018010100003");
+        customer.setCustomerNo("LXCD10002017123000030");
         TestResult result = getJsonTestResult("/customer/detailCustomerPerson", customer);
     }
 

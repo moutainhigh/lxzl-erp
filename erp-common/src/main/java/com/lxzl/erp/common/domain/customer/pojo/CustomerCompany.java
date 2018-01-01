@@ -52,35 +52,34 @@ public class CustomerCompany extends BasePO {
     private String industry;  //所属行业'
     private BigDecimal registeredCapital;  //注册资本'
     private Integer officeNumber;  //办公人数'
-    @NotBlank(message = ErrorCode.PRODUCT_PURPOSE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+//    @NotBlank(message = ErrorCode.PRODUCT_PURPOSE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String productPurpose;  //设备用途'
     @Valid
-    @NotEmpty(message = ErrorCode.CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+//    @NotEmpty(message = ErrorCode.CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private List<CustomerCompanyNeed> customerCompanyNeedFirstList;  //首次所需设备
     private List<CustomerCompanyNeed> customerCompanyNeedLaterList;  //后续所需设备
     private String agentPersonName;  //经办人姓名'
     private String agentPersonPhone;  //经办人电话'
     private String agentPersonNo;  //经办人身份证号码'
     private String unifiedCreditCode;  //统一信用代码'
-    private String salesMan; //业务员
-    private String unionArea; //联合区域
-    private String unionSalesMan; //联合业务员
     private Double operatingArea; //经营面积
     private Integer unitInsuredNumber; //单位参保人数
     private String affiliatedEnterprise; //关联企业
+
 
     private String provinceName;// 省名
     private String cityName; //城市名
     private String districtName; //地区名
 
+
     @Valid
-    @NotNull(message = ErrorCode.BUSINESS_LICENSE_PICTURE_IMAGE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+//    @NotNull(message = ErrorCode.BUSINESS_LICENSE_PICTURE_IMAGE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Image businessLicensePictureImage;//营业执照
     @Valid
-    @NotNull(message = ErrorCode.LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+//    @NotNull(message = ErrorCode.LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Image legalPersonNoPictureFrontImage;//法人/股东身份证正面
     @Valid
-    @NotNull(message = ErrorCode.LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+//    @NotNull(message = ErrorCode.LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Image legalPersonNoPictureBackImage;//法人/股东身份证反面
     @Valid
     private List<Image> managerPlaceRentContractImageList;//经营场所租赁合同
@@ -385,30 +384,6 @@ public class CustomerCompany extends BasePO {
         return officeNumber;
     }
 
-    public String getSalesMan() {
-        return salesMan;
-    }
-
-    public void setSalesMan(String salesMan) {
-        this.salesMan = salesMan;
-    }
-
-    public String getUnionArea() {
-        return unionArea;
-    }
-
-    public void setUnionArea(String unionArea) {
-        this.unionArea = unionArea;
-    }
-
-    public String getUnionSalesMan() {
-        return unionSalesMan;
-    }
-
-    public void setUnionSalesMan(String unionSalesMan) {
-        this.unionSalesMan = unionSalesMan;
-    }
-
     public Double getOperatingArea() {
         return operatingArea;
     }
@@ -560,4 +535,5 @@ public class CustomerCompany extends BasePO {
     public void setOtherDateImageList(List<Image> otherDateImageList) {
         this.otherDateImageList = otherDateImageList;
     }
-}
+
+   }

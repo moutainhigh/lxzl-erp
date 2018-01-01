@@ -41,6 +41,7 @@ public class StatementOrderDetail extends BasePO {
     private Date updateTime;   //添加时间
     private String updateUser;   //修改人
 
+    private String orderNo;
 
     public Integer getStatementOrderDetailId() {
         return statementOrderDetailId;
@@ -272,5 +273,13 @@ public class StatementOrderDetail extends BasePO {
 
     public void setStatementDetailPaidAmount(BigDecimal statementDetailPaidAmount) {
         this.statementDetailPaidAmount = statementDetailPaidAmount;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
     }
 }

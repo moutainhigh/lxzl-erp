@@ -64,7 +64,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         }
 
         DeploymentOrderDO deploymentOrderDO = ConverterUtil.convert(deploymentOrder, DeploymentOrderDO.class);
-        deploymentOrderDO.setDeploymentOrderNo(generateNoSupport.generateDeploymentOrderNo(currentTime,deploymentOrderDO.getSrcWarehouseId(),deploymentOrderDO.getTargetWarehouseId()));
+        deploymentOrderDO.setDeploymentOrderNo(generateNoSupport.generateDeploymentOrderNo(currentTime, deploymentOrderDO.getSrcWarehouseId(), deploymentOrderDO.getTargetWarehouseId()));
         deploymentOrderDO.setDeploymentOrderStatus(DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT);
         deploymentOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         deploymentOrderDO.setUpdateUser(loginUser.getUserId().toString());
@@ -99,12 +99,14 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         Map<Integer, DeploymentOrderProductDO> updateDeploymentOrderProductDOMap = new HashMap<>();
         List<DeploymentOrderProductDO> dbDeploymentOrderProductDOList = deploymentOrderProductMapper.findByDeploymentOrderNo(deploymentOrderNo);
         Map<Integer, DeploymentOrderProductDO> dbDeploymentOrderProductDOMap = ListUtil.listToMap(dbDeploymentOrderProductDOList, "deploymentProductSkuId");
-        for (DeploymentOrderProductDO deploymentOrderProductDO : deploymentOrderProductDOList) {
-            if (dbDeploymentOrderProductDOMap.get(deploymentOrderProductDO.getDeploymentProductSkuId()) != null) {
-                updateDeploymentOrderProductDOMap.put(deploymentOrderProductDO.getDeploymentProductSkuId(), deploymentOrderProductDO);
-                dbDeploymentOrderProductDOMap.remove(deploymentOrderProductDO.getDeploymentProductSkuId());
-            } else {
-                saveDeploymentOrderProductDOMap.put(deploymentOrderProductDO.getDeploymentProductSkuId(), deploymentOrderProductDO);
+        if (CollectionUtil.isNotEmpty(deploymentOrderProductDOList)) {
+            for (DeploymentOrderProductDO deploymentOrderProductDO : deploymentOrderProductDOList) {
+                if (dbDeploymentOrderProductDOMap.get(deploymentOrderProductDO.getDeploymentProductSkuId()) != null) {
+                    updateDeploymentOrderProductDOMap.put(deploymentOrderProductDO.getDeploymentProductSkuId(), deploymentOrderProductDO);
+                    dbDeploymentOrderProductDOMap.remove(deploymentOrderProductDO.getDeploymentProductSkuId());
+                } else {
+                    saveDeploymentOrderProductDOMap.put(deploymentOrderProductDO.getDeploymentProductSkuId(), deploymentOrderProductDO);
+                }
             }
         }
 
@@ -163,12 +165,14 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         Map<Integer, DeploymentOrderMaterialDO> updateDeploymentOrderMaterialDOMap = new HashMap<>();
         List<DeploymentOrderMaterialDO> dbDeploymentOrderMaterialDOList = deploymentOrderMaterialMapper.findByDeploymentOrderNo(deploymentOrderNo);
         Map<Integer, DeploymentOrderMaterialDO> dbDeploymentOrderMaterialDOMap = ListUtil.listToMap(dbDeploymentOrderMaterialDOList, "deploymentMaterialId");
-        for (DeploymentOrderMaterialDO deploymentOrderMaterialDO : deploymentOrderMaterialDOList) {
-            if (dbDeploymentOrderMaterialDOMap.get(deploymentOrderMaterialDO.getDeploymentMaterialId()) != null) {
-                updateDeploymentOrderMaterialDOMap.put(deploymentOrderMaterialDO.getDeploymentMaterialId(), deploymentOrderMaterialDO);
-                dbDeploymentOrderMaterialDOMap.remove(deploymentOrderMaterialDO.getDeploymentMaterialId());
-            } else {
-                saveDeploymentOrderMaterialDOMap.put(deploymentOrderMaterialDO.getDeploymentMaterialId(), deploymentOrderMaterialDO);
+        if (CollectionUtil.isNotEmpty(deploymentOrderMaterialDOList)) {
+            for (DeploymentOrderMaterialDO deploymentOrderMaterialDO : deploymentOrderMaterialDOList) {
+                if (dbDeploymentOrderMaterialDOMap.get(deploymentOrderMaterialDO.getDeploymentMaterialId()) != null) {
+                    updateDeploymentOrderMaterialDOMap.put(deploymentOrderMaterialDO.getDeploymentMaterialId(), deploymentOrderMaterialDO);
+                    dbDeploymentOrderMaterialDOMap.remove(deploymentOrderMaterialDO.getDeploymentMaterialId());
+                } else {
+                    saveDeploymentOrderMaterialDOMap.put(deploymentOrderMaterialDO.getDeploymentMaterialId(), deploymentOrderMaterialDO);
+                }
             }
         }
 

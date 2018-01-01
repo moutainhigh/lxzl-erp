@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.user.impl.support;
 
+import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.SubCompanyType;
 import com.lxzl.erp.common.domain.user.pojo.Role;
@@ -43,13 +44,19 @@ public class UserSupport {
         return checkRoleListHaveHeaderCompany(userRoleList);
     }
 
-    /**
-     * 判断用户是否属于总公司
-     * @return
-     */
+
 
     public Integer getCurrentUserCompanyId(){
         User user = (User) httpSession.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        List<Role> userRoleList = userService.getUserById(user.getUserId()).getResult().getRoleList();
+        for(Role role : userRoleList){
+            return role.getSubCompanyId();
+        }
+        return null;
+    }
+
+    public Integer getCompanyIdByUser(Integer userId){
+        User user = CommonCache.userMap.get(userId);
         List<Role> userRoleList = userService.getUserById(user.getUserId()).getResult().getRoleList();
         for(Role role : userRoleList){
             return role.getSubCompanyId();

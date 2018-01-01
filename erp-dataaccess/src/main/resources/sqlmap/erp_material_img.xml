@@ -27,6 +27,11 @@
 		WHERE emi.id = #{id, jdbcType=INTEGER} AND emi.data_status = 1 
 	</select>
 
+	<select id="findByImgId" resultMap="MaterialImgDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_material_img emi
+		WHERE emi.id = #{imgId, jdbcType=INTEGER} AND emi.data_status = 1
+	</select>
+
 	<select id="findByMaterialIdAndType" resultMap="MaterialImgDO" parameterType="java.util.Map">
 		SELECT <include refid="column_List"/> FROM erp_material_img emi
 		WHERE emi.material_id = #{materialId, jdbcType=INTEGER} AND emi.data_status = 1

@@ -28,6 +28,16 @@ public class Customer extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+	private Integer owner;		//数据归属人，跟单员
+	private Integer unionUser;  //联合开发人
+
+	private String unionUserName; //联合业务员
+	private String ownerName; //业务员
+
+	private String unionAreaProvinceName;// 联合省名
+	private String unionAreaCityName; //联合城市名
+	private String unionAreaDistrictName; //联合地区名
+
 
 	@Valid
 	private CustomerPerson customerPerson;
@@ -156,5 +166,61 @@ public class Customer extends BasePO {
 
 	public void setCustomerAccount(CustomerAccount customerAccount) {
 		this.customerAccount = customerAccount;
+	}
+
+	public Integer getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Integer owner) {
+		this.owner = owner;
+	}
+
+	public Integer getUnionUser() {
+		return unionUser;
+	}
+
+	public void setUnionUser(Integer unionUser) {
+		this.unionUser = unionUser;
+	}
+
+	public String getUnionUserName() {
+		return unionUserName;
+	}
+
+	public void setUnionUserName(String unionUserName) {
+		this.unionUserName = unionUserName;
+	}
+
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+
+	public String getUnionAreaProvinceName() {
+		return unionAreaProvinceName;
+	}
+
+	public void setUnionAreaProvinceName(String unionAreaProvinceName) {
+		this.unionAreaProvinceName = unionAreaProvinceName;
+	}
+
+	public String getUnionAreaCityName() {
+		return unionAreaCityName;
+	}
+
+	public void setUnionAreaCityName(String unionAreaCityName) {
+		this.unionAreaCityName = unionAreaCityName;
+	}
+
+	public String getUnionAreaDistrictName() {
+		return unionAreaDistrictName;
+	}
+
+	public void setUnionAreaDistrictName(String unionAreaDistrictName) {
+		this.unionAreaDistrictName = unionAreaDistrictName;
 	}
 }

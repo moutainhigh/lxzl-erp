@@ -129,7 +129,7 @@ public class MaterialServiceImpl implements MaterialService {
     public ServiceResult<String, Integer> deleteImage(Integer imgId) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        MaterialImgDO dbRecord = materialImgMapper.findById(imgId);
+        MaterialImgDO dbRecord = materialImgMapper.findByImgId(imgId);
         if (dbRecord == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
@@ -282,7 +282,7 @@ public class MaterialServiceImpl implements MaterialService {
 
         if (!updateMaterialImgList.isEmpty()) {
             for (MaterialImg materialImg : updateMaterialImgList) {
-                MaterialImgDO dbMaterialImgDO = materialImgMapper.findById(materialImg.getMaterialImgId());
+                MaterialImgDO dbMaterialImgDO = materialImgMapper.findByImgId(materialImg.getMaterialImgId());
                 if(dbMaterialImgDO.getMaterialId() != null){
                     continue;
                 }
@@ -571,7 +571,7 @@ public class MaterialServiceImpl implements MaterialService {
         }
 
         List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findByMaterialTypeAndModelId(dbMaterialModelDO.getMaterialType(), dbMaterialModelDO.getId());
-        if (CollectionUtil.isEmpty(bulkMaterialDOList)) {
+        if (CollectionUtil.isNotEmpty(bulkMaterialDOList)) {
             result.setErrorCode(ErrorCode.RECORD_USED_CAN_NOT_DELETE);
             return result;
         }

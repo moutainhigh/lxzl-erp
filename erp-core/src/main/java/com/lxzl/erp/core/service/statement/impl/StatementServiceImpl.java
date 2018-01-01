@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
+import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -300,7 +301,25 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        result.setResult(ConverterUtil.convert(statementOrderDO, StatementOrder.class));
+        StatementOrder statementOrder = ConverterUtil.convert(statementOrderDO, StatementOrder.class);
+        if(statementOrder != null && CollectionUtil.isNotEmpty(statementOrder.getStatementOrderDetailList())){
+            for(StatementOrderDetail statementOrderDetail : statementOrder.getStatementOrderDetailList()){
+                if(OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())){
+                    OrderDO orderDO = orderMapper.findByOrderId(statementOrderDetail.getOrderId());
+                    statementOrderDetail.setOrderNo(orderDO.getOrderNo());
+                }
+                if(OrderType.ORDER_TYPE_RETURN.equals(statementOrderDetail.getOrderType())){
+                    ReturnOrderDO returnOrderDO = returnOrderMapper.findById(statementOrderDetail.getOrderId());
+                    statementOrderDetail.setOrderNo(returnOrderDO.getReturnOrderNo());
+                }
+                if(OrderType.ORDER_TYPE_CHANGE.equals(statementOrderDetail.getOrderType())){
+                    ChangeOrderDO changeOrderDO = changeOrderMapper.findById(statementOrderDetail.getOrderId());
+                    statementOrderDetail.setOrderNo(changeOrderDO.getChangeOrderNo());
+                }
+            }
+        }
+
+        result.setResult(statementOrder);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -447,7 +466,11 @@ public class StatementServiceImpl implements StatementService {
         // TODO 退货完成后要退还租金押金和设备押金   totalReturnRentDepositAmount,totalReturnDepositAmount
         if (BigDecimalUtil.compare(totalReturnRentDepositAmount, BigDecimal.ZERO) > 0
                 || BigDecimalUtil.compare(totalReturnDepositAmount, BigDecimal.ZERO) > 0) {
-            paymentService.returnDeposit(returnOrderDO.getCustomerNo(), totalReturnRentDepositAmount, totalReturnDepositAmount);
+           ServiceResult<String,Boolean> returnDepositResult = paymentService.returnDeposit(returnOrderDO.getCustomerNo(), totalReturnRentDepositAmount, totalReturnDepositAmount);
+            if (!ErrorCode.SUCCESS.equals(returnDepositResult.getErrorCode()) || !returnDepositResult.getResult()) {
+                result.setErrorCode(returnDepositResult.getErrorCode());
+                return result;
+            }
         }
 
         result.setErrorCode(ErrorCode.SUCCESS);

@@ -13,12 +13,21 @@ public class CustomerDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
+	private Integer owner;		//数据归属人，跟单员
+	private Integer unionUser;  //联合开发人
+
+
 	@Transient
 	private CustomerCompanyDO customerCompanyDO;
 	@Transient
 	private CustomerPersonDO customerPersonDO;
 
 	private CustomerRiskManagementDO customerRiskManagementDO;
+
+	@Transient
+	private String unionUserName; //联合业务员
+	@Transient
+	private String ownerName; //业务员
 
 	public Integer getId(){
 		return id;
@@ -98,5 +107,37 @@ public class CustomerDO  extends BaseDO {
 
 	public void setCustomerName(String customerName) {
 		this.customerName = customerName;
+	}
+
+	public Integer getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Integer owner) {
+		this.owner = owner;
+	}
+
+	public Integer getUnionUser() {
+		return unionUser;
+	}
+
+	public void setUnionUser(Integer unionUser) {
+		this.unionUser = unionUser;
+	}
+
+	public String getUnionUserName() {
+		return unionUserName;
+	}
+
+	public void setUnionUserName(String unionUserName) {
+		this.unionUserName = unionUserName;
+	}
+
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
 	}
 }

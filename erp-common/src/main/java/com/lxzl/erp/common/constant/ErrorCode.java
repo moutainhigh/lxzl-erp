@@ -669,7 +669,7 @@ public class ErrorCode {
         MAP.put(RETURN_ORDER_DAMAGE_COST_NOT_NULL, "损坏费用不能为空");
         MAP.put(RETURN_ORDER_DAMAGE_COST_ERROR, "损坏费用金额有误");
         MAP.put(ORDER_HAVE_NO_PAID, "订单未支付，不能操作");
-        MAP.put(ORDER_CAN_NOT_DELIVERY, "订单不能支付");
+        MAP.put(ORDER_CAN_NOT_DELIVERY, "订单不能发货");
         MAP.put(ORDER_PAY_MODE_ERROR, "您当前不支持这种支付方式。");
         MAP.put(CHANGE_COUNT_ERROR, "更换数量错误");
         MAP.put(CHANGE_ORDER_NO_NOT_NULL, "换货单编号不能为空");
