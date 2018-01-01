@@ -21,9 +21,6 @@
     <listener>
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
-    <listener>
-        <listener-class>com.lxzl.erp.web.listener.RedisInitDataListener</listener-class>
-    </listener>
 	<!-- filter -->
 	<filter>
 		<filter-name>WebContextFilter</filter-name>

@@ -31,16 +31,6 @@ public class RedisInitDataListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        UserService userService = WebApplicationContextUtils.getWebApplicationContext(servletContextEvent.getServletContext()).getBean(UserService.class);
-        RedisManager redisManager = WebApplicationContextUtils.getWebApplicationContext(servletContextEvent.getServletContext()).getBean(RedisManager.class);
-
-        UserQueryParam userQueryParam = new UserQueryParam();
-        ServiceResult<String, List<User>> getUserResult = userService.getUserListByParam(userQueryParam);
-        if (ErrorCode.SUCCESS.equals(getUserResult.getErrorCode())) {
-            List<User> userList = getUserResult.getResult();
-            Map<Integer, User> userMap = ListUtil.listToMap(userList, "userId");
-            redisManager.add(RedisKeyConstant.USER_KEY, userMap);
-        }
     }
 
     @Override
