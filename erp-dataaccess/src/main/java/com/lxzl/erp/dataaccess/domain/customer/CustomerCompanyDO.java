@@ -43,19 +43,16 @@ public class CustomerCompanyDO  extends BaseDO {
 	private String customerNo;  //客户编码
 	private Integer isLegalPersonApple;   //是否法人代表申请
 	private String legalPersonPhone;   //法人手机号
-	private String salesMan; //业务员
-	private String unionArea; //联合区域
-	private String unionSalesMan; //联合业务员
 	private Double operatingArea; //经营面积
 	private Integer unitInsuredNumber; //单位参保人数
 	private String affiliatedEnterprise; //关联企业
 
 	@Transient
-	private String provinceName;
-	@Transient
 	private String cityName;
 	@Transient
 	private String districtName;
+	@Transient
+	private String provinceName;
 
 	public Integer getId(){
 		return id;
@@ -327,30 +324,6 @@ public class CustomerCompanyDO  extends BaseDO {
 
 	public void setCompanyFoundTime(Date companyFoundTime) {
 		this.companyFoundTime = companyFoundTime;
-	}
-
-	public String getSalesMan() {
-		return salesMan;
-	}
-
-	public void setSalesMan(String salesMan) {
-		this.salesMan = salesMan;
-	}
-
-	public String getUnionArea() {
-		return unionArea;
-	}
-
-	public void setUnionArea(String unionArea) {
-		this.unionArea = unionArea;
-	}
-
-	public String getUnionSalesMan() {
-		return unionSalesMan;
-	}
-
-	public void setUnionSalesMan(String unionSalesMan) {
-		this.unionSalesMan = unionSalesMan;
 	}
 
 	public Double getOperatingArea() {

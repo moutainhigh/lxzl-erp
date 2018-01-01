@@ -39,7 +39,7 @@ public class CustomerController {
     @RequestMapping(value = "addCompany", method = RequestMethod.POST)
     public Result addCompany(@RequestBody @Validated(AddCustomerCompanyGroup.class) Customer customer, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = customerService.addCompany(customer);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        return resultGenerator.generate(serviceResult);
     }
     @RequestMapping(value = "addPerson", method = RequestMethod.POST)
     public Result addPerson(@RequestBody @Validated(AddCustomerPersonGroup.class) Customer customer, BindingResult validResult) {
