@@ -713,6 +713,10 @@ public class ProductServiceImpl implements ProductService {
 
         if (!updateProductImgList.isEmpty()) {
             for (ProductImg productImg : updateProductImgList) {
+                ProductImgDO dbProductImgDO = productImgMapper.findById(productImg.getProductImgId());
+                if(dbProductImgDO.getProductId() != null){
+                    continue;
+                }
                 ProductImgDO productImgDO = ProductImageConverter.convertProductImg(productImg);
                 productImgDO.setProductId(productId);
                 productImgDO.setImgType(type);
