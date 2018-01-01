@@ -105,7 +105,7 @@
     </div>
     <div class="panel-heading">
         <div class="row">
-            <ul class="nav panel-tabs-border panel-tabs">
+            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
                 <li class="active">
                     <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
                 </li>

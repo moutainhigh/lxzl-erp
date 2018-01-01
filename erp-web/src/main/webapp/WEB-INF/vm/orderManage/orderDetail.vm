@@ -164,7 +164,7 @@
                                             <th>商品ID</th>
                                             <th>图片</th>
                                             <th>商品名称</th>
-                                            <th>列表价格</th>
+##                                            <th>列表价格</th>
                                             <th>SKU</th>
                                         </tr>
                                         </thead>
@@ -176,8 +176,8 @@
                                             <td>
                                                 <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
                                             </td>
-                                            <td>{{productName}}</td>
-                                            <td class="br-r">{{listPriceFixed}}</td>
+                                            <td class="br-r">{{productName}}</td>
+##                                            <td class="br-r">{{listPriceFixed}}</td>
                                             <td class="pn">
                                                 <table class="table">
                                                     {{#chooseSkuList}}
@@ -196,9 +196,9 @@
                                                         <td>
                                                             租期：{{rentTimeLength}}
                                                         </td>
-                                                        <td>
-                                                            保险金：{{insuranceAmount}}
-                                                        </td>
+##                                                        <td>
+##                                                            保险金：{{insuranceAmount}}
+##                                                        </td>
                                                         <td>
                                                             支付方式：{{payModeValue}}
                                                         </td>
@@ -269,7 +269,7 @@
                                             <th>数量</th>
                                             <th>租赁类型</th>
                                             <th>租赁时长</th>
-                                            <th>保险金</th>
+##                                            <th>保险金</th>
                                             <th>支付方式</th>
                                             <th>操作</th>
                                         </tr>
@@ -300,9 +300,9 @@
                                             <td>
                                                 {{rentTimeLength}}
                                             </td>
-                                            <td>
-                                                {{insuranceAmount}}
-                                            </td>
+##                                            <td>
+##                                                {{insuranceAmount}}
+##                                            </td>
                                             <td>
                                                 {{payModeValue}}
                                             </td>
