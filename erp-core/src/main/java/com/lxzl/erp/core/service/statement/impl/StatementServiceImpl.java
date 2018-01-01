@@ -445,6 +445,10 @@ public class StatementServiceImpl implements StatementService {
         saveStatementOrder(addStatementOrderDetailDOList, buyerCustomerId, currentTime, loginUser.getUserId());
 
         // TODO 退货完成后要退还租金押金和设备押金   totalReturnRentDepositAmount,totalReturnDepositAmount
+        if (BigDecimalUtil.compare(totalReturnRentDepositAmount, BigDecimal.ZERO) > 0
+                || BigDecimalUtil.compare(totalReturnDepositAmount, BigDecimal.ZERO) > 0) {
+            paymentService.returnDeposit(returnOrderDO.getCustomerNo(), totalReturnRentDepositAmount, totalReturnDepositAmount);
+        }
 
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -701,9 +705,9 @@ public class StatementServiceImpl implements StatementService {
         Calendar statementEndTimeCalendar = Calendar.getInstance();
         statementEndTimeCalendar.setTime(statementEndTime);
         int statementEndMonthDays = DateUtil.getActualMaximum(statementEndTime);
-        if(statementDays > statementEndMonthDays){
+        if (statementDays > statementEndMonthDays) {
             statementEndTimeCalendar.set(Calendar.DAY_OF_MONTH, statementEndMonthDays);
-        }else{
+        } else {
             statementEndTimeCalendar.set(Calendar.DAY_OF_MONTH, statementDays);
         }
 

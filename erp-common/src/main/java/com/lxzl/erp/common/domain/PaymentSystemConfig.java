@@ -12,6 +12,7 @@ public class PaymentSystemConfig {
     public static String paymentSystemManualChargeURL;
     public static String paymentSystemManualDeductURL;
     public static String paymentSystemBalancePayURL;
+    public static String paymentSystemReturnDepositURL;
     public static String paymentSystemAppId;
     public static String paymentSystemAppSecret;
 
@@ -37,5 +38,9 @@ public class PaymentSystemConfig {
 
     public void setPaymentSystemManualDeductURL(String paymentSystemManualDeductURL) {
         PaymentSystemConfig.paymentSystemManualDeductURL = paymentSystemManualDeductURL;
+    }
+
+    public void setPaymentSystemReturnDepositURL(String paymentSystemReturnDepositURL) {
+        PaymentSystemConfig.paymentSystemReturnDepositURL = paymentSystemReturnDepositURL;
     }
 }
