@@ -34,17 +34,9 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setCustomerOrigin(1);
         customerCompany.setCompanyName("测试公司名");
         customerCompany.setConnectRealName("测试紧急联系人");
-        customerCompany.setConnectPhone("18566324578");
+        customerCompany.setConnectPhone("18566324590");
         customerCompany.setAddress("企业信息详细地址测试");
         customerCompany.setProductPurpose("测试设备用途");
-//        customerCompany.setSalesMan("测试业务员2");
-//        customerCompany.setLegalPerson("测试法人");
-//        customerCompany.setLegalPersonNo("422827199009080362");
-//        customerCompany.setLegalPersonPhone("18574125666");
-//        customerCompany.setAgentPersonName("测试经办人");
-//        customerCompany.setAgentPersonPhone("18569874123");
-//        customerCompany.setAgentPersonNo("422827199109070052");
-//        customerCompany.setConsignAddress("测试收货地址");
         customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
 
         Image image1 = new Image();
@@ -95,7 +87,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC10002017123101115");
+        customer.setCustomerNo("LXCC10002018010100002");
         CustomerCompany customerCompany = new CustomerCompany();
 
         //首次所需设备
@@ -113,30 +105,20 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setConnectPhone("18566324578");
         customerCompany.setAddress("企业信息详细地址测试");
         customerCompany.setProductPurpose("测试设备用途");
-//        customerCompany.setLegalPerson("测试法人");
-//        customerCompany.setLegalPersonNo("422827199009080362");
-//        customerCompany.setLegalPersonPhone("18574125639");
-//        customerCompany.setAgentPersonName("测试经办人");
-//        customerCompany.setAgentPersonPhone("18569874123");
-//        customerCompany.setAgentPersonNo("422827199109070052");
-//        customerCompany.setConsignAddress("测试收货地址");
         //加入首次租赁设备
         customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
 
-        //
+
         Image image1 = new Image();
-        image1.setImgId(18);
-//        image1.setRefId("400041");
+        image1.setImgId(28);
         customerCompany.setBusinessLicensePictureImage(image1);
 
         Image image2 = new Image();
-        image2.setImgId(16);
-//        image2.setRefId("400043");
+        image2.setImgId(26);
         customerCompany.setLegalPersonNoPictureFrontImage(image2);
 
         Image image3 = new Image();
-        image3.setImgId(17);
-//        image3.setRefId("400041");
+        image3.setImgId(27);
         customerCompany.setLegalPersonNoPictureBackImage(image3);
         customer.setCustomerCompany(customerCompany);
 
@@ -144,13 +126,10 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         List<Image> managerPlaceRentContractImageList = new ArrayList<>();
         Image image4= new Image();
         image4.setImgId(19);
-//        image4.setRefId("400041");
         Image image5= new Image();
         image5.setImgId(20);
-//        image5.setRefId("400041");
         Image image6= new Image();
         image6.setImgId(21);
-//        image6.setRefId("400041");
         managerPlaceRentContractImageList.add(image4);
         managerPlaceRentContractImageList.add(image5);
         managerPlaceRentContractImageList.add(image6);
@@ -195,14 +174,14 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC10002017123101115");
+        customer.setCustomerNo("LXCC10002018010100002");
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }
 
     @Test
     public void detailCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCD10002017123101114");
+        customer.setCustomerNo("LXCD10002018010100003");
         TestResult result = getJsonTestResult("/customer/detailCustomerPerson", customer);
     }
 
