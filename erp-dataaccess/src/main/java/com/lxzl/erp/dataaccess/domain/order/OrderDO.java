@@ -44,6 +44,7 @@ public class OrderDO extends BaseDO {
     private Date confirmDeliveryTime;
     private Date expectReturnTime;
     private Date actualReturnTime;
+    private Double taxRate;
     private String buyerRemark;
     private Integer dataStatus;
     private String remark;
@@ -421,5 +422,13 @@ public class OrderDO extends BaseDO {
 
     public void setTotalMaterialRentDepositAmount(BigDecimal totalMaterialRentDepositAmount) {
         this.totalMaterialRentDepositAmount = totalMaterialRentDepositAmount;
+    }
+
+    public Double getTaxRate() {
+        return taxRate;
+    }
+
+    public void setTaxRate(Double taxRate) {
+        this.taxRate = taxRate;
     }
 }

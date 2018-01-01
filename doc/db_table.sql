@@ -1017,6 +1017,7 @@ CREATE TABLE `erp_order` (
   `confirm_delivery_time` datetime DEFAULT NULL COMMENT '确认收货时间',
   `expect_return_time` datetime DEFAULT NULL COMMENT '预计归还时间',
   `actual_return_time` datetime DEFAULT NULL COMMENT '实际归还时间，最后一件设备归还的时间',
+  `tax_rate` double NOT NULL DEFAULT 0 COMMENT '税率',
   `buyer_remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '购买人备注',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
