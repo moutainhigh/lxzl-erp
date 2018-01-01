@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.user.impl;
 
+import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.UserType;
@@ -20,6 +21,7 @@ import com.lxzl.se.common.util.secret.MD5Util;
 import com.lxzl.se.core.service.impl.BaseServiceImpl;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -116,6 +118,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         userDO.setCreateTime(currentTime);
         userDO.setUpdateTime(currentTime);
         userMapper.save(userDO);
+        CommonCache.userMap.put(userDO.getId(),ConverterUtil.convert(userDO,User.class));
         saveRoleMap(userDO, finalRoleIdMap, currentTime, loginUser);
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -206,6 +209,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         userDO.setUpdateUser(loginUser.getUserId().toString());
         userDO.setUpdateTime(currentTime);
         userMapper.update(userDO);
+        CommonCache.userMap.put(userDO.getId(),ConverterUtil.convert(userDO,User.class));
 
         for (Integer roleId : modifyRoleIdMap.keySet()) {
             UserRoleDO userRoleDO = null;
