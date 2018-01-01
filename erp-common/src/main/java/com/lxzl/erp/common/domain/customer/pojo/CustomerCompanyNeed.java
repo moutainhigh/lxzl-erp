@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.customer.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
 
 import javax.validation.constraints.NotNull;
@@ -26,7 +27,8 @@ public class CustomerCompanyNeed {
     @NotNull(message = ErrorCode.CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
     private Integer rentLength;  //租赁期限
 
-    private String skuName;
+    private Product product; //商品
+
 
     public Integer getSkuId() {
         return skuId;
@@ -68,11 +70,11 @@ public class CustomerCompanyNeed {
         this.rentLength = rentLength;
     }
 
-    public String getSkuName() {
-        return skuName;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setSkuName(String skuName) {
-        this.skuName = skuName;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

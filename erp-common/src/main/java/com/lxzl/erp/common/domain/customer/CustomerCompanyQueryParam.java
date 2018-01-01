@@ -22,9 +22,6 @@ public class CustomerCompanyQueryParam extends BasePageParam {
     private String agentPersonPhone;  //经办人电话'
     private String agentPersonNo;  //经办人身份证号码'
     private String unifiedCreditCode;  //统一信用代码'
-    private String salesMan; //业务员
-    private String unionArea; //联合区域
-    private String unionSalesMan; //联合业务员
     private String affiliatedEnterprise; //关联企业
 
 
@@ -171,30 +168,6 @@ public class CustomerCompanyQueryParam extends BasePageParam {
 
     public void setUnifiedCreditCode(String unifiedCreditCode) {
         this.unifiedCreditCode = unifiedCreditCode;
-    }
-
-    public String getSalesMan() {
-        return salesMan;
-    }
-
-    public void setSalesMan(String salesMan) {
-        this.salesMan = salesMan;
-    }
-
-    public String getUnionArea() {
-        return unionArea;
-    }
-
-    public void setUnionArea(String unionArea) {
-        this.unionArea = unionArea;
-    }
-
-    public String getUnionSalesMan() {
-        return unionSalesMan;
-    }
-
-    public void setUnionSalesMan(String unionSalesMan) {
-        this.unionSalesMan = unionSalesMan;
     }
 
     public String getAffiliatedEnterprise() {

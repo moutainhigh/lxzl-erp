@@ -81,7 +81,7 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
-        orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime,orderDO.getBuyerCustomerId()));
+        orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime, orderDO.getBuyerCustomerId()));
         orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
         orderDO.setOrderSellerId(loginUser.getUserId());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
@@ -96,7 +96,7 @@ public class OrderServiceImpl implements OrderService {
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
         Order saveOrder = queryOrderByNo(orderDO.getOrderNo()).getResult();
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(),orderDO.getOrderStatus(),FastJsonUtil.toJSONString(saveOrder),currentTime,loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), FastJsonUtil.toJSONString(saveOrder), currentTime, loginUser.getUserId());
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
@@ -216,7 +216,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Order saveOrder = queryOrderByNo(orderDO.getOrderNo()).getResult();
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(),orderDO.getOrderStatus(),FastJsonUtil.toJSONString(saveOrder),currentTime,loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), FastJsonUtil.toJSONString(saveOrder), currentTime, loginUser.getUserId());
         result.setResult(orderNo);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -625,7 +625,7 @@ public class OrderServiceImpl implements OrderService {
 
             // 记录订单时间轴
             Order saveOrder = queryOrderByNo(orderDO.getOrderNo()).getResult();
-            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(),orderDO.getOrderStatus(),FastJsonUtil.toJSONString(saveOrder),currentTime,loginUser.getUserId());
+            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), FastJsonUtil.toJSONString(saveOrder), currentTime, loginUser.getUserId());
         } catch (Exception e) {
             logger.error("审批订单通知失败： {}", businessNo);
             return false;
@@ -697,7 +697,7 @@ public class OrderServiceImpl implements OrderService {
         customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), orderDO.getTotalCreditDepositAmount());
         // 记录订单时间轴
         Order saveOrder = queryOrderByNo(orderDO.getOrderNo()).getResult();
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(),orderDO.getOrderStatus(),FastJsonUtil.toJSONString(saveOrder),currentTime,loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), FastJsonUtil.toJSONString(saveOrder), currentTime, loginUser.getUserId());
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
@@ -773,8 +773,27 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
+        Integer payType = null;
+        if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
+            for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderProductDO.getPayMode())) {
+                    payType = OrderPayMode.PAY_MODE_PAY_BEFORE;
+                    break;
+                }
+            }
+        }
+        if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList()) && !OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payType)) {
+            for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
+                if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderMaterialDO.getPayMode())) {
+                    payType = OrderPayMode.PAY_MODE_PAY_BEFORE;
+                    break;
+                }
+            }
+        }
 
-        if (!PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())
+
+        if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payType) &&
+                !PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())
                 && !PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus())) {
             result.setErrorCode(ErrorCode.ORDER_HAVE_NO_PAID);
             return result;
@@ -809,7 +828,7 @@ public class OrderServiceImpl implements OrderService {
 
         // 记录订单时间轴
         Order saveOrder = queryOrderByNo(orderDO.getOrderNo()).getResult();
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(),orderDO.getOrderStatus(),FastJsonUtil.toJSONString(saveOrder),currentTime,loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), FastJsonUtil.toJSONString(saveOrder), currentTime, loginUser.getUserId());
 
         result.setResult(param.getOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -1097,7 +1116,7 @@ public class OrderServiceImpl implements OrderService {
 
         // 记录订单时间轴
         Order saveOrder = queryOrderByNo(dbRecordOrder.getOrderNo()).getResult();
-        orderTimeAxisSupport.addOrderTimeAxis(dbRecordOrder.getId(),dbRecordOrder.getOrderStatus(),FastJsonUtil.toJSONString(saveOrder),currentTime,loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(dbRecordOrder.getId(), dbRecordOrder.getOrderStatus(), FastJsonUtil.toJSONString(saveOrder), currentTime, loginUser.getUserId());
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order.getOrderNo());
@@ -1200,7 +1219,7 @@ public class OrderServiceImpl implements OrderService {
 
         // 记录订单时间轴
         Order saveOrder = queryOrderByNo(orderDO.getOrderNo()).getResult();
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(),orderDO.getOrderStatus(),FastJsonUtil.toJSONString(saveOrder),currentTime,loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), FastJsonUtil.toJSONString(saveOrder), currentTime, loginUser.getUserId());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
         return result;
@@ -1301,7 +1320,7 @@ public class OrderServiceImpl implements OrderService {
         Map<Integer, OrderMaterialDO> updateOrderMaterialDOMap = new HashMap<>();
         List<OrderMaterialDO> dbOrderMaterialDOList = orderMaterialMapper.findByOrderId(orderId);
         Map<Integer, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(dbOrderMaterialDOList, "id");
-        if(CollectionUtil.isNotEmpty(orderMaterialDOList)){
+        if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
             for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
                 if (dbOrderMaterialDOMap.get(orderMaterialDO.getId()) != null) {
                     updateOrderMaterialDOMap.put(orderMaterialDO.getMaterialId(), orderMaterialDO);

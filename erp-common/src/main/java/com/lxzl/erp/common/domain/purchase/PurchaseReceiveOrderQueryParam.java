@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
 import java.util.Date;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PurchaseReceiveOrderQueryParam extends BasePageParam {
@@ -25,6 +26,9 @@ public class PurchaseReceiveOrderQueryParam extends BasePageParam {
     private Date createEndTime;//创建收货单结束时间
     private Date confirmStartTime;//确认签单起始时间
     private Date confirmEndTime;//确认签单结束时间
+
+    private List<Integer> passiveUserIdList;//控制数据权限
+    private List<Integer> warehouseIdList;//控制数据权限
 
     public Integer getPurchaseOrderId() {
         return purchaseOrderId;
@@ -66,11 +70,11 @@ public class PurchaseReceiveOrderQueryParam extends BasePageParam {
         this.purchaseDeliveryNo = purchaseDeliveryNo;
     }
 
-    public String getpurchaseReceiveNo() {
+    public String getPurchaseReceiveNo() {
         return purchaseReceiveNo;
     }
 
-    public void setpurchaseReceiveNo(String purchaseReceiveNo) {
+    public void setPurchaseReceiveNo(String purchaseReceiveNo) {
         this.purchaseReceiveNo = purchaseReceiveNo;
     }
 
@@ -161,4 +165,21 @@ public class PurchaseReceiveOrderQueryParam extends BasePageParam {
     public void setConfirmEndTime(Date confirmEndTime) {
         this.confirmEndTime = confirmEndTime;
     }
+
+    public List<Integer> getPassiveUserIdList() {
+        return passiveUserIdList;
+    }
+
+    public void setPassiveUserIdList(List<Integer> passiveUserIdList) {
+        this.passiveUserIdList = passiveUserIdList;
+    }
+
+    public List<Integer> getWarehouseIdList() {
+        return warehouseIdList;
+    }
+
+    public void setWarehouseIdList(List<Integer> warehouseIdList) {
+        this.warehouseIdList = warehouseIdList;
+    }
+
 }

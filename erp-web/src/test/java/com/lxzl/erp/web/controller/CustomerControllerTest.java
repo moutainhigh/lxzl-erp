@@ -40,7 +40,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setProductPurpose("测试设备用途");
         customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
 
-        Image image1 = new Image();
+/*        Image image1 = new Image();
 //        image1.setImgId(18);
 //        customerCompany.setBusinessLicensePictureImage(image1);
 
@@ -63,7 +63,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         managerPlaceRentContractImageList.add(image4);
         managerPlaceRentContractImageList.add(image5);
         managerPlaceRentContractImageList.add(image6);
-        customerCompany.setManagerPlaceRentContractImageList(managerPlaceRentContractImageList);
+        customerCompany.setManagerPlaceRentContractImageList(managerPlaceRentContractImageList);*/
 
         customer.setCustomerCompany(customerCompany);
         TestResult result = getJsonTestResult("/customer/addCompany", customer);
@@ -88,7 +88,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC10002018010100002");
+        customer.setCustomerNo("LXCC10002018010100005");
         CustomerCompany customerCompany = new CustomerCompany();
 
         //首次所需设备
@@ -177,14 +177,14 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC10002018010100005");
+        customer.setCustomerNo("LXCC10002018010100009");
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }
 
     @Test
     public void detailCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCD10002017123000030");
+        customer.setCustomerNo("LXCD10002018010100007");
         TestResult result = getJsonTestResult("/customer/detailCustomerPerson", customer);
     }
 

@@ -29,9 +29,11 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
 
     @Autowired
     private ProductSkuMapper productSkuMapper;
+
     /**
      * 测试自动过总公司的采购单
      * 条件：1.没有发票，2.收货库房为分公司，3.整机四大件
+     *
      * @throws Exception
      */
     @Test
@@ -48,37 +50,39 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         List<PurchaseOrderProduct> purchaseOrderProductList = new ArrayList<>();//采购单商品项列表
 //        purchaseOrderProductList.add(createPurchaseOrderProduct(65,100,new BigDecimal(5000)));
 //        purchaseOrderProductList.add(createPurchaseOrderProduct(64,100,new BigDecimal(2200)));
-        purchaseOrderProductList.add(createPurchaseOrderProduct(63,100,new BigDecimal(2200)));
+        purchaseOrderProductList.add(createPurchaseOrderProduct(63, 100, new BigDecimal(2200)));
         purchaseOrder.setPurchaseOrderProductList(purchaseOrderProductList);
 
         List<PurchaseOrderMaterial> purchaseOrderMaterialList = new ArrayList<>();//小配件采购单物料项列表不能为空
 //        purchaseOrderMaterialList.add(createPurchaseOrderMaterial("M201711201500267591516",100,new BigDecimal(875)));
         purchaseOrder.setPurchaseOrderMaterialList(purchaseOrderMaterialList);
 
-        TestResult testResult = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/add", purchaseOrder);
     }
+
     @Test
     public void addPurchaseOrder3() throws Exception {
 
-        PurchaseOrder purchaseOrder = JSON.parseObject("{\"productSupplierId\":\"1\",\"warehouseNo\":\"W201708081508\",\"isInvoice\":\"1\",\"isNew\":\"1\",\"purchaseType\":\"1\",\"purchaseOrderProductList\":[{\"productId\":\"2000032\",\"productSkuId\":\"87\",\"productAmount\":\"100\",\"productCount\":\"10\",\"productMaterialList\":[{\"materialNo\":\"M201711201356145971009\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291808329011520\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711201457288791418\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711201500267591516\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291912439731417\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291753428101534\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291807447341672\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711171838059981293\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291744581931681\",\"materialCount\":\"1\"}]}]}",PurchaseOrder.class);
-        TestResult testResult = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
+        PurchaseOrder purchaseOrder = JSON.parseObject("{\"productSupplierId\":\"1\",\"warehouseNo\":\"W201708081508\",\"isInvoice\":\"1\",\"isNew\":\"1\",\"purchaseType\":\"1\",\"purchaseOrderProductList\":[{\"productId\":\"2000032\",\"productSkuId\":\"87\",\"productAmount\":\"100\",\"productCount\":\"10\",\"productMaterialList\":[{\"materialNo\":\"M201711201356145971009\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291808329011520\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711201457288791418\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711201500267591516\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291912439731417\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291753428101534\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291807447341672\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711171838059981293\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291744581931681\",\"materialCount\":\"1\"}]}]}", PurchaseOrder.class);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/add", purchaseOrder);
     }
 
-    private PurchaseOrderMaterial createPurchaseOrderMaterial(String materialNo,Integer materialCount,BigDecimal materialAmount){
+    private PurchaseOrderMaterial createPurchaseOrderMaterial(String materialNo, Integer materialCount, BigDecimal materialAmount) {
         PurchaseOrderMaterial purchaseOrderMaterial = new PurchaseOrderMaterial();
         purchaseOrderMaterial.setMaterialNo(materialNo);
         purchaseOrderMaterial.setMaterialCount(materialCount);
         purchaseOrderMaterial.setMaterialAmount(materialAmount);
         return purchaseOrderMaterial;
     }
-    private PurchaseOrderProduct createPurchaseOrderProduct(Integer skuId , Integer productSkuCount , BigDecimal productSkuAmount){
+
+    private PurchaseOrderProduct createPurchaseOrderProduct(Integer skuId, Integer productSkuCount, BigDecimal productSkuAmount) {
         ProductSkuDO productSkuDO = productSkuMapper.findById(skuId);
         List<ProductMaterialDO> productMaterialDOList = productSkuDO.getProductMaterialDOList();
 
         List<ProductMaterial> productMaterialList = new ArrayList<ProductMaterial>();
-        for(ProductMaterialDO productMaterialDO : productMaterialDOList){
+        for (ProductMaterialDO productMaterialDO : productMaterialDOList) {
             ProductMaterial productMaterial1 = new ProductMaterial();
-            BeanUtils.copyProperties(productMaterialDO,productMaterial1);
+            BeanUtils.copyProperties(productMaterialDO, productMaterial1);
             productMaterial1.setProductMaterialId(productMaterialDO.getId());
             productMaterialList.add(productMaterial1);
         }
@@ -90,9 +94,11 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrderProduct.setProductMaterialList(productMaterialList);
         return purchaseOrderProduct;
     }
+
     /**
      * 测试小配件不过总公司
      * 条件：1.没有发票，2.收货库房为分公司，3.小配件
+     *
      * @throws Exception
      */
     @Test
@@ -106,11 +112,12 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrder.setProductSupplierId(1);//商品供应商ID不能为空
 
         List<PurchaseOrderMaterial> purchaseOrderMaterialList = new ArrayList<>();//小配件采购单物料项列表不能为空
-        purchaseOrderMaterialList.add(createPurchaseOrderMaterial("M201711171838059981293",3,new BigDecimal(42)));
+        purchaseOrderMaterialList.add(createPurchaseOrderMaterial("M201711171838059981293", 3, new BigDecimal(42)));
 
         purchaseOrder.setPurchaseOrderMaterialList(purchaseOrderMaterialList);
-        TestResult testResult = getJsonTestResult("/purchaseOrder/add",purchaseOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/add", purchaseOrder);
     }
+
     @Test
     public void updatePurchaseOrder() throws Exception {
 
@@ -148,8 +155,9 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrderProductList.add(purchaseOrderProduct2);
 
         purchaseOrder.setPurchaseOrderProductList(purchaseOrderProductList);
-        TestResult testResult = getJsonTestResult("/purchaseOrder/update",purchaseOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/update", purchaseOrder);
     }
+
     @Test
     public void updatePurchaseOrder2() throws Exception {
 
@@ -442,8 +450,8 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
                 "\t\t\"realMaterialCount\": \"20\",\n" +
                 "\t\t\"remark\": \"\"\n" +
                 "\t}]\n" +
-                "}",PurchaseOrder.class);
-        TestResult testResult = getJsonTestResult("/purchaseOrder/update",purchaseOrder);
+                "}", PurchaseOrder.class);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/update", purchaseOrder);
     }
 
 
@@ -453,14 +461,16 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseOrderCommitParam.setPurchaseNo("PO201712161659351135000061140");
         purchaseOrderCommitParam.setVerifyUserId(500002);
         purchaseOrderCommitParam.setRemark("给我好好审");
-        TestResult testResult = getJsonTestResult("/purchaseOrder/commit",purchaseOrderCommitParam);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/commit", purchaseOrderCommitParam);
     }
+
     @Test
     public void delete() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
 //        purchaseOrder.setPurchaseNo("PO201711181416106215000051764");
-        TestResult testResult = getJsonTestResult("/purchaseOrder/delete",purchaseOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/delete", purchaseOrder);
     }
+
     @Test
     public void page() throws Exception {
         PurchaseOrderQueryParam purchaseOrderQueryParam = new PurchaseOrderQueryParam();
@@ -474,37 +484,39 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
 //        purchaseOrderQueryParam.setCreateEndTime(new Date());
 //        purchaseOrderQueryParam.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_WAIT_COMMIT);
 //        purchaseOrderQueryParam.setCommitStatus(CommonConstant.COMMON_CONSTANT_YES);
-        TestResult testResult = getJsonTestResult("/purchaseOrder/page",purchaseOrderQueryParam);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/page", purchaseOrderQueryParam);
     }
+
     @Test
     public void queryPurchaseOrderByNo() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setPurchaseNo("PO201712261029363455000061169");
-        TestResult testResult = getJsonTestResult("/purchaseOrder/queryPurchaseOrderByNo",purchaseOrder);
+        purchaseOrder.setPurchaseNo("PO201712161803102965000011585");
+        TestResult testResult = getJsonTestResult("/purchaseOrder/queryPurchaseOrderByNo", purchaseOrder);
     }
+
     @Test
-    public void receiveVerifyTestResult(){
-        boolean flag = purchaseOrderService.receiveVerifyResult(true,"");
+    public void receiveVerifyTestResult() {
+        boolean flag = purchaseOrderService.receiveVerifyResult(true, "");
     }
 
     @Test
     public void pagePurchaseDelivery() throws Exception {
         PurchaseDeliveryOrderQueryParam purchaseOrderDeliveryQueryParam = new PurchaseDeliveryOrderQueryParam();
-        purchaseOrderDeliveryQueryParam.setPurchaseNo("PO201711181544591335000051741");
+//        purchaseOrderDeliveryQueryParam.setPurchaseNo("PO201711181544591335000051741");
 //        purchaseOrderDeliveryQueryParam.setWarehouseId(4000001);
 //        purchaseOrderDeliveryQueryParam.setIsInvoice(1);
 //        purchaseOrderDeliveryQueryParam.setIsNew(1);
 //        purchaseOrderDeliveryQueryParam.setCreateEndTime(new Date());
 //        purchaseOrderDeliveryQueryParam.setCreateStartTime(new Date());
 //        purchaseOrderDeliveryQueryParam.setPurchaseDeliveryOrderStatus(0);
-        TestResult testResult = getJsonTestResult("/purchaseOrder/pagePurchaseDelivery",purchaseOrderDeliveryQueryParam);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/pagePurchaseDelivery", purchaseOrderDeliveryQueryParam);
     }
 
     @Test
     public void queryPurchaseDeliveryOrderByNo() throws Exception {
         PurchaseDeliveryOrder purchaseDeliveryOrder = new PurchaseDeliveryOrder();
         purchaseDeliveryOrder.setPurchaseDeliveryNo("PD2017111816030427860000471733");
-        TestResult testResult = getJsonTestResult("/purchaseOrder/queryPurchaseDeliveryOrderByNo",purchaseDeliveryOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/queryPurchaseDeliveryOrderByNo", purchaseDeliveryOrder);
     }
 
     @Test
@@ -541,8 +553,8 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
 //        purchaseReceiveOrder.setPurchaseReceiveOrderProductList(purchaseOrderProductList);
         purchaseReceiveOrder.setPurchaseReceiveOrderMaterialList(purchaseReceiveOrderMaterialList);
 
-        TestResult testResult = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder",purchaseReceiveOrder);
-     }
+        TestResult testResult = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder", purchaseReceiveOrder);
+    }
 
     @Test
     public void updatePurchaseReceiveOrder1() throws Exception {
@@ -835,15 +847,15 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
                 "\t\t\"realMaterialCount\": \"20\",\n" +
                 "\t\t\"remark\": \"\"\n" +
                 "\t}]\n" +
-                "}",PurchaseReceiveOrder.class);
-        TestResult testResult = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder",purchaseReceiveOrder);
+                "}", PurchaseReceiveOrder.class);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder", purchaseReceiveOrder);
     }
 
     @Test
     public void confirmPurchaseReceiveOrder() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
         purchaseReceiveOrder.setPurchaseReceiveNo("LXPR0755201712300062");
-        TestResult testResult = getJsonTestResult("/purchaseOrder/confirmPurchaseReceiveOrder",purchaseReceiveOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/confirmPurchaseReceiveOrder", purchaseReceiveOrder);
     }
 
     @Test
@@ -873,39 +885,44 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
 //        purchaseReceiveOrderQueryParam.setCreateEndTime(createEndTime.getTime());//创建收货单结束时间
 //        purchaseReceiveOrderQueryParam.setConfirmStartTime(confirmStartTime.getTime());//确认签单起始时间
 //        purchaseReceiveOrderQueryParam.setConfirmEndTime(confirmEndTime.getTime());//确认签单结束时间
-        TestResult testResult = getJsonTestResult("/purchaseOrder/pagePurchaseReceive",purchaseReceiveOrderQueryParam);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/pagePurchaseReceive", purchaseReceiveOrderQueryParam);
     }
 
     @Test
     public void queryPurchaseReceiveOrderByNo() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
         purchaseReceiveOrder.setPurchaseReceiveNo("LXPR1000201801010001");
-        TestResult testResult = getJsonTestResult("/purchaseOrder/queryPurchaseReceiveOrderByNo",purchaseReceiveOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/queryPurchaseReceiveOrderByNo", purchaseReceiveOrder);
     }
+
     @Test
     public void endPurchaseOrder() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setPurchaseNo("PO201712221725210305000011528");
-        TestResult testResult = getJsonTestResult("/purchaseOrder/endPurchaseOrder",purchaseOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/endPurchaseOrder", purchaseOrder);
     }
+
     @Test
     public void continuePurchaseOrder() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setPurchaseNo("PO201711201619009825000051652");
-        TestResult testResult = getJsonTestResult("/purchaseOrder/continuePurchaseOrder",purchaseOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/continuePurchaseOrder", purchaseOrder);
     }
+
     @Test
     public void pageReceiveOrderProductEquipment() throws Exception {
         PurchaseReceiveOrderProductEquipmentPageParam purchaseReceiveOrderProductEquipmentPageParam = new PurchaseReceiveOrderProductEquipmentPageParam();
         purchaseReceiveOrderProductEquipmentPageParam.setPurchaseReceiveOrderProductId(212);
-        TestResult testResult = getJsonTestResult("/purchaseOrder/pageReceiveOrderProductEquipment",purchaseReceiveOrderProductEquipmentPageParam);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/pageReceiveOrderProductEquipment", purchaseReceiveOrderProductEquipmentPageParam);
     }
+
     @Test
     public void pageReceiveOrderMaterialBulk() throws Exception {
         PurchaseReceiveOrderMaterialBulkPageParam purchaseReceiveOrderMaterialBulkPageParam = new PurchaseReceiveOrderMaterialBulkPageParam();
         purchaseReceiveOrderMaterialBulkPageParam.setPurchaseReceiveOrderMaterialId(134);
-        TestResult testResult = getJsonTestResult("/purchaseOrder/pageReceiveOrderMaterialBulk",purchaseReceiveOrderMaterialBulkPageParam);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/pageReceiveOrderMaterialBulk", purchaseReceiveOrderMaterialBulkPageParam);
     }
+
     @Test
     public void updateReceiveEquipmentRemark() throws Exception {
         UpdateReceiveEquipmentRemarkParam updateReceiveEquipmentRemarkParam = new UpdateReceiveEquipmentRemarkParam();
@@ -916,6 +933,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         updateReceiveEquipmentRemarkParam.setPurchaseReceiveOrderNo("PR2017122613482675460001641534");
         TestResult testResult = getJsonTestResult("/purchaseOrder/updateReceiveEquipmentRemark", updateReceiveEquipmentRemarkParam);
     }
+
     @Test
     public void updateReceiveMaterialRemark() throws Exception {
         UpdateReceiveMaterialRemarkParam updateReceiveMaterialRemarkParam = new UpdateReceiveMaterialRemarkParam();
@@ -929,17 +947,19 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         updateReceiveMaterialRemarkParam.setPurchaseReceiveOrderMaterialList(purchaseReceiveOrderMaterialList);
         TestResult testResult = getJsonTestResult("/purchaseOrder/updateReceiveMaterialRemark", updateReceiveMaterialRemarkParam);
     }
+
     @Test
     public void commitPurchaseReceiveOrder() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
         purchaseReceiveOrder.setPurchaseReceiveNo("PR2017122613482675460001641534");
-        TestResult testResult = getJsonTestResult("/purchaseOrder/commitPurchaseReceiveOrder",purchaseReceiveOrder);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/commitPurchaseReceiveOrder", purchaseReceiveOrder);
     }
+
     @Test
     public void getPurchaseReceiveMaterialPriceList() throws Exception {
         PurchaseReceiveOrderMaterial purchaseReceiveOrderMaterial = new PurchaseReceiveOrderMaterial();
-        purchaseReceiveOrderMaterial.setPurchaseReceiveOrderMaterialId(137);
-        TestResult testResult = getJsonTestResult("/purchaseOrder/getPurchaseReceiveMaterialPriceList",purchaseReceiveOrderMaterial);
+        purchaseReceiveOrderMaterial.setPurchaseReceiveOrderMaterialId(1);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/getPurchaseReceiveMaterialPriceList", purchaseReceiveOrderMaterial);
     }
 
     @Test
@@ -957,8 +977,9 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         purchaseReceiveOrderMaterialPrice1.setPrice(new BigDecimal(100));
         purchaseReceiveOrderMaterialPriceList.add(purchaseReceiveOrderMaterialPrice1);
         updatePurchaseReceiveMaterialPriceParam.setPurchaseReceiveOrderMaterialPriceList(purchaseReceiveOrderMaterialPriceList);
-        TestResult testResult = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveMaterialPrice",updatePurchaseReceiveMaterialPriceParam);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveMaterialPrice", updatePurchaseReceiveMaterialPriceParam);
     }
+
     @Test
     public void test() throws Exception {
         Product product = JSON.parseObject("{\"categoryId\":800003,\"dataStatus\":1,\"isRent\":1,\"listPrice\":100.00,\"productCategoryPropertyList\":[{\"categoryId\":800003,\"categoryPropertyId\":1,\"dataOrder\":11,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":2,\"dataOrder\":1,\"dataStatus\":1,\"propertyId\":1,\"propertyValueName\":\"白色\"}],\"propertyName\":\"颜色\",\"propertyType\":1},{\"categoryId\":800003,\"categoryPropertyId\":2,\"dataOrder\":10,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"materialType\":1,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":5,\"dataOrder\":0,\"dataStatus\":1,\"propertyId\":2,\"propertyValueName\":\"8G\"}],\"propertyName\":\"内存\",\"propertyType\":1},{\"categoryId\":800003,\"categoryPropertyId\":5,\"dataOrder\":7,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"materialType\":3,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":11,\"dataOrder\":0,\"dataStatus\":1,\"propertyId\":5,\"propertyValueName\":\"I5-6400\"}],\"propertyName\":\"CPU\",\"propertyType\":1},{\"categoryId\":800003,\"categoryPropertyId\":6,\"dataOrder\":6,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"materialType\":4,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":13,\"dataOrder\":0,\"dataStatus\":1,\"propertyId\":6,\"propertyValueName\":\"2T HDD\"}],\"propertyName\":\"机械硬盘\",\"propertyType\":1},{\"categoryId\":800003,\"categoryPropertyId\":7,\"dataOrder\":5,\"dataStatus\":1,\"isCheckbox\":0,\"isInput\":0,\"isRequired\":0,\"materialType\":5,\"productCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":15,\"dataOrder\":0,\"dataStatus\":1,\"propertyId\":7,\"propertyValueName\":\"1060 3G\"}],\"propertyName\":\"显卡\",\"propertyType\":1}],\"productDesc\":\"thinkpad002 agagag\",\"productDescImgList\":[{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":128,\"imgOrder\":0,\"imgType\":2,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJ2ATvaQAAClthmAlvA142.jpg\",\"isMain\":0,\"originalName\":\"002_01_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":130,\"imgOrder\":0,\"imgType\":2,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJ2ARglUAADNYmKQUEw790.jpg\",\"isMain\":0,\"originalName\":\"002_03_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":132,\"imgOrder\":0,\"imgType\":2,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJ2AIrubAACyKALuvoc015.jpg\",\"isMain\":0,\"originalName\":\"002_05_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":129,\"imgOrder\":0,\"imgType\":2,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJ2AYa4xAAEfm778e6A667.jpg\",\"isMain\":0,\"originalName\":\"002_02_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":131,\"imgOrder\":0,\"imgType\":2,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJ2ANE50AAA1jKJM1l8479.jpg\",\"isMain\":0,\"originalName\":\"002_04_500x500.jpg\",\"productId\":2000013}],\"productId\":2000013,\"productImgList\":[{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":126,\"imgOrder\":0,\"imgType\":1,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJuAPwpLAAA1jKJM1l8134.jpg\",\"isMain\":0,\"originalName\":\"002_04_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":123,\"imgOrder\":0,\"imgType\":1,\"imgUrl\":\"group1/M00/00/07/wKgKyFoNTJuAbbnkAAClthmAlvA105.jpg\",\"isMain\":0,\"originalName\":\"002_01_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":124,\"imgOrder\":0,\"imgType\":1,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJuAP9vHAAEfm778e6A622.jpg\",\"isMain\":0,\"originalName\":\"002_02_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":127,\"imgOrder\":0,\"imgType\":1,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJuAKEYKAACyKALuvoc275.jpg\",\"isMain\":0,\"originalName\":\"002_05_500x500.jpg\",\"productId\":2000013},{\"dataStatus\":1,\"imgDomain\":\"http://192.168.10.200:8900/\",\"imgId\":125,\"imgOrder\":0,\"imgType\":1,\"imgUrl\":\"group1/M00/00/08/wKgKyFoNTJuAPzlsAADNYmKQUEw518.jpg\",\"isMain\":0,\"originalName\":\"002_03_500x500.jpg\",\"productId\":2000013}],\"productName\":\"thinkpad002\",\"productPropertyList\":[{\"dataStatus\":1,\"isSku\":0,\"productId\":2000013,\"propertyId\":3,\"propertyName\":\"机型\",\"propertyValueId\":7,\"propertyValueName\":\"E270DMG\",\"remark\":\"\",\"skuPropertyId\":261},{\"dataStatus\":1,\"isSku\":0,\"productId\":2000013,\"propertyId\":4,\"propertyName\":\"主板\",\"propertyValueId\":9,\"propertyValueName\":\"H110集显主板\",\"remark\":\"\",\"skuPropertyId\":262},{\"dataStatus\":1,\"isSku\":0,\"productId\":2000013,\"propertyId\":8,\"propertyName\":\"电源\",\"propertyValueId\":17,\"propertyValueName\":\"350W\",\"remark\":\"\",\"skuPropertyId\":263},{\"dataStatus\":1,\"isSku\":0,\"productId\":2000013,\"propertyId\":9,\"propertyName\":\"散热器\",\"propertyValueId\":19,\"propertyValueName\":\"CPU散热器\",\"remark\":\"\",\"skuPropertyId\":264},{\"dataStatus\":1,\"isSku\":0,\"productId\":2000013,\"propertyId\":11,\"propertyName\":\"机箱\",\"propertyValueId\":22,\"propertyValueName\":\"水冷机箱\",\"remark\":\"\",\"skuPropertyId\":265}],\"productSkuList\":[{\"customCode\":\"\",\"dataStatus\":1,\"dayRentPrice\":88.00,\"monthRentPrice\":77.00,\"productId\":2000013,\"productMaterialList\":[{\"materialCount\":1,\"materialName\":\"金士顿2G内存\",\"materialNo\":\"M201711251154081811299\",\"materialType\":1},{\"materialCount\":1,\"materialName\":\"金士顿2G内存\",\"materialNo\":\"M201711251154081811299\",\"materialType\":1},{\"materialCount\":1,\"materialName\":\"金士顿2G内存\",\"materialNo\":\"M201711251154081811299\",\"materialType\":1},{\"materialCount\":1,\"materialName\":\"金士顿2G内存\",\"materialNo\":\"M201711251154081811299\",\"materialType\":1},{\"materialCount\":1,\"materialModelId\":4,\"materialName\":\"CPU物料-I5-6400\",\"materialNo\":\"M201711201422478141693\",\"materialType\":3},{\"materialCount\":1,\"materialName\":\"机械硬盘物料/2T HDD\",\"materialNo\":\"M201711201457288791418\",\"materialType\":4},{\"materialCount\":1,\"materialModelId\":6,\"materialName\":\"显卡/1060 3G\",\"materialNo\":\"M201711201500267591516\",\"materialType\":5},{\"materialCount\":1,\"materialModelId\":2,\"materialName\":\"H110集显主板\",\"materialNo\":\"M201711211953291591494\",\"materialType\":2},{\"materialCount\":1,\"materialModelId\":8,\"materialName\":\"电源350W\",\"materialNo\":\"M201711291745413251585\",\"materialType\":6},{\"materialCount\":1,\"materialModelId\":10,\"materialName\":\"CPU散热器\",\"materialNo\":\"M201711291744581931681\",\"materialType\":7},{\"materialCount\":1,\"materialModelId\":11,\"materialName\":\"水冷机箱\",\"materialNo\":\"M201711171838059981293\",\"materialType\":9}],\"productSkuPropertyList\":[{\"dataStatus\":1,\"isSku\":1,\"productId\":2000013,\"propertyId\":1,\"propertyName\":\"颜色\",\"propertyValueId\":2,\"propertyValueName\":\"白色\",\"remark\":\"\",\"skuId\":40,\"skuPropertyId\":255},{\"dataStatus\":1,\"isSku\":1,\"productId\":2000013,\"propertyId\":2,\"propertyName\":\"内存\",\"propertyValueId\":5,\"propertyValueName\":\"8G\",\"remark\":\"\",\"skuId\":40,\"skuPropertyId\":256},{\"dataStatus\":1,\"isSku\":1,\"productId\":2000013,\"propertyId\":5,\"propertyName\":\"CPU\",\"propertyValueId\":11,\"propertyValueName\":\"I5-6400\",\"remark\":\"\",\"skuId\":40,\"skuPropertyId\":257},{\"dataStatus\":1,\"isSku\":1,\"productId\":2000013,\"propertyId\":6,\"propertyName\":\"机械硬盘\",\"propertyValueId\":13,\"propertyValueName\":\"2T HDD\",\"remark\":\"\",\"skuId\":40,\"skuPropertyId\":258},{\"dataStatus\":1,\"isSku\":1,\"productId\":2000013,\"propertyId\":7,\"propertyName\":\"显卡\",\"propertyValueId\":15,\"propertyValueName\":\"1060 3G\",\"remark\":\"\",\"skuId\":40,\"skuPropertyId\":260}],\"shouldProductCategoryPropertyValueList\":[{\"categoryId\":800003,\"categoryPropertyValueId\":5,\"materialType\":1,\"propertyCapacityValue\":8,\"propertyId\":2,\"propertyName\":\"内存\",\"propertyValueName\":\"8G\"},{\"categoryId\":800003,\"categoryPropertyValueId\":11,\"materialModelId\":4,\"materialType\":3,\"propertyId\":5,\"propertyName\":\"CPU\",\"propertyValueName\":\"I5-6400\"},{\"categoryId\":800003,\"categoryPropertyValueId\":13,\"materialType\":4,\"propertyCapacityValue\":2048,\"propertyId\":6,\"propertyName\":\"机械硬盘\",\"propertyValueName\":\"2T HDD\"},{\"categoryId\":800003,\"categoryPropertyValueId\":15,\"materialModelId\":6,\"materialType\":5,\"propertyId\":7,\"propertyName\":\"显卡\",\"propertyValueName\":\"1060 3G\"},{\"categoryId\":800003,\"categoryPropertyValueId\":9,\"materialModelId\":2,\"materialType\":2,\"propertyId\":4,\"propertyName\":\"主板\",\"propertyValueName\":\"H110集显主板\"},{\"categoryId\":800003,\"categoryPropertyValueId\":17,\"materialModelId\":8,\"materialType\":6,\"propertyId\":8,\"propertyName\":\"电源\",\"propertyValueName\":\"350W\"},{\"categoryId\":800003,\"categoryPropertyValueId\":19,\"materialModelId\":10,\"materialType\":7,\"propertyId\":9,\"propertyName\":\"散热器\",\"propertyValueName\":\"CPU散热器\"},{\"categoryId\":800003,\"categoryPropertyValueId\":22,\"materialModelId\":11,\"materialType\":9,\"propertyId\":11,\"propertyName\":\"机箱\",\"propertyValueName\":\"水冷机箱\"}],\"skuId\":40,\"skuName\":\"颜色:白色/内存:8G/CPU:I5-6400/机械硬盘:2T HDD/显卡:1060 3G/固态硬盘:256G SSD\",\"skuPrice\":100.00,\"stock\":100,\"timeRentPrice\":99.00}],\"subtitle\":\"thinkpad002\",\"unit\":303719}", Product.class);
@@ -976,6 +997,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
                 "}", UpdatePurchaseReceiveEquipmentPriceParam.class);
         TestResult testResult = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrderPrice", updatePurchaseReceiveEquipmentPriceParam);
     }
+
     @Test
     public void testConvert() throws Exception {
 //        PurchaseOrderDO purchaseOrderDO = new PurchaseOrderDO();
@@ -989,8 +1011,14 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         userDO.setRemark("备注");
 
 
-        User user =ConverterUtil.convert(userDO,User.class);
+        User user = ConverterUtil.convert(userDO, User.class);
     }
+
+    @Test
+    public void test2() {
+        TestResult result = JSON.parseObject("{\"code\":\"J000000\",\"description\":\"成功\",\"resultMap\":{\"data\":{\"createTime\":1514791684000,\"createUser\":\"500007\",\"createUserRealName\":\"超一\",\"dataStatus\":1,\"isInvoice\":1,\"isNew\":1,\"owner\":500007,\"ownerName\":\"超一\",\"productSupplierId\":2,\"productSupplierName\":\"小青IT设备\",\"purchaseDeliveryOrderList\":[{\"createTime\":1514791781000,\"createUser\":\"500000\",\"dataStatus\":1,\"isInvoice\":1,\"isNew\":1,\"ownerSupplierId\":2,\"ownerSupplierName\":\"小青IT设备\",\"purchaseDeliveryNo\":\"LXPD0755201801010002\",\"purchaseDeliveryOrderId\":6000002,\"purchaseDeliveryOrderMaterialList\":[],\"purchaseDeliveryOrderProductList\":[{\"createTime\":1514791781000,\"createUser\":\"500000\",\"productAmount\":2000.00,\"productCount\":10,\"productId\":2000001,\"productName\":\"戴尔CF27英寸显示器\",\"productSkuId\":3,\"productSnapshot\":\"{\\\"brandId\\\":3,\\\"brandName\\\":\\\"戴尔\\\",\\\"categoryId\\\":800018,\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isRent\\\":1,\\\"listPrice\\\":0.00,\\\"productCategoryPropertyList\\\":[{\\\"categoryId\\\":800018,\\\"categoryPropertyId\\\":72,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":0,\\\"dataStatus\\\":1,\\\"isCheckbox\\\":0,\\\"isInput\\\":0,\\\"isRequired\\\":0,\\\"productCategoryPropertyValueList\\\":[{\\\"categoryId\\\":800018,\\\"categoryPropertyValueId\\\":272,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":3,\\\"dataStatus\\\":1,\\\"propertyId\\\":72,\\\"propertyValueName\\\":\\\"正方屏\\\",\\\"remark\\\":\\\"显示器屏幕型号正方屏\\\",\\\"updateUserRealName\\\":\\\"管理员\\\"}],\\\"propertyName\\\":\\\"屏幕型号\\\",\\\"propertyType\\\":1,\\\"updateUserRealName\\\":\\\"管理员\\\"},{\\\"categoryId\\\":800018,\\\"categoryPropertyId\\\":71,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":0,\\\"dataStatus\\\":1,\\\"isCheckbox\\\":0,\\\"isInput\\\":0,\\\"isRequired\\\":0,\\\"productCategoryPropertyValueList\\\":[{\\\"categoryId\\\":800018,\\\"categoryPropertyValueId\\\":271,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":1,\\\"dataStatus\\\":1,\\\"propertyId\\\":71,\\\"propertyValueName\\\":\\\"24寸\\\",\\\"remark\\\":\\\"显示器尺寸24寸\\\",\\\"updateUserRealName\\\":\\\"管理员\\\"}],\\\"propertyName\\\":\\\"尺寸\\\",\\\"propertyType\\\":1,\\\"updateUserRealName\\\":\\\"管理员\\\"}],\\\"productDesc\\\":\\\"\\\",\\\"productDescImgList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"imgDomain\\\":\\\"http://img.52rental.com/\\\",\\\"imgOrder\\\":0,\\\"imgType\\\":2,\\\"imgUrl\\\":\\\"group1/M00/00/00/Ch7fq1pJo3aAFvw6AAS0DyELeE4486.jpg\\\",\\\"isMain\\\":0,\\\"originalName\\\":\\\"5a2fdf59N3d7d85e8.jpg\\\",\\\"productId\\\":2000001,\\\"productImgId\\\":4,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"productId\\\":2000001,\\\"productImgList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"imgDomain\\\":\\\"http://img.52rental.com/\\\",\\\"imgOrder\\\":0,\\\"imgType\\\":1,\\\"imgUrl\\\":\\\"group1/M00/00/00/Ch7fq1pJo3OARYVWAAS0DyELeE4745.jpg\\\",\\\"isMain\\\":0,\\\"originalName\\\":\\\"5a2fdf59N3d7d85e8.jpg\\\",\\\"productId\\\":2000001,\\\"productImgId\\\":3,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"productName\\\":\\\"戴尔CF27英寸显示器\\\",\\\"productNo\\\":\\\"P201801011057236751720\\\",\\\"productPropertyList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isSku\\\":0,\\\"productId\\\":2000001,\\\"propertyId\\\":73,\\\"propertyName\\\":\\\"其他属性\\\",\\\"propertyValueId\\\":275,\\\"propertyValueName\\\":\\\"无\\\",\\\"remark\\\":\\\"\\\",\\\"skuPropertyId\\\":16,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"productSkuList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"customCode\\\":\\\"\\\",\\\"dataStatus\\\":1,\\\"dayRentPrice\\\":100.00,\\\"monthRentPrice\\\":1000.00,\\\"newProductSkuCount\\\":0,\\\"oldProductSkuCount\\\":0,\\\"productId\\\":2000001,\\\"productMaterialList\\\":[],\\\"productName\\\":\\\"戴尔CF27英寸显示器\\\",\\\"productSkuPropertyList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isSku\\\":1,\\\"productId\\\":2000001,\\\"propertyId\\\":72,\\\"propertyName\\\":\\\"屏幕型号\\\",\\\"propertyValueId\\\":272,\\\"propertyValueName\\\":\\\"正方屏\\\",\\\"remark\\\":\\\"\\\",\\\"skuId\\\":3,\\\"skuPropertyId\\\":15,\\\"updateUserRealName\\\":\\\"测试用户\\\"},{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isSku\\\":1,\\\"productId\\\":2000001,\\\"propertyId\\\":71,\\\"propertyName\\\":\\\"尺寸\\\",\\\"propertyValueId\\\":271,\\\"propertyValueName\\\":\\\"24寸\\\",\\\"remark\\\":\\\"\\\",\\\"skuId\\\":3,\\\"skuPropertyId\\\":14,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"shouldProductCategoryPropertyValueList\\\":[],\\\"skuId\\\":3,\\\"skuName\\\":\\\"屏幕型号:正方屏/尺寸:24寸\\\",\\\"skuPrice\\\":2800.00,\\\"stock\\\":0,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"subtitle\\\":\\\"超清\\\",\\\"unit\\\":303719,\\\"updateUserRealName\\\":\\\"测试用户\\\"}\",\"purchaseDeliveryOrderId\":6000002,\"purchaseDeliveryOrderProductId\":2,\"purchaseOrderProductId\":2,\"realProductCount\":10,\"realProductId\":2000001,\"realProductName\":\"戴尔CF27英寸显示器\",\"realProductSkuId\":3,\"realProductSnapshot\":\"{\\\"brandId\\\":3,\\\"brandName\\\":\\\"戴尔\\\",\\\"categoryId\\\":800018,\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isRent\\\":1,\\\"listPrice\\\":0.00,\\\"productCategoryPropertyList\\\":[{\\\"categoryId\\\":800018,\\\"categoryPropertyId\\\":72,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":0,\\\"dataStatus\\\":1,\\\"isCheckbox\\\":0,\\\"isInput\\\":0,\\\"isRequired\\\":0,\\\"productCategoryPropertyValueList\\\":[{\\\"categoryId\\\":800018,\\\"categoryPropertyValueId\\\":272,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":3,\\\"dataStatus\\\":1,\\\"propertyId\\\":72,\\\"propertyValueName\\\":\\\"正方屏\\\",\\\"remark\\\":\\\"显示器屏幕型号正方屏\\\",\\\"updateUserRealName\\\":\\\"管理员\\\"}],\\\"propertyName\\\":\\\"屏幕型号\\\",\\\"propertyType\\\":1,\\\"updateUserRealName\\\":\\\"管理员\\\"},{\\\"categoryId\\\":800018,\\\"categoryPropertyId\\\":71,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":0,\\\"dataStatus\\\":1,\\\"isCheckbox\\\":0,\\\"isInput\\\":0,\\\"isRequired\\\":0,\\\"productCategoryPropertyValueList\\\":[{\\\"categoryId\\\":800018,\\\"categoryPropertyValueId\\\":271,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":1,\\\"dataStatus\\\":1,\\\"propertyId\\\":71,\\\"propertyValueName\\\":\\\"24寸\\\",\\\"remark\\\":\\\"显示器尺寸24寸\\\",\\\"updateUserRealName\\\":\\\"管理员\\\"}],\\\"propertyName\\\":\\\"尺寸\\\",\\\"propertyType\\\":1,\\\"updateUserRealName\\\":\\\"管理员\\\"}],\\\"productDesc\\\":\\\"\\\",\\\"productDescImgList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"imgDomain\\\":\\\"http://img.52rental.com/\\\",\\\"imgOrder\\\":0,\\\"imgType\\\":2,\\\"imgUrl\\\":\\\"group1/M00/00/00/Ch7fq1pJo3aAFvw6AAS0DyELeE4486.jpg\\\",\\\"isMain\\\":0,\\\"originalName\\\":\\\"5a2fdf59N3d7d85e8.jpg\\\",\\\"productId\\\":2000001,\\\"productImgId\\\":4,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"productId\\\":2000001,\\\"productImgList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"imgDomain\\\":\\\"http://img.52rental.com/\\\",\\\"imgOrder\\\":0,\\\"imgType\\\":1,\\\"imgUrl\\\":\\\"group1/M00/00/00/Ch7fq1pJo3OARYVWAAS0DyELeE4745.jpg\\\",\\\"isMain\\\":0,\\\"originalName\\\":\\\"5a2fdf59N3d7d85e8.jpg\\\",\\\"productId\\\":2000001,\\\"productImgId\\\":3,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"productName\\\":\\\"戴尔CF27英寸显示器\\\",\\\"productNo\\\":\\\"P201801011057236751720\\\",\\\"productPropertyList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isSku\\\":0,\\\"productId\\\":2000001,\\\"propertyId\\\":73,\\\"propertyName\\\":\\\"其他属性\\\",\\\"propertyValueId\\\":275,\\\"propertyValueName\\\":\\\"无\\\",\\\"remark\\\":\\\"\\\",\\\"skuPropertyId\\\":16,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"productSkuList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"customCode\\\":\\\"\\\",\\\"dataStatus\\\":1,\\\"dayRentPrice\\\":100.00,\\\"monthRentPrice\\\":1000.00,\\\"newProductSkuCount\\\":0,\\\"oldProductSkuCount\\\":0,\\\"productId\\\":2000001,\\\"productMaterialList\\\":[],\\\"productName\\\":\\\"戴尔CF27英寸显示器\\\",\\\"productSkuPropertyList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isSku\\\":1,\\\"productId\\\":2000001,\\\"propertyId\\\":72,\\\"propertyName\\\":\\\"屏幕型号\\\",\\\"propertyValueId\\\":272,\\\"propertyValueName\\\":\\\"正方屏\\\",\\\"remark\\\":\\\"\\\",\\\"skuId\\\":3,\\\"skuPropertyId\\\":15,\\\"updateUserRealName\\\":\\\"测试用户\\\"},{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isSku\\\":1,\\\"productId\\\":2000001,\\\"propertyId\\\":71,\\\"propertyName\\\":\\\"尺寸\\\",\\\"propertyValueId\\\":271,\\\"propertyValueName\\\":\\\"24寸\\\",\\\"remark\\\":\\\"\\\",\\\"skuId\\\":3,\\\"skuPropertyId\\\":14,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"shouldProductCategoryPropertyValueList\\\":[],\\\"skuId\\\":3,\\\"skuName\\\":\\\"屏幕型号:正方屏/尺寸:24寸\\\",\\\"skuPrice\\\":2800.00,\\\"stock\\\":0,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"subtitle\\\":\\\"超清\\\",\\\"unit\\\":303719,\\\"updateUserRealName\\\":\\\"测试用户\\\"}\",\"updateTime\":1514791781000,\"updateUser\":\"500000\"}],\"purchaseDeliveryOrderStatus\":0,\"purchaseOrderId\":6000002,\"purchaseOrderNo\":\"LXPO0755201801010002\",\"updateTime\":1514791781000,\"updateUser\":\"500000\",\"warehouseId\":4000002,\"warehouseSnapshot\":\"{\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataStatus\\\":1,\\\"subCompanyId\\\":2,\\\"subCompanyName\\\":\\\"深圳分公司\\\",\\\"subCompanyType\\\":2,\\\"updateUserRealName\\\":\\\"管理员\\\",\\\"warehouseId\\\":4000002,\\\"warehouseName\\\":\\\"深圳分公司仓库\\\",\\\"warehouseNo\\\":\\\"LXW07551\\\",\\\"warehousePositionList\\\":[],\\\"warehouseType\\\":1}\"}],\"purchaseNo\":\"LXPO0755201801010002\",\"purchaseOrderAmountTotal\":20000.00,\"purchaseOrderId\":6000002,\"purchaseOrderMaterialList\":[],\"purchaseOrderProductList\":[{\"createTime\":1514791684000,\"createUser\":\"500007\",\"createUserRealName\":\"超一\",\"dataStatus\":1,\"productAmount\":2000.00,\"productCount\":10,\"productId\":2000001,\"productName\":\"戴尔CF27英寸显示器\",\"productSkuId\":3,\"productSnapshot\":\"{\\\"brandId\\\":3,\\\"brandName\\\":\\\"戴尔\\\",\\\"categoryId\\\":800018,\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isRent\\\":1,\\\"listPrice\\\":0.00,\\\"productCategoryPropertyList\\\":[{\\\"categoryId\\\":800018,\\\"categoryPropertyId\\\":72,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":0,\\\"dataStatus\\\":1,\\\"isCheckbox\\\":0,\\\"isInput\\\":0,\\\"isRequired\\\":0,\\\"productCategoryPropertyValueList\\\":[{\\\"categoryId\\\":800018,\\\"categoryPropertyValueId\\\":272,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":3,\\\"dataStatus\\\":1,\\\"propertyId\\\":72,\\\"propertyValueName\\\":\\\"正方屏\\\",\\\"remark\\\":\\\"显示器屏幕型号正方屏\\\",\\\"updateUserRealName\\\":\\\"管理员\\\"}],\\\"propertyName\\\":\\\"屏幕型号\\\",\\\"propertyType\\\":1,\\\"updateUserRealName\\\":\\\"管理员\\\"},{\\\"categoryId\\\":800018,\\\"categoryPropertyId\\\":71,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":0,\\\"dataStatus\\\":1,\\\"isCheckbox\\\":0,\\\"isInput\\\":0,\\\"isRequired\\\":0,\\\"productCategoryPropertyValueList\\\":[{\\\"categoryId\\\":800018,\\\"categoryPropertyValueId\\\":271,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":1,\\\"dataStatus\\\":1,\\\"propertyId\\\":71,\\\"propertyValueName\\\":\\\"24寸\\\",\\\"remark\\\":\\\"显示器尺寸24寸\\\",\\\"updateUserRealName\\\":\\\"管理员\\\"}],\\\"propertyName\\\":\\\"尺寸\\\",\\\"propertyType\\\":1,\\\"updateUserRealName\\\":\\\"管理员\\\"}],\\\"productDesc\\\":\\\"\\\",\\\"productDescImgList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"imgDomain\\\":\\\"http://img.52rental.com/\\\",\\\"imgOrder\\\":0,\\\"imgType\\\":2,\\\"imgUrl\\\":\\\"group1/M00/00/00/Ch7fq1pJo3aAFvw6AAS0DyELeE4486.jpg\\\",\\\"isMain\\\":0,\\\"originalName\\\":\\\"5a2fdf59N3d7d85e8.jpg\\\",\\\"productId\\\":2000001,\\\"productImgId\\\":4,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"productId\\\":2000001,\\\"productImgList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"imgDomain\\\":\\\"http://img.52rental.com/\\\",\\\"imgOrder\\\":0,\\\"imgType\\\":1,\\\"imgUrl\\\":\\\"group1/M00/00/00/Ch7fq1pJo3OARYVWAAS0DyELeE4745.jpg\\\",\\\"isMain\\\":0,\\\"originalName\\\":\\\"5a2fdf59N3d7d85e8.jpg\\\",\\\"productId\\\":2000001,\\\"productImgId\\\":3,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"productName\\\":\\\"戴尔CF27英寸显示器\\\",\\\"productNo\\\":\\\"P201801011057236751720\\\",\\\"productPropertyList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isSku\\\":0,\\\"productId\\\":2000001,\\\"propertyId\\\":73,\\\"propertyName\\\":\\\"其他属性\\\",\\\"propertyValueId\\\":275,\\\"propertyValueName\\\":\\\"无\\\",\\\"remark\\\":\\\"\\\",\\\"skuPropertyId\\\":16,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"productSkuList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"customCode\\\":\\\"\\\",\\\"dataStatus\\\":1,\\\"dayRentPrice\\\":100.00,\\\"monthRentPrice\\\":1000.00,\\\"newProductSkuCount\\\":0,\\\"oldProductSkuCount\\\":0,\\\"productId\\\":2000001,\\\"productMaterialList\\\":[],\\\"productName\\\":\\\"戴尔CF27英寸显示器\\\",\\\"productSkuPropertyList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isSku\\\":1,\\\"productId\\\":2000001,\\\"propertyId\\\":72,\\\"propertyName\\\":\\\"屏幕型号\\\",\\\"propertyValueId\\\":272,\\\"propertyValueName\\\":\\\"正方屏\\\",\\\"remark\\\":\\\"\\\",\\\"skuId\\\":3,\\\"skuPropertyId\\\":15,\\\"updateUserRealName\\\":\\\"测试用户\\\"},{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isSku\\\":1,\\\"productId\\\":2000001,\\\"propertyId\\\":71,\\\"propertyName\\\":\\\"尺寸\\\",\\\"propertyValueId\\\":271,\\\"propertyValueName\\\":\\\"24寸\\\",\\\"remark\\\":\\\"\\\",\\\"skuId\\\":3,\\\"skuPropertyId\\\":14,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"shouldProductCategoryPropertyValueList\\\":[],\\\"skuId\\\":3,\\\"skuName\\\":\\\"屏幕型号:正方屏/尺寸:24寸\\\",\\\"skuPrice\\\":2800.00,\\\"stock\\\":0,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"subtitle\\\":\\\"超清\\\",\\\"unit\\\":303719,\\\"updateUserRealName\\\":\\\"测试用户\\\"}\",\"purchaseOrderId\":6000002,\"purchaseOrderProductId\":2,\"updateTime\":1514791684000,\"updateUser\":\"500007\",\"updateUserRealName\":\"超一\"}],\"purchaseOrderStatus\":15,\"purchaseReceiveOrderList\":[{\"autoAllotStatus\":0,\"confirmTime\":1514792624000,\"createTime\":1514791781000,\"createUser\":\"500000\",\"dataStatus\":1,\"isInvoice\":1,\"isNew\":1,\"owner\":0,\"productSupplierId\":2,\"productSupplierName\":\"小青IT设备\",\"purchaseDeliveryOrderId\":6000002,\"purchaseOrderId\":6000002,\"purchaseOrderNo\":\"LXPO0755201801010002\",\"purchaseReceiveNo\":\"LXPR0755201801010002\",\"purchaseReceiveOrderId\":6000002,\"purchaseReceiveOrderMaterialList\":[],\"purchaseReceiveOrderProductList\":[{\"createTime\":1514791781000,\"createUser\":\"500000\",\"dataStatus\":1,\"isSrc\":1,\"productCount\":10,\"productId\":2000001,\"productName\":\"戴尔CF27英寸显示器\",\"productSkuId\":3,\"productSnapshot\":\"{\\\"brandId\\\":3,\\\"brandName\\\":\\\"戴尔\\\",\\\"categoryId\\\":800018,\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isRent\\\":1,\\\"listPrice\\\":0.00,\\\"productCategoryPropertyList\\\":[{\\\"categoryId\\\":800018,\\\"categoryPropertyId\\\":72,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":0,\\\"dataStatus\\\":1,\\\"isCheckbox\\\":0,\\\"isInput\\\":0,\\\"isRequired\\\":0,\\\"productCategoryPropertyValueList\\\":[{\\\"categoryId\\\":800018,\\\"categoryPropertyValueId\\\":272,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":3,\\\"dataStatus\\\":1,\\\"propertyId\\\":72,\\\"propertyValueName\\\":\\\"正方屏\\\",\\\"remark\\\":\\\"显示器屏幕型号正方屏\\\",\\\"updateUserRealName\\\":\\\"管理员\\\"}],\\\"propertyName\\\":\\\"屏幕型号\\\",\\\"propertyType\\\":1,\\\"updateUserRealName\\\":\\\"管理员\\\"},{\\\"categoryId\\\":800018,\\\"categoryPropertyId\\\":71,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":0,\\\"dataStatus\\\":1,\\\"isCheckbox\\\":0,\\\"isInput\\\":0,\\\"isRequired\\\":0,\\\"productCategoryPropertyValueList\\\":[{\\\"categoryId\\\":800018,\\\"categoryPropertyValueId\\\":271,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":1,\\\"dataStatus\\\":1,\\\"propertyId\\\":71,\\\"propertyValueName\\\":\\\"24寸\\\",\\\"remark\\\":\\\"显示器尺寸24寸\\\",\\\"updateUserRealName\\\":\\\"管理员\\\"}],\\\"propertyName\\\":\\\"尺寸\\\",\\\"propertyType\\\":1,\\\"updateUserRealName\\\":\\\"管理员\\\"}],\\\"productDesc\\\":\\\"\\\",\\\"productDescImgList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"imgDomain\\\":\\\"http://img.52rental.com/\\\",\\\"imgOrder\\\":0,\\\"imgType\\\":2,\\\"imgUrl\\\":\\\"group1/M00/00/00/Ch7fq1pJo3aAFvw6AAS0DyELeE4486.jpg\\\",\\\"isMain\\\":0,\\\"originalName\\\":\\\"5a2fdf59N3d7d85e8.jpg\\\",\\\"productId\\\":2000001,\\\"productImgId\\\":4,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"productId\\\":2000001,\\\"productImgList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"imgDomain\\\":\\\"http://img.52rental.com/\\\",\\\"imgOrder\\\":0,\\\"imgType\\\":1,\\\"imgUrl\\\":\\\"group1/M00/00/00/Ch7fq1pJo3OARYVWAAS0DyELeE4745.jpg\\\",\\\"isMain\\\":0,\\\"originalName\\\":\\\"5a2fdf59N3d7d85e8.jpg\\\",\\\"productId\\\":2000001,\\\"productImgId\\\":3,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"productName\\\":\\\"戴尔CF27英寸显示器\\\",\\\"productNo\\\":\\\"P201801011057236751720\\\",\\\"productPropertyList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isSku\\\":0,\\\"productId\\\":2000001,\\\"propertyId\\\":73,\\\"propertyName\\\":\\\"其他属性\\\",\\\"propertyValueId\\\":275,\\\"propertyValueName\\\":\\\"无\\\",\\\"remark\\\":\\\"\\\",\\\"skuPropertyId\\\":16,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"productSkuList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"customCode\\\":\\\"\\\",\\\"dataStatus\\\":1,\\\"dayRentPrice\\\":100.00,\\\"monthRentPrice\\\":1000.00,\\\"newProductSkuCount\\\":0,\\\"oldProductSkuCount\\\":0,\\\"productId\\\":2000001,\\\"productMaterialList\\\":[],\\\"productName\\\":\\\"戴尔CF27英寸显示器\\\",\\\"productSkuPropertyList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isSku\\\":1,\\\"productId\\\":2000001,\\\"propertyId\\\":72,\\\"propertyName\\\":\\\"屏幕型号\\\",\\\"propertyValueId\\\":272,\\\"propertyValueName\\\":\\\"正方屏\\\",\\\"remark\\\":\\\"\\\",\\\"skuId\\\":3,\\\"skuPropertyId\\\":15,\\\"updateUserRealName\\\":\\\"测试用户\\\"},{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isSku\\\":1,\\\"productId\\\":2000001,\\\"propertyId\\\":71,\\\"propertyName\\\":\\\"尺寸\\\",\\\"propertyValueId\\\":271,\\\"propertyValueName\\\":\\\"24寸\\\",\\\"remark\\\":\\\"\\\",\\\"skuId\\\":3,\\\"skuPropertyId\\\":14,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"shouldProductCategoryPropertyValueList\\\":[],\\\"skuId\\\":3,\\\"skuName\\\":\\\"屏幕型号:正方屏/尺寸:24寸\\\",\\\"skuPrice\\\":2800.00,\\\"stock\\\":0,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"subtitle\\\":\\\"超清\\\",\\\"unit\\\":303719,\\\"updateUserRealName\\\":\\\"测试用户\\\"}\",\"purchaseDeliveryOrderProductId\":2,\"purchaseOrderProductId\":2,\"purchaseReceiveOrderId\":6000002,\"purchaseReceiveOrderProductId\":2,\"realProductCount\":10,\"realProductId\":2000001,\"realProductName\":\"戴尔CF27英寸显示器\",\"realProductSkuId\":3,\"realProductSnapshot\":\"{\\\"brandId\\\":3,\\\"brandName\\\":\\\"戴尔\\\",\\\"categoryId\\\":800018,\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isRent\\\":1,\\\"listPrice\\\":0.00,\\\"productCategoryPropertyList\\\":[{\\\"categoryId\\\":800018,\\\"categoryPropertyId\\\":72,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":0,\\\"dataStatus\\\":1,\\\"isCheckbox\\\":0,\\\"isInput\\\":0,\\\"isRequired\\\":0,\\\"productCategoryPropertyValueList\\\":[{\\\"categoryId\\\":800018,\\\"categoryPropertyValueId\\\":272,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":3,\\\"dataStatus\\\":1,\\\"propertyId\\\":72,\\\"propertyValueName\\\":\\\"正方屏\\\",\\\"remark\\\":\\\"显示器屏幕型号正方屏\\\",\\\"updateUserRealName\\\":\\\"管理员\\\"}],\\\"propertyName\\\":\\\"屏幕型号\\\",\\\"propertyType\\\":1,\\\"updateUserRealName\\\":\\\"管理员\\\"},{\\\"categoryId\\\":800018,\\\"categoryPropertyId\\\":71,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":0,\\\"dataStatus\\\":1,\\\"isCheckbox\\\":0,\\\"isInput\\\":0,\\\"isRequired\\\":0,\\\"productCategoryPropertyValueList\\\":[{\\\"categoryId\\\":800018,\\\"categoryPropertyValueId\\\":271,\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataOrder\\\":1,\\\"dataStatus\\\":1,\\\"propertyId\\\":71,\\\"propertyValueName\\\":\\\"24寸\\\",\\\"remark\\\":\\\"显示器尺寸24寸\\\",\\\"updateUserRealName\\\":\\\"管理员\\\"}],\\\"propertyName\\\":\\\"尺寸\\\",\\\"propertyType\\\":1,\\\"updateUserRealName\\\":\\\"管理员\\\"}],\\\"productDesc\\\":\\\"\\\",\\\"productDescImgList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"imgDomain\\\":\\\"http://img.52rental.com/\\\",\\\"imgOrder\\\":0,\\\"imgType\\\":2,\\\"imgUrl\\\":\\\"group1/M00/00/00/Ch7fq1pJo3aAFvw6AAS0DyELeE4486.jpg\\\",\\\"isMain\\\":0,\\\"originalName\\\":\\\"5a2fdf59N3d7d85e8.jpg\\\",\\\"productId\\\":2000001,\\\"productImgId\\\":4,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"productId\\\":2000001,\\\"productImgList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"imgDomain\\\":\\\"http://img.52rental.com/\\\",\\\"imgOrder\\\":0,\\\"imgType\\\":1,\\\"imgUrl\\\":\\\"group1/M00/00/00/Ch7fq1pJo3OARYVWAAS0DyELeE4745.jpg\\\",\\\"isMain\\\":0,\\\"originalName\\\":\\\"5a2fdf59N3d7d85e8.jpg\\\",\\\"productId\\\":2000001,\\\"productImgId\\\":3,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"productName\\\":\\\"戴尔CF27英寸显示器\\\",\\\"productNo\\\":\\\"P201801011057236751720\\\",\\\"productPropertyList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isSku\\\":0,\\\"productId\\\":2000001,\\\"propertyId\\\":73,\\\"propertyName\\\":\\\"其他属性\\\",\\\"propertyValueId\\\":275,\\\"propertyValueName\\\":\\\"无\\\",\\\"remark\\\":\\\"\\\",\\\"skuPropertyId\\\":16,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"productSkuList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"customCode\\\":\\\"\\\",\\\"dataStatus\\\":1,\\\"dayRentPrice\\\":100.00,\\\"monthRentPrice\\\":1000.00,\\\"newProductSkuCount\\\":0,\\\"oldProductSkuCount\\\":0,\\\"productId\\\":2000001,\\\"productMaterialList\\\":[],\\\"productName\\\":\\\"戴尔CF27英寸显示器\\\",\\\"productSkuPropertyList\\\":[{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isSku\\\":1,\\\"productId\\\":2000001,\\\"propertyId\\\":72,\\\"propertyName\\\":\\\"屏幕型号\\\",\\\"propertyValueId\\\":272,\\\"propertyValueName\\\":\\\"正方屏\\\",\\\"remark\\\":\\\"\\\",\\\"skuId\\\":3,\\\"skuPropertyId\\\":15,\\\"updateUserRealName\\\":\\\"测试用户\\\"},{\\\"createUserRealName\\\":\\\"测试用户\\\",\\\"dataStatus\\\":1,\\\"isSku\\\":1,\\\"productId\\\":2000001,\\\"propertyId\\\":71,\\\"propertyName\\\":\\\"尺寸\\\",\\\"propertyValueId\\\":271,\\\"propertyValueName\\\":\\\"24寸\\\",\\\"remark\\\":\\\"\\\",\\\"skuId\\\":3,\\\"skuPropertyId\\\":14,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"shouldProductCategoryPropertyValueList\\\":[],\\\"skuId\\\":3,\\\"skuName\\\":\\\"屏幕型号:正方屏/尺寸:24寸\\\",\\\"skuPrice\\\":2800.00,\\\"stock\\\":0,\\\"updateUserRealName\\\":\\\"测试用户\\\"}],\\\"subtitle\\\":\\\"超清\\\",\\\"unit\\\":303719,\\\"updateUserRealName\\\":\\\"测试用户\\\"}\",\"updateTime\":1514791781000,\"updateUser\":\"500000\"}],\"purchaseReceiveOrderStatus\":2,\"totalAmount\":0.00,\"updateTime\":1514792627000,\"updateUser\":\"500007\",\"updateUserRealName\":\"超一\",\"warehouseId\":4000002,\"warehouseSnapshot\":\"{\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataStatus\\\":1,\\\"subCompanyId\\\":2,\\\"subCompanyName\\\":\\\"深圳分公司\\\",\\\"subCompanyType\\\":2,\\\"updateUserRealName\\\":\\\"管理员\\\",\\\"warehouseId\\\":4000002,\\\"warehouseName\\\":\\\"深圳分公司仓库\\\",\\\"warehouseNo\\\":\\\"LXW07551\\\",\\\"warehousePositionList\\\":[],\\\"warehouseType\\\":1}\"}],\"purchaseType\":1,\"taxRate\":0,\"updateTime\":1514792677000,\"updateUser\":\"500007\",\"updateUserRealName\":\"超一\",\"warehouseId\":4000002,\"warehouseSnapshot\":\"{\\\"createUserRealName\\\":\\\"管理员\\\",\\\"dataStatus\\\":1,\\\"subCompanyId\\\":2,\\\"subCompanyName\\\":\\\"深圳分公司\\\",\\\"subCompanyType\\\":2,\\\"updateUserRealName\\\":\\\"管理员\\\",\\\"warehouseId\\\":4000002,\\\"warehouseName\\\":\\\"深圳分公司仓库\\\",\\\"warehouseNo\\\":\\\"LXW07551\\\",\\\"warehousePositionList\\\":[],\\\"warehouseType\\\":1}\",\"workflowLink\":{\"commitUser\":500007,\"commitUserName\":\"超一\",\"createTime\":1514791701000,\"createUser\":\"500007\",\"createUserRealName\":\"超一\",\"currentVerifyStatus\":2,\"currentVerifyUser\":500005,\"currentVerifyUserName\":\"陈二\",\"dataStatus\":1,\"lastStep\":true,\"updateTime\":1514791781000,\"updateUser\":\"500005\",\"updateUserRealName\":\"陈二\",\"workflowCurrentNodeId\":1,\"workflowCurrentNodeName\":\"总公司采购主管审核\",\"workflowLastStep\":2,\"workflowLinkDetailList\":[{\"createTime\":1514791760000,\"createUser\":\"500006\",\"createUserRealName\":\"陈超一\",\"dataStatus\":1,\"updateTime\":1514791781000,\"updateUser\":\"500005\",\"updateUserRealName\":\"陈二\",\"verifyOpinion\":\"\",\"verifyStatus\":2,\"verifyTime\":1514791781000,\"verifyUser\":500005,\"verifyUserName\":\"陈二\",\"workflowCurrentNodeId\":0,\"workflowLinkDetailId\":6,\"workflowLinkId\":2,\"workflowPreviousNodeId\":1,\"workflowPreviousNodeName\":\"总公司采购主管审核\",\"workflowReferNo\":\"LXPO0755201801010002\",\"workflowStep\":2},{\"createTime\":1514791701000,\"createUser\":\"500007\",\"createUserRealName\":\"超一\",\"dataStatus\":1,\"updateTime\":1514791760000,\"updateUser\":\"500006\",\"updateUserRealName\":\"陈超一\",\"verifyOpinion\":\"\",\"verifyStatus\":2,\"verifyTime\":1514791760000,\"verifyUser\":500006,\"verifyUserName\":\"陈超一\",\"workflowCurrentNodeId\":1,\"workflowCurrentNodeName\":\"总公司采购主管审核\",\"workflowLinkDetailId\":5,\"workflowLinkId\":2,\"workflowNextNodeId\":2,\"workflowNextNodeName\":\"总公司采购经理审核\",\"workflowReferNo\":\"LXPO0755201801010002\",\"workflowStep\":1},{\"createTime\":1514791701000,\"createUser\":\"500007\",\"createUserRealName\":\"超一\",\"dataStatus\":1,\"updateTime\":1514791701000,\"updateUser\":\"500007\",\"updateUserRealName\":\"超一\",\"verifyOpinion\":\"\",\"verifyStatus\":2,\"verifyTime\":1514791701000,\"verifyUser\":500007,\"verifyUserName\":\"超一\",\"workflowCurrentNodeId\":0,\"workflowLinkDetailId\":4,\"workflowLinkId\":2,\"workflowNextNodeId\":1,\"workflowNextNodeName\":\"总公司采购主管审核\",\"workflowReferNo\":\"LXPO0755201801010002\",\"workflowStep\":0}],\"workflowLinkId\":2,\"workflowLinkNo\":\"LXWF5000072018010100002\",\"workflowReferNo\":\"LXPO0755201801010002\",\"workflowStep\":2,\"workflowTemplateId\":1,\"workflowTemplateName\":\"采购审核流\",\"workflowType\":1}}},\"success\":true}", TestResult.class);
+    }
+
     @Autowired
     private PurchaseOrderService purchaseOrderService;
 }

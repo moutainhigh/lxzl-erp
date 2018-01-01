@@ -9,6 +9,8 @@ import com.lxzl.erp.common.domain.user.pojo.UserRole;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,8 @@ public class UserSupport {
     private UserService userService;
     @Autowired
     private WarehouseService warehouseService;
+    @Autowired
+    private UserMapper userMapper;
 
 
     public User getCurrentUser(){
@@ -56,8 +60,8 @@ public class UserSupport {
     }
 
     public Integer getCompanyIdByUser(Integer userId){
-        User user = CommonCache.userMap.get(userId);
-        List<Role> userRoleList = userService.getUserById(user.getUserId()).getResult().getRoleList();
+        UserDO userDO = userMapper.findByUserId(userId);
+        List<Role> userRoleList = userService.getUserById(userDO.getId()).getResult().getRoleList();
         for(Role role : userRoleList){
             return role.getSubCompanyId();
         }

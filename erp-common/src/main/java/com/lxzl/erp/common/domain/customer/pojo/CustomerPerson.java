@@ -34,13 +34,13 @@ public class CustomerPerson extends BasePO {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
-	@NotBlank(message = ErrorCode.PERSON_NAME_NOT_NULL,groups={AddCustomerPersonGroup.class})
+//	@NotBlank(message = ErrorCode.PERSON_NAME_NOT_NULL,groups={AddCustomerPersonGroup.class})
 	private String personName;//用户名'
-	@NotBlank(message = ErrorCode.PERSON_NO_NOT_NULL,groups={AddCustomerPersonGroup.class})
+//	@NotBlank(message = ErrorCode.PERSON_NO_NOT_NULL,groups={AddCustomerPersonGroup.class})
 	private String personNo;//身份证号'
-	@NotBlank(message = ErrorCode.CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_NULL,groups={AddCustomerPersonGroup.class})
+//	@NotBlank(message = ErrorCode.CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_NULL,groups={AddCustomerPersonGroup.class})
 	private String connectRealName;//紧急联系人姓名'
-	@NotBlank(message = ErrorCode.CUSTOMER_PERSON_CONNECT_PHONE_NOT_NULL,groups={AddCustomerPersonGroup.class})
+//	@NotBlank(message = ErrorCode.CUSTOMER_PERSON_CONNECT_PHONE_NOT_NULL,groups={AddCustomerPersonGroup.class})
 	private String connectPhone;//紧急联系人电话'
 
 	private String provinceName;

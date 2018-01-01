@@ -31,9 +31,9 @@ public class Customer extends BasePO {
 	private Integer owner;		//数据归属人，跟单员
 	private Integer unionUser;  //联合开发人
 
-	private String unionUserName; //联合业务员
-	private String ownerName; //业务员
 
+	private String ownerName; //业务员
+	private String unionUserName; //联合业务员
 	private String unionAreaProvinceName;// 联合省名
 	private String unionAreaCityName; //联合城市名
 	private String unionAreaDistrictName; //联合地区名

@@ -8,7 +8,6 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.ImgType;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
@@ -33,11 +32,9 @@ import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.*;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
-import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -114,14 +111,13 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerCompanyDO customerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
         //设置首次所需设备
-        List<CustomerCompanyNeed> customerCompanyNeedFirstList = customer.getCustomerCompany().getCustomerCompanyNeedFirstList();
-        if(CollectionUtil.isNotEmpty(customerCompanyNeedFirstList)){
+        if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getCustomerCompanyNeedFirstList())){
+            List<CustomerCompanyNeed> customerCompanyNeedFirstList = customer.getCustomerCompany().getCustomerCompanyNeedFirstList();
             for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedFirstList){
                 BigDecimal totalPrice = BigDecimalUtil.mul(customerCompanyNeed.getUnitPrice(),new BigDecimal(customerCompanyNeed.getRentCount()));
-                ServiceResult<String, Product> stringProductServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
-                List<ProductSku> productSkuList = stringProductServiceResult.getResult().getProductSkuList();
-                customerCompanyNeed.setSkuName(productSkuList.get(0).getSkuName());
                 customerCompanyNeed.setTotalPrice(totalPrice);
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
+                customerCompanyNeed.setProduct( productServiceResult.getResult());
             }
             customerCompanyDO.setCustomerCompanyNeedFirstJson(JSON.toJSON(customerCompanyNeedFirstList).toString());
         }
@@ -132,9 +128,8 @@ public class CustomerServiceImpl implements CustomerService {
             for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedLaterList){
                 BigDecimal totalPrice = BigDecimalUtil.mul(customerCompanyNeed.getUnitPrice(),new BigDecimal(customerCompanyNeed.getRentCount()));
                 customerCompanyNeed.setTotalPrice(totalPrice);
-                ServiceResult<String, Product> stringProductServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
-                List<ProductSku> productSkuList = stringProductServiceResult.getResult().getProductSkuList();
-                customerCompanyNeed.setSkuName(productSkuList.get(0).getSkuName());
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
+                customerCompanyNeed.setProduct( productServiceResult.getResult());
 
             }
             customerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
@@ -197,6 +192,11 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateTime(now);
         customerDO.setCreateUser(userSupport.getCurrentUserId().toString());
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+       //加入跟单员和联合开发员
+       customerDO.setOwner(userSupport.getCurrentUserId());
+       if (customer.getUnionUser() != null){
+           customerDO.setUnionUser(customer.getUnionUser());
+       }
         customerMapper.save(customerDO);
 
         CustomerPersonDO customerPersonDO = ConverterUtil.convert(customer.getCustomerPerson(),CustomerPersonDO.class);
@@ -226,7 +226,7 @@ public class CustomerServiceImpl implements CustomerService {
         addCustomerConsignInfo(customerConsignInfo);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(customer.getCustomerNo());
+        serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
     }
 
@@ -240,27 +240,18 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
-        //更改联合开发人
-        if (customer.getUnionUser() != null){
-            customerDO.setUnionUser(customer.getUnionUser());
-            customerDO.setUpdateTime(now);
-            customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            customerMapper.update(customerDO);
-        }
-
 
         CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
         CustomerCompanyDO newCustomerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(),CustomerCompanyDO.class);
 
         //判断首次所需设备 list转json
-        List<CustomerCompanyNeed> customerCompanyNeedFirstList = customer.getCustomerCompany().getCustomerCompanyNeedFirstList();
-        if(CollectionUtil.isNotEmpty(customerCompanyNeedFirstList)){
+        if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getCustomerCompanyNeedFirstList())){
+            List<CustomerCompanyNeed> customerCompanyNeedFirstList = customer.getCustomerCompany().getCustomerCompanyNeedFirstList();
             for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedFirstList){
                 BigDecimal totalPrice = BigDecimalUtil.mul(customerCompanyNeed.getUnitPrice(),new BigDecimal(customerCompanyNeed.getRentCount()));
                 customerCompanyNeed.setTotalPrice(totalPrice);
-                ServiceResult<String, Product> stringProductServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
-                List<ProductSku> productSkuList = stringProductServiceResult.getResult().getProductSkuList();
-                customerCompanyNeed.setSkuName(productSkuList.get(0).getSkuName());
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
+                customerCompanyNeed.setProduct( productServiceResult.getResult());
             }
             newCustomerCompanyDO.setCustomerCompanyNeedFirstJson(JSON.toJSON(customerCompanyNeedFirstList).toString());
         }
@@ -271,9 +262,8 @@ public class CustomerServiceImpl implements CustomerService {
             for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedLaterList){
                 BigDecimal totalPrice = BigDecimalUtil.mul(customerCompanyNeed.getUnitPrice(),new BigDecimal(customerCompanyNeed.getRentCount()));
                 customerCompanyNeed.setTotalPrice(totalPrice);
-                ServiceResult<String, Product> stringProductServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
-                List<ProductSku> productSkuList = stringProductServiceResult.getResult().getProductSkuList();
-                customerCompanyNeed.setSkuName(productSkuList.get(0).getSkuName());
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
+                customerCompanyNeed.setProduct( productServiceResult.getResult());
             }
             newCustomerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
         }
@@ -287,103 +277,109 @@ public class CustomerServiceImpl implements CustomerService {
         customerCompanyMapper.update(newCustomerCompanyDO);
 
         //对营业执照图片操作
-        List<Image> businessLicensePictureImageList = new ArrayList<>();
-        businessLicensePictureImageList.add(customer.getCustomerCompany().getBusinessLicensePictureImage());
-        serviceResult = updateImage(businessLicensePictureImageList,ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
-        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
-            return serviceResult;
-        }
+            List<Image> businessLicensePictureImageList = new ArrayList<>();
+            businessLicensePictureImageList.add(customer.getCustomerCompany().getBusinessLicensePictureImage());
+            serviceResult = updateImage(businessLicensePictureImageList,ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
+            if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+                serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
+                return serviceResult;
+            }
+
 
         //对身份证正面图片操作
-        List<Image> legalPersonNoPictureFrontImageList = new ArrayList<>();
-        legalPersonNoPictureFrontImageList.add(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage());
-        serviceResult = updateImage(legalPersonNoPictureFrontImageList,ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
-        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
-            return serviceResult;
-        }
+            List<Image> legalPersonNoPictureFrontImageList = new ArrayList<>();
+            legalPersonNoPictureFrontImageList.add(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage());
+            serviceResult = updateImage(legalPersonNoPictureFrontImageList,ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
+            if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+                serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
+                return serviceResult;
+            }
+
 
         //对身份证反面图片操作
-        List<Image> legalPersonNoPictureBackImageList = new ArrayList<>();
-        legalPersonNoPictureBackImageList.add(customer.getCustomerCompany().getLegalPersonNoPictureBackImage());
-        serviceResult = updateImage(legalPersonNoPictureBackImageList,ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
-        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
-            return serviceResult;
-        }
+            List<Image> legalPersonNoPictureBackImageList = new ArrayList<>();
+            legalPersonNoPictureBackImageList.add(customer.getCustomerCompany().getLegalPersonNoPictureBackImage());
+            serviceResult = updateImage(legalPersonNoPictureBackImageList, ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+            if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+                serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
+                return serviceResult;
+            }
 
         //对经营场所租赁合同图片操作
         serviceResult = updateImage(customer.getCustomerCompany().getManagerPlaceRentContractImageList(),ImgType.MANAGER_PLACE_RENT_CONTRACT_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对法人个人征信报告或附（法人个人征信授权书）图片操作
         serviceResult = updateImage(customer.getCustomerCompany().getLegalPersonCreditReportImageList(),ImgType.LEGAL_PERSON_CREDIT_REPORT_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对固定资产证明图片操作
         serviceResult = updateImage(customer.getCustomerCompany().getFixedAssetsProveImageList(),ImgType.FIXED_ASSETS_PROVE_IMG_TYPE,customerCompanyDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对单位对公账户流水账单图片操作
         serviceResult = updateImage(customer.getCustomerCompany().getPublicAccountFlowBillImageList(),ImgType.PUBLIC_ACCOUNT_FLOW_BILL_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对社保/公积金缴纳证明图片操作
         serviceResult = updateImage(customer.getCustomerCompany().getSocialSecurityRoProvidentFundImageList(),ImgType.SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对战略协议或合作协议图片操作
         serviceResult = updateImage(customer.getCustomerCompany().getCooperationAgreementImageList(),ImgType.COOPERATION_AGREEMENT_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对法人学历证明图片操作
         serviceResult = updateImage(customer.getCustomerCompany().getLegalPersonEducationImageList(),ImgType.LEGAL_PERSON_EDUCATION_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对法人职称证明图片操作.
         serviceResult = updateImage(customer.getCustomerCompany().getLegalPersonPositionalTitleImageList(),ImgType.LEGAL_PERSON_POSITIONAL_TITLE_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对现场核查表图片操作
         serviceResult = updateImage(customer.getCustomerCompany().getLocaleChecklistsImageList(),ImgType.LOCALE_CHECKLISTS_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对其他材料图片操作
         serviceResult = updateImage(customer.getCustomerCompany().getOtherDateImageList(),ImgType.OTHER_DATE_IMG_TYPE,customerDO.getId().toString(),userSupport.getCurrentUserId().toString(),now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
             return serviceResult;
         }
-
-
+        //更改联合开发人
+        if (customer.getUnionUser() != null){
+            customerDO.setUnionUser(customer.getUnionUser());
+            customerDO.setUpdateTime(now);
+            customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        }
         customerDO.setCustomerName(newCustomerCompanyDO.getCompanyName());
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -392,7 +388,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerMapper.update(customerDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(customer.getCustomerNo());
+        serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
     }
 
@@ -416,15 +412,20 @@ public class CustomerServiceImpl implements CustomerService {
         newCustomerPersonDO.setId(customerPersonDO.getId());
         customerPersonMapper.update(newCustomerPersonDO);
 
+        //更改联合开发人
+        if (customer.getUnionUser() != null){
+            customerDO.setUnionUser(customer.getUnionUser());
+        }
         customerDO.setCustomerName(newCustomerPersonDO.getRealName());
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerDO.setIsDisabled(customer.getIsDisabled());
         customerDO.setRemark(customer.getRemark());
+
         customerMapper.update(customerDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(customer.getCustomerNo());
+        serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
     }
 
@@ -478,6 +479,7 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         customerResult.setCustomerAccount(customerAccount);
 
+        //显示联合开发原的省，市，区
         if (customerDO.getUnionUser() != null){
             Integer companyId = userSupport.getCompanyIdByUser(customerDO.getUnionUser());
             SubCompanyDO subCompanyDO = subCompanyMapper.findById(companyId);
@@ -487,8 +489,10 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //首次所需设备，Json转list
-        String customerCompanyNeedFirstJson = customerDO.getCustomerCompanyDO().getCustomerCompanyNeedFirstJson();
-        customerResult.getCustomerCompany().setCustomerCompanyNeedFirstList(JSONObject.parseArray(customerCompanyNeedFirstJson,CustomerCompanyNeed.class));
+        if(StringUtil.isNotEmpty(customerDO.getCustomerCompanyDO().getCustomerCompanyNeedFirstJson())) {
+            String customerCompanyNeedFirstJson = customerDO.getCustomerCompanyDO().getCustomerCompanyNeedFirstJson();
+            customerResult.getCustomerCompany().setCustomerCompanyNeedFirstList(JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class));
+        }
 
         //后续所需设备，Json转list
         if (StringUtil.isNotEmpty(customerDO.getCustomerCompanyDO().getCustomerCompanyNeedLaterJson())){
@@ -587,7 +591,6 @@ public class CustomerServiceImpl implements CustomerService {
             customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(otherDateImageList);
         }
 
-
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
         return serviceResult;
@@ -603,6 +606,14 @@ public class CustomerServiceImpl implements CustomerService {
         }
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
+        //显示联合开发原的省，市，区
+        if (customerDO.getUnionUser() != null){
+            Integer companyId = userSupport.getCompanyIdByUser(customerDO.getUnionUser());
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(companyId);
+            customerResult.setUnionAreaProvinceName(subCompanyDO.getProvinceName());
+            customerResult.setUnionAreaCityName(subCompanyDO.getCityName());
+            customerResult.setUnionAreaDistrictName(subCompanyDO.getDistrictName());
+        }
         customerResult.setCustomerAccount(customerAccount);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -1151,27 +1162,24 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         if(CollectionUtil.isNotEmpty(updateImgList)){
-            if(CollectionUtil.isNotEmpty(updateImgList)) {
-                for (Image img : updateImgList) {
-                    ImageDO imgDO = imgMysqlMapper.findById(img.getImgId());
-                    if (imgDO == null) {
-                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                        serviceResult.setErrorCode(ErrorCode.IMAGE_NOT_EXISTS);
-                        return serviceResult;
-                    }
-                    if (StringUtil.isNotEmpty(imgDO.getRefId())) {
-                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                        serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,imgDO.getId());
-                        return serviceResult;
-                    }
-                    imgDO.setImgType(imgType);
-                    imgDO.setRefId(refId);
-                    imgDO.setUpdateUser(user);
-                    imgDO.setUpdateTime(now);
-                    imgMysqlMapper.update(imgDO);
+            for (Image img : updateImgList) {
+                ImageDO imgDO = imgMysqlMapper.findById(img.getImgId());
+                if (imgDO == null) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.IMAGE_NOT_EXISTS);
+                    return serviceResult;
                 }
+                if (StringUtil.isNotEmpty(imgDO.getRefId())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,imgDO.getId());
+                    return serviceResult;
+                }
+                imgDO.setImgType(imgType);
+                imgDO.setRefId(refId);
+                imgDO.setUpdateUser(user);
+                imgDO.setUpdateTime(now);
+                imgMysqlMapper.update(imgDO);
             }
-
         }
 
         if(!dbImgRecordMap.isEmpty()){
