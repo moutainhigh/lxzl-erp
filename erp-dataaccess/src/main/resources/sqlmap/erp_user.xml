@@ -239,6 +239,6 @@
         SELECT rud.passive_user_id user_id FROM erp_role_user_data rud WHERE rud.active_user_id = #{userId} AND rud.data_status=1
         UNION ALL
         SELECT #{userId} FROM dual
-        ) a LEFT JOIN erp_user u ON a.user_id = u.id
+        ) a LEFT JOIN erp_user u ON a.user_id = u.id WHERE id IS NOT NULL
     </select>
 </mapper>
