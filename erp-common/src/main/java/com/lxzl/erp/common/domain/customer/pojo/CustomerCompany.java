@@ -7,10 +7,8 @@ import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -70,6 +68,8 @@ public class CustomerCompany extends BasePO {
     private String provinceName;// 省名
     private String cityName; //城市名
     private String districtName; //地区名
+
+
 
 
     @Valid
@@ -536,4 +536,4 @@ public class CustomerCompany extends BasePO {
         this.otherDateImageList = otherDateImageList;
     }
 
-   }
+}

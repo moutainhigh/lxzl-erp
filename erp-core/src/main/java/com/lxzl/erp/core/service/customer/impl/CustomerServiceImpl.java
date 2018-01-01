@@ -115,10 +115,9 @@ public class CustomerServiceImpl implements CustomerService {
             List<CustomerCompanyNeed> customerCompanyNeedFirstList = customer.getCustomerCompany().getCustomerCompanyNeedFirstList();
             for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedFirstList){
                 BigDecimal totalPrice = BigDecimalUtil.mul(customerCompanyNeed.getUnitPrice(),new BigDecimal(customerCompanyNeed.getRentCount()));
-                ServiceResult<String, Product> stringProductServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
-                List<ProductSku> productSkuList = stringProductServiceResult.getResult().getProductSkuList();
-                customerCompanyNeed.setSkuName(productSkuList.get(0).getSkuName());
                 customerCompanyNeed.setTotalPrice(totalPrice);
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
+                customerCompanyNeed.setProduct( productServiceResult.getResult());
             }
             customerCompanyDO.setCustomerCompanyNeedFirstJson(JSON.toJSON(customerCompanyNeedFirstList).toString());
         }
@@ -129,9 +128,8 @@ public class CustomerServiceImpl implements CustomerService {
             for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedLaterList){
                 BigDecimal totalPrice = BigDecimalUtil.mul(customerCompanyNeed.getUnitPrice(),new BigDecimal(customerCompanyNeed.getRentCount()));
                 customerCompanyNeed.setTotalPrice(totalPrice);
-                ServiceResult<String, Product> stringProductServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
-                List<ProductSku> productSkuList = stringProductServiceResult.getResult().getProductSkuList();
-                customerCompanyNeed.setSkuName(productSkuList.get(0).getSkuName());
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
+                customerCompanyNeed.setProduct( productServiceResult.getResult());
 
             }
             customerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
@@ -252,9 +250,8 @@ public class CustomerServiceImpl implements CustomerService {
             for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedFirstList){
                 BigDecimal totalPrice = BigDecimalUtil.mul(customerCompanyNeed.getUnitPrice(),new BigDecimal(customerCompanyNeed.getRentCount()));
                 customerCompanyNeed.setTotalPrice(totalPrice);
-                ServiceResult<String, Product> stringProductServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
-                List<ProductSku> productSkuList = stringProductServiceResult.getResult().getProductSkuList();
-                customerCompanyNeed.setSkuName(productSkuList.get(0).getSkuName());
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
+                customerCompanyNeed.setProduct( productServiceResult.getResult());
             }
             newCustomerCompanyDO.setCustomerCompanyNeedFirstJson(JSON.toJSON(customerCompanyNeedFirstList).toString());
         }
@@ -265,9 +262,8 @@ public class CustomerServiceImpl implements CustomerService {
             for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedLaterList){
                 BigDecimal totalPrice = BigDecimalUtil.mul(customerCompanyNeed.getUnitPrice(),new BigDecimal(customerCompanyNeed.getRentCount()));
                 customerCompanyNeed.setTotalPrice(totalPrice);
-                ServiceResult<String, Product> stringProductServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
-                List<ProductSku> productSkuList = stringProductServiceResult.getResult().getProductSkuList();
-                customerCompanyNeed.setSkuName(productSkuList.get(0).getSkuName());
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
+                customerCompanyNeed.setProduct( productServiceResult.getResult());
             }
             newCustomerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
         }
@@ -419,8 +415,6 @@ public class CustomerServiceImpl implements CustomerService {
         //更改联合开发人
         if (customer.getUnionUser() != null){
             customerDO.setUnionUser(customer.getUnionUser());
-            customerDO.setUpdateTime(now);
-            customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         }
         customerDO.setCustomerName(newCustomerPersonDO.getRealName());
         customerDO.setUpdateTime(now);
@@ -495,8 +489,10 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //首次所需设备，Json转list
-        String customerCompanyNeedFirstJson = customerDO.getCustomerCompanyDO().getCustomerCompanyNeedFirstJson();
-        customerResult.getCustomerCompany().setCustomerCompanyNeedFirstList(JSONObject.parseArray(customerCompanyNeedFirstJson,CustomerCompanyNeed.class));
+        if(StringUtil.isNotEmpty(customerDO.getCustomerCompanyDO().getCustomerCompanyNeedFirstJson())) {
+            String customerCompanyNeedFirstJson = customerDO.getCustomerCompanyDO().getCustomerCompanyNeedFirstJson();
+            customerResult.getCustomerCompany().setCustomerCompanyNeedFirstList(JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class));
+        }
 
         //后续所需设备，Json转list
         if (StringUtil.isNotEmpty(customerDO.getCustomerCompanyDO().getCustomerCompanyNeedLaterJson())){
@@ -1166,27 +1162,24 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         if(CollectionUtil.isNotEmpty(updateImgList)){
-            if(CollectionUtil.isNotEmpty(updateImgList)) {
-                for (Image img : updateImgList) {
-                    ImageDO imgDO = imgMysqlMapper.findById(img.getImgId());
-                    if (imgDO == null) {
-                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                        serviceResult.setErrorCode(ErrorCode.IMAGE_NOT_EXISTS);
-                        return serviceResult;
-                    }
-                    if (StringUtil.isNotEmpty(imgDO.getRefId())) {
-                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                        serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,imgDO.getId());
-                        return serviceResult;
-                    }
-                    imgDO.setImgType(imgType);
-                    imgDO.setRefId(refId);
-                    imgDO.setUpdateUser(user);
-                    imgDO.setUpdateTime(now);
-                    imgMysqlMapper.update(imgDO);
+            for (Image img : updateImgList) {
+                ImageDO imgDO = imgMysqlMapper.findById(img.getImgId());
+                if (imgDO == null) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.IMAGE_NOT_EXISTS);
+                    return serviceResult;
                 }
+                if (StringUtil.isNotEmpty(imgDO.getRefId())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL,imgDO.getId());
+                    return serviceResult;
+                }
+                imgDO.setImgType(imgType);
+                imgDO.setRefId(refId);
+                imgDO.setUpdateUser(user);
+                imgDO.setUpdateTime(now);
+                imgMysqlMapper.update(imgDO);
             }
-
         }
 
         if(!dbImgRecordMap.isEmpty()){
