@@ -38,7 +38,7 @@ public class PurchaseOrder extends BasePO {
     @NotNull(message = ErrorCode.IS_NEW_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
     @In(value = {CommonConstant.YES, CommonConstant.NO}, message = ErrorCode.IS_INVOICE_VALUE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
     private Integer isNew;   //是否全新机
-    @NotNull(message = ErrorCode.PURCHASE_TAX_RATE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
+//    @NotNull(message = ErrorCode.PURCHASE_TAX_RATE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
     @Min(value = 0 ,message = ErrorCode.PURCHASE_TAX_RATE_ERROR,groups = {AddGroup.class, UpdateGroup.class})
     @Max(value = 1 ,message = ErrorCode.PURCHASE_TAX_RATE_ERROR,groups = {AddGroup.class, UpdateGroup.class})
     private Double taxRate;   //税率

@@ -29,7 +29,7 @@
 		<result column="ownerName" jdbcType="VARCHAR" property="ownerName" />
 		<result column="productSupplierName" jdbcType="VARCHAR" property="productSupplierName" />
 		<collection property="purchaseReceiveOrderProductDOList" resultMap="PurchaseReceiveOrderProductDO" />
-		<collection property="PurchaseReceiveOrderMaterialDOList" resultMap="PurchaseReceiveOrderMaterialDO" />
+		<collection property="purchaseReceiveOrderMaterialDOList" resultMap="PurchaseReceiveOrderMaterialDO" />
 	</resultMap>
 
 

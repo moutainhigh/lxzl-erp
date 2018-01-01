@@ -41,13 +41,6 @@ public interface PaymentService extends BaseService {
     ServiceResult<String, Boolean> manualDeduct(ManualDeductParam param);
 
     /**
-     *
-     * @param customerNo 客户编码
-     * @param payAmount 余额
-     * @return 充值结果
-     */
-
-    /**
      * 余额支付
      *
      * @param customerNo           余额
@@ -60,4 +53,14 @@ public interface PaymentService extends BaseService {
      * @return 支付结果
      */
     ServiceResult<String, Boolean> balancePay(String customerNo, String businessOrderNo, String businessOrderRemark, String businessNotifyUrl, BigDecimal payAmount, BigDecimal payRentDepositAmount, BigDecimal payDepositAmount);
+
+    /**
+     * 退还用户押金
+     *
+     * @param customerNo              客户编号
+     * @param returnRentDepositAmount 退还租金押金
+     * @param returnDepositAmount     退还设备押金
+     * @return 退还结果
+     */
+    ServiceResult<String, Boolean> returnDeposit(String customerNo, BigDecimal returnRentDepositAmount, BigDecimal returnDepositAmount);
 }
