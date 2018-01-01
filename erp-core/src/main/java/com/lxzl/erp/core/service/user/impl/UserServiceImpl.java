@@ -8,20 +8,23 @@ import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.user.LoginParam;
+import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.user.*;
-import com.lxzl.erp.dataaccess.domain.user.*;
+import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMapper;
+import com.lxzl.erp.dataaccess.domain.user.RoleDO;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
+import com.lxzl.erp.dataaccess.domain.user.UserRoleDO;
 import com.lxzl.se.common.util.secret.MD5Util;
 import com.lxzl.se.core.service.impl.BaseServiceImpl;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -50,9 +53,6 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     @Autowired
     private UserRoleService userRoleService;
-
-    @Autowired
-    private DepartmentMapper departmentMapper;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
@@ -118,7 +118,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         userDO.setCreateTime(currentTime);
         userDO.setUpdateTime(currentTime);
         userMapper.save(userDO);
-        CommonCache.userMap.put(userDO.getId(),ConverterUtil.convert(userDO,User.class));
+        CommonCache.userMap.put(userDO.getId(), ConverterUtil.convert(userDO, User.class));
         saveRoleMap(userDO, finalRoleIdMap, currentTime, loginUser);
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -209,7 +209,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         userDO.setUpdateUser(loginUser.getUserId().toString());
         userDO.setUpdateTime(currentTime);
         userMapper.update(userDO);
-        CommonCache.userMap.put(userDO.getId(),ConverterUtil.convert(userDO,User.class));
+        CommonCache.userMap.put(userDO.getId(), ConverterUtil.convert(userDO, User.class));
 
         for (Integer roleId : modifyRoleIdMap.keySet()) {
             UserRoleDO userRoleDO = null;

@@ -515,6 +515,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         for (UserDO userDO : userDOList) {
             newMap.put(userDO.getId(), "");
         }
+
         RoleUserFinalDO roleUserFinalDO = new RoleUserFinalDO();
         roleUserFinalDO.setActiveUserId(activeUserId);
         Date now = new Date();

@@ -109,9 +109,6 @@ public class UserRoleController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-
-
-
     /**
      * 更新用户可观察用户（数据级）
      * @param roleUserData
@@ -134,9 +131,6 @@ public class UserRoleController extends BaseController {
         ServiceResult<String, RoleUserData> serviceResult = userRoleService.getRoleUserDataListByUser(roleUserData.getActiveUserId());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
-
-
-
 
     /**
      * 重新构建观察者最终可观察用户权限并保存（数据级）

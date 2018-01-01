@@ -4,6 +4,7 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Date;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PurchaseOrderQueryParam extends BasePageParam {
@@ -18,6 +19,9 @@ public class PurchaseOrderQueryParam extends BasePageParam {
     private Integer commitStatus ;//提交状态，0未提交，1已提交
     private Date createStartTime;
     private Date createEndTime;
+
+    //控制数据权限
+    private List<Integer> passiveUserIdList;
 
     public String getPurchaseNo() {
         return purchaseNo;
@@ -105,4 +109,13 @@ public class PurchaseOrderQueryParam extends BasePageParam {
     public void setWarehouseId(Integer warehouseId) {
         this.warehouseId = warehouseId;
     }
+
+    public List<Integer> getPassiveUserIdList() {
+        return passiveUserIdList;
+    }
+
+    public void setPassiveUserIdList(List<Integer> passiveUserIdList) {
+        this.passiveUserIdList = passiveUserIdList;
+    }
+
 }

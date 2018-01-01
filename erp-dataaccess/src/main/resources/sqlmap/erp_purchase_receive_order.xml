@@ -269,6 +269,23 @@
 				<![CDATA[ AND epro.confirm_time <= #{maps.queryParam.confirmEndTime} ]]>
 			</if>
 			<if test="true">
+				AND
+				(
+				(epro.create_user in
+				<foreach item="item" index="index" collection="maps.queryParam.passiveUserIdList" open="(" separator=","
+						 close=")">
+					#{item}
+				</foreach>
+				) or
+				(epro.warehouse_id in
+				<foreach item="item" index="index" collection="maps.queryParam.warehouseIdList" open="(" separator=","
+						 close=")">
+					#{item}
+				</foreach>
+				)
+				)
+			</if>
+			<if test="true">
 				AND epro.data_status = 1
 			</if>
 		</where>
@@ -317,6 +334,23 @@
 			</if>
 			<if test="maps.queryParam.confirmEndTime != null ">
 				<![CDATA[ AND epro.confirm_time <= #{maps.queryParam.confirmEndTime} ]]>
+			</if>
+			<if test="true">
+				AND
+				(
+					(epro.create_user in
+						<foreach item="item" index="index" collection="maps.queryParam.passiveUserIdList" open="(" separator=","
+								 close=")">
+							#{item}
+						</foreach>
+					) or
+					(epro.warehouse_id in
+					<foreach item="item" index="index" collection="maps.queryParam.warehouseIdList" open="(" separator=","
+							 close=")">
+						#{item}
+					</foreach>
+					)
+				)
 			</if>
 			<if test="true">
 				AND epro.data_status = 1

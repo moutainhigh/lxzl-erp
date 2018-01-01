@@ -31,6 +31,8 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.*;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.RoleUserFinalMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderBulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
@@ -42,6 +44,8 @@ import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.purchase.*;
 import com.lxzl.erp.dataaccess.domain.supplier.SupplierDO;
+import com.lxzl.erp.dataaccess.domain.user.RoleUserFinalDO;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderBulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
@@ -120,6 +124,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private BulkMaterialMapper bulkMaterialMapper;
     @Autowired
     private GenerateNoSupport generateNoSupport;
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
@@ -699,6 +705,23 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             }
             purchaseOrderQueryParam.setWarehouseId(warehouseDO.getId());
         }
+        //数据级权限控制-查找用户可查看用户列表
+        Integer currentUserId = userSupport.getCurrentUserId();
+        //获取用户最【新的】最终可观察用户列表
+        List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
+        List<Integer> passiveUserIdList = new ArrayList<>();
+        if(CollectionUtil.isNotEmpty(userDOList)){
+            for(UserDO userDO : userDOList){
+                passiveUserIdList.add(userDO.getId());
+            }
+        }else{
+            result.setErrorCode(ErrorCode.SUCCESS);
+            Page<PurchaseOrder> page = new Page<>(new ArrayList<PurchaseOrder>(), 0, purchaseOrderQueryParam.getPageNo(), purchaseOrderQueryParam.getPageSize());
+            result.setResult(page);
+            return result;
+        }
+        purchaseOrderQueryParam.setPassiveUserIdList(passiveUserIdList);
+
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -851,6 +874,23 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             }
             purchaseDeliveryOrderQueryParam.setWarehouseId(warehouseDO.getId());
         }
+
+        //数据级权限控制-查找用户可查看用户列表
+        Integer currentUserId = userSupport.getCurrentUserId();
+        //获取用户最【新的】最终可观察用户列表
+        List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
+        List<Integer> passiveUserIdList = new ArrayList<>();
+        if(CollectionUtil.isNotEmpty(userDOList)){
+            for(UserDO userDO : userDOList){
+                passiveUserIdList.add(userDO.getId());
+            }
+        }else{
+            result.setErrorCode(ErrorCode.SUCCESS);
+            Page<PurchaseDeliveryOrder> page = new Page<>(new ArrayList<PurchaseDeliveryOrder>(), 0, purchaseDeliveryOrderQueryParam.getPageNo(), purchaseDeliveryOrderQueryParam.getPageSize());
+            result.setResult(page);
+            return result;
+        }
+        purchaseDeliveryOrderQueryParam.setPassiveUserIdList(passiveUserIdList);
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -1148,7 +1188,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 autoPurchaseReceiveOrderProductDO.setRealProductSkuId(purchaseReceiveOrderProductDO.getRealProductSkuId());
                 autoPurchaseReceiveOrderProductDO.setRealProductSnapshot(purchaseReceiveOrderProductDO.getRealProductSnapshot());
                 autoPurchaseReceiveOrderProductDO.setUpdateTime(now);
-                autoPurchaseReceiveOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                autoPurchaseReceiveOrderProductDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                 autoPurchaseReceiveOrderProductDO.setDataStatus(purchaseReceiveOrderProductDO.getDataStatus());
                 purchaseReceiveOrderProductMapper.update(autoPurchaseReceiveOrderProductDO);
             }
@@ -1157,8 +1197,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO = new PurchaseReceiveOrderProductDO();
                     BeanUtils.copyProperties(realSkuMap.get(skuId), purchaseReceiveOrderProductDO);
                     purchaseReceiveOrderProductDO.setPurchaseReceiveOrderId(autoPurchaseReceiveOrderDO.getId());
-                    purchaseReceiveOrderProductDO.setCreateUser(CommonConstant.SUPER_USER_ID.toString());
-                    purchaseReceiveOrderProductDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
+                    purchaseReceiveOrderProductDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    purchaseReceiveOrderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     purchaseReceiveOrderProductDO.setCreateTime(now);
                     purchaseReceiveOrderProductDO.setUpdateTime(now);
                     purchaseReceiveOrderProductDO.setId(null);
@@ -1186,8 +1226,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO = new PurchaseReceiveOrderMaterialDO();
                     BeanUtils.copyProperties(realSkuMap.get(materialId), purchaseReceiveOrderMaterialDO);
                     purchaseReceiveOrderMaterialDO.setPurchaseReceiveOrderId(autoPurchaseReceiveOrderDO.getId());
-                    purchaseReceiveOrderMaterialDO.setCreateUser(CommonConstant.SUPER_USER_ID.toString());
-                    purchaseReceiveOrderMaterialDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
+                    purchaseReceiveOrderMaterialDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    purchaseReceiveOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     purchaseReceiveOrderMaterialDO.setCreateTime(now);
                     purchaseReceiveOrderMaterialDO.setUpdateTime(now);
                     purchaseReceiveOrderMaterialDO.setId(null);
@@ -1302,6 +1342,39 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             }
             purchaseReceiveOrderQueryParam.setPurchaseDeliveryOrderId(purchaseDeliveryOrderDO.getId());
         }
+
+        //数据级权限控制-查找用户可查看用户列表
+        Integer currentUserId = userSupport.getCurrentUserId();
+        //获取用户最【新的】最终可观察用户列表
+        List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
+        //数据级权限控制-查找用户可查看仓库列表
+        ServiceResult<String,List<Warehouse>> warehouseListResult = warehouseService.getAvailableWarehouse();
+        if(!ErrorCode.SUCCESS.equals(warehouseListResult.getErrorCode())){
+            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+            return result;
+        }
+        List<Warehouse> warehouseList = warehouseListResult.getResult();
+        List<Integer> passiveUserIdList = new ArrayList<>();
+        List<Integer> warehouseIdList = new ArrayList<>();
+        if(CollectionUtil.isEmpty(userDOList)&&CollectionUtil.isEmpty(warehouseList)){
+            result.setErrorCode(ErrorCode.SUCCESS);
+            Page<PurchaseReceiveOrder> page = new Page<>(new ArrayList<PurchaseReceiveOrder>(), 0, purchaseReceiveOrderQueryParam.getPageNo(), purchaseReceiveOrderQueryParam.getPageSize());
+            result.setResult(page);
+            return result;
+        }
+        if(CollectionUtil.isNotEmpty(userDOList)){
+            for(UserDO userDO : userDOList){
+                passiveUserIdList.add(userDO.getId());
+            }
+        }
+        if(CollectionUtil.isNotEmpty(warehouseList)){
+            for(Warehouse warehouse : warehouseList){
+                warehouseIdList.add(warehouse.getWarehouseId());
+            }
+        }
+        purchaseReceiveOrderQueryParam.setPassiveUserIdList(passiveUserIdList);
+        purchaseReceiveOrderQueryParam.setWarehouseIdList(warehouseIdList);
+
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -1764,7 +1837,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             } else {
                 purchaseOrderDO.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_WAIT_COMMIT);
             }
-            purchaseOrderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
+            purchaseOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             purchaseOrderDO.setUpdateTime(new Date());
             purchaseOrderMapper.update(purchaseOrderDO);
             return true;
@@ -1829,8 +1902,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         purchaseDeliveryOrderDO.setDeliveryTime(null);
         purchaseDeliveryOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         purchaseDeliveryOrderDO.setOwnerSupplierId(purchaseOrderDO.getProductSupplierId());
-        purchaseDeliveryOrderDO.setCreateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
-        purchaseDeliveryOrderDO.setUpdateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
+        purchaseDeliveryOrderDO.setCreateUser(String.valueOf(purchaseOrderDO.getCreateUser()));
+        purchaseDeliveryOrderDO.setUpdateUser(String.valueOf(purchaseOrderDO.getCreateUser()));
         purchaseDeliveryOrderDO.setCreateTime(now);
         purchaseDeliveryOrderDO.setUpdateTime(now);
         purchaseDeliveryOrderMapper.save(purchaseDeliveryOrderDO);
@@ -1860,8 +1933,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 purchaseDeliveryOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 purchaseDeliveryOrderProductDO.setCreateTime(now);
                 purchaseDeliveryOrderProductDO.setUpdateTime(now);
-                purchaseDeliveryOrderProductDO.setCreateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
-                purchaseDeliveryOrderProductDO.setUpdateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
+                purchaseDeliveryOrderProductDO.setCreateUser(String.valueOf(purchaseOrderDO.getCreateUser()));
+                purchaseDeliveryOrderProductDO.setUpdateUser(String.valueOf(purchaseOrderDO.getCreateUser()));
                 purchaseDeliveryOrderProductMapper.save(purchaseDeliveryOrderProductDO);
                 purchaseDeliveryOrderProductDOList.add(purchaseDeliveryOrderProductDO);
             }
@@ -1893,8 +1966,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 purchaseDeliveryOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 purchaseDeliveryOrderMaterialDO.setCreateTime(now);
                 purchaseDeliveryOrderMaterialDO.setUpdateTime(now);
-                purchaseDeliveryOrderMaterialDO.setCreateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
-                purchaseDeliveryOrderMaterialDO.setUpdateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
+                purchaseDeliveryOrderMaterialDO.setCreateUser(String.valueOf(purchaseOrderDO.getCreateUser()));
+                purchaseDeliveryOrderMaterialDO.setUpdateUser(String.valueOf(purchaseOrderDO.getCreateUser()));
                 purchaseDeliveryOrderMaterialMapper.save(purchaseDeliveryOrderMaterialDO);
                 purchaseDeliveryOrderMaterialDOList.add(purchaseDeliveryOrderMaterialDO);
             }
@@ -1924,8 +1997,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         purchaseReceiveOrderDO.setProductSupplierId(purchaseDeliveryOrderDO.getOwnerSupplierId());
         purchaseReceiveOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         //收货单的owner不存，签单后保存
-        purchaseReceiveOrderDO.setCreateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
-        purchaseReceiveOrderDO.setUpdateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
+        purchaseReceiveOrderDO.setCreateUser(String.valueOf(purchaseDeliveryOrderDO.getCreateUser()));
+        purchaseReceiveOrderDO.setUpdateUser(String.valueOf(purchaseDeliveryOrderDO.getCreateUser()));
         purchaseReceiveOrderDO.setCreateTime(now);
         purchaseReceiveOrderDO.setUpdateTime(now);
         purchaseReceiveOrderDO.setWarehouseId(purchaseDeliveryOrderDO.getWarehouseId());
@@ -1970,8 +2043,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 purchaseReceiveOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 purchaseReceiveOrderProductDO.setCreateTime(now);
                 purchaseReceiveOrderProductDO.setUpdateTime(now);
-                purchaseReceiveOrderProductDO.setCreateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
-                purchaseReceiveOrderProductDO.setUpdateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
+                purchaseReceiveOrderProductDO.setCreateUser(String.valueOf(purchaseDeliveryOrderDO.getCreateUser()));
+                purchaseReceiveOrderProductDO.setUpdateUser(String.valueOf(purchaseDeliveryOrderDO.getCreateUser()));
                 purchaseReceiveOrderProductMapper.save(purchaseReceiveOrderProductDO);
             }
         }
@@ -1999,8 +2072,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 purchaseReceiveOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 purchaseReceiveOrderMaterialDO.setCreateTime(now);
                 purchaseReceiveOrderMaterialDO.setUpdateTime(now);
-                purchaseReceiveOrderMaterialDO.setCreateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
-                purchaseReceiveOrderMaterialDO.setUpdateUser(String.valueOf(CommonConstant.SUPER_USER_ID));
+                purchaseReceiveOrderMaterialDO.setCreateUser(String.valueOf(purchaseDeliveryOrderDO.getCreateUser()));
+                purchaseReceiveOrderMaterialDO.setUpdateUser(String.valueOf(purchaseDeliveryOrderDO.getCreateUser()));
                 purchaseReceiveOrderMaterialMapper.save(purchaseReceiveOrderMaterialDO);
             }
         }
