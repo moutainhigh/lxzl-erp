@@ -45,26 +45,34 @@
                         <th>库存</th>
                         <th>本身价值</th>
                         <th>租赁价格</th>
-                        <th>描述</th>
+##                        <th>描述</th>
+                        <th>选择新旧配件</th>
                         <th class="text-right">操作</th>
                     </tr>
                     </thead>
                     <tbody>
                     {{#dataSource}}
                     {{#listData}}
-                    <tr>
+                    <tr class="materialRow">
                         <td>{{materialNo}}</td>
                         <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                         <td>{{materialName}}</td>
                         <td>{{materialModelName}}</td>
                         <td>{{materialTypeStr}}</td>
                         <td>{{stock}}</td>
-                        <td>{{materialPriceFormat}}</td>
+                        <td>{{#price}}{{materialPriceFormat}}{{/price}}</td>
                         <td>
-                            <p>日租：￥{{dayRentPriceFormat}}</p>
-                            <p>月租：￥{{monthRentPriceFormat}}</p>
+                            <p>日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
+                            <p>月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
                         </td>
-                        <td>{{materialDesc}}</td>
+##                        <td>{{materialDesc}}</td>
+                        <td>
+                            <label class="block mn switch switch-primary">
+                                <input type="checkbox" name="isNewMaterial" id="isNewMaterial-{{materialNo}}" value="1">
+                                <label for="isNewMaterial-{{materialNo}}" data-on="新" data-off="旧"></label>
+                                <span></span>
+                            </label>
+                        </td>
                         <td class="text-right">
                             <div class="btn-group text-right">
                                 <a href="#" type="button" class="btn btn-default btn-xs chooseButton" data-materialNo="{{materialNo}}" data-material="{{materialJSONString}}">选择</a>

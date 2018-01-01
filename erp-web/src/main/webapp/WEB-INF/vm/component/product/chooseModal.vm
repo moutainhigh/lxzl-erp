@@ -103,7 +103,7 @@
                                                     </label>
                                                 </td>
                                                 <td>
-                                                    <label class="block mt15 switch switch-primary">
+                                                    <label class="block mn switch switch-primary">
                                                         <input type="checkbox" name="isNewProduct" id="isNewProduct-{{skuId}}" value="1">
                                                         <label for="isNewProduct-{{skuId}}" data-on="新" data-off="旧"></label>
                                                         <span></span>
@@ -135,36 +135,7 @@
                                 </div>
                             </div>
                         </div>
-##                        <div class="row ph15">
-##                            <div class="col-md-12">
-##                                <label class="col-md-2 control-label text-right">选择SKU</label>
-##                                <div class="form-group col-md-10 mn">
-##                                    <div class="option-group field">
-##                                        {{#skuList}}
-##                                        <label class="option block option-primary mb15">
-##                                            <input type="checkbox" name="sku" value="{{skuId}}">
-##                                            <span class="checkbox"></span> <span class="mr20">{{propertiesToStr}}</span>
-##                                            <span class="mr20">库存：{{stock}}</span>
-##                                            <span class="mr20">日租：{{#price}}{{dayRentPrice}}{{/price}}</span>
-##                                            <span class="mr20">月租：{{#price}}{{monthRentPrice}}{{/price}}</span>
-##                                        </label>
-##                                        {{/skuList}}
-##                                    </div>
-##                                </div>
-##                            </div>
-##                        </div>
                         {{/skuListSource}}
-##                        <div class="section-divider mtn mb15"></div>
-##                        <div class="row ph15">
-##                            <div class="col-md-12">
-##                                <label class="col-md-2 control-label text-right hidden-xs" style="visibility: hidden">操作</label>
-##                                <div class="form-group col-md-10 mn">
-##                                    <button class="btn btn-xs btn-primary mr15 confirmChoose">确定</button>
-##                                    <button class="btn btn-xs btn-default mr15 cancelChoose">取消</button>
-##                                </div>
-##                            </div>
-##
-##                        </div>
                     </div>
                     {{/product}}
                 </script>

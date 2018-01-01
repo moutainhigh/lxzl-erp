@@ -30,6 +30,18 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group field">
+                    <label class="col-md-3 control-label">税率</label>
+                    <div class="col-md-9">
+                        <div>
+                            <input id="taxRate" name="taxRate" class="form-control taxRate" type="text" placeholder="请输入税率(0-1)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group field">
                     <label class="col-md-3 control-label">运费</label>
                     <div class="col-md-9">
                         <div>
@@ -152,13 +164,13 @@
                                 <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
                             </td>
                             <td class="br-r">{{productName}}</td>
-##                            <td class="br-r">{{listPriceFixed}}</td>
                             <td class="pn">
+
                                 <table class="table">
                                     {{#chooseSkuList}}
                                     {{#skuList}}
                                     <tr class="skuRow">
-                                        <td width="15%">{{propertiesToStr}}</td>
+                                        <td width="15%"><span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{propertiesToStr}}</td>
                                         <td>
                                             <label class="field select">
                                                 <select name="rentType-{{skuId}}-{{rowKey}}" class="rentType required" style="min-width: 130px;">
@@ -172,6 +184,7 @@
                                         </td>
                                         <td class="productUnitAmountTd">
                                             <div class="smart-widget sm-right smr-50">
+                                                <input type="hidden" name="skuId" value="{{isNewProduct}}" class="isNewProduct" />
                                                 <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
                                                 <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
                                                 <label class="field prepend-icon">
@@ -281,13 +294,13 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                            <td>{{materialNo}}</td>
+                            <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{isNewMaterialValue}}</span>{{materialNo}}</td>
                             <td>{{materialName}}</td>
                             <td>{{materialTypeStr}}</td>
                             <td>{{materialPriceFormat}}</td>
                             <td>
-                                <p>日租：￥{{dayRentPriceFormat}}</p>
-                                <p>月租：￥{{monthRentPriceFormat}}</p>
+                                <p>日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
+                                <p>月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
                             </td>
                             <td>{{materialDesc}}</td>
                             <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
@@ -305,6 +318,7 @@
                             <td class="materialUnitAmountTd">
                                 <div class="smart-widget sm-right smr-50">
                                     <label class="field prepend-icon">
+                                        <input type="hidden" name="isNewMaterial" value="{{isNewMaterial}}" class="isNewMaterial" />
                                         <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
                                         <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
                                         <input type="text" name="materialUnitAmount-{{materialNo}}" value="{{materialUnitAmount}}" class="materialUnitAmount form-control required moneyNumber gui-input" placeholder="输入配件单价" />

@@ -95,7 +95,7 @@
                                             </label>
                                         </td>
                                         {{/hasCommonActionButtons}}
-                                        <td>{{equipmentNo}}</td>
+                                        <td><span class="badge {{isNewBadgeClass}} mr5">{{isNewValue}}</span>{{equipmentNo}}</td>
                                         <td>{{ownerWarehouseName}}</td>
                                         <td>{{currentWarehouseName}}</td>
                                         <td>{{productId}}</td>

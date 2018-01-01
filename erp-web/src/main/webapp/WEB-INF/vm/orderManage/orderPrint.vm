@@ -51,6 +51,7 @@
                         <div class="col-md-4">
                             <ul class="list-unstyled pull-right">
                                 <li> <b>起租日期：</b>{{#time}}{{rentStartTime}}{{/time}}&nbsp;</li>
+                                <li> <b>归还日期：</b>{{#time}}{{expectReturnTime}}{{/time}}&nbsp;</li>
                             </ul>
                         </div>
                         {{/order}}
@@ -114,7 +115,6 @@
                                     <th>设备价值</th>
                                     <th>单价</th>
                                     <th>数量</th>
-
                                     <th class="text-right pr10">应付金额</th>
                                 </tr>
                                 </thead>
@@ -154,7 +154,16 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td><b>总押金:</b></td><td>￥{{#price}}{{totalDepositAmount}}{{/price}}</td>
+                                            <td><b>设备总押金:</b></td><td>￥{{#price}}{{totalProductDepositAmount}}{{/price}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>租金总押金:</b></td><td>￥{{#price}}{{totalProductRentDepositAmount}}{{/price}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>商品总价:</b></td><td>￥{{#price}}{{totalProductAmount}}{{/price}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>配件总价:</b></td><td>￥{{#price}}{{totalMaterialAmount}}{{/price}}</td>
                                         </tr>
                                         <tr>
                                             <td><b>保险金:</b></td><td>￥{{#price}}{{totalInsuranceAmount}}{{/price}}</td>
@@ -168,6 +177,9 @@
                                         <tr>
                                             <td><b>总金额:</b></td><td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
                                         </tr>
+##                                        <tr>
+##                                            <td><b>已支付:</b></td><td>￥{{#price}}{{totalPaidOrderAmount}}{{/price}}</td>
+##                                        </tr>
                                     </tbody>
                                 </table>
                                 {{/order}}
