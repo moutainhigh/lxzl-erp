@@ -70,12 +70,12 @@
 	</select>
 	<select id="findByPurchaseOrderNo" resultMap="BulkMaterialDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/>
-		FROM erp_purchase_order epo
-		LEFT JOIN erp_purchase_receive_order  epro ON epro.purchase_order_id = epo.id AND epro.data_status=1
-		LEFT JOIN erp_stock_order eso ON epro.purchase_receive_no = eso.refer_no AND eso.data_status=1 AND eso.cause_type=1
-		LEFT JOIN erp_stock_order_bulk_material esobm ON eso.stock_order_no = esobm.stock_order_no AND esobm.data_status=1
-		LEFT JOIN erp_bulk_material ebm ON ebm.id=esobm.bulk_material_id AND ebm.data_status=1
-		WHERE epo.purchase_no = #{purchaseOrderNo} AND epo.data_status = 1 AND auto_allot_status != 1
+		FROM erp_bulk_material ebm
+		LEFT JOIN erp_stock_order_bulk_material esobm ON ebm.id=esobm.bulk_material_id AND esobm.data_status=1
+		LEFT JOIN erp_stock_order eso ON eso.stock_order_no = esobm.stock_order_no AND eso.data_status=1
+		LEFT JOIN erp_purchase_receive_order epro  ON epro.purchase_receive_no = eso.refer_no AND epro.data_status=1 AND eso.cause_type=1
+		LEFT JOIN erp_purchase_order epo ON epro.purchase_order_id = epo.id AND epro.data_status=1
+		WHERE epo.purchase_no = #{purchaseOrderNo} AND epo.data_status = 1 AND epro.auto_allot_status != 1
 	</select>
 	<select id="findByMaterialTypeAndModelId" resultMap="BulkMaterialDO" parameterType="java.util.Map">
 		select

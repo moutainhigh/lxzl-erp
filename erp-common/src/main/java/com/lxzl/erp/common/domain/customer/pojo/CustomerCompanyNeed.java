@@ -26,6 +26,8 @@ public class CustomerCompanyNeed {
     @NotNull(message = ErrorCode.CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
     private Integer rentLength;  //租赁期限
 
+    private String skuName;
+
     public Integer getSkuId() {
         return skuId;
     }
@@ -64,5 +66,13 @@ public class CustomerCompanyNeed {
 
     public void setRentLength(Integer rentLength) {
         this.rentLength = rentLength;
+    }
+
+    public String getSkuName() {
+        return skuName;
+    }
+
+    public void setSkuName(String skuName) {
+        this.skuName = skuName;
     }
 }
