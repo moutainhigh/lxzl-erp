@@ -272,7 +272,10 @@
 
 <script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
 <script type="text/javascript">
-    management_load_script('${staticManagement}/js','manage.product.util.js', 'manage.product.view.js');
+    management_load_script('${staticManagement}/js',
+            'api.data.js',
+            'manage.product.util.js',
+            'manage.product.view.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化
