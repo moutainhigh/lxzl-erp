@@ -75,19 +75,29 @@
                     </div>
                 </div>
             </div>
-            <script type="text/html" id="invoiceSupplierSelectTpl">
+            <div class="col-md-4">
                 <div class="form-group field">
-                    <label class="col-md-3 control-label">发票供应商</label>
+                    <label class="col-md-3 control-label">税率</label>
                     <div class="col-md-9">
-                        <div class="input-group bringContainer">
-                            <input type="hidden" name="invoiceSupplierId" class="form-control" bringFiled="supplierId" />
-                            <input id="warehouseName" name="supplierName" bringFiled="supplierName" class="form-control" type="text" readonly placeholder="请选择发票供应商（选填）" />
-                            <span class="input-group-addon cursor chooseSupplier" id="chooseInvoiceSupplier"><i class="fa fa-search"></i></span>
+                        <div>
+                            <input id="taxRate" name="taxRate" class="form-control taxRate required" type="text" placeholder="请输入税率(0-1)" />
                         </div>
                     </div>
                 </div>
-            </script>
-            <div class="col-md-4" id="invoiceSupplierSelect"></div>
+            </div>
+##            <script type="text/html" id="invoiceSupplierSelectTpl">
+##                <div class="form-group field">
+##                    <label class="col-md-3 control-label">发票供应商</label>
+##                    <div class="col-md-9">
+##                        <div class="input-group bringContainer">
+##                            <input type="hidden" name="invoiceSupplierId" class="form-control" bringFiled="supplierId" />
+##                            <input id="warehouseName" name="supplierName" bringFiled="supplierName" class="form-control" type="text" readonly placeholder="请选择发票供应商（选填）" />
+##                            <span class="input-group-addon cursor chooseSupplier" id="chooseInvoiceSupplier"><i class="fa fa-search"></i></span>
+##                        </div>
+##                    </div>
+##                </div>
+##            </script>
+##            <div class="col-md-4" id="invoiceSupplierSelect"></div>
         </div>
     </div>
     <div class="panel-heading">

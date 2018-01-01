@@ -51,6 +51,7 @@
                                         <dt class="mb10">采购单实收</dt><dd>{{#price}}{{purchaseOrderAmountReal}}{{/price}}</dd>
                                         <dt class="mb10">结算金额</dt><dd>{{#price}}{{purchaseOrderAmountStatement}}{{/price}}</dd>
                                         <dt class="mb10">是否有发票</dt><dd>{{isInvoiceStr}}</dd>
+                                        <dt class="mb10">税率</dt><dd>{{taxRate}}</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
