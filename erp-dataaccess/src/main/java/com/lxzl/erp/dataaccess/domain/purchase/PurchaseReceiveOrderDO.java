@@ -31,7 +31,7 @@ public class PurchaseReceiveOrderDO  extends BaseDO {
 	@Transient
 	private List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList;
 	@Transient
-	private List<PurchaseReceiveOrderMaterialDO> PurchaseReceiveOrderMaterialDOList;
+	private List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOList;
 	@Transient
 	private String ownerName;
 	@Transient
@@ -201,11 +201,11 @@ public class PurchaseReceiveOrderDO  extends BaseDO {
 
 
 	public List<PurchaseReceiveOrderMaterialDO> getPurchaseReceiveOrderMaterialDOList() {
-		return PurchaseReceiveOrderMaterialDOList;
+		return purchaseReceiveOrderMaterialDOList;
 	}
 
 	public void setPurchaseReceiveOrderMaterialDOList(List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOList) {
-		PurchaseReceiveOrderMaterialDOList = purchaseReceiveOrderMaterialDOList;
+		this.purchaseReceiveOrderMaterialDOList = purchaseReceiveOrderMaterialDOList;
 	}
 
 	public String getPurchaseOrderNo() {
