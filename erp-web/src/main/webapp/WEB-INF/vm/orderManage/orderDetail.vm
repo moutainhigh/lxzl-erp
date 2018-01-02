@@ -98,11 +98,14 @@
                                         <dt class="mb10">运费：</dt><dd>￥{{#price}}{{logisticsAmount}}{{/price}}</dd>
                                         <dt class="mb10">共计优惠：</dt><dd>（-） ￥{{#price}}{{totalDiscountAmount}}{{/price}}</dd>
                                         <dt class="mb10">应付总价：</dt><dd class="text-danger">￥{{#price}}{{totalOrderAmount}}{{/price}}</dd>
-                                        <dt class="mb10">已支付：</dt><dd>￥{{#price}}{{totalPaidOrderAmount}}{{/price}}</dd>
+                                        <dt class="mb10">首付：</dt><dd class="text-danger">￥{{#price}}{{firstNeedPayAmount}}{{/price}}</dd>
+                                        <dt class="mb10">已支付：</dt><dd class="text-danger">￥{{#price}}{{totalPaidOrderAmount}}{{/price}}</dd>
 
                                     </dl>
                                 </div>
                                 <div class="col-md-4 br-l">
+                                    <h4 class="pl15">订单状态</h4>
+
                                     <h4 class="pl15">订单状态</h4>
                                     <div class="row pl30 mt15">
                                         <ul class="Rental-timeline">

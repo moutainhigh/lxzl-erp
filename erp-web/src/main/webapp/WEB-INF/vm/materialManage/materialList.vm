@@ -83,6 +83,7 @@
                                 <th>名称</th>
                                 <th>型号</th>
                                 <th>类型</th>
+                                <th>配件值大小</th>
                                 <th>库存</th>
                                 <th>价值</th>
                                 <th>租金</th>
@@ -111,6 +112,7 @@
                                 <td>{{materialName}}</td>
                                 <td>{{materialModelName}}</td>
                                 <td>{{materialTypeStr}}</td>
+                                <td>{{#memorysize}}{{materialCapacityValue}}{{/memorysize}}</td>
                                 <td>{{stock}}</td>
                                 <td>{{#price}}{{materialPrice}}{{/price}}</td>
                                 <td>
