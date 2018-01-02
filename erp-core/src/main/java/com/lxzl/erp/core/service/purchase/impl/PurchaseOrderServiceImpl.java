@@ -533,6 +533,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         ServiceResult<String, List<PurchaseReceiveOrderProductDO>> result = new ServiceResult<>();
         List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = new ArrayList<>();
         Set<Integer> productSet = new HashSet<>();
+        Map<Integer,PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOMap = ListUtil.listToMap(oldPurchaseReceiveOrderProductDOList,"id");
         for (PurchaseOrderProductDO purchaseOrderProductDO : purchaseOrderDO.getPurchaseOrderProductDOList()) {
             productSet.add(purchaseOrderProductDO.getProductId());
         }
@@ -559,6 +560,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     result.setErrorCode(ErrorCode.PRODUCT_NOT_SAME);
                     return result;
                 }
+                PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO = purchaseReceiveOrderProductDOMap.get(purchaseReceiveOrderProduct.getPurchaseReceiveOrderProductId());
+                if(purchaseReceiveOrderProductDO!=null){
+                    if(purchaseReceiveOrderProduct.getRealProductCount() >purchaseReceiveOrderProductDO.getProductCount()){
+                        result.setErrorCode(ErrorCode.PRODUCT_SKU_COUNT_ERROR);
+                        return result;
+                    }
+                }
                 //校验此sku是否可以使用productMaterialList的物料配置
                 ProductSku productSku = new ProductSku();
                 productSku.setSkuId(productSkuDO.getId());
@@ -568,7 +576,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     result.setErrorCode(verifyProductMaterialResult.getErrorCode());
                     return result;
                 }
-                PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO = new PurchaseReceiveOrderProductDO();
+                purchaseReceiveOrderProductDO = new PurchaseReceiveOrderProductDO();
                 //保存采购收货单商品项快照
                 ServiceResult<String, Product> productResult = productService.queryProductDetailById(productSkuDO.getProductId());
                 purchaseReceiveOrderProductDO.setId(purchaseReceiveOrderProduct.getPurchaseReceiveOrderProductId());
@@ -593,7 +601,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> result = new ServiceResult<>();
         List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOList = new ArrayList<>();
         Set<Integer> materialIdSet = new HashSet<>();
-
+        Map<Integer,PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOMap = ListUtil.listToMap(oldPurchaseReceiveOrderMaterialDOList,"materialId");
         //用来判断是否是原单中应有的配件
         Set<Integer> materialSet = new HashSet<>();
         for (PurchaseOrderMaterialDO purchaseOrderMaterialDO : purchaseOrderDO.getPurchaseOrderMaterialDOList()) {
@@ -621,7 +629,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     result.setErrorCode(ErrorCode.MATERIAL_NOT_SAME);
                     return result;
                 }
-                PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO = new PurchaseReceiveOrderMaterialDO();
+
+                PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO = purchaseReceiveOrderMaterialDOMap.get(materialDO.getId());
+                if(purchaseReceiveOrderMaterialDO!=null){
+                    if(purchaseReceiveOrderMaterial.getRealMaterialCount() > purchaseReceiveOrderMaterialDO.getMaterialCount()){
+                        result.setErrorCode(ErrorCode.MATERIAL_COUNT_ERROR);
+                        return result;
+                    }
+                }
+                purchaseReceiveOrderMaterialDO = new PurchaseReceiveOrderMaterialDO();
                 //保存采购订单物料项快照
                 purchaseReceiveOrderMaterialDO.setRealMaterialSnapshot(JSON.toJSONString(materialDO));
                 purchaseReceiveOrderMaterialDO.setRealMaterialId(materialDO.getId());
