@@ -141,7 +141,13 @@
 
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/fancytree2/jquery.fancytree-all.min.js"></script>
     <script type="text/javascript">
-        management_load_script('${staticManagement}/js','manage.user.js','manage.user.add.js','manage.user.edit.js','manage.user.view.js','manage.user.access.data.js', 'manage.department.tree.js');
+        management_load_script('${staticManagement}/js',
+                'manage.user.js',
+                'manage.user.add.js',
+                'manage.user.edit.js',
+                'manage.user.view.js',
+                'manage.user.access.data.js',
+                'manage.department.tree.js');
     </script>
 
     <script type="text/javascript">

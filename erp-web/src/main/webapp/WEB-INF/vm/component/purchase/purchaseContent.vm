@@ -142,7 +142,6 @@
                             <th>商品ID</th>
                             <th>图片</th>
                             <th>商品名称</th>
-                            <th>列表价格</th>
                             <th>SKU</th>
                         </tr>
                         </thead>
@@ -158,15 +157,17 @@
                             </td>
                             <td>{{productId}}</td>
                             <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-                            <td>{{productName}}</td>
-                            <td class="br-r">{{listPriceFixed}}</td>
+                            <td class="br-r">{{productName}}</td>
                             <td class="pn">
                                 <table class="table">
                                     {{#chooseSkuList}}
                                     {{#skuList}}
                                     <tr class="skuRow">
-                                        <td style="width: 40%">{{propertiesToStr}}</td>
-                                        <td style="width: 20%">
+                                        <td style="width: 20%">{{propertiesToStr}}</td>
+                                        <td width="20%">
+                                            商品价值：￥{{#price}}{{skuPrice}}{{/price}}
+                                        </td>
+                                        <td>
                                             <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
                                             <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
                                             <label class="field prepend-icon mw200">
@@ -174,12 +175,12 @@
                                                 <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                             </label>
                                         </td>
-                                        <td style="width: 20%">
+                                        <td>
                                             <label class="field prepend-icon mw200">
                                                 <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入采购数量" />
                                             </label>
                                         </td>
-                                        <td style="width:20%" class="text-right">
+                                        <td class="text-right">
                                             <div class="btn-group text-right">
                                                 <a href="#" type="button" class="btn btn-default btn-xs editMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">编辑配件</a>
                                                 <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
@@ -201,7 +202,7 @@
                                                                 <input type="hidden" name="propertyCapacityValue" value="{{propertyCapacityValue}}" />
                                                                 <table class="table pn br-r materialInputTable" >
                                                                     {{#materialList}}
-                                                                    <tr class="materialInputRow" #*data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}"*#>
+                                                                    <tr class="materialInputRow">
                                                                         <td style="width: 50%;">
                                                                             <div class="field">
                                                                                 <div class="input-group bringContainer">
@@ -256,6 +257,17 @@
                     </script>
                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                 </div>
+                <script type="text/html" id="totalProductTpl">
+                    {{#totalProduct}}
+                    <div class="clearfix p15 br-t">
+                        <dl class="dl-horizontal dl-horizontal-rental pull-right">
+                            <dt class="mb5">商品总数量：</dt><dd>{{totalCount}}</dd>
+                            <dt class="mb5">商品总价格：</dt><dd class="text-danger">￥{{#price}}{{totalPrice}}{{/price}}</dd>
+                        </dl>
+                    </div>
+                    {{/totalProduct}}
+                </script>
+                <div id="totalProduct"></div>
             </div>
             <div id="purchaseOrderMaterialItems" class="tab-pane">
                 <div class="panel-menu p12 br-n br-b">
@@ -340,6 +352,17 @@
                     </script>
                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialDataListTable"></table>
                 </div>
+                <script type="text/html" id="totalMaterialTpl">
+                    {{#totalMaterial}}
+                    <div class="clearfix p15 br-t">
+                        <dl class="dl-horizontal dl-horizontal-rental pull-right">
+                            <dt class="mb5">配件总数量：</dt><dd>{{totalCount}}</dd>
+                            <dt class="mb5">配件总价格：</dt><dd class="text-danger">￥{{#price}}{{totalPrice}}{{/price}}</dd>
+                        </dl>
+                    </div>
+                    {{/totalMaterial}}
+                </script>
+                <div id="totalMaterial"></div>
             </div>
         </div>
     </div>
