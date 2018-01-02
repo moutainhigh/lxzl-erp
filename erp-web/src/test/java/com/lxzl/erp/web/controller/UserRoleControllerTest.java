@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.company.pojo.Department;
@@ -8,6 +9,7 @@ import com.lxzl.erp.common.domain.user.RoleQueryParam;
 import com.lxzl.erp.common.domain.user.UserRoleQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.*;
 import com.lxzl.erp.common.util.JSONUtil;
+import com.lxzl.erp.dataaccess.domain.user.RoleDepartmentDataDO;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -88,6 +90,13 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/userRole/updateRoleDepartmentData",roleDepartmentData);
     }
     @Test
+    public void updateRoleDepartmentData1() throws Exception {
+
+        RoleDepartmentData roleDepartmentData = JSON.parseObject("{\"departmentList\":[{\"departmentId\":\"400002\"}],\"roleId\":600001}", RoleDepartmentData.class);
+
+        TestResult testResult = getJsonTestResult("/userRole/updateRoleDepartmentData",roleDepartmentData);
+    }
+    @Test
     public void getRoleDepartmentDataListByRole() throws Exception {
 
         Role role = new Role();
@@ -105,6 +114,12 @@ public class UserRoleControllerTest extends ERPUnTransactionalTest {
         user.setUserId(500002);
 //        userList.add(user);
         roleUserData.setPassiveUserList(userList);
+        TestResult testResult = getJsonTestResult("/userRole/updateRoleUserData",roleUserData);
+    }
+    @Test
+    public void updateRoleUserData1() throws Exception {
+
+        RoleUserData roleUserData = JSON.parseObject("{\"passiveUserList\":[{\"userId\":\"500013\"},{\"userId\":\"400051\"},{\"userId\":\"500020\"}],\"activeUserId\":500020}",RoleUserData.class);
         TestResult testResult = getJsonTestResult("/userRole/updateRoleUserData",roleUserData);
     }
     @Test

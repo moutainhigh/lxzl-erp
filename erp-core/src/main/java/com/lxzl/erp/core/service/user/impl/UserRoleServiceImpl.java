@@ -7,13 +7,18 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.system.pojo.Menu;
-import com.lxzl.erp.common.domain.user.*;
+import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
+import com.lxzl.erp.common.domain.user.RoleMenuQueryParam;
+import com.lxzl.erp.common.domain.user.RoleQueryParam;
+import com.lxzl.erp.common.domain.user.UserRoleQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.*;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.company.impl.support.DepartmentConverter;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserRoleConverter;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.SysMenuMapper;
@@ -24,6 +29,7 @@ import com.lxzl.erp.dataaccess.domain.system.SysMenuDO;
 import com.lxzl.erp.dataaccess.domain.user.*;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import org.apache.hadoop.yarn.webapp.hamlet.Hamlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -69,8 +75,8 @@ public class UserRoleServiceImpl implements UserRoleService {
     @Autowired
     private DepartmentMapper departmentMapper;
 
-    @Autowired(required = false)
-    private HttpSession session;
+    @Autowired
+    private UserSupport userSupport;
 
     /**
      * 权限控制
@@ -152,16 +158,16 @@ public class UserRoleServiceImpl implements UserRoleService {
     @Override
     public ServiceResult<String, Integer> addRole(Role role) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         String verifyCode = verifyOpRole(role);
         if (!ErrorCode.SUCCESS.equals(verifyCode)) {
             result.setErrorCode(verifyCode);
             return result;
         }
-        RoleDO roleDO = ConverterUtil.convert(role,RoleDO.class);
+        String currentUserId = userSupport.getCurrentUserId().toString();
+        RoleDO roleDO = ConverterUtil.convert(role, RoleDO.class);
         roleDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        roleDO.setCreateUser(loginUser.getUserId().toString());
-        roleDO.setUpdateUser(loginUser.getUserId().toString());
+        roleDO.setCreateUser(currentUserId);
+        roleDO.setUpdateUser(currentUserId);
         roleDO.setCreateTime(new Date());
         roleDO.setUpdateTime(new Date());
         roleMapper.save(roleDO);
@@ -177,14 +183,14 @@ public class UserRoleServiceImpl implements UserRoleService {
     @Override
     public ServiceResult<String, Integer> updateRole(Role role) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+
         String verifyCode = verifyOpRole(role);
         if (!ErrorCode.SUCCESS.equals(verifyCode)) {
             result.setErrorCode(verifyCode);
             return result;
         }
-        RoleDO roleDO = ConverterUtil.convert(role,RoleDO.class);
-        roleDO.setUpdateUser(loginUser.getUserId().toString());
+        RoleDO roleDO = ConverterUtil.convert(role, RoleDO.class);
+        roleDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         roleDO.setUpdateTime(new Date());
         roleMapper.update(roleDO);
 
@@ -199,7 +205,6 @@ public class UserRoleServiceImpl implements UserRoleService {
     @Override
     public ServiceResult<String, Integer> deleteRole(Integer id) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
 
         List<UserRoleDO> userRoleList = userRoleMapper.findListByRoleId(id);
         if (userRoleList != null && userRoleList.size() > 0) {
@@ -214,7 +219,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         RoleDO roleDO = new RoleDO();
         roleDO.setId(id);
-        roleDO.setUpdateUser(loginUser.getUserId().toString());
+        roleDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         roleDO.setUpdateTime(new Date());
         roleDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
         roleMapper.update(roleDO);
@@ -234,21 +239,22 @@ public class UserRoleServiceImpl implements UserRoleService {
         List<RoleDO> list = roleMapper.findList(params);
         Integer count = roleMapper.findListCount(params);
 
-        Page<Role> page = new Page<>(ConverterUtil.convertList(list,Role.class), count, param.getPageNo(), param.getPageSize());
+        Page<Role> page = new Page<>(ConverterUtil.convertList(list, Role.class), count, param.getPageNo(), param.getPageSize());
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> saveUserRole(UserRole userRole) {
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         // 超级管理员不用赋权限
         ServiceResult<String, Integer> result = new ServiceResult<>();
         List<RoleDO> roleList = userRoleMapper.findRoleListByUserId(userRole.getUserId());
         Map<Integer, RoleDO> dbRoleMap = new HashMap<>();
         dbRoleMap = ListUtil.listToMap(roleList, "id");
+        String currentUserId = userSupport.getCurrentUserId().toString();
+        Date now = new Date();
         if (userRole.getRoleList() != null && userRole.getRoleList().size() > 0) {
             for (Role role : userRole.getRoleList()) {
                 dbRoleMap.remove(role.getRoleId());
@@ -256,14 +262,13 @@ public class UserRoleServiceImpl implements UserRoleService {
                 if (dbRecord != null) {
                     continue;
                 }
-
-                UserRoleDO userRoleDO = ConverterUtil.convert(userRole,UserRoleDO.class);
+                UserRoleDO userRoleDO = ConverterUtil.convert(userRole, UserRoleDO.class);
                 userRoleDO.setRoleId(role.getRoleId());
                 userRoleDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                userRoleDO.setCreateUser(loginUser.getUserId().toString());
-                userRoleDO.setUpdateUser(loginUser.getUserId().toString());
-                userRoleDO.setCreateTime(new Date());
-                userRoleDO.setUpdateTime(new Date());
+                userRoleDO.setCreateUser(currentUserId);
+                userRoleDO.setUpdateUser(currentUserId);
+                userRoleDO.setCreateTime(now);
+                userRoleDO.setUpdateTime(now);
                 userRoleMapper.save(userRoleDO);
             }
         }
@@ -271,7 +276,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         for (Map.Entry<Integer, RoleDO> entry : dbRoleMap.entrySet()) {
             UserRoleDO userRoleDO = userRoleMapper.findUserRole(userRole.getUserId(), entry.getKey());
             userRoleDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-            userRoleDO.setUpdateUser(loginUser.getUserId().toString());
+            userRoleDO.setUpdateUser(currentUserId);
             userRoleDO.setUpdateTime(new Date());
             userRoleMapper.update(userRoleDO);
         }
@@ -287,7 +292,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         List<RoleDO> roleDOList = userRoleMapper.findRoleListByUserId(param.getUserId());
         UserRole userRole = new UserRole();
         userRole.setUserId(param.getUserId());
-        userRole.setRoleList(ConverterUtil.convertList(roleDOList,Role.class));
+        userRole.setRoleList(ConverterUtil.convertList(roleDOList, Role.class));
         result.setResult(userRole);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -297,8 +302,8 @@ public class UserRoleServiceImpl implements UserRoleService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> saveRoleMenu(RoleMenu roleMenu) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-
+        String currentUserId = userSupport.getCurrentUserId().toString();
+        Date now = new Date();
         roleMenuMapper.deleteMenuByRoleId(roleMenu.getRoleId());
         if (roleMenu.getMenuList() != null && roleMenu.getMenuList().size() > 0) {
             for (Menu menu : roleMenu.getMenuList()) {
@@ -306,14 +311,14 @@ public class UserRoleServiceImpl implements UserRoleService {
                 if (dbRecord != null) {
                     continue;
                 }
-                RoleMenuDO roleMenuDO = ConverterUtil.convert(roleMenu,RoleMenuDO.class);
+                RoleMenuDO roleMenuDO = ConverterUtil.convert(roleMenu, RoleMenuDO.class);
 
                 roleMenuDO.setMenuId(menu.getMenuId());
                 roleMenuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                roleMenuDO.setCreateUser(loginUser.getUserId().toString());
-                roleMenuDO.setUpdateUser(loginUser.getUserId().toString());
-                roleMenuDO.setCreateTime(new Date());
-                roleMenuDO.setUpdateTime(new Date());
+                roleMenuDO.setCreateUser(currentUserId);
+                roleMenuDO.setUpdateUser(currentUserId);
+                roleMenuDO.setCreateTime(now);
+                roleMenuDO.setUpdateTime(now);
                 roleMenuMapper.save(roleMenuDO);
                 saveParentMenu(roleMenu.getRoleId(), menu.getMenuId());
             }
@@ -324,7 +329,8 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     private void saveParentMenu(Integer roleId, Integer menuId) {
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        String currentUserId = userSupport.getCurrentUserId().toString();
+        Date now = new Date();
         SysMenuDO sysMenuDO = sysMenuMapper.findByMenuId(menuId);
         if (sysMenuDO != null && !CommonConstant.SUPER_MENU_ID.equals(sysMenuDO.getParentMenuId())) {
             RoleMenuDO dbRecord = roleMenuMapper.findRoleMenu(roleId, sysMenuDO.getParentMenuId());
@@ -334,10 +340,10 @@ public class UserRoleServiceImpl implements UserRoleService {
                 roleMenuDO.setMenuId(sysMenuDO.getParentMenuId());
 
                 roleMenuDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                roleMenuDO.setCreateUser(loginUser.getUserId().toString());
-                roleMenuDO.setUpdateUser(loginUser.getUserId().toString());
-                roleMenuDO.setCreateTime(new Date());
-                roleMenuDO.setUpdateTime(new Date());
+                roleMenuDO.setCreateUser(currentUserId);
+                roleMenuDO.setUpdateUser(currentUserId);
+                roleMenuDO.setCreateTime(now);
+                roleMenuDO.setUpdateTime(now);
                 roleMenuMapper.save(roleMenuDO);
             }
             saveParentMenu(roleId, sysMenuDO.getParentMenuId());
@@ -356,14 +362,14 @@ public class UserRoleServiceImpl implements UserRoleService {
         List<SysMenuDO> nodeList = UserRoleConverter.convertTree(menuDOList);
         List<Menu> resultList = new ArrayList<>();
         for (SysMenuDO node1 : nodeList) {
-            resultList.add(ConverterUtil.convert(node1,Menu.class));
+            resultList.add(ConverterUtil.convert(node1, Menu.class));
         }
 
         RoleDO roleDO = roleMapper.findByMapId(param.getRoleId());
         RoleMenu roleMenu = new RoleMenu();
         if (roleDO != null) {
             roleMenu.setRoleId(roleDO.getId());
-            roleMenu.setRole(ConverterUtil.convert(roleDO,Role.class));
+            roleMenu.setRole(ConverterUtil.convert(roleDO, Role.class));
         }
         roleMenu.setMenuList(resultList);
 
@@ -373,53 +379,53 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> updateRoleDepartmentData(RoleDepartmentData roleDepartmentData) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        List<Department> departmentList = roleDepartmentData.getDepartmentList();
-        List<RoleDepartmentDataDO> oldList = roleDepartmentDataMapper.getRoleDepartmentDataListByRoleId(roleDepartmentData.getRoleId());
-        if (departmentList == null || departmentList.size() == 0) {
-            if (oldList != null && oldList.size() > 0) {
-                for (RoleDepartmentDataDO roleDepartmentDataDO : oldList) {
-                    roleDepartmentDataMapper.deleteByRoleAndDepartment(roleDepartmentData.getRoleId(), roleDepartmentDataDO.getDepartmentId());
-                }
-                result.setErrorCode(ErrorCode.SUCCESS);
-            } else {
-                result.setErrorCode(ErrorCode.DEPARTMENT_NOT_NULL);
-            }
+
+        RoleDO roleDO = roleMapper.findById(roleDepartmentData.getRoleId());
+        if(roleDO == null ){
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
+        String currentUserId = userSupport.getCurrentUserId().toString();
+        Date now = new Date();
+        List<Department> departmentList = roleDepartmentData.getDepartmentList();
+        Set<Integer> departmentIdSet = ListUtil.listToSet(departmentList,"departmentId");
+        List<RoleDepartmentDataDO> oldList = roleDepartmentDataMapper.getRoleDepartmentDataListByRoleId(roleDepartmentData.getRoleId());
+        Map<Integer,RoleDepartmentDataDO> oldMap = ListUtil.listToMap(oldList,"departmentId");
 
-
-        Map<Integer, RoleDepartmentDataDO> oldMap = new HashMap<>();
-        for (RoleDepartmentDataDO roleDepartmentDataDO : oldList) {
-            oldMap.put(roleDepartmentDataDO.getDepartmentId(), roleDepartmentDataDO);
-        }
-        Map<Integer, Department> newMap = new HashMap<>();
-        for (Department department : departmentList) {
-            newMap.put(department.getDepartmentId(), department);
-        }
-        RoleDepartmentDataDO roleDepartmentDataDO = new RoleDepartmentDataDO();
-        roleDepartmentDataDO.setRoleId(roleDepartmentData.getRoleId());
-        roleDepartmentDataDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        roleDepartmentDataDO.setCreateUser(loginUser.getUserId().toString());
-        roleDepartmentDataDO.setUpdateUser(loginUser.getUserId().toString());
-        roleDepartmentDataDO.setCreateTime(new Date());
-        roleDepartmentDataDO.setUpdateTime(new Date());
-        for (Department department : departmentList) {
-            //当前部门不在旧部门列表中，新增部门，在旧列表中，不处理
-            if (oldMap.containsKey(department.getDepartmentId())) {
-                continue;
-            } else {
-                roleDepartmentDataDO.setDepartmentId(department.getDepartmentId());
-                roleDepartmentDataMapper.save(roleDepartmentDataDO);
+        if(CollectionUtil.isNotEmpty(departmentIdSet)){
+            for(Integer departmentId : departmentIdSet){
+                DepartmentDO departmentDO = departmentMapper.findById(departmentId);
+                if(departmentDO==null){
+                    result.setErrorCode(ErrorCode.DEPARTMENT_NOT_EXISTS);
+                    return result;
+                }
+                //当前部门不在旧部门列表中，新增部门，在旧列表中，不处理
+                if (oldMap.containsKey(departmentId)) {
+                    oldMap.remove(departmentId);
+                    continue;
+                } else {
+                    RoleDepartmentDataDO roleDepartmentDataDO = new RoleDepartmentDataDO();
+                    roleDepartmentDataDO.setRoleId(roleDepartmentData.getRoleId());
+                    roleDepartmentDataDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    roleDepartmentDataDO.setCreateUser(currentUserId);
+                    roleDepartmentDataDO.setUpdateUser(currentUserId);
+                    roleDepartmentDataDO.setCreateTime(now);
+                    roleDepartmentDataDO.setUpdateTime(now);
+                    roleDepartmentDataDO.setDepartmentId(departmentId);
+                    roleDepartmentDataMapper.save(roleDepartmentDataDO);
+                }
             }
         }
-        for (RoleDepartmentDataDO departmentDataDO : oldList) {
-            //旧部门不在新部门列表中，删除
-            if (!newMap.containsKey(departmentDataDO.getDepartmentId())) {
-                roleDepartmentDataMapper.deleteByRoleAndDepartment(roleDepartmentData.getRoleId(), departmentDataDO.getDepartmentId());
-            }
+
+        for (Integer departmentId : oldMap.keySet()) {
+            RoleDepartmentDataDO roleDepartmentDataDO = oldMap.get(departmentId);
+            roleDepartmentDataDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            roleDepartmentDataDO.setUpdateTime(now);
+            roleDepartmentDataDO.setUpdateUser(currentUserId);
+            roleDepartmentDataMapper.update(roleDepartmentDataDO);
         }
         result.setResult(roleDepartmentData.getRoleId());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -437,52 +443,51 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> updateRoleUserData(RoleUserData roleUserData) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        List<RoleUserDataDO> oldList = roleUserDataMapper.getRoleUserDataListByActiveId(roleUserData.getActiveUserId());
-
-        List<User> passiveUserList = roleUserData.getPassiveUserList();
-        if (passiveUserList == null || passiveUserList.size() == 0) {
-            if (oldList != null && oldList.size() > 0) {
-                for (RoleUserDataDO roleUserDataDO : oldList) {
-                    roleUserDataMapper.deleteByActiveAndPassive(roleUserData.getActiveUserId(), roleUserDataDO.getPassiveUserId());
-                }
-                result.setErrorCode(ErrorCode.SUCCESS);
-            } else {
-                result.setErrorCode(ErrorCode.USER_NOT_NULL);
-            }
+        String currentUserId = userSupport.getCurrentUserId().toString();
+        Date now = new Date();
+        UserDO userDO = userMapper.findByUserId(roleUserData.getActiveUserId());
+        if(userDO==null){
+            result.setErrorCode(ErrorCode.USER_NOT_EXISTS);
             return result;
         }
+        List<RoleUserDataDO> oldList = roleUserDataMapper.getRoleUserDataListByActiveId(roleUserData.getActiveUserId());
+        Map<Integer,RoleUserDataDO> oldMap = ListUtil.listToMap(oldList,"passiveUserId");
 
-
-        Map<Integer, RoleUserDataDO> oldMap = new HashMap<>();
-        for (RoleUserDataDO roleDepartmentDataDO : oldList) {
-            oldMap.put(roleDepartmentDataDO.getPassiveUserId(), roleDepartmentDataDO);
-        }
-        Map<Integer, User> newMap = new HashMap<>();
-        for (User user : passiveUserList) {
-            newMap.put(user.getUserId(), user);
-        }
-        RoleUserDataDO roleUserDataDO = new RoleUserDataDO();
-        roleUserDataDO.setActiveUserId(roleUserData.getActiveUserId());
-        roleUserDataDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        roleUserDataDO.setCreateUser(loginUser.getUserId().toString());
-        roleUserDataDO.setUpdateUser(loginUser.getUserId().toString());
-        roleUserDataDO.setCreateTime(new Date());
-        roleUserDataDO.setUpdateTime(new Date());
-        for (User user : passiveUserList) {
-            if (oldMap.containsKey(user.getUserId())) {
-                continue;
-            } else {
-                roleUserDataDO.setPassiveUserId(user.getUserId());
-                roleUserDataMapper.save(roleUserDataDO);
+        List<User> passiveUserList = roleUserData.getPassiveUserList();
+        Set<Integer> passiveUserSet = ListUtil.listToSet(passiveUserList,"userId");
+        if(CollectionUtil.isNotEmpty(passiveUserSet)){
+            for(Integer userId : passiveUserSet){
+                UserDO passiveUserDO = userMapper.findByUserId(userId);
+                if(passiveUserDO==null){
+                    result.setErrorCode(ErrorCode.USER_NOT_EXISTS);
+                    return result;
+                }
+                if (oldMap.containsKey(userId)) {
+                    oldMap.remove(userId);
+                    continue;
+                } else {
+                    RoleUserDataDO roleUserDataDO = new RoleUserDataDO();
+                    roleUserDataDO.setActiveUserId(roleUserData.getActiveUserId());
+                    roleUserDataDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    roleUserDataDO.setCreateUser(currentUserId);
+                    roleUserDataDO.setUpdateUser(currentUserId);
+                    roleUserDataDO.setCreateTime(now);
+                    roleUserDataDO.setUpdateTime(now);
+                    roleUserDataDO.setPassiveUserId(userId);
+                    roleUserDataMapper.save(roleUserDataDO);
+                }
             }
         }
-        for (RoleUserDataDO userDataDO : oldList) {
-            if (!newMap.containsKey(userDataDO.getPassiveUserId())) {
-                roleUserDataMapper.deleteByActiveAndPassive(roleUserData.getActiveUserId(), userDataDO.getPassiveUserId());
-            }
+
+        for (Integer passiveUserId : oldMap.keySet()) {
+            RoleUserDataDO roleUserDataDO = oldMap.get(passiveUserId);
+            roleUserDataDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            roleUserDataDO.setUpdateTime(now);
+            roleUserDataDO.setUpdateUser(currentUserId);
+            roleUserDataMapper.update(roleUserDataDO);
         }
         result.setResult(roleUserData.getActiveUserId());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -499,9 +504,16 @@ public class UserRoleServiceImpl implements UserRoleService {
         return result;
     }
 
+    /**
+     * 已废弃
+     * @param activeUserId
+     * @return
+     */
     @Override
     public ServiceResult<String, RoleUserFinal> rebuildFinalRoleUserData(Integer activeUserId) {
         ServiceResult<String, RoleUserFinal> result = new ServiceResult<>();
+        String currentUserId = userSupport.getCurrentUserId().toString();
+        Date now = new Date();
         //获取用户【旧的】最终可观察用户列表
         List<RoleUserFinalDO> roleUserFinalList = roleUserFinalMapper.getFinalRoleUserData(activeUserId);
         Map<Integer, String> oldMap = new HashMap();
@@ -518,10 +530,8 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         RoleUserFinalDO roleUserFinalDO = new RoleUserFinalDO();
         roleUserFinalDO.setActiveUserId(activeUserId);
-        Date now = new Date();
         roleUserFinalDO.setUpdateTime(now);
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        roleUserFinalDO.setUpdateUser(loginUser.getUserId().toString());
+        roleUserFinalDO.setUpdateUser(currentUserId);
         //旧列表有，新列表没有，数据库删除该条权限
         for (RoleUserFinalDO old : roleUserFinalList) {
             if (!newMap.containsKey(old.getPassiveUserId())) {
@@ -532,7 +542,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         //旧列表没有，新列表有，数据库添加该条权限
         roleUserFinalDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         roleUserFinalDO.setCreateTime(now);
-        roleUserFinalDO.setCreateUser(loginUser.getUserId().toString());
+        roleUserFinalDO.setCreateUser(currentUserId);
         for (UserDO user : userDOList) {
             if (!oldMap.containsKey(user.getId())) {
                 roleUserFinalDO.setPassiveUserId(user.getId());

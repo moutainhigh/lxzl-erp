@@ -61,12 +61,10 @@
         <include refid="set_column_sql"/>
         WHERE id = #{id, jdbcType=INTEGER}
     </update>
-    <update id="deleteByActiveAndPassive" parameterType="map">
-        update erp_role_user_data set data_status = 2
-        WHERE active_user_id = #{activeUserId} and passive_user_id = #{passiveUserId}
-    </update>
+
     <select id="getRoleUserDataListByActiveId" resultMap="RoleUserDataDO" parameterType="map">
-        select  <include refid="column_List"/> ,u.real_name passive_user_name from erp_role_user_data rud left join erp_user u on rud.passive_user_id=u.id
+        select  <include refid="column_List"/> ,u.real_name passive_user_name from erp_role_user_data rud
+        left join erp_user u on rud.passive_user_id=u.id
         <where>
             <if test="activeUserId!=null">
                 and rud.active_user_id = #{activeUserId}
