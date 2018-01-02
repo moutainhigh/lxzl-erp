@@ -2,10 +2,10 @@ package com.lxzl.erp.common.domain.order;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePageParam;
-import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderQueryParam extends BasePageParam implements Serializable {
@@ -21,6 +21,10 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private Date createStartTime;
     private Date createEndTime;
     private Integer orderSellerId;
+
+    private List<Integer> passiveUserIdList;
+    private Integer subCompanyId;
+
 
     public Integer getOrderId() {
         return orderId;
@@ -108,5 +112,21 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setOrderSellerId(Integer orderSellerId) {
         this.orderSellerId = orderSellerId;
+    }
+
+    public List<Integer> getPassiveUserIdList() {
+        return passiveUserIdList;
+    }
+
+    public void setPassiveUserIdList(List<Integer> passiveUserIdList) {
+        this.passiveUserIdList = passiveUserIdList;
+    }
+
+    public Integer getSubCompanyId() {
+        return subCompanyId;
+    }
+
+    public void setSubCompanyId(Integer subCompanyId) {
+        this.subCompanyId = subCompanyId;
     }
 }

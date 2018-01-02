@@ -2,6 +2,8 @@ package com.lxzl.erp.common.domain.customer;
 
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
+import java.util.List;
+
 public class CustomerPersonQueryParam extends BasePageParam {
 
     private Integer customerId;
@@ -18,6 +20,8 @@ public class CustomerPersonQueryParam extends BasePageParam {
     private String personNo;//身份证号'
     private String connectRealName;//紧急联系人姓名'
     private String connectPhone;//紧急联系人电话'
+
+    private List<Integer> passiveUserIdList;
 
     public Integer getCustomerId() {
         return customerId;
@@ -105,5 +109,13 @@ public class CustomerPersonQueryParam extends BasePageParam {
 
     public void setConnectPhone(String connectPhone) {
         this.connectPhone = connectPhone;
+    }
+
+    public List<Integer> getPassiveUserIdList() {
+        return passiveUserIdList;
+    }
+
+    public void setPassiveUserIdList(List<Integer> passiveUserIdList) {
+        this.passiveUserIdList = passiveUserIdList;
     }
 }

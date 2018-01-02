@@ -288,6 +288,7 @@
 			<if test="true">
 				AND ec.data_status = 1 AND ec.customer_type=1
 			</if>
+			<include refid="data_access_sql.customer_control"/>
 		</where>
 		ORDER BY ec.create_time DESC
 
@@ -331,6 +332,7 @@
 			<if test="true">
 				AND ec.data_status = 1 AND ec.customer_type=1
 			</if>
+			<include refid="data_access_sql.customer_control"/>
 		</where>
 		ORDER BY ec.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
@@ -374,6 +376,7 @@
 			<if test="true">
 				AND ec.data_status = 1 AND ec.customer_type=2
 			</if>
+			<include refid="data_access_sql.customer_control"/>
 		</where>
 	</select>
 	<select id="findCustomerPersonByParams" resultMap="CustomerDO" parameterType="map">
@@ -420,6 +423,7 @@
 			<if test="true">
 				AND ec.data_status = 1 AND ec.customer_type=2
 			</if>
+			<include refid="data_access_sql.customer_control"/>
 		</where>
 		ORDER BY ec.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}

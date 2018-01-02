@@ -31,12 +31,14 @@ import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.*;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -712,9 +714,22 @@ public class OrderServiceImpl implements OrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        if (!userSupport.isHeadUser()) {
-            orderQueryParam.setOrderSellerId(user.getUserId());
+        //数据级权限控制-查找用户可查看用户列表
+        Integer currentUserId = userSupport.getCurrentUserId();
+        //获取用户最【新的】最终可观察用户列表
+        List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
+        //数据级权限控制-查找用户可查看本分公司
+        Integer subCompanyId = userSupport.getCurrentUserCompanyId();
+        List<Integer> passiveUserIdList = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(userDOList)) {
+            for (UserDO userDO : userDOList) {
+                passiveUserIdList.add(userDO.getId());
+            }
         }
+
+        orderQueryParam.setPassiveUserIdList(passiveUserIdList);
+        orderQueryParam.setSubCompanyId(subCompanyId);
+
         maps.put("orderQueryParam", orderQueryParam);
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
@@ -1707,4 +1722,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private GenerateNoSupport generateNoSupport;
+
+    @Autowired
+    private UserMapper userMapper;
 }
