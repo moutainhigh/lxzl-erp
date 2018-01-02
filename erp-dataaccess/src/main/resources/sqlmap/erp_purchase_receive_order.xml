@@ -117,11 +117,13 @@
 		SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>,eu.real_name AS ownerName,es1.supplier_name AS productSupplierName,epo.purchase_no AS purchaseOrderNo FROM (
 		SELECT <include refid="column_List"/> FROM erp_purchase_receive_order epro
 		WHERE epro.purchase_receive_no = #{purchaseReceiveNo, jdbcType=VARCHAR} AND epro.data_status = 1
-		) epro LEFT JOIN erp_purchase_receive_order_product eprop ON eprop.purchase_receive_order_id = epro.id
+		) epro
+		LEFT JOIN erp_purchase_receive_order_product eprop ON eprop.purchase_receive_order_id = epro.id and eprop.data_status = 1
 		LEFT JOIN erp_purchase_receive_order_material eprom ON eprom.purchase_receive_order_id = epro.id AND eprom.data_status = 1
 		LEFT JOIN erp_user eu ON epro.owner = eu.id
 		LEFT JOIN erp_supplier es1 ON epro.product_supplier_id = es1.id
 		LEFT JOIN erp_purchase_order epo ON epo.id=epro.purchase_order_id
+
 	</select>
 	<select id="findAutoAllotReceiveOrder" resultMap="PurchaseReceiveOrderDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>,eu.real_name AS ownerName,es1.supplier_name AS productSupplierName,epo.purchase_no AS purchaseOrderNo FROM (

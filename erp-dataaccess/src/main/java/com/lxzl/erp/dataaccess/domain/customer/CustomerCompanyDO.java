@@ -1,12 +1,10 @@
 package com.lxzl.erp.dataaccess.domain.customer;
 
-import com.lxzl.erp.common.domain.customer.pojo.CustomerCompanyNeed;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 
 public class CustomerCompanyDO  extends BaseDO {
@@ -34,8 +32,8 @@ public class CustomerCompanyDO  extends BaseDO {
 	private BigDecimal registeredCapital;  //注册资本'
 	private Integer officeNumber;  //办公人数'
 	private String productPurpose;  //设备用途'
-	private String CustomerCompanyNeedFirstJson;  //首次所需设备
-	private String CustomerCompanyNeedLaterJson;  //后期所需设备
+	private String customerCompanyNeedFirstJson;  //首次所需设备
+	private String customerCompanyNeedLaterJson;  //后期所需设备
 	private String agentPersonName;  //经办人姓名'
 	private String agentPersonPhone;  //经办人电话'
 	private String agentPersonNo;  //经办人身份证号码'
@@ -239,19 +237,19 @@ public class CustomerCompanyDO  extends BaseDO {
 	}
 
 	public String getCustomerCompanyNeedFirstJson() {
-		return CustomerCompanyNeedFirstJson;
+		return customerCompanyNeedFirstJson;
 	}
 
 	public void setCustomerCompanyNeedFirstJson(String customerCompanyNeedFirstJson) {
-		CustomerCompanyNeedFirstJson = customerCompanyNeedFirstJson;
+		this.customerCompanyNeedFirstJson = customerCompanyNeedFirstJson;
 	}
 
 	public String getCustomerCompanyNeedLaterJson() {
-		return CustomerCompanyNeedLaterJson;
+		return customerCompanyNeedLaterJson;
 	}
 
 	public void setCustomerCompanyNeedLaterJson(String customerCompanyNeedLaterJson) {
-		CustomerCompanyNeedLaterJson = customerCompanyNeedLaterJson;
+		this.customerCompanyNeedLaterJson = customerCompanyNeedLaterJson;
 	}
 
 	public String getAgentPersonName() {

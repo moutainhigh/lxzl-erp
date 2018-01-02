@@ -3,7 +3,6 @@ package com.lxzl.erp.common.domain.product.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePO;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 

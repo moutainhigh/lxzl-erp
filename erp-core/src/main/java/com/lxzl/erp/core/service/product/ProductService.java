@@ -2,9 +2,13 @@ package com.lxzl.erp.core.service.product;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.material.pojo.Material;
-import com.lxzl.erp.common.domain.product.*;
-import com.lxzl.erp.common.domain.product.pojo.*;
+import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
+import com.lxzl.erp.common.domain.product.ProductQueryParam;
+import com.lxzl.erp.common.domain.product.ProductSkuQueryParam;
+import com.lxzl.erp.common.domain.product.pojo.Product;
+import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
+import com.lxzl.erp.common.domain.product.pojo.ProductImg;
+import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.se.core.service.BaseService;
 import org.springframework.web.multipart.MultipartFile;
 
