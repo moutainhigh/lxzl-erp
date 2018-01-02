@@ -295,6 +295,8 @@ public class ErrorCode {
     public static final String RETURN_ORDER_CAN_NOT_COMMIT = "J400084";
     public static final String ORDER_PRODUCT_NOT_EXISTS = "J400085";
     public static final String ORDER_MATERIAL_NOT_EXISTS = "J400086";
+    public static final String ORDER_PRODUCT_DEPOSIT_ERROR = "J400087";
+    public static final String ORDER_MATERIAL_DEPOSIT_ERROR = "J400088";
 
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
@@ -705,6 +707,8 @@ public class ErrorCode {
         MAP.put(RETURN_ORDER_CAN_NOT_COMMIT, "只有待提交的退还单可以提交审核");
         MAP.put(ORDER_PRODUCT_NOT_EXISTS, "商品订单项不存在");
         MAP.put(ORDER_MATERIAL_NOT_EXISTS, "商品配件项不存在");
+        MAP.put(ORDER_PRODUCT_DEPOSIT_ERROR, "订单商品押金有误，请检查");
+        MAP.put(ORDER_MATERIAL_DEPOSIT_ERROR, "订单配件押金有误，请检查");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
