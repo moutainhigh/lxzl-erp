@@ -13,6 +13,7 @@ public class ProductQueryParam extends BasePageParam {
     private String productName;
     private Integer isRent;
     private Integer brandId;
+    private Integer categoryId;
 
     public Integer getProductId() {
         return productId;
@@ -44,5 +45,13 @@ public class ProductQueryParam extends BasePageParam {
 
     public void setBrandId(Integer brandId) {
         this.brandId = brandId;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 }
