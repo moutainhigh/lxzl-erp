@@ -14,6 +14,7 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
+import com.lxzl.erp.core.service.dataAccess.DataAccessSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.material.impl.support.MaterialSupport;
@@ -714,27 +715,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(OrderQueryParam orderQueryParam) {
-        User user = userSupport.getCurrentUser();
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+
+        dataAccessSupport.setDataAccessPassiveUserList(orderQueryParam);
+        dataAccessSupport.setDataAccessSubCompany(orderQueryParam);
+
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        //数据级权限控制-查找用户可查看用户列表
-        Integer currentUserId = userSupport.getCurrentUserId();
-        //获取用户最【新的】最终可观察用户列表
-        List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
-        //数据级权限控制-查找用户可查看本分公司
-        Integer subCompanyId = userSupport.getCurrentUserCompanyId();
-        List<Integer> passiveUserIdList = new ArrayList<>();
-        if (CollectionUtil.isNotEmpty(userDOList)) {
-            for (UserDO userDO : userDOList) {
-                passiveUserIdList.add(userDO.getId());
-            }
-        }
-
-        orderQueryParam.setPassiveUserIdList(passiveUserIdList);
-        orderQueryParam.setSubCompanyId(subCompanyId);
 
         maps.put("orderQueryParam", orderQueryParam);
 
@@ -1464,7 +1453,7 @@ public class OrderServiceImpl implements OrderService {
                 BigDecimal depositAmount = BigDecimal.ZERO;
                 BigDecimal creditDepositAmount = BigDecimal.ZERO;
                 BigDecimal rentDepositAmount = BigDecimal.ZERO;
-                if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() > 30) {
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() <= 30) {
                     BigDecimal remainder = orderProductDO.getDepositAmount().divideAndRemainder(new BigDecimal(orderProductDO.getProductCount()))[1];
                     if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
                         throw new BusinessException(ErrorCode.ORDER_PRODUCT_DEPOSIT_ERROR);
@@ -1472,8 +1461,8 @@ public class OrderServiceImpl implements OrderService {
                     depositAmount = orderProductDO.getDepositAmount();
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() <= 30) {
-                    depositAmount = BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
-                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
+                    creditDepositAmount = BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
+                    totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                 } else if ((BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) || CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
                     Integer depositCycle = orderProductDO.getDepositCycle() <= orderProductDO.getRentTimeLength() ? orderProductDO.getDepositCycle() : orderProductDO.getRentTimeLength();
                     rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(depositCycle));
@@ -1540,22 +1529,22 @@ public class OrderServiceImpl implements OrderService {
                 BigDecimal depositAmount = BigDecimal.ZERO;
                 BigDecimal creditDepositAmount = BigDecimal.ZERO;
                 BigDecimal rentDepositAmount = BigDecimal.ZERO;
-                if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() > 30) {
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() <= 30) {
                     BigDecimal remainder = orderMaterialDO.getDepositAmount().divideAndRemainder(new BigDecimal(orderMaterialDO.getMaterialCount()))[1];
                     if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
                         throw new BusinessException(ErrorCode.ORDER_PRODUCT_DEPOSIT_ERROR);
                     }
                     depositAmount = orderMaterialDO.getDepositAmount();
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
-                } else if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() <= 30) {
-                    depositAmount = BigDecimalUtil.mul(material.getMaterialPrice(), new BigDecimal(orderMaterialDO.getMaterialCount()));
-                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
+                } else if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() > 30) {
+                    creditDepositAmount = BigDecimalUtil.mul(material.getMaterialPrice(), new BigDecimal(orderMaterialDO.getMaterialCount()));
+                    totalCreditDepositAmount = BigDecimalUtil.add(totalDepositAmount, creditDepositAmount);
                 } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
                     rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getDepositCycle()));
                     totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
 
-                    depositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(material.getMaterialPrice(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getDepositCycle()));
-                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
+                    creditDepositAmount = BigDecimalUtil.mul(material.getMaterialPrice(), new BigDecimal(orderMaterialDO.getMaterialCount()));
+                    totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                 } else {
                     rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getDepositCycle()));
                     totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
@@ -1756,5 +1745,5 @@ public class OrderServiceImpl implements OrderService {
     private GenerateNoSupport generateNoSupport;
 
     @Autowired
-    private UserMapper userMapper;
+    private DataAccessSupport dataAccessSupport;
 }
