@@ -86,7 +86,7 @@
                                     <tr class="bg-light">
                                         <th>ID</th>
                                         <th>类型</th>
-                                        <th>订单ID</th>
+                                        <th>订单编号</th>
                                         <th>订单项类型</th>
 ##                                        <th>订单项关联ID</th>
                                         <th>预计支付时间</th>
@@ -105,17 +105,17 @@
                                     <tr>
                                         <td>{{statementOrderDetailId}}</td>
                                         <td>{{orderTypeValue}}</td>
-                                        <td>{{orderId}}</td>
+                                        <td>{{orderNo}}</td>
                                         <td>{{orderItemTypeValue}}</td>
 ##                                        <td>{{orderItemReferId}}</td>
-                                        <td>{{#time}}{{statementExpectPayTime}}{{/time}}</td>
+                                        <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
                                         <td>{{#price}}{{statementDetailAmount}}{{/price}}</td>
                                         <td>{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>
-                                        <td>{{#time}}{{statementDetailPaidTime}}{{/time}}</td>
+                                        <td>{{#shortTime}}{{statementDetailPaidTime}}{{/shortTime}}</td>
                                         <td>{{#price}}{{statementDetailOverdueAmount}}{{/price}}</td>
                                         <td>{{statementDetailStatusValue}}</td>
-                                        <td>{{#time}}{{statementStartTime}}{{/time}}</td>
-                                        <td>{{#time}}{{statementEndTime}}{{/time}}</td>
+                                        <td>{{#shortTime}}{{statementStartTime}}{{/shortTime}}</td>
+                                        <td>{{#shortTime}}{{statementEndTime}}{{/shortTime}}</td>
                                     </tr>
                                     {{/listData}}
                                     {{^listData}}

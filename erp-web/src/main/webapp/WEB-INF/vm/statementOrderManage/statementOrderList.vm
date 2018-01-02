@@ -83,6 +83,7 @@
                                     <th>结算单支付时间</th>
                                     <th>逾期金额</th>
                                     <th>结算状态</th>
+                                    <th>支付时间</th>
                                     <th>结算开始时间</th>
                                     <th>结算结束时间</th>
                                     {{#hasRowActionButtons}}
@@ -110,6 +111,7 @@
                                     <td>{{#shortTime}}{{statementPaidTime}}{{/shortTime}}</td>
                                     <td>{{#price}}{{statementOverdueAmount}}{{/price}}</td>
                                     <td>{{statementOrderStatusValue}}</td>
+                                    <td>{{#shortTime}}{{statementDetailStatus}}{{/shortTime}}</td>
                                     <td>{{#shortTime}}{{statementStartTime}}{{/shortTime}}</td>
                                     <td>{{#shortTime}}{{statementEndTime}}{{/shortTime}}</td>
                                     {{#hasRowActionButtons}}
