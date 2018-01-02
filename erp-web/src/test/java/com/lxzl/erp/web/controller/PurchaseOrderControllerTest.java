@@ -558,7 +558,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void updatePurchaseReceiveOrder1() throws Exception {
-        PurchaseReceiveOrder purchaseReceiveOrder = JSON.parseObject("{\"purchaseReceiveNo\":\"LXPR1000201801020002\",\"isNew\":\"1\",\"purchaseReceiveOrderMaterialList\":[{\"realMaterialNo\":\"M201801011026586021729\",\"realMaterialCount\":\"10\",\"remark\":\"\"}]}", PurchaseReceiveOrder.class);
+        PurchaseReceiveOrder purchaseReceiveOrder = JSON.parseObject("{\"isNew\":1,\"purchaseReceiveNo\":\"LXPR1000201801020002\",\"purchaseReceiveOrderMaterialList\":[{\"realMaterialCount\":12,\"realMaterialNo\":\"M201712181610381101755\",\"remark\":\"\"}]}", PurchaseReceiveOrder.class);
         TestResult testResult = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveOrder", purchaseReceiveOrder);
     }
 

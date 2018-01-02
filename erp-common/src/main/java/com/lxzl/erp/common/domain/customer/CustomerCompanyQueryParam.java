@@ -2,6 +2,8 @@ package com.lxzl.erp.common.domain.customer;
 
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
+import java.util.List;
+
 public class CustomerCompanyQueryParam extends BasePageParam {
 
     private Integer customerId;
@@ -23,6 +25,8 @@ public class CustomerCompanyQueryParam extends BasePageParam {
     private String agentPersonNo;  //经办人身份证号码'
     private String unifiedCreditCode;  //统一信用代码'
     private String affiliatedEnterprise; //关联企业
+
+    private List<Integer> passiveUserIdList;
 
 
 
@@ -176,5 +180,13 @@ public class CustomerCompanyQueryParam extends BasePageParam {
 
     public void setAffiliatedEnterprise(String affiliatedEnterprise) {
         this.affiliatedEnterprise = affiliatedEnterprise;
+    }
+
+    public List<Integer> getPassiveUserIdList() {
+        return passiveUserIdList;
+    }
+
+    public void setPassiveUserIdList(List<Integer> passiveUserIdList) {
+        this.passiveUserIdList = passiveUserIdList;
     }
 }

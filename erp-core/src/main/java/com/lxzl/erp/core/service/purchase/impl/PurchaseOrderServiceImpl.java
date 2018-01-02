@@ -528,12 +528,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         return ErrorCode.SUCCESS;
     }
 
-    private ServiceResult<String, List<PurchaseReceiveOrderProductDO>> checkPurchaseReceiveOrderProductListForUpdate(List<PurchaseReceiveOrderProductDO> oldPurchaseReceiveOrderProductDOList, List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList, String userId, Date now) {
+    private ServiceResult<String, List<PurchaseReceiveOrderProductDO>> checkPurchaseReceiveOrderProductListForUpdate(List<PurchaseReceiveOrderProductDO> oldPurchaseReceiveOrderProductDOList, List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList, String userId, Date now,PurchaseOrderDO purchaseOrderDO) {
         ServiceResult<String, List<PurchaseReceiveOrderProductDO>> result = new ServiceResult<>();
         List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = new ArrayList<>();
         Set<Integer> productSet = new HashSet<>();
-        for (PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO : oldPurchaseReceiveOrderProductDOList) {
-            productSet.add(purchaseReceiveOrderProductDO.getProductId());
+        for (PurchaseOrderProductDO purchaseOrderProductDO : purchaseOrderDO.getPurchaseOrderProductDOList()) {
+            productSet.add(purchaseOrderProductDO.getProductId());
         }
         if (CollectionUtil.isNotEmpty(purchaseReceiveOrderProductList)) {
             // 验证采购单商品项是否合法
@@ -588,15 +588,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         return result;
     }
 
-    private ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> checkPurchaseReceiveOrderMaterialListForUpdate(List<PurchaseReceiveOrderMaterialDO> oldPurchaseReceiveOrderMaterialDOList, List<PurchaseReceiveOrderMaterial> purchaseReceiveOrderMaterialList, String userId, Date now) {
+    private ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> checkPurchaseReceiveOrderMaterialListForUpdate(List<PurchaseReceiveOrderMaterialDO> oldPurchaseReceiveOrderMaterialDOList, List<PurchaseReceiveOrderMaterial> purchaseReceiveOrderMaterialList, String userId, Date now,PurchaseOrderDO purchaseOrderDO) {
         ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> result = new ServiceResult<>();
         List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOList = new ArrayList<>();
         Set<Integer> materialIdSet = new HashSet<>();
 
         //用来判断是否是原单中应有的配件
         Set<Integer> materialSet = new HashSet<>();
-        for (PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO : oldPurchaseReceiveOrderMaterialDOList) {
-            materialSet.add(purchaseReceiveOrderMaterialDO.getMaterialId());
+        for (PurchaseOrderMaterialDO purchaseOrderMaterialDO : purchaseOrderDO.getPurchaseOrderMaterialDOList()) {
+            materialSet.add(purchaseOrderMaterialDO.getMaterialId());
         }
         if (CollectionUtil.isNotEmpty(purchaseReceiveOrderMaterialList)) {
             // 验证采购收料单物料项是否合法
@@ -950,8 +950,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return serviceResult;
         }
         Date now = new Date();
-        ServiceResult<String, List<PurchaseReceiveOrderProductDO>> newProductResult = checkPurchaseReceiveOrderProductListForUpdate(purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList(), purchaseReceiveOrder.getPurchaseReceiveOrderProductList(), userSupport.getCurrentUserId().toString(), now);
-        ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> newMaterialResult = checkPurchaseReceiveOrderMaterialListForUpdate(purchaseReceiveOrderDO.getPurchaseReceiveOrderMaterialDOList(), purchaseReceiveOrder.getPurchaseReceiveOrderMaterialList(), userSupport.getCurrentUserId().toString(), now);
+        //查询采购单
+        PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findDetailByPurchaseNo(purchaseReceiveOrderDO.getPurchaseOrderNo());
+
+        ServiceResult<String, List<PurchaseReceiveOrderProductDO>> newProductResult = checkPurchaseReceiveOrderProductListForUpdate(purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList(), purchaseReceiveOrder.getPurchaseReceiveOrderProductList(), userSupport.getCurrentUserId().toString(), now,purchaseOrderDO);
+        ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> newMaterialResult = checkPurchaseReceiveOrderMaterialListForUpdate(purchaseReceiveOrderDO.getPurchaseReceiveOrderMaterialDOList(), purchaseReceiveOrder.getPurchaseReceiveOrderMaterialList(), userSupport.getCurrentUserId().toString(), now,purchaseOrderDO);
         if (!ErrorCode.SUCCESS.equals(newProductResult.getErrorCode())) {
             serviceResult.setErrorCode(newProductResult.getErrorCode());
             return serviceResult;
@@ -1301,10 +1304,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
         //数据级权限控制-查找用户可查看仓库列表
         ServiceResult<String, List<Warehouse>> warehouseListResult = warehouseService.getAvailableWarehouse();
-        if (!ErrorCode.SUCCESS.equals(warehouseListResult.getErrorCode())) {
-            result.setErrorCode(ErrorCode.SYSTEM_ERROR);
-            return result;
-        }
         List<Warehouse> warehouseList = warehouseListResult.getResult();
         List<Integer> passiveUserIdList = new ArrayList<>();
         List<Integer> warehouseIdList = new ArrayList<>();

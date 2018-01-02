@@ -159,7 +159,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pageCustomerCompany() throws Exception {
         CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
-        customerCompanyQueryParam.setCustomerNo("LXCC10002018010100005");
+//        customerCompanyQueryParam.setCustomerNo("LXCC10002018010100005");
 //        customerCompanyQueryParam.setCompanyName("百");
 //        customerCompanyQueryParam.setProductPurpose("测试");
 
@@ -169,8 +169,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pageCustomerPerson() throws Exception {
         CustomerPersonQueryParam customerPersonQueryParam = new CustomerPersonQueryParam();
-        customerPersonQueryParam.setPageNo(1);
-        customerPersonQueryParam.setPageSize(40);
+//        customerPersonQueryParam.setPageNo(1);
+//        customerPersonQueryParam.setPageSize(40);
         TestResult result = getJsonTestResult("/customer/pageCustomerPerson", customerPersonQueryParam);
     }
 

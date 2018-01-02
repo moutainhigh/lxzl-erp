@@ -18,6 +18,7 @@ import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
+import com.lxzl.erp.common.domain.purchase.pojo.PurchaseOrder;
 import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
@@ -32,9 +33,11 @@ import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.*;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -80,6 +83,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private SubCompanyMapper subCompanyMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
 
 
@@ -437,6 +443,15 @@ public class CustomerServiceImpl implements CustomerService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("queryParam", customerCompanyQueryParam);
+        //数据级权限控制-查找用户可查看用户列表
+        Integer currentUserId = userSupport.getCurrentUserId();
+        //获取用户最【新的】最终可观察用户列表
+        List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
+        List<Integer> passiveUserIdList = new ArrayList<>();
+        for (UserDO userDO : userDOList) {
+            passiveUserIdList.add(userDO.getId());
+        }
+        customerCompanyQueryParam.setPassiveUserIdList(passiveUserIdList);
 
         Integer totalCount = customerMapper.findCustomerCompanyCountByParams(maps);
         List<CustomerDO> customerDOList = customerMapper.findCustomerCompanyByParams(maps);
@@ -456,7 +471,15 @@ public class CustomerServiceImpl implements CustomerService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("queryParam", customerPersonQueryParam);
-
+        //数据级权限控制-查找用户可查看用户列表
+        Integer currentUserId = userSupport.getCurrentUserId();
+        //获取用户最【新的】最终可观察用户列表
+        List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
+        List<Integer> passiveUserIdList = new ArrayList<>();
+        for (UserDO userDO : userDOList) {
+            passiveUserIdList.add(userDO.getId());
+        }
+        customerPersonQueryParam.setPassiveUserIdList(passiveUserIdList);
         Integer totalCount = customerMapper.findCustomerPersonCountByParams(maps);
         List<CustomerDO> customerDOList = customerMapper.findCustomerPersonByParams(maps);
         List<Customer> customerPersonList = ConverterUtil.convertList(customerDOList, Customer.class);
