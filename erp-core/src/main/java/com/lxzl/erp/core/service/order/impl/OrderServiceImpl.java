@@ -714,7 +714,6 @@ public class OrderServiceImpl implements OrderService {
         PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
 
         dataAccessSupport.setDataAccessPassiveUserList(orderQueryParam);
-        dataAccessSupport.setDataAccessSubCompany(orderQueryParam);
 
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());

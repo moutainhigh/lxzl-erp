@@ -38,16 +38,11 @@
 	</sql>
 
 	<sql id="order_control">
-		<if test="maps.orderQueryParam.dataAccessUserIdList != null &amp;&amp;maps.orderQueryParam.dataAccessSubCompanyId != null ">
-			AND
-			(
-			(eo.create_user in
-			<foreach item="item" index="index" collection="maps.orderQueryParam.dataAccessUserIdList" open="(" separator=","
-					 close=")">
+		<if test="maps.orderQueryParam.dataAccessUserIdList != null">
+			AND eo.create_user in
+			<foreach item="item" index="index" collection="maps.orderQueryParam.dataAccessUserIdList" open="(" separator="," close=")">
 				#{item}
 			</foreach>
-			) or (esc.id =#{maps.orderQueryParam.dataAccessSubCompanyId})
-			)
 		</if>
 	</sql>
 
