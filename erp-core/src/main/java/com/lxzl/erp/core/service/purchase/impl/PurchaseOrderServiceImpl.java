@@ -47,6 +47,7 @@ import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderBulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
+import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -125,7 +126,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private DataAccessSupport dataAccessSupport;
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> add(PurchaseOrder purchaseOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date now = new Date();
@@ -242,7 +243,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> update(PurchaseOrder purchaseOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
         //校验采购单是否存在
@@ -1024,7 +1025,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      */
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> confirmPurchaseReceiveOrder(PurchaseReceiveOrder purchaseReceiveOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         PurchaseReceiveOrderDO purchaseReceiveOrderDO = purchaseReceiveOrderMapper.findAllByNo(purchaseReceiveOrder.getPurchaseReceiveNo());
@@ -1353,8 +1354,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         return serviceResult;
     }
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> continuePurchaseOrder(PurchaseOrder purchaseOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findDetailByPurchaseNo(purchaseOrder.getPurchaseNo());
@@ -1363,60 +1364,64 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return serviceResult;
         }
         //只有部分采购的采购单可以继续采购
-        if (PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PART.equals(purchaseOrderDO.getPurchaseOrderStatus())) {
-            //查询采购单的所有收货单列表
-            List<PurchaseReceiveOrderDO> purchaseReceiveOrderDOList = purchaseReceiveOrderMapper.findListByPurchaseId(purchaseOrderDO.getId());
-            //用来保存所有已签单的采购收货单实际已收到的sku总数
-            Map<Integer, Integer> skuCountMap = new HashMap<>();
-            //用来保存所有已签单的采购收货单实际已收到的sku总数
-            Map<Integer, Integer> materialCountMap = new HashMap<>();
-            for (PurchaseReceiveOrderDO purchaseReceiveOrderDO : purchaseReceiveOrderDOList) {
-                //只累加已签单的sku，并且非自动流转总仓的
-                if (PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_YET.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())
-                        && !AutoAllotStatus.AUTO_ALLOT_STATUS_YES.equals(purchaseReceiveOrderDO.getAutoAllotStatus())) {
-                    //找到的所有采购单项sku，累加数量
-                    List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList();
-                    for (PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO : purchaseReceiveOrderProductDOList) {
-                        Integer countNow = skuCountMap.get(purchaseReceiveOrderProductDO.getRealProductSkuId());
-                        if (countNow == null) {
-                            skuCountMap.put(purchaseReceiveOrderProductDO.getRealProductSkuId(), 0);
-                        }
-                        skuCountMap.put(purchaseReceiveOrderProductDO.getRealProductSkuId(), skuCountMap.get(purchaseReceiveOrderProductDO.getRealProductSkuId()) + purchaseReceiveOrderProductDO.getRealProductCount());
-                    }
-                    //找到所采购单物料项，累加数量
-                    List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderMaterialDOList();
-                    for (PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO : purchaseReceiveOrderMaterialDOList) {
-                        Integer countNow = skuCountMap.get(purchaseReceiveOrderMaterialDO.getMaterialId());
-                        if (countNow == null) {
-                            skuCountMap.put(purchaseReceiveOrderMaterialDO.getRealMaterialId(), 0);
-                        }
-                        materialCountMap.put(purchaseReceiveOrderMaterialDO.getRealMaterialId(), countNow + purchaseReceiveOrderMaterialDO.getRealMaterialCount());
-                    }
-                }
-            }
-            List<PurchaseOrderProductDO> purchaseOrderProductDOList = purchaseOrderDO.getPurchaseOrderProductDOList();
-            //找出没有完成的采购单项，并计算未采购完成的数量
-            for (PurchaseOrderProductDO purchaseOrderProductDO : purchaseOrderProductDOList) {
-                Integer skuCount = skuCountMap.get(purchaseOrderProductDO.getProductSkuId());
-                skuCount = skuCount == null ? 0 : skuCount;
-                purchaseOrderProductDO.setProductCount(purchaseOrderProductDO.getProductCount() - skuCount);
-            }
-
-            List<PurchaseOrderMaterialDO> purchaseOrderMaterialDOList = purchaseOrderDO.getPurchaseOrderMaterialDOList();
-            //找出没有完成的采购单物料项，并计算未采购完成的数量
-            for (PurchaseOrderMaterialDO purchaseOrderMaterialDO : purchaseOrderMaterialDOList) {
-                Integer materialCount = materialCountMap.get(purchaseOrderMaterialDO.getMaterialId());
-                materialCount = materialCount == null ? 0 : materialCount;
-                purchaseOrderMaterialDO.setMaterialCount(purchaseOrderMaterialDO.getMaterialCount() - materialCount);
-            }
-            //类似采购单审核之后的流程，自动生成发货通知单、收货通知单
-
-            createPurchaseDeliveryAndReceiveOrder(purchaseOrderDO);
-            serviceResult.setErrorCode(ErrorCode.SUCCESS);
-            serviceResult.setResult(purchaseOrderDO.getPurchaseNo());
-        } else {
+        if (!PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PART.equals(purchaseOrderDO.getPurchaseOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_ORDER_STATUS_CAN_NOT_CONTINUE);
         }
+        //查询采购单的所有收货单列表
+        List<PurchaseReceiveOrderDO> purchaseReceiveOrderDOList = purchaseReceiveOrderMapper.findListByPurchaseId(purchaseOrderDO.getId());
+        //用来保存所有已签单的采购收货单实际已收到的sku总数
+        Map<Integer, Integer> skuCountMap = new HashMap<>();
+        //用来保存所有已签单的采购收货单实际已收到的配件总数
+        Map<Integer, Integer> materialCountMap = new HashMap<>();
+        for (PurchaseReceiveOrderDO purchaseReceiveOrderDO : purchaseReceiveOrderDOList) {
+            //只累加已签单的sku，并且非自动流转总仓的
+            if (PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_YET.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())
+                    && !AutoAllotStatus.AUTO_ALLOT_STATUS_YES.equals(purchaseReceiveOrderDO.getAutoAllotStatus())) {
+                //找到的所有采购单项sku，累加数量
+                List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList();
+                for (PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO : purchaseReceiveOrderProductDOList) {
+                    Integer countNow = skuCountMap.get(purchaseReceiveOrderProductDO.getRealProductSkuId());
+                    if (countNow == null) {
+                        skuCountMap.put(purchaseReceiveOrderProductDO.getRealProductSkuId(), 0);
+                    }
+                    skuCountMap.put(purchaseReceiveOrderProductDO.getRealProductSkuId(), skuCountMap.get(purchaseReceiveOrderProductDO.getRealProductSkuId()) + purchaseReceiveOrderProductDO.getRealProductCount());
+                }
+                //找到所采购单物料项，累加数量
+                List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderMaterialDOList();
+                for (PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO : purchaseReceiveOrderMaterialDOList) {
+                    Integer countNow = skuCountMap.get(purchaseReceiveOrderMaterialDO.getMaterialId());
+                    if (countNow == null) {
+                        skuCountMap.put(purchaseReceiveOrderMaterialDO.getRealMaterialId(), 0);
+                    }
+                    materialCountMap.put(purchaseReceiveOrderMaterialDO.getRealMaterialId(), countNow + purchaseReceiveOrderMaterialDO.getRealMaterialCount());
+                }
+            }
+        }
+        List<PurchaseOrderProductDO> purchaseOrderProductDOList = purchaseOrderDO.getPurchaseOrderProductDOList();
+        //找出没有完成的采购单项，并计算未采购完成的数量
+        for (PurchaseOrderProductDO purchaseOrderProductDO : purchaseOrderProductDOList) {
+            Integer skuCount = skuCountMap.get(purchaseOrderProductDO.getProductSkuId());
+            skuCount = skuCount == null ? 0 : skuCount;
+            purchaseOrderProductDO.setProductCount(purchaseOrderProductDO.getProductCount() - skuCount);
+        }
+
+        List<PurchaseOrderMaterialDO> purchaseOrderMaterialDOList = purchaseOrderDO.getPurchaseOrderMaterialDOList();
+        //找出没有完成的采购单物料项，并计算未采购完成的数量
+        for (PurchaseOrderMaterialDO purchaseOrderMaterialDO : purchaseOrderMaterialDOList) {
+            Integer materialCount = materialCountMap.get(purchaseOrderMaterialDO.getMaterialId());
+            materialCount = materialCount == null ? 0 : materialCount;
+            purchaseOrderMaterialDO.setMaterialCount(purchaseOrderMaterialDO.getMaterialCount() - materialCount);
+        }
+        //类似采购单审核之后的流程，自动生成发货通知单、收货通知单
+        createPurchaseDeliveryAndReceiveOrder(purchaseOrderDO);
+        //修改采购单为采购中
+        purchaseOrderDO.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PURCHASING);
+        purchaseOrderDO.setUpdateTime(new Date());
+        purchaseOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        purchaseOrderMapper.update(purchaseOrderDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(purchaseOrderDO.getPurchaseNo());
         return serviceResult;
     }
 
@@ -1659,7 +1664,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> updatePurchaseReceiveMaterialRemark(UpdateReceiveMaterialRemarkParam updateReceiveMaterialRemarkParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         PurchaseReceiveOrderDO purchaseReceiveOrderDO = purchaseReceiveOrderMapper.findAllByNo(updateReceiveMaterialRemarkParam.getPurchaseReceiveOrderNo());
@@ -1716,7 +1721,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      * @param verifyResult
      * @param businessNo
      */
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     @Override
     public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
