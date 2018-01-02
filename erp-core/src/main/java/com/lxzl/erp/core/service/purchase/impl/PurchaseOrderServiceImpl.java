@@ -1306,7 +1306,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             if(materialCountMap.get(materialId)!=null){
                 count = materialCountMap.get(materialId);
             }
-            if(materialCountMap.get(materialId)>count){
+            if(materialShouldMap.get(materialId)>count){
                 stateInt = stateInt & 0;
             }else{
                 stateInt = stateInt & 1;
