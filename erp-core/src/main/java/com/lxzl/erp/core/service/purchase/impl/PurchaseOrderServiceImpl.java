@@ -15,7 +15,6 @@ import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.*;
-import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.material.MaterialService;
@@ -31,7 +30,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.*;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.user.RoleUserFinalMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderBulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderEquipmentMapper;
@@ -44,7 +42,6 @@ import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.purchase.*;
 import com.lxzl.erp.dataaccess.domain.supplier.SupplierDO;
-import com.lxzl.erp.dataaccess.domain.user.RoleUserFinalDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderBulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO;
@@ -192,7 +189,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         //保存采购单
         PurchaseOrderDO purchaseOrderDO = ConverterUtil.convert(purchaseOrder, PurchaseOrderDO.class);
         //查询库房信息并保存库房快照
-        purchaseOrderDO.setWarehouseSnapshot(JSON.toJSONString(ConverterUtil.convert(warehouseDO,Warehouse.class)));
+        purchaseOrderDO.setWarehouseSnapshot(JSON.toJSONString(ConverterUtil.convert(warehouseDO, Warehouse.class)));
         purchaseOrderDO.setPurchaseOrderAmountTotal(purchaseOrderDetail.totalAmount);
         //创建采购单时，采购单实收金额和采购单结算金额为空
         purchaseOrderDO.setPurchaseOrderAmountReal(null);
@@ -531,11 +528,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         return ErrorCode.SUCCESS;
     }
 
-    private ServiceResult<String, List<PurchaseReceiveOrderProductDO>> checkPurchaseReceiveOrderProductListForUpdate(List<PurchaseReceiveOrderProductDO> oldPurchaseReceiveOrderProductDOList,List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList, String userId, Date now) {
+    private ServiceResult<String, List<PurchaseReceiveOrderProductDO>> checkPurchaseReceiveOrderProductListForUpdate(List<PurchaseReceiveOrderProductDO> oldPurchaseReceiveOrderProductDOList, List<PurchaseReceiveOrderProduct> purchaseReceiveOrderProductList, String userId, Date now) {
         ServiceResult<String, List<PurchaseReceiveOrderProductDO>> result = new ServiceResult<>();
         List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = new ArrayList<>();
         Set<Integer> productSet = new HashSet<>();
-        for(PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO : oldPurchaseReceiveOrderProductDOList){
+        for (PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO : oldPurchaseReceiveOrderProductDOList) {
             productSet.add(purchaseReceiveOrderProductDO.getProductId());
         }
         if (CollectionUtil.isNotEmpty(purchaseReceiveOrderProductList)) {
@@ -557,7 +554,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     return result;
                 }
                 //如果不是是采购单里面的商品
-                if(!productSet.contains(productSkuDO.getProductId())){
+                if (!productSet.contains(productSkuDO.getProductId())) {
                     result.setErrorCode(ErrorCode.PRODUCT_NOT_SAME);
                     return result;
                 }
@@ -591,14 +588,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         return result;
     }
 
-    private ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> checkPurchaseReceiveOrderMaterialListForUpdate(List<PurchaseReceiveOrderMaterialDO> oldPurchaseReceiveOrderMaterialDOList,List<PurchaseReceiveOrderMaterial> purchaseReceiveOrderMaterialList, String userId, Date now) {
+    private ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> checkPurchaseReceiveOrderMaterialListForUpdate(List<PurchaseReceiveOrderMaterialDO> oldPurchaseReceiveOrderMaterialDOList, List<PurchaseReceiveOrderMaterial> purchaseReceiveOrderMaterialList, String userId, Date now) {
         ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> result = new ServiceResult<>();
         List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOList = new ArrayList<>();
         Set<Integer> materialIdSet = new HashSet<>();
 
         //用来判断是否是原单中应有的配件
         Set<Integer> materialSet = new HashSet<>();
-        for(PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO : oldPurchaseReceiveOrderMaterialDOList){
+        for (PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO : oldPurchaseReceiveOrderMaterialDOList) {
             materialSet.add(purchaseReceiveOrderMaterialDO.getMaterialId());
         }
         if (CollectionUtil.isNotEmpty(purchaseReceiveOrderMaterialList)) {
@@ -619,7 +616,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     return result;
                 }
                 //如果不是是采购单里面的配件
-                if(!materialSet.contains(materialDO.getId())){
+                if (!materialSet.contains(materialDO.getId())) {
                     result.setErrorCode(ErrorCode.MATERIAL_NOT_SAME);
                     return result;
                 }
@@ -653,11 +650,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         for (ProductMaterial productMaterial : materialList) {
             MaterialDO materialDO = materialMapper.findByNo(productMaterial.getMaterialNo());
             productMaterial.setMaterialName(materialDO.getMaterialName());
+            productMaterial.setMaterialType(materialDO.getMaterialType());
             productMaterial.setMaterialModelId(materialDO.getMaterialModelId());
         }
         for (ProductSku productSku : productSkuList) {
             if (productSkuId != null && productSkuId.equals(productSku.getSkuId())) {
-                productMaterial.setMaterialType(materialDO.getMaterialType());
+
                 list.add(productSku);
                 productSku.setProductMaterialList(materialList);
                 break;
@@ -668,6 +666,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
+    public ServiceResult<String, PurchaseOrder> queryPurchaseOrderByNo(String purchaseNo) {
         ServiceResult<String, PurchaseOrder> serviceResult = new ServiceResult<>();
         PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findDetailByPurchaseNo(purchaseNo);
         if (purchaseOrderDO == null) {
@@ -676,7 +675,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         PurchaseOrder purchaseOrder = ConverterUtil.convert(purchaseOrderDO, PurchaseOrder.class);
-        public ServiceResult<String, PurchaseOrder> queryPurchaseOrderByNo(String purchaseNo) {
+
         List<PurchaseDeliveryOrderDO> purchaseDeliveryOrderDOList = purchaseDeliveryOrderMapper.findListByPurchaseId(purchaseOrderDO.getId());
         List<PurchaseReceiveOrderDO> purchaseReceiveOrderDOList = purchaseReceiveOrderMapper.findListByPurchaseId(purchaseOrderDO.getId());
 
@@ -710,11 +709,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         //获取用户最【新的】最终可观察用户列表
         List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
         List<Integer> passiveUserIdList = new ArrayList<>();
-        if(CollectionUtil.isNotEmpty(userDOList)){
-            for(UserDO userDO : userDOList){
+        if (CollectionUtil.isNotEmpty(userDOList)) {
+            for (UserDO userDO : userDOList) {
                 passiveUserIdList.add(userDO.getId());
             }
-        }else{
+        } else {
             result.setErrorCode(ErrorCode.SUCCESS);
             Page<PurchaseOrder> page = new Page<>(new ArrayList<PurchaseOrder>(), 0, purchaseOrderQueryParam.getPageNo(), purchaseOrderQueryParam.getPageSize());
             result.setResult(page);
@@ -880,11 +879,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         //获取用户最【新的】最终可观察用户列表
         List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
         List<Integer> passiveUserIdList = new ArrayList<>();
-        if(CollectionUtil.isNotEmpty(userDOList)){
-            for(UserDO userDO : userDOList){
+        if (CollectionUtil.isNotEmpty(userDOList)) {
+            for (UserDO userDO : userDOList) {
                 passiveUserIdList.add(userDO.getId());
             }
-        }else{
+        } else {
             result.setErrorCode(ErrorCode.SUCCESS);
             Page<PurchaseDeliveryOrder> page = new Page<>(new ArrayList<PurchaseDeliveryOrder>(), 0, purchaseDeliveryOrderQueryParam.getPageNo(), purchaseDeliveryOrderQueryParam.getPageSize());
             result.setResult(page);
@@ -946,13 +945,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_STATUS_CAN_NOT_UPDATE);
             return serviceResult;
         }
-        if(CollectionUtil.isEmpty(purchaseReceiveOrder.getPurchaseReceiveOrderProductList())&&CollectionUtil.isEmpty(purchaseReceiveOrder.getPurchaseReceiveOrderMaterialList())){
+        if (CollectionUtil.isEmpty(purchaseReceiveOrder.getPurchaseReceiveOrderProductList()) && CollectionUtil.isEmpty(purchaseReceiveOrder.getPurchaseReceiveOrderMaterialList())) {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
         Date now = new Date();
-        ServiceResult<String, List<PurchaseReceiveOrderProductDO>> newProductResult = checkPurchaseReceiveOrderProductListForUpdate(purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList(),purchaseReceiveOrder.getPurchaseReceiveOrderProductList(), userSupport.getCurrentUserId().toString(), now);
-        ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> newMaterialResult = checkPurchaseReceiveOrderMaterialListForUpdate(purchaseReceiveOrderDO.getPurchaseReceiveOrderMaterialDOList(),purchaseReceiveOrder.getPurchaseReceiveOrderMaterialList(), userSupport.getCurrentUserId().toString(), now);
+        ServiceResult<String, List<PurchaseReceiveOrderProductDO>> newProductResult = checkPurchaseReceiveOrderProductListForUpdate(purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList(), purchaseReceiveOrder.getPurchaseReceiveOrderProductList(), userSupport.getCurrentUserId().toString(), now);
+        ServiceResult<String, List<PurchaseReceiveOrderMaterialDO>> newMaterialResult = checkPurchaseReceiveOrderMaterialListForUpdate(purchaseReceiveOrderDO.getPurchaseReceiveOrderMaterialDOList(), purchaseReceiveOrder.getPurchaseReceiveOrderMaterialList(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(newProductResult.getErrorCode())) {
             serviceResult.setErrorCode(newProductResult.getErrorCode());
             return serviceResult;
@@ -984,7 +983,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private String updatePurchaseReceiveOrderProductList(PurchaseReceiveOrderDO purchaseReceiveOrderDO, List<PurchaseReceiveOrderProductDO> newPurchaseReceiveOrderProductDOList, Date now) {
         //商品项列表
         List<PurchaseReceiveOrderProductDO> oldProductList = purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList();
-        Map<Integer, PurchaseReceiveOrderProductDO> deleteMap = ListUtil.listToMap(oldProductList,"id");
+        Map<Integer, PurchaseReceiveOrderProductDO> deleteMap = ListUtil.listToMap(oldProductList, "id");
         //如果新列表项有ID，则更新
         for (PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO : newPurchaseReceiveOrderProductDOList) {
             if (purchaseReceiveOrderProductDO.getId() != null) {
@@ -1013,7 +1012,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         //这里的商品项列表
         List<PurchaseReceiveOrderMaterialDO> oldMaterialList = purchaseReceiveOrderDO.getPurchaseReceiveOrderMaterialDOList();
         //为方便比对，将旧采购订单项列表存入map
-        Map<Integer, PurchaseReceiveOrderMaterialDO> deleteMap = ListUtil.listToMap(oldMaterialList,"id");
+        Map<Integer, PurchaseReceiveOrderMaterialDO> deleteMap = ListUtil.listToMap(oldMaterialList, "id");
 
         for (PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO : newPurchaseReceiveOrderMaterialDOList) {
             if (purchaseReceiveOrderMaterialDO.getId() != null) {
@@ -1245,7 +1244,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         //调用入库接口
         ServiceResult<String, Integer> inStockResult = warehouseService.productInStock(productInStockParam);
         if (!ErrorCode.SUCCESS.equals(inStockResult.getErrorCode())) {
-            System.out.println("inStockResult.getErrorCode())"+inStockResult.getErrorCode());
+            System.out.println("inStockResult.getErrorCode())" + inStockResult.getErrorCode());
             System.out.println("-----------------回滚-------------------");
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             serviceResult.setErrorCode(inStockResult.getErrorCode());
@@ -1298,27 +1297,27 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         //获取用户最【新的】最终可观察用户列表
         List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
         //数据级权限控制-查找用户可查看仓库列表
-        ServiceResult<String,List<Warehouse>> warehouseListResult = warehouseService.getAvailableWarehouse();
-        if(!ErrorCode.SUCCESS.equals(warehouseListResult.getErrorCode())){
+        ServiceResult<String, List<Warehouse>> warehouseListResult = warehouseService.getAvailableWarehouse();
+        if (!ErrorCode.SUCCESS.equals(warehouseListResult.getErrorCode())) {
             result.setErrorCode(ErrorCode.SYSTEM_ERROR);
             return result;
         }
         List<Warehouse> warehouseList = warehouseListResult.getResult();
         List<Integer> passiveUserIdList = new ArrayList<>();
         List<Integer> warehouseIdList = new ArrayList<>();
-        if(CollectionUtil.isEmpty(userDOList)&&CollectionUtil.isEmpty(warehouseList)){
+        if (CollectionUtil.isEmpty(userDOList) && CollectionUtil.isEmpty(warehouseList)) {
             result.setErrorCode(ErrorCode.SUCCESS);
             Page<PurchaseReceiveOrder> page = new Page<>(new ArrayList<PurchaseReceiveOrder>(), 0, purchaseReceiveOrderQueryParam.getPageNo(), purchaseReceiveOrderQueryParam.getPageSize());
             result.setResult(page);
             return result;
         }
-        if(CollectionUtil.isNotEmpty(userDOList)){
-            for(UserDO userDO : userDOList){
+        if (CollectionUtil.isNotEmpty(userDOList)) {
+            for (UserDO userDO : userDOList) {
                 passiveUserIdList.add(userDO.getId());
             }
         }
-        if(CollectionUtil.isNotEmpty(warehouseList)){
-            for(Warehouse warehouse : warehouseList){
+        if (CollectionUtil.isNotEmpty(warehouseList)) {
+            for (Warehouse warehouse : warehouseList) {
                 warehouseIdList.add(warehouse.getWarehouseId());
             }
         }
