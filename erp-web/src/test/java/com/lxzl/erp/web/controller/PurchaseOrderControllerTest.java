@@ -616,7 +616,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void continuePurchaseOrder() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setPurchaseNo("PO201711201619009825000051652");
+        purchaseOrder.setPurchaseNo("LXPO1000201801020008");
         TestResult testResult = getJsonTestResult("/purchaseOrder/continuePurchaseOrder", purchaseOrder);
     }
 

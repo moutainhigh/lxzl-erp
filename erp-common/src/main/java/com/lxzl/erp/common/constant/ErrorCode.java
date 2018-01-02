@@ -208,6 +208,7 @@ public class ErrorCode {
     public static final String PURCHASE_RECEIVE_ORDER_STATUS_YET_CAN_NOT_COMMIT = "J300059";
     public static final String SUB_COMPANY_NOT_EXISTS = "J300060";
     public static final String PURCHASE_TAX_RATE_ERROR = "J300061";
+    public static final String SUPPLIER_IS_EXISTS = "J300062";
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
     public static final String ORDER_CUSTOMER_CONSIGN_NOT_NULL = "J400001";
@@ -295,6 +296,8 @@ public class ErrorCode {
     public static final String RETURN_ORDER_CAN_NOT_COMMIT = "J400084";
     public static final String ORDER_PRODUCT_NOT_EXISTS = "J400085";
     public static final String ORDER_MATERIAL_NOT_EXISTS = "J400086";
+    public static final String ORDER_PRODUCT_DEPOSIT_ERROR = "J400087";
+    public static final String ORDER_MATERIAL_DEPOSIT_ERROR = "J400088";
 
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
@@ -351,6 +354,7 @@ public class ErrorCode {
     public static final String PRODUCT_PURPOSE_NOT_NULL = "J500054";
     public static final String LIST_FIRST_NEED_PRODUCTS_NOT_NULL = "J500055";
     public static final String CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL = "J500056";
+    public static final String CUSTOMER_IS_EXISTS = "J500057";
 
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
@@ -626,6 +630,8 @@ public class ErrorCode {
         MAP.put(SALES_MAN_NOT_NULL, "业务员不能为空");
         MAP.put(PURCHASE_TAX_RATE_ERROR, "采购单税率有误");
         MAP.put(CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL, "首次所需设备不能为空");
+        MAP.put(CUSTOMER_IS_EXISTS, "客户已经存在");
+        MAP.put(SUPPLIER_IS_EXISTS, "供应商已经存在");
 
 
 
@@ -705,6 +711,8 @@ public class ErrorCode {
         MAP.put(RETURN_ORDER_CAN_NOT_COMMIT, "只有待提交的退还单可以提交审核");
         MAP.put(ORDER_PRODUCT_NOT_EXISTS, "商品订单项不存在");
         MAP.put(ORDER_MATERIAL_NOT_EXISTS, "商品配件项不存在");
+        MAP.put(ORDER_PRODUCT_DEPOSIT_ERROR, "订单商品押金有误，请检查");
+        MAP.put(ORDER_MATERIAL_DEPOSIT_ERROR, "订单配件押金有误，请检查");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");

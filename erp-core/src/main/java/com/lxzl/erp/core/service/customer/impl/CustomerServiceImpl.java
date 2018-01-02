@@ -90,6 +90,11 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, String> addCompany(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
+        CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerCompany().getCompanyName());
+        if(dbCustomerDO != null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            return serviceResult;
+        }
         CustomerDO customerDO = new CustomerDO();
         customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_COMPANY));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_COMPANY);
@@ -180,6 +185,12 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, String> addPerson(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
+
+        CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerPerson().getRealName());
+        if(dbCustomerDO != null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            return serviceResult;
+        }
         CustomerDO customerDO = new CustomerDO();
         customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_PERSON));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
@@ -237,6 +248,11 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, String> updateCompany(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
+        CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerCompany().getCompanyName());
+        if(dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            return serviceResult;
+        }
         CustomerDO customerDO = customerMapper.findCustomerCompanyByNo(customer.getCustomerNo());
         if (customerDO == null || !CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
@@ -399,6 +415,11 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, String> updatePerson(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
+        CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerPerson().getRealName());
+        if(dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            return serviceResult;
+        }
         CustomerDO customerDO = customerMapper.findCustomerPersonByNo(customer.getCustomerNo());
         if (customerDO == null || !CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);

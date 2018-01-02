@@ -20,53 +20,56 @@
     </resultMap>
 
     <sql id="column_List">
-        tr.id,tr.role_name,tr.role_desc,tr.is_super_admin,tr.data_status,tr.remark,tr.create_time,tr.update_time
+        er.id,er.role_name,er.role_desc,er.is_super_admin,er.data_status,er.remark,er.create_time,er.update_time
     </sql>
-
+    <select id="findById" resultMap="RoleDO" parameterType="java.lang.Integer">
+        SELECT <include refid="column_List"/> FROM erp_role er
+        WHERE er.id = #{id, jdbcType=INTEGER} AND er.data_status = 1
+    </select>
     <select id="findList" resultMap="RoleDO" parameterType="map">
         select
         <include refid="column_List"/>,
         ed.id as department_id, ed.department_name as department_name,
         esc.id as sub_company_id, esc.sub_company_name as sub_company_name
-        from erp_role tr
-        left join erp_department ed on ed.id = tr.department_id and tr.data_status = 1
+        from erp_role er
+        left join erp_department ed on ed.id = er.department_id and er.data_status = 1
         left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
         <where>
             <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.departmentId != null">
-                and tr.department_id = #{maps.roleQueryParam.departmentId, jdbcType=INTEGER}
+                and er.department_id = #{maps.roleQueryParam.departmentId, jdbcType=INTEGER}
             </if>
             <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.roleId != null">
-                and tr.id = #{maps.roleQueryParam.roleId, jdbcType=INTEGER}
+                and er.id = #{maps.roleQueryParam.roleId, jdbcType=INTEGER}
             </if>
             <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.roleName != null">
-                and tr.role_name like CONCAT('%','${maps.roleQueryParam.roleName}','%' )
+                and er.role_name like CONCAT('%','${maps.roleQueryParam.roleName}','%' )
             </if>
             <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.subCompanyId != null">
                 and ed.sub_company_id = #{maps.roleQueryParam.subCompanyId, jdbcType=INTEGER}
             </if>
             <if test="true">
-                and tr.data_status = 1
+                and er.data_status = 1
             </if>
         </where>
-        order by tr.id
+        order by er.id
         limit #{maps.start},#{maps.pageSize}
     </select>
 
     <select id="findListCount" resultType="java.lang.Integer" parameterType="map">
         select count(1)
-        from erp_role tr
+        from erp_role er
         <where>
             <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.departmentId != null">
-                and tr.department_id = #{maps.roleQueryParam.departmentId, jdbcType=INTEGER}
+                and er.department_id = #{maps.roleQueryParam.departmentId, jdbcType=INTEGER}
             </if>
             <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.roleId != null">
-                and tr.id = #{maps.roleQueryParam.roleId, jdbcType=INTEGER}
+                and er.id = #{maps.roleQueryParam.roleId, jdbcType=INTEGER}
             </if>
             <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.roleName != null">
-                and tr.role_name like CONCAT('%','${maps.roleQueryParam.roleName}','%' )
+                and er.role_name like CONCAT('%','${maps.roleQueryParam.roleName}','%' )
             </if>
             <if test="true">
-                and tr.data_status = 1
+                and er.data_status = 1
             </if>
         </where>
     </select>
@@ -76,10 +79,10 @@
         <include refid="column_List"/>,
         ed.id as department_id, ed.department_name as department_name,
         esc.id as sub_company_id, esc.sub_company_name as sub_company_name
-        from erp_role tr
-        left join erp_department ed on ed.id = tr.department_id and tr.data_status = 1
+        from erp_role er
+        left join erp_department ed on ed.id = er.department_id and er.data_status = 1
         left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
-        where tr.id = #{roleId, jdbcType=INTEGER} and tr.data_status = 1
+        where er.id = #{roleId, jdbcType=INTEGER} and er.data_status = 1
     </select>
 
     <select id="findByUserId" resultMap="RoleDO" parameterType="java.lang.Integer">
@@ -87,11 +90,11 @@
         <include refid="column_List"/>,
         ed.id as department_id, ed.department_name as department_name,
         esc.id as sub_company_id, esc.sub_company_name as sub_company_name
-        from erp_role tr
-        inner join erp_user_role tur on tr.id = tur.role_id and tur.data_status = 1
-        left join erp_department ed on ed.id = tr.department_id and tr.data_status = 1
+        from erp_role er
+        inner join erp_user_role eur on er.id = eur.role_id and eur.data_status = 1
+        left join erp_department ed on ed.id = er.department_id and er.data_status = 1
         left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
-        where tur.user_id = #{userId, jdbcType=INTEGER} and tr.data_status = 1
+        where eur.user_id = #{userId, jdbcType=INTEGER} and er.data_status = 1
     </select>
 
     <sql id="set_column_sql">

@@ -12,7 +12,6 @@ import java.util.List;
 
 @Repository
 public interface RoleDepartmentDataMapper extends BaseMysqlDAO<RoleDepartmentDataDO> {
-    Integer deleteByRoleAndDepartment(@Param("roleId") Integer roleId, @Param("departmentId") Integer departmentId);
 
     List<RoleDepartmentDataDO> getRoleDepartmentDataListByRoleId(@Param("roleId") Integer roleId);
 
