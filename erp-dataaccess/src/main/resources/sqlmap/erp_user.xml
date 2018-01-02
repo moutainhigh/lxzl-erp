@@ -228,8 +228,8 @@
     <select id="getPassiveUserByUser" resultMap="userResult" parameterType="map">
         SELECT DISTINCT user_id id ,u.real_name FROM (
         SELECT eur.user_id  FROM erp_department ed
-	    left join erp_role er on ed.id= er.department_id
-        left join erp_user_role eur on eur.role_id = er.id
+	    LEFT JOIN erp_role er on ed.id= er.department_id and er.data_status = 1
+        LEFT JOIN erp_user_role eur on eur.role_id = er.id and eur.data_status = 1
         where ed.id
             IN( SELECT DISTINCT rdd.department_id FROM erp_user_role ur
             LEFT JOIN erp_role_department_data rdd ON rdd.role_id = ur.role_id AND rdd.data_status=1
