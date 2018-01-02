@@ -15,6 +15,7 @@ public class Product extends BasePO {
     private Integer brandId;
     private String brandName;
     private Integer categoryId;
+    private String categoryName;
     private String subtitle;
     private Integer unit;
     private BigDecimal listPrice;
@@ -180,5 +181,13 @@ public class Product extends BasePO {
 
     public void setBrandName(String brandName) {
         this.brandName = brandName;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }

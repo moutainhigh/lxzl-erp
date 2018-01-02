@@ -28,6 +28,8 @@ public class ProductDO extends BaseDO {
 
     @Transient
     private String brandName;
+    @Transient
+    private String categoryName;
 
     public Integer getId() {
         return id;
@@ -171,5 +173,13 @@ public class ProductDO extends BaseDO {
 
     public void setBrandName(String brandName) {
         this.brandName = brandName;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }
