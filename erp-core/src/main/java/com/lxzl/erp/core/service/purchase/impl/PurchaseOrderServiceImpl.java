@@ -1200,12 +1200,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     //记录采购收货单配件总数
                     List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOList = receiveOrderDO.getPurchaseReceiveOrderMaterialDOList();
                     if(CollectionUtil.isNotEmpty(purchaseReceiveOrderMaterialDOList)){
+                        //todo 这里暂时用real字段
                         for(PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO : purchaseReceiveOrderMaterialDOList){
                             int count = 0 ;
-                            if(materialCountMap.get(purchaseReceiveOrderMaterialDO.getMaterialId())!=null){
-                                count = materialCountMap.get(purchaseReceiveOrderMaterialDO.getMaterialId());
+                            if(materialCountMap.get(purchaseReceiveOrderMaterialDO.getRealMaterialId())!=null){
+                                count = materialCountMap.get(purchaseReceiveOrderMaterialDO.getRealMaterialId());
                             }
-                            materialCountMap.put(purchaseReceiveOrderMaterialDO.getMaterialId(),count+purchaseReceiveOrderMaterialDO.getRealMaterialCount());
+                            materialCountMap.put(purchaseReceiveOrderMaterialDO.getRealMaterialId(),count+purchaseReceiveOrderMaterialDO.getRealMaterialCount());
                         }
                     }
                 }
@@ -1280,8 +1281,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         if(CollectionUtil.isNotEmpty(purchaseOrderMaterialDOList)){
             for(PurchaseOrderMaterialDO purchaseOrderMaterialDO : purchaseOrderMaterialDOList){
                 int count = 0 ;
-                if(materialCountMap.get(purchaseOrderMaterialDO.getMaterialId())!=null){
-                    count = materialCountMap.get(purchaseOrderMaterialDO.getMaterialId());
+                if(materialShouldMap.get(purchaseOrderMaterialDO.getMaterialId())!=null){
+                    count = materialShouldMap.get(purchaseOrderMaterialDO.getMaterialId());
                 }
                 materialShouldMap.put(purchaseOrderMaterialDO.getMaterialId(),count+purchaseOrderMaterialDO.getMaterialCount());
             }
@@ -1480,20 +1481,20 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 //找到的所有采购单项sku，累加数量
                 List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList();
                 for (PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO : purchaseReceiveOrderProductDOList) {
-                    Integer countNow = skuCountMap.get(purchaseReceiveOrderProductDO.getRealProductSkuId());
-                    if (countNow == null) {
-                        skuCountMap.put(purchaseReceiveOrderProductDO.getRealProductSkuId(), 0);
+                    int count = 0 ;
+                    if(skuCountMap.get(purchaseReceiveOrderProductDO.getRealProductSkuId())!=null){
+                        count = skuCountMap.get(purchaseReceiveOrderProductDO.getRealProductSkuId());
                     }
-                    skuCountMap.put(purchaseReceiveOrderProductDO.getRealProductSkuId(), skuCountMap.get(purchaseReceiveOrderProductDO.getRealProductSkuId()) + purchaseReceiveOrderProductDO.getRealProductCount());
+                    skuCountMap.put(purchaseReceiveOrderProductDO.getRealProductSkuId(), count + purchaseReceiveOrderProductDO.getRealProductCount());
                 }
                 //找到所采购单物料项，累加数量
                 List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderMaterialDOList();
                 for (PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO : purchaseReceiveOrderMaterialDOList) {
-                    Integer countNow = skuCountMap.get(purchaseReceiveOrderMaterialDO.getMaterialId());
-                    if (countNow == null) {
-                        skuCountMap.put(purchaseReceiveOrderMaterialDO.getRealMaterialId(), 0);
+                    int count = 0 ;
+                    if(materialCountMap.get(purchaseReceiveOrderMaterialDO.getMaterialId())!=null){
+                        count = materialCountMap.get(purchaseReceiveOrderMaterialDO.getMaterialId());
                     }
-                    materialCountMap.put(purchaseReceiveOrderMaterialDO.getRealMaterialId(), countNow + purchaseReceiveOrderMaterialDO.getRealMaterialCount());
+                    materialCountMap.put(purchaseReceiveOrderMaterialDO.getRealMaterialId(), count + purchaseReceiveOrderMaterialDO.getRealMaterialCount());
                 }
             }
         }
@@ -2054,8 +2055,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         //获取发货订单物料项列表
 //        List<PurchaseDeliveryOrderProductDO> purchaseDeliveryOrderProductDOList =  purchaseOrderSupport.getAllPurchaseDeliveryOrderProductDO(purchaseDeliveryOrderDO.getId());
         List<PurchaseDeliveryOrderMaterialDO> purchaseDeliveryOrderMaterialDOList = purchaseDeliveryOrderDO.getPurchaseDeliveryOrderMaterialDOList();
-        //保存采购发货单商品项
+        //保存采购收货单商品项
         if (CollectionUtil.isNotEmpty(purchaseDeliveryOrderMaterialDOList)) {
+            //todo 这里的保存累积看是否有问题
             for (PurchaseDeliveryOrderMaterialDO purchaseDeliveryOrderMaterialDO : purchaseDeliveryOrderMaterialDOList) {
                 PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO = new PurchaseReceiveOrderMaterialDO();
                 purchaseReceiveOrderMaterialDO.setPurchaseDeliveryOrderMaterialId(purchaseDeliveryOrderMaterialDO.getId());

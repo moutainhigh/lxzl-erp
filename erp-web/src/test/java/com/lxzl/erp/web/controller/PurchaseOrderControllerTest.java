@@ -565,7 +565,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void confirmPurchaseReceiveOrder() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
-        purchaseReceiveOrder.setPurchaseReceiveNo("LXPR1000201801030014");
+        purchaseReceiveOrder.setPurchaseReceiveNo("LXPR1000201801030017");
         TestResult testResult = getJsonTestResult("/purchaseOrder/confirmPurchaseReceiveOrder", purchaseReceiveOrder);
     }
 
@@ -616,7 +616,7 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void continuePurchaseOrder() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setPurchaseNo("LXPO1000201801020008");
+        purchaseOrder.setPurchaseNo("LXPO1000201801030013");
         TestResult testResult = getJsonTestResult("/purchaseOrder/continuePurchaseOrder", purchaseOrder);
     }
 
