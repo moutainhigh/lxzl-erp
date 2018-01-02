@@ -204,9 +204,9 @@ public class MaterialServiceImpl implements MaterialService {
             return result;
         }
         if (MaterialType.isCapacityMaterial(dbRecord.getMaterialType())) {
-            material.setMaterialCapacityValue(null);
-        } else {
             material.setMaterialModelId(null);
+        } else {
+            material.setMaterialCapacityValue(null);
         }
 
         MaterialDO materialDO = ConverterUtil.convert(material, MaterialDO.class);
