@@ -1480,20 +1480,20 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 //找到的所有采购单项sku，累加数量
                 List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList();
                 for (PurchaseReceiveOrderProductDO purchaseReceiveOrderProductDO : purchaseReceiveOrderProductDOList) {
-                    Integer countNow = skuCountMap.get(purchaseReceiveOrderProductDO.getRealProductSkuId());
-                    if (countNow == null) {
-                        skuCountMap.put(purchaseReceiveOrderProductDO.getRealProductSkuId(), 0);
+                    int count = 0 ;
+                    if(skuCountMap.get(purchaseReceiveOrderProductDO.getRealProductSkuId())!=null){
+                        count = skuCountMap.get(purchaseReceiveOrderProductDO.getRealProductSkuId());
                     }
-                    skuCountMap.put(purchaseReceiveOrderProductDO.getRealProductSkuId(), skuCountMap.get(purchaseReceiveOrderProductDO.getRealProductSkuId()) + purchaseReceiveOrderProductDO.getRealProductCount());
+                    skuCountMap.put(purchaseReceiveOrderProductDO.getRealProductSkuId(), count + purchaseReceiveOrderProductDO.getRealProductCount());
                 }
                 //找到所采购单物料项，累加数量
                 List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderMaterialDOList();
                 for (PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO : purchaseReceiveOrderMaterialDOList) {
-                    Integer countNow = skuCountMap.get(purchaseReceiveOrderMaterialDO.getMaterialId());
-                    if (countNow == null) {
-                        skuCountMap.put(purchaseReceiveOrderMaterialDO.getRealMaterialId(), 0);
+                    int count = 0 ;
+                    if(materialCountMap.get(purchaseReceiveOrderMaterialDO.getMaterialId())!=null){
+                        count = materialCountMap.get(purchaseReceiveOrderMaterialDO.getMaterialId());
                     }
-                    materialCountMap.put(purchaseReceiveOrderMaterialDO.getRealMaterialId(), countNow + purchaseReceiveOrderMaterialDO.getRealMaterialCount());
+                    materialCountMap.put(purchaseReceiveOrderMaterialDO.getRealMaterialId(), count + purchaseReceiveOrderMaterialDO.getRealMaterialCount());
                 }
             }
         }
