@@ -2,34 +2,81 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="data_access_sql">
 	<sql id="purchase_control">
-		<if test="maps.queryParam.passiveUserIdList != null">
+		<if test="maps.queryParam.dataAccessUserIdList != null">
 			AND epo.create_user in
-			<foreach item="item" index="index" collection="maps.queryParam.passiveUserIdList" open="(" separator="," close=")">
+			<foreach item="item" index="index" collection="maps.queryParam.dataAccessUserIdList" open="(" separator="," close=")">
 				#{item}
 			</foreach>
 		</if>
 	</sql>
-
-	<sql id="order_control">
-		<if test="maps.orderQueryParam.passiveUserIdList != null &amp;&amp;maps.orderQueryParam.subCompanyId != null ">
+	<sql id="purchase_delivery_control">
+		<if test="maps.queryParam.dataAccessUserIdList != null">
+			AND epdo.create_user in
+			<foreach item="item" index="index" collection="maps.queryParam.dataAccessUserIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</sql>
+	<sql id="purchase_receive_control">
+		<if test="maps.queryParam.dataAccessUserIdList != null &amp;&amp;maps.queryParam.dataAccessWarehouseIdList != null ">
 			AND
 			(
-			(eo.create_user in
-			<foreach item="item" index="index" collection="maps.orderQueryParam.passiveUserIdList" open="(" separator=","
+			(epro.create_user in
+			<foreach item="item" index="index" collection="maps.queryParam.dataAccessUserIdList" open="(" separator=","
 					 close=")">
 				#{item}
 			</foreach>
-			) or (esc.id =#{maps.orderQueryParam.subCompanyId})
+			) or
+			(epro.warehouse_id in
+			<foreach item="item" index="index" collection="maps.queryParam.dataAccessWarehouseIdList" open="(" separator=","
+					 close=")">
+				#{item}
+			</foreach>
+			)
+			)
+		</if>
+	</sql>
+
+	<sql id="order_control">
+		<if test="maps.orderQueryParam.dataAccessUserIdList != null &amp;&amp;maps.orderQueryParam.dataAccessSubCompanyId != null ">
+			AND
+			(
+			(eo.create_user in
+			<foreach item="item" index="index" collection="maps.orderQueryParam.dataAccessUserIdList" open="(" separator=","
+					 close=")">
+				#{item}
+			</foreach>
+			) or (esc.id =#{maps.orderQueryParam.dataAccessSubCompanyId})
 			)
 		</if>
 	</sql>
 
 	<sql id="customer_control">
-		<if test="maps.queryParam.passiveUserIdList != null">
+		<if test="maps.queryParam.dataAccessUserIdList != null">
 			AND ec.create_user in
-			<foreach item="item" index="index" collection="maps.queryParam.passiveUserIdList" open="(" separator="," close=")">
+			<foreach item="item" index="index" collection="maps.queryParam.dataAccessUserIdList" open="(" separator="," close=")">
 				#{item}
 			</foreach>
 		</if>
 	</sql>
+
+	<sql id="change_order_control">
+		<if test="maps.queryParam.dataAccessUserIdList != null">
+			AND eco.create_user in
+			<foreach item="item" index="index" collection="maps.queryParam.dataAccessUserIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</sql>
+
+	<sql id="return_order_control">
+		<if test="maps.queryParam.dataAccessUserIdList != null">
+			AND ero.create_user in
+			<foreach item="item" index="index" collection="maps.queryParam.dataAccessUserIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</sql>
+
+
 </mapper>

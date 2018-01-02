@@ -16,6 +16,7 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
+import com.lxzl.erp.core.service.dataAccess.DataAccessSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.returnOrder.ReturnOrderService;
@@ -590,22 +591,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         ServiceResult<String, Page<ReturnOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(returnOrderPageParam.getPageNo(), returnOrderPageParam.getPageSize());
 
-        //数据级权限控制-查找用户可查看用户列表
-        Integer currentUserId = userSupport.getCurrentUserId();
-        //获取用户最【新的】最终可观察用户列表
-        List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
-        List<Integer> passiveUserIdList = new ArrayList<>();
-        if (CollectionUtil.isNotEmpty(userDOList)) {
-            for (UserDO userDO : userDOList) {
-                passiveUserIdList.add(userDO.getId());
-            }
-        } else {
-            result.setErrorCode(ErrorCode.SUCCESS);
-            Page<ReturnOrder> page = new Page<>(new ArrayList<ReturnOrder>(), 0, returnOrderPageParam.getPageNo(), returnOrderPageParam.getPageSize());
-            result.setResult(page);
-            return result;
-        }
-        returnOrderPageParam.setPassiveUserIdList(passiveUserIdList);
+        dataAccessSupport.setDataAccessPassiveUserList(returnOrderPageParam);
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -1117,7 +1103,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     @Autowired
     private GenerateNoSupport generateNoSupport;
     @Autowired
-    private UserMapper userMapper;
+    private DataAccessSupport dataAccessSupport;
 
 
 }

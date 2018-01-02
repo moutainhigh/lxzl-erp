@@ -150,7 +150,7 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
     @Test
     public void page() throws Exception {
         ChangeOrderPageParam changeOrderPageParam = new ChangeOrderPageParam();
-        changeOrderPageParam.setOwnerName("涛");
+//        changeOrderPageParam.setOwnerName("涛");
         TestResult testResult = getJsonTestResult("/changeOrder/page",changeOrderPageParam);
     }
     @Test

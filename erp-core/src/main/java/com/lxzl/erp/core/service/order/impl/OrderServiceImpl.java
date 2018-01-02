@@ -14,6 +14,7 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
+import com.lxzl.erp.core.service.dataAccess.DataAccessSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.material.impl.support.MaterialSupport;
@@ -708,28 +709,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(OrderQueryParam orderQueryParam) {
-        User user = userSupport.getCurrentUser();
+
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+
+        dataAccessSupport.setDataAccessPassiveUserList(orderQueryParam);
+        dataAccessSupport.setDataAccessSubCompany(orderQueryParam);
+
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        //数据级权限控制-查找用户可查看用户列表
-        Integer currentUserId = userSupport.getCurrentUserId();
-        //获取用户最【新的】最终可观察用户列表
-        List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
-        //数据级权限控制-查找用户可查看本分公司
-        Integer subCompanyId = userSupport.getCurrentUserCompanyId();
-        List<Integer> passiveUserIdList = new ArrayList<>();
-        if (CollectionUtil.isNotEmpty(userDOList)) {
-            for (UserDO userDO : userDOList) {
-                passiveUserIdList.add(userDO.getId());
-            }
-        }
-
-        orderQueryParam.setPassiveUserIdList(passiveUserIdList);
-        orderQueryParam.setSubCompanyId(subCompanyId);
-
         maps.put("orderQueryParam", orderQueryParam);
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
@@ -1724,5 +1713,5 @@ public class OrderServiceImpl implements OrderService {
     private GenerateNoSupport generateNoSupport;
 
     @Autowired
-    private UserMapper userMapper;
+    private DataAccessSupport dataAccessSupport;
 }

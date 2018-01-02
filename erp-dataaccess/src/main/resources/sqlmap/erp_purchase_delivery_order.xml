@@ -191,15 +191,10 @@
 			<if test="maps.queryParam.createEndTime != null ">
 				<![CDATA[ AND epdo.create_time <= #{maps.queryParam.createEndTime} ]]>
 			</if>
-			<if test="maps.queryParam.passiveUserIdList != null">
-				AND epdo.create_user in
-				<foreach item="item" index="index" collection="maps.queryParam.passiveUserIdList" open="(" separator="," close=")">
-					#{item}
-				</foreach>
-			</if>
 			<if test="true">
 				and epdo.data_status = 1
 			</if>
+			<include refid="data_access_sql.purchase_delivery_control"/>
 		</where>
 	</select>
 	<select id="findPurchaseDeliveryOrderByParams" resultMap="PurchaseDeliveryOrderDO" parameterType="map">
@@ -229,15 +224,10 @@
 			<if test="maps.queryParam.createEndTime != null ">
 				<![CDATA[ AND epdo.create_time <= #{maps.queryParam.createEndTime} ]]>
 			</if>
-			<if test="maps.queryParam.passiveUserIdList != null">
-				AND epdo.create_user in
-				<foreach item="item" index="index" collection="maps.queryParam.passiveUserIdList" open="(" separator="," close=")">
-					#{item}
-				</foreach>
-			</if>
 			<if test="true">
 				and epdo.data_status = 1
 			</if>
+			<include refid="data_access_sql.purchase_delivery_control"/>
 		</where>
 		ORDER BY epdo.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}

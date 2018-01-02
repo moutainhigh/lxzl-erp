@@ -15,6 +15,7 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.changeOrder.ChangeOrderService;
 import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
+import com.lxzl.erp.core.service.dataAccess.DataAccessSupport;
 import com.lxzl.erp.core.service.material.BulkMaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.order.OrderService;
@@ -1105,22 +1106,8 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         ServiceResult<String, Page<ChangeOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(changeOrderPageParam.getPageNo(), changeOrderPageParam.getPageSize());
 
-        //数据级权限控制-查找用户可查看用户列表
-        Integer currentUserId = userSupport.getCurrentUserId();
-        //获取用户最【新的】最终可观察用户列表
-        List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
-        List<Integer> passiveUserIdList = new ArrayList<>();
-        if (CollectionUtil.isNotEmpty(userDOList)) {
-            for (UserDO userDO : userDOList) {
-                passiveUserIdList.add(userDO.getId());
-            }
-        } else {
-            result.setErrorCode(ErrorCode.SUCCESS);
-            Page<ChangeOrder> page = new Page<>(new ArrayList<ChangeOrder>(), 0, changeOrderPageParam.getPageNo(), changeOrderPageParam.getPageSize());
-            result.setResult(page);
-            return result;
-        }
-        changeOrderPageParam.setPassiveUserIdList(passiveUserIdList);
+        dataAccessSupport.setDataAccessPassiveUserList(changeOrderPageParam);
+
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
@@ -1452,5 +1439,5 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     @Autowired
     private GenerateNoSupport generateNoSupport;
     @Autowired
-    private UserMapper userMapper;
+    private DataAccessSupport dataAccessSupport;
 }
