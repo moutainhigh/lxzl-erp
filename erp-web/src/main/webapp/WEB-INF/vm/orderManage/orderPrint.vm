@@ -59,6 +59,7 @@
                     <div class="row p15" id="invoice-info"></div>
 
                     <script type="text/html" id="dataListTpl">
+                        {{#hasListData}}
                         <div class="col-md-12">
                             <h1>商品</h1>
                             <table class="table table-striped">
@@ -96,11 +97,13 @@
                                 </tbody>
                             </table>
                         </div>
+                        {{/hasListData}}
                     </script>
 
                     <div class="row" id="dataListTable"></div>
 
                     <script type="text/html" id="materialDataListTpl">
+                        {{#hasListData}}
                         <div class="col-md-12">
                             <h1>配件</h1>
                             <table class="table table-striped">
@@ -138,6 +141,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        {{/hasListData}}
                     </script>
 
                     <div class="row" id="materialDataListTable"></div>
@@ -149,37 +153,31 @@
                                 <table class="table" id="invoice-summary">
                                     <thead>
                                         <tr>
-                                            <th><b>授信押金:</b></th><th>{{#price}}{{totalCreditDepositAmount}}{{/price}}</th>
+                                            <th><b>授信押金:</b></th><th>￥{{#price}}{{totalCreditDepositAmount}}{{/price}}（商品：￥{{#price}}{{totalProductCreditDepositAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialCreditDepositAmount}}{{/price}}）</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td><b>设备总押金:</b></td><td>￥{{#price}}{{totalProductDepositAmount}}{{/price}}</td>
+                                            <td><b>设备总押金:</b></td><td>￥{{#price}}{{totalDepositAmount}}{{/price}} （商品：{{#price}}{{totalProductDepositAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialDepositAmount}}{{/price}}）</td>
                                         </tr>
                                         <tr>
-                                            <td><b>租金总押金:</b></td><td>￥{{#price}}{{totalProductRentDepositAmount}}{{/price}}</td>
+                                            <td><b>租金总押金:</b></td><td>￥{{#price}}{{totalRentDepositAmount}}{{/price}}（商品：￥{{#price}}{{totalProductRentDepositAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialRentDepositAmount}}{{/price}}）</td>
                                         </tr>
                                         <tr>
-                                            <td><b>商品总价:</b></td><td>￥{{#price}}{{totalProductAmount}}{{/price}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><b>配件总价:</b></td><td>￥{{#price}}{{totalMaterialAmount}}{{/price}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><b>保险金:</b></td><td>￥{{#price}}{{totalInsuranceAmount}}{{/price}}</td>
+                                            <td><b>租金总价:</b></td><td>￥{{#price}}{{totalRentalAmoutFont}}{{/price}}（商品：￥{{#price}}{{totalProductAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialAmount}}{{/price}}）</td>
                                         </tr>
                                         <tr>
                                             <td><b>运费:</b></td><td>￥{{#price}}{{logisticsAmount}}{{/price}}</td>
                                         </tr>
                                         <tr>
-                                            <td><b>优惠:</b></td><td>(-)￥{{#price}}{{totalDiscountAmount}}{{/price}}</td>
+                                            <td><b>应付总价:</b></td><td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
                                         </tr>
                                         <tr>
-                                            <td><b>总金额:</b></td><td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
+                                            <td><b>首付:</b></td><td>￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
                                         </tr>
-##                                        <tr>
-##                                            <td><b>已支付:</b></td><td>￥{{#price}}{{totalPaidOrderAmount}}{{/price}}</td>
-##                                        </tr>
+                                        <tr>
+                                            <td><b>已支付:</b></td><td>￥{{#price}}{{totalPaidOrderAmount}}{{/price}}</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                                 {{/order}}

@@ -44,6 +44,7 @@
                         <div class="input-group">
                             <span class="input-group-addon">17%</span>
                             <input class="form-control required taxRate2" type="text" name="highTaxRate" id="highTaxRate"  placeholder="请输入0-100的值" />
+                            <span class="input-group-addon">%</span>
                         </div>
                     </div>
                     <label class="col-md-3 control-label">税率</label>
@@ -51,6 +52,7 @@
                         <div class="input-group">
                             <span class="input-group-addon">6%</span>
                             <input class="form-control required taxRate2" type="text" name="lowTaxRate" id="lowTaxRate" placeholder="请输入0-100的值" />
+                            <span class="input-group-addon">%</span>
                         </div>
                     </div>
                 </div>
@@ -124,7 +126,6 @@
                             <th>商品ID</th>
                             <th>图片</th>
                             <th>商品名称</th>
-##                            <th>列表价格</th>
                             <th>SKU</th>
                         </tr>
                         </thead>
