@@ -186,6 +186,7 @@
                                                     {{#skuList}}
                                                     <tr class="skuRow">
                                                         <td width="15%"><span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{propertiesToStr}}</td>
+                                                        <td>商品价值：￥{{#price}}{{skuPrice}}{{/price}}</td>
                                                         <td>
                                                             商品单价：{{productUnitAmount}}
                                                         </td>
