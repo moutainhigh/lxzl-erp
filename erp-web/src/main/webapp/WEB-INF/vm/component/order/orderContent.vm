@@ -21,14 +21,15 @@
                         #parse("component/customer/address.vm")
                     </div>
                 </div>
-                <div class="form-group field">
-                    <label class="col-md-3 control-label">税率</label>
-                    <div class="col-md-9">
-                        <div>
-                            <input id="taxRate" name="taxRate" class="form-control taxRate" type="text" placeholder="请输入税率(0-1)" />
-                        </div>
-                    </div>
-                </div>
+##                <div class="form-group field">
+##                    <label class="col-md-3 control-label">税率</label>
+##                    <div class="col-md-9">
+##                        <div class="input-group">
+##                            <span class="input-group-addon">17%</span>
+##                            <input class="form-control required taxRate" type="text" name="highTaxRate" id="highTaxRate"  placeholder="请输入0-100的值" />
+##                        </div>
+##                    </div>
+##                </div>
                 <div class="form-group field">
                     <label class="col-md-3 control-label">运费</label>
                     <div class="col-md-9">
@@ -38,8 +39,31 @@
                     </div>
                 </div>
                 <div class="form-group field">
+                    <label class="col-md-3 control-label">税率</label>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-addon">17%</span>
+                            <input class="form-control required taxRate" type="text" name="highTaxRate" id="highTaxRate"  placeholder="请输入0-100的值" />
+                        </div>
+                    </div>
+                    <label class="col-md-3 control-label">税率</label>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-addon">6%</span>
+                            <input class="form-control required taxRate" type="text" name="lowTaxRate" id="lowTaxRate" placeholder="请输入0-100的值" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group field">
+                    <label class="col-md-3 control-label">交货日期</label>
+                    <div class="col-md-3">
+                        <div class="input-group date" id="createExpectDeliveryTimePicker">
+                            <input id="expectDeliveryTime" name="expectDeliveryTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择交货日期" />
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
                     <label class="col-md-3 control-label">起租日期</label>
-                    <div class="col-md-9">
+                    <div class="col-md-3">
                         <div class="input-group date" id="createTimePicker">
                             <input id="rentStartTime" name="rentStartTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择起租日期" />
                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -125,8 +149,8 @@
                                     {{#chooseSkuList}}
                                     {{#skuList}}
                                     <tr class="skuRow">
-                                        <td width="15%"><span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{propertiesToStr}}</td>
-                                        <td>
+                                        <td width="20%"><span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{propertiesToStr}}</td>
+                                        <td width="20%">
                                             <label class="field select">
                                                 <select name="rentType-{{skuId}}-{{rowKey}}" class="rentType required" style="min-width: 130px;">
                                                     <option value="">选择租赁类型</option>
@@ -137,7 +161,18 @@
                                                 <i class="arrow"></i>
                                             </label>
                                         </td>
-                                        <td class="productUnitAmountTd">
+                                        <td width="20%">
+                                            <label class="field prepend-icon">
+                                                <input type="text" name="rentTimeLength-{{skuId}}-{{rowKey}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required number pl10" placeholder="租赁时长" />
+                                            </label>
+                                            {{#showDepositAmount}}
+                                            <label class="field prepend-icon mt10">
+                                                <input type="text" name="depositAmount-{{skuId}}-{{rowKey}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入设备押金" />
+                                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                            </label>
+                                            {{/showDepositAmount}}
+                                        </td>
+                                        <td width="15%" class="productUnitAmountTd">
                                             <div class="smart-widget sm-right smr-50">
                                                 <input type="hidden" name="skuId" value="{{isNewProduct}}" class="isNewProduct" />
                                                 <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
@@ -149,32 +184,11 @@
                                                 <button type="button" class="button btn-primary bradiusN chooseProductUnitAmount" data-productskuid="{{skuId}}"><i class="fa fa-search"></i></button>
                                             </div>
                                         </td>
-                                        <td>
+                                        <td width="15%">
                                             <label class="field prepend-icon mw200">
                                                 <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入租赁数量" />
                                             </label>
                                         </td>
-                                        <td>
-                                            <label class="field prepend-icon mw200">
-                                                <input type="text" name="rentTimeLength-{{skuId}}-{{rowKey}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required number pl10" placeholder="租赁时长" />
-                                            </label>
-                                        </td>
-##                                        <td>
-##                                            <label class="field prepend-icon mw200">
-##                                                <input type="text" name="insuranceAmount-{{skuId}}-{{rowKey}}" value="{{insuranceAmount}}" class="insuranceAmount form-control required moneyNumber" placeholder="输入保险金额" />
-##                                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-##                                            </label>
-##                                        </td>
-##                                        <td>
-##                                            <label class="field prepend-icon mw200">
-##                                                <select name="payMode-{{skuId}}-{{rowKey}}" class="payMode form-control required">
-##                                                    <option value="">请选择</option>
-##                                                    {{#payModeList}}
-##                                                    <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
-##                                                    {{/payModeList}}
-##                                                </select>
-##                                            </label>
-##                                        </td>
                                         <td class="text-right">
                                             <div class="btn-group text-right">
                                                 <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
@@ -231,11 +245,9 @@
                             <th>描述</th>
                             <th>图片</th>
                             <th>租赁类型</th>
+                            <th>租赁时长</th>
                             <th>配件单价</th>
                             <th>数量</th>
-                            <th>租赁时长</th>
-##                            <th>保险金</th>
-##                            <th>支付方式</th>
                             <th class="text-right">操作</th>
                         </tr>
                         </thead>
@@ -270,6 +282,19 @@
                                     <i class="arrow"></i>
                                 </label>
                             </td>
+                            <td>
+                                <div class="mw200">
+                                    <label class="field prepend-icon">
+                                        <input type="text" name="rentTimeLength-{{materialNo}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required number pl10" placeholder="租赁时长" />
+                                    </label>
+                                    {{#showDepositAmount}}
+                                    <label class="field prepend-icon mt10">
+                                        <input type="text" name="depositAmount-{{materialNo}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入配件押金" />
+                                        <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                    </label>
+                                    {{/showDepositAmount}}
+                                </div>
+                            </td>
                             <td class="materialUnitAmountTd">
                                 <div class="smart-widget sm-right smr-50">
                                     <label class="field prepend-icon">
@@ -287,27 +312,6 @@
                                     <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入租赁数量" />
                                 </label>
                             </td>
-                            <td>
-                                <label class="field prepend-icon mw200">
-                                    <input type="text" name="rentTimeLength-{{materialNo}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required number pl10" placeholder="租赁时长" />
-                                </label>
-                            </td>
-##                            <td>
-##                                <label class="field prepend-icon mw200">
-##                                    <input type="text" name="insuranceAmount-{{materialNo}}" value="{{insuranceAmount}}" class="insuranceAmount form-control required moneyNumber" placeholder="输入保险金" />
-##                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-##                                </label>
-##                            </td>
-##                            <td>
-##                                <label class="field prepend-icon mw200">
-##                                    <select name="payMode-{{materialNo}}" class="payMode form-control required">
-##                                        <option value="">请选择</option>
-##                                        {{#payModeList}}
-##                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
-##                                        {{/payModeList}}
-##                                    </select>
-##                                </label>
-##                            </td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
                                     <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}">删除</a>
