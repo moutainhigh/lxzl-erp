@@ -80,6 +80,11 @@ public class SupplierServiceImpl implements SupplierService {
             result.setErrorCode(verifyCode);
             return result;
         }
+        SupplierDO dbSupplierDO = supplierMapper.findByName(supplier.getSupplierName());
+        if (dbSupplierDO != null) {
+            result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
+            return result;
+        }
 
         SupplierDO supplierDO = ConverterUtil.convert(supplier, SupplierDO.class);
         supplierDO.setSupplierNo(generateNoSupport.generateSupplierNo(supplierDO.getCity()));
@@ -103,6 +108,11 @@ public class SupplierServiceImpl implements SupplierService {
         SupplierDO dbSupplierDO = supplierMapper.findByNo(supplier.getSupplierNo());
         if (dbSupplierDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        SupplierDO nameSupplierDO = supplierMapper.findByName(supplier.getSupplierName());
+        if (nameSupplierDO != null && !nameSupplierDO.getSupplierNo().equals(supplier.getSupplierNo())) {
+            result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
             return result;
         }
 

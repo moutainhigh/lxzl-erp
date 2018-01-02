@@ -12,6 +12,8 @@ public interface SupplierMapper extends BaseMysqlDAO<SupplierDO> {
 
     SupplierDO findByNo(@Param("supplierNo") String supplierNo);
 
+    SupplierDO findByName(@Param("supplierName") String supplierName);
+
     List<SupplierDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
     Integer listCount(@Param("maps") Map<String, Object> paramMap);

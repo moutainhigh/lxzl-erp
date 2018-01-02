@@ -48,6 +48,16 @@
 		where es.supplier_no = #{supplierNo, jdbcType=VARCHAR} and es.data_status = 1
 	</select>
 
+	<select id="findByName" resultMap="SupplierDO" parameterType="java.lang.String">
+		select <include refid="column_List"/>
+		,eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name
+		from erp_supplier es
+		LEFT JOIN erp_area_province eap ON eap.id = es.province
+		LEFT JOIN erp_area_city eac ON eac.id = es.city
+		LEFT JOIN erp_area_district ead ON ead.id = es.district
+		where es.supplier_name = #{supplierName, jdbcType=VARCHAR} and es.data_status = 1
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(es.id) from erp_supplier es 
 		<where>
