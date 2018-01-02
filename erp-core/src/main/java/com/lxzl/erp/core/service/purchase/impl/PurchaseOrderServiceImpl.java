@@ -930,7 +930,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     public ServiceResult<String, String> updatePurchaseReceiveOrder(PurchaseReceiveOrder purchaseReceiveOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        PurchaseReceiveOrderDO purchaseReceiveOrderDO = purchaseReceiveOrderMapper.findByNo(purchaseReceiveOrder.getPurchaseReceiveNo());
+        PurchaseReceiveOrderDO purchaseReceiveOrderDO = purchaseReceiveOrderMapper.findAllByNo(purchaseReceiveOrder.getPurchaseReceiveNo());
         if (purchaseReceiveOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_NOT_EXISTS);
             return serviceResult;
@@ -956,7 +956,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             serviceResult.setErrorCode(newProductResult.getErrorCode());
             return serviceResult;
         }
-
+        if (!ErrorCode.SUCCESS.equals(newMaterialResult.getErrorCode())) {
+            serviceResult.setErrorCode(newMaterialResult.getErrorCode());
+            return serviceResult;
+        }
         purchaseReceiveOrderDO.setIsNew(purchaseReceiveOrder.getIsNew());
         purchaseReceiveOrderDO.setUpdateTime(now);
         purchaseReceiveOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
