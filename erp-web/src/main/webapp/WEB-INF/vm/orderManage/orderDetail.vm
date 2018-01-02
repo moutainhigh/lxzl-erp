@@ -212,7 +212,7 @@
                                                         </td>
                                                     </tr>
                                                     <tr class="bg-light affixTr" style="height: 0;">
-                                                        <td colspan="8" class="pn br-n" style="height:0;">
+                                                        <td colspan="9" class="pn br-n" style="height:0;">
                                                             <div class="panel m15 affixPanel"  style="display: none;">
                                                                 <div class="panel-heading pn ph8">
                                                                     <span>已配设备：设备编号列表</span>

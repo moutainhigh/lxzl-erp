@@ -161,7 +161,7 @@
                                                         </td>
                                                     </tr>
                                                     <tr class="bg-light editMaterialTr" style="height: 0;">
-                                                        <td colspan="4" class="pn br-n" style="height:0;">
+                                                        <td colspan="5" class="pn br-n" style="height:0;">
                                                             <div class="panel m15 editMaterialPannel" style="display: none;">
                                                                 <div class="panel-heading pn ph8">
                                                                     <span>配件信息</span>
