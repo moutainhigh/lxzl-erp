@@ -9,6 +9,8 @@ import java.util.Date;
 public class CommonTest {
 
     public static void main(String[] args) {
+        BigDecimal remainder = new BigDecimal(1000.).divideAndRemainder(new BigDecimal(5))[1];
+        System.out.println("====" + remainder);
         System.out.println(BigDecimalUtil.div(new BigDecimal(5000), new BigDecimal(30), 2));
         System.out.println(BigDecimalUtil.div(BigDecimalUtil.mul(new BigDecimal(5000), new BigDecimal(30)), new BigDecimal(30),2));
     }

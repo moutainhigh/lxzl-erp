@@ -11,6 +11,7 @@
         <result column="brand_id" property="brandId"/>
         <result column="brand_name" property="brandName"/>
         <result column="category_id" property="categoryId"/>
+        <result column="category_name" property="categoryName"/>
         <result column="subtitle" property="subtitle"/>
         <result column="unit" property="unit"/>
         <result column="list_price" property="listPrice"/>
@@ -154,9 +155,10 @@
         </trim>
         FROM (
             SELECT
-            <include refid="column_List"/>, eb.brand_name AS brand_name
+            <include refid="column_List"/>, eb.brand_name AS brand_name, epc.category_name as category_name
             FROM erp_product ep
             LEFT JOIN erp_brand eb ON eb.id = ep.brand_id AND eb.data_status = 1
+            LEFT JOIN erp_product_category epc ON epc.id = ep.category_id AND epc.data_status = 1
             <where>
                 <if test="maps.productQueryParam.productId != null &amp;&amp; maps.productQueryParam.productId != ''">
                     and ep.id = #{maps.productQueryParam.productId, jdbcType=INTEGER}
@@ -169,6 +171,9 @@
                 </if>
                 <if test="maps.productQueryParam.brandId != null &amp;&amp; maps.productQueryParam.brandId != ''">
                     and ep.brand_id = #{maps.productQueryParam.brandId, jdbcType=INTEGER}
+                </if>
+                <if test="maps.productQueryParam.categoryId != null &amp;&amp; maps.productQueryParam.categoryId != ''">
+                    and ep.category_id = #{maps.productQueryParam.categoryId, jdbcType=INTEGER}
                 </if>
                 <if test="true">
                     and ep.data_status = 1
@@ -197,6 +202,9 @@
             <if test="maps.productQueryParam.brandId != null &amp;&amp; maps.productQueryParam.brandId != ''">
                 and ep.brand_id = #{maps.productQueryParam.brandId, jdbcType=INTEGER}
             </if>
+            <if test="maps.productQueryParam.categoryId != null &amp;&amp; maps.productQueryParam.categoryId != ''">
+                and ep.category_id = #{maps.productQueryParam.categoryId, jdbcType=INTEGER}
+            </if>
             <if test="true">
                 and ep.data_status = 1
             </if>
@@ -217,9 +225,10 @@
         ,epcp.property_name property_property_name,epcpv.property_value_name property_property_value_name
         FROM (
             SELECT
-            <include refid="column_List"/>, eb.brand_name AS brand_name
+            <include refid="column_List"/>, eb.brand_name AS brand_name, epc.category_name as category_name
             FROM erp_product ep
             LEFT JOIN erp_brand eb ON eb.id = ep.brand_id AND eb.data_status = 1
+            LEFT JOIN erp_product_category epc ON epc.id = ep.category_id AND epc.data_status = 1
             WHERE ep.id = #{productId, jdbcType=INTEGER} and ep.data_status = 1
         ) m_product
         LEFT JOIN erp_product_img epi ON epi.product_id = m_product.id AND epi.data_status = 1 AND epi.img_type = 1

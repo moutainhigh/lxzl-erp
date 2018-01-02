@@ -27,7 +27,7 @@
                                     <script type="text/html" id="actionButtonsTpl">
                                         {{#acitonButtons}}
                                         {{#showButton}}
-                                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-orderno="{{orderNo}}">
+                                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">
                                             <i class="{{iClass}}"></i> {{text}}
                                         </a>
                                         {{/showButton}}
@@ -97,7 +97,6 @@
                                         <th>状态</th>
                                         <th>结算开始时间</th>
                                         <th>结算结束时间</th>
-##                                        <td>押金</td>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -117,12 +116,6 @@
                                         <td>{{statementDetailStatusValue}}</td>
                                         <td>{{#shortTime}}{{statementStartTime}}{{/shortTime}}</td>
                                         <td>{{#shortTime}}{{statementEndTime}}{{/shortTime}}</td>
-##                                        <td>
-##                                            <p>结算租金押金:{{#price}}{{statementDetailRentDepositAmount}}{{/price}}</p>
-##                                            <p>结算租金押金:{{#price}}{{statementDetailRentDepositAmount}}{{/price}}</p>
-##                                            <p>结算租金押金:{{#price}}{{statementDetailRentDepositAmount}}{{/price}}</p>
-##                                            <p>结算租金押金:{{#price}}{{statementDetailRentDepositAmount}}{{/price}}</p>
-##                                        </td>
                                     </tr>
                                     {{/listData}}
                                     {{^listData}}

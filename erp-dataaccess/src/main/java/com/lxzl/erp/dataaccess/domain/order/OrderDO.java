@@ -14,6 +14,7 @@ public class OrderDO extends BaseDO {
     private Integer id;
     private String orderNo;
     private Integer buyerCustomerId;
+    private Date expectDeliveryTime;
     private Date rentStartTime;
     private BigDecimal totalDepositAmount;
     private BigDecimal totalMustDepositAmount;
@@ -44,7 +45,8 @@ public class OrderDO extends BaseDO {
     private Date confirmDeliveryTime;
     private Date expectReturnTime;
     private Date actualReturnTime;
-    private Double taxRate;
+    private Integer highTaxRate;
+    private Integer lowTaxRate;
     private String buyerRemark;
     private Integer dataStatus;
     private String remark;
@@ -424,11 +426,27 @@ public class OrderDO extends BaseDO {
         this.totalMaterialRentDepositAmount = totalMaterialRentDepositAmount;
     }
 
-    public Double getTaxRate() {
-        return taxRate;
+    public Integer getHighTaxRate() {
+        return highTaxRate;
     }
 
-    public void setTaxRate(Double taxRate) {
-        this.taxRate = taxRate;
+    public void setHighTaxRate(Integer highTaxRate) {
+        this.highTaxRate = highTaxRate;
+    }
+
+    public Integer getLowTaxRate() {
+        return lowTaxRate;
+    }
+
+    public void setLowTaxRate(Integer lowTaxRate) {
+        this.lowTaxRate = lowTaxRate;
+    }
+
+    public Date getExpectDeliveryTime() {
+        return expectDeliveryTime;
+    }
+
+    public void setExpectDeliveryTime(Date expectDeliveryTime) {
+        this.expectDeliveryTime = expectDeliveryTime;
     }
 }

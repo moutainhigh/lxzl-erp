@@ -14,6 +14,7 @@ public class Order extends BasePO {
     private Integer orderId;
     private String orderNo;
     private Integer buyerCustomerId;
+    private Date expectDeliveryTime;
     private Date rentStartTime;
     private Integer depositCycle;
     private Integer paymentCycle;
@@ -46,7 +47,8 @@ public class Order extends BasePO {
     private Date confirmDeliveryTime;
     private Date expectReturnTime;
     private Date actualReturnTime;
-    private Double taxRate;
+    private Integer highTaxRate;
+    private Integer lowTaxRate;
     private String buyerRemark;
     private Integer dataStatus;
     private String remark;
@@ -309,6 +311,14 @@ public class Order extends BasePO {
         this.rentStartTime = rentStartTime;
     }
 
+    public Date getExpectDeliveryTime() {
+        return expectDeliveryTime;
+    }
+
+    public void setExpectDeliveryTime(Date expectDeliveryTime) {
+        this.expectDeliveryTime = expectDeliveryTime;
+    }
+
     public Integer getVerifyUser() {
         return verifyUser;
     }
@@ -469,11 +479,19 @@ public class Order extends BasePO {
         this.totalMaterialRentDepositAmount = totalMaterialRentDepositAmount;
     }
 
-    public Double getTaxRate() {
-        return taxRate;
+    public Integer getHighTaxRate() {
+        return highTaxRate;
     }
 
-    public void setTaxRate(Double taxRate) {
-        this.taxRate = taxRate;
+    public void setHighTaxRate(Integer highTaxRate) {
+        this.highTaxRate = highTaxRate;
+    }
+
+    public Integer getLowTaxRate() {
+        return lowTaxRate;
+    }
+
+    public void setLowTaxRate(Integer lowTaxRate) {
+        this.lowTaxRate = lowTaxRate;
     }
 }
