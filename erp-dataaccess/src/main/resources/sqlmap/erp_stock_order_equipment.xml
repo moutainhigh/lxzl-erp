@@ -6,6 +6,7 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="stock_order_no" jdbcType="VARCHAR" property="stockOrderNo" />
 		<result column="item_refer_id" jdbcType="INTEGER" property="itemReferId" />
+		<result column="item_refer_type" jdbcType="INTEGER" property="itemReferType" />
 		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
 		<result column="equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -17,7 +18,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		esoe.id,esoe.stock_order_no,esoe.item_refer_id,esoe.equipment_id,esoe.equipment_no,esoe.data_status,esoe.remark,esoe.create_time,esoe.create_user,esoe.update_time,esoe.update_user
+		esoe.id,esoe.stock_order_no,esoe.item_refer_id,esoe.item_refer_type,esoe.equipment_id,esoe.equipment_no,esoe.data_status,esoe.remark,esoe.create_time,esoe.create_user,esoe.update_time,esoe.update_user
 	</sql>
 
 	<select id="findById" resultMap="StockOrderEquipmentDO" parameterType="java.lang.Integer">
@@ -55,6 +56,9 @@
 			<if test="itemReferId != null">
 				item_refer_id = #{itemReferId,jdbcType=INTEGER},
 			</if>
+			<if test="itemReferType != null">
+				item_refer_type = #{itemReferType,jdbcType=INTEGER},
+			</if>
 			<if test="equipmentId != null">
 				equipment_id = #{equipmentId,jdbcType=INTEGER},
 			</if>
@@ -87,11 +91,11 @@
 	</insert>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_stock_order_equipment (stock_order_no,item_refer_id, equipment_id, equipment_no, data_status, remark, create_time, create_user, update_time, update_user)
+		insert into erp_stock_order_equipment (stock_order_no,item_refer_id,item_refer_type, equipment_id, equipment_no, data_status, remark, create_time, create_user, update_time, update_user)
 		VALUES
 		<foreach item="stockOrderEquipmentDO" collection="stockOrderEquipmentDOList" separator=",">
 			(
-			#{stockOrderEquipmentDO.stockOrderNo},#{stockOrderEquipmentDO.itemReferId},#{stockOrderEquipmentDO.equipmentId},#{stockOrderEquipmentDO.equipmentNo},#{stockOrderEquipmentDO.dataStatus},#{stockOrderEquipmentDO.remark},
+			#{stockOrderEquipmentDO.stockOrderNo},#{stockOrderEquipmentDO.itemReferId},#{stockOrderEquipmentDO.itemReferType},#{stockOrderEquipmentDO.equipmentId},#{stockOrderEquipmentDO.equipmentNo},#{stockOrderEquipmentDO.dataStatus},#{stockOrderEquipmentDO.remark},
 			#{stockOrderEquipmentDO.createTime},#{stockOrderEquipmentDO.createUser},#{stockOrderEquipmentDO.updateTime},#{stockOrderEquipmentDO.updateUser
 			})
 		</foreach>

@@ -3,137 +3,155 @@ package com.lxzl.erp.common.domain.warehouse.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePO;
 
-import java.io.Serializable;
 import java.util.Date;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StockOrderEquipment extends BasePO {
 
-	private Integer stockOrderEquipmentId;   //唯一标识
-	private String stockOrderNo;   //出入库单编号
-	private Integer equipmentId;   //设备ID
-	private String equipmentNo;   //设备编号唯一
-	private Integer dataStatus;   //状态：0不可用；1可用；2删除
-	private String remark;   //备注
-	private Date createTime;   //添加时间
-	private String createUser;   //添加人
-	private Date updateTime;   //添加时间
-	private String updateUser;   //修改人
-	private Integer productId;	//商品ID
-	private String productName;	 //商品名称
-	private Integer productSkuId; //商品SKUID
-	private String productSkuName;	//商品SKU名称
+    private Integer stockOrderEquipmentId;   //唯一标识
+    private String stockOrderNo;   //出入库单编号
+    private Integer itemReferId;    //关联项ID
+    private String itemReferType;    //关联项类型，1-采购收货单商品项
+    private Integer equipmentId;   //设备ID
+    private String equipmentNo;   //设备编号唯一
+    private Integer dataStatus;   //状态：0不可用；1可用；2删除
+    private String remark;   //备注
+    private Date createTime;   //添加时间
+    private String createUser;   //添加人
+    private Date updateTime;   //添加时间
+    private String updateUser;   //修改人
+    private Integer productId;    //商品ID
+    private String productName;     //商品名称
+    private Integer productSkuId; //商品SKUID
+    private String productSkuName;    //商品SKU名称
 
-	public Integer getStockOrderEquipmentId(){
-		return stockOrderEquipmentId;
-	}
 
-	public void setStockOrderEquipmentId(Integer stockOrderEquipmentId){
-		this.stockOrderEquipmentId = stockOrderEquipmentId;
-	}
+    public Integer getStockOrderEquipmentId() {
+        return stockOrderEquipmentId;
+    }
 
-	public String getStockOrderNo(){
-		return stockOrderNo;
-	}
+    public void setStockOrderEquipmentId(Integer stockOrderEquipmentId) {
+        this.stockOrderEquipmentId = stockOrderEquipmentId;
+    }
 
-	public void setStockOrderNo(String stockOrderNo){
-		this.stockOrderNo = stockOrderNo;
-	}
+    public String getStockOrderNo() {
+        return stockOrderNo;
+    }
 
-	public Integer getEquipmentId(){
-		return equipmentId;
-	}
+    public void setStockOrderNo(String stockOrderNo) {
+        this.stockOrderNo = stockOrderNo;
+    }
 
-	public void setEquipmentId(Integer equipmentId){
-		this.equipmentId = equipmentId;
-	}
+    public Integer getItemReferId() {
+        return itemReferId;
+    }
 
-	public String getEquipmentNo(){
-		return equipmentNo;
-	}
+    public void setItemReferId(Integer itemReferId) {
+        this.itemReferId = itemReferId;
+    }
 
-	public void setEquipmentNo(String equipmentNo){
-		this.equipmentNo = equipmentNo;
-	}
+    public String getItemReferType() {
+        return itemReferType;
+    }
 
-	public Integer getDataStatus(){
-		return dataStatus;
-	}
+    public void setItemReferType(String itemReferType) {
+        this.itemReferType = itemReferType;
+    }
 
-	public void setDataStatus(Integer dataStatus){
-		this.dataStatus = dataStatus;
-	}
+    public Integer getEquipmentId() {
+        return equipmentId;
+    }
 
-	public String getRemark(){
-		return remark;
-	}
+    public void setEquipmentId(Integer equipmentId) {
+        this.equipmentId = equipmentId;
+    }
 
-	public void setRemark(String remark){
-		this.remark = remark;
-	}
+    public String getEquipmentNo() {
+        return equipmentNo;
+    }
 
-	public Date getCreateTime(){
-		return createTime;
-	}
+    public void setEquipmentNo(String equipmentNo) {
+        this.equipmentNo = equipmentNo;
+    }
 
-	public void setCreateTime(Date createTime){
-		this.createTime = createTime;
-	}
+    public Integer getDataStatus() {
+        return dataStatus;
+    }
 
-	public String getCreateUser(){
-		return createUser;
-	}
+    public void setDataStatus(Integer dataStatus) {
+        this.dataStatus = dataStatus;
+    }
 
-	public void setCreateUser(String createUser){
-		this.createUser = createUser;
-	}
+    public String getRemark() {
+        return remark;
+    }
 
-	public Date getUpdateTime(){
-		return updateTime;
-	}
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
-	public void setUpdateTime(Date updateTime){
-		this.updateTime = updateTime;
-	}
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-	public String getUpdateUser(){
-		return updateUser;
-	}
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-	public void setUpdateUser(String updateUser){
-		this.updateUser = updateUser;
-	}
+    public String getCreateUser() {
+        return createUser;
+    }
 
-	public Integer getProductId() {
-		return productId;
-	}
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
+    }
 
-	public void setProductId(Integer productId) {
-		this.productId = productId;
-	}
+    public Date getUpdateTime() {
+        return updateTime;
+    }
 
-	public String getProductName() {
-		return productName;
-	}
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
-	public void setProductName(String productName) {
-		this.productName = productName;
-	}
+    public String getUpdateUser() {
+        return updateUser;
+    }
 
-	public Integer getProductSkuId() {
-		return productSkuId;
-	}
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser;
+    }
 
-	public void setProductSkuId(Integer productSkuId) {
-		this.productSkuId = productSkuId;
-	}
+    public Integer getProductId() {
+        return productId;
+    }
 
-	public String getProductSkuName() {
-		return productSkuName;
-	}
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
 
-	public void setProductSkuName(String productSkuName) {
-		this.productSkuName = productSkuName;
-	}
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public Integer getProductSkuId() {
+        return productSkuId;
+    }
+
+    public void setProductSkuId(Integer productSkuId) {
+        this.productSkuId = productSkuId;
+    }
+
+    public String getProductSkuName() {
+        return productSkuName;
+    }
+
+    public void setProductSkuName(String productSkuName) {
+        this.productSkuName = productSkuName;
+    }
 }

@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 public class PurchaseReceiveOrderMaterialBulkPageParam extends BasePageParam {
     @NotNull(message = ErrorCode.ID_NOT_NULL)
     private Integer purchaseReceiveOrderMaterialId;
+    private Integer itemReferType;
 
     public Integer getPurchaseReceiveOrderMaterialId() {
         return purchaseReceiveOrderMaterialId;
@@ -17,5 +18,13 @@ public class PurchaseReceiveOrderMaterialBulkPageParam extends BasePageParam {
 
     public void setPurchaseReceiveOrderMaterialId(Integer purchaseReceiveOrderMaterialId) {
         this.purchaseReceiveOrderMaterialId = purchaseReceiveOrderMaterialId;
+    }
+
+    public Integer getItemReferType() {
+        return itemReferType;
+    }
+
+    public void setItemReferType(Integer itemReferType) {
+        this.itemReferType = itemReferType;
     }
 }
