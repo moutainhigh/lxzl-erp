@@ -200,7 +200,7 @@
                                             </td>
                                             <td>
                                                 <p>{{payModeValue}}</p>
-                                                <p>押￥{{#price}}{{deposiCycle}}{{/price}}付{{paymentCycle}}</p>
+                                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
                                             </td>
                                             <td>
                                                 ￥{{#price}}{{productAmount}}{{/price}}

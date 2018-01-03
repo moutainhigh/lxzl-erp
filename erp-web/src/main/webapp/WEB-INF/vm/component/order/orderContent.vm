@@ -138,13 +138,11 @@
                             <th>商品名称</th>
                             <th>SKU</th>
                             <th>商品价值</th>
-
-
-                            <th>租赁类型</th>
-                            <th>租赁时长</th>
-                        ##                                            <th>租赁类型</th>
                             <th>商品单价</th>
                             <th>租赁数量</th>
+                            <th>租赁类型</th>
+                            <th>租赁时长</th>
+                            <th>设备押金</th>
                             <th class="text-right">操作</th>
                         </tr>
                         </thead>
@@ -164,30 +162,6 @@
                             <td>{{productName}}</td>
                             <td><span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{propertiesToStr}}</td>
                             <td>￥{{#price}}{{skuPrice}}{{/price}}</td>
-                            <td>
-                                <label class="field select">
-                                    <select name="rentType-{{skuId}}-{{rowKey}}" class="rentType required" style="min-width: 130px;">
-                                        <option value="">选择租赁类型</option>
-                                        {{#rentTypeList}}
-                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
-                                        {{/rentTypeList}}
-                                    </select>
-                                    <i class="arrow"></i>
-                                </label>
-                            </td>
-                            <td>
-                                <div class="mw200">
-                                    <label class="field prepend-icon">
-                                        <input type="text" name="rentTimeLength-{{skuId}}-{{rowKey}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required number pl10" placeholder="租赁时长" />
-                                    </label>
-                                    {{#showDepositAmount}}
-                                    <label class="field prepend-icon mt10">
-                                        <input type="text" name="depositAmount-{{skuId}}-{{rowKey}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入设备押金" />
-                                        <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                                    </label>
-                                    {{/showDepositAmount}}
-                                </div>
-                            </td>
                             <td class="productUnitAmountTd">
                                 <div class="smart-widget sm-right smr-50">
                                     <input type="hidden" name="skuId" value="{{isNewProduct}}" class="isNewProduct" />
@@ -204,6 +178,32 @@
                                 <label class="field prepend-icon mw200">
                                     <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入租赁数量" />
                                 </label>
+                            </td>
+                            <td>
+                                <label class="field select">
+                                    <select name="rentType-{{skuId}}-{{rowKey}}" class="rentType required" style="min-width: 130px;">
+                                        <option value="">选择租赁类型</option>
+                                        {{#rentTypeList}}
+                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                        {{/rentTypeList}}
+                                    </select>
+                                    <i class="arrow"></i>
+                                </label>
+                            </td>
+                            <td>
+                                <div class="mw200">
+                                    <label class="field prepend-icon">
+                                        <input type="text" name="rentTimeLength-{{skuId}}-{{rowKey}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required number pl10" placeholder="租赁时长" />
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                {{#showDepositAmount}}
+                                <label class="field prepend-icon">
+                                    <input type="text" name="depositAmount-{{skuId}}-{{rowKey}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入设备押金" />
+                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                </label>
+                                {{/showDepositAmount}}
                             </td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
