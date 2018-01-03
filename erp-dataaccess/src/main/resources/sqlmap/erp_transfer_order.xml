@@ -30,6 +30,12 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(eto.id) FROM erp_transfer_order eto 
 		<where>
+			<if test="maps.transferOrderOrderQueryParam != null &amp;&amp; maps.transferOrderOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND eto.create_time >= #{maps.transferOrderOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.transferOrderOrderQueryParam != null &amp;&amp; maps.transferOrderOrderQueryParam.createEndTime != null">
+				<![CDATA[ AND eto.create_time <= #{maps.transferOrderOrderQueryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				AND eto.data_status = 1
 			</if>
