@@ -77,7 +77,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerPerson.setPersonNo("422827999857463210");
         customerPerson.setConnectRealName("测试个人用户紧急联系人姓名");
         customerPerson.setConnectPhone("18563214987");
-        customerPerson.setRealName("叶良辰测试名");
+        customerPerson.setRealName("叶良辰测试名11");
         customerPerson.setPhone("13888886666");
         customerPerson.setAddress("个人信息详细地址测试");
         customer.setCustomerPerson(customerPerson);
@@ -142,12 +142,12 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCD10002017123000030");
+        customer.setCustomerNo("LXCD10002018010300015");
         CustomerPerson customerPerson = new CustomerPerson();
         customerPerson.setPersonNo("422827999857463210");
         customerPerson.setConnectRealName("update测试个人用户紧急联系人姓名");
         customerPerson.setConnectPhone("18563214987");
-        customerPerson.setRealName("叶良辰测试名update");
+        customerPerson.setRealName("叶良辰测试名update1120");
         customerPerson.setPhone("13888886666");
         customerPerson.setAddress("update个人信息详细地址测试");
         customer.setCustomerPerson(customerPerson);

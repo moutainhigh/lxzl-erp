@@ -364,9 +364,6 @@
 			<if test="maps.queryParam.district != null">
 				AND ecp.district = #{maps.queryParam.district, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.personName != null &amp;&amp; maps.queryParam.personName != ''">
-				AND ecp.personName LIKE CONCAT('%','${maps.queryParam.personName}','%' )
-			</if>
 			<if test="maps.queryParam.personNo != null &amp;&amp; maps.queryParam.personNo != ''">
 				AND ecp.personNo LIKE CONCAT('%','${maps.queryParam.personNo}','%' )
 			</if>
@@ -410,9 +407,6 @@
 			</if>
 			<if test="maps.queryParam.district != null">
 				AND ecp.district = #{maps.queryParam.district, jdbcType=INTEGER}
-			</if>
-			<if test="maps.queryParam.personName != null &amp;&amp; maps.queryParam.personName != ''">
-				AND ecp.personName LIKE CONCAT('%','${maps.queryParam.personName}','%' )
 			</if>
 			<if test="maps.queryParam.personNo != null &amp;&amp; maps.queryParam.personNo != ''">
 				AND ecp.personNo LIKE CONCAT('%','${maps.queryParam.personNo}','%' )

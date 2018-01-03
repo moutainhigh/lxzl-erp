@@ -48,84 +48,148 @@ public class Customer extends BasePO {
 
 	private CustomerAccount customerAccount;
 
-	public Integer getCustomerId(){
+	public Integer getCustomerId() {
 		return customerId;
 	}
 
-	public void setCustomerId(Integer customerId){
+	public void setCustomerId(Integer customerId) {
 		this.customerId = customerId;
 	}
 
-	public Integer getCustomerType(){
+	public Integer getCustomerType() {
 		return customerType;
 	}
 
-	public void setCustomerType(Integer customerType){
+	public void setCustomerType(Integer customerType) {
 		this.customerType = customerType;
 	}
 
-	public String getCustomerNo(){
+	public String getCustomerNo() {
 		return customerNo;
 	}
 
-	public void setCustomerNo(String customerNo){
+	public void setCustomerNo(String customerNo) {
 		this.customerNo = customerNo;
 	}
 
-	public Integer getIsDisabled(){
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public Integer getIsDisabled() {
 		return isDisabled;
 	}
 
-	public void setIsDisabled(Integer isDisabled){
+	public void setIsDisabled(Integer isDisabled) {
 		this.isDisabled = isDisabled;
 	}
 
-	public Integer getDataStatus(){
+	public Integer getDataStatus() {
 		return dataStatus;
 	}
 
-	public void setDataStatus(Integer dataStatus){
+	public void setDataStatus(Integer dataStatus) {
 		this.dataStatus = dataStatus;
 	}
 
-	public String getRemark(){
+	public String getRemark() {
 		return remark;
 	}
 
-	public void setRemark(String remark){
+	public void setRemark(String remark) {
 		this.remark = remark;
 	}
 
-	public Date getCreateTime(){
+	public Date getCreateTime() {
 		return createTime;
 	}
 
-	public void setCreateTime(Date createTime){
+	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
 
-	public String getCreateUser(){
+	public String getCreateUser() {
 		return createUser;
 	}
 
-	public void setCreateUser(String createUser){
+	public void setCreateUser(String createUser) {
 		this.createUser = createUser;
 	}
 
-	public Date getUpdateTime(){
+	public Date getUpdateTime() {
 		return updateTime;
 	}
 
-	public void setUpdateTime(Date updateTime){
+	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
 
-	public String getUpdateUser(){
+	public String getUpdateUser() {
 		return updateUser;
 	}
 
-	public void setUpdateUser(String updateUser){
+	public void setUpdateUser(String updateUser) {
 		this.updateUser = updateUser;
+	}
+
+	public Integer getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Integer owner) {
+		this.owner = owner;
+	}
+
+	public Integer getUnionUser() {
+		return unionUser;
+	}
+
+	public void setUnionUser(Integer unionUser) {
+		this.unionUser = unionUser;
+	}
+
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+
+	public String getUnionUserName() {
+		return unionUserName;
+	}
+
+	public void setUnionUserName(String unionUserName) {
+		this.unionUserName = unionUserName;
+	}
+
+	public String getUnionAreaProvinceName() {
+		return unionAreaProvinceName;
+	}
+
+	public void setUnionAreaProvinceName(String unionAreaProvinceName) {
+		this.unionAreaProvinceName = unionAreaProvinceName;
+	}
+
+	public String getUnionAreaCityName() {
+		return unionAreaCityName;
+	}
+
+	public void setUnionAreaCityName(String unionAreaCityName) {
+		this.unionAreaCityName = unionAreaCityName;
+	}
+
+	public String getUnionAreaDistrictName() {
+		return unionAreaDistrictName;
+	}
+
+	public void setUnionAreaDistrictName(String unionAreaDistrictName) {
+		this.unionAreaDistrictName = unionAreaDistrictName;
 	}
 
 	public CustomerPerson getCustomerPerson() {
@@ -152,75 +216,11 @@ public class Customer extends BasePO {
 		this.customerRiskManagement = customerRiskManagement;
 	}
 
-	public String getCustomerName() {
-		return customerName;
-	}
-
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
-	}
-
 	public CustomerAccount getCustomerAccount() {
 		return customerAccount;
 	}
 
 	public void setCustomerAccount(CustomerAccount customerAccount) {
 		this.customerAccount = customerAccount;
-	}
-
-	public Integer getOwner() {
-		return owner;
-	}
-
-	public void setOwner(Integer owner) {
-		this.owner = owner;
-	}
-
-	public Integer getUnionUser() {
-		return unionUser;
-	}
-
-	public void setUnionUser(Integer unionUser) {
-		this.unionUser = unionUser;
-	}
-
-	public String getUnionUserName() {
-		return unionUserName;
-	}
-
-	public void setUnionUserName(String unionUserName) {
-		this.unionUserName = unionUserName;
-	}
-
-	public String getOwnerName() {
-		return ownerName;
-	}
-
-	public void setOwnerName(String ownerName) {
-		this.ownerName = ownerName;
-	}
-
-	public String getUnionAreaProvinceName() {
-		return unionAreaProvinceName;
-	}
-
-	public void setUnionAreaProvinceName(String unionAreaProvinceName) {
-		this.unionAreaProvinceName = unionAreaProvinceName;
-	}
-
-	public String getUnionAreaCityName() {
-		return unionAreaCityName;
-	}
-
-	public void setUnionAreaCityName(String unionAreaCityName) {
-		this.unionAreaCityName = unionAreaCityName;
-	}
-
-	public String getUnionAreaDistrictName() {
-		return unionAreaDistrictName;
-	}
-
-	public void setUnionAreaDistrictName(String unionAreaDistrictName) {
-		this.unionAreaDistrictName = unionAreaDistrictName;
 	}
 }
