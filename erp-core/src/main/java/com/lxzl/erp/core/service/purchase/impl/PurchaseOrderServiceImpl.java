@@ -1229,10 +1229,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return serviceResult;
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(purchaseReceiveOrder.getPurchaseReceiveNo());
-        if(true){
-            throw new BusinessException();
-        }
         return serviceResult;
     }
 
