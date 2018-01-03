@@ -17,6 +17,7 @@ public class MaterialInStorage extends BasePO {
     private Integer materialCount;
     private Integer isNew;
     private Integer itemReferId;
+    private Integer itemReferType;
 
     public Integer getMaterialId() {
         return materialId;
@@ -48,5 +49,13 @@ public class MaterialInStorage extends BasePO {
 
     public void setItemReferId(Integer itemReferId) {
         this.itemReferId = itemReferId;
+    }
+
+    public Integer getItemReferType() {
+        return itemReferType;
+    }
+
+    public void setItemReferType(Integer itemReferType) {
+        this.itemReferType = itemReferType;
     }
 }

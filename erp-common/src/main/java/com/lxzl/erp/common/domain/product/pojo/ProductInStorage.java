@@ -3,7 +3,6 @@ package com.lxzl.erp.common.domain.product.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePO;
 
-import java.io.Serializable;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -15,6 +14,7 @@ public class ProductInStorage extends BasePO {
     private List<ProductMaterial> productMaterialList;
     private Integer isNew;
     private Integer itemReferId;
+    private Integer itemReferType;
 
     public Integer getProductId() {
         return productId;
@@ -62,5 +62,13 @@ public class ProductInStorage extends BasePO {
 
     public void setItemReferId(Integer itemReferId) {
         this.itemReferId = itemReferId;
+    }
+
+    public Integer getItemReferType() {
+        return itemReferType;
+    }
+
+    public void setItemReferType(Integer itemReferType) {
+        this.itemReferType = itemReferType;
     }
 }

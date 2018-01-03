@@ -6,6 +6,7 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="stock_order_no" jdbcType="VARCHAR" property="stockOrderNo" />
 		<result column="item_refer_id" jdbcType="INTEGER" property="itemReferId" />
+		<result column="item_refer_type" jdbcType="INTEGER" property="itemReferType" />
 		<result column="bulk_material_id" jdbcType="INTEGER" property="bulkMaterialId" />
 		<result column="bulk_material_no" jdbcType="VARCHAR" property="bulkMaterialNo" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -17,7 +18,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		esobm.id,esobm.stock_order_no,esobm.item_refer_id,esobm.bulk_material_id,esobm.bulk_material_no,esobm.data_status,esobm.remark,esobm.create_time,esobm.create_user,esobm.update_time,esobm.update_user
+		esobm.id,esobm.stock_order_no,esobm.item_refer_id,esobm.item_refer_type,esobm.bulk_material_id,esobm.bulk_material_no,esobm.data_status,esobm.remark,esobm.create_time,esobm.create_user,esobm.update_time,esobm.update_user
 	</sql>
 
 	<select id="findById" resultMap="StockOrderBulkMaterialDO" parameterType="java.lang.Integer">
@@ -57,6 +58,9 @@
 			<if test="itemReferId != null">
 				item_refer_id = #{itemReferId,jdbcType=INTEGER},
 			</if>
+			<if test="itemReferType != null">
+				item_refer_type = #{itemReferType,jdbcType=INTEGER},
+			</if>
 			<if test="bulkMaterialId != null">
 				bulk_material_id = #{bulkMaterialId,jdbcType=INTEGER},
 			</if>
@@ -94,10 +98,10 @@
 
 
 	<insert id="saveList" parameterType="java.util.List">
-		insert into erp_stock_order_bulk_material (stock_order_no,item_refer_id, bulk_material_id, bulk_material_no, data_status, remark, create_time, create_user, update_time, update_user)
+		insert into erp_stock_order_bulk_material (stock_order_no,item_refer_id, item_refer_type,bulk_material_id, bulk_material_no, data_status, remark, create_time, create_user, update_time, update_user)
 		values
 		<foreach collection="list" item="stockOrderBulkMaterialDO" separator=",">
-			(#{stockOrderBulkMaterialDO.stockOrderNo},#{stockOrderBulkMaterialDO.itemReferId},#{stockOrderBulkMaterialDO.bulkMaterialId},#{stockOrderBulkMaterialDO.bulkMaterialNo},#{stockOrderBulkMaterialDO.dataStatus},#{stockOrderBulkMaterialDO.remark},
+			(#{stockOrderBulkMaterialDO.stockOrderNo},#{stockOrderBulkMaterialDO.itemReferId},#{stockOrderBulkMaterialDO.itemReferType},#{stockOrderBulkMaterialDO.bulkMaterialId},#{stockOrderBulkMaterialDO.bulkMaterialNo},#{stockOrderBulkMaterialDO.dataStatus},#{stockOrderBulkMaterialDO.remark},
 			#{stockOrderBulkMaterialDO.createTime},#{stockOrderBulkMaterialDO.createUser},#{stockOrderBulkMaterialDO.updateTime},#{stockOrderBulkMaterialDO.updateUser}
 			)
 		</foreach>

@@ -11,6 +11,7 @@ public class StockOrderEquipmentDO  extends BaseDO {
 	private Integer id;
 	private String stockOrderNo;
 	private Integer itemReferId;
+	private Integer itemReferType;
 	private Integer equipmentId;
 	private String equipmentNo;
 	private Integer dataStatus;
@@ -111,5 +112,13 @@ public class StockOrderEquipmentDO  extends BaseDO {
 
 	public void setItemReferId(Integer itemReferId) {
 		this.itemReferId = itemReferId;
+	}
+
+	public Integer getItemReferType() {
+		return itemReferType;
+	}
+
+	public void setItemReferType(Integer itemReferType) {
+		this.itemReferType = itemReferType;
 	}
 }

@@ -1056,6 +1056,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             productInStorage.setProductSkuId(purchaseReceiveOrderProductDO.getRealProductSkuId());
             productInStorage.setProductCount(purchaseReceiveOrderProductDO.getRealProductCount());
             productInStorage.setItemReferId(purchaseReceiveOrderProductDO.getId());
+            productInStorage.setItemReferType(StockItemReferType.PURCHASE_RECEIVE_ORDER_PRODUCT);
             String realProductSnapshot = purchaseReceiveOrderProductDO.getRealProductSnapshot();
             Product product = JSON.parseObject(realProductSnapshot, Product.class);
             productInStorage.setProductMaterialList(product.getProductSkuList().get(0).getProductMaterialList());
@@ -1072,6 +1073,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             materialInStorage.setMaterialId(purchaseReceiveOrderMaterialDO.getRealMaterialId());
             materialInStorage.setMaterialCount(purchaseReceiveOrderMaterialDO.getRealMaterialCount());
             materialInStorage.setItemReferId(purchaseReceiveOrderMaterialDO.getId());
+            materialInStorage.setItemReferType(StockItemReferType.PURCHASE_RECEIVE_ORDER_MATERIAL);
             materialInStorage.setIsNew(purchaseReceiveOrderDO.getIsNew());
             materialInStorageList.add(materialInStorage);
             realMaterialMap.put(purchaseReceiveOrderMaterialDO.getRealMaterialId(), purchaseReceiveOrderMaterialDO);
@@ -1737,6 +1739,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private List<BulkMaterialDO> getBulkMaterialDOList(Integer purchaseReceiveOrderMaterialId) {
         PurchaseReceiveOrderMaterialBulkPageParam purchaseReceiveOrderMaterialBulkPageParam = new PurchaseReceiveOrderMaterialBulkPageParam();
         purchaseReceiveOrderMaterialBulkPageParam.setPurchaseReceiveOrderMaterialId(purchaseReceiveOrderMaterialId);
+        purchaseReceiveOrderMaterialBulkPageParam.setItemReferType(StockItemReferType.PURCHASE_RECEIVE_ORDER_MATERIAL);
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", 0);
         maps.put("pageSize", Integer.MAX_VALUE);

@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
 </head>
-<body class="blank-page">
+<body class="invoice-page">
     #parse("layout/toolbox.vm")
     <div id="main">
         #parse("layout/navbar.vm")
@@ -16,10 +16,9 @@
         <section id="content_wrapper">
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
-            <section id="content" class="animated fadeIn">
-
+            <section id="content" class="animated fadeIn noprint">
                 <form class="" id="detailPurchaseReceiveForm">
-                    <div class="panel panel-primary panel-border top mb35">
+                    <div class="panel panel-primary panel-border top mb35 invoice-panel"">
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-md-4">
@@ -170,7 +169,7 @@
                                                                 <div class="btn-group text-right">
                                                                     <a href="#" type="button" class="btn btn-default btn-xs showMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">查看物料</a>
                                                                     {{#rowActionButtons}}
-                                                                    <a href="#" type="button"
+                                                                    <a href="${ctx}{{menuUrl}}?id={{purchaseReceiveOrderProductId}}" type="button"
                                                                        class="btn btn-default btn-xs {{class}}"
                                                                        data-skuid="{{skuId}}"
                                                                        data-productid="{{productId}}"
@@ -298,15 +297,17 @@
                         </div>
                     </div>
                 </form>
-
             </section>
+            <div id="barCodeContainer" class="forprint">
+##                <img src="" class="img-responsive pull-left" id="barcode" alt="凌雄租赁">
+            </div>
         </section>
-
         #parse("layout/sidebarRight.vm")
     </div>
     #parse("layout/footer.vm")
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/jsBarcode/JsBarcode.all.min.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'manage.purchase.receive.handle.mixin.js',
@@ -316,7 +317,9 @@
                 'modal.choose.material.js',
                 'manage.purchase.receive.edit.equipment.price.js',
                 'manage.purchase.receive.edit.material.price.js',
-                'modal.input.js');
+                'modal.input.js',
+                'manage.purchase.receive.equiment.list.js',
+                'barcode.print.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

@@ -572,6 +572,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         // 入库物料记录
         List<StockOrderBulkMaterialDO> allStockOrderBulkMaterialDOList = new ArrayList<>();
         Integer itemReferId = materialInStorage.getItemReferId();
+        Integer itemReferType = materialInStorage.getItemReferType();
         User loginUser = userSupport.getCurrentUser();
         Map<Integer ,MaterialDO> materialMap = new HashMap<>();
         Map<String,BulkMaterialDO> allBulkMaterialDOMap = new HashMap<>();
@@ -612,6 +613,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             StockOrderBulkMaterialDO stockOrderBulkMaterialDO = new StockOrderBulkMaterialDO();
             stockOrderBulkMaterialDO.setStockOrderNo(stockOrderNo);
             stockOrderBulkMaterialDO.setItemReferId(itemReferId);
+            stockOrderBulkMaterialDO.setItemReferType(itemReferType);
             stockOrderBulkMaterialDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
             stockOrderBulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             stockOrderBulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
@@ -655,6 +657,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         // 设备散料
         List<ProductEquipmentBulkMaterialDO> allProductEquipmentBulkMaterialDOList = new ArrayList<>();
         Integer itemReferId = productInStorage.getItemReferId();
+        Integer itemReferType = productInStorage.getItemReferType();
 
         ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
 
@@ -682,6 +685,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             StockOrderEquipmentDO stockOrderEquipmentDO = new StockOrderEquipmentDO();
             stockOrderEquipmentDO.setStockOrderNo(stockOrderNo);
             stockOrderEquipmentDO.setItemReferId(itemReferId);
+            stockOrderEquipmentDO.setItemReferType(itemReferType);
             stockOrderEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
             stockOrderEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             stockOrderEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
@@ -739,6 +743,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                         StockOrderBulkMaterialDO stockOrderBulkMaterialDO = new StockOrderBulkMaterialDO();
                         stockOrderBulkMaterialDO.setStockOrderNo(stockOrderNo);
                         stockOrderBulkMaterialDO.setItemReferId(itemReferId);
+                        stockOrderBulkMaterialDO.setItemReferId(itemReferType);
                         stockOrderBulkMaterialDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
                         stockOrderBulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                         stockOrderBulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());

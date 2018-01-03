@@ -3,84 +3,91 @@ package com.lxzl.erp.dataaccess.domain.warehouse;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
-import java.util.Date;
+
+public class StockOrderBulkMaterialDO extends BaseDO {
+
+    private Integer id;
+    private String stockOrderNo;
+    private Integer bulkMaterialId;
+    private String bulkMaterialNo;
+    private Integer itemReferId;
+    private Integer itemReferType;
+    private Integer dataStatus;
+    private String remark;
+
+    @Transient
+    private String bulkMaterialName;
 
 
-public class StockOrderBulkMaterialDO  extends BaseDO {
+    public Integer getId() {
+        return id;
+    }
 
-	private Integer id;
-	private String stockOrderNo;
-	private Integer bulkMaterialId;
-	private String bulkMaterialNo;
-	private Integer itemReferId;
-	private Integer dataStatus;
-	private String remark;
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	@Transient
-	private String bulkMaterialName;
+    public String getStockOrderNo() {
+        return stockOrderNo;
+    }
 
+    public void setStockOrderNo(String stockOrderNo) {
+        this.stockOrderNo = stockOrderNo;
+    }
 
-	public Integer getId(){
-		return id;
-	}
+    public Integer getBulkMaterialId() {
+        return bulkMaterialId;
+    }
 
-	public void setId(Integer id){
-		this.id = id;
-	}
+    public void setBulkMaterialId(Integer bulkMaterialId) {
+        this.bulkMaterialId = bulkMaterialId;
+    }
 
-	public String getStockOrderNo(){
-		return stockOrderNo;
-	}
+    public String getBulkMaterialNo() {
+        return bulkMaterialNo;
+    }
 
-	public void setStockOrderNo(String stockOrderNo){
-		this.stockOrderNo = stockOrderNo;
-	}
+    public void setBulkMaterialNo(String bulkMaterialNo) {
+        this.bulkMaterialNo = bulkMaterialNo;
+    }
 
-	public Integer getBulkMaterialId(){
-		return bulkMaterialId;
-	}
+    public Integer getDataStatus() {
+        return dataStatus;
+    }
 
-	public void setBulkMaterialId(Integer bulkMaterialId){
-		this.bulkMaterialId = bulkMaterialId;
-	}
+    public void setDataStatus(Integer dataStatus) {
+        this.dataStatus = dataStatus;
+    }
 
-	public String getBulkMaterialNo(){
-		return bulkMaterialNo;
-	}
+    public String getRemark() {
+        return remark;
+    }
 
-	public void setBulkMaterialNo(String bulkMaterialNo){
-		this.bulkMaterialNo = bulkMaterialNo;
-	}
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
-	public Integer getDataStatus(){
-		return dataStatus;
-	}
+    public String getBulkMaterialName() {
+        return bulkMaterialName;
+    }
 
-	public void setDataStatus(Integer dataStatus){
-		this.dataStatus = dataStatus;
-	}
+    public void setBulkMaterialName(String bulkMaterialName) {
+        this.bulkMaterialName = bulkMaterialName;
+    }
 
-	public String getRemark(){
-		return remark;
-	}
+    public Integer getItemReferId() {
+        return itemReferId;
+    }
 
-	public void setRemark(String remark){
-		this.remark = remark;
-	}
+    public void setItemReferId(Integer itemReferId) {
+        this.itemReferId = itemReferId;
+    }
 
-	public String getBulkMaterialName() {
-		return bulkMaterialName;
-	}
+    public Integer getItemReferType() {
+        return itemReferType;
+    }
 
-	public void setBulkMaterialName(String bulkMaterialName) {
-		this.bulkMaterialName = bulkMaterialName;
-	}
-
-	public Integer getItemReferId() {
-		return itemReferId;
-	}
-
-	public void setItemReferId(Integer itemReferId) {
-		this.itemReferId = itemReferId;
-	}
+    public void setItemReferType(Integer itemReferType) {
+        this.itemReferType = itemReferType;
+    }
 }

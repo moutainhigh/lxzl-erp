@@ -92,7 +92,17 @@
 		LEFT JOIN erp_stock_order eso ON eso.stock_order_no = esobm.stock_order_no AND eso.data_status=1 AND eso.cause_type=1
 		LEFT JOIN erp_purchase_receive_order epro ON epro.purchase_receive_no = eso.refer_no AND epro.data_status=1 AND epro.auto_allot_status != 1
 		LEFT JOIN erp_purchase_order epo ON epro.purchase_order_id = epo.id AND epo.data_status=1
-		WHERE esobm.item_refer_id = #{maps.queryParam.purchaseReceiveOrderMaterialId} AND ebm.data_status = 1
+		<where>
+			<if test="maps.queryParam.itemReferType != null ">
+				AND esobm.item_refer_type = #{maps.queryParam.itemReferType}
+			</if>
+			<if test="maps.queryParam.purchaseReceiveOrderMaterialId != null ">
+				AND esobm.item_refer_id = #{maps.queryParam.purchaseReceiveOrderMaterialId}
+			</if>
+			<if test="true">
+				AND ebm.data_status = 1
+			</if>
+		</where>
 		order by  ebm.create_time desc
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
