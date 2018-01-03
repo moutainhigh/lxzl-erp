@@ -750,11 +750,8 @@ public class StatementServiceImpl implements StatementService {
 
         if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
             statementExpectPayTime = rentStartTime;
-        }
-        if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
-            statementExpectPayTime = rentStartTime;
         } else if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
-            statementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, rentTimeLength);
+            statementExpectPayTime = statementEndTime;
         }
 
         // 保险金额

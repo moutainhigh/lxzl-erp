@@ -1181,7 +1181,7 @@ public class OrderServiceImpl implements OrderService {
                 } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
                     orderMaterialDO.setDepositCycle(customerRiskManagementDO.getNewDepositCycle());
                     orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getNewPaymentCycle());
-                    orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getNewPaymentCycle());
+                    orderMaterialDO.setPayMode(customerRiskManagementDO.getNewPayMode());
                 } else {
                     orderMaterialDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
                     orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
