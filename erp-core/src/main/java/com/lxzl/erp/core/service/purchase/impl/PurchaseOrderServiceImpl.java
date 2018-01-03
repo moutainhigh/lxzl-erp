@@ -1182,7 +1182,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     if (CollectionUtil.isNotEmpty(purchaseReceiveOrderMaterialDOList)) {
                         for (PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO : purchaseReceiveOrderMaterialDOList) {
                             int count = 0;
-                            if (materialCountMap.get(purchaseReceiveOrderMaterialDO.getMaterialId()) != null) {
+                            if (materialCountMap.get(purchaseReceiveOrderMaterialDO.getRealMaterialId()) != null) {
                                 count = materialCountMap.get(purchaseReceiveOrderMaterialDO.getRealMaterialId());
                             }
                             materialCountMap.put(purchaseReceiveOrderMaterialDO.getRealMaterialId(), count + purchaseReceiveOrderMaterialDO.getRealMaterialCount());
@@ -1425,6 +1425,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 }
             }
         }
+        //采购单商品项列表
         List<PurchaseOrderProductDO> purchaseOrderProductDOList = purchaseOrderDO.getPurchaseOrderProductDOList();
         //找出没有完成的采购单项，并计算未采购完成的数量
         for (PurchaseOrderProductDO purchaseOrderProductDO : purchaseOrderProductDOList) {
@@ -1432,7 +1433,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             skuCount = skuCount == null ? 0 : skuCount;
             purchaseOrderProductDO.setProductCount(purchaseOrderProductDO.getProductCount() - skuCount);
         }
-
+        //采购单配件项列表
         List<PurchaseOrderMaterialDO> purchaseOrderMaterialDOList = purchaseOrderDO.getPurchaseOrderMaterialDOList();
         //找出没有完成的采购单物料项，并计算未采购完成的数量
         for (PurchaseOrderMaterialDO purchaseOrderMaterialDO : purchaseOrderMaterialDOList) {
@@ -1867,8 +1868,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 purchaseDeliveryOrderProductDO.setUpdateTime(now);
                 purchaseDeliveryOrderProductDO.setCreateUser(String.valueOf(purchaseOrderDO.getCreateUser()));
                 purchaseDeliveryOrderProductDO.setUpdateUser(String.valueOf(purchaseOrderDO.getCreateUser()));
-                purchaseDeliveryOrderProductMapper.save(purchaseDeliveryOrderProductDO);
-                purchaseDeliveryOrderProductDOList.add(purchaseDeliveryOrderProductDO);
+                if(purchaseOrderProductDO.getProductCount()>0){
+                    purchaseDeliveryOrderProductMapper.save(purchaseDeliveryOrderProductDO);
+                    purchaseDeliveryOrderProductDOList.add(purchaseDeliveryOrderProductDO);
+                }
             }
         }
         purchaseDeliveryOrderDO.setPurchaseDeliveryOrderProductDOList(purchaseDeliveryOrderProductDOList);
@@ -1879,7 +1882,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         //声明发货单物料项列表，后面会将保存后的发货单物料项add到发货单中
         List<PurchaseDeliveryOrderMaterialDO> purchaseDeliveryOrderMaterialDOList = new ArrayList<>();
 
-        //保存采购发货单商品项
+        //保存采购发货单配件项
         if (CollectionUtil.isNotEmpty(purchaseOrderMaterialDOList)) {
             for (PurchaseOrderMaterialDO purchaseOrderMaterialDO : purchaseOrderMaterialDOList) {
                 PurchaseDeliveryOrderMaterialDO purchaseDeliveryOrderMaterialDO = new PurchaseDeliveryOrderMaterialDO();
@@ -1900,8 +1903,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 purchaseDeliveryOrderMaterialDO.setUpdateTime(now);
                 purchaseDeliveryOrderMaterialDO.setCreateUser(String.valueOf(purchaseOrderDO.getCreateUser()));
                 purchaseDeliveryOrderMaterialDO.setUpdateUser(String.valueOf(purchaseOrderDO.getCreateUser()));
-                purchaseDeliveryOrderMaterialMapper.save(purchaseDeliveryOrderMaterialDO);
-                purchaseDeliveryOrderMaterialDOList.add(purchaseDeliveryOrderMaterialDO);
+                if(purchaseOrderMaterialDO.getMaterialCount()>0){
+                    purchaseDeliveryOrderMaterialMapper.save(purchaseDeliveryOrderMaterialDO);
+                    purchaseDeliveryOrderMaterialDOList.add(purchaseDeliveryOrderMaterialDO);
+                }
+
             }
         }
         purchaseDeliveryOrderDO.setPurchaseDeliveryOrderMaterialDOList(purchaseDeliveryOrderMaterialDOList);
