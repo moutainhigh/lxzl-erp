@@ -45,8 +45,9 @@
 				#{item}
 			</foreach>)
 			<if test="maps.orderQueryParam.dataAccessSubCompanyId != null &amp;&amp; maps.orderQueryParam.dataAccessSubCompanyId != ''">
-				OR (
-					and eo.order_sub_company_id = #{maps.orderQueryParam.dataAccessSubCompanyId, jdbcType=INTEGER}
+				OR
+				(
+					eo.order_sub_company_id = #{maps.orderQueryParam.dataAccessSubCompanyId, jdbcType=INTEGER}
 				)
 			</if>
 
