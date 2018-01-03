@@ -20,7 +20,6 @@ public class CustomerPersonDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
-	private String personName;//用户名'
 	private String personNo;//身份证号'
 	private String connectRealName;//紧急联系人姓名'
 	private String connectPhone;//紧急联系人电话'
@@ -144,13 +143,6 @@ public class CustomerPersonDO  extends BaseDO {
 		this.districtName = districtName;
 	}
 
-	public String getPersonName() {
-		return personName;
-	}
-
-	public void setPersonName(String personName) {
-		this.personName = personName;
-	}
 
 	public String getPersonNo() {
 		return personNo;

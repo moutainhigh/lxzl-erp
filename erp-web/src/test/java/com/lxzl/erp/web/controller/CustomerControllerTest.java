@@ -75,7 +75,6 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
         CustomerPerson customerPerson = new CustomerPerson();
         customerPerson.setPersonNo("422827999857463210");
-        customerPerson.setPersonName("测试个人用户名");
         customerPerson.setConnectRealName("测试个人用户紧急联系人姓名");
         customerPerson.setConnectPhone("18563214987");
         customerPerson.setRealName("叶良辰测试名");
@@ -146,7 +145,6 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setCustomerNo("LXCD10002017123000030");
         CustomerPerson customerPerson = new CustomerPerson();
         customerPerson.setPersonNo("422827999857463210");
-        customerPerson.setPersonName("update测试个人用户名");
         customerPerson.setConnectRealName("update测试个人用户紧急联系人姓名");
         customerPerson.setConnectPhone("18563214987");
         customerPerson.setRealName("叶良辰测试名update");

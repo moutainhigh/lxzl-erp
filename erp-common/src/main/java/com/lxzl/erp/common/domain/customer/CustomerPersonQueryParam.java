@@ -16,7 +16,6 @@ public class CustomerPersonQueryParam extends BasePageParam {
     private Integer district;   //区ID，对应区ID
 
 
-    private String personName;//用户名'
     private String personNo;//身份证号'
     private String connectRealName;//紧急联系人姓名'
     private String connectPhone;//紧急联系人电话'
@@ -77,14 +76,6 @@ public class CustomerPersonQueryParam extends BasePageParam {
 
     public void setDistrict(Integer district) {
         this.district = district;
-    }
-
-    public String getPersonName() {
-        return personName;
-    }
-
-    public void setPersonName(String personName) {
-        this.personName = personName;
     }
 
     public String getPersonNo() {
