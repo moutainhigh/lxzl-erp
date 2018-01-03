@@ -7,6 +7,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -147,5 +149,26 @@ public class DateUtil {
             result--;
         }
         return result;
+    }
+
+    /**
+     * 获取某月第一天
+     * @param offset 0-当月，1-下月，-1 上月，依次类推
+     * @return
+     */
+    public static Date getMonthByOffset(Integer offset) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        // 获取前月的第一天
+        Calendar cale = Calendar.getInstance();
+        cale.add(Calendar.MONTH, offset);
+        cale.set(Calendar.DAY_OF_MONTH, 1);
+        String day = format.format(cale.getTime());
+        Date date = null;
+        try {
+            date = format.parse(day);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
     }
 }
