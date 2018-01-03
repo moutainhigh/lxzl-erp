@@ -11,11 +11,13 @@ import com.lxzl.erp.common.domain.order.LastRentPriceRequest;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
+import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.*;
+
 /**
  * 描述: 订单测试类
  *
@@ -69,31 +71,24 @@ public class OrderTest extends ERPUnTransactionalTest {
     public void testCreateOrderJSON() throws Exception {
         String str = "{\n" +
                 "\t\"buyerCustomerNo\": \"CP201712060843154191841\",\n" +
-                "\t\"rentStartTime\": 1515542400000,\n" +
-                "\t\"logisticsAmount\": \"\",\n" +
+                "\t\"rentStartTime\": 1515024000000,\n" +
+                "\t\"expectDeliveryTime\": 1514937600000,\n" +
+                "\t\"logisticsAmount\": \"98\",\n" +
                 "\t\"buyerRemark\": \"备注\",\n" +
                 "\t\"customerConsignId\": \"37\",\n" +
-                "\t\"taxRate\": \"90\",\n" +
+                "\t\"highTaxRate\": \"10\",\n" +
+                "\t\"lowTaxRate\": \"90\",\n" +
+                "\t\"deliveryMode\": \"1\",\n" +
                 "\t\"orderProductList\": [{\n" +
-                "\t\t\"productId\": \"2000029\",\n" +
-                "\t\t\"productSkuId\": \"83\",\n" +
-                "\t\t\"productUnitAmount\": \"350\",\n" +
+                "\t\t\"productId\": \"2000033\",\n" +
+                "\t\t\"productSkuId\": \"88\",\n" +
+                "\t\t\"productUnitAmount\": \"100\",\n" +
                 "\t\t\"productCount\": \"10\",\n" +
-                "\t\t\"rentType\": \"1\",\n" +
-                "\t\t\"rentTimeLength\": \"30\",\n" +
+                "\t\t\"rentType\": \"2\",\n" +
+                "\t\t\"rentTimeLength\": \"10\",\n" +
                 "\t\t\"insuranceAmount\": \"\",\n" +
-                "\t\t\"isNewProduct\": \"0\",\n" +
-                "\t\t\"depositAmount\": \"100\"\n" +
-                "\t}],\n" +
-                "\t\"orderMaterialList\": [{\n" +
-                "\t\t\"materialId\": \"62\",\n" +
-                "\t\t\"materialUnitAmount\": \"100\",\n" +
-                "\t\t\"materialCount\": \"10\",\n" +
-                "\t\t\"rentType\": \"1\",\n" +
-                "\t\t\"rentTimeLength\": \"20\",\n" +
-                "\t\t\"insuranceAmount\": \"\",\n" +
-                "\t\t\"isNewMaterial\": \"0\",\n" +
-                "\t\t\"depositAmount\": \"100\"\n" +
+                "\t\t\"isNewProduct\": \"1\",\n" +
+                "\t\t\"depositAmount\": 0\n" +
                 "\t}]\n" +
                 "}";
         Order order = JSONUtil.convertJSONToBean(str, Order.class);
@@ -187,9 +182,9 @@ public class OrderTest extends ERPUnTransactionalTest {
     }
 
     @Test
-    public void testProcessOrderJson() throws Exception{
+    public void testProcessOrderJson() throws Exception {
         String str = "{\"equipmentNo\":\"LX-E-4000001-2017122918883\",\"orderNo\":\"LXO2017123070005600071\",\"operationType\":1}\n";
-        ProcessOrderParam processOrderParam = JSONUtil.convertJSONToBean(str,ProcessOrderParam.class );
+        ProcessOrderParam processOrderParam = JSONUtil.convertJSONToBean(str, ProcessOrderParam.class);
         TestResult testResult = getJsonTestResult("/order/process", processOrderParam);
     }
 
@@ -205,6 +200,13 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void queryAllOrder() throws Exception {
         OrderQueryParam param = new OrderQueryParam();
+//        param.setBuyerRealName("荣焱");
+        TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
+    }
+    @Test
+    public void queryAllOrderJSON() throws Exception {
+        String str = "{\"pageNo\":1,\"pageSize\":15,\"orderNo\":\"\",\"buyerRealName\":\"\",\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\"}";
+        OrderQueryParam param = FastJsonUtil.toBean(str,OrderQueryParam.class);
 //        param.setBuyerRealName("荣焱");
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
