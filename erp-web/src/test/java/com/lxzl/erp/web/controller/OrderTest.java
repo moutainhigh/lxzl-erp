@@ -67,13 +67,41 @@ public class OrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void testCreateOrderJSON() throws Exception {
-        String str = "{\"buyerCustomerNo\":\"CC201712261408524351576\",\"rentStartTime\":1514419200000,\"logisticsAmount\":\"123\",\"orderSubCompanyId\":1,\"buyerRemark\":\"\",\"customerConsignId\":\"64\",\"orderProductList\":[{\"productId\":\"2000050\",\"productSkuId\":\"178\",\"productUnitAmount\":\"500\",\"productCount\":\"10\",\"rentType\":\"2\",\"rentTimeLength\":\"6\",\"insuranceAmount\":\"\"}]}\n" +
-                "Name\n";
+        String str = "{\n" +
+                "\t\"buyerCustomerNo\": \"CP201712060843154191841\",\n" +
+                "\t\"rentStartTime\": 1515542400000,\n" +
+                "\t\"logisticsAmount\": \"\",\n" +
+                "\t\"buyerRemark\": \"备注\",\n" +
+                "\t\"customerConsignId\": \"37\",\n" +
+                "\t\"taxRate\": \"90\",\n" +
+                "\t\"orderProductList\": [{\n" +
+                "\t\t\"productId\": \"2000029\",\n" +
+                "\t\t\"productSkuId\": \"83\",\n" +
+                "\t\t\"productUnitAmount\": \"350\",\n" +
+                "\t\t\"productCount\": \"10\",\n" +
+                "\t\t\"rentType\": \"1\",\n" +
+                "\t\t\"rentTimeLength\": \"30\",\n" +
+                "\t\t\"insuranceAmount\": \"\",\n" +
+                "\t\t\"isNewProduct\": \"0\",\n" +
+                "\t\t\"depositAmount\": \"100\"\n" +
+                "\t}],\n" +
+                "\t\"orderMaterialList\": [{\n" +
+                "\t\t\"materialId\": \"62\",\n" +
+                "\t\t\"materialUnitAmount\": \"100\",\n" +
+                "\t\t\"materialCount\": \"10\",\n" +
+                "\t\t\"rentType\": \"1\",\n" +
+                "\t\t\"rentTimeLength\": \"20\",\n" +
+                "\t\t\"insuranceAmount\": \"\",\n" +
+                "\t\t\"isNewMaterial\": \"0\",\n" +
+                "\t\t\"depositAmount\": \"100\"\n" +
+                "\t}]\n" +
+                "}";
         Order order = JSONUtil.convertJSONToBean(str, Order.class);
 
         TestResult testResult = getJsonTestResult("/order/create", order);
 
     }
+
     @Test
     public void testUpdateOrderJSON() throws Exception {
         String str = "{\"orderNo\":\"O201712171440529091845\",\"buyerCustomerNo\":\"CC201712091546467081096\",\"rentStartTime\":1513555200000,\"logisticsAmount\":\"1\",\"orderSellerId\":500001,\"orderSubCompanyId\":5,\"buyerRemark\":\"包装好好打着，别弄坏了\",\"customerConsignId\":\"40\",\"orderProductList\":[{\"productId\":\"2000013\",\"productSkuId\":\"40\",\"productUnitAmount\":\"150\",\"productCount\":\"2\",\"rentType\":\"2\",\"rentTimeLength\":\"12\",\"insuranceAmount\":\"1\",\"payMode\":\"2\"}]}";

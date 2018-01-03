@@ -121,7 +121,7 @@
                                             <th>商品ID</th>
                                             <th>图片</th>
                                             <th>商品名称</th>
-                                            <th>列表价格</th>
+##                                            <th>列表价格</th>
                                             <th>SKU</th>
                                         </tr>
                                         </thead>
@@ -131,14 +131,17 @@
                                         <tr class="productRow" productRowKey="{{productId}}">
                                             <td>{{productId}}</td>
                                             <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-                                            <td>{{productName}}</td>
-                                            <td class="br-r">{{listPriceFixed}}</td>
+                                            <td class="br-r">{{productName}}</td>
+##                                            <td class="br-r">{{listPriceFixed}}</td>
                                             <td class="pn">
                                                 <table class="table">
                                                     {{#chooseSkuList}}
                                                     {{#skuList}}
                                                     <tr class="skuRow">
-                                                        <td style="width: 40%">{{propertiesToStr}}</td>
+                                                        <td style="width: 20%">{{propertiesToStr}}</td>
+                                                        <td width="20%">
+                                                            商品价值：￥{{#price}}{{skuPrice}}{{/price}}
+                                                        </td>
                                                         <td style="width: 20%">
                                                             <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
                                                             <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
@@ -158,7 +161,7 @@
                                                         </td>
                                                     </tr>
                                                     <tr class="bg-light editMaterialTr" style="height: 0;">
-                                                        <td colspan="4" class="pn br-n" style="height:0;">
+                                                        <td colspan="5" class="pn br-n" style="height:0;">
                                                             <div class="panel m15 editMaterialPannel" style="display: none;">
                                                                 <div class="panel-heading pn ph8">
                                                                     <span>配件信息</span>

@@ -51,6 +51,7 @@
                                 <dl class="dl-horizontal dl-horizontal-rental">
                                     <dt class="mb5">支付日期：</dt><dd>{{#time}}{{payTime}}{{/time}}&nbsp;</dd>
                                     <dt class="mb5">发货日期：</dt><dd>{{#time}}{{deliveryTime}}{{/time}}&nbsp;</dd>
+                                    <dt class="mb5">交货日期：</dt><dd>{{#time}}{{expectDeliveryTime}}{{/time}}&nbsp;</dd>
                                 </dl>
                             </div>
                             <div class="col-md-4">
@@ -86,17 +87,17 @@
                                 <div class="col-md-4 br-l">
                                     <h4 class="pl15">金额信息</h4>
                                     <dl class="dl-horizontal dl-horizontal-rental pl15">
-                                        <dt class="mb10">税率：</dt><dd>{{taxRate}}</dd>
-                                        <dt class="mb10">授信押金：</dt><dd>￥{{#price}}{{totalCreditDepositAmount}}{{/price}}</dd>
-                                        <dt class="mb10">设备总押金：</dt><dd>￥{{#price}}{{totalProductDepositAmount}}{{/price}}</dd>
-                                        <dt class="mb10">租金总押金：</dt><dd>￥{{#price}}{{totalProductRentDepositAmount}}{{/price}}</dd>
-##                                        <dt class="mb10">商品总数：</dt><dd>{{totalProductCount}}</dd>
-                                        <dt class="mb10">商品总价：</dt><dd>￥{{#price}}{{totalProductAmount}}{{/price}}</dd>
-##                                        <dt class="mb10">配件总数：</dt><dd>{{totalMaterialCount}}</dd>
-                                        <dt class="mb10">配件总价：</dt><dd>￥{{#price}}{{totalMaterialAmount}}{{/price}}</dd>
-##                                        <dt class="mb10">保险金：</dt><dd>￥{{#price}}{{totalInsuranceAmount}}{{/price}}</dd>
+                                        <dt class="mb10">税率：</dt>
+                                        <dd>
+                                            <em style="font-style: normal;" class="text-info mr5">17%:</em><em style="font-style: normal;" class="mr15">{{highTaxRate}}%</em>
+                                            <em style="font-style: normal;" class="text-info mr5">6%:</em><em style="font-style: normal;">{{lowTaxRate}}%</em>
+                                        </dd>
+                                        <dt class="mb10">授信押金：</dt><dd>￥{{#price}}{{totalCreditDepositAmount}}{{/price}}（商品：￥{{#price}}{{totalProductCreditDepositAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialCreditDepositAmount}}{{/price}}）</dd>
+                                        <dt class="mb10">设备总押金：</dt><dd>￥{{#price}}{{totalDepositAmount}}{{/price}}（商品：{{#price}}{{totalProductDepositAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialDepositAmount}}{{/price}}）</dd>
+                                        <dt class="mb10">租金总押金：</dt><dd>￥{{#price}}{{totalRentDepositAmount}}{{/price}}（商品：￥{{#price}}{{totalProductRentDepositAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialRentDepositAmount}}{{/price}}）</dd>
+                                        <dt class="mb10">租金总价：</dt><dd>￥{{#price}}{{totalRentalAmoutFont}}{{/price}}（商品：￥{{#price}}{{totalProductAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialAmount}}{{/price}}）</dd>
+##                                        <dt class="mb10">配件总价：</dt><dd>￥{{#price}}{{totalMaterialAmount}}{{/price}}</dd>
                                         <dt class="mb10">运费：</dt><dd>￥{{#price}}{{logisticsAmount}}{{/price}}</dd>
-##                                        <dt class="mb10">共计优惠：</dt><dd>（-） ￥{{#price}}{{totalDiscountAmount}}{{/price}}</dd>
                                         <dt class="mb10">应付总价：</dt><dd class="text-danger">￥{{#price}}{{totalOrderAmount}}{{/price}}</dd>
                                         <dt class="mb10">首付：</dt><dd class="text-danger">￥{{#price}}{{firstNeedPayAmount}}{{/price}}</dd>
                                         <dt class="mb10">已支付：</dt><dd class="text-danger">￥{{#price}}{{totalPaidOrderAmount}}{{/price}}</dd>
@@ -185,6 +186,7 @@
                                                     {{#skuList}}
                                                     <tr class="skuRow">
                                                         <td width="15%"><span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{propertiesToStr}}</td>
+                                                        <td>商品价值：￥{{#price}}{{skuPrice}}{{/price}}</td>
                                                         <td>
                                                             商品单价：{{productUnitAmount}}
                                                         </td>
@@ -210,7 +212,7 @@
                                                         </td>
                                                     </tr>
                                                     <tr class="bg-light affixTr" style="height: 0;">
-                                                        <td colspan="8" class="pn br-n" style="height:0;">
+                                                        <td colspan="9" class="pn br-n" style="height:0;">
                                                             <div class="panel m15 affixPanel"  style="display: none;">
                                                                 <div class="panel-heading pn ph8">
                                                                     <span>已配设备：设备编号列表</span>

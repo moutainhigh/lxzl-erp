@@ -2128,6 +2128,8 @@ CREATE TABLE `erp_assemble_order_product_equipment` (
 DROP TABLE if exists `erp_transfer_order`;
 CREATE TABLE `erp_transfer_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `transfer_order_no` varchar(100) NOT NULL COMMENT '组装单编号',
+  `transfer_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '转移单状态，0初始化，4转移成功，8取消转移',
 
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -2142,6 +2144,9 @@ DROP TABLE if exists `erp_transfer_order_product`;
 CREATE TABLE `erp_transfer_order_product` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `transfer_order_id` int(20) NOT NULL COMMENT '转移单ID',
+  `product_id` int(20) NOT NULL COMMENT '转移商品ID',
+  `product_sku_id` int(20) NOT NULL COMMENT '转移商品SKU ID',
+  `product_count` int(11) NOT NULL COMMENT '物料数量',
 
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -2156,6 +2161,9 @@ DROP TABLE if exists `erp_transfer_order_material`;
 CREATE TABLE `erp_transfer_order_material` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `transfer_order_id` int(20) NOT NULL COMMENT '转移单ID',
+  `material_id` int(20) NOT NULL COMMENT '物料ID',
+  `material_no` varchar(100) NOT NULL COMMENT '物料编号',
+  `material_count` int(11) NOT NULL COMMENT '物料数量',
 
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
