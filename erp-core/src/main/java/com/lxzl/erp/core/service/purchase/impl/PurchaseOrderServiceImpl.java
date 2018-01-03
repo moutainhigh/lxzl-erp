@@ -46,6 +46,7 @@ import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderBulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
+import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -1229,6 +1230,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(purchaseReceiveOrder.getPurchaseReceiveNo());
+        if(true){
+            throw new BusinessException();
+        }
         return serviceResult;
     }
 
@@ -1418,8 +1422,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 List<PurchaseReceiveOrderMaterialDO> purchaseReceiveOrderMaterialDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderMaterialDOList();
                 for (PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO : purchaseReceiveOrderMaterialDOList) {
                     int count = 0;
-                    if (materialCountMap.get(purchaseReceiveOrderMaterialDO.getMaterialId()) != null) {
-                        count = materialCountMap.get(purchaseReceiveOrderMaterialDO.getMaterialId());
+                    if (materialCountMap.get(purchaseReceiveOrderMaterialDO.getRealMaterialId()) != null) {
+                        count = materialCountMap.get(purchaseReceiveOrderMaterialDO.getRealMaterialId());
                     }
                     materialCountMap.put(purchaseReceiveOrderMaterialDO.getRealMaterialId(), count + purchaseReceiveOrderMaterialDO.getRealMaterialCount());
                 }
