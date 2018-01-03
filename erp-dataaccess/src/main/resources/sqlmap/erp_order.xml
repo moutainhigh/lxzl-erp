@@ -7,6 +7,7 @@
     <resultMap type="com.lxzl.erp.dataaccess.domain.order.OrderDO" id="OrderDO">
         <id column="id" jdbcType="INTEGER" property="id" />
         <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+        <result column="delivery_mode" jdbcType="INTEGER" property="deliveryMode" />
         <result column="buyer_customer_id" jdbcType="INTEGER" property="buyerCustomerId" />
         <result column="buyer_customer_no" jdbcType="VARCHAR" property="buyerCustomerNo" />
         <result column="buyer_customer_name" jdbcType="VARCHAR" property="buyerCustomerName" />
@@ -152,7 +153,7 @@
     </resultMap>
 
     <sql id="column_List">
-		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.rent_start_time as rent_start_time,eo.expect_delivery_time as expect_delivery_time,eo.total_deposit_amount as total_deposit_amount,eo.total_must_deposit_amount as total_must_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.total_rent_deposit_amount,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_product_deposit_amount as total_product_deposit_amount,eo.total_product_credit_deposit_amount as total_product_credit_deposit_amount,eo.total_product_rent_deposit_amount as total_product_rent_deposit_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_material_deposit_amount as total_material_deposit_amount,eo.total_material_credit_deposit_amount as total_material_credit_deposit_amount,eo.total_material_rent_deposit_amount as total_material_rent_deposit_amount,eo.total_order_amount as total_order_amount,eo.total_paid_order_amount as total_paid_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status, eo.first_need_pay_amount as first_need_pay_amount,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.high_tax_rate as high_tax_rate,eo.low_tax_rate as low_tax_rate,eo.buyer_remark as buyer_remark,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user
+		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.delivery_mode as delivery_mode,eo.rent_start_time as rent_start_time,eo.expect_delivery_time as expect_delivery_time,eo.total_deposit_amount as total_deposit_amount,eo.total_must_deposit_amount as total_must_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.total_rent_deposit_amount,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_product_deposit_amount as total_product_deposit_amount,eo.total_product_credit_deposit_amount as total_product_credit_deposit_amount,eo.total_product_rent_deposit_amount as total_product_rent_deposit_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_material_deposit_amount as total_material_deposit_amount,eo.total_material_credit_deposit_amount as total_material_credit_deposit_amount,eo.total_material_rent_deposit_amount as total_material_rent_deposit_amount,eo.total_order_amount as total_order_amount,eo.total_paid_order_amount as total_paid_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status, eo.first_need_pay_amount as first_need_pay_amount,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.high_tax_rate as high_tax_rate,eo.low_tax_rate as low_tax_rate,eo.buyer_remark as buyer_remark,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user
 	</sql>
 
     <sql id="product_column_List">
@@ -320,6 +321,9 @@
                 <if test="maps.orderQueryParam.consigneePhone != null &amp;&amp; maps.orderQueryParam.consigneePhone != ''">
                     and eoci.consignee_phone = #{maps.orderQueryParam.consigneePhone, jdbcType=VARCHAR}
                 </if>
+                <if test="maps.orderQueryParam.deliveryMode != null &amp;&amp; maps.orderQueryParam.deliveryMode != ''">
+                    and eo.delivery_mode = #{maps.orderQueryParam.deliveryMode, jdbcType=INTEGER}
+                </if>
                 <if test="maps.orderQueryParam.orderId != null &amp;&amp; maps.orderQueryParam.orderId != ''">
                     and eo.id = #{maps.orderQueryParam.orderId, jdbcType=INTEGER}
                 </if>
@@ -389,6 +393,9 @@
             <if test="maps.orderQueryParam.consigneePhone != null &amp;&amp; maps.orderQueryParam.consigneePhone != ''">
                 and eoci.consignee_phone = #{maps.orderQueryParam.consigneePhone, jdbcType=VARCHAR}
             </if>
+            <if test="maps.orderQueryParam.deliveryMode != null &amp;&amp; maps.orderQueryParam.deliveryMode != ''">
+                and eo.delivery_mode = #{maps.orderQueryParam.deliveryMode, jdbcType=INTEGER}
+            </if>
             <if test="maps.orderQueryParam.orderId != null &amp;&amp; maps.orderQueryParam.orderId != ''">
                 and eo.id = #{maps.orderQueryParam.orderId, jdbcType=INTEGER}
             </if>
@@ -421,6 +428,9 @@
         <set>
             <if test="orderNo != null">
                 order_no = #{orderNo, jdbcType=INTEGER},
+            </if>
+            <if test="deliveryMode != null">
+                delivery_mode = #{deliveryMode, jdbcType=INTEGER},
             </if>
             <if test="buyerCustomerId != null">
                 buyer_customer_id = #{buyerCustomerId, jdbcType=INTEGER},

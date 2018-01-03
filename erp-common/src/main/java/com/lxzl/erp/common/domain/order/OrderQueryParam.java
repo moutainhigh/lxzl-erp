@@ -24,6 +24,7 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     private List<Integer> passiveUserIdList;
     private Integer subCompanyId;
+    private Integer deliveryMode;
 
 
     public Integer getOrderId() {
@@ -128,5 +129,13 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setSubCompanyId(Integer subCompanyId) {
         this.subCompanyId = subCompanyId;
+    }
+
+    public Integer getDeliveryMode() {
+        return deliveryMode;
+    }
+
+    public void setDeliveryMode(Integer deliveryMode) {
+        this.deliveryMode = deliveryMode;
     }
 }

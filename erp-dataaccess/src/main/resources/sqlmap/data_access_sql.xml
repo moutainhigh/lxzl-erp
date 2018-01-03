@@ -39,10 +39,17 @@
 
 	<sql id="order_control">
 		<if test="maps.orderQueryParam.dataAccessUserIdList != null">
-			AND eo.create_user in
-			<foreach item="item" index="index" collection="maps.orderQueryParam.dataAccessUserIdList" open="(" separator="," close=")">
+			AND (eo.create_user in
+			<foreach item="item" index="index" collection="maps.orderQueryParam.dataAccessUserIdList" open="("
+					 separator="," close=")">
 				#{item}
-			</foreach>
+			</foreach>)
+			<if test="maps.orderQueryParam.dataAccessSubCompanyId != null &amp;&amp; maps.orderQueryParam.dataAccessSubCompanyId != ''">
+				OR (
+					and eo.order_sub_company_id = #{maps.orderQueryParam.dataAccessSubCompanyId, jdbcType=INTEGER}
+				)
+			</if>
+
 		</if>
 	</sql>
 

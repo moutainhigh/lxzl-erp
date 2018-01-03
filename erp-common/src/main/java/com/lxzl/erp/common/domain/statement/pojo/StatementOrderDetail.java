@@ -42,6 +42,9 @@ public class StatementOrderDetail extends BasePO {
     private String updateUser;   //修改人
 
     private String orderNo;
+    private String itemName;
+    private Integer itemCount;
+    private BigDecimal unitAmount;
 
     public Integer getStatementOrderDetailId() {
         return statementOrderDetailId;
@@ -281,5 +284,29 @@ public class StatementOrderDetail extends BasePO {
 
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public Integer getItemCount() {
+        return itemCount;
+    }
+
+    public void setItemCount(Integer itemCount) {
+        this.itemCount = itemCount;
+    }
+
+    public BigDecimal getUnitAmount() {
+        return unitAmount;
+    }
+
+    public void setUnitAmount(BigDecimal unitAmount) {
+        this.unitAmount = unitAmount;
     }
 }

@@ -290,7 +290,6 @@ DROP TABLE if exists `erp_customer_person`;
 CREATE TABLE `erp_customer_person` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
-  `person_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '用户名',
   `person_no` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '身份证号码',
   `connect_real_name` varchar(24) COLLATE utf8_bin NOT NULL COMMENT '紧急联系人姓名',
   `connect_phone` varchar(24) COLLATE utf8_bin NOT NULL COMMENT '紧急联系人电话',
@@ -2130,8 +2129,8 @@ CREATE TABLE `erp_assemble_order_product_equipment` (
 DROP TABLE if exists `erp_transfer_order`;
 CREATE TABLE `erp_transfer_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `transfer_order_no` varchar(100) NOT NULL COMMENT '组装单编号',
-  `transfer_order_name` varchar(100) NOT NULL COMMENT '组装单名称',
+  `transfer_order_no` varchar(100) NOT NULL COMMENT '转移单编号',
+  `transfer_order_name` varchar(100) NOT NULL COMMENT '转移单名称',
   `transfer_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '转移单状态，0初始化，4审批中，8转移成功，16取消转移',
   `transfer_order_mode` int(11) NOT NULL COMMENT '转移方式，1转入，2转出（凭空转入转出）',
   `transfer_order_type` int(11) NOT NULL COMMENT '转移类型，1外借入库转入，2试验机转入，99其他',

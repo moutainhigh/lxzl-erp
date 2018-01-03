@@ -26,20 +26,20 @@ import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
-import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.*;
-import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -83,9 +83,19 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
         calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
+        if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getOrderSubCompanyId());
+            if (order.getOrderSubCompanyId() == null || subCompanyDO == null) {
+                result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+                return result;
+            }
+            orderDO.setOrderSubCompanyId(order.getOrderSubCompanyId());
+        } else {
+            orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+        }
+
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime, orderDO.getBuyerCustomerId()));
-        orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
         orderDO.setOrderSellerId(loginUser.getUserId());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
         orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -144,6 +154,16 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
         calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
+        if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getOrderSubCompanyId());
+            if (order.getOrderSubCompanyId() == null || subCompanyDO == null) {
+                result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+                return result;
+            }
+            orderDO.setOrderSubCompanyId(order.getOrderSubCompanyId());
+        } else {
+            orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+        }
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setId(dbOrderDO.getId());
         orderDO.setOrderNo(dbOrderDO.getOrderNo());
@@ -636,7 +656,8 @@ public class OrderServiceImpl implements OrderService {
             Order saveOrder = queryOrderByNo(orderDO.getOrderNo()).getResult();
             orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), FastJsonUtil.toJSONString(saveOrder), currentTime, loginUser.getUserId());
         } catch (Exception e) {
-            logger.error("审批订单通知失败： {}", businessNo);
+            e.printStackTrace();
+            logger.error("审批订单通知失败： {} {}", businessNo, e.toString());
             return false;
         }
         return true;
@@ -1086,7 +1107,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (DateUtil.getBeginOfDay(currentTime).getTime() < DateUtil.dateInterval(DateUtil.getBeginOfDay(dbRecordOrder.getRentStartTime()), -2).getTime()) {
-            result.setErrorCode(ErrorCode.ORDER_CAN_NOT_DELIVERY);
+            result.setErrorCode(ErrorCode.ORDER_CAN_NOT_DELIVERY_TIME_REASON);
             return result;
         }
         if (CollectionUtil.isNotEmpty(dbRecordOrder.getOrderProductDOList())) {
@@ -1588,6 +1609,9 @@ public class OrderServiceImpl implements OrderService {
         if (order.getCustomerConsignId() == null) {
             return ErrorCode.ORDER_CUSTOMER_CONSIGN_NOT_NULL;
         }
+        if (order.getDeliveryMode() == null || !DeliveryMode.inThisScope(order.getDeliveryMode())) {
+            return ErrorCode.ORDER_DELIVERY_MODE_ERROR;
+        }
         CustomerDO customerDO = customerMapper.findByNo(order.getBuyerCustomerNo());
         if (customerDO == null) {
             return ErrorCode.CUSTOMER_NOT_EXISTS;
@@ -1746,4 +1770,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private DataAccessSupport dataAccessSupport;
+
+    @Autowired
+    private SubCompanyMapper subCompanyMapper;
 }

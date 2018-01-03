@@ -25,6 +25,7 @@ public class CommonConstant {
     public static final Integer SUPER_ROLE_ID = 600000;
     public static final Integer SUPER_CUSTOMER_ID = 700000;
     public static final Integer SUPER_PRODUCT_CATEGORY_ID = 800000;
+    public static final Integer ELECTRIC_SALE_COMPANY_ID = 10;
 
     public static final String COMMUNITY_SESSION_KEY = "community_id";
     public static final String TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";

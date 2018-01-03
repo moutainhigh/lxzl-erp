@@ -13,6 +13,7 @@ public class Order extends BasePO {
 
     private Integer orderId;
     private String orderNo;
+    private Integer deliveryMode;
     private Integer buyerCustomerId;
     private Date expectDeliveryTime;
     private Date rentStartTime;
@@ -493,5 +494,13 @@ public class Order extends BasePO {
 
     public void setLowTaxRate(Integer lowTaxRate) {
         this.lowTaxRate = lowTaxRate;
+    }
+
+    public Integer getDeliveryMode() {
+        return deliveryMode;
+    }
+
+    public void setDeliveryMode(Integer deliveryMode) {
+        this.deliveryMode = deliveryMode;
     }
 }

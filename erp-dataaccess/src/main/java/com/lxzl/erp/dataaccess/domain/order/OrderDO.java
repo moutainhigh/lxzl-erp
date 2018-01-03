@@ -13,6 +13,7 @@ public class OrderDO extends BaseDO {
 
     private Integer id;
     private String orderNo;
+    private Integer deliveryMode;
     private Integer buyerCustomerId;
     private Date expectDeliveryTime;
     private Date rentStartTime;
@@ -448,5 +449,13 @@ public class OrderDO extends BaseDO {
 
     public void setExpectDeliveryTime(Date expectDeliveryTime) {
         this.expectDeliveryTime = expectDeliveryTime;
+    }
+
+    public Integer getDeliveryMode() {
+        return deliveryMode;
+    }
+
+    public void setDeliveryMode(Integer deliveryMode) {
+        this.deliveryMode = deliveryMode;
     }
 }

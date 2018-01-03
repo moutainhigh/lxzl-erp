@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.dataAccess;
 
+import com.lxzl.erp.common.constant.DepartmentType;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.base.BasePageParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
@@ -23,7 +24,8 @@ public class DataAccessSupport {
     private UserMapper userMapper;
     @Autowired
     private WarehouseService warehouseService;
-    public void setDataAccessPassiveUserList(BasePageParam basePageParam){
+
+    public void setDataAccessPassiveUserList(BasePageParam basePageParam) {
 
         //数据级权限控制-查找用户可查看用户列表
         Integer currentUserId = userSupport.getCurrentUserId();
@@ -38,7 +40,7 @@ public class DataAccessSupport {
         basePageParam.setDataAccessUserIdList(passiveUserIdList);
     }
 
-    public void setDataAccessWarehouseList(BasePageParam basePageParam){
+    public void setDataAccessWarehouseList(BasePageParam basePageParam) {
 
         //数据级权限控制-查找用户可查看仓库列表
         ServiceResult<String, List<Warehouse>> warehouseListResult = warehouseService.getAvailableWarehouse();
@@ -51,9 +53,12 @@ public class DataAccessSupport {
         }
         basePageParam.setDataAccessWarehouseIdList(warehouseIdList);
     }
-    public void setDataAccessSubCompany(BasePageParam basePageParam){
-        Integer subCompanyId = userSupport.getCurrentUserCompanyId();
-        basePageParam.setDataAccessSubCompanyId(subCompanyId);
+
+    public void setDataAccessSubCompany(BasePageParam basePageParam) {
+        if (userSupport.isServicePerson(userSupport.getCurrentUserId())) {
+            Integer subCompanyId = userSupport.getCurrentUserCompanyId();
+            basePageParam.setDataAccessSubCompanyId(subCompanyId);
+        }
     }
 
 }
