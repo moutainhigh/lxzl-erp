@@ -89,7 +89,7 @@
 ##                                        <th class="">租期</th>
                                         <th class="">商品总价</th>
                                         <th class="">订单总价</th>
-                                        <th class="">优惠金额</th>
+##                                        <th class="">优惠金额</th>
                                         <th class="">支付时间</th>
                                         <th class="">支付状态</th>
                                         <th class="">状态</th>
@@ -122,7 +122,7 @@
 ##                                            <td>{{rentTimeLength}}</td>
                                             <td>{{#price}}{{totalProductAmount}}{{/price}}</td>
                                             <td>{{#price}}{{totalOrderAmount}}{{/price}}</td>
-                                            <td>{{#price}}{{totalDiscountAmount}}{{/price}}</td>
+##                                            <td>{{#price}}{{totalDiscountAmount}}{{/price}}</td>
                                             <td>{{#time}}{{payTime}}{{/time}}</td>
                                             <td>{{payStatusValue}}</td>
                                             <td>{{orderStatusStr}}</td>

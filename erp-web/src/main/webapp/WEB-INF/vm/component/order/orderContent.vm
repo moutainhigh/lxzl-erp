@@ -133,86 +133,95 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </th>
-                            <th>商品ID</th>
-                            <th>图片</th>
+                        ##                                            <th>商品ID</th>
+                        ##                                            <th>图片</th>
                             <th>商品名称</th>
                             <th>SKU</th>
+                            <th>商品价值</th>
+
+
+                            <th>租赁类型</th>
+                            <th>租赁时长</th>
+                        ##                                            <th>租赁类型</th>
+                            <th>商品单价</th>
+                            <th>租赁数量</th>
+                            <th class="text-right">操作</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {{#dataSource}}
                         {{#listData}}
-                        <tr class="productRow" productRowKey="{{productId}}">
+                        <tr class="productRow skuRow" productRowKey="{{productId}}">
                             <td>
                                 <label class="option block mn">
-                                    <input type="checkbox" name="checkItem" value="{{productId}}">
+                                    <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}">
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                            <td>{{productId}}</td>
+##                            <td>{{productId}}</td>
+##                            <td>
+##                                <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
+##                            </td>
+                            <td>{{productName}}</td>
+                            <td><span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{propertiesToStr}}</td>
+                            <td>￥{{#price}}{{skuPrice}}{{/price}}</td>
                             <td>
-                                <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
+                                <label class="field select">
+                                    <select name="rentType-{{skuId}}-{{rowKey}}" class="rentType required" style="min-width: 130px;">
+                                        <option value="">选择租赁类型</option>
+                                        {{#rentTypeList}}
+                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                        {{/rentTypeList}}
+                                    </select>
+                                    <i class="arrow"></i>
+                                </label>
                             </td>
-                            <td class="br-r">{{productName}}</td>
-                            <td class="pn">
-
-                                <table class="table">
-                                    {{#chooseSkuList}}
-                                    {{#skuList}}
-                                    <tr class="skuRow">
-                                        <td><span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{propertiesToStr}}</td>
-                                        <td>商品价值：￥{{#price}}{{skuPrice}}{{/price}}</td>
-                                        <td>
-                                            <label class="field select">
-                                                <select name="rentType-{{skuId}}-{{rowKey}}" class="rentType required" style="min-width: 130px;">
-                                                    <option value="">选择租赁类型</option>
-                                                    {{#rentTypeList}}
-                                                    <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
-                                                    {{/rentTypeList}}
-                                                </select>
-                                                <i class="arrow"></i>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <div class="mw200">
-                                                <label class="field prepend-icon">
-                                                    <input type="text" name="rentTimeLength-{{skuId}}-{{rowKey}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required number pl10" placeholder="租赁时长" />
-                                                </label>
-                                                {{#showDepositAmount}}
-                                                <label class="field prepend-icon mt10">
-                                                    <input type="text" name="depositAmount-{{skuId}}-{{rowKey}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入设备押金" />
-                                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                                                </label>
-                                                {{/showDepositAmount}}
-                                            </div>
-                                        </td>
-                                        <td class="productUnitAmountTd">
-                                            <div class="smart-widget sm-right smr-50">
-                                                <input type="hidden" name="skuId" value="{{isNewProduct}}" class="isNewProduct" />
-                                                <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
-                                                <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
-                                                <label class="field prepend-icon">
-                                                    <input type="text" name="productUnitAmount-{{skuId}}-{{rowKey}}" value="{{productUnitAmount}}" class="productUnitAmount form-control required moneyNumber gui-input" placeholder="输入商品单价" />
-                                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                                                </label>
-                                                <button type="button" class="button btn-primary bradiusN chooseProductUnitAmount" data-productskuid="{{skuId}}"><i class="fa fa-search"></i></button>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <label class="field prepend-icon mw200">
-                                                <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入租赁数量" />
-                                            </label>
-                                        </td>
-                                        <td class="text-right">
-                                            <div class="btn-group text-right">
-                                                <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {{/skuList}}
-                                    {{/chooseSkuList}}
-                                </table>
+                            <td>
+                                <div class="mw200">
+                                    <label class="field prepend-icon">
+                                        <input type="text" name="rentTimeLength-{{skuId}}-{{rowKey}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required number pl10" placeholder="租赁时长" />
+                                    </label>
+                                    {{#showDepositAmount}}
+                                    <label class="field prepend-icon mt10">
+                                        <input type="text" name="depositAmount-{{skuId}}-{{rowKey}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入设备押金" />
+                                        <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                    </label>
+                                    {{/showDepositAmount}}
+                                </div>
                             </td>
+                            <td class="productUnitAmountTd">
+                                <div class="smart-widget sm-right smr-50">
+                                    <input type="hidden" name="skuId" value="{{isNewProduct}}" class="isNewProduct" />
+                                    <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
+                                    <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+                                    <label class="field prepend-icon">
+                                        <input type="text" name="productUnitAmount-{{skuId}}-{{rowKey}}" value="{{productUnitAmount}}" class="productUnitAmount form-control required moneyNumber gui-input" placeholder="输入商品单价" />
+                                        <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                    </label>
+                                    <button type="button" class="button btn-primary bradiusN chooseProductUnitAmount" data-productskuid="{{skuId}}"><i class="fa fa-search"></i></button>
+                                </div>
+                            </td>
+                            <td>
+                                <label class="field prepend-icon mw200">
+                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入租赁数量" />
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <div class="btn-group text-right">
+                                    <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
+                                </div>
+                            </td>
+##                            <td class="pn">
+##
+##                                <table class="table">
+##                                    {{#chooseSkuList}}
+##                                    {{#skuList}}
+##                                    <tr class="skuRow">
+##
+##                                    </tr>
+##                                    {{/skuList}}
+##                                    {{/chooseSkuList}}
+##                                </table>
+##                            </td>
                         </tr>
                         {{/listData}}
                         {{^listData}}
@@ -220,7 +229,6 @@
                             <td valign="top" colspan="14" class="text-center">没有选择商品</td>
                         </tr>
                         {{/listData}}
-                        {{/dataSource}}
                         </tbody>
                     </script>
                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>

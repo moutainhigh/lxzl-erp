@@ -111,7 +111,11 @@
                                         <td>{{orderNo}}</td>
                                         <td>{{orderItemTypeValue}}</td>
 ##                                        <td>{{orderItemReferId}}</td>
-                                        <td>{{itemName}}</td>
+                                        <td>
+                                            <div class="mw200">
+                                                {{itemName}}
+                                            </div>
+                                        </td>
                                         <td>{{itemCount}}</td>
                                         <td>{{#price}}{{unitAmount}}{{/price}}</td>
                                         <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>

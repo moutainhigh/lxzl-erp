@@ -228,61 +228,51 @@
 ##                                                    <span class="checkbox mn"></span>
 ##                                                </label>
 ##                                            </th>
-                                            <th>商品ID</th>
-                                            <th>图片</th>
+##                                            <th>商品ID</th>
+##                                            <th>图片</th>
                                             <th>商品名称</th>
-                                            <th>列表价格</th>
                                             <th>SKU</th>
+                                            <th>可退数量</th>
+                                            <th>退货数量</th>
+                                            <th class="text-right">操作</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {{#dataSource}}
                                         {{#listData}}
                                         <tr class="productRow" productRowKey="{{productId}}">
-                                            <td>{{productId}}</td>
-                                            <td>
-                                                <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
-                                            </td>
+##                                            <td>{{productId}}</td>
+##                                            <td>
+##                                                <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
+##                                            </td>
                                             <td>{{productName}}</td>
-                                            <td class="br-r">{{listPriceFixed}}</td>
-                                            <td class="pn">
-                                                <table class="table">
-                                                    {{#chooseSkuList}}
-                                                    {{#skuList}}
-                                                    <tr class="skuRow">
-                                                        <td>{{propertiesToStr}}</td>
-                                                        <td>可退：{{canProcessCount}}</td>
-                                                        <td>
-                                                            退货数量：{{returnProductSkuCount}}
-                                                        </td>
-                                                        <td class="text-right">
-                                                            <div class="btn-group text-right">
-                                                                <a href="#" type="button" class="btn btn-default btn-xs viewAffix viewReturnEquipment" data-returnorderproductid="{{returnOrderProductId}}">查看已退设备</a>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr class="bg-light affixTr" style="height: 0;">
-                                                        <td colspan="8" class="pn br-n" style="height:0;">
-                                                            <div class="panel m15 affixPanel"  style="display: none;">
-                                                                <div class="panel-heading pn ph8">
-                                                                    <span>已退还设备：设备编号列表</span>
-                                                                </div>
-                                                                <div class="panel-body pn">
-                                                                    <table class="table">
-                                                                        <tr><td class="br-r">正在加载...</td></tr>
-                                                                    </table>
-                                                                </div>
-                                                                <div class="panel-footer pn pv5 ph15">
-                                                                    <div class="row">
-                                                                        <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    {{/skuList}}
-                                                    {{/chooseSkuList}}
-                                                </table>
+                                            <td>{{propertiesToStr}}</td>
+                                            <td>{{canProcessCount}}</td>
+                                            <td>
+                                               {{returnProductSkuCount}}
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="btn-group text-right">
+                                                    <a href="#" type="button" class="btn btn-default btn-xs viewAffix viewReturnEquipment" data-returnorderproductid="{{returnOrderProductId}}">查看已退设备</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bg-light affixTr" style="height: 0;">
+                                            <td colspan="8" class="pn br-n" style="height:0;">
+                                                <div class="panel m15 affixPanel"  style="display: none;">
+                                                    <div class="panel-heading pn ph8">
+                                                        <span>已退还设备：设备编号列表</span>
+                                                    </div>
+                                                    <div class="panel-body pn">
+                                                        <table class="table">
+                                                            <tr><td class="br-r">正在加载...</td></tr>
+                                                        </table>
+                                                    </div>
+                                                    <div class="panel-footer pn pv5 ph15">
+                                                        <div class="row">
+                                                            <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                         {{/listData}}
@@ -291,7 +281,6 @@
                                             <td valign="top" colspan="14" class="text-center">没有选择商品</td>
                                         </tr>
                                         {{/listData}}
-                                        {{/dataSource}}
                                         </tbody>
                                     </script>
 

@@ -145,54 +145,70 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </th>
-                            <th>商品ID</th>
-                            <th>图片</th>
+##                            <th>商品ID</th>
+##                            <th>图片</th>
                             <th>商品名称</th>
-                            <th>列表价格</th>
                             <th>SKU</th>
+                            <th>可退数量</th>
+                            <th>退货数量</th>
+                            <th class="text-right">操作</th>
+
                         </tr>
                         </thead>
                         <tbody>
-                        {{#dataSource}}
                         {{#listData}}
-                        <tr class="productRow" productRowKey="{{productId}}">
+                        <tr class="productRow skuRow" productRowKey="{{productId}}">
                             <td>
                                 <label class="option block mn">
-                                    <input type="checkbox" name="checkItem" value="{{productId}}">
+                                    <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}">
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                            <td>{{productId}}</td>
-                            <td>
-                                <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
-                            </td>
+##                            <td>{{productId}}</td>
+##                            <td>
+##                                <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
+##                            </td>
                             <td>{{productName}}</td>
-                            <td class="br-r">{{listPriceFixed}}</td>
-                            <td class="pn">
-                                <table class="table">
-                                    {{#chooseSkuList}}
-                                    {{#skuList}}
-                                    <tr class="skuRow">
-                                        <td>{{propertiesToStr}}</td>
-##                                        <td>在租：{{rentCount}}</td>
-                                        <td>可退：{{canProcessCount}}</td>
-                                        <td>
-                                            <label class="field prepend-icon mw200">
-                                                <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
-                                                <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
-                                                <input type="text" name="returnProductSkuCount-{{skuId}}" value="{{returnProductSkuCount}}" class="returnProductSkuCount form-control required number pl10" placeholder="输入退货数量" />
-                                            </label>
-                                        </td>
-                                        <td class="text-right">
-                                            <div class="btn-group text-right">
-                                                <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {{/skuList}}
-                                    {{/chooseSkuList}}
-                                </table>
+                            <td>{{propertiesToStr}}</td>
+                        ##                                        <td>在租：{{rentCount}}</td>
+                            <td>{{canProcessCount}}</td>
+                            <td>
+                                <label class="field prepend-icon mw200">
+                                    <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
+                                    <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+                                    <input type="text" name="returnProductSkuCount-{{skuId}}" value="{{returnProductSkuCount}}" class="returnProductSkuCount form-control required number pl10" placeholder="输入退货数量" />
+                                </label>
                             </td>
+                            <td class="text-right">
+                                <div class="btn-group text-right">
+                                    <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
+                                </div>
+                            </td>
+##                            <td class="pn">
+##                                <table class="table">
+##                                    {{#chooseSkuList}}
+##                                    {{#skuList}}
+##                                    <tr class="skuRow">
+##                                        <td>{{propertiesToStr}}</td>
+####                                        <td>在租：{{rentCount}}</td>
+##                                        <td>可退：{{canProcessCount}}</td>
+##                                        <td>
+##                                            <label class="field prepend-icon mw200">
+##                                                <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
+##                                                <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+##                                                <input type="text" name="returnProductSkuCount-{{skuId}}" value="{{returnProductSkuCount}}" class="returnProductSkuCount form-control required number pl10" placeholder="输入退货数量" />
+##                                            </label>
+##                                        </td>
+##                                        <td class="text-right">
+##                                            <div class="btn-group text-right">
+##                                                <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
+##                                            </div>
+##                                        </td>
+##                                    </tr>
+##                                    {{/skuList}}
+##                                    {{/chooseSkuList}}
+##                                </table>
+##                            </td>
                         </tr>
                         {{/listData}}
                         {{^listData}}
@@ -200,7 +216,6 @@
                             <td valign="top" colspan="14" class="text-center">没有选择商品</td>
                         </tr>
                         {{/listData}}
-                        {{/dataSource}}
                         </tbody>
                     </script>
                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
