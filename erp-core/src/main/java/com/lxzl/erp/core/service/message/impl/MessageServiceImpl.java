@@ -40,6 +40,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public ServiceResult<String, Integer> superSendMessage(Message message) {
+
         return sendMessageDetail(message, CommonConstant.SUPER_USER_ID);
     }
 

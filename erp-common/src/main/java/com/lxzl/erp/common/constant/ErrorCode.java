@@ -410,6 +410,10 @@ public class ErrorCode {
     public static final String IMG_REF_ID_NOT_NULL = "J1100031";
     public static final String IMG_REF_ID_NEED_NULL = "J1100032";
 
+    public static final String TRANSFER_ORDER_NO_NOT_NULL = "J1200001";
+    public static final String TRANSFER_ORDER_ID_NOT_NULL = "J1200002";
+    public static final String TRANSFER_ORDER_NOT_EXISTS = "J1200003";
+
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -634,7 +638,6 @@ public class ErrorCode {
         MAP.put(SUPPLIER_IS_EXISTS, "供应商已经存在");
 
 
-
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
         MAP.put(ORDER_PRODUCT_STOCK_INSUFFICIENT, "库存不足");
@@ -817,6 +820,12 @@ public class ErrorCode {
         MAP.put(OTHER_DATE_IMAGE_TYPE_IS_ERROR, "传入的不是其他材料的照片，请重新传入");
         MAP.put(IMG_REF_ID_NOT_NULL, "图片的ref-ID不能为空");
         MAP.put(IMG_REF_ID_NEED_NULL, "编号【%s 】的图片refID已经有值，不能进行该操作");
+
+
+        MAP.put(TRANSFER_ORDER_NO_NOT_NULL, "组装单编号不能为空");
+        MAP.put(TRANSFER_ORDER_ID_NOT_NULL, "转移单ID不能为空");
+        MAP.put(TRANSFER_ORDER_NOT_EXISTS, "转移单不存在");
+
 
     }
 

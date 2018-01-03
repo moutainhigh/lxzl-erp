@@ -20,4 +20,9 @@ public class StockCauseType {
      * 订单发货
      */
     public static final Integer STOCK_CAUSE_TYPE_ORDER_DELIVERY = 3;
+
+    /**
+     * 转移
+     */
+    public static final Integer STOCK_CAUSE_TYPE_TRANSFER_ORDER = 3;
 }

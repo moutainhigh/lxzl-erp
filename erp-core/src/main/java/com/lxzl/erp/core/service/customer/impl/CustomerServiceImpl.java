@@ -204,6 +204,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setCreateTime(now);
         customerDO.setUpdateTime(now);
         customerDO.setCreateUser(userSupport.getCurrentUserId().toString());
+
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         //加入跟单员和联合开发员
         customerDO.setOwner(userSupport.getCurrentUserId());
@@ -485,8 +486,6 @@ public class CustomerServiceImpl implements CustomerService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("queryParam", customerPersonQueryParam);
-
-
 
         Integer totalCount = customerMapper.findCustomerPersonCountByParams(maps);
         List<CustomerDO> customerDOList = customerMapper.findCustomerPersonByParams(maps);

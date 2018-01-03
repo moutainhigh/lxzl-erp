@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.transferOrder.TransferOrderMapper">
+
+	<resultMap id="TransferOrderDO" type="com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="transfer_order_no" jdbcType="VARCHAR" property="transferOrderNo" />
+		<result column="transfer_order_name" jdbcType="VARCHAR" property="transferOrderName" />
+		<result column="transfer_order_status" jdbcType="INTEGER" property="transferOrderStatus" />
+		<result column="transfer_order_mode" jdbcType="INTEGER" property="transferOrderMode" />
+		<result column="transfer_order_type" jdbcType="INTEGER" property="transferOrderType" />
+		<result column="warehouse_id" jdbcType="INTEGER" property="warehouseId" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		eto.id,eto.transfer_order_no,eto.transfer_order_name,eto.transfer_order_status,eto.transfer_order_mode,eto.transfer_order_type,eto.warehouse_id,eto.data_status,eto.remark,eto.create_time,eto.create_user,eto.update_time,eto.update_user
+	</sql>
+
+	<select id="findById" resultMap="TransferOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_transfer_order eto 
+		WHERE eto.id = #{id, jdbcType=INTEGER} AND eto.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eto.id) FROM erp_transfer_order eto 
+		<where>
+			<if test="true">
+				AND eto.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="TransferOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_transfer_order eto 
+		<where>
+			<if test="true">
+				AND eto.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="transferOrderNo != null">
+				transfer_order_no = #{transferOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="transferOrderName != null">
+				transfer_order_name = #{transferOrderName,jdbcType=VARCHAR},
+			</if>
+			<if test="transferOrderStatus != null">
+				transfer_order_status = #{transferOrderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="transferOrderMode != null">
+				transfer_order_mode = #{transferOrderMode,jdbcType=INTEGER},
+			</if>
+			<if test="transferOrderType != null">
+				transfer_order_type = #{transferOrderType,jdbcType=INTEGER},
+			</if>
+			<if test="warehouseId != null">
+				warehouse_id = #{warehouseId,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderDO">
+		INSERT INTO erp_transfer_order <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderDO">
+		UPDATE erp_transfer_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
