@@ -1,0 +1,104 @@
+<div class="popup-basic popup-xl admin-form mfp-with-anim theme-primary " id="chooseProductModal">
+
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-search"></i>选择设备打印条形码</span>
+        </div>
+##        <div class="panel-heading">
+##            <div class="panel-header-menu pull-left mr10">
+##                <a href="javascript:window.print()" class="btn btn-xs btn-default btn-gradient mr5"> <i class="fa fa-print fs13"></i> </a>
+##            </div>
+##        </div>
+        <div class="panel-body br-b">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="btn-group" id="actionButtons">
+                        <a href="#" class="btn btn-primary btn-sm ml5 bradius chooseEquiment">
+                            <i class="fa fa-print fs13"></i> 选择设备
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form class="editForm">
+            <div class="panel-body pn">
+                <div class="table-responsive">
+                    <script type="text/html" class="dataListTpl">
+                        <thead>
+                        <tr>
+                            <th>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkAll" value="">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </th>
+                            <th>设备编号</th>
+                            <th>仓库</th>
+                            <th>商品ID</th>
+                            <th>商品名</th>
+                            <th>商品图</th>
+                            <th>SKUID</th>
+                            <th>设备状态</th>
+##                            <th>原采购价</th>
+##                            <th>采购价格</th>
+                            <th>备注</th>
+                            {{#hasRowActionButtons}}
+                            <th class="text-right">操作</th>
+                            {{/hasRowActionButtons}}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#dataSource}}
+                        {{#listData}}
+                        <tr class="equipmentTr">
+                            <td>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkItem" value="{{equipmentNo}}">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </td>
+                            <td>{{equipmentNo}}</td>
+                            <td>{{ownerWarehouseName}}</td>
+                            <td>{{productId}}</td>
+                            <td>{{productName}}</td>
+                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                            <td>{{skuId}}</td>
+                            <td>{{equipmentStatusStr}}</td>
+##                            <td>{{#price}}{{srcPurchasePrice}}{{/price}}</td>
+##                            <td>
+##                                <input type="hidden" name="equipmentNo" value="{{equipmentNo}}" class="equipmentNo" />
+##                                <label class="field prepend-icon">
+##                                    <input type="text" name="productAmount-{{equipmentNo}}" value="{{purchasePrice}}" class="purchasePrice form-control required moneyNumber" placeholder="输入采购价格" />
+##                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+##                                </label>
+##                            </td>
+                            <td>{{remark}}</td>
+                        </tr>
+                        {{/listData}}
+                        {{^listData}}
+                        <tr>
+                            <td valign="top" colspan="8" class="text-center">没有查询到设备</td>
+                        </tr>
+                        {{/listData}}
+                        {{/dataSource}}
+                        </tbody>
+                    </script>
+                    <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13 dataListTable"></table>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                        #parse("component/pager.vm")
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <button type="button" class="button btn-default cancelButton"">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+

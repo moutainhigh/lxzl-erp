@@ -126,6 +126,12 @@ public class PageController extends BaseController {
         return "/productManage/skuList";
     }
 
+    //条形码打印
+    @RequestMapping("/print-manage/barcode")
+    public String printManageBarcode() {
+        return "/productManage/printBarcode";
+    }
+
     //物料型号管理
     @RequestMapping("/material-modal-manage/list")
     public String materialMaodalManageList() {
@@ -350,6 +356,11 @@ public class PageController extends BaseController {
     @RequestMapping("/purchase-receive-manage-udpate-equipment-remark/modal")
     public String purchaseReceiveManageUpdateEquipmentRemarkModal() {
         return "/component/purchaseReceiveOrder/updateEquipmentRemarkModal";
+    }
+
+    @RequestMapping("/purchase-receive-manage-equiment/list")
+    public String purchaseReceiveMangeEquimentList() {
+        return "/component/purchaseReceiveOrder/equimentList";
     }
 
 
