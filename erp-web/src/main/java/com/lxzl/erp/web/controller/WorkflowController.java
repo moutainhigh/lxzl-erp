@@ -5,7 +5,10 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.workflow.VerifyWorkflowParam;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
+import com.lxzl.erp.common.domain.workflow.WorkflowTemplateQueryParam;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowNode;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowTemplate;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
@@ -13,6 +16,8 @@ import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -73,6 +78,25 @@ public class WorkflowController extends BaseController {
         ServiceResult<String, Boolean> serviceResult = workflowService.isNeedVerify(workflowLinkQueryParam.getWorkflowType());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    @RequestMapping(value = "updateWorkflowNodeList", method = RequestMethod.POST)
+    public Result updateWorkflowNodeList(@RequestBody @Validated WorkflowTemplate workflowTemplate, BindingResult bindingResult) {
+        ServiceResult<String, Integer> serviceResult = workflowService.updateWorkflowNodeList(workflowTemplate);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "findWorkflowTemplate", method = RequestMethod.POST)
+    public Result findWorkflowTemplate(@RequestBody WorkflowTemplate workflowTemplate, BindingResult bindingResult) {
+        ServiceResult<String, WorkflowTemplate> serviceResult = workflowService.findWorkflowTemplate(workflowTemplate.getWorkflowTemplateId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "pageWorkflowTemplate", method = RequestMethod.POST)
+    public Result pageWorkflowTemplate(@RequestBody WorkflowTemplateQueryParam workflowTemplateQueryParam, BindingResult bindingResult) {
+        ServiceResult<String, Page<WorkflowTemplate>> serviceResult = workflowService.pageWorkflowTemplate(workflowTemplateQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 
     @Autowired
     private WorkflowService workflowService;
