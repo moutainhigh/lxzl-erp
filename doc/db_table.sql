@@ -945,6 +945,7 @@ CREATE TABLE `erp_stock_order_equipment` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `stock_order_no` varchar(100) NOT NULL COMMENT '出入库单编号',
   `item_refer_id` int(11) COMMENT '关联项ID',
+  `item_refer_type` int(11) COMMENT '关联项类型，1-采购收货单商品项',
   `equipment_id` int(20) NOT NULL COMMENT '设备ID',
   `equipment_no` varchar(100) NOT NULL COMMENT '设备编号唯一',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -956,11 +957,12 @@ CREATE TABLE `erp_stock_order_equipment` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='设备出入库单明细';
 
-DROP TABLE if exists `erp_stock_order_bulk_material`;
+  DROP TABLE if exists `erp_stock_order_bulk_material`;
 CREATE TABLE `erp_stock_order_bulk_material` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `stock_order_no` varchar(100) NOT NULL COMMENT '出入库单编号',
   `item_refer_id` int(11) COMMENT '关联项ID',
+  `item_refer_type` int(11) COMMENT '关联项类型，1-采购收货单商品项，2-采购收货单物料项',
   `bulk_material_id` int(20) NOT NULL COMMENT '散料ID',
   `bulk_material_no` varchar(100) NOT NULL COMMENT '散料编号唯一',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
