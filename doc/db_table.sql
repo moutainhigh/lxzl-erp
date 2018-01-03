@@ -2129,8 +2129,11 @@ DROP TABLE if exists `erp_transfer_order`;
 CREATE TABLE `erp_transfer_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `transfer_order_no` varchar(100) NOT NULL COMMENT '组装单编号',
-  `transfer_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '转移单状态，0初始化，4转移成功，8取消转移',
-
+  `transfer_order_name` varchar(100) NOT NULL COMMENT '组装单名称',
+  `transfer_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '转移单状态，0初始化，4审批中，8转移成功，16取消转移',
+  `transfer_order_mode` int(11) NOT NULL COMMENT '转移方式，1转入，2转出（凭空转入转出）',
+  `transfer_order_type` int(11) NOT NULL COMMENT '转移类型，1外借入库转入，2试验机转入，99其他',
+  `warehouse_id` int(20) DEFAULT NULL COMMENT '仓库ID，哪个库房转移',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -2147,7 +2150,7 @@ CREATE TABLE `erp_transfer_order_product` (
   `product_id` int(20) NOT NULL COMMENT '转移商品ID',
   `product_sku_id` int(20) NOT NULL COMMENT '转移商品SKU ID',
   `product_count` int(11) NOT NULL COMMENT '物料数量',
-
+  `is_new` int(11) NOT NULL DEFAULT '0' COMMENT '是否全新，1是，0否',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -2164,7 +2167,7 @@ CREATE TABLE `erp_transfer_order_material` (
   `material_id` int(20) NOT NULL COMMENT '物料ID',
   `material_no` varchar(100) NOT NULL COMMENT '物料编号',
   `material_count` int(11) NOT NULL COMMENT '物料数量',
-
+  `is_new` int(11) NOT NULL DEFAULT '0' COMMENT '是否全新，1是，0否',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -2179,7 +2182,7 @@ CREATE TABLE `erp_transfer_order_product_equipment` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `transfer_order_id` int(20) NOT NULL COMMENT '转移单ID',
   `transfer_order_product_id` int(20) NOT NULL COMMENT '转移单商品项ID',
-
+  `product_equipment_no` varchar(100) NOT NULL COMMENT '商品设备唯一编号',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -2194,7 +2197,7 @@ CREATE TABLE `erp_transfer_order_material_bulk` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `transfer_order_id` int(20) NOT NULL COMMENT '转移单ID',
   `transfer_order_material_id` int(20) NOT NULL COMMENT '转移单ID',
-
+  `bulk_material_no` varchar(100) NOT NULL COMMENT '散料唯一编号',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
