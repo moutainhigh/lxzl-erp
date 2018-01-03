@@ -2,123 +2,236 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowTemplateMapper">
 
-	<resultMap id="WorkflowTemplateDO" type="com.lxzl.erp.dataaccess.domain.workflow.WorkflowTemplateDO">
-		<id column="id" jdbcType="INTEGER" property="id" />
-		<result column="workflow_name" jdbcType="VARCHAR" property="workflowName" />
-		<result column="workflow_desc" jdbcType="VARCHAR" property="workflowDesc" />
-		<result column="workflow_type" jdbcType="INTEGER" property="workflowType" />
-		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
-		<result column="remark" jdbcType="VARCHAR" property="remark" />
-		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
-		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
-		<collection property="workflowNodeDOList" resultMap="WorkflowNodeDO"/>
-	</resultMap>
+    <resultMap id="WorkflowTemplateDO" type="com.lxzl.erp.dataaccess.domain.workflow.WorkflowTemplateDO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="workflow_name" jdbcType="VARCHAR" property="workflowName"/>
+        <result column="workflow_desc" jdbcType="VARCHAR" property="workflowDesc"/>
+        <result column="workflow_type" jdbcType="INTEGER" property="workflowType"/>
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <collection property="workflowNodeDOList" resultMap="WorkflowNodeDO"/>
+    </resultMap>
 
-	<resultMap id="WorkflowNodeDO" type="com.lxzl.erp.dataaccess.domain.workflow.WorkflowNodeDO">
-		<id column="node_id" jdbcType="INTEGER" property="id" />
-		<result column="node_workflow_node_name" jdbcType="VARCHAR" property="workflowNodeName" />
-		<result column="node_workflow_template_id" jdbcType="INTEGER" property="workflowTemplateId" />
-		<result column="node_workflow_step" jdbcType="INTEGER" property="workflowStep" />
-		<result column="node_workflow_previous_node_id" jdbcType="INTEGER" property="workflowPreviousNodeId" />
-		<result column="node_workflow_next_node_id" jdbcType="INTEGER" property="workflowNextNodeId" />
-		<result column="node_workflow_department_type" jdbcType="INTEGER" property="workflowDepartmentType" />
-		<result column="node_workflow_department" jdbcType="INTEGER" property="workflowDepartment" />
-		<result column="node_workflow_role" jdbcType="INTEGER" property="workflowRole" />
-		<result column="node_workflow_user" jdbcType="INTEGER" property="workflowUser" />
-		<result column="node_data_status" jdbcType="INTEGER" property="dataStatus" />
-		<result column="node_remark" jdbcType="VARCHAR" property="remark" />
-		<result column="node_create_time" jdbcType="TIMESTAMP" property="createTime" />
-		<result column="node_create_user" jdbcType="VARCHAR" property="createUser" />
-		<result column="node_update_time" jdbcType="TIMESTAMP" property="updateTime" />
-		<result column="node_update_user" jdbcType="VARCHAR" property="updateUser" />
-	</resultMap>
+    <resultMap id="WorkflowNodeDO" type="com.lxzl.erp.dataaccess.domain.workflow.WorkflowNodeDO">
+        <id column="node_id" jdbcType="INTEGER" property="id"/>
+        <result column="node_workflow_node_name" jdbcType="VARCHAR" property="workflowNodeName"/>
+        <result column="node_workflow_template_id" jdbcType="INTEGER" property="workflowTemplateId"/>
+        <result column="node_workflow_step" jdbcType="INTEGER" property="workflowStep"/>
+        <result column="node_workflow_previous_node_id" jdbcType="INTEGER" property="workflowPreviousNodeId"/>
+        <result column="node_workflow_next_node_id" jdbcType="INTEGER" property="workflowNextNodeId"/>
+        <result column="node_workflow_department_type" jdbcType="INTEGER" property="workflowDepartmentType"/>
+        <result column="node_workflow_department" jdbcType="INTEGER" property="workflowDepartment"/>
+        <result column="node_workflow_role" jdbcType="INTEGER" property="workflowRole"/>
+        <result column="node_workflow_user" jdbcType="INTEGER" property="workflowUser"/>
+        <result column="node_data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="node_remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="node_create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="node_create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="node_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="node_update_user" jdbcType="VARCHAR" property="updateUser"/>
+    </resultMap>
 
-	<sql id="column_List">
+    <sql id="column_List">
 		ewt.id,ewt.workflow_name,ewt.workflow_desc,ewt.workflow_type,ewt.data_status,ewt.remark,ewt.create_time,ewt.create_user,ewt.update_time,ewt.update_user
 	</sql>
 
-	<sql id="node_column_List">
+    <sql id="node_column_List">
 		ewn.id as node_id,ewn.workflow_node_name as node_workflow_node_name,ewn.workflow_template_id as node_workflow_template_id,ewn.workflow_step as node_workflow_step,ewn.workflow_previous_node_id as node_workflow_previous_node_id,ewn.workflow_next_node_id as node_workflow_next_node_id,ewn.workflow_department_type as node_workflow_department_type,ewn.workflow_department as node_workflow_department,ewn.workflow_role as node_workflow_role,ewn.workflow_user as node_workflow_user,ewn.data_status as node_data_status,ewn.remark as node_remark,ewn.create_time as node_create_time,ewn.create_user as node_create_user,ewn.update_time as node_update_time,ewn.update_user as node_update_user
 	</sql>
 
-	<select id="findById" resultMap="WorkflowTemplateDO" parameterType="java.lang.Integer">
-		select template.*,<include refid="node_column_List"/> from
-		(
-			select <include refid="column_List"/> from erp_workflow_template ewt
-			where ewt.id = #{id, jdbcType=INTEGER} and data_status = 1
-		) template
-		left join erp_workflow_node ewn on ewn.workflow_template_id = template.id and ewn.data_status = 1
-		order by ewn.workflow_step
-	</select>
+    <select id="findById" resultMap="WorkflowTemplateDO" parameterType="java.lang.Integer">
+        select template.*,
+        <include refid="node_column_List"/>
+        from
+        (
+        select
+        <include refid="column_List"/>
+        from erp_workflow_template ewt
+        where ewt.id = #{id, jdbcType=INTEGER} and data_status = 1
+        ) template
+        left join erp_workflow_node ewn on ewn.workflow_template_id = template.id and ewn.data_status = 1
+        order by ewn.workflow_step
+    </select>
 
-	<select id="findByWorkflowType" resultMap="WorkflowTemplateDO" parameterType="java.lang.Integer">
-		select template.*,<include refid="node_column_List"/> from
-		(
-			select <include refid="column_List"/> from erp_workflow_template ewt
-			where ewt.workflow_type = #{workflowType, jdbcType=INTEGER} and data_status = 1
-		) template
-		left join erp_workflow_node ewn on ewn.workflow_template_id = template.id and ewn.data_status = 1
-		order by ewn.workflow_step
-	</select>
+    <select id="findByWorkflowType" resultMap="WorkflowTemplateDO" parameterType="java.lang.Integer">
+        select template.*,
+        <include refid="node_column_List"/>
+        from
+        (
+        select
+        <include refid="column_List"/>
+        from erp_workflow_template ewt
+        where ewt.workflow_type = #{workflowType, jdbcType=INTEGER} and data_status = 1
+        ) template
+        left join erp_workflow_node ewn on ewn.workflow_template_id = template.id and ewn.data_status = 1
+        order by ewn.workflow_step
+    </select>
 
-	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		select count(ewt.id) from erp_workflow_template ewt 
-		<where>
-			<if test="true">
-				and ewt.data_status = 1
-			</if>
-		</where>
-	</select>
+    <select id="listCount" resultType="java.lang.Integer" parameterType="map">
+        select count(ewt.id) from erp_workflow_template ewt
+        <where>
+            <if test="maps.workflowTemplateQueryParam != null &amp;&amp; maps.workflowTemplateQueryParam.workflowTemplateId != null &amp;&amp; maps.workflowTemplateQueryParam.workflowTemplateId != ''">
+                and ewt.id = #{maps.workflowTemplateQueryParam.workflowTemplateId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.workflowTemplateQueryParam != null &amp;&amp;maps.workflowTemplateQueryParam.workflowTemplateName != null &amp;&amp; maps.workflowTemplateQueryParam.workflowTemplateName != ''">
+                and ewt.workflow_name like CONCAT('%','${maps.workflowTemplateQueryParam.workflowTemplateName}','%' )
+            </if>
+            <if test="true">
+                and ewt.data_status = 1
+            </if>
+        </where>
+    </select>
 
-	<select id="listPage" resultMap="WorkflowTemplateDO" parameterType="map">
-		select <include refid="column_List"/> from erp_workflow_template ewt 
-		<where>
-			<if test="true">
-				and ewt.data_status = 1
-			</if>
-		</where>
-		LIMIT #{maps.start},#{maps.pageSize}
-	</select>
+    <select id="listPage" resultMap="WorkflowTemplateDO" parameterType="map">
+        select
+        <include refid="column_List"/>
+        from erp_workflow_template ewt
+        <where>
+            <if test="maps.workflowTemplateQueryParam != null &amp;&amp; maps.workflowTemplateQueryParam.workflowTemplateId != null &amp;&amp; maps.workflowTemplateQueryParam.workflowTemplateId != ''">
+                and ewt.id = #{maps.workflowTemplateQueryParam.workflowTemplateId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.workflowTemplateQueryParam != null &amp;&amp;maps.workflowTemplateQueryParam.workflowTemplateName != null &amp;&amp; maps.workflowTemplateQueryParam.workflowTemplateName != ''">
+                and ewt.workflow_name like CONCAT('%','${maps.workflowTemplateQueryParam.workflowTemplateName}','%' )
+            </if>
+            <if test="true">
+                and ewt.data_status = 1
+            </if>
+        </where>
+        LIMIT #{maps.start},#{maps.pageSize}
+    </select>
 
-	<sql id="set_column_sql">
-		<set>
-			<if test="workflowName != null">
-				workflow_name = #{workflowName,jdbcType=VARCHAR},
-			</if>
-			<if test="workflowDesc != null">
-				workflow_desc = #{workflowDesc,jdbcType=VARCHAR},
-			</if>
-			<if test="workflowType != null">
-				workflow_type = #{workflowType,jdbcType=INTEGER},
-			</if>
-			<if test="dataStatus != null">
-				data_status = #{dataStatus,jdbcType=INTEGER},
-			</if>
-			<if test="remark != null">
-				remark = #{remark,jdbcType=VARCHAR},
-			</if>
-			<if test="createTime != null">
-				create_time = #{createTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="createUser != null">
-				create_user = #{createUser,jdbcType=VARCHAR},
-			</if>
-			<if test="updateTime != null">
-				update_time = #{updateTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="updateUser != null">
-				update_user = #{updateUser,jdbcType=VARCHAR},
-			</if>
-		</set>
+    <sql id="set_column_sql">
+        <set>
+            <if test="workflowName != null">
+                workflow_name = #{workflowName,jdbcType=VARCHAR},
+            </if>
+            <if test="workflowDesc != null">
+                workflow_desc = #{workflowDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="workflowType != null">
+                workflow_type = #{workflowType,jdbcType=INTEGER},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+        </set>
+    </sql>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.workflow.WorkflowTemplateDO">
+        insert into erp_workflow_template
+        <include refid="set_column_sql"/>
+    </insert>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.workflow.WorkflowTemplateDO">
+        update erp_workflow_template
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <select id="findByWorkflowTemplateId" resultMap="WorkflowTemplateDO" parameterType="java.lang.Integer">
+        select template.*,
+        <include refid="node_column_List"/>
+        ,edd.data_name AS departmentTypeName
+        ,ed.department_name AS departmentName
+        ,er.role_Name AS roleName
+        ,eu.real_name AS userName
+        from
+        (
+        select
+        <include refid="column_List"/>
+        from erp_workflow_template ewt
+        where ewt.id = #{id, jdbcType=INTEGER} and data_status = 1
+        ) template
+        left join erp_workflow_node ewn on ewn.workflow_template_id = template.id and ewn.data_status = 1
+        LEFT JOIN erp_data_dictionary edd on ewn.workflow_department_type = edd.id and edd.data_status = 1
+        LEFT JOIN erp_department ed ON ewn.workflow_department = ed.id and ed.data_status = 1
+        left join erp_role er on ewn.workflow_role = er.id and er.data_status = 1
+        LEFT JOIN erp_user eu on ewn.workflow_user = eu.id
+        order by ewn.workflow_step
+    </select>
+
+
+    <resultMap id="RoleDO" type="com.lxzl.erp.dataaccess.domain.user.RoleDO">
+        <id column="role_id" jdbcType="INTEGER" property="id"/>
+        <result column="role_role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="role_role_desc" jdbcType="VARCHAR" property="roleDesc"/>
+        <result column="role_parent_role_name" jdbcType="VARCHAR" property="parentRoleName"/>
+        <result column="role_is_super_admin" jdbcType="VARCHAR" property="isSuperAdmin"/>
+        <result column="role_data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="role_remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="role_create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="role_create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="role_update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="role_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <resultMap type="com.lxzl.erp.dataaccess.domain.user.UserDO" id="UserDO">
+        <id column="user_id" property="id"/>
+        <result column="user_user_type" property="userType"/>
+        <result column="user_user_name" property="userName"/>
+        <result column="user_real_name" property="realName"/>
+        <result column="user_password" property="password"/>
+        <result column="user_email" property="email"/>
+        <result column="user_email_verify_code" property="emailVerifyCode"/>
+        <result column="user_email_verify_time" property="emailVerifyTime"/>
+        <result column="user_phone" property="phone"/>
+        <result column="user_phone_verify_code" property="phoneVerifyCode"/>
+        <result column="user_phone_verify_time" property="phoneVerifyTime"/>
+        <result column="user_is_activated" property="isActivated"/>
+        <result column="user_is_disabled" property="isDisabled"/>
+        <result column="user_register_time" property="registerTime"/>
+        <result column="user_last_login_time" property="lastLoginTime"/>
+        <result column="user_last_login_ip" property="lastLoginIp"/>
+        <result column="user_remark" property="remark"/>
+    </resultMap>
+
+    <resultMap id="DepartmentDO" type="com.lxzl.erp.dataaccess.domain.company.DepartmentDO">
+        <id column="department_id" jdbcType="INTEGER" property="id"/>
+        <result column="department_department_name" jdbcType="VARCHAR" property="departmentName"/>
+        <result column="department_department_type" jdbcType="INTEGER" property="departmentType"/>
+        <result column="department_parent_department_id" jdbcType="INTEGER" property="parentDepartmentId"/>
+        <result column="department_sub_company_id" jdbcType="INTEGER" property="subCompanyId"/>
+        <result column="department_data_order" jdbcType="INTEGER" property="dataOrder"/>
+        <result column="department_data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="department_remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="department_create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="department_create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="department_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="department_update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <collection property="department_roleDOList" resultMap="RoleDO"/>
+        <collection property="department_userDOList" resultMap="UserDO"/>
+    </resultMap>
+
+    <sql id="department_column_List">
+		ed.id,ed.department_name,ed.department_type,ed.parent_department_id,ed.sub_company_id,ed.data_order,ed.data_status,ed.remark,ed.create_time,ed.create_user,ed.update_time,ed.update_user
 	</sql>
 
-	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.workflow.WorkflowTemplateDO">
-		insert into erp_workflow_template <include refid="set_column_sql"/>
-	</insert>
+    <sql id="user_column_List">
+		eu.id as user_id,eu.user_type as user_user_type,eu.user_name as user_user_name,eu.real_name as user_real_name,eu.password as user_password,eu.email as user_email,eu.email_verify_code as user_email_verify_code,eu.email_verify_time as user_email_verify_time,eu.phone as user_phone,eu.phone_verify_code as user_phone_verify_code,eu.phone_verify_time as user_phone_verify_time,eu.is_activated as user_is_activated,eu.is_disabled as user_is_disabled,eu.register_time as user_register_time,eu.last_login_time as user_last_login_time,eu.last_login_ip as user_last_login_ip,eu.remark as user_remark
+	</sql>
 
-	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.workflow.WorkflowTemplateDO">
-		update erp_workflow_template <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
-	</update>
+    <sql id="role_column_List">
+		er.id as role_id,er.role_name as role_role_name,er.role_desc as role_role_desc,er.is_super_admin as role_is_super_admin,er.data_status as role_data_status,er.remark as role_remark,er.create_time as role_create_time,er.update_time as role_update_time
+	</sql>
+
 </mapper>

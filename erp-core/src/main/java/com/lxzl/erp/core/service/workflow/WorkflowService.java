@@ -4,7 +4,9 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
+import com.lxzl.erp.common.domain.workflow.WorkflowTemplateQueryParam;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowTemplate;
 import com.lxzl.se.core.service.BaseService;
 
 import java.util.List;
@@ -89,4 +91,30 @@ public interface WorkflowService extends BaseService {
      * @return true 是 false 否
      */
     ServiceResult<String, Boolean> isNeedVerify(Integer workflowType);
+
+
+    /**
+     * 根据模版类型查找流程
+     * @param workflowTemplateId
+     * @return
+     */
+    ServiceResult<String,WorkflowTemplate> findWorkflowTemplate(Integer workflowTemplateId);
+
+    /**
+     * 更新模板节点列表
+     *
+     * @param workflowTemplate
+     * @return
+     */
+
+    ServiceResult<String,Integer> updateWorkflowNodeList(WorkflowTemplate workflowTemplate);
+
+    /**
+     * 获取模版讯息
+     *
+     * @param workflowTemplateQueryParam
+     * @return
+     */
+    ServiceResult<String,Page<WorkflowTemplate>> pageWorkflowTemplate(WorkflowTemplateQueryParam workflowTemplateQueryParam);
+
 }

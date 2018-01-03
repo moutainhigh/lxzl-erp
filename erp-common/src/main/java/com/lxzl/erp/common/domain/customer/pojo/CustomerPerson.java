@@ -34,13 +34,8 @@ public class CustomerPerson extends BasePO {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
-//	@NotBlank(message = ErrorCode.PERSON_NAME_NOT_NULL,groups={AddCustomerPersonGroup.class})
-	private String personName;//用户名'
-//	@NotBlank(message = ErrorCode.PERSON_NO_NOT_NULL,groups={AddCustomerPersonGroup.class})
 	private String personNo;//身份证号'
-//	@NotBlank(message = ErrorCode.CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_NULL,groups={AddCustomerPersonGroup.class})
 	private String connectRealName;//紧急联系人姓名'
-//	@NotBlank(message = ErrorCode.CUSTOMER_PERSON_CONNECT_PHONE_NOT_NULL,groups={AddCustomerPersonGroup.class})
 	private String connectPhone;//紧急联系人电话'
 
 	private String provinceName;
@@ -48,126 +43,149 @@ public class CustomerPerson extends BasePO {
 	private String districtName;
 
 
-	public Integer getCustomerPersonId(){
+	public Integer getCustomerPersonId() {
 		return customerPersonId;
 	}
 
-	public void setCustomerPersonId(Integer customerPersonId){
+	public void setCustomerPersonId(Integer customerPersonId) {
 		this.customerPersonId = customerPersonId;
 	}
 
-	public Integer getCustomerId(){
+	public Integer getCustomerId() {
 		return customerId;
 	}
 
-	public void setCustomerId(Integer customerId){
+	public void setCustomerId(Integer customerId) {
 		this.customerId = customerId;
 	}
 
-	public String getRealName(){
+	public String getRealName() {
 		return realName;
 	}
 
-	public void setRealName(String realName){
+	public void setRealName(String realName) {
 		this.realName = realName;
 	}
 
-	public String getEmail(){
+	public String getEmail() {
 		return email;
 	}
 
-	public void setEmail(String email){
+	public void setEmail(String email) {
 		this.email = email;
 	}
 
-	public String getPhone(){
+	public String getPhone() {
 		return phone;
 	}
 
-	public void setPhone(String phone){
+	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 
-	public Integer getProvince(){
+	public Integer getProvince() {
 		return province;
 	}
 
-	public void setProvince(Integer province){
+	public void setProvince(Integer province) {
 		this.province = province;
 	}
 
-	public Integer getCity(){
+	public Integer getCity() {
 		return city;
 	}
 
-	public void setCity(Integer city){
+	public void setCity(Integer city) {
 		this.city = city;
 	}
 
-	public Integer getDistrict(){
+	public Integer getDistrict() {
 		return district;
 	}
 
-	public void setDistrict(Integer district){
+	public void setDistrict(Integer district) {
 		this.district = district;
 	}
 
-	public String getAddress(){
+	public String getAddress() {
 		return address;
 	}
 
-	public void setAddress(String address){
+	public void setAddress(String address) {
 		this.address = address;
 	}
 
-	public Integer getDataStatus(){
+	public Integer getDataStatus() {
 		return dataStatus;
 	}
 
-	public void setDataStatus(Integer dataStatus){
+	public void setDataStatus(Integer dataStatus) {
 		this.dataStatus = dataStatus;
 	}
 
-	public String getRemark(){
+	public String getRemark() {
 		return remark;
 	}
 
-	public void setRemark(String remark){
+	public void setRemark(String remark) {
 		this.remark = remark;
 	}
 
-	public Date getCreateTime(){
+	public Date getCreateTime() {
 		return createTime;
 	}
 
-	public void setCreateTime(Date createTime){
+	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
 
-	public String getCreateUser(){
+	public String getCreateUser() {
 		return createUser;
 	}
 
-	public void setCreateUser(String createUser){
+	public void setCreateUser(String createUser) {
 		this.createUser = createUser;
 	}
 
-	public Date getUpdateTime(){
+	public Date getUpdateTime() {
 		return updateTime;
 	}
 
-	public void setUpdateTime(Date updateTime){
+	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
 
-	public String getUpdateUser(){
+	public String getUpdateUser() {
 		return updateUser;
 	}
 
-	public void setUpdateUser(String updateUser){
+	public void setUpdateUser(String updateUser) {
 		this.updateUser = updateUser;
 	}
 
+	public String getPersonNo() {
+		return personNo;
+	}
+
+	public void setPersonNo(String personNo) {
+		this.personNo = personNo;
+	}
+
+	public String getConnectRealName() {
+		return connectRealName;
+	}
+
+	public void setConnectRealName(String connectRealName) {
+		this.connectRealName = connectRealName;
+	}
+
+	public String getConnectPhone() {
+		return connectPhone;
+	}
+
+	public void setConnectPhone(String connectPhone) {
+		this.connectPhone = connectPhone;
+	}
 
 	public String getProvinceName() {
 		return provinceName;
@@ -191,38 +209,5 @@ public class CustomerPerson extends BasePO {
 
 	public void setDistrictName(String districtName) {
 		this.districtName = districtName;
-	}
-
-	public String getPersonName() {
-		return personName;
-	}
-
-	public void setPersonName(String personName) {
-		this.personName = personName;
-	}
-
-	public String getPersonNo() {
-		return personNo;
-	}
-
-	public void setPersonNo(String personNo) {
-		this.personNo = personNo;
-	}
-
-
-	public String getConnectRealName() {
-		return connectRealName;
-	}
-
-	public void setConnectRealName(String connectRealName) {
-		this.connectRealName = connectRealName;
-	}
-
-	public String getConnectPhone() {
-		return connectPhone;
-	}
-
-	public void setConnectPhone(String connectPhone) {
-		this.connectPhone = connectPhone;
 	}
 }

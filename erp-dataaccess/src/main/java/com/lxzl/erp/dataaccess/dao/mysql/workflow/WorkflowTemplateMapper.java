@@ -15,4 +15,6 @@ public interface WorkflowTemplateMapper extends BaseMysqlDAO<WorkflowTemplateDO>
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	WorkflowTemplateDO findByWorkflowType(Integer workflowType);
+
+	WorkflowTemplateDO findByWorkflowTemplateId(Integer workflowTemplateId);
 }

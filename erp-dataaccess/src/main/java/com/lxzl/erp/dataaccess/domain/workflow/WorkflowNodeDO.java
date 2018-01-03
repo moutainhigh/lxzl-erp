@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.workflow;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 
 
@@ -18,6 +20,15 @@ public class WorkflowNodeDO  extends BaseDO {
 	private Integer workflowUser;
 	private Integer dataStatus;
 	private String remark;
+
+	@Transient
+	private String departmentName;
+	@Transient
+	private String roleName;
+	@Transient
+	private String userName;
+	@Transient
+	private String departmentTypeName;
 
 	public Integer getId(){
 		return id;
@@ -111,7 +122,21 @@ public class WorkflowNodeDO  extends BaseDO {
 		return workflowDepartmentType;
 	}
 
-	public void setWorkflowDepartmentType(Integer workflowDepartmentType) {
-		this.workflowDepartmentType = workflowDepartmentType;
-	}
+	public void setWorkflowDepartmentType(Integer workflowDepartmentType) { this.workflowDepartmentType = workflowDepartmentType; }
+
+	public String getDepartmentName() { return departmentName; }
+
+	public void setDepartmentName(String departmentName) { this.departmentName = departmentName; }
+
+	public String getRoleName() { return roleName; }
+
+	public void setRoleName(String roleName) { this.roleName = roleName; }
+
+	public String getUserName() { return userName; }
+
+	public void setUserName(String userName) { this.userName = userName; }
+
+	public String getDepartmentTypeName() { return departmentTypeName; }
+
+	public void setDepartmentTypeName(String departmentTypeName) { this.departmentTypeName = departmentTypeName; }
 }

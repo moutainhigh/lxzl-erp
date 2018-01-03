@@ -6,7 +6,13 @@ import com.lxzl.erp.common.constant.VerifyStatus;
 import com.lxzl.erp.common.constant.WorkflowType;
 import com.lxzl.erp.common.domain.workflow.VerifyWorkflowParam;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
+import com.lxzl.erp.common.domain.workflow.WorkflowTemplateQueryParam;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowNode;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowTemplate;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -19,8 +25,8 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     @Test
     public void verifyWorkFlow() throws Exception {
         VerifyWorkflowParam workflowParam = new VerifyWorkflowParam();
-        workflowParam.setWorkflowLinkNo("WL201712291436573341765");
-        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
+        workflowParam.setWorkflowLinkNo("LXWF5000152018010300144");
+        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
         workflowParam.setReturnType(1);
 //        workflowParam.setNextVerifyUser(500003);
 
@@ -64,5 +70,43 @@ public class WorkflowTest extends ERPUnTransactionalTest {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
         workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
         TestResult testResult = getJsonTestResult("/workflow/isNeedVerify", workflowLinkQueryParam);
+    }
+
+
+    @Test
+    public void updateWorkflowNodeTest() throws Exception {
+        WorkflowTemplate workflowTemplate = new WorkflowTemplate();
+        workflowTemplate.setWorkflowTemplateId(7);
+        List<WorkflowNode> workflowNodeList = new ArrayList<>();
+        WorkflowNode workflowNode1 = new WorkflowNode();
+        workflowNode1.setWorkflowNodeName("test3");
+//        workflowNode1.setWorkflowDepartmentType(300007);
+//        workflowNode1.setWorkflowDepartment(400040);
+        workflowNode1.setWorkflowUser(500006);
+//        workflowNode1.setWorkflowRole(600012);
+        workflowNodeList.add(workflowNode1);
+        WorkflowNode workflowNode2 = new WorkflowNode();
+        workflowNode2.setWorkflowNodeName("test4");
+        workflowNode2.setWorkflowDepartmentType(300004);
+        workflowNode2.setWorkflowDepartment(400011);
+        workflowNode2.setWorkflowUser(500005);
+        workflowNode2.setWorkflowRole(600005);
+        workflowNodeList.add(workflowNode2);
+        workflowTemplate.setWorkflowNodeList(workflowNodeList);
+        TestResult testResult = getJsonTestResult("/workflow/updateWorkflowNodeList", workflowTemplate);
+    }
+
+    @Test
+    public void findTemplateByIdTest() throws Exception {
+        WorkflowTemplate workflowTemplate = new WorkflowTemplate();
+        workflowTemplate.setWorkflowTemplateId(1);
+        TestResult testResult = getJsonTestResult("/workflow/findWorkflowTemplate", workflowTemplate);
+    }
+
+    @Test
+    public void workflowTemplatePageTest() throws Exception {
+        WorkflowTemplateQueryParam workflowTemplateQueryParam = new WorkflowTemplateQueryParam();
+        workflowTemplateQueryParam.setWorkflowTemplateId(6);
+        TestResult testResult = getJsonTestResult("/workflow/pageWorkflowTemplate", workflowTemplateQueryParam);
     }
 }
