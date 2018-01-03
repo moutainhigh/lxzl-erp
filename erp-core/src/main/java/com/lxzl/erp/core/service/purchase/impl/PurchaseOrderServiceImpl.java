@@ -1803,8 +1803,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      * @param verifyResult
      * @param businessNo
      */
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
             PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findDetailByPurchaseNo(businessNo);
@@ -1824,6 +1825,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             purchaseOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             purchaseOrderDO.setUpdateTime(new Date());
             purchaseOrderMapper.update(purchaseOrderDO);
+
             return true;
         } catch (Exception e) {
             logger.error("【采购单审核后，业务处理异常，未生成发货单】", e);
@@ -2042,7 +2044,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             for (PurchaseDeliveryOrderMaterialDO purchaseDeliveryOrderMaterialDO : purchaseDeliveryOrderMaterialDOList) {
                 PurchaseReceiveOrderMaterialDO purchaseReceiveOrderMaterialDO = new PurchaseReceiveOrderMaterialDO();
                 purchaseReceiveOrderMaterialDO.setPurchaseReceiveOrderId(purchaseReceiveOrderDO.getId());
-                purchaseReceiveOrderMaterialDO.setPurchaseOrderMaterialId(purchaseReceiveOrderMaterialDO.getPurchaseOrderMaterialId());
+                purchaseReceiveOrderMaterialDO.setPurchaseOrderMaterialId(purchaseDeliveryOrderMaterialDO.getPurchaseOrderMaterialId());
                 purchaseReceiveOrderMaterialDO.setPurchaseDeliveryOrderMaterialId(purchaseDeliveryOrderMaterialDO.getId());
                 purchaseReceiveOrderMaterialDO.setMaterialId(purchaseDeliveryOrderMaterialDO.getMaterialId());
                 purchaseReceiveOrderMaterialDO.setMaterialName(purchaseDeliveryOrderMaterialDO.getMaterialName());
