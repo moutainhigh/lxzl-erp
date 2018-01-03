@@ -413,7 +413,7 @@ public class StatementServiceImpl implements StatementService {
         Integer buyerCustomerId = returnOrderDO.getCustomerId();
         Date statementDetailStartTime;
         Date statementDetailEndTime;
-        // 其他的费用
+        // 其他的费用 包括服务费等费用
         BigDecimal otherAmount = BigDecimalUtil.add(returnOrderDO.getServiceCost(), returnOrderDO.getDamageCost());
 
         // 租金押金和设备押金
