@@ -1,10 +1,6 @@
 package com.lxzl.erp.dataaccess.domain.transferOrder;
 
-import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterial;
-import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderProduct;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import java.util.Date;
-import java.util.List;
 
 
 public class TransferOrderDO  extends BaseDO {
