@@ -89,6 +89,9 @@
                                         <th>订单编号</th>
                                         <th>订单项类型</th>
 ##                                        <th>订单项关联ID</th>
+                                        <th>商品名</th>
+                                        <th>商品数量</th>
+                                        <th>单价</th>
                                         <th>预计支付时间</th>
                                         <th>结算单金额</th>
                                         <th>已经支付金额</th>
@@ -108,6 +111,9 @@
                                         <td>{{orderNo}}</td>
                                         <td>{{orderItemTypeValue}}</td>
 ##                                        <td>{{orderItemReferId}}</td>
+                                        <td>{{itemName}}</td>
+                                        <td>{{itemCount}}</td>
+                                        <td>{{#price}}{{unitAmount}}{{/price}}</td>
                                         <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
                                         <td>{{#price}}{{statementDetailAmount}}{{/price}}</td>
                                         <td>{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>

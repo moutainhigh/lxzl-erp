@@ -21,20 +21,21 @@
                         #parse("component/customer/address.vm")
                     </div>
                 </div>
-##                <div class="form-group field">
-##                    <label class="col-md-3 control-label">税率</label>
-##                    <div class="col-md-9">
-##                        <div class="input-group">
-##                            <span class="input-group-addon">17%</span>
-##                            <input class="form-control required taxRate" type="text" name="highTaxRate" id="highTaxRate"  placeholder="请输入0-100的值" />
-##                        </div>
-##                    </div>
-##                </div>
                 <div class="form-group field">
-                    <label class="col-md-3 control-label">运费</label>
-                    <div class="col-md-9">
-                        <div>
-                            <input id="logisticsAmount" name="logisticsAmount" class="form-control moneyNumber" type="text" placeholder="请输入运费" />
+                    <div class="col-md-6">
+                        <label class="col-md-6 control-label">送货方式</label>
+                        <div class="col-md-6">
+                            <div>
+                                <select class="form-control bradius required" name="deliveryMode" id="deliveryMode"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="col-md-6 control-label">运费</label>
+                        <div class="col-md-6">
+                            <div>
+                                <input id="logisticsAmount" name="logisticsAmount" class="form-control moneyNumber" type="text" placeholder="请输入运费" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -76,6 +77,15 @@
                     <label class="col-md-3 control-label">购买人备注</label>
                     <div class="col-md-9">
                         <textarea class="form-control" id="buyerRemark" rows="3"  name="buyerRemark"></textarea>
+                    </div>
+                </div>
+                <div class="form-group field hide" id="orderSubCompanyNameFormControl">
+                    <label class="col-md-3 control-label">订单所属公司</label>
+                    <div class="col-md-9">
+                        <div class="input-group bringContainer">
+                            <input id="orderSubCompanyName" name="orderSubCompanyName" bringFiled="orderSubCompanyName" class="form-control required" type="text" readonly placeholder="请选择订单所属公司" />
+                            <span class="input-group-addon cursor" id="chooseSubCompany"><i class="fa fa-search"></i></span>
+                        </div>
                     </div>
                 </div>
             </div>
