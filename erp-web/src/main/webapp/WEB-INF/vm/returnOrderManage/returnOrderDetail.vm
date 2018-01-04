@@ -232,7 +232,7 @@
 ##                                            <th>图片</th>
                                             <th>商品名称</th>
                                             <th>SKU</th>
-                                            <th>可退数量</th>
+                                            <th>预计退还数量</th>
                                             <th>退货数量</th>
                                             <th class="text-right">操作</th>
                                         </tr>
@@ -246,7 +246,7 @@
 ##                                            </td>
                                             <td>{{productName}}</td>
                                             <td>{{propertiesToStr}}</td>
-                                            <td>{{canProcessCount}}</td>
+                                            <td>{{returnProductSkuCount}}</td>
                                             <td>
                                                {{returnProductSkuCount}}
                                             </td>
