@@ -728,7 +728,7 @@ CREATE TABLE `erp_product_equipment` (
   `owner_warehouse_id` int(20) NOT NULL COMMENT '归属仓库ID',
   `owner_warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '归属目前仓位ID',
   `equipment_price` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '设备本身价值',
-  `purchase_price` decimal(15,2) NOT NULL DEFAULT 0  COMMENT '采购价格',
+  `purchase_price` decimal(15,2) COMMENT '采购价格',
   `equipment_status` int(11) NOT NULL DEFAULT '0' COMMENT '设备状态，1设备空闲，2租赁中，3维修中，4报废，5调拨中',
   `is_new` int(11) NOT NULL DEFAULT '0' COMMENT '是否全新，1是，0否',
   `purchase_receive_remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '采购收料备注',
