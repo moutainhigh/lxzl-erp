@@ -1404,8 +1404,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         //用来保存所有已签单的采购收货单实际已收到的配件总数
         Map<Integer, Integer> materialCountMap = new HashMap<>();
         for (PurchaseReceiveOrderDO purchaseReceiveOrderDO : purchaseReceiveOrderDOList) {
-            //只累加已签单的sku，并且非自动流转总仓的
-            if (PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_YET.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())
+            //只累加已签单的或已提交的sku，并且非自动流转总仓的
+            if ((PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_YET.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())
+                    ||PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_COMMITTED.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus()))
                     && !AutoAllotStatus.AUTO_ALLOT_STATUS_YES.equals(purchaseReceiveOrderDO.getAutoAllotStatus())) {
                 //找到的所有采购单项sku，累加数量
                 List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList();
