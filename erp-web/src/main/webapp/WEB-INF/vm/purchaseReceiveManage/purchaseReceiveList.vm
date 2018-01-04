@@ -117,11 +117,11 @@
                                 <td>{{isNewStr}}</td>
                                 <td>
                                     <p class="mn {{purchaseReceiveOrderStatusClass}}">{{purchaseReceiveOrderStatusValue}}</p>
-                                    <p class="mn mt5">{{#clockTime}}{{confirmTime}}{{/clockTime}}</p>
+                                    <p class="mn mt5" title="确认时间">{{#clockTime}}{{confirmTime}}{{/clockTime}}</p>
                                 </td>
                                 <td>
                                     <p class="mn">{{createUserRealName}}</p>
-                                    <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                    <p class="mn mt5" title="创建时间">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
                                 </td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">

@@ -19,7 +19,7 @@
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
             <div class="row">
-                <div class="col-md-9 center-block">
+                <div class="col-md-10 center-block">
                     <div class="admin-form theme-primary">
                         <form method="post" id="viewProductForm">
                             <input type="hidden" name="productId" />
@@ -209,6 +209,8 @@
                                                 <th>{{propertyName}}</th>
                                                 {{/ths}}
                                                 <th>SKU名称</th>
+                                                <th>新库存</th>
+                                                <th>旧库存</th>
                                                 <th>商品价值</th>
                                                 <th>日租价</th>
                                                 <th>月租价</th>
@@ -223,6 +225,10 @@
                                                 {{/property}}
                                                 <td>
                                                     {{skuName}}
+                                                </td>
+                                                <td>{{newProductSkuCount}}</td>
+                                                <td>
+                                                    {{oldProductSkuCount}}
                                                 </td>
                                                 <td>
                                                     <label class="field prepend-icon">

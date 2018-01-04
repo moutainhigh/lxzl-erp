@@ -13,7 +13,7 @@
                         </div>
                         <div class="field form-group pull-right mn mr10" style="width: 120px;">
                             <div class="input-group">
-                                <input type="text" name="materialName" id="materialName" class="form-control input-sm bradius number" autocomplete="off" placeholder="输入配件名称">
+                                <input type="text" name="materialName" id="materialName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入配件名称">
                             </div>
                         </div>
                         <div class="form-group pull-right mn mr10" style="width: 120px;">
@@ -43,10 +43,9 @@
                         <th>型号</th>
                         <th>类型</th>
                         <th>配件值大小</th>
-                        <th>库存</th>
                         <th>本身价值</th>
                         <th>租赁价格</th>
-##                        <th>描述</th>
+                        <th>库存</th>
                         {{#showIsNewCheckBox}}
                         <th>选择新旧配件</th>
                         {{/showIsNewCheckBox}}
@@ -63,13 +62,15 @@
                         <td>{{materialModelName}}</td>
                         <td>{{materialTypeStr}}</td>
                         <td>{{#memorysize}}{{materialCapacityValue}}{{/memorysize}}</td>
-                        <td>{{stock}}</td>
                         <td>{{#price}}{{materialPriceFormat}}{{/price}}</td>
                         <td>
                             <p>日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
                             <p>月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
                         </td>
-##                        <td>{{materialDesc}}</td>
+                        <td>
+                            <p>新：{{newMaterialCount}}</p>
+                            <p>旧：{{oldMaterialCount}}</p>
+                        </td>
                         {{#showIsNewCheckBox}}
                         <td>
                             <label class="block mn switch switch-primary">

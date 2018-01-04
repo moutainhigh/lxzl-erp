@@ -82,7 +82,7 @@
                                         <th>类别</th>
                                         <th>品牌</th>
                                         <th>租金</th>
-                                        <th>总库存</th>
+##                                        <th>总库存</th>
                                         <th>是否在租</th>
                                         <th>创建人</th>
                                         {{#hasRowActionButtons}}
@@ -112,7 +112,7 @@
                                                 <p>日租：{{dayRentPriceRange}}</p>
                                                 <p>月租：{{monthRentPriceRang}}</p>
                                             </td>
-                                            <td>{{totalStock}}</td>
+##                                            <td>{{totalStock}}</td>
                                             <td>{{isRentStr}}</td>
                                             <td>
                                                 <p class="mn">{{createUserRealName}}</p>

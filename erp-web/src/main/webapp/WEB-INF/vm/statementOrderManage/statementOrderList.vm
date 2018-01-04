@@ -105,8 +105,8 @@
                                     <td>{{customerName}}</td>
                                     <td>￥{{#price}}{{statementAmount}}{{/price}}</td>
                                     <td>
-                                        <p class="mn" title="结算明细最早的一个时间">开始：{{#clockTime}}{{statementStartTime}}{{/clockTime}}</p>
-                                        <p class="mn mt5" title="结算明细最晚的一个时间">结束：{{#clockTime}}{{statementEndTime}}{{/clockTime}}</p>
+                                        <p class="mn" title="结算明细最早的一个时间">开始：{{#clockShorTime}}{{statementStartTime}}{{/clockShorTime}}</p>
+                                        <p class="mn mt5" title="结算明细最晚的一个时间">结束：{{#clockShorTime}}{{statementEndTime}}{{/clockShorTime}}</p>
                                     </td>
                                     <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
 ##                                    <td>￥{{#price}}{{statementPaidAmount}}{{/price}}</td>
@@ -115,7 +115,7 @@
                                         <p class="mn mt5" title="支付时间">{{#clockTime}}{{statementPaidTime}}{{/clockTime}}</p>
                                     </td>
                                     <td>￥{{#price}}{{statementOverdueAmount}}{{/price}}</td>
-                                    <td>{{statementOrderStatusValue}}</td>
+                                    <td class="{{statementOrderStatusClass}}">{{statementOrderStatusValue}}</td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
                                         <div class="btn-group text-right">

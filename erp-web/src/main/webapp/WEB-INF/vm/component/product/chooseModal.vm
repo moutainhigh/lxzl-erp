@@ -39,7 +39,7 @@
                         <th>图片</th>
                         <th>商品名称</th>
                         <th>类别</th>
-                        <th>总库存</th>
+##                        <th>总库存</th>
                         <th>是否在租</th>
                         <th class="text-right">操作</th>
                     </tr>
@@ -52,7 +52,7 @@
                         <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                         <td>{{productName}}</td>
                         <td>{{categoryName}}</td>
-                        <td>{{totalStock}}</td>
+##                        <td>{{totalStock}}</td>
                         <td>{{isRentStr}}</td>
                         <td class="text-right">
                             <div class="btn-group text-right">
@@ -90,7 +90,7 @@
                                             <th>选择新旧机器</th>
                                             {{/showIsNewCheckBox}}
                                             <th>SKU</th>
-                                            <th>总库存</th>
+##                                            <th>总库存</th>
                                             <th>新库存</th>
                                             <th>旧库存</th>
                                             <th>日租</th>
@@ -116,7 +116,7 @@
                                                 </td>
                                                 {{/showIsNewCheckBox}}
                                                 <td>{{propertiesToStr}}</td>
-                                                <td>{{stock}}</td>
+##                                                <td>{{stock}}</td>
                                                 <td>
                                                     {{newProductSkuCount}}
                                                 </td>

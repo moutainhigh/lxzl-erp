@@ -19,7 +19,7 @@
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
             <div class="row">
-                <div class="col-md-9 center-block">
+                <div class="col-md-10 center-block">
                     <div class="admin-form theme-primary">
                         <form method="post" id="addProductForm">
                             <div class="panel panel-default panel-border top">
