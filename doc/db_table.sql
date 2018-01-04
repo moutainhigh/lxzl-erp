@@ -1595,6 +1595,7 @@ CREATE TABLE `erp_statement_order_detail` (
   `order_id` int(20) NOT NULL COMMENT '订单ID',
   `order_item_type` int(20) NOT NULL COMMENT '订单项类型，1为商品，2为物料',
   `order_item_refer_id` int(20) NOT NULL COMMENT '订单项ID',
+  `statement_detail_phase` int(20) COMMENT '期数',
   `statement_detail_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '结算单总金额（租金+租金押金）',
   `statement_detail_rent_deposit_amount` decimal(15,2) DEFAULT 0 COMMENT '结算租金押金金额',
   `statement_detail_rent_deposit_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '已付租金押金金额',

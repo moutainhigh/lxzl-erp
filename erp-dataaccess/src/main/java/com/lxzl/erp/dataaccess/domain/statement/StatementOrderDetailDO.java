@@ -14,6 +14,7 @@ public class StatementOrderDetailDO extends BaseDO {
     private Integer orderId;
     private Integer orderItemType;
     private Integer orderItemReferId;
+    private Integer statementDetailPhase;
     private Date statementExpectPayTime;
     private BigDecimal statementDetailAmount;
     private BigDecimal statementDetailRentDepositAmount;
@@ -222,5 +223,13 @@ public class StatementOrderDetailDO extends BaseDO {
 
     public void setStatementDetailDepositReturnAmount(BigDecimal statementDetailDepositReturnAmount) {
         this.statementDetailDepositReturnAmount = statementDetailDepositReturnAmount;
+    }
+
+    public Integer getStatementDetailPhase() {
+        return statementDetailPhase;
+    }
+
+    public void setStatementDetailPhase(Integer statementDetailPhase) {
+        this.statementDetailPhase = statementDetailPhase;
     }
 }

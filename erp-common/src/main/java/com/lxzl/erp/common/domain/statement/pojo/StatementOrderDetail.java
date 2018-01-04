@@ -18,6 +18,7 @@ public class StatementOrderDetail extends BasePO {
     private Integer orderId;   //订单ID
     private Integer orderItemType;        // 订单项类型，1为商品，2为物料
     private Integer orderItemReferId;    // 订单项关联ID
+    private Integer statementDetailPhase;   // 结算单期数
     private Date statementExpectPayTime;    // 结算单预计支付时间
     private BigDecimal statementDetailAmount;   //结算单金额
     private BigDecimal statementDetailPaidAmount;    // 已付总金额
@@ -45,6 +46,7 @@ public class StatementOrderDetail extends BasePO {
     private String itemName;
     private Integer itemCount;
     private BigDecimal unitAmount;
+    private Integer itemRentType;
 
     public Integer getStatementOrderDetailId() {
         return statementOrderDetailId;
@@ -308,5 +310,21 @@ public class StatementOrderDetail extends BasePO {
 
     public void setUnitAmount(BigDecimal unitAmount) {
         this.unitAmount = unitAmount;
+    }
+
+    public Integer getStatementDetailPhase() {
+        return statementDetailPhase;
+    }
+
+    public void setStatementDetailPhase(Integer statementDetailPhase) {
+        this.statementDetailPhase = statementDetailPhase;
+    }
+
+    public Integer getItemRentType() {
+        return itemRentType;
+    }
+
+    public void setItemRentType(Integer itemRentType) {
+        this.itemRentType = itemRentType;
     }
 }
