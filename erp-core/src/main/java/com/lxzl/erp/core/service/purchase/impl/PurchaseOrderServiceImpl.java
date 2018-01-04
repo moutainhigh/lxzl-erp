@@ -15,6 +15,7 @@ import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.dataAccess.DataAccessSupport;
@@ -1805,7 +1806,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     /**
-     * 如果有发票：生成发货通知单，收料通知单
+     * 如果有发票：整机四大件全新机20000元以上，过总仓，否则：生成发货通知单，收料通知单
      * 如果没有发票；收货库房为总公司库：生成发货通知单，收料通知单
      * 如果没有发票；收货库房为分公司库：生成发货通知单，生成总公司收料通知单（real空着不存，待分公司收货通知单状态为已确认时回填）及分拨单号，生成分公司收料通知单
      * 如果是小配件；生成发货通知单，收料通知单
@@ -1815,9 +1816,33 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     public void createPurchaseDeliveryAndReceiveOrder(PurchaseOrderDO purchaseOrderDO) {
         //生成发货通知单
         PurchaseDeliveryOrderDO purchaseDeliveryOrderDO = createDeliveryDetail(purchaseOrderDO);
-        if (CommonConstant.COMMON_CONSTANT_YES.equals(purchaseOrderDO.getIsInvoice()) || PurchaseType.PURCHASE_TYPE_GADGET == purchaseOrderDO.getPurchaseType()) {//如果有发票或者是小配件类型
-            //直接生成收料通知单
-            createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_NO, null);
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(purchaseOrderDO.getIsInvoice()) ) {
+            if(PurchaseType.PURCHASE_TYPE_GADGET == purchaseOrderDO.getPurchaseType()){
+                //如果有发票或者是小配件类型，直接生成收料通知单
+                createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_NO, null);
+            }else if(PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN==purchaseOrderDO.getPurchaseType()){
+
+                List<PurchaseOrderProductDO> purchaseOrderProductDOList = purchaseOrderDO.getPurchaseOrderProductDOList();
+                List<PurchaseOrderMaterialDO> purchaseOrderMaterialDOList = purchaseOrderDO.getPurchaseOrderMaterialDOList();
+                BigDecimal totalAmount = BigDecimal.ZERO;
+                if(CollectionUtil.isNotEmpty(purchaseOrderProductDOList)){
+                    for(PurchaseOrderProductDO purchaseOrderProductDO : purchaseOrderProductDOList){
+                        totalAmount = BigDecimalUtil.add(totalAmount,BigDecimalUtil.mul(new BigDecimal(purchaseOrderProductDO.getProductCount()),purchaseOrderProductDO.getProductAmount()));;
+                    }
+                }
+                if(CollectionUtil.isNotEmpty(purchaseOrderMaterialDOList)){
+                    for(PurchaseOrderMaterialDO purchaseOrderMaterialDO : purchaseOrderMaterialDOList){
+                        totalAmount = BigDecimalUtil.add(totalAmount,BigDecimalUtil.mul(new BigDecimal(purchaseOrderMaterialDO.getMaterialCount()),purchaseOrderMaterialDO.getMaterialAmount()));;
+                    }
+                }
+                //整机四大件全新机20000元以上，必须过总仓
+                if(BigDecimalUtil.compare(totalAmount,new BigDecimal(20000))>0){
+                    //生成总公司收料通知单
+                    PurchaseReceiveOrderDO purchaseReceiveOrderDO = createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_YES, null);
+                    //生成分公司收料通知单
+                    createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_RECEIVE, purchaseReceiveOrderDO.getAutoAllotNo());
+                }
+            }
         } else if (CommonConstant.COMMON_CONSTANT_NO.equals(purchaseOrderDO.getIsInvoice())) {//如果没有发票
             //解析采购单库房快照，是否为总公司库
             Warehouse warehouse = JSON.parseObject(purchaseOrderDO.getWarehouseSnapshot(), Warehouse.class);
