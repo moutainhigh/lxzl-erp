@@ -2,7 +2,6 @@ package com.lxzl.erp.web.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPTransactionalTest;
-import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.PurchaseType;
@@ -566,7 +565,7 @@ public class PurchaseOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void confirmPurchaseReceiveOrder() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
-        purchaseReceiveOrder.setPurchaseReceiveNo("LXPR1000201801040089");
+        purchaseReceiveOrder.setPurchaseReceiveNo("LXPR0755201801040115");
         TestResult testResult = getJsonTestResult("/purchaseOrder/confirmPurchaseReceiveOrder", purchaseReceiveOrder);
     }
 
@@ -610,7 +609,7 @@ public class PurchaseOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void endPurchaseOrder() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setPurchaseNo("LXPO1000201801040038");
+        purchaseOrder.setPurchaseNo("LXPO1000201801040041");
         TestResult testResult = getJsonTestResult("/purchaseOrder/endPurchaseOrder", purchaseOrder);
     }
 

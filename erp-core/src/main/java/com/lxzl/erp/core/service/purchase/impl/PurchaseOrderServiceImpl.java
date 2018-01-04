@@ -1166,7 +1166,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         Map<Integer, Integer> materialCountMap = new HashMap<>();
         if (CollectionUtil.isNotEmpty(purchaseReceiveOrderDOList)) {
             for (PurchaseReceiveOrderDO receiveOrderDO : purchaseReceiveOrderDOList) {
-                if (AutoAllotStatus.AUTO_ALLOT_STATUS_NO.equals(purchaseReceiveOrderDO.getAutoAllotStatus())) {
+                if (AutoAllotStatus.AUTO_ALLOT_STATUS_NO.equals(receiveOrderDO.getAutoAllotStatus())||
+                        AutoAllotStatus.AUTO_ALLOT_STATUS_RECEIVE.equals(receiveOrderDO.getAutoAllotStatus())) {
                     receiveOrderDO = purchaseReceiveOrderMapper.findAllByNo(receiveOrderDO.getPurchaseReceiveNo());
                     //记录采购收货单商品总数
                     List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = receiveOrderDO.getPurchaseReceiveOrderProductDOList();
