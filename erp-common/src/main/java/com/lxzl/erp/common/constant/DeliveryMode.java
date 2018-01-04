@@ -10,11 +10,13 @@ public class DeliveryMode {
 
     public static final Integer DELIVERY_MODE_EXPRESS = 1;
     public static final Integer DELIVERY_MODE_SINCE = 2;
+    public static final Integer DELIVERY_MODE_LX_EXPRESS = 3;
 
     public static boolean inThisScope(Integer deliveryMode) {
         if (deliveryMode != null
                 && (DELIVERY_MODE_EXPRESS.equals(deliveryMode)
-                || DELIVERY_MODE_SINCE.equals(deliveryMode))) {
+                || DELIVERY_MODE_SINCE.equals(deliveryMode)
+                || DELIVERY_MODE_LX_EXPRESS.equals(deliveryMode))) {
             return true;
         }
         return false;

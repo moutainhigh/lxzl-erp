@@ -722,6 +722,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                                 productEquipmentDO.setCurrentWarehouseId(dbDeploymentOrderDO.getTargetWarehouseId());
                                 productEquipmentDO.setOwnerWarehouseId(dbDeploymentOrderDO.getTargetWarehouseId());
                             }
+                            productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
                             productEquipmentMapper.update(productEquipmentDO);
                         }
                     }
@@ -744,6 +745,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                                 bulkMaterialDO.setCurrentWarehouseId(dbDeploymentOrderDO.getTargetWarehouseId());
                                 bulkMaterialDO.setOwnerWarehouseId(dbDeploymentOrderDO.getTargetWarehouseId());
                             }
+                            bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
                             bulkMaterialMapper.update(bulkMaterialDO);
                         }
                     }

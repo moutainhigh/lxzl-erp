@@ -19,6 +19,8 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.MaterialImageConverter;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialImgMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
@@ -31,6 +33,7 @@ import com.lxzl.erp.dataaccess.domain.material.MaterialImgDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialModelDO;
 import com.lxzl.erp.dataaccess.domain.product.*;
 import com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderMaterialDO;
+import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -83,6 +86,12 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Autowired
     private ProductCategoryPropertyValueMapper productCategoryPropertyValueMapper;
+
+    @Autowired
+    private WarehouseSupport warehouseSupport;
+
+    @Autowired
+    private UserSupport userSupport;
 
     @Autowired(required = false)
     private HttpSession session;
@@ -369,11 +378,13 @@ public class MaterialServiceImpl implements MaterialService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
+        WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
         Material material = ConverterUtil.convert(materialDO, Material.class);
 
         BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
         bulkMaterialQueryParam.setMaterialId(materialDO.getId());
         bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+        bulkMaterialQueryParam.setCurrentWarehouseId(warehouseDO.getId());
 
         Map<String, Object> queryEquipmentCountParam = new HashMap<>();
         queryEquipmentCountParam.put("start", 0);
