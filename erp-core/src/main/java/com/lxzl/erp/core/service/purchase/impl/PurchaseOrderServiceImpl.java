@@ -46,7 +46,6 @@ import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderBulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
-import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -205,7 +204,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     private String checkDetail(PurchaseOrderDetail purchaseOrderDetail, PurchaseOrder purchaseOrder, List<PurchaseOrderProduct> purchaseOrderProductList, List<PurchaseOrderMaterial> purchaseOrderMaterialList, boolean isHead, Date now) {
 
-        //如果是整机四大件，物料列表只能有四大件物料
         if (PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN == purchaseOrder.getPurchaseType()) {
 
             if (CollectionUtil.isNotEmpty(purchaseOrderProductList)) {
@@ -215,9 +213,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     return checkErrorCode;
                 }
             }
+            boolean productIsEmpty = CollectionUtil.isEmpty(purchaseOrderProductList);
+            //todo 如果是整机四大件，物料列表有小配件时，商品列表不能为空
             if (CollectionUtil.isNotEmpty(purchaseOrderMaterialList)) {
                 //校验采购订单物料项
-                String checkErrorCode = checkPurchaseOrderMaterialList(purchaseOrderDetail, purchaseOrderMaterialList, purchaseOrder.getPurchaseType());
+                String checkErrorCode = checkPurchaseOrderMaterialList(purchaseOrderDetail, purchaseOrderMaterialList, purchaseOrder.getPurchaseType(),productIsEmpty);
                 if (!ErrorCode.SUCCESS.equals(checkErrorCode)) {
                     return checkErrorCode;
                 }
@@ -229,7 +229,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 return ErrorCode.PURCHASE_ORDER_MATERIAL_LIST_NOT_NULL;
             }
             //校验采购订单物料项
-            String checkErrorCode = checkPurchaseOrderMaterialList(purchaseOrderDetail, purchaseOrderMaterialList, purchaseOrder.getPurchaseType());
+            String checkErrorCode = checkPurchaseOrderMaterialList(purchaseOrderDetail, purchaseOrderMaterialList, purchaseOrder.getPurchaseType(),null);
             if (!ErrorCode.SUCCESS.equals(checkErrorCode)) {
                 return checkErrorCode;
             }
@@ -392,13 +392,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
     }
 
-    private String checkPurchaseOrderMaterialList(PurchaseOrderDetail purchaseOrderDetail, List<PurchaseOrderMaterial> purchaseOrderMaterialList, Integer purchaseType) {
+    private String checkPurchaseOrderMaterialList(PurchaseOrderDetail purchaseOrderDetail, List<PurchaseOrderMaterial> purchaseOrderMaterialList, Integer purchaseType,Boolean productIsEmpty) {
         ServiceResult<String, PurchaseOrderDetail> result = new ServiceResult<>();
 
         //声明materialIdSet，如果一个采购单中有相同物料项，则返回错误
         Set<Integer> materialIdSet = new HashSet<>();
         //声明用于校验整机四大件列表
         List<Material> materialList = new ArrayList<>();
+        //是否含有小配件
+        boolean haveSmall = false;
         // 验证采购单物料项是否合法
         for (PurchaseOrderMaterial purchaseOrderMaterial : purchaseOrderMaterialList) {
 
@@ -415,6 +417,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             MaterialDO materialDO = materialMapper.findByNo(purchaseOrderMaterial.getMaterialNo());
             if (materialDO == null) {
                 return ErrorCode.MATERIAL_NOT_EXISTS;
+            }
+            //如果是小配件
+            if(!MaterialType.isMainMaterial(materialDO.getMaterialType())){
+                haveSmall = true;
             }
             materialIdSet.add(materialDO.getId());
             //累加采购单物料项总价
@@ -444,10 +450,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         if (purchaseOrderMaterialList.size() != materialIdSet.size()) {
             return ErrorCode.PURCHASE_ORDER_MATERIAL_CAN_NOT_REPEAT;
         }
-        //校验整机四大件类型的是否全为整机四大件
-        if (PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN == purchaseType && !materialService.isAllMainMaterial(materialList)) {
-            return ErrorCode.PURCHASE_ORDER_MATERIAL_NOT_MAIN;
+        if(PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN == purchaseType&&productIsEmpty&&haveSmall){
+            return ErrorCode.MUST_HAVE_MAIN;
         }
+        //校验整机四大件类型的是否全为整机四大件
+//        if (PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN == purchaseType && !materialService.isAllMainMaterial(materialList)) {
+//            return ErrorCode.PURCHASE_ORDER_MATERIAL_NOT_MAIN;
+//        }
         //校验小配件类型的是否全为小配件
         if (PurchaseType.PURCHASE_TYPE_GADGET == purchaseType && !materialService.isAllGadget(materialList)) {
             return ErrorCode.PURCHASE_ORDER_MATERIAL_NOT_GADGET;

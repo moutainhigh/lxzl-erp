@@ -209,6 +209,7 @@ public class ErrorCode {
     public static final String SUB_COMPANY_NOT_EXISTS = "J300060";
     public static final String PURCHASE_TAX_RATE_ERROR = "J300061";
     public static final String SUPPLIER_IS_EXISTS = "J300062";
+    public static final String MUST_HAVE_MAIN = "J300063";
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
     public static final String ORDER_CUSTOMER_CONSIGN_NOT_NULL = "J400001";
@@ -647,6 +648,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL, "首次所需设备不能为空");
         MAP.put(CUSTOMER_IS_EXISTS, "客户已经存在");
         MAP.put(SUPPLIER_IS_EXISTS, "供应商已经存在");
+        MAP.put(MUST_HAVE_MAIN, "含有小配件的整机四大件采购单必须有整机");
 
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
