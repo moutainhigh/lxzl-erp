@@ -22,7 +22,6 @@
 	<import resource="spring/spring-aop.xml" />
 	<import resource="spring/spring-mysql.xml" />
     <import resource="spring/spring-fastdfs.xml" />
-    <import resource="spring/spring-redis.xml" />
 	<import resource="spring/spring-contant-properties.xml" />
 
 

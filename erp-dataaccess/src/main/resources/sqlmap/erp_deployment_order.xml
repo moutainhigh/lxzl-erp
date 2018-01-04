@@ -188,6 +188,7 @@
 				<if test="true">
 					AND edo.data_status = 1
 				</if>
+				ORDER BY edo.id DESC
 			</where>
 			LIMIT #{maps.start},#{maps.pageSize}
 		) deployment_order_main LEFT  JOIN erp_deployment_order_product edop ON edop.deployment_order_id = deployment_order_main.id AND edop.data_status = 1

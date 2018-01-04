@@ -111,6 +111,14 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
 
 
     @Test
+    public void testConfirmDeploymentOrder() throws Exception {
+        DeploymentOrder deploymentOrder = new DeploymentOrder();
+        deploymentOrder.setDeploymentOrderNo("LXC010010201801030014");
+        TestResult testResult = getJsonTestResult("/deploymentOrder/confirm", deploymentOrder);
+    }
+
+
+    @Test
     public void testQueryPageDeploymentOrder() throws Exception {
         DeploymentOrderQueryParam param = new DeploymentOrderQueryParam();
         param.setPageNo(1);
