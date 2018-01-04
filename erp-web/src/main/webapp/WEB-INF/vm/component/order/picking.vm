@@ -8,7 +8,8 @@
                 <div class="section">
                     <label for="username" class="field-label">输入设备号</label>
                     <label for="remark" class="field prepend-icon">
-                        <textarea class="gui-textarea required" id="equipmentNo" name="equipmentNo" autofocus></textarea>
+##                        <textarea class="gui-textarea required" id="equipmentNo" name="equipmentNo" autofocus></textarea>
+                        <input type="text"  class="gui-textarea required" id="equipmentNo" name="equipmentNo" autofocus />
                         <label for="comment" class="field-icon"><i class="fa fa-tag"></i>
                         </label>
                     </label>
