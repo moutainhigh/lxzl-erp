@@ -164,8 +164,8 @@
                             <td>￥{{#price}}{{skuPrice}}{{/price}}</td>
                             <td class="productUnitAmountTd">
                                 <div class="smart-widget sm-right smr-50">
-                                    <input type="hidden" name="skuId" value="{{isNewProduct}}" class="isNewProduct" />
-                                    <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
+                                    <input type="hidden" name="isNewProduct" value="{{isNewProduct}}" class="isNewProduct" />
+                                    <input type="hidden" name="productId" value="{{productId}}" class="productId" />
                                     <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
                                     <label class="field prepend-icon">
                                         <input type="text" name="productUnitAmount-{{skuId}}-{{rowKey}}" value="{{productUnitAmount}}" class="productUnitAmount form-control required moneyNumber gui-input" placeholder="输入商品单价" />
