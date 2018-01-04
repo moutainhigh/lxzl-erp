@@ -12,6 +12,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
+import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -294,6 +295,7 @@ public class StatementServiceImpl implements StatementService {
             orderDO.setTotalPaidOrderAmount(BigDecimalUtil.add(orderDO.getTotalPaidOrderAmount(), paidAmount));
             orderDO.setPayTime(currentTime);
             orderMapper.update(orderDO);
+            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_PAID, null, currentTime, loginUser.getUserId());
         }
 
         result.setResult(true);
@@ -1021,4 +1023,7 @@ public class StatementServiceImpl implements StatementService {
 
     @Autowired
     private ReturnOrderMaterialBulkMapper returnOrderMaterialBulkMapper;
+
+    @Autowired
+    private OrderTimeAxisSupport orderTimeAxisSupport;
 }

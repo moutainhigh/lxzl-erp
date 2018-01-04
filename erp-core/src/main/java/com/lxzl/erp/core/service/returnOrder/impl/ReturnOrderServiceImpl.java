@@ -567,20 +567,6 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(returnOrder.getReturnOrderNo());
 
         returnOrder = ConverterUtil.convert(returnOrderDO, ReturnOrder.class);
-        //填写退还商品项可退数量字段，用于修改接口提示
-        List<ReturnOrderProduct> returnOrderProductList = returnOrder.getReturnOrderProductList();
-        if (CollectionUtil.isNotEmpty(returnOrderProductList)) {
-            for (ReturnOrderProduct returnOrderProduct : returnOrderProductList) {
-                returnOrderProduct.setCanProcessCount(returnOrderProduct.getReturnProductSkuCount() - returnOrderProduct.getRealReturnProductSkuCount());
-            }
-        }
-        //填写退还物料项可退数量字段，用于修改接口提示
-        List<ReturnOrderMaterial> returnOrderMaterialList = returnOrder.getReturnOrderMaterialList();
-        if (CollectionUtil.isNotEmpty(returnOrderMaterialList)) {
-            for (ReturnOrderMaterial returnOrderMaterial : returnOrderMaterialList) {
-                returnOrderMaterial.setCanProcessCount(returnOrderMaterial.getReturnMaterialCount() - returnOrderMaterial.getRealReturnMaterialCount());
-            }
-        }
         serviceResult.setResult(returnOrder);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
