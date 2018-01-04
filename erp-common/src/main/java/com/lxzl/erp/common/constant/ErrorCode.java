@@ -303,6 +303,8 @@ public class ErrorCode {
     public static final String ORDER_CAN_NOT_DELIVERY_TIME_REASON = "J400049";
     public static final String ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT = "J400050";
     public static final String ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT = "J400051";
+    public static final String ORDER_PRODUCT_COUNT_ERROR = "J400052";
+    public static final String ORDER_MATERIAL_COUNT_ERROR = "J400052";
 
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
@@ -528,6 +530,8 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL, "企业客户首次所需设备选项不能空");
         MAP.put(ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT, "全新配件库存不足！");
         MAP.put(ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT, "次新配件库存不足！");
+        MAP.put(ORDER_PRODUCT_COUNT_ERROR, "商品数量必须大于0！");
+        MAP.put(ORDER_MATERIAL_COUNT_ERROR, "设备数量必须大于0！");
 
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");

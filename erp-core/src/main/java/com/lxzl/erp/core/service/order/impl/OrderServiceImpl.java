@@ -1628,6 +1628,9 @@ public class OrderServiceImpl implements OrderService {
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
             Map<String, OrderProduct> orderProductMap = new HashMap<>();
             for (OrderProduct orderProduct : order.getOrderProductList()) {
+                if (orderProduct.getProductCount() == null || orderProduct.getProductCount() <= 0) {
+                    return ErrorCode.ORDER_PRODUCT_COUNT_ERROR;
+                }
                 if (orderProduct.getRentType() == null || orderProduct.getRentTimeLength() == null || orderProduct.getRentTimeLength() <= 0) {
                     return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
                 }
@@ -1668,6 +1671,9 @@ public class OrderServiceImpl implements OrderService {
         if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
             Map<String, OrderMaterial> orderMaterialMap = new HashMap<>();
             for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
+                if (orderMaterial.getMaterialCount() == null || orderMaterial.getMaterialCount() <= 0) {
+                    return ErrorCode.ORDER_MATERIAL_COUNT_ERROR;
+                }
                 if (orderMaterial.getRentType() == null || orderMaterial.getRentTimeLength() == null || orderMaterial.getRentTimeLength() <= 0) {
                     return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
                 }
