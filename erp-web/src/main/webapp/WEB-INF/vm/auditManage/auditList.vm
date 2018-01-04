@@ -70,7 +70,7 @@
                                 <th>模板ID</th>
                                 <th>流程当前步骤</th>
                                 <th>流程最后步骤</th>
-                                <th>当前结点ID</th>
+                                <th>当前结点名</th>
                                 <th>当前审批人</th>
                                 <th>审批状态</th>
                                 <th>创建时间</th>
@@ -95,10 +95,10 @@
                                 <td>{{workflowLinkNo}}</td>
                                 <td>{{workflowTypeStr}}</td>
                                 <td><a href="{{workflowReferUrl}}" target="_blank">{{workflowReferNo}}</a></td>
-                                <td>{{workflowTemplateId}}</td>
+                                <td>{{workflowTemplateName}}</td>
                                 <td>{{workflowStep}}</td>
                                 <td>{{workflowLastStep}}</td>
-                                <td>{{workflowCurrentNodeId}}</td>
+                                <td>{{workflowCurrentNodeName}}</td>
                                 <td>{{currentVerifyUserName}}</td>
                                 <td>{{workflowVerifyStatusStr}}</td>
                                 <td>{{createTimeFormat}}</td>
