@@ -84,7 +84,6 @@
                                         {{/hasCommonActionButtons}}
                                         <th class="">订单编号</th>
                                         <th class="">客户</th>
-##                                        <th class="">商品总价</th>
                                         <th class="">订单总价</th>
                                         <th class="">支付状态</th>
                                         <th class="">订单状态</th>
@@ -108,7 +107,6 @@
                                             {{/hasCommonActionButtons}}
                                             <td>{{orderNo}}</td>
                                             <td>{{buyerCustomerName}}</td>
-##                                            <td>￥{{#price}}{{totalProductAmount}}{{/price}}</td>
                                             <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
                                             <td>
                                                 <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
