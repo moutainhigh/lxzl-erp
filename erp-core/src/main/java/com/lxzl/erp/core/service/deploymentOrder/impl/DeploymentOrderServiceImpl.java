@@ -707,6 +707,51 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             return result;
         }
 
+        if (CollectionUtil.isNotEmpty(dbDeploymentOrderDO.getDeploymentOrderProductDOList())) {
+            for (DeploymentOrderProductDO deploymentOrderProductDO : dbDeploymentOrderDO.getDeploymentOrderProductDOList()) {
+                List<DeploymentOrderProductEquipmentDO> deploymentOrderProductEquipmentDOList = deploymentOrderProductEquipmentMapper.findByDeploymentOrderProductId(deploymentOrderProductDO.getId());
+                if (CollectionUtil.isNotEmpty(deploymentOrderProductEquipmentDOList)) {
+                    for (DeploymentOrderProductEquipmentDO deploymentOrderProductEquipmentDO : deploymentOrderProductEquipmentDOList) {
+                        ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(deploymentOrderProductEquipmentDO.getEquipmentNo());
+                        if (productEquipmentDO != null
+                                && ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_DEPLOYING.equals(productEquipmentDO.getEquipmentStatus())
+                                && dbDeploymentOrderDO.getSrcWarehouseId().equals(productEquipmentDO.getCurrentWarehouseId())) {
+                            if (DeploymentType.DEPLOYMENT_TYPE_BORROW.equals(dbDeploymentOrderDO.getDeploymentType())) {
+                                productEquipmentDO.setCurrentWarehouseId(dbDeploymentOrderDO.getTargetWarehouseId());
+                            } else if (DeploymentType.DEPLOYMENT_TYPE_SELL.equals(dbDeploymentOrderDO.getDeploymentType())) {
+                                productEquipmentDO.setCurrentWarehouseId(dbDeploymentOrderDO.getTargetWarehouseId());
+                                productEquipmentDO.setOwnerWarehouseId(dbDeploymentOrderDO.getTargetWarehouseId());
+                            }
+                            productEquipmentMapper.update(productEquipmentDO);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (CollectionUtil.isNotEmpty(dbDeploymentOrderDO.getDeploymentOrderMaterialDOList())) {
+            for (DeploymentOrderMaterialDO deploymentOrderMaterialDO : dbDeploymentOrderDO.getDeploymentOrderMaterialDOList()) {
+                List<DeploymentOrderMaterialBulkDO> deploymentOrderMaterialBulkDOList = deploymentOrderMaterialBulkMapper.findByDeploymentOrderMaterialId(deploymentOrderMaterialDO.getId());
+                if (CollectionUtil.isNotEmpty(deploymentOrderMaterialBulkDOList)) {
+                    for (DeploymentOrderMaterialBulkDO deploymentOrderMaterialBulkDO : deploymentOrderMaterialBulkDOList) {
+                        BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(deploymentOrderMaterialBulkDO.getBulkMaterialNo());
+                        if (bulkMaterialDO != null
+                                && BulkMaterialStatus.BULK_MATERIAL_STATUS_DEPLOYING.equals(bulkMaterialDO.getBulkMaterialStatus())
+                                && dbDeploymentOrderDO.getSrcWarehouseId().equals(bulkMaterialDO.getCurrentWarehouseId())) {
+                            if (DeploymentType.DEPLOYMENT_TYPE_BORROW.equals(dbDeploymentOrderDO.getDeploymentType())) {
+                                bulkMaterialDO.setCurrentWarehouseId(dbDeploymentOrderDO.getTargetWarehouseId());
+                            } else if (DeploymentType.DEPLOYMENT_TYPE_SELL.equals(dbDeploymentOrderDO.getDeploymentType())) {
+                                bulkMaterialDO.setCurrentWarehouseId(dbDeploymentOrderDO.getTargetWarehouseId());
+                                bulkMaterialDO.setOwnerWarehouseId(dbDeploymentOrderDO.getTargetWarehouseId());
+                            }
+                            bulkMaterialMapper.update(bulkMaterialDO);
+                        }
+                    }
+                }
+            }
+        }
+
+
         dbDeploymentOrderDO.setDeploymentOrderStatus(DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_CONFIRM);
         dbDeploymentOrderDO.setUpdateTime(currentTime);
         dbDeploymentOrderDO.setUpdateUser(loginUser.getUserId().toString());

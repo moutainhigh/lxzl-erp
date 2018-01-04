@@ -16,9 +16,11 @@ public class ProductEquipmentDO extends BaseDO {
     private Integer skuId;
     private String orderNo;
     private Integer currentWarehouseId;
+    @Transient
     private String currentWarehouseName;
     private Integer currentWarehousePositionId;
     private Integer ownerWarehouseId;
+    @Transient
     private String ownerWarehouseName;
     private Integer ownerWarehousePositionId;
     private BigDecimal equipmentPrice;
