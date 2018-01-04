@@ -51,8 +51,8 @@
                                 <dl class="dl-horizontal dl-horizontal-rental">
                                     <dt class="mb5">支付日期：</dt><dd>{{#time}}{{payTime}}{{/time}}&nbsp;</dd>
                                     <dt class="mb5">发货日期：</dt><dd>{{#time}}{{deliveryTime}}{{/time}}&nbsp;</dd>
-                                    <dt class="mb5">交货日期：</dt><dd>{{#time}}{{expectDeliveryTime}}{{/time}}&nbsp;</dd>
-                                    <dt class="mb5">交货方式：</dt><dd>{{deliveryModeValue}}&nbsp;</dd>
+                                    <dt class="mb5">送货日期：</dt><dd>{{#time}}{{expectDeliveryTime}}{{/time}}&nbsp;</dd>
+                                    <dt class="mb5">送货方式：</dt><dd>{{deliveryModeValue}}&nbsp;</dd>
                                 </dl>
                             </div>
                             <div class="col-md-4">

@@ -83,22 +83,16 @@
                                         </th>
                                         {{/hasCommonActionButtons}}
                                         <th class="">订单编号</th>
-
                                         <th class="">客户</th>
-##                                        <th class="">租赁方式</th>
-##                                        <th class="">租期</th>
                                         <th class="">商品总价</th>
                                         <th class="">订单总价</th>
-##                                        <th class="">优惠金额</th>
                                         <th class="">支付时间</th>
                                         <th class="">支付状态</th>
-                                        <th class="">状态</th>
                                         <th class="">创建人</th>
                                         <th class="">创建时间</th>
-##                                        <th class="">发货时间</th>
-##                                        <th class="">确认收货时间</th>
-                                        <th class="">购买人备注</th>
-                                        <th class="">订单备注</th>
+##                                        <th class="">购买人备注</th>
+                                        <th class="">订单状态</th>
+##                                        <th class="">订单备注</th>
                                         {{#hasRowActionButtons}}
                                         <th class="text-right">操作</th>
                                         {{/hasRowActionButtons}}
@@ -118,28 +112,23 @@
                                             {{/hasCommonActionButtons}}
                                             <td>{{orderNo}}</td>
                                             <td>{{buyerCustomerName}}</td>
-##                                            <td>{{rentTypeStr}}</td>
-##                                            <td>{{rentTimeLength}}</td>
                                             <td>{{#price}}{{totalProductAmount}}{{/price}}</td>
                                             <td>{{#price}}{{totalOrderAmount}}{{/price}}</td>
-##                                            <td>{{#price}}{{totalDiscountAmount}}{{/price}}</td>
                                             <td>{{#time}}{{payTime}}{{/time}}</td>
-                                            <td>{{payStatusValue}}</td>
-                                            <td>{{orderStatusStr}}</td>
+                                            <td class="{{payStatusClass}}">{{payStatusValue}}</td>
                                             <td>{{createUserRealName}}</td>
                                             <td>{{#time}}{{createTime}}{{/time}}</td>
-##                                            <td>{{#time}}{{deliveryTime}}{{/time}}</td>
-##                                            <td>{{#time}}{{confirmDeliveryTime}}{{/time}}</td>
-                                            <td>
-                                                <div class="mw200">
-                                                    {{buyerRemark}}
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="mw200">
-                                                    {{remark}}
-                                                </div>
-                                            </td>
+##                                            <td>
+##                                                <div class="mw200">
+##                                                    {{buyerRemark}}
+##                                                </div>
+##                                            </td>
+                                            <td class="{{orderStatusClass}}">{{orderStatusStr}}</td>
+##                                            <td>
+##                                                <div class="mw200">
+##                                                    {{remark}}
+##                                                </div>
+##                                            </td>
                                             {{#hasRowActionButtons}}
                                             <td class="text-right">
                                                 <div class="btn-group text-right">

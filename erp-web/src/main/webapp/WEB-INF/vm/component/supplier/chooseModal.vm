@@ -13,7 +13,12 @@
                         </div>
                         <div class="form-group pull-right mn mr10" style="width: 120px;">
                             <div class="input-group">
-                                <input type="text" name="supplierName" id="supplierName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入仓库名称" />
+                                <input type="text" name="supplierName" id="supplierName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入供应商名称">
+                            </div>
+                        </div>
+                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                            <div class="input-group">
+                                <input type="text" name="supplierNo" id="supplierNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入供应商编号">
                             </div>
                         </div>
                     </form>
@@ -22,7 +27,7 @@
         </div>
         <div class="panel-body pn">
             <div class="table-responsive">
-                <script type="text/html" id="chooseWarehouseModalDataListTpl">
+                <script type="text/html" id="chooseSupplierModalDataListTpl">
                     <thead>
                     <tr>
                         <th>
@@ -31,7 +36,7 @@
                                 <span class="checkbox mn"></span>
                             </label>
                         </th>
-                        <th>供应商ID</th>
+                        <th>供应商编号</th>
                         <th>供应商</th>
                         <th>地址</th>
                         <th>联系人</th>
@@ -49,7 +54,7 @@
                                 <span class="checkbox mn"></span>
                             </label>
                         </td>
-                        <td>{{supplierId}}</td>
+                        <td>{{supplierNo}}</td>
                         <td>{{supplierName}}</td>
                         <td>{{address}}</td>
                         <td>{{contactName}}</td>
@@ -69,7 +74,7 @@
                     {{/dataSource}}
                     </tbody>
                 </script>
-                <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="chooseWarehouseModalDataListTable"></table>
+                <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="chooseSupplierModalDataListTable"></table>
             </div>
         </div>
         <div class="panel-footer">

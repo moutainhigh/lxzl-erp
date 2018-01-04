@@ -111,6 +111,7 @@
                                             <th>SKU</th>
                                             <th>调拨单价</th>
                                             <th>调拨数量</th>
+                                            <th class="text-right">操作</th>
                                         </tr>
                                         </thead>
                                         <tbody>
