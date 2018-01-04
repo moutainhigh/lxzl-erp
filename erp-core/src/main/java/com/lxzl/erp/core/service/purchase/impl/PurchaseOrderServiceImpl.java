@@ -1404,8 +1404,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         //用来保存所有已签单的采购收货单实际已收到的配件总数
         Map<Integer, Integer> materialCountMap = new HashMap<>();
         for (PurchaseReceiveOrderDO purchaseReceiveOrderDO : purchaseReceiveOrderDOList) {
-            //只累加已签单的sku，并且非自动流转总仓的
-            if (PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_YET.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())
+            //只累加已签单的或已提交的sku，并且非自动流转总仓的
+            if ((PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_YET.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())
+                    ||PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_COMMITTED.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus()))
                     && !AutoAllotStatus.AUTO_ALLOT_STATUS_YES.equals(purchaseReceiveOrderDO.getAutoAllotStatus())) {
                 //找到的所有采购单项sku，累加数量
                 List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList();
@@ -1626,11 +1627,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         List<PurchaseReceiveOrderMaterialPrice> purchaseReceiveOrderMaterialPriceList = new ArrayList<>();
         Map<BigDecimal, Integer> purchaseReceiveOrderMaterialPriceMap = new HashMap<>();
         for (BulkMaterialDO bulkMaterialDO : bulkMaterialDOList) {
-            if (bulkMaterialDO.getPurchasePrice() != null) {
-                if (purchaseReceiveOrderMaterialPriceMap.get(bulkMaterialDO.getPurchasePrice()) == null) {
-                    purchaseReceiveOrderMaterialPriceMap.put(bulkMaterialDO.getPurchasePrice(), 0);
-                }
-                purchaseReceiveOrderMaterialPriceMap.put(bulkMaterialDO.getPurchasePrice(), purchaseReceiveOrderMaterialPriceMap.get(bulkMaterialDO.getPurchasePrice()) + 1);
+            BigDecimal purchasePrice = bulkMaterialDO.getPurchasePrice();
+            if (purchasePrice == null) {
+                purchasePrice = BigDecimal.ZERO;
+            }
+            if (purchaseReceiveOrderMaterialPriceMap.get(purchasePrice) == null) {
+                purchaseReceiveOrderMaterialPriceMap.put(purchasePrice, 1);
+            }else{
+                purchaseReceiveOrderMaterialPriceMap.put(purchasePrice, purchaseReceiveOrderMaterialPriceMap.get(purchasePrice) + 1);
             }
         }
         for (BigDecimal bigDecimal : purchaseReceiveOrderMaterialPriceMap.keySet()) {
