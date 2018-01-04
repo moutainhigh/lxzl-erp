@@ -22,8 +22,9 @@ public class ProductTest extends ERPUnTransactionalTest {
     @Test
     public void queryAllProduct() throws Exception {
         ProductQueryParam productQueryParam = new ProductQueryParam();
-//        productQueryParam.setPageNo(1);
-//        productQueryParam.setPageSize(15);
+        productQueryParam.setPageNo(1);
+        productQueryParam.setPageSize(15);
+        productQueryParam.setIsRent(0);
 //        productQueryParam.setBrandId(15);
         TestResult testResult = getJsonTestResult("/product/queryAllProduct", productQueryParam);
     }

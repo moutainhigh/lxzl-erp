@@ -166,13 +166,13 @@
                 <if test="maps.productQueryParam.productName != null &amp;&amp; maps.productQueryParam.productName != ''">
                     and ep.product_name like CONCAT('%','${maps.productQueryParam.productName}','%' )
                 </if>
-                <if test="maps.productQueryParam.isRent != null &amp;&amp; maps.productQueryParam.isRent != ''">
+                <if test="maps.productQueryParam.isRent != null">
                     and ep.is_rent = #{maps.productQueryParam.isRent, jdbcType=INTEGER}
                 </if>
-                <if test="maps.productQueryParam.brandId != null &amp;&amp; maps.productQueryParam.brandId != ''">
+                <if test="maps.productQueryParam.brandId != null">
                     and ep.brand_id = #{maps.productQueryParam.brandId, jdbcType=INTEGER}
                 </if>
-                <if test="maps.productQueryParam.categoryId != null &amp;&amp; maps.productQueryParam.categoryId != ''">
+                <if test="maps.productQueryParam.categoryId != null">
                     and ep.category_id = #{maps.productQueryParam.categoryId, jdbcType=INTEGER}
                 </if>
                 <if test="true">
@@ -196,13 +196,13 @@
             <if test="maps.productQueryParam.productName != null &amp;&amp; maps.productQueryParam.productName != ''">
                 and ep.product_name like CONCAT('%','${maps.productQueryParam.productName}','%' )
             </if>
-            <if test="maps.productQueryParam.isRent != null &amp;&amp; maps.productQueryParam.isRent != ''">
+            <if test="maps.productQueryParam.isRent != null">
                 and ep.is_rent = #{maps.productQueryParam.isRent, jdbcType=INTEGER}
             </if>
-            <if test="maps.productQueryParam.brandId != null &amp;&amp; maps.productQueryParam.brandId != ''">
+            <if test="maps.productQueryParam.brandId != null">
                 and ep.brand_id = #{maps.productQueryParam.brandId, jdbcType=INTEGER}
             </if>
-            <if test="maps.productQueryParam.categoryId != null &amp;&amp; maps.productQueryParam.categoryId != ''">
+            <if test="maps.productQueryParam.categoryId != null">
                 and ep.category_id = #{maps.productQueryParam.categoryId, jdbcType=INTEGER}
             </if>
             <if test="true">
