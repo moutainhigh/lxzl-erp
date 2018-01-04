@@ -300,11 +300,11 @@ public class ErrorCode {
     public static final String ORDER_PRODUCT_DEPOSIT_ERROR = "J400087";
     public static final String ORDER_MATERIAL_DEPOSIT_ERROR = "J400088";
     public static final String ORDER_DELIVERY_MODE_ERROR = "J400089";
-    public static final String ORDER_CAN_NOT_DELIVERY_TIME_REASON = "J400049";
-    public static final String ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT = "J400050";
-    public static final String ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT = "J400051";
-    public static final String ORDER_PRODUCT_COUNT_ERROR = "J400052";
-    public static final String ORDER_MATERIAL_COUNT_ERROR = "J400052";
+    public static final String ORDER_CAN_NOT_DELIVERY_TIME_REASON = "J400090";
+    public static final String ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT = "J400091";
+    public static final String ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT = "J400092";
+    public static final String ORDER_PRODUCT_COUNT_ERROR = "J400093";
+    public static final String ORDER_MATERIAL_COUNT_ERROR = "J400094";
 
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
