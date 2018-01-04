@@ -63,17 +63,21 @@
                                     </label>
                                 </th>
                                 {{/hasCommonActionButtons}}
-                                <th>工作流ID</th>
                                 <th>工作流编号</th>
-                                <th>类型</th>
                                 <th>关联编号</th>
-                                <th>模板ID</th>
-                                <th>流程当前步骤</th>
-                                <th>流程最后步骤</th>
-                                <th>当前结点名</th>
-                                <th>当前审批人</th>
-                                <th>审批状态</th>
-                                <th>创建时间</th>
+                                <th>类型</th>
+                                <th>模板名</th>
+                                <th>当前/最后(步骤)</th>
+
+
+##                                <th>当前结点名</th>
+##                                <th>当前审批人</th>
+##                                <th>审批状态</th>
+
+                                <th>当前(节点名/审批人/状态)</th>
+
+
+                                <th>创建人</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
                                 {{/hasRowActionButtons}}
@@ -91,17 +95,22 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{workflowLinkId}}</td>
                                 <td>{{workflowLinkNo}}</td>
-                                <td>{{workflowTypeStr}}</td>
                                 <td><a href="{{workflowReferUrl}}" target="_blank">{{workflowReferNo}}</a></td>
+                                <td>{{workflowTypeStr}}</td>
                                 <td>{{workflowTemplateName}}</td>
-                                <td>{{workflowStep}}</td>
-                                <td>{{workflowLastStep}}</td>
-                                <td>{{workflowCurrentNodeName}}</td>
-                                <td>{{currentVerifyUserName}}</td>
-                                <td>{{workflowVerifyStatusStr}}</td>
-                                <td>{{createTimeFormat}}</td>
+                                <td>{{workflowStep}}/{{workflowLastStep}}</td>
+
+##                                <td>{{workflowCurrentNodeName}}</td>
+##                                <td>{{currentVerifyUserName}}</td>
+##                                <td>{{workflowVerifyStatusStr}}</td>
+
+                                <td>{{workflowCurrentNodeName}}-{{currentVerifyUserName}}-<span class="text-{{workflowVerifyStatusClass}}">{{workflowVerifyStatusValue}}</span></td>
+
+                                <td>
+                                    <p class="mn">{{createUserRealName}}</p>
+                                    <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                </td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
                                     <div class="btn-group text-right">

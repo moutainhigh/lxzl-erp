@@ -77,15 +77,13 @@
                                     {{/hasCommonActionButtons}}
                                     <th>结算单编号</th>
                                     <th>客户</th>
-                                    <th>预计支付时间</th>
                                     <th>结算单金额</th>
+                                    <th>结算时间</th>
+                                    <th>预计支付时间</th>
                                     <th>已支付金额</th>
-                                    <th>结算单支付时间</th>
+##                                    <th>支付时间</th>
                                     <th>逾期金额</th>
                                     <th>结算状态</th>
-                                    <th>支付时间</th>
-                                    <th>结算开始时间</th>
-                                    <th>结算结束时间</th>
                                     {{#hasRowActionButtons}}
                                     <th class="text-right">操作</th>
                                     {{/hasRowActionButtons}}
@@ -105,15 +103,19 @@
                                     {{/hasCommonActionButtons}}
                                     <td>{{statementOrderNo}}</td>
                                     <td>{{customerName}}</td>
+                                    <td>￥{{#price}}{{statementAmount}}{{/price}}</td>
+                                    <td>
+                                        <p class="mn" title="结算明细最早的一个时间">开始：{{#clockTime}}{{statementStartTime}}{{/clockTime}}</p>
+                                        <p class="mn mt5" title="结算明细最晚的一个时间">结束：{{#clockTime}}{{statementEndTime}}{{/clockTime}}</p>
+                                    </td>
                                     <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
-                                    <td>{{#price}}{{statementAmount}}{{/price}}</td>
-                                    <td>{{#price}}{{statementPaidAmount}}{{/price}}</td>
-                                    <td>{{#shortTime}}{{statementPaidTime}}{{/shortTime}}</td>
-                                    <td>{{#price}}{{statementOverdueAmount}}{{/price}}</td>
+##                                    <td>￥{{#price}}{{statementPaidAmount}}{{/price}}</td>
+                                    <td>
+                                        <p class="mn">￥{{#price}}{{statementPaidAmount}}{{/price}}</p>
+                                        <p class="mn mt5" title="支付时间">{{#clockTime}}{{statementPaidTime}}{{/clockTime}}</p>
+                                    </td>
+                                    <td>￥{{#price}}{{statementOverdueAmount}}{{/price}}</td>
                                     <td>{{statementOrderStatusValue}}</td>
-                                    <td>{{#shortTime}}{{statementDetailStatus}}{{/shortTime}}</td>
-                                    <td>{{#shortTime}}{{statementStartTime}}{{/shortTime}}</td>
-                                    <td>{{#shortTime}}{{statementEndTime}}{{/shortTime}}</td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
                                         <div class="btn-group text-right">

@@ -84,15 +84,10 @@
                                         {{/hasCommonActionButtons}}
                                         <th class="">订单编号</th>
                                         <th class="">客户</th>
-                                        <th class="">商品总价</th>
                                         <th class="">订单总价</th>
-                                        <th class="">支付时间</th>
                                         <th class="">支付状态</th>
-                                        <th class="">创建人</th>
-                                        <th class="">创建时间</th>
-##                                        <th class="">购买人备注</th>
                                         <th class="">订单状态</th>
-##                                        <th class="">订单备注</th>
+                                        <th class="">创建人</th>
                                         {{#hasRowActionButtons}}
                                         <th class="text-right">操作</th>
                                         {{/hasRowActionButtons}}
@@ -112,23 +107,16 @@
                                             {{/hasCommonActionButtons}}
                                             <td>{{orderNo}}</td>
                                             <td>{{buyerCustomerName}}</td>
-                                            <td>{{#price}}{{totalProductAmount}}{{/price}}</td>
-                                            <td>{{#price}}{{totalOrderAmount}}{{/price}}</td>
-                                            <td>{{#time}}{{payTime}}{{/time}}</td>
-                                            <td class="{{payStatusClass}}">{{payStatusValue}}</td>
-                                            <td>{{createUserRealName}}</td>
-                                            <td>{{#time}}{{createTime}}{{/time}}</td>
-##                                            <td>
-##                                                <div class="mw200">
-##                                                    {{buyerRemark}}
-##                                                </div>
-##                                            </td>
-                                            <td class="{{orderStatusClass}}">{{orderStatusStr}}</td>
-##                                            <td>
-##                                                <div class="mw200">
-##                                                    {{remark}}
-##                                                </div>
-##                                            </td>
+                                            <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
+                                            <td>
+                                                <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
+                                                <p class="mn mt5">{{#clockTime}}{{payTime}}{{/clockTime}}</p>
+                                            </td>
+                                            <td class="{{orderStatusClass}}">{{orderStatusStr}}</td>>
+                                            <td>
+                                                <p class="mn">{{createUserRealName}}</p>
+                                                <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                            </td>
                                             {{#hasRowActionButtons}}
                                             <td class="text-right">
                                                 <div class="btn-group text-right">

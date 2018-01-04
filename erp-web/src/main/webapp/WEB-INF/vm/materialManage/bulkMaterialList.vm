@@ -83,12 +83,12 @@
                                 <th>散料名称</th>
                                 <th>品牌</th>
                                 <th>散料类型</th>
+                                <th>面值大小</th>
+                                <th>散料价值</th>
                                 <th>配件编号</th>
                                 <th>归属仓库</th>
                                 <th>当前仓库</th>
-                                <th>散料字面量</th>
-                                <th>散料价值</th>
-                                <th>当前设备编号</th>
+                                <th>所在设备编号</th>
                                 <th>状态</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
@@ -111,13 +111,13 @@
                                 <td>{{bulkMaterialName}}</td>
                                 <td>{{brandName}}</td>
                                 <td>{{bulkMaterialTypeValue}}</td>
+                                <td>{{#memorysize}}{{materialCapacityValue}}{{/memorysize}}</td>
+                                <td>￥{{#price}}{{bulkMaterialPrice}}{{/price}}</td>
                                 <td>{{materialNo}}</td>
                                 <td>{{ownerWarehouseName}}</td>
                                 <td>{{currentWarehouseName}}</td>
-                                <td>{{materialCapacityValue}}</td>
-                                <td>{{bulkMaterialPriceFormat}}</td>
                                 <td>{{currentEquipmentNo}}</td>
-                                <td>{{bulkMaterialStatusValue}}</td>
+                                <td class="{{bulkMaterialStatusClass}}">{{bulkMaterialStatusValue}}</td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
                                     <div class="btn-group text-right">
