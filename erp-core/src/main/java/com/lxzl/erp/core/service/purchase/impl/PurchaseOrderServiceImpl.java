@@ -1627,11 +1627,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         List<PurchaseReceiveOrderMaterialPrice> purchaseReceiveOrderMaterialPriceList = new ArrayList<>();
         Map<BigDecimal, Integer> purchaseReceiveOrderMaterialPriceMap = new HashMap<>();
         for (BulkMaterialDO bulkMaterialDO : bulkMaterialDOList) {
-            if (bulkMaterialDO.getPurchasePrice() != null) {
-                if (purchaseReceiveOrderMaterialPriceMap.get(bulkMaterialDO.getPurchasePrice()) == null) {
-                    purchaseReceiveOrderMaterialPriceMap.put(bulkMaterialDO.getPurchasePrice(), 0);
-                }
-                purchaseReceiveOrderMaterialPriceMap.put(bulkMaterialDO.getPurchasePrice(), purchaseReceiveOrderMaterialPriceMap.get(bulkMaterialDO.getPurchasePrice()) + 1);
+            BigDecimal purchasePrice = bulkMaterialDO.getPurchasePrice();
+            if (purchasePrice == null) {
+                purchasePrice = BigDecimal.ZERO;
+            }
+            if (purchaseReceiveOrderMaterialPriceMap.get(purchasePrice) == null) {
+                purchaseReceiveOrderMaterialPriceMap.put(purchasePrice, 1);
+            }else{
+                purchaseReceiveOrderMaterialPriceMap.put(purchasePrice, purchaseReceiveOrderMaterialPriceMap.get(purchasePrice) + 1);
             }
         }
         for (BigDecimal bigDecimal : purchaseReceiveOrderMaterialPriceMap.keySet()) {
