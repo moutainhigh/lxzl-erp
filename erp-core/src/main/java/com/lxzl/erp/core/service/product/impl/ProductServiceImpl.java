@@ -13,10 +13,13 @@ import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.*;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.*;
+import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
@@ -333,11 +336,13 @@ public class ProductServiceImpl implements ProductService {
             List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByProductAndSkuId(productSku.getProductId(), productSku.getSkuId());
             productSku.setShouldProductCategoryPropertyValueList(ConverterUtil.convertList(productCategoryPropertyValueDOList, ProductCategoryPropertyValue.class));
 
+            WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
             // 根据sku查询全新与次新的设备数量
             ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
             productEquipmentQueryParam.setSkuId(productSku.getSkuId());
             productEquipmentQueryParam.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
             productEquipmentQueryParam.setIsNew(CommonConstant.COMMON_CONSTANT_YES);
+            productEquipmentQueryParam.setCurrentWarehouseId(warehouseDO.getId());
 
             Map<String, Object> queryEquipmentCountParam = new HashMap<>();
             queryEquipmentCountParam.put("start", 0);
@@ -381,11 +386,13 @@ public class ProductServiceImpl implements ProductService {
             List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByProductAndSkuId(productSku.getProductId(), productSku.getSkuId());
             productSku.setShouldProductCategoryPropertyValueList(ConverterUtil.convertList(productCategoryPropertyValueDOList, ProductCategoryPropertyValue.class));
 
+            WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
             // 根据sku查询全新与次新的设备数量
             ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
             productEquipmentQueryParam.setSkuId(productSku.getSkuId());
             productEquipmentQueryParam.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
             productEquipmentQueryParam.setIsNew(CommonConstant.COMMON_CONSTANT_YES);
+            productEquipmentQueryParam.setCurrentWarehouseId(warehouseDO.getId());
 
             Map<String, Object> queryEquipmentCountParam = new HashMap<>();
             queryEquipmentCountParam.put("start", 0);
@@ -1067,4 +1074,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductCategoryMapper productCategoryMapper;
+
+    @Autowired
+    private WarehouseSupport warehouseSupport;
+
+    @Autowired
+    private UserSupport userSupport;
 }

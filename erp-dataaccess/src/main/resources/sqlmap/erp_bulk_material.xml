@@ -62,7 +62,9 @@
 		WHERE ebm.bulk_material_no = #{bulkMaterialNo, jdbcType=VARCHAR} AND ebm.data_status = 1
 	</select>
 	<select id="findRentByCustomerId" resultMap="BulkMaterialDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_order eo INNER JOIN erp_bulk_material ebm ON eo.order_no=ebm.order_no WHERE eo.data_status=1 AND eo.buyer_customer_id = #{customerId}
+		SELECT <include refid="column_List"/> FROM erp_order eo INNER JOIN erp_bulk_material ebm ON eo.order_no=ebm.order_no
+		AND ebm.current_equipment_id IS NULL AND ebm.data_status = 1
+		WHERE eo.data_status=1 AND eo.buyer_customer_id = #{customerId}
 	</select>
 	<select id="findRentByCustomerIdAndMaterialId" resultMap="BulkMaterialDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> FROM erp_order eo INNER JOIN erp_bulk_material ebm ON eo.order_no=ebm.order_no WHERE eo.data_status=1
@@ -71,7 +73,7 @@
 	<select id="findByPurchaseOrderNo" resultMap="BulkMaterialDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/>
 		FROM erp_bulk_material ebm
-		LEFT JOIN erp_stock_order_bulk_material esobm ON ebm.id=esobm.bulk_material_id AND esobm.data_status=1
+		LEFT JOIN erp_stock_order_bulk_material esobm ON ebm.id=esobm.bulk_material_id AND esobm.data_status=1 AND esobm.item_refer_type=2
 		LEFT JOIN erp_stock_order eso ON eso.stock_order_no = esobm.stock_order_no AND eso.data_status=1 AND eso.cause_type=1
 		LEFT JOIN erp_purchase_receive_order epro  ON epro.purchase_receive_no = eso.refer_no AND epro.data_status=1
 		LEFT JOIN erp_purchase_order epo ON epro.purchase_order_id = epo.id AND epo.data_status=1
@@ -84,7 +86,10 @@
 		where ebm.bulk_material_type = #{materialType, jdbcType=INTEGER} and ebm.material_model_id = #{materialModelId, jdbcType=INTEGER} and ebm.data_status = 1
 	</select>
 	<select id="getRentBulkCountByOrderNo" resultType="java.lang.Integer">
-		SELECT count(1) FROM erp_bulk_material ebm WHERE ebm.data_status=1 AND ebm.order_no = #{orderNo}
+		SELECT count(1) FROM erp_bulk_material ebm
+		LEFT JOIN erp_material em ON ebm.material_id = em.id AND is_consumable = 0 AND em.data_status=1
+		WHERE ebm.data_status=1 AND ebm.order_no = #{orderNo}
+		AND ebm.current_equipment_id IS NULL
 	</select>
 	<select id="listByPurchaseReceiveOrderMaterialId" resultMap="BulkMaterialDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm
