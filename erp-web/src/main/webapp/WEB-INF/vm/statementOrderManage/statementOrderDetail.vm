@@ -90,8 +90,10 @@
                                         <th>订单项类型</th>
 ##                                        <th>订单项关联ID</th>
                                         <th>商品名</th>
-                                        <th>商品数量</th>
                                         <th>单价</th>
+                                        <th>商品数量</th>
+                                        <th>租赁类型</th>
+                                        <th>期数</th>
                                         <th>预计支付时间</th>
                                         <th>结算单金额</th>
                                         <th>已经支付金额</th>
@@ -116,13 +118,15 @@
                                                 {{itemName}}
                                             </div>
                                         </td>
+                                        <td>￥{{#price}}{{unitAmount}}{{/price}}</td>
                                         <td>{{itemCount}}</td>
-                                        <td>{{#price}}{{unitAmount}}{{/price}}</td>
+                                        <td>{{itemRentTypeValue}}</td>
+                                        <td>{{statementDetailPhase}}</td>
                                         <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
-                                        <td>{{#price}}{{statementDetailAmount}}{{/price}}</td>
-                                        <td>{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>
+                                        <td>￥{{#price}}{{statementDetailAmount}}{{/price}}</td>
+                                        <td>￥{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>
                                         <td>{{#shortTime}}{{statementDetailPaidTime}}{{/shortTime}}</td>
-                                        <td>{{#price}}{{statementDetailOverdueAmount}}{{/price}}</td>
+                                        <td>￥{{#price}}{{statementDetailOverdueAmount}}{{/price}}</td>
                                         <td>{{statementDetailStatusValue}}</td>
                                         <td>{{#shortTime}}{{statementStartTime}}{{/shortTime}}</td>
                                         <td>{{#shortTime}}{{statementEndTime}}{{/shortTime}}</td>
