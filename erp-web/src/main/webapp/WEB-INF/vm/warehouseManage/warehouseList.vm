@@ -77,7 +77,6 @@
                                     <th>公司名</th>
                                     <th>公司类型</th>
                                     <th>创建人</th>
-                                    <th>创建时间</th>
                                     {{#hasRowActionButtons}}
                                     <th class="text-right">操作</th>
                                     {{/hasRowActionButtons}}
@@ -100,8 +99,10 @@
                                     <td>{{warehouseTypeStr}}</td>
                                     <td>{{subCompanyName}}</td>
                                     <td>{{companyTypeStr}}</td>
-                                    <td>{{createUserRealName}}</td>
-                                    <td>{{#time}}{{createTime}}{{/time}}</td>
+                                    <td>
+                                        <p class="mn">{{createUserRealName}}</p>
+                                        <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                    </td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
                                         <div class="btn-group text-right">

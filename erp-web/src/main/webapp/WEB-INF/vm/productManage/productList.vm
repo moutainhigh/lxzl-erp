@@ -114,7 +114,10 @@
                                             </td>
                                             <td>{{totalStock}}</td>
                                             <td>{{isRentStr}}</td>
-                                            <td>{{createUserRealName}}</td>
+                                            <td>
+                                                <p class="mn">{{createUserRealName}}</p>
+                                                <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                            </td>
                                             {{#hasRowActionButtons}}
                                             <td class="text-right">
                                                 <div class="btn-group text-right">

@@ -73,12 +73,8 @@
                                     {{/hasCommonActionButtons}}
                                     <th>客户编号</th>
                                     <th>真实姓名</th>
-                                    <th>电子邮件</th>
-                                    <th>手机号</th>
-                                    <th>地址</th>
+                                    <th>联系方式</th>
                                     <th>创建人</th>
-                                    <th>创建时间</th>
-                                    <th>备注</th>
                                     {{#hasRowActionButtons}}
                                     <th class="text-right">操作</th>
                                     {{/hasRowActionButtons}}
@@ -98,19 +94,14 @@
                                     {{/hasCommonActionButtons}}
                                     <td>{{customerNo}}</td>
                                     <td>{{customerPerson.realName}}</td>
-                                    <td>{{customerPerson.email}}</td>
-                                    <td>{{customerPerson.phone}}</td>
                                     <td>
-                                        <div class="mw200">
-                                            {{addressForamt}}
-                                        </div>
+                                        <p class="mn">{{customerPerson.email}}</p>
+                                        <p class="mn mt5"><i class="fa fa-mobile mr5"></i>{{customerPerson.phone}}</p>
+                                        <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{addressForamt}}</p>
                                     </td>
-                                    <td>{{createUserRealName}}</td>
-                                    <td>{{createTimeFormat}}</td>
                                     <td>
-                                        <div class="mw200">
-                                            {{customerPerson.remark}}
-                                        </div>
+                                        <p class="mn">{{createUserRealName}}</p>
+                                        <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
                                     </td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">

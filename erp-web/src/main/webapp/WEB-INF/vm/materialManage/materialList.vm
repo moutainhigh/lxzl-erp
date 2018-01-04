@@ -88,8 +88,6 @@
                                 <th>价值</th>
                                 <th>租金</th>
                                 <th>创建人</th>
-                                <th>创建时间</th>
-                                <th>描述</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
                                 {{/hasRowActionButtons}}
@@ -114,17 +112,14 @@
                                 <td>{{materialTypeStr}}</td>
                                 <td>{{#memorysize}}{{materialCapacityValue}}{{/memorysize}}</td>
                                 <td>{{stock}}</td>
-                                <td>{{#price}}{{materialPrice}}{{/price}}</td>
+                                <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
                                 <td>
-                                    <p>日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
-                                    <p>月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
+                                    <p class="mn">日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
+                                    <p class="mn mt5">月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
                                 </td>
-                                <td>{{createUserRealName}}</td>
-                                <td>{{#time}}{{createTime}}{{/time}}</td>
                                 <td>
-                                    <div class="mw200">
-                                    {{materialDesc}}
-                                    </div>
+                                    <p class="mn">{{createUserRealName}}</p>
+                                    <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
                                 </td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">

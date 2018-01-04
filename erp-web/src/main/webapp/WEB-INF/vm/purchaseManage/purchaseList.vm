@@ -88,9 +88,7 @@
                                     <th>是否有发票</th>
                                     <th>是否全新机</th>
                                     <th>采购单状态</th>
-                                    <th>采购者</th>
-##                                    <th>商品信息</th>
-                                    <th>创建时间</th>
+                                    <th>创建人</th>
                                     {{#hasRowActionButtons}}
                                     <th class="text-right">操作</th>
                                     {{/hasRowActionButtons}}
@@ -109,16 +107,17 @@
                                     </td>
                                     {{/hasCommonActionButtons}}
                                     <td>{{purchaseNo}}</td>
-                                    <td>{{#price}}{{purchaseOrderAmountTotal}}{{/price}}</td>
+                                    <td>￥{{#price}}{{purchaseOrderAmountTotal}}{{/price}}</td>
                                     <td>{{productSupplierName}}</td>
                                     <td>{{invoiceSupplierName}}</td>
                                     <td>{{warehouse}}</td>
                                     <td>{{isInvoiceStr}}</td>
                                     <td>{{isNewStr}}</td>
-                                    <td>{{purchaseOrderStatusStr}}</td>
-                                    <td>{{ownerName}}</td>
-##                                    <td>{{}}</td>
-                                    <td>{{#time}}{{createTime}}{{/time}}</td>
+                                    <td class="{{purchaseOrderStatusClass}}">{{purchaseOrderStatusValue}}</td>
+                                    <td>
+                                        <p class="mn">{{createUserRealName}}</p>
+                                        <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                    </td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
                                         <div class="btn-group text-right">
