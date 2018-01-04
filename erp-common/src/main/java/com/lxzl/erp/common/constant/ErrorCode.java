@@ -212,7 +212,8 @@ public class ErrorCode {
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
     public static final String ORDER_CUSTOMER_CONSIGN_NOT_NULL = "J400001";
-    public static final String ORDER_PRODUCT_STOCK_INSUFFICIENT = "J400002";
+    public static final String ORDER_PRODUCT_STOCK_NEW_INSUFFICIENT = "J400002";
+    public static final String ORDER_PRODUCT_STOCK_OLD_INSUFFICIENT = "J400003";
     public static final String ORDER_NOT_EXISTS = "J400004";
     public static final String ORDER_PRODUCT_EQUIPMENT_NOT_NULL = "J400005";
     public static final String ORDER_PRODUCT_EQUIPMENT_STATUS_ERROR = "J400006";
@@ -300,6 +301,8 @@ public class ErrorCode {
     public static final String ORDER_MATERIAL_DEPOSIT_ERROR = "J400088";
     public static final String ORDER_DELIVERY_MODE_ERROR = "J400089";
     public static final String ORDER_CAN_NOT_DELIVERY_TIME_REASON = "J400049";
+    public static final String ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT = "J400050";
+    public static final String ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT = "J400051";
 
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
@@ -523,6 +526,8 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL, "企业客户首次所需设备的总价值不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL, "企业客户首次所需设备的租赁期限不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL, "企业客户首次所需设备选项不能空");
+        MAP.put(ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT, "全新配件库存不足！");
+        MAP.put(ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT, "次新配件库存不足！");
 
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
@@ -642,7 +647,8 @@ public class ErrorCode {
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
-        MAP.put(ORDER_PRODUCT_STOCK_INSUFFICIENT, "库存不足");
+        MAP.put(ORDER_PRODUCT_STOCK_NEW_INSUFFICIENT, "全新商品库存不足");
+        MAP.put(ORDER_PRODUCT_STOCK_OLD_INSUFFICIENT, "次新商品库存不足");
         MAP.put(ORDER_NOT_EXISTS, "订单不存在");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_NOT_NULL, "订单商品项设备编号不能为空");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_STATUS_ERROR, "该设备不存在或者该设备状态异常，请仔细检查");

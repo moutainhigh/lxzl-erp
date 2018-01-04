@@ -1646,8 +1646,14 @@ public class OrderServiceImpl implements OrderService {
                     return ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS;
                 }
                 ProductSku productSku = product.getProductSkuList().get(0);
-                if (productSku == null || productSku.getStock() == null || productSku.getStock() <= 0 || (productSku.getStock() - orderProduct.getProductCount()) < 0) {
-                    return ErrorCode.ORDER_PRODUCT_STOCK_INSUFFICIENT;
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProduct.getIsNewProduct())) {
+                    if (productSku == null || productSku.getNewProductSkuCount() == null || productSku.getNewProductSkuCount() <= 0 || (productSku.getNewProductSkuCount() - orderProduct.getProductCount()) < 0) {
+                        return ErrorCode.ORDER_PRODUCT_STOCK_NEW_INSUFFICIENT;
+                    }
+                } else {
+                    if (productSku == null || productSku.getOldProductSkuCount() == null || productSku.getOldProductSkuCount() <= 0 || (productSku.getOldProductSkuCount() - orderProduct.getProductCount()) < 0) {
+                        return ErrorCode.ORDER_PRODUCT_STOCK_OLD_INSUFFICIENT;
+                    }
                 }
 
                 String key = orderProduct.getProductSkuId() + "-" + orderProduct.getRentType() + "-" + orderProduct.getRentTimeLength();
@@ -1681,8 +1687,14 @@ public class OrderServiceImpl implements OrderService {
                     return ErrorCode.ORDER_MATERIAL_AMOUNT_ERROR;
                 }
                 Material material = materialServiceResult.getResult();
-                if (material.getStock() == null || material.getStock() <= 0 || (material.getStock() - orderMaterial.getMaterialCount()) < 0) {
-                    return ErrorCode.ORDER_MATERIAL_STOCK_INSUFFICIENT;
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterial.getIsNewMaterial())) {
+                    if (material == null || material.getNewMaterialCount() == null || material.getNewMaterialCount() <= 0 || (material.getNewMaterialCount() - orderMaterial.getMaterialCount()) < 0) {
+                        return ErrorCode.ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT;
+                    }
+                } else {
+                    if (material == null || material.getOldMaterialCount() == null || material.getOldMaterialCount() <= 0 || (material.getOldMaterialCount() - orderMaterial.getMaterialCount()) < 0) {
+                        return ErrorCode.ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT;
+                    }
                 }
                 String key = orderMaterial.getMaterialId() + "-" + orderMaterial.getRentType() + "-" + orderMaterial.getRentTimeLength();
                 if (orderMaterialMap.get(key) != null) {
