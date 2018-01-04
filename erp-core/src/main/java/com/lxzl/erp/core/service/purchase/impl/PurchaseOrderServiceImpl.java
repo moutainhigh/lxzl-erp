@@ -217,7 +217,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             //todo 如果是整机四大件，物料列表有小配件时，商品列表不能为空
             if (CollectionUtil.isNotEmpty(purchaseOrderMaterialList)) {
                 //校验采购订单物料项
-                String checkErrorCode = checkPurchaseOrderMaterialList(purchaseOrderDetail, purchaseOrderMaterialList, purchaseOrder.getPurchaseType(),productIsEmpty);
+                String checkErrorCode = checkPurchaseOrderMaterialList(purchaseOrderDetail, purchaseOrderMaterialList, purchaseOrder.getPurchaseType(), productIsEmpty);
                 if (!ErrorCode.SUCCESS.equals(checkErrorCode)) {
                     return checkErrorCode;
                 }
@@ -229,7 +229,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 return ErrorCode.PURCHASE_ORDER_MATERIAL_LIST_NOT_NULL;
             }
             //校验采购订单物料项
-            String checkErrorCode = checkPurchaseOrderMaterialList(purchaseOrderDetail, purchaseOrderMaterialList, purchaseOrder.getPurchaseType(),null);
+            String checkErrorCode = checkPurchaseOrderMaterialList(purchaseOrderDetail, purchaseOrderMaterialList, purchaseOrder.getPurchaseType(), null);
             if (!ErrorCode.SUCCESS.equals(checkErrorCode)) {
                 return checkErrorCode;
             }
@@ -392,7 +392,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
     }
 
-    private String checkPurchaseOrderMaterialList(PurchaseOrderDetail purchaseOrderDetail, List<PurchaseOrderMaterial> purchaseOrderMaterialList, Integer purchaseType,Boolean productIsEmpty) {
+    private String checkPurchaseOrderMaterialList(PurchaseOrderDetail purchaseOrderDetail, List<PurchaseOrderMaterial> purchaseOrderMaterialList, Integer purchaseType, Boolean productIsEmpty) {
         ServiceResult<String, PurchaseOrderDetail> result = new ServiceResult<>();
 
         //声明materialIdSet，如果一个采购单中有相同物料项，则返回错误
@@ -419,7 +419,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 return ErrorCode.MATERIAL_NOT_EXISTS;
             }
             //如果是小配件
-            if(!MaterialType.isMainMaterial(materialDO.getMaterialType())){
+            if (!MaterialType.isMainMaterial(materialDO.getMaterialType())) {
                 haveSmall = true;
             }
             materialIdSet.add(materialDO.getId());
@@ -450,7 +450,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         if (purchaseOrderMaterialList.size() != materialIdSet.size()) {
             return ErrorCode.PURCHASE_ORDER_MATERIAL_CAN_NOT_REPEAT;
         }
-        if(PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN == purchaseType&&productIsEmpty&&haveSmall){
+        if (PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN == purchaseType && productIsEmpty && haveSmall) {
             return ErrorCode.MUST_HAVE_MAIN;
         }
         //校验整机四大件类型的是否全为整机四大件
@@ -1175,7 +1175,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         Map<Integer, Integer> materialCountMap = new HashMap<>();
         if (CollectionUtil.isNotEmpty(purchaseReceiveOrderDOList)) {
             for (PurchaseReceiveOrderDO receiveOrderDO : purchaseReceiveOrderDOList) {
-                if (AutoAllotStatus.AUTO_ALLOT_STATUS_NO.equals(receiveOrderDO.getAutoAllotStatus())||
+                if (AutoAllotStatus.AUTO_ALLOT_STATUS_NO.equals(receiveOrderDO.getAutoAllotStatus()) ||
                         AutoAllotStatus.AUTO_ALLOT_STATUS_RECEIVE.equals(receiveOrderDO.getAutoAllotStatus())) {
                     receiveOrderDO = purchaseReceiveOrderMapper.findAllByNo(receiveOrderDO.getPurchaseReceiveNo());
                     //记录采购收货单商品总数
@@ -1228,7 +1228,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
 
         //判断是否全部采购
-        Integer finalStatus = getPurchaseStatus(skuCountMap,materialCountMap,skuShouldMap,materialShouldMap);
+        Integer finalStatus = getPurchaseStatus(skuCountMap, materialCountMap, skuShouldMap, materialShouldMap);
         purchaseOrderDO.setPurchaseOrderStatus(finalStatus);
         purchaseOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         purchaseOrderDO.setUpdateTime(now);
@@ -1416,7 +1416,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         for (PurchaseReceiveOrderDO purchaseReceiveOrderDO : purchaseReceiveOrderDOList) {
             //只累加已签单的或已提交的sku，并且非自动流转总仓的
             if ((PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_YET.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus())
-                    ||PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_COMMITTED.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus()))
+                    || PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_COMMITTED.equals(purchaseReceiveOrderDO.getPurchaseReceiveOrderStatus()))
                     && !AutoAllotStatus.AUTO_ALLOT_STATUS_YES.equals(purchaseReceiveOrderDO.getAutoAllotStatus())) {
                 //找到的所有采购单项sku，累加数量
                 List<PurchaseReceiveOrderProductDO> purchaseReceiveOrderProductDOList = purchaseReceiveOrderDO.getPurchaseReceiveOrderProductDOList();
@@ -1643,7 +1643,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             }
             if (purchaseReceiveOrderMaterialPriceMap.get(purchasePrice) == null) {
                 purchaseReceiveOrderMaterialPriceMap.put(purchasePrice, 1);
-            }else{
+            } else {
                 purchaseReceiveOrderMaterialPriceMap.put(purchasePrice, purchaseReceiveOrderMaterialPriceMap.get(purchasePrice) + 1);
             }
         }
@@ -1805,7 +1805,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     /**
-     * 如果有发票：生成发货通知单，收料通知单
+     * 如果有发票：整机四大件全新机20000元以上，过总仓，否则：生成发货通知单，收料通知单
      * 如果没有发票；收货库房为总公司库：生成发货通知单，收料通知单
      * 如果没有发票；收货库房为分公司库：生成发货通知单，生成总公司收料通知单（real空着不存，待分公司收货通知单状态为已确认时回填）及分拨单号，生成分公司收料通知单
      * 如果是小配件；生成发货通知单，收料通知单
@@ -1813,15 +1813,46 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      * @param purchaseOrderDO
      */
     public void createPurchaseDeliveryAndReceiveOrder(PurchaseOrderDO purchaseOrderDO) {
+        //解析采购单库房快照，是否为总公司库
+        Warehouse warehouse = JSON.parseObject(purchaseOrderDO.getWarehouseSnapshot(), Warehouse.class);
+        boolean isHead = SubCompanyType.SUB_COMPANY_TYPE_HEADER.equals(warehouse.getSubCompanyType());
         //生成发货通知单
         PurchaseDeliveryOrderDO purchaseDeliveryOrderDO = createDeliveryDetail(purchaseOrderDO);
-        if (CommonConstant.COMMON_CONSTANT_YES.equals(purchaseOrderDO.getIsInvoice()) || PurchaseType.PURCHASE_TYPE_GADGET == purchaseOrderDO.getPurchaseType()) {//如果有发票或者是小配件类型
-            //直接生成收料通知单
-            createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_NO, null);
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(purchaseOrderDO.getIsInvoice())) {
+
+            if (PurchaseType.PURCHASE_TYPE_GADGET == purchaseOrderDO.getPurchaseType()) {
+                //如果有发票或者是小配件类型，直接生成收料通知单
+                createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_NO, null);
+            } else if (PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN == purchaseOrderDO.getPurchaseType()) {
+
+                List<PurchaseOrderProductDO> purchaseOrderProductDOList = purchaseOrderDO.getPurchaseOrderProductDOList();
+                List<PurchaseOrderMaterialDO> purchaseOrderMaterialDOList = purchaseOrderDO.getPurchaseOrderMaterialDOList();
+                BigDecimal totalAmount = BigDecimal.ZERO;
+                if (CollectionUtil.isNotEmpty(purchaseOrderProductDOList)) {
+                    for (PurchaseOrderProductDO purchaseOrderProductDO : purchaseOrderProductDOList) {
+                        totalAmount = BigDecimalUtil.add(totalAmount, BigDecimalUtil.mul(new BigDecimal(purchaseOrderProductDO.getProductCount()), purchaseOrderProductDO.getProductAmount()));
+                    }
+                }
+                if (CollectionUtil.isNotEmpty(purchaseOrderMaterialDOList)) {
+                    for (PurchaseOrderMaterialDO purchaseOrderMaterialDO : purchaseOrderMaterialDOList) {
+                        totalAmount = BigDecimalUtil.add(totalAmount, BigDecimalUtil.mul(new BigDecimal(purchaseOrderMaterialDO.getMaterialCount()), purchaseOrderMaterialDO.getMaterialAmount()));
+                    }
+                }
+                //整机四大件全新机20000元以上，必须过总仓
+                if (BigDecimalUtil.compare(totalAmount, new BigDecimal(20000)) > 0) {
+                    if (isHead) {//如果是总公司仓库
+                        //直接生成收料通知单
+                        createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_NO, null);
+                    } else {//如果是分公司仓库
+                        //生成总公司收料通知单
+                        PurchaseReceiveOrderDO purchaseReceiveOrderDO = createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_YES, null);
+                        //生成分公司收料通知单
+                        createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_RECEIVE, purchaseReceiveOrderDO.getAutoAllotNo());
+                    }
+                }
+            }
         } else if (CommonConstant.COMMON_CONSTANT_NO.equals(purchaseOrderDO.getIsInvoice())) {//如果没有发票
-            //解析采购单库房快照，是否为总公司库
-            Warehouse warehouse = JSON.parseObject(purchaseOrderDO.getWarehouseSnapshot(), Warehouse.class);
-            boolean isHead = SubCompanyType.SUB_COMPANY_TYPE_HEADER.equals(warehouse.getSubCompanyType());
+
             if (isHead) {//如果是总公司仓库
                 //直接生成收料通知单
                 createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_NO, null);
@@ -1885,7 +1916,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 purchaseDeliveryOrderProductDO.setUpdateTime(now);
                 purchaseDeliveryOrderProductDO.setCreateUser(String.valueOf(purchaseOrderDO.getCreateUser()));
                 purchaseDeliveryOrderProductDO.setUpdateUser(String.valueOf(purchaseOrderDO.getCreateUser()));
-                if(purchaseOrderProductDO.getProductCount()>0){
+                if (purchaseOrderProductDO.getProductCount() > 0) {
                     purchaseDeliveryOrderProductMapper.save(purchaseDeliveryOrderProductDO);
                     purchaseDeliveryOrderProductDOList.add(purchaseDeliveryOrderProductDO);
                 }
@@ -1920,7 +1951,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 purchaseDeliveryOrderMaterialDO.setUpdateTime(now);
                 purchaseDeliveryOrderMaterialDO.setCreateUser(String.valueOf(purchaseOrderDO.getCreateUser()));
                 purchaseDeliveryOrderMaterialDO.setUpdateUser(String.valueOf(purchaseOrderDO.getCreateUser()));
-                if(purchaseOrderMaterialDO.getMaterialCount()>0){
+                if (purchaseOrderMaterialDO.getMaterialCount() > 0) {
                     purchaseDeliveryOrderMaterialMapper.save(purchaseDeliveryOrderMaterialDO);
                     purchaseDeliveryOrderMaterialDOList.add(purchaseDeliveryOrderMaterialDO);
                 }
