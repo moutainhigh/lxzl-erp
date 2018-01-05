@@ -280,6 +280,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         Date now = new Date();
         List<PurchaseOrderProduct> purchaseOrderProductList = purchaseOrder.getPurchaseOrderProductList();
         List<PurchaseOrderMaterial> purchaseOrderMaterialList = purchaseOrder.getPurchaseOrderMaterialList();
+        if(CollectionUtil.isEmpty(purchaseOrderProductList)&&CollectionUtil.isEmpty(purchaseOrderMaterialList)){
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
         PurchaseOrderDetail purchaseOrderDetail = new PurchaseOrderDetail(userSupport.getCurrentUserId().toString(), now);
         //校验采购订单商品项
         String checkErrorCode = checkDetail(purchaseOrderDetail, purchaseOrder, purchaseOrderProductList, purchaseOrderMaterialList, isHead, now);
