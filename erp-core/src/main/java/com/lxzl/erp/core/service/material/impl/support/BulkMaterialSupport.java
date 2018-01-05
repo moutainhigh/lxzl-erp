@@ -27,12 +27,13 @@ public class BulkMaterialSupport {
     @Autowired
     private BulkMaterialMapper bulkMaterialMapper;
 
-    public List<BulkMaterialDO> queryFitBulkMaterialDOList(Integer warehouseId, Integer materialId, Integer materialCount) {
+    public List<BulkMaterialDO> queryFitBulkMaterialDOList(Integer warehouseId, Integer materialId, Integer materialCount, Integer isNew) {
         BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
         bulkMaterialQueryParam.setMaterialId(materialId);
         bulkMaterialQueryParam.setCurrentWarehouseId(warehouseId);
         bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
         bulkMaterialQueryParam.setIsOnEquipment(CommonConstant.COMMON_CONSTANT_NO);
+        bulkMaterialQueryParam.setIsNew(isNew);
 
         Map<String, Object> bulkQueryParam = new HashMap<>();
         bulkQueryParam.put("start", 0);

@@ -920,33 +920,26 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (materialId != null) {
-            // 必须是当前库房闲置的物料
-            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(srcWarehouseId, materialId, materialCount);
-            if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
-                result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
-                return result;
-            }
-            for (int i = 0; i < materialCount; i++) {
-                BulkMaterialDO bulkMaterialDO = bulkMaterialDOList.get(i);
-                if (!bulkMaterialDO.getCurrentWarehouseId().equals(srcWarehouseId)) {
-                    result.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_IN_THIS_WAREHOUSE, equipmentNo, bulkMaterialDO.getCurrentWarehouseId());
-                    return result;
-                }
+            boolean isMatching = false;
+            Map<String, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId", "rentType", "rentTimeLength");
+            for (Map.Entry<String, OrderMaterialDO> entry : orderMaterialDOMap.entrySet()) {
+                String key = entry.getKey();
+                // 如果输入进来的散料ID 为当前订单项需要的，那么就匹配
+                if (key.startsWith(materialId.toString())) {
+                    OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(key);
+                    //已经配好的
+                    List<OrderMaterialBulkDO> orderMaterialBulkDOList = orderMaterialBulkMapper.findByOrderMaterialId(orderMaterialDO.getId());
+                    if (orderMaterialBulkDOList != null && orderMaterialBulkDOList.size() >= orderMaterialDO.getMaterialCount()) {
+                        continue;
+                    }
+                    // 必须是当前库房闲置的物料
+                    List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(srcWarehouseId, materialId, materialCount, orderMaterialDO.getIsNewMaterial());
+                    if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
+                        result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
+                        return result;
+                    }
 
-                boolean isMatching = false;
-                Map<String, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId", "rentType", "rentTimeLength");
-                for (Map.Entry<String, OrderMaterialDO> entry : orderMaterialDOMap.entrySet()) {
-                    String key = entry.getKey();
-                    // 如果输入进来的散料ID 为当前订单项需要的，那么就匹配
-                    if (key.startsWith(bulkMaterialDO.getMaterialId().toString())) {
-                        OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(key);
-                        List<OrderMaterialBulkDO> orderMaterialBulkDOList = orderMaterialBulkMapper.findByOrderMaterialId(orderMaterialDO.getId());
-                        if (orderMaterialBulkDOList != null && orderMaterialBulkDOList.size() >= orderMaterialDO.getMaterialCount()) {
-                            continue;
-                        }
-                        if (!bulkMaterialDO.getIsNew().equals(orderMaterialDO.getIsNewMaterial())) {
-                            continue;
-                        }
+                    for(BulkMaterialDO bulkMaterialDO : bulkMaterialDOList){
                         bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
                         bulkMaterialDO.setOrderNo(orderDO.getOrderNo());
                         bulkMaterialDO.setUpdateTime(currentTime);
@@ -970,14 +963,14 @@ public class OrderServiceImpl implements OrderService {
                         orderMaterialBulkDO.setUpdateTime(currentTime);
                         orderMaterialBulkDO.setUpdateUser(loginUserId.toString());
                         orderMaterialBulkMapper.save(orderMaterialBulkDO);
-                        isMatching = true;
-                        break;
                     }
+                    isMatching = true;
+                    break;
                 }
-                if (!isMatching) {
-                    result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
-                    return result;
-                }
+            }
+            if (!isMatching) {
+                result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
+                return result;
             }
 
             String operateMaterialStockResult = materialSupport.operateMaterialStock(materialId, (materialCount * -1));

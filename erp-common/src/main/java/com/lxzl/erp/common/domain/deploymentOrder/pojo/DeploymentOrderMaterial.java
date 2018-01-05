@@ -25,6 +25,7 @@ public class DeploymentOrderMaterial extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+	private Integer isNew;
 
 	private List<DeploymentOrderMaterialBulk> deploymentOrderMaterialBulkList;
 
@@ -147,5 +148,13 @@ public class DeploymentOrderMaterial extends BasePO {
 
 	public void setDeploymentOrderMaterialBulkList(List<DeploymentOrderMaterialBulk> deploymentOrderMaterialBulkList) {
 		this.deploymentOrderMaterialBulkList = deploymentOrderMaterialBulkList;
+	}
+
+	public Integer getIsNew() {
+		return isNew;
+	}
+
+	public void setIsNew(Integer isNew) {
+		this.isNew = isNew;
 	}
 }
