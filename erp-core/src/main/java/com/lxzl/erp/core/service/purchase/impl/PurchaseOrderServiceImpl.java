@@ -204,6 +204,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     private String checkDetail(PurchaseOrderDetail purchaseOrderDetail, PurchaseOrder purchaseOrder, List<PurchaseOrderProduct> purchaseOrderProductList, List<PurchaseOrderMaterial> purchaseOrderMaterialList, boolean isHead, Date now) {
 
+
         if (PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN == purchaseOrder.getPurchaseType()) {
 
             if (CollectionUtil.isNotEmpty(purchaseOrderProductList)) {
@@ -214,7 +215,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 }
             }
             boolean productIsEmpty = CollectionUtil.isEmpty(purchaseOrderProductList);
-            //todo 如果是整机四大件，物料列表有小配件时，商品列表不能为空
+
             if (CollectionUtil.isNotEmpty(purchaseOrderMaterialList)) {
                 //校验采购订单物料项
                 String checkErrorCode = checkPurchaseOrderMaterialList(purchaseOrderDetail, purchaseOrderMaterialList, purchaseOrder.getPurchaseType(), productIsEmpty);
@@ -450,6 +451,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         if (purchaseOrderMaterialList.size() != materialIdSet.size()) {
             return ErrorCode.PURCHASE_ORDER_MATERIAL_CAN_NOT_REPEAT;
         }
+        //如果是整机四大件，物料列表有小配件时，商品列表不能为空
         if (PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN == purchaseType && productIsEmpty && haveSmall) {
             return ErrorCode.MUST_HAVE_MAIN;
         }
@@ -457,6 +459,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 //        if (PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN == purchaseType && !materialService.isAllMainMaterial(materialList)) {
 //            return ErrorCode.PURCHASE_ORDER_MATERIAL_NOT_MAIN;
 //        }
+
         //校验小配件类型的是否全为小配件
         if (PurchaseType.PURCHASE_TYPE_GADGET == purchaseType && !materialService.isAllGadget(materialList)) {
             return ErrorCode.PURCHASE_ORDER_MATERIAL_NOT_GADGET;
@@ -1780,6 +1783,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             if (!PurchaseOrderStatus.PURCHASE_ORDER_STATUS_VERIFYING.equals(purchaseOrderDO.getPurchaseOrderStatus())) {
                 return false;
             }
+
             if (verifyResult) {
                 createPurchaseDeliveryAndReceiveOrder(purchaseOrderDO);
                 purchaseOrderDO.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_PURCHASING);
@@ -1812,7 +1816,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      *
      * @param purchaseOrderDO
      */
-    public void createPurchaseDeliveryAndReceiveOrder(PurchaseOrderDO purchaseOrderDO) {
+    public void createPurchaseDeliveryAndReceiveOrder(PurchaseOrderDO purchaseOrderDO ) {
         //解析采购单库房快照，是否为总公司库
         Warehouse warehouse = JSON.parseObject(purchaseOrderDO.getWarehouseSnapshot(), Warehouse.class);
         boolean isHead = SubCompanyType.SUB_COMPANY_TYPE_HEADER.equals(warehouse.getSubCompanyType());
@@ -1825,30 +1829,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_NO, null);
             } else if (PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN == purchaseOrderDO.getPurchaseType()) {
 
-                List<PurchaseOrderProductDO> purchaseOrderProductDOList = purchaseOrderDO.getPurchaseOrderProductDOList();
-                List<PurchaseOrderMaterialDO> purchaseOrderMaterialDOList = purchaseOrderDO.getPurchaseOrderMaterialDOList();
-                BigDecimal totalAmount = BigDecimal.ZERO;
-                if (CollectionUtil.isNotEmpty(purchaseOrderProductDOList)) {
-                    for (PurchaseOrderProductDO purchaseOrderProductDO : purchaseOrderProductDOList) {
-                        totalAmount = BigDecimalUtil.add(totalAmount, BigDecimalUtil.mul(new BigDecimal(purchaseOrderProductDO.getProductCount()), purchaseOrderProductDO.getProductAmount()));
-                    }
-                }
-                if (CollectionUtil.isNotEmpty(purchaseOrderMaterialDOList)) {
-                    for (PurchaseOrderMaterialDO purchaseOrderMaterialDO : purchaseOrderMaterialDOList) {
-                        totalAmount = BigDecimalUtil.add(totalAmount, BigDecimalUtil.mul(new BigDecimal(purchaseOrderMaterialDO.getMaterialCount()), purchaseOrderMaterialDO.getMaterialAmount()));
-                    }
-                }
                 //整机四大件全新机20000元以上，必须过总仓
-                if (BigDecimalUtil.compare(totalAmount, new BigDecimal(20000)) > 0) {
-                    if (isHead) {//如果是总公司仓库
-                        //直接生成收料通知单
-                        createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_NO, null);
-                    } else {//如果是分公司仓库
-                        //生成总公司收料通知单
-                        PurchaseReceiveOrderDO purchaseReceiveOrderDO = createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_YES, null);
-                        //生成分公司收料通知单
-                        createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_RECEIVE, purchaseReceiveOrderDO.getAutoAllotNo());
-                    }
+                if (BigDecimalUtil.compare(purchaseOrderDO.getPurchaseOrderAmountTotal(), new BigDecimal(20000)) > 0) {
+                    //生成总公司收料通知单
+                    PurchaseReceiveOrderDO purchaseReceiveOrderDO = createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_YES, null);
+                    //生成分公司收料通知单
+                    createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_RECEIVE, purchaseReceiveOrderDO.getAutoAllotNo());
+                }else{
+                    //直接生成收料通知单
+                    createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_NO, null);
                 }
             }
         } else if (CommonConstant.COMMON_CONSTANT_NO.equals(purchaseOrderDO.getIsInvoice())) {//如果没有发票
