@@ -271,6 +271,10 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         //修改订单商品设备-实际归还时间，实际租金
         Date now = new Date();
         OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findRentByCustomerIdAndEquipmentId(returnOrderDO.getCustomerId(), productEquipmentDO.getId());
+        if(orderProductEquipmentDO==null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_RENT_OR_ORDER_NOT_CONFIRM);
+            return serviceResult;
+        }
         //计算该设备的租金
         ServiceResult<String, String> returnResult = orderService.returnEquipment(orderDO.getOrderNo(), productEquipmentDO.getEquipmentNo(), null, now);
         if (!ErrorCode.SUCCESS.equals(returnResult.getErrorCode())) {
@@ -378,7 +382,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             rentMap.get(bulkMaterialDO.getMaterialNo()).add(bulkMaterialDO);
             MaterialDO materialDO = materialMapper.findByNo(bulkMaterialDO.getMaterialNo());
             //如果散料所属物料需要还
-            if (CommonConstant.COMMON_CONSTANT_NO.equals(materialDO.getIsConsumable())) {
+            if (materialDO.getIsConsumable()==null||CommonConstant.COMMON_CONSTANT_NO.equals(materialDO.getIsConsumable())) {
                 if (!orderBulkMaterialNeedReturnMap.containsKey(bulkMaterialDO.getOrderNo())) {
                     orderBulkMaterialNeedReturnMap.put(bulkMaterialDO.getOrderNo(), new HashMap<Integer, BulkMaterialDO>());
                 }
@@ -432,7 +436,10 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
                 rentBulkMaterialCountNowMap.put(orderDO.getOrderNo(), rentBulkMaterialCountNowMap.get(orderDO.getOrderNo()) + 1);
             }
             //需还map删除此设备
-            orderBulkMaterialNeedReturnMap.get(orderDO.getOrderNo()).remove(bulkMaterialDO.getId());
+            Map<Integer,BulkMaterialDO> orderBulkMaterialDOMap = orderBulkMaterialNeedReturnMap.get(orderDO.getOrderNo());
+            if(orderBulkMaterialDOMap!=null){
+                orderBulkMaterialDOMap.remove(bulkMaterialDO.getId());
+            }
 
             List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
             Map<Integer, OrderMaterialDO> orderMaterialDOMap = new HashMap<>();
@@ -555,9 +562,6 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         customerRiskManagementMapper.update(customerRiskManagementDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        if (true) {
-            throw new BusinessException();
-        }
         return serviceResult;
     }
 
@@ -599,6 +603,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
      * @return
      */
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> end(ReturnOrder returnOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         if (returnOrder.getServiceCost().compareTo(BigDecimal.ZERO) < 0) {
@@ -886,7 +891,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
                     ReturnOrderMaterialDO returnOrderMaterialDO = oldReturnOrderMaterialDOMap.get(oldMaterialRent.getId());
                     //修改删除时，总数量相应改变
                     totalReturnMaterialCount = totalReturnMaterialCount - returnOrderMaterialDO.getReturnMaterialCount() + returnOrderMaterial.getReturnMaterialCount();
-                    returnOrderMaterialDO.setRealReturnMaterialCount(returnOrderMaterial.getRealReturnMaterialCount());
+                    returnOrderMaterialDO.setReturnMaterialCount(returnOrderMaterial.getReturnMaterialCount());
                     returnOrderMaterialDO.setReturnMaterialSnapshot(JSON.toJSONString(oldMaterialRent));
                     returnOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                     returnOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());

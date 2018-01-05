@@ -363,6 +363,7 @@ public class ErrorCode {
     public static final String LIST_FIRST_NEED_PRODUCTS_NOT_NULL = "J500055";
     public static final String CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL = "J500056";
     public static final String CUSTOMER_IS_EXISTS = "J500057";
+    public static final String CUSTOMER_NOT_RENT_OR_ORDER_NOT_CONFIRM = "J500058";
 
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
@@ -782,7 +783,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_PERSON_ADDRESS_NOT_NULL, "个人客户详细地址不能为空");
         MAP.put(STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败");
         MAP.put(STATEMENT_ORDER_STATUS_ERROR, "结算单状态异常");
-
+        MAP.put(CUSTOMER_NOT_RENT_OR_ORDER_NOT_CONFIRM, "客户没有租赁该设备或设备所在订单未确认收货");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

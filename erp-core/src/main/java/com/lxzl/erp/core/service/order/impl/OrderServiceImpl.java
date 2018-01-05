@@ -804,31 +804,6 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
-        Integer payType = null;
-        if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
-            for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
-                if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderProductDO.getPayMode())) {
-                    payType = OrderPayMode.PAY_MODE_PAY_BEFORE;
-                    break;
-                }
-            }
-        }
-        if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList()) && !OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payType)) {
-            for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
-                if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderMaterialDO.getPayMode())) {
-                    payType = OrderPayMode.PAY_MODE_PAY_BEFORE;
-                    break;
-                }
-            }
-        }
-
-
-        if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payType) &&
-                !PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())
-                && !PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus())) {
-            result.setErrorCode(ErrorCode.ORDER_HAVE_NO_PAID);
-            return result;
-        }
         if (!CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())
                 && !CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(param.getOperationType())) {
             result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
@@ -985,6 +960,7 @@ public class OrderServiceImpl implements OrderService {
                         orderMaterialBulkDO.setOrderMaterialId(orderMaterialDO.getId());
                         orderMaterialBulkDO.setBulkMaterialId(bulkMaterialDO.getId());
                         orderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
+                        orderMaterialBulkDO.setRentStartTime(orderDO.getRentStartTime());
                         orderMaterialBulkDO.setExpectReturnTime(expectReturnTime);
                         orderMaterialBulkDO.setExpectRentAmount(expectRentAmount);
                         orderMaterialBulkDO.setActualRentAmount(BigDecimal.ZERO);
@@ -1103,6 +1079,29 @@ public class OrderServiceImpl implements OrderService {
         }
         if (!OrderStatus.ORDER_STATUS_PROCESSING.equals(dbRecordOrder.getOrderStatus())) {
             result.setErrorCode(ErrorCode.ORDER_STATUS_NOT_PROCESSED);
+            return result;
+        }
+        Integer payType = null;
+        if (CollectionUtil.isNotEmpty(dbRecordOrder.getOrderProductDOList())) {
+            for (OrderProductDO orderProductDO : dbRecordOrder.getOrderProductDOList()) {
+                if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderProductDO.getPayMode())) {
+                    payType = OrderPayMode.PAY_MODE_PAY_BEFORE;
+                    break;
+                }
+            }
+        }
+        if (CollectionUtil.isNotEmpty(dbRecordOrder.getOrderMaterialDOList()) && !OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payType)) {
+            for (OrderMaterialDO orderMaterialDO : dbRecordOrder.getOrderMaterialDOList()) {
+                if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderMaterialDO.getPayMode())) {
+                    payType = OrderPayMode.PAY_MODE_PAY_BEFORE;
+                    break;
+                }
+            }
+        }
+        if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payType) &&
+                !PayStatus.PAY_STATUS_PAID.equals(dbRecordOrder.getPayStatus())
+                && !PayStatus.PAY_STATUS_PAID_PART.equals(dbRecordOrder.getPayStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_HAVE_NO_PAID);
             return result;
         }
 
@@ -1627,6 +1626,9 @@ public class OrderServiceImpl implements OrderService {
         }
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
             Map<String, OrderProduct> orderProductMap = new HashMap<>();
+            int oldProductCount = 0, newProductCount = 0;
+            Map<Integer, Integer> productNewStockMap = new HashMap<>();
+            Map<Integer, Integer> productOldStockMap = new HashMap<>();
             for (OrderProduct orderProduct : order.getOrderProductList()) {
                 if (orderProduct.getProductCount() == null || orderProduct.getProductCount() <= 0) {
                     return ErrorCode.ORDER_PRODUCT_COUNT_ERROR;
@@ -1642,20 +1644,33 @@ public class OrderServiceImpl implements OrderService {
                     return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
                 }
                 Product product = productServiceResult.getResult();
+                if (productNewStockMap.get(product.getProductId()) == null) {
+                    productNewStockMap.put(product.getProductId(), product.getNewProductCount());
+                    productOldStockMap.put(product.getProductId(), product.getOldProductCount());
+                }
+
                 if (CommonConstant.COMMON_CONSTANT_NO.equals(product.getIsRent())) {
                     return ErrorCode.PRODUCT_IS_NOT_RENT;
                 }
                 if (CollectionUtil.isEmpty(product.getProductSkuList())) {
                     return ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS;
                 }
-                ProductSku productSku = product.getProductSkuList().get(0);
+                oldProductCount = productOldStockMap.get(product.getProductId());
+                newProductCount = productNewStockMap.get(product.getProductId());
+
                 if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProduct.getIsNewProduct())) {
-                    if (productSku == null || productSku.getNewProductSkuCount() == null || productSku.getNewProductSkuCount() <= 0 || (productSku.getNewProductSkuCount() - orderProduct.getProductCount()) < 0) {
+                    if ((newProductCount - orderProduct.getProductCount()) < 0) {
                         return ErrorCode.ORDER_PRODUCT_STOCK_NEW_INSUFFICIENT;
+                    }else{
+                        newProductCount = newProductCount - orderProduct.getProductCount();
+                        productNewStockMap.put(product.getProductId(), newProductCount);
                     }
                 } else {
-                    if (productSku == null || productSku.getOldProductSkuCount() == null || productSku.getOldProductSkuCount() <= 0 || (productSku.getOldProductSkuCount() - orderProduct.getProductCount()) < 0) {
-                        return ErrorCode.ORDER_PRODUCT_STOCK_OLD_INSUFFICIENT;
+                    if ((oldProductCount - orderProduct.getProductCount()) < 0) {
+                        return ErrorCode.ORDER_PRODUCT_STOCK_NEW_INSUFFICIENT;
+                    }else{
+                        oldProductCount = oldProductCount - orderProduct.getProductCount();
+                        productOldStockMap.put(product.getProductId(), oldProductCount);
                     }
                 }
 

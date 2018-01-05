@@ -25,7 +25,7 @@
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 
 		<result column="customer_origin" jdbcType="INTEGER" property="customerOrigin" />
-		<result column="company_found_time" jdbcType="TIMESTAMP" property="companyFoundFime" />
+		<result column="company_found_time" jdbcType="TIMESTAMP" property="companyFoundTime" />
 		<result column="industry" jdbcType="VARCHAR" property="industry" />
 		<result column="registered_capital" jdbcType="INTEGER" property="registeredCapital" />
 		<result column="office_number" jdbcType="INTEGER" property="officeNumber" />
