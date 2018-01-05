@@ -14,6 +14,7 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private String orderNo;
     private String buyerRealName;
     private Integer buyerCustomerId;
+    private String buyerCustomerNo;
     private String consigneeName;
     private String consigneePhone;
     private Integer rentType;
@@ -137,5 +138,13 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setDeliveryMode(Integer deliveryMode) {
         this.deliveryMode = deliveryMode;
+    }
+
+    public String getBuyerCustomerNo() {
+        return buyerCustomerNo;
+    }
+
+    public void setBuyerCustomerNo(String buyerCustomerNo) {
+        this.buyerCustomerNo = buyerCustomerNo;
     }
 }
