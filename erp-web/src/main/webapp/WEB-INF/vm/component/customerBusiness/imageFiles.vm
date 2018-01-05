@@ -175,6 +175,21 @@
             </div>
         </div>
     </div>
+    <div class="section row">
+        <div class="col-md-12">
+            <div class="section-divider mv40"><span> 其它材料 </span></div>
+            <div class="tray-bin">
+                <div class="atl-dropzone dropzoneImg" id="otherDateImageList">
+                    <div class="dz-default dz-message" >
+                <span>
+                    <i class="fa fa-cloud-upload"></i>
+                    <span class="sub-text">将图片拖入或点击（支持.jpg,.ipeg,.png）</span>
+                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 
