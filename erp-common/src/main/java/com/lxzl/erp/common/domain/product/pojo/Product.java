@@ -32,6 +32,9 @@ public class Product extends BasePO {
     private List<ProductSkuProperty> productPropertyList;   // 商品属性
     private List<ProductCategoryProperty> productCategoryPropertyList;
 
+    private Integer newProductCount;     // 全新设备数量
+    private Integer oldProductCount;     // 次新设备数量
+
     public Integer getProductId() {
         return productId;
     }
@@ -198,5 +201,21 @@ public class Product extends BasePO {
 
     public void setProductModel(String productModel) {
         this.productModel = productModel;
+    }
+
+    public Integer getNewProductCount() {
+        return newProductCount;
+    }
+
+    public void setNewProductCount(Integer newProductCount) {
+        this.newProductCount = newProductCount;
+    }
+
+    public Integer getOldProductCount() {
+        return oldProductCount;
+    }
+
+    public void setOldProductCount(Integer oldProductCount) {
+        this.oldProductCount = oldProductCount;
     }
 }
