@@ -603,6 +603,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
      * @return
      */
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> end(ReturnOrder returnOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         if (returnOrder.getServiceCost().compareTo(BigDecimal.ZERO) < 0) {
@@ -890,7 +891,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
                     ReturnOrderMaterialDO returnOrderMaterialDO = oldReturnOrderMaterialDOMap.get(oldMaterialRent.getId());
                     //修改删除时，总数量相应改变
                     totalReturnMaterialCount = totalReturnMaterialCount - returnOrderMaterialDO.getReturnMaterialCount() + returnOrderMaterial.getReturnMaterialCount();
-                    returnOrderMaterialDO.setRealReturnMaterialCount(returnOrderMaterial.getRealReturnMaterialCount());
+                    returnOrderMaterialDO.setReturnMaterialCount(returnOrderMaterial.getReturnMaterialCount());
                     returnOrderMaterialDO.setReturnMaterialSnapshot(JSON.toJSONString(oldMaterialRent));
                     returnOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                     returnOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
