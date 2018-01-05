@@ -339,7 +339,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //对固定资产证明图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getFixedAssetsProveImageList(), ImgType.FIXED_ASSETS_PROVE_IMG_TYPE, customerCompanyDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        serviceResult = updateImage(customer.getCustomerCompany().getFixedAssetsProveImageList(), ImgType.FIXED_ASSETS_PROVE_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
             return serviceResult;
@@ -1150,7 +1150,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         //对其他材料图片操作
         if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getOtherDateImageList())) {
-            for (Image otherDateImage : customer.getCustomerCompany().getLocaleChecklistsImageList()) {
+            for (Image otherDateImage : customer.getCustomerCompany().getOtherDateImageList()) {
                 ImageDO otherDateImageDO = imgMysqlMapper.findById(otherDateImage.getImgId());
                 if (otherDateImageDO == null) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
