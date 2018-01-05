@@ -16,6 +16,7 @@ public class MaterialDO extends BaseDO {
     private Integer id;
     private String materialNo;
     private String materialName;
+    private String materialMode;
     private Integer materialType;
     private Integer isMainMaterial;
     private Double materialCapacityValue;
@@ -223,5 +224,13 @@ public class MaterialDO extends BaseDO {
 
     public void setBrandName(String brandName) {
         this.brandName = brandName;
+    }
+
+    public String getMaterialMode() {
+        return materialMode;
+    }
+
+    public void setMaterialMode(String materialMode) {
+        this.materialMode = materialMode;
     }
 }

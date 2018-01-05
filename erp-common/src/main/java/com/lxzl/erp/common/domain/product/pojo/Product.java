@@ -12,6 +12,7 @@ public class Product extends BasePO {
     private Integer productId;
     private String productNo;
     private String productName;
+    private String productModel;
     private Integer brandId;
     private String brandName;
     private Integer categoryId;
@@ -189,5 +190,13 @@ public class Product extends BasePO {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public String getProductModel() {
+        return productModel;
+    }
+
+    public void setProductModel(String productModel) {
+        this.productModel = productModel;
     }
 }

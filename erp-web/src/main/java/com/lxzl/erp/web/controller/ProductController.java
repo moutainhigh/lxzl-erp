@@ -84,6 +84,12 @@ public class ProductController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "queryProductByNo", method = RequestMethod.POST)
+    public Result queryProductByNo(@RequestBody Product product, BindingResult validResult) {
+        ServiceResult<String, Product> serviceResult = productService.queryProductByNo(product.getProductNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "queryAllProduct", method = RequestMethod.POST)
     public Result queryAllProduct(@RequestBody ProductQueryParam productQueryParam, BindingResult validResult) {
         ServiceResult<String, Page<Product>> serviceResult = productService.queryAllProduct(productQueryParam);

@@ -8,6 +8,7 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="material_no" jdbcType="VARCHAR" property="materialNo" />
 		<result column="material_name" jdbcType="VARCHAR" property="materialName" />
+		<result column="material_model" jdbcType="VARCHAR" property="materialModel" />
 		<result column="material_type" jdbcType="INTEGER" property="materialType" />
 		<result column="is_main_material" jdbcType="INTEGER" property="isMainMaterial" />
 		<result column="material_capacity_value" jdbcType="DOUBLE" property="materialCapacityValue" />
@@ -50,7 +51,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		em.id,em.material_no,em.material_name,em.material_type,em.material_capacity_value,em.material_model_id,em.is_main_material,em.brand_id,em.stock,em.is_rent,em.material_price,em.day_rent_price,em.month_rent_price,em.material_desc,em.is_consumable,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
+		em.id,em.material_no,em.material_name,em.material_model,em.material_type,em.material_capacity_value,em.material_model_id,em.is_main_material,em.brand_id,em.stock,em.is_rent,em.material_price,em.day_rent_price,em.month_rent_price,em.material_desc,em.is_consumable,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user
 	</sql>
 
 	<sql id="img_column_List">
@@ -204,6 +205,9 @@
 			</if>
 			<if test="materialName != null">
 				material_name = #{materialName,jdbcType=VARCHAR},
+			</if>
+			<if test="materialModel != null">
+				material_model = #{materialModel,jdbcType=VARCHAR},
 			</if>
 			<if test="materialType != null">
 				material_type = #{materialType,jdbcType=INTEGER},

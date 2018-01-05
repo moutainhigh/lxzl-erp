@@ -460,7 +460,7 @@ public class ErrorCode {
         MAP.put(SUB_COMPANY_NAME_NOT_NULL, "子公司名称不能为空");
         MAP.put(DEPARTMENT_NOT_EXISTS, "部门不存在");
 
-        MAP.put(PRODUCT_ID_NOT_NULL, "商品ID不能为空");
+        MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
         MAP.put(PRODUCT_PROPERTY_NOT_NULL, "商品属性不能为空");
         MAP.put(PRODUCT_SKU_NOT_NULL, "商品SKU不能为空");

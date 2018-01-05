@@ -10,6 +10,7 @@ public class ProductDO extends BaseDO {
     private Integer id;
     private String productNo;
     private String productName;
+    private String productModel;
     private Integer brandId;
     private Integer categoryId;
     private String subtitle;
@@ -181,5 +182,13 @@ public class ProductDO extends BaseDO {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public String getProductModel() {
+        return productModel;
+    }
+
+    public void setProductModel(String productModel) {
+        this.productModel = productModel;
     }
 }

@@ -11,6 +11,7 @@ import java.util.Map;
 @Repository
 public interface ProductMapper extends BaseMysqlDAO<ProductDO> {
     ProductDO findByProductId(@Param("productId") Integer productId);
+    ProductDO findByProductNo(@Param("productNo") String productNo);
     List<ProductDO> findProductByParams(@Param("maps") Map<String, Object> paramMap);
     Integer findProductCountByParams(@Param("maps") Map<String, Object> paramMap);
 

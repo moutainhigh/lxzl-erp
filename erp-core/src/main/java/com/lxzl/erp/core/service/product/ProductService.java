@@ -88,6 +88,14 @@ public interface ProductService extends BaseService {
     ServiceResult<String, Product> queryProductById(Integer productId);
 
     /**
+     * 根据商品编码查询商品
+     *
+     * @param productNo 商品No
+     * @return 单个商品信息
+     */
+    ServiceResult<String, Product> queryProductByNo(String productNo);
+
+    /**
      * 根据ID查询商品信息以及SKU信息
      *
      * @param productSkuId 商品SKUID
@@ -140,8 +148,9 @@ public interface ProductService extends BaseService {
 
     /**
      * 校验SKU的物料信息是否准确
+     *
      * @param productSku SKU信息
      * @return 错误码，错误的物料类型
-     * */
+     */
     ServiceResult<String, Integer> verifyProductMaterial(ProductSku productSku);
 }

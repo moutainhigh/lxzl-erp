@@ -360,11 +360,14 @@ public class MaterialServiceImpl implements MaterialService {
         List<MaterialDO> materialDOList = materialMapper.listPage(maps);
         List<Material> materialList = ConverterUtil.convertList(materialDOList, Material.class);
         for(Material material : materialList){
-            WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
             BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
             bulkMaterialQueryParam.setMaterialId(material.getMaterialId());
             bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
-            bulkMaterialQueryParam.setCurrentWarehouseId(warehouseDO.getId());
+
+            if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
+                WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
+                bulkMaterialQueryParam.setCurrentWarehouseId(warehouseDO.getId());
+            }
 
             Map<String, Object> queryEquipmentCountParam = new HashMap<>();
             queryEquipmentCountParam.put("start", 0);
@@ -396,13 +399,17 @@ public class MaterialServiceImpl implements MaterialService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
+
         Material material = ConverterUtil.convert(materialDO, Material.class);
 
         BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
         bulkMaterialQueryParam.setMaterialId(materialDO.getId());
         bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
-        bulkMaterialQueryParam.setCurrentWarehouseId(warehouseDO.getId());
+
+        if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
+            WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
+            bulkMaterialQueryParam.setCurrentWarehouseId(warehouseDO.getId());
+        }
 
         Map<String, Object> queryEquipmentCountParam = new HashMap<>();
         queryEquipmentCountParam.put("start", 0);
@@ -432,13 +439,16 @@ public class MaterialServiceImpl implements MaterialService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
         Material material = ConverterUtil.convert(materialDO, Material.class);
 
         BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
         bulkMaterialQueryParam.setMaterialId(materialDO.getId());
         bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
-        bulkMaterialQueryParam.setCurrentWarehouseId(warehouseDO.getId());
+
+        if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
+            WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
+            bulkMaterialQueryParam.setCurrentWarehouseId(warehouseDO.getId());
+        }
 
         Map<String, Object> queryEquipmentCountParam = new HashMap<>();
         queryEquipmentCountParam.put("start", 0);
