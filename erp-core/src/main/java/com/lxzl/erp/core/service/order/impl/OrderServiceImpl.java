@@ -818,7 +818,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())) {
-            ServiceResult<String, Object> addOrderItemResult = addOrderItem(orderDO, param.getWarehouseId(), param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), loginUser.getUserId(), currentTime);
+            ServiceResult<String, Object> addOrderItemResult = addOrderItem(orderDO, param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), loginUser.getUserId(), currentTime);
             if (!ErrorCode.SUCCESS.equals(addOrderItemResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(addOrderItemResult.getErrorCode(), addOrderItemResult.getFormatArgs());
@@ -848,7 +848,7 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
-    private ServiceResult<String, Object> addOrderItem(OrderDO orderDO, Integer srcWarehouseId, String equipmentNo, Integer materialId, Integer materialCount, Integer loginUserId, Date currentTime) {
+    private ServiceResult<String, Object> addOrderItem(OrderDO orderDO, String equipmentNo, Integer materialId, Integer materialCount, Integer loginUserId, Date currentTime) {
         ServiceResult<String, Object> result = new ServiceResult<>();
         // 计算预计归还时间
         if (equipmentNo != null) {
@@ -861,13 +861,12 @@ public class OrderServiceImpl implements OrderService {
                 result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_IS_NOT_IDLE, equipmentNo);
                 return result;
             }
-            WarehouseDO currentWarehouse = warehouseSupport.getAvailableWarehouse(productEquipmentDO.getCurrentWarehouseId());
+            WarehouseDO currentWarehouse = warehouseSupport.getSubCompanyWarehouse(orderDO.getOrderSubCompanyId());
             if (currentWarehouse == null) {
-                result.setErrorCode(ErrorCode.WAREHOUSE_NOT_AVAILABLE);
+                result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
                 return result;
             }
-
-            currentWarehouse = warehouseSupport.getSubCompanyWarehouse(orderDO.getOrderSubCompanyId());
+            currentWarehouse = warehouseSupport.getAvailableWarehouse(currentWarehouse.getId());
             if (currentWarehouse == null) {
                 result.setErrorCode(ErrorCode.WAREHOUSE_NOT_AVAILABLE);
                 return result;
@@ -968,8 +967,20 @@ public class OrderServiceImpl implements OrderService {
                     if (orderMaterialBulkDOList != null && orderMaterialBulkDOList.size() >= orderMaterialDO.getMaterialCount()) {
                         continue;
                     }
+
+                    WarehouseDO currentWarehouse = warehouseSupport.getSubCompanyWarehouse(orderDO.getOrderSubCompanyId());
+                    if (currentWarehouse == null) {
+                        result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
+                        return result;
+                    }
+                    currentWarehouse = warehouseSupport.getAvailableWarehouse(currentWarehouse.getId());
+                    if (currentWarehouse == null) {
+                        result.setErrorCode(ErrorCode.WAREHOUSE_NOT_AVAILABLE);
+                        return result;
+                    }
+
                     // 必须是当前库房闲置的物料
-                    List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(srcWarehouseId, materialId, materialCount, orderMaterialDO.getIsNewMaterial());
+                    List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(currentWarehouse.getId(), materialId, materialCount, orderMaterialDO.getIsNewMaterial());
                     if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
                         result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
                         return result;
