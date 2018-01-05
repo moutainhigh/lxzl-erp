@@ -647,7 +647,7 @@ CREATE TABLE `erp_material` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '物料ID',
   `material_no` varchar(100) NOT NULL COMMENT '物料唯一编号',
   `material_name` varchar(100) COLLATE utf8_bin COMMENT '物料名称，取属性与属性值全称',
-  `material_model` varchar(100) COMMENT '商品型号',
+  `material_model` varchar(100) COMMENT '商品型号（英文）',
   `material_type` int(20) NOT NULL COMMENT '物料类型',
   `material_model_id` int(20) DEFAULT NULL COMMENT '物料型号ID',
   `material_capacity_value` double(11,2) DEFAULT NULL COMMENT '物料字面量',
