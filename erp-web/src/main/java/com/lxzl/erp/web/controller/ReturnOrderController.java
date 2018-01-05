@@ -62,7 +62,7 @@ public class ReturnOrderController extends BaseController {
     @RequestMapping(value = "doReturnMaterial", method = RequestMethod.POST)
     public Result doReturnMaterial(@RequestBody @Validated DoReturnMaterialParam doReturnMaterialParam, BindingResult validResult) {
         ServiceResult<String, Material> serviceResult = returnOrderService.doReturnMaterial(doReturnMaterialParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        return resultGenerator.generate(serviceResult);
     }
 
     @RequestMapping(value = "detail", method = RequestMethod.POST)

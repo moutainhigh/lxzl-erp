@@ -364,6 +364,7 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL = "J500056";
     public static final String CUSTOMER_IS_EXISTS = "J500057";
     public static final String CUSTOMER_NOT_RENT_OR_ORDER_NOT_CONFIRM = "J500058";
+    public static final String CUSTOMER_RENT_THIS_BULK_MATERIAL_NO_MORE = "J500059";
 
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
@@ -534,6 +535,7 @@ public class ErrorCode {
         MAP.put(ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT, "次新配件库存不足！");
         MAP.put(ORDER_PRODUCT_COUNT_ERROR, "商品数量必须大于0！");
         MAP.put(ORDER_MATERIAL_COUNT_ERROR, "设备数量必须大于0！");
+        MAP.put(CUSTOMER_RENT_THIS_BULK_MATERIAL_NO_MORE, "该配件客户的在租只有【%d】个！");
 
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
