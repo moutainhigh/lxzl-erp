@@ -17,7 +17,7 @@ public class CustomerOrderControllerTest extends ERPUnTransactionalTest{
     @Test
     public void pageRentMaterialCanReturn() throws Exception {
         RentMaterialCanProcessPageParam rentMaterialCanProcessPageParam = new RentMaterialCanProcessPageParam();
-        rentMaterialCanProcessPageParam.setCustomerNo("CC201712291147092641899");
+        rentMaterialCanProcessPageParam.setCustomerNo("LXCC10002018010500022");
         TestResult testResult = getJsonTestResult("/customerOrder/pageRentMaterialCanReturn",rentMaterialCanProcessPageParam);
     }
 

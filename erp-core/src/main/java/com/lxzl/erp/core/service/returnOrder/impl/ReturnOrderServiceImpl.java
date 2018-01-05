@@ -395,7 +395,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             return serviceResult;
         }
         if (rentMap.get(doReturnMaterialParam.getMaterialNo()).size() < doReturnMaterialParam.getReturnCount()) {
-            serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_RENT_THIS_BULK_MATERIAL_NO_MORE,rentMap.get(doReturnMaterialParam.getMaterialNo()).size());
             return serviceResult;
         }
         Date now = new Date();

@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.customer.pojo.*;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
 import com.lxzl.erp.common.domain.payment.ManualDeductParam;
 import com.lxzl.erp.common.domain.system.pojo.Image;
+import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         Customer customer = new Customer();
         customer.setUnionUser(500006);
 
-        List<CustomerCompanyNeed> customerCompanyNeedFirstList= new ArrayList<>();
+        List<CustomerCompanyNeed> customerCompanyNeedFirstList = new ArrayList<>();
         CustomerCompanyNeed customerCompanyNeed = new CustomerCompanyNeed();
         customerCompanyNeed.setSkuId(70);
         customerCompanyNeed.setUnitPrice(new BigDecimal(1560));
@@ -91,7 +92,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         CustomerCompany customerCompany = new CustomerCompany();
 
         //首次所需设备
-        List<CustomerCompanyNeed> customerCompanyNeedFirstList= new ArrayList<>();
+        List<CustomerCompanyNeed> customerCompanyNeedFirstList = new ArrayList<>();
         CustomerCompanyNeed customerCompanyNeed = new CustomerCompanyNeed();
         customerCompanyNeed.setSkuId(71);
         customerCompanyNeed.setUnitPrice(new BigDecimal(1560));
@@ -124,11 +125,11 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         //加入经营场所租赁合同
         List<Image> managerPlaceRentContractImageList = new ArrayList<>();
-        Image image4= new Image();
+        Image image4 = new Image();
         image4.setImgId(19);
-        Image image5= new Image();
+        Image image5 = new Image();
         image5.setImgId(20);
-        Image image6= new Image();
+        Image image6 = new Image();
         image6.setImgId(21);
         managerPlaceRentContractImageList.add(image4);
         managerPlaceRentContractImageList.add(image5);
@@ -136,6 +137,22 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setManagerPlaceRentContractImageList(managerPlaceRentContractImageList);
 
 
+        TestResult result = getJsonTestResult("/customer/updateCompany", customer);
+    }
+
+    @Test
+    public void addCustomerCompanyJSON() throws Exception {
+        String str = "{\"isDisabled\":\"0\",\"unionUser\":\"500018\",\"customerCompany\":{\"customerOrigin\":\"3\",\"unionUserName\":\"QWER\",\"unionUser\":\"500018\",\"companyName\":\"高超专用测试账户1\",\"companyAbb\":\"测试地址\",\"landline\":\"0755-89741234\",\"connectRealName\":\"陈斯托夫斯基\",\"connectPhone\":\"13112341234\",\"legalPerson\":\"张江\",\"legalPersonNo\":\"230321198606131214\",\"legalPersonPhone\":\"\",\"companyFoundTime\":\"\",\"industry\":\"\",\"affiliatedEnterprise\":\"\",\"registeredCapital\":\"\",\"officeNumber\":\"\",\"productPurpose\":\"\",\"agentPersonName\":\"\",\"agentPersonPhone\":\"\",\"agentPersonNo\":\"\",\"unifiedCreditCode\":\"\",\"operatingArea\":\"\",\"unitInsuredNumber\":\"\",\"isDisabled\":\"0\",\"remark\":\"\",\"province\":\"1\",\"city\":\"1\",\"district\":\"1\",\"address\":\"32\",\"businessLicensePictureImage\":{\"imgId\":188},\"legalPersonNoPictureFrontImage\":{\"imgId\":189},\"legalPersonNoPictureBackImage\":{\"imgId\":190},\"legalPersonCreditReportImageList\":[{\"imgId\":191}],\"fixedAssetsProveImageList\":[{\"imgId\":192}],\"publicAccountFlowBillImageList\":[{\"imgId\":193}],\"socialSecurityRoProvidentFundImageList\":[{\"imgId\":194}],\"cooperationAgreementImageList\":[{\"imgId\":195}],\"legalPersonEducationImageList\":[{\"imgId\":196}],\"legalPersonPositionalTitleImageList\":[{\"imgId\":197}],\"localeChecklistsImageList\":[{\"imgId\":200}],\"managerPlaceRentContractImageList\":[{\"imgId\":199}],\"otherDateImageList\":[{\"imgId\":198}]}}";
+
+        Customer customer = FastJsonUtil.toBean(str, Customer.class);
+        TestResult result = getJsonTestResult("/customer/addCompany", customer);
+    }
+
+    @Test
+    public void updateCustomerCompanyJSON() throws Exception {
+        String str = "{\"isDisabled\":\"0\",\"unionUser\":\"500018\",\"customerCompany\":{\"customerOrigin\":\"3\",\"unionUserName\":\"QWER\",\"unionUser\":\"500018\",\"companyName\":\"高超专用测试账户1\",\"companyAbb\":\"测试地址\",\"landline\":\"0755-89741234\",\"connectRealName\":\"陈斯托夫斯基\",\"connectPhone\":\"13112341234\",\"legalPerson\":\"张江\",\"legalPersonNo\":\"230321198606131214\",\"legalPersonPhone\":\"13808088080\",\"companyFoundTime\":\"2018-01-06\",\"industry\":\"\",\"affiliatedEnterprise\":\"\",\"registeredCapital\":\"0\",\"officeNumber\":\"\",\"productPurpose\":\"\",\"agentPersonName\":\"\",\"agentPersonPhone\":\"\",\"agentPersonNo\":\"\",\"unifiedCreditCode\":\"\",\"operatingArea\":\"\",\"unitInsuredNumber\":\"\",\"isDisabled\":\"0\",\"remark\":\"\",\"province\":\"1\",\"city\":\"1\",\"district\":\"1\",\"address\":\"32\",\"businessLicensePictureImage\":{\"imgId\":188},\"legalPersonNoPictureFrontImage\":{\"imgId\":189},\"legalPersonNoPictureBackImage\":{\"imgId\":190},\"legalPersonCreditReportImageList\":[{\"imgId\":191}],\"fixedAssetsProveImageList\":[{\"imgId\":192}],\"publicAccountFlowBillImageList\":[{\"imgId\":193}],\"socialSecurityRoProvidentFundImageList\":[{\"imgId\":194}],\"cooperationAgreementImageList\":[{\"imgId\":195}],\"legalPersonEducationImageList\":[{\"imgId\":196}],\"legalPersonPositionalTitleImageList\":[{\"imgId\":197}],\"localeChecklistsImageList\":[{\"imgId\":200}],\"managerPlaceRentContractImageList\":[{\"imgId\":199}],\"otherDateImageList\":[{\"imgId\":198}]},\"customerNo\":\"LXCC10002018010600026\"}";
+
+        Customer customer = FastJsonUtil.toBean(str, Customer.class);
         TestResult result = getJsonTestResult("/customer/updateCompany", customer);
     }
 
@@ -175,7 +192,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC10002018010500023");
+        customer.setCustomerNo("LXCC10002018010500025");
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }
 
@@ -313,7 +330,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
                 "\t\"deductAmount\": \"100\",\n" +
                 "\t\"deductRemark\": \"备注\"\n" +
                 "}";
-        ManualDeductParam customer = JSONUtil.convertJSONToBean(str , ManualDeductParam.class);
+        ManualDeductParam customer = JSONUtil.convertJSONToBean(str, ManualDeductParam.class);
         TestResult result = getJsonTestResult("/payment/manualDeduct", customer);
     }
 }

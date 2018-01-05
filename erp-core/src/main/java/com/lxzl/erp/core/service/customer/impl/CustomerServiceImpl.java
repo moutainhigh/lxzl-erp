@@ -339,7 +339,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //对固定资产证明图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getFixedAssetsProveImageList(), ImgType.FIXED_ASSETS_PROVE_IMG_TYPE, customerCompanyDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        serviceResult = updateImage(customer.getCustomerCompany().getFixedAssetsProveImageList(), ImgType.FIXED_ASSETS_PROVE_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
             return serviceResult;
@@ -563,62 +563,62 @@ public class CustomerServiceImpl implements CustomerService {
         List<ImageDO> legalPersonCreditReportImageDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(), ImgType.LEGAL_PERSON_CREDIT_REPORT_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(legalPersonCreditReportImageDOList)) {
             List<Image> legalPersonCreditReportImageList = ConverterUtil.convertList(legalPersonCreditReportImageDOList, Image.class);
-            customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(legalPersonCreditReportImageList);
+            customerResult.getCustomerCompany().setLegalPersonCreditReportImageList(legalPersonCreditReportImageList);
         }
 
         //固定资产证明
         List<ImageDO> fixedAssetsProveImageDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(), ImgType.FIXED_ASSETS_PROVE_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(fixedAssetsProveImageDOList)) {
             List<Image> fixedAssetsProveImageList = ConverterUtil.convertList(fixedAssetsProveImageDOList, Image.class);
-            customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(fixedAssetsProveImageList);
+            customerResult.getCustomerCompany().setFixedAssetsProveImageList(fixedAssetsProveImageList);
         }
 
         //单位对公账户流水账单
         List<ImageDO> publicAccountFlowBillImageDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(), ImgType.PUBLIC_ACCOUNT_FLOW_BILL_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(publicAccountFlowBillImageDOList)) {
             List<Image> publicAccountFlowBillImageList = ConverterUtil.convertList(publicAccountFlowBillImageDOList, Image.class);
-            customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(publicAccountFlowBillImageList);
+            customerResult.getCustomerCompany().setPublicAccountFlowBillImageList(publicAccountFlowBillImageList);
         }
 
         //社保/公积金缴纳证明
         List<ImageDO> socialSecurityRoProvidentFundImageListDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(), ImgType.SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(socialSecurityRoProvidentFundImageListDOList)) {
             List<Image> socialSecurityRoProvidentFundImageList = ConverterUtil.convertList(socialSecurityRoProvidentFundImageListDOList, Image.class);
-            customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(socialSecurityRoProvidentFundImageList);
+            customerResult.getCustomerCompany().setSocialSecurityRoProvidentFundImageList(socialSecurityRoProvidentFundImageList);
         }
         //战略协议或合作协议
         List<ImageDO> cooperationAgreementImageListDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(), ImgType.COOPERATION_AGREEMENT_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(cooperationAgreementImageListDOList)) {
             List<Image> cooperationAgreementImageList = ConverterUtil.convertList(cooperationAgreementImageListDOList, Image.class);
-            customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(cooperationAgreementImageList);
+            customerResult.getCustomerCompany().setCooperationAgreementImageList(cooperationAgreementImageList);
         }
 
         //法人学历证明
         List<ImageDO> legalPersonEducationImageListDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(), ImgType.LEGAL_PERSON_EDUCATION_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(legalPersonEducationImageListDOList)) {
             List<Image> legalPersonEducationImageList = ConverterUtil.convertList(legalPersonEducationImageListDOList, Image.class);
-            customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(legalPersonEducationImageList);
+            customerResult.getCustomerCompany().setLegalPersonEducationImageList(legalPersonEducationImageList);
         }
 
         //法人职称证明
         List<ImageDO> legalPersonPositionalTitleImageListDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(), ImgType.LEGAL_PERSON_POSITIONAL_TITLE_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(legalPersonPositionalTitleImageListDOList)) {
             List<Image> legalPersonPositionalTitleImageList = ConverterUtil.convertList(legalPersonPositionalTitleImageListDOList, Image.class);
-            customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(legalPersonPositionalTitleImageList);
+            customerResult.getCustomerCompany().setLegalPersonPositionalTitleImageList(legalPersonPositionalTitleImageList);
         }
 
         //现场核查表
         List<ImageDO> localeChecklistsImageListDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(), ImgType.LOCALE_CHECKLISTS_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(localeChecklistsImageListDOList)) {
             List<Image> localeChecklistsImageList = ConverterUtil.convertList(localeChecklistsImageListDOList, Image.class);
-            customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(localeChecklistsImageList);
+            customerResult.getCustomerCompany().setLocaleChecklistsImageList(localeChecklistsImageList);
         }
 
         //其他材料
         List<ImageDO> otherDateImageListDOList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(), ImgType.OTHER_DATE_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(otherDateImageListDOList)) {
             List<Image> otherDateImageList = ConverterUtil.convertList(otherDateImageListDOList, Image.class);
-            customerResult.getCustomerCompany().setManagerPlaceRentContractImageList(otherDateImageList);
+            customerResult.getCustomerCompany().setOtherDateImageList(otherDateImageList);
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -1150,7 +1150,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         //对其他材料图片操作
         if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getOtherDateImageList())) {
-            for (Image otherDateImage : customer.getCustomerCompany().getLocaleChecklistsImageList()) {
+            for (Image otherDateImage : customer.getCustomerCompany().getOtherDateImageList()) {
                 ImageDO otherDateImageDO = imgMysqlMapper.findById(otherDateImage.getImgId());
                 if (otherDateImageDO == null) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -1199,7 +1199,7 @@ public class CustomerServiceImpl implements CustomerService {
                     serviceResult.setErrorCode(ErrorCode.IMAGE_NOT_EXISTS);
                     return serviceResult;
                 }
-                if (StringUtil.isNotEmpty(imgDO.getRefId())) {
+                if (StringUtil.isNotEmpty(imgDO.getRefId()) && !imgDO.getRefId().equals(refId)) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL, imgDO.getId());
                     return serviceResult;
