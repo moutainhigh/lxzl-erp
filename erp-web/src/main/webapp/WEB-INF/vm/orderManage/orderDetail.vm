@@ -58,8 +58,8 @@
                             <div class="col-md-4">
                                 <dl class="dl-horizontal dl-horizontal-rental">
                                     <dt class="mb5">起租日期：</dt><dd>{{#time}}{{rentStartTime}}{{/time}}&nbsp;</dd>
-                                    <dt class="mb5">预计归还：</dt><dd>{{#time}}{{expectReturnTime}}{{/time}}</dd>
-                                    <dt class="mb5">实际归还：</dt><dd>{{#time}}{{actualReturnTime}}{{/time}}&nbsp;</dd>
+                                    <dt class="mb5">预计归还：</dt><dd>{{#shortTime}}{{expectReturnTime}}{{/shortTime}}</dd>
+                                    <dt class="mb5">实际归还：</dt><dd>{{#shortTime}}{{actualReturnTime}}{{/shortTime}}&nbsp;</dd>
                                 </dl>
                             </div>
                         </div>

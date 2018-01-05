@@ -3,7 +3,7 @@
     <a class="mix label1 folder1 custom-img-link" href="{{url}}" title="{{des}}" data-bound="" style="display: inline-block;">
         <div class="panel p6 pbn">
             <div class="of-h">
-                <img src="{{url}}" class="h-170" />
+                <img src="{{url}}" style="max-height: 170px;" />
                 <div class="row table-layout">
                     <div class="col-xs-8 va-m pln">
                         <h6>{{des}}</h6>
@@ -19,5 +19,7 @@
     </a>
     {{/img}}
 </script>
-<div id="mix-container" class="grid"></div>
+<div id="mix-container" class="grid">
+    <p id="noimgbox">无上传图片资料</p>
+</div>
 

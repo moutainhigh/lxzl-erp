@@ -26,6 +26,7 @@
                                         <dt class="mb10">客户编号</dt><dd>{{customerNo}}</dd>
                                         <dt class="mb10">公司名</dt><dd>{{customerCompany.companyName}}</dd>
                                         <dt class="mb10">公司简称</dt><dd>{{customerCompany.companyAbb}}</dd>
+                                        <dt class="mb10">备注</dt><dd>{{customerCompany.remark}}</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
@@ -39,7 +40,7 @@
                                     <dl class="dl-horizontal">
                                         <dt class="mb10">创建人</dt><dd>{{createUserRealName}}</dd>
                                         <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}</dd>
-                                        <dt class="mb10">备注</dt><dd>{{customerCompany.remark}}</dd>
+                                        <dt class="mb10">联合开发人</dt><dd>{{unionUserName}}</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -199,7 +200,7 @@
                         <div class="panel-heading pn ph8">
                             <span>客户图片上传信息</span>
                         </div>
-                        <div class="panel-body nano nano-default affix rtlnao" style="height: 430px" id="customerImgNano">
+                        <div class="panel-body nano nano-default affix rtlnao" style="max-height: 430px" id="customerImgNano">
                             <div class="nano-content">
                                 #parse("component/customerBusiness/imageInfo.vm")
                             </div>
