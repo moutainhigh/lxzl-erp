@@ -1,13 +1,196 @@
 <div class="panel-body p25">
-    <div class="section-divider mv40"><span> 营业执照 </span></div>
-    <div class="tray-bin">
-        <div class="atl-dropzone dropzoneImg" id="businessLicensePictureImage">
-            <div class="dz-default dz-message" >
+   <div class="section row">
+       <div class="col-md-4">
+           <div class="section-divider mv40"><span> 营业执照 </span></div>
+           <div class="tray-bin">
+               <div class="atl-dropzone dropzoneImg" id="businessLicensePictureImage">
+                   <div class="dz-default dz-message" >
                 <span>
                     <i class="fa fa-cloud-upload"></i>
-                    <span class="sub-text">将图片拖入或点击</span>
+                    <span class="sub-text">将图片拖入或点击（支持.jpg,.ipeg,.png）</span>
                 </span>
+                   </div>
+               </div>
+           </div>
+       </div>
+       <div class="col-md-4">
+           <div class="section-divider mv40"><span> 法人/股东身份证正面 </span></div>
+           <div class="tray-bin">
+               <div class="atl-dropzone dropzoneImg" id="legalPersonNoPictureFrontImage">
+                   <div class="dz-default dz-message" >
+                <span>
+                    <i class="fa fa-cloud-upload"></i>
+                    <span class="sub-text">将图片拖入或点击（支持.jpg,.ipeg,.png）</span>
+                </span>
+                   </div>
+               </div>
+           </div>
+       </div>
+       <div class="col-md-4">
+           <div class="section-divider mv40"><span> 法人/股东身份证反 </span></div>
+           <div class="tray-bin">
+               <div class="atl-dropzone dropzoneImg" id="legalPersonNoPictureBackImage">
+                   <div class="dz-default dz-message" >
+                <span>
+                    <i class="fa fa-cloud-upload"></i>
+                    <span class="sub-text">将图片拖入或点击（支持.jpg,.ipeg,.png）</span>
+                </span>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </div>
+    <div class="section row">
+        <div class="col-md-12">
+            <div class="section-divider mv40"><span> 法人个人征信报告或附（法人个人征信授权书） </span></div>
+            <div class="tray-bin">
+                <div class="atl-dropzone dropzoneImg" id="legalPersonCreditReportImageList">
+                    <div class="dz-default dz-message" >
+                <span>
+                    <i class="fa fa-cloud-upload"></i>
+                    <span class="sub-text">将图片拖入或点击（支持.jpg,.ipeg,.png）</span>
+                </span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <div class="section row">
+        <div class="col-md-12">
+            <div class="section-divider mv40"><span> 固定资产证明 </span></div>
+            <div class="tray-bin">
+                <div class="atl-dropzone dropzoneImg" id="fixedAssetsProveImageList">
+                    <div class="dz-default dz-message" >
+                <span>
+                    <i class="fa fa-cloud-upload"></i>
+                    <span class="sub-text">将图片拖入或点击（支持.jpg,.ipeg,.png）</span>
+                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-12">
+            <div class="section-divider mv40"><span> 单位对公账户流水账单 </span></div>
+            <div class="tray-bin">
+                <div class="atl-dropzone dropzoneImg" id="publicAccountFlowBillImageList">
+                    <div class="dz-default dz-message" >
+                <span>
+                    <i class="fa fa-cloud-upload"></i>
+                    <span class="sub-text">将图片拖入或点击（支持.jpg,.ipeg,.png）</span>
+                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-12">
+            <div class="section-divider mv40"><span> 公积金缴纳证明 </span></div>
+            <div class="tray-bin">
+                <div class="atl-dropzone dropzoneImg" id="socialSecurityRoProvidentFundImageList">
+                    <div class="dz-default dz-message" >
+                <span>
+                    <i class="fa fa-cloud-upload"></i>
+                    <span class="sub-text">将图片拖入或点击（支持.jpg,.ipeg,.png）</span>
+                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-12">
+            <div class="section-divider mv40"><span> 战略协议或合作协议 </span></div>
+            <div class="tray-bin">
+                <div class="atl-dropzone dropzoneImg" id="cooperationAgreementImageList">
+                    <div class="dz-default dz-message" >
+                <span>
+                    <i class="fa fa-cloud-upload"></i>
+                    <span class="sub-text">将图片拖入或点击（支持.jpg,.ipeg,.png）</span>
+                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-12">
+            <div class="section-divider mv40"><span> 法人学历证明 </span></div>
+            <div class="tray-bin">
+                <div class="atl-dropzone dropzoneImg" id="legalPersonEducationImageList">
+                    <div class="dz-default dz-message" >
+                <span>
+                    <i class="fa fa-cloud-upload"></i>
+                    <span class="sub-text">将图片拖入或点击（支持.jpg,.ipeg,.png）</span>
+                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-12">
+            <div class="section-divider mv40"><span> 法人职称证明 </span></div>
+            <div class="tray-bin">
+                <div class="atl-dropzone dropzoneImg" id="legalPersonPositionalTitleImageList">
+                    <div class="dz-default dz-message" >
+                <span>
+                    <i class="fa fa-cloud-upload"></i>
+                    <span class="sub-text">将图片拖入或点击（支持.jpg,.ipeg,.png）</span>
+                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-12">
+            <div class="section-divider mv40"><span> 现场核查表 </span></div>
+            <div class="tray-bin">
+                <div class="atl-dropzone dropzoneImg" id="localeChecklistsImageList">
+                    <div class="dz-default dz-message" >
+                <span>
+                    <i class="fa fa-cloud-upload"></i>
+                    <span class="sub-text">将图片拖入或点击（支持.jpg,.ipeg,.png）</span>
+                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-12">
+            <div class="section-divider mv40"><span> 经营场所租赁合同 </span></div>
+            <div class="tray-bin">
+                <div class="atl-dropzone dropzoneImg" id="managerPlaceRentContractImageList">
+                    <div class="dz-default dz-message" >
+                <span>
+                    <i class="fa fa-cloud-upload"></i>
+                    <span class="sub-text">将图片拖入或点击（支持.jpg,.ipeg,.png）</span>
+                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+<script type="text/html" id="examplePreviewTpl">
+    {{#productImg}}
+    <div class="dz-preview dz-processing dz-error dz-image-preview hidden example-preview" data-img="{{dataImg}}">
+        <div class="dz-details">
+            <div class="dz-filename">
+                <span data-dz-name="">{{originalName}}</span>
+            </div>
+            <img data-dz-thumbnail="" alt="avatar" src="{{imgDomain}}{{imgUrl}}" class="img-responsive">
+        </div>
+        <div class="dz-success-mark">
+                                                 <span>âœ?/span>
+        </div>
+        <a class="dz-remove" href="#" data-dz-remove>删除</a>
+    </div>
+    {{/productImg}}
+</script>
