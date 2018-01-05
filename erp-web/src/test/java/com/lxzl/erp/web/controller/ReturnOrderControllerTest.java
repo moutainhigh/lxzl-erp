@@ -132,9 +132,9 @@ public class ReturnOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void doReturnMaterial() throws Exception {
         DoReturnMaterialParam doReturnMaterialParam = new DoReturnMaterialParam();
-        doReturnMaterialParam.setReturnOrderNo("LXRO7013392018010500007");
-        doReturnMaterialParam.setMaterialNo("M201801011026586021729");
-        doReturnMaterialParam.setReturnCount(1);
+        doReturnMaterialParam.setReturnOrderNo("LXRO7013392018010500008");
+        doReturnMaterialParam.setMaterialNo("M201712181610381101755");
+        doReturnMaterialParam.setReturnCount(3);
         TestResult testResult = getJsonTestResult("/returnOrder/doReturnMaterial", doReturnMaterialParam);
     }
 
@@ -147,7 +147,7 @@ public class ReturnOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void detail() throws Exception {
         ReturnOrder returnOrder = new ReturnOrder();
-        returnOrder.setReturnOrderNo("RO201712252003510581416");
+        returnOrder.setReturnOrderNo("LXRO7013392018010500007");
         TestResult testResult = getJsonTestResult("/returnOrder/detail", returnOrder);
     }
 

@@ -395,7 +395,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             return serviceResult;
         }
         if (rentMap.get(doReturnMaterialParam.getMaterialNo()).size() < doReturnMaterialParam.getReturnCount()) {
-            serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_RENT_THIS_BULK_MATERIAL_NO_MORE,rentMap.get(doReturnMaterialParam.getMaterialNo()).size());
             return serviceResult;
         }
         Date now = new Date();
@@ -498,21 +498,21 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
                     returnOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     returnOrderMaterialDOMapForUpdate.put(returnOrderMaterialDO.getReturnMaterialId(), returnOrderMaterialDO);
                 }
-                //添加退还散料记录
-                ReturnOrderMaterialBulkDO returnOrderMaterialBulkDO = new ReturnOrderMaterialBulkDO();
-                returnOrderMaterialBulkDO.setReturnOrderMaterialId(returnOrderMaterialDO.getId());
-                returnOrderMaterialBulkDO.setReturnOrderId(returnOrderDO.getId());
-                returnOrderMaterialBulkDO.setReturnOrderNo(returnOrderDO.getReturnOrderNo());
-                returnOrderMaterialBulkDO.setOrderNo(orderDO.getOrderNo());
-                returnOrderMaterialBulkDO.setBulkMaterialId(bulkMaterialDO.getId());
-                returnOrderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
-                returnOrderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                returnOrderMaterialBulkDO.setCreateTime(now);
-                returnOrderMaterialBulkDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                returnOrderMaterialBulkDO.setUpdateTime(now);
-                returnOrderMaterialBulkDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                returnOrderMaterialBulkDOListForSave.add(returnOrderMaterialBulkDO);
             }
+            //添加退还散料记录
+            ReturnOrderMaterialBulkDO returnOrderMaterialBulkDO = new ReturnOrderMaterialBulkDO();
+            returnOrderMaterialBulkDO.setReturnOrderMaterialId(returnOrderMaterialDO.getId());
+            returnOrderMaterialBulkDO.setReturnOrderId(returnOrderDO.getId());
+            returnOrderMaterialBulkDO.setReturnOrderNo(returnOrderDO.getReturnOrderNo());
+            returnOrderMaterialBulkDO.setOrderNo(orderDO.getOrderNo());
+            returnOrderMaterialBulkDO.setBulkMaterialId(bulkMaterialDO.getId());
+            returnOrderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
+            returnOrderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            returnOrderMaterialBulkDO.setCreateTime(now);
+            returnOrderMaterialBulkDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            returnOrderMaterialBulkDO.setUpdateTime(now);
+            returnOrderMaterialBulkDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            returnOrderMaterialBulkDOListForSave.add(returnOrderMaterialBulkDO);
         }
 
         //待更新的订单列表

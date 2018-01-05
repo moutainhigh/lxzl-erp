@@ -282,11 +282,19 @@ public class ConverterUtil {
                 }
             }
         } else if (o.getClass().getSimpleName().equals("ImageDO")) {
+
+            Field doIdField = o.getClass().getDeclaredField("id");
+            doIdField.setAccessible(true);
+            Object value = doIdField.get(o);
             Field[] poFields = clazz.getDeclaredFields();
             for (Field poIdField : poFields) {
                 if ("imgDomain".equals(poIdField.getName())) {
                     poIdField.setAccessible(true);
                     poIdField.set(t, ConstantConfig.imageDomain);
+                }
+                if ("imgId".equals(poIdField.getName())) {
+                    poIdField.setAccessible(true);
+                    poIdField.set(t, value);
                 }
             }
         } else if (o.getClass().getSimpleName().equals("ProductImgDO")) {
