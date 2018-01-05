@@ -112,6 +112,7 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL = "J200066";
     public static final String CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL = "J200067";
     public static final String CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL = "J200068";
+    public static final String WAREHOUSE_NOT_AVAILABLE = "J200069";
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
     public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
@@ -538,6 +539,7 @@ public class ErrorCode {
         MAP.put(ORDER_MATERIAL_COUNT_ERROR, "设备数量必须大于0！");
         MAP.put(CUSTOMER_RENT_THIS_BULK_MATERIAL_NO_MORE, "该配件客户的在租只有【%d】个！");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_NOT_MATCHING, "订单设备不匹配");
+        MAP.put(WAREHOUSE_NOT_AVAILABLE, "仓库不可用");
 
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");

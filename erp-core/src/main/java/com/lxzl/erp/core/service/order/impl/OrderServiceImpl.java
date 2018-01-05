@@ -856,8 +856,17 @@ public class OrderServiceImpl implements OrderService {
             }
             WarehouseDO currentWarehouse = warehouseSupport.getAvailableWarehouse(productEquipmentDO.getCurrentWarehouseId());
             if (currentWarehouse == null) {
-                result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, equipmentNo, productEquipmentDO.getCurrentWarehouseId());
+                result.setErrorCode(ErrorCode.WAREHOUSE_NOT_AVAILABLE);
                 return result;
+            }
+
+            currentWarehouse = warehouseSupport.getSubCompanyWarehouse(orderDO.getOrderSubCompanyId());
+            if (currentWarehouse == null) {
+                result.setErrorCode(ErrorCode.WAREHOUSE_NOT_AVAILABLE);
+                return result;
+            }
+            if (!productEquipmentDO.getCurrentWarehouseId().equals(currentWarehouse.getId())) {
+                result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, equipmentNo, productEquipmentDO.getCurrentWarehouseId());
             }
 
             boolean isMatching = false;
@@ -989,7 +998,7 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
             if (!isMatching) {
-                result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
+                result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, materialId);
                 return result;
             }
 
