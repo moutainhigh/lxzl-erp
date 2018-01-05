@@ -196,6 +196,10 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
+        if (!loginUser.getUserId().toString().equals(orderDO.getCreateUser())) {
+            result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
+            return result;
+        }
         if (CollectionUtil.isEmpty(orderDO.getOrderProductDOList())
                 && CollectionUtil.isEmpty(orderDO.getOrderMaterialDOList())) {
             result.setErrorCode(ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL);
@@ -254,7 +258,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ServiceResult<String, String> payOrder(String orderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        Date currentTime = new Date();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (orderDO == null) {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
@@ -718,6 +721,10 @@ public class OrderServiceImpl implements OrderService {
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (orderDO.getOrderStatus() == null || !OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus())) {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
+        if (!loginUser.getUserId().toString().equals(orderDO.getCreateUser())) {
+            result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
             return result;
         }
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
