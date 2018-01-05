@@ -985,6 +985,7 @@ public class OrderServiceImpl implements OrderService {
                         orderMaterialBulkDO.setOrderMaterialId(orderMaterialDO.getId());
                         orderMaterialBulkDO.setBulkMaterialId(bulkMaterialDO.getId());
                         orderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
+                        orderMaterialBulkDO.setRentStartTime(orderDO.getRentStartTime());
                         orderMaterialBulkDO.setExpectReturnTime(expectReturnTime);
                         orderMaterialBulkDO.setExpectRentAmount(expectRentAmount);
                         orderMaterialBulkDO.setActualRentAmount(BigDecimal.ZERO);

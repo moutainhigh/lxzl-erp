@@ -121,7 +121,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
 
         WarehouseDO warehouseDO = ConverterUtil.convert(warehouse, WarehouseDO.class);
-        warehouseDO.setWarehouseNo(generateNoSupport.generateWarehouseNo(warehouseDO.getSubCompanyId(),warehouseDO.getWarehouseType()));
+        warehouseDO.setWarehouseNo(generateNoSupport.generateWarehouseNo(warehouseDO.getSubCompanyId(), warehouseDO.getWarehouseType()));
         warehouseDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         warehouseDO.setUpdateUser(loginUser.getUserId().toString());
         warehouseDO.setCreateUser(loginUser.getUserId().toString());
@@ -497,7 +497,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         paramMap.put("stockOrderQueryParam", stockOrderQueryParam);
         Integer totalCount = stockOrderMapper.listCount(paramMap);
         List<StockOrderDO> stockOrderDOList = stockOrderMapper.listPage(paramMap);
-        Page<StockOrder> page = new Page<>(ConverterUtil.convertList(stockOrderDOList,StockOrder.class), totalCount, stockOrderQueryParam.getPageNo(), stockOrderQueryParam.getPageSize());
+        Page<StockOrder> page = new Page<>(ConverterUtil.convertList(stockOrderDOList, StockOrder.class), totalCount, stockOrderQueryParam.getPageNo(), stockOrderQueryParam.getPageSize());
 
         result.setResult(page);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -574,13 +574,13 @@ public class WarehouseServiceImpl implements WarehouseService {
         Integer itemReferId = materialInStorage.getItemReferId();
         Integer itemReferType = materialInStorage.getItemReferType();
         User loginUser = userSupport.getCurrentUser();
-        Map<Integer ,MaterialDO> materialMap = new HashMap<>();
-        Map<String,BulkMaterialDO> allBulkMaterialDOMap = new HashMap<>();
+        Map<Integer, MaterialDO> materialMap = new HashMap<>();
+        Map<String, BulkMaterialDO> allBulkMaterialDOMap = new HashMap<>();
         for (int i = 0; i < materialInStorage.getMaterialCount(); i++) {
 
-            if(!materialMap.containsKey(materialInStorage.getMaterialId())){
+            if (!materialMap.containsKey(materialInStorage.getMaterialId())) {
                 MaterialDO materialDO = materialMapper.findById(materialInStorage.getMaterialId());
-                materialMap.put(materialDO.getId(),materialDO);
+                materialMap.put(materialDO.getId(), materialDO);
             }
             MaterialDO materialDO = materialMap.get(materialInStorage.getMaterialId());
 
@@ -608,7 +608,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             bulkMaterialDO.setMaterialCapacityValue(materialDO.getMaterialCapacityValue());
             bulkMaterialDO.setBulkMaterialPrice(materialDO.getMaterialPrice());
             allBulkMaterialDOList.add(bulkMaterialDO);
-            allBulkMaterialDOMap.put(bulkMaterialDO.getBulkMaterialNo(),bulkMaterialDO);
+            allBulkMaterialDOMap.put(bulkMaterialDO.getBulkMaterialNo(), bulkMaterialDO);
 
             StockOrderBulkMaterialDO stockOrderBulkMaterialDO = new StockOrderBulkMaterialDO();
             stockOrderBulkMaterialDO.setStockOrderNo(stockOrderNo);
@@ -628,7 +628,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             bulkMaterialMapper.saveList(allBulkMaterialDOList);
         }
         if (!allStockOrderBulkMaterialDOList.isEmpty()) {
-            for(StockOrderBulkMaterialDO stockOrderBulkMaterialDO : allStockOrderBulkMaterialDOList){
+            for (StockOrderBulkMaterialDO stockOrderBulkMaterialDO : allStockOrderBulkMaterialDOList) {
                 BulkMaterialDO bulkMaterialDO = allBulkMaterialDOMap.get(stockOrderBulkMaterialDO.getBulkMaterialNo());
                 stockOrderBulkMaterialDO.setBulkMaterialId(bulkMaterialDO.getId());
                 stockOrderBulkMaterialDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
@@ -644,7 +644,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
         // 入库设备
         List<ProductEquipmentDO> allProductEquipmentDOList = new ArrayList<>();
-        Map<String,ProductEquipmentDO> allProductEquipmentDOMap = new HashMap<>();
+        Map<String, ProductEquipmentDO> allProductEquipmentDOMap = new HashMap<>();
         // 入库设备记录
         List<StockOrderEquipmentDO> allStockOrderEquipmentDOList = new ArrayList<>();
         // 入库物料记录
@@ -653,7 +653,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         List<ProductEquipmentMaterialDO> allProductEquipmentMaterialDOList = new ArrayList<>();
         // 入库散料（由物料产生散料）
         List<BulkMaterialDO> allBulkMaterialDOList = new ArrayList<>();
-        Map<String,BulkMaterialDO> allBulkMaterialDOMap = new HashMap<>();
+        Map<String, BulkMaterialDO> allBulkMaterialDOMap = new HashMap<>();
         // 设备散料
         List<ProductEquipmentBulkMaterialDO> allProductEquipmentBulkMaterialDOList = new ArrayList<>();
         Integer itemReferId = productInStorage.getItemReferId();
@@ -661,7 +661,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
         ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
 
-        Map<Integer ,MaterialDO> materialMap = new HashMap<>();
+        Map<Integer, MaterialDO> materialMap = new HashMap<>();
         for (int i = 0; i < productInStorage.getProductCount(); i++) {
             ProductEquipmentDO productEquipmentDO = new ProductEquipmentDO();
             productEquipmentDO.setEquipmentNo(GenerateNoUtil.generateEquipmentNo(currentTime, warehouseId, productInStockCounter.getProductEquipmentCount()));
@@ -680,7 +680,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             productEquipmentDO.setUpdateTime(currentTime);
             productEquipmentDO.setCreateTime(currentTime);
             allProductEquipmentDOList.add(productEquipmentDO);
-            allProductEquipmentDOMap.put(productEquipmentDO.getEquipmentNo(),productEquipmentDO);
+            allProductEquipmentDOMap.put(productEquipmentDO.getEquipmentNo(), productEquipmentDO);
 
             StockOrderEquipmentDO stockOrderEquipmentDO = new StockOrderEquipmentDO();
             stockOrderEquipmentDO.setStockOrderNo(stockOrderNo);
@@ -707,9 +707,9 @@ public class WarehouseServiceImpl implements WarehouseService {
                     productEquipmentMaterialDO.setCreateTime(currentTime);
                     allProductEquipmentMaterialDOList.add(productEquipmentMaterialDO);
 
-                    if(!materialMap.containsKey(productMaterial.getMaterialId())){
+                    if (!materialMap.containsKey(productMaterial.getMaterialId())) {
                         MaterialDO materialDO = materialMapper.findById(productMaterial.getMaterialId());
-                        materialMap.put(materialDO.getId(),materialDO);
+                        materialMap.put(materialDO.getId(), materialDO);
                     }
                     for (int j = 0; j < productMaterial.getMaterialCount(); j++) {
                         MaterialDO materialDO = materialMap.get(productMaterial.getMaterialId());
@@ -738,7 +738,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                         bulkMaterialDO.setMaterialCapacityValue(materialDO.getMaterialCapacityValue());
                         bulkMaterialDO.setBulkMaterialPrice(materialDO.getMaterialPrice());
                         allBulkMaterialDOList.add(bulkMaterialDO);
-                        allBulkMaterialDOMap.put(bulkMaterialDO.getBulkMaterialNo(),bulkMaterialDO);
+                        allBulkMaterialDOMap.put(bulkMaterialDO.getBulkMaterialNo(), bulkMaterialDO);
 
                         StockOrderBulkMaterialDO stockOrderBulkMaterialDO = new StockOrderBulkMaterialDO();
                         stockOrderBulkMaterialDO.setStockOrderNo(stockOrderNo);
@@ -770,22 +770,22 @@ public class WarehouseServiceImpl implements WarehouseService {
             SqlLogInterceptor.setExecuteSql("skip print productEquipmentMapper.saveList  sql ......");
             productEquipmentMapper.saveList(allProductEquipmentDOList);
         }
-        if(!allStockOrderEquipmentDOList.isEmpty()){
-            for(StockOrderEquipmentDO stockOrderEquipmentDO : allStockOrderEquipmentDOList){
+        if (!allStockOrderEquipmentDOList.isEmpty()) {
+            for (StockOrderEquipmentDO stockOrderEquipmentDO : allStockOrderEquipmentDOList) {
                 stockOrderEquipmentDO.setEquipmentId(allProductEquipmentDOMap.get(stockOrderEquipmentDO.getEquipmentNo()).getId());
             }
             SqlLogInterceptor.setExecuteSql("skip print stockOrderEquipmentMapper.saveList  sql ......");
             stockOrderEquipmentMapper.saveList(allStockOrderEquipmentDOList);
         }
         if (!allProductEquipmentMaterialDOList.isEmpty()) {
-            for(ProductEquipmentMaterialDO productEquipmentMaterialDO : allProductEquipmentMaterialDOList){
+            for (ProductEquipmentMaterialDO productEquipmentMaterialDO : allProductEquipmentMaterialDOList) {
                 productEquipmentMaterialDO.setEquipmentId(allProductEquipmentDOMap.get(productEquipmentMaterialDO.getEquipmentNo()).getId());
             }
             SqlLogInterceptor.setExecuteSql("skip print productEquipmentMaterialMapper.saveList  sql ......");
             productEquipmentMaterialMapper.saveList(allProductEquipmentMaterialDOList);
         }
         if (!allBulkMaterialDOList.isEmpty()) {
-            for(BulkMaterialDO bulkMaterialDO : allBulkMaterialDOList){
+            for (BulkMaterialDO bulkMaterialDO : allBulkMaterialDOList) {
                 ProductEquipmentDO productEquipmentDO = allProductEquipmentDOMap.get(bulkMaterialDO.getCurrentEquipmentNo());
                 bulkMaterialDO.setCurrentEquipmentId(productEquipmentDO.getId());
             }
@@ -793,7 +793,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             bulkMaterialMapper.saveList(allBulkMaterialDOList);
         }
         if (!allProductEquipmentBulkMaterialDOList.isEmpty()) {
-            for(ProductEquipmentBulkMaterialDO productEquipmentBulkMaterialDO : allProductEquipmentBulkMaterialDOList){
+            for (ProductEquipmentBulkMaterialDO productEquipmentBulkMaterialDO : allProductEquipmentBulkMaterialDOList) {
                 productEquipmentBulkMaterialDO.setEquipmentId(allProductEquipmentDOMap.get(productEquipmentBulkMaterialDO.getEquipmentNo()).getId());
                 productEquipmentBulkMaterialDO.setBulkMaterialId(allBulkMaterialDOMap.get(productEquipmentBulkMaterialDO.getBulkMaterialNo()).getId());
             }
@@ -801,7 +801,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             productEquipmentBulkMaterialMapper.saveList(allProductEquipmentBulkMaterialDOList);
         }
         if (!allStockOrderBulkMaterialDOList.isEmpty()) {
-            for(StockOrderBulkMaterialDO stockOrderBulkMaterialDO : allStockOrderBulkMaterialDOList){
+            for (StockOrderBulkMaterialDO stockOrderBulkMaterialDO : allStockOrderBulkMaterialDOList) {
                 BulkMaterialDO bulkMaterialDO = allBulkMaterialDOMap.get(stockOrderBulkMaterialDO.getBulkMaterialNo());
                 stockOrderBulkMaterialDO.setBulkMaterialId(bulkMaterialDO.getId());
                 stockOrderBulkMaterialDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
@@ -816,7 +816,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         User loginUser = userSupport.getCurrentUser();
         // 变更散料（由物料产生散料）
         List<BulkMaterialDO> allBulkMaterialDOList = new ArrayList<>();
-        Map<String,BulkMaterialDO> allBulkMaterialDOMap = new HashMap<>();
+        Map<String, BulkMaterialDO> allBulkMaterialDOMap = new HashMap<>();
         // 变更物料记录
         List<StockOrderBulkMaterialDO> allStockOrderBulkMaterialDOList = new ArrayList<>();
         // 散料库存变更记录
@@ -844,7 +844,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             bulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
             bulkMaterialDO.setUpdateTime(currentTime);
             allBulkMaterialDOList.add(bulkMaterialDO);
-            allBulkMaterialDOMap.put(bulkMaterialDO.getBulkMaterialNo(),bulkMaterialDO);
+            allBulkMaterialDOMap.put(bulkMaterialDO.getBulkMaterialNo(), bulkMaterialDO);
 
             StockOrderBulkMaterialDO stockOrderBulkMaterialDO = new StockOrderBulkMaterialDO();
             stockOrderBulkMaterialDO.setStockOrderNo(stockOrderNo);
@@ -876,7 +876,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             bulkMaterialMapper.updateList(allBulkMaterialDOList);
         }
         if (!allStockOrderBulkMaterialDOList.isEmpty()) {
-            for(StockOrderBulkMaterialDO stockOrderBulkMaterialDO : allStockOrderBulkMaterialDOList){
+            for (StockOrderBulkMaterialDO stockOrderBulkMaterialDO : allStockOrderBulkMaterialDOList) {
                 BulkMaterialDO bulkMaterialDO = allBulkMaterialDOMap.get(stockOrderBulkMaterialDO.getBulkMaterialNo());
                 stockOrderBulkMaterialDO.setBulkMaterialId(bulkMaterialDO.getId());
                 stockOrderBulkMaterialDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
