@@ -78,12 +78,21 @@
 
                 <div class="p25 pt35">
                     <div class="row">
-                        <div class="col-md-4">
-                            <h4 class="page-header mtn br-light text-muted hidden">用户信息</h4>
-                            #parse("component/customer/risk.vm")
-                            #parse("component/customer/address.vm")
+                        #parse("component/customer/riskInfo.vm")
+                    </div>
+                </div>
+
+                <div class="p25 ptn">
+                    <div class="row">
+                        <div class="col-md-12">
+                            #parse("component/customer/addressInfo.vm")
                         </div>
-                        <div class="col-md-8">
+                    </div>
+                </div>
+
+                <div class="p25 ptn">
+                    <div class="row">
+                        <div class="col-md-12">
                             #parse("component/customer/orders.vm")
                         </div>
                     </div>

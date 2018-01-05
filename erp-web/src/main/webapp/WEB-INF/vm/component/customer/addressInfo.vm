@@ -1,0 +1,70 @@
+<script type="text/html" id="customerAddressTpl">
+    {{#dataSource}}
+    <div class="panel-heading">
+        <span class="panel-icon"><i class="glyphicon glyphicon-map-marker"></i>
+        </span>
+        <span class="panel-title">收货地址</span>
+        <div class="widget-menu pull-right">
+            {{#addButton}}
+            <button class="btn btn-xs btn-default {{class}}">{{text}}</button>
+            {{/addButton}}
+        </div>
+    </div>
+    <div class="panel-body pb5 admin-form">
+
+        {{#listData}}
+        <div class="col-md-4">
+            <div class="well">
+                <p>
+                    {{#isDefault}}
+                    <span class="fs11 text-muted"><i class="fa fa-circle text-info fs12 pr5"></i>默认地址</span>
+                    {{/isDefault}}
+                    {{#checkbox}}
+                    <label class="radio-inline mr10 pull-right">
+                        <input type="radio" name="customerConsignInfoId" value="{{customerConsignInfoId}}" {{#isDefault}}checked{{/isDefault}} data-address="{{addressJson}}"  />
+                    </label>
+                    {{/checkbox}}
+                </p>
+                <address class="mn">
+                    <strong>{{consigneeName}}</strong>
+                    <br>
+                    {{provinceName}}{{cityName}}{{districtName}}{{address}}
+                    <br>
+                    <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{consigneePhone}}
+                </address>
+                <p class="pv10">
+                    {{#editButton}}
+                    <button class="btn btn-xs btn-default pull-right {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
+                    {{/editButton}}
+                    {{#deleteAuthor}}
+                    <button class="btn btn-xs btn-default pull-right mr5 {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
+                    {{/deleteAuthor}}
+                </p>
+            </div>
+        </div>
+        {{/listData}}
+        {{^listData}}
+        <div class="well">
+            <address>
+                还没有添加地址信息
+            </address>
+        </div>
+        {{/listData}}
+    </div>
+    {{/dataSource}}
+</script>
+
+<div class="panel" id="customerAddressPannel">
+    <div class="panel-heading">
+        <span class="panel-icon"><i class="glyphicon glyphicon-map-marker"></i>
+        </span>
+        <span class="panel-title">收货地址</span>
+    </div>
+    <div class="panel-body pb5 admin-form">
+        <div class="well">
+            <address>
+                还没有添加地址信息
+            </address>
+        </div>
+    </div>
+</div>
