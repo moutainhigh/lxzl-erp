@@ -1,0 +1,249 @@
+<div class="panel-body p25">
+    <div class="section row">
+        <div class="col-md-3">
+            <label for="customerOrigin" class="field-label"><em class="text-danger">*</em>客户来源</label>
+            <label class="field select">
+                <select id="customerOrigin" name="customerOrigin" class="required">
+                    <option value="">请选择</option>
+                </select>
+                <i class="arrow"></i>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="customerOrigin" class="field-label">联合开发人</label>
+            <div class="smart-widget sm-right smr-50">
+                <label class="field">
+                    <input type="text" name="unionUserName" id="unionUserName" class="gui-input" readonly />
+                    <input type="hidden" name="unionUser" id="unionUser" class="gui-input" />
+                </label>
+                <button type="button" class="button btn-primary bradiusN" id="chooseUnionUserName"> <i class="fa fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <label for="companyName" class="field-label"><em class="text-danger">*</em>公司名称</label>
+            <label for="companyName" class="field prepend-icon">
+                <input type="text" name="companyName" id="companyName" class="gui-input required" />
+                <label for="companyName" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="companyAbb" class="field-label">公司简称</label>
+            <label for="companyAbb" class="field prepend-icon">
+                <input type="text" name="companyAbb" id="companyAbb" class="gui-input required" />
+                <label for="companyAbb" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-3">
+            <label for="landline" class="field-label">座机电话</label>
+            <label for="landline" class="field prepend-icon">
+                <input type="text" name="landline" id="landline" class="gui-input telephone" />
+                <label for="landline" class="field-icon"><i class="fa fa-phone"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="connectRealName" class="field-label"><em class="text-danger">*</em>联系人姓名</label>
+            <label for="connectRealName" class="field prepend-icon">
+                <input type="text" name="connectRealName" id="connectRealName" class="gui-input required letterOrChinese" />
+                <label for="connectRealName" class="field-icon"><i class="fa fa-user"></i></label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="connectPhone" class="field-label"><em class="text-danger">*</em>联系人手机号</label>
+            <label for="connectPhone" class="field prepend-icon">
+                <input type="text" name="connectPhone" id="connectPhone" class="gui-input required mobilephone" />
+                <label for="connectPhone" class="field-icon"><i class="fa fa-mobile"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="legalPerson" class="field-label">法人姓名</label>
+            <label for="legalPerson" class="field prepend-icon">
+                <input type="text" name="legalPerson" id="legalPerson" class="gui-input letterOrChinese" />
+                <label for="legalPerson" class="field-icon"><i class="fa fa-user"></i>
+                </label>
+            </label>
+        </div>
+
+    </div>
+    <div class="section row">
+        <div class="col-md-3">
+            <label for="legalPersonNo" class="field-label">法人身份证号</label>
+            <label for="legalPersonNo" class="field prepend-icon">
+                <input type="text" name="legalPersonNo" id="legalPersonNo" class="gui-input" />
+                <label for="legalPersonNo" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="legalPersonPhone" class="field-label">法人身手机号</label>
+            <label for="legalPersonPhone" class="field prepend-icon">
+                <input type="text" name="legalPersonPhone" id="legalPersonPhone" class="gui-input mobilephone" />
+                <label for="legalPersonPhone" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="companyFoundTime" class="field-label">企业成立时间</label>
+            <label for="companyFoundTime" class="field prepend-picker-icon" id="companyFoundTimePicker">
+                <input type="text" id="companyFoundTime" name="companyFoundTime" class="gui-input hasDatepicker">
+                <button type="button" class="ui-datepicker-trigger"><i class="fa fa-calendar-o"></i></button>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="industry" class="field-label">所属行业</label>
+            <label for="industry" class="field prepend-icon">
+                <input type="text" name="industry" id="industry" class="gui-input" />
+                <label for="industry" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+
+    </div>
+    <div class="section row">
+        <div class="col-md-3">
+            <label for="affiliatedEnterprise" class="field-label">关联企业</label>
+            <label for="affiliatedEnterprise" class="field prepend-icon">
+                <input type="text" name="affiliatedEnterprise" id="affiliatedEnterprise" class="gui-input" />
+                <label for="affiliatedEnterprise" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="registeredCapital" class="field-label">注册资本</label>
+            <label for="registeredCapital" class="field prepend-icon">
+                <input type="text" name="registeredCapital" id="registeredCapital" class="gui-input" />
+                <label for="registeredCapital" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="officeNumber" class="field-label">办公人数</label>
+            <label for="officeNumber" class="field prepend-icon">
+                <input type="text" name="officeNumber" id="officeNumber" class="gui-input number" />
+                <label for="officeNumber" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="productPurpose" class="field-label">设备用途</label>
+            <label for="productPurpose" class="field prepend-icon">
+                <input type="text" name="productPurpose" id="productPurpose" class="gui-input" />
+                <label for="productPurpose" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-3">
+            <label for="agentPersonName" class="field-label">经办人姓名</label>
+            <label for="agentPersonName" class="field prepend-icon">
+                <input type="text" name="agentPersonName" id="agentPersonName" class="gui-input letterOrChinese" />
+                <label for="agentPersonName" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="agentPersonPhone" class="field-label">经办人电话</label>
+            <label for="agentPersonPhone" class="field prepend-icon">
+                <input type="text" name="agentPersonPhone" id="agentPersonPhone" class="gui-input mobilephone" />
+                <label for="agentPersonPhone" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="agentPersonNo" class="field-label">经办人身份证号码</label>
+            <label for="agentPersonNo" class="field prepend-icon">
+                <input type="text" name="agentPersonNo" id="agentPersonNo" class="gui-input" />
+                <label for="agentPersonNo" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="unifiedCreditCode" class="field-label">统一信用代码</label>
+            <label for="unifiedCreditCode" class="field prepend-icon">
+                <input type="text" name="unifiedCreditCode" id="unifiedCreditCode" class="gui-input" />
+                <label for="unifiedCreditCode" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-3">
+            <label for="operatingArea" class="field-label">经营面积</label>
+            <label for="operatingArea" class="field prepend-icon">
+                <input type="text" name="operatingArea" id="operatingArea" class="gui-input number" />
+                <label for="operatingArea" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="unitInsuredNumber" class="field-label">单位参保人数</label>
+            <label for="unitInsuredNumber" class="field prepend-icon">
+                <input type="text" name="unitInsuredNumber" id="unitInsuredNumber" class="gui-input number" />
+                <label for="unitInsuredNumber" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="isDisabled" class="field-label"><em class="text-danger">*</em>禁用状态</label>
+            <label class="field select">
+                <select id="isDisabled" name="isDisabled">
+                    <option value="0">否</option>
+                    <option value="1">是</option>
+                </select>
+                <i class="arrow"></i>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label for="remark" class="field-label">备注</label>
+            <label for="remark" class="field prepend-icon">
+                <input type="text" name="remark" id="remark" class="gui-input" />
+                <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
+            </label>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-3">
+            <div class="section">
+                <label for="province" class="field-label"><em class="text-danger">*</em>省份/城市/地区</label>
+                <label class="field select">
+                    <select id="province" name="province" class="required">
+                        <option value="">请选择</option>
+                    </select>
+                    <i class="arrow"></i>
+                </label>
+            </div>
+            <div class="section">
+##                <label for="city" class="field-label">城市</label>
+                <label class="field select">
+                    <select id="city" name="city" class="required">
+                        <option value="">请选择</option>
+                    </select>
+                    <i class="arrow"></i>
+                </label>
+            </div>
+            <div class="section">
+##                <label for="district" class="field-label">地区</label>
+                <label class="field select">
+                    <select id="district" name="district" class="required">
+                        <option value="">请选择</option>
+                    </select>
+                    <i class="arrow"></i>
+                </label>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <label for="address" class="field-label"><em class="text-danger">*</em>详细地址</label>
+            <label for="address" class="field prepend-icon">
+                <textarea class="gui-textarea required" id="address" name="address" style="height: 170px;"></textarea>
+                <label for="address" class="field-icon"><i class="fa fa-map-marker"></i></label>
+            </label>
+        </div>
+    </div>
+</div>
