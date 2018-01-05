@@ -19,31 +19,32 @@
                 <div class="pv30 ph40 bg-light dark br-b br-grey posr">
                     <script type="text/html" id="customerHeadTpl">
                         {{#customer}}
-                        <div class="w200 text-center pr30 hidden-xs">
-                            <img src="${staticManagement}img/author.png" class="responsive" width="100%" />
-                        </div>
                         <div class="va-t m30">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <h2 class=""> {{customerCompany.companyName}} <small>{{customerNo}}</small></h2>
-                                    <p class="fs15"><b>用户类型：</b>{{cutomerTypeValue}}</p>
-                                    <p class="fs15"><b>是否禁用：</b>{{isDisabledValue}}</p>
-                                    <p class="fs15"><b>联系方式：</b><span class="mr10">{{customerCompany.connectRealName}}</span><span>{{customerCompany.connectPhone}}</span></p>
-                                    <p class="fs15"><b>创建时间：</b>{{#time}}{{createTime}}{{/time}}</p>
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">客户名</dt><dd>{{customerCompany.companyName}}</dd>
+                                        <dt class="mb10">客户编号</dt><dd>{{customerNo}}</dd>
+                                        <dt class="mb10">用户类型</dt><dd>{{cutomerTypeValue}}</dd>
+                                        <dt class="mb10">是否禁用</dt><dd>{{isDisabledValue}}</dd>
+                                        <dt class="mb10">创建人</dt><dd>{{createUserRealName}}</dd>
+                                        <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}</dd>
+                                    </dl>
                                 </div>
                                 <div class="col-md-4">
-                                    <h2 style="visibility: hidden;">&nbsp;</h2>
-                                    <p class="fs15"><b>营业执照号：</b>{{customerCompany.businessLicenseNo}}</p>
-                                    <p class="fs15"><b>法人：</b>{{customerCompany.legalPerson}}</p>
-                                    <p class="fs15"><b>法人身份证：</b>{{customerCompany.legalPersonNo}}</p>
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">营业执照号</dt><dd>{{customerCompany.businessLicenseNo}}</dd>
+                                        <dt class="mb10">法人</dt><dd>{{customerCompany.legalPerson}}</dd>
+                                        <dt class="mb10">法人身份证</dt><dd>{{customerCompany.legalPersonNo}}</dd>
+                                    </dl>
                                 </div>
                                 <div class="col-md-4">
-                                    <h2 style="visibility: hidden;">&nbsp;</h2>
-                                    <p class="fs15"><b>省份：</b>{{customerCompany.provinceName}}</p>
-                                    <p class="fs15"><b>城市：</b>{{customerCompany.cityName}}</p>
-                                    <p class="fs15"><b>地区：</b>{{customerCompany.districtName}}</p>
-                                    <p class="fs15"><b>地址：</b>{{customerCompany.address}}</p>
-                                    <p class="fs15"><b>备注：</b>{{customerCompany.remark}}</p>
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">联系人</dt><dd>{{customerCompany.connectRealName}}</dd>
+                                        <dt class="mb10">联系电话</dt><dd>{{customerCompany.connectPhone}}</dd>
+                                        <dt class="mb10">地址</dt><dd>{{customerCompany.provinceName}}{{customerCompany.cityName}}{{customerCompany.districtName}}{{customerCompany.address}}</dd>
+                                        <dt class="mb10">备注</dt><dd>{{customerCompany.remark}}</dd>
+                                    </dl>
                                 </div>
                             </div>
                             <hr />

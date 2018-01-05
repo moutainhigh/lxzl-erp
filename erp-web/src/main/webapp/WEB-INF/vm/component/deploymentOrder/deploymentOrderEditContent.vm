@@ -46,20 +46,10 @@
                 </div>
             </div>
         </div>
-    ##                        <div class="row">
-    ##                            <div class="col-md-6">
-    ##                                <div class="form-group field">
-    ##                                    <label class="col-md-3 control-label">备注</label>
-    ##                                    <div class="col-md-9">
-    ##                                        <textarea class="form-control" id="remark" rows="3"  name="remark"></textarea>
-    ##                                    </div>
-    ##                                </div>
-    ##                            </div>
-    ##                        </div>
     </div>
     <div class="panel-heading">
         <div class="row">
-            <ul class="nav panel-tabs-border panel-tabs">
+            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
                 <li class="active">
                     <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
                 </li>
@@ -102,6 +92,7 @@
                             <th>SKU</th>
                             <th>调拨商品单价</th>
                             <th>调拨数量</th>
+                            <th>操作</th>
                         </tr>
                         </thead>
                         <tbody>

@@ -78,10 +78,6 @@
                                     <th>源仓库</th>
                                     <th>目标仓库</th>
                                     <th>调拨状态</th>
-##                                    <th>商品总数</th>
-##                                    <th>商品总价</th>
-##                                    <th>配件总数</th>
-##                                    <th>配件总价</th>
                                     <th>订单总价</th>
                                     <th>优惠金额</th>
                                     <th>预计归还时间</th>
@@ -107,11 +103,7 @@
                                     <td>{{deploymentTypeValue}}</td>
                                     <td>{{srcWarehouseName}}</td>
                                     <td>{{targetWarehouseName}}</td>
-                                    <td>{{deploymentOrderStatusValue}}</td>
-##                                    <td>{{totalProductCount}}</td>
-##                                    <td>￥{{#price}}{{totalProductAmount}}{{/price}}</td>
-##                                    <td>{{totalMaterialCount}}</td>
-##                                    <td>￥{{#price}}{{totalMaterialAmount}}{{/price}}</td>
+                                    <td class="{{deploymentOrderStatusClass}}">{{deploymentOrderStatusValue}}</td>
                                     <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
                                     <td>￥{{#price}}{{totalDiscountAmount}}{{/price}}</td>
                                     <td>{{#time}}{{expectReturnTime}}{{/time}}</td>

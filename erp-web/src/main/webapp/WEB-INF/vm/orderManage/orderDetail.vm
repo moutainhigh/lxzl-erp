@@ -164,8 +164,6 @@
                                     <script type="text/html" id="dataListTpl">
                                         <thead>
                                         <tr class="bg-light">
-##                                            <th>商品ID</th>
-##                                            <th>图片</th>
                                             <th>商品名称</th>
                                             <th>SKU</th>
                                             <th>商品价值</th>
@@ -181,10 +179,6 @@
                                         <tbody>
                                         {{#listData}}
                                         <tr class="productRow" productRowKey="{{productId}}">
-##                                            <td>{{productId}}</td>
-##                                            <td>
-##                                                <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
-##                                            </td>
                                             <td>{{productName}}</td>
                                             <td width="15%"><span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{propertiesToStr}}</td>
                                             <td>￥{{#price}}{{skuPrice}}{{/price}}</td>
@@ -215,7 +209,7 @@
                                             <td colspan="9" class="pn br-n" style="height:0;">
                                                 <div class="panel m15 affixPanel"  style="display: none;">
                                                     <div class="panel-heading pn ph10">
-                                                        <span>已配设备：共配 {{orderProductEquipmentListCount}} 条</span>
+                                                        <span>已配设备：共配 {{orderProductEquipmentListCount}} 件</span>
                                                     </div>
                                                     <div class="panel-body pn">
                                                         <table class="table">
@@ -223,8 +217,6 @@
                                                                 <th>设备编号</th>
                                                                 <th>预计归还时间</th>
                                                                 <th>实际归还时间</th>
-##                                                                <th>预计租金</th>
-##                                                                <th>实际租金</th>
                                                             </thead>
                                                             {{#orderProductEquipmentListData}}
                                                             <tbody>
@@ -233,8 +225,6 @@
                                                                     <td>{{equipmentNo}}</td>
                                                                     <td>{{#shortTime}}{{expectReturnTime}}{{/shortTime}}</td>
                                                                     <td>{{#time}}{{actualReturnTime}}{{/time}}</td>
-##                                                                    <td>{{#price}}{{expectRentAmount}}{{/price}}</td>
-##                                                                    <td>{{#price}}{{actualRentAmount}}{{/price}}</td>
                                                                 </tr>
                                                                 {{/list}}
                                                                 {{^list}}
@@ -330,21 +320,22 @@
                                         <tr class="bg-light affixTr" style="height: 0;">
                                             <td colspan="14" class="pn br-n" style="height:0;">
                                                 <div class="panel m15 affixPanel"  style="display: none;">
+                                                    {{#orderMaterialBulkListData}}
                                                     <div class="panel-heading pn ph8">
-                                                        <span>已配散料：散料编号列表</span>
+                                                        <span>已配散料：共 {{sourcceLength}} 件</span>
                                                     </div>
                                                     <div class="panel-body pn">
                                                         <table class="table">
-                                                            {{#orderMaterialBulkList}}
+                                                            {{#orderMaterialBulkListSource}}
                                                             <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
                                                                 <td class="br-r">{{bulkMaterialNo}}</td>
                                                             </tr>
-                                                            {{/orderMaterialBulkList}}
-                                                            {{^orderMaterialBulkList}}
+                                                            {{/orderMaterialBulkListSource}}
+                                                            {{^orderMaterialBulkListSource}}
                                                             <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
                                                                 <td class="br-r">无配货信息</td>
                                                             </tr>
-                                                            {{/orderMaterialBulkList}}
+                                                            {{/orderMaterialBulkListSource}}
                                                         </table>
                                                     </div>
                                                     <div class="panel-footer pn pv5 ph15">
@@ -352,6 +343,7 @@
                                                             <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
                                                         </div>
                                                     </div>
+                                                    {{/orderMaterialBulkListData}}
                                                 </div>
                                             </td>
                                         </tr>
