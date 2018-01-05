@@ -581,11 +581,22 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         // 处理调拨物料业务
         if (materialId != null) {
 
+            Map<Integer, DeploymentOrderMaterialDO> deploymentOrderMaterialDOMap = ListUtil.listToMap(deploymentOrderDO.getDeploymentOrderMaterialDOList(), "deploymentMaterialId");
+            DeploymentOrderMaterialDO deploymentOrderMaterialDO = deploymentOrderMaterialDOMap.get(materialId);
+            if (deploymentOrderMaterialDO == null) {
+                result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
+                return result;
+            }
+
             // 必须是当前库房闲置的物料
             BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
             bulkMaterialQueryParam.setMaterialId(materialId);
             bulkMaterialQueryParam.setCurrentWarehouseId(deploymentOrderDO.getSrcWarehouseId());
             bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+
+            if (deploymentOrderMaterialDO.getIsNew() != null) {
+                bulkMaterialQueryParam.setIsNew(deploymentOrderMaterialDO.getIsNew());
+            }
 
             Map<String, Object> bulkQueryParam = new HashMap<>();
             bulkQueryParam.put("start", 0);
@@ -596,20 +607,14 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                 result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
                 return result;
             }
+            List<DeploymentOrderMaterialBulkDO> deploymentOrderMaterialBulkDOList = deploymentOrderMaterialBulkMapper.findByDeploymentOrderMaterialId(deploymentOrderMaterialDO.getId());
+            if (deploymentOrderMaterialBulkDOList != null && (deploymentOrderMaterialBulkDOList.size() + materialCount) > deploymentOrderMaterialDO.getDeploymentProductMaterialCount()) {
+                result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_MATERIAL_BULK_COUNT_MAX, deploymentOrderMaterialDO.getDeploymentProductMaterialCount());
+                return result;
+            }
 
             for (int i = 0; i < materialCount; i++) {
                 BulkMaterialDO bulkMaterialDO = bulkMaterialDOList.get(i);
-                Map<Integer, DeploymentOrderMaterialDO> deploymentOrderMaterialDOMap = ListUtil.listToMap(deploymentOrderDO.getDeploymentOrderMaterialDOList(), "deploymentMaterialId");
-                DeploymentOrderMaterialDO deploymentOrderMaterialDO = deploymentOrderMaterialDOMap.get(materialId);
-                if (deploymentOrderMaterialDO == null) {
-                    result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
-                    return result;
-                }
-                List<DeploymentOrderMaterialBulkDO> deploymentOrderMaterialBulkDOList = deploymentOrderMaterialBulkMapper.findByDeploymentOrderMaterialId(deploymentOrderMaterialDO.getId());
-                if (deploymentOrderMaterialBulkDOList != null && deploymentOrderMaterialBulkDOList.size() >= deploymentOrderMaterialDO.getDeploymentProductMaterialCount()) {
-                    result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_MATERIAL_BULK_COUNT_MAX, deploymentOrderMaterialDO.getDeploymentProductMaterialCount());
-                    return result;
-                }
 
                 bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_DEPLOYING);
                 bulkMaterialDO.setUpdateTime(currentTime);

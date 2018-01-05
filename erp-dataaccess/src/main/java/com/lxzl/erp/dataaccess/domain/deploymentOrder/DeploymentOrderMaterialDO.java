@@ -17,6 +17,7 @@ public class DeploymentOrderMaterialDO  extends BaseDO {
 	private String deploymentProductMaterialSnapshot;
 	private Integer dataStatus;
 	private String remark;
+	private Integer isNew;
 
 	private List<DeploymentOrderMaterialBulkDO> deploymentOrderMaterialBulkDOList;
 
@@ -106,5 +107,13 @@ public class DeploymentOrderMaterialDO  extends BaseDO {
 
 	public void setDeploymentOrderMaterialBulkDOList(List<DeploymentOrderMaterialBulkDO> deploymentOrderMaterialBulkDOList) {
 		this.deploymentOrderMaterialBulkDOList = deploymentOrderMaterialBulkDOList;
+	}
+
+	public Integer getIsNew() {
+		return isNew;
+	}
+
+	public void setIsNew(Integer isNew) {
+		this.isNew = isNew;
 	}
 }

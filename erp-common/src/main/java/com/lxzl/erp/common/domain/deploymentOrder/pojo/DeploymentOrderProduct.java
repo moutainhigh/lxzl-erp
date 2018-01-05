@@ -25,6 +25,7 @@ public class DeploymentOrderProduct extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+	private Integer isNew;
 
 	private List<DeploymentOrderProductEquipment> deploymentOrderProductEquipmentList;
 
@@ -147,5 +148,13 @@ public class DeploymentOrderProduct extends BasePO {
 
 	public void setDeploymentOrderProductEquipmentList(List<DeploymentOrderProductEquipment> deploymentOrderProductEquipmentList) {
 		this.deploymentOrderProductEquipmentList = deploymentOrderProductEquipmentList;
+	}
+
+	public Integer getIsNew() {
+		return isNew;
+	}
+
+	public void setIsNew(Integer isNew) {
+		this.isNew = isNew;
 	}
 }

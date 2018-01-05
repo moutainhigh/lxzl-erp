@@ -17,6 +17,7 @@ public class DeploymentOrderProductDO  extends BaseDO {
 	private String deploymentProductSkuSnapshot;
 	private Integer dataStatus;
 	private String remark;
+	private Integer isNew;
 
 	private List<DeploymentOrderProductEquipmentDO> deploymentOrderProductEquipmentDOList;
 
@@ -106,5 +107,13 @@ public class DeploymentOrderProductDO  extends BaseDO {
 
 	public void setDeploymentOrderProductEquipmentDOList(List<DeploymentOrderProductEquipmentDO> deploymentOrderProductEquipmentDOList) {
 		this.deploymentOrderProductEquipmentDOList = deploymentOrderProductEquipmentDOList;
+	}
+
+	public Integer getIsNew() {
+		return isNew;
+	}
+
+	public void setIsNew(Integer isNew) {
+		this.isNew = isNew;
 	}
 }
