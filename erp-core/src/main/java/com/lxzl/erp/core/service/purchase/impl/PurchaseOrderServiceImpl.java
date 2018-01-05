@@ -412,7 +412,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             if (StringUtil.isEmpty(purchaseOrderMaterial.getMaterialNo())) {
                 return ErrorCode.MATERIAL_NO_NOT_NULL;
             }
-            if (purchaseOrderMaterial.getMaterialAmount() == null || purchaseOrderMaterial.getMaterialAmount().doubleValue() <= 0) {
+            if (purchaseOrderMaterial.getMaterialAmount() == null || BigDecimalUtil.compare(purchaseOrderMaterial.getMaterialAmount(),BigDecimal.ZERO) < 0) {
                 return ErrorCode.MATERIAL_PRICE_ERROR;
             }
             if (purchaseOrderMaterial.getMaterialCount() == null || purchaseOrderMaterial.getMaterialCount() <= 0) {
@@ -479,7 +479,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             if (purchaseOrderProduct.getProductSkuId() == null) {
                 return ErrorCode.PRODUCT_SKU_NOT_NULL;
             }
-            if (purchaseOrderProduct.getProductAmount() == null || purchaseOrderProduct.getProductAmount().doubleValue() <= 0) {
+            if (purchaseOrderProduct.getProductAmount() == null || BigDecimalUtil.compare(purchaseOrderProduct.getProductAmount(),BigDecimal.ZERO) < 0) {
                 return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
             }
             if (purchaseOrderProduct.getProductCount() == null || purchaseOrderProduct.getProductCount() <= 0) {
