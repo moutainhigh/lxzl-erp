@@ -1,7 +1,7 @@
 package com.lxzl.erp.web.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.lxzl.erp.ERPUnTransactionalTest;
+import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ReturnOrChangeMode;
@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
+public class ReturnOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void create() throws Exception {
         AddReturnOrderParam addReturnOrderParam = new AddReturnOrderParam();
@@ -45,6 +45,7 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
         addReturnOrderParam.setIsCharging(CommonConstant.COMMON_CONSTANT_YES);
         TestResult testResult = getJsonTestResult("/returnOrder/add", addReturnOrderParam);
     }
+
     @Test
     public void create3() throws Exception {
         AddReturnOrderParam addReturnOrderParam = new AddReturnOrderParam();
@@ -65,6 +66,7 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
         addReturnOrderParam.setIsCharging(CommonConstant.COMMON_CONSTANT_YES);
         TestResult testResult = getJsonTestResult("/returnOrder/add", addReturnOrderParam);
     }
+
     @Test
     public void create2() throws Exception {
         AddReturnOrderParam addReturnOrderParam = JSON.parseObject("{\n" +
@@ -138,6 +140,12 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
     }
 
     @Test
+    public void doReturnMaterial1() throws Exception {
+        DoReturnMaterialParam doReturnMaterialParam = JSON.parseObject("{\"returnOrderNo\":\"LXRO7013382018010500004\",\"materialNo\":\"M201711291745413251585\",\"returnCount\":\"1\"}", DoReturnMaterialParam.class);
+        TestResult testResult = getJsonTestResult("/returnOrder/doReturnMaterial", doReturnMaterialParam);
+    }
+
+    @Test
     public void detail() throws Exception {
         ReturnOrder returnOrder = new ReturnOrder();
         returnOrder.setReturnOrderNo("RO201712252003510581416");
@@ -189,6 +197,7 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
         returnOrder.setIsDamage(CommonConstant.YES);
         TestResult testResult = getJsonTestResult("/returnOrder/end", returnOrder);
     }
+
     @Test
     public void commit() throws Exception {
         ReturnOrderCommitParam returnOrderCommitParam = new ReturnOrderCommitParam();

@@ -63,7 +63,7 @@ public class PurchaseOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void addPurchaseOrder3() throws Exception {
 
-        PurchaseOrder purchaseOrder = JSON.parseObject("{\"productSupplierId\":\"1\",\"warehouseNo\":\"W201708081508\",\"isInvoice\":\"1\",\"isNew\":\"1\",\"purchaseType\":\"1\",\"purchaseOrderProductList\":[{\"productId\":\"2000032\",\"productSkuId\":\"87\",\"productAmount\":\"100\",\"productCount\":\"10\",\"productMaterialList\":[{\"materialNo\":\"M201711201356145971009\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291808329011520\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711201457288791418\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711201500267591516\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291912439731417\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291753428101534\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291807447341672\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711171838059981293\",\"materialCount\":\"1\"},{\"materialNo\":\"M201711291744581931681\",\"materialCount\":\"1\"}]}]}", PurchaseOrder.class);
+        PurchaseOrder purchaseOrder = JSON.parseObject("{\"productSupplierId\":\"11\",\"warehouseNo\":\"LXW07551\",\"isInvoice\":\"1\",\"isNew\":\"1\",\"purchaseType\":\"1\",\"taxRate\":\"0\",\"purchaseOrderMaterialList\":[{\"materialNo\":\"M201711171838059981292\",\"materialAmount\":\"500\",\"materialCount\":\"50\"}]}", PurchaseOrder.class);
         TestResult testResult = getJsonTestResult("/purchaseOrder/add", purchaseOrder);
     }
 
@@ -490,7 +490,7 @@ public class PurchaseOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void queryPurchaseOrderByNo() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setPurchaseNo("LXPO1000201801010005");
+        purchaseOrder.setPurchaseNo("LXPO0755201801050066");
         TestResult testResult = getJsonTestResult("/purchaseOrder/queryPurchaseOrderByNo", purchaseOrder);
     }
 
@@ -616,7 +616,7 @@ public class PurchaseOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void continuePurchaseOrder() throws Exception {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setPurchaseNo("LXPO1000201801040035");
+        purchaseOrder.setPurchaseNo("LXPO0755201801050068");
         TestResult testResult = getJsonTestResult("/purchaseOrder/continuePurchaseOrder", purchaseOrder);
     }
 

@@ -378,7 +378,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             rentMap.get(bulkMaterialDO.getMaterialNo()).add(bulkMaterialDO);
             MaterialDO materialDO = materialMapper.findByNo(bulkMaterialDO.getMaterialNo());
             //如果散料所属物料需要还
-            if (CommonConstant.COMMON_CONSTANT_NO.equals(materialDO.getIsConsumable())) {
+            if (materialDO.getIsConsumable()==null||CommonConstant.COMMON_CONSTANT_NO.equals(materialDO.getIsConsumable())) {
                 if (!orderBulkMaterialNeedReturnMap.containsKey(bulkMaterialDO.getOrderNo())) {
                     orderBulkMaterialNeedReturnMap.put(bulkMaterialDO.getOrderNo(), new HashMap<Integer, BulkMaterialDO>());
                 }
@@ -432,7 +432,10 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
                 rentBulkMaterialCountNowMap.put(orderDO.getOrderNo(), rentBulkMaterialCountNowMap.get(orderDO.getOrderNo()) + 1);
             }
             //需还map删除此设备
-            orderBulkMaterialNeedReturnMap.get(orderDO.getOrderNo()).remove(bulkMaterialDO.getId());
+            Map<Integer,BulkMaterialDO> orderBulkMaterialDOMap = orderBulkMaterialNeedReturnMap.get(orderDO.getOrderNo());
+            if(orderBulkMaterialDOMap!=null){
+                orderBulkMaterialDOMap.remove(bulkMaterialDO.getId());
+            }
 
             List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
             Map<Integer, OrderMaterialDO> orderMaterialDOMap = new HashMap<>();
@@ -555,9 +558,6 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         customerRiskManagementMapper.update(customerRiskManagementDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        if (true) {
-            throw new BusinessException();
-        }
         return serviceResult;
     }
 
