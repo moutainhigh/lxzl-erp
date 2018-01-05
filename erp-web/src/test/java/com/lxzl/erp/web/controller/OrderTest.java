@@ -150,13 +150,14 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testProcessOrder() throws Exception {
         ProcessOrderParam processOrderParam = new ProcessOrderParam();
-        processOrderParam.setOrderNo("O201712161345332381669");
+        processOrderParam.setOrderNo("LXO2018010670133900041");
         //select * from erp_product_equipment where sku_id=40 and equipment_status = 1 and data_status = 1 and order_no is null
 //        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010012");
 //        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017120110037");
-        processOrderParam.setMaterialId(24);
-        processOrderParam.setMaterialCount(2);
+        processOrderParam.setMaterialId(61);
+        processOrderParam.setMaterialCount(6);
         processOrderParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
+        processOrderParam.setWarehouseId(4000001);
         TestResult testResult = getJsonTestResult("/order/process", processOrderParam);
     }
 

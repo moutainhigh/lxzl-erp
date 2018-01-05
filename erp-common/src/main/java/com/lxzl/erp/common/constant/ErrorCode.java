@@ -306,6 +306,7 @@ public class ErrorCode {
     public static final String ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT = "J400092";
     public static final String ORDER_PRODUCT_COUNT_ERROR = "J400093";
     public static final String ORDER_MATERIAL_COUNT_ERROR = "J400094";
+    public static final String ORDER_PRODUCT_EQUIPMENT_NOT_MATCHING = "J400095";
 
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
@@ -536,6 +537,7 @@ public class ErrorCode {
         MAP.put(ORDER_PRODUCT_COUNT_ERROR, "商品数量必须大于0！");
         MAP.put(ORDER_MATERIAL_COUNT_ERROR, "设备数量必须大于0！");
         MAP.put(CUSTOMER_RENT_THIS_BULK_MATERIAL_NO_MORE, "该配件客户的在租只有【%d】个！");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_NOT_MATCHING, "订单设备不匹配");
 
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");

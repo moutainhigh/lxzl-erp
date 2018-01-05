@@ -862,51 +862,71 @@ public class OrderServiceImpl implements OrderService {
 
             boolean isMatching = false;
             Map<String, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(), "productSkuId", "rentType", "rentTimeLength");
+            OrderProductDO matchingOrderProductDO = null;
+
+            // 匹配SKU
             for (Map.Entry<String, OrderProductDO> entry : orderProductDOMap.entrySet()) {
                 String key = entry.getKey();
+                OrderProductDO orderProductDO = entry.getValue();
                 // 如果输入进来的设备skuID 为当前订单项需要的，那么就匹配
                 if (key.startsWith(productEquipmentDO.getSkuId().toString())) {
-                    OrderProductDO orderProductDO = orderProductDOMap.get(key);
-                    List<OrderProductEquipmentDO> orderProductEquipmentDOList = orderProductEquipmentMapper.findByOrderProductId(orderProductDO.getId());
-                    // 如果这个订单项满了，那么就换下一个
-                    if (orderProductEquipmentDOList != null && orderProductEquipmentDOList.size() >= orderProductDO.getProductCount()) {
-                        continue;
-                    }
-                    if (!productEquipmentDO.getIsNew().equals(orderProductDO.getIsNewProduct())) {
-                        continue;
-                    }
-
-                    productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY);
-                    productEquipmentDO.setOrderNo(orderDO.getOrderNo());
-                    productEquipmentDO.setUpdateTime(currentTime);
-                    productEquipmentDO.setUpdateUser(loginUserId.toString());
-                    productEquipmentMapper.update(productEquipmentDO);
-
-                    // 将该设备上的物料统一加上订单号
-                    bulkMaterialMapper.updateEquipmentOrderNo(productEquipmentDO.getEquipmentNo(), orderDO.getOrderNo());
-
-                    BigDecimal expectRentAmount = calculationOrderExpectRentAmount(orderProductDO.getProductUnitAmount(), orderProductDO.getRentType(), orderProductDO.getRentTimeLength());
-                    Date expectReturnTime = calculationOrderExpectReturnTime(orderDO.getRentStartTime(), orderProductDO.getRentType(), orderProductDO.getRentTimeLength());
-                    OrderProductEquipmentDO orderProductEquipmentDO = new OrderProductEquipmentDO();
-                    orderProductEquipmentDO.setOrderId(orderProductDO.getOrderId());
-                    orderProductEquipmentDO.setOrderProductId(orderProductDO.getId());
-                    orderProductEquipmentDO.setEquipmentId(productEquipmentDO.getId());
-                    orderProductEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
-                    orderProductEquipmentDO.setRentStartTime(orderDO.getRentStartTime());
-                    orderProductEquipmentDO.setProductEquipmentUnitAmount(orderProductDO.getProductUnitAmount());
-                    orderProductEquipmentDO.setExpectReturnTime(expectReturnTime);
-                    orderProductEquipmentDO.setExpectRentAmount(expectRentAmount);
-                    orderProductEquipmentDO.setActualRentAmount(BigDecimal.ZERO);
-                    orderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                    orderProductEquipmentDO.setCreateTime(currentTime);
-                    orderProductEquipmentDO.setCreateUser(loginUserId.toString());
-                    orderProductEquipmentDO.setUpdateTime(currentTime);
-                    orderProductEquipmentDO.setUpdateUser(loginUserId.toString());
-                    orderProductEquipmentMapper.save(orderProductEquipmentDO);
-                    isMatching = true;
+                    matchingOrderProductDO = orderProductDO;
                     break;
                 }
             }
+            // 匹配商品
+            if (matchingOrderProductDO == null) {
+                for (Map.Entry<String, OrderProductDO> entry : orderProductDOMap.entrySet()) {
+                    OrderProductDO orderProductDO = entry.getValue();
+                    // 如果输入进来的设备productId,订单项中包含，就匹配 为当前订单项需要的，那么就匹配
+                    if (orderProductDO.getProductId().equals(productEquipmentDO.getProductId())) {
+                        matchingOrderProductDO = orderProductDO;
+                        break;
+                    }
+                }
+            }
+            if (matchingOrderProductDO != null) {
+                List<OrderProductEquipmentDO> orderProductEquipmentDOList = orderProductEquipmentMapper.findByOrderProductId(matchingOrderProductDO.getId());
+                // 如果这个订单项满了，那么就换下一个
+                if (orderProductEquipmentDOList != null && orderProductEquipmentDOList.size() >= matchingOrderProductDO.getProductCount()) {
+                    result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_COUNT_MAX);
+                    return result;
+                }
+                if (!productEquipmentDO.getIsNew().equals(matchingOrderProductDO.getIsNewProduct())) {
+                    result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_NOT_MATCHING);
+                    return result;
+                }
+
+                productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY);
+                productEquipmentDO.setOrderNo(orderDO.getOrderNo());
+                productEquipmentDO.setUpdateTime(currentTime);
+                productEquipmentDO.setUpdateUser(loginUserId.toString());
+                productEquipmentMapper.update(productEquipmentDO);
+
+                // 将该设备上的物料统一加上订单号
+                bulkMaterialMapper.updateEquipmentOrderNo(productEquipmentDO.getEquipmentNo(), orderDO.getOrderNo());
+
+                BigDecimal expectRentAmount = calculationOrderExpectRentAmount(matchingOrderProductDO.getProductUnitAmount(), matchingOrderProductDO.getRentType(), matchingOrderProductDO.getRentTimeLength());
+                Date expectReturnTime = calculationOrderExpectReturnTime(orderDO.getRentStartTime(), matchingOrderProductDO.getRentType(), matchingOrderProductDO.getRentTimeLength());
+                OrderProductEquipmentDO orderProductEquipmentDO = new OrderProductEquipmentDO();
+                orderProductEquipmentDO.setOrderId(matchingOrderProductDO.getOrderId());
+                orderProductEquipmentDO.setOrderProductId(matchingOrderProductDO.getId());
+                orderProductEquipmentDO.setEquipmentId(productEquipmentDO.getId());
+                orderProductEquipmentDO.setEquipmentNo(productEquipmentDO.getEquipmentNo());
+                orderProductEquipmentDO.setRentStartTime(orderDO.getRentStartTime());
+                orderProductEquipmentDO.setProductEquipmentUnitAmount(matchingOrderProductDO.getProductUnitAmount());
+                orderProductEquipmentDO.setExpectReturnTime(expectReturnTime);
+                orderProductEquipmentDO.setExpectRentAmount(expectRentAmount);
+                orderProductEquipmentDO.setActualRentAmount(BigDecimal.ZERO);
+                orderProductEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                orderProductEquipmentDO.setCreateTime(currentTime);
+                orderProductEquipmentDO.setCreateUser(loginUserId.toString());
+                orderProductEquipmentDO.setUpdateTime(currentTime);
+                orderProductEquipmentDO.setUpdateUser(loginUserId.toString());
+                orderProductEquipmentMapper.save(orderProductEquipmentDO);
+                isMatching = true;
+            }
+
             if (!isMatching) {
                 result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
                 return result;
@@ -939,7 +959,7 @@ public class OrderServiceImpl implements OrderService {
                         return result;
                     }
 
-                    for(BulkMaterialDO bulkMaterialDO : bulkMaterialDOList){
+                    for (BulkMaterialDO bulkMaterialDO : bulkMaterialDOList) {
                         bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
                         bulkMaterialDO.setOrderNo(orderDO.getOrderNo());
                         bulkMaterialDO.setUpdateTime(currentTime);
@@ -1656,14 +1676,14 @@ public class OrderServiceImpl implements OrderService {
                 if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProduct.getIsNewProduct())) {
                     if ((newProductCount - orderProduct.getProductCount()) < 0) {
                         return ErrorCode.ORDER_PRODUCT_STOCK_NEW_INSUFFICIENT;
-                    }else{
+                    } else {
                         newProductCount = newProductCount - orderProduct.getProductCount();
                         productNewStockMap.put(product.getProductId(), newProductCount);
                     }
                 } else {
                     if ((oldProductCount - orderProduct.getProductCount()) < 0) {
                         return ErrorCode.ORDER_PRODUCT_STOCK_NEW_INSUFFICIENT;
-                    }else{
+                    } else {
                         oldProductCount = oldProductCount - orderProduct.getProductCount();
                         productOldStockMap.put(product.getProductId(), oldProductCount);
                     }
