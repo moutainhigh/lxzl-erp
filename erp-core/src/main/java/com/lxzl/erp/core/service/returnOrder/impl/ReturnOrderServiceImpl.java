@@ -271,6 +271,10 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         //修改订单商品设备-实际归还时间，实际租金
         Date now = new Date();
         OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findRentByCustomerIdAndEquipmentId(returnOrderDO.getCustomerId(), productEquipmentDO.getId());
+        if(orderProductEquipmentDO==null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_RENT_OR_ORDER_NOT_CONFIRM);
+            return serviceResult;
+        }
         //计算该设备的租金
         ServiceResult<String, String> returnResult = orderService.returnEquipment(orderDO.getOrderNo(), productEquipmentDO.getEquipmentNo(), null, now);
         if (!ErrorCode.SUCCESS.equals(returnResult.getErrorCode())) {
