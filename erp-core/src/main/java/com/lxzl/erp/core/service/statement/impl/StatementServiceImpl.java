@@ -412,6 +412,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createReturnOrderStatement(String returnOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(returnOrderNo);
@@ -487,7 +488,7 @@ public class StatementServiceImpl implements StatementService {
                             needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderProductEquipmentDO.getProductEquipmentUnitAmount());
                         }
                         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
-                            payReturnAmount = BigDecimalUtil.add(payReturnAmount, otherAmount);
+                            payReturnAmount = BigDecimalUtil.sub(payReturnAmount, otherAmount);
                             otherAmount = BigDecimal.ZERO;
                         }
                         // 正常全额退
@@ -563,7 +564,7 @@ public class StatementServiceImpl implements StatementService {
                         }
 
                         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
-                            payReturnAmount = BigDecimalUtil.add(payReturnAmount, otherAmount);
+                            payReturnAmount = BigDecimalUtil.sub(payReturnAmount, otherAmount);
                             otherAmount = BigDecimal.ZERO;
                         }
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, thisPhaseAmount);
@@ -605,6 +606,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createChangeOrderStatement(String changeOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         Date currentTime = new Date();
