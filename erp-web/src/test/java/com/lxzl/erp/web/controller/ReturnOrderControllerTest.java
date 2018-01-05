@@ -97,25 +97,20 @@ public class ReturnOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void update2() throws Exception {
         UpdateReturnOrderParam updateReturnOrderParam = JSON.parseObject("{\n" +
-                "  \"returnOrderNo\": \"RO201712181649257021207\",\n" +
+                "  \"returnOrderNo\": \"LXRO7013392018010500007\",\n" +
+                "  \"customerNo\": \"LXCC10002018010500022\",\n" +
                 "  \"isCharging\": \"1\",\n" +
-                "  \"remark\": \"退货\",\n" +
+                "  \"remark\": \"\",\n" +
                 "  \"returnMode\": \"1\",\n" +
                 "  \"returnOrderConsignInfo\": {\n" +
-                "    \"consigneeName\": \"黎文\",\n" +
-                "    \"consigneePhone\": \"18033402833\",\n" +
-                "    \"province\": 19,\n" +
-                "    \"city\": 202,\n" +
-                "    \"district\": 1956,\n" +
-                "    \"address\": \"车公庙安华工业区\"\n" +
+                "    \"consigneeName\": \"测试紧急联系人\",\n" +
+                "    \"consigneePhone\": \"18566324590\",\n" +
+                "    \"address\": \"企业信息详细地址测试\"\n" +
                 "  },\n" +
-                "  \"returnOrderProductList\": [{\n" +
-                "    \"returnProductSkuId\": 76,\n" +
-                "    \"returnProductSkuCount\": \"2\"\n" +
-                "  }],\n" +
+                "  \"returnOrderProductList\": [],\n" +
                 "  \"returnOrderMaterialList\": [{\n" +
-                "    \"returnMaterialNo\": \"M201711201356145971009\",\n" +
-                "    \"returnMaterialCount\": \"1\"\n" +
+                "    \"returnMaterialNo\": \"M201801011026586021729\",\n" +
+                "    \"returnMaterialCount\": \"2\"\n" +
                 "  }]\n" +
                 "}", UpdateReturnOrderParam.class);
         TestResult testResult = getJsonTestResult("/returnOrder/update", updateReturnOrderParam);
@@ -137,8 +132,8 @@ public class ReturnOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void doReturnMaterial() throws Exception {
         DoReturnMaterialParam doReturnMaterialParam = new DoReturnMaterialParam();
-        doReturnMaterialParam.setReturnOrderNo("RO201712191652428981484");
-        doReturnMaterialParam.setMaterialNo("M201711201356145971009");
+        doReturnMaterialParam.setReturnOrderNo("LXRO7013392018010500007");
+        doReturnMaterialParam.setMaterialNo("M201801011026586021729");
         doReturnMaterialParam.setReturnCount(1);
         TestResult testResult = getJsonTestResult("/returnOrder/doReturnMaterial", doReturnMaterialParam);
     }
@@ -195,7 +190,7 @@ public class ReturnOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void end() throws Exception {
         ReturnOrder returnOrder = new ReturnOrder();
-        returnOrder.setReturnOrderNo("LXRO7000722017122900009");
+        returnOrder.setReturnOrderNo("LXRO7013362018010500005");
         returnOrder.setServiceCost(new BigDecimal(100));
         returnOrder.setDamageCost(BigDecimal.ZERO);
         returnOrder.setIsDamage(CommonConstant.YES);

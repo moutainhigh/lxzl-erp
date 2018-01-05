@@ -175,7 +175,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC10002018010100009");
+        customer.setCustomerNo("LXCC10002018010500023");
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }
 

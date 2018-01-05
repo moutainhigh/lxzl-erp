@@ -104,11 +104,11 @@
 	</update>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_return_order_material_bulk (return_order_material_id,return_order_id,return_order_no,bulk_material_id,bulk_material_no,data_status,remark,create_time,create_user,update_time,update_user)
+		insert into erp_return_order_material_bulk (return_order_material_id,return_order_id,return_order_no,order_no,bulk_material_id,bulk_material_no,data_status,remark,create_time,create_user,update_time,update_user)
 		values
 		<foreach collection="returnOrderMaterialBulkDOList" item="returnOrderMaterialBulkDO" index="index" separator =",">
 			(
-			#{returnOrderMaterialBulkDO.returnOrderMaterialId},#{returnOrderMaterialBulkDO.returnOrderId},#{returnOrderMaterialBulkDO.returnOrderNo},#{returnOrderMaterialBulkDO.bulkMaterialId},#{returnOrderMaterialBulkDO.bulkMaterialNo},#{returnOrderMaterialBulkDO.dataStatus},
+			#{returnOrderMaterialBulkDO.returnOrderMaterialId},#{returnOrderMaterialBulkDO.returnOrderId},#{returnOrderMaterialBulkDO.orderNo},#{returnOrderMaterialBulkDO.returnOrderNo},#{returnOrderMaterialBulkDO.bulkMaterialId},#{returnOrderMaterialBulkDO.bulkMaterialNo},#{returnOrderMaterialBulkDO.dataStatus},
 			#{returnOrderMaterialBulkDO.remark},#{returnOrderMaterialBulkDO.createTime},#{returnOrderMaterialBulkDO.createUser},#{returnOrderMaterialBulkDO.updateTime},#{returnOrderMaterialBulkDO.updateUser}
 			)
 		</foreach>

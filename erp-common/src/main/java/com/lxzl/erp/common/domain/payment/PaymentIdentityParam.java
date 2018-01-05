@@ -12,6 +12,7 @@ public class PaymentIdentityParam implements Serializable {
 
     private String businessAppId;
     private String businessAppSecret;
+    private String businessOperateUser;
 
     public String getBusinessAppId() {
         return businessAppId;
@@ -27,5 +28,13 @@ public class PaymentIdentityParam implements Serializable {
 
     public void setBusinessAppSecret(String businessAppSecret) {
         this.businessAppSecret = businessAppSecret;
+    }
+
+    public String getBusinessOperateUser() {
+        return businessOperateUser;
+    }
+
+    public void setBusinessOperateUser(String businessOperateUser) {
+        this.businessOperateUser = businessOperateUser;
     }
 }

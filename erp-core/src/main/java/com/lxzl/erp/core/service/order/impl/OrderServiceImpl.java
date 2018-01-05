@@ -1646,6 +1646,8 @@ public class OrderServiceImpl implements OrderService {
                 Product product = productServiceResult.getResult();
                 if (productNewStockMap.get(product.getProductId()) == null) {
                     productNewStockMap.put(product.getProductId(), product.getNewProductCount());
+                }
+                if (productOldStockMap.get(product.getProductId()) == null) {
                     productOldStockMap.put(product.getProductId(), product.getOldProductCount());
                 }
 

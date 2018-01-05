@@ -62,7 +62,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     private static final Logger logger = LoggerFactory.getLogger(ReturnOrderServiceImpl.class);
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> add(AddReturnOrderParam addReturnOrderParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         CustomerDO customerDO = customerMapper.findCustomerPersonByNo(addReturnOrderParam.getCustomerNo());
@@ -227,7 +227,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, ProductEquipment> doReturnEquipment(DoReturnEquipmentParam doReturnEquipmentParam) {
         ServiceResult<String, ProductEquipment> serviceResult = new ServiceResult<>();
         //校验退还单是否存在
@@ -355,7 +355,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Material> doReturnMaterial(DoReturnMaterialParam doReturnMaterialParam) {
         ServiceResult<String, Material> serviceResult = new ServiceResult<>();
         //校验退还单是否存在
@@ -723,7 +723,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> update(UpdateReturnOrderParam updateReturnOrderParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(updateReturnOrderParam.getReturnOrderNo());
@@ -1014,7 +1014,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
             ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(businessNo);

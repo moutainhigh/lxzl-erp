@@ -29,8 +29,6 @@ import java.util.Map;
 @Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
 
-
-
     @Override
     public ServiceResult<String, Page<Product>> pageRentProductSku(RentProductSkuPageParam rentProductSkuPageParam) {
         ServiceResult<String, Page<Product>> serviceResult = new ServiceResult<>();
