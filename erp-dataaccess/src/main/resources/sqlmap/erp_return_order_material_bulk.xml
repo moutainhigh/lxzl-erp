@@ -108,7 +108,7 @@
 		values
 		<foreach collection="returnOrderMaterialBulkDOList" item="returnOrderMaterialBulkDO" index="index" separator =",">
 			(
-			#{returnOrderMaterialBulkDO.returnOrderMaterialId},#{returnOrderMaterialBulkDO.returnOrderId},#{returnOrderMaterialBulkDO.order_no},#{returnOrderMaterialBulkDO.returnOrderNo},#{returnOrderMaterialBulkDO.bulkMaterialId},#{returnOrderMaterialBulkDO.bulkMaterialNo},#{returnOrderMaterialBulkDO.dataStatus},
+			#{returnOrderMaterialBulkDO.returnOrderMaterialId},#{returnOrderMaterialBulkDO.returnOrderId},#{returnOrderMaterialBulkDO.orderNo},#{returnOrderMaterialBulkDO.returnOrderNo},#{returnOrderMaterialBulkDO.bulkMaterialId},#{returnOrderMaterialBulkDO.bulkMaterialNo},#{returnOrderMaterialBulkDO.dataStatus},
 			#{returnOrderMaterialBulkDO.remark},#{returnOrderMaterialBulkDO.createTime},#{returnOrderMaterialBulkDO.createUser},#{returnOrderMaterialBulkDO.updateTime},#{returnOrderMaterialBulkDO.updateUser}
 			)
 		</foreach>
