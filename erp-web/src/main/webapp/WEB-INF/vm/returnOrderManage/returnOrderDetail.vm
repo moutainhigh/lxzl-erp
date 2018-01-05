@@ -39,144 +39,45 @@
                        {{#data}}
                        <div class="form-horizontal panel-body bg-light dark br-t-n">
                            <div class="row">
-                               <div class="col-md-6">
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">客户</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{customerName}}（客户编号：{{customerNo}}）</p>
-                                       </div>
-                                   </div>
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">退还方式</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{returnModeStr}}</p>
-                                       </div>
-                                   </div>
-                                   <div class="form-group field">
-                                       <label class="col-md-3 control-label" style="visibility: hidden;">收货地址</label>
-                                       <div class="col-md-9">
-                                           <div class="panel" id="customerAddressPannel">
-                                               <div class="panel-heading">
-                                                <span class="panel-icon"><i class="glyphicon glyphicon-map-marker"></i>
-                                                </span>
-                                                   <span class="panel-title">取货地址</span>
-                                               </div>
-                                               <div class="panel-body pb5 admin-form">
-                                                   <div class="well" id="orderConsignInfo">
-                                                       {{#returnOrderConsignInfo}}
-                                                       <address class="mn">
-                                                           <strong>{{consigneeName}}</strong>
-                                                           <br>
-                                                           {{provinceName}}{{cityName}}{{districtName}}{{address}}
-                                                           <br>
-                                                           <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{consigneePhone}}
-                                                       </address>
-                                                       {{/returnOrderConsignInfo}}
-                                                       {{^returnOrderConsignInfo}}
-                                                       <address class="mn">
-                                                           还没有添加取货地址
-                                                       </address>
-                                                       {{/returnOrderConsignInfo}}
-                                                   </div>
-                                               </div>
-                                           </div>
-
-                                       </div>
-                                   </div>
+                               <div class="col-md-4">
+                                   <dl class="dl-horizontal">
+                                       <dt class="mb10">客户</dt><dd>{{customerName}}</dd>
+                                       <dt class="mb10">客户编号</dt><dd>{{customerNo}}</dd>
+                                       <dt class="mb10">退货方式</dt><dd>{{returnModeStr}}</dd>
+                                       <dt class="">收货地址</dt>
+                                       {{#returnOrderConsignInfo}}
+                                            <dd>{{consigneeName}}</dd>
+                                            <dd><i class="fa fa-mobile mr5"></i>{{consigneePhone}}</dd>
+                                            <dd><i class="fa fa-map-marker mr5"></i>{{addressForamt}}</dd>
+                                       {{/returnOrderConsignInfo}}
+                                       {{^returnOrderConsignInfo}}
+                                            <dd>没有取货地址</dd>
+                                       {{/returnOrderConsignInfo}}
+                                   </dl>
                                </div>
-                               <div class="col-md-6">
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">订单状态</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{returnOrderStatusValue}}&nbsp;</p>
-                                       </div>
-                                   </div>
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">创建人</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{createUserRealName}}&nbsp;</p>
-                                       </div>
-                                   </div>
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">创建时间</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{#time}}{{createTime}}{{/time}}&nbsp;</p>
-                                       </div>
-                                   </div>
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">修改人</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{updateUserRealName}}&nbsp;</p>
-                                       </div>
-                                   </div>
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">修改时间</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{#time}}{{updateTime}}{{/time}}&nbsp;</p>
-                                       </div>
-                                   </div>
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">备注</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{remark}}</p>
-                                       </div>
-                                   </div>
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">是否计费</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{isChargingStr}}</p>
-                                       </div>
-                                   </div>
+                               <div class="col-md-4">
+                                   <dl class="dl-horizontal">
+                                       <dt class="mb10">订单状态</dt><dd>{{returnOrderStatusValue}}&nbsp;</dd>
+                                       <dt class="mb10">创建人</dt><dd>{{createUserRealName}}&nbsp;</dd>
+                                       <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
+                                       <dt class="mb10">修改人</dt><dd>{{updateUserRealName}}&nbsp;</dd>
+                                       <dt class="mb10">修改时间</dt><dd>{{#time}}{{updateTime}}{{/time}}&nbsp;</dd>
+                                       <dt class="mb10">备注</dt><dd>{{remark}}</dd>
+                                   </dl>
                                </div>
-                           </div>
-                       </div>
-                       <div class="form-horizontal panel-body bg-light dark">
-                           <div class="row">
-                               <div class="col-md-6">
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">退还商品总数</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{totalReturnProductCount}}</p>
-                                       </div>
-                                   </div>
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">实际退还商品总数</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{realTotalReturnProductCount}}</p>
-                                       </div>
-                                   </div>
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">退还配件总数</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{totalReturnMaterialCount}}</p>
-                                       </div>
-                                   </div>
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">实际退还配件总数</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{realTotalReturnMaterialCount}}</p>
-                                       </div>
-                                   </div>
-                               </div>
-                               <div class="col-md-6">
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">租赁期间产生总费用</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{#price}}{{totalRentCost}}{{/price}}</p>
-                                       </div>
-                                   </div>
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">服务费</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{#price}}{{serviceCost}}{{/price}}</p>
-                                       </div>
-                                   </div>
-                                   <div class="form-group field mn">
-                                       <label class="col-md-3 control-label">损坏加收费用</label>
-                                       <div class="col-md-9">
-                                           <p class="form-control-static text-muted">{{#price}}{{damageCost}}{{/price}}</p>
-                                       </div>
-                                   </div>
+                               <div class="col-md-4">
+                                   <dl class="dl-horizontal">
+                                       <dt class="">退还商品总数</dt>
+                                       <dd>预计：{{totalReturnProductCount}}&nbsp;</dd>
+                                       <dd class="mb10">实际：{{realTotalReturnProductCount}}&nbsp;</dd>
+                                       <dt >退还配件总数</dt>
+                                       <dd>预计：{{totalReturnMaterialCount}}&nbsp;</dd>
+                                       <dd class="mb10">实际：{{realTotalReturnMaterialCount}}&nbsp;</dd>
+                                       <dt class="mb10">是否计费</dt><dd>{{isChargingStr}}</dd>
+                                       <dt class="mb10">服务费</dt><dd>￥{{#price}}{{serviceCost}}{{/price}}</dd>
+                                       <dt class="mb10">损坏费用</dt><dd>￥{{#price}}{{damageCost}}{{/price}}</dd>
+                                       <dt class="mb10">租赁总费用</dt><dd>￥{{#price}}{{totalRentCost}}{{/price}}</dd>
+                                   </dl>
                                </div>
                            </div>
                        </div>
@@ -222,14 +123,6 @@
                                     <script type="text/html" id="dataListTpl">
                                         <thead>
                                         <tr class="bg-light">
-##                                            <th>
-##                                                <label class="option block mn">
-##                                                    <input type="checkbox" name="checkAll" value="">
-##                                                    <span class="checkbox mn"></span>
-##                                                </label>
-##                                            </th>
-##                                            <th>商品ID</th>
-##                                            <th>图片</th>
                                             <th>商品名称</th>
                                             <th>SKU</th>
                                             <th>预计退还数量</th>
@@ -240,10 +133,6 @@
                                         <tbody>
                                         {{#listData}}
                                         <tr class="productRow" productRowKey="{{productId}}">
-##                                            <td>{{productId}}</td>
-##                                            <td>
-##                                                <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
-##                                            </td>
                                             <td>{{productName}}</td>
                                             <td>{{propertiesToStr}}</td>
                                             <td>{{returnProductSkuCount}}</td>
@@ -260,7 +149,7 @@
                                             <td colspan="8" class="pn br-n" style="height:0;">
                                                 <div class="panel m15 affixPanel"  style="display: none;">
                                                     <div class="panel-heading pn ph8">
-                                                        <span>已退还设备：设备编号列表</span>
+                                                        <span>已退还设备：<span class="equimentListCount"></span></span>
                                                     </div>
                                                     <div class="panel-body pn">
                                                         <table class="table">
@@ -297,22 +186,6 @@
                                 </div>
                             </div>
                             <div id="purchaseOrderMaterialItems" class="tab-pane">
-##                                <div class="panel-menu p12 br-n br-b">
-##                                    <div class="row">
-##                                        <div class="pull-left ml10">
-##                                            <script type="text/html" id="returnMaterialButtonsTpl">
-##                                                {{#acitonButtons}}
-##                                                {{#showButton}}
-##                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-returnorderno="{{returnOrderNo}}">
-##                                                    <i class="{{iClass}}"></i> {{text}}
-##                                                </a>
-##                                                {{/showButton}}
-##                                                {{/acitonButtons}}
-##                                            </script>
-##                                            <div class="btn-group actionCommonButtons" id="returnMaterialButtons"></div>
-##                                        </div>
-##                                    </div>
-##                                </div>
                                 <div class="table-responsive">
                                     <script type="text/html" id="materialDataListTpl">
                                         <thead>
@@ -331,7 +204,7 @@
                                             <th>描述</th>
                                             <th>图片</th>
 ##                                            <th>在租数量</th>
-                                            <th>可退数量</th>
+                                            <th>预计退货数量</th>
                                             <th>退货数量</th>
                                             <th class="text-right">操作</th>
                                         </tr>
@@ -349,15 +222,14 @@
                                             <td>{{materialNo}}</td>
                                             <td>{{materialName}}</td>
                                             <td>{{materialTypeStr}}</td>
-                                            <td>{{materialPriceFormat}}</td>
+                                            <td>{{#price}}{{materialPrice}}{{/price}}</td>
                                             <td>
-                                                <p>日租：￥{{dayRentPriceFormat}}</p>
-                                                <p>月租：￥{{monthRentPriceFormat}}</p>
+                                                <p>日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
+                                                <p>月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
                                             </td>
                                             <td>{{materialDesc}}</td>
                                             <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-##                                            <td>{{rentCount}}</td>
-                                            <td>{{canProcessCount}}</td>
+                                            <td>{{returnMaterialCount}}</td>
                                             <td>
                                                 <label class="field prepend-icon mw200">
                                                     {{returnMaterialCount}}
@@ -380,7 +252,7 @@
                                             <td colspan="11" class="pn br-n" style="height:0;">
                                                 <div class="panel m15 affixPanel"  style="display: none;">
                                                     <div class="panel-heading pn ph8">
-                                                        <span>已退还配件：配件编号列表</span>
+                                                        <span>已退还配件：<span class="materialListCount"></span></span>
                                                     </div>
                                                     <div class="panel-body pn">
                                                         <table class="table">

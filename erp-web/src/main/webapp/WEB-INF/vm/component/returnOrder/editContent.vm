@@ -82,7 +82,7 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group field">
-                    <label class="col-md-3 control-label">退还方式</label>
+                    <label class="col-md-3 control-label">退货方式</label>
                     <div class="col-md-9">
                         <div class="input-group" style="width: 100%;">
                             <select class="form-control required" name="returnMode">
@@ -145,8 +145,6 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </th>
-##                            <th>商品ID</th>
-##                            <th>图片</th>
                             <th>商品名称</th>
                             <th>SKU</th>
                             <th>可退数量</th>
@@ -164,13 +162,8 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-##                            <td>{{productId}}</td>
-##                            <td>
-##                                <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
-##                            </td>
                             <td>{{productName}}</td>
                             <td>{{propertiesToStr}}</td>
-                        ##                                        <td>在租：{{rentCount}}</td>
                             <td>{{canProcessCount}}</td>
                             <td>
                                 <label class="field prepend-icon mw200">
@@ -184,31 +177,6 @@
                                     <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
                                 </div>
                             </td>
-##                            <td class="pn">
-##                                <table class="table">
-##                                    {{#chooseSkuList}}
-##                                    {{#skuList}}
-##                                    <tr class="skuRow">
-##                                        <td>{{propertiesToStr}}</td>
-####                                        <td>在租：{{rentCount}}</td>
-##                                        <td>可退：{{canProcessCount}}</td>
-##                                        <td>
-##                                            <label class="field prepend-icon mw200">
-##                                                <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
-##                                                <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
-##                                                <input type="text" name="returnProductSkuCount-{{skuId}}" value="{{returnProductSkuCount}}" class="returnProductSkuCount form-control required number pl10" placeholder="输入退货数量" />
-##                                            </label>
-##                                        </td>
-##                                        <td class="text-right">
-##                                            <div class="btn-group text-right">
-##                                                <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
-##                                            </div>
-##                                        </td>
-##                                    </tr>
-##                                    {{/skuList}}
-##                                    {{/chooseSkuList}}
-##                                </table>
-##                            </td>
                         </tr>
                         {{/listData}}
                         {{^listData}}
