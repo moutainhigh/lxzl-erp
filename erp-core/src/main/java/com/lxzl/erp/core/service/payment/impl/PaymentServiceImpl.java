@@ -11,7 +11,9 @@ import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.service.payment.PaymentService;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.se.common.exception.BusinessException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,12 +28,16 @@ import java.math.BigDecimal;
 @Service("paymentService")
 public class PaymentServiceImpl implements PaymentService {
 
+    @Autowired
+    private UserSupport userSupport;
+
     @Override
     public CustomerAccount queryCustomerAccount(String customerNo) {
         CustomerAccountQueryParam param = new CustomerAccountQueryParam();
         param.setBusinessCustomerNo(customerNo);
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        param.setBusinessOperateUser(userSupport.getCurrentUserId().toString());
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
@@ -52,6 +58,7 @@ public class PaymentServiceImpl implements PaymentService {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        param.setBusinessOperateUser(userSupport.getCurrentUserId().toString());
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
@@ -74,6 +81,7 @@ public class PaymentServiceImpl implements PaymentService {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        param.setBusinessOperateUser(userSupport.getCurrentUserId().toString());
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
@@ -104,6 +112,7 @@ public class PaymentServiceImpl implements PaymentService {
         param.setBusinessNotifyUrl(businessNotifyUrl);
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        param.setBusinessOperateUser(userSupport.getCurrentUserId().toString());
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
@@ -130,6 +139,7 @@ public class PaymentServiceImpl implements PaymentService {
         param.setBusinessReturnDepositAmount(returnDepositAmount);
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        param.setBusinessOperateUser(userSupport.getCurrentUserId().toString());
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");

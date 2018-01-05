@@ -449,7 +449,6 @@ public class ProductServiceImpl implements ProductService {
         productDO.setProductSkuDOList(productSkuDOList);
         Product product = ConverterUtil.convert(productDO, Product.class);
 
-        int oldProductCount = 0, newProductCount = 0;
         for (ProductSku productSku : product.getProductSkuList()) {
             List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByProductAndSkuId(productSku.getProductId(), productSku.getSkuId());
             productSku.setShouldProductCategoryPropertyValueList(ConverterUtil.convertList(productCategoryPropertyValueDOList, ProductCategoryPropertyValue.class));
@@ -474,15 +473,32 @@ public class ProductServiceImpl implements ProductService {
             Integer oldProductSkuCount = productEquipmentMapper.listCount(queryEquipmentCountParam);
             productSku.setNewProductSkuCount(newProductSkuCount);
             productSku.setOldProductSkuCount(oldProductSkuCount);
-            oldProductCount += oldProductSkuCount;
-            newProductCount += newProductSkuCount;
         }
         Map<String, Object> maps = new HashMap<>();
         maps.put("productId", productSkuDO.getProductId());
         List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.findProductCategoryPropertyListByProductId(maps);
         product.setProductCategoryPropertyList(ConverterUtil.convertList(productCategoryPropertyDOList, ProductCategoryProperty.class));
-        product.setNewProductCount(newProductCount);
-        product.setOldProductCount(oldProductCount);
+
+        // 根据sku查询全新与次新的设备数量
+        ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
+        productEquipmentQueryParam.setProductId(productSkuDO.getProductId());
+        productEquipmentQueryParam.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
+        productEquipmentQueryParam.setIsNew(CommonConstant.COMMON_CONSTANT_YES);
+        if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
+            WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
+            productEquipmentQueryParam.setCurrentWarehouseId(warehouseDO.getId());
+        }
+
+        Map<String, Object> queryEquipmentCountParam = new HashMap<>();
+        queryEquipmentCountParam.put("start", 0);
+        queryEquipmentCountParam.put("pageSize", Integer.MAX_VALUE);
+        queryEquipmentCountParam.put("productEquipmentQueryParam", productEquipmentQueryParam);
+        Integer newProductSkuCount = productEquipmentMapper.listCount(queryEquipmentCountParam);
+        productEquipmentQueryParam.setIsNew(CommonConstant.COMMON_CONSTANT_NO);
+        queryEquipmentCountParam.put("productEquipmentQueryParam", productEquipmentQueryParam);
+        Integer oldProductSkuCount = productEquipmentMapper.listCount(queryEquipmentCountParam);
+        product.setNewProductCount(newProductSkuCount);
+        product.setOldProductCount(oldProductSkuCount);
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(product);

@@ -241,7 +241,8 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())) {
+        if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())
+                || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDO.getStatementStatus())) {
             result.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_ERROR);
             return result;
         }
@@ -420,6 +421,7 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
             return result;
         }
+
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = new ArrayList<>();
@@ -458,22 +460,30 @@ public class StatementServiceImpl implements StatementService {
                             if (i == 0) {
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                                 BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
-                                BigDecimal thisReturnDepositAmount = BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
+                                BigDecimal thisReturnDepositAmount = BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
 
-                                if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), thisReturnDepositAmount) > 0) {
+                                if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), thisReturnDepositAmount) >= 0) {
                                     totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, thisReturnDepositAmount);
                                     statementOrderDetailDO.setStatementDetailDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositReturnAmount(), thisReturnDepositAmount));
                                     statementOrderDO.setStatementDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositReturnAmount(), thisReturnDepositAmount));
                                 }
-                                if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), thisReturnRentDepositAmount) > 0) {
+                                if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), thisReturnRentDepositAmount) >= 0) {
                                     totalReturnRentDepositAmount = BigDecimalUtil.add(totalReturnRentDepositAmount, thisReturnRentDepositAmount);
                                     statementOrderDetailDO.setStatementDetailRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositReturnAmount(), thisReturnRentDepositAmount));
                                     statementOrderDO.setStatementRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositReturnAmount(), thisReturnRentDepositAmount));
                                 }
+                                statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
                                 statementOrderDetailMapper.update(statementOrderDetailDO);
+                                statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
                                 statementOrderMapper.update(statementOrderDO);
                             }
                             continue;
+                        } else {
+                            StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
+                            statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
+                            statementOrderMapper.update(statementOrderDO);
+                            statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
+                            statementOrderDetailMapper.update(statementOrderDetailDO);
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
@@ -487,14 +497,15 @@ public class StatementServiceImpl implements StatementService {
                         if (returnTime.getTime() > statementDetailStartTime.getTime()) {
                             needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderProductEquipmentDO.getProductEquipmentUnitAmount());
                         }
-                        if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
-                            payReturnAmount = BigDecimalUtil.sub(payReturnAmount, otherAmount);
-                            otherAmount = BigDecimal.ZERO;
-                        }
                         // 正常全额退
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, thisPhaseAmount);
                         // 退款金额，除了租金以外，保险金额也不能收了
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, orderProductDO.getInsuranceAmount()));
+                        payReturnAmount = BigDecimalUtil.compare(payReturnAmount, statementOrderDetailDO.getStatementDetailAmount()) > 0 ? statementOrderDetailDO.getStatementDetailAmount() : payReturnAmount;
+                        if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
+                            payReturnAmount = BigDecimalUtil.sub(payReturnAmount, otherAmount);
+                            otherAmount = BigDecimal.ZERO;
+                        }
                         // 退款金额，扣除未交款的部分
                         payReturnAmount = BigDecimalUtil.sub(payReturnAmount, needPayAmount);
                         StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderProductEquipmentDO.getReturnOrderId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT, returnOrderProductEquipmentDO.getReturnOrderProductId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId());
@@ -535,20 +546,28 @@ public class StatementServiceImpl implements StatementService {
                                 BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.div(orderMaterialDO.getRentDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), 2);
                                 BigDecimal thisReturnDepositAmount = BigDecimalUtil.div(orderMaterialDO.getDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), 2);
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
-                                if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), thisReturnDepositAmount) > 0) {
+                                if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), thisReturnDepositAmount) >= 0) {
                                     totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, thisReturnDepositAmount);
                                     statementOrderDetailDO.setStatementDetailDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositReturnAmount(), thisReturnDepositAmount));
                                     statementOrderDO.setStatementDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositReturnAmount(), thisReturnDepositAmount));
                                 }
-                                if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), thisReturnRentDepositAmount) > 0) {
+                                if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), thisReturnRentDepositAmount) >= 0) {
                                     totalReturnRentDepositAmount = BigDecimalUtil.add(totalReturnRentDepositAmount, thisReturnRentDepositAmount);
                                     statementOrderDetailDO.setStatementDetailRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositReturnAmount(), thisReturnRentDepositAmount));
                                     statementOrderDO.setStatementRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositReturnAmount(), thisReturnRentDepositAmount));
                                 }
+                                statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
                                 statementOrderDetailMapper.update(statementOrderDetailDO);
+                                statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
                                 statementOrderMapper.update(statementOrderDO);
                             }
                             continue;
+                        } else {
+                            StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
+                            statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
+                            statementOrderMapper.update(statementOrderDO);
+                            statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
+                            statementOrderDetailMapper.update(statementOrderDetailDO);
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
@@ -563,13 +582,15 @@ public class StatementServiceImpl implements StatementService {
                             needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderMaterialBulkDO.getMaterialBulkUnitAmount());
                         }
 
+                        payReturnAmount = BigDecimalUtil.add(payReturnAmount, thisPhaseAmount);
+                        // 退款金额，除了租金以外，保险金额也不能收了
+                        payReturnAmount = BigDecimalUtil.add(payReturnAmount, amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, orderMaterialDO.getInsuranceAmount()));
+                        payReturnAmount = BigDecimalUtil.compare(payReturnAmount, statementOrderDetailDO.getStatementDetailAmount()) > 0 ? statementOrderDetailDO.getStatementDetailAmount() : payReturnAmount;
+
                         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
                             payReturnAmount = BigDecimalUtil.sub(payReturnAmount, otherAmount);
                             otherAmount = BigDecimal.ZERO;
                         }
-                        payReturnAmount = BigDecimalUtil.add(payReturnAmount, thisPhaseAmount);
-                        // 退款金额，除了租金以外，保险金额也不能收了
-                        payReturnAmount = BigDecimalUtil.add(payReturnAmount, amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, orderMaterialDO.getInsuranceAmount()));
                         // 退款金额，扣除未交款的部分
                         payReturnAmount = BigDecimalUtil.sub(payReturnAmount, needPayAmount);
 
@@ -828,11 +849,13 @@ public class StatementServiceImpl implements StatementService {
         Date statementEndTime = null, statementExpectPayTime = null;
         if (OrderRentType.RENT_TYPE_DAY.equals(rentType)) {
             statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(rentStartTime, rentTimeLength);
+            statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(statementEndTime, -1);
             if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
                 statementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(rentStartTime, rentTimeLength);
             }
         } else if (OrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
             statementEndTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, rentTimeLength);
+            statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(statementEndTime, -1);
             if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
                 statementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, rentTimeLength);
             }
@@ -902,7 +925,7 @@ public class StatementServiceImpl implements StatementService {
         // 最后一期的结束时间
         Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(lastPhaseStartTime, surplusDays - 1);
 
-        lastPhaseStartTime = lastPhaseStartTime.getTime() > statementEndTime.getTime() ? statementEndTime : statementEndTime;
+        lastPhaseStartTime = lastPhaseStartTime.getTime() > statementEndTime.getTime() ? statementEndTime : lastPhaseStartTime;
         Date statementExpectPayTime;
         if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
             statementExpectPayTime = lastPhaseStartTime;

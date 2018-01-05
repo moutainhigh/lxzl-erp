@@ -69,28 +69,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void testCreateOrderJSON() throws Exception {
-        String str = "{\n" +
-                "\t\"buyerCustomerNo\": \"CP201712060843154191841\",\n" +
-                "\t\"rentStartTime\": 1515024000000,\n" +
-                "\t\"expectDeliveryTime\": 1514937600000,\n" +
-                "\t\"logisticsAmount\": \"98\",\n" +
-                "\t\"buyerRemark\": \"备注\",\n" +
-                "\t\"customerConsignId\": \"37\",\n" +
-                "\t\"highTaxRate\": \"10\",\n" +
-                "\t\"lowTaxRate\": \"90\",\n" +
-                "\t\"deliveryMode\": \"1\",\n" +
-                "\t\"orderProductList\": [{\n" +
-                "\t\t\"productId\": \"2000033\",\n" +
-                "\t\t\"productSkuId\": \"88\",\n" +
-                "\t\t\"productUnitAmount\": \"100\",\n" +
-                "\t\t\"productCount\": \"10\",\n" +
-                "\t\t\"rentType\": \"2\",\n" +
-                "\t\t\"rentTimeLength\": \"10\",\n" +
-                "\t\t\"insuranceAmount\": \"\",\n" +
-                "\t\t\"isNewProduct\": \"1\",\n" +
-                "\t\t\"depositAmount\": 0\n" +
-                "\t}]\n" +
-                "}";
+        String str = "{\"buyerCustomerNo\":\"LXCC10002018010400019\",\"rentStartTime\":1515196800000,\"expectDeliveryTime\":1515110400000,\"logisticsAmount\":\"10\",\"buyerRemark\":\"\",\"customerConsignId\":\"119\",\"highTaxRate\":\"2\",\"lowTaxRate\":\"98\",\"deliveryMode\":\"2\",\"orderProductList\":[{\"productId\":\"2000050\",\"productSkuId\":\"180\",\"productUnitAmount\":\"400\",\"productCount\":\"2\",\"rentType\":\"2\",\"rentTimeLength\":\"2\",\"insuranceAmount\":\"\",\"isNewProduct\":\"0\",\"depositAmount\":0}]}";
         Order order = JSONUtil.convertJSONToBean(str, Order.class);
 
         TestResult testResult = getJsonTestResult("/order/create", order);
