@@ -73,41 +73,7 @@
                             #parse("component/customer/address.vm")
                         </div>
                         <div class="col-md-8">
-
-                            <div class="panel">
-                                <div class="panel-heading">
-                                    <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
-                                        <li class="">
-                                            <a href="#tab2_1" data-toggle="tab" aria-expanded="false">订单</a>
-                                        </li>
-                                        <li class="">
-                                            <a href="#tab2_2" data-toggle="tab" aria-expanded="false">维修单</a>
-                                        </li>
-                                        <li class="active">
-                                            <a href="#tab2_3" data-toggle="tab" aria-expanded="true">退货单</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="panel-body">
-                                    <div class="tab-content pn br-n">
-                                        <div id="tab2_1" class="tab-pane">
-                                            <div class="row">
-
-                                            </div>
-                                        </div>
-                                        <div id="tab2_2" class="tab-pane">
-                                            <div class="row">
-
-                                            </div>
-                                        </div>
-                                        <div id="tab2_3" class="tab-pane active">
-                                            <div class="row">
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            #parse("component/customer/orders.vm")
                         </div>
                     </div>
                 </div>
@@ -127,6 +93,7 @@
                 'manage.customer.address.js',
                 'manage.customer.address.add.js',
                 'manage.customer.address.edit.js',
+                'manage.customer.orders.js',
                 'modal.input.js');
     </script>
     <script type="text/javascript">
