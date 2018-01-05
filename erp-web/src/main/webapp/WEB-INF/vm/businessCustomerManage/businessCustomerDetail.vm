@@ -5,7 +5,7 @@
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
 </head>
-<body class="profile-page">
+<body class="gallery-page">
     #parse("layout/toolbox.vm")
     <div id="main">
     #parse("layout/navbar.vm")
@@ -23,50 +23,60 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
-                                        <dt class="mb10">客户名</dt><dd>{{customerCompany.companyName}}</dd>
                                         <dt class="mb10">客户编号</dt><dd>{{customerNo}}</dd>
+                                        <dt class="mb10">公司名</dt><dd>{{customerCompany.companyName}}</dd>
+                                        <dt class="mb10">公司简称</dt><dd>{{customerCompany.companyAbb}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
                                         <dt class="mb10">用户类型</dt><dd>{{cutomerTypeValue}}</dd>
+                                        <dt class="mb10">客户来源</dt><dd>{{customerOriginValue}}</dd>
                                         <dt class="mb10">是否禁用</dt><dd>{{isDisabledValue}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
                                         <dt class="mb10">创建人</dt><dd>{{createUserRealName}}</dd>
                                         <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}</dd>
-                                    </dl>
-                                </div>
-                                <div class="col-md-4">
-                                    <dl class="dl-horizontal">
-                                        <dt class="mb10">营业执照号</dt><dd>{{customerCompany.businessLicenseNo}}</dd>
-                                        <dt class="mb10">法人</dt><dd>{{customerCompany.legalPerson}}</dd>
-                                        <dt class="mb10">法人身份证</dt><dd>{{customerCompany.legalPersonNo}}</dd>
-                                    </dl>
-                                </div>
-                                <div class="col-md-4">
-                                    <dl class="dl-horizontal">
-                                        <dt class="mb10">联系人</dt><dd>{{customerCompany.connectRealName}}</dd>
-                                        <dt class="mb10">联系电话</dt><dd>{{customerCompany.connectPhone}}</dd>
-                                        <dt class="mb10">地址</dt><dd>{{customerCompany.provinceName}}{{customerCompany.cityName}}{{customerCompany.districtName}}{{customerCompany.address}}</dd>
                                         <dt class="mb10">备注</dt><dd>{{customerCompany.remark}}</dd>
                                     </dl>
                                 </div>
                             </div>
                             <hr />
                             <div class="row">
+
                                 <div class="col-md-3">
-                                    <p class="fs15"><b>账户金额：</b>￥{{#price}}{{customerAccount.balanceAmount}}{{/price}}</p>
-                                    <div class="btn-group" id="actionButtons">
-                                        {{#manualActionButtons}}
-                                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-customerno="{{customerNo}}">
-                                            <i class="{{iClass}}"></i> {{text}}
-                                        </a>
-                                        {{/manualActionButtons}}
+                                    <div class="panel panel-tile text-center">
+                                        <div class="panel-body bg-primary light">
+                                            <h1 class="fs35 mbn">￥{{#price}}{{customerAccount.balanceAmount}}{{/price}}</h1>
+                                            <h6 class="text-white">账户金额</h6>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <p class="fs15"><b>冻结金额：</b>￥{{#price}}{{customerAccount.totalFrozenAmount}}{{/price}}</p>
+                                    <div class="panel panel-tile text-center">
+                                        <div class="panel-body">
+                                            <h1 class="fs35 mbn">￥{{#price}}{{customerAccount.totalFrozenAmount}}{{/price}}</h1>
+                                            <h6 class="text-primary">冻结金额</h6>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <p class="fs15"><b>租金押金：</b>￥{{#price}}{{customerAccount.rentDepositAmount}}{{/price}}</p>
+                                    <div class="panel panel-tile text-center">
+                                        <div class="panel-body">
+                                            <h1 class="fs35 mbn">￥{{#price}}{{customerAccount.rentDepositAmount}}{{/price}}</h1>
+                                            <h6 class="text-primary">租金押金</h6>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <p class="fs15"><b>设备押金：</b>￥{{#price}}{{customerAccount.depositAmount}}{{/price}}</p>
+                                    <div class="panel panel-tile text-center">
+                                        <div class="panel-body">
+                                            <h1 class="fs35 mbn">￥{{#price}}{{customerAccount.depositAmount}}{{/price}}</h1>
+                                            <h6 class="text-primary">设备押金</h6>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -77,6 +87,92 @@
                 </div>
 
                 <div class="p25 pt35">
+                    <div class="row">
+                        <script type="text/html" id="customerCompanyInfoTpl">
+                            {{#customer}}
+                            <div class="panel" id="p0">
+                                <div class="panel-heading">
+                                    <span class="panel-title text-info fw700">公司信息</span>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-4 br-r">
+                                            <table class="table mbn tc-med-1 tc-bold-last tc-fs13-last">
+                                                <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <span>法人</span>
+                                                    </td>
+                                                    <td>{{customerCompany.legalPerson}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>法人身份证</span>
+                                                    </td>
+                                                    <td>{{customerCompany.legalPersonNo}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>法人身手机号</span>
+                                                    </td>
+                                                    <td>{{customerCompany.legalPersonPhone}}</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="col-md-4 br-r">
+                                            <table class="table mbn">
+                                                <tbody>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted">紧急联系人</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.connectRealName}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted">紧急联系人手机号</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.connectPhone}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted">地址</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.provinceName}}{{customerCompany.cityName}}{{customerCompany.districtName}}{{customerCompany.address}}</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <table class="table mbn">
+                                                <tbody>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted"></i>所属行业</td>
+                                                    <td class="fs14 fw700 text-muted text-right">{{customerCompany.industry}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted"></i>注册资本</td>
+                                                    <td class="fs14 fw700 text-muted text-right">￥{{customerCompany.registeredCapital}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted"></i>办公人数</td>
+                                                    <td class="fs14 fw700 text-muted text-right">{{customerCompany.officeNumber}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted"></i>设备用途</td>
+                                                    <td class="fs14 fw700 text-muted text-right">{{customerCompany.productPurpose}}</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            {{/customer}}
+                        </script>
+                        <div class="col-md-12 admin-grid" id="customerCompanyInfo"></div>
+                    </div>
+                </div>
+
+                <div class="p25 ptn">
                     <div class="row">
                         #parse("component/customer/riskInfo.vm")
                     </div>
@@ -98,6 +194,20 @@
                     </div>
                 </div>
 
+                <div class="p25 ptn">
+                    <div class="panel">
+                        <div class="panel-heading pn ph8">
+                            <span>客户图片上传信息</span>
+                        </div>
+                        <div class="panel-body nano nano-default affix rtlnao" style="height: 430px" id="customerImgNano">
+                            <div class="nano-content">
+                                #parse("component/customerBusiness/imageInfo.vm")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
             </form>
         </section>
     </section>
@@ -106,6 +216,7 @@
     #parse("layout/footer.vm")
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
+                'manage.customer.mixin.js',
                 'manage.customer.handle.mixin.js',
                 'manage.customer.business.detail.js',
                 'manage.customer.risk.js',

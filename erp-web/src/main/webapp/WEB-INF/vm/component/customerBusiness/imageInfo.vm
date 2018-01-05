@@ -1,0 +1,23 @@
+<script type="text/html" id="imgBoxTpl">
+    {{#img}}
+    <a class="mix label1 folder1 custom-img-link" href="{{url}}" title="{{des}}" data-bound="" style="display: inline-block;">
+        <div class="panel p6 pbn">
+            <div class="of-h">
+                <img src="{{url}}" class="h-170" />
+                <div class="row table-layout">
+                    <div class="col-xs-8 va-m pln">
+                        <h6>{{des}}</h6>
+                    </div>
+                    <div class="col-xs-4 text-right va-m prn">
+                        <span class="fa fa-eye-slash fs12 text-muted"></span>
+                        <span class="fa fa-circle fs10 text-info ml10"></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </a>
+    {{/img}}
+</script>
+<div id="mix-container" class="grid"></div>
+
