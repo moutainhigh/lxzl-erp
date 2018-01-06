@@ -80,4 +80,18 @@ public class UserControllerTest extends ERPUnTransactionalTest {
     public void logout() throws Exception {
     }
 
+    @Test
+    public void disabledUserTest() throws Exception {
+        User user = new User();
+        user.setUserId(500023);
+        TestResult testResult = getJsonTestResult("/user/disabledUser",user);
+    }
+
+    @Test
+    public void enableUserTest() throws Exception {
+        User user = new User();
+        user.setUserId(500023);
+        TestResult testResult = getJsonTestResult("/user/enableUser",user);
+    }
+
 }

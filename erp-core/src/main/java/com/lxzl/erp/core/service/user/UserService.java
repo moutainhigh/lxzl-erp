@@ -71,4 +71,18 @@ public interface UserService extends BaseService {
      */
     ServiceResult<String, List<User>> getUserListByParam(UserQueryParam userQueryParam);
 
+    /**
+     * 修改用户禁用
+     * @param user
+     * @return
+     */
+    ServiceResult<String,Integer> disabledUser(User user);
+
+    /**
+     * 修改用户不禁用
+     * @param user
+     * @return
+     */
+    ServiceResult<String,Integer> enableUser(User user);
+
 }
