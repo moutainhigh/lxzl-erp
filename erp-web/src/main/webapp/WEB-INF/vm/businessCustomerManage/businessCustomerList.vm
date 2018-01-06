@@ -154,9 +154,6 @@
         management_load_script('${staticManagement}/js',
                 'manage.customer.handle.mixin.js',
                 'manage.customer.business.js',
-                'manage.customer.business.add.js',
-                'manage.customer.business.edit.js',
-                'manage.customer.business.detail.js',
                 'manage.customer.risk.js',
                 'manage.customer.address.add.js');
     </script>

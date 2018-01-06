@@ -246,7 +246,6 @@
                             <th>名称</th>
                             <th>类型</th>
                             <th>配件价值</th>
-                            <th>租赁价格</th>
                             <th>租赁类型</th>
                             <th>租赁时长</th>
                             <th>配件单价</th>
@@ -269,10 +268,6 @@
                             <td>{{materialName}}</td>
                             <td>{{materialTypeStr}}</td>
                             <td>{{materialPriceFormat}}</td>
-                            <td>
-                                <p>日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
-                                <p>月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
-                            </td>
                             <td>
                                 <label class="field select">
                                     <select name="rentType-{{materialNo}}" class="rentType required" style="min-width: 130px;">
