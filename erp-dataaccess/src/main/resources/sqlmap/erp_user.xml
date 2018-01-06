@@ -171,6 +171,9 @@
             <if test="maps.userQueryParam.departmentId != null &amp;&amp; maps.userQueryParam.departmentId != ''">
                 and ed.id = #{maps.userQueryParam.departmentId, jdbcType=INTEGER}
             </if>
+            <if test="maps.userQueryParam.departmentType != null &amp;&amp; maps.userQueryParam.departmentType != ''">
+                and ed.department_type = #{maps.userQueryParam.departmentType, jdbcType=INTEGER}
+            </if>
             <if test="maps.userQueryParam.roleId != null &amp;&amp; maps.userQueryParam.roleId != ''">
                 and tr.id = #{maps.userQueryParam.roleId, jdbcType=INTEGER}
             </if>
@@ -210,6 +213,9 @@
             <where>
                 <if test="maps.userQueryParam.departmentId != null &amp;&amp; maps.userQueryParam.departmentId != ''">
                     and ed.id = #{maps.userQueryParam.departmentId, jdbcType=INTEGER}
+                </if>
+                <if test="maps.userQueryParam.departmentType != null &amp;&amp; maps.userQueryParam.departmentType != ''">
+                    and ed.department_type = #{maps.userQueryParam.departmentType, jdbcType=INTEGER}
                 </if>
                 <if test="maps.userQueryParam.roleId != null &amp;&amp; maps.userQueryParam.roleId != ''">
                     and tr.id = #{maps.userQueryParam.roleId, jdbcType=INTEGER}
