@@ -53,6 +53,15 @@
                                             <h1 class="fs35 mbn">￥{{#price}}{{customerAccount.balanceAmount}}{{/price}}</h1>
                                             <h6 class="text-white">账户金额</h6>
                                         </div>
+                                        <div class="panel-footer bg-white br-t br-light p12">
+                                            <div class="btn-group">
+                                                {{#manualActionButtons}}
+                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}} mr15" title="{{menuName}}">
+                                                    <i class="{{iClass}}"></i> {{text}}
+                                                </a>
+                                                {{/manualActionButtons}}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -150,7 +159,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>注册资本</td>
-                                                    <td class="fs14 fw700 text-muted text-right">￥{{customerCompany.registeredCapital}}</td>
+                                                    <td class="fs14 fw700 text-muted text-right">{{customerCompany.registeredCapital}}万</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>办公人数</td>

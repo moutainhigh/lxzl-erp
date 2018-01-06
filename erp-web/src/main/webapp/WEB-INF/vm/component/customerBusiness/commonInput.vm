@@ -73,7 +73,7 @@
     </div>
     <div class="section row">
         <div class="col-md-3">
-            <label for="legalPersonNo" class="field-label">法人身份证号</label>
+            <label for="legalPersonNo" class="field-label">法身份证号</label>
             <label for="legalPersonNo" class="field prepend-icon">
                 <input type="text" name="legalPersonNo" id="legalPersonNo" class="gui-input" />
                 <label for="legalPersonNo" class="field-icon"><i class="fa fa-tag"></i>
@@ -81,10 +81,10 @@
             </label>
         </div>
         <div class="col-md-3">
-            <label for="legalPersonPhone" class="field-label">法人身手机号</label>
+            <label for="legalPersonPhone" class="field-label">法人手机号</label>
             <label for="legalPersonPhone" class="field prepend-icon">
                 <input type="text" name="legalPersonPhone" id="legalPersonPhone" class="gui-input mobilephone" />
-                <label for="legalPersonPhone" class="field-icon"><i class="fa fa-tag"></i>
+                <label for="legalPersonPhone" class="field-icon"><i class="fa fa-mobile"></i>
                 </label>
             </label>
         </div>
@@ -103,7 +103,6 @@
                 </label>
             </label>
         </div>
-
     </div>
     <div class="section row">
         <div class="col-md-3">
@@ -116,11 +115,16 @@
         </div>
         <div class="col-md-3">
             <label for="registeredCapital" class="field-label">注册资本</label>
-            <label for="registeredCapital" class="field prepend-icon">
-                <input type="text" name="registeredCapital" id="registeredCapital" class="gui-input" />
-                <label for="registeredCapital" class="field-icon"><i class="fa fa-tag"></i>
+
+
+            <div class="smart-widget sm-right">
+                <label for="registeredCapital" class="field prepend-icon">
+                    <input type="text" name="registeredCapital" id="registeredCapital" class="gui-input number" />
+                    <label for="registeredCapital" class="field-icon"><i class="fa fa-jpy"></i>
+                    </label>
                 </label>
-            </label>
+                <label for="registeredCapital" class="button">万</label>
+            </div>
         </div>
         <div class="col-md-3">
             <label for="officeNumber" class="field-label">办公人数</label>
@@ -152,7 +156,7 @@
             <label for="agentPersonPhone" class="field-label">经办人电话</label>
             <label for="agentPersonPhone" class="field prepend-icon">
                 <input type="text" name="agentPersonPhone" id="agentPersonPhone" class="gui-input mobilephone" />
-                <label for="agentPersonPhone" class="field-icon"><i class="fa fa-tag"></i>
+                <label for="agentPersonPhone" class="field-icon"><i class="fa fa-mobile"></i>
                 </label>
             </label>
         </div>
@@ -191,9 +195,9 @@
             </label>
         </div>
         <div class="col-md-3">
-            <label for="isDisabled" class="field-label"><em class="text-danger">*</em>禁用状态</label>
+            <label for="isDisabled" class="field-label"><em class="text-danger">*</em>是否由法人代表申请</label>
             <label class="field select">
-                <select id="isDisabled" name="isDisabled">
+                <select id="isLegalPersonApple" name="isLegalPersonApple">
                     <option value="0">否</option>
                     <option value="1">是</option>
                 </select>

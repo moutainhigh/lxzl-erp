@@ -53,7 +53,8 @@
     management_load_script('${staticManagement}/js',
             'manage.customer.mixin.js',
             'manage.customer.business.js',
-            'manage.customer.business.edit.js');
+            'manage.customer.business.edit.js',
+            'modal.choose.user.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化
