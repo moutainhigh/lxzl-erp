@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.order.pojo;
 
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.io.Serializable;
@@ -71,6 +72,8 @@ public class Order extends BasePO {
     // 审核人和提交审核信息,只提供给审核的时候用
     private Integer verifyUser;
     private String commitRemark;
+
+    private StatementOrder statementOrder;
 
     public List<OrderProduct> getOrderProductList() {
         return orderProductList;
@@ -502,5 +505,13 @@ public class Order extends BasePO {
 
     public void setDeliveryMode(Integer deliveryMode) {
         this.deliveryMode = deliveryMode;
+    }
+
+    public StatementOrder getStatementOrder() {
+        return statementOrder;
+    }
+
+    public void setStatementOrder(StatementOrder statementOrder) {
+        this.statementOrder = statementOrder;
     }
 }

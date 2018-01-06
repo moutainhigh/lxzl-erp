@@ -332,84 +332,135 @@ public class StatementServiceImpl implements StatementService {
         StatementOrder statementOrder = ConverterUtil.convert(statementOrderDO, StatementOrder.class);
         if (statementOrder != null && CollectionUtil.isNotEmpty(statementOrder.getStatementOrderDetailList())) {
             for (StatementOrderDetail statementOrderDetail : statementOrder.getStatementOrderDetailList()) {
-                if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
-                    OrderDO orderDO = orderMapper.findByOrderId(statementOrderDetail.getOrderId());
-                    statementOrderDetail.setOrderNo(orderDO.getOrderNo());
-                    if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
-                        for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
-                            if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(orderProductDO.getId())) {
-                                statementOrderDetail.setItemName(orderProductDO.getProductName() + orderProductDO.getProductSkuName());
-                                statementOrderDetail.setItemCount(orderProductDO.getProductCount());
-                                statementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
-                                statementOrderDetail.setItemRentType(orderProductDO.getRentType());
-                            }
-                        }
-                    }
-                    if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
-                        for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
-                            if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(orderMaterialDO.getId())) {
-                                statementOrderDetail.setItemName(orderMaterialDO.getMaterialName());
-                                statementOrderDetail.setItemCount(orderMaterialDO.getMaterialCount());
-                                statementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
-                                statementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
-                            }
-                        }
-                    }
-                }
-                if (OrderType.ORDER_TYPE_RETURN.equals(statementOrderDetail.getOrderType())) {
-                    ReturnOrderDO returnOrderDO = returnOrderMapper.findById(statementOrderDetail.getOrderId());
-                    statementOrderDetail.setOrderNo(returnOrderDO.getReturnOrderNo());
-                    if (CollectionUtil.isNotEmpty(returnOrderDO.getReturnOrderProductDOList())) {
-                        for (ReturnOrderProductDO returnOrderProductDO : returnOrderDO.getReturnOrderProductDOList()) {
-                            if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(returnOrderProductDO.getId())) {
-                                Product product = FastJsonUtil.toBean(returnOrderProductDO.getReturnProductSkuSnapshot(), Product.class);
-                                if (CollectionUtil.isNotEmpty(product.getProductSkuList())) {
-                                    statementOrderDetail.setItemName(product.getProductName() + product.getProductSkuList().get(0).getSkuName());
-                                }
-                                statementOrderDetail.setItemCount(returnOrderProductDO.getRealReturnProductSkuCount());
-                            }
-                        }
-                    }
-                    if (CollectionUtil.isNotEmpty(returnOrderDO.getReturnOrderMaterialDOList())) {
-                        for (ReturnOrderMaterialDO returnOrderMaterialDO : returnOrderDO.getReturnOrderMaterialDOList()) {
-                            if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(returnOrderMaterialDO.getId())) {
-                                Material material = FastJsonUtil.toBean(returnOrderMaterialDO.getReturnMaterialSnapshot(), Material.class);
-                                statementOrderDetail.setItemName(material.getMaterialName());
-                                statementOrderDetail.setItemCount(returnOrderMaterialDO.getReturnMaterialCount());
-                            }
-                        }
-                    }
-                }
-                if (OrderType.ORDER_TYPE_CHANGE.equals(statementOrderDetail.getOrderType())) {
-                    ChangeOrderDO changeOrderDO = changeOrderMapper.findById(statementOrderDetail.getOrderId());
-                    statementOrderDetail.setOrderNo(changeOrderDO.getChangeOrderNo());
-                    if (CollectionUtil.isNotEmpty(changeOrderDO.getChangeOrderProductDOList())) {
-                        for (ChangeOrderProductDO changeOrderProductDO : changeOrderDO.getChangeOrderProductDOList()) {
-                            if (OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(changeOrderDO.getId())) {
-                                Product product = FastJsonUtil.toBean(changeOrderProductDO.getSrcChangeProductSkuSnapshot(), Product.class);
-                                if (CollectionUtil.isNotEmpty(product.getProductSkuList())) {
-                                    statementOrderDetail.setItemName(product.getProductName() + product.getProductSkuList().get(0).getSkuName());
-                                }
-                                statementOrderDetail.setItemCount(changeOrderProductDO.getRealChangeProductSkuCount());
-                            }
-                        }
-                    }
-                    if (CollectionUtil.isNotEmpty(changeOrderDO.getChangeOrderMaterialDOList())) {
-                        for (ChangeOrderMaterialDO changeOrderMaterialDO : changeOrderDO.getChangeOrderMaterialDOList()) {
-                            if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(changeOrderMaterialDO.getId())) {
-                                Material material = FastJsonUtil.toBean(changeOrderMaterialDO.getSrcChangeMaterialSnapshot(), Material.class);
-                                statementOrderDetail.setItemName(material.getMaterialName());
-                                statementOrderDetail.setItemCount(changeOrderMaterialDO.getRealChangeMaterialCount());
-                            }
-                        }
-                    }
-                }
+                convertStatementOrderDetailOtherInfo(statementOrderDetail);
             }
         }
 
         result.setResult(statementOrder);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    @Override
+    public ServiceResult<String, StatementOrder> queryStatementOrderDetailByOrderId(String orderNo) {
+        ServiceResult<String, StatementOrder> result = new ServiceResult<>();
+        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        if (orderDO == null) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+
+        StatementOrder statementOrder = new StatementOrder();
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
+        List<StatementOrderDetail> statementOrderDetailList = ConverterUtil.convertList(statementOrderDetailDOList, StatementOrderDetail.class);
+
+        Integer customerId = null;
+        if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
+            for (StatementOrderDetail statementOrderDetail : statementOrderDetailList) {
+                if (customerId == null) {
+                    customerId = statementOrderDetail.getCustomerId();
+                }
+                convertStatementOrderDetailOtherInfo(statementOrderDetail);
+
+                statementOrder.setStatementAmount(BigDecimalUtil.add(statementOrder.getStatementAmount(), statementOrderDetail.getStatementDetailAmount()));
+                statementOrder.setStatementPaidAmount(BigDecimalUtil.add(statementOrder.getStatementPaidAmount(), statementOrderDetail.getStatementDetailPaidAmount()));
+                statementOrder.setStatementRentDepositAmount(BigDecimalUtil.add(statementOrder.getStatementRentDepositAmount(), statementOrderDetail.getStatementDetailRentDepositAmount()));
+                statementOrder.setStatementRentDepositPaidAmount(BigDecimalUtil.add(statementOrder.getStatementRentDepositPaidAmount(), statementOrderDetail.getStatementDetailRentDepositPaidAmount()));
+                statementOrder.setStatementRentDepositReturnAmount(BigDecimalUtil.add(statementOrder.getStatementRentDepositReturnAmount(), statementOrderDetail.getStatementDetailRentDepositReturnAmount()));
+                statementOrder.setStatementDepositAmount(BigDecimalUtil.add(statementOrder.getStatementDepositAmount(), statementOrderDetail.getStatementDetailDepositAmount()));
+                statementOrder.setStatementDepositPaidAmount(BigDecimalUtil.add(statementOrder.getStatementDepositPaidAmount(), statementOrderDetail.getStatementDetailDepositPaidAmount()));
+                statementOrder.setStatementDepositReturnAmount(BigDecimalUtil.add(statementOrder.getStatementDepositReturnAmount(), statementOrderDetail.getStatementDetailDepositReturnAmount()));
+                statementOrder.setStatementRentAmount(BigDecimalUtil.add(statementOrder.getStatementRentAmount(), statementOrderDetail.getStatementDetailRentAmount()));
+                statementOrder.setStatementRentPaidAmount(BigDecimalUtil.add(statementOrder.getStatementRentPaidAmount(), statementOrderDetail.getStatementDetailRentPaidAmount()));
+                statementOrder.setStatementOverdueAmount(BigDecimalUtil.add(statementOrder.getStatementOverdueAmount(), statementOrderDetail.getStatementDetailOverdueAmount()));
+            }
+        }
+        statementOrder.setStatementOrderDetailList(statementOrderDetailList);
+
+        CustomerDO customerDO = customerMapper.findById(customerId);
+        if (customerDO != null) {
+            statementOrder.setCustomerId(customerId);
+            statementOrder.setCustomerName(customerDO.getCustomerName());
+        }
+
+        result.setResult(statementOrder);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    private void convertStatementOrderDetailOtherInfo(StatementOrderDetail statementOrderDetail) {
+        if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
+            OrderDO orderDO = orderMapper.findByOrderId(statementOrderDetail.getOrderId());
+            statementOrderDetail.setOrderNo(orderDO.getOrderNo());
+            if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
+                for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                    if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(orderProductDO.getId())) {
+                        statementOrderDetail.setItemName(orderProductDO.getProductName() + orderProductDO.getProductSkuName());
+                        statementOrderDetail.setItemCount(orderProductDO.getProductCount());
+                        statementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
+                        statementOrderDetail.setItemRentType(orderProductDO.getRentType());
+                    }
+                }
+            }
+            if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
+                for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
+                    if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(orderMaterialDO.getId())) {
+                        statementOrderDetail.setItemName(orderMaterialDO.getMaterialName());
+                        statementOrderDetail.setItemCount(orderMaterialDO.getMaterialCount());
+                        statementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
+                        statementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
+                    }
+                }
+            }
+        }
+        if (OrderType.ORDER_TYPE_RETURN.equals(statementOrderDetail.getOrderType())) {
+            ReturnOrderDO returnOrderDO = returnOrderMapper.findById(statementOrderDetail.getOrderId());
+            statementOrderDetail.setOrderNo(returnOrderDO.getReturnOrderNo());
+            if (CollectionUtil.isNotEmpty(returnOrderDO.getReturnOrderProductDOList())) {
+                for (ReturnOrderProductDO returnOrderProductDO : returnOrderDO.getReturnOrderProductDOList()) {
+                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(returnOrderProductDO.getId())) {
+                        Product product = FastJsonUtil.toBean(returnOrderProductDO.getReturnProductSkuSnapshot(), Product.class);
+                        if (CollectionUtil.isNotEmpty(product.getProductSkuList())) {
+                            statementOrderDetail.setItemName(product.getProductName() + product.getProductSkuList().get(0).getSkuName());
+                        }
+                        statementOrderDetail.setItemCount(returnOrderProductDO.getRealReturnProductSkuCount());
+                    }
+                }
+            }
+            if (CollectionUtil.isNotEmpty(returnOrderDO.getReturnOrderMaterialDOList())) {
+                for (ReturnOrderMaterialDO returnOrderMaterialDO : returnOrderDO.getReturnOrderMaterialDOList()) {
+                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(returnOrderMaterialDO.getId())) {
+                        Material material = FastJsonUtil.toBean(returnOrderMaterialDO.getReturnMaterialSnapshot(), Material.class);
+                        statementOrderDetail.setItemName(material.getMaterialName());
+                        statementOrderDetail.setItemCount(returnOrderMaterialDO.getReturnMaterialCount());
+                    }
+                }
+            }
+        }
+        if (OrderType.ORDER_TYPE_CHANGE.equals(statementOrderDetail.getOrderType())) {
+            ChangeOrderDO changeOrderDO = changeOrderMapper.findById(statementOrderDetail.getOrderId());
+            statementOrderDetail.setOrderNo(changeOrderDO.getChangeOrderNo());
+            if (CollectionUtil.isNotEmpty(changeOrderDO.getChangeOrderProductDOList())) {
+                for (ChangeOrderProductDO changeOrderProductDO : changeOrderDO.getChangeOrderProductDOList()) {
+                    if (OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(changeOrderDO.getId())) {
+                        Product product = FastJsonUtil.toBean(changeOrderProductDO.getSrcChangeProductSkuSnapshot(), Product.class);
+                        if (CollectionUtil.isNotEmpty(product.getProductSkuList())) {
+                            statementOrderDetail.setItemName(product.getProductName() + product.getProductSkuList().get(0).getSkuName());
+                        }
+                        statementOrderDetail.setItemCount(changeOrderProductDO.getRealChangeProductSkuCount());
+                    }
+                }
+            }
+            if (CollectionUtil.isNotEmpty(changeOrderDO.getChangeOrderMaterialDOList())) {
+                for (ChangeOrderMaterialDO changeOrderMaterialDO : changeOrderDO.getChangeOrderMaterialDOList()) {
+                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(changeOrderMaterialDO.getId())) {
+                        Material material = FastJsonUtil.toBean(changeOrderMaterialDO.getSrcChangeMaterialSnapshot(), Material.class);
+                        statementOrderDetail.setItemName(material.getMaterialName());
+                        statementOrderDetail.setItemCount(changeOrderMaterialDO.getRealChangeMaterialCount());
+                    }
+                }
+            }
+        }
     }
 
     @Override

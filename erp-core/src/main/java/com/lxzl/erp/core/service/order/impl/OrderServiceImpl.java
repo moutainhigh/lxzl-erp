@@ -205,6 +205,76 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL);
             return result;
         }
+        if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
+            int oldProductCount = 0, newProductCount = 0;
+            Map<Integer, Integer> productNewStockMap = new HashMap<>();
+            Map<Integer, Integer> productOldStockMap = new HashMap<>();
+            for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
+                if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
+                    result.setErrorCode(productServiceResult.getErrorCode());
+                    return result;
+                }
+                Product product = productServiceResult.getResult();
+                if (CommonConstant.COMMON_CONSTANT_NO.equals(product.getIsRent())) {
+                    result.setErrorCode(ErrorCode.PRODUCT_IS_NOT_RENT);
+                    return result;
+                }
+                if (CollectionUtil.isEmpty(product.getProductSkuList())) {
+                    result.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                    return result;
+                }
+                if (productNewStockMap.get(product.getProductId()) == null) {
+                    productNewStockMap.put(product.getProductId(), product.getNewProductCount());
+                }
+                if (productOldStockMap.get(product.getProductId()) == null) {
+                    productOldStockMap.put(product.getProductId(), product.getOldProductCount());
+                }
+                oldProductCount = productOldStockMap.get(product.getProductId());
+                newProductCount = productNewStockMap.get(product.getProductId());
+
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
+                    if ((newProductCount - orderProductDO.getProductCount()) < 0) {
+                        result.setErrorCode(ErrorCode.ORDER_PRODUCT_STOCK_NEW_INSUFFICIENT);
+                        return result;
+                    } else {
+                        newProductCount = newProductCount - orderProductDO.getProductCount();
+                        productNewStockMap.put(product.getProductId(), newProductCount);
+                    }
+                } else {
+                    if ((oldProductCount - orderProductDO.getProductCount()) < 0) {
+                        result.setErrorCode(ErrorCode.ORDER_PRODUCT_STOCK_OLD_INSUFFICIENT);
+                        return result;
+                    } else {
+                        oldProductCount = oldProductCount - orderProductDO.getProductCount();
+                        productOldStockMap.put(product.getProductId(), oldProductCount);
+                    }
+                }
+            }
+        }
+        if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
+            for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
+                ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
+                if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())
+                        || materialServiceResult.getResult() == null) {
+                    result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+                    return result;
+                }
+                Material material = materialServiceResult.getResult();
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
+                    if (material == null || material.getNewMaterialCount() == null || material.getNewMaterialCount() <= 0 || (material.getNewMaterialCount() - orderMaterialDO.getMaterialCount()) < 0) {
+                        result.setErrorCode(ErrorCode.ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT);
+                        return result;
+                    }
+                } else {
+                    if (material == null || material.getOldMaterialCount() == null || material.getOldMaterialCount() <= 0 || (material.getOldMaterialCount() - orderMaterialDO.getMaterialCount()) < 0) {
+                        result.setErrorCode(ErrorCode.ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT);
+                        return result;
+                    }
+                }
+            }
+        }
+
         CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
         BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
         if (BigDecimalUtil.compare(BigDecimalUtil.sub(BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmount(), customerRiskManagementDO.getCreditAmountUsed()), totalCreditDepositAmount), BigDecimal.ZERO) < 0) {
@@ -1330,12 +1400,14 @@ public class OrderServiceImpl implements OrderService {
         Map<Integer, OrderProductDO> updateOrderProductDOMap = new HashMap<>();
         List<OrderProductDO> dbOrderProductDOList = orderProductMapper.findByOrderId(orderId);
         Map<Integer, OrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(dbOrderProductDOList, "id");
-        for (OrderProductDO orderProductDO : orderProductDOList) {
-            if (dbOrderProductDOMap.get(orderProductDO.getId()) != null) {
-                updateOrderProductDOMap.put(orderProductDO.getProductSkuId(), orderProductDO);
-                dbOrderProductDOMap.remove(orderProductDO.getId());
-            } else {
-                saveOrderProductDOMap.put(orderProductDO.getProductSkuId(), orderProductDO);
+        if (CollectionUtil.isNotEmpty(orderProductDOList)) {
+            for (OrderProductDO orderProductDO : orderProductDOList) {
+                if (dbOrderProductDOMap.get(orderProductDO.getId()) != null) {
+                    updateOrderProductDOMap.put(orderProductDO.getProductSkuId(), orderProductDO);
+                    dbOrderProductDOMap.remove(orderProductDO.getId());
+                } else {
+                    saveOrderProductDOMap.put(orderProductDO.getProductSkuId(), orderProductDO);
+                }
             }
         }
 
@@ -1684,18 +1756,17 @@ public class OrderServiceImpl implements OrderService {
                     return ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS;
                 }
                 Product product = productServiceResult.getResult();
-                if (productNewStockMap.get(product.getProductId()) == null) {
-                    productNewStockMap.put(product.getProductId(), product.getNewProductCount());
-                }
-                if (productOldStockMap.get(product.getProductId()) == null) {
-                    productOldStockMap.put(product.getProductId(), product.getOldProductCount());
-                }
-
                 if (CommonConstant.COMMON_CONSTANT_NO.equals(product.getIsRent())) {
                     return ErrorCode.PRODUCT_IS_NOT_RENT;
                 }
                 if (CollectionUtil.isEmpty(product.getProductSkuList())) {
                     return ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS;
+                }
+                if (productNewStockMap.get(product.getProductId()) == null) {
+                    productNewStockMap.put(product.getProductId(), product.getNewProductCount());
+                }
+                if (productOldStockMap.get(product.getProductId()) == null) {
+                    productOldStockMap.put(product.getProductId(), product.getOldProductCount());
                 }
                 oldProductCount = productOldStockMap.get(product.getProductId());
                 newProductCount = productNewStockMap.get(product.getProductId());
@@ -1709,7 +1780,7 @@ public class OrderServiceImpl implements OrderService {
                     }
                 } else {
                     if ((oldProductCount - orderProduct.getProductCount()) < 0) {
-                        return ErrorCode.ORDER_PRODUCT_STOCK_NEW_INSUFFICIENT;
+                        return ErrorCode.ORDER_PRODUCT_STOCK_OLD_INSUFFICIENT;
                     } else {
                         oldProductCount = oldProductCount - orderProduct.getProductCount();
                         productOldStockMap.put(product.getProductId(), oldProductCount);
