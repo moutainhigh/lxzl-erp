@@ -56,7 +56,7 @@
                                         <div class="panel-footer bg-white br-t br-light p12">
                                             <div class="btn-group">
                                                 {{#manualActionButtons}}
-                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}} mr15" title="{{menuName}}">
+                                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}} mr15" title="{{menuName}}" data-customerno="{{customerNo}}">
                                                     <i class="{{iClass}}"></i> {{text}}
                                                 </a>
                                                 {{/manualActionButtons}}

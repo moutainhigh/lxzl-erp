@@ -75,7 +75,7 @@
                         <td>
                             <label class="block mn switch switch-primary">
                                 <input type="checkbox" name="isNewMaterial" id="isNewMaterial-{{materialNo}}" value="1">
-                                <label for="isNewMaterial-{{materialNo}}" data-on="新" data-off="旧"></label>
+                                <label for="isNewMaterial-{{materialNo}}" data-on="全新" data-off="次新"></label>
                                 <span></span>
                             </label>
                         </td>
