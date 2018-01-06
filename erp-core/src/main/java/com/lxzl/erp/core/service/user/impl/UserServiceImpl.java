@@ -14,6 +14,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
@@ -53,6 +54,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     @Autowired
     private UserRoleService userRoleService;
+
+    @Autowired
+    private UserSupport userSupport;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
@@ -315,6 +319,45 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         return result;
     }
 
+    @Override
+    public ServiceResult<String, Integer> disabledUser(User user) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        String currentUserId = userSupport.getCurrentUserId().toString();
+        Date currentTime = new Date();
+        UserDO userDO = userMapper.findByUserId(user.getUserId());
+        if(userDO == null){
+            result.setErrorCode(ErrorCode.USER_NOT_EXISTS);
+            return result;
+        }
+        userDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);
+        userDO.setUpdateTime(currentTime);
+        userDO.setUpdateUser(currentUserId);
+        userMapper.update(userDO);
+
+        result.setResult(userDO.getId());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> enableUser(User user) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        String currentUserId = userSupport.getCurrentUserId().toString();
+        Date currentTime = new Date();
+        UserDO userDO = userMapper.findByUserId(user.getUserId());
+        if(userDO == null){
+            result.setErrorCode(ErrorCode.USER_NOT_EXISTS);
+            return result;
+        }
+        userDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
+        userDO.setUpdateTime(currentTime);
+        userDO.setUpdateUser(currentUserId);
+        userMapper.update(userDO);
+
+        result.setResult(userDO.getId());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
 
     private String generateMD5Password(String username, String password, String md5Key) {
         String value = MD5Util.encryptWithKey(username + password, md5Key);
