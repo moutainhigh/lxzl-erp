@@ -11,4 +11,5 @@ public class OrderStatus {
     public static final Integer ORDER_STATUS_CANCEL = 28;        // 取消
     public static final Integer ORDER_STATUS_OVER = 32;        // 结束
     public static final Integer ORDER_STATUS_PAID = 36;        // 订单支付（仅供时间轴使用）
+    public static final Integer ORDER_STATUS_REJECT = 40;        // 订单拒绝（仅供时间轴使用）
 }

@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.*;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
+import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -714,20 +715,19 @@ public class OrderServiceImpl implements OrderService {
                     return false;
                 }
                 orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
+                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
             } else {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
                 // 如果拒绝，则退还授信额度
                 if (BigDecimalUtil.compare(orderDO.getTotalCreditDepositAmount(), BigDecimal.ZERO) != 0) {
                     customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), orderDO.getTotalCreditDepositAmount());
                 }
+                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_REJECT, null, currentTime, loginUser.getUserId());
             }
             orderDO.setUpdateTime(currentTime);
             orderDO.setUpdateUser(loginUser.getUserId().toString());
             orderMapper.update(orderDO);
 
-            // 记录订单时间轴
-            Order saveOrder = queryOrderByNo(orderDO.getOrderNo()).getResult();
-            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), FastJsonUtil.toJSONString(saveOrder), currentTime, loginUser.getUserId());
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("审批订单通知失败： {} {}", businessNo, e.toString());
@@ -772,6 +772,10 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
+        ServiceResult<String, StatementOrder> statementOrderResult = statementService.queryStatementOrderDetailByOrderId(order.getOrderNo());
+        if (!ErrorCode.SUCCESS.equals(statementOrderResult.getErrorCode())) {
+            order.setStatementOrder(statementOrderResult.getResult());
+        }
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
