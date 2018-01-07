@@ -32,12 +32,8 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
      */
     @Test
     public void generateProductEquipmentNo() throws Exception {
-        ArrayList<Integer> warehouseIds = new ArrayList<>();
-        warehouseIds.add(4000001);
-        warehouseIds.add(4000002);
-        warehouseIds.add(4000003);
         long startTime = System.currentTimeMillis();
-        List<String> strings = generateNoSupport.generateProductEquipmentNo(new Date(), warehouseIds);
+        List<String> strings = generateNoSupport.generateProductEquipmentNoList(null,"", 1);
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
@@ -50,13 +46,8 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
      */
     @Test
     public void generateBulkMaterialNo1() throws Exception {
-        ArrayList<Integer> warehouseIds = new ArrayList<>();
-        warehouseIds.add(4000001);
-        warehouseIds.add(4000002);
-        warehouseIds.add(4000003);
-
         long startTime = System.currentTimeMillis();
-        List<String> strings = generateNoSupport.generateBulkMaterialNo(new Date(), warehouseIds);
+        List<String> strings = generateNoSupport.generateBulkMaterialNoList(null,"1000",1);
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
@@ -118,7 +109,7 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
     public void generateEquipmentNo() throws Exception {
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < 3000; i++) {
-            generateNoSupport.generateProductEquipmentNo(new Date(), 4000001);
+            generateNoSupport.generateProductEquipmentNo(null, "null");
         }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;

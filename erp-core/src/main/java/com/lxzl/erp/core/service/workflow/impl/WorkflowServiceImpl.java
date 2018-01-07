@@ -163,6 +163,44 @@ public class WorkflowServiceImpl implements WorkflowService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> cancelWorkFlow(Integer workflowType, String workflowReferNo) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date currentTime = new Date();
+        User loginUser = userSupport.getCurrentUser();
+        WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
+        if (workflowLinkDO == null) {
+            result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+            return result;
+        }
+
+        workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_CANCEL);
+        workflowLinkDO.setCurrentVerifyUser(userSupport.getCurrentUserId());
+        workflowLinkMapper.update(workflowLinkDO);
+        WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
+
+        List<WorkflowLinkDetailDO> workflowLinkDetailDOList = workflowLinkDO.getWorkflowLinkDetailDOList();
+        if(workflowLinkDetailDOList != null && workflowLinkDetailDOList.size() > 1){
+            WorkflowLinkDetailDO previousWorkflowLinkDetailDO = workflowLinkDetailDOList.get(1);
+            workflowLinkDetailDO.setWorkflowPreviousNodeId(previousWorkflowLinkDetailDO.getWorkflowCurrentNodeId());
+        }
+
+        workflowLinkDetailDO.setVerifyUser(userSupport.getCurrentUserId());
+        workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
+        workflowLinkDetailDO.setWorkflowReferNo(workflowReferNo);
+        workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_CANCEL);
+        workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        workflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
+        workflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
+        workflowLinkDetailDO.setUpdateTime(currentTime);
+        workflowLinkDetailDO.setCreateTime(currentTime);
+        workflowLinkDetailMapper.save(workflowLinkDetailDO);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
     public ServiceResult<String, List<User>> getNextVerifyUsers(Integer workflowType, String workflowReferNo) {
         ServiceResult<String, List<User>> result = new ServiceResult<>();
         if (workflowType == null

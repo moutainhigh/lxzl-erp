@@ -117,4 +117,9 @@ public interface WorkflowService extends BaseService {
      */
     ServiceResult<String,Page<WorkflowTemplate>> pageWorkflowTemplate(WorkflowTemplateQueryParam workflowTemplateQueryParam);
 
+    /**
+     * 取消审核
+     * */
+    ServiceResult<String, String> cancelWorkFlow(Integer workflowType, String workflowReferNo);
+
 }

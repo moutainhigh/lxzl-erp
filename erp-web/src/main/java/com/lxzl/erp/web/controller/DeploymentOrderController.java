@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.deploymentOrder.CommitDeploymentOrderParam;
 import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.deploymentOrder.ProcessDeploymentOrderParam;
+import com.lxzl.erp.common.domain.deploymentOrder.ReturnDeploymentOrderParam;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrder;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -74,6 +75,12 @@ public class DeploymentOrderController extends BaseController {
     @RequestMapping(value = "confirm", method = RequestMethod.POST)
     public Result confirm(@RequestBody ProcessDeploymentOrderParam param, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = deploymentOrderService.confirmDeploymentOrder(param.getDeploymentOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "returnDeploymentOrder", method = RequestMethod.POST)
+    public Result returnDeploymentOrder(@RequestBody ReturnDeploymentOrderParam param, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = deploymentOrderService.returnDeploymentOrder(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

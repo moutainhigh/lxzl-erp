@@ -5,6 +5,7 @@ import com.lxzl.erp.common.constant.CustomerType;
 import com.lxzl.erp.common.domain.TransferOrderOrderQueryParam;
 import com.lxzl.erp.common.domain.assembleOder.AssembleOrderQueryParam;
 import com.lxzl.erp.common.domain.changeOrder.ChangeOrderPageParam;
+import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
 import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialQueryParam;
@@ -126,7 +127,7 @@ public class GenerateNoSupport {
             maps.put("productEquipmentQueryParam", productEquipmentQueryParam);
             Integer productCount = productEquipmentMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXP-");
+            builder.append("LX-");
             builder.append(cityCode);
             builder.append("-");
             builder.append(productModel);
@@ -223,11 +224,11 @@ public class GenerateNoSupport {
             Integer subCompanyId = userSupport.getCurrentUserCompanyId();
             //业务员所在的city_code
             String subCompanyCode = subCompanyMapper.findById(subCompanyId).getSubCompanyCode();
-            ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
-            productEquipmentQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            productEquipmentQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            CustomerQueryParam customerQueryParam = new CustomerQueryParam();
+            customerQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+            customerQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
             Map<String, Object> maps = new HashMap<>();
-            maps.put("productEquipmentQueryParam", productEquipmentQueryParam);
+            maps.put("customerQueryParam", customerQueryParam);
             Integer count = customerMapper.listCount(maps);
 
             if (customerType.equals(CustomerType.CUSTOMER_TYPE_COMPANY)) {
@@ -349,7 +350,8 @@ public class GenerateNoSupport {
     /**
      * 生成设备编号
      */
-    public String generateProductEquipmentNo(Date currentTime, Integer warehouseId) {
+    public String generateProductEquipmentNo(String productModel, String cityCode) {
+        Date currentTime = new Date();
         synchronized (this) {
             ProductEquipmentQueryParam param = new ProductEquipmentQueryParam();
             param.setCreateStartTime(DateUtil.getMonthByOffset(0));
@@ -357,14 +359,13 @@ public class GenerateNoSupport {
             Map<String, Object> maps = new HashMap<>();
             maps.put("productEquipmentQueryParam", param);
             Integer listCount = productEquipmentMapper.listCount(maps);
-            //仓库
-            WarehouseDO warehouseDO = warehouseMapper.findById(warehouseId);
-            //分公司
-            SubCompanyDO subCompanyDO = subCompanyMapper.findById(warehouseDO.getSubCompanyId());
 
             StringBuilder builder = new StringBuilder();
-            builder.append("LXE");
-            builder.append(subCompanyDO.getSubCompanyCode());
+            builder.append("LX-");
+            builder.append(cityCode);
+            builder.append("-");
+            builder.append(productModel);
+            builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
             builder.append(String.format("%06d", listCount + 1));
             return builder.toString();
@@ -520,7 +521,8 @@ public class GenerateNoSupport {
     /**
      * 生成批量设备编号
      */
-    public List<String> generateProductEquipmentNo(Date currentTime, List<Integer> warehouseIds) {
+    public List<String> generateProductEquipmentNoList(String productModel, String cityCode, Integer equipmentCount) {
+        Date currentTime = new Date();
         synchronized (this) {
             ProductEquipmentQueryParam param = new ProductEquipmentQueryParam();
             param.setCreateStartTime(DateUtil.getMonthByOffset(0));
@@ -530,14 +532,13 @@ public class GenerateNoSupport {
             Integer listCount = productEquipmentMapper.listCount(maps);
 
             ArrayList<String> ProductEquipmentNos = new ArrayList<>();
-            for (Integer warehouseId : warehouseIds) {
-                //仓库
-                WarehouseDO warehouseDO = warehouseMapper.findById(warehouseId);
-                //分公司
-                SubCompanyDO subCompanyDO = subCompanyMapper.findById(warehouseDO.getSubCompanyId());
+            for (int i = 0; i < equipmentCount; i++) {
                 StringBuilder builder = new StringBuilder();
-                builder.append("LXE");
-                builder.append(subCompanyDO.getSubCompanyCode());
+                builder.append("LX-");
+                builder.append(cityCode);
+                builder.append("-");
+                builder.append(productModel);
+                builder.append("-");
                 builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
                 builder.append(String.format("%06d", listCount + 1));
                 ProductEquipmentNos.add(builder.toString());
@@ -550,7 +551,8 @@ public class GenerateNoSupport {
     /**
      * 生成批量散料单编号
      **/
-    public List<String> generateBulkMaterialNo(Date currentTime, List<Integer> warehouseIds) {
+    public List<String> generateBulkMaterialNoList(String materialModel, String cityCode, int bulkMaterialCount) {
+        Date currentTime = new Date();
         synchronized (this) {
             BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
             bulkMaterialQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
@@ -560,14 +562,13 @@ public class GenerateNoSupport {
             Integer count = bulkMaterialMapper.listCount(maps);
 
             ArrayList<String> BulkMaterialNos = new ArrayList<>();
-            for (Integer warehouseId : warehouseIds) {
-                //仓库
-                WarehouseDO warehouseDO = warehouseMapper.findById(warehouseId);
-                //分公司
-                SubCompanyDO subCompanyDO = subCompanyMapper.findById(warehouseDO.getSubCompanyId());
+            for (int i = 0; i < bulkMaterialCount; i++) {
                 StringBuilder builder = new StringBuilder();
-                builder.append("LXBM");
-                builder.append(subCompanyDO.getSubCompanyCode());
+                builder.append("LX-");
+                builder.append(cityCode);
+                builder.append("-");
+                builder.append(materialModel);
+                builder.append("-");
                 builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
                 builder.append(String.format("%06d", count + 1));
                 BulkMaterialNos.add(builder.toString());

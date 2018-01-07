@@ -184,11 +184,11 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ec.id) FROM erp_customer ec 
 		<where>
-			<if test="maps.productEquipmentQueryParam.createStartTime != null ">
-				<![CDATA[ AND ec.create_time >= #{maps.productEquipmentQueryParam.createStartTime} ]]>
+			<if test="maps.customerQueryParam.createStartTime != null ">
+				<![CDATA[ AND ec.create_time >= #{maps.customerQueryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.productEquipmentQueryParam.createEndTime != null">
-				<![CDATA[ AND ec.create_time <= #{maps.productEquipmentQueryParam.createEndTime} ]]>
+			<if test="maps.customerQueryParam.createEndTime != null">
+				<![CDATA[ AND ec.create_time <= #{maps.customerQueryParam.createEndTime} ]]>
 			</if>
 			<if test="true">
 				AND ec.data_status = 1
@@ -199,6 +199,12 @@
 	<select id="listPage" resultMap="CustomerDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_customer ec 
 		<where>
+			<if test="maps.customerQueryParam.createStartTime != null ">
+				<![CDATA[ AND ec.create_time >= #{maps.customerQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.customerQueryParam.createEndTime != null">
+				<![CDATA[ AND ec.create_time <= #{maps.customerQueryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				AND ec.data_status = 1
 			</if>
