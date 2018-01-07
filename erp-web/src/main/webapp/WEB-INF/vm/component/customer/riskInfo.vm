@@ -62,7 +62,7 @@
                         </tr>
                         <tr>
                             <td class="va-m fw600 text-muted"><i class="mr5 fa fa-apple"></i>苹果付款期数</td>
-                            <td class="fs15 fw700 text-right">{{applePayModeValue}}</td>
+                            <td class="fs15 fw700 text-right">{{applePaymentCycle}}</td>
                         </tr>
                         <tr>
                             <td class="va-m fw600 text-muted"><i class="mr5 fa fa-apple"></i>苹果设备支付方式</td>
@@ -77,15 +77,15 @@
                         <tbody>
                         <tr>
                             <td class="va-m fw600 text-muted"><i class="fa fa-circle text-success fs8 pr15"></i>全新设备押金期数</td>
-                            <td class="fs14 fw700 text-muted text-right">{{newDepositCycle}}</td>
+                            <td class="fs14 fw700 text-right">{{newDepositCycle}}</td>
                         </tr>
                         <tr>
                             <td class="va-m fw600 text-muted"><i class="fa fa-circle text-success fs8 pr15"></i>全新设备付款期数</td>
-                            <td class="fs14 fw700 text-muted text-right">{{newPaymentCycle}}</td>
+                            <td class="fs14 fw700 text-right">{{newPaymentCycle}}</td>
                         </tr>
                         <tr>
                             <td class="va-m fw600 text-muted"><i class="fa fa-circle text-success fs8 pr15"></i>全新设备支付方式</td>
-                            <td class="fs14 fw700 text-muted text-right">{{newPayModeValue}}</td>
+                            <td class="fs14 fw700 text-right">{{newPayModeValue}}</td>
                         </tr>
                         </tbody>
                     </table>
