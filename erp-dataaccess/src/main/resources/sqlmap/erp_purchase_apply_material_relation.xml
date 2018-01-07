@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.purchaseApply.PurchaseApplyMaterialRelationMapper">
+
+	<resultMap id="PurchaseApplyMaterialRelationDO" type="com.lxzl.erp.dataaccess.domain.purchaseApply.PurchaseApplyMaterialRelationDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="purchase_order_id" jdbcType="INTEGER" property="purchaseOrderId" />
+		<result column="purchase_order_no" jdbcType="VARCHAR" property="purchaseOrderNo" />
+		<result column="purchase_order_material_id" jdbcType="INTEGER" property="purchaseOrderMaterialId" />
+		<result column="purchase_apply_order_material_id" jdbcType="INTEGER" property="purchaseApplyOrderMaterialId" />
+		<result column="apply_count" jdbcType="INTEGER" property="applyCount" />
+		<result column="real_count" jdbcType="INTEGER" property="realCount" />
+		<result column="purchase_start_time" jdbcType="TIMESTAMP" property="purchaseStartTime" />
+		<result column="purchase_end_time" jdbcType="TIMESTAMP" property="purchaseEndTime" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		epamr.id,epamr.purchase_order_id,epamr.purchase_order_no,epamr.purchase_order_material_id,epamr.purchase_apply_order_material_id,epamr.apply_count,epamr.real_count,epamr.purchase_start_time,epamr.purchase_end_time,epamr.data_status,epamr.remark,epamr.create_time,epamr.create_user,epamr.update_time,epamr.update_user
+	</sql>
+
+	<select id="findById" resultMap="PurchaseApplyMaterialRelationDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_purchase_apply_material_relation epamr 
+		WHERE epamr.id = #{id, jdbcType=INTEGER} AND epamr.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(epamr.id) FROM erp_purchase_apply_material_relation epamr 
+		<where>
+			<if test="true">
+				AND epamr.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="PurchaseApplyMaterialRelationDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_purchase_apply_material_relation epamr 
+		<where>
+			<if test="true">
+				AND epamr.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="purchaseOrderId != null">
+				purchase_order_id = #{purchaseOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="purchaseOrderNo != null">
+				purchase_order_no = #{purchaseOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="purchaseOrderMaterialId != null">
+				purchase_order_material_id = #{purchaseOrderMaterialId,jdbcType=INTEGER},
+			</if>
+			<if test="purchaseApplyOrderMaterialId != null">
+				purchase_apply_order_material_id = #{purchaseApplyOrderMaterialId,jdbcType=INTEGER},
+			</if>
+			<if test="applyCount != null">
+				apply_count = #{applyCount,jdbcType=INTEGER},
+			</if>
+			<if test="realCount != null">
+				real_count = #{realCount,jdbcType=INTEGER},
+			</if>
+			<if test="purchaseStartTime != null">
+				purchase_start_time = #{purchaseStartTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="purchaseEndTime != null">
+				purchase_end_time = #{purchaseEndTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.purchaseApply.PurchaseApplyMaterialRelationDO">
+		INSERT INTO erp_purchase_apply_material_relation <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.purchaseApply.PurchaseApplyMaterialRelationDO">
+		UPDATE erp_purchase_apply_material_relation <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

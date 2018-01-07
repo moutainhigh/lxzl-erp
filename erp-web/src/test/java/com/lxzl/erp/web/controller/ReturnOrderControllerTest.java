@@ -10,10 +10,12 @@ import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderConsignInfo;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderMaterial;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProduct;
+import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ReturnOrderControllerTest extends ERPTransactionalTest {

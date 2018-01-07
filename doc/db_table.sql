@@ -1959,14 +1959,14 @@ CREATE TABLE `erp_purchase_receive_order_product_material` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购收货单商品配件表';
 
 -- -----------------------------------------采购申请单----------------------------------------- --
-DROP TABLE if exists `erp_purchase_request_order`;
-CREATE TABLE `erp_purchase_request_order` (
+DROP TABLE if exists `erp_purchase_apply_order`;
+CREATE TABLE `erp_purchase_apply_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `purchase_request_order_no` varchar(100) NOT NULL COMMENT '申请单编号',
-  `request_user_id` int(20) NOT NULL DEFAULT 0 COMMENT  '申请人ID',
+  `purchase_apply_order_no` varchar(100) NOT NULL COMMENT '申请单编号',
+  `apply_user_id` int(20) NOT NULL DEFAULT 0 COMMENT  '申请人ID',
   `warehouse_id` int(20) NOT NULL DEFAULT 0 COMMENT  '仓库ID，总公司可以给分公司采购，申请人为分公司，则分公司只允许采购到本分公司仓库',
   `department_id` int(20) NOT NULL DEFAULT 0 COMMENT  '部门ID',
-  `purchase_request_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '采购申请单状态，0-待提交，3-审核中，6-待采购，9-采购中，12-部分采购，15-全部采购，18-取消',
+  `purchase_apply_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '采购申请单状态，0-待提交，3-审核中，6-待采购，9-采购中，12-部分采购，15-全部采购，18-取消',
   `all_use_time` datetime DEFAULT NULL COMMENT '整单计划使用时间',
   `purchase_start_time` datetime DEFAULT NULL COMMENT '采购开始时间',
   `purchase_end_time` datetime DEFAULT NULL COMMENT '全部采购完成时间',
@@ -1979,15 +1979,15 @@ CREATE TABLE `erp_purchase_request_order` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购申请单表';
 
-DROP TABLE if exists `erp_purchase_request_order_product`;
-CREATE TABLE `erp_purchase_request_order_product` (
+DROP TABLE if exists `erp_purchase_apply_order_product`;
+CREATE TABLE `erp_purchase_apply_order_product` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `purchase_request_order_id` int(20) NOT NULL COMMENT '采购申请单ID',
-  `purchase_request_order_no` varchar(100) NOT NULL COMMENT '采购申请单编号',
+  `purchase_apply_order_id` int(20) NOT NULL COMMENT '采购申请单ID',
+  `purchase_apply_order_no` varchar(100) NOT NULL COMMENT '采购申请单编号',
   `product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID',
-  `request_count` int(20) NOT NULL DEFAULT 0 COMMENT '计划采购数量',
+  `apply_count` int(20) NOT NULL DEFAULT 0 COMMENT '计划采购数量',
   `real_count` int(20) NOT NULL DEFAULT 0  COMMENT '实际采购数量',
-  `purchase_request_order_item_status` int(20) NOT NULL DEFAULT 0 COMMENT '单项状态，0-待采购，3-采购中，6-部分采购，9-全部采购',
+  `purchase_apply_order_item_status` int(20) NOT NULL DEFAULT 0 COMMENT '单项状态，0-待采购，3-采购中，6-部分采购，9-全部采购',
   `is_new` int(11) NOT NULL DEFAULT 0 COMMENT '是否全新，1是，0否',
   `use_time` datetime NOT NULL COMMENT '计划使用时间',
   `purchase_start_time` datetime DEFAULT NULL COMMENT '采购开始时间',
@@ -2001,18 +2001,18 @@ CREATE TABLE `erp_purchase_request_order_product` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购申请单商品项表';
 
-DROP TABLE if exists `erp_purchase_request_order_material`;
-CREATE TABLE `erp_purchase_request_order_material` (
+DROP TABLE if exists `erp_purchase_apply_order_material`;
+CREATE TABLE `erp_purchase_apply_order_material` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `purchase_request_order_id` int(20) NOT NULL COMMENT '采购申请单ID',
-  `purchase_request_order_no` varchar(100) NOT NULL COMMENT '采购申请单编号',
+  `purchase_apply_order_id` int(20) NOT NULL COMMENT '采购申请单ID',
+  `purchase_apply_order_no` varchar(100) NOT NULL COMMENT '采购申请单编号',
   `material_id` int(20) NOT NULL COMMENT '配件ID',
   `material_no` varchar(100) NOT NULL COMMENT '配件编号',
-  `request_count` int(20) NOT NULL DEFAULT 0 COMMENT '计划采购数量',
+  `apply_count` int(20) NOT NULL DEFAULT 0 COMMENT '计划采购数量',
   `real_count` int(20) NOT NULL DEFAULT 0  COMMENT '实际采购数量',
   `purchase_start_time` datetime DEFAULT NULL COMMENT '采购开始时间',
   `purchase_end_time` datetime DEFAULT NULL COMMENT '全部采购完成时间',
-  `purchase_request_order_item_status` int(20) NOT NULL DEFAULT 0 COMMENT '单项状态，0-待采购，3-采购中，6-部分采购，9-全部采购',
+  `purchase_apply_order_item_status` int(20) NOT NULL DEFAULT 0 COMMENT '单项状态，0-待采购，3-采购中，6-部分采购，9-全部采购',
   `is_new` int(11) NOT NULL DEFAULT 0 COMMENT '是否全新，1是，0否',
   `use_time` datetime NOT NULL COMMENT '计划使用时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -2024,14 +2024,14 @@ CREATE TABLE `erp_purchase_request_order_material` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购申请单配件项表';
 
-DROP TABLE if exists `erp_purchase_request_product_map`;
-CREATE TABLE `erp_purchase_request_product_map` (
+DROP TABLE if exists `erp_purchase_apply_product_relation`;
+CREATE TABLE `erp_purchase_apply_product_relation` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `purchase_order_id` int(20) NOT NULL COMMENT '采购单ID',
   `purchase_order_no` varchar(100) NOT NULL COMMENT '采购单编号',
   `purchase_order_product_id` int(20) NOT NULL COMMENT '采购单商品项ID',
-  `purchase_request_order_product_id` int(20) NOT NULL COMMENT '采购申请单商品项ID',
-  `request_count` int(20) NOT NULL DEFAULT 0  COMMENT '预计采购数量',
+  `purchase_apply_order_product_id` int(20) NOT NULL COMMENT '采购申请单商品项ID',
+  `apply_count` int(20) NOT NULL DEFAULT 0  COMMENT '预计采购数量',
   `real_count` int(20) NOT NULL DEFAULT 0  COMMENT '实际采购数量',
   `purchase_start_time` datetime DEFAULT NULL COMMENT '采购开始时间',
   `purchase_end_time` datetime DEFAULT NULL COMMENT '全部采购完成时间',
@@ -2044,14 +2044,14 @@ CREATE TABLE `erp_purchase_request_product_map` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购单商品项-采购申请单商品项映射表';
 
-DROP TABLE if exists `erp_purchase_request_material_map`;
-CREATE TABLE `erp_purchase_request_material_map` (
+DROP TABLE if exists `erp_purchase_apply_material_relation`;
+CREATE TABLE `erp_purchase_apply_material_relation` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `purchase_order_id` int(20) NOT NULL COMMENT '采购单ID',
   `purchase_order_no` varchar(100) NOT NULL COMMENT '采购单编号',
   `purchase_order_material_id` int(20) NOT NULL COMMENT '采购单配件项ID',
-  `purchase_request_order_material_id` int(20) NOT NULL COMMENT '采购申请单配件项ID',
-  `request_count` int(20) NOT NULL DEFAULT 0  COMMENT '预计采购数量',
+  `purchase_apply_order_material_id` int(20) NOT NULL COMMENT '采购申请单配件项ID',
+  `apply_count` int(20) NOT NULL DEFAULT 0  COMMENT '预计采购数量',
   `real_count` int(20) NOT NULL DEFAULT 0  COMMENT '实际采购数量',
   `purchase_start_time` datetime DEFAULT NULL COMMENT '采购开始时间',
   `purchase_end_time` datetime DEFAULT NULL COMMENT '全部采购完成时间',
@@ -2063,8 +2063,6 @@ CREATE TABLE `erp_purchase_request_material_map` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='采购单配件项-采购申请单配件项映射表';
-
-
 
 -- -----------------------------------------采购退货单----------------------------------------- --
 DROP TABLE if exists `erp_purchase_back_order`;
