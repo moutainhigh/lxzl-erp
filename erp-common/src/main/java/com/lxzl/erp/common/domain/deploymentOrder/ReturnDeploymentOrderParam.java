@@ -1,20 +1,21 @@
 package com.lxzl.erp.common.domain.deploymentOrder;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
  *
  * @author gaochao
- * @date 2017-11-28 15:18
+ * @date 2018-01-07 10:09
  */
-public class ProcessDeploymentOrderParam implements Serializable {
+public class ReturnDeploymentOrderParam implements Serializable {
     private String deploymentOrderNo;
-    private String equipmentNo;
+    private Date returnDate;
+    private List<String> equipmentNoList;
     private Integer materialId;
     private Integer materialCount;
-    private Integer operationType;
 
     public String getDeploymentOrderNo() {
         return deploymentOrderNo;
@@ -24,12 +25,20 @@ public class ProcessDeploymentOrderParam implements Serializable {
         this.deploymentOrderNo = deploymentOrderNo;
     }
 
-    public String getEquipmentNo() {
-        return equipmentNo;
+    public Date getReturnDate() {
+        return returnDate;
     }
 
-    public void setEquipmentNo(String equipmentNo) {
-        this.equipmentNo = equipmentNo;
+    public void setReturnDate(Date returnDate) {
+        this.returnDate = returnDate;
+    }
+
+    public List<String> getEquipmentNoList() {
+        return equipmentNoList;
+    }
+
+    public void setEquipmentNoList(List<String> equipmentNoList) {
+        this.equipmentNoList = equipmentNoList;
     }
 
     public Integer getMaterialId() {
@@ -46,13 +55,5 @@ public class ProcessDeploymentOrderParam implements Serializable {
 
     public void setMaterialCount(Integer materialCount) {
         this.materialCount = materialCount;
-    }
-
-    public Integer getOperationType() {
-        return operationType;
-    }
-
-    public void setOperationType(Integer operationType) {
-        this.operationType = operationType;
     }
 }

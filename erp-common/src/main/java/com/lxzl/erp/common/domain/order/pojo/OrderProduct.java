@@ -26,7 +26,6 @@ public class OrderProduct extends BasePO {
     private BigDecimal creditDepositAmount;
     private BigDecimal insuranceAmount;
     private String productSkuSnapshot;
-    private List<String> equipmentNoList;
     private Integer dataStatus;
     private String remark;
     private List<ProductSkuProperty> productSkuPropertyList;
@@ -130,14 +129,6 @@ public class OrderProduct extends BasePO {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    public List<String> getEquipmentNoList() {
-        return equipmentNoList;
-    }
-
-    public void setEquipmentNoList(List<String> equipmentNoList) {
-        this.equipmentNoList = equipmentNoList;
     }
 
     public List<ProductSkuProperty> getProductSkuPropertyList() {

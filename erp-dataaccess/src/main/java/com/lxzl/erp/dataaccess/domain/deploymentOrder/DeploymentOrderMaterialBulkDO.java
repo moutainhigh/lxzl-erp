@@ -12,6 +12,7 @@ public class DeploymentOrderMaterialBulkDO  extends BaseDO {
 	private String deploymentOrderNo;
 	private Integer bulkMaterialId;
 	private String bulkMaterialNo;
+	private Date returnTime;
 	private Integer dataStatus;
 	private String remark;
 
@@ -79,4 +80,11 @@ public class DeploymentOrderMaterialBulkDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public Date getReturnTime() {
+		return returnTime;
+	}
+
+	public void setReturnTime(Date returnTime) {
+		this.returnTime = returnTime;
+	}
 }

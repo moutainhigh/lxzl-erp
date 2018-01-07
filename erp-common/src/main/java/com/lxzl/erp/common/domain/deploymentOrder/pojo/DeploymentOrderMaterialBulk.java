@@ -16,6 +16,7 @@ public class DeploymentOrderMaterialBulk extends BasePO {
 	private String deploymentOrderNo;   //货物调拨单编号
 	private Integer bulkMaterialId;   //散料ID
 	private String bulkMaterialNo;   //散料编号
+	private Date returnTime;		//退还时间
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -120,4 +121,11 @@ public class DeploymentOrderMaterialBulk extends BasePO {
 		this.updateUser = updateUser;
 	}
 
+	public Date getReturnTime() {
+		return returnTime;
+	}
+
+	public void setReturnTime(Date returnTime) {
+		this.returnTime = returnTime;
+	}
 }

@@ -4,6 +4,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.deploymentOrder.ProcessDeploymentOrderParam;
+import com.lxzl.erp.common.domain.deploymentOrder.ReturnDeploymentOrderParam;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrder;
 import com.lxzl.erp.core.service.VerifyReceiver;
 
@@ -92,4 +93,12 @@ public interface DeploymentOrderService extends VerifyReceiver {
      * @return 调拨单信息
      */
     ServiceResult<String, DeploymentOrder> queryDeploymentOrderDetail(String deploymentOrderNo);
+
+    /**
+     * 退还调拨单
+     *
+     * @param param 退还调拨单
+     * @return 调拨单号
+     */
+    ServiceResult<String, String> returnDeploymentOrder(ReturnDeploymentOrderParam param);
 }

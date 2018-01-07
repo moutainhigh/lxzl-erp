@@ -310,6 +310,10 @@ public class ErrorCode {
     public static final String ORDER_PRODUCT_COUNT_ERROR = "J400093";
     public static final String ORDER_MATERIAL_COUNT_ERROR = "J400094";
     public static final String ORDER_PRODUCT_EQUIPMENT_NOT_MATCHING = "J400095";
+    public static final String DEPLOYMENT_ORDER_HAVE_NO_THIS_PRODUCT_EQUIPMENT = "J400096";
+    public static final String DEPLOYMENT_ORDER_BULK_MATERIAL_NOT_ENOUGH = "J400097";
+    public static final String DEPLOYMENT_ORDER_NOT_EXISTS = "J400098";
+    public static final String DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_HAVE_RETURNED = "J400096";
 
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
@@ -544,6 +548,10 @@ public class ErrorCode {
         MAP.put(WAREHOUSE_NOT_AVAILABLE, "仓库不可用");
         MAP.put(PRODUCT_EQUIPMENT_NOT_NEW, "设备不是全新的");
         MAP.put(PRODUCT_EQUIPMENT_NOT_OLD, "设备不是次新的");
+        MAP.put(DEPLOYMENT_ORDER_HAVE_NO_THIS_PRODUCT_EQUIPMENT, "调拨单没有该设备");
+        MAP.put(DEPLOYMENT_ORDER_BULK_MATERIAL_NOT_ENOUGH, "调拨单配件不足");
+        MAP.put(DEPLOYMENT_ORDER_NOT_EXISTS, "调拨单不存在");
+        MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_HAVE_RETURNED, "调拨单该设备已经退还");
 
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");

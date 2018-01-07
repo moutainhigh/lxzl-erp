@@ -9,6 +9,7 @@
 		<result column="deployment_order_no" jdbcType="VARCHAR" property="deploymentOrderNo" />
 		<result column="bulk_material_id" jdbcType="INTEGER" property="bulkMaterialId" />
 		<result column="bulk_material_no" jdbcType="VARCHAR" property="bulkMaterialNo" />
+		<result column="return_time" jdbcType="TIMESTAMP" property="returnTime" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -18,7 +19,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		edomb.id,edomb.deployment_order_material_id,edomb.deployment_order_id,edomb.deployment_order_no,edomb.bulk_material_id,edomb.bulk_material_no,edomb.data_status,edomb.remark,edomb.create_time,edomb.create_user,edomb.update_time,edomb.update_user
+		edomb.id,edomb.deployment_order_material_id,edomb.deployment_order_id,edomb.deployment_order_no,edomb.bulk_material_id,edomb.bulk_material_no,edomb.return_time,edomb.data_status,edomb.remark,edomb.create_time,edomb.create_user,edomb.update_time,edomb.update_user
 	</sql>
 
 	<select id="findById" resultMap="DeploymentOrderMaterialBulkDO" parameterType="java.lang.Integer">
@@ -71,6 +72,9 @@
 			</if>
 			<if test="bulkMaterialNo != null">
 				bulk_material_no = #{bulkMaterialNo,jdbcType=VARCHAR},
+			</if>
+			<if test="returnTime != null">
+				return_time = #{returnTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},

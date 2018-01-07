@@ -12,6 +12,7 @@ public class DeploymentOrderProductEquipmentDO  extends BaseDO {
 	private String deploymentOrderNo;
 	private Integer equipmentId;
 	private String equipmentNo;
+	private Date returnTime;
 	private Integer dataStatus;
 	private String remark;
 
@@ -79,4 +80,11 @@ public class DeploymentOrderProductEquipmentDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public Date getReturnTime() {
+		return returnTime;
+	}
+
+	public void setReturnTime(Date returnTime) {
+		this.returnTime = returnTime;
+	}
 }

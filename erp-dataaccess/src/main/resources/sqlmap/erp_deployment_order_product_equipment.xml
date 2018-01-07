@@ -9,6 +9,7 @@
 		<result column="deployment_order_no" jdbcType="VARCHAR" property="deploymentOrderNo" />
 		<result column="equipment_id" jdbcType="INTEGER" property="equipmentId" />
 		<result column="equipment_no" jdbcType="VARCHAR" property="equipmentNo" />
+		<result column="return_time" jdbcType="TIMESTAMP" property="returnTime" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -18,7 +19,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		edope.id,edope.deployment_order_product_id,edope.deployment_order_id,edope.deployment_order_no,edope.equipment_id,edope.equipment_no,edope.data_status,edope.remark,edope.create_time,edope.create_user,edope.update_time,edope.update_user
+		edope.id,edope.deployment_order_product_id,edope.deployment_order_id,edope.deployment_order_no,edope.equipment_id,edope.equipment_no,edope.return_time,edope.data_status,edope.remark,edope.create_time,edope.create_user,edope.update_time,edope.update_user
 	</sql>
 
 	<select id="findById" resultMap="DeploymentOrderProductEquipmentDO" parameterType="java.lang.Integer">
@@ -71,6 +72,9 @@
 			</if>
 			<if test="equipmentNo != null">
 				equipment_no = #{equipmentNo,jdbcType=VARCHAR},
+			</if>
+			<if test="returnTime != null">
+				return_time = #{returnTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},

@@ -25,7 +25,6 @@ public class OrderProductDO extends BaseDO {
     private BigDecimal creditDepositAmount;
     private BigDecimal insuranceAmount;
     private String productSkuSnapshot;
-    private List<String> equipmentNoList;
     private Integer depositCycle;
     private Integer paymentCycle;
     private Integer payMode;
@@ -127,14 +126,6 @@ public class OrderProductDO extends BaseDO {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    public List<String> getEquipmentNoList() {
-        return equipmentNoList;
-    }
-
-    public void setEquipmentNoList(List<String> equipmentNoList) {
-        this.equipmentNoList = equipmentNoList;
     }
 
     public BigDecimal getDepositAmount() {

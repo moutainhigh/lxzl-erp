@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.deploymentOrder.ProcessDeploymentOrderParam;
+import com.lxzl.erp.common.domain.deploymentOrder.ReturnDeploymentOrderParam;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrder;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrderMaterial;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrderProduct;
@@ -14,11 +15,11 @@ import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
-import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.deploymentOrder.*;
@@ -698,6 +699,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> confirmDeploymentOrder(String deploymentOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -811,6 +813,81 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> returnDeploymentOrder(ReturnDeploymentOrderParam param) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+
+        if (param == null || param.getDeploymentOrderNo() == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+
+        DeploymentOrderDO deploymentOrderDO = deploymentOrderMapper.findByNo(param.getDeploymentOrderNo());
+        if (deploymentOrderDO == null) {
+            result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_NOT_EXISTS);
+            return result;
+        }
+
+        if (CollectionUtil.isEmpty(param.getEquipmentNoList()) && (param.getMaterialCount() == null || param.getMaterialCount() < 0)) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+
+        List<DeploymentOrderProductEquipmentDO> returnDeploymentOrderProductEquipmentDOList = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(param.getEquipmentNoList())) {
+            for (String equipmentNo : param.getEquipmentNoList()) {
+                DeploymentOrderProductEquipmentDO deploymentOrderProductEquipmentDO = deploymentOrderProductEquipmentMapper.findDeploymentOrderByEquipmentNo(deploymentOrderDO.getId(), equipmentNo);
+                if (deploymentOrderProductEquipmentDO == null) {
+                    result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_PRODUCT_EQUIPMENT);
+                    return result;
+                } else {
+                    if (deploymentOrderProductEquipmentDO.getReturnTime() == null) {
+                        returnDeploymentOrderProductEquipmentDOList.add(deploymentOrderProductEquipmentDO);
+                    } else {
+                        result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_HAVE_RETURNED);
+                        return result;
+                    }
+                }
+            }
+        }
+
+        List<DeploymentOrderMaterialBulkDO> returnDeploymentOrderBulkMaterialDOList = new ArrayList<>();
+        if (param.getMaterialId() != null && param.getMaterialCount() > 0) {
+            DeploymentOrderMaterialDO deploymentOrderMaterialDO = deploymentOrderMaterialMapper.findByDeploymentOrderNoAndMaterialId(deploymentOrderDO.getDeploymentOrderNo(), param.getMaterialId());
+            List<DeploymentOrderMaterialBulkDO> deploymentOrderMaterialBulkDOList = deploymentOrderMaterialBulkMapper.findByDeploymentOrderMaterialId(deploymentOrderMaterialDO.getId());
+            if (deploymentOrderMaterialBulkDOList == null) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_BULK_MATERIAL_NOT_ENOUGH);
+                return result;
+            } else {
+                for (DeploymentOrderMaterialBulkDO deploymentOrderMaterialBulkDO : deploymentOrderMaterialBulkDOList) {
+                    if (deploymentOrderMaterialBulkDO.getReturnTime() == null) {
+                        returnDeploymentOrderBulkMaterialDOList.add(deploymentOrderMaterialBulkDO);
+                    }
+                }
+            }
+            if (returnDeploymentOrderBulkMaterialDOList.size() < param.getMaterialCount()) {
+                result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_BULK_MATERIAL_NOT_ENOUGH);
+                return result;
+            }
+        }
+
+        for (DeploymentOrderProductEquipmentDO deploymentOrderProductEquipmentDO : returnDeploymentOrderProductEquipmentDOList) {
+            deploymentOrderProductEquipmentDO.setReturnTime(currentTime);
+            deploymentOrderProductEquipmentMapper.update(deploymentOrderProductEquipmentDO);
+        }
+        for (DeploymentOrderMaterialBulkDO deploymentOrderMaterialBulkDO : returnDeploymentOrderBulkMaterialDOList) {
+            deploymentOrderMaterialBulkDO.setReturnTime(currentTime);
+            deploymentOrderMaterialBulkMapper.update(deploymentOrderMaterialBulkDO);
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
     public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
@@ -871,4 +948,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
 
     @Autowired
     private WarehouseSupport warehouseSupport;
+
+    @Autowired
+    private UserSupport userSupport;
 }
