@@ -180,7 +180,7 @@
                                         {{#listData}}
                                         <tr class="productRow" productRowKey="{{productId}}">
                                             <td>{{productName}}</td>
-                                            <td width="15%"><span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{propertiesToStr}}</td>
+                                            <td width="15%"><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{propertiesToStr}}</td>
                                             <td>￥{{#price}}{{skuPrice}}{{/price}}</td>
                                             <td>
                                                 ￥{{#price}}{{productUnitAmount}}{{/price}}
@@ -261,37 +261,29 @@
                                         <thead>
                                         <tr>
                                             <th>编号</th>
+                                            <th>图片</th>
                                             <th>名称</th>
                                             <th>类型</th>
-                                            <th>本身价值</th>
-                                            <th>租赁价格</th>
-                                            <th>描述</th>
-                                            <th>图片</th>
+                                            <th>配件价值</th>
                                             <th>配件单价</th>
                                             <th>数量</th>
                                             <th>租赁类型</th>
                                             <th>租赁时长</th>
-##                                            <th>保险金</th>
                                             <th>支付方式</th>
-                                            <th>操作</th>
+                                            <th class="text-right">操作</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         {{#dataSource}}
                                         {{#listData}}
                                         <tr class="materialRow">
-                                            <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{isNewMaterialValue}}</span>{{materialNo}}</td>
+                                            <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{#isNewValue}}{{isNewMaterial}}{{/isNewValue}}</span>{{materialNo}}</td>
+                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                             <td>{{materialName}}</td>
                                             <td>{{materialTypeStr}}</td>
-                                            <td>{{materialPriceFormat}}</td>
+                                            <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
                                             <td>
-                                                <p>日租：￥{{dayRentPriceFormat}}</p>
-                                                <p>月租：￥{{monthRentPriceFormat}}</p>
-                                            </td>
-                                            <td>{{materialDesc}}</td>
-                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-                                            <td>
-                                                {{materialUnitAmount}}
+                                                ￥{{#price}}{{materialUnitAmount}}{{/price}}
                                             </td>
                                             <td>
                                                 {{materialCount}}
@@ -302,13 +294,10 @@
                                             <td>
                                                 {{rentTimeLength}}
                                             </td>
-##                                            <td>
-##                                                {{insuranceAmount}}
-##                                            </td>
                                             <td>
                                                 {{payModeValue}}
                                             </td>
-                                            <td>
+                                            <td class="text-right">
                                                 <div class="btn-group text-right">
                                                     {{#rowActionButtons}}
                                                     <a href="#" type="button" class="btn btn-default btn-xs {{class}}" data-materialno="{{materialNo}}" data-materialid="{{materialId}}" data-orderno="{{orderNo}}" data-materialcount="{{materialCount}}">{{text}}</a>

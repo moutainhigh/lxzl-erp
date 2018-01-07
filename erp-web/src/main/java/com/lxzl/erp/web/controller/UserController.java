@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -100,9 +101,6 @@ public class UserController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-
-
-
     /**
      * 用户退出
      *
@@ -112,6 +110,30 @@ public class UserController extends BaseController {
     public Result logout() {
         session.setAttribute(CommonConstant.ERP_USER_SESSION_KEY, null);
         return resultGenerator.generate(ErrorCode.SUCCESS);
+    }
+
+    /**
+     * 用户禁用
+     * @param user
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "disabledUser", method = RequestMethod.POST)
+    public Result disabledUser(@RequestBody @Validated({IdGroup.class}) User user, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = userService.disabledUser(user);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 用户不禁用
+     * @param user
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "enableUser", method = RequestMethod.POST)
+    public Result enableUser(@RequestBody @Validated({IdGroup.class}) User user, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = userService.enableUser(user);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     @Autowired

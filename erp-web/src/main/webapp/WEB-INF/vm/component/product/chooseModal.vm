@@ -110,7 +110,7 @@
                                                 <td>
                                                     <label class="block mn switch switch-primary">
                                                         <input type="checkbox" name="isNewProduct" id="isNewProduct-{{skuId}}" value="1">
-                                                        <label for="isNewProduct-{{skuId}}" data-on="新" data-off="旧"></label>
+                                                        <label for="isNewProduct-{{skuId}}" data-on="全新" data-off="次新"></label>
                                                         <span></span>
                                                     </label>
                                                 </td>

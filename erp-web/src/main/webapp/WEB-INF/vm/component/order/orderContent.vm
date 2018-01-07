@@ -133,8 +133,6 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </th>
-                        ##                                            <th>商品ID</th>
-                        ##                                            <th>图片</th>
                             <th>商品名称</th>
                             <th>SKU</th>
                             <th>商品价值</th>
@@ -155,10 +153,6 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-##                            <td>{{productId}}</td>
-##                            <td>
-##                                <a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a>
-##                            </td>
                             <td>{{productName}}</td>
                             <td><span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{propertiesToStr}}</td>
                             <td>￥{{#price}}{{skuPrice}}{{/price}}</td>
@@ -210,18 +204,6 @@
                                     <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
                                 </div>
                             </td>
-##                            <td class="pn">
-##
-##                                <table class="table">
-##                                    {{#chooseSkuList}}
-##                                    {{#skuList}}
-##                                    <tr class="skuRow">
-##
-##                                    </tr>
-##                                    {{/skuList}}
-##                                    {{/chooseSkuList}}
-##                                </table>
-##                            </td>
                         </tr>
                         {{/listData}}
                         {{^listData}}
@@ -260,12 +242,10 @@
                                 </label>
                             </th>
                             <th>编号</th>
+                            <th>图片</th>
                             <th>名称</th>
                             <th>类型</th>
-                            <th>本身价值</th>
-                            <th>租赁价格</th>
-                            <th>描述</th>
-                            <th>图片</th>
+                            <th>配件价值</th>
                             <th>租赁类型</th>
                             <th>租赁时长</th>
                             <th>配件单价</th>
@@ -284,15 +264,10 @@
                                 </label>
                             </td>
                             <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{isNewMaterialValue}}</span>{{materialNo}}</td>
+                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                             <td>{{materialName}}</td>
                             <td>{{materialTypeStr}}</td>
                             <td>{{materialPriceFormat}}</td>
-                            <td>
-                                <p>日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
-                                <p>月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
-                            </td>
-                            <td>{{materialDesc}}</td>
-                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                             <td>
                                 <label class="field select">
                                     <select name="rentType-{{materialNo}}" class="rentType required" style="min-width: 130px;">

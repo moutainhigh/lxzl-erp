@@ -15,6 +15,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User extends BasePO {
 
+    @NotNull(message = ErrorCode.ID_NOT_NULL,groups = {IdGroup.class})
     private Integer userId;
     private Integer userType;
     private String userName;
