@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.FileService;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.*;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -118,7 +119,7 @@ public class ProductServiceImpl implements ProductService {
             return result;
         }
         ProductDO productDO = ConverterUtil.convert(product, ProductDO.class);
-        productDO.setProductNo(GenerateNoUtil.generateProductNo(currentTime));
+        productDO.setProductNo(generateNoSupport.generateProductNo(productDO.getProductModel()));
         productDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         productDO.setCreateUser(loginUser.getUserId().toString());
         productDO.setUpdateUser(loginUser.getUserId().toString());
@@ -1170,4 +1171,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private UserSupport userSupport;
+
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
 }

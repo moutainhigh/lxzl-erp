@@ -12,8 +12,10 @@ import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,6 +36,9 @@ public class UserSupport {
     private UserMapper userMapper;
     @Autowired
     private DepartmentMapper departmentMapper;
+
+    @Autowired
+    private SubCompanyMapper subCompanyMapper;
 
 
     public User getCurrentUser() {
@@ -62,6 +67,17 @@ public class UserSupport {
         List<Role> userRoleList = userService.getUserById(user.getUserId()).getResult().getRoleList();
         for (Role role : userRoleList) {
             return role.getSubCompanyId();
+        }
+        return null;
+    }
+    public SubCompanyDO getCurrentUserCompany() {
+        User user = (User) httpSession.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        List<Role> userRoleList = userService.getUserById(user.getUserId()).getResult().getRoleList();
+        for (Role role : userRoleList) {
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(role.getSubCompanyId());
+            if(subCompanyDO != null){
+                return subCompanyDO;
+            }
         }
         return null;
     }

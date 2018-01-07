@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -22,6 +23,8 @@ public class MaterialQueryParam extends BasePageParam {
     private Integer isMainMaterial;
     private Integer isRent;
     private Integer brandId;
+    private Date createStartTime;
+    private Date createEndTime;
 
     public String getMaterialNo() {
         return materialNo;
@@ -85,5 +88,21 @@ public class MaterialQueryParam extends BasePageParam {
 
     public void setBrandId(Integer brandId) {
         this.brandId = brandId;
+    }
+
+    public Date getCreateStartTime() {
+        return createStartTime;
+    }
+
+    public void setCreateStartTime(Date createStartTime) {
+        this.createStartTime = createStartTime;
+    }
+
+    public Date getCreateEndTime() {
+        return createEndTime;
+    }
+
+    public void setCreateEndTime(Date createEndTime) {
+        this.createEndTime = createEndTime;
     }
 }

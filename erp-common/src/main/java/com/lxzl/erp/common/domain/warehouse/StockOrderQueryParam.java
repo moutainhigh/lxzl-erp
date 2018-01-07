@@ -2,6 +2,8 @@ package com.lxzl.erp.common.domain.warehouse;
 
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
+import java.util.Date;
+
 /**
  * 描述: ${DESCRIPTION}
  *
@@ -26,6 +28,8 @@ public class StockOrderQueryParam extends BasePageParam {
      * 关联单编号
      */
     private String referNo;
+    private Date createStartTime;
+    private Date createEndTime;
 
     public String getStockOrderNo() {
         return stockOrderNo;
@@ -57,5 +61,21 @@ public class StockOrderQueryParam extends BasePageParam {
 
     public void setReferNo(String referNo) {
         this.referNo = referNo;
+    }
+
+    public Date getCreateEndTime() {
+        return createEndTime;
+    }
+
+    public void setCreateEndTime(Date createEndTime) {
+        this.createEndTime = createEndTime;
+    }
+
+    public Date getCreateStartTime() {
+        return createStartTime;
+    }
+
+    public void setCreateStartTime(Date createStartTime) {
+        this.createStartTime = createStartTime;
     }
 }

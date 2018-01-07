@@ -7,14 +7,17 @@ import com.lxzl.erp.common.domain.assembleOder.AssembleOrderQueryParam;
 import com.lxzl.erp.common.domain.changeOrder.ChangeOrderPageParam;
 import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
+import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
+import com.lxzl.erp.common.domain.product.ProductQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseReceiveOrderQueryParam;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderQueryParam;
 import com.lxzl.erp.common.domain.returnOrder.ReturnOrderPageParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.warehouse.StockOrderQueryParam;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -25,8 +28,10 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.deploymentOrder.DeploymentOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseDeliveryOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseReceiveOrderMapper;
@@ -34,6 +39,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.transferOrder.TransferOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.domain.area.AreaCityDO;
@@ -71,6 +77,139 @@ public class GenerateNoSupport {
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
             builder.append(buyerCustomerId);
             builder.append(String.format("%05d", orderCount + 1));
+            return builder.toString();
+        }
+    }
+
+    /**
+     * 生成商品编号
+     */
+    public String generateProductNo(String productModel) {
+        Date currentTime = new Date();
+        if (productModel == null) {
+            productModel = "";
+        }
+        synchronized (this) {
+            ProductQueryParam productQueryParam = new ProductQueryParam();
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("start", 0);
+            maps.put("pageSize", Integer.MAX_VALUE);
+            productQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+            productQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            maps.put("productQueryParam", productQueryParam);
+            Integer productCount = productMapper.findProductCountByParams(maps);
+            StringBuilder builder = new StringBuilder();
+            builder.append("LXP-");
+            builder.append(productModel);
+            builder.append("-");
+            builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+
+            builder.append(String.format("%05d", productCount + 1));
+            return builder.toString();
+        }
+    }
+
+    /**
+     * 生成商品编号
+     */
+    public String generateEquipmentNo(String productModel,String cityCode) {
+        Date currentTime = new Date();
+        if (productModel == null) {
+            productModel = "";
+        }
+        synchronized (this) {
+            ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("start", 0);
+            maps.put("pageSize", Integer.MAX_VALUE);
+            productEquipmentQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+            productEquipmentQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            maps.put("productEquipmentQueryParam", productEquipmentQueryParam);
+            Integer productCount = productEquipmentMapper.listCount(maps);
+            StringBuilder builder = new StringBuilder();
+            builder.append("LXP-");
+            builder.append(cityCode);
+            builder.append("-");
+            builder.append(productModel);
+            builder.append("-");
+            builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+
+            builder.append(String.format("%05d", productCount + 1));
+            return builder.toString();
+        }
+    }
+
+    /**
+     * 生成入库单号
+     */
+    public String generateStockOrderNo() {
+        Date currentTime = new Date();
+
+        synchronized (this) {
+            StockOrderQueryParam stockOrderQueryParam = new StockOrderQueryParam();
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("start", 0);
+            maps.put("pageSize", Integer.MAX_VALUE);
+            stockOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+            stockOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            maps.put("stockOrderQueryParam", stockOrderQueryParam);
+            Integer count = stockOrderMapper.listCount(maps);
+            StringBuilder builder = new StringBuilder();
+            builder.append("LXSO");
+            builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append(String.format("%05d", count + 1));
+            return builder.toString();
+        }
+    }
+
+    /**
+     * 生成散料编号
+     */
+    public String generateBulkMaterialNo(String materialModel, String cityCode) {
+        Date currentTime = new Date();
+        materialModel = materialModel == null ? "" : materialModel;
+        synchronized (this) {
+            BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("start", 0);
+            maps.put("pageSize", Integer.MAX_VALUE);
+            bulkMaterialQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+            bulkMaterialQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            maps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
+            Integer count = bulkMaterialMapper.listCount(maps);
+            StringBuilder builder = new StringBuilder();
+            builder.append("LX-");
+            builder.append(cityCode);
+            builder.append("-");
+            builder.append(materialModel);
+            builder.append("-");
+            builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append(String.format("%05d", count + 1));
+            return builder.toString();
+        }
+    }
+
+    /**
+     * 生成散料编号
+     */
+    public String generateMaterialNo(String materialModel) {
+        Date currentTime = new Date();
+        materialModel = materialModel == null ? "" : materialModel;
+        synchronized (this) {
+            MaterialQueryParam materialQueryParam = new MaterialQueryParam();
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("start", 0);
+            maps.put("pageSize", Integer.MAX_VALUE);
+            materialQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+            materialQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            maps.put("materialQueryParam", materialQueryParam);
+            Integer count = materialMapper.listCount(maps);
+            StringBuilder builder = new StringBuilder();
+            builder.append("LX-");
+            builder.append(materialModel);
+            builder.append("-");
+            builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append(String.format("%05d", count + 1));
             return builder.toString();
         }
     }
@@ -457,13 +596,13 @@ public class GenerateNoSupport {
 
     /**
      * 生成组装单编号
-     * */
-    public String generateAssemblerOderNo(Date date,Integer warehouseId){
+     */
+    public String generateAssemblerOderNo(Date date, Integer warehouseId) {
         HashMap<String, Object> maps = new HashMap<>();
         AssembleOrderQueryParam assembleOrderQueryParam = new AssembleOrderQueryParam();
         assembleOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
         assembleOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
-        maps.put("assembleOrderQueryParam",assembleOrderQueryParam);
+        maps.put("assembleOrderQueryParam", assembleOrderQueryParam);
         Integer count = assembleOrderMapper.listCount(maps);
         StringBuilder builder = new StringBuilder();
         builder.append("LXA");
@@ -472,15 +611,16 @@ public class GenerateNoSupport {
         builder.append(count + 1);
         return builder.toString();
     }
+
     /**
      * 转移单编号
-     * */
-    public String generateTransferOrderNo(Date date,Integer warehouseId){
+     */
+    public String generateTransferOrderNo(Date date, Integer warehouseId) {
         HashMap<String, Object> maps = new HashMap<>();
         TransferOrderOrderQueryParam transferOrderOrderQueryParam = new TransferOrderOrderQueryParam();
         transferOrderOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
         transferOrderOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
-        maps.put("transferOrderOrderQueryParam",transferOrderOrderQueryParam);
+        maps.put("transferOrderOrderQueryParam", transferOrderOrderQueryParam);
         Integer count = transferOrderMapper.listCount(maps);
         StringBuilder builder = new StringBuilder();
         builder.append("LXT");
@@ -520,8 +660,6 @@ public class GenerateNoSupport {
     @Autowired
     private StatementOrderMapper statementOrderMapper;
     @Autowired
-    private BulkMaterialMapper bulkMaterialMapper;
-    @Autowired
     private DeploymentOrderMapper deploymentOrderMapper;
     @Autowired
     private UserSupport userSupport;
@@ -529,4 +667,12 @@ public class GenerateNoSupport {
     private AssembleOrderMapper assembleOrderMapper;
     @Autowired
     private TransferOrderMapper transferOrderMapper;
+    @Autowired
+    private ProductMapper productMapper;
+    @Autowired
+    private StockOrderMapper stockOrderMapper;
+    @Autowired
+    private BulkMaterialMapper bulkMaterialMapper;
+    @Autowired
+    private MaterialMapper materialMapper;
 }

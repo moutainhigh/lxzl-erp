@@ -133,6 +133,12 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(eso.id) from erp_stock_order eso
 		<where>
+			<if test="maps.stockOrderQueryParam.createStartTime != null">
+				<![CDATA[ AND eso.create_time >= #{maps.stockOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.stockOrderQueryParam.createEndTime != null">
+				<![CDATA[ AND eso.create_time <= #{maps.stockOrderQueryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				and eso.data_status = 1
 			</if>
@@ -160,6 +166,12 @@
 			LEFT JOIN erp_warehouse ews ON ews.id = eso.src_warehouse_id AND ews.data_status = 1
 			LEFT JOIN erp_warehouse ewt ON ewt.id = eso.target_warehouse_id AND ewt.data_status = 1
 			<where>
+				<if test="maps.stockOrderQueryParam.createStartTime != null">
+					<![CDATA[ AND eso.create_time >= #{maps.stockOrderQueryParam.createStartTime} ]]>
+				</if>
+				<if test="maps.stockOrderQueryParam.createEndTime != null">
+					<![CDATA[ AND eso.create_time <= #{maps.stockOrderQueryParam.createEndTime} ]]>
+				</if>
 				<if test="true">
 					and eso.data_status = 1
 				</if>

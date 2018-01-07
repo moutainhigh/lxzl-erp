@@ -32,7 +32,7 @@ public class GenerateNoUtil {
 
     public static String generateBulkMaterialNo(Date currentTime, int no) {
         currentTime = new Date();
-        return "LXBM" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) +  + (10000 + no);
+        return "LXBM" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + +(10000 + no);
     }
 
     public static String generateMaterialNo(Date currentTime) {
@@ -40,10 +40,12 @@ public class GenerateNoUtil {
         Random random = new Random();
         return "LXM" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentTime) + (1000 + random.nextInt(900));
     }
+
     public static String generateEquipmentNo(Date currentTime, Integer warehouseId, int no) {
         currentTime = new Date();
         return "LX-E-" + warehouseId + "-" + new SimpleDateFormat("yyyyMMdd").format(currentTime) + (10000 + no);
     }
+
     public static String generateStatementNo(Date currentTime) {
         currentTime = new Date();
         Random random = new Random();

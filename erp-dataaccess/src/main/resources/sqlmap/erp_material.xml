@@ -147,6 +147,12 @@
 			<if test="maps.materialQueryParam.brandId != null &amp;&amp; maps.materialQueryParam.brandId != ''">
 				and em.brand_id = #{maps.materialQueryParam.brandId, jdbcType=INTEGER}
 			</if>
+			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.createStartTime != null ">
+				<![CDATA[ AND em.create_time >= #{maps.materialQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.createEndTime != null">
+				<![CDATA[ AND em.create_time <= #{maps.materialQueryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				AND em.data_status = 1
 			</if>
@@ -187,6 +193,12 @@
 				</if>
 				<if test="maps.materialQueryParam.brandId != null &amp;&amp; maps.materialQueryParam.brandId != ''">
 					and em.brand_id = #{maps.materialQueryParam.brandId, jdbcType=INTEGER}
+				</if>
+				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.createStartTime != null ">
+					<![CDATA[ AND em.create_time >= #{maps.materialQueryParam.createStartTime} ]]>
+				</if>
+				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.createEndTime != null">
+					<![CDATA[ AND em.create_time <= #{maps.materialQueryParam.createEndTime} ]]>
 				</if>
 				<if test="true">
 					AND em.data_status = 1

@@ -142,7 +142,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         productCategoryPropertyValueDO.setUpdateTime(currentTime);
         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
         // 自动添加物料，处于下架状态
-        saveMaterial(productCategoryPropertyDO, productCategoryPropertyValueDO, loginUser, currentTime);
+        // saveMaterial(productCategoryPropertyDO, productCategoryPropertyValueDO, loginUser, currentTime);
 
         result.setResult(productCategoryPropertyValueDO.getId());
         result.setErrorCode(ErrorCode.SUCCESS);

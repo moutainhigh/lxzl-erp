@@ -19,7 +19,6 @@ import com.lxzl.erp.common.domain.warehouse.pojo.StockOrder;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
@@ -27,12 +26,10 @@ import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.*;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
-import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentBulkMaterialDO;
-import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
-import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterialDO;
-import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
+import com.lxzl.erp.dataaccess.domain.product.*;
 import com.lxzl.erp.dataaccess.domain.warehouse.*;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -91,6 +88,9 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Autowired
     private UserSupport userSupport;
+
+    @Autowired
+    private ProductMapper productMapper;
 
     @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
@@ -338,7 +338,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         // 生成入库单
         StockOrderDO stockOrderDO = new StockOrderDO();
         stockOrderDO.setOperationType(StockOperationType.STORCK_OPERATION_TYPE_IN);
-        stockOrderDO.setStockOrderNo(GenerateNoUtil.generateStockOrderNo(currentTime));
+        stockOrderDO.setStockOrderNo(generateNoSupport.generateStockOrderNo());
         stockOrderDO.setCauseType(causeType);
         stockOrderDO.setReferNo(referNo);
         stockOrderDO.setSrcWarehouseId(srcWarehouseId);
@@ -457,7 +457,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
         StockOrderDO stockOrderDO = new StockOrderDO();
         stockOrderDO.setOperationType(StockOperationType.STORCK_OPERATION_TYPE_OUT);
-        stockOrderDO.setStockOrderNo(GenerateNoUtil.generateStockOrderNo(currentTime));
+        stockOrderDO.setStockOrderNo(generateNoSupport.generateStockOrderNo());
         stockOrderDO.setCauseType(causeType);
         stockOrderDO.setReferNo(referNo);
         stockOrderDO.setSrcWarehouseId(srcWarehouseId);
@@ -567,6 +567,10 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     private void saveBulkMaterial(String stockOrderNo, Integer warehouseId, Integer warehousePositionId, MaterialInStorage materialInStorage, Date currentTime, ProductInStockCounter productInStockCounter) {
+
+        SubCompanyDO subCompanyDO = userSupport.getCurrentUserCompany();
+        String cityCode = subCompanyDO == null ? "" : subCompanyDO.getSubCompanyCode();
+
         // 入库散料（由物料产生散料）
         List<BulkMaterialDO> allBulkMaterialDOList = new ArrayList<>();
         // 入库物料记录
@@ -585,7 +589,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             MaterialDO materialDO = materialMap.get(materialInStorage.getMaterialId());
 
             BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
-            bulkMaterialDO.setBulkMaterialNo(GenerateNoUtil.generateBulkMaterialNo(currentTime, productInStockCounter.getBulkMaterialCount()));
+            bulkMaterialDO.setBulkMaterialNo(generateNoSupport.generateBulkMaterialNo(materialDO.getMaterialModel(), cityCode));
             bulkMaterialDO.setMaterialId(materialInStorage.getMaterialId());
             bulkMaterialDO.setCurrentWarehouseId(warehouseId);
             bulkMaterialDO.setCurrentWarehousePositionId(warehousePositionId);
@@ -642,6 +646,10 @@ public class WarehouseServiceImpl implements WarehouseService {
     private void saveProductEquipment(String stockOrderNo, Integer warehouseId, Integer warehousePositionId, ProductInStorage productInStorage, Date currentTime, ProductInStockCounter productInStockCounter) {
         User loginUser = userSupport.getCurrentUser();
 
+        SubCompanyDO subCompanyDO = userSupport.getCurrentUserCompany();
+        String cityCode = subCompanyDO == null ? "" : subCompanyDO.getSubCompanyCode();
+
+
         // 入库设备
         List<ProductEquipmentDO> allProductEquipmentDOList = new ArrayList<>();
         Map<String, ProductEquipmentDO> allProductEquipmentDOMap = new HashMap<>();
@@ -660,11 +668,12 @@ public class WarehouseServiceImpl implements WarehouseService {
         Integer itemReferType = productInStorage.getItemReferType();
 
         ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
+        ProductDO productDO = productMapper.findByProductId(productSkuDO.getProductId());
 
         Map<Integer, MaterialDO> materialMap = new HashMap<>();
         for (int i = 0; i < productInStorage.getProductCount(); i++) {
             ProductEquipmentDO productEquipmentDO = new ProductEquipmentDO();
-            productEquipmentDO.setEquipmentNo(GenerateNoUtil.generateEquipmentNo(currentTime, warehouseId, productInStockCounter.getProductEquipmentCount()));
+            productEquipmentDO.setEquipmentNo(generateNoSupport.generateEquipmentNo(productDO.getProductModel(), cityCode));
             productEquipmentDO.setProductId(productInStorage.getProductId());
             productEquipmentDO.setSkuId(productInStorage.getProductSkuId());
             productEquipmentDO.setEquipmentPrice(productSkuDO.getSkuPrice());
@@ -714,7 +723,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                     for (int j = 0; j < productMaterial.getMaterialCount(); j++) {
                         MaterialDO materialDO = materialMap.get(productMaterial.getMaterialId());
                         BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
-                        bulkMaterialDO.setBulkMaterialNo(GenerateNoUtil.generateBulkMaterialNo(currentTime, productInStockCounter.getBulkMaterialCount()));
+                        bulkMaterialDO.setBulkMaterialNo(generateNoSupport.generateBulkMaterialNo(materialDO.getMaterialModel(), cityCode));
                         bulkMaterialDO.setMaterialId(productMaterial.getMaterialId());
                         bulkMaterialDO.setCurrentWarehouseId(warehouseId);
                         bulkMaterialDO.setCurrentWarehousePositionId(warehousePositionId);

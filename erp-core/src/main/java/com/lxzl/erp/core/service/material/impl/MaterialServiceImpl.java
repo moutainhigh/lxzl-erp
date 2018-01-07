@@ -17,6 +17,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.FileService;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.MaterialImageConverter;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -95,6 +96,9 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Autowired(required = false)
     private HttpSession session;
+
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
 
     @Override
     public ServiceResult<String, List<MaterialImg>> uploadImage(MultipartFile[] files) {
@@ -186,7 +190,7 @@ public class MaterialServiceImpl implements MaterialService {
         } else {
             materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_NO);
         }
-        materialDO.setMaterialNo(GenerateNoUtil.generateMaterialNo(currentTime));
+        materialDO.setMaterialNo(generateNoSupport.generateMaterialNo(materialDO.getMaterialModel()));
         materialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         materialDO.setUpdateUser(loginUser.getUserId().toString());
         materialDO.setCreateUser(loginUser.getUserId().toString());

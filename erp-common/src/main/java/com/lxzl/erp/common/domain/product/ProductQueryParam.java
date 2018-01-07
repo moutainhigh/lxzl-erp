@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductQueryParam extends BasePageParam {
@@ -14,6 +15,8 @@ public class ProductQueryParam extends BasePageParam {
     private Integer isRent;
     private Integer brandId;
     private Integer categoryId;
+    private Date createStartTime;
+    private Date createEndTime;
 
     public Integer getProductId() {
         return productId;
@@ -53,5 +56,21 @@ public class ProductQueryParam extends BasePageParam {
 
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public Date getCreateStartTime() {
+        return createStartTime;
+    }
+
+    public void setCreateStartTime(Date createStartTime) {
+        this.createStartTime = createStartTime;
+    }
+
+    public Date getCreateEndTime() {
+        return createEndTime;
+    }
+
+    public void setCreateEndTime(Date createEndTime) {
+        this.createEndTime = createEndTime;
     }
 }

@@ -176,6 +176,12 @@
                 <if test="maps.productQueryParam.categoryId != null">
                     and ep.category_id = #{maps.productQueryParam.categoryId, jdbcType=INTEGER}
                 </if>
+                <if test="maps.productQueryParam.createStartTime != null">
+                    <![CDATA[ AND ep.create_time >= #{maps.productQueryParam.createStartTime} ]]>
+                </if>
+                <if test="maps.productQueryParam.createEndTime != null">
+                    <![CDATA[ AND ep.create_time <= #{maps.productQueryParam.createEndTime} ]]>
+                </if>
                 <if test="true">
                     and ep.data_status = 1
                 </if>
@@ -205,6 +211,12 @@
             </if>
             <if test="maps.productQueryParam.categoryId != null">
                 and ep.category_id = #{maps.productQueryParam.categoryId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.productQueryParam.createStartTime != null">
+                <![CDATA[ AND ep.create_time >= #{maps.productQueryParam.createStartTime} ]]>
+            </if>
+            <if test="maps.productQueryParam.createEndTime != null">
+                <![CDATA[ AND ep.create_time <= #{maps.productQueryParam.createEndTime} ]]>
             </if>
             <if test="true">
                 and ep.data_status = 1

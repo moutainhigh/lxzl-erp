@@ -12,6 +12,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.statement.StatementService;
@@ -826,7 +827,7 @@ public class StatementServiceImpl implements StatementService {
 
                 if (!statementOrderDOMap.containsKey(dateKey)) {
                     statementOrderDO = new StatementOrderDO();
-                    statementOrderDO.setStatementOrderNo(GenerateNoUtil.generateStatementNo(currentTime));
+                    statementOrderDO.setStatementOrderNo(generateNoSupport.generateStatementOrderNo(dateKey, buyerCustomerId));
                     statementOrderDO.setCustomerId(buyerCustomerId);
                     statementOrderDO.setStatementExpectPayTime(dateKey);
                     statementOrderDO.setStatementAmount(statementOrderDetailDO.getStatementDetailAmount());
@@ -1098,4 +1099,7 @@ public class StatementServiceImpl implements StatementService {
 
     @Autowired
     private OrderTimeAxisSupport orderTimeAxisSupport;
+
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
 }
