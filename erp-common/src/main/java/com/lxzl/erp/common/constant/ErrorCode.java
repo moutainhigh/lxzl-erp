@@ -545,7 +545,7 @@ public class ErrorCode {
         MAP.put(ORDER_MATERIAL_COUNT_ERROR, "设备数量必须大于0！");
         MAP.put(CUSTOMER_RENT_THIS_BULK_MATERIAL_NO_MORE, "该配件客户的在租只有【%d】个！");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_NOT_MATCHING, "订单设备不匹配");
-        MAP.put(WAREHOUSE_NOT_AVAILABLE, "仓库不可用");
+        MAP.put(WAREHOUSE_NOT_AVAILABLE, "您无权使用该仓库");
         MAP.put(PRODUCT_EQUIPMENT_NOT_NEW, "设备不是全新的");
         MAP.put(PRODUCT_EQUIPMENT_NOT_OLD, "设备不是次新的");
         MAP.put(DEPLOYMENT_ORDER_HAVE_NO_THIS_PRODUCT_EQUIPMENT, "调拨单没有该设备");

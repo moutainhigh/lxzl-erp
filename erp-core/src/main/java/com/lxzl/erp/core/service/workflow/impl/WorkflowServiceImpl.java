@@ -174,6 +174,13 @@ public class WorkflowServiceImpl implements WorkflowService {
             return result;
         }
 
+        if(VerifyStatus.VERIFY_STATUS_PASS.equals(workflowLinkDO.getCurrentVerifyStatus())
+                || VerifyStatus.VERIFY_STATUS_BACK.equals(workflowLinkDO.getCurrentVerifyStatus())
+                || VerifyStatus.VERIFY_STATUS_BACK.equals(workflowLinkDO.getCurrentVerifyStatus())){
+            result.setErrorCode(ErrorCode.VERIFY_STATUS_ERROR);
+            return result;
+        }
+
         workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_CANCEL);
         workflowLinkDO.setCurrentVerifyUser(userSupport.getCurrentUserId());
         workflowLinkMapper.update(workflowLinkDO);

@@ -540,6 +540,10 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                 return result;
             }
             WarehouseDO currentWarehouse = warehouseSupport.getAvailableWarehouse(productEquipmentDO.getCurrentWarehouseId());
+            if (currentWarehouse == null) {
+                result.setErrorCode(ErrorCode.WAREHOUSE_NOT_AVAILABLE);
+                return result;
+            }
             if (!ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE.equals(productEquipmentDO.getEquipmentStatus())) {
                 result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_IS_NOT_IDLE, equipmentNo);
                 return result;
@@ -832,6 +836,12 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
 
         if (CollectionUtil.isEmpty(param.getEquipmentNoList()) && (param.getMaterialCount() == null || param.getMaterialCount() < 0)) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+
+        WarehouseDO warehouseDO = warehouseSupport.getAvailableWarehouse(deploymentOrderDO.getTargetWarehouseId());
+        if (warehouseDO == null) {
+            result.setErrorCode(ErrorCode.WAREHOUSE_NOT_AVAILABLE);
             return result;
         }
 

@@ -565,7 +565,7 @@ public class PurchaseOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void confirmPurchaseReceiveOrder() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();
-        purchaseReceiveOrder.setPurchaseReceiveNo("LXPR1000201801060174");
+        purchaseReceiveOrder.setPurchaseReceiveNo("LXPR0755201801070185");
         TestResult testResult = getJsonTestResult("/purchaseOrder/confirmPurchaseReceiveOrder", purchaseReceiveOrder);
     }
 

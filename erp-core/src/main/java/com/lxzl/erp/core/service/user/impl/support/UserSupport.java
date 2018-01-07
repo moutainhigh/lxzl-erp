@@ -4,11 +4,13 @@ import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.DepartmentType;
 import com.lxzl.erp.common.constant.SubCompanyType;
+import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.user.pojo.UserRole;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
@@ -21,7 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class UserSupport {
@@ -70,12 +74,13 @@ public class UserSupport {
         }
         return null;
     }
+
     public SubCompanyDO getCurrentUserCompany() {
         User user = (User) httpSession.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         List<Role> userRoleList = userService.getUserById(user.getUserId()).getResult().getRoleList();
         for (Role role : userRoleList) {
             SubCompanyDO subCompanyDO = subCompanyMapper.findById(role.getSubCompanyId());
-            if(subCompanyDO != null){
+            if (subCompanyDO != null) {
                 return subCompanyDO;
             }
         }
@@ -141,7 +146,31 @@ public class UserSupport {
                 }
             }
         }
-
         return false;
+    }
+
+    /**
+     * 校验当前人是否能使用当前部门，如果返回
+     */
+    public DepartmentDO getAvailableDepartment(Integer departmentId) {
+        DepartmentQueryParam departmentQueryParam = new DepartmentQueryParam();
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("start", 0);
+        paramMap.put("pageSize", Integer.MAX_VALUE);
+        paramMap.put("departmentQueryParam", departmentQueryParam);
+        List<DepartmentDO> departmentDOList = departmentMapper.listPage(paramMap);
+
+        Map<Integer, DepartmentDO> departmentDOMap = ListUtil.listToMap(departmentDOList, "id");
+        UserDO userDO = userMapper.findByUserId(getCurrentUserId());
+        List<Role> userRoleList = userService.getUserById(userDO.getId()).getResult().getRoleList();
+        if(CollectionUtil.isNotEmpty(userRoleList)){
+            for (Role role : userRoleList) {
+                if (role.getDepartmentId().equals(departmentId) && departmentDOMap.containsKey(role.getDepartmentId())) {
+                    return departmentDOMap.get(role.getDepartmentId());
+                }
+            }
+        }
+        return null;
     }
 }
