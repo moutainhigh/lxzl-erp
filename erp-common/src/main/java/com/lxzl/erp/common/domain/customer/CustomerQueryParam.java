@@ -11,6 +11,7 @@ import java.util.Date;
  */
 public class CustomerQueryParam implements Serializable {
 
+    private String customerNo;
     private Date createStartTime;
     private Date createEndTime;
 
@@ -28,5 +29,13 @@ public class CustomerQueryParam implements Serializable {
 
     public void setCreateEndTime(Date createEndTime) {
         this.createEndTime = createEndTime;
+    }
+
+    public String getCustomerNo() {
+        return customerNo;
+    }
+
+    public void setCustomerNo(String customerNo) {
+        this.customerNo = customerNo;
     }
 }

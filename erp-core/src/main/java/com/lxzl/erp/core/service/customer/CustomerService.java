@@ -14,6 +14,7 @@ public interface CustomerService {
     ServiceResult<String,String> updatePerson(Customer customer);
     ServiceResult<String,Page<Customer>> pageCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam);
     ServiceResult<String,Page<Customer>> pageCustomerPerson(CustomerPersonQueryParam customerPersonQueryParam);
+    ServiceResult<String,Customer> detailCustomer(String customerNo);
     ServiceResult<String,Customer> detailCustomerCompany(Customer customer);
     ServiceResult<String,Customer> detailCustomerPerson(Customer customer);
     ServiceResult<String,String> updateRisk(CustomerRiskManagement customerRiskManagement);

@@ -91,7 +91,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerCompany().getCompanyName());
-        if(dbCustomerDO != null){
+        if (dbCustomerDO != null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;
         }
@@ -187,7 +187,7 @@ public class CustomerServiceImpl implements CustomerService {
         Date now = new Date();
 
         CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerPerson().getRealName());
-        if(dbCustomerDO != null){
+        if (dbCustomerDO != null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;
         }
@@ -250,7 +250,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerCompany().getCompanyName());
-        if(dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())){
+        if (dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;
         }
@@ -417,7 +417,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerPerson().getRealName());
-        if(dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())){
+        if (dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;
         }
@@ -620,6 +620,36 @@ public class CustomerServiceImpl implements CustomerService {
             List<Image> otherDateImageList = ConverterUtil.convertList(otherDateImageListDOList, Image.class);
             customerResult.getCustomerCompany().setOtherDateImageList(otherDateImageList);
         }
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(customerResult);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, Customer> detailCustomer(String customerNo) {
+        ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        if (customerDO == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+        if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
+            customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
+        } else if (CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
+            customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
+        }
+        CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
+        Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
+        //显示联合开发原的省，市，区
+        if (customerDO.getUnionUser() != null) {
+            Integer companyId = userSupport.getCompanyIdByUser(customerDO.getUnionUser());
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(companyId);
+            customerResult.setUnionAreaProvinceName(subCompanyDO.getProvinceName());
+            customerResult.setUnionAreaCityName(subCompanyDO.getCityName());
+            customerResult.setUnionAreaDistrictName(subCompanyDO.getDistrictName());
+        }
+        customerResult.setCustomerAccount(customerAccount);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
