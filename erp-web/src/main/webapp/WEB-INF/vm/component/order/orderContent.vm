@@ -98,10 +98,10 @@
         <div class="row">
             <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
                 <li class="active">
-                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
+                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
                 </li>
                 <li>
-                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项</a>
+                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
                 </li>
             </ul>
         </div>
@@ -134,7 +134,9 @@
                                 </label>
                             </th>
                             <th>商品名称</th>
-                            <th>SKU</th>
+                            <th>类别</th>
+                            <th>品牌</th>
+                            <th>商品参数（SKU）</th>
                             <th>商品价值</th>
                             <th>商品单价</th>
                             <th>租赁数量</th>
@@ -153,8 +155,10 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                            <td>{{productName}}</td>
-                            <td><span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{propertiesToStr}}</td>
+                            <td><span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{productName}}</td>
+                            <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+                            <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                            <td>{{propertiesToStr}}</td>
                             <td>￥{{#price}}{{skuPrice}}{{/price}}</td>
                             <td class="productUnitAmountTd">
                                 <div class="smart-widget sm-right smr-50">
@@ -241,15 +245,17 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </th>
-                            <th>编号</th>
-                            <th>图片</th>
-                            <th>名称</th>
+##                            <th>编号</th>
+##                            <th>图片</th>
+                            <th>配件名称</th>
+                            <th>品牌</th>
                             <th>类型</th>
                             <th>配件价值</th>
-                            <th>租赁类型</th>
-                            <th>租赁时长</th>
                             <th>配件单价</th>
                             <th>数量</th>
+                            <th>租赁类型</th>
+                            <th>租赁时长</th>
+                            <th>设备押金</th>
                             <th class="text-right">操作</th>
                         </tr>
                         </thead>
@@ -263,35 +269,12 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                            <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{isNewMaterialValue}}</span>{{materialNo}}</td>
-                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-                            <td>{{materialName}}</td>
+##                            <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{isNewMaterialValue}}</span>{{materialNo}}</td>
+##                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                            <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{isNewMaterialValue}}</span>{{materialName}}</td>
+                            <td>{{brandName}}</td>
                             <td>{{materialTypeStr}}</td>
-                            <td>{{materialPriceFormat}}</td>
-                            <td>
-                                <label class="field select">
-                                    <select name="rentType-{{materialNo}}" class="rentType required" style="min-width: 130px;">
-                                        <option value="">选择租赁类型</option>
-                                        {{#rentTypeList}}
-                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
-                                        {{/rentTypeList}}
-                                    </select>
-                                    <i class="arrow"></i>
-                                </label>
-                            </td>
-                            <td>
-                                <div class="mw200">
-                                    <label class="field prepend-icon">
-                                        <input type="text" name="rentTimeLength-{{materialNo}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required number pl10" placeholder="租赁时长" />
-                                    </label>
-                                    {{#showDepositAmount}}
-                                    <label class="field prepend-icon mt10">
-                                        <input type="text" name="depositAmount-{{materialNo}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入配件押金" />
-                                        <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                                    </label>
-                                    {{/showDepositAmount}}
-                                </div>
-                            </td>
+                            <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
                             <td class="materialUnitAmountTd">
                                 <div class="smart-widget sm-right smr-50">
                                     <label class="field prepend-icon">
@@ -308,6 +291,32 @@
                                 <label class="field prepend-icon mw200">
                                     <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入租赁数量" />
                                 </label>
+                            </td>
+                            <td>
+                                <label class="field select">
+                                    <select name="rentType-{{materialNo}}" class="rentType required" style="min-width: 130px;">
+                                        <option value="">选择租赁类型</option>
+                                        {{#rentTypeList}}
+                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                        {{/rentTypeList}}
+                                    </select>
+                                    <i class="arrow"></i>
+                                </label>
+                            </td>
+                            <td>
+                                <div class="mw200">
+                                    <label class="field prepend-icon">
+                                        <input type="text" name="rentTimeLength-{{materialNo}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required number pl10" placeholder="租赁时长" />
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                {{#showDepositAmount}}
+                                <label class="field prepend-icon">
+                                    <input type="text" name="depositAmount-{{materialNo}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入配件押金" />
+                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                </label>
+                                {{/showDepositAmount}}
                             </td>
                             <td class="text-right">
                                 <div class="btn-group text-right">

@@ -82,12 +82,16 @@
                                             </label>
                                         </th>
                                         {{/hasCommonActionButtons}}
-                                        <th class="">订单编号</th>
-                                        <th class="">客户</th>
-                                        <th class="">订单总价</th>
-                                        <th class="">支付状态</th>
-                                        <th class="">订单状态</th>
-                                        <th class="">创建人</th>
+                                        <th>订单编号</th>
+                                        <th>订单归属</th>
+                                        <th>送货日期</th>
+                                        <th>客户</th>
+                                        <th>商品名</th>
+                                        <th>订单总价</th>
+                                        <th>支付状态</th>
+                                        <th>订单状态</th>
+                                        <th>收货人</th>
+                                        <th>创建人</th>
                                         {{#hasRowActionButtons}}
                                         <th class="text-right">操作</th>
                                         {{/hasRowActionButtons}}
@@ -106,13 +110,26 @@
                                             </td>
                                             {{/hasCommonActionButtons}}
                                             <td>{{orderNo}}</td>
+                                            <td>{{orderSubCompanyName}}</td>
+                                            <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
                                             <td>{{buyerCustomerName}}</td>
+                                            <td>
+                                                {{orderItemName}}
+                                            </td>
                                             <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
                                             <td>
                                                 <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
                                                 <p class="mn mt5">{{#clockTime}}{{payTime}}{{/clockTime}}</p>
                                             </td>
-                                            <td class="{{orderStatusClass}}">{{orderStatusStr}}</td>>
+                                            <td>
+                                                <p class="mn {{orderStatusClass}}">{{orderStatusStr}}</p>
+                                                <p class="mn mt5">{{#clockShorTime}}{{confirmDeliveryTime}}{{/clockShorTime}}</p>
+                                            </td>
+                                            <td>
+                                                <p class="mn">{{orderConsignInfo.consigneeName}}</p>
+                                                <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{orderConsignInfo.consigneePhone}}</p>
+                                                <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}</p>
+                                            </td>
                                             <td>
                                                 <p class="mn">{{createUserRealName}}</p>
                                                 <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>

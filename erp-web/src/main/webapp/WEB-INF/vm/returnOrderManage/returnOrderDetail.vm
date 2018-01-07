@@ -90,10 +90,10 @@
                         <div class="row">
                             <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
                                 <li class="active">
-                                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
+                                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
                                 </li>
                                 <li>
-                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项</a>
+                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
                                 </li>
                             </ul>
                         </div>
@@ -124,9 +124,10 @@
                                         <thead>
                                         <tr class="bg-light">
                                             <th>商品名称</th>
-                                            <th>SKU</th>
-                                            <th>预计退还数量</th>
-                                            <th>退货数量</th>
+                                            <th>类别</th>
+                                            <th>品牌</th>
+                                            <th>商品参数（SKU）</th>
+                                            <th>实际 / 预计（退货数量）</th>
                                             <th class="text-right">操作</th>
                                         </tr>
                                         </thead>
@@ -134,10 +135,11 @@
                                         {{#listData}}
                                         <tr class="productRow" productRowKey="{{productId}}">
                                             <td>{{productName}}</td>
+                                            <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+                                            <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                                             <td>{{propertiesToStr}}</td>
-                                            <td>{{returnProductSkuCount}}</td>
                                             <td>
-                                               {{returnProductSkuCount}}
+                                               {{realReturnProductSkuCount}}/{{returnProductSkuCount}}
                                             </td>
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
@@ -196,16 +198,13 @@
                                                     <span class="checkbox mn"></span>
                                                 </label>
                                             </th>
-                                            <th>编号</th>
-                                            <th>名称</th>
+                                            <th>配件名称</th>
+##                                            <th>图片</th>
+                                            <th>品牌</th>
                                             <th>类型</th>
-                                            <th>本身价值</th>
-                                            <th>租赁价格</th>
-                                            <th>描述</th>
-                                            <th>图片</th>
-##                                            <th>在租数量</th>
-                                            <th>预计退货数量</th>
-                                            <th>退货数量</th>
+                                            <th>配件价值</th>
+##                                            <th>预计退货数量</th>
+                                            <th>实际 / 预计(退货数量)</th>
                                             <th class="text-right">操作</th>
                                         </tr>
                                         </thead>
@@ -219,21 +218,13 @@
                                                     <span class="checkbox mn"></span>
                                                 </label>
                                             </td>
-                                            <td>{{materialNo}}</td>
                                             <td>{{materialName}}</td>
+##                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                                            <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
                                             <td>{{materialTypeStr}}</td>
-                                            <td>{{#price}}{{materialPrice}}{{/price}}</td>
+                                            <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
                                             <td>
-                                                <p>日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
-                                                <p>月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
-                                            </td>
-                                            <td>{{materialDesc}}</td>
-                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-                                            <td>{{returnMaterialCount}}</td>
-                                            <td>
-                                                <label class="field prepend-icon mw200">
-                                                    {{returnMaterialCount}}
-                                                </label>
+                                                {{realReturnMaterialCount}}/{{returnMaterialCount}}
                                             </td>
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
