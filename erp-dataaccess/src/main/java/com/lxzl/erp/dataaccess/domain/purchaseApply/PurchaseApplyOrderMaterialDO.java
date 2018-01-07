@@ -11,6 +11,7 @@ public class PurchaseApplyOrderMaterialDO  extends BaseDO {
 	private String purchaseApplyOrderNo;
 	private Integer materialId;
 	private String materialNo;
+	private String materialSnapshot;
 	private Integer applyCount;
 	private Integer realCount;
 	private Date purchaseStartTime;
@@ -59,6 +60,14 @@ public class PurchaseApplyOrderMaterialDO  extends BaseDO {
 
 	public void setMaterialNo(String materialNo){
 		this.materialNo = materialNo;
+	}
+
+	public String getMaterialSnapshot() {
+		return materialSnapshot;
+	}
+
+	public void setMaterialSnapshot(String materialSnapshot) {
+		this.materialSnapshot = materialSnapshot;
 	}
 
 	public Integer getApplyCount(){

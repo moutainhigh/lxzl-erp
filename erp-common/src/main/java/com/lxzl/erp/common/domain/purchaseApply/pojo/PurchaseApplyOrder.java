@@ -1,17 +1,27 @@
 package com.lxzl.erp.common.domain.purchaseApply.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PurchaseApplyOrder extends BasePO {
 
 	private Integer purchaseApplyOrderId;   //唯一标识
+	@NotNull(message = ErrorCode.PURCHASE_APPLY_ORDER_NO_NOT_NULL,groups = {IdGroup.class})
 	private String purchaseApplyOrderNo;   //申请单编号
 	private Integer applyUserId;   //申请人ID
 	private Integer warehouseId;   //仓库ID，总公司可以给分公司采购，申请人为分公司，则分公司只允许采购到本分公司仓库
+	@NotNull(message = ErrorCode.DEPARTMENT_ID_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private Integer departmentId;   //部门ID
 	private Integer purchaseApplyOrderStatus;   //采购申请单状态，0-待提交，3-审核中，6-待采购，9-采购中，12-部分采购，15-全部采购，18-取消
 	private Date allUseTime;   //整单计划使用时间
@@ -23,6 +33,10 @@ public class PurchaseApplyOrder extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+	@Valid
+	private List<PurchaseApplyOrderProduct> purchaseApplyOrderProductList;
+	@Valid
+	private List<PurchaseApplyOrderMaterial> purchaseApplyOrderMaterialList;
 
 
 	public Integer getPurchaseApplyOrderId(){
@@ -145,4 +159,19 @@ public class PurchaseApplyOrder extends BasePO {
 		this.updateUser = updateUser;
 	}
 
+	public List<PurchaseApplyOrderProduct> getPurchaseApplyOrderProductList() {
+		return purchaseApplyOrderProductList;
+	}
+
+	public void setPurchaseApplyOrderProductList(List<PurchaseApplyOrderProduct> purchaseApplyOrderProductList) {
+		this.purchaseApplyOrderProductList = purchaseApplyOrderProductList;
+	}
+
+	public List<PurchaseApplyOrderMaterial> getPurchaseApplyOrderMaterialList() {
+		return purchaseApplyOrderMaterialList;
+	}
+
+	public void setPurchaseApplyOrderMaterialList(List<PurchaseApplyOrderMaterial> purchaseApplyOrderMaterialList) {
+		this.purchaseApplyOrderMaterialList = purchaseApplyOrderMaterialList;
+	}
 }

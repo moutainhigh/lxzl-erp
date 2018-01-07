@@ -314,6 +314,8 @@ public class ErrorCode {
     public static final String DEPLOYMENT_ORDER_BULK_MATERIAL_NOT_ENOUGH = "J400097";
     public static final String DEPLOYMENT_ORDER_NOT_EXISTS = "J400098";
     public static final String DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_HAVE_RETURNED = "J400096";
+    public static final String PURCHASE_APPLY_ORDER_NO_NOT_NULL = "J500060";
+    public static final String PURCHASE_APPLY_ORDER_NOT_EXISTS = "J500061";
 
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
@@ -552,6 +554,8 @@ public class ErrorCode {
         MAP.put(DEPLOYMENT_ORDER_BULK_MATERIAL_NOT_ENOUGH, "调拨单配件不足");
         MAP.put(DEPLOYMENT_ORDER_NOT_EXISTS, "调拨单不存在");
         MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_HAVE_RETURNED, "调拨单该设备已经退还");
+        MAP.put(PURCHASE_APPLY_ORDER_NO_NOT_NULL, "采购申请单编号不能为空");
+        MAP.put(PURCHASE_APPLY_ORDER_NOT_EXISTS, "采购申请单不存在");
 
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");

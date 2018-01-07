@@ -7,15 +7,14 @@ import org.hibernate.validator.constraints.NotBlank;
 
 public class PurchaseApplyOrderCommitParam extends BaseCommitParam {
 
-    @NotBlank(message = ErrorCode.PURCHASE_ORDER_NO_NOT_NULL, groups = {ExtendGroup.class})
-    private String purchaseNo;
+    @NotBlank(message = ErrorCode.PURCHASE_APPLY_ORDER_NO_NOT_NULL, groups = {ExtendGroup.class})
+    private String purchaseApplyNo;
 
-    public String getPurchaseNo() {
-        return purchaseNo;
+    public String getPurchaseApplyNo() {
+        return purchaseApplyNo;
     }
 
-    public void setPurchaseNo(String purchaseNo) {
-        this.purchaseNo = purchaseNo;
+    public void setPurchaseApplyNo(String purchaseApplyNo) {
+        this.purchaseApplyNo = purchaseApplyNo;
     }
-
 }

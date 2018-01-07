@@ -10,6 +10,7 @@ public class PurchaseApplyOrderProductDO  extends BaseDO {
 	private Integer purchaseApplyOrderId;
 	private String purchaseApplyOrderNo;
 	private Integer productSkuId;
+	private String productSnapshot;
 	private Integer applyCount;
 	private Integer realCount;
 	private Integer purchaseApplyOrderItemStatus;
@@ -50,6 +51,14 @@ public class PurchaseApplyOrderProductDO  extends BaseDO {
 
 	public void setProductSkuId(Integer productSkuId){
 		this.productSkuId = productSkuId;
+	}
+
+	public String getProductSnapshot() {
+		return productSnapshot;
+	}
+
+	public void setProductSnapshot(String productSnapshot) {
+		this.productSnapshot = productSnapshot;
 	}
 
 	public Integer getApplyCount(){

@@ -773,10 +773,9 @@ public class OrderServiceImpl implements OrderService {
         }
 
         ServiceResult<String, StatementOrder> statementOrderResult = statementService.queryStatementOrderDetailByOrderId(order.getOrderNo());
-        if (!ErrorCode.SUCCESS.equals(statementOrderResult.getErrorCode())) {
+        if (ErrorCode.SUCCESS.equals(statementOrderResult.getErrorCode())) {
             order.setStatementOrder(statementOrderResult.getResult());
         }
-
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;

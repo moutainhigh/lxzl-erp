@@ -15,6 +15,7 @@ import com.lxzl.erp.common.domain.product.ProductQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseReceiveOrderQueryParam;
+import com.lxzl.erp.common.domain.purchaseApply.PurchaseApplyOrderPageParam;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderQueryParam;
 import com.lxzl.erp.common.domain.returnOrder.ReturnOrderPageParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
@@ -36,6 +37,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseDeliveryOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseReceiveOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.purchaseApply.PurchaseApplyOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
@@ -631,7 +633,29 @@ public class GenerateNoSupport {
         return builder.toString();
     }
 
-
+    /**
+     * 生成采购申请单编号
+     */
+    public String generatePurchaseApplyOrderNo(String cityCode) {
+        Date currentTime = new Date();
+        synchronized (this) {
+            PurchaseApplyOrderPageParam purchaseApplyOrderPageParam = new PurchaseApplyOrderPageParam();
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("start", 0);
+            maps.put("pageSize", Integer.MAX_VALUE);
+            purchaseApplyOrderPageParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+            purchaseApplyOrderPageParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            maps.put("queryParam", purchaseApplyOrderPageParam);
+            Integer count = purchaseApplyOrderMapper.listCount(maps);
+            StringBuilder builder = new StringBuilder();
+            builder.append("LXPA-");
+            builder.append(cityCode);
+            builder.append("-");
+            builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append(String.format("%05d", count));
+            return builder.toString();
+        }
+    }
     @Autowired
     private SupplierMapper supplierMapper;
     @Autowired
@@ -676,4 +700,6 @@ public class GenerateNoSupport {
     private BulkMaterialMapper bulkMaterialMapper;
     @Autowired
     private MaterialMapper materialMapper;
+    @Autowired
+    private PurchaseApplyOrderMapper purchaseApplyOrderMapper;
 }

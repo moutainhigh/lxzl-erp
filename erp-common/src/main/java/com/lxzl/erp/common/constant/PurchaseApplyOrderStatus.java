@@ -1,0 +1,14 @@
+package com.lxzl.erp.common.constant;
+
+/**
+ * 采购申请单状态，0-待提交，3-审核中，6-待采购，9-采购中，12-部分采购，15-全部采购，18-取消
+ */
+public class PurchaseApplyOrderStatus {
+    public static final Integer PURCHASE_APPLY_ORDER_STATUS_WAIT_COMMIT = 0;          // 0-待提交
+    public static final Integer PURCHASE_APPLY_ORDER_STATUS_VERIFYING = 3;          // 3-审核中
+    public static final Integer PURCHASE_APPLY_ORDER_STATUS_WAIT_PURCHASE = 6;          // 6-待采购
+    public static final Integer PURCHASE_APPLY_ORDER_STATUS_PURCHASING = 9;          // 6-采购中
+    public static final Integer PURCHASE_APPLY_ORDER_STATUS_PART = 12;          // 9-部分采购
+    public static final Integer PURCHASE_APPLY_ORDER_STATUS_ALL = 15;          // 12-全部采购
+    public static final Integer PURCHASE_APPLY_ORDER_STATUS_CANCEL = 18;          // 18-取消
+}

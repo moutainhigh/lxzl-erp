@@ -29,6 +29,11 @@
 		WHERE epao.id = #{id, jdbcType=INTEGER} AND epao.data_status = 1 
 	</select>
 
+	<select id="findByNo" resultMap="PurchaseApplyOrderDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_purchase_apply_order epao
+		WHERE epao.purchase_apply_order_no = #{id, jdbcType=VARCHAR} AND epao.data_status = 1
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(epao.id) FROM erp_purchase_apply_order epao 
 		<where>
@@ -41,6 +46,12 @@
 	<select id="listPage" resultMap="PurchaseApplyOrderDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_purchase_apply_order epao 
 		<where>
+			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.createStartTime != null">
+				<![CDATA[ AND epao.create_time >= #{maps.queryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.createEndTime != null">
+				<![CDATA[ AND epao.create_time <= #{maps.queryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				AND epao.data_status = 1
 			</if>
