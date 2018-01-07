@@ -589,7 +589,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             MaterialDO materialDO = materialMap.get(materialInStorage.getMaterialId());
 
             BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
-            bulkMaterialDO.setBulkMaterialNo(generateNoSupport.generateBulkMaterialNo(materialDO.getMaterialModel(), cityCode));
+            bulkMaterialDO.setBulkMaterialNo(generateNoSupport.generateBulkMaterialNo(materialDO.getMaterialModel(), cityCode, productInStockCounter.getBulkMaterialCount()));
             bulkMaterialDO.setMaterialId(materialInStorage.getMaterialId());
             bulkMaterialDO.setCurrentWarehouseId(warehouseId);
             bulkMaterialDO.setCurrentWarehousePositionId(warehousePositionId);
@@ -673,7 +673,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         Map<Integer, MaterialDO> materialMap = new HashMap<>();
         for (int i = 0; i < productInStorage.getProductCount(); i++) {
             ProductEquipmentDO productEquipmentDO = new ProductEquipmentDO();
-            productEquipmentDO.setEquipmentNo(generateNoSupport.generateEquipmentNo(productDO.getProductModel(), cityCode));
+            productEquipmentDO.setEquipmentNo(generateNoSupport.generateEquipmentNo(productDO.getProductModel(), cityCode, productInStockCounter.getProductEquipmentCount()));
             productEquipmentDO.setProductId(productInStorage.getProductId());
             productEquipmentDO.setSkuId(productInStorage.getProductSkuId());
             productEquipmentDO.setEquipmentPrice(productSkuDO.getSkuPrice());
@@ -723,7 +723,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                     for (int j = 0; j < productMaterial.getMaterialCount(); j++) {
                         MaterialDO materialDO = materialMap.get(productMaterial.getMaterialId());
                         BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
-                        bulkMaterialDO.setBulkMaterialNo(generateNoSupport.generateBulkMaterialNo(materialDO.getMaterialModel(), cityCode));
+                        bulkMaterialDO.setBulkMaterialNo(generateNoSupport.generateBulkMaterialNo(materialDO.getMaterialModel(), cityCode, productInStockCounter.getBulkMaterialCount()));
                         bulkMaterialDO.setMaterialId(productMaterial.getMaterialId());
                         bulkMaterialDO.setCurrentWarehouseId(warehouseId);
                         bulkMaterialDO.setCurrentWarehousePositionId(warehousePositionId);

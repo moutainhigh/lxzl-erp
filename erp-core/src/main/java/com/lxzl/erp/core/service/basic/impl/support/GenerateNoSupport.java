@@ -112,11 +112,10 @@ public class GenerateNoSupport {
     /**
      * 生成商品编号
      */
-    public String generateEquipmentNo(String productModel,String cityCode) {
+    public String generateEquipmentNo(String productModel, String cityCode, Integer counter) {
         Date currentTime = new Date();
-        if (productModel == null) {
-            productModel = "";
-        }
+        productModel = productModel == null ? "" : productModel;
+        counter = counter == null ? 1 : counter;
         synchronized (this) {
             ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
             Map<String, Object> maps = new HashMap<>();
@@ -134,7 +133,7 @@ public class GenerateNoSupport {
             builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
 
-            builder.append(String.format("%05d", productCount + 1));
+            builder.append(String.format("%05d", productCount + counter));
             return builder.toString();
         }
     }
@@ -165,9 +164,10 @@ public class GenerateNoSupport {
     /**
      * 生成散料编号
      */
-    public String generateBulkMaterialNo(String materialModel, String cityCode) {
+    public String generateBulkMaterialNo(String materialModel, String cityCode, Integer counter) {
         Date currentTime = new Date();
         materialModel = materialModel == null ? "" : materialModel;
+        counter = counter == null ? 1 : counter;
         synchronized (this) {
             BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
             Map<String, Object> maps = new HashMap<>();
@@ -184,7 +184,7 @@ public class GenerateNoSupport {
             builder.append(materialModel);
             builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
-            builder.append(String.format("%05d", count + 1));
+            builder.append(String.format("%05d", count + counter));
             return builder.toString();
         }
     }
