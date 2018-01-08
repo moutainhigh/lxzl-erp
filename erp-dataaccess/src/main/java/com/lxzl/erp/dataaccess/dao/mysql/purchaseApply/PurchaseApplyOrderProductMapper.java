@@ -1,10 +1,11 @@
 package com.lxzl.erp.dataaccess.dao.mysql.purchaseApply;
 
-import com.lxzl.erp.dataaccess.domain.purchaseApply.PurchaseApplyOrderMaterialDO;
+import com.lxzl.erp.dataaccess.domain.purchaseApply.PurchaseApplyOrderProductDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
-import com.lxzl.erp.dataaccess.domain.purchaseApply.PurchaseApplyOrderProductDO;import org.apache.ibatis.annotations.Param;
-import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -15,4 +16,6 @@ public interface PurchaseApplyOrderProductMapper extends BaseMysqlDAO<PurchaseAp
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	Integer saveList(List<PurchaseApplyOrderProductDO> purchaseApplyOrderProductDOList);
+
+	List<PurchaseApplyOrderProductDO> findByPurchaseApplyOrderNo(@Param("purchaseApplyOrderNo") String purchaseApplyOrderNo);
 }

@@ -1,7 +1,10 @@
 package com.lxzl.erp.dataaccess.domain.purchaseApply;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
+import java.util.List;
 
 
 public class PurchaseApplyOrderDO  extends BaseDO {
@@ -17,6 +20,11 @@ public class PurchaseApplyOrderDO  extends BaseDO {
 	private Date purchaseEndTime;
 	private Integer dataStatus;
 	private String remark;
+
+	@Transient
+	private List<PurchaseApplyOrderProductDO> purchaseApplyOrderProductDOList;
+	@Transient
+	private List<PurchaseApplyOrderMaterialDO> purchaseApplyOrderMaterialDOList;
 
 	public Integer getId(){
 		return id;
@@ -106,4 +114,19 @@ public class PurchaseApplyOrderDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public List<PurchaseApplyOrderProductDO> getPurchaseApplyOrderProductDOList() {
+		return purchaseApplyOrderProductDOList;
+	}
+
+	public void setPurchaseApplyOrderProductDOList(List<PurchaseApplyOrderProductDO> purchaseApplyOrderProductDOList) {
+		this.purchaseApplyOrderProductDOList = purchaseApplyOrderProductDOList;
+	}
+
+	public List<PurchaseApplyOrderMaterialDO> getPurchaseApplyOrderMaterialDOList() {
+		return purchaseApplyOrderMaterialDOList;
+	}
+
+	public void setPurchaseApplyOrderMaterialDOList(List<PurchaseApplyOrderMaterialDO> purchaseApplyOrderMaterialDOList) {
+		this.purchaseApplyOrderMaterialDOList = purchaseApplyOrderMaterialDOList;
+	}
 }

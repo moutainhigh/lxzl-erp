@@ -818,6 +818,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             //待提交和审核通过的采购单可以取消
             return ErrorCode.PURCHASE_ORDER_COMMITTED_CAN_NOT_CANCEL;
         }
+
+        //审核中的强制取消
+        if(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_VERIFYING.equals(purchaseOrderDO.getPurchaseOrderStatus())){
+            ServiceResult<String,String> cancelWorkFlowResult = workflowService.cancelWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE,purchaseOrderDO.getPurchaseNo());
+            if(!ErrorCode.SUCCESS.equals(cancelWorkFlowResult.getErrorCode())){
+                return cancelWorkFlowResult.getErrorCode();
+            }
+        }
         Date now = new Date();
         purchaseOrderDO.setUpdateTime(now);
         purchaseOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());

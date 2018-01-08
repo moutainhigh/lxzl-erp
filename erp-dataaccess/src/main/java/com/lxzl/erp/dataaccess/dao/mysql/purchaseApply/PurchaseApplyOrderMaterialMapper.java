@@ -16,4 +16,6 @@ public interface PurchaseApplyOrderMaterialMapper extends BaseMysqlDAO<PurchaseA
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
     Integer saveList(List<PurchaseApplyOrderMaterialDO> purchaseApplyOrderMaterialDOList);
+
+    List<PurchaseApplyOrderMaterialDO> findByPurchaseApplyOrderNo(@Param("purchaseApplyOrderNo") String purchaseApplyOrderNo);
 }
