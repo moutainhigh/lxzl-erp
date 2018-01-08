@@ -383,6 +383,9 @@ public class ErrorCode {
     public static final String CUSTOMER_RENT_THIS_BULK_MATERIAL_NO_MORE = "J500059";
     public static final String CUSTOMER_OWNER_NOT_NULL = "J500060";
     public static final String STATEMENT_ORDER_CAN_NOT_PAID_THIS = "J500061";
+    public static final String CUSTOMER_RISK_MANAGEMENT_APPLE_LIMIT = "J500062";
+    public static final String CUSTOMER_RISK_MANAGEMENT_NEW_LIMIT = "J500063";
+    public static final String CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT = "J500064";
 
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
@@ -577,6 +580,9 @@ public class ErrorCode {
         MAP.put(CUSTOMER_OWNER_NOT_NULL, "客户业务员ID不能为空");
         MAP.put(PURCHASE_APPLY_USE_TIME_NOT_NUll, "计划使用时间不能为空");
         MAP.put(STATEMENT_ORDER_CAN_NOT_PAID_THIS, "历史有未结算的结算单，不能支付该项");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_APPLE_LIMIT, "苹果设备被限制，不能下单");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_NEW_LIMIT, "全新设备被限制，不能下单");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT, "价格被限制，不能下单");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
