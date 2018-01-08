@@ -1,6 +1,6 @@
 package com.lxzl.erp.web.controller;
 
-import com.alibaba.dubbo.common.json.JSON;
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
@@ -39,6 +39,23 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
         deploymentOrder.setDeploymentOrderProductList(deploymentOrderProductList);
 
         TestResult testResult = getJsonTestResult("/deploymentOrder/create", deploymentOrder);
+    }
+    @Test
+    public void testUpdateJson() throws Exception {
+        String json = "{\n" +
+                "\t\"deploymentOrderNo\": \"LXC010010201801080031\",\n" +
+                "\t\"deploymentType\": \"1\",\n" +
+                "\t\"srcWarehouseId\": \"4000002\",\n" +
+                "\t\"targetWarehouseId\": \"4000001\",\n" +
+                "\t\"expectReturnTime\": 1533600000000,\n" +
+                "\t\"deploymentOrderProductList\": [{\n" +
+                "\t\t\"deploymentProductSkuId\": 178,\n" +
+                "\t\t\"deploymentProductSkuCount\": \"4\",\n" +
+                "\t\t\"deploymentProductUnitAmount\": \"2000\"\n" +
+                "\t}]\n" +
+                "}\n";
+        DeploymentOrder deploymentOrder = JSON.parseObject(json,DeploymentOrder.class);
+        TestResult testResult = getJsonTestResult("/deploymentOrder/update", deploymentOrder);
     }
 
     @Test

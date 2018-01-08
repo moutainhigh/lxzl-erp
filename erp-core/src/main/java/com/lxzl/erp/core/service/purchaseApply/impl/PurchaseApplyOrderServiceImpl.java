@@ -65,19 +65,19 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> add(PurchaseApplyOrder purchaseApplyOrder) {
-        ServiceResult<String, String> result = new ServiceResult<>();
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
         User user = userSupport.getCurrentUser();
         //校验用户是否可选此部门
         DepartmentDO departmentDO = userSupport.getAvailableDepartment(purchaseApplyOrder.getDepartmentId());
         if(departmentDO==null){
-            result.setErrorCode(ErrorCode.DEPARTMENT_NOT_EXISTS);
-            return result;
+            serviceResult.setErrorCode(ErrorCode.DEPARTMENT_NOT_EXISTS);
+            return serviceResult;
         }
         List<PurchaseApplyOrderProduct> purchaseApplyOrderProductList = purchaseApplyOrder.getPurchaseApplyOrderProductList();
         List<PurchaseApplyOrderMaterial> purchaseApplyOrderMaterialList = purchaseApplyOrder.getPurchaseApplyOrderMaterialList();
         if(CollectionUtil.isEmpty(purchaseApplyOrderProductList)&&CollectionUtil.isEmpty(purchaseApplyOrderMaterialList)){
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
-            return result;
+            serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return serviceResult;
         }
         Date now = new Date();
         WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(user.getUserId());
@@ -101,15 +101,15 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
 
         ServiceResult<String,List<PurchaseApplyOrderProductDO>> applyOrderProductResult = getPurchaseApplyOrderProductDOList(purchaseApplyOrderProductList,purchaseApplyOrderDO,now,user);
         if(!ErrorCode.SUCCESS.equals(applyOrderProductResult.getErrorCode())){
-            result.setErrorCode(applyOrderProductResult.getErrorCode());
+            serviceResult.setErrorCode(applyOrderProductResult.getErrorCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            return result;
+            return serviceResult;
         }
         ServiceResult<String,List<PurchaseApplyOrderMaterialDO>> applyOrderMaterialResult = getPurchaseApplyOrderMaterialDOList(purchaseApplyOrderMaterialList,purchaseApplyOrderDO,now,user);
         if(!ErrorCode.SUCCESS.equals(applyOrderMaterialResult.getErrorCode())){
-            result.setErrorCode(applyOrderProductResult.getErrorCode());
+            serviceResult.setErrorCode(applyOrderProductResult.getErrorCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            return result;
+            return serviceResult;
         }
         List<PurchaseApplyOrderProductDO> purchaseApplyOrderProductDOList = applyOrderProductResult.getResult();
         List<PurchaseApplyOrderMaterialDO> purchaseApplyOrderMaterialDOList = applyOrderMaterialResult.getResult();
@@ -119,9 +119,9 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         if(CollectionUtil.isNotEmpty(purchaseApplyOrderMaterialDOList)){
             purchaseApplyOrderMaterialMapper.saveList(purchaseApplyOrderMaterialDOList);
         }
-        result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(purchaseApplyOrderDO.getPurchaseApplyOrderNo());
-        return result;
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(purchaseApplyOrderDO.getPurchaseApplyOrderNo());
+        return serviceResult;
     }
 
     private ServiceResult<String,List<PurchaseApplyOrderProductDO>> getPurchaseApplyOrderProductDOList(List<PurchaseApplyOrderProduct> purchaseApplyOrderProductList , PurchaseApplyOrderDO purchaseApplyOrderDO , Date now , User user){
@@ -204,7 +204,39 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
 
     @Override
     public ServiceResult<String, String> update(PurchaseApplyOrder purchaseApplyOrder) {
-        return null;
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        PurchaseApplyOrderDO purchaseApplyOrderDO = purchaseApplyOrderMapper.findByNo(purchaseApplyOrder.getPurchaseApplyOrderNo());
+        if(purchaseApplyOrderDO==null){
+            serviceResult.setErrorCode(ErrorCode.PURCHASE_APPLY_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        if(!PurchaseApplyOrderStatus.PURCHASE_APPLY_ORDER_STATUS_WAIT_COMMIT.equals(purchaseApplyOrderDO.getPurchaseApplyOrderStatus())){
+            serviceResult.setErrorCode(ErrorCode.PURCHASE_APPLY_CAN_NOT_UPDATE);
+            return serviceResult;
+        }
+        //校验用户是否可选此部门
+        DepartmentDO departmentDO = userSupport.getAvailableDepartment(purchaseApplyOrder.getDepartmentId());
+        if(departmentDO==null){
+            serviceResult.setErrorCode(ErrorCode.DEPARTMENT_NOT_EXISTS);
+            return serviceResult;
+        }
+        List<PurchaseApplyOrderProduct> purchaseApplyOrderProductList = purchaseApplyOrder.getPurchaseApplyOrderProductList();
+        List<PurchaseApplyOrderMaterial> purchaseApplyOrderMaterialList = purchaseApplyOrder.getPurchaseApplyOrderMaterialList();
+        if(CollectionUtil.isEmpty(purchaseApplyOrderProductList)&&CollectionUtil.isEmpty(purchaseApplyOrderMaterialList)){
+            serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return serviceResult;
+        }
+        User user = userSupport.getCurrentUser();
+        Date now = new Date();
+        purchaseApplyOrderDO.setAllUseTime(purchaseApplyOrder.getAllUseTime());
+        purchaseApplyOrderDO.setRemark(purchaseApplyOrder.getRemark());
+        purchaseApplyOrderDO.setUpdateTime(now);
+        purchaseApplyOrderDO.setUpdateUser(user.getUserId().toString());
+        purchaseApplyOrderMapper.update(purchaseApplyOrderDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(purchaseApplyOrderDO.getPurchaseApplyOrderNo());
+        return serviceResult;
     }
 
     @Override

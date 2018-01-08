@@ -136,11 +136,16 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         if (updateDeploymentOrderProductDOMap.size() > 0) {
             for (Map.Entry<Integer, DeploymentOrderProductDO> entry : updateDeploymentOrderProductDOMap.entrySet()) {
                 DeploymentOrderProductDO deploymentOrderProductDO = entry.getValue();
+                DeploymentOrderProductDO oldDeploymentOrderProductDO = deploymentOrderProductMapper.findByDeploymentOrderNoAndSkuId(deploymentOrderNo,deploymentOrderProductDO.getDeploymentProductSkuId());
+                if(oldDeploymentOrderProductDO==null){
+                    throw new BusinessException(ErrorCode.RECORD_NOT_EXISTS);
+                }
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(deploymentOrderProductDO.getDeploymentProductSkuId());
                 if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
                     throw new BusinessException(productServiceResult.getErrorCode());
                 }
                 Product product = productServiceResult.getResult();
+                deploymentOrderProductDO.setId(oldDeploymentOrderProductDO.getId());
                 deploymentOrderProductDO.setDeploymentProductAmount(BigDecimalUtil.mul(deploymentOrderProductDO.getDeploymentProductUnitAmount(), new BigDecimal(deploymentOrderProductDO.getDeploymentProductSkuCount())));
                 deploymentOrderProductDO.setDeploymentProductSkuSnapshot(FastJsonUtil.toJSONString(product));
                 deploymentOrderProductDO.setUpdateUser(loginUser.getUserId().toString());

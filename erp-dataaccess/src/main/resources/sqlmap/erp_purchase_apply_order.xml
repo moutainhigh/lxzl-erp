@@ -76,7 +76,7 @@
 			<if test="purchaseApplyOrderStatus != null">
 				purchase_apply_order_status = #{purchaseApplyOrderStatus,jdbcType=INTEGER},
 			</if>
-			<if test="allUseTime != null">
+			<if test="true">
 				all_use_time = #{allUseTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="purchaseStartTime != null">

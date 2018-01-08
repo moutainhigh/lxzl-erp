@@ -15,7 +15,7 @@ CREATE TABLE `erp_user` (
   `phone_verify_code` varchar(8) CHARACTER SET ascii DEFAULT NULL COMMENT '手机号验证码',
   `phone_verify_time` datetime DEFAULT NULL COMMENT '手机验证时间',
   `is_activated` tinyint(4) NOT NULL COMMENT '是否激活，0不可用；1可用',
-  `is_disabled` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否禁用，0不可用；1可用',
+  `is_disabled` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否禁用，0启用；1禁用',
   `register_time` datetime NOT NULL COMMENT '注册时间',
   `last_login_time` datetime DEFAULT NULL COMMENT '最后登录时间',
   `last_login_ip` varchar(40) CHARACTER SET ascii DEFAULT NULL COMMENT '最后登录IP',

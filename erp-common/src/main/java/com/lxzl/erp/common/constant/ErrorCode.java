@@ -317,6 +317,7 @@ public class ErrorCode {
     public static final String PURCHASE_APPLY_ORDER_NO_NOT_NULL = "J500060";
     public static final String PURCHASE_APPLY_ORDER_NOT_EXISTS = "J500061";
     public static final String BULK_MATERIAL_HAVE_NOT_ENOUGH_BY_PARAM = "J500062";
+    public static final String PURCHASE_APPLY_CAN_NOT_UPDATE = "J500063";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -562,6 +563,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_APPLY_ORDER_NO_NOT_NULL, "采购申请单编号不能为空");
         MAP.put(PURCHASE_APPLY_ORDER_NOT_EXISTS, "采购申请单不存在");
         MAP.put(BULK_MATERIAL_HAVE_NOT_ENOUGH_BY_PARAM, "配件【%s】库存不足！");
+        MAP.put(PURCHASE_APPLY_CAN_NOT_UPDATE, "此状态采购申请单不可修改");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
