@@ -34,6 +34,7 @@ public class Customer extends BasePO {
 	@NotNull(message = ErrorCode.CUSTOMER_OWNER_NOT_NULL , groups = {AddCustomerCompanyGroup.class,AddCustomerPersonGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class})
 	private Integer owner;		//数据归属人，跟单员
 	private Integer unionUser;  //联合开发人
+	private Integer customerStatus;  //客户状态，0初始化，1资料提交，2审核通过，3资料驳回
 
 
 	private String ownerName; //业务员姓名
@@ -226,5 +227,13 @@ public class Customer extends BasePO {
 
 	public void setCustomerAccount(CustomerAccount customerAccount) {
 		this.customerAccount = customerAccount;
+	}
+
+	public Integer getCustomerStatus() {
+		return customerStatus;
+	}
+
+	public void setCustomerStatus(Integer customerStatus) {
+		this.customerStatus = customerStatus;
 	}
 }

@@ -41,6 +41,9 @@ public class CustomerRiskManagement extends BasePO {
 	private Integer payMode;			// 其他设备支付方式
 	private Integer applePayMode;		// 苹果设备支付方式
 	private Integer newPayMode;			// 全新设备支付方式
+	private Integer isLimitApple;		// 是否限制苹果
+	private Integer isLimitNew;			// 是否限制全新
+	private BigDecimal singleLimitPrice;	// 单台限制设备价值
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -244,5 +247,29 @@ public class CustomerRiskManagement extends BasePO {
 
 	public void setPayMode(Integer payMode) {
 		this.payMode = payMode;
+	}
+
+	public Integer getIsLimitApple() {
+		return isLimitApple;
+	}
+
+	public void setIsLimitApple(Integer isLimitApple) {
+		this.isLimitApple = isLimitApple;
+	}
+
+	public Integer getIsLimitNew() {
+		return isLimitNew;
+	}
+
+	public void setIsLimitNew(Integer isLimitNew) {
+		this.isLimitNew = isLimitNew;
+	}
+
+	public BigDecimal getSingleLimitPrice() {
+		return singleLimitPrice;
+	}
+
+	public void setSingleLimitPrice(BigDecimal singleLimitPrice) {
+		this.singleLimitPrice = singleLimitPrice;
 	}
 }

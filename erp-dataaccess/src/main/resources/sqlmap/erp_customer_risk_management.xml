@@ -16,6 +16,9 @@
 		<result column="pay_mode" jdbcType="INTEGER" property="payMode" />
 		<result column="apple_pay_mode" jdbcType="INTEGER" property="applePayMode" />
 		<result column="new_pay_mode" jdbcType="INTEGER" property="newPayMode" />
+		<result column="is_limit_apple" jdbcType="INTEGER" property="isLimitApple" />
+		<result column="is_limit_new" jdbcType="INTEGER" property="isLimitNew" />
+		<result column="single_limit_price" jdbcType="DECIMAL" property="singleLimitPrice" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -25,7 +28,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ecrm.id,ecrm.customer_id,ecrm.credit_amount,ecrm.credit_amount_used,ecrm.deposit_cycle,ecrm.payment_cycle,ecrm.apple_deposit_cycle,ecrm.apple_payment_cycle,ecrm.new_deposit_cycle,ecrm.new_payment_cycle,ecrm.pay_mode,ecrm.apple_pay_mode,ecrm.new_pay_mode,ecrm.data_status,ecrm.remark,ecrm.create_time,ecrm.create_user,ecrm.update_time,ecrm.update_user
+		ecrm.id,ecrm.customer_id,ecrm.credit_amount,ecrm.credit_amount_used,ecrm.deposit_cycle,ecrm.payment_cycle,ecrm.apple_deposit_cycle,ecrm.apple_payment_cycle,ecrm.new_deposit_cycle,ecrm.new_payment_cycle,ecrm.pay_mode,ecrm.apple_pay_mode,ecrm.new_pay_mode,ecrm.is_limit_apple,ecrm.is_limit_new,ecrm.single_limit_price,ecrm.data_status,ecrm.remark,ecrm.create_time,ecrm.create_user,ecrm.update_time,ecrm.update_user
 	</sql>
 
 	<select id="findById" resultMap="CustomerRiskManagementDO" parameterType="java.lang.Integer">
@@ -94,6 +97,15 @@
 			</if>
 			<if test="newPayMode != null">
 				new_pay_mode = #{newPayMode,jdbcType=INTEGER},
+			</if>
+			<if test="isLimitApple != null">
+				is_limit_apple = #{isLimitApple, jdbcType=INTEGER},
+			</if>
+			<if test="isLimitNew != null">
+				is_limit_new = #{isLimitNew, jdbcType=INTEGER},
+			</if>
+			<if test="singleLimitPrice != null">
+				single_limit_price = #{singleLimitPrice, jdbcType=DECIMAL},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
