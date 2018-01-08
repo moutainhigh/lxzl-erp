@@ -155,7 +155,7 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                            <td><span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{productName}}</td>
+                            <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
                             <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                             <td>{{propertiesToStr}}</td>

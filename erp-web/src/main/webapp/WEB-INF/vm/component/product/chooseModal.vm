@@ -87,12 +87,12 @@
                                         <tr class="bg-light">
                                             <th></th>
                                             {{#showIsNewCheckBox}}
-                                            <th>选择新旧机器</th>
+                                            <th>商品属性</th>
                                             {{/showIsNewCheckBox}}
                                             <th>SKU</th>
 ##                                            <th>总库存</th>
                                             <th>新库存</th>
-                                            <th>旧库存</th>
+                                            <th>次新库存</th>
                                             <th>日租</th>
                                             <th>月租</th>
                                         </tr>
@@ -123,8 +123,8 @@
                                                 <td>
                                                     {{oldProductSkuCount}}
                                                 </td>
-                                                <td>{{#price}}{{dayRentPrice}}{{/price}}</td>
-                                                <td>{{#price}}{{monthRentPrice}}{{/price}}</td>
+                                                <td>￥{{#price}}{{dayRentPrice}}{{/price}}</td>
+                                                <td>￥{{#price}}{{monthRentPrice}}{{/price}}</td>
                                             </tr>
                                             {{/skuList}}
                                         </tbody>
