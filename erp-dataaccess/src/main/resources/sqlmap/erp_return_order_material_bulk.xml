@@ -68,6 +68,9 @@
 			<if test="returnOrderNo != null">
 				return_order_no = #{returnOrderNo,jdbcType=VARCHAR},
 			</if>
+			<if test="orderNo != null">
+				order_no = #{orderNo,jdbcType=VARCHAR},
+			</if>
 			<if test="bulkMaterialId != null">
 				bulk_material_id = #{bulkMaterialId,jdbcType=INTEGER},
 			</if>
@@ -108,7 +111,7 @@
 		values
 		<foreach collection="returnOrderMaterialBulkDOList" item="returnOrderMaterialBulkDO" index="index" separator =",">
 			(
-			#{returnOrderMaterialBulkDO.returnOrderMaterialId},#{returnOrderMaterialBulkDO.returnOrderId},#{returnOrderMaterialBulkDO.orderNo},#{returnOrderMaterialBulkDO.returnOrderNo},#{returnOrderMaterialBulkDO.bulkMaterialId},#{returnOrderMaterialBulkDO.bulkMaterialNo},#{returnOrderMaterialBulkDO.dataStatus},
+			#{returnOrderMaterialBulkDO.returnOrderMaterialId},#{returnOrderMaterialBulkDO.returnOrderId},#{returnOrderMaterialBulkDO.returnOrderNo},#{returnOrderMaterialBulkDO.orderNo},#{returnOrderMaterialBulkDO.bulkMaterialId},#{returnOrderMaterialBulkDO.bulkMaterialNo},#{returnOrderMaterialBulkDO.dataStatus},
 			#{returnOrderMaterialBulkDO.remark},#{returnOrderMaterialBulkDO.createTime},#{returnOrderMaterialBulkDO.createUser},#{returnOrderMaterialBulkDO.updateTime},#{returnOrderMaterialBulkDO.updateUser}
 			)
 		</foreach>

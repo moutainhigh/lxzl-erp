@@ -3,6 +3,8 @@ package com.lxzl.erp.dataaccess.domain.customer;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
+import java.math.BigDecimal;
+
 public class CustomerDO  extends BaseDO {
 
 	private Integer id;
@@ -17,6 +19,8 @@ public class CustomerDO  extends BaseDO {
 	private Integer unionUser;  //联合开发人
 	private Integer customerStatus;  //客户状态，0初始化，1资料提交，2审核通过，3资料驳回
 
+	private BigDecimal firstApplyAmount;		// 首期申请额度
+	private BigDecimal laterApplyAmount;		// 后期申请额度
 
 	@Transient
 	private CustomerCompanyDO customerCompanyDO;
@@ -148,5 +152,21 @@ public class CustomerDO  extends BaseDO {
 
 	public void setCustomerStatus(Integer customerStatus) {
 		this.customerStatus = customerStatus;
+	}
+
+	public BigDecimal getFirstApplyAmount() {
+		return firstApplyAmount;
+	}
+
+	public void setFirstApplyAmount(BigDecimal firstApplyAmount) {
+		this.firstApplyAmount = firstApplyAmount;
+	}
+
+	public BigDecimal getLaterApplyAmount() {
+		return laterApplyAmount;
+	}
+
+	public void setLaterApplyAmount(BigDecimal laterApplyAmount) {
+		this.laterApplyAmount = laterApplyAmount;
 	}
 }
