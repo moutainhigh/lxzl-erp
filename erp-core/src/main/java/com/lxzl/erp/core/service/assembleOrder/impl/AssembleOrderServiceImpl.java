@@ -98,7 +98,7 @@ public class AssembleOrderServiceImpl implements AssembleOrderService {
             productMaterial.setMaterialNo(materialDO.getMaterialNo());
             productMaterial.setMaterialCount(assembleOrderMaterial.getMaterialCount());
             productMaterialList.add(productMaterial);
-            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(assembleOrder.getWarehouseId(), assembleOrderMaterial.getMaterialId(), amount,1);
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(assembleOrder.getWarehouseId(), assembleOrderMaterial.getMaterialId(), amount,null);
             //判断是否找到足够的物料
             if(bulkMaterialDOList.size()<assembleOrderMaterial.getMaterialCount()){
                 serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH_BY_PARAM, materialDO.getMaterialName());
