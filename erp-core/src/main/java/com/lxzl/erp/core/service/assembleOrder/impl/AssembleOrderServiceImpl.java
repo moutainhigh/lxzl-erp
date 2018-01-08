@@ -21,11 +21,14 @@ import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.assembleOder.AssembleOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.assembleOderMaterial.AssembleOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.assembleOderMaterialEquipment.AssembleOrderProductEquipmentMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
+import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
 import com.lxzl.erp.dataaccess.domain.assembleOder.AssembleOrderDO;
 import com.lxzl.erp.dataaccess.domain.assembleOder.AssembleOrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.assembleOder.AssembleOrderProductEquipmentDO;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.*;
@@ -95,7 +98,7 @@ public class AssembleOrderServiceImpl implements AssembleOrderService {
             productMaterial.setMaterialNo(materialDO.getMaterialNo());
             productMaterial.setMaterialCount(assembleOrderMaterial.getMaterialCount());
             productMaterialList.add(productMaterial);
-            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(assembleOrder.getWarehouseId(), assembleOrderMaterial.getMaterialId(), amount);
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(assembleOrder.getWarehouseId(), assembleOrderMaterial.getMaterialId(), amount,1);
             //判断是否找到足够的物料
             if(bulkMaterialDOList.size()<assembleOrderMaterial.getMaterialCount()){
                 serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH_BY_PARAM, materialDO.getMaterialName());
@@ -144,11 +147,15 @@ public class AssembleOrderServiceImpl implements AssembleOrderService {
             assembleOrderMaterialMapper.save(assembleOrderMaterialDO);
         }
 
+        WarehouseDO equipmentWarehouseDO = warehouseMapper.findById(assembleOrder.getWarehouseId());
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(equipmentWarehouseDO.getSubCompanyId());
+        ProductDO productDO = productMapper.findById(productSkuDO.getProductId());
         //生成设备
         for (int i = 0; i < assembleOrder.getAssembleProductCount(); i++) {
             //保存商品设备
             ProductEquipmentDO productEquipmentDO = new ProductEquipmentDO();
-            String productEquipmentNo = generateNoSupport.generateProductEquipmentNo(now, assembleOrder.getWarehouseId());
+
+            String productEquipmentNo = generateNoSupport.generateProductEquipmentNo(productDO.getProductModel(),subCompanyDO.getSubCompanyCode());
             productEquipmentDO.setEquipmentNo(productEquipmentNo);
             productEquipmentDO.setProductId(productSkuDO.getProductId());
             productEquipmentDO.setSkuId(assembleOrder.getAssembleProductSkuId());
@@ -285,4 +292,10 @@ public class AssembleOrderServiceImpl implements AssembleOrderService {
     private BulkMaterialSupport bulkMaterialSupport;
     @Autowired
     private ProductEquipmentMaterialMapper productEquipmentMaterialMapper;
+    @Autowired
+    private WarehouseMapper warehouseMapper;
+    @Autowired
+    private SubCompanyMapper subCompanyMapper;
+    @Autowired
+    private ProductMapper productMapper;
 }
