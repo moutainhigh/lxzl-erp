@@ -13,4 +13,6 @@ public interface ProductCategoryPropertyValueMapper extends BaseMysqlDAO<Product
 
     List<ProductCategoryPropertyValueDO> findByProductAndSkuId(@Param("productId") Integer productId, @Param("skuId") Integer skuId);
     List<ProductCategoryPropertyValueDO> findByMaterialModelId(@Param("materialModelId") Integer materialModelId);
+    List<ProductCategoryPropertyValueDO> findByMaterialTypeAndCapacityValue(@Param("materialType") Integer materialType,
+                                                                            @Param("capacityValue") Double capacityValue);
 }
