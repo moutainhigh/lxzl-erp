@@ -116,8 +116,8 @@
                                 <td>{{stock}}</td>
                                 <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
                                 <td>
-                                    <p class="mn" style="white-space: nowrap">日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
-                                    <p class="mn mt5" style="white-space: nowrap">月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
+                                    <p class="mn">日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
+                                    <p class="mn mt5">月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
                                 </td>
                                 <td>
                                     <p class="mn">{{createUserRealName}}</p>
