@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import org.springframework.data.annotation.Transient;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -37,6 +38,10 @@ public class PurchaseApplyOrder extends BasePO {
 	private List<PurchaseApplyOrderProduct> purchaseApplyOrderProductList;
 	@Valid
 	private List<PurchaseApplyOrderMaterial> purchaseApplyOrderMaterialList;
+
+	private String applyUserName;
+	private String warehouseName;
+	private String departmentName;
 
 
 	public Integer getPurchaseApplyOrderId(){
@@ -173,5 +178,29 @@ public class PurchaseApplyOrder extends BasePO {
 
 	public void setPurchaseApplyOrderMaterialList(List<PurchaseApplyOrderMaterial> purchaseApplyOrderMaterialList) {
 		this.purchaseApplyOrderMaterialList = purchaseApplyOrderMaterialList;
+	}
+
+	public String getApplyUserName() {
+		return applyUserName;
+	}
+
+	public void setApplyUserName(String applyUserName) {
+		this.applyUserName = applyUserName;
+	}
+
+	public String getWarehouseName() {
+		return warehouseName;
+	}
+
+	public void setWarehouseName(String warehouseName) {
+		this.warehouseName = warehouseName;
+	}
+
+	public String getDepartmentName() {
+		return departmentName;
+	}
+
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
 	}
 }
