@@ -44,6 +44,7 @@ public class CustomerRiskManagement extends BasePO {
 	private Integer isLimitApple;		// 是否限制苹果
 	private Integer isLimitNew;			// 是否限制全新
 	private BigDecimal singleLimitPrice;	// 单台限制设备价值
+	private Integer returnVisitFrequency; 	// 回访频率
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -271,5 +272,13 @@ public class CustomerRiskManagement extends BasePO {
 
 	public void setSingleLimitPrice(BigDecimal singleLimitPrice) {
 		this.singleLimitPrice = singleLimitPrice;
+	}
+
+	public Integer getReturnVisitFrequency() {
+		return returnVisitFrequency;
+	}
+
+	public void setReturnVisitFrequency(Integer returnVisitFrequency) {
+		this.returnVisitFrequency = returnVisitFrequency;
 	}
 }

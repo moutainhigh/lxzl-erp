@@ -118,6 +118,7 @@ public class ErrorCode {
     public static final String PRODUCT_EQUIPMENT_NOT_NEW = "J200070";
     public static final String PRODUCT_EQUIPMENT_NOT_OLD = "J200071";
 
+
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
     public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
     public static final String WORKFLOW_LINK_EXISTS = "J800003";
@@ -215,6 +216,9 @@ public class ErrorCode {
     public static final String PURCHASE_TAX_RATE_ERROR = "J300061";
     public static final String SUPPLIER_IS_EXISTS = "J300062";
     public static final String MUST_HAVE_MAIN = "J300063";
+    public static final String SUPPLIER_NO_IS_EXISTS = "J300064";
+    public static final String SUPPLIER_NAME_NOT_NULL = "J300065";
+    public static final String SUPPLIER_NO_NOT_NULL = "J300066";
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
     public static final String ORDER_CUSTOMER_CONSIGN_NOT_NULL = "J400001";
@@ -382,7 +386,12 @@ public class ErrorCode {
     public static final String CUSTOMER_NOT_RENT_OR_ORDER_NOT_CONFIRM = "J500058";
     public static final String CUSTOMER_RENT_THIS_BULK_MATERIAL_NO_MORE = "J500059";
     public static final String CUSTOMER_OWNER_NOT_NULL = "J500060";
-
+    public static final String STATEMENT_ORDER_CAN_NOT_PAID_THIS = "J500061";
+    public static final String CUSTOMER_RISK_MANAGEMENT_APPLE_LIMIT = "J500062";
+    public static final String CUSTOMER_RISK_MANAGEMENT_NEW_LIMIT = "J500063";
+    public static final String CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT = "J500064";
+    public static final String CUSTOMER_STATUS_ERROR = "J500065";
+    public static final String CUSTOMER_IS_DISABLED = "J500066";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -575,7 +584,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_APPLY_YET_RECEIVE_CAN_NOT_CANCEL, "已收货的采购申请单不可取消");
         MAP.put(CUSTOMER_OWNER_NOT_NULL, "客户业务员ID不能为空");
         MAP.put(PURCHASE_APPLY_USE_TIME_NOT_NUll, "计划使用时间不能为空");
-
+        MAP.put(STATEMENT_ORDER_CAN_NOT_PAID_THIS, "历史有未结算的结算单，不能支付该项");
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
         MAP.put(WORKFLOW_LINK_EXISTS, "此单工作流已经存在");
@@ -589,6 +598,11 @@ public class ErrorCode {
         MAP.put(WORKFLOW_LINK_STATUS_ERROR, "此工作流状态有误");
         MAP.put(WORKFLOW_TEMPLATE_NOT_EXISTS, "工作流模板不存在或者已经禁用");
         MAP.put(WORKFLOW_HAVE_NO_CONFIG, "审核工作流没有配置");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_APPLE_LIMIT, "苹果设备被限制，不能下单");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_NEW_LIMIT, "全新设备被限制，不能下单");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT, "价格被限制，不能下单");
+        MAP.put(CUSTOMER_STATUS_ERROR, "客户状态异常，仔细检查后操作");
+        MAP.put(CUSTOMER_IS_DISABLED, "客户已经被禁用");
 
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
@@ -690,7 +704,9 @@ public class ErrorCode {
         MAP.put(CUSTOMER_IS_EXISTS, "客户已经存在");
         MAP.put(SUPPLIER_IS_EXISTS, "供应商已经存在");
         MAP.put(MUST_HAVE_MAIN, "含有小配件的整机四大件采购单必须有整机");
-
+        MAP.put(SUPPLIER_NO_IS_EXISTS, "供应商编号已经存在");
+        MAP.put(SUPPLIER_NAME_NOT_NULL, "供应商名字不能为空");
+        MAP.put(SUPPLIER_NO_NOT_NULL, "供应商编号不能为空");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");

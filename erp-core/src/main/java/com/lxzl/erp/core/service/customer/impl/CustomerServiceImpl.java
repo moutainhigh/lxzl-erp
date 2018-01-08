@@ -2,10 +2,7 @@ package com.lxzl.erp.core.service.customer.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.CustomerType;
-import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.ImgType;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
@@ -103,6 +100,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerDO.setIsDisabled(customer.getIsDisabled());
         }
         customerDO.setCustomerName(customer.getCustomerCompany().getCompanyName());
+        customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
         customerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerDO.setCreateTime(now);
         customerDO.setUpdateTime(now);
@@ -199,6 +197,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerDO.setIsDisabled(customer.getIsDisabled());
         }
         customerDO.setCustomerName(customer.getCustomerPerson().getRealName());
+        customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
         customerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerDO.setCreateTime(now);
         customerDO.setUpdateTime(now);
@@ -395,6 +394,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer.getUnionUser() != null && !customerDO.getOwner().equals(customer.getUnionUser())) {
             customerDO.setUnionUser(customer.getUnionUser());
         }
+        customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
         customerDO.setCustomerName(newCustomerCompanyDO.getCompanyName());
         customerDO.setOwner(customer.getOwner());
         customerDO.setUpdateTime(now);
@@ -437,6 +437,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer.getUnionUser() != null && !customerDO.getOwner().equals(customer.getUnionUser())) {
             customerDO.setUnionUser(customer.getUnionUser());
         }
+        customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
         customerDO.setCustomerName(newCustomerPersonDO.getRealName());
         customerDO.setOwner(customer.getOwner());
         customerDO.setUpdateTime(now);
@@ -449,6 +450,63 @@ public class CustomerServiceImpl implements CustomerService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, String> commitCustomer(String customerNo) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date currentTime = new Date();
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        if (!CustomerStatus.STATUS_INIT.equals(customerDO.getCustomerStatus())
+                || !CustomerStatus.STATUS_REJECT.equals(customerDO.getCustomerStatus())) {
+            result.setErrorCode(ErrorCode.CUSTOMER_STATUS_ERROR);
+            return result;
+        }
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(customerDO.getIsDisabled())) {
+            result.setErrorCode(ErrorCode.CUSTOMER_IS_DISABLED);
+            return result;
+        }
+        customerDO.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
+        customerDO.setUpdateTime(currentTime);
+        customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerMapper.update(customerDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> verifyCustomer(String customerNo, Integer customerStatus, String verifyRemark) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date currentTime = new Date();
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        if (!CustomerStatus.STATUS_COMMIT.equals(customerDO.getCustomerStatus())
+                && !CustomerStatus.STATUS_PASS.equals(customerDO.getCustomerStatus())) {
+            result.setErrorCode(ErrorCode.CUSTOMER_STATUS_ERROR);
+            return result;
+        }
+        if (!CustomerStatus.STATUS_PASS.equals(customerStatus)
+                || !CustomerStatus.STATUS_REJECT.equals(customerStatus)) {
+            result.setErrorCode(ErrorCode.CUSTOMER_STATUS_ERROR);
+            return result;
+        }
+
+        if (CustomerStatus.STATUS_REJECT.equals(customerStatus) && StringUtil.isNotBlank(verifyRemark)) {
+            customerDO.setRemark(customerDO.getRemark() + verifyRemark);
+        }
+        customerDO.setCustomerStatus(customerStatus);
+        customerDO.setUpdateTime(currentTime);
+        customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerMapper.update(customerDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
     @Override

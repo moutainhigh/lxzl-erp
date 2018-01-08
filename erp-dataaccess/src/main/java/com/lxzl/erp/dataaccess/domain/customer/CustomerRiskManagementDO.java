@@ -22,6 +22,7 @@ public class CustomerRiskManagementDO  extends BaseDO {
 	private Integer isLimitApple;		// 是否限制苹果
 	private Integer isLimitNew;			// 是否限制全新
 	private BigDecimal singleLimitPrice;	// 单台限制设备价值
+	private Integer returnVisitFrequency; 	// 回访频率
 	private Integer dataStatus;
 	private String remark;
 
@@ -167,5 +168,13 @@ public class CustomerRiskManagementDO  extends BaseDO {
 
 	public void setSingleLimitPrice(BigDecimal singleLimitPrice) {
 		this.singleLimitPrice = singleLimitPrice;
+	}
+
+	public Integer getReturnVisitFrequency() {
+		return returnVisitFrequency;
+	}
+
+	public void setReturnVisitFrequency(Integer returnVisitFrequency) {
+		this.returnVisitFrequency = returnVisitFrequency;
 	}
 }

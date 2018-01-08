@@ -115,6 +115,12 @@
 		ORDER BY esod.id
 	</select>
 
+	<select id="findByCustomerId" resultMap="StatementOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statement_order eso
+		WHERE eso.customer_id = #{customerId, jdbcType=INTEGER} AND eso.data_status = 1
+		ORDER BY statement_expect_pay_time ASC
+	</select>
+
 	<select id="findByCustomerAndPayTime" resultMap="StatementOrderDO" parameterType="java.util.Map">
 		SELECT <include refid="column_List"/> FROM erp_statement_order eso
 		WHERE eso.customer_id = #{customerId, jdbcType=INTEGER} AND TO_DAYS(eso.statement_expect_pay_time) = TO_DAYS(#{payTime, jdbcType=TIMESTAMP}) AND eso.data_status = 1

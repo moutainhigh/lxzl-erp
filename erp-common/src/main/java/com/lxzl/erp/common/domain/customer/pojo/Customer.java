@@ -13,6 +13,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -35,6 +36,8 @@ public class Customer extends BasePO {
 	private Integer owner;		//数据归属人，跟单员
 	private Integer unionUser;  //联合开发人
 	private Integer customerStatus;  //客户状态，0初始化，1资料提交，2审核通过，3资料驳回
+	private BigDecimal firstApplyAmount;		// 首期申请额度
+	private BigDecimal laterApplyAmount;		// 后期申请额度
 
 
 	private String ownerName; //业务员姓名
@@ -42,6 +45,7 @@ public class Customer extends BasePO {
 	private String unionAreaProvinceName;// 联合省名
 	private String unionAreaCityName; //联合城市名
 	private String unionAreaDistrictName; //联合地区名
+	private String verifyRemark;	//审核备注
 
 
 	@Valid
@@ -235,5 +239,29 @@ public class Customer extends BasePO {
 
 	public void setCustomerStatus(Integer customerStatus) {
 		this.customerStatus = customerStatus;
+	}
+
+	public BigDecimal getFirstApplyAmount() {
+		return firstApplyAmount;
+	}
+
+	public void setFirstApplyAmount(BigDecimal firstApplyAmount) {
+		this.firstApplyAmount = firstApplyAmount;
+	}
+
+	public BigDecimal getLaterApplyAmount() {
+		return laterApplyAmount;
+	}
+
+	public void setLaterApplyAmount(BigDecimal laterApplyAmount) {
+		this.laterApplyAmount = laterApplyAmount;
+	}
+
+	public String getVerifyRemark() {
+		return verifyRemark;
+	}
+
+	public void setVerifyRemark(String verifyRemark) {
+		this.verifyRemark = verifyRemark;
 	}
 }

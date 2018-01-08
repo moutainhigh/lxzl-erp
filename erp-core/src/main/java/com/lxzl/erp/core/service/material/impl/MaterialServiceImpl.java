@@ -100,6 +100,9 @@ public class MaterialServiceImpl implements MaterialService {
     @Autowired
     private GenerateNoSupport generateNoSupport;
 
+    @Autowired
+    private ProductSkuPropertyMapper productSkuPropertyMapper;
+
     @Override
     public ServiceResult<String, List<MaterialImg>> uploadImage(MultipartFile[] files) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -198,6 +201,7 @@ public class MaterialServiceImpl implements MaterialService {
         materialDO.setCreateTime(currentTime);
         materialMapper.save(materialDO);
         saveMaterialImage(material.getMaterialImgList(), 1, materialDO.getId(), loginUser, currentTime);
+        saveProductMaterial(materialDO, loginUser.getUserId(), currentTime);
 
         result.setResult(materialDO.getMaterialNo());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -274,6 +278,37 @@ public class MaterialServiceImpl implements MaterialService {
         return result;
     }
 
+    void saveProductMaterial(MaterialDO materialDO, Integer loginUserId, Date currentTime) {
+        List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = new ArrayList<>();
+        if (MaterialType.isCapacityMaterial(materialDO.getMaterialType())) {
+            productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByMaterialTypeAndCapacityValue(materialDO.getMaterialType(), materialDO.getMaterialCapacityValue());
+        } else {
+            productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByMaterialModelId(materialDO.getMaterialModelId());
+        }
+        for (ProductCategoryPropertyValueDO productCategoryPropertyValueDO : productCategoryPropertyValueDOList) {
+            List<ProductSkuPropertyDO> productSkuPropertyDOList = productSkuPropertyMapper.findByPropertyValueId(productCategoryPropertyValueDO.getId());
+            if (CollectionUtil.isNotEmpty(productSkuPropertyDOList)) {
+                for (ProductSkuPropertyDO productSkuPropertyDO : productSkuPropertyDOList) {
+                    ProductMaterialDO dbProductMaterialDO = productMaterialMapper.findBySkuAndMaterial(productSkuPropertyDO.getSkuId(), materialDO.getId());
+                    if (dbProductMaterialDO == null) {
+                        ProductMaterialDO productMaterialDO = new ProductMaterialDO();
+                        productMaterialDO.setProductId(productSkuPropertyDO.getProductId());
+                        productMaterialDO.setProductSkuId(productSkuPropertyDO.getSkuId());
+                        productMaterialDO.setMaterialId(materialDO.getId());
+                        productMaterialDO.setMaterialCount(1);
+                        productMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                        productMaterialDO.setCreateUser(loginUserId.toString());
+                        productMaterialDO.setUpdateUser(loginUserId.toString());
+                        productMaterialDO.setCreateTime(currentTime);
+                        productMaterialDO.setUpdateTime(currentTime);
+                        productMaterialMapper.save(productMaterialDO);
+                    }
+                }
+            }
+        }
+
+    }
+
 
     void saveMaterialImage(List<MaterialImg> materialImgList, Integer type, Integer materialId, User loginUser, Date currentTime) {
 
@@ -296,7 +331,7 @@ public class MaterialServiceImpl implements MaterialService {
         if (!updateMaterialImgList.isEmpty()) {
             for (MaterialImg materialImg : updateMaterialImgList) {
                 MaterialImgDO dbMaterialImgDO = materialImgMapper.findByImgId(materialImg.getMaterialImgId());
-                if(dbMaterialImgDO.getMaterialId() != null){
+                if (dbMaterialImgDO == null || dbMaterialImgDO.getMaterialId() != null) {
                     continue;
                 }
                 MaterialImgDO materialImgDO = MaterialImageConverter.convertMaterialImg(materialImg);
@@ -363,7 +398,7 @@ public class MaterialServiceImpl implements MaterialService {
         Integer totalCount = materialMapper.listCount(maps);
         List<MaterialDO> materialDOList = materialMapper.listPage(maps);
         List<Material> materialList = ConverterUtil.convertList(materialDOList, Material.class);
-        for(Material material : materialList){
+        for (Material material : materialList) {
             BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
             bulkMaterialQueryParam.setMaterialId(material.getMaterialId());
             bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);

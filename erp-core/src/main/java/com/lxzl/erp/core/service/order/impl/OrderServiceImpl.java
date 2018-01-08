@@ -1073,6 +1073,7 @@ public class OrderServiceImpl implements OrderService {
                         orderMaterialBulkDO.setOrderMaterialId(orderMaterialDO.getId());
                         orderMaterialBulkDO.setBulkMaterialId(bulkMaterialDO.getId());
                         orderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
+                        orderMaterialBulkDO.setMaterialBulkUnitAmount(orderMaterialDO.getMaterialUnitAmount());
                         orderMaterialBulkDO.setRentStartTime(orderDO.getRentStartTime());
                         orderMaterialBulkDO.setExpectReturnTime(expectReturnTime);
                         orderMaterialBulkDO.setExpectRentAmount(expectRentAmount);
@@ -1279,26 +1280,48 @@ public class OrderServiceImpl implements OrderService {
 
     public void verifyCustomerRiskInfo(OrderDO orderDO) {
         CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
-        if (customerRiskManagementDO == null) {
-            throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS);
+        boolean isCheckRiskManagement = isCheckRiskManagement(orderDO);
+        if (isCheckRiskManagement) {
+            if (customerRiskManagementDO == null) {
+                throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS);
+            }
         }
+
         if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
             for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
                 Product product = productServiceResult.getResult();
-                // 商品品牌为苹果品牌
-                if (BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) {
-                    orderProductDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
-                    orderProductDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
-                    orderProductDO.setPayMode(customerRiskManagementDO.getApplePayMode());
-                } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
-                    orderProductDO.setDepositCycle(customerRiskManagementDO.getNewDepositCycle());
-                    orderProductDO.setPaymentCycle(customerRiskManagementDO.getNewPaymentCycle());
-                    orderProductDO.setPayMode(customerRiskManagementDO.getNewPayMode());
-                } else {
-                    orderProductDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
-                    orderProductDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
-                    orderProductDO.setPayMode(customerRiskManagementDO.getPayMode());
+                ProductSku productSku = productServiceResult.getResult().getProductSkuList().get(0);
+                // 如果走风控
+                if (isCheckRiskManagement) {
+                    if (BrandId.BRAND_ID_APPLE.equals(product.getBrandId()) && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsLimitApple())) {
+                        throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_APPLE_LIMIT);
+                    }
+                    if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsLimitNew())) {
+                        throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NEW_LIMIT);
+                    }
+                    if (customerRiskManagementDO.getSingleLimitPrice() != null && BigDecimalUtil.compare(productSku.getSkuPrice(), customerRiskManagementDO.getSingleLimitPrice()) >= 0) {
+                        throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT);
+                    }
+                    orderProductDO.setDepositCycle(1);
+                    orderProductDO.setPaymentCycle(1);
+                    orderProductDO.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+                }else{
+                    // 商品品牌为苹果品牌
+                    if (BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) {
+                        orderProductDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
+                        orderProductDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
+                        orderProductDO.setPayMode(customerRiskManagementDO.getApplePayMode());
+                    } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
+                        orderProductDO.setDepositCycle(customerRiskManagementDO.getNewDepositCycle());
+                        orderProductDO.setPaymentCycle(customerRiskManagementDO.getNewPaymentCycle());
+                        orderProductDO.setPayMode(customerRiskManagementDO.getNewPayMode());
+                    } else {
+                        orderProductDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
+                        orderProductDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
+                        orderProductDO.setPayMode(customerRiskManagementDO.getPayMode());
+                    }
                 }
             }
         }
@@ -1307,21 +1330,82 @@ public class OrderServiceImpl implements OrderService {
             for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
                 ServiceResult<String, Material> materialResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
                 Material material = materialResult.getResult();
-                if (BrandId.BRAND_ID_APPLE.equals(material.getBrandId())) {
-                    orderMaterialDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
-                    orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
-                    orderMaterialDO.setPayMode(customerRiskManagementDO.getApplePayMode());
-                } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
-                    orderMaterialDO.setDepositCycle(customerRiskManagementDO.getNewDepositCycle());
-                    orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getNewPaymentCycle());
-                    orderMaterialDO.setPayMode(customerRiskManagementDO.getNewPayMode());
-                } else {
-                    orderMaterialDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
-                    orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
-                    orderMaterialDO.setPayMode(customerRiskManagementDO.getPayMode());
+                // 如果走风控
+                if (isCheckRiskManagement) {
+                    if (BrandId.BRAND_ID_APPLE.equals(material.getBrandId()) && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsLimitApple())) {
+                        throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_APPLE_LIMIT);
+                    }
+                    if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsLimitNew())) {
+                        throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NEW_LIMIT);
+                    }
+                    if (customerRiskManagementDO.getSingleLimitPrice() != null && BigDecimalUtil.compare(material.getMaterialPrice(), customerRiskManagementDO.getSingleLimitPrice()) >= 0) {
+                        throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT);
+                    }
+                    orderMaterialDO.setDepositCycle(1);
+                    orderMaterialDO.setPaymentCycle(1);
+                    orderMaterialDO.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+                }else{
+                    if (BrandId.BRAND_ID_APPLE.equals(material.getBrandId())) {
+                        orderMaterialDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
+                        orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
+                        orderMaterialDO.setPayMode(customerRiskManagementDO.getApplePayMode());
+                    } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
+                        orderMaterialDO.setDepositCycle(customerRiskManagementDO.getNewDepositCycle());
+                        orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getNewPaymentCycle());
+                        orderMaterialDO.setPayMode(customerRiskManagementDO.getNewPayMode());
+                    } else {
+                        orderMaterialDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
+                        orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
+                        orderMaterialDO.setPayMode(customerRiskManagementDO.getPayMode());
+                    }
                 }
             }
         }
+    }
+
+    private boolean isCheckRiskManagement(OrderDO orderDO) {
+
+        BigDecimal totalProductAmount = BigDecimal.ZERO;
+        BigDecimal totalMaterialAmount = BigDecimal.ZERO;
+        Integer totalProductCount = 0;
+        if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
+            for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())
+                        && orderProductDO.getRentTimeLength() >= 90) {
+                    return true;
+                }
+                if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())
+                        && orderProductDO.getRentTimeLength() >= 3) {
+                    return true;
+                }
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
+                ProductSku productSku = productServiceResult.getResult().getProductSkuList().get(0);
+
+                totalProductAmount = BigDecimalUtil.add(totalProductAmount, productSku.getSkuPrice());
+                totalProductCount += orderProductDO.getProductCount();
+            }
+        }
+
+        if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
+            for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())
+                        && orderMaterialDO.getRentTimeLength() >= 90) {
+                    return true;
+                }
+                if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())
+                        && orderMaterialDO.getRentTimeLength() >= 3) {
+                    return true;
+                }
+                ServiceResult<String, Material> materialResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
+                Material material = materialResult.getResult();
+                totalMaterialAmount = BigDecimalUtil.add(totalMaterialAmount, material.getMaterialPrice());
+            }
+        }
+        BigDecimal totalAmount = BigDecimalUtil.add(totalProductAmount, totalMaterialAmount);
+        if (totalProductCount >= 100 || BigDecimalUtil.compare(totalAmount, new BigDecimal(2000000)) >= 0) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -1588,6 +1672,7 @@ public class OrderServiceImpl implements OrderService {
                 BigDecimal depositAmount = BigDecimal.ZERO;
                 BigDecimal creditDepositAmount = BigDecimal.ZERO;
                 BigDecimal rentDepositAmount = BigDecimal.ZERO;
+                // 小于等于30天的,不走风控，大于30天的，走风控授信
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() <= 30) {
                     BigDecimal remainder = orderProductDO.getDepositAmount().divideAndRemainder(new BigDecimal(orderProductDO.getProductCount()))[1];
                     if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
@@ -1595,7 +1680,7 @@ public class OrderServiceImpl implements OrderService {
                     }
                     depositAmount = orderProductDO.getDepositAmount();
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
-                } else if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() <= 30) {
+                } else if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() > 30) {
                     creditDepositAmount = BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
                     totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                 } else if ((BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) || CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
@@ -1664,6 +1749,7 @@ public class OrderServiceImpl implements OrderService {
                 BigDecimal depositAmount = BigDecimal.ZERO;
                 BigDecimal creditDepositAmount = BigDecimal.ZERO;
                 BigDecimal rentDepositAmount = BigDecimal.ZERO;
+                // 小于等于30天的,不走风控，大于30天的，走风控授信
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() <= 30) {
                     BigDecimal remainder = orderMaterialDO.getDepositAmount().divideAndRemainder(new BigDecimal(orderMaterialDO.getMaterialCount()))[1];
                     if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {

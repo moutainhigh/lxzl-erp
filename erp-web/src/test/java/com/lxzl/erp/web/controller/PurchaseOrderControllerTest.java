@@ -667,6 +667,13 @@ public class PurchaseOrderControllerTest extends ERPTransactionalTest {
     }
 
     @Test
+    public void strongCancel() throws Exception {
+        PurchaseOrder purchaseOrder = new PurchaseOrder();
+        purchaseOrder.setPurchaseNo("LXPO1000201801080003");
+        TestResult testResult = getJsonTestResult("/purchaseOrder/strongCancel", purchaseOrder);
+    }
+
+    @Test
     public void getPurchaseReceiveMaterialPriceList() throws Exception {
         PurchaseReceiveOrderMaterial purchaseReceiveOrderMaterial = new PurchaseReceiveOrderMaterial();
         purchaseReceiveOrderMaterial.setPurchaseReceiveOrderMaterialId(248);
