@@ -417,7 +417,7 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         ServiceResult<String, String> result = new ServiceResult<>();
         Date now = new Date();
         //校验采购单是否存在
-        PurchaseApplyOrderDO purchaseApplyOrderDO = purchaseApplyOrderMapper.findByNo(purchaseApplyOrderCommitParam.getPurchaseApplyNo());
+        PurchaseApplyOrderDO purchaseApplyOrderDO = purchaseApplyOrderMapper.findByNo(purchaseApplyOrderCommitParam.getPurchaseApplyOrderNo());
         if (purchaseApplyOrderDO == null) {
             result.setErrorCode(ErrorCode.PURCHASE_APPLY_ORDER_NOT_EXISTS);
             return result;
@@ -441,7 +441,7 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
                 return result;
             }
             //调用提交审核服务
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE_APPLY_ORDER, purchaseApplyOrderCommitParam.getPurchaseApplyNo(), purchaseApplyOrderCommitParam.getVerifyUserId(), purchaseApplyOrderCommitParam.getRemark());
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE_APPLY_ORDER, purchaseApplyOrderCommitParam.getPurchaseApplyOrderNo(), purchaseApplyOrderCommitParam.getVerifyUserId(), purchaseApplyOrderCommitParam.getRemark());
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 purchaseApplyOrderDO.setPurchaseApplyOrderStatus(PurchaseApplyOrderStatus.PURCHASE_APPLY_ORDER_STATUS_VERIFYING);

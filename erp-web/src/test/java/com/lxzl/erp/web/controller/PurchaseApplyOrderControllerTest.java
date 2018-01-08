@@ -143,7 +143,7 @@ public class PurchaseApplyOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void commit() throws Exception {
         PurchaseApplyOrderCommitParam purchaseApplyOrderCommitParam = new PurchaseApplyOrderCommitParam();
-        purchaseApplyOrderCommitParam.setPurchaseApplyNo("LXPA-0755-2018010800005");
+        purchaseApplyOrderCommitParam.setPurchaseApplyOrderNo("LXPA-0755-2018010800005");
         purchaseApplyOrderCommitParam.setVerifyUserId(500006);
         TestResult result = getJsonTestResult("/purchaseApplyOrder/commit",purchaseApplyOrderCommitParam);
     }
