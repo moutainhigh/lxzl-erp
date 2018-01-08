@@ -380,6 +380,7 @@ public class ErrorCode {
     public static final String CUSTOMER_IS_EXISTS = "J500057";
     public static final String CUSTOMER_NOT_RENT_OR_ORDER_NOT_CONFIRM = "J500058";
     public static final String CUSTOMER_RENT_THIS_BULK_MATERIAL_NO_MORE = "J500059";
+    public static final String CUSTOMER_OWNER_NOT_NULL = "J500060";
 
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
@@ -571,6 +572,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_APPLY_CAN_NOT_UPDATE, "此状态采购申请单不可修改");
         MAP.put(PURCHASE_APPLY_CAN_NOT_CANCEL_BY_STATUS, "此状态采购申请单不可取消");
         MAP.put(PURCHASE_APPLY_YET_RECEIVE_CAN_NOT_CANCEL, "已收货的采购申请单不可取消");
+        MAP.put(CUSTOMER_OWNER_NOT_NULL, "客户业务员ID不能为空");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
