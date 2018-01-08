@@ -47,7 +47,7 @@
 		INNER JOIN erp_warehouse ewc ON ebm.current_warehouse_id = ewc.id
 		INNER JOIN erp_warehouse ewo ON ebm.owner_warehouse_id = ewo.id
 		LEFT JOIN erp_brand eb ON eb.id = ebm.brand_id
-		WHERE ebm.id = #{id, jdbcType=INTEGER} AND data_status = 1 
+		WHERE ebm.id = #{id, jdbcType=INTEGER} AND ebm.data_status = 1
 	</select>
 
 	<select id="findByNo" resultMap="BulkMaterialDO" parameterType="java.lang.String">

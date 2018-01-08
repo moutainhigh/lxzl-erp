@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.assembleOderMaterialEquipment.AssembleOrderProductEquipmentMapper">
+
+	<resultMap id="AssembleOrderProductEquipmentDO" type="com.lxzl.erp.dataaccess.domain.assembleOder.AssembleOrderProductEquipmentDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="assemble_order_id" jdbcType="INTEGER" property="assembleOrderId" />
+		<result column="product_equipment_no" jdbcType="VARCHAR" property="productEquipmentNo" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		eaope.id,eaope.assemble_order_id,eaope.product_equipment_no,eaope.data_status,eaope.remark,eaope.create_time,eaope.create_user,eaope.update_time,eaope.update_user
+	</sql>
+
+	<select id="findById" resultMap="AssembleOrderProductEquipmentDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_assemble_order_product_equipment eaope 
+		WHERE eaope.id = #{id, jdbcType=INTEGER} AND eaope.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eaope.id) FROM erp_assemble_order_product_equipment eaope 
+		<where>
+			<if test="true">
+				AND eaope.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="AssembleOrderProductEquipmentDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_assemble_order_product_equipment eaope 
+		<where>
+			<if test="maps.assembleOrderProductEquipmentQueryParam.assembleOrderId != null">
+				AND eaope.assemble_order_id = #{maps.assembleOrderProductEquipmentQueryParam.assembleOrderId}
+			</if>
+		</where><where>
+			<if test="true">
+				AND eaope.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="assembleOrderId != null">
+				assemble_order_id = #{assembleOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="productEquipmentNo != null">
+				product_equipment_no = #{productEquipmentNo,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.assembleOder.AssembleOrderProductEquipmentDO">
+		INSERT INTO erp_assemble_order_product_equipment <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.assembleOder.AssembleOrderProductEquipmentDO">
+		UPDATE erp_assemble_order_product_equipment <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

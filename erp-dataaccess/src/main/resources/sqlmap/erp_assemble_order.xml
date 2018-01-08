@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.assembleOder.AssembleOrderMapper">
+
+	<resultMap id="AssembleOrderDO" type="com.lxzl.erp.dataaccess.domain.assembleOder.AssembleOrderDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="assemble_order_no" jdbcType="VARCHAR" property="assembleOrderNo" />
+		<result column="assemble_product_id" jdbcType="INTEGER" property="assembleProductId" />
+		<result column="assemble_product_sku_id" jdbcType="INTEGER" property="assembleProductSkuId" />
+		<result column="assemble_product_count" jdbcType="INTEGER" property="assembleProductCount" />
+		<result column="warehouse_id" jdbcType="INTEGER" property="warehouseId" />
+		<result column="assemble_order_status" jdbcType="INTEGER" property="assembleOrderStatus" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<collection property="assembleOrderMaterialDOList" resultMap="AssembleOrderMaterialDO" />
+	</resultMap>
+
+	<resultMap id="AssembleOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.assembleOder.AssembleOrderMaterialDO">
+		<id column="eaom_id" jdbcType="INTEGER" property="id" />
+		<result column="eaom_assembleOrderId" jdbcType="INTEGER" property="assembleOrderId" />
+		<result column="eaom_materialId" jdbcType="INTEGER" property="materialId" />
+		<result column="eaom_materialNo" jdbcType="VARCHAR" property="materialNo" />
+		<result column="eaom_materialCount" jdbcType="INTEGER" property="materialCount" />
+		<result column="eaom_dataStatus" jdbcType="INTEGER" property="dataStatus" />
+		<result column="eaom_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="eaom_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="eaom_createUser" jdbcType="VARCHAR" property="createUser" />
+		<result column="eaom_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="eaom_updateUser" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="assemble_order_material_column_List">
+		eaom.id AS eaom_id,eaom.assemble_order_id AS eaom_assembleOrderId,eaom.material_id AS eaom_materialId,eaom.material_no AS eaom_materialNo,eaom.material_count AS eaom_materialCount,eaom.data_status AS eaom_dataStatus,eaom.remark AS eaom_remark,eaom.create_time AS eaom_createTime,eaom.create_user AS eaom_createUser,eaom.update_time AS eaom_updateTime,eaom.update_user AS eaom_updateUser
+	</sql>
+	<sql id="column_List">
+		eao.id,eao.assemble_order_no,eao.assemble_product_id,eao.assemble_product_sku_id,eao.assemble_product_count,eao.warehouse_id,eao.assemble_order_status,eao.data_status,eao.remark,eao.create_time,eao.create_user,eao.update_time,eao.update_user
+	</sql>
+
+	<select id="findById" resultMap="AssembleOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_assemble_order eao
+		WHERE eao.id = #{id, jdbcType=INTEGER} AND eao.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eao.id) FROM erp_assemble_order eao
+		<where>
+			<if test="maps.queryParam.assembleOrderId != null">
+				AND eao.id = #{maps.queryParam.assembleOrderId,jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam.assembleOrderNo != null &amp;&amp; maps.queryParam.assembleOrderNo != ''">
+				AND eao.assemble_order_no = #{maps.queryParam.assembleOrderNo,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+				<![CDATA[ AND eao.create_time >= #{maps.queryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+				<![CDATA[ AND eao.create_time <= #{maps.queryParam.createEndTime} ]]>
+			</if>
+			<if test="true">
+				AND eao.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="AssembleOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_assemble_order eao
+		<where>
+			<if test="true">
+				AND eao.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="assembleOrderNo != null">
+				assemble_order_no = #{assembleOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="assembleProductId != null">
+				assemble_product_id = #{assembleProductId,jdbcType=INTEGER},
+			</if>
+			<if test="assembleProductSkuId != null">
+				assemble_product_sku_id = #{assembleProductSkuId,jdbcType=INTEGER},
+			</if>
+			<if test="assembleProductCount != null">
+				assemble_product_count = #{assembleProductCount,jdbcType=INTEGER},
+			</if>
+			<if test="warehouseId != null">
+				warehouse_id = #{warehouseId,jdbcType=INTEGER},
+			</if>
+			<if test="assembleOrderStatus != null">
+				assemble_order_status = #{assembleOrderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.assembleOder.AssembleOrderDO">
+		INSERT INTO erp_assemble_order <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.assembleOder.AssembleOrderDO">
+		UPDATE erp_assemble_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<select id="findDetailByAssembleOrderId" resultMap="AssembleOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/>,<include refid="assemble_order_material_column_List"/>
+		FROM (
+		SELECT
+		<include refid="column_List"/>
+		FROM erp_assemble_order eao
+		WHERE eao.id = #{assembleOrderId,jdbcType=INTEGER} AND eao.data_status = 1
+		) eao  LEFT JOIN erp_assemble_order_material eaom on eaom.assemble_order_id = eao.id and eaom.data_status=1
+	</select>
+
+
+	<select id="findAssembleOrderByParams" resultMap="AssembleOrderDO" parameterType="map">
+	SELECT <include refid="column_List"/>,<include refid="assemble_order_material_column_List"/>
+	FROM (
+	SELECT
+	<include refid="column_List"/>
+	FROM erp_assemble_order eao
+	<where>
+		<if test="maps.queryParam.assembleOrderNo != null &amp;&amp; maps.queryParam.jointProductId != null">
+			and eao.id = #{maps.queryParam.assembleOrderId,jdbcType=INTEGER}
+		</if>
+		<if test="maps.queryParam.assembleOrderNo != null &amp;&amp; maps.queryParam.assembleOrderNo != ''">
+			and eao.assemble_order_no = #{maps.queryParam.assembleOrderNo,jdbcType=VARCHAR}
+		</if>
+		<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+			<![CDATA[ AND eao.create_time >= #{maps.queryParam.createStartTime} ]]>
+		</if>
+		<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+			<![CDATA[ AND eao.create_time <= #{maps.queryParam.createEndTime} ]]>
+		</if>
+		<if test="true">
+			and eao.data_status = 1
+		</if>
+	</where>
+	ORDER BY eao.create_time DESC
+	LIMIT #{maps.start},#{maps.pageSize}
+	) eao
+	LEFT JOIN erp_assemble_order_material eaom on eaom.assemble_order_id = eao.id and eaom.data_status=1
+	ORDER BY eao.create_time DESC
+	</select>
+</mapper>

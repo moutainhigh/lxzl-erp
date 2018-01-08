@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.assembleOderMaterial.AssembleOrderMaterialMapper">
+
+	<resultMap id="AssembleOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.assembleOder.AssembleOrderMaterialDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="assemble_order_id" jdbcType="INTEGER" property="assembleOrderId" />
+		<result column="material_id" jdbcType="INTEGER" property="materialId" />
+		<result column="material_no" jdbcType="VARCHAR" property="materialNo" />
+		<result column="material_count" jdbcType="INTEGER" property="materialCount" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		eaom.id,eaom.assemble_order_id,eaom.material_id,eaom.material_no,eaom.material_count,eaom.data_status,eaom.remark,eaom.create_time,eaom.create_user,eaom.update_time,eaom.update_user
+	</sql>
+
+	<select id="findById" resultMap="AssembleOrderMaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_assemble_order_material eaom 
+		WHERE eaom.id = #{id, jdbcType=INTEGER} AND eaom.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eaom.id) FROM erp_assemble_order_material eaom 
+		<where>
+			<if test="true">
+				AND eaom.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="AssembleOrderMaterialDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_assemble_order_material eaom 
+		<where>
+			<if test="maps.assembleOrderMaterialQueryParam.materialId != null">
+				AND eaom.material_id = #{maps.assembleOrderMaterialQueryParam.materialId}
+			</if>
+			<if test="maps.assembleOrderMaterialQueryParam.materialId != null">
+				AND eaom.material_id = #{maps.assembleOrderMaterialQueryParam.materialId}
+			</if>
+			<if test="true">
+				AND eaom.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="assembleOrderId != null">
+				assemble_order_id = #{assembleOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="materialId != null">
+				material_id = #{materialId,jdbcType=INTEGER},
+			</if>
+			<if test="materialNo != null">
+				material_no = #{materialNo,jdbcType=VARCHAR},
+			</if>
+			<if test="materialCount != null">
+				material_count = #{materialCount,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.assembleOder.AssembleOrderMaterialDO">
+		INSERT INTO erp_assemble_order_material <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.assembleOder.AssembleOrderMaterialDO">
+		UPDATE erp_assemble_order_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -13,8 +13,26 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AssembleOrderQueryParam extends BasePageParam {
 
-    private Date createStartTime;
-    private Date createEndTime;
+    private Integer assembleOrderId;  //组装单id
+    private Date createStartTime;   //创建起始时间
+    private Date createEndTime;     //创建结束时间
+    private Integer assembleOrderNo;  //组装单编号
+
+    public Integer getAssembleOrderNo() {
+        return assembleOrderNo;
+    }
+
+    public void setAssembleOrderNo(Integer assembleOrderNo) {
+        this.assembleOrderNo = assembleOrderNo;
+    }
+
+    public Integer getAssembleOrderId() {
+        return assembleOrderId;
+    }
+
+    public void setAssembleOrderId(Integer assembleOrderId) {
+        this.assembleOrderId = assembleOrderId;
+    }
 
     public Date getCreateStartTime() {
         return createStartTime;

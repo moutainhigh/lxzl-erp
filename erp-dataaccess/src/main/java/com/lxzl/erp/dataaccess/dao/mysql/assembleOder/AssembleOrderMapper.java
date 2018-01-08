@@ -13,4 +13,8 @@ public interface AssembleOrderMapper extends BaseMysqlDAO<AssembleOrderDO> {
 	List<AssembleOrderDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+    AssembleOrderDO findDetailByAssembleOrderId(@Param("assembleOrderId") Integer assembleOrderId);
+	//查询分页信息
+	List<AssembleOrderDO> findAssembleOrderByParams(@Param("maps") Map<String, Object> maps);
 }

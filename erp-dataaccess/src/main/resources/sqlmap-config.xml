@@ -101,6 +101,12 @@
         <mapper resource="sqlmap/erp_joint_material.xml" />
         <mapper resource="sqlmap/erp_joint_product_sku.xml" />
         <mapper resource="sqlmap/erp_order_time_axis.xml" />
+
+        <mapper resource="sqlmap/erp_assemble_order.xml" />
+        <mapper resource="sqlmap/erp_assemble_order_material.xml" />
+        <mapper resource="sqlmap/erp_assemble_order_product_equipment.xml" />
+
+        <mapper resource="sqlmap/erp_transfer_order.xml" />
     </mappers>
 
 </configuration>

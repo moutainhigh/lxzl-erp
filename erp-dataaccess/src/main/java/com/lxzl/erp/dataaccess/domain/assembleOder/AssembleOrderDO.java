@@ -1,7 +1,11 @@
 package com.lxzl.erp.dataaccess.domain.assembleOder;
 
+import com.lxzl.erp.common.domain.assembleOder.pojo.AssembleOrderMaterial;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
+import java.util.List;
 
 
 public class AssembleOrderDO  extends BaseDO {
@@ -15,6 +19,16 @@ public class AssembleOrderDO  extends BaseDO {
 	private Integer assembleOrderStatus;
 	private Integer dataStatus;
 	private String remark;
+	@Transient
+	private List<AssembleOrderMaterialDO> assembleOrderMaterialDOList;  //组装单配件
+
+	public List<AssembleOrderMaterialDO> getAssembleOrderMaterialDOList() {
+		return assembleOrderMaterialDOList;
+	}
+
+	public void setAssembleOrderMaterialDOList(List<AssembleOrderMaterialDO> assembleOrderMaterialDOList) {
+		this.assembleOrderMaterialDOList = assembleOrderMaterialDOList;
+	}
 
 	public Integer getId(){
 		return id;

@@ -1,15 +1,14 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
+import com.lxzl.erp.TestResult;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.*;
 
 /**
  * User : XiaoLuYu
@@ -17,6 +16,19 @@ import static org.junit.Assert.*;
  * Time : Created in ${Time}
  */
 public class GenerateNoSupportTest extends ERPUnTransactionalTest {
+
+    public void generateTransferOrderNo() throws Exception {
+        String s = generateNoSupport.generateTransferOrderNo(new Date(), 1);
+        System.out.println(s);
+    }
+
+
+    @Test
+    public void generateAssemblerOderNo() throws Exception {
+        String s = generateNoSupport.generateAssemblerOderNo(new Date(), 1);
+        System.out.println(s);
+    }
+
     @Test
     public void generateSupplierNo() throws Exception {
         long startTime = System.currentTimeMillis();
@@ -241,5 +253,8 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
         //一次 执行时间：0.07s
     }
 
-
+    @Test
+    public void generateCustomerNo2() throws Exception {
+        TestResult result = getJsonTestResult("/generate/createCustomerNo",null);
+    }
 }

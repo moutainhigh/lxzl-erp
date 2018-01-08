@@ -605,7 +605,7 @@ public class GenerateNoSupport {
         AssembleOrderQueryParam assembleOrderQueryParam = new AssembleOrderQueryParam();
         assembleOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
         assembleOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
-        maps.put("assembleOrderQueryParam", assembleOrderQueryParam);
+        maps.put("queryParam",assembleOrderQueryParam);
         Integer count = assembleOrderMapper.listCount(maps);
         StringBuilder builder = new StringBuilder();
         builder.append("LXA");
@@ -623,7 +623,7 @@ public class GenerateNoSupport {
         TransferOrderOrderQueryParam transferOrderOrderQueryParam = new TransferOrderOrderQueryParam();
         transferOrderOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
         transferOrderOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
-        maps.put("transferOrderOrderQueryParam", transferOrderOrderQueryParam);
+        maps.put("queryParam",transferOrderOrderQueryParam);
         Integer count = transferOrderMapper.listCount(maps);
         StringBuilder builder = new StringBuilder();
         builder.append("LXT");
