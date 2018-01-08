@@ -60,8 +60,8 @@
                                        <dt class="mb10">订单状态</dt><dd>{{returnOrderStatusValue}}&nbsp;</dd>
                                        <dt class="mb10">创建人</dt><dd>{{createUserRealName}}&nbsp;</dd>
                                        <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
-                                       <dt class="mb10">修改人</dt><dd>{{updateUserRealName}}&nbsp;</dd>
-                                       <dt class="mb10">修改时间</dt><dd>{{#time}}{{updateTime}}{{/time}}&nbsp;</dd>
+##                                       <dt class="mb10">修改人</dt><dd>{{updateUserRealName}}&nbsp;</dd>
+##                                       <dt class="mb10">修改时间</dt><dd>{{#time}}{{updateTime}}{{/time}}&nbsp;</dd>
                                        <dt class="mb10">备注</dt><dd>{{remark}}</dd>
                                    </dl>
                                </div>
