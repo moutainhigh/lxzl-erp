@@ -428,7 +428,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             //取得订单，并且把商品项存入map方便查找
             OrderDO orderDO = orderDOMap.get(bulkMaterialDO.getOrderNo());
             //这里统计订单的本次退还散料数+1
-            if (!rentBulkMaterialCountNowMap.containsKey(orderDO.getId())) {
+            if (!rentBulkMaterialCountNowMap.containsKey(orderDO.getOrderNo())) {
                 rentBulkMaterialCountNowMap.put(orderDO.getOrderNo(), 1);
                 //这里查询一遍该订单的在租设备总数，保存到map
                 rentEquipmentCountMap.put(orderDO.getOrderNo(), productEquipmentMapper.getRentEquipmentCountByOrderNo(orderDO.getOrderNo()));

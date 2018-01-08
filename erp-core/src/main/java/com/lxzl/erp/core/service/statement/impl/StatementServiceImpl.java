@@ -247,6 +247,19 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_ERROR);
             return result;
         }
+        List<StatementOrderDO> statementOrderDOList = statementOrderMapper.findByCustomerId(statementOrderDO.getCustomerId());
+        for (StatementOrderDO dbStatementOrderDO : statementOrderDOList) {
+            if (!StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(dbStatementOrderDO.getStatementStatus())
+                    && !StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDO.getStatementStatus())) {
+                if(dbStatementOrderDO.getStatementOrderNo().equals(statementOrderNo)){
+                    break;
+                }
+                result.setErrorCode(ErrorCode.STATEMENT_ORDER_CAN_NOT_PAID_THIS);
+                return result;
+            }
+        }
+
+
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         CustomerDO customerDO = customerMapper.findById(statementOrderDO.getCustomerId());
@@ -605,12 +618,6 @@ public class StatementServiceImpl implements StatementService {
                                 statementOrderMapper.update(statementOrderDO);
                             }
                             continue;
-                        } else {
-                            StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
-                            statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
-                            statementOrderMapper.update(statementOrderDO);
-                            statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
-                            statementOrderDetailMapper.update(statementOrderDetailDO);
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();

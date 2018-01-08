@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 @Repository
 public interface StatementOrderMapper extends BaseMysqlDAO<StatementOrderDO> {
 
@@ -17,6 +18,8 @@ public interface StatementOrderMapper extends BaseMysqlDAO<StatementOrderDO> {
 
     StatementOrderDO findByCustomerAndPayTime(@Param("customerId") Integer customerId,
                                               @Param("payTime") Date payTime);
+
+    List<StatementOrderDO> findByCustomerId(@Param("customerId") Integer customerId);
 
     StatementOrderDO findByNo(@Param("statementOrderNo") String statementOrderNo);
 }
