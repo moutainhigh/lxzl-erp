@@ -25,6 +25,12 @@ public class PurchaseApplyOrderDO  extends BaseDO {
 	private List<PurchaseApplyOrderProductDO> purchaseApplyOrderProductDOList;
 	@Transient
 	private List<PurchaseApplyOrderMaterialDO> purchaseApplyOrderMaterialDOList;
+	@Transient
+	private String applyUserName;
+	@Transient
+	private String warehouseName;
+	@Transient
+	private String departmentName;
 
 	public Integer getId(){
 		return id;
@@ -128,5 +134,29 @@ public class PurchaseApplyOrderDO  extends BaseDO {
 
 	public void setPurchaseApplyOrderMaterialDOList(List<PurchaseApplyOrderMaterialDO> purchaseApplyOrderMaterialDOList) {
 		this.purchaseApplyOrderMaterialDOList = purchaseApplyOrderMaterialDOList;
+	}
+
+	public String getApplyUserName() {
+		return applyUserName;
+	}
+
+	public void setApplyUserName(String applyUserName) {
+		this.applyUserName = applyUserName;
+	}
+
+	public String getWarehouseName() {
+		return warehouseName;
+	}
+
+	public void setWarehouseName(String warehouseName) {
+		this.warehouseName = warehouseName;
+	}
+
+	public String getDepartmentName() {
+		return departmentName;
+	}
+
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
 	}
 }

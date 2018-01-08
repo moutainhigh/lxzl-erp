@@ -15,6 +15,7 @@ import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.dataAccess.DataAccessSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.purchase.impl.PurchaseOrderServiceImpl;
 import com.lxzl.erp.core.service.purchaseApply.PurchaseApplyOrderService;
@@ -32,6 +33,7 @@ import com.lxzl.erp.dataaccess.domain.purchaseApply.PurchaseApplyOrderDO;
 import com.lxzl.erp.dataaccess.domain.purchaseApply.PurchaseApplyOrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.purchaseApply.PurchaseApplyOrderProductDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
+import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +43,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService {
@@ -69,6 +68,8 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
     private PurchaseApplyOrderProductMapper purchaseApplyOrderProductMapper;
     @Autowired
     private WorkflowService workflowService;
+    @Autowired
+    private DataAccessSupport dataAccessSupport;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
@@ -77,13 +78,13 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         User user = userSupport.getCurrentUser();
         //校验用户是否可选此部门
         DepartmentDO departmentDO = userSupport.getAvailableDepartment(purchaseApplyOrder.getDepartmentId());
-        if(departmentDO==null){
+        if (departmentDO == null) {
             serviceResult.setErrorCode(ErrorCode.DEPARTMENT_NOT_EXISTS);
             return serviceResult;
         }
         List<PurchaseApplyOrderProduct> purchaseApplyOrderProductList = purchaseApplyOrder.getPurchaseApplyOrderProductList();
         List<PurchaseApplyOrderMaterial> purchaseApplyOrderMaterialList = purchaseApplyOrder.getPurchaseApplyOrderMaterialList();
-        if(CollectionUtil.isEmpty(purchaseApplyOrderProductList)&&CollectionUtil.isEmpty(purchaseApplyOrderMaterialList)){
+        if (CollectionUtil.isEmpty(purchaseApplyOrderProductList) && CollectionUtil.isEmpty(purchaseApplyOrderMaterialList)) {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
@@ -107,24 +108,24 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         purchaseApplyOrderMapper.save(purchaseApplyOrderDO);
 
 
-        ServiceResult<String,List<PurchaseApplyOrderProductDO>> applyOrderProductResult = getPurchaseApplyOrderProductDOList(purchaseApplyOrderProductList,purchaseApplyOrderDO,now,user);
-        if(!ErrorCode.SUCCESS.equals(applyOrderProductResult.getErrorCode())){
+        ServiceResult<String, List<PurchaseApplyOrderProductDO>> applyOrderProductResult = getPurchaseApplyOrderProductDOList(purchaseApplyOrderProductList, purchaseApplyOrderDO, now, user);
+        if (!ErrorCode.SUCCESS.equals(applyOrderProductResult.getErrorCode())) {
             serviceResult.setErrorCode(applyOrderProductResult.getErrorCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             return serviceResult;
         }
-        ServiceResult<String,List<PurchaseApplyOrderMaterialDO>> applyOrderMaterialResult = getPurchaseApplyOrderMaterialDOList(purchaseApplyOrderMaterialList,purchaseApplyOrderDO,now,user);
-        if(!ErrorCode.SUCCESS.equals(applyOrderMaterialResult.getErrorCode())){
+        ServiceResult<String, List<PurchaseApplyOrderMaterialDO>> applyOrderMaterialResult = getPurchaseApplyOrderMaterialDOList(purchaseApplyOrderMaterialList, purchaseApplyOrderDO, now, user);
+        if (!ErrorCode.SUCCESS.equals(applyOrderMaterialResult.getErrorCode())) {
             serviceResult.setErrorCode(applyOrderProductResult.getErrorCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             return serviceResult;
         }
         List<PurchaseApplyOrderProductDO> purchaseApplyOrderProductDOList = applyOrderProductResult.getResult();
         List<PurchaseApplyOrderMaterialDO> purchaseApplyOrderMaterialDOList = applyOrderMaterialResult.getResult();
-        if(CollectionUtil.isNotEmpty(purchaseApplyOrderProductDOList)){
+        if (CollectionUtil.isNotEmpty(purchaseApplyOrderProductDOList)) {
             purchaseApplyOrderProductMapper.saveList(purchaseApplyOrderProductDOList);
         }
-        if(CollectionUtil.isNotEmpty(purchaseApplyOrderMaterialDOList)){
+        if (CollectionUtil.isNotEmpty(purchaseApplyOrderMaterialDOList)) {
             purchaseApplyOrderMaterialMapper.saveList(purchaseApplyOrderMaterialDOList);
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -132,13 +133,13 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         return serviceResult;
     }
 
-    private ServiceResult<String,List<PurchaseApplyOrderProductDO>> getPurchaseApplyOrderProductDOList(List<PurchaseApplyOrderProduct> purchaseApplyOrderProductList , PurchaseApplyOrderDO purchaseApplyOrderDO , Date now , User user){
-        ServiceResult<String,List<PurchaseApplyOrderProductDO>> serviceResult = new ServiceResult<>();
+    private ServiceResult<String, List<PurchaseApplyOrderProductDO>> getPurchaseApplyOrderProductDOList(List<PurchaseApplyOrderProduct> purchaseApplyOrderProductList, PurchaseApplyOrderDO purchaseApplyOrderDO, Date now, User user) {
+        ServiceResult<String, List<PurchaseApplyOrderProductDO>> serviceResult = new ServiceResult<>();
         List<PurchaseApplyOrderProductDO> purchaseApplyOrderProductDOListForSave = new ArrayList<>();
-        if(CollectionUtil.isNotEmpty(purchaseApplyOrderProductList)){
-            for(PurchaseApplyOrderProduct purchaseApplyOrderProduct : purchaseApplyOrderProductList){
-                ServiceResult<String,PurchaseApplyOrderProductDO> createPurchaseApplyOrderProductDOResult = createPurchaseApplyOrderProductDO(purchaseApplyOrderDO,purchaseApplyOrderProduct,now ,user);
-                if(!ErrorCode.SUCCESS.equals(createPurchaseApplyOrderProductDOResult.getErrorCode())){
+        if (CollectionUtil.isNotEmpty(purchaseApplyOrderProductList)) {
+            for (PurchaseApplyOrderProduct purchaseApplyOrderProduct : purchaseApplyOrderProductList) {
+                ServiceResult<String, PurchaseApplyOrderProductDO> createPurchaseApplyOrderProductDOResult = createPurchaseApplyOrderProductDO(purchaseApplyOrderDO, purchaseApplyOrderProduct, now, user);
+                if (!ErrorCode.SUCCESS.equals(createPurchaseApplyOrderProductDOResult.getErrorCode())) {
                     serviceResult.setErrorCode(createPurchaseApplyOrderProductDOResult.getErrorCode());
                     return serviceResult;
                 }
@@ -149,14 +150,15 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         serviceResult.setResult(purchaseApplyOrderProductDOListForSave);
         return serviceResult;
     }
-    private ServiceResult<String,PurchaseApplyOrderProductDO> createPurchaseApplyOrderProductDO(PurchaseApplyOrderDO purchaseApplyOrderDO , PurchaseApplyOrderProduct purchaseApplyOrderProduct , Date now , User user){
-        ServiceResult<String,PurchaseApplyOrderProductDO> serviceResult = new ServiceResult<>();
+
+    private ServiceResult<String, PurchaseApplyOrderProductDO> createPurchaseApplyOrderProductDO(PurchaseApplyOrderDO purchaseApplyOrderDO, PurchaseApplyOrderProduct purchaseApplyOrderProduct, Date now, User user) {
+        ServiceResult<String, PurchaseApplyOrderProductDO> serviceResult = new ServiceResult<>();
         PurchaseApplyOrderProductDO purchaseApplyOrderProductDO = new PurchaseApplyOrderProductDO();
         purchaseApplyOrderProductDO.setPurchaseApplyOrderId(purchaseApplyOrderDO.getId());
         purchaseApplyOrderProductDO.setPurchaseApplyOrderNo(purchaseApplyOrderDO.getPurchaseApplyOrderNo());
-        ServiceResult<String,Product> productServiceResult = productService.queryProductBySkuId(purchaseApplyOrderProduct.getProductSkuId());
-        if(!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())){
-            serviceResult.setErrorCode(productServiceResult.getErrorCode(),productServiceResult.getFormatArgs());
+        ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(purchaseApplyOrderProduct.getProductSkuId());
+        if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
+            serviceResult.setErrorCode(productServiceResult.getErrorCode(), productServiceResult.getFormatArgs());
             return serviceResult;
         }
         Product product = productServiceResult.getResult();
@@ -166,9 +168,12 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         purchaseApplyOrderProductDO.setRealCount(0);
         purchaseApplyOrderProductDO.setPurchaseApplyOrderItemStatus(PurchaseApplyOrderItemStatus.PURCHASE_APPLY_ORDER_ITEM_STATUS_WAIT_PURCHASE);
         purchaseApplyOrderProductDO.setIsNew(purchaseApplyOrderProduct.getIsNew());
-        if(purchaseApplyOrderDO.getAllUseTime()!=null){
+        if (purchaseApplyOrderDO.getAllUseTime() != null) {
             purchaseApplyOrderProductDO.setUseTime(purchaseApplyOrderDO.getAllUseTime());
-        }else{
+        } else if(purchaseApplyOrderProduct.getUseTime() == null ){
+            serviceResult.setErrorCode(ErrorCode.PURCHASE_APPLY_USE_TIME_NOT_NUll);
+            return serviceResult;
+        }else {
             purchaseApplyOrderProductDO.setUseTime(purchaseApplyOrderProduct.getUseTime());
         }
         purchaseApplyOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -181,13 +186,14 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         serviceResult.setResult(purchaseApplyOrderProductDO);
         return serviceResult;
     }
-    private ServiceResult<String,List<PurchaseApplyOrderMaterialDO>> getPurchaseApplyOrderMaterialDOList(List<PurchaseApplyOrderMaterial> purchaseApplyOrderMaterialList , PurchaseApplyOrderDO purchaseApplyOrderDO , Date now , User user){
-        ServiceResult<String,List<PurchaseApplyOrderMaterialDO>> serviceResult = new ServiceResult<>();
+
+    private ServiceResult<String, List<PurchaseApplyOrderMaterialDO>> getPurchaseApplyOrderMaterialDOList(List<PurchaseApplyOrderMaterial> purchaseApplyOrderMaterialList, PurchaseApplyOrderDO purchaseApplyOrderDO, Date now, User user) {
+        ServiceResult<String, List<PurchaseApplyOrderMaterialDO>> serviceResult = new ServiceResult<>();
         List<PurchaseApplyOrderMaterialDO> purchaseApplyOrderMaterialDOArrayListForSave = new ArrayList<>();
-        if(CollectionUtil.isNotEmpty(purchaseApplyOrderMaterialList)){
-            for(PurchaseApplyOrderMaterial purchaseApplyOrderMaterial : purchaseApplyOrderMaterialList){
-                ServiceResult<String,PurchaseApplyOrderMaterialDO> createPurchaseApplyOrderMaterialDOResult =  createPurchaseApplyOrderMaterialDO(purchaseApplyOrderDO,purchaseApplyOrderMaterial,now,user);
-                if(!ErrorCode.SUCCESS.equals(createPurchaseApplyOrderMaterialDOResult.getErrorCode())){
+        if (CollectionUtil.isNotEmpty(purchaseApplyOrderMaterialList)) {
+            for (PurchaseApplyOrderMaterial purchaseApplyOrderMaterial : purchaseApplyOrderMaterialList) {
+                ServiceResult<String, PurchaseApplyOrderMaterialDO> createPurchaseApplyOrderMaterialDOResult = createPurchaseApplyOrderMaterialDO(purchaseApplyOrderDO, purchaseApplyOrderMaterial, now, user);
+                if (!ErrorCode.SUCCESS.equals(createPurchaseApplyOrderMaterialDOResult.getErrorCode())) {
                     serviceResult.setErrorCode(createPurchaseApplyOrderMaterialDOResult.getErrorCode());
                     return serviceResult;
                 }
@@ -198,13 +204,14 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         serviceResult.setResult(purchaseApplyOrderMaterialDOArrayListForSave);
         return serviceResult;
     }
-    private ServiceResult<String,PurchaseApplyOrderMaterialDO> createPurchaseApplyOrderMaterialDO(PurchaseApplyOrderDO purchaseApplyOrderDO,PurchaseApplyOrderMaterial purchaseApplyOrderMaterial , Date now , User user){
-        ServiceResult<String,PurchaseApplyOrderMaterialDO> serviceResult = new ServiceResult<>();
+
+    private ServiceResult<String, PurchaseApplyOrderMaterialDO> createPurchaseApplyOrderMaterialDO(PurchaseApplyOrderDO purchaseApplyOrderDO, PurchaseApplyOrderMaterial purchaseApplyOrderMaterial, Date now, User user) {
+        ServiceResult<String, PurchaseApplyOrderMaterialDO> serviceResult = new ServiceResult<>();
         PurchaseApplyOrderMaterialDO purchaseApplyOrderMaterialDO = new PurchaseApplyOrderMaterialDO();
         purchaseApplyOrderMaterialDO.setPurchaseApplyOrderId(purchaseApplyOrderDO.getId());
         purchaseApplyOrderMaterialDO.setPurchaseApplyOrderNo(purchaseApplyOrderDO.getPurchaseApplyOrderNo());
         MaterialDO materialDO = materialMapper.findByNo(purchaseApplyOrderMaterial.getMaterialNo());
-        if(materialDO==null){
+        if (materialDO == null) {
             serviceResult.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
             return serviceResult;
         }
@@ -214,9 +221,12 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         purchaseApplyOrderMaterialDO.setRealCount(0);
         purchaseApplyOrderMaterialDO.setPurchaseApplyOrderItemStatus(PurchaseApplyOrderItemStatus.PURCHASE_APPLY_ORDER_ITEM_STATUS_WAIT_PURCHASE);
         purchaseApplyOrderMaterialDO.setIsNew(purchaseApplyOrderMaterial.getIsNew());
-        if(purchaseApplyOrderDO.getAllUseTime()!=null){
+        if (purchaseApplyOrderDO.getAllUseTime() != null) {
             purchaseApplyOrderMaterialDO.setUseTime(purchaseApplyOrderDO.getAllUseTime());
-        }else{
+        } else if(purchaseApplyOrderMaterial.getUseTime() == null){
+            serviceResult.setErrorCode(ErrorCode.PURCHASE_APPLY_USE_TIME_NOT_NUll);
+            return serviceResult;
+        } else {
             purchaseApplyOrderMaterialDO.setUseTime(purchaseApplyOrderMaterial.getUseTime());
         }
         purchaseApplyOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -229,37 +239,34 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         serviceResult.setResult(purchaseApplyOrderMaterialDO);
         return serviceResult;
     }
+
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> update(PurchaseApplyOrder purchaseApplyOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         PurchaseApplyOrderDO purchaseApplyOrderDO = purchaseApplyOrderMapper.findByNo(purchaseApplyOrder.getPurchaseApplyOrderNo());
-        if(purchaseApplyOrderDO==null){
+        if (purchaseApplyOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_APPLY_ORDER_NOT_EXISTS);
             return serviceResult;
         }
-        if(!PurchaseApplyOrderStatus.PURCHASE_APPLY_ORDER_STATUS_WAIT_COMMIT.equals(purchaseApplyOrderDO.getPurchaseApplyOrderStatus())){
+        if (!PurchaseApplyOrderStatus.PURCHASE_APPLY_ORDER_STATUS_WAIT_COMMIT.equals(purchaseApplyOrderDO.getPurchaseApplyOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_APPLY_CAN_NOT_UPDATE);
             return serviceResult;
         }
         //校验用户是否可选此部门
         DepartmentDO departmentDO = userSupport.getAvailableDepartment(purchaseApplyOrder.getDepartmentId());
-        if(departmentDO==null){
+        if (departmentDO == null) {
             serviceResult.setErrorCode(ErrorCode.DEPARTMENT_NOT_EXISTS);
             return serviceResult;
         }
         List<PurchaseApplyOrderProduct> purchaseApplyOrderProductList = purchaseApplyOrder.getPurchaseApplyOrderProductList();
         List<PurchaseApplyOrderMaterial> purchaseApplyOrderMaterialList = purchaseApplyOrder.getPurchaseApplyOrderMaterialList();
-        if(CollectionUtil.isEmpty(purchaseApplyOrderProductList)&&CollectionUtil.isEmpty(purchaseApplyOrderMaterialList)){
+        if (CollectionUtil.isEmpty(purchaseApplyOrderProductList) && CollectionUtil.isEmpty(purchaseApplyOrderMaterialList)) {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
         User user = userSupport.getCurrentUser();
         Date now = new Date();
-        purchaseApplyOrderDO.setAllUseTime(purchaseApplyOrder.getAllUseTime());
-        purchaseApplyOrderDO.setRemark(purchaseApplyOrder.getRemark());
-        purchaseApplyOrderDO.setUpdateTime(now);
-        purchaseApplyOrderDO.setUpdateUser(user.getUserId().toString());
-        purchaseApplyOrderMapper.update(purchaseApplyOrderDO);
 
         List<PurchaseApplyOrderProductDO> purchaseApplyOrderProductDOList = purchaseApplyOrderProductMapper.findByPurchaseApplyOrderNo(purchaseApplyOrderDO.getPurchaseApplyOrderNo());
         List<PurchaseApplyOrderProductDO> purchaseApplyOrderProductDOListForSave = new ArrayList<>();
@@ -267,20 +274,20 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         List<PurchaseApplyOrderMaterialDO> purchaseApplyOrderMaterialDOList = purchaseApplyOrderMaterialMapper.findByPurchaseApplyOrderNo(purchaseApplyOrderDO.getPurchaseApplyOrderNo());
         List<PurchaseApplyOrderMaterialDO> purchaseApplyOrderMaterialDOListForSave = new ArrayList<>();
         List<PurchaseApplyOrderMaterialDO> purchaseApplyOrderMaterialDOListForUpdate = new ArrayList<>();
-        Map<Integer,PurchaseApplyOrderProductDO> deletePurchaseApplyOrderProductDOMap = ListUtil.listToMap(purchaseApplyOrderProductDOList,"id");
-        Map<Integer,PurchaseApplyOrderMaterialDO> deletePurchaseApplyOrderMaterialDOMap = ListUtil.listToMap(purchaseApplyOrderMaterialDOList,"id");
-        if(CollectionUtil.isNotEmpty(purchaseApplyOrderProductList)){
-            for(PurchaseApplyOrderProduct purchaseApplyOrderProduct : purchaseApplyOrderProductList){
-                if(purchaseApplyOrderProduct.getPurchaseApplyOrderProductId()!=null){
+        Map<Integer, PurchaseApplyOrderProductDO> deletePurchaseApplyOrderProductDOMap = ListUtil.listToMap(purchaseApplyOrderProductDOList, "id");
+        Map<Integer, PurchaseApplyOrderMaterialDO> deletePurchaseApplyOrderMaterialDOMap = ListUtil.listToMap(purchaseApplyOrderMaterialDOList, "id");
+        if (CollectionUtil.isNotEmpty(purchaseApplyOrderProductList)) {
+            for (PurchaseApplyOrderProduct purchaseApplyOrderProduct : purchaseApplyOrderProductList) {
+                if (purchaseApplyOrderProduct.getPurchaseApplyOrderProductId() != null) {
                     //修改列表加入
                     PurchaseApplyOrderProductDO purchaseApplyOrderProductDO = purchaseApplyOrderProductMapper.findById(purchaseApplyOrderProduct.getPurchaseApplyOrderProductId());
-                    if(purchaseApplyOrderProductDO==null){
+                    if (purchaseApplyOrderProductDO == null) {
                         serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                         return serviceResult;
                     }
-                    ServiceResult<String,Product> productServiceResult = productService.queryProductBySkuId(purchaseApplyOrderProduct.getProductSkuId());
-                    if(!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())){
-                        serviceResult.setErrorCode(productServiceResult.getErrorCode(),productServiceResult.getFormatArgs());
+                    ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(purchaseApplyOrderProduct.getProductSkuId());
+                    if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
+                        serviceResult.setErrorCode(productServiceResult.getErrorCode(), productServiceResult.getFormatArgs());
                         return serviceResult;
                     }
                     Product product = productServiceResult.getResult();
@@ -288,9 +295,12 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
                     purchaseApplyOrderProductDO.setProductSnapshot(JSON.toJSONString(product));
                     purchaseApplyOrderProductDO.setApplyCount(purchaseApplyOrderProduct.getApplyCount());
                     purchaseApplyOrderProductDO.setIsNew(purchaseApplyOrderProduct.getIsNew());
-                    if(purchaseApplyOrderDO.getAllUseTime()!=null){
+                    if (purchaseApplyOrderDO.getAllUseTime() != null) {
                         purchaseApplyOrderProductDO.setUseTime(purchaseApplyOrderDO.getAllUseTime());
-                    }else{
+                    } else if (purchaseApplyOrderProduct.getUseTime()==null){
+                        serviceResult.setErrorCode(ErrorCode.PURCHASE_APPLY_USE_TIME_NOT_NUll);
+                        return serviceResult;
+                    }else {
                         purchaseApplyOrderProductDO.setUseTime(purchaseApplyOrderProduct.getUseTime());
                     }
                     purchaseApplyOrderProductDO.setRemark(purchaseApplyOrderProduct.getRemark());
@@ -299,10 +309,10 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
                     purchaseApplyOrderProductDOListForUpdate.add(purchaseApplyOrderProductDO);
                     //待删除列表删除
                     deletePurchaseApplyOrderProductDOMap.remove(purchaseApplyOrderProductDO.getId());
-                }else{
+                } else {
                     //新增列表加入
-                    ServiceResult<String,PurchaseApplyOrderProductDO> createPurchaseApplyOrderProductDOResult = createPurchaseApplyOrderProductDO(purchaseApplyOrderDO,purchaseApplyOrderProduct,now,user);
-                    if(!ErrorCode.SUCCESS.equals(createPurchaseApplyOrderProductDOResult.getErrorCode())){
+                    ServiceResult<String, PurchaseApplyOrderProductDO> createPurchaseApplyOrderProductDOResult = createPurchaseApplyOrderProductDO(purchaseApplyOrderDO, purchaseApplyOrderProduct, now, user);
+                    if (!ErrorCode.SUCCESS.equals(createPurchaseApplyOrderProductDOResult.getErrorCode())) {
                         serviceResult.setErrorCode(createPurchaseApplyOrderProductDOResult.getErrorCode());
                         return serviceResult;
                     }
@@ -311,17 +321,17 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
             }
         }
 
-        if(CollectionUtil.isNotEmpty(purchaseApplyOrderMaterialList)){
-            for(PurchaseApplyOrderMaterial purchaseApplyOrderMaterial : purchaseApplyOrderMaterialList){
-                if(purchaseApplyOrderMaterial.getPurchaseApplyOrderMaterialId()!=null){
+        if (CollectionUtil.isNotEmpty(purchaseApplyOrderMaterialList)) {
+            for (PurchaseApplyOrderMaterial purchaseApplyOrderMaterial : purchaseApplyOrderMaterialList) {
+                if (purchaseApplyOrderMaterial.getPurchaseApplyOrderMaterialId() != null) {
                     //修改列表加入
                     PurchaseApplyOrderMaterialDO purchaseApplyOrderMaterialDO = purchaseApplyOrderMaterialMapper.findById(purchaseApplyOrderMaterial.getPurchaseApplyOrderMaterialId());
-                    if(purchaseApplyOrderMaterialDO==null){
+                    if (purchaseApplyOrderMaterialDO == null) {
                         serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                         return serviceResult;
                     }
                     MaterialDO materialDO = materialMapper.findByNo(purchaseApplyOrderMaterial.getMaterialNo());
-                    if(materialDO==null){
+                    if (materialDO == null) {
                         serviceResult.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                         return serviceResult;
                     }
@@ -329,8 +339,11 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
                     purchaseApplyOrderMaterialDO.setMaterialNo(materialDO.getMaterialNo());
                     purchaseApplyOrderMaterialDO.setApplyCount(purchaseApplyOrderMaterial.getApplyCount());
                     purchaseApplyOrderMaterialDO.setIsNew(purchaseApplyOrderMaterial.getIsNew());
-                    if(purchaseApplyOrderDO.getAllUseTime()!=null){
+                    if (purchaseApplyOrderDO.getAllUseTime() != null) {
                         purchaseApplyOrderMaterialDO.setUseTime(purchaseApplyOrderDO.getAllUseTime());
+                    } else if(purchaseApplyOrderMaterial.getUseTime() == null ){
+                        serviceResult.setErrorCode(ErrorCode.PURCHASE_APPLY_USE_TIME_NOT_NUll);
+                        return serviceResult;
                     }else{
                         purchaseApplyOrderMaterialDO.setUseTime(purchaseApplyOrderMaterial.getUseTime());
                     }
@@ -340,10 +353,10 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
                     purchaseApplyOrderMaterialDOListForUpdate.add(purchaseApplyOrderMaterialDO);
                     //待删除列表删除
                     deletePurchaseApplyOrderMaterialDOMap.remove(purchaseApplyOrderMaterialDO.getId());
-                }else{
+                } else {
                     //新增列表加入
-                    ServiceResult<String,PurchaseApplyOrderMaterialDO> createPurchaseApplyOrderMaterialDOResult = createPurchaseApplyOrderMaterialDO(purchaseApplyOrderDO,purchaseApplyOrderMaterial,now,user);
-                    if(!ErrorCode.SUCCESS.equals(createPurchaseApplyOrderMaterialDOResult.getErrorCode())){
+                    ServiceResult<String, PurchaseApplyOrderMaterialDO> createPurchaseApplyOrderMaterialDOResult = createPurchaseApplyOrderMaterialDO(purchaseApplyOrderDO, purchaseApplyOrderMaterial, now, user);
+                    if (!ErrorCode.SUCCESS.equals(createPurchaseApplyOrderMaterialDOResult.getErrorCode())) {
                         serviceResult.setErrorCode(createPurchaseApplyOrderMaterialDOResult.getErrorCode());
                         return serviceResult;
                     }
@@ -352,24 +365,30 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
             }
         }
 
-        if(CollectionUtil.isNotEmpty(purchaseApplyOrderProductDOListForSave)){
+        purchaseApplyOrderDO.setAllUseTime(purchaseApplyOrder.getAllUseTime());
+        purchaseApplyOrderDO.setRemark(purchaseApplyOrder.getRemark());
+        purchaseApplyOrderDO.setUpdateTime(now);
+        purchaseApplyOrderDO.setUpdateUser(user.getUserId().toString());
+        purchaseApplyOrderMapper.update(purchaseApplyOrderDO);
+
+        if (CollectionUtil.isNotEmpty(purchaseApplyOrderProductDOListForSave)) {
             purchaseApplyOrderProductMapper.saveList(purchaseApplyOrderProductDOListForSave);
         }
-        if(CollectionUtil.isNotEmpty(purchaseApplyOrderMaterialDOListForSave)){
+        if (CollectionUtil.isNotEmpty(purchaseApplyOrderMaterialDOListForSave)) {
             purchaseApplyOrderMaterialMapper.saveList(purchaseApplyOrderMaterialDOListForSave);
         }
-        if(CollectionUtil.isNotEmpty(purchaseApplyOrderProductDOListForUpdate)){
-            for(PurchaseApplyOrderProductDO purchaseApplyOrderProductDO : purchaseApplyOrderProductDOListForUpdate){
+        if (CollectionUtil.isNotEmpty(purchaseApplyOrderProductDOListForUpdate)) {
+            for (PurchaseApplyOrderProductDO purchaseApplyOrderProductDO : purchaseApplyOrderProductDOListForUpdate) {
                 purchaseApplyOrderProductMapper.update(purchaseApplyOrderProductDO);
             }
         }
-        if(CollectionUtil.isNotEmpty(purchaseApplyOrderMaterialDOListForUpdate)){
-            for(PurchaseApplyOrderMaterialDO purchaseApplyOrderMaterialDO : purchaseApplyOrderMaterialDOListForUpdate){
+        if (CollectionUtil.isNotEmpty(purchaseApplyOrderMaterialDOListForUpdate)) {
+            for (PurchaseApplyOrderMaterialDO purchaseApplyOrderMaterialDO : purchaseApplyOrderMaterialDOListForUpdate) {
                 purchaseApplyOrderMaterialMapper.update(purchaseApplyOrderMaterialDO);
             }
         }
-        if(deletePurchaseApplyOrderProductDOMap!=null&&deletePurchaseApplyOrderProductDOMap.size()>0){
-            for(Integer id : deletePurchaseApplyOrderProductDOMap.keySet()){
+        if (deletePurchaseApplyOrderProductDOMap != null && deletePurchaseApplyOrderProductDOMap.size() > 0) {
+            for (Integer id : deletePurchaseApplyOrderProductDOMap.keySet()) {
                 PurchaseApplyOrderProductDO purchaseApplyOrderProductDO = deletePurchaseApplyOrderProductDOMap.get(id);
                 purchaseApplyOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 purchaseApplyOrderProductDO.setUpdateTime(now);
@@ -377,8 +396,8 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
                 purchaseApplyOrderProductMapper.update(purchaseApplyOrderProductDO);
             }
         }
-        if(deletePurchaseApplyOrderMaterialDOMap!=null&&deletePurchaseApplyOrderMaterialDOMap.size()>0){
-            for(Integer id : deletePurchaseApplyOrderMaterialDOMap.keySet()){
+        if (deletePurchaseApplyOrderMaterialDOMap != null && deletePurchaseApplyOrderMaterialDOMap.size() > 0) {
+            for (Integer id : deletePurchaseApplyOrderMaterialDOMap.keySet()) {
                 PurchaseApplyOrderMaterialDO purchaseApplyOrderMaterialDO = deletePurchaseApplyOrderMaterialDOMap.get(id);
                 purchaseApplyOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 purchaseApplyOrderMaterialDO.setUpdateTime(now);
@@ -392,12 +411,13 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> commit(PurchaseApplyOrderCommitParam purchaseApplyOrderCommitParam) {
 
         ServiceResult<String, String> result = new ServiceResult<>();
         Date now = new Date();
         //校验采购单是否存在
-        PurchaseApplyOrderDO purchaseApplyOrderDO = purchaseApplyOrderMapper.findByNo(purchaseApplyOrderCommitParam.getPurchaseApplyNo());
+        PurchaseApplyOrderDO purchaseApplyOrderDO = purchaseApplyOrderMapper.findByNo(purchaseApplyOrderCommitParam.getPurchaseApplyOrderNo());
         if (purchaseApplyOrderDO == null) {
             result.setErrorCode(ErrorCode.PURCHASE_APPLY_ORDER_NOT_EXISTS);
             return result;
@@ -421,7 +441,7 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
                 return result;
             }
             //调用提交审核服务
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE_APPLY_ORDER, purchaseApplyOrderCommitParam.getPurchaseApplyNo(), purchaseApplyOrderCommitParam.getVerifyUserId(), purchaseApplyOrderCommitParam.getRemark());
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE_APPLY_ORDER, purchaseApplyOrderCommitParam.getPurchaseApplyOrderNo(), purchaseApplyOrderCommitParam.getVerifyUserId(), purchaseApplyOrderCommitParam.getRemark());
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 purchaseApplyOrderDO.setPurchaseApplyOrderStatus(PurchaseApplyOrderStatus.PURCHASE_APPLY_ORDER_STATUS_VERIFYING);
@@ -444,36 +464,37 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public String cancel(String purchaseApplyOrderNo) {
         PurchaseApplyOrderDO purchaseApplyOrderDO = purchaseApplyOrderMapper.findByNo(purchaseApplyOrderNo);
-        if(purchaseApplyOrderDO == null){
+        if (purchaseApplyOrderDO == null) {
             return ErrorCode.PURCHASE_APPLY_ORDER_NOT_EXISTS;
         }
-        if(!PurchaseApplyOrderStatus.PURCHASE_APPLY_ORDER_STATUS_WAIT_COMMIT.equals(purchaseApplyOrderDO.getPurchaseApplyOrderStatus())&&
-                !PurchaseApplyOrderStatus.PURCHASE_APPLY_ORDER_STATUS_VERIFYING.equals(purchaseApplyOrderDO.getPurchaseApplyOrderStatus())&&
-                !PurchaseApplyOrderStatus.PURCHASE_APPLY_ORDER_STATUS_WAIT_PURCHASE.equals(purchaseApplyOrderDO.getPurchaseApplyOrderStatus())){
+        if (!PurchaseApplyOrderStatus.PURCHASE_APPLY_ORDER_STATUS_WAIT_COMMIT.equals(purchaseApplyOrderDO.getPurchaseApplyOrderStatus()) &&
+                !PurchaseApplyOrderStatus.PURCHASE_APPLY_ORDER_STATUS_VERIFYING.equals(purchaseApplyOrderDO.getPurchaseApplyOrderStatus()) &&
+                !PurchaseApplyOrderStatus.PURCHASE_APPLY_ORDER_STATUS_WAIT_PURCHASE.equals(purchaseApplyOrderDO.getPurchaseApplyOrderStatus())) {
             return ErrorCode.PURCHASE_APPLY_CAN_NOT_CANCEL_BY_STATUS;
         }
         List<PurchaseApplyOrderProductDO> purchaseApplyOrderProductDOList = purchaseApplyOrderProductMapper.findByPurchaseApplyOrderNo(purchaseApplyOrderNo);
         List<PurchaseApplyOrderMaterialDO> purchaseApplyOrderMaterialDOList = purchaseApplyOrderMaterialMapper.findByPurchaseApplyOrderNo(purchaseApplyOrderNo);
-        if(CollectionUtil.isNotEmpty(purchaseApplyOrderProductDOList)){
-            for(PurchaseApplyOrderProductDO purchaseApplyOrderProductDO : purchaseApplyOrderProductDOList){
-                if(purchaseApplyOrderProductDO.getRealCount()>0){
+        if (CollectionUtil.isNotEmpty(purchaseApplyOrderProductDOList)) {
+            for (PurchaseApplyOrderProductDO purchaseApplyOrderProductDO : purchaseApplyOrderProductDOList) {
+                if (purchaseApplyOrderProductDO.getRealCount() > 0) {
                     return ErrorCode.PURCHASE_APPLY_YET_RECEIVE_CAN_NOT_CANCEL;
                 }
             }
         }
-        if(CollectionUtil.isNotEmpty(purchaseApplyOrderMaterialDOList)){
-            for(PurchaseApplyOrderMaterialDO purchaseApplyOrderMaterialDO : purchaseApplyOrderMaterialDOList){
-                if(purchaseApplyOrderMaterialDO.getRealCount()>0){
+        if (CollectionUtil.isNotEmpty(purchaseApplyOrderMaterialDOList)) {
+            for (PurchaseApplyOrderMaterialDO purchaseApplyOrderMaterialDO : purchaseApplyOrderMaterialDOList) {
+                if (purchaseApplyOrderMaterialDO.getRealCount() > 0) {
                     return ErrorCode.PURCHASE_APPLY_YET_RECEIVE_CAN_NOT_CANCEL;
                 }
             }
         }
         //审核中的强制取消
-        if(PurchaseApplyOrderStatus.PURCHASE_APPLY_ORDER_STATUS_VERIFYING.equals(purchaseApplyOrderDO.getPurchaseApplyOrderStatus())){
-            ServiceResult<String,String> cancelWorkFlowResult = workflowService.cancelWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE_APPLY_ORDER,purchaseApplyOrderNo);
-            if(!ErrorCode.SUCCESS.equals(cancelWorkFlowResult.getErrorCode())){
+        if (PurchaseApplyOrderStatus.PURCHASE_APPLY_ORDER_STATUS_VERIFYING.equals(purchaseApplyOrderDO.getPurchaseApplyOrderStatus())) {
+            ServiceResult<String, String> cancelWorkFlowResult = workflowService.cancelWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE_APPLY_ORDER, purchaseApplyOrderNo);
+            if (!ErrorCode.SUCCESS.equals(cancelWorkFlowResult.getErrorCode())) {
                 return cancelWorkFlowResult.getErrorCode();
             }
         }
@@ -489,7 +510,7 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
     public ServiceResult<String, PurchaseApplyOrder> queryByNo(String purchaseApplyOrderNo) {
         ServiceResult<String, PurchaseApplyOrder> serviceResult = new ServiceResult<>();
         PurchaseApplyOrderDO purchaseApplyOrderDO = purchaseApplyOrderMapper.findByNo(purchaseApplyOrderNo);
-        if(purchaseApplyOrderDO==null){
+        if (purchaseApplyOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_APPLY_ORDER_NOT_EXISTS);
             return serviceResult;
         }
@@ -497,7 +518,7 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         List<PurchaseApplyOrderMaterialDO> purchaseApplyOrderMaterialDOList = purchaseApplyOrderMaterialMapper.findByPurchaseApplyOrderNo(purchaseApplyOrderNo);
         purchaseApplyOrderDO.setPurchaseApplyOrderProductDOList(purchaseApplyOrderProductDOList);
         purchaseApplyOrderDO.setPurchaseApplyOrderMaterialDOList(purchaseApplyOrderMaterialDOList);
-        PurchaseApplyOrder purchaseApplyOrder = ConverterUtil.convert(purchaseApplyOrderDO,PurchaseApplyOrder.class);
+        PurchaseApplyOrder purchaseApplyOrder = ConverterUtil.convert(purchaseApplyOrderDO, PurchaseApplyOrder.class);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(purchaseApplyOrder);
         return serviceResult;
@@ -505,10 +526,27 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
 
     @Override
     public ServiceResult<String, Page<PurchaseApplyOrder>> queryAll(PurchaseApplyOrderPageParam purchaseApplyOrderPageParam) {
-        return null;
+        ServiceResult<String, Page<PurchaseApplyOrder>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(purchaseApplyOrderPageParam.getPageNo(), purchaseApplyOrderPageParam.getPageSize());
+        dataAccessSupport.setDataAccessPassiveUserList(purchaseApplyOrderPageParam);
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("queryParam", purchaseApplyOrderPageParam);
+
+        Integer totalCount = purchaseApplyOrderMapper.listCount(maps);
+        List<PurchaseApplyOrderDO> purchaseApplyOrderDOList = purchaseApplyOrderMapper.listPage(maps);
+        List<PurchaseApplyOrder> purchaseApplyOrderList = ConverterUtil.convertList(purchaseApplyOrderDOList, PurchaseApplyOrder.class);
+        Page<PurchaseApplyOrder> page = new Page<>(purchaseApplyOrderList, totalCount, purchaseApplyOrderPageParam.getPageNo(), purchaseApplyOrderPageParam.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
             PurchaseApplyOrderDO purchaseApplyOrderDO = purchaseApplyOrderMapper.findByNo(businessNo);

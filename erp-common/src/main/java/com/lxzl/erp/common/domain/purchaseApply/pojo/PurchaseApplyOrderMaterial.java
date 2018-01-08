@@ -23,8 +23,8 @@ public class PurchaseApplyOrderMaterial extends BasePO {
     @NotNull(message = ErrorCode.MATERIAL_ID_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
     private String materialNo;   //配件编号
     private String materialSnapshot;   //配件冗余信息，防止商品修改留存快照，不可修改
-    @NotNull(message = ErrorCode.PRODUCT_SKU_COUNT_ERROR, groups = {AddGroup.class, UpdateGroup.class})
-    @Min(value = 0, message = ErrorCode.PRODUCT_SKU_COUNT_ERROR, groups = {AddGroup.class, UpdateGroup.class})
+    @NotNull(message = ErrorCode.MATERIAL_COUNT_ERROR, groups = {AddGroup.class, UpdateGroup.class})
+    @Min(value = 0, message = ErrorCode.MATERIAL_COUNT_ERROR, groups = {AddGroup.class, UpdateGroup.class})
     private Integer applyCount;   //计划采购数量
     private Integer realCount;   //实际采购数量
     private Date purchaseStartTime;   //采购开始时间

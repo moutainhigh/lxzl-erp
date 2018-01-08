@@ -155,7 +155,11 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                            <td><span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{productName}}</td>
+                            <td>
+##                                <span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>
+                                {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}
+                                {{productName}}
+                            </td>
                             <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                             <td>{{propertiesToStr}}</td>
@@ -271,7 +275,10 @@
                             </td>
 ##                            <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{isNewMaterialValue}}</span>{{materialNo}}</td>
 ##                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-                            <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{isNewMaterialValue}}</span>{{materialName}}</td>
+                            <td>
+                                {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
+                                {{materialName}}
+                            </td>
                             <td>{{brandName}}</td>
                             <td>{{materialTypeStr}}</td>
                             <td>￥{{#price}}{{materialPrice}}{{/price}}</td>

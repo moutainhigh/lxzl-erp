@@ -322,6 +322,7 @@ public class ErrorCode {
     public static final String PURCHASE_APPLY_CAN_NOT_UPDATE = "J500063";
     public static final String PURCHASE_APPLY_CAN_NOT_CANCEL_BY_STATUS = "J500064";
     public static final String PURCHASE_APPLY_YET_RECEIVE_CAN_NOT_CANCEL = "J500065";
+    public static final String PURCHASE_APPLY_USE_TIME_NOT_NUll = "J500066";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -573,6 +574,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_APPLY_CAN_NOT_CANCEL_BY_STATUS, "此状态采购申请单不可取消");
         MAP.put(PURCHASE_APPLY_YET_RECEIVE_CAN_NOT_CANCEL, "已收货的采购申请单不可取消");
         MAP.put(CUSTOMER_OWNER_NOT_NULL, "客户业务员ID不能为空");
+        MAP.put(PURCHASE_APPLY_USE_TIME_NOT_NUll, "计划使用时间不能为空");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");

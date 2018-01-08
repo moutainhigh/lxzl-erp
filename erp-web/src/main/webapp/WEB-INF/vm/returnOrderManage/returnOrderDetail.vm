@@ -303,7 +303,8 @@
                 'manage.return.order.detail.js',
                 'manage.order.picking.js',
                 'manage.return.order.end.input.modal.js',
-                'modal.input.js');
+                'modal.input.js',
+                'modal.submit.audit.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
