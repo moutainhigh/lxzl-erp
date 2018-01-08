@@ -109,8 +109,8 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateTime(now);
         customerDO.setCreateUser(userSupport.getCurrentUserId().toString());
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        //加入跟单员和联合开发员
-        customerDO.setOwner(userSupport.getCurrentUserId());
+        //加入业务员和联合开发员
+        customerDO.setOwner(customer.getOwner());
         if (customer.getUnionUser() != null) {
             customerDO.setUnionUser(customer.getUnionUser());
         }
@@ -204,10 +204,9 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setCreateTime(now);
         customerDO.setUpdateTime(now);
         customerDO.setCreateUser(userSupport.getCurrentUserId().toString());
-
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        //加入跟单员和联合开发员
-        customerDO.setOwner(userSupport.getCurrentUserId());
+        customerDO.setOwner(customer.getOwner());
+        //加入业务员和联合开发员
         if (customer.getUnionUser() != null) {
             customerDO.setUnionUser(customer.getUnionUser());
         }
@@ -394,12 +393,11 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
         //更改联合开发人
-        if (customer.getUnionUser() != null) {
+        if (customer.getUnionUser() != null && !customerDO.getOwner().equals(customer.getUnionUser())) {
             customerDO.setUnionUser(customer.getUnionUser());
-            customerDO.setUpdateTime(now);
-            customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         }
         customerDO.setCustomerName(newCustomerCompanyDO.getCompanyName());
+        customerDO.setOwner(customer.getOwner());
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerDO.setIsDisabled(customer.getIsDisabled());
@@ -437,10 +435,11 @@ public class CustomerServiceImpl implements CustomerService {
         customerPersonMapper.update(newCustomerPersonDO);
 
         //更改联合开发人
-        if (customer.getUnionUser() != null) {
+        if (customer.getUnionUser() != null && !customerDO.getOwner().equals(customer.getUnionUser())) {
             customerDO.setUnionUser(customer.getUnionUser());
         }
         customerDO.setCustomerName(newCustomerPersonDO.getRealName());
+        customerDO.setOwner(customer.getOwner());
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerDO.setIsDisabled(customer.getIsDisabled());
