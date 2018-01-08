@@ -463,7 +463,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             return result;
         }
         if (!DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT.equals(deploymentOrderDO.getDeploymentOrderStatus())
-                || !DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_PROCESSING.equals(deploymentOrderDO.getDeploymentOrderStatus())) {
+                && !DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_PROCESSING.equals(deploymentOrderDO.getDeploymentOrderStatus())) {
             result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_STATUS_ERROR);
             return result;
         }

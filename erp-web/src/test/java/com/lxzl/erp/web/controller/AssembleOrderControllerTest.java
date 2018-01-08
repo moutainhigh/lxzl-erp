@@ -3,24 +3,14 @@ package com.lxzl.erp.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.TestResult;
-import com.lxzl.erp.common.domain.Page;
-import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.assembleOder.pojo.AssembleOrder;
 import com.lxzl.erp.common.domain.assembleOder.pojo.AssembleOrderMaterial;
-import com.lxzl.erp.common.domain.product.ProductSkuQueryParam;
-import com.lxzl.erp.common.domain.product.pojo.Product;
-import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
-import com.lxzl.erp.common.domain.product.pojo.ProductSku;
-import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.core.service.product.ProductService;
-import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.domain.product.ProductMaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
