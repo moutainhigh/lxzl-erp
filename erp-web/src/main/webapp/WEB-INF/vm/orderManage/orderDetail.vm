@@ -113,12 +113,11 @@
                                         <dt><label style="letter-spacing: 0.75em;">已用额度</label><span class="mr5">：</span></dt>
                                         <dd class="mb5" id="creditAmountUsed"></dd>
 
+                                        <dt><label>本期免押金额度</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5">￥{{#price}}{{totalCreditDepositAmount}}{{/price}}#*（商品：￥{{#price}}{{totalProductCreditDepositAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialCreditDepositAmount}}{{/price}}）*#</dd>
+
                                         <dt><label>剩余免押金额度</label><span class="mr5">：</span></dt>
                                         <dd class="mb5" id="surplusCreditAmount"></dd>
-
-                                        <dt><label>本期免押金额度</label><span class="mr5">：</span></dt>
-                                        <dd class="mb5">
-                                            ￥{{#price}}{{totalCreditDepositAmount}}{{/price}}#*（商品：￥{{#price}}{{totalProductCreditDepositAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialCreditDepositAmount}}{{/price}}）*#</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
@@ -148,7 +147,7 @@
                                         <dt><label style="letter-spacing: 1em">首付</label><span class="mr5">：</span></dt>
                                         <dd class="mb5 text-danger">￥{{#price}}{{firstNeedPayAmount}}{{/price}}</dd>
 
-                                        <dt><label style="letter-spacing: 0.33em">已支付</label><span class="mr5">：</span></dt>
+                                        <dt><label style="letter-spacing: 0.33em">已付租金</label><span class="mr5">：</span></dt>
                                         <dd class="mb5 text-danger">￥{{#price}}{{totalPaidOrderAmount}}{{/price}}</dd>
                                     </dl>
                                 </div>
