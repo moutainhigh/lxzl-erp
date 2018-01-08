@@ -424,7 +424,7 @@ public class StatementServiceImpl implements StatementService {
                         if (CollectionUtil.isNotEmpty(product.getProductSkuList())) {
                             statementOrderDetail.setItemName(product.getProductName() + product.getProductSkuList().get(0).getSkuName());
                         }
-                        statementOrderDetail.setItemCount(returnOrderProductDO.getRealReturnProductSkuCount());
+                        statementOrderDetail.setItemCount(1);
                     }
                 }
             }
@@ -433,7 +433,7 @@ public class StatementServiceImpl implements StatementService {
                     if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(returnOrderMaterialDO.getId())) {
                         Material material = FastJsonUtil.toBean(returnOrderMaterialDO.getReturnMaterialSnapshot(), Material.class);
                         statementOrderDetail.setItemName(material.getMaterialName());
-                        statementOrderDetail.setItemCount(returnOrderMaterialDO.getReturnMaterialCount());
+                        statementOrderDetail.setItemCount(1);
                     }
                 }
             }
@@ -448,7 +448,7 @@ public class StatementServiceImpl implements StatementService {
                         if (CollectionUtil.isNotEmpty(product.getProductSkuList())) {
                             statementOrderDetail.setItemName(product.getProductName() + product.getProductSkuList().get(0).getSkuName());
                         }
-                        statementOrderDetail.setItemCount(changeOrderProductDO.getRealChangeProductSkuCount());
+                        statementOrderDetail.setItemCount(1);
                     }
                 }
             }
@@ -457,7 +457,7 @@ public class StatementServiceImpl implements StatementService {
                     if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(changeOrderMaterialDO.getId())) {
                         Material material = FastJsonUtil.toBean(changeOrderMaterialDO.getSrcChangeMaterialSnapshot(), Material.class);
                         statementOrderDetail.setItemName(material.getMaterialName());
-                        statementOrderDetail.setItemCount(changeOrderMaterialDO.getRealChangeMaterialCount());
+                        statementOrderDetail.setItemCount(1);
                     }
                 }
             }
@@ -528,12 +528,6 @@ public class StatementServiceImpl implements StatementService {
                                 statementOrderMapper.update(statementOrderDO);
                             }
                             continue;
-                        } else {
-                            StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
-                            statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
-                            statementOrderMapper.update(statementOrderDO);
-                            statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
-                            statementOrderDetailMapper.update(statementOrderDetailDO);
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
@@ -551,7 +545,8 @@ public class StatementServiceImpl implements StatementService {
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, thisPhaseAmount);
                         // 退款金额，除了租金以外，保险金额也不能收了
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, orderProductDO.getInsuranceAmount()));
-                        payReturnAmount = BigDecimalUtil.compare(payReturnAmount, statementOrderDetailDO.getStatementDetailAmount()) > 0 ? statementOrderDetailDO.getStatementDetailAmount() : payReturnAmount;
+                        // 如果单个设备退还，价格会比结算单要高（周期长），以周期的价格为准
+                        payReturnAmount = BigDecimalUtil.compare(payReturnAmount, BigDecimalUtil.div(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE)) > 0 ? BigDecimalUtil.div(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE) : payReturnAmount;
                         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
                             payReturnAmount = BigDecimalUtil.sub(payReturnAmount, otherAmount);
                             otherAmount = BigDecimal.ZERO;
@@ -633,7 +628,7 @@ public class StatementServiceImpl implements StatementService {
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, thisPhaseAmount);
                         // 退款金额，除了租金以外，保险金额也不能收了
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, amountSupport.calculateRentAmount(statementDetailStartTime, statementDetailEndTime, orderMaterialDO.getInsuranceAmount()));
-                        payReturnAmount = BigDecimalUtil.compare(payReturnAmount, statementOrderDetailDO.getStatementDetailAmount()) > 0 ? statementOrderDetailDO.getStatementDetailAmount() : payReturnAmount;
+                        payReturnAmount = BigDecimalUtil.compare(payReturnAmount, BigDecimalUtil.div(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE)) > 0 ? BigDecimalUtil.div(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE) : payReturnAmount;
 
                         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
                             payReturnAmount = BigDecimalUtil.sub(payReturnAmount, otherAmount);
@@ -850,6 +845,9 @@ public class StatementServiceImpl implements StatementService {
                     statementOrderDO.setStatementRentAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentAmount(), statementOrderDetailDO.getStatementDetailRentAmount()));
                     if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())) {
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
+                    }
+                    if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) == 0) {
+                        statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
                     }
                     if (statementOrderDetailDO.getStatementStartTime().getTime() < statementOrderDO.getStatementStartTime().getTime()) {
                         statementOrderDO.setStatementStartTime(statementOrderDetailDO.getStatementStartTime());
