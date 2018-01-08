@@ -199,7 +199,7 @@
                                             <div class="pull-right ml10">
                                                 <div class="btn-group actionCommonButtons" >
                                                     {{#acitonButtons}}
-                                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-orderno="{{orderNo}}">
+                                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{text}}" data-orderno="{{orderNo}}">
                                                         <i class="{{iClass}}"></i> {{text}}
                                                     </a>
                                                     {{/acitonButtons}}
