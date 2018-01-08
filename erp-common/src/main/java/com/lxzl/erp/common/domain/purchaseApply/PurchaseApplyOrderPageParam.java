@@ -8,7 +8,6 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PurchaseApplyOrderPageParam extends BasePageParam{
 
-
     private String purchaseApplyOrderNo;
     private String applyUserName;
     private String warehouseName;
