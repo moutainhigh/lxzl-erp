@@ -16,7 +16,7 @@
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="owner" jdbcType="INTEGER" property="owner" />
 		<result column="union_user" jdbcType="INTEGER" property="unionUser" />
-
+		<result column="customer_status" jdbcType="INTEGER" property="customerStatus" />
 		<result column="unionUserName" jdbcType="INTEGER" property="unionUserName" />
 		<result column="ownerName" jdbcType="INTEGER" property="ownerName" />
 
@@ -39,6 +39,9 @@
 		<result column="ecrm_apple_pay_mode" jdbcType="INTEGER" property="applePayMode" />
 		<result column="ecrm_new_pay_mode" jdbcType="INTEGER" property="newPayMode" />
 		<result column="ecrm_pay_mode" jdbcType="INTEGER" property="payMode" />
+		<result column="ecrm_is_limit_apple" jdbcType="INTEGER" property="isLimitApple" />
+		<result column="ecrm_is_limit_new" jdbcType="INTEGER" property="isLimitNew" />
+		<result column="ecrm_single_limit_price" jdbcType="DECIMAL" property="singleLimitPrice" />
 		<result column="ecrm_data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="ecrm_remark" jdbcType="VARCHAR" property="remark" />
 		<result column="ecrm_create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -120,7 +123,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ec.id,ec.customer_type,ec.customer_no,ec.customer_name,ec.is_disabled,ec.data_status,ec.remark,ec.create_time,ec.create_user,ec.update_time,ec.update_user,ec.owner,ec.union_user
+		ec.id,ec.customer_type,ec.customer_no,ec.customer_name,ec.is_disabled,ec.data_status,ec.remark,ec.create_time,ec.create_user,ec.update_time,ec.update_user,ec.owner,ec.union_user,ec.customer_status
 	</sql>
 	<sql id="company_column_List">
 		ecc.id AS ecc_id,ecc.customer_id AS ecc_customer_id,ecc.landline AS ecc_landline,ecc.connect_real_name AS ecc_connect_real_name,ecc.connect_phone AS ecc_connect_phone,ecc.company_name AS ecc_company_name,ecc.company_abb AS ecc_company_abb,ecc.province AS ecc_province,ecc.city AS ecc_city,ecc.district AS ecc_district,ecc.address AS ecc_address,ecc.legal_person AS ecc_legal_person,ecc.legal_person_no AS ecc_legal_person_no,ecc.business_license_no AS ecc_business_license_no,ecc.data_status AS ecc_data_status,ecc.remark AS ecc_remark,ecc.create_time AS ecc_create_time,ecc.create_user AS ecc_create_user,ecc.update_time AS ecc_update_time,ecc.update_user AS ecc_update_use,ecc.customer_origin AS ecc_customer_origin,ecc.company_found_time AS ecc_company_found_time,ecc.industry AS ecc_industry,ecc.registered_capital AS ecc_registered_capital,ecc.office_number AS ecc_office_number,ecc.product_purpose AS ecc_product_purpose,ecc.customer_company_need_first_json AS ecc_customer_company_need_first_json,ecc.customer_company_need_later_json AS ecc_customer_company_need_later_json,ecc.agent_person_name AS ecc_agent_person_name,ecc.agent_person_phone AS ecc_agent_person_phone,ecc.agent_person_no AS ecc_agent_person_no,ecc.unified_credit_code AS ecc_unified_credit_code,ecc.customer_no AS ecc_customer_no,ecc.is_legal_person_apple AS ecc_is_legal_person_apple,ecc.legal_person_phone AS ecc_legal_person_phone,ecc.operating_area AS ecc_operating_area,ecc.unit_insured_number AS ecc_unit_insured_number,ecc.affiliated_enterprise AS ecc_affiliated_enterprise
@@ -129,7 +132,7 @@
 		ecp.id AS ecp_id,ecp.customer_id AS ecp_customer_id,ecp.real_name AS ecp_real_name,ecp.email AS ecp_email,ecp.phone AS ecp_phone,ecp.province AS ecp_province,ecp.city AS ecp_city,ecp.district AS ecp_district,ecp.address AS ecp_address,ecp.data_status AS ecp_data_status,ecp.remark AS ecp_remark,ecp.create_time AS ecp_create_time,ecp.create_user AS ecp_create_user,ecp.update_time AS ecp_update_time,ecp.update_user AS ecp_update_user,ecp.person_no AS ecp_person_no, ecp.connect_real_name AS ecp_connect_real_name, ecp.connect_phone AS ecp_connect_phone
 	</sql>
 	<sql id="risk_column_List">
-		ecrm.id AS ecrm_id,ecrm.customer_id AS ecrm_customer_id,ecrm.credit_amount AS ecrm_credit_amount,ecrm.credit_amount_used AS ecrm_credit_amount_used,ecrm.deposit_cycle AS ecrm_deposit_cycle,ecrm.payment_cycle AS ecrm_payment_cycle,ecrm.apple_deposit_cycle AS ecrm_apple_deposit_cycle,ecrm.apple_payment_cycle AS ecrm_apple_payment_cycle,ecrm.new_deposit_cycle AS ecrm_new_deposit_cycle,ecrm.new_payment_cycle AS ecrm_new_payment_cycle,ecrm.apple_pay_mode AS ecrm_apple_pay_mode,ecrm.new_pay_mode AS ecrm_new_pay_mode,ecrm.pay_mode AS ecrm_pay_mode,ecrm.data_status AS ecrm_data_status,ecrm.remark AS ecrm_remark,ecrm.create_time AS ecrm_create_time,ecrm.create_user AS ecrm_create_user,ecrm.update_time AS ecrm_update_time,ecrm.update_user AS ecrm_update_user
+		ecrm.id AS ecrm_id,ecrm.customer_id AS ecrm_customer_id,ecrm.credit_amount AS ecrm_credit_amount,ecrm.credit_amount_used AS ecrm_credit_amount_used,ecrm.deposit_cycle AS ecrm_deposit_cycle,ecrm.payment_cycle AS ecrm_payment_cycle,ecrm.apple_deposit_cycle AS ecrm_apple_deposit_cycle,ecrm.apple_payment_cycle AS ecrm_apple_payment_cycle,ecrm.new_deposit_cycle AS ecrm_new_deposit_cycle,ecrm.new_payment_cycle AS ecrm_new_payment_cycle,ecrm.apple_pay_mode AS ecrm_apple_pay_mode,ecrm.new_pay_mode AS ecrm_new_pay_mode,ecrm.pay_mode AS ecrm_pay_mode,ecrm.is_limit_apple as ecrm_is_limit_apple,ecrm.is_limit_new as ecrm_is_limit_new,ecrm.single_limit_price as ecrm_single_limit_price,ecrm.data_status AS ecrm_data_status,ecrm.remark AS ecrm_remark,ecrm.create_time AS ecrm_create_time,ecrm.create_user AS ecrm_create_user,ecrm.update_time AS ecrm_update_time,ecrm.update_user AS ecrm_update_user
 	</sql>
 	<select id="findById" resultMap="CustomerDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/>,<include refid="risk_column_List"/> FROM erp_customer ec

@@ -24,7 +24,6 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.CustomerService;
-import com.lxzl.erp.core.service.customer.impl.support.CustomerRiskManagementConverter;
 import com.lxzl.erp.core.service.dataAccess.DataAccessSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.product.ProductService;
@@ -691,7 +690,7 @@ public class CustomerServiceImpl implements CustomerService {
         Date now = new Date();
         if (customerDO.getCustomerRiskManagementDO() == null) {//没有风控信息则添加
 
-            CustomerRiskManagementDO customerRiskManagementDO = CustomerRiskManagementConverter.convertCustomerRiskManagement(customerRiskManagement);
+            CustomerRiskManagementDO customerRiskManagementDO = ConverterUtil.convert(customerRiskManagement, CustomerRiskManagementDO.class);
             customerRiskManagementDO.setCreditAmountUsed(BigDecimal.ZERO);
             customerRiskManagementDO.setCustomerId(customerDO.getId());
             customerRiskManagementDO.setRemark(customerRiskManagement.getRemark());
@@ -705,7 +704,7 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setResult(customerDO.getCustomerNo());
             return serviceResult;
         } else {//有风控信息则修改
-            CustomerRiskManagementDO customerRiskManagementDOForUpdate = CustomerRiskManagementConverter.convertCustomerRiskManagement(customerRiskManagement);
+            CustomerRiskManagementDO customerRiskManagementDOForUpdate = ConverterUtil.convert(customerRiskManagement, CustomerRiskManagementDO.class);
             customerRiskManagementDOForUpdate.setId(customerDO.getCustomerRiskManagementDO().getId());
             customerRiskManagementDOForUpdate.setRemark(customerRiskManagement.getRemark());
             customerRiskManagementDOForUpdate.setUpdateTime(now);

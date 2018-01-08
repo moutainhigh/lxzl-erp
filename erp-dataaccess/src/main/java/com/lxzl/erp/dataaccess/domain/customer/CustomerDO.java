@@ -15,6 +15,7 @@ public class CustomerDO  extends BaseDO {
 
 	private Integer owner;		//数据归属人，跟单员
 	private Integer unionUser;  //联合开发人
+	private Integer customerStatus;  //客户状态，0初始化，1资料提交，2审核通过，3资料驳回
 
 
 	@Transient
@@ -139,5 +140,13 @@ public class CustomerDO  extends BaseDO {
 
 	public void setOwnerName(String ownerName) {
 		this.ownerName = ownerName;
+	}
+
+	public Integer getCustomerStatus() {
+		return customerStatus;
+	}
+
+	public void setCustomerStatus(Integer customerStatus) {
+		this.customerStatus = customerStatus;
 	}
 }
