@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.statistics.impl;
 
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIndexInfo;
@@ -38,6 +39,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         Integer totalProductEquipmentCount = productEquipmentMapper.listCount(paramMap);
         statisticsIndexInfo.setTotalProductEquipmentCount(totalProductEquipmentCount);
 
+        paramMap.put("customerQueryParam", new CustomerQueryParam());
         Integer totalCustomerCount = customerMapper.listCount(paramMap);
         statisticsIndexInfo.setTotalCustomerCount(totalCustomerCount);
 
