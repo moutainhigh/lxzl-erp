@@ -27,6 +27,10 @@ public class SupplierDO  extends BaseDO {
 	@Transient
 	private String districtName;
 
+	private String beneficiaryName;   //收款户名
+	private String beneficiaryAccount;   //收款帐号
+	private String beneficiaryBankName;   //收款开户行
+
 	public Integer getId(){
 		return id;
 	}
@@ -146,4 +150,16 @@ public class SupplierDO  extends BaseDO {
 	public void setSupplierNo(String supplierNo) {
 		this.supplierNo = supplierNo;
 	}
+
+	public String getBeneficiaryName() { return beneficiaryName; }
+
+	public void setBeneficiaryName(String beneficiaryName) { this.beneficiaryName = beneficiaryName; }
+
+	public String getBeneficiaryAccount() { return beneficiaryAccount; }
+
+	public void setBeneficiaryAccount(String beneficiaryAccount) { this.beneficiaryAccount = beneficiaryAccount; }
+
+	public String getBeneficiaryBankName() { return beneficiaryBankName; }
+
+	public void setBeneficiaryBankName(String beneficiaryBankName) { this.beneficiaryBankName = beneficiaryBankName; }
 }

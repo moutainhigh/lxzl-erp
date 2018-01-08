@@ -215,6 +215,9 @@ public class ErrorCode {
     public static final String PURCHASE_TAX_RATE_ERROR = "J300061";
     public static final String SUPPLIER_IS_EXISTS = "J300062";
     public static final String MUST_HAVE_MAIN = "J300063";
+    public static final String SUPPLIER_NO_IS_EXISTS = "J300064";
+    public static final String SUPPLIER_NAME_NOT_NULL = "J300065";
+    public static final String SUPPLIER_NO_NOT_NULL = "J300066";
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
     public static final String ORDER_CUSTOMER_CONSIGN_NOT_NULL = "J400001";
@@ -323,7 +326,6 @@ public class ErrorCode {
     public static final String PURCHASE_APPLY_CAN_NOT_CANCEL_BY_STATUS = "J500064";
     public static final String PURCHASE_APPLY_YET_RECEIVE_CAN_NOT_CANCEL = "J500065";
     public static final String PURCHASE_APPLY_USE_TIME_NOT_NUll = "J500066";
-
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
     public static final String CUSTOMER_PERSON_NOT_NULL = "J500003";
@@ -383,7 +385,6 @@ public class ErrorCode {
     public static final String CUSTOMER_RENT_THIS_BULK_MATERIAL_NO_MORE = "J500059";
     public static final String CUSTOMER_OWNER_NOT_NULL = "J500060";
     public static final String STATEMENT_ORDER_CAN_NOT_PAID_THIS = "J500061";
-
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -577,7 +578,6 @@ public class ErrorCode {
         MAP.put(CUSTOMER_OWNER_NOT_NULL, "客户业务员ID不能为空");
         MAP.put(PURCHASE_APPLY_USE_TIME_NOT_NUll, "计划使用时间不能为空");
         MAP.put(STATEMENT_ORDER_CAN_NOT_PAID_THIS, "历史有未结算的结算单，不能支付该项");
-
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");
         MAP.put(WORKFLOW_LINK_EXISTS, "此单工作流已经存在");
@@ -692,7 +692,9 @@ public class ErrorCode {
         MAP.put(CUSTOMER_IS_EXISTS, "客户已经存在");
         MAP.put(SUPPLIER_IS_EXISTS, "供应商已经存在");
         MAP.put(MUST_HAVE_MAIN, "含有小配件的整机四大件采购单必须有整机");
-
+        MAP.put(SUPPLIER_NO_IS_EXISTS, "供应商编号已经存在");
+        MAP.put(SUPPLIER_NAME_NOT_NULL, "供应商名字不能为空");
+        MAP.put(SUPPLIER_NO_NOT_NULL, "供应商编号不能为空");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");

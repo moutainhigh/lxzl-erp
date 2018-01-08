@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.supplier.SupplierQueryParam;
 import com.lxzl.erp.common.domain.supplier.pojo.Supplier;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.supplier.SupplierService;
@@ -16,6 +17,10 @@ import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.servlet.http.HttpSession;
 import java.util.Date;
@@ -75,19 +80,28 @@ public class SupplierServiceImpl implements SupplierService {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
-        String verifyCode = verifySupplier(supplier);
-        if (!ErrorCode.SUCCESS.equals(verifyCode)) {
-            result.setErrorCode(verifyCode);
+        if(StringUtil.isBlank(supplier.getSupplierNo())){
+            result.setErrorCode(ErrorCode.SUPPLIER_NO_NOT_NULL);
             return result;
         }
-        SupplierDO dbSupplierDO = supplierMapper.findByName(supplier.getSupplierName());
-        if (dbSupplierDO != null) {
+        if(StringUtil.isBlank(supplier.getSupplierName())){
+            result.setErrorCode(ErrorCode.SUPPLIER_NAME_NOT_NULL);
+            return result;
+        }
+        //todo 供应商编号（前端填入，校验不重复）、供应商名称（前端填入，校验不重复）
+        SupplierDO noSupplierDO = supplierMapper.findByNo(supplier.getSupplierNo());
+        if(noSupplierDO != null){
+            result.setErrorCode(ErrorCode.SUPPLIER_NO_IS_EXISTS);
+            return result;
+        }
+        SupplierDO nameSupplierDO = supplierMapper.findByName(supplier.getSupplierName());
+        if (nameSupplierDO != null) {
             result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
             return result;
         }
 
         SupplierDO supplierDO = ConverterUtil.convert(supplier, SupplierDO.class);
-        supplierDO.setSupplierNo(generateNoSupport.generateSupplierNo(supplierDO.getCity()));
+//        supplierDO.setSupplierNo(dbSupplierDO.getSupplierNo());
         supplierDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         supplierDO.setUpdateUser(loginUser.getUserId().toString());
         supplierDO.setCreateUser(loginUser.getUserId().toString());
@@ -101,30 +115,46 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
-    public ServiceResult<String, String> updateSupplier(Supplier supplier) {
-        ServiceResult<String, String> result = new ServiceResult<>();
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, Integer> updateSupplier(Supplier supplier) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
-        SupplierDO dbSupplierDO = supplierMapper.findByNo(supplier.getSupplierNo());
-        if (dbSupplierDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+
+        if(StringUtil.isBlank(supplier.getSupplierNo())){
+            result.setErrorCode(ErrorCode.SUPPLIER_NO_NOT_NULL);
             return result;
         }
+        if(StringUtil.isBlank(supplier.getSupplierName())){
+            result.setErrorCode(ErrorCode.SUPPLIER_NAME_NOT_NULL);
+            return result;
+        }
+        SupplierDO supplierDO = supplierMapper.findById(supplier.getSupplierId());
+        if(supplierDO == null){
+            result.setErrorCode(ErrorCode.SUPPLIER_NOT_EXISTS);
+            return result;
+        }
+
+        SupplierDO supplierNoDO = supplierMapper.findByNo(supplier.getSupplierNo());
+        if(supplierNoDO != null && !supplierNoDO.getSupplierNo().equals(supplierDO.getSupplierNo())){
+            result.setErrorCode(ErrorCode.SUPPLIER_NO_IS_EXISTS);
+            return result;
+        }
+
         SupplierDO nameSupplierDO = supplierMapper.findByName(supplier.getSupplierName());
-        if (nameSupplierDO != null && !nameSupplierDO.getSupplierNo().equals(supplier.getSupplierNo())) {
+        if (nameSupplierDO != null && !nameSupplierDO.getSupplierName().equals(supplierDO.getSupplierName())) {
             result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
             return result;
         }
 
-        SupplierDO supplierDO = ConverterUtil.convert(supplier, SupplierDO.class);
-        supplierDO.setId(dbSupplierDO.getId());
-        supplierDO.setSupplierNo(dbSupplierDO.getSupplierNo());
+        supplierDO = ConverterUtil.convert(supplier, SupplierDO.class);
+//        supplierDO.setSupplierNo(dbSupplierDO.getSupplierNo());
         supplierDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         supplierDO.setUpdateUser(loginUser.getUserId().toString());
         supplierDO.setUpdateTime(currentTime);
         supplierMapper.update(supplierDO);
 
-        result.setResult(supplierDO.getSupplierNo());
+        result.setResult(supplierDO.getId());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -137,7 +167,6 @@ public class SupplierServiceImpl implements SupplierService {
         return result;
     }
 
-
     private String verifySupplier(Supplier supplier) {
         if (supplier == null) {
             return ErrorCode.PARAM_IS_NOT_NULL;
@@ -145,9 +174,7 @@ public class SupplierServiceImpl implements SupplierService {
         if (StringUtil.isBlank(supplier.getSupplierName())) {
             return ErrorCode.PARAM_IS_NOT_ENOUGH;
         }
-
         return ErrorCode.SUCCESS;
     }
-
 
 }
