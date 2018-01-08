@@ -204,7 +204,7 @@
 		FROM erp_purchase_order epo
 		<where>
 			<if test="maps.queryParam.purchaseNo != null &amp;&amp; maps.queryParam.purchaseNo != ''">
-				and epo.purchase_no = #{maps.queryParam.purchaseNo, jdbcType=VARCHAR}
+				and epo.purchase_no like CONCAT('%','${maps.queryParam.purchaseNo}','%' )
 			</if>
 			<if test="maps.queryParam.productSupplierId != null">
 				and epo.product_supplier_id = #{maps.queryParam.productSupplierId, jdbcType=INTEGER}
@@ -245,7 +245,7 @@
 		FROM erp_purchase_order epo
 		<where>
 			<if test="maps.queryParam.purchaseNo != null &amp;&amp; maps.queryParam.purchaseNo != ''">
-				and epo.purchase_no = #{maps.queryParam.purchaseNo, jdbcType=VARCHAR}
+				and epo.purchase_no like CONCAT('%','${maps.queryParam.purchaseNo}','%' )
 			</if>
 			<if test="maps.queryParam.productSupplierId != null">
 				and epo.product_supplier_id = #{maps.queryParam.productSupplierId, jdbcType=INTEGER}

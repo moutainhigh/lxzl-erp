@@ -32,6 +32,10 @@
 		SELECT <include refid="column_List"/> FROM erp_purchase_apply_order_material epaom 
 		WHERE epaom.id = #{id, jdbcType=INTEGER} AND epaom.data_status = 1 
 	</select>
+	<select id="findByPurchaseApplyOrderNo" resultMap="PurchaseApplyOrderMaterialDO">
+		SELECT <include refid="column_List"/> FROM erp_purchase_apply_order_material epaom
+		WHERE epaom.purchase_apply_order_no = #{purchaseApplyOrderNo} AND epaom.data_status = 1
+	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(epaom.id) FROM erp_purchase_apply_order_material epaom 

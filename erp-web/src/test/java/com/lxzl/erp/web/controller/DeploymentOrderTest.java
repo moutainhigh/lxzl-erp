@@ -91,8 +91,8 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCancelDeploymentOrder() throws Exception {
         DeploymentOrder deploymentOrder = new DeploymentOrder();
-        deploymentOrder.setDeploymentOrderNo("O201711151901080841608");
-        deploymentOrder.setVerifyUser(1);
+        deploymentOrder.setDeploymentOrderNo("LXC010010201801080030");
+//        deploymentOrder.setVerifyUser(1);
         TestResult testResult = getJsonTestResult("/deploymentOrder/cancel", deploymentOrder);
     }
 

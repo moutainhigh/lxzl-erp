@@ -12,6 +12,7 @@ public class ErrorCode {
     public static final String SYSTEM_DEVELOPING = "J000001";
     public static final String EMAIL_ERROR = "J000002";
     public static final String DATA_NOT_BELONG_TO_YOU = "J000003";
+    public static final String COMMITTED_CAN_NOT_REPEAT = "J000991";
     public static final String COMMIT_ONLY_SELF = "J000992";
     public static final String RECORD_USED_CAN_NOT_DELETE = "J000993";
     public static final String AMOUNT_MAST_MORE_THEN_ZERO = "J000994";
@@ -22,6 +23,7 @@ public class ErrorCode {
     public static final String SYSTEM_ERROR = "J000999";
     public static final String RECORD_NOT_EXISTS = "J009999";
     public static final String RECORD_ALREADY_EXISTS = "J099999";
+
 
     public static final String USER_NAME_NOT_NULL = "J100000";
     public static final String USER_PASSWORD_NOT_NULL = "J100001";
@@ -318,6 +320,8 @@ public class ErrorCode {
     public static final String PURCHASE_APPLY_ORDER_NOT_EXISTS = "J500061";
     public static final String BULK_MATERIAL_HAVE_NOT_ENOUGH_BY_PARAM = "J500062";
     public static final String PURCHASE_APPLY_CAN_NOT_UPDATE = "J500063";
+    public static final String PURCHASE_APPLY_CAN_NOT_CANCEL_BY_STATUS = "J500064";
+    public static final String PURCHASE_APPLY_YET_RECEIVE_CAN_NOT_CANCEL = "J500065";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -376,6 +380,7 @@ public class ErrorCode {
     public static final String CUSTOMER_IS_EXISTS = "J500057";
     public static final String CUSTOMER_NOT_RENT_OR_ORDER_NOT_CONFIRM = "J500058";
     public static final String CUSTOMER_RENT_THIS_BULK_MATERIAL_NO_MORE = "J500059";
+    public static final String CUSTOMER_OWNER_NOT_NULL = "J500060";
 
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
@@ -452,6 +457,7 @@ public class ErrorCode {
         MAP.put(SYSTEM_DEVELOPING, "开发中……");
         MAP.put(EMAIL_ERROR, "邮箱格式有误");
         MAP.put(DATA_NOT_BELONG_TO_YOU, "数据不属于你，无法操作！");
+        MAP.put(COMMITTED_CAN_NOT_REPEAT, "重复提交！");
         MAP.put(COMMIT_ONLY_SELF, "只能提交自己的数据");
         MAP.put(RECORD_USED_CAN_NOT_DELETE, "数据被使用，无法删除");
         MAP.put(AMOUNT_MAST_MORE_THEN_ZERO, "金额必须大于0");
@@ -564,6 +570,9 @@ public class ErrorCode {
         MAP.put(PURCHASE_APPLY_ORDER_NOT_EXISTS, "采购申请单不存在");
         MAP.put(BULK_MATERIAL_HAVE_NOT_ENOUGH_BY_PARAM, "配件【%s】库存不足！");
         MAP.put(PURCHASE_APPLY_CAN_NOT_UPDATE, "此状态采购申请单不可修改");
+        MAP.put(PURCHASE_APPLY_CAN_NOT_CANCEL_BY_STATUS, "此状态采购申请单不可取消");
+        MAP.put(PURCHASE_APPLY_YET_RECEIVE_CAN_NOT_CANCEL, "已收货的采购申请单不可取消");
+        MAP.put(CUSTOMER_OWNER_NOT_NULL, "客户业务员ID不能为空");
 
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
         MAP.put(WORKFLOW_TEMPLATE_HAVE_NO_NODE, "此工作流模板没有节点");

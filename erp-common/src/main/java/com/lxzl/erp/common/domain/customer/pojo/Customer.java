@@ -5,11 +5,14 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerPersonGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerPersonGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 
@@ -28,12 +31,13 @@ public class Customer extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+	@NotNull(message = ErrorCode.CUSTOMER_OWNER_NOT_NULL , groups = {AddCustomerCompanyGroup.class,AddCustomerPersonGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class})
 	private Integer owner;		//数据归属人，跟单员
 	private Integer unionUser;  //联合开发人
 
 
-	private String ownerName; //业务员
-	private String unionUserName; //联合业务员
+	private String ownerName; //业务员姓名
+	private String unionUserName; //联合业务员姓名
 	private String unionAreaProvinceName;// 联合省名
 	private String unionAreaCityName; //联合城市名
 	private String unionAreaDistrictName; //联合地区名
