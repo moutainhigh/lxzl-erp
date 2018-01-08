@@ -44,33 +44,33 @@
                             {{#order}}
                             <div class="row">
                                 <div class="col-md-4">
-                                    <dl class="dl-horizontal dl-horizontal-rental">
-                                        <dt class="mb10">状态：</dt><dd>{{statementOrderStatusValue}}&nbsp;</dd>
-                                        <dt class="mb10">客户名：</dt><dd>{{customerName}}</dd>
-                                        <dt class="mb10">预计支付时间：</dt><dd>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</dd>
-                                        <dt class="mb10">实际支付时间：</dt><dd>{{#shortTime}}{{statementPaidTime}}{{/shortTime}}</dd>
-                                        <dt class="mb10">结算开始时间：</dt><dd>{{#shortTime}}{{statementStartTime}}{{/shortTime}}</dd>
-                                        <dt class="mb10">结算结束时间：</dt><dd>{{#shortTime}}{{statementEndTime}}{{/shortTime}}&nbsp;</dd>
+                                    <dl class="dl-horizontal">
+                                        <dt>状态：</dt><dd class="mb5">{{statementOrderStatusValue}}&nbsp;</dd>
+                                        <dt>客户名：</dt><dd class="mb5">{{customerName}}</dd>
+                                        <dt>预计支付时间：</dt><dd class="mb5">{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</dd>
+                                        <dt>实际支付时间：</dt><dd class="mb5">{{#time}}{{statementPaidTime}}{{/time}}</dd>
+                                        <dt>结算开始日期：</dt><dd class="mb5">{{#shortTime}}{{statementStartTime}}{{/shortTime}}</dd>
+                                        <dt>结算结束日期：</dt><dd class="mb5">{{#shortTime}}{{statementEndTime}}{{/shortTime}}&nbsp;</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
-                                    <dl class="dl-horizontal dl-horizontal-rental">
-                                        <dt class="mb10">租金押金：</dt><dd>￥{{#price}}{{statementRentDepositAmount}}{{/price}}&nbsp;</dd>
-                                        <dt class="mb10">已付租金押金：</dt><dd>￥{{#price}}{{statementRentDepositPaidAmount}}{{/price}}&nbsp;</dd>
-                                        <dt class="mb10">已退租金押金：</dt><dd>￥{{#price}}{{statementRentDepositReturnAmount}}{{/price}}&nbsp;</dd>
+                                    <dl class="dl-horizontal">
+                                        <dt>租金押金：</dt><dd class="mb5">￥{{#price}}{{statementRentDepositAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>已付租金押金：</dt><dd class="mb5">￥{{#price}}{{statementRentDepositPaidAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>已退租金押金：</dt><dd class="mb5">￥{{#price}}{{statementRentDepositReturnAmount}}{{/price}}&nbsp;</dd>
 
-                                        <dt class="mb10">设备押金：</dt><dd>￥{{#price}}{{statementDepositAmount}}{{/price}}&nbsp;</dd>
-                                        <dt class="mb10">已付设备押金：</dt><dd>￥{{#price}}{{statementDepositPaidAmount}}{{/price}}&nbsp;</dd>
-                                        <dt class="mb10">已退设备押金：</dt><dd>￥{{#price}}{{statementDepositReturnAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>设备押金：</dt><dd class="mb5">￥{{#price}}{{statementDepositAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>已付设备押金：</dt><dd class="mb5">￥{{#price}}{{statementDepositPaidAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>已退设备押金：</dt><dd class="mb5">￥{{#price}}{{statementDepositReturnAmount}}{{/price}}&nbsp;</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
-                                    <dl class="dl-horizontal dl-horizontal-rental">
-                                        <dt class="mb10">租金：</dt><dd>￥{{#price}}{{statementRentAmount}}{{/price}}&nbsp;</dd>
-                                        <dt class="mb10">已付租金：</dt><dd>￥{{#price}}{{statementRentPaidAmount}}{{/price}}&nbsp;</dd>
-                                        <dt class="mb10">结算单总金额：</dt><dd class="text-danger">￥{{#price}}{{statementAmount}}{{/price}}&nbsp;</dd>
-                                        <dt class="mb10">已付总金额：</dt><dd class="text-danger">￥{{#price}}{{statementPaidAmount}}{{/price}}&nbsp;</dd>
-                                        <dt class="mb10">逾期金额：</dt><dd class="text-danger">￥{{#price}}{{statementOverdueAmount}}{{/price}}&nbsp;</dd>
+                                    <dl class="dl-horizontal">
+                                        <dt>租金：</dt><dd class="mb5">￥{{#price}}{{statementRentAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>已付租金：</dt><dd class="mb5">￥{{#price}}{{statementRentPaidAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>结算单总金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>已付总金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementPaidAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>逾期金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementOverdueAmount}}{{/price}}&nbsp;</dd>
                                     </dl>
                                 </div>
                             </div>
