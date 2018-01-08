@@ -43,7 +43,7 @@
                         <th>型号</th>
                         <th>类型</th>
                         <th>配件值大小</th>
-                        <th>本身价值</th>
+                        <th>配件价值</th>
                         <th>租赁价格</th>
                         <th>库存</th>
                         {{#showIsNewCheckBox}}
@@ -62,7 +62,7 @@
                         <td>{{materialModelName}}</td>
                         <td>{{materialTypeStr}}</td>
                         <td>{{#memorysize}}{{materialCapacityValue}}{{/memorysize}}</td>
-                        <td>{{#price}}{{materialPriceFormat}}{{/price}}</td>
+                        <td>￥{{#price}}{{materialPriceFormat}}{{/price}}</td>
                         <td>
                             <p style="white-space:nowrap">日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
                             <p style="white-space:nowrap">月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>

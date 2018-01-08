@@ -90,9 +90,9 @@
                                             <th>商品属性</th>
                                             {{/showIsNewCheckBox}}
                                             <th>SKU</th>
-##                                            <th>总库存</th>
                                             <th>新库存</th>
                                             <th>次新库存</th>
+                                            <th>价值</th>
                                             <th>日租</th>
                                             <th>月租</th>
                                         </tr>
@@ -116,13 +116,13 @@
                                                 </td>
                                                 {{/showIsNewCheckBox}}
                                                 <td>{{propertiesToStr}}</td>
-##                                                <td>{{stock}}</td>
                                                 <td>
                                                     {{newProductSkuCount}}
                                                 </td>
                                                 <td>
                                                     {{oldProductSkuCount}}
                                                 </td>
+                                                <td>￥{{#price}}{{skuPrice}}{{/price}}</td>
                                                 <td>￥{{#price}}{{dayRentPrice}}{{/price}}</td>
                                                 <td>￥{{#price}}{{monthRentPrice}}{{/price}}</td>
                                             </tr>
