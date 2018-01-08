@@ -18,6 +18,10 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="apply_user_name" jdbcType="VARCHAR" property="applyUserName" />
+		<result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+		<result column="department_name" jdbcType="VARCHAR" property="departmentName" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -25,27 +29,53 @@
 	</sql>
 
 	<select id="findById" resultMap="PurchaseApplyOrderDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_purchase_apply_order epao 
+		SELECT <include refid="column_List"/> FROM erp_purchase_apply_order epao
 		WHERE epao.id = #{id, jdbcType=INTEGER} AND epao.data_status = 1 
 	</select>
 
 	<select id="findByNo" resultMap="PurchaseApplyOrderDO" parameterType="java.lang.String">
-		SELECT <include refid="column_List"/> FROM erp_purchase_apply_order epao
-		WHERE epao.purchase_apply_order_no = #{id, jdbcType=VARCHAR} AND epao.data_status = 1
+		SELECT <include refid="column_List"/>,eu.real_name AS apply_user_name,ew.warehouse_name AS warehouse_name, ed.department_name AS departmentName FROM erp_purchase_apply_order epao
+		LEFT JOIN erp_user eu ON eu.id = epao.apply_user_id
+		LEFT JOIN erp_warehouse ew ON ew.id = epao.warehouse_id AND ew.data_status=1
+		LEFT JOIN erp_department ed ON ed.id = epao.department_id AND ed.data_status=1
+		WHERE epao.purchase_apply_order_no = #{purchaseApplyOrderNo, jdbcType=VARCHAR} AND epao.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(epao.id) FROM erp_purchase_apply_order epao 
+		SELECT count(DISTINCT epao.id) FROM erp_purchase_apply_order epao
+		LEFT JOIN erp_user eu ON eu.id = epao.apply_user_id
+		LEFT JOIN erp_warehouse ew ON ew.id = epao.warehouse_id AND ew.data_status=1
+		LEFT JOIN erp_department ed ON ed.id = epao.department_id AND ed.data_status=1
+		LEFT JOIN erp_purchase_apply_order_product epaop ON epaop.purchase_apply_order_id = epao.id AND epaop.data_status=1
+		LEFT JOIN erp_purchase_apply_order_material epaom ON epaom.purchase_apply_order_id = epao.id AND epaom.data_status=1
 		<where>
-			<if test="true">
-				AND epao.data_status = 1
+			<if test="maps.queryParam.purchaseApplyOrderNo != null &amp;&amp; maps.queryParam.purchaseApplyOrderNo != ''">
+				and epao.purchase_apply_order_no like CONCAT('%','${maps.queryParam.purchaseApplyOrderNo}','%' )
 			</if>
-		</where>
-	</select>
-
-	<select id="listPage" resultMap="PurchaseApplyOrderDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_purchase_apply_order epao 
-		<where>
+			<if test="maps.queryParam.applyUserName != null &amp;&amp; maps.queryParam.applyUserName != ''">
+				and eu.real_name like CONCAT('%','${maps.queryParam.applyUserName}','%' )
+			</if>
+			<if test="maps.queryParam.warehouseName != null &amp;&amp; maps.queryParam.warehouseName != ''">
+				and ew.warehouse_name like CONCAT('%','${maps.queryParam.warehouseName}','%' )
+			</if>
+			<if test="maps.queryParam.departmentName != null &amp;&amp; maps.queryParam.departmentName != ''">
+				and ed.department_name like CONCAT('%','${maps.queryParam.departmentName}','%' )
+			</if>
+			<if test="maps.queryParam.purchaseApplyOrderStatus != null">
+				and epao.purchase_apply_order_status = #{maps.queryParam.purchaseApplyOrderStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.useStartTime != null">
+				AND (<![CDATA[ epao.all_use_time >= #{maps.queryParam.useStartTime} ]]>
+					or <![CDATA[ epaop.use_time >= #{maps.queryParam.useStartTime} ]]>
+					or <![CDATA[ epaom.use_time >= #{maps.queryParam.useStartTime} ]]>
+				)
+			</if>
+			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.useEndTime != null">
+				AND (<![CDATA[epao.all_use_time <= #{maps.queryParam.useEndTime} ]]>
+				or <![CDATA[ epaop.use_time <= #{maps.queryParam.useEndTime} ]]>
+				or <![CDATA[ epaom.use_time <= #{maps.queryParam.useEndTime} ]]>
+				)
+			</if>
 			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.createStartTime != null">
 				<![CDATA[ AND epao.create_time >= #{maps.queryParam.createStartTime} ]]>
 			</if>
@@ -56,6 +86,61 @@
 				AND epao.data_status = 1
 			</if>
 		</where>
+	</select>
+
+	<select id="listPage" resultMap="PurchaseApplyOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/>,eu.real_name AS apply_user_name,ew.warehouse_name AS warehouse_name, ed.department_name AS department_name from erp_purchase_apply_order epao
+		LEFT JOIN erp_user eu ON eu.id = epao.apply_user_id
+		LEFT JOIN erp_warehouse ew ON ew.id = epao.warehouse_id AND ew.data_status=1
+		LEFT JOIN erp_department ed ON ed.id = epao.department_id AND ed.data_status=1
+		WHERE epao.id IN
+		(
+		SELECT DISTINCT epao.id FROM erp_purchase_apply_order epao
+		LEFT JOIN erp_user eu ON eu.id = epao.apply_user_id
+		LEFT JOIN erp_warehouse ew ON ew.id = epao.warehouse_id AND ew.data_status=1
+		LEFT JOIN erp_department ed ON ed.id = epao.department_id AND ed.data_status=1
+		LEFT JOIN erp_purchase_apply_order_product epaop ON epaop.purchase_apply_order_id = epao.id AND epaop.data_status=1
+		LEFT JOIN erp_purchase_apply_order_material epaom ON epaom.purchase_apply_order_id = epao.id AND epaom.data_status=1
+		<where>
+			<if test="maps.queryParam.purchaseApplyOrderNo != null &amp;&amp; maps.queryParam.purchaseApplyOrderNo != ''">
+				and epao.purchase_apply_order_no like CONCAT('%','${maps.queryParam.purchaseApplyOrderNo}','%' )
+			</if>
+			<if test="maps.queryParam.applyUserName != null &amp;&amp; maps.queryParam.applyUserName != ''">
+				and eu.real_name like CONCAT('%','${maps.queryParam.applyUserName}','%' )
+			</if>
+			<if test="maps.queryParam.warehouseName != null &amp;&amp; maps.queryParam.warehouseName != ''">
+				and ew.warehouse_name like CONCAT('%','${maps.queryParam.warehouseName}','%' )
+			</if>
+			<if test="maps.queryParam.departmentName != null &amp;&amp; maps.queryParam.departmentName != ''">
+				and ed.department_name like CONCAT('%','${maps.queryParam.departmentName}','%' )
+			</if>
+			<if test="maps.queryParam.purchaseApplyOrderStatus != null">
+				and epao.purchase_apply_order_status = #{maps.queryParam.purchaseApplyOrderStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.useStartTime != null">
+				AND (<![CDATA[ epao.all_use_time >= #{maps.queryParam.useStartTime} ]]>
+				or <![CDATA[ epaop.use_time >= #{maps.queryParam.useStartTime} ]]>
+				or <![CDATA[ epaom.use_time >= #{maps.queryParam.useStartTime} ]]>
+				)
+			</if>
+			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.useEndTime != null">
+				AND (<![CDATA[epao.all_use_time <= #{maps.queryParam.useEndTime} ]]>
+				or <![CDATA[ epaop.use_time <= #{maps.queryParam.useEndTime} ]]>
+				or <![CDATA[ epaom.use_time <= #{maps.queryParam.useEndTime} ]]>
+				)
+			</if>
+			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.createStartTime != null">
+				<![CDATA[ AND epao.create_time >= #{maps.queryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.createEndTime != null">
+				<![CDATA[ AND epao.create_time <= #{maps.queryParam.createEndTime} ]]>
+			</if>
+			<if test="true">
+				AND epao.data_status = 1
+			</if>
+		</where>
+		)
+		order by epao.create_time desc
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 

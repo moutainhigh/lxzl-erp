@@ -61,7 +61,7 @@ public class PurchaseApplyOrderController {
      * @return
      */
     @RequestMapping(value = "cancel", method = RequestMethod.POST)
-    public Result deletePurchaseOrder(@RequestBody @Validated(IdGroup.class) PurchaseApplyOrder purchaseApplyOrder, BindingResult validResult) {
+    public Result cancel(@RequestBody @Validated(IdGroup.class) PurchaseApplyOrder purchaseApplyOrder, BindingResult validResult) {
         return resultGenerator.generate(purchaseApplyOrderService.cancel(purchaseApplyOrder.getPurchaseApplyOrderNo()));
     }
 
