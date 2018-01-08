@@ -107,7 +107,10 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{bulkMaterialNo}}</td>
+                                <td>
+                                    {{#isNewValueBadge}}{{isNew}}{{/isNewValueBadge}}
+                                    {{bulkMaterialNo}}
+                                </td>
                                 <td>{{bulkMaterialName}}</td>
                                 <td>{{brandName}}</td>
                                 <td>{{bulkMaterialTypeValue}}</td>

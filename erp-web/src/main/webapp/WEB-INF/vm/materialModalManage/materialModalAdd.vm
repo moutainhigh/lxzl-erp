@@ -9,7 +9,7 @@
                     <div class="col-md-6">
                         <label for="modelName" class="field-label">型号名称</label>
                         <label for="modelName" class="field prepend-icon">
-                            <input type="text" name="modelName" id="modelName" class="gui-input required" placeholder="请输入配件名称" maxlength="20">
+                            <input type="text" name="modelName" id="modelName" class="gui-input required" placeholder="请输入配件名称" />
                             <label for="modelName" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
