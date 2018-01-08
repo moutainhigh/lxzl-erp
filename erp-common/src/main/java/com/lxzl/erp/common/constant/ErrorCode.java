@@ -118,6 +118,7 @@ public class ErrorCode {
     public static final String PRODUCT_EQUIPMENT_NOT_NEW = "J200070";
     public static final String PRODUCT_EQUIPMENT_NOT_OLD = "J200071";
 
+
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
     public static final String WORKFLOW_TEMPLATE_HAVE_NO_NODE = "J800002";
     public static final String WORKFLOW_LINK_EXISTS = "J800003";
@@ -389,6 +390,8 @@ public class ErrorCode {
     public static final String CUSTOMER_RISK_MANAGEMENT_APPLE_LIMIT = "J500062";
     public static final String CUSTOMER_RISK_MANAGEMENT_NEW_LIMIT = "J500063";
     public static final String CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT = "J500064";
+    public static final String CUSTOMER_STATUS_ERROR = "J500065";
+    public static final String CUSTOMER_IS_DISABLED = "J500066";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -598,6 +601,8 @@ public class ErrorCode {
         MAP.put(CUSTOMER_RISK_MANAGEMENT_APPLE_LIMIT, "苹果设备被限制，不能下单");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_NEW_LIMIT, "全新设备被限制，不能下单");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT, "价格被限制，不能下单");
+        MAP.put(CUSTOMER_STATUS_ERROR, "客户状态异常，仔细检查后操作");
+        MAP.put(CUSTOMER_IS_DISABLED, "客户已经被禁用");
 
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");

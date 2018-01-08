@@ -45,6 +45,7 @@ public class Customer extends BasePO {
 	private String unionAreaProvinceName;// 联合省名
 	private String unionAreaCityName; //联合城市名
 	private String unionAreaDistrictName; //联合地区名
+	private String verifyRemark;	//审核备注
 
 
 	@Valid
@@ -254,5 +255,13 @@ public class Customer extends BasePO {
 
 	public void setLaterApplyAmount(BigDecimal laterApplyAmount) {
 		this.laterApplyAmount = laterApplyAmount;
+	}
+
+	public String getVerifyRemark() {
+		return verifyRemark;
+	}
+
+	public void setVerifyRemark(String verifyRemark) {
+		this.verifyRemark = verifyRemark;
 	}
 }
