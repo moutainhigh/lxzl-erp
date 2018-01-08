@@ -22,10 +22,13 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="beneficiary_name" jdbcType="VARCHAR" property="beneficiaryName" />
+		<result column="beneficiary_account" jdbcType="VARCHAR" property="beneficiaryAccount" />
+		<result column="beneficiary_bank_name" jdbcType="VARCHAR" property="beneficiaryBankName" />
 	</resultMap>
 
 	<sql id="column_List">
-		es.id,es.supplier_no,es.supplier_name,es.province,es.city,es.district,es.address,es.tel,es.contactName,es.contactPhone,es.data_status,es.remark,es.create_time,es.create_user,es.update_time,es.update_user
+		es.id,es.supplier_no,es.supplier_name,es.province,es.city,es.district,es.address,es.tel,es.contactName,es.contactPhone,es.data_status,es.remark,es.create_time,es.create_user,es.update_time,es.update_user,es.beneficiary_name,es.beneficiary_account,es.beneficiary_bank_name
 	</sql>
 
 	<select id="findById" resultMap="SupplierDO" parameterType="java.lang.Integer">
@@ -146,6 +149,15 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="beneficiaryName != null">
+				beneficiary_name = #{beneficiaryName,jdbcType=VARCHAR},
+			</if>
+			<if test="beneficiaryAccount != null">
+				beneficiary_account = #{beneficiaryAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="beneficiaryBankName != null">
+				beneficiary_bank_name = #{beneficiaryBankName,jdbcType=VARCHAR},
 			</if>
 		</set>
 	</sql>

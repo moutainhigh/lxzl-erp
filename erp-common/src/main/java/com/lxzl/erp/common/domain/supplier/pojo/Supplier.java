@@ -20,12 +20,16 @@ public class Supplier extends BasePO {
 	private String tel;   //电话号码
 	private String contactName;   //联系人姓名
 	private String contactPhone;   //联系手机号
+
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+	private String beneficiaryName;   //收款户名
+	private String beneficiaryAccount;   //收款帐号
+	private String beneficiaryBankName;   //收款开户行
 	private String provinceName;	//省份名称
 	private String cityName;		//城市名称
 	private String districtName;	//地区名称
@@ -182,4 +186,16 @@ public class Supplier extends BasePO {
 	public void setSupplierNo(String supplierNo) {
 		this.supplierNo = supplierNo;
 	}
+
+	public String getBeneficiaryName() { return beneficiaryName; }
+
+	public void setBeneficiaryName(String beneficiaryName) { this.beneficiaryName = beneficiaryName; }
+
+	public String getBeneficiaryAccount() { return beneficiaryAccount; }
+
+	public void setBeneficiaryAccount(String beneficiaryAccount) { this.beneficiaryAccount = beneficiaryAccount; }
+
+	public String getBeneficiaryBankName() { return beneficiaryBankName; }
+
+	public void setBeneficiaryBankName(String beneficiaryBankName) { this.beneficiaryBankName = beneficiaryBankName; }
 }

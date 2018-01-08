@@ -752,7 +752,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                         StockOrderBulkMaterialDO stockOrderBulkMaterialDO = new StockOrderBulkMaterialDO();
                         stockOrderBulkMaterialDO.setStockOrderNo(stockOrderNo);
                         stockOrderBulkMaterialDO.setItemReferId(itemReferId);
-                        stockOrderBulkMaterialDO.setItemReferId(itemReferType);
+                        stockOrderBulkMaterialDO.setItemReferType(itemReferType);
                         stockOrderBulkMaterialDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
                         stockOrderBulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                         stockOrderBulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
