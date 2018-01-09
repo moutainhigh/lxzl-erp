@@ -64,7 +64,7 @@
                 <div class="section">
                     <label for="productModel" class="field-label">型号</label>
                     <label for="productModel" class="field prepend-icon">
-                        <input type="text" name="productModel" id="productModel" class="gui-input required letterOrNumber"/>
+                        <input type="text" name="productModel" id="productModel" class="gui-input required letterOrNumber2"/>
                         <label for="productModel" class="field-icon"><i class="fa fa-tag"></i>
                         </label>
                     </label>
