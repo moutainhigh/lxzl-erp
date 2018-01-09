@@ -946,6 +946,7 @@ public class OrderServiceImpl implements OrderService {
             }
             if (!productEquipmentDO.getCurrentWarehouseId().equals(currentWarehouse.getId())) {
                 result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, equipmentNo, productEquipmentDO.getCurrentWarehouseId());
+                return result;
             }
 
             boolean isMatching = false;
