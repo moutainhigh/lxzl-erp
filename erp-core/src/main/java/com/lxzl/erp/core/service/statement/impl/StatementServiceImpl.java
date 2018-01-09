@@ -250,7 +250,7 @@ public class StatementServiceImpl implements StatementService {
         List<StatementOrderDO> statementOrderDOList = statementOrderMapper.findByCustomerId(statementOrderDO.getCustomerId());
         for (StatementOrderDO dbStatementOrderDO : statementOrderDOList) {
             if (!StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(dbStatementOrderDO.getStatementStatus())
-                    && !StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDO.getStatementStatus())) {
+                    && !StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(dbStatementOrderDO.getStatementStatus())) {
                 if(dbStatementOrderDO.getStatementOrderNo().equals(statementOrderNo)){
                     break;
                 }
