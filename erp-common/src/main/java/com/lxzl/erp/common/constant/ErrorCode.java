@@ -788,7 +788,7 @@ public class ErrorCode {
         MAP.put(ORDER_PRODUCT_DEPOSIT_ERROR, "订单商品押金有误，请检查");
         MAP.put(ORDER_MATERIAL_DEPOSIT_ERROR, "订单配件押金有误，请检查");
         MAP.put(ORDER_DELIVERY_MODE_ERROR, "订单送货方式有误，请仔细检查");
-        MAP.put(ORDER_CAN_NOT_DELIVERY_TIME_REASON, "订单未到改发货时间，不能发货");
+        MAP.put(ORDER_CAN_NOT_DELIVERY_TIME_REASON, "订单未到发货时间，不能发货");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
