@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.customer.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -497,7 +498,7 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
         if (!CustomerStatus.STATUS_PASS.equals(customerStatus)
-                || !CustomerStatus.STATUS_REJECT.equals(customerStatus)) {
+                && !CustomerStatus.STATUS_REJECT.equals(customerStatus)) {
             result.setErrorCode(ErrorCode.CUSTOMER_STATUS_ERROR);
             return result;
         }
@@ -681,6 +682,13 @@ public class CustomerServiceImpl implements CustomerService {
             customerResult.getCustomerCompany().setOtherDateImageList(otherDateImageList);
         }
 
+        if(customerResult.getOwner() != null){
+            customerResult.setCustomerOwnerUser(CommonCache.userMap.get(customerResult.getOwner()));
+        }
+        if(customerResult.getUnionUser() != null){
+            customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
+        }
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
         return serviceResult;
@@ -711,6 +719,12 @@ public class CustomerServiceImpl implements CustomerService {
         }
         customerResult.setCustomerAccount(customerAccount);
 
+        if(customerResult.getOwner() != null){
+            customerResult.setCustomerOwnerUser(CommonCache.userMap.get(customerResult.getOwner()));
+        }
+        if(customerResult.getUnionUser() != null){
+            customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
         return serviceResult;
@@ -736,6 +750,12 @@ public class CustomerServiceImpl implements CustomerService {
         }
         customerResult.setCustomerAccount(customerAccount);
 
+        if(customerResult.getOwner() != null){
+            customerResult.setCustomerOwnerUser(CommonCache.userMap.get(customerResult.getOwner()));
+        }
+        if(customerResult.getUnionUser() != null){
+            customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
         return serviceResult;

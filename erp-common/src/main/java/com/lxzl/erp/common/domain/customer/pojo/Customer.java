@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
+import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerPersonGroup;
@@ -56,6 +57,9 @@ public class Customer extends BasePO {
 	private CustomerRiskManagement customerRiskManagement;
 
 	private CustomerAccount customerAccount;
+
+	private User customerOwnerUser;
+	private User customerUnionUser;
 
 	public Integer getCustomerId() {
 		return customerId;
@@ -263,5 +267,21 @@ public class Customer extends BasePO {
 
 	public void setVerifyRemark(String verifyRemark) {
 		this.verifyRemark = verifyRemark;
+	}
+
+	public User getCustomerOwnerUser() {
+		return customerOwnerUser;
+	}
+
+	public void setCustomerOwnerUser(User customerOwnerUser) {
+		this.customerOwnerUser = customerOwnerUser;
+	}
+
+	public User getCustomerUnionUser() {
+		return customerUnionUser;
+	}
+
+	public void setCustomerUnionUser(User customerUnionUser) {
+		this.customerUnionUser = customerUnionUser;
 	}
 }
