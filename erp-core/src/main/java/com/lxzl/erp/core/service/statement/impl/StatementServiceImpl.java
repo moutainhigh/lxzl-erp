@@ -251,7 +251,7 @@ public class StatementServiceImpl implements StatementService {
         for (StatementOrderDO dbStatementOrderDO : statementOrderDOList) {
             if (!StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(dbStatementOrderDO.getStatementStatus())
                     && !StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(dbStatementOrderDO.getStatementStatus())) {
-                if(dbStatementOrderDO.getStatementOrderNo().equals(statementOrderNo)){
+                if (dbStatementOrderDO.getStatementOrderNo().equals(statementOrderNo)) {
                     break;
                 }
                 result.setErrorCode(ErrorCode.STATEMENT_ORDER_CAN_NOT_PAID_THIS);
@@ -847,6 +847,11 @@ public class StatementServiceImpl implements StatementService {
                 } else {
                     statementOrderDO = statementOrderDOMap.get(dateKey);
                     statementOrderDO.setStatementAmount(BigDecimalUtil.add(statementOrderDO.getStatementAmount(), statementOrderDetailDO.getStatementDetailAmount()));
+                    if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) < 0) {
+                        BigDecimal diffAmount = BigDecimalUtil.sub(BigDecimal.ZERO, statementOrderDO.getStatementAmount());
+                        statementOrderDO.setStatementAmount(BigDecimal.ZERO);
+                        statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(), diffAmount));
+                    }
                     statementOrderDO.setStatementDepositAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositAmount(), statementOrderDetailDO.getStatementDetailDepositAmount()));
                     statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositAmount()));
                     statementOrderDO.setStatementRentAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentAmount(), statementOrderDetailDO.getStatementDetailRentAmount()));
