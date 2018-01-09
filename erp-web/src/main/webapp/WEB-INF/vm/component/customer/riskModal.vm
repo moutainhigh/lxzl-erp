@@ -97,6 +97,36 @@
                     </div>
                 </div>
                 <div class="section row">
+                    <div class="col-md-4">
+                        <label for="singleLimitPrice" class="field-label">限制单台设备价值</label>
+                        <label for="singleLimitPrice" class="field select">
+                            <input type="text" name="singleLimitPrice" id="singleLimitPrice" class="gui-input moneyNumber" maxlength="7">
+                            <label for="creditAmount" class="field-icon"><i class="fa fa-jpy"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="isLimitApple" class="field-label">是否限制苹果机</label>
+                        <label for="isLimitApple" class="field select">
+                            <select class="required" name="isLimitApple">
+                                <option value="0">否</option>
+                                <option value="1">是</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="isLimitNew" class="field-label">是否限制全新机</label>
+                        <label for="isLimitNew" class="field select">
+                            <select class="required" name="isLimitNew">
+                                <option value="0">否</option>
+                                <option value="1">是</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
                     <div class="col-md-12">
                         <label for="remark" class="field-label">备注</label>
                         <label for="remark" class="field prepend-icon">

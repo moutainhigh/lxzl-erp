@@ -19,14 +19,14 @@
                                 <i class="fa fa-circle text-primary fs8 pr15"></i>
                                 <span>授信额度</span>
                             </td>
-                            <td>￥{{creditAmountFormat}}</td>
+                            <td>￥{{#price}}{{creditAmount}}{{/price}}</td>
                         </tr>
                         <tr>
                             <td>
                                 <i class="fa fa-circle text-primary fs8 pr15"></i>
                                 <span>已用授信额度</span>
                             </td>
-                            <td>￥{{creditAmountUsedFormat}}</td>
+                            <td>￥{{#price}}{{creditAmountUsed}}{{/price}}</td>
                         </tr>
                         <tr>
                             <td>
@@ -49,6 +49,13 @@
                             </td>
                             <td>{{payModeValue}}</td>
                         </tr>
+                        <tr>
+                            <td>
+                                <i class="fa fa-circle text-primary fs8 pr15"></i>
+                                <span>限制单台设备价值</span>
+                            </td>
+                            <td>￥{{#price}}{{singleLimitPrice}}{{/price}}</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -58,7 +65,7 @@
                         <tbody>
                         <tr>
                             <td class="va-m fw600 text-muted"><i class="mr5 fa fa-apple"></i>苹果押金期数</td>
-                            <td class="fs15 fw700 text-right">{{applePaymentCycle}}</td>
+                            <td class="fs15 fw700 text-right">{{appleDepositCycle}}</td>
                         </tr>
                         <tr>
                             <td class="va-m fw600 text-muted"><i class="mr5 fa fa-apple"></i>苹果付款期数</td>
@@ -67,6 +74,10 @@
                         <tr>
                             <td class="va-m fw600 text-muted"><i class="mr5 fa fa-apple"></i>苹果设备支付方式</td>
                             <td class="fs15 fw700 text-right">{{applePayModeValue}}</td>
+                        </tr>
+                        <tr>
+                            <td class="va-m fw600 text-muted"><i class="mr5 fa fa-apple"></i>是否限制苹果机</td>
+                            <td class="fs15 fw700 text-right">{{#boolText}}{{isLimitApple}}{{/boolText}}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -86,6 +97,10 @@
                         <tr>
                             <td class="va-m fw600 text-muted"><i class="fa fa-circle text-success fs8 pr15"></i>全新设备支付方式</td>
                             <td class="fs14 fw700 text-right">{{newPayModeValue}}</td>
+                        </tr>
+                        <tr>
+                            <td class="va-m fw600 text-muted"><i class="fa fa-circle text-success fs8 pr15"></i>是否限制全新机</td>
+                            <td class="fs14 fw700 text-right">{{#boolText}}{{isLimitNew}}{{/boolText}}</td>
                         </tr>
                         </tbody>
                     </table>
