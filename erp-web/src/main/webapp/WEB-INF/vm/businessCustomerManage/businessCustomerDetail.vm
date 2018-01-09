@@ -41,6 +41,7 @@
                                         <dt class="mb10">创建人</dt><dd>{{createUserRealName}}</dd>
                                         <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}</dd>
                                         <dt class="mb10">联合开发人</dt><dd>{{unionUserName}}</dd>
+                                        <dt class="mb10">业务员</dt><dd>{{ownerName}}</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -109,6 +110,25 @@
                                         <div class="col-md-4 br-r">
                                             <table class="table mbn tc-med-1 tc-bold-last tc-fs13-last">
                                                 <tbody>
+
+                                                <tr>
+                                                    <td>
+                                                        <span>首期申请额度</span>
+                                                    </td>
+                                                    <td>￥{{#price}}{{firstApplyAmount}}{{/price}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>后期申请额度</span>
+                                                    </td>
+                                                    <td>￥{{#price}}{{laterApplyAmount}}{{/price}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>是否法人申请</span>
+                                                    </td>
+                                                    <td>{{#boolText}}{{customerCompany.isLegalPersonApple}}{{/boolText}}</td>
+                                                </tr>
                                                 <tr>
                                                     <td>
                                                         <span>法人</span>
@@ -123,54 +143,96 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <span>法人身手机号</span>
+                                                        <span>法人手机号</span>
                                                     </td>
                                                     <td>{{customerCompany.legalPersonPhone}}</td>
                                                 </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>经办人</span>
+                                                    </td>
+                                                    <td>{{customerCompany.agentPersonName}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>经办人身份证</span>
+                                                    </td>
+                                                    <td>{{customerCompany.agentPersonNo}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>经办人手机号</span>
+                                                    </td>
+                                                    <td>{{customerCompany.agentPersonPhone}}</td>
+                                                </tr>
                                                 </tbody>
                                             </table>
                                         </div>
 
-                                        <div class="col-md-4 br-r">
+                                        <div class="col-md-4  br-r">
+                                            {{#customerCompany}}
                                             <table class="table mbn">
                                                 <tbody>
                                                 <tr>
-                                                    <td class="va-m fw600 text-muted">紧急联系人</td>
-                                                    <td class="fs15 fw700 text-right">{{customerCompany.connectRealName}}</td>
+                                                    <td class="va-m fw600 text-muted"></i>成立日期</td>
+                                                    <td class="fs15 fw700 text-right">{{#shortTime}}{{companyFoundTime}}{{/shortTime}}</td>
                                                 </tr>
-                                                <tr>
-                                                    <td class="va-m fw600 text-muted">紧急联系人手机号</td>
-                                                    <td class="fs15 fw700 text-right">{{customerCompany.connectPhone}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="va-m fw600 text-muted">地址</td>
-                                                    <td class="fs15 fw700 text-right">{{customerCompany.provinceName}}{{customerCompany.cityName}}{{customerCompany.districtName}}{{customerCompany.address}}</td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <table class="table mbn">
-                                                <tbody>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>所属行业</td>
-                                                    <td class="fs14 fw700 text-muted text-right">{{customerCompany.industry}}</td>
+                                                    <td class="fs15 fw700 text-right">{{industry}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted"></i>关联企业</td>
+                                                    <td class="fs15 fw700 text-right">{{affiliatedEnterprise}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>注册资本</td>
-                                                    <td class="fs14 fw700 text-muted text-right">{{customerCompany.registeredCapital}}万</td>
+                                                    <td class="fs14 fw700 text-right">{{registeredCapital}}万</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>办公人数</td>
-                                                    <td class="fs14 fw700 text-muted text-right">{{customerCompany.officeNumber}}</td>
+                                                    <td class="fs15 fw700 text-right">{{officeNumber}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted"></i>经营面积</td>
+                                                    <td class="fs15 fw700 text-right">{{operatingArea}}㎡</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted"></i>统一信用码</td>
+                                                    <td class="fs15 fw700 text-right">{{unifiedCreditCode}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>设备用途</td>
-                                                    <td class="fs14 fw700 text-muted text-right">{{customerCompany.productPurpose}}</td>
+                                                    <td class="fs15 fw700 text-right">{{productPurpose}}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
+                                            {{/customerCompany}}
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            {{#customerCompany}}
+                                            <table class="table mbn">
+                                                <tbody>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted">公司座机</td>
+                                                    <td class="fs15 fw700 text-right">{{landline}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted">紧急联系人</td>
+                                                    <td class="fs15 fw700 text-right">{{connectRealName}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted">紧急联系人手机号</td>
+                                                    <td class="fs15 fw700 text-right">{{connectPhone}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted">公司地址</td>
+                                                    <td class="fs15 fw700 text-right">{{provinceName}}{{cityName}}{{districtName}}{{address}}</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                            {{/customerCompany}}
                                         </div>
 
                                     </div>
