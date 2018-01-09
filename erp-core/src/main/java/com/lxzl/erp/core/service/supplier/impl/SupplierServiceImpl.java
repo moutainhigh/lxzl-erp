@@ -80,28 +80,59 @@ public class SupplierServiceImpl implements SupplierService {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
-        if(StringUtil.isBlank(supplier.getSupplierNo())){
-            result.setErrorCode(ErrorCode.SUPPLIER_NO_NOT_NULL);
+        String verifyCode = verifySupplier(supplier);
+        if (!ErrorCode.SUCCESS.equals(verifyCode)) {
+            result.setErrorCode(verifyCode);
             return result;
         }
-        if(StringUtil.isBlank(supplier.getSupplierName())){
-            result.setErrorCode(ErrorCode.SUPPLIER_NAME_NOT_NULL);
+        //供应商名称（前端填入，校验不重复，判断中英文，若输入中文则判断空格，判断供应商）
+        String supplierName = supplier.getSupplierName();
+        if(supplierName.matches("^[A-Za-z0-9\\s]+$")){
+            SupplierDO nameSupplierDO = supplierMapper.findByName(supplierName);
+            if (nameSupplierDO != null) {
+                result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
+                return result;
+            }
+        }else {
+            if(supplierName.indexOf(" ") != -1) {
+                result.setErrorCode(ErrorCode.SUPPLIER_NAME_IS_NULL);
+                return result;
+            }
+            String checkName = supplierName.replaceAll(" ","");
+            SupplierDO nameSupplierDO = supplierMapper.findByName(checkName);
+            if (nameSupplierDO != null) {
+                result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
+                return result;
+            }
+        }
+        //判断校验自定义不能中文跟长度20
+        String supplierCode = supplier.getSupplierCode();
+        SupplierDO supplierCodeDO = supplierMapper.findByCode(supplierCode);
+        if(!supplierCode.matches("^[A-Za-z0-9-]{0,20}$")){
+            result.setErrorCode(ErrorCode.SUPPLIER_CODE_NOT_CN_LENGTH);
             return result;
         }
-        //todo 供应商编号（前端填入，校验不重复）、供应商名称（前端填入，校验不重复）
-        SupplierDO noSupplierDO = supplierMapper.findByNo(supplier.getSupplierNo());
-        if(noSupplierDO != null){
-            result.setErrorCode(ErrorCode.SUPPLIER_NO_IS_EXISTS);
+        if(supplierCodeDO != null){
+            result.setErrorCode(ErrorCode.SUPPLIER_CODE_IS_EXISTS);
             return result;
         }
-        SupplierDO nameSupplierDO = supplierMapper.findByName(supplier.getSupplierName());
-        if (nameSupplierDO != null) {
-            result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
+        //考虑英文私或公（限制长度100内），收款帐号为数字长度30
+        if(supplier.getBeneficiaryBankName().length() > 100){
+            result.setErrorCode(ErrorCode.BENEFICIARY_BANK_NAME_IS_LENGTH);
+            return result;
+        }
+        if(supplier.getBeneficiaryName().length() > 100){
+            result.setErrorCode(ErrorCode.BENEFICIARY_NAME_IS_LENGTH);
+            return result;
+        }
+        String beneficiaryAccount = supplier.getBeneficiaryAccount();
+        if(!beneficiaryAccount.matches("^[0-9-]{0,30}$")){
+            result.setErrorCode(ErrorCode.BENEFICIARY_ACCOUNT_IS_MATH_LENGTH);
             return result;
         }
 
         SupplierDO supplierDO = ConverterUtil.convert(supplier, SupplierDO.class);
-//        supplierDO.setSupplierNo(dbSupplierDO.getSupplierNo());
+        supplierDO.setSupplierNo(generateNoSupport.generateSupplierNo(supplierDO.getCity()));
         supplierDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         supplierDO.setUpdateUser(loginUser.getUserId().toString());
         supplierDO.setCreateUser(loginUser.getUserId().toString());
@@ -116,45 +147,75 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, Integer> updateSupplier(Supplier supplier) {
-        ServiceResult<String, Integer> result = new ServiceResult<>();
+    public ServiceResult<String, String> updateSupplier(Supplier supplier) {
+        ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
-
-        if(StringUtil.isBlank(supplier.getSupplierNo())){
-            result.setErrorCode(ErrorCode.SUPPLIER_NO_NOT_NULL);
+        SupplierDO dbSupplierDO = supplierMapper.findByNo(supplier.getSupplierNo());
+        if (dbSupplierDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
+        //供应商名称（前端填入，校验不重复，判断中英文，若输入中文则判断空格，判断供应商）
         if(StringUtil.isBlank(supplier.getSupplierName())){
             result.setErrorCode(ErrorCode.SUPPLIER_NAME_NOT_NULL);
             return result;
         }
-        SupplierDO supplierDO = supplierMapper.findById(supplier.getSupplierId());
-        if(supplierDO == null){
-            result.setErrorCode(ErrorCode.SUPPLIER_NOT_EXISTS);
+        String supplierName = supplier.getSupplierName();
+        if(supplierName.matches("^[A-Za-z0-9\\s]+$")){
+            SupplierDO nameSupplierDO = supplierMapper.findByName(supplierName);
+            if (nameSupplierDO != null && !nameSupplierDO.getSupplierName().equals(dbSupplierDO.getSupplierName())) {
+                result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
+                return result;
+            }
+        }else {
+            if(supplierName.indexOf(" ") != -1) {
+                result.setErrorCode(ErrorCode.SUPPLIER_NAME_IS_NULL);
+                return result;
+            }
+            String checkName = supplierName.replaceAll(" ","");
+            SupplierDO nameSupplierDO = supplierMapper.findByName(checkName);
+            if (nameSupplierDO != null && !nameSupplierDO.getSupplierName().equals(dbSupplierDO.getSupplierName())) {
+                result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
+                return result;
+            }
+        }
+
+        //判断校验自定义不能中文跟长度20
+        String supplierCode = supplier.getSupplierCode();
+        SupplierDO supplierCodeDO = supplierMapper.findByCode(supplierCode);
+        if(!supplierCode.matches("^[A-Za-z0-9-]{0,20}$")){
+            result.setErrorCode(ErrorCode.SUPPLIER_CODE_NOT_CN_LENGTH);
+            return result;
+        }
+        if(supplierCodeDO != null && !supplierCodeDO.getSupplierCode().equals(dbSupplierDO.getSupplierCode())){
+            result.setErrorCode(ErrorCode.SUPPLIER_CODE_IS_EXISTS);
+            return result;
+        }
+        //考虑英文私或公（限制长度100内），收款帐号为数字长度30
+        if(supplier.getBeneficiaryBankName().length() > 100){
+            result.setErrorCode(ErrorCode.BENEFICIARY_BANK_NAME_IS_LENGTH);
+            return result;
+        }
+        if(supplier.getBeneficiaryName().length() > 100){
+            result.setErrorCode(ErrorCode.BENEFICIARY_NAME_IS_LENGTH);
+            return result;
+        }
+        String beneficiaryAccount = supplier.getBeneficiaryAccount();
+        if(!beneficiaryAccount.matches("^[0-9-]{0,30}$")){
+            result.setErrorCode(ErrorCode.BENEFICIARY_ACCOUNT_IS_MATH_LENGTH);
             return result;
         }
 
-        SupplierDO supplierNoDO = supplierMapper.findByNo(supplier.getSupplierNo());
-        if(supplierNoDO != null && !supplierNoDO.getSupplierNo().equals(supplierDO.getSupplierNo())){
-            result.setErrorCode(ErrorCode.SUPPLIER_NO_IS_EXISTS);
-            return result;
-        }
-
-        SupplierDO nameSupplierDO = supplierMapper.findByName(supplier.getSupplierName());
-        if (nameSupplierDO != null && !nameSupplierDO.getSupplierName().equals(supplierDO.getSupplierName())) {
-            result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
-            return result;
-        }
-
-        supplierDO = ConverterUtil.convert(supplier, SupplierDO.class);
-//        supplierDO.setSupplierNo(dbSupplierDO.getSupplierNo());
+        SupplierDO supplierDO = ConverterUtil.convert(supplier, SupplierDO.class);
+        supplierDO.setId(dbSupplierDO.getId());
+        supplierDO.setSupplierNo(dbSupplierDO.getSupplierNo());
         supplierDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         supplierDO.setUpdateUser(loginUser.getUserId().toString());
         supplierDO.setUpdateTime(currentTime);
         supplierMapper.update(supplierDO);
 
-        result.setResult(supplierDO.getId());
+        result.setResult(supplierDO.getSupplierNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -162,8 +223,17 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public ServiceResult<String, String> deleteSupplier(String supplierNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        Date currentTime = new Date();
+        SupplierDO supplierDO = supplierMapper.findByNo(supplierNo);
 
-        result.setErrorCode(ErrorCode.SYSTEM_DEVELOPING);
+        supplierDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        supplierDO.setUpdateUser(loginUser.getUserId().toString());
+        supplierDO.setUpdateTime(currentTime);
+        supplierMapper.update(supplierDO);
+
+        result.setResult(supplierDO.getSupplierNo());
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 

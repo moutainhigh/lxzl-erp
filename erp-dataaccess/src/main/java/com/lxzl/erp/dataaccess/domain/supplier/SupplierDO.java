@@ -30,6 +30,7 @@ public class SupplierDO  extends BaseDO {
 	private String beneficiaryName;   //收款户名
 	private String beneficiaryAccount;   //收款帐号
 	private String beneficiaryBankName;   //收款开户行
+	private String supplierCode;	//供应商自定义编码
 
 	public Integer getId(){
 		return id;
@@ -162,4 +163,8 @@ public class SupplierDO  extends BaseDO {
 	public String getBeneficiaryBankName() { return beneficiaryBankName; }
 
 	public void setBeneficiaryBankName(String beneficiaryBankName) { this.beneficiaryBankName = beneficiaryBankName; }
+
+	public String getSupplierCode() { return supplierCode; }
+
+	public void setSupplierCode(String supplierCode) { this.supplierCode = supplierCode; }
 }

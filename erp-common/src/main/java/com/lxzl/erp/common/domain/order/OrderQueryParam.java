@@ -26,6 +26,7 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private List<Integer> passiveUserIdList;
     private Integer subCompanyId;
     private Integer deliveryMode;
+    private Integer isPendingDelivery;
 
 
     public Integer getOrderId() {
@@ -146,5 +147,13 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setBuyerCustomerNo(String buyerCustomerNo) {
         this.buyerCustomerNo = buyerCustomerNo;
+    }
+
+    public Integer getIsPendingDelivery() {
+        return isPendingDelivery;
+    }
+
+    public void setIsPendingDelivery(Integer isPendingDelivery) {
+        this.isPendingDelivery = isPendingDelivery;
     }
 }

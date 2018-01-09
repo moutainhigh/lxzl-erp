@@ -48,7 +48,7 @@ public class SupplierController {
 
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public Result update(@RequestBody Supplier supplier, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = supplierService.updateSupplier(supplier);
+        ServiceResult<String, String> serviceResult = supplierService.updateSupplier(supplier);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

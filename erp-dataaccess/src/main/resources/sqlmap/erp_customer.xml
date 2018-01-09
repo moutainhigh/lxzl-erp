@@ -252,6 +252,15 @@
 			<if test="owner != null">
 				owner = #{owner,jdbcType=INTEGER},
 			</if>
+			<if test="customerStatus != null">
+				customer_status = #{customerStatus,jdbcType=INTEGER},
+			</if>
+			<if test="firstApplyAmount != null">
+				first_apply_amount = #{firstApplyAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="laterApplyAmount != null">
+				later_apply_amount = #{laterApplyAmount,jdbcType=DECIMAL},
+			</if>
 			<if test="unionUser != null">
 				union_user = #{unionUser,jdbcType=INTEGER},
 			</if>

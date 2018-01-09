@@ -44,7 +44,7 @@ public interface SupplierService extends BaseService {
      * @param supplier 供应商信息
      * @return 供应商编号
      */
-    ServiceResult<String, Integer> updateSupplier(Supplier supplier);
+    ServiceResult<String, String> updateSupplier(Supplier supplier);
 
     /**
      * 删除供应商

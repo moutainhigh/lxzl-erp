@@ -91,7 +91,7 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;
         }
-        CustomerDO customerDO = new CustomerDO();
+        CustomerDO customerDO = ConverterUtil.convert(customer, CustomerDO.class);
         customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_COMPANY));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_COMPANY);
         if (customer.getIsDisabled() == null) {
@@ -188,7 +188,7 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;
         }
-        CustomerDO customerDO = new CustomerDO();
+        CustomerDO customerDO = ConverterUtil.convert(customer, CustomerDO.class);
         customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_PERSON));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
         if (customer.getIsDisabled() == null) {
@@ -400,6 +400,8 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerDO.setIsDisabled(customer.getIsDisabled());
+        customerDO.setFirstApplyAmount(customer.getFirstApplyAmount());
+        customerDO.setLaterApplyAmount(customer.getLaterApplyAmount());
         customerDO.setRemark(customer.getRemark());
         customerMapper.update(customerDO);
 
@@ -437,6 +439,8 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer.getUnionUser() != null && !customerDO.getOwner().equals(customer.getUnionUser())) {
             customerDO.setUnionUser(customer.getUnionUser());
         }
+        customerDO.setFirstApplyAmount(customer.getFirstApplyAmount());
+        customerDO.setLaterApplyAmount(customer.getLaterApplyAmount());
         customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
         customerDO.setCustomerName(newCustomerPersonDO.getRealName());
         customerDO.setOwner(customer.getOwner());

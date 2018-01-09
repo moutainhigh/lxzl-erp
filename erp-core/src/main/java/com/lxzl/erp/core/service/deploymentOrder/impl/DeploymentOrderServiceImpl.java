@@ -915,7 +915,6 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         } else {
             dbDeploymentOrderDO.setDeploymentOrderStatus(DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT);
         }
-        dbDeploymentOrderDO.setDeploymentOrderStatus(DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_PROCESSING);
         dbDeploymentOrderDO.setUpdateTime(currentTime);
         dbDeploymentOrderDO.setUpdateUser(loginUser.getUserId().toString());
         deploymentOrderMapper.update(dbDeploymentOrderDO);
