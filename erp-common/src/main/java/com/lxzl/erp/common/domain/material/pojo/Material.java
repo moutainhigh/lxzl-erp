@@ -24,7 +24,7 @@ public class Material extends BasePO {
     @NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL,groups = {AddReturnOrderGroup.class, AddChangeOrderParam.class})
     private String materialNo;   //物料唯一编号
     private String materialName;   //物料名称，取属性与属性值全称
-    private String materialMode;   // 物料型号
+    private String materialModel;   // 物料型号
     private Integer materialType;   //物料类型
     private Integer brandId;   //所属品牌ID
     private String brandName;   //所属品牌名称
@@ -289,11 +289,11 @@ public class Material extends BasePO {
         this.oldMaterialCount = oldMaterialCount;
     }
 
-    public String getMaterialMode() {
-        return materialMode;
+    public String getMaterialModel() {
+        return materialModel;
     }
 
-    public void setMaterialMode(String materialMode) {
-        this.materialMode = materialMode;
+    public void setMaterialModel(String materialModel) {
+        this.materialModel = materialModel;
     }
 }
