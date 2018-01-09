@@ -304,6 +304,99 @@ public class ProductTest extends BaseUnTransactionalTest {
 
 
     @Test
+    public void testSaveProperties() {
+
+
+        Integer notepad = 800002, AIO = 800003, bchassis = 800005, mchassis = 800006, schassis = 800007, mnchassis = 800008, workstation = 800009, server = 800010,
+                tv = 800011, projector = 800012, zPrinters = 800013, jPrinters = 800014, aioPrinters = 800015, Copier = 800016, pad = 800017, monitor = 800018;
+        Map<Integer, String> categoryMap = new HashMap<>();
+        categoryMap.put(notepad, "笔记本");
+        categoryMap.put(AIO, "一体机");
+        categoryMap.put(bchassis, "大机箱");
+        categoryMap.put(mchassis, "中机箱");
+        categoryMap.put(schassis, "小机箱");
+        categoryMap.put(mnchassis, "mini机箱");
+        categoryMap.put(workstation, "工作站");
+        categoryMap.put(server, "服务器");
+        categoryMap.put(tv, "电视机");
+        categoryMap.put(projector, "投影仪");
+        categoryMap.put(zPrinters, "针式打印机");
+        categoryMap.put(jPrinters, "激光打印机");
+        categoryMap.put(aioPrinters, "打印、复印、传真一体机");
+        categoryMap.put(Copier, "数码复印件");
+        categoryMap.put(pad, "平板电脑");
+        categoryMap.put(monitor, "显示器");
+
+        for (Map.Entry<Integer, String> entry : categoryMap.entrySet()) {
+            if (notepad.equals(entry.getKey())) {
+                String[] valueName = new String[]{"屏幕尺寸", "其他属性", "CPU", "显卡", "内存", "机械硬盘", "固态硬盘"};
+                for (int i = 0; i < valueName.length; i++) {
+                    String value = valueName[i];
+                    ProductCategoryPropertyDO productCategoryPropertyDO = buildProductCategoryPropertyDO(value, notepad, 1, null, (valueName.length - i));
+                    productCategoryPropertyDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
+                    productCategoryPropertyMapper.save(productCategoryPropertyDO);
+                }
+            }
+            if (AIO.equals(entry.getKey())) {
+
+            }
+            if (bchassis.equals(entry.getKey())) {
+
+            }
+            if (mchassis.equals(entry.getKey())) {
+
+            }
+            if (schassis.equals(entry.getKey())) {
+
+            }
+            if (mnchassis.equals(entry.getKey())) {
+
+            }
+            if (workstation.equals(entry.getKey())) {
+
+            }
+            if (server.equals(entry.getKey())) {
+
+            }
+            if (tv.equals(entry.getKey())) {
+
+            }
+            if (projector.equals(entry.getKey())) {
+
+            }
+            if (zPrinters.equals(entry.getKey())) {
+
+            }
+            if (jPrinters.equals(entry.getKey())) {
+
+            }
+            if (aioPrinters.equals(entry.getKey())) {
+
+            }
+            if (Copier.equals(entry.getKey())) {
+
+            }
+            if (pad.equals(entry.getKey())) {
+
+            }
+            if (monitor.equals(entry.getKey())) {
+
+            }
+        }
+    }
+
+    private ProductCategoryPropertyDO buildProductCategoryPropertyDO(String name, Integer categoryId, Integer propertyType,Integer materialType, Integer order) {
+        ProductCategoryPropertyDO productCategoryPropertyDO = new ProductCategoryPropertyDO();
+        productCategoryPropertyDO.setPropertyName(name);
+        productCategoryPropertyDO.setCategoryId(categoryId);
+        productCategoryPropertyDO.setPropertyType(propertyType);
+        productCategoryPropertyDO.setMaterialType(materialType);
+        productCategoryPropertyDO.setDataOrder(order);
+        productCategoryPropertyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        return productCategoryPropertyDO;
+    }
+
+    @Test
     public void testSavePropertiesValue() {
         Map<String, Object> params = new HashMap<>();
         params.put("start", 0);
@@ -533,7 +626,8 @@ public class ProductTest extends BaseUnTransactionalTest {
                         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
                     }
                 }
-                if (productCategoryPropertyDO.getPropertyName().equals("内存")) {
+                if (productCategoryPropertyDO.getPropertyName().equals("" +
+                        "内存")) {
                     String[] valueName = new String[]{"1", "2", "4", "8", "16", "32", "64"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];

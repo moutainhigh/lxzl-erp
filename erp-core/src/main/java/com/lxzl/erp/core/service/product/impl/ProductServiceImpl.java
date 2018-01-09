@@ -166,6 +166,10 @@ public class ProductServiceImpl implements ProductService {
             return result;
         }
         ProductDO productDO = ConverterUtil.convert(product, ProductDO.class);
+        // 以下三个字段不允许修改，所以置空
+        productDO.setBrandId(null);
+        productDO.setCategoryId(null);
+        productDO.setProductModel(null);
         productDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         productDO.setUpdateUser(loginUser.getUserId().toString());
         productDO.setUpdateTime(currentTime);

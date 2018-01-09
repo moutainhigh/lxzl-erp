@@ -1307,7 +1307,7 @@ public class OrderServiceImpl implements OrderService {
                     orderProductDO.setDepositCycle(1);
                     orderProductDO.setPaymentCycle(1);
                     orderProductDO.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
-                }else{
+                } else {
                     // 商品品牌为苹果品牌
                     if (BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) {
                         orderProductDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
@@ -1344,7 +1344,7 @@ public class OrderServiceImpl implements OrderService {
                     orderMaterialDO.setDepositCycle(1);
                     orderMaterialDO.setPaymentCycle(1);
                     orderMaterialDO.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
-                }else{
+                } else {
                     if (BrandId.BRAND_ID_APPLE.equals(material.getBrandId())) {
                         orderMaterialDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
                         orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());

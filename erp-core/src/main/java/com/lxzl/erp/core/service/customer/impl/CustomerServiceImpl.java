@@ -169,8 +169,8 @@ public class CustomerServiceImpl implements CustomerService {
         customerConsignInfo.setCreateUser(userSupport.getCurrentUserId().toString());
         customerConsignInfo.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerConsignInfo.setUpdateTime(now);
-        //调用新增企业地址信息方法
-        addCustomerConsignInfo(customerConsignInfo);
+        //调用新增企业地址信息方法，注释添加地址方法
+        // addCustomerConsignInfo(customerConsignInfo);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
@@ -234,7 +234,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerConsignInfo.setUpdateTime(now);
 
         //调用新增个人用户地址信息方法
-        addCustomerConsignInfo(customerConsignInfo);
+        // addCustomerConsignInfo(customerConsignInfo);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
