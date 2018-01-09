@@ -64,7 +64,7 @@
                 <div class="section">
                     <label for="productModel" class="field-label">型号</label>
                     <label for="productModel" class="field prepend-icon">
-                        <input type="text" name="productModel" id="productModel" class="gui-input required letterOrNumber"/>
+                        <input type="text" name="productModel" id="productModel" class="gui-input required letterOrNumber2"/>
                         <label for="productModel" class="field-icon"><i class="fa fa-tag"></i>
                         </label>
                     </label>
@@ -183,6 +183,7 @@
                     </div>
                     <div class="panel-footer text-right pn pv15 br-n br-t">
                         <button type="submit" class="btn btn-primary btn-xs mr15 addSku">添加SKU</button>
+                        <button type="button" class="btn btn-default btn-xs mr15 resetCheckedBox">重置</button>
                     </div>
                 </div>
             {{/hasProperties}}

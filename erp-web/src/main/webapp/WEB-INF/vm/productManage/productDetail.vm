@@ -19,7 +19,7 @@
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
             <div class="row">
-                <div class="col-md-10 center-block">
+                <div class="col-md-12 center-block">
                     <div class="admin-form theme-primary">
                         <form method="post" id="viewProductForm">
 
@@ -109,10 +109,10 @@
                                     <div class="tray-bin">
                                         <div class="atl-dropzone dropzoneImg" id="dropzoneProductImg">
                                             <div class="dz-default dz-message" >
-                    <span>
-                        <i class="fa fa-cloud-upload"></i>
-                        <span class="sub-text">将图片拖入或点击</span>
-                    </span>
+                                                <span>
+                                                    <i class="fa fa-cloud-upload"></i>
+                                                    <span class="sub-text">将图片拖入或点击</span>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -121,10 +121,10 @@
                                     <div class="tray-bin">
                                         <div class="atl-dropzone dropzoneImg" id="dropzoneProductDesImg">
                                             <div class="dz-default dz-message" >
-                    <span>
-                        <i class="fa fa-cloud-upload"></i>
-                        <span class="sub-text">将图片拖入或点击</span>
-                    </span>
+                                                <span>
+                                                    <i class="fa fa-cloud-upload"></i>
+                                                    <span class="sub-text">将图片拖入或点击</span>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
