@@ -183,6 +183,7 @@
                     </div>
                     <div class="panel-footer text-right pn pv15 br-n br-t">
                         <button type="submit" class="btn btn-primary btn-xs mr15 addSku">添加SKU</button>
+                        <button type="button" class="btn btn-default btn-xs mr15 resetCheckedBox">重置</button>
                     </div>
                 </div>
             {{/hasProperties}}
