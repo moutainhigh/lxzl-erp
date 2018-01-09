@@ -34,6 +34,7 @@
                                         <dt class="mb10">用户类型</dt><dd>{{cutomerTypeValue}}</dd>
                                         <dt class="mb10">客户来源</dt><dd>{{customerOriginValue}}</dd>
                                         <dt class="mb10">是否禁用</dt><dd>{{isDisabledValue}}</dd>
+                                        <dt class="mb10">客户状态</dt><dd>{{customerStatusValue}}</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
