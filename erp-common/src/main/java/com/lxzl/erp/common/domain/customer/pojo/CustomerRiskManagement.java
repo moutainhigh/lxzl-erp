@@ -19,20 +19,20 @@ public class CustomerRiskManagement extends BasePO {
 	private Integer customerRiskManagementId;   //唯一标识
 
 	private Integer customerId;
-//	@NotEmpty(message = ErrorCode.CUSTOMER_NO_NOT_NULL , groups = {UpdateGroup.class})
+	@NotEmpty(message = ErrorCode.CUSTOMER_NO_NOT_NULL , groups = {UpdateGroup.class})
 	private String customerNo;   //用户编号
-//	@NotNull(message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_NOT_NULL , groups = {UpdateGroup.class})
-//	@Max(value = 10000000,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_ERROR , groups = {UpdateGroup.class})
-//	@Min(value = 0,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_ERROR , groups = {UpdateGroup.class})
+	@NotNull(message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_NOT_NULL , groups = {UpdateGroup.class})
+	@Max(value = 10000000,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_ERROR , groups = {UpdateGroup.class})
+	@Min(value = 0,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_ERROR , groups = {UpdateGroup.class})
 	private BigDecimal creditAmount;   //授信额度
 	private BigDecimal creditAmountUsed;   //已用授信额度
-//	@NotNull(message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_NOT_NULL , groups = {UpdateGroup.class})
-//	@Max(value = 120,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR , groups = {UpdateGroup.class})
-//	@Min(value = 0,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR , groups = {UpdateGroup.class})
+	@NotNull(message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_NOT_NULL , groups = {UpdateGroup.class})
+	@Max(value = 120,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR , groups = {UpdateGroup.class})
+	@Min(value = 0,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR , groups = {UpdateGroup.class})
 	private Integer depositCycle;   //押金期数
-//	@NotNull(message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_NOT_NULL , groups = {UpdateGroup.class})
-//	@Max(value = 120,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR , groups = {UpdateGroup.class})
-//	@Min(value = 1,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR , groups = {UpdateGroup.class})
+	@NotNull(message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_NOT_NULL , groups = {UpdateGroup.class})
+	@Max(value = 120,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR , groups = {UpdateGroup.class})
+	@Min(value = 1,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR , groups = {UpdateGroup.class})
 	private Integer paymentCycle;   //付款期数
 	private Integer appleDepositCycle;	// 苹果设备租赁方案
 	private Integer applePaymentCycle;	// 苹果设备付款期数
@@ -54,33 +54,6 @@ public class CustomerRiskManagement extends BasePO {
 
 
 	private String customerName;
-
-	@Override
-	public String toString() {
-		return "CustomerRiskManagement{" +
-				"customerRiskManagementId=" + customerRiskManagementId +
-				", customerId=" + customerId +
-				", customerNo='" + customerNo + '\'' +
-				", creditAmount=" + creditAmount +
-				", creditAmountUsed=" + creditAmountUsed +
-				", depositCycle=" + depositCycle +
-				", paymentCycle=" + paymentCycle +
-				", appleDepositCycle=" + appleDepositCycle +
-				", applePaymentCycle=" + applePaymentCycle +
-				", newDepositCycle=" + newDepositCycle +
-				", newPaymentCycle=" + newPaymentCycle +
-				", payMode=" + payMode +
-				", applePayMode=" + applePayMode +
-				", newPayMode=" + newPayMode +
-				", dataStatus=" + dataStatus +
-				", remark='" + remark + '\'' +
-				", createTime=" + createTime +
-				", createUser='" + createUser + '\'' +
-				", updateTime=" + updateTime +
-				", updateUser='" + updateUser + '\'' +
-				", customerName='" + customerName + '\'' +
-				'}';
-	}
 
 	public Integer getCustomerRiskManagementId(){
 		return customerRiskManagementId;
