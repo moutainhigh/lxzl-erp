@@ -466,7 +466,7 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
         if (!CustomerStatus.STATUS_INIT.equals(customerDO.getCustomerStatus())
-                || !CustomerStatus.STATUS_REJECT.equals(customerDO.getCustomerStatus())) {
+                && !CustomerStatus.STATUS_REJECT.equals(customerDO.getCustomerStatus())) {
             result.setErrorCode(ErrorCode.CUSTOMER_STATUS_ERROR);
             return result;
         }
