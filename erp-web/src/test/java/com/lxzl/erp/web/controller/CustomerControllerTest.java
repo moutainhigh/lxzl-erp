@@ -142,16 +142,16 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void addCustomerCompanyJSON() throws Exception {
-        String str = "{\n" +
+        String str = "{{\n" +
                 "\t\"unionUser\": \"500006\",\n" +
                 "\t\"owner\": \"500008\",\n" +
-                "\t\t\"firstApplyAmount\": \"1000\",\n" +
-                "\t\t\"laterApplyAmount\": \"1000\",\n" +
+                "\t\"firstApplyAmount\": \"1000\",\n" +
+                "\t\"laterApplyAmount\": \"10000\",\n" +
                 "\t\"customerCompany\": {\n" +
                 "\t\t\"customerOrigin\": \"2\",\n" +
                 "\t\t\"unionUserName\": \"毛涛\",\n" +
                 "\t\t\"unionUser\": \"500006\",\n" +
-                "\t\t\"companyName\": \"测试公司名1121\",\n" +
+                "\t\t\"companyName\": \"测试公司名111\",\n" +
                 "\t\t\"companyAbb\": \"测试公司名111\",\n" +
                 "\t\t\"landline\": \"0755-33806405\",\n" +
                 "\t\t\"connectRealName\": \"测试紧急联系人\",\n" +
@@ -167,6 +167,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
                 "\t\t\"unitInsuredNumber\": \"10\",\n" +
                 "\t\t\"ownerName\": \"毛桃a\",\n" +
                 "\t\t\"owner\": \"500008\",\n" +
+                "\t\t\"firstApplyAmount\": \"1000\",\n" +
+                "\t\t\"laterApplyAmount\": \"10000\",\n" +
                 "\t\t\"isLegalPersonApple\": \"0\",\n" +
                 "\t\t\"province\": \"1\",\n" +
                 "\t\t\"city\": \"1\",\n" +
@@ -179,9 +181,40 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
                 "\t\t\"agentPersonNo\": \"110226198501272116\",\n" +
                 "\t\t\"agentPersonPhone\": \"18033402832\",\n" +
                 "\t\t\"remark\": \"\",\n" +
+                "\t\t\"businessLicensePictureImage\": {\n" +
+                "\t\t\t\"imgId\": 305\n" +
+                "\t\t},\n" +
+                "\t\t\"legalPersonNoPictureFrontImage\": {\n" +
+                "\t\t\t\"imgId\": 306\n" +
+                "\t\t},\n" +
+                "\t\t\"legalPersonNoPictureBackImage\": {\n" +
+                "\t\t\t\"imgId\": 307\n" +
+                "\t\t},\n" +
+                "\t\t\"legalPersonCreditReportImageList\": [{\n" +
+                "\t\t\t\"imgId\": 308\n" +
+                "\t\t}],\n" +
+                "\t\t\"fixedAssetsProveImageList\": [{\n" +
+                "\t\t\t\"imgId\": 309\n" +
+                "\t\t}],\n" +
+                "\t\t\"publicAccountFlowBillImageList\": [{\n" +
+                "\t\t\t\"imgId\": 310\n" +
+                "\t\t}],\n" +
+                "\t\t\"socialSecurityRoProvidentFundImageList\": [{\n" +
+                "\t\t\t\"imgId\": 311\n" +
+                "\t\t}],\n" +
+                "\t\t\"cooperationAgreementImageList\": [{\n" +
+                "\t\t\t\"imgId\": 312\n" +
+                "\t\t}],\n" +
+                "\t\t\"localeChecklistsImageList\": [{\n" +
+                "\t\t\t\"imgId\": 314\n" +
+                "\t\t}],\n" +
+                "\t\t\"managerPlaceRentContractImageList\": [{\n" +
+                "\t\t\t\"imgId\": 313\n" +
+                "\t\t}],\n" +
+                "\t\t\"otherDateImageList\": []\n" +
                 "\t},\n" +
                 "\t\"customerNo\": \"LXCC10002018010800035\"\n" +
-                "}";
+                "}\n";
 
         Customer customer = FastJsonUtil.toBean(str, Customer.class);
         TestResult result = getJsonTestResult("/customer/addCompany", customer);

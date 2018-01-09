@@ -1,4 +1,4 @@
-CREATE DATABASE IF NOT EXISTS lxzl_erp DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE DATABASE IF NOT EXISTS db_lxzl_payment_gateway DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE lxzl_erp;
 
 DROP TABLE if exists `erp_user`;
@@ -208,7 +208,7 @@ CREATE TABLE `erp_supplier` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `supplier_no` varchar(100) NOT NULL COMMENT '供应商编码',
   `supplier_name` varchar(100) NOT NULL DEFAULT '' COMMENT '供应商名称',
-  `supplier_code` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '供应商自定义编码',
+  `supplier_code` varchar(100) COLLATE utf8_bin COMMENT '供应商自定义编码',
   `province` int(20) COMMENT '省份ID，省份ID',
   `city` int(20) COMMENT '城市ID，对应城市ID',
   `district` int(20) COMMENT '区ID，对应区ID',
@@ -992,6 +992,7 @@ DROP TABLE if exists `erp_order`;
 CREATE TABLE `erp_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `order_no` varchar(100) NOT NULL COMMENT '订单编号',
+  `delivery_mode` int(11) COMMENT '发货方式，1快递，2自提',
   `buyer_customer_id` int(20) NOT NULL COMMENT '购买人ID',
   `expect_delivery_time` datetime NOT NULL COMMENT '送货时间',
   `rent_start_time` datetime NOT NULL COMMENT '起租时间',

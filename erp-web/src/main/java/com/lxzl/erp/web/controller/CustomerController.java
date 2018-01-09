@@ -61,13 +61,13 @@ public class CustomerController {
     }
 
     @RequestMapping(value = "commitCustomer", method = RequestMethod.POST)
-    public Result commitCustomer(@RequestBody @Validated(UpdateCustomerPersonGroup.class) Customer customer, BindingResult validResult) {
+    public Result commitCustomer(@RequestBody Customer customer, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = customerService.commitCustomer(customer.getCustomerNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     @RequestMapping(value = "verifyCustomer", method = RequestMethod.POST)
-    public Result verifyCustomer(@RequestBody @Validated(UpdateCustomerPersonGroup.class) Customer customer, BindingResult validResult) {
+    public Result verifyCustomer(@RequestBody Customer customer, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = customerService.verifyCustomer(customer.getCustomerNo(), customer.getCustomerStatus(), customer.getVerifyRemark());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
