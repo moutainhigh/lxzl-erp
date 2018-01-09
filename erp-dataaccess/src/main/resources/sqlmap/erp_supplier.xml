@@ -25,10 +25,11 @@
 		<result column="beneficiary_name" jdbcType="VARCHAR" property="beneficiaryName" />
 		<result column="beneficiary_account" jdbcType="VARCHAR" property="beneficiaryAccount" />
 		<result column="beneficiary_bank_name" jdbcType="VARCHAR" property="beneficiaryBankName" />
+		<result column="supplier_code" jdbcType="VARCHAR" property="supplierCode" />
 	</resultMap>
 
 	<sql id="column_List">
-		es.id,es.supplier_no,es.supplier_name,es.province,es.city,es.district,es.address,es.tel,es.contactName,es.contactPhone,es.data_status,es.remark,es.create_time,es.create_user,es.update_time,es.update_user,es.beneficiary_name,es.beneficiary_account,es.beneficiary_bank_name
+		es.id,es.supplier_no,es.supplier_name,es.province,es.city,es.district,es.address,es.tel,es.contactName,es.contactPhone,es.data_status,es.remark,es.create_time,es.create_user,es.update_time,es.update_user,es.beneficiary_name,es.beneficiary_account,es.beneficiary_bank_name,es.supplier_code
 	</sql>
 
 	<select id="findById" resultMap="SupplierDO" parameterType="java.lang.Integer">
@@ -49,6 +50,16 @@
 		LEFT JOIN erp_area_city eac ON eac.id = es.city
 		LEFT JOIN erp_area_district ead ON ead.id = es.district
 		where es.supplier_no = #{supplierNo, jdbcType=VARCHAR} and es.data_status = 1
+	</select>
+
+	<select id="findByCode" resultMap="SupplierDO" parameterType="java.lang.String">
+		select <include refid="column_List"/>
+		,eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name
+		from erp_supplier es
+		LEFT JOIN erp_area_province eap ON eap.id = es.province
+		LEFT JOIN erp_area_city eac ON eac.id = es.city
+		LEFT JOIN erp_area_district ead ON ead.id = es.district
+		where es.supplier_code = #{supplierCode, jdbcType=VARCHAR} and es.data_status = 1
 	</select>
 
 	<select id="findByName" resultMap="SupplierDO" parameterType="java.lang.String">
@@ -73,6 +84,9 @@
 			<if test="maps.supplierQueryParam != null &amp;&amp; maps.supplierQueryParam.supplierNo != null &amp;&amp; maps.supplierQueryParam.supplierNo != ''">
 				and es.supplier_no like CONCAT('%','${maps.supplierQueryParam.supplierNo}','%' )
 			</if>
+			<if test="maps.supplierQueryParam != null &amp;&amp; maps.supplierQueryParam.supplierCode != null &amp;&amp; maps.supplierQueryParam.supplierCode != ''">
+				and es.supplier_code like CONCAT('%','${maps.supplierQueryParam.supplierCode}','%' )
+			</if>
 			<if test="true">
 				and es.data_status = 1
 			</if>
@@ -95,6 +109,9 @@
 			</if>
 			<if test="maps.supplierQueryParam != null &amp;&amp; maps.supplierQueryParam.supplierNo != null &amp;&amp; maps.supplierQueryParam.supplierNo != ''">
 				and es.supplier_no like CONCAT('%','${maps.supplierQueryParam.supplierNo}','%' )
+			</if>
+			<if test="maps.supplierQueryParam != null &amp;&amp; maps.supplierQueryParam.supplierCode != null &amp;&amp; maps.supplierQueryParam.supplierCode != ''">
+				and es.supplier_code like CONCAT('%','${maps.supplierQueryParam.supplierCode}','%' )
 			</if>
 			<if test="true">
 				AND es.data_status = 1
@@ -158,6 +175,9 @@
 			</if>
 			<if test="beneficiaryBankName != null">
 				beneficiary_bank_name = #{beneficiaryBankName,jdbcType=VARCHAR},
+			</if>
+			<if test="supplierCode != null">
+				supplier_code = #{supplierCode,jdbcType=VARCHAR},
 			</if>
 		</set>
 	</sql>

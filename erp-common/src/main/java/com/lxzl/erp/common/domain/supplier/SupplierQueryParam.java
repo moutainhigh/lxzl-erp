@@ -14,6 +14,7 @@ public class SupplierQueryParam extends BasePageParam {
     private Integer supplierId;   //字典ID，唯一
     private String supplierNo;   //供应商编号
     private String supplierName;   //供应商名称
+    private String supplierCode;	//供应商自定义编码
 
 
     public Integer getSupplierId() {
@@ -39,4 +40,8 @@ public class SupplierQueryParam extends BasePageParam {
     public void setSupplierNo(String supplierNo) {
         this.supplierNo = supplierNo;
     }
+
+    public String getSupplierCode() { return supplierCode; }
+
+    public void setSupplierCode(String supplierCode) { this.supplierCode = supplierCode; }
 }
