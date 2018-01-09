@@ -142,7 +142,46 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void addCustomerCompanyJSON() throws Exception {
-        String str = "{\"isDisabled\":\"0\",\"unionUser\":\"500018\",\"customerCompany\":{\"customerOrigin\":\"3\",\"unionUserName\":\"QWER\",\"unionUser\":\"500018\",\"companyName\":\"高超专用测试账户1\",\"companyAbb\":\"测试地址\",\"landline\":\"0755-89741234\",\"connectRealName\":\"陈斯托夫斯基\",\"connectPhone\":\"13112341234\",\"legalPerson\":\"张江\",\"legalPersonNo\":\"230321198606131214\",\"legalPersonPhone\":\"\",\"companyFoundTime\":\"\",\"industry\":\"\",\"affiliatedEnterprise\":\"\",\"registeredCapital\":\"\",\"officeNumber\":\"\",\"productPurpose\":\"\",\"agentPersonName\":\"\",\"agentPersonPhone\":\"\",\"agentPersonNo\":\"\",\"unifiedCreditCode\":\"\",\"operatingArea\":\"\",\"unitInsuredNumber\":\"\",\"isDisabled\":\"0\",\"remark\":\"\",\"province\":\"1\",\"city\":\"1\",\"district\":\"1\",\"address\":\"32\",\"businessLicensePictureImage\":{\"imgId\":188},\"legalPersonNoPictureFrontImage\":{\"imgId\":189},\"legalPersonNoPictureBackImage\":{\"imgId\":190},\"legalPersonCreditReportImageList\":[{\"imgId\":191}],\"fixedAssetsProveImageList\":[{\"imgId\":192}],\"publicAccountFlowBillImageList\":[{\"imgId\":193}],\"socialSecurityRoProvidentFundImageList\":[{\"imgId\":194}],\"cooperationAgreementImageList\":[{\"imgId\":195}],\"legalPersonEducationImageList\":[{\"imgId\":196}],\"legalPersonPositionalTitleImageList\":[{\"imgId\":197}],\"localeChecklistsImageList\":[{\"imgId\":200}],\"managerPlaceRentContractImageList\":[{\"imgId\":199}],\"otherDateImageList\":[{\"imgId\":198}]}}";
+        String str = "{\n" +
+                "\t\"unionUser\": \"500006\",\n" +
+                "\t\"owner\": \"500008\",\n" +
+                "\t\t\"firstApplyAmount\": \"1000\",\n" +
+                "\t\t\"laterApplyAmount\": \"1000\",\n" +
+                "\t\"customerCompany\": {\n" +
+                "\t\t\"customerOrigin\": \"2\",\n" +
+                "\t\t\"unionUserName\": \"毛涛\",\n" +
+                "\t\t\"unionUser\": \"500006\",\n" +
+                "\t\t\"companyName\": \"测试公司名1121\",\n" +
+                "\t\t\"companyAbb\": \"测试公司名111\",\n" +
+                "\t\t\"landline\": \"0755-33806405\",\n" +
+                "\t\t\"connectRealName\": \"测试紧急联系人\",\n" +
+                "\t\t\"connectPhone\": \"18566324590\",\n" +
+                "\t\t\"companyFoundTime\": \"2018-01-09\",\n" +
+                "\t\t\"industry\": \"动漫梦工厂\",\n" +
+                "\t\t\"affiliatedEnterprise\": \"百度\",\n" +
+                "\t\t\"registeredCapital\": \"100000000\",\n" +
+                "\t\t\"officeNumber\": \"1000\",\n" +
+                "\t\t\"unifiedCreditCode\": \"8888888\",\n" +
+                "\t\t\"operatingArea\": \"1000\",\n" +
+                "\t\t\"productPurpose\": \"测试设备用途\",\n" +
+                "\t\t\"unitInsuredNumber\": \"10\",\n" +
+                "\t\t\"ownerName\": \"毛桃a\",\n" +
+                "\t\t\"owner\": \"500008\",\n" +
+                "\t\t\"isLegalPersonApple\": \"0\",\n" +
+                "\t\t\"province\": \"1\",\n" +
+                "\t\t\"city\": \"1\",\n" +
+                "\t\t\"district\": \"1\",\n" +
+                "\t\t\"address\": \"企业信息详细地址测试\",\n" +
+                "\t\t\"legalPerson\": \"高超\",\n" +
+                "\t\t\"legalPersonNo\": \"110226198501272116\",\n" +
+                "\t\t\"legalPersonPhone\": \"18033402836\",\n" +
+                "\t\t\"agentPersonName\": \"黎明\",\n" +
+                "\t\t\"agentPersonNo\": \"110226198501272116\",\n" +
+                "\t\t\"agentPersonPhone\": \"18033402832\",\n" +
+                "\t\t\"remark\": \"\",\n" +
+                "\t},\n" +
+                "\t\"customerNo\": \"LXCC10002018010800035\"\n" +
+                "}";
 
         Customer customer = FastJsonUtil.toBean(str, Customer.class);
         TestResult result = getJsonTestResult("/customer/addCompany", customer);
