@@ -16,26 +16,33 @@ public class SupplierTest extends ERPUnTransactionalTest {
     @Test
     public void getSupplier() throws Exception{
         SupplierQueryParam supplierQueryParam = new SupplierQueryParam();
+        supplierQueryParam.setSupplierName("供货商 ");
         TestResult testResult = getJsonTestResult("/supplier/getSupplier", supplierQueryParam);
     }
 
     @Test
     public void add() throws Exception{
         Supplier supplier = new Supplier();
-        supplier.setSupplierNo("LX20180112");
-        supplier.setSupplierName("庄凯麟的大盘商12");
+        supplier.setSupplierName("庄凯麟的大盘商17");
+        supplier.setProvince(19);
+        supplier.setCity(202);
+        supplier.setDistrict(1956);
         supplier.setBeneficiaryName("庄凯麟");
         supplier.setBeneficiaryAccount("62222212344321987654");
         supplier.setBeneficiaryBankName("工商银行深圳车公庙支行");
+        supplier.setSupplierCode("LX123456781166");
         TestResult testResult = getJsonTestResult("/supplier/add", supplier);
     }
 
     @Test
     public void update() throws Exception{
         Supplier supplier = new Supplier();
-        supplier.setSupplierId(16);
-        supplier.setSupplierNo("LX20180109");
-        supplier.setSupplierName("庄凯麟的大盘商9");
+        supplier.setSupplierNo("LXS075500025");
+        supplier.setSupplierName("庄凯麟的大盘商17");
+        supplier.setBeneficiaryName("庄凯麟");
+        supplier.setBeneficiaryAccount("6222-1234-5678");
+        supplier.setBeneficiaryBankName("工商银行深圳车公庙支行");
+        supplier.setSupplierCode("LX12345678777");
         TestResult testResult = getJsonTestResult("/supplier/update", supplier);
     }
 
