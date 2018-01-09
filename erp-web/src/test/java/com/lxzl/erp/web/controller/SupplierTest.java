@@ -23,26 +23,26 @@ public class SupplierTest extends ERPUnTransactionalTest {
     @Test
     public void add() throws Exception{
         Supplier supplier = new Supplier();
-        supplier.setSupplierName("庄凯麟的大盘商17");
+        supplier.setSupplierName("庄凯麟的大盘商55");
         supplier.setProvince(19);
         supplier.setCity(202);
         supplier.setDistrict(1956);
         supplier.setBeneficiaryName("庄凯麟");
         supplier.setBeneficiaryAccount("62222212344321987654");
         supplier.setBeneficiaryBankName("工商银行深圳车公庙支行");
-        supplier.setSupplierCode("LX123456781166");
+        supplier.setSupplierCode("LX123456152554");
         TestResult testResult = getJsonTestResult("/supplier/add", supplier);
     }
 
     @Test
     public void update() throws Exception{
         Supplier supplier = new Supplier();
-        supplier.setSupplierNo("LXS075500025");
-        supplier.setSupplierName("庄凯麟的大盘商17");
+        supplier.setSupplierNo("LXS075500021");
+        supplier.setSupplierName("abcdefg fffff");
         supplier.setBeneficiaryName("庄凯麟");
         supplier.setBeneficiaryAccount("6222-1234-5678");
         supplier.setBeneficiaryBankName("工商银行深圳车公庙支行");
-        supplier.setSupplierCode("LX12345678777");
+        supplier.setSupplierCode("LX123456781555");
         TestResult testResult = getJsonTestResult("/supplier/update", supplier);
     }
 

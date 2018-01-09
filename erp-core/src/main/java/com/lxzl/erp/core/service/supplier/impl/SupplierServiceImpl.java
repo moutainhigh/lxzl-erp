@@ -85,15 +85,26 @@ public class SupplierServiceImpl implements SupplierService {
             result.setErrorCode(verifyCode);
             return result;
         }
-        //供应商名称（前端填入，校验不重复，输入空格也判断供应商）
+        //供应商名称（前端填入，校验不重复，判断中英文，若输入中文则判断空格，判断供应商）
         String supplierName = supplier.getSupplierName();
-        String checkName = supplierName.replaceAll(" ","");
-        SupplierDO nameSupplierDO = supplierMapper.findByName(checkName);
-        if (nameSupplierDO != null) {
-            result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
-            return result;
+        if(supplierName.matches("^[A-Za-z0-9\\s]+$")){
+            SupplierDO nameSupplierDO = supplierMapper.findByName(supplierName);
+            if (nameSupplierDO != null) {
+                result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
+                return result;
+            }
+        }else {
+            if(supplierName.indexOf(" ") != -1) {
+                result.setErrorCode(ErrorCode.SUPPLIER_NAME_IS_NULL);
+                return result;
+            }
+            String checkName = supplierName.replaceAll(" ","");
+            SupplierDO nameSupplierDO = supplierMapper.findByName(checkName);
+            if (nameSupplierDO != null) {
+                result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
+                return result;
+            }
         }
-
         //判断校验自定义不能中文跟长度20
         String supplierCode = supplier.getSupplierCode();
         SupplierDO supplierCodeDO = supplierMapper.findByCode(supplierCode);
@@ -145,17 +156,29 @@ public class SupplierServiceImpl implements SupplierService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        //供应商名称（前端填入，校验不重复，输入空格也判断供应商）
+        //供应商名称（前端填入，校验不重复，判断中英文，若输入中文则判断空格，判断供应商）
         if(StringUtil.isBlank(supplier.getSupplierName())){
             result.setErrorCode(ErrorCode.SUPPLIER_NAME_NOT_NULL);
             return result;
         }
         String supplierName = supplier.getSupplierName();
-        String checkName = supplierName.replaceAll(" ","");
-        SupplierDO nameSupplierDO = supplierMapper.findByName(checkName);
-        if (nameSupplierDO != null && !nameSupplierDO.getSupplierName().equals(dbSupplierDO.getSupplierName())) {
-            result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
-            return result;
+        if(supplierName.matches("^[A-Za-z0-9\\s]+$")){
+            SupplierDO nameSupplierDO = supplierMapper.findByName(supplierName);
+            if (nameSupplierDO != null && !nameSupplierDO.getSupplierName().equals(dbSupplierDO.getSupplierName())) {
+                result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
+                return result;
+            }
+        }else {
+            if(supplierName.indexOf(" ") != -1) {
+                result.setErrorCode(ErrorCode.SUPPLIER_NAME_IS_NULL);
+                return result;
+            }
+            String checkName = supplierName.replaceAll(" ","");
+            SupplierDO nameSupplierDO = supplierMapper.findByName(checkName);
+            if (nameSupplierDO != null && !nameSupplierDO.getSupplierName().equals(dbSupplierDO.getSupplierName())) {
+                result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
+                return result;
+            }
         }
 
         //判断校验自定义不能中文跟长度20
