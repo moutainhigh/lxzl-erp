@@ -144,4 +144,27 @@ public class CustomerController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    /**
+     * 修改企业客户禁用
+     * @param customer
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "disabledCustomer", method = RequestMethod.POST)
+    public Result disabledCustomer(@RequestBody @Validated({IdGroup.class}) Customer customer, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.disabledCustomer(customer);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 修改企业客户启用
+     * @param customer
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "enableCustomer", method = RequestMethod.POST)
+    public Result enableCustomer(@RequestBody @Validated({IdGroup.class}) Customer customer, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.enableCustomer(customer);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }
