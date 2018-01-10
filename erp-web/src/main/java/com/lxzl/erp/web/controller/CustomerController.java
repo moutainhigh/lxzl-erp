@@ -145,7 +145,7 @@ public class CustomerController {
     }
 
     /**
-     * 修改企业客户禁用
+     * 修改企业客户启用
      * @param customer
      * @param validResult
      * @return
@@ -157,7 +157,7 @@ public class CustomerController {
     }
 
     /**
-     * 修改企业客户启用
+     * 修改企业客户禁用
      * @param customer
      * @param validResult
      * @return

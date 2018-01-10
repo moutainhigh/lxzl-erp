@@ -77,14 +77,14 @@ public interface CustomerService {
     void updateLastUseTime(Integer customerConsignInfo);
 
     /**
-     * 修改企业客户禁用
+     * 修改企业客户启用
      * @param customer
      * @return
      */
     ServiceResult<String,String> disabledCustomer(Customer customer);
 
     /**
-     * 修改企业客户启用
+     * 修改企业客户禁用
      * @param customer
      * @return
      */
