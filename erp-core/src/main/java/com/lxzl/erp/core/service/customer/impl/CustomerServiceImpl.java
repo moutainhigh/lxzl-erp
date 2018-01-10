@@ -258,6 +258,12 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
+        if (CustomerStatus.STATUS_COMMIT.equals(customerDO.getCustomerStatus())
+                || CustomerStatus.STATUS_PASS.equals(customerDO.getCustomerStatus())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CAN_NOT_EDIT);
+            return serviceResult;
+        }
+
         CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
         CustomerCompanyDO newCustomerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
 
@@ -426,6 +432,13 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
+
+        if (CustomerStatus.STATUS_COMMIT.equals(customerDO.getCustomerStatus())
+                || CustomerStatus.STATUS_PASS.equals(customerDO.getCustomerStatus())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CAN_NOT_EDIT);
+            return serviceResult;
+        }
+
         CustomerPersonDO customerPersonDO = customerPersonMapper.findByCustomerId(customerDO.getId());
         CustomerPersonDO newCustomerPersonDO = ConverterUtil.convert(customer.getCustomerPerson(), CustomerPersonDO.class);
         newCustomerPersonDO.setDataStatus(null);
@@ -682,10 +695,10 @@ public class CustomerServiceImpl implements CustomerService {
             customerResult.getCustomerCompany().setOtherDateImageList(otherDateImageList);
         }
 
-        if(customerResult.getOwner() != null){
+        if (customerResult.getOwner() != null) {
             customerResult.setCustomerOwnerUser(CommonCache.userMap.get(customerResult.getOwner()));
         }
-        if(customerResult.getUnionUser() != null){
+        if (customerResult.getUnionUser() != null) {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
         }
 
@@ -719,10 +732,10 @@ public class CustomerServiceImpl implements CustomerService {
         }
         customerResult.setCustomerAccount(customerAccount);
 
-        if(customerResult.getOwner() != null){
+        if (customerResult.getOwner() != null) {
             customerResult.setCustomerOwnerUser(CommonCache.userMap.get(customerResult.getOwner()));
         }
-        if(customerResult.getUnionUser() != null){
+        if (customerResult.getUnionUser() != null) {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -750,10 +763,10 @@ public class CustomerServiceImpl implements CustomerService {
         }
         customerResult.setCustomerAccount(customerAccount);
 
-        if(customerResult.getOwner() != null){
+        if (customerResult.getOwner() != null) {
             customerResult.setCustomerOwnerUser(CommonCache.userMap.get(customerResult.getOwner()));
         }
-        if(customerResult.getUnionUser() != null){
+        if (customerResult.getUnionUser() != null) {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);

@@ -396,6 +396,7 @@ public class ErrorCode {
     public static final String CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT = "J500064";
     public static final String CUSTOMER_STATUS_ERROR = "J500065";
     public static final String CUSTOMER_IS_DISABLED = "J500066";
+    public static final String CUSTOMER_CAN_NOT_EDIT = "J500067";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -607,6 +608,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT, "价格被限制，不能下单");
         MAP.put(CUSTOMER_STATUS_ERROR, "客户状态异常，仔细检查后操作");
         MAP.put(CUSTOMER_IS_DISABLED, "客户已经被禁用");
+        MAP.put(CUSTOMER_CAN_NOT_EDIT, "客户在该状态下不允许修改");
 
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
