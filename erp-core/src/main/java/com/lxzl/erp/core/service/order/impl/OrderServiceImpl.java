@@ -1305,10 +1305,6 @@ public class OrderServiceImpl implements OrderService {
                     if (customerRiskManagementDO.getSingleLimitPrice() != null && BigDecimalUtil.compare(productSku.getSkuPrice(), customerRiskManagementDO.getSingleLimitPrice()) >= 0) {
                         throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT);
                     }
-                    orderProductDO.setDepositCycle(1);
-                    orderProductDO.setPaymentCycle(1);
-                    orderProductDO.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
-                } else {
                     // 商品品牌为苹果品牌
                     if (BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) {
                         orderProductDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
@@ -1323,6 +1319,10 @@ public class OrderServiceImpl implements OrderService {
                         orderProductDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
                         orderProductDO.setPayMode(customerRiskManagementDO.getPayMode());
                     }
+                } else {
+                    orderProductDO.setDepositCycle(1);
+                    orderProductDO.setPaymentCycle(1);
+                    orderProductDO.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
                 }
             }
         }
@@ -1342,10 +1342,6 @@ public class OrderServiceImpl implements OrderService {
                     if (customerRiskManagementDO.getSingleLimitPrice() != null && BigDecimalUtil.compare(material.getMaterialPrice(), customerRiskManagementDO.getSingleLimitPrice()) >= 0) {
                         throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT);
                     }
-                    orderMaterialDO.setDepositCycle(1);
-                    orderMaterialDO.setPaymentCycle(1);
-                    orderMaterialDO.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
-                } else {
                     if (BrandId.BRAND_ID_APPLE.equals(material.getBrandId())) {
                         orderMaterialDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
                         orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
@@ -1359,6 +1355,10 @@ public class OrderServiceImpl implements OrderService {
                         orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
                         orderMaterialDO.setPayMode(customerRiskManagementDO.getPayMode());
                     }
+                } else {
+                    orderMaterialDO.setDepositCycle(1);
+                    orderMaterialDO.setPaymentCycle(1);
+                    orderMaterialDO.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
                 }
             }
         }
