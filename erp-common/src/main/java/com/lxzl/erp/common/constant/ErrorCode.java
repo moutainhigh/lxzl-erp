@@ -217,12 +217,14 @@ public class ErrorCode {
     public static final String SUPPLIER_IS_EXISTS = "J300062";
     public static final String MUST_HAVE_MAIN = "J300063";
     public static final String SUPPLIER_NAME_NOT_NULL = "J300064";
-    public static final String SUPPLIER_CODE_NOT_CN_LENGTH = "J300065";
+    public static final String SUPPLIER_CODE_NOT_CN= "J300065";
     public static final String BENEFICIARY_BANK_NAME_IS_LENGTH = "J300066";
     public static final String BENEFICIARY_NAME_IS_LENGTH = "J300067";
-    public static final String BENEFICIARY_ACCOUNT_IS_MATH_LENGTH = "J300068";
+    public static final String BENEFICIARY_ACCOUNT_IS_MATH = "J300068";
     public static final String SUPPLIER_CODE_IS_EXISTS = "J300069";
     public static final String SUPPLIER_NAME_IS_NULL = "J300070";
+    public static final String BENEFICIARY_ACCOUNT_IS_LENGTH = "J300071";
+    public static final String SUPPLIER_CODE_IS_LENGTH= "J300072";
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
     public static final String ORDER_CUSTOMER_CONSIGN_NOT_NULL = "J400001";
@@ -610,7 +612,6 @@ public class ErrorCode {
         MAP.put(CUSTOMER_IS_DISABLED, "客户已经被禁用");
         MAP.put(CUSTOMER_CAN_NOT_EDIT, "客户在该状态下不允许修改");
 
-
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
         MAP.put(MONEY_MORE_THAN_ZERO, "金额不能小于0");
@@ -712,10 +713,12 @@ public class ErrorCode {
         MAP.put(SUPPLIER_NAME_IS_NULL, "供应商名字有空格");
         MAP.put(MUST_HAVE_MAIN, "含有小配件的整机四大件采购单必须有整机");
         MAP.put(SUPPLIER_NAME_NOT_NULL, "供应商名字不能为空");
-        MAP.put(SUPPLIER_CODE_NOT_CN_LENGTH, "自定义编码不能输入中文，和长度限制20字内,");
+        MAP.put(SUPPLIER_CODE_NOT_CN, "自定义编码只能输入英数和 _  - ");
+        MAP.put(SUPPLIER_CODE_IS_LENGTH, "自定义编码长度超过20");
         MAP.put(BENEFICIARY_BANK_NAME_IS_LENGTH, "收款开户行长度超过100");
         MAP.put(BENEFICIARY_NAME_IS_LENGTH, "收款户名长度超过100");
-        MAP.put(BENEFICIARY_ACCOUNT_IS_MATH_LENGTH, "收款帐号只能数字和长度不能超过30");
+        MAP.put(BENEFICIARY_ACCOUNT_IS_MATH, "收款帐号只能数字和（-）");
+        MAP.put(BENEFICIARY_ACCOUNT_IS_LENGTH, "收款帐号长度不能超过30");
         MAP.put(SUPPLIER_CODE_IS_EXISTS, "自定义供应商编号已经存在");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");

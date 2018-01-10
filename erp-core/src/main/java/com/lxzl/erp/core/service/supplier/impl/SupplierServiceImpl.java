@@ -7,7 +7,6 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.supplier.SupplierQueryParam;
 import com.lxzl.erp.common.domain.supplier.pojo.Supplier;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.supplier.SupplierService;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.servlet.http.HttpSession;
 import java.util.Date;
@@ -85,49 +83,23 @@ public class SupplierServiceImpl implements SupplierService {
             result.setErrorCode(verifyCode);
             return result;
         }
-        //供应商名称（前端填入，校验不重复，判断中英文，若输入中文则判断空格，判断供应商）
-        String supplierName = supplier.getSupplierName();
-        if(supplierName.matches("^[A-Za-z0-9\\s]+$")){
-            SupplierDO nameSupplierDO = supplierMapper.findByName(supplierName);
-            if (nameSupplierDO != null) {
-                result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
-                return result;
-            }
-        }else {
-            if(supplierName.indexOf(" ") != -1) {
-                result.setErrorCode(ErrorCode.SUPPLIER_NAME_IS_NULL);
-                return result;
-            }
-            String checkName = supplierName.replaceAll(" ","");
-            SupplierDO nameSupplierDO = supplierMapper.findByName(checkName);
-            if (nameSupplierDO != null) {
-                result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
-                return result;
-            }
-        }
-        //判断校验自定义不能中文跟长度20
-        String supplierCode = supplier.getSupplierCode();
-        SupplierDO supplierCodeDO = supplierMapper.findByCode(supplierCode);
-        if(!supplierCode.matches("^[A-Za-z0-9-]{0,20}$")){
-            result.setErrorCode(ErrorCode.SUPPLIER_CODE_NOT_CN_LENGTH);
+        //setSupplierNo代码生成用到getCity需判断
+        if(supplier.getCity() == null){
+            result.setErrorCode(ErrorCode.CITY_ID_NOT_NULL);
             return result;
         }
+        //供应商名称（前端填入，校验不重复，判断空格，判断供应商）
+        String checkName = supplier.getSupplierName().trim();
+        SupplierDO nameSupplierDO = supplierMapper.findByName(checkName);
+        if (nameSupplierDO != null) {
+            result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
+            return result;
+        }
+        supplier.setSupplierName(checkName);
+        //自定义编码不重复
+        SupplierDO supplierCodeDO = supplierMapper.findByCode(supplier.getSupplierCode());
         if(supplierCodeDO != null){
             result.setErrorCode(ErrorCode.SUPPLIER_CODE_IS_EXISTS);
-            return result;
-        }
-        //考虑英文私或公（限制长度100内），收款帐号为数字长度30
-        if(supplier.getBeneficiaryBankName().length() > 100){
-            result.setErrorCode(ErrorCode.BENEFICIARY_BANK_NAME_IS_LENGTH);
-            return result;
-        }
-        if(supplier.getBeneficiaryName().length() > 100){
-            result.setErrorCode(ErrorCode.BENEFICIARY_NAME_IS_LENGTH);
-            return result;
-        }
-        String beneficiaryAccount = supplier.getBeneficiaryAccount();
-        if(!beneficiaryAccount.matches("^[0-9-]{0,30}$")){
-            result.setErrorCode(ErrorCode.BENEFICIARY_ACCOUNT_IS_MATH_LENGTH);
             return result;
         }
 
@@ -156,54 +128,22 @@ public class SupplierServiceImpl implements SupplierService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        //供应商名称（前端填入，校验不重复，判断中英文，若输入中文则判断空格，判断供应商）
+        //供应商名称（前端填入，校验不重复，判断空格，判断供应商）
         if(StringUtil.isBlank(supplier.getSupplierName())){
             result.setErrorCode(ErrorCode.SUPPLIER_NAME_NOT_NULL);
             return result;
         }
-        String supplierName = supplier.getSupplierName();
-        if(supplierName.matches("^[A-Za-z0-9\\s]+$")){
-            SupplierDO nameSupplierDO = supplierMapper.findByName(supplierName);
-            if (nameSupplierDO != null && !nameSupplierDO.getSupplierName().equals(dbSupplierDO.getSupplierName())) {
-                result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
-                return result;
-            }
-        }else {
-            if(supplierName.indexOf(" ") != -1) {
-                result.setErrorCode(ErrorCode.SUPPLIER_NAME_IS_NULL);
-                return result;
-            }
-            String checkName = supplierName.replaceAll(" ","");
-            SupplierDO nameSupplierDO = supplierMapper.findByName(checkName);
-            if (nameSupplierDO != null && !nameSupplierDO.getSupplierName().equals(dbSupplierDO.getSupplierName())) {
-                result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
-                return result;
-            }
-        }
-
-        //判断校验自定义不能中文跟长度20
-        String supplierCode = supplier.getSupplierCode();
-        SupplierDO supplierCodeDO = supplierMapper.findByCode(supplierCode);
-        if(!supplierCode.matches("^[A-Za-z0-9-]{0,20}$")){
-            result.setErrorCode(ErrorCode.SUPPLIER_CODE_NOT_CN_LENGTH);
+        String checkName = supplier.getSupplierName().trim();
+        SupplierDO nameSupplierDO = supplierMapper.findByName(checkName);
+        if (nameSupplierDO != null && !nameSupplierDO.getSupplierName().equals(dbSupplierDO.getSupplierName())) {
+            result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
             return result;
         }
+        supplier.setSupplierName(checkName);
+        //自定义编码不重复
+        SupplierDO supplierCodeDO = supplierMapper.findByCode(supplier.getSupplierCode());
         if(supplierCodeDO != null && !supplierCodeDO.getSupplierCode().equals(dbSupplierDO.getSupplierCode())){
             result.setErrorCode(ErrorCode.SUPPLIER_CODE_IS_EXISTS);
-            return result;
-        }
-        //考虑英文私或公（限制长度100内），收款帐号为数字长度30
-        if(supplier.getBeneficiaryBankName().length() > 100){
-            result.setErrorCode(ErrorCode.BENEFICIARY_BANK_NAME_IS_LENGTH);
-            return result;
-        }
-        if(supplier.getBeneficiaryName().length() > 100){
-            result.setErrorCode(ErrorCode.BENEFICIARY_NAME_IS_LENGTH);
-            return result;
-        }
-        String beneficiaryAccount = supplier.getBeneficiaryAccount();
-        if(!beneficiaryAccount.matches("^[0-9-]{0,30}$")){
-            result.setErrorCode(ErrorCode.BENEFICIARY_ACCOUNT_IS_MATH_LENGTH);
             return result;
         }
 
