@@ -72,10 +72,16 @@
     <div class="section row">
         <div class="col-md-3">
             <label for="industry" class="field-label">所属行业</label>
-            <label for="industry" class="field prepend-icon">
-                <input type="text" name="industry" id="industry" class="gui-input" />
-                <label for="industry" class="field-icon"><i class="fa fa-tag"></i>
-                </label>
+##            <label for="industry" class="field prepend-icon">
+##                <input type="text" name="industry" id="industry" class="gui-input" />
+##                <label for="industry" class="field-icon"><i class="fa fa-tag"></i>
+##                </label>
+##            </label>
+            <label class="field select">
+                <select id="industry" name="industry" class="required">
+                    <option value="">请选择</option>
+                </select>
+                <i class="arrow"></i>
             </label>
         </div>
         <div class="col-md-3">

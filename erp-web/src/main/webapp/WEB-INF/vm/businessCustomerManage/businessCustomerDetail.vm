@@ -171,44 +171,42 @@
                                         </div>
 
                                         <div class="col-md-4  br-r">
-                                            {{#customerCompany}}
                                             <table class="table mbn">
                                                 <tbody>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>成立日期</td>
-                                                    <td class="fs15 fw700 text-right">{{#shortTime}}{{companyFoundTime}}{{/shortTime}}</td>
+                                                    <td class="fs15 fw700 text-right">{{#shortTime}}{{customerCompany.companyFoundTime}}{{/shortTime}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>所属行业</td>
-                                                    <td class="fs15 fw700 text-right">{{industry}}</td>
+                                                    <td class="fs15 fw700 text-right">{{#customerIndustryValue}}{{customerCompany.industry}}{{/customerIndustryValue}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>关联企业</td>
-                                                    <td class="fs15 fw700 text-right">{{affiliatedEnterprise}}</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.affiliatedEnterprise}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>注册资本</td>
-                                                    <td class="fs14 fw700 text-right">{{registeredCapital}}万</td>
+                                                    <td class="fs14 fw700 text-right">{{customerCompany.registeredCapital}}万</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>办公人数</td>
-                                                    <td class="fs15 fw700 text-right">{{officeNumber}}</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.officeNumber}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>经营面积</td>
-                                                    <td class="fs15 fw700 text-right">{{operatingArea}}㎡</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.operatingArea}}㎡</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>统一信用码</td>
-                                                    <td class="fs15 fw700 text-right">{{unifiedCreditCode}}</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.unifiedCreditCode}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>设备用途</td>
-                                                    <td class="fs15 fw700 text-right">{{productPurpose}}</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.productPurpose}}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
-                                            {{/customerCompany}}
                                         </div>
 
                                         <div class="col-md-4">
