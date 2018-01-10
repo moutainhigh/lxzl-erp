@@ -383,11 +383,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         //声明待保存的采购单物料项列表
         private List<PurchaseOrderMaterialDO> purchaseOrderMaterialDOList = new ArrayList<>();
         //声明累加采购单总价
-        private BigDecimal totalAmount = new BigDecimal(0);
+        private BigDecimal totalAmount = BigDecimal.ZERO;
         //声明累加采购单商品项总价
-        private BigDecimal totalProductAmount = new BigDecimal(0);
+        private BigDecimal totalProductAmount = BigDecimal.ZERO;
         //声明累加采购单物料项总价
-        private BigDecimal totalMaterialAmount = new BigDecimal(0);
+        private BigDecimal totalMaterialAmount = BigDecimal.ZERO;
         private Date now = null;
         private String userId = null;
 
@@ -1841,8 +1841,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_NO, null);
             } else if (PurchaseType.PURCHASE_TYPE_ALL_OR_MAIN == purchaseOrderDO.getPurchaseType()) {
 
-                //整机四大件全新机20000元以上，必须过总仓
-                if (BigDecimalUtil.compare(purchaseOrderDO.getPurchaseOrderAmountTotal(), new BigDecimal(20000)) > 0) {
+                //整机四大件全新机20000元以上，且不是总仓，必须过总仓
+                if (BigDecimalUtil.compare(purchaseOrderDO.getPurchaseOrderAmountTotal(), new BigDecimal(20000)) > 0&&!isHead) {
                     //生成总公司收料通知单
                     PurchaseReceiveOrderDO purchaseReceiveOrderDO = createReceiveDetail(purchaseDeliveryOrderDO, AutoAllotStatus.AUTO_ALLOT_STATUS_YES, null);
                     //生成分公司收料通知单

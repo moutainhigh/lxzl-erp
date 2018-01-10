@@ -1015,6 +1015,50 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
+    @Override
+    public ServiceResult<String, String> disabledCustomer(Customer customer) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        String currentUserId = userSupport.getCurrentUserId().toString();
+        Date currentTime = new Date();
+        CustomerDO customerDO = customerMapper.findByNo(customer.getCustomerNo());
+
+        if(customerDO == null){
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+
+        customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);
+        customerDO.setUpdateTime(currentTime);
+        customerDO.setUpdateUser(currentUserId);
+        customerMapper.update(customerDO);
+
+        result.setResult(customerDO.getCustomerNo());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> enableCustomer(Customer customer) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        String currentUserId = userSupport.getCurrentUserId().toString();
+        Date currentTime = new Date();
+        CustomerDO customerDO = customerMapper.findByNo(customer.getCustomerNo());
+
+        if(customerDO == null){
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+
+        customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
+        customerDO.setUpdateTime(currentTime);
+        customerDO.setUpdateUser(currentUserId);
+        customerMapper.update(customerDO);
+
+        result.setResult(customerDO.getCustomerNo());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
     private ServiceResult<String, String> saveImage(Customer customer, Date now) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 

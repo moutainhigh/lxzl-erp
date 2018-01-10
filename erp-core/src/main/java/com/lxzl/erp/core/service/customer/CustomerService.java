@@ -75,4 +75,18 @@ public interface CustomerService {
      * @param customerConsignInfo 地址信息的ID
      */
     void updateLastUseTime(Integer customerConsignInfo);
+
+    /**
+     * 修改企业客户启用
+     * @param customer
+     * @return
+     */
+    ServiceResult<String,String> disabledCustomer(Customer customer);
+
+    /**
+     * 修改企业客户禁用
+     * @param customer
+     * @return
+     */
+    ServiceResult<String,String> enableCustomer(Customer customer);
 }

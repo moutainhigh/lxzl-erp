@@ -412,4 +412,18 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         ManualDeductParam customer = JSONUtil.convertJSONToBean(str, ManualDeductParam.class);
         TestResult result = getJsonTestResult("/payment/manualDeduct", customer);
     }
+
+    @Test
+    public void disabledCustomerTest() throws Exception {
+        Customer customer = new Customer();
+        customer.setCustomerNo("LXCC10002018010800035");
+        TestResult testResult = getJsonTestResult("/customer/disabledCustomer",customer);
+    }
+
+    @Test
+    public void enableCustomerTest() throws Exception {
+        Customer customer = new Customer();
+        customer.setCustomerNo("LXCC10002018010800035");
+        TestResult testResult = getJsonTestResult("/customer/enableCustomer",customer);
+    }
 }
