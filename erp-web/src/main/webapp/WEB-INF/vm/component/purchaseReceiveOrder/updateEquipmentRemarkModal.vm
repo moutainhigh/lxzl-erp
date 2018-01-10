@@ -16,7 +16,8 @@
                 <div class="section">
                     <label for="username" class="field-label">扫描设备</label>
                     <label for="remark" class="field prepend-icon">
-                        <textarea class="gui-textarea required" id="equipmentNo" name="equipmentNo" autofocus></textarea>
+                        <input type="text"  class="gui-textarea required" id="equipmentNo" name="equipmentNo" autofocus />
+##                        <textarea class="gui-textarea required" id="equipmentNo" name="equipmentNo" autofocus></textarea>
                         <label for="comment" class="field-icon"><i class="fa fa-tag"></i>
                         </label>
                     </label>
