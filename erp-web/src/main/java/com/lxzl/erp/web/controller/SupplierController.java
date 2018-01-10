@@ -4,6 +4,8 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.supplier.SupplierQueryParam;
 import com.lxzl.erp.common.domain.supplier.pojo.Supplier;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.supplier.SupplierService;
@@ -41,13 +43,13 @@ public class SupplierController {
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public Result add(@RequestBody Supplier supplier, BindingResult validResult) {
+    public Result add(@RequestBody @Validated({AddGroup.class})Supplier supplier, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = supplierService.addSupplier(supplier);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     @RequestMapping(value = "update", method = RequestMethod.POST)
-    public Result update(@RequestBody Supplier supplier, BindingResult validResult) {
+    public Result update(@RequestBody @Validated({UpdateGroup.class})Supplier supplier, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = supplierService.updateSupplier(supplier);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }

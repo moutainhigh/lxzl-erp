@@ -1,9 +1,13 @@
 package com.lxzl.erp.common.domain.supplier.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import org.hibernate.validator.constraints.Length;
 
-import java.io.Serializable;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 
@@ -27,9 +31,15 @@ public class Supplier extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+	@Length(max = 100,message = ErrorCode.BENEFICIARY_NAME_IS_LENGTH,groups = {AddGroup.class, UpdateGroup.class})
 	private String beneficiaryName;   //收款户名
+	@Length(max = 30,message = ErrorCode.BENEFICIARY_ACCOUNT_IS_LENGTH,groups = {AddGroup.class, UpdateGroup.class})
+	@Pattern(regexp = "^[0-9-]+$",message = ErrorCode.BENEFICIARY_ACCOUNT_IS_MATH,groups = {AddGroup.class, UpdateGroup.class})
 	private String beneficiaryAccount;   //收款帐号
+	@Length(max = 100,message = ErrorCode.BENEFICIARY_BANK_NAME_IS_LENGTH,groups = {AddGroup.class, UpdateGroup.class})
 	private String beneficiaryBankName;   //收款开户行
+	@Length(max = 20,message = ErrorCode.SUPPLIER_CODE_IS_LENGTH,groups = {AddGroup.class, UpdateGroup.class})
+	@Pattern(regexp = "^[A-Za-z0-9-_]+$",message = ErrorCode.SUPPLIER_CODE_NOT_CN,groups = {AddGroup.class, UpdateGroup.class})
 	private String supplierCode;	//供应商自定义编码
 
 	private String provinceName;	//省份名称
