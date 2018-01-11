@@ -333,6 +333,10 @@ public class ErrorCode {
     public static final String PURCHASE_APPLY_CAN_NOT_CANCEL_BY_STATUS = "J500064";
     public static final String PURCHASE_APPLY_YET_RECEIVE_CAN_NOT_CANCEL = "J500065";
     public static final String PURCHASE_APPLY_USE_TIME_NOT_NUll = "J500066";
+    public static final String PURCHASE_APPLY_CAN_NOT_PAUSE = "J500067";
+    public static final String PURCHASE_APPLY_CAN_NOT_CONTINUE = "J500068";
+    public static final String PURCHASE_APPLY_CAN_NOT_END = "J500069";
+    public static final String PURCHASE_NOT_HAVE_APPLY = "J500070";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -635,6 +639,10 @@ public class ErrorCode {
         MAP.put(CUSTOMER_STATUS_ERROR, "客户状态异常，仔细检查后操作");
         MAP.put(CUSTOMER_IS_DISABLED, "客户已经被禁用");
         MAP.put(CUSTOMER_CAN_NOT_EDIT, "客户在该状态下不允许修改");
+        MAP.put(PURCHASE_APPLY_CAN_NOT_PAUSE, "此采购申请单不能暂停");
+        MAP.put(PURCHASE_APPLY_CAN_NOT_CONTINUE, "此采购申请单不能恢复暂停");
+        MAP.put(PURCHASE_APPLY_CAN_NOT_END, "此采购申请单不能结束");
+        MAP.put(PURCHASE_NOT_HAVE_APPLY, "采购计划中没有【%s】");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
