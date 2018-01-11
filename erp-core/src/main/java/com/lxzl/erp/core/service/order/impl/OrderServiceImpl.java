@@ -1437,8 +1437,7 @@ public class OrderServiceImpl implements OrderService {
                         && orderProductDO.getRentTimeLength() >= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
                     return true;
                 }
-                if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())
-                        && orderProductDO.getRentTimeLength() >= CommonConstant.ORDER_NEED_VERIFY_MONTHS) {
+                if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
                     return true;
                 }
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
@@ -1455,8 +1454,7 @@ public class OrderServiceImpl implements OrderService {
                         && orderMaterialDO.getRentTimeLength() >= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
                     return true;
                 }
-                if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())
-                        && orderMaterialDO.getRentTimeLength() >= CommonConstant.ORDER_NEED_VERIFY_MONTHS) {
+                if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
                     return true;
                 }
                 ServiceResult<String, Material> materialResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
