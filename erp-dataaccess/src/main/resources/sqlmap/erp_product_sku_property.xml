@@ -68,6 +68,12 @@
         from erp_product_sku_property epsp where epsp.product_id = #{productId, jdbcType=INTEGER} and epsp.property_value_id =  #{propertyValueId, jdbcType=INTEGER} and epsp.data_status = 1 and epsp.is_sku = 0
     </select>
 
+    <select id="findByPropertyValueId" resultMap="ProductSkuPropertyDO" parameterType="map">
+        select
+        <include refid="column_List"/>
+        from erp_product_sku_property epsp where epsp.property_value_id =  #{propertyValueId, jdbcType=INTEGER} and epsp.data_status = 1 and epsp.is_sku = 0
+    </select>
+
     <select id="findByPropertyValue" resultMap="ProductSkuPropertyDO" parameterType="java.lang.Integer">
         select
         <include refid="column_List"/>

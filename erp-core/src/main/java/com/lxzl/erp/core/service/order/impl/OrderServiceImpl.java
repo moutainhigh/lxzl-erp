@@ -279,8 +279,12 @@ public class OrderServiceImpl implements OrderService {
 
         CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
         BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
+        if (customerRiskManagementDO == null && BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) > 0) {
+            result.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_NEED_RISK_INFO);
+            return result;
+        }
         if (BigDecimalUtil.compare(BigDecimalUtil.sub(BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmount(), customerRiskManagementDO.getCreditAmountUsed()), totalCreditDepositAmount), BigDecimal.ZERO) < 0) {
-            result.setErrorCode(ErrorCode.CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW);
+            result.setErrorCode(ErrorCode.CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW);
             return result;
         }
 
@@ -372,6 +376,18 @@ public class OrderServiceImpl implements OrderService {
                     result.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                     return result;
                 }
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())
+                        && orderProductDO.getRentTimeLength() < CommonConstant.ORDER_NEED_VERIFY_DAYS
+                        && OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderProductDO.getPayMode())) {
+                    isNeedVerify = true;
+                    break;
+                }
+                if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())
+                        && orderProductDO.getRentTimeLength() < CommonConstant.ORDER_NEED_VERIFY_MONTHS
+                        && OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderProductDO.getPayMode())) {
+                    isNeedVerify = true;
+                    break;
+                }
 
                 BigDecimal productUnitAmount = null;
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
@@ -382,6 +398,7 @@ public class OrderServiceImpl implements OrderService {
                 // 订单价格低于商品租赁价，需要商务审批
                 if (BigDecimalUtil.compare(orderProductDO.getProductUnitAmount(), productUnitAmount) < 0) {
                     isNeedVerify = true;
+                    break;
                 }
             }
         }
@@ -398,6 +415,21 @@ public class OrderServiceImpl implements OrderService {
                     result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                     return result;
                 }
+
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())
+                        && orderMaterialDO.getRentTimeLength() < CommonConstant.ORDER_NEED_VERIFY_DAYS
+                        && OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderMaterialDO.getPayMode())) {
+                    isNeedVerify = true;
+                    break;
+                }
+                if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())
+                        && orderMaterialDO.getRentTimeLength() < CommonConstant.ORDER_NEED_VERIFY_MONTHS
+                        && OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderMaterialDO.getPayMode())) {
+                    isNeedVerify = true;
+                    break;
+                }
+
+
                 BigDecimal materialUnitAmount = null;
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())) {
                     materialUnitAmount = material.getDayRentPrice();
@@ -407,6 +439,7 @@ public class OrderServiceImpl implements OrderService {
                 // 订单价格低于商品租赁价，需要商务审批
                 if (BigDecimalUtil.compare(orderMaterialDO.getMaterialUnitAmount(), materialUnitAmount) < 0) {
                     isNeedVerify = true;
+                    break;
                 }
             }
         }
@@ -768,14 +801,14 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }
                 // 计算首付
-                if(order.getStatementOrder() != null && CollectionUtil.isNotEmpty(order.getStatementOrder().getStatementOrderDetailList())){
-                    for(StatementOrderDetail statementOrderDetail : order.getStatementOrder().getStatementOrderDetailList()){
-                        if(OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())
+                if (order.getStatementOrder() != null && CollectionUtil.isNotEmpty(order.getStatementOrder().getStatementOrderDetailList())) {
+                    for (StatementOrderDetail statementOrderDetail : order.getStatementOrder().getStatementOrderDetailList()) {
+                        if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())
                                 && OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType())
                                 && statementOrderDetail.getOrderId().equals(orderProduct.getOrderId())
                                 && statementOrderDetail.getOrderItemReferId().equals(orderProduct.getOrderProductId())
-                                && com.lxzl.erp.common.util.DateUtil.isSameDay(statementOrderDetail.getStatementExpectPayTime(),order.getRentStartTime())){
-                            orderProduct.setFirstNeedPayAmount(BigDecimalUtil.add(orderProduct.getFirstNeedPayAmount(),statementOrderDetail.getStatementDetailAmount()));
+                                && com.lxzl.erp.common.util.DateUtil.isSameDay(statementOrderDetail.getStatementExpectPayTime(), order.getRentStartTime())) {
+                            orderProduct.setFirstNeedPayAmount(BigDecimalUtil.add(orderProduct.getFirstNeedPayAmount(), statementOrderDetail.getStatementDetailAmount()));
                         }
                     }
                 }
@@ -790,14 +823,14 @@ public class OrderServiceImpl implements OrderService {
                 orderMaterial.setOrderMaterialBulkList(ConverterUtil.convertList(orderMaterialBulkDOList, OrderMaterialBulk.class));
 
                 // 计算首付
-                if(order.getStatementOrder() != null && CollectionUtil.isNotEmpty(order.getStatementOrder().getStatementOrderDetailList())){
-                    for(StatementOrderDetail statementOrderDetail : order.getStatementOrder().getStatementOrderDetailList()){
-                        if(OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())
+                if (order.getStatementOrder() != null && CollectionUtil.isNotEmpty(order.getStatementOrder().getStatementOrderDetailList())) {
+                    for (StatementOrderDetail statementOrderDetail : order.getStatementOrder().getStatementOrderDetailList()) {
+                        if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())
                                 && OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType())
                                 && statementOrderDetail.getOrderId().equals(orderMaterial.getOrderId())
                                 && statementOrderDetail.getOrderItemReferId().equals(orderMaterial.getOrderMaterialId())
-                                && com.lxzl.erp.common.util.DateUtil.isSameDay(statementOrderDetail.getStatementExpectPayTime(),order.getRentStartTime())){
-                            orderMaterial.setFirstNeedPayAmount(BigDecimalUtil.add(orderMaterial.getFirstNeedPayAmount(),statementOrderDetail.getStatementDetailAmount()));
+                                && com.lxzl.erp.common.util.DateUtil.isSameDay(statementOrderDetail.getStatementExpectPayTime(), order.getRentStartTime())) {
+                            orderMaterial.setFirstNeedPayAmount(BigDecimalUtil.add(orderMaterial.getFirstNeedPayAmount(), statementOrderDetail.getStatementDetailAmount()));
                         }
                     }
                 }
@@ -1401,11 +1434,11 @@ public class OrderServiceImpl implements OrderService {
         if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
             for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())
-                        && orderProductDO.getRentTimeLength() >= 90) {
+                        && orderProductDO.getRentTimeLength() >= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
                     return true;
                 }
                 if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())
-                        && orderProductDO.getRentTimeLength() >= 3) {
+                        && orderProductDO.getRentTimeLength() >= CommonConstant.ORDER_NEED_VERIFY_MONTHS) {
                     return true;
                 }
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
@@ -1419,11 +1452,11 @@ public class OrderServiceImpl implements OrderService {
         if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
             for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())
-                        && orderMaterialDO.getRentTimeLength() >= 90) {
+                        && orderMaterialDO.getRentTimeLength() >= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
                     return true;
                 }
                 if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())
-                        && orderMaterialDO.getRentTimeLength() >= 3) {
+                        && orderMaterialDO.getRentTimeLength() >= CommonConstant.ORDER_NEED_VERIFY_MONTHS) {
                     return true;
                 }
                 ServiceResult<String, Material> materialResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
@@ -1432,7 +1465,7 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         BigDecimal totalAmount = BigDecimalUtil.add(totalProductAmount, totalMaterialAmount);
-        if (totalProductCount >= 100 || BigDecimalUtil.compare(totalAmount, new BigDecimal(2000000)) >= 0) {
+        if (totalProductCount >= CommonConstant.ORDER_NEED_VERIFY_PRODUCT_COUNT || BigDecimalUtil.compare(totalAmount, CommonConstant.ORDER_NEED_VERIFY_PRODUCT_AMOUNT) >= 0) {
             return true;
         }
         return false;
@@ -1702,15 +1735,15 @@ public class OrderServiceImpl implements OrderService {
                 BigDecimal depositAmount = BigDecimal.ZERO;
                 BigDecimal creditDepositAmount = BigDecimal.ZERO;
                 BigDecimal rentDepositAmount = BigDecimal.ZERO;
-                // 小于等于30天的,不走风控，大于30天的，走风控授信
-                if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() <= 30) {
+                // 小于等于90天的,不走风控，大于90天的，走风控授信
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
                     BigDecimal remainder = orderProductDO.getDepositAmount().divideAndRemainder(new BigDecimal(orderProductDO.getProductCount()))[1];
                     if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
                         throw new BusinessException(ErrorCode.ORDER_PRODUCT_DEPOSIT_ERROR);
                     }
                     depositAmount = orderProductDO.getDepositAmount();
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
-                } else if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() > 30) {
+                } else if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() > CommonConstant.ORDER_NEED_VERIFY_DAYS) {
                     creditDepositAmount = BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProductDO.getProductCount()));
                     totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
                 } else if ((BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) || CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
@@ -1779,15 +1812,15 @@ public class OrderServiceImpl implements OrderService {
                 BigDecimal depositAmount = BigDecimal.ZERO;
                 BigDecimal creditDepositAmount = BigDecimal.ZERO;
                 BigDecimal rentDepositAmount = BigDecimal.ZERO;
-                // 小于等于30天的,不走风控，大于30天的，走风控授信
-                if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() <= 30) {
+                // 小于等于90天的,不走风控，大于90天的，走风控授信
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
                     BigDecimal remainder = orderMaterialDO.getDepositAmount().divideAndRemainder(new BigDecimal(orderMaterialDO.getMaterialCount()))[1];
                     if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
                         throw new BusinessException(ErrorCode.ORDER_MATERIAL_DEPOSIT_ERROR);
                     }
                     depositAmount = orderMaterialDO.getDepositAmount();
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
-                } else if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() > 30) {
+                } else if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() > CommonConstant.ORDER_NEED_VERIFY_DAYS) {
                     creditDepositAmount = BigDecimalUtil.mul(material.getMaterialPrice(), new BigDecimal(orderMaterialDO.getMaterialCount()));
                     totalCreditDepositAmount = BigDecimalUtil.add(totalDepositAmount, creditDepositAmount);
                 } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {

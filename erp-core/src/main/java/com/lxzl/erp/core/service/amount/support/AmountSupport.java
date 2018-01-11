@@ -41,6 +41,7 @@ public class AmountSupport {
         if (returnEndDateDay >= rentStartDateDay) {
             nextSurplusDays = returnEndDateDay - rentStartDateDay + 1;
         } else {
+            // 计算前一个月时，算当天，所以要增加一天
             previousSurplusDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(DateUtil.monthInterval(returnEndDate, -1)) - rentStartDateDay + 1;
             nextSurplusDays = returnEndDateDay;
         }

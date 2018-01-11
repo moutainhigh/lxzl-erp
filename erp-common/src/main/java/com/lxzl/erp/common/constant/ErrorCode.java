@@ -333,6 +333,10 @@ public class ErrorCode {
     public static final String PURCHASE_APPLY_CAN_NOT_CANCEL_BY_STATUS = "J500064";
     public static final String PURCHASE_APPLY_YET_RECEIVE_CAN_NOT_CANCEL = "J500065";
     public static final String PURCHASE_APPLY_USE_TIME_NOT_NUll = "J500066";
+    public static final String PURCHASE_APPLY_CAN_NOT_PAUSE = "J500067";
+    public static final String PURCHASE_APPLY_CAN_NOT_CONTINUE = "J500068";
+    public static final String PURCHASE_APPLY_CAN_NOT_END = "J500069";
+    public static final String PURCHASE_NOT_HAVE_APPLY = "J500070";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -363,7 +367,7 @@ public class ErrorCode {
     public static final String PRODUCT_SKU_CAN_NOT_REPEAT = "J500029";
     public static final String MATERIAL_CAN_NOT_REPEAT = "J500030";
     public static final String CUSTOMER_CONSIGN_NOT_EXISTS = "J500031";
-    public static final String CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW = "J500032";
+    public static final String CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW = "J500032";
     public static final String CUSTOMER_CONSIGN_INFO_NOT_EXISTS = "J500033";
     public static final String CUSTOMER_CONSIGN_INFO_IS_MAIN_NOT_NULL = "J500034";
     public static final String CUSTOMER_CONSIGN_INFO_IS_MAIN_ERROR = "J500035";
@@ -399,6 +403,7 @@ public class ErrorCode {
     public static final String CUSTOMER_STATUS_ERROR = "J500065";
     public static final String CUSTOMER_IS_DISABLED = "J500066";
     public static final String CUSTOMER_CAN_NOT_EDIT = "J500067";
+    public static final String CUSTOMER_GET_CREDIT_NEED_RISK_INFO = "J500068";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -635,6 +640,10 @@ public class ErrorCode {
         MAP.put(CUSTOMER_STATUS_ERROR, "客户状态异常，仔细检查后操作");
         MAP.put(CUSTOMER_IS_DISABLED, "客户已经被禁用");
         MAP.put(CUSTOMER_CAN_NOT_EDIT, "客户在该状态下不允许修改");
+        MAP.put(PURCHASE_APPLY_CAN_NOT_PAUSE, "此采购申请单不能暂停");
+        MAP.put(PURCHASE_APPLY_CAN_NOT_CONTINUE, "此采购申请单不能恢复暂停");
+        MAP.put(PURCHASE_APPLY_CAN_NOT_END, "此采购申请单不能结束");
+        MAP.put(PURCHASE_NOT_HAVE_APPLY, "采购计划中没有【%s】");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -711,7 +720,8 @@ public class ErrorCode {
         MAP.put(MATERIAL_TYPE_HAVE_NO_MODEL, "该配件类型没有型号");
         MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_NO_NOT_NULL, "采购收货单配件项配件编号不能为空");
         MAP.put(CUSTOMER_CONSIGN_NOT_EXISTS, "客户收货地址不存在");
-        MAP.put(CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW, "客户授信额度超限");
+        MAP.put(CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW, "客户授信额度超限");
+        MAP.put(CUSTOMER_GET_CREDIT_NEED_RISK_INFO, "客户需要授信额度，未检测到风控信息");
         MAP.put(STOCK_NOT_MATCH, "备货不匹配");
         MAP.put(STOCK_NOT_ENOUGH, "备货不足，请先继续备货");
         MAP.put(MATERIAL_NOT_RENT, "不是客户在租配件，不能退还");
@@ -822,8 +832,8 @@ public class ErrorCode {
         MAP.put(RETURN_ORDER_CAN_NOT_COMMIT, "只有待提交的退还单可以提交审核");
         MAP.put(ORDER_PRODUCT_NOT_EXISTS, "商品订单项不存在");
         MAP.put(ORDER_MATERIAL_NOT_EXISTS, "商品配件项不存在");
-        MAP.put(ORDER_PRODUCT_DEPOSIT_ERROR, "订单商品押金有误，请检查");
-        MAP.put(ORDER_MATERIAL_DEPOSIT_ERROR, "订单配件押金有误，请检查");
+        MAP.put(ORDER_PRODUCT_DEPOSIT_ERROR, "订单商品押金有误，需为商品价格的倍数");
+        MAP.put(ORDER_MATERIAL_DEPOSIT_ERROR, "订单配件押金有误，需为配件价格的倍数");
         MAP.put(ORDER_DELIVERY_MODE_ERROR, "订单送货方式有误，请仔细检查");
         MAP.put(ORDER_CAN_NOT_DELIVERY_TIME_REASON, "订单未到发货时间，不能发货");
 

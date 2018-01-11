@@ -17,6 +17,7 @@
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 
+		<result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
 		<collection property="transferOrderProductDOList" resultMap="TransferOrderProductDO" />
 		<collection property="transferOrderMaterialDOList" resultMap="TransferOrderMaterialDO" />
 	</resultMap>
@@ -158,13 +159,14 @@
 	</select>
 
 	<select id="findDetailById" resultMap="TransferOrderDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>
+		SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>,ew.warehouse_name
 		FROM(
 		select <include refid="column_List"/> from erp_transfer_order eto
 		where eto.id = #{transferOrderId, jdbcType=INTEGER} and data_status = 1
 		) eto
 		left join erp_transfer_order_product etop on etop.transfer_order_id = eto.id and etop.data_status =1
 		left join erp_transfer_order_material etom on etom.transfer_order_id = eto.id and etom.data_status =1
+		LEFT JOIN erp_warehouse ew ON ew.id = eto.warehouse_id
 	</select>
 
 	<select id="findTransferOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
@@ -174,7 +176,7 @@
 				and eto.transfer_order_no = #{maps.queryParam.transferOrderNo, jdbcType=VARCHAR}
 			</if>
 			<if test="maps.queryParam.transferOrderName != null &amp;&amp; maps.queryParam.transferOrderName != '' ">
-				and eto.transfer_order_name = #{maps.queryParam.transferOrderName, jdbcType=VARCHAR}
+				and eto.transfer_order_name LIKE CONCAT('%','${maps.queryParam.transferOrderName}','%' )
 			</if>
 			<if test="maps.queryParam.transferOrderStatus != null">
 				and eto.transfer_order_status = #{maps.queryParam.transferOrderStatus, jdbcType=Integer}
@@ -204,7 +206,7 @@
 				and eto.transfer_order_no = #{maps.queryParam.transferOrderNo, jdbcType=VARCHAR}
 			</if>
 			<if test="maps.queryParam.transferOrderName != null &amp;&amp; maps.queryParam.transferOrderName != '' ">
-				and eto.transfer_order_name = #{maps.queryParam.transferOrderName, jdbcType=VARCHAR}
+				and eto.transfer_order_name LIKE CONCAT('%','${maps.queryParam.transferOrderName}','%' )
 			</if>
 			<if test="maps.queryParam.transferOrderStatus != null">
 				and eto.transfer_order_status = #{maps.queryParam.transferOrderStatus, jdbcType=Integer}
@@ -225,8 +227,9 @@
 		order by eto.create_time desc
 		LIMIT #{maps.start},#{maps.pageSize}
 		) eto
-		left join erp_transfer_order_product etop on etop.transfer_order_id = eto.id and etop.data_status=1
-		left join erp_transfer_order_material etom on etom.transfer_order_id = eto.id and etom.data_status=1
+		LEFT JOIN erp_transfer_order_product etop on etop.transfer_order_id = eto.id and etop.data_status=1
+		LEFT JOIN erp_transfer_order_material etom on etom.transfer_order_id = eto.id and etom.data_status=1
+		LEFT JOIN erp_warehouse ew ON ew.id = eto.warehouse_id
 		order by eto.create_time desc
 	</select>
 

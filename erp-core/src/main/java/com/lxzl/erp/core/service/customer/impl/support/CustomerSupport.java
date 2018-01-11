@@ -42,7 +42,7 @@ public class CustomerSupport {
             BigDecimal newValue = BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(),amount);
             //如果超过了可用授信额度
             if(BigDecimalUtil.compare(newValue,customerRiskManagementDO.getCreditAmount())>0){
-                return ErrorCode.CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW;
+                return ErrorCode.CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW;
             }
             customerRiskManagementDO.setCreditAmountUsed(newValue);
             customerRiskManagementMapper.update(customerRiskManagementDO);
@@ -101,7 +101,7 @@ public class CustomerSupport {
             BigDecimal newValue = BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(),amount);
             //如果超过了可用授信额度
             if(BigDecimalUtil.compare(newValue,customerRiskManagementDO.getCreditAmount())>0){
-                return ErrorCode.CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW;
+                return ErrorCode.CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW;
             }
             customerRiskManagementDO.setCreditAmountUsed(newValue);
             customerRiskManagementMapper.update(customerRiskManagementDO);

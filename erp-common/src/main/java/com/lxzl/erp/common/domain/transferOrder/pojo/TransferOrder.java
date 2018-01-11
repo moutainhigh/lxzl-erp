@@ -6,9 +6,8 @@ import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.QueryGroup;
-import com.lxzl.erp.common.domain.validGroup.TransferOrder.DumpTransferOrderProductEquipmentOutGroup;
-import com.lxzl.erp.common.domain.validGroup.TransferOrder.TransferOrderOutGroup;
-import com.lxzl.erp.common.domain.validGroup.TransferOrder.TransferOrderProductEquipmentOutGroup;
+import com.lxzl.erp.common.domain.validGroup.TransferOrder.*;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
@@ -22,9 +21,9 @@ public class TransferOrder extends BasePO {
 
 	@NotNull(message = ErrorCode.TRANSFER_ORDER_ID_NOT_NULL ,groups = {QueryGroup.class,TransferOrderProductEquipmentOutGroup.class,DumpTransferOrderProductEquipmentOutGroup.class})
 	private Integer transferOrderId;   //唯一标识
-	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NO_NOT_NULL ,groups = {IdGroup.class})
+	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NO_NOT_NULL ,groups = {IdGroup.class, UpdateTransferOrderIntoGroup.class,UpdateTransferOrderOutGroup.class})
 	private String transferOrderNo;   //转移单编号
-	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NAME_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class})
+	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NAME_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class,UpdateTransferOrderIntoGroup.class,UpdateTransferOrderOutGroup.class})
 	private String transferOrderName;   //转移单名称
 	private Integer transferOrderStatus;   //转移单状态，0初始化，4审批中，8转移成功，16取消转移
 	@NotNull(message = ErrorCode.TRANSFER_ORDER_MODE_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class})
@@ -46,12 +45,13 @@ public class TransferOrder extends BasePO {
 	private List<TransferOrderMaterial> transferOrderMaterialList;
 
 	@NotBlank(message = ErrorCode.TRANSFER_ORDER_PRODUCT_EQUIPMENT_NO_NOT_NULL ,groups = {TransferOrderProductEquipmentOutGroup.class, DumpTransferOrderProductEquipmentOutGroup.class})
-	private String productEquipmentNo;
+	private String productEquipmentNo;//设备编号
 
 	// 审核人和提交审核信息,只提供给审核的时候用
 	private Integer verifyUser;
 	private String commitRemark;
 
+	private String warehouseName;
 
 	public Integer getTransferOrderId(){
 		return transferOrderId;
@@ -195,5 +195,13 @@ public class TransferOrder extends BasePO {
 
 	public void setProductEquipmentNo(String productEquipmentNo) {
 		this.productEquipmentNo = productEquipmentNo;
+	}
+
+	public String getWarehouseName() {
+		return warehouseName;
+	}
+
+	public void setWarehouseName(String warehouseName) {
+		this.warehouseName = warehouseName;
 	}
 }

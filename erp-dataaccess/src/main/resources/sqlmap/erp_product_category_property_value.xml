@@ -57,6 +57,24 @@
         where epcp.material_type = #{materialType, jdbcType=INTEGER} and epcpv.property_capacity_value = #{capacityValue, jdbcType=INTEGER} and epcpv.data_status = 1
     </select>
 
+    <select id="findByPropertyId" resultMap="ProductCategoryPropertyValueDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>, epcp.property_name, epcp.material_type
+        from erp_product_category_property_value epcpv
+        INNER JOIN erp_product_category_property epcp on epcp.id = epcpv.property_id and epcp.data_status = 1
+        where epcp.id = #{propertyId, jdbcType=INTEGER} and epcpv.data_status = 1
+        order by epcpv.data_order desc
+    </select>
+
+    <select id="findByCategoryId" resultMap="ProductCategoryPropertyValueDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>, epcp.property_name, epcp.material_type
+        from erp_product_category_property_value epcpv
+        INNER JOIN erp_product_category_property epcp on epcp.id = epcpv.property_id and epcp.data_status = 1
+        where epcpv.category_id = #{categoryId, jdbcType=INTEGER} and epcpv.data_status = 1
+        order by epcpv.data_order desc
+    </select>
+
     <sql id="set_column_sql">
         <set>
             <if test="propertyValueName != null">

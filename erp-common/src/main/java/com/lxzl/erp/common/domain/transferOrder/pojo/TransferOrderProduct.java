@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.TransferOrder.UpdateTransferOrderIntoGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -17,11 +19,11 @@ public class TransferOrderProduct extends BasePO {
 	private Integer transferOrderProductId;   //唯一标识
 	private Integer transferOrderId;   //转移单ID
 	private Integer productId;   //转移商品ID
-	@NotNull(message = ErrorCode.TRANSFER_ORDER_PRODUCT_SKU_ID_NOT_NULL ,groups = {AddGroup.class})
+	@NotNull(message = ErrorCode.TRANSFER_ORDER_PRODUCT_SKU_ID_NOT_NULL ,groups = {AddGroup.class,UpdateTransferOrderIntoGroup.class})
 	private Integer productSkuId;   //转移商品SKU ID
-	@NotNull(message = ErrorCode.TRANSFER_ORDER_PRODUCT_COUNT_NOT_NULL ,groups = {AddGroup.class})
+	@NotNull(message = ErrorCode.TRANSFER_ORDER_PRODUCT_COUNT_NOT_NULL ,groups = {AddGroup.class,UpdateTransferOrderIntoGroup.class})
 	private Integer productCount;   //商品数量
-	@NotNull(message = ErrorCode.TRANSFER_ORDER_PRODUCT_IS_NEW_NOT_NULL ,groups = {AddGroup.class})
+	@NotNull(message = ErrorCode.TRANSFER_ORDER_PRODUCT_IS_NEW_NOT_NULL ,groups = {AddGroup.class,UpdateTransferOrderIntoGroup.class})
 	private Integer isNew;   //是否全新，1是，0否
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注

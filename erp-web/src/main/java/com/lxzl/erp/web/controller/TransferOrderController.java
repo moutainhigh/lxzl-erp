@@ -2,9 +2,9 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrder;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterial;
-import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.QueryGroup;
@@ -61,8 +61,17 @@ public class TransferOrderController {
      * 修改转入转移单
      */
     @RequestMapping(value = "updateTransferOrderInto", method = RequestMethod.POST)
-    public Result updateTransferOrderInto(@RequestBody  @Validated(IdGroup.class) TransferOrder transferOrder, BindingResult validResult) {
+    public Result updateTransferOrderInto(@RequestBody  @Validated(UpdateTransferOrderIntoGroup.class) TransferOrder transferOrder, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = transferOrderService.updateTransferOrderInto(transferOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 修改转出转移单
+     */
+    @RequestMapping(value = "updateTransferOrderOut", method = RequestMethod.POST)
+    public Result updateTransferOrderOut(@RequestBody  @Validated(UpdateTransferOrderOutGroup.class) TransferOrder transferOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = transferOrderService.updateTransferOrderOut(transferOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -100,15 +109,6 @@ public class TransferOrderController {
     public Result dumpTransferOrderMaterialOut(@RequestBody @Validated(DumpTransferOrderMaterialOutGroup.class)TransferOrderMaterial transferOrderMaterial, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = transferOrderService.dumpTransferOrderMaterialOut(transferOrderMaterial);
         return resultGenerator.generate(serviceResult);
-    }
-
-    /**
-     * 修改转出转移单
-     */
-    @RequestMapping(value = "updateTransferOrderOut", method = RequestMethod.POST)
-    public Result updateTransferOrderOut(@RequestBody  @Validated(IdGroup.class) TransferOrder transferOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = transferOrderService.updateTransferOrderOut(transferOrder);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     /**
