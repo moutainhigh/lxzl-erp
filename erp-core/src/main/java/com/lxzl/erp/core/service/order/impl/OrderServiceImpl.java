@@ -1383,7 +1383,9 @@ public class OrderServiceImpl implements OrderService {
                 } else {
                     orderProductDO.setDepositCycle(1);
                     orderProductDO.setPaymentCycle(1);
-                    orderProductDO.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+                    if(orderProductDO.getPayMode() == null){
+                        throw new BusinessException(ErrorCode.ORDER_PAY_MODE_NOT_NULL);
+                    }
                 }
             }
         }
@@ -1417,10 +1419,11 @@ public class OrderServiceImpl implements OrderService {
                         orderMaterialDO.setPayMode(customerRiskManagementDO.getPayMode());
                     }
                 } else {
-
                     orderMaterialDO.setDepositCycle(1);
                     orderMaterialDO.setPaymentCycle(1);
-                    orderMaterialDO.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+                    if(orderMaterialDO.getPayMode() == null){
+                        throw new BusinessException(ErrorCode.ORDER_PAY_MODE_NOT_NULL);
+                    }
                 }
             }
         }
