@@ -6,7 +6,7 @@
         <span class="panel-title">风控信息</span>
         <div class="widget-menu pull-right">
             {{#riskButton}}
-                <button class="btn btn-xs btn-default {{class}}">{{text}}</button>
+                <button class="btn btn-xs btn-default {{class}}" data-customerno="{{customerno}}" data-customertype="{{customerType}}">{{text}}</button>
             {{/riskButton}}
         </div>
     </div>
@@ -96,6 +96,13 @@
                 </td>
                 <td>全新设备支付方式</td>
                 <td><span class='text-info'>{{newPayModeValue}}</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="fa fa-circle text-success"></span>
+                </td>
+                <td>回访频率</td>
+                <td><span class='text-success'>{{returnVisitFrequency}}个月</span></td>
             </tr>
             <tr>
                 <td colspan="3">

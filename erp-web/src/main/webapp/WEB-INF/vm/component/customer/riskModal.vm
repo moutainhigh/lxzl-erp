@@ -6,12 +6,50 @@
         <form method="post" id="riskCustomerForm" description="风控授信">
             <div class="panel-body p25">
                 <div class="section row">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <label for="creditAmount" class="field-label">授信额度</label>
                         <label for="creditAmount" class="field prepend-icon">
                             <input type="text" name="creditAmount" id="creditAmount" class="gui-input required moneyNumber" maxlength="7">
                             <label for="creditAmount" class="field-icon"><i class="fa fa-jpy"></i>
                             </label>
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="returnVisitFrequency" class="field-label">回访频率</label>
+                        <label for="returnVisitFrequency" class="field prepend-icon">
+                            <input type="text" name="returnVisitFrequency" id="returnVisitFrequency" class="gui-input required number" maxlength="7">
+                            <label for="returnVisitFrequency" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-4">
+                        <label for="singleLimitPrice" class="field-label">限制单台设备价值</label>
+                        <label for="singleLimitPrice" class="field select">
+                            <input type="text" name="singleLimitPrice" id="singleLimitPrice" class="gui-input moneyNumber" maxlength="7">
+                            <label for="creditAmount" class="field-icon"><i class="fa fa-jpy"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="isLimitApple" class="field-label">是否限制苹果机</label>
+                        <label for="isLimitApple" class="field select">
+                            <select class="required" name="isLimitApple">
+                                <option value="0">否</option>
+                                <option value="1">是</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="isLimitNew" class="field-label">是否限制全新机</label>
+                        <label for="isLimitNew" class="field select">
+                            <select class="required" name="isLimitNew">
+                                <option value="0">否</option>
+                                <option value="1">是</option>
+                            </select>
+                            <i class="arrow"></i>
                         </label>
                     </div>
                 </div>
@@ -96,36 +134,7 @@
                         </label>
                     </div>
                 </div>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="singleLimitPrice" class="field-label">限制单台设备价值</label>
-                        <label for="singleLimitPrice" class="field select">
-                            <input type="text" name="singleLimitPrice" id="singleLimitPrice" class="gui-input moneyNumber" maxlength="7">
-                            <label for="creditAmount" class="field-icon"><i class="fa fa-jpy"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="isLimitApple" class="field-label">是否限制苹果机</label>
-                        <label for="isLimitApple" class="field select">
-                            <select class="required" name="isLimitApple">
-                                <option value="0">否</option>
-                                <option value="1">是</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="isLimitNew" class="field-label">是否限制全新机</label>
-                        <label for="isLimitNew" class="field select">
-                            <select class="required" name="isLimitNew">
-                                <option value="0">否</option>
-                                <option value="1">是</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                </div>
+
                 <div class="section row">
                     <div class="col-md-12">
                         <label for="remark" class="field-label">备注</label>

@@ -5,7 +5,7 @@
             <span class="panel-title text-info fw700">风控授信</span>
             <div class="widget-menu pull-right">
                 {{#riskButton}}
-                <button class="btn btn-xs btn-default {{class}}">{{text}}</button>
+                <button class="btn btn-xs btn-default {{class}}" data-customerno="{{customerno}}" data-customertype="{{customerType}}">{{text}}</button>
                 {{/riskButton}}
             </div>
         </div>
@@ -55,6 +55,13 @@
                                 <span>限制单台设备价值</span>
                             </td>
                             <td>￥{{#price}}{{singleLimitPrice}}{{/price}}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fa fa-circle text-primary fs8 pr15"></i>
+                                <span>回访频率</span>
+                            </td>
+                            <td>{{returnVisitFrequency}}个月</td>
                         </tr>
                         </tbody>
                     </table>
