@@ -378,7 +378,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         productInStockCounter.setBulkMaterialCount(bulkCount);
 
         // 目前支持采购
-        if (StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE.equals(causeType)) {
+        if (StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE.equals(causeType)|| StockCauseType.STOCK_CAUSE_TYPE_TRANSFER_ORDER.equals(causeType)) {
             if (CollectionUtil.isNotEmpty(productInStorageList)) {
                 for (ProductInStorage productInStorage : productInStorageList) {
                     saveProductEquipment(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, productInStorage, currentTime, productInStockCounter);

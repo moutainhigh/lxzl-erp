@@ -15,7 +15,13 @@ public interface TransferOrderMapper extends BaseMysqlDAO<TransferOrderDO> {
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
-    Integer findTransferOrderCountByParams(Map<String, Object> maps);
+    Integer findTransferOrderCountByParams(@Param("maps") Map<String, Object> maps);
 
-	List<TransferOrderDO> findTransferOrderByParams(Map<String, Object> maps);
+	List<TransferOrderDO> findTransferOrderByParams(@Param("maps") Map<String, Object> maps);
+
+    TransferOrderDO findByNo(@Param("transferOrderNo") String transferOrderNo);
+
+    TransferOrderDO findDetailById(@Param("transferOrderId") Integer transferOrderId);
+
+    TransferOrderDO findDetailByNo(@Param("transferOrderNo") String transferOrderNo);
 }

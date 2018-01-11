@@ -22,7 +22,7 @@ public class StockCauseType {
     public static final Integer STOCK_CAUSE_TYPE_ORDER_DELIVERY = 3;
 
     /**
-     * 转移
+     * 转移入库
      */
-    public static final Integer STOCK_CAUSE_TYPE_TRANSFER_ORDER = 3;
+    public static final Integer STOCK_CAUSE_TYPE_TRANSFER_ORDER = 4;
 }
