@@ -62,7 +62,14 @@
 			</foreach>
 		</if>
 	</sql>
-
+	<sql id="customer_company_control">
+		<if test="maps.queryParam.dataAccessUserIdList != null">
+			AND ecc.create_user in
+			<foreach item="item" index="index" collection="maps.queryParam.dataAccessUserIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</sql>
 	<sql id="change_order_control">
 		<if test="maps.queryParam.dataAccessUserIdList != null">
 			AND eco.create_user in
