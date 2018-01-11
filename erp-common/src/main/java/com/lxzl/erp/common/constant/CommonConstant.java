@@ -1,5 +1,7 @@
 package com.lxzl.erp.common.constant;
 
+import java.math.BigDecimal;
+
 /**
  * Created by IntelliJ IDEA.
  * User: gaochao
@@ -44,4 +46,9 @@ public class CommonConstant {
     public static final String COMMON_CONSTANT_SEPARATOR = ",";
 
     public static final String NORMAL_STRING = "正常";
+
+    public static final Integer ORDER_NEED_VERIFY_DAYS = 90;
+    public static final Integer ORDER_NEED_VERIFY_MONTHS = 3;
+    public static final Integer ORDER_NEED_VERIFY_PRODUCT_COUNT = 100;
+    public static final BigDecimal ORDER_NEED_VERIFY_PRODUCT_AMOUNT = new BigDecimal(200000);
 }

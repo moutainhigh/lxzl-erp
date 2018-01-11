@@ -367,7 +367,7 @@ public class ErrorCode {
     public static final String PRODUCT_SKU_CAN_NOT_REPEAT = "J500029";
     public static final String MATERIAL_CAN_NOT_REPEAT = "J500030";
     public static final String CUSTOMER_CONSIGN_NOT_EXISTS = "J500031";
-    public static final String CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW = "J500032";
+    public static final String CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW = "J500032";
     public static final String CUSTOMER_CONSIGN_INFO_NOT_EXISTS = "J500033";
     public static final String CUSTOMER_CONSIGN_INFO_IS_MAIN_NOT_NULL = "J500034";
     public static final String CUSTOMER_CONSIGN_INFO_IS_MAIN_ERROR = "J500035";
@@ -403,6 +403,7 @@ public class ErrorCode {
     public static final String CUSTOMER_STATUS_ERROR = "J500065";
     public static final String CUSTOMER_IS_DISABLED = "J500066";
     public static final String CUSTOMER_CAN_NOT_EDIT = "J500067";
+    public static final String CUSTOMER_GET_CREDIT_NEED_RISK_INFO = "J500068";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -719,7 +720,8 @@ public class ErrorCode {
         MAP.put(MATERIAL_TYPE_HAVE_NO_MODEL, "该配件类型没有型号");
         MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_NO_NOT_NULL, "采购收货单配件项配件编号不能为空");
         MAP.put(CUSTOMER_CONSIGN_NOT_EXISTS, "客户收货地址不存在");
-        MAP.put(CUSTOMER_GETCREDIT_AMOUNT_OVER_FLOW, "客户授信额度超限");
+        MAP.put(CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW, "客户授信额度超限");
+        MAP.put(CUSTOMER_GET_CREDIT_NEED_RISK_INFO, "客户需要授信额度，未检测到风控信息");
         MAP.put(STOCK_NOT_MATCH, "备货不匹配");
         MAP.put(STOCK_NOT_ENOUGH, "备货不足，请先继续备货");
         MAP.put(MATERIAL_NOT_RENT, "不是客户在租配件，不能退还");
@@ -830,8 +832,8 @@ public class ErrorCode {
         MAP.put(RETURN_ORDER_CAN_NOT_COMMIT, "只有待提交的退还单可以提交审核");
         MAP.put(ORDER_PRODUCT_NOT_EXISTS, "商品订单项不存在");
         MAP.put(ORDER_MATERIAL_NOT_EXISTS, "商品配件项不存在");
-        MAP.put(ORDER_PRODUCT_DEPOSIT_ERROR, "订单商品押金有误，请检查");
-        MAP.put(ORDER_MATERIAL_DEPOSIT_ERROR, "订单配件押金有误，请检查");
+        MAP.put(ORDER_PRODUCT_DEPOSIT_ERROR, "订单商品押金有误，需为商品价格的倍数");
+        MAP.put(ORDER_MATERIAL_DEPOSIT_ERROR, "订单配件押金有误，需为配件价格的倍数");
         MAP.put(ORDER_DELIVERY_MODE_ERROR, "订单送货方式有误，请仔细检查");
         MAP.put(ORDER_CAN_NOT_DELIVERY_TIME_REASON, "订单未到发货时间，不能发货");
 
