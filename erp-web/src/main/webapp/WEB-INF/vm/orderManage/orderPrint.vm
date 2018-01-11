@@ -121,7 +121,7 @@
                     <dd class="mb5">{{#shortTime}}{{rentStartTime}}{{/shortTime}}&nbsp;</dd>
 
                     <dt><label>备注信息</label><span class="mr5">：</span></dt>
-                    <dd>{{remark}}&nbsp;</dd>
+                    <dd>{{buyerRemark}}&nbsp;</dd>
                 </dl>
             </div>
             <div class="col-xs-4">
