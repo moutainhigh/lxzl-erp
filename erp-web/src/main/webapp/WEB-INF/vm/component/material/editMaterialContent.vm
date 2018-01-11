@@ -56,7 +56,7 @@
             <div class="section">
                 <label for="userName" class="field-label">配件型号(生成配件编号)</label>
                 <label for="materialModel" class="field prepend-icon">
-                    <input type="text" name="materialModel" id="materialModel" class="gui-input required" placeholder="数字、英文字母、横杠" />
+                    <input type="text" name="materialModel" id="materialModel" class="gui-input required letterOrNumber2" placeholder="数字、英文字母、横杠" />
                     <label for="materialModel" class="field-icon"><i class="fa fa-tag"></i></label>
                 </label>
             </div>
