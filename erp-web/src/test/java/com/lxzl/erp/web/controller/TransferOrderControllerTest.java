@@ -34,13 +34,29 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
         List<TransferOrderProduct> transferOrderProductList= new ArrayList<>();
         TransferOrderProduct transferOrderProduct1 = new TransferOrderProduct();
         transferOrderProduct1.setProductSkuId(57);
-        transferOrderProduct1.setProductCount(5);
+        transferOrderProduct1.setProductCount(3);
+        transferOrderProduct1.setIsNew(0);
 
         TransferOrderProduct transferOrderProduct2 = new TransferOrderProduct();
-        transferOrderProduct2.setProductSkuId(58);
-        transferOrderProduct2.setProductCount(5);
+        transferOrderProduct2.setProductSkuId(57);
+        transferOrderProduct2.setProductCount(3);
+        transferOrderProduct2.setIsNew(1);
+
+        TransferOrderProduct transferOrderProduct3 = new TransferOrderProduct();
+        transferOrderProduct3.setProductSkuId(96);
+        transferOrderProduct3.setProductCount(3);
+        transferOrderProduct3.setIsNew(0);
+
+        TransferOrderProduct transferOrderProduct4 = new TransferOrderProduct();
+        transferOrderProduct4.setProductSkuId(96);
+        transferOrderProduct4.setProductCount(3);
+        transferOrderProduct4.setIsNew(1);
+
         transferOrderProductList.add(transferOrderProduct1);
         transferOrderProductList.add(transferOrderProduct2);
+        transferOrderProductList.add(transferOrderProduct3);
+        transferOrderProductList.add(transferOrderProduct4);
+
 
         List<TransferOrderMaterial> TransferOrderMaterialList = new ArrayList<>();
         TransferOrderMaterial transferOrderMaterial1 = new TransferOrderMaterial();
@@ -54,9 +70,9 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
         TransferOrderMaterialList.add(transferOrderMaterial2);
 
         transferOrder.setTransferOrderProductList(transferOrderProductList);
-        transferOrder.setTransferOrderMaterialList(TransferOrderMaterialList);
+//        transferOrder.setTransferOrderMaterialList(TransferOrderMaterialList);
 
-        TestResult testResult = getJsonTestResult("/transferOrder/addTransferOrderInto", transferOrder);
+        TestResult testResult = getJsonTestResult("/transferOrder/createTransferOrderInto", transferOrder);
     }
 
     @Test
@@ -67,7 +83,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
         transferOrder.setTransferOrderType(TransferOrderType.INTEGER_ORDER_TYPE_OUT);
         transferOrder.setRemark("转出123备注");
 
-        TestResult testResult = getJsonTestResult("/transferOrder/addTransferOrderOut", transferOrder);
+        TestResult testResult = getJsonTestResult("/transferOrder/createTransferOrderOut", transferOrder);
     }
 
     @Test
@@ -129,7 +145,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     @Test
     public void updateTransferOrderInto() throws Exception{
         TransferOrder transferOrder = new TransferOrder();
-        transferOrder.setTransferOrderNo("");
+        transferOrder.setTransferOrderNo("LXT40000012018011129");
         transferOrder.setTransferOrderName("测试转移单转入update");
         transferOrder.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT);
         transferOrder.setTransferOrderMode(TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO);
@@ -139,25 +155,43 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
 
         List<TransferOrderProduct> transferOrderProductList= new ArrayList<>();
         TransferOrderProduct transferOrderProduct1 = new TransferOrderProduct();
-        transferOrderProduct1.setProductSkuId(59);
-        transferOrderProduct1.setProductCount(7);
+        transferOrderProduct1.setProductSkuId(57);
+        transferOrderProduct1.setProductCount(2);
+        transferOrderProduct1.setIsNew(0);
 
         TransferOrderProduct transferOrderProduct2 = new TransferOrderProduct();
-        transferOrderProduct2.setProductSkuId(60);
-        transferOrderProduct2.setProductCount(7);
-        transferOrderProductList.add(transferOrderProduct1);
+        transferOrderProduct2.setProductSkuId(57);
+        transferOrderProduct2.setProductCount(2);
+        transferOrderProduct2.setIsNew(1);
+
+        TransferOrderProduct transferOrderProduct3 = new TransferOrderProduct();
+        transferOrderProduct3.setProductSkuId(96);
+        transferOrderProduct3.setProductCount(2);
+        transferOrderProduct3.setIsNew(0);
+
+        TransferOrderProduct transferOrderProduct4 = new TransferOrderProduct();
+        transferOrderProduct4.setProductSkuId(96);
+        transferOrderProduct4.setProductCount(2);
+        transferOrderProduct4.setIsNew(1);
+
+//        transferOrderProductList.add(transferOrderProduct1);
         transferOrderProductList.add(transferOrderProduct2);
+        transferOrderProductList.add(transferOrderProduct3);
+//        transferOrderProductList.add(transferOrderProduct4);
 
         List<TransferOrderMaterial> TransferOrderMaterialList = new ArrayList<>();
         TransferOrderMaterial transferOrderMaterial1 = new TransferOrderMaterial();
         transferOrderMaterial1.setMaterialNo("M201712251528189361350");
-        transferOrderMaterial1.setMaterialCount(7);
+        transferOrderMaterial1.setMaterialCount(2);
+        transferOrderMaterial1.setIsNew(0);
 
         TransferOrderMaterial transferOrderMaterial2 = new TransferOrderMaterial();
-        transferOrderMaterial2.setMaterialNo("M201712251042319161870");
-        transferOrderMaterial2.setMaterialCount(7);
-        TransferOrderMaterialList.add(transferOrderMaterial1);
-        TransferOrderMaterialList.add(transferOrderMaterial2);
+        transferOrderMaterial2.setMaterialNo("M201712251528189361350");
+        transferOrderMaterial2.setMaterialCount(2);
+        transferOrderMaterial2.setIsNew(1);
+
+//        TransferOrderMaterialList.add(transferOrderMaterial1);
+//        TransferOrderMaterialList.add(transferOrderMaterial2);
 
         transferOrder.setTransferOrderProductList(transferOrderProductList);
         transferOrder.setTransferOrderMaterialList(TransferOrderMaterialList);

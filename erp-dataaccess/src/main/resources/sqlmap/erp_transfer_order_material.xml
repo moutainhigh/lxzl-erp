@@ -96,9 +96,9 @@
 		WHERE etom.transfer_order_id = #{transferOrderId,jdbcType=INTEGER} AND etom.data_status = 1
 	</select>
 
-	<update id="clearDateStatus" >
+	<update id="clearDateStatusByTransferIdAndMaterialNoAndIsNew" >
 		UPDATE erp_transfer_order_material SET data_status = 2 WHERE
-		material_no = #{materialNo,jdbcType=VARCHAR} AND transfer_order_id = #{transferOrderId,jdbcType=INTEGER} AND material_count = #{materialCount,jdbcType=INTEGER}
+		material_no = #{materialNo,jdbcType=VARCHAR} AND transfer_order_id = #{transferOrderId,jdbcType=INTEGER} AND is_new = #{isNew,jdbcType=INTEGER}
 	</update>
 
 	<select id="findByTransferOrderIdAndMaterialNoAndIsNew" resultMap="TransferOrderMaterialDO">
@@ -106,4 +106,8 @@
 		etom.transfer_order_id = #{transferOrderId,jdbcType=INTEGER} AND etom.material_no = #{materialNo,jdbcType=VARCHAR} AND etom.is_new = #{isNew,jdbcType=INTEGER} AND etom.data_status = 1
 	</select>
 
+	<select id="findByTransferOrderIdAndIsNew" resultMap="TransferOrderMaterialDO">
+		SELECT <include refid="column_List"/> FROM erp_transfer_order_material etom WHERE
+		etom.transfer_order_id = #{transferOrderId,jdbcType=INTEGER} AND etom.is_new = #{isNew,jdbcType=INTEGER} AND etom.data_status = 1
+	</select>
 </mapper>

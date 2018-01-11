@@ -15,7 +15,9 @@ public interface TransferOrderProductMapper extends BaseMysqlDAO<TransferOrderPr
 
     List<TransferOrderProductDO> findByTransferOrderId(@Param("transferOrderId")Integer transferOrderId);
 
-	void clearDateStatus(@Param("productSkuId")Integer productSkuId,@Param("transferOrderId")Integer transferOrderId,@Param("productCount")Integer productCount);
+	void clearDateStatusByTransferIdAndProductSkuIdAndIsNew(@Param("productSkuId")Integer productSkuId,@Param("transferOrderId")Integer transferOrderId,@Param("isNew")Integer isNew);
 
     TransferOrderProductDO findByTransferOrderIdAndSkuIdAndIsNew(@Param("transferOrderId")Integer transferOrderId,@Param("productSkuId")Integer productSkuId,@Param("isNew")Integer isNew);
+
+    List<TransferOrderProductDO> findByTransferOrderIdAndIsNew(@Param("transferOrderId")Integer transferOrderId,@Param("isNew")Integer isNew);
 }

@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.QueryGroup;
 import com.lxzl.erp.common.domain.validGroup.TransferOrder.*;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.transferOrder.TransferOrderService;
@@ -61,7 +62,7 @@ public class TransferOrderController {
      * 修改转入转移单
      */
     @RequestMapping(value = "updateTransferOrderInto", method = RequestMethod.POST)
-    public Result updateTransferOrderInto(@RequestBody  @Validated(IdGroup.class) TransferOrder transferOrder, BindingResult validResult) {
+    public Result updateTransferOrderInto(@RequestBody  @Validated(UpdateGroup.class) TransferOrder transferOrder, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = transferOrderService.updateTransferOrderInto(transferOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }

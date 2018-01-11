@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.validGroup.QueryGroup;
 import com.lxzl.erp.common.domain.validGroup.TransferOrder.DumpTransferOrderProductEquipmentOutGroup;
 import com.lxzl.erp.common.domain.validGroup.TransferOrder.TransferOrderOutGroup;
 import com.lxzl.erp.common.domain.validGroup.TransferOrder.TransferOrderProductEquipmentOutGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
@@ -22,14 +23,14 @@ public class TransferOrder extends BasePO {
 
 	@NotNull(message = ErrorCode.TRANSFER_ORDER_ID_NOT_NULL ,groups = {QueryGroup.class,TransferOrderProductEquipmentOutGroup.class,DumpTransferOrderProductEquipmentOutGroup.class})
 	private Integer transferOrderId;   //唯一标识
-	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NO_NOT_NULL ,groups = {IdGroup.class})
+	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NO_NOT_NULL ,groups = {IdGroup.class, UpdateGroup.class})
 	private String transferOrderNo;   //转移单编号
-	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NAME_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class})
+	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NAME_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class,UpdateGroup.class})
 	private String transferOrderName;   //转移单名称
 	private Integer transferOrderStatus;   //转移单状态，0初始化，4审批中，8转移成功，16取消转移
-	@NotNull(message = ErrorCode.TRANSFER_ORDER_MODE_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class})
+	@NotNull(message = ErrorCode.TRANSFER_ORDER_MODE_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class,UpdateGroup.class})
 	private Integer transferOrderMode;   //转移方式，1转入，2转出（凭空转入转出）
-	@NotNull(message = ErrorCode.TRANSFER_ORDER_TYPE_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class})
+	@NotNull(message = ErrorCode.TRANSFER_ORDER_TYPE_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class,UpdateGroup.class})
 	private Integer transferOrderType;   //转移类型，1外借入库转入，2试验机转入，3转出，99其他
 	@NotNull(message = ErrorCode.WAREHOUSE_ID_NOT_NULL ,groups = {AddGroup.class})
 	private Integer warehouseId;   //仓库ID，哪个库房转移
