@@ -107,6 +107,10 @@
         <mapper resource="sqlmap/erp_assemble_order_product_equipment.xml" />
 
         <mapper resource="sqlmap/erp_transfer_order.xml" />
+        <mapper resource="sqlmap/erp_transfer_order_material.xml" />
+        <mapper resource="sqlmap/erp_transfer_order_material_bulk.xml" />
+        <mapper resource="sqlmap/erp_transfer_order_product.xml" />
+        <mapper resource="sqlmap/erp_transfer_order_product_equipment.xml" />
 
         <mapper resource="sqlmap/erp_purchase_apply_order.xml" />
         <mapper resource="sqlmap/erp_purchase_apply_order_product.xml" />

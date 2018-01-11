@@ -43,4 +43,6 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
     Integer listByPurchaseReceiveOrderMaterialIdCount(@Param("maps") Map<String, Object> paramMap);
 
     void returnEquipment(@Param("equipmentNo") String equipmentNo);
+
+    List<BulkMaterialDO> findByEquipmentNo(@Param("equipmentNo")String equipmentNo);
 }

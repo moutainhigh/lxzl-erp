@@ -502,4 +502,9 @@
 		UPDATE erp_bulk_material SET bulk_material_status = #{bulkMaterialStatus, jdbcType=INTEGER}
 		WHERE current_equipment_no = #{equipmentNo, jdbcType=VARCHAR}
 	</update>
+
+	<select id="findByEquipmentNo" resultMap="BulkMaterialDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm WHERE
+		ebm.current_equipment_no = #{equipmentNo,jdbcType=VARCHAR} AND ebm.data_status = 1
+	</select>
 </mapper>
