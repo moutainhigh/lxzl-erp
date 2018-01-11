@@ -6,9 +6,7 @@ import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.QueryGroup;
-import com.lxzl.erp.common.domain.validGroup.TransferOrder.DumpTransferOrderProductEquipmentOutGroup;
-import com.lxzl.erp.common.domain.validGroup.TransferOrder.TransferOrderOutGroup;
-import com.lxzl.erp.common.domain.validGroup.TransferOrder.TransferOrderProductEquipmentOutGroup;
+import com.lxzl.erp.common.domain.validGroup.TransferOrder.*;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -23,16 +21,16 @@ public class TransferOrder extends BasePO {
 
 	@NotNull(message = ErrorCode.TRANSFER_ORDER_ID_NOT_NULL ,groups = {QueryGroup.class,TransferOrderProductEquipmentOutGroup.class,DumpTransferOrderProductEquipmentOutGroup.class})
 	private Integer transferOrderId;   //唯一标识
-	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NO_NOT_NULL ,groups = {IdGroup.class, UpdateGroup.class})
+	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NO_NOT_NULL ,groups = {IdGroup.class, UpdateTransferOrderIntoGroup.class,UpdateTransferOrderOutGroup.class})
 	private String transferOrderNo;   //转移单编号
-	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NAME_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class,UpdateGroup.class})
+	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NAME_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class,UpdateTransferOrderIntoGroup.class,UpdateTransferOrderOutGroup.class})
 	private String transferOrderName;   //转移单名称
 	private Integer transferOrderStatus;   //转移单状态，0初始化，4审批中，8转移成功，16取消转移
-	@NotNull(message = ErrorCode.TRANSFER_ORDER_MODE_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class,UpdateGroup.class})
+	@NotNull(message = ErrorCode.TRANSFER_ORDER_MODE_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class})
 	private Integer transferOrderMode;   //转移方式，1转入，2转出（凭空转入转出）
-	@NotNull(message = ErrorCode.TRANSFER_ORDER_TYPE_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class,UpdateGroup.class})
+	@NotNull(message = ErrorCode.TRANSFER_ORDER_TYPE_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class})
 	private Integer transferOrderType;   //转移类型，1外借入库转入，2试验机转入，3转出，99其他
-	@NotNull(message = ErrorCode.WAREHOUSE_ID_NOT_NULL ,groups = {AddGroup.class,UpdateGroup.class})
+	@NotNull(message = ErrorCode.WAREHOUSE_ID_NOT_NULL ,groups = {AddGroup.class})
 	private Integer warehouseId;   //仓库ID，哪个库房转移
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -47,7 +45,7 @@ public class TransferOrder extends BasePO {
 	private List<TransferOrderMaterial> transferOrderMaterialList;
 
 	@NotBlank(message = ErrorCode.TRANSFER_ORDER_PRODUCT_EQUIPMENT_NO_NOT_NULL ,groups = {TransferOrderProductEquipmentOutGroup.class, DumpTransferOrderProductEquipmentOutGroup.class})
-	private String productEquipmentNo;
+	private String productEquipmentNo;//设备编号
 
 	// 审核人和提交审核信息,只提供给审核的时候用
 	private Integer verifyUser;

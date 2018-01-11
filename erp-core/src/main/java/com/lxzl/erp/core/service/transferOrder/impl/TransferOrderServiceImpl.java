@@ -270,6 +270,25 @@ public class TransferOrderServiceImpl implements TransferOrderService {
     }
 
     @Override
+    public ServiceResult<String, String> updateTransferOrderOut(TransferOrder transferOrder) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+
+        TransferOrderDO transferOrderDO = transferOrderMapper.findDetailByNo(transferOrder.getTransferOrderNo());
+        //todo 以后转出类型会增加，此时不知道以后的类型是什么，所以先不用修改
+//        transferOrderDO.setTransferOrderType();
+        transferOrderDO.setTransferOrderName(transferOrder.getTransferOrderName());
+        transferOrderDO.setRemark(transferOrder.getRemark());
+        transferOrderDO.setUpdateTime(now);
+        transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        transferOrderMapper.update(transferOrderDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(transferOrder.getTransferOrderNo());
+        return serviceResult;
+    }
+
+    @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> transferOrderProductEquipmentOut(TransferOrder transferOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
@@ -369,7 +388,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(transferOrderProductEquipmentDO.getId().toString());
+        serviceResult.setResult(transferOrderDO.getTransferOrderNo());
         return serviceResult;
     }
 
@@ -449,7 +468,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(transferOrderProductEquipmentDO.getId().toString());
+        serviceResult.setResult(transferOrderDO.getTransferOrderNo());
         return serviceResult;
     }
 
@@ -505,15 +524,22 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         }
 
         //生成转移单配件表
-        TransferOrderMaterialDO transferOrderMaterialDO = ConverterUtil.convert(transferOrderMaterial,TransferOrderMaterialDO.class);
-        transferOrderMaterialDO.setTransferOrderId(transferOrderDO.getId());
-        transferOrderMaterialDO.setMaterialId(materialDO.getId());
-        transferOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        transferOrderMaterialDO.setCreateTime(now);
-        transferOrderMaterialDO.setCreateUser(userSupport.getCurrentUserId().toString());
-        transferOrderMaterialDO.setUpdateTime(now);
-        transferOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        transferOrderMaterialMapper.save(transferOrderMaterialDO);
+        TransferOrderMaterialDO transferOrderMaterialDO = transferOrderMaterialMapper.findByTransferOrderIdAndMaterialNoAndIsNew(transferOrderDO.getId(),transferOrderMaterial.getMaterialNo(),transferOrderMaterial.getIsNew());
+        if (transferOrderMaterialDO == null){
+            transferOrderMaterialDO= ConverterUtil.convert(transferOrderMaterial,TransferOrderMaterialDO.class);
+            transferOrderMaterialDO.setMaterialId(materialDO.getId());
+            transferOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            transferOrderMaterialDO.setCreateTime(now);
+            transferOrderMaterialDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            transferOrderMaterialDO.setUpdateTime(now);
+            transferOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            transferOrderMaterialMapper.save(transferOrderMaterialDO);
+        }else{
+            transferOrderMaterialDO.setMaterialCount(transferOrderMaterialDO.getMaterialCount() + transferOrderMaterial.getMaterialCount());
+            transferOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            transferOrderMaterialDO.setUpdateTime(now);
+            transferOrderMaterialMapper.update(transferOrderMaterialDO);
+        }
 
         //生成转移单配件散料表
         for (BulkMaterialDO bulkMaterialDO : bulkMaterialDOList){
@@ -536,7 +562,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(transferOrderMaterialDO.getId().toString());
+        serviceResult.setResult(transferOrderDO.getTransferOrderNo());
         return serviceResult;
     }
 
@@ -657,27 +683,11 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(transferOrderMaterialDO.getId().toString());
+        serviceResult.setResult(transferOrderDO.getTransferOrderNo());
         return serviceResult;
     }
 
-    @Override
-    public ServiceResult<String, String> updateTransferOrderOut(TransferOrder transferOrder) {
-        ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        Date now = new Date();
 
-        TransferOrderDO transferOrderDO = transferOrderMapper.findDetailByNo(transferOrder.getTransferOrderNo());
-        //todo 以后转出类型会增加，此时不知道以后的类型是什么，所以先不能修改
-//        transferOrderDO.setTransferOrderType();
-        transferOrderDO.setTransferOrderName(transferOrder.getTransferOrderName());
-        transferOrderDO.setUpdateTime(now);
-        transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        transferOrderMapper.update(transferOrderDO);
-
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(transferOrder.getTransferOrderNo());
-        return serviceResult;
-    }
 
     @Override
     public ServiceResult<String, String> cancelTransferOrder(String transferOrderNo) {
