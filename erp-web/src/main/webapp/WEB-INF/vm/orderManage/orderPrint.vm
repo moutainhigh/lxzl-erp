@@ -19,6 +19,7 @@
             border-radius: 5px;
             background: white;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
         .printHead {
             height:1cm;
@@ -73,13 +74,23 @@
         .printH2 {
             font-size: 1.5em;
         }
+
+        .qrcodeCanvas {
+            height:1.5cm;
+            width: 1.5cm;
+            float: right;
+            position: absolute;
+            right: 0;
+            right: 0.5cm;
+            top:0.3cm;
+        }
     </style>
 
 </head>
 <body style="height: auto;">
     <div class="panel">
     <div class="panel-heading">
-        <span class="panel-title"><span class="glyphicon glyphicon-print"></span>打印订单</span>
+        <span class="panel-title"><span class="glyphicon glyphicon-print"></span>打印订单（暂不兼容谷歌浏览器）</span>
         <div class="panel-header-menu pull-right mr10">
             <a href="javascript:window.print()" class="btn btn-xs btn-default btn-gradient mr5"> <i class="fa fa-print fs13"></i> </a>
         </div>
@@ -252,8 +263,9 @@
                 <div class="print-col">
                     <p  class="pn mn text-center printH1"><b>租赁设备交货单</b></p>
                 </div>
-                <div class="print-col">
-                    <img src="" class="img-responsive pull-right" id="barcode" alt="凌雄租赁" />
+                <div class="print-col text-right">
+##                    <img src="" class="img-responsive pull-right" id="barcode" alt="凌雄租赁" />
+                    <div class="qrcodeCanvas" id="qrcodeCanvas{{pagerIndex}}"></div>
                 </div>
             </div>
 
@@ -428,6 +440,7 @@
 
     #parse("layout/footer.vm")
     <script type="text/javascript" src="${staticCommon}vendor/plugins/jsBarcode/JsBarcode.all.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/qrcode/qrcode.min.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'api.data.js',
