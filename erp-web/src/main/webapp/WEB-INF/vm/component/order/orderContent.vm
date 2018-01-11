@@ -143,6 +143,7 @@
                             <th>租赁类型</th>
                             <th>租赁时长</th>
                             <th>设备押金</th>
+                            <th>支付方式</th>
                             <th class="text-right">操作</th>
                         </tr>
                         </thead>
@@ -207,6 +208,19 @@
                                 </label>
                                 {{/showDepositAmount}}
                             </td>
+                            <td>
+                                {{#showDepositAmount}}
+                                <label class="field select">
+                                    <select name="payMode-{{skuId}}-{{rowKey}}" class="payMode required" style="min-width: 130px;">
+                                        <option value="">选择支付方式</option>
+                                        {{#payModeList}}
+                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                        {{/payModeList}}
+                                    </select>
+                                    <i class="arrow"></i>
+                                </label>
+                                {{/showDepositAmount}}
+                            </td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
                                     <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
@@ -260,6 +274,7 @@
                             <th>租赁类型</th>
                             <th>租赁时长</th>
                             <th>设备押金</th>
+                            <th>支付方式</th>
                             <th class="text-right">操作</th>
                         </tr>
                         </thead>
@@ -322,6 +337,19 @@
                                 <label class="field prepend-icon">
                                     <input type="text" name="depositAmount-{{materialNo}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入配件押金" />
                                     <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                </label>
+                                {{/showDepositAmount}}
+                            </td>
+                            <td>
+                                {{#showDepositAmount}}
+                                <label class="field select">
+                                    <select name="payMode-{{skuId}}-{{rowKey}}" class="payMode required" style="min-width: 130px;">
+                                        <option value="">选择支付方式</option>
+                                        {{#payModeList}}
+                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                        {{/payModeList}}
+                                    </select>
+                                    <i class="arrow"></i>
                                 </label>
                                 {{/showDepositAmount}}
                             </td>
