@@ -7,7 +7,6 @@ import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.TransferOrder.TramsferOrderMaterialOutGroup;
 import com.lxzl.erp.common.domain.validGroup.TransferOrder.DumpTransferOrderMaterialOutGroup;
 import com.lxzl.erp.common.domain.validGroup.TransferOrder.UpdateTransferOrderIntoGroup;
-import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
@@ -29,8 +28,6 @@ public class TransferOrderMaterial extends BasePO {
 	@NotNull(message = ErrorCode.TRANSFER_ORDER_IS_NEW_NOT_NULL,groups = {AddGroup.class,UpdateTransferOrderIntoGroup.class,TramsferOrderMaterialOutGroup.class,DumpTransferOrderMaterialOutGroup.class})
 	private Integer isNew;   //是否全新，1是，0否
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
-
-
 	private String remark;   //备注
 	private Date createTime;   //添加时间
 	private String createUser;   //添加人
