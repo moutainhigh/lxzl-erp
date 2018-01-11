@@ -258,7 +258,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         }
 
 
-        transferOrderDO.setTransferOrderType(transferOrder.getTransferOrderType());
+        transferOrderDO.setTransferOrderName(transferOrder.getTransferOrderName());
         transferOrderDO.setRemark(transferOrder.getRemark());
         transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         transferOrderDO.setUpdateTime(now);

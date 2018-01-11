@@ -23,6 +23,8 @@ public class TransferOrderDO  extends BaseDO {
 	@Transient
 	private List<TransferOrderMaterialDO> transferOrderMaterialDOList;
 
+	private String warehouseName;
+
 	public Integer getId(){
 		return id;
 	}
@@ -109,5 +111,13 @@ public class TransferOrderDO  extends BaseDO {
 
 	public void setTransferOrderMaterialDOList(List<TransferOrderMaterialDO> transferOrderMaterialDOList) {
 		this.transferOrderMaterialDOList = transferOrderMaterialDOList;
+	}
+
+	public String getWarehouseName() {
+		return warehouseName;
+	}
+
+	public void setWarehouseName(String warehouseName) {
+		this.warehouseName = warehouseName;
 	}
 }

@@ -382,13 +382,13 @@
 				AND ecp.district = #{maps.queryParam.district, jdbcType=INTEGER}
 			</if>
 			<if test="maps.queryParam.personNo != null &amp;&amp; maps.queryParam.personNo != ''">
-				AND ecp.personNo LIKE CONCAT('%','${maps.queryParam.personNo}','%' )
+				AND ecp.person_no LIKE CONCAT('%','${maps.queryParam.personNo}','%' )
 			</if>
 			<if test="maps.queryParam.connectRealName != null &amp;&amp; maps.queryParam.connectRealName != ''">
-				AND ecp.connectRealName LIKE CONCAT('%','${maps.queryParam.connectRealName}','%' )
+				AND ecp.connect_real_name LIKE CONCAT('%','${maps.queryParam.connectRealName}','%' )
 			</if>
 			<if test="maps.queryParam.connectPhone != null &amp;&amp; maps.queryParam.connectPhone != ''">
-				AND ecp.connectPhone LIKE CONCAT('%','${maps.queryParam.connectPhone}','%' )
+				AND ecp.connect_phone LIKE CONCAT('%','${maps.queryParam.connectPhone}','%' )
 			</if>
 			<if test="true">
 				AND ec.data_status = 1 AND ec.customer_type=2
@@ -426,13 +426,13 @@
 				AND ecp.district = #{maps.queryParam.district, jdbcType=INTEGER}
 			</if>
 			<if test="maps.queryParam.personNo != null &amp;&amp; maps.queryParam.personNo != ''">
-				AND ecp.personNo LIKE CONCAT('%','${maps.queryParam.personNo}','%' )
+				AND ecp.person_no LIKE CONCAT('%','${maps.queryParam.personNo}','%' )
 			</if>
 			<if test="maps.queryParam.connectRealName != null &amp;&amp; maps.queryParam.connectRealName != ''">
-				AND ecp.connectRealName LIKE CONCAT('%','${maps.queryParam.connectRealName}','%' )
+				AND ecp.connect_real_name LIKE CONCAT('%','${maps.queryParam.connectRealName}','%' )
 			</if>
 			<if test="maps.queryParam.connectPhone != null &amp;&amp; maps.queryParam.connectPhone != ''">
-				AND ecp.connectPhone LIKE CONCAT('%','${maps.queryParam.connectPhone}','%' )
+				AND ecp.connect_phone LIKE CONCAT('%','${maps.queryParam.connectPhone}','%' )
 			</if>
 			<if test="true">
 				AND ec.data_status = 1 AND ec.customer_type=2

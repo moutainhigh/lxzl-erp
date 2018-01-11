@@ -18,7 +18,7 @@ import java.util.List;
 public class TransferOrderMaterial extends BasePO {
 
 	private Integer transferOrderMaterialId;   //唯一标识
-	@NotNull(message = ErrorCode.TRANSFER_ORDER_ID_NOT_NULL,groups = {UpdateGroup.class,TramsferOrderMaterialOutGroup.class,DumpTransferOrderMaterialOutGroup.class})
+	@NotNull(message = ErrorCode.TRANSFER_ORDER_ID_NOT_NULL,groups = {TramsferOrderMaterialOutGroup.class,DumpTransferOrderMaterialOutGroup.class})
 	private Integer transferOrderId;   //转移单ID
 	private Integer materialId;   //物料ID
 	@NotBlank(message = ErrorCode.TRANSFER_ORDER_MATERIAL_NO_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class,TramsferOrderMaterialOutGroup.class,DumpTransferOrderMaterialOutGroup.class})
@@ -28,6 +28,8 @@ public class TransferOrderMaterial extends BasePO {
 	@NotNull(message = ErrorCode.TRANSFER_ORDER_IS_NEW_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class,TramsferOrderMaterialOutGroup.class,DumpTransferOrderMaterialOutGroup.class})
 	private Integer isNew;   //是否全新，1是，0否
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
+
+
 	private String remark;   //备注
 	private Date createTime;   //添加时间
 	private String createUser;   //添加人
