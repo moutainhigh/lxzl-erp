@@ -49,6 +49,7 @@
             </if>
             <if test="true">
                 and er.data_status = 1
+                and er.is_super_admin = 0
             </if>
         </where>
         order by er.id
@@ -70,6 +71,7 @@
             </if>
             <if test="true">
                 and er.data_status = 1
+                and er.is_super_admin = 0
             </if>
         </where>
     </select>
