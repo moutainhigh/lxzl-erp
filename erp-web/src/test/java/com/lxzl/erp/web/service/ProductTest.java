@@ -387,10 +387,6 @@ public class ProductTest extends BaseUnTransactionalTest {
 
         Integer notepad = 800002, AIO = 800003, chassis = 800004, pad = 800005, monitor = 800006;
         Map<Integer, String> categoryMap = new HashMap<>();
-        categoryMap.put(notepad, "笔记本");
-        categoryMap.put(AIO, "一体机");
-        categoryMap.put(chassis, "台式机");
-        categoryMap.put(pad, "平板电脑");
         categoryMap.put(monitor, "显示器");
 
         for (ProductCategoryPropertyDO productCategoryPropertyDO : productCategoryPropertyDOList) {
@@ -661,7 +657,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     String[] valueName = new String[]{"8", "16", "32", "64", "128", "256"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
+                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value+ "G", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
                         productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
                         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
                     }
