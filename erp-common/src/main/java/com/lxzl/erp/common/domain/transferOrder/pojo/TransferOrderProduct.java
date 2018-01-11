@@ -21,6 +21,7 @@ public class TransferOrderProduct extends BasePO {
 	private Integer productSkuId;   //转移商品SKU ID
 	@NotNull(message = ErrorCode.TRANSFER_ORDER_PRODUCT_COUNT_NOT_NULL ,groups = {AddGroup.class})
 	private Integer productCount;   //商品数量
+	@NotNull(message = ErrorCode.TRANSFER_ORDER_PRODUCT_IS_NEW_NOT_NULL ,groups = {AddGroup.class})
 	private Integer isNew;   //是否全新，1是，0否
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注

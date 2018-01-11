@@ -107,9 +107,6 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                 TransferOrderProductDO transferOrderProductDO = ConverterUtil.convert(transferOrderProduct, TransferOrderProductDO.class);
                 transferOrderProductDO.setProductId(productSkuDO.getProductId());
                 transferOrderProductDO.setTransferOrderId(transferOrderDO.getId());
-                if (transferOrderProduct.getIsNew() == null) {
-                    transferOrderProductDO.setIsNew(CommonConstant.COMMON_CONSTANT_NO);
-                }
                 transferOrderProductDO.setRemark(transferOrderProduct.getRemark());
                 transferOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 transferOrderProductDO.setCreateTime(now);

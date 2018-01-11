@@ -24,7 +24,7 @@ public class TransferOrderMaterial extends BasePO {
 	private String materialNo;   //物料编号
 	@NotNull(message = ErrorCode.TRANSFER_ORDER_MATERIAL_COUNT_NOT_NULL,groups = {AddGroup.class,TramsferOrderMaterialOutGroup.class,DumpTransferOrderMaterialOutGroup.class})
 	private Integer materialCount;   //物料数量
-	@NotNull(message = ErrorCode.TRANSFER_ORDER_IS_NEW_NOT_NULL,groups = {TramsferOrderMaterialOutGroup.class,DumpTransferOrderMaterialOutGroup.class})
+	@NotNull(message = ErrorCode.TRANSFER_ORDER_IS_NEW_NOT_NULL,groups = {AddGroup.class,TramsferOrderMaterialOutGroup.class,DumpTransferOrderMaterialOutGroup.class})
 	private Integer isNew;   //是否全新，1是，0否
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注

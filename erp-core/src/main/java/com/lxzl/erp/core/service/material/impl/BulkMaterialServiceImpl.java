@@ -48,7 +48,7 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
     @Autowired
     private MaterialMapper materialMapper;
 
-
+    //todo 检查拆卸和安装时，设备时空闲中时，设备当中有散料，那么散料状态就是租赁中，需要好好检查下
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> dismantleBulkMaterial(BulkMaterial bulkMaterial) {
@@ -210,17 +210,18 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
             return serviceResult;
         }
 
+        //该散料是否存在设备中
+        if (dismantlebulkMaterialDO.getCurrentEquipmentId() == null){
+            serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NOT_IN_PRODUCT_EQUIPMENT);
+            return serviceResult;
+        }
+
         //判断散料的状态是否租赁中
         if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY.equals(dismantlebulkMaterialDO.getBulkMaterialStatus())){
             serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NOT_BUSY,dismantlebulkMaterialDO.getBulkMaterialNo());
             return serviceResult;
         }
 
-        //该散料是否存在设备中
-        if (dismantlebulkMaterialDO.getCurrentEquipmentId() == null){
-            serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NOT_IN_PRODUCT_EQUIPMENT);
-            return serviceResult;
-        }
 
         //散料处于租赁中并且有当前设备时，
         // 通过当前设备ID找到当前设备物料，通过物料ID查看当前设备的该物料是否还有数量，
@@ -249,6 +250,12 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
             return serviceResult;
         }
 
+        //判断该散料是否已经插在其他设备上
+        if (installbulkMaterialDO.getCurrentEquipmentId() != null){
+            serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT);
+            return serviceResult;
+        }
+
         //首先判断状态
         if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE.equals(installbulkMaterialDO.getBulkMaterialStatus()) &&
                 !(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY.equals(installbulkMaterialDO.getBulkMaterialStatus()) && StringUtil.isEmpty(installbulkMaterialDO.getOrderNo()))) {
@@ -256,11 +263,6 @@ public class BulkMaterialServiceImpl implements BulkMaterialService {
             return serviceResult;
         }
 
-        //散料处于空闲状态，判断该散料是否已经插在其他设备上
-        if (installbulkMaterialDO.getCurrentEquipmentId() != null){
-            serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_IN_PRODUCT_EQUIPMENT);
-            return serviceResult;
-        }
 
         //判断安装的散料仓库和拆卸的散料仓库是否相等
         if (!installbulkMaterialDO.getCurrentWarehouseId().equals(dismantlebulkMaterialDO.getCurrentWarehouseId())){
