@@ -37,11 +37,12 @@ public class AmountSupport {
         // 后一个月的总天数
         int nextAllDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(returnEndDate);
 
+        // 如果结束的日期日，大于开始的日期日，那么就证明最后一期在同一个月，否则就要算前一个月和后一个月的金额
         if (returnEndDateDay >= rentStartDateDay) {
             nextSurplusDays = returnEndDateDay - rentStartDateDay + 1;
         } else {
-            previousSurplusDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(DateUtil.monthInterval(returnEndDate, -1)) - rentStartDateDay;
-            nextSurplusDays = rentStartDateDay;
+            previousSurplusDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(DateUtil.monthInterval(returnEndDate, -1)) - rentStartDateDay + 1;
+            nextSurplusDays = returnEndDateDay;
         }
         BigDecimal surplusDaysAmount = BigDecimalUtil.add(BigDecimalUtil.div(BigDecimalUtil.mul(unitAmount, new BigDecimal(previousSurplusDays)), new BigDecimal(previousAllDays), BigDecimalUtil.SCALE), BigDecimalUtil.div(BigDecimalUtil.mul(unitAmount, new BigDecimal(nextSurplusDays)), new BigDecimal(nextAllDays), BigDecimalUtil.SCALE));
 
