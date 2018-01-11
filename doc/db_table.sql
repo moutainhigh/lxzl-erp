@@ -2128,7 +2128,6 @@ CREATE TABLE `erp_purchase_back_order_product_material` (
   `purchase_back_order_product_id` int(20) NOT NULL COMMENT '采购退货单项ID',
   `product_id` int(20) NOT NULL COMMENT '商品ID',
   `product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID',
-  `product_sku_id` int(20) NOT NULL COMMENT '商品SKU ID',
   `material_id` int(20) NOT NULL COMMENT '预计配件ID，来源（采购收货单），不可变更',
   `material_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '配件名称冗余，不可修改',
   `material_snapshot` text COMMENT '配件冗余信息，防止商品修改留存快照，不可修改',

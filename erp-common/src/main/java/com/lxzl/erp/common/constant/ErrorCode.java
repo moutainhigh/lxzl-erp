@@ -453,9 +453,33 @@ public class ErrorCode {
     public static final String IMG_REF_ID_NOT_NULL = "J1100031";
     public static final String IMG_REF_ID_NEED_NULL = "J1100032";
 
-    public static final String TRANSFER_ORDER_NO_NOT_NULL = "J1200001";
+    public static final String TRANSFER_ORDER_NAME_NOT_NULL = "J1200001";
     public static final String TRANSFER_ORDER_ID_NOT_NULL = "J1200002";
     public static final String TRANSFER_ORDER_NOT_EXISTS = "J1200003";
+    public static final String TRANSFER_ORDER_MODE_NOT_NULL = "J1200004";
+    public static final String TRANSFER_ORDER_TYPE_NOT_NULL = "J1200005";
+    public static final String TRANSFER_ORDER_PRODUCT_ID_NOT_NULL = "J1200006";
+    public static final String TRANSFER_ORDER_PRODUCT_SKU_ID_NOT_NULL = "J1200007";
+    public static final String TRANSFER_ORDER_PRODUCT_COUNT_NOT_NULL = "J1200008";
+    public static final String TRANSFER_ORDER_PRODUCT_AND_MATERIAL_NOT_NULL = "J1200009";
+    public static final String TRANSFER_ORDER_MATERIAL_ID_NOT_NULL = "J1200010";
+    public static final String TRANSFER_ORDER_MATERIAL_NO_NOT_NULL = "J1200011";
+    public static final String TRANSFER_ORDER_MATERIAL_COUNT_NOT_NULL = "J1200012";
+    public static final String TRANSFER_ORDER_NO_NOT_NULL = "J1200013";
+    public static final String TRANSFER_ORDER_STATUS_IS_ERROR = "J1200014";
+    public static final String TRANSFER_ORDER_PRODUCT_EQUIPMENT_STOCK_NOT_ENOUGH = "J1200015";
+    public static final String TRANSFER_ORDER_PRODUCT_EQUIPMENT_NO_NOT_NULL = "J1200016";
+    public static final String BULK_MATERIAL_IN_TRANSFER_ORDER_IS_NOT_IDLE = "J1200017";
+    public static final String TRANSFER_ORDER_PRODUCT_EQUIPMENT_NO_AND_BULK_MATERIAL_NO_NOT_NULL = "J1200018";
+    public static final String USER_CAN_NOT_OPERATION_TRANSFER_ORDER_WAREHOUSE = "J1200019";
+    public static final String PRODUCT_EQUIPMENT_AND_USER_NOT_SAME_WAREHOUSE = "J1200020";
+    public static final String TRANSFER_ORDER_PRODUCT_NOT_EXISTS_BY_EQUIPMENT_NO = "J1200021";
+    public static final String TRANSFER_ORDER_IS_NEW_NOT_NULL = "J1200022";
+    public static final String TRANSFER_ORDER_MATERIAL_STOCK_NOT_ENOUGH = "J1200023";
+    public static final String PRODUCT_EQUIPMENT_IN_TRANSFER_ORDER_ID_NOT_EXISTS = "J1200024";
+    public static final String TRANSFER_ORDER_MODE_IS_NOT_OUT = "J1200025";
+    public static final String TRANSFER_ORDER_MATERIAL_NOT_EXISTS = "J1200026";
+    public static final String TRANSFER_ORDER_PRODUCT_IS_NEW_NOT_NULL = "J1200027";
 
     public static final String ASSEMBLE_ORDER_ID_NOT_NULL = "J1300001";
     public static final String ASSEMBLE_ORDER_MATERIAL_ID_NOT_NULL = "J1300002";
@@ -529,7 +553,7 @@ public class ErrorCode {
         MAP.put(PRODUCT_SKU_CAN_NOT_DELETE, "检测到您要删除商品SKU，目前SKU不支持删除。");
         MAP.put(BULK_MATERIAL_IS_NOT_IDLE, "编号【%s 】没有在闲置状态。");
         MAP.put(PRODUCT_EQUIPMENT_STATUS_ERROR, "商品设备状态有误。");
-        MAP.put(BULK_MATERIAL_STATUS_ERROR, "散料状态有误。");
+        MAP.put(BULK_MATERIAL_STATUS_ERROR, "编号【%s 】散料状态有误。");
         MAP.put(BULK_MATERIAL_NOT_IN_THIS_WAREHOUSE, "散料不在该库房。");
         MAP.put(PRODUCT_MATERIAL_NOT_MATCHING, "商品配件不足。");
         MAP.put(PRODUCT_MATERIAL_MEMORY_NOT_MATCHING, "商品【内存】配件不匹配");
@@ -907,10 +931,33 @@ public class ErrorCode {
         MAP.put(IMG_REF_ID_NOT_NULL, "图片的ref-ID不能为空");
         MAP.put(IMG_REF_ID_NEED_NULL, "编号【%s 】的图片refID已经有值，不能进行该操作");
 
-
-        MAP.put(TRANSFER_ORDER_NO_NOT_NULL, "组装单编号不能为空");
+        MAP.put(TRANSFER_ORDER_NAME_NOT_NULL, "转移单名称不能为空");
         MAP.put(TRANSFER_ORDER_ID_NOT_NULL, "转移单ID不能为空");
         MAP.put(TRANSFER_ORDER_NOT_EXISTS, "转移单不存在");
+        MAP.put(TRANSFER_ORDER_MODE_NOT_NULL, "转移单方式不能为空");
+        MAP.put(TRANSFER_ORDER_TYPE_NOT_NULL, "转移单类型不能为空");
+        MAP.put(TRANSFER_ORDER_PRODUCT_ID_NOT_NULL, "转移单商品ID不能为空");
+        MAP.put(TRANSFER_ORDER_PRODUCT_SKU_ID_NOT_NULL, "转移单商品SKU ID不能为空");
+        MAP.put(TRANSFER_ORDER_PRODUCT_COUNT_NOT_NULL, "转移单物料数量不能为空");
+        MAP.put(TRANSFER_ORDER_PRODUCT_AND_MATERIAL_NOT_NULL, "转移单商品和物料不能同时为空");
+        MAP.put(TRANSFER_ORDER_MATERIAL_ID_NOT_NULL, "转移单物料ID不能为空");
+        MAP.put(TRANSFER_ORDER_MATERIAL_NO_NOT_NULL, "转移单物料编号不能为空");
+        MAP.put(TRANSFER_ORDER_MATERIAL_COUNT_NOT_NULL, "转移单物料数量不能为空");
+        MAP.put(TRANSFER_ORDER_NO_NOT_NULL, "转移单编号不能为空");
+        MAP.put(TRANSFER_ORDER_STATUS_IS_ERROR, "转移单状态有误");
+        MAP.put(TRANSFER_ORDER_PRODUCT_EQUIPMENT_STOCK_NOT_ENOUGH, "货物转移该仓库该商品库存不足。");
+        MAP.put(TRANSFER_ORDER_MATERIAL_STOCK_NOT_ENOUGH, "货物转移该仓库该物料库存不足。");
+        MAP.put(TRANSFER_ORDER_PRODUCT_EQUIPMENT_NO_AND_BULK_MATERIAL_NO_NOT_NULL, "转移单商品设备编号和物转移单散料编号不能同时为空。");
+        MAP.put(USER_CAN_NOT_OPERATION_TRANSFER_ORDER_WAREHOUSE, "该用户不能操作这个仓库下的转移单。");
+        MAP.put(PRODUCT_EQUIPMENT_AND_USER_NOT_SAME_WAREHOUSE, "编号【%s 】的设备与用户不在同一个仓库");
+        MAP.put(TRANSFER_ORDER_PRODUCT_NOT_EXISTS_BY_EQUIPMENT_NO, "编号【%s 】的设备对应的转移单商品表不存在");
+        MAP.put(TRANSFER_ORDER_IS_NEW_NOT_NULL, "转移单配件表下的散料是否全新不能为空");
+        MAP.put(PRODUCT_EQUIPMENT_IN_TRANSFER_ORDER_ID_NOT_EXISTS, "该设备并不在此转移单中");
+        MAP.put(TRANSFER_ORDER_MODE_IS_NOT_OUT, "该转移单不是转出类型");
+        MAP.put(TRANSFER_ORDER_MATERIAL_NOT_EXISTS, "转移单配件表不存在");
+        MAP.put(TRANSFER_ORDER_PRODUCT_EQUIPMENT_NO_NOT_NULL, "转移单下的商品设备编号不能为空");
+        MAP.put(BULK_MATERIAL_IN_TRANSFER_ORDER_IS_NOT_IDLE, "该物料下的散料有不处于空闲状态，不能进行转移操作");
+        MAP.put(TRANSFER_ORDER_PRODUCT_IS_NEW_NOT_NULL, "转移单商品表下的商品设备是否全新不能为空");
 
         MAP.put(ASSEMBLE_ORDER_ID_NOT_NULL, "组装单ID不能为空");
         MAP.put(ASSEMBLE_ORDER_NOT_EXISTS, "组装单不存在");

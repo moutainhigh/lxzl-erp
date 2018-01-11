@@ -3711,6 +3711,10 @@ INSERT INTO `erp_sys_menu` VALUES ('200126', '打印', '200049', '0', '3', '', '
 INSERT INTO `erp_sys_menu` VALUES ('200127', '打印', '200091', '0', '3', '', '', '3', '1', '退货单打印', null, '', null, '');
 INSERT INTO `erp_sys_menu` VALUES ('200128', '打印', '200103', '0', '3', '', '', '3', '1', '调拨单打印', null, '', null, '');
 INSERT INTO `erp_sys_menu` VALUES ('200129', '待发货', '200008', '0', '1', 'order-manage/waite-for-delivery-list', '', '2', '1', null, null, '', null, '');
+INSERT INTO `erp_sys_menu` VALUES ('200130', '提交审核', '200071', '0', '3', '', '', '3', '1', '企业客户提交审核', null, '', null, '');
+INSERT INTO `erp_sys_menu` VALUES ('300131', '审核', '200071', '0', '3', '', '', '3', '1', '企业客户审核', null, '', null, '');
+INSERT INTO `erp_sys_menu` VALUES ('300132', '提交审核', '200066', '0', '3', '', '', '3', '1', '个人客户提交审核', null, '', null, '');
+INSERT INTO `erp_sys_menu` VALUES ('300133', '审核', '200066', '0', '3', '', '', '3', '1', '个人客户审核', null, '', null, '');
 
 
 INSERT INTO `erp_user` VALUES ('500001', '1', 'admin', 'admin', '1ebb7166413b88e68954bc821e18ab25', 'admin@lxzl.com', null, null, '18033402888', null, null, '1', '0', '2017-10-08 16:00:51', '2017-12-17 10:09:33', '192.168.10.172', '', '2017-10-08 16:00:51', '', '2017-11-06 17:26:15', '500001');

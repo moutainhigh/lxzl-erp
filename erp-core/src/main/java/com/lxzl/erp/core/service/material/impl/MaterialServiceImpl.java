@@ -608,8 +608,8 @@ public class MaterialServiceImpl implements MaterialService {
 
         MaterialModelDO materialModelDO = ConverterUtil.convert(materialModel, MaterialModelDO.class);
         materialModelDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        materialModelDO.setUpdateUser(loginUser.getUserId().toString());
-        materialModelDO.setCreateUser(loginUser.getUserId().toString());
+//        materialModelDO.setUpdateUser(loginUser.getUserId().toString());
+//        materialModelDO.setCreateUser(loginUser.getUserId().toString());
         materialModelDO.setUpdateTime(currentTime);
         materialModelDO.setCreateTime(currentTime);
         materialModelMapper.save(materialModelDO);

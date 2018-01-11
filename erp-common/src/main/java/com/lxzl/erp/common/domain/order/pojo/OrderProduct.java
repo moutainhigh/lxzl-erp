@@ -35,6 +35,8 @@ public class OrderProduct extends BasePO {
     private Integer isNewProduct;
     private List<OrderProductEquipment> orderProductEquipmentList;
 
+    private BigDecimal firstNeedPayAmount;
+
     public Integer getOrderProductId() {
         return orderProductId;
     }
@@ -225,5 +227,13 @@ public class OrderProduct extends BasePO {
 
     public void setRentDepositAmount(BigDecimal rentDepositAmount) {
         this.rentDepositAmount = rentDepositAmount;
+    }
+
+    public BigDecimal getFirstNeedPayAmount() {
+        return firstNeedPayAmount;
+    }
+
+    public void setFirstNeedPayAmount(BigDecimal firstNeedPayAmount) {
+        this.firstNeedPayAmount = firstNeedPayAmount;
     }
 }

@@ -16,25 +16,66 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<collection property="transferOrderProductDOList" resultMap="TransferOrderProductDO" />
+		<collection property="transferOrderMaterialDOList" resultMap="TransferOrderMaterialDO" />
+	</resultMap>
+
+	<resultMap id="TransferOrderProductDO" type="com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderProductDO">
+		<id column="etop_id" jdbcType="INTEGER" property="id" />
+		<result column="etop_transfer_order_id" jdbcType="INTEGER" property="transferOrderId" />
+		<result column="etop_product_id" jdbcType="INTEGER" property="productId" />
+		<result column="etop_product_sku_id" jdbcType="INTEGER" property="productSkuId" />
+		<result column="etop_product_count" jdbcType="INTEGER" property="productCount" />
+		<result column="etop_is_new" jdbcType="INTEGER" property="isNew" />
+		<result column="etop_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="etop_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="etop_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="etop_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="etop_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="etop_update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<resultMap id="TransferOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderMaterialDO">
+		<id column="etom_id" jdbcType="INTEGER" property="id" />
+		<result column="etom_transfer_order_id" jdbcType="INTEGER" property="transferOrderId" />
+		<result column="etom_material_id" jdbcType="INTEGER" property="materialId" />
+		<result column="etom_material_no" jdbcType="VARCHAR" property="materialNo" />
+		<result column="etom_material_count" jdbcType="INTEGER" property="materialCount" />
+		<result column="etom_is_new" jdbcType="INTEGER" property="isNew" />
+		<result column="etom_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="etom_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="etom_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="etom_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="etom_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="etom_update_user" jdbcType="VARCHAR" property="updateUser" />
 	</resultMap>
 
 	<sql id="column_List">
 		eto.id,eto.transfer_order_no,eto.transfer_order_name,eto.transfer_order_status,eto.transfer_order_mode,eto.transfer_order_type,eto.warehouse_id,eto.data_status,eto.remark,eto.create_time,eto.create_user,eto.update_time,eto.update_user
 	</sql>
 
+	<sql id="product_column_List">
+		etop.id AS etop_id,etop.transfer_order_id AS etop_transfer_order_id,etop.product_id AS etop_product_id,etop.product_sku_id AS etop_product_sku_id,etop.product_count AS etop_product_count,etop.is_new AS etop_is_new,etop.data_status AS etop_data_status,etop.remark AS etop_remark,etop.create_time AS etop_create_time,etop.create_user AS etop_create_user,etop.update_time AS etop_update_time,etop.update_user AS etop_update_user
+	</sql>
+
+	<sql id="material_column_List">
+		etom.id AS etom_id,etom.transfer_order_id AS etom_transfer_order_id,etom.material_id AS etom_material_id,etom.material_no AS etom_material_no,etom.material_count AS etom_material_count,etom.is_new AS etom_is_new,etom.data_status AS etom_data_status,etom.remark AS etom_remark,etom.create_time AS etom_create_time,etom.create_user AS etom_create_user,etom.update_time AS etom_update_time,etom.update_user AS etom_update_user
+	</sql>
+
 	<select id="findById" resultMap="TransferOrderDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_transfer_order eto 
-		WHERE eto.id = #{id, jdbcType=INTEGER} AND eto.data_status = 1 
+		SELECT <include refid="column_List"/> FROM erp_transfer_order eto
+		WHERE eto.id = #{id, jdbcType=INTEGER} AND eto.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(eto.id) FROM erp_transfer_order eto 
+		SELECT count(eto.id) FROM erp_transfer_order eto
 		<where>
-			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
-				<![CDATA[ AND eto.create_time >= #{maps.queryParam.createStartTime} ]]>
+			<if test="maps.transferOrderOrderQueryParam != null &amp;&amp; maps.transferOrderOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND eto.create_time >= #{maps.transferOrderOrderQueryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
-				<![CDATA[ AND eto.create_time <= #{maps.queryParam.createEndTime} ]]>
+			<if test="maps.transferOrderOrderQueryParam != null &amp;&amp; maps.transferOrderOrderQueryParam.createEndTime != null">
+				<![CDATA[ AND eto.create_time <= #{maps.transferOrderOrderQueryParam.createEndTime} ]]>
 			</if>
 			<if test="true">
 				AND eto.data_status = 1
@@ -43,7 +84,7 @@
 	</select>
 
 	<select id="listPage" resultMap="TransferOrderDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_transfer_order eto 
+		SELECT <include refid="column_List"/> FROM erp_transfer_order eto
 		<where>
 			<if test="true">
 				AND eto.data_status = 1
@@ -100,4 +141,94 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderDO">
 		UPDATE erp_transfer_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="findByNo" resultMap="TransferOrderDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_transfer_order eto
+		where eto.transfer_order_no = #{transferOrderNo,jdbcType=VARCHAR} AND eto.data_status = 1
+	</select>
+
+	<select id="findDetailByNo" resultMap="TransferOrderDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>
+		FROM(
+		select <include refid="column_List"/> from erp_transfer_order eto
+		where eto.transfer_order_no = #{transferOrderNo, jdbcType=VARCHAR} and data_status = 1
+		) eto
+		left join erp_transfer_order_product etop on etop.transfer_order_id = eto.id and etop.data_status =1
+		left join erp_transfer_order_material etom on etom.transfer_order_id = eto.id and etom.data_status =1
+	</select>
+
+	<select id="findDetailById" resultMap="TransferOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>
+		FROM(
+		select <include refid="column_List"/> from erp_transfer_order eto
+		where eto.id = #{transferOrderId, jdbcType=INTEGER} and data_status = 1
+		) eto
+		left join erp_transfer_order_product etop on etop.transfer_order_id = eto.id and etop.data_status =1
+		left join erp_transfer_order_material etom on etom.transfer_order_id = eto.id and etom.data_status =1
+	</select>
+
+	<select id="findTransferOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(id) FROM erp_transfer_order eto
+		<where>
+			<if test="maps.queryParam.transferOrderNo != null &amp;&amp; maps.queryParam.transferOrderNo != '' ">
+				and eto.transfer_order_no = #{maps.queryParam.transferOrderNo, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.transferOrderName != null &amp;&amp; maps.queryParam.transferOrderName != '' ">
+				and eto.transfer_order_name = #{maps.queryParam.transferOrderName, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.transferOrderStatus != null">
+				and eto.transfer_order_status = #{maps.queryParam.transferOrderStatus, jdbcType=Integer}
+			</if>
+			<if test="maps.queryParam.transferOrderMode != null">
+				and eto.transfer_order_mode = #{maps.queryParam.transferOrderMode, jdbcType=Integer}
+			</if>
+			<if test="maps.queryParam.transferOrderType != null">
+				and eto.transfer_order_type = #{maps.queryParam.transferOrderType, jdbcType=Integer}
+			</if>
+			<if test="maps.queryParam.warehouseId != null">
+				and eto.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=Integer}
+			</if>
+			<if test="true">
+				and eto.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="findTransferOrderByParams" resultMap="TransferOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>
+		FROM (
+		SELECT <include refid="column_List"/>
+		FROM erp_transfer_order eto
+		<where>
+			<if test="maps.queryParam.transferOrderNo != null &amp;&amp; maps.queryParam.transferOrderNo != '' ">
+				and eto.transfer_order_no = #{maps.queryParam.transferOrderNo, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.transferOrderName != null &amp;&amp; maps.queryParam.transferOrderName != '' ">
+				and eto.transfer_order_name = #{maps.queryParam.transferOrderName, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.transferOrderStatus != null">
+				and eto.transfer_order_status = #{maps.queryParam.transferOrderStatus, jdbcType=Integer}
+			</if>
+			<if test="maps.queryParam.transferOrderMode != null">
+				and eto.transfer_order_mode = #{maps.queryParam.transferOrderMode, jdbcType=Integer}
+			</if>
+			<if test="maps.queryParam.transferOrderType != null">
+				and eto.transfer_order_type = #{maps.queryParam.transferOrderType, jdbcType=Integer}
+			</if>
+			<if test="maps.queryParam.warehouseId != null">
+				and eto.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=Integer}
+			</if>
+			<if test="true">
+				and eto.data_status = 1
+			</if>
+		</where>
+		order by eto.create_time desc
+		LIMIT #{maps.start},#{maps.pageSize}
+		) eto
+		left join erp_transfer_order_product etop on etop.transfer_order_id = eto.id and etop.data_status=1
+		left join erp_transfer_order_material etom on etom.transfer_order_id = eto.id and etom.data_status=1
+		order by eto.create_time desc
+	</select>
+
+
 </mapper>

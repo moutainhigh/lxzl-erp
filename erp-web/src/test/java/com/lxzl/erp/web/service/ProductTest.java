@@ -307,85 +307,64 @@ public class ProductTest extends BaseUnTransactionalTest {
     public void testSaveProperties() {
 
 
-        Integer notepad = 800002, AIO = 800003, bchassis = 800005, mchassis = 800006, schassis = 800007, mnchassis = 800008, workstation = 800009, server = 800010,
-                tv = 800011, projector = 800012, zPrinters = 800013, jPrinters = 800014, aioPrinters = 800015, Copier = 800016, pad = 800017, monitor = 800018;
+        Integer notepad = 800002, AIO = 800003, chassis = 800004,pad = 800005,monitor = 800005;
         Map<Integer, String> categoryMap = new HashMap<>();
         categoryMap.put(notepad, "笔记本");
         categoryMap.put(AIO, "一体机");
-        categoryMap.put(bchassis, "大机箱");
-        categoryMap.put(mchassis, "中机箱");
-        categoryMap.put(schassis, "小机箱");
-        categoryMap.put(mnchassis, "mini机箱");
-        categoryMap.put(workstation, "工作站");
-        categoryMap.put(server, "服务器");
-        categoryMap.put(tv, "电视机");
-        categoryMap.put(projector, "投影仪");
-        categoryMap.put(zPrinters, "针式打印机");
-        categoryMap.put(jPrinters, "激光打印机");
-        categoryMap.put(aioPrinters, "打印、复印、传真一体机");
-        categoryMap.put(Copier, "数码复印件");
+        categoryMap.put(chassis, "台式机");
         categoryMap.put(pad, "平板电脑");
         categoryMap.put(monitor, "显示器");
 
         for (Map.Entry<Integer, String> entry : categoryMap.entrySet()) {
             if (notepad.equals(entry.getKey())) {
-                String[] valueName = new String[]{"屏幕尺寸", "其他属性", "CPU", "显卡", "内存", "机械硬盘", "固态硬盘"};
+                String[] valueName = new String[]{"CPU", "内存", "机械硬盘", "固态硬盘", "显卡", "尺寸", "颜色", "电池", "其他属性"};
                 for (int i = 0; i < valueName.length; i++) {
                     String value = valueName[i];
-                    ProductCategoryPropertyDO productCategoryPropertyDO = buildProductCategoryPropertyDO(value, notepad, 1, null, (valueName.length - i));
+                    ProductCategoryPropertyDO productCategoryPropertyDO = buildProductCategoryPropertyDO(value, entry.getKey(), 1, null, (valueName.length - i));
                     productCategoryPropertyDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
                     productCategoryPropertyMapper.save(productCategoryPropertyDO);
                 }
             }
             if (AIO.equals(entry.getKey())) {
-
+                String[] valueName = new String[]{"CPU", "内存", "机械硬盘", "固态硬盘", "显卡", "尺寸", "其他属性"};
+                for (int i = 0; i < valueName.length; i++) {
+                    String value = valueName[i];
+                    ProductCategoryPropertyDO productCategoryPropertyDO = buildProductCategoryPropertyDO(value, entry.getKey(), 1, null, (valueName.length - i));
+                    productCategoryPropertyDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
+                    productCategoryPropertyMapper.save(productCategoryPropertyDO);
+                }
             }
-            if (bchassis.equals(entry.getKey())) {
-
-            }
-            if (mchassis.equals(entry.getKey())) {
-
-            }
-            if (schassis.equals(entry.getKey())) {
-
-            }
-            if (mnchassis.equals(entry.getKey())) {
-
-            }
-            if (workstation.equals(entry.getKey())) {
-
-            }
-            if (server.equals(entry.getKey())) {
-
-            }
-            if (tv.equals(entry.getKey())) {
-
-            }
-            if (projector.equals(entry.getKey())) {
-
-            }
-            if (zPrinters.equals(entry.getKey())) {
-
-            }
-            if (jPrinters.equals(entry.getKey())) {
-
-            }
-            if (aioPrinters.equals(entry.getKey())) {
-
-            }
-            if (Copier.equals(entry.getKey())) {
-
+            if (chassis.equals(entry.getKey())) {
+                String[] valueName = new String[]{"CPU", "内存", "机械硬盘", "固态硬盘", "显卡", "其他属性"};
+                for (int i = 0; i < valueName.length; i++) {
+                    String value = valueName[i];
+                    ProductCategoryPropertyDO productCategoryPropertyDO = buildProductCategoryPropertyDO(value, entry.getKey(), 1, null, (valueName.length - i));
+                    productCategoryPropertyDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
+                    productCategoryPropertyMapper.save(productCategoryPropertyDO);
+                }
             }
             if (pad.equals(entry.getKey())) {
-
+                String[] valueName = new String[]{"CPU", "内存", "颜色", "尺寸", "其他属性"};
+                for (int i = 0; i < valueName.length; i++) {
+                    String value = valueName[i];
+                    ProductCategoryPropertyDO productCategoryPropertyDO = buildProductCategoryPropertyDO(value, entry.getKey(), 1, null, (valueName.length - i));
+                    productCategoryPropertyDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
+                    productCategoryPropertyMapper.save(productCategoryPropertyDO);
+                }
             }
             if (monitor.equals(entry.getKey())) {
-
+                String[] valueName = new String[]{"尺寸", "其他属性"};
+                for (int i = 0; i < valueName.length; i++) {
+                    String value = valueName[i];
+                    ProductCategoryPropertyDO productCategoryPropertyDO = buildProductCategoryPropertyDO(value, entry.getKey(), 1, null, (valueName.length - i));
+                    productCategoryPropertyDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
+                    productCategoryPropertyMapper.save(productCategoryPropertyDO);
+                }
             }
         }
     }
 
-    private ProductCategoryPropertyDO buildProductCategoryPropertyDO(String name, Integer categoryId, Integer propertyType,Integer materialType, Integer order) {
+    private ProductCategoryPropertyDO buildProductCategoryPropertyDO(String name, Integer categoryId, Integer propertyType, Integer materialType, Integer order) {
         ProductCategoryPropertyDO productCategoryPropertyDO = new ProductCategoryPropertyDO();
         productCategoryPropertyDO.setPropertyName(name);
         productCategoryPropertyDO.setCategoryId(categoryId);
@@ -403,32 +382,19 @@ public class ProductTest extends BaseUnTransactionalTest {
         params.put("pageSize", Integer.MAX_VALUE);
         List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.listPage(params);
 
-        Integer notepad = 800002, AIO = 800003, bchassis = 800005, mchassis = 800006, schassis = 800007, mnchassis = 800008, workstation = 800009, server = 800010,
-                tv = 800011, projector = 800012, zPrinters = 800013, jPrinters = 800014, aioPrinters = 800015, Copier = 800016, pad = 800017, monitor = 800018;
+        Integer notepad = 800002, AIO = 800003, chassis = 800004,pad = 800005,monitor = 800005;
         Map<Integer, String> categoryMap = new HashMap<>();
         categoryMap.put(notepad, "笔记本");
         categoryMap.put(AIO, "一体机");
-        categoryMap.put(bchassis, "大机箱");
-        categoryMap.put(mchassis, "中机箱");
-        categoryMap.put(schassis, "小机箱");
-        categoryMap.put(mnchassis, "mini机箱");
-        categoryMap.put(workstation, "工作站");
-        categoryMap.put(server, "服务器");
-        categoryMap.put(tv, "电视机");
-        categoryMap.put(projector, "投影仪");
-        categoryMap.put(zPrinters, "针式打印机");
-        categoryMap.put(jPrinters, "激光打印机");
-        categoryMap.put(aioPrinters, "打印、复印、传真一体机");
-        categoryMap.put(Copier, "数码复印件");
+        categoryMap.put(chassis, "台式机");
         categoryMap.put(pad, "平板电脑");
         categoryMap.put(monitor, "显示器");
-
 
         for (ProductCategoryPropertyDO productCategoryPropertyDO : productCategoryPropertyDOList) {
             // 笔记本
             if (notepad.equals(productCategoryPropertyDO.getCategoryId())) {
-                if (productCategoryPropertyDO.getPropertyName().equals("屏幕尺寸")) {
-                    String[] valueName = new String[]{"11.6", "12.1", "13.3", "14.1", "15.4", "15.6"};
+                if (productCategoryPropertyDO.getPropertyName().equals("尺寸")) {
+                    String[] valueName = new String[]{"12.5","13.3","14","15.4","15.6"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
@@ -446,9 +412,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("CPU")) {
-                    String[] valueName = new String[]{"Intel Core i3 520M @ 2.50GHZ", "Intel Core i5 2520M @ 2.50GHZ", "Intel Core i7 2520M @ 2.50GHZ", "Intel Core i7 3520M @ 2.60GHZ", "Intel Core i5 3320M @ 2.60GHZ", "Intel Core i5 4200 @ 3.1GHZ",
-                            "Intel Core i5 4200 @ 3.1GHZ", "Intel Core i5 M520 @ 2.40GHZ", "Intel Core i5  5200@ 2.60GHZ", "Intel Core i5 3120M @ 2.60GHZ", "Intel Core i7  720@ 2.60GHZ", "Intel Core i7  2720@ 2.60GHZ", "Intel Core i7  3720@ 2.60GHZ",
-                            "Intel Core i5  520@ 2.50GHZ", "Intel Core i5  2520@ 2.50GHZ", "Intel Core i5  4200@ 2.20GHZ", "Intel Core i5  5200@ 2.20GHZ", "Intel Core i5 1600 MHZ", "Intel Core i5 3210 @ 2.50GHZ", "Intel Core i5 3210", "Intel Core i7 2675QM @ 2.20GHZ", "Intel Core i7 3615QM @ 2.30GHZ", "Intel Core i7 4850QM @ 2.30GHZ"};
+                    String[] valueName = new String[]{"双核", "i3 3代","i3 4代","i3 5代","i3 6代","i3 7代","i3 8代","i5 3代","i5 4代","i5 5代","i5 6代","i5 7代","i5 8代","i7 3代","i7 4代","i7 5代","i7 6代","i7 7代","i7 8代"};
 
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
@@ -462,7 +426,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("显卡")) {
-                    String[] valueName = new String[]{"集成", "GT650M"};
+                    String[] valueName = new String[]{"集显", "标配 1G","标配 2G","标配 3G","标配 4G","标配 6G","标配 8G"};
 
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
@@ -476,7 +440,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("内存")) {
-                    String[] valueName = new String[]{"1", "2", "4", "8", "16", "32", "64"};
+                    String[] valueName = new String[]{"4", "8", "16", "32", "64","128"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value + "G", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), Integer.parseInt(value) * 1024.0, null, (valueName.length - i));
@@ -495,10 +459,28 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("固态硬盘")) {
-                    String[] valueName = new String[]{"128", "256"};
+                    String[] valueName = new String[]{"120", "240", "512"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value + "G", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), Integer.parseInt(value) * 1024.0, null, (valueName.length - i));
+                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
+                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
+                    }
+                }
+                if (productCategoryPropertyDO.getPropertyName().equals("颜色")) {
+                    String[] valueName = new String[]{"黑色","银色"};
+                    for (int i = 0; i < valueName.length; i++) {
+                        String value = valueName[i];
+                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
+                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
+                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
+                    }
+                }
+                if (productCategoryPropertyDO.getPropertyName().equals("电池")) {
+                    String[] valueName = new String[]{"标配","加大"};
+                    for (int i = 0; i < valueName.length; i++) {
+                        String value = valueName[i];
+                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
                         productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
                         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
                     }
@@ -509,7 +491,7 @@ public class ProductTest extends BaseUnTransactionalTest {
             // 一体机
             if (AIO.equals(productCategoryPropertyDO.getCategoryId())) {
                 if (productCategoryPropertyDO.getPropertyName().equals("屏幕尺寸")) {
-                    String[] valueName = new String[]{"20", "21.5", "23", "27"};
+                    String[] valueName = new String[]{"19", "20", "21.5", "27"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
@@ -527,7 +509,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("CPU")) {
-                    String[] valueName = new String[]{"双核 Intel Pentium G640 @ 2.80GHZ", "双核 AMD IIX2 221 @ 2.80GHZ", "双核  Intel Pentium", "G3250T/DDR3", "Intel Core i5 3330S @ 2.70GHZ", "Intel Core i5 3330S @ 2.70GHZ", "Intel Core i5 3570 @ 3.20GHZ", "Intel Core i5 4570 @ 3.20GHZ"};
+                    String[] valueName = new String[]{"双核", "i3 3代","i3 4代","i3 5代","i3 6代","i3 7代","i3 8代","i5 3代","i5 4代","i5 5代","i5 6代","i5 7代","i5 8代","i7 3代","i7 4代","i7 5代","i7 6代","i7 7代","i7 8代"};
 
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
@@ -541,7 +523,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("显卡")) {
-                    String[] valueName = new String[]{"集成"};
+                    String[] valueName = new String[]{"集显","标配1G","标配2G","GTX750 1G","GTX960 2G","GTX960 4G","GTX1030 2G","GTX 1050TI 2G","GTX 1050TI 4G","GTX1060 3G","GTX1060 6G","GTX1080 4G","GTX1060 8G"};
 
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
@@ -555,7 +537,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("内存")) {
-                    String[] valueName = new String[]{"1", "2", "4", "8", "16", "32", "64"};
+                    String[] valueName = new String[]{"4", "8", "16", "32", "64","128"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value + "G", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), Integer.parseInt(value) * 1024.0, null, (valueName.length - i));
@@ -574,7 +556,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("固态硬盘")) {
-                    String[] valueName = new String[]{"128", "256"};
+                    String[] valueName = new String[]{"120", "240", "512"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value + "G", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), Integer.parseInt(value) * 1024.0, null, (valueName.length - i));
@@ -585,10 +567,7 @@ public class ProductTest extends BaseUnTransactionalTest {
             }
 
             // 大机箱，小机箱，中机箱，mni机箱
-            if (bchassis.equals(productCategoryPropertyDO.getCategoryId())
-                    || mchassis.equals(productCategoryPropertyDO.getCategoryId())
-                    || schassis.equals(productCategoryPropertyDO.getCategoryId())
-                    || mnchassis.equals(productCategoryPropertyDO.getCategoryId())) {
+            if (chassis.equals(productCategoryPropertyDO.getCategoryId())) {
                 if (productCategoryPropertyDO.getPropertyName().equals("其他属性")) {
                     String[] valueName = new String[]{"无"};
                     for (int i = 0; i < valueName.length; i++) {
@@ -599,7 +578,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("CPU")) {
-                    String[] valueName = new String[]{"Intel Core i5 4590", "Intel  i5 4430@ 3.40GHZ", "Intel  i3 4130@ 3.40GHZ", "Intel  双核G3220@ 3.40GH", "Intel  i3 2100@ 2.70GHZ", "Intel  i5 2400@ 2.30GHZ", "Intel Core i7 2600 @ 3.40GHZ", "Intel Core i7 4770 @ 3.40GHZ", "Intel  i7 @ 2.30GHZ", "Intel  i5 2400@ 2.30GHZ", "CPU: Intel  i5 2500@ 2.30GHZ", "CPU: Intel  i5 2500@ 2.30GHZ", "CPU: Intel  i3 4130@ 3.40GHZ 4G/", "CPU: Intel i3 2代@ 2.30GHZ 4G/"};
+                    String[] valueName = new String[]{"双核", "i3 3代","i3 4代","i3 5代","i3 6代","i3 7代","i3 8代","i5 3代","i5 4代","i5 5代","i5 6代","i5 7代","i5 8代","i7 3代","i7 4代","i7 5代","i7 6代","i7 7代","i7 8代"};
 
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
@@ -613,76 +592,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("显卡")) {
-                    String[] valueName = new String[]{"集成"};
-
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        MaterialModel materialModel = new MaterialModel();
-                        materialModel.setMaterialType(MaterialType.MATERIAL_TYPE_GRAPHICS_CARD);
-                        materialModel.setModelName(value);
-                        Integer modeId = materialService.addMaterialModel(materialModel).getResult();
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, modeId, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("" +
-                        "内存")) {
-                    String[] valueName = new String[]{"1", "2", "4", "8", "16", "32", "64"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value + "G", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), Integer.parseInt(value) * 1024.0, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("机械硬盘")) {
-                    String[] valueName = new String[]{"500", "1024", "2048"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        String tempName = value.equals("1024") ? "1T" : value.equals("2048") ? "2T" : value + "G";
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(tempName, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), Integer.parseInt(value) * 1024.0, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("固态硬盘")) {
-                    String[] valueName = new String[]{"128", "256"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value + "G", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), Integer.parseInt(value) * 1024.0, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-            }
-
-            if (workstation.equals(productCategoryPropertyDO.getCategoryId())) {
-                if (productCategoryPropertyDO.getPropertyName().equals("其他属性")) {
-                    String[] valueName = new String[]{"无"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("CPU")) {
-                    String[] valueName = new String[]{"CPU: Intel 至强 E3 1245 @ 3.30GHZ", "CPU: Intel 至强 E3 1225 @ 3.20GHZ", "CPU: Intel 至强 E5 2603 @ 1.80GHZ*2"};
-
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        MaterialModel materialModel = new MaterialModel();
-                        materialModel.setMaterialType(MaterialType.MATERIAL_TYPE_CPU);
-                        materialModel.setModelName(value);
-                        Integer modeId = materialService.addMaterialModel(materialModel).getResult();
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, modeId, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("显卡")) {
-                    String[] valueName = new String[]{"集成"};
+                    String[] valueName = new String[]{"集显","标配1G","标配2G","GTX750 1G","GTX960 2G","GTX960 4G","GTX1030 2G","GTX 1050TI 2G","GTX 1050TI 4G","GTX1060 3G","GTX1060 6G","GTX1080 4G","GTX1060 8G"};
 
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
@@ -696,7 +606,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("内存")) {
-                    String[] valueName = new String[]{"1", "2", "4", "8", "16", "32", "64"};
+                    String[] valueName = new String[]{"4", "8", "16", "32", "64","128"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value + "G", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), Integer.parseInt(value) * 1024.0, null, (valueName.length - i));
@@ -705,7 +615,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("机械硬盘")) {
-                    String[] valueName = new String[]{"500", "1024", "2048"};
+                    String[] valueName = new String[]{"320", "500", "1024", "2048"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         String tempName = value.equals("1024") ? "1T" : value.equals("2048") ? "2T" : value + "G";
@@ -715,74 +625,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("固态硬盘")) {
-                    String[] valueName = new String[]{"128", "256"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value + "G", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), Integer.parseInt(value) * 1024.0, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-            }
-            if (server.equals(productCategoryPropertyDO.getCategoryId())) {
-                if (productCategoryPropertyDO.getPropertyName().equals("其他属性")) {
-                    String[] valueName = new String[]{"无"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("CPU")) {
-                    String[] valueName = new String[]{"Intel 至强六核Xeon E5620*2 2.4GHz", "Intel 至强四核Xeon E5600*2 2.4GHz/16G/1TB*2"};
-
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        MaterialModel materialModel = new MaterialModel();
-                        materialModel.setMaterialType(MaterialType.MATERIAL_TYPE_CPU);
-                        materialModel.setModelName(value);
-                        Integer modeId = materialService.addMaterialModel(materialModel).getResult();
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, modeId, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("显卡")) {
-                    String[] valueName = new String[]{"集成"};
-
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        MaterialModel materialModel = new MaterialModel();
-                        materialModel.setMaterialType(MaterialType.MATERIAL_TYPE_GRAPHICS_CARD);
-                        materialModel.setModelName(value);
-                        Integer modeId = materialService.addMaterialModel(materialModel).getResult();
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, modeId, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("内存")) {
-                    String[] valueName = new String[]{"1", "2", "4", "8", "16", "32", "64"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value + "G", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), Integer.parseInt(value) * 1024.0, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("机械硬盘")) {
-                    String[] valueName = new String[]{"500", "1024", "2048"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        String tempName = value.equals("1024") ? "1T" : value.equals("2048") ? "2T" : value + "G";
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(tempName, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), Integer.parseInt(value) * 1024.0, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("固态硬盘")) {
-                    String[] valueName = new String[]{"128", "256"};
+                    String[] valueName = new String[]{"120", "240", "512"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value + "G", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), Integer.parseInt(value) * 1024.0, null, (valueName.length - i));
@@ -792,115 +635,6 @@ public class ProductTest extends BaseUnTransactionalTest {
                 }
             }
 
-
-            if (tv.equals(productCategoryPropertyDO.getCategoryId())) {
-                if (productCategoryPropertyDO.getPropertyName().equals("其他属性")) {
-                    String[] valueName = new String[]{"无"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("尺寸")) {
-                    String[] valueName = new String[]{"42", "43", "49", "50", "55", "60", "65", "75"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value + "寸", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("显示器")) {
-                    String[] valueName = new String[]{"LED", "高清"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("操作系统")) {
-                    String[] valueName = new String[]{"安卓", "普通"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-            }
-            if (projector.equals(productCategoryPropertyDO.getCategoryId())) {
-                if (productCategoryPropertyDO.getPropertyName().equals("其他属性")) {
-                    String[] valueName = new String[]{"无"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("分辨率")) {
-                    String[] valueName = new String[]{"1024×768"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value + "寸", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("对比度")) {
-                    String[] valueName = new String[]{"3000：1"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("灯泡功率")) {
-                    String[] valueName = new String[]{"280W"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("流明")) {
-                    String[] valueName = new String[]{"5000"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-            }
-            if (zPrinters.equals(productCategoryPropertyDO.getCategoryId())
-                    || jPrinters.equals(productCategoryPropertyDO.getCategoryId())
-                    || aioPrinters.equals(productCategoryPropertyDO.getCategoryId())
-                    || Copier.equals(productCategoryPropertyDO.getCategoryId())) {
-                if (productCategoryPropertyDO.getPropertyName().equals("其他属性")) {
-                    String[] valueName = new String[]{"无"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("颜色")) {
-                    String[] valueName = new String[]{"黑", "白", "彩色"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-            }
             if (pad.equals(productCategoryPropertyDO.getCategoryId())) {
                 if (productCategoryPropertyDO.getPropertyName().equals("其他属性")) {
                     String[] valueName = new String[]{"无"};
@@ -912,7 +646,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("颜色")) {
-                    String[] valueName = new String[]{"黑灰", "银", "土豪金"};
+                    String[] valueName = new String[]{"黑色", "银色", "其他"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
@@ -920,8 +654,8 @@ public class ProductTest extends BaseUnTransactionalTest {
                         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
                     }
                 }
-                if (productCategoryPropertyDO.getPropertyName().equals("容量")) {
-                    String[] valueName = new String[]{"8G", "16G", "32G", "64G", "128G", "256G"};
+                if (productCategoryPropertyDO.getPropertyName().equals("内存")) {
+                    String[] valueName = new String[]{"8", "16", "32", "64", "128", "256"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
@@ -929,16 +663,30 @@ public class ProductTest extends BaseUnTransactionalTest {
                         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
                     }
                 }
-                if (productCategoryPropertyDO.getPropertyName().equals("型号")) {
-                    String[] valueName = new String[]{"A5", "A6", "A7", "A8", "A9", "A10"};
+                if (productCategoryPropertyDO.getPropertyName().equals("尺寸")) {
+                    String[] valueName = new String[]{"7.9", "9.7", "10.5", "12.9"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
+                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
+                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
+                    }
+                }
+                if (productCategoryPropertyDO.getPropertyName().equals("CPU")) {
+                    String[] valueName = new String[]{"双核", "i3 3代","i3 4代","i3 5代","i3 6代","i3 7代","i3 8代","i5 3代","i5 4代","i5 5代","i5 6代","i5 7代","i5 8代","i7 3代","i7 4代","i7 5代","i7 6代","i7 7代","i7 8代"};
+                    for (int i = 0; i < valueName.length; i++) {
+                        String value = valueName[i];
+                        MaterialModel materialModel = new MaterialModel();
+                        materialModel.setMaterialType(MaterialType.MATERIAL_TYPE_CPU);
+                        materialModel.setModelName(value);
+                        Integer modeId = materialService.addMaterialModel(materialModel).getResult();
+                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, modeId, (valueName.length - i));
                         productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
                         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
                     }
                 }
             }
+
             if (monitor.equals(productCategoryPropertyDO.getCategoryId())) {
                 if (productCategoryPropertyDO.getPropertyName().equals("其他属性")) {
                     String[] valueName = new String[]{"无"};
@@ -949,17 +697,9 @@ public class ProductTest extends BaseUnTransactionalTest {
                         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
                     }
                 }
+
                 if (productCategoryPropertyDO.getPropertyName().equals("尺寸")) {
-                    String[] valueName = new String[]{"17寸", "18.5寸", "20寸", "21.5寸", "23寸", "24寸"};
-                    for (int i = 0; i < valueName.length; i++) {
-                        String value = valueName[i];
-                        ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
-                        productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
-                        productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
-                    }
-                }
-                if (productCategoryPropertyDO.getPropertyName().equals("屏幕型号")) {
-                    String[] valueName = new String[]{"正方屏", "宽屏", "其他"};
+                    String[] valueName = new String[]{"18.5", "21.5", "23", "24"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));

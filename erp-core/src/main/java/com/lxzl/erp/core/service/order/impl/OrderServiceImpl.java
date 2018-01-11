@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.order.pojo.*;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
+import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -750,6 +751,11 @@ public class OrderServiceImpl implements OrderService {
         }
         Order order = ConverterUtil.convert(orderDO, Order.class);
 
+        ServiceResult<String, StatementOrder> statementOrderResult = statementService.queryStatementOrderDetailByOrderId(order.getOrderNo());
+        if (ErrorCode.SUCCESS.equals(statementOrderResult.getErrorCode())) {
+            order.setStatementOrder(statementOrderResult.getResult());
+        }
+
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
             for (OrderProduct orderProduct : order.getOrderProductList()) {
                 Product product = FastJsonUtil.toBean(orderProduct.getProductSkuSnapshot(), Product.class);
@@ -761,6 +767,19 @@ public class OrderServiceImpl implements OrderService {
                         }
                     }
                 }
+                // 计算首付
+                if(order.getStatementOrder() != null && CollectionUtil.isNotEmpty(order.getStatementOrder().getStatementOrderDetailList())){
+                    for(StatementOrderDetail statementOrderDetail : order.getStatementOrder().getStatementOrderDetailList()){
+                        if(OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())
+                                && OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType())
+                                && statementOrderDetail.getOrderId().equals(orderProduct.getOrderId())
+                                && statementOrderDetail.getOrderItemReferId().equals(orderProduct.getOrderProductId())
+                                && com.lxzl.erp.common.util.DateUtil.isSameDay(statementOrderDetail.getStatementExpectPayTime(),order.getRentStartTime())){
+                            orderProduct.setFirstNeedPayAmount(BigDecimalUtil.add(orderProduct.getFirstNeedPayAmount(),statementOrderDetail.getStatementDetailAmount()));
+                        }
+                    }
+                }
+
                 List<OrderProductEquipmentDO> orderProductEquipmentDOList = orderProductEquipmentMapper.findByOrderProductId(orderProduct.getOrderProductId());
                 orderProduct.setOrderProductEquipmentList(ConverterUtil.convertList(orderProductEquipmentDOList, OrderProductEquipment.class));
             }
@@ -769,13 +788,22 @@ public class OrderServiceImpl implements OrderService {
             for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
                 List<OrderMaterialBulkDO> orderMaterialBulkDOList = orderMaterialBulkMapper.findByOrderMaterialId(orderMaterial.getOrderMaterialId());
                 orderMaterial.setOrderMaterialBulkList(ConverterUtil.convertList(orderMaterialBulkDOList, OrderMaterialBulk.class));
+
+                // 计算首付
+                if(order.getStatementOrder() != null && CollectionUtil.isNotEmpty(order.getStatementOrder().getStatementOrderDetailList())){
+                    for(StatementOrderDetail statementOrderDetail : order.getStatementOrder().getStatementOrderDetailList()){
+                        if(OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())
+                                && OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType())
+                                && statementOrderDetail.getOrderId().equals(orderMaterial.getOrderId())
+                                && statementOrderDetail.getOrderItemReferId().equals(orderMaterial.getOrderMaterialId())
+                                && com.lxzl.erp.common.util.DateUtil.isSameDay(statementOrderDetail.getStatementExpectPayTime(),order.getRentStartTime())){
+                            orderMaterial.setFirstNeedPayAmount(BigDecimalUtil.add(orderMaterial.getFirstNeedPayAmount(),statementOrderDetail.getStatementDetailAmount()));
+                        }
+                    }
+                }
             }
         }
 
-        ServiceResult<String, StatementOrder> statementOrderResult = statementService.queryStatementOrderDetailByOrderId(order.getOrderNo());
-        if (ErrorCode.SUCCESS.equals(statementOrderResult.getErrorCode())) {
-            order.setStatementOrder(statementOrderResult.getResult());
-        }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
@@ -1356,6 +1384,7 @@ public class OrderServiceImpl implements OrderService {
                         orderMaterialDO.setPayMode(customerRiskManagementDO.getPayMode());
                     }
                 } else {
+
                     orderMaterialDO.setDepositCycle(1);
                     orderMaterialDO.setPaymentCycle(1);
                     orderMaterialDO.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
