@@ -15,12 +15,13 @@ public class UserControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addUser() throws Exception {
         User user = new User();
-        user.setUserName("eddie1");
-        user.setEmail("liuke@lxzl.com.cn");
+        user.setUserName("tangyy");
+        user.setRealName("唐友元");
+        user.setEmail("xxx@gmail.com");
         user.setPassword("123456");
         List<Role> roleList = new ArrayList<>();
         Role role = new Role();
-        role.setRoleId(600002);
+        role.setRoleId(600006);
         roleList.add(role);
         user.setRoleList(roleList);
 

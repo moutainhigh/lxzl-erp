@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.material.pojo.MaterialModel;
 import com.lxzl.erp.common.domain.product.*;
 import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.util.AlgorithmUtil;
+import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.product.ProductCategoryService;
 import com.lxzl.erp.core.service.product.ProductService;
@@ -19,6 +20,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderDO;
+import com.lxzl.erp.web.init.ReadExcelUtils;
 import com.lxzl.se.unit.test.BaseUnTransactionalTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -307,7 +309,7 @@ public class ProductTest extends BaseUnTransactionalTest {
     public void testSaveProperties() {
 
 
-        Integer notepad = 800002, AIO = 800003, chassis = 800004,pad = 800005,monitor = 800005;
+        Integer notepad = 800002, AIO = 800003, chassis = 800004, pad = 800005, monitor = 800006;
         Map<Integer, String> categoryMap = new HashMap<>();
         categoryMap.put(notepad, "笔记本");
         categoryMap.put(AIO, "一体机");
@@ -375,6 +377,7 @@ public class ProductTest extends BaseUnTransactionalTest {
         return productCategoryPropertyDO;
     }
 
+
     @Test
     public void testSavePropertiesValue() {
         Map<String, Object> params = new HashMap<>();
@@ -382,7 +385,7 @@ public class ProductTest extends BaseUnTransactionalTest {
         params.put("pageSize", Integer.MAX_VALUE);
         List<ProductCategoryPropertyDO> productCategoryPropertyDOList = productCategoryPropertyMapper.listPage(params);
 
-        Integer notepad = 800002, AIO = 800003, chassis = 800004,pad = 800005,monitor = 800005;
+        Integer notepad = 800002, AIO = 800003, chassis = 800004, pad = 800005, monitor = 800006;
         Map<Integer, String> categoryMap = new HashMap<>();
         categoryMap.put(notepad, "笔记本");
         categoryMap.put(AIO, "一体机");
@@ -394,7 +397,7 @@ public class ProductTest extends BaseUnTransactionalTest {
             // 笔记本
             if (notepad.equals(productCategoryPropertyDO.getCategoryId())) {
                 if (productCategoryPropertyDO.getPropertyName().equals("尺寸")) {
-                    String[] valueName = new String[]{"12.5","13.3","14","15.4","15.6"};
+                    String[] valueName = new String[]{"12.5", "13.3", "14", "15.4", "15.6"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
@@ -412,7 +415,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("CPU")) {
-                    String[] valueName = new String[]{"双核", "i3 3代","i3 4代","i3 5代","i3 6代","i3 7代","i3 8代","i5 3代","i5 4代","i5 5代","i5 6代","i5 7代","i5 8代","i7 3代","i7 4代","i7 5代","i7 6代","i7 7代","i7 8代"};
+                    String[] valueName = new String[]{"双核", "i3 3代", "i3 4代", "i3 5代", "i3 6代", "i3 7代", "i3 8代", "i5 3代", "i5 4代", "i5 5代", "i5 6代", "i5 7代", "i5 8代", "i7 3代", "i7 4代", "i7 5代", "i7 6代", "i7 7代", "i7 8代"};
 
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
@@ -426,7 +429,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("显卡")) {
-                    String[] valueName = new String[]{"集显", "标配 1G","标配 2G","标配 3G","标配 4G","标配 6G","标配 8G"};
+                    String[] valueName = new String[]{"集显", "标配 1G", "标配 2G", "标配 3G", "标配 4G", "标配 6G", "标配 8G"};
 
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
@@ -440,7 +443,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("内存")) {
-                    String[] valueName = new String[]{"4", "8", "16", "32", "64","128"};
+                    String[] valueName = new String[]{"4", "8", "16", "32", "64", "128"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value + "G", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), Integer.parseInt(value) * 1024.0, null, (valueName.length - i));
@@ -468,7 +471,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("颜色")) {
-                    String[] valueName = new String[]{"黑色","银色"};
+                    String[] valueName = new String[]{"黑色", "银色"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
@@ -477,7 +480,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("电池")) {
-                    String[] valueName = new String[]{"标配","加大"};
+                    String[] valueName = new String[]{"标配", "加大"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, null, (valueName.length - i));
@@ -509,7 +512,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("CPU")) {
-                    String[] valueName = new String[]{"双核", "i3 3代","i3 4代","i3 5代","i3 6代","i3 7代","i3 8代","i5 3代","i5 4代","i5 5代","i5 6代","i5 7代","i5 8代","i7 3代","i7 4代","i7 5代","i7 6代","i7 7代","i7 8代"};
+                    String[] valueName = new String[]{"双核", "i3 3代", "i3 4代", "i3 5代", "i3 6代", "i3 7代", "i3 8代", "i5 3代", "i5 4代", "i5 5代", "i5 6代", "i5 7代", "i5 8代", "i7 3代", "i7 4代", "i7 5代", "i7 6代", "i7 7代", "i7 8代"};
 
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
@@ -523,7 +526,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("显卡")) {
-                    String[] valueName = new String[]{"集显","标配1G","标配2G","GTX750 1G","GTX960 2G","GTX960 4G","GTX1030 2G","GTX 1050TI 2G","GTX 1050TI 4G","GTX1060 3G","GTX1060 6G","GTX1080 4G","GTX1060 8G"};
+                    String[] valueName = new String[]{"集显", "标配1G", "标配2G", "GTX750 1G", "GTX960 2G", "GTX960 4G", "GTX1030 2G", "GTX 1050TI 2G", "GTX 1050TI 4G", "GTX1060 3G", "GTX1060 6G", "GTX1080 4G", "GTX1060 8G"};
 
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
@@ -537,7 +540,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("内存")) {
-                    String[] valueName = new String[]{"4", "8", "16", "32", "64","128"};
+                    String[] valueName = new String[]{"4", "8", "16", "32", "64", "128"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value + "G", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), Integer.parseInt(value) * 1024.0, null, (valueName.length - i));
@@ -578,7 +581,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("CPU")) {
-                    String[] valueName = new String[]{"双核", "i3 3代","i3 4代","i3 5代","i3 6代","i3 7代","i3 8代","i5 3代","i5 4代","i5 5代","i5 6代","i5 7代","i5 8代","i7 3代","i7 4代","i7 5代","i7 6代","i7 7代","i7 8代"};
+                    String[] valueName = new String[]{"双核", "i3 3代", "i3 4代", "i3 5代", "i3 6代", "i3 7代", "i3 8代", "i5 3代", "i5 4代", "i5 5代", "i5 6代", "i5 7代", "i5 8代", "i7 3代", "i7 4代", "i7 5代", "i7 6代", "i7 7代", "i7 8代"};
 
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
@@ -592,7 +595,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("显卡")) {
-                    String[] valueName = new String[]{"集显","标配1G","标配2G","GTX750 1G","GTX960 2G","GTX960 4G","GTX1030 2G","GTX 1050TI 2G","GTX 1050TI 4G","GTX1060 3G","GTX1060 6G","GTX1080 4G","GTX1060 8G"};
+                    String[] valueName = new String[]{"集显", "标配1G", "标配2G", "GTX750 1G", "GTX960 2G", "GTX960 4G", "GTX1030 2G", "GTX 1050TI 2G", "GTX 1050TI 4G", "GTX1060 3G", "GTX1060 6G", "GTX1080 4G", "GTX1060 8G"};
 
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
@@ -606,7 +609,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("内存")) {
-                    String[] valueName = new String[]{"4", "8", "16", "32", "64","128"};
+                    String[] valueName = new String[]{"4", "8", "16", "32", "64", "128"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value + "G", productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), Integer.parseInt(value) * 1024.0, null, (valueName.length - i));
@@ -673,7 +676,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     }
                 }
                 if (productCategoryPropertyDO.getPropertyName().equals("CPU")) {
-                    String[] valueName = new String[]{"双核", "i3 3代","i3 4代","i3 5代","i3 6代","i3 7代","i3 8代","i5 3代","i5 4代","i5 5代","i5 6代","i5 7代","i5 8代","i7 3代","i7 4代","i7 5代","i7 6代","i7 7代","i7 8代"};
+                    String[] valueName = new String[]{"双核", "i3 3代", "i3 4代", "i3 5代", "i3 6代", "i3 7代", "i3 8代", "i5 3代", "i5 4代", "i5 5代", "i5 6代", "i5 7代", "i5 8代", "i7 3代", "i7 4代", "i7 5代", "i7 6代", "i7 7代", "i7 8代"};
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         MaterialModel materialModel = new MaterialModel();
@@ -706,6 +709,44 @@ public class ProductTest extends BaseUnTransactionalTest {
                         productCategoryPropertyValueDO.setRemark(categoryMap.get(productCategoryPropertyDO.getCategoryId()) + productCategoryPropertyDO.getPropertyName() + value);
                         productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
                     }
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testSaveProduct() throws Exception {
+        String filepath = "D:\\document\\notepad.xls";
+        ReadExcelUtils excelReader = new ReadExcelUtils(filepath);
+        // 对读取Excel表格内容测试
+        Map<Integer, Map<Integer, Object>> map = excelReader.readExcelContent();
+        Map<String, Object> params = new HashMap<>();
+        params.put("start", 0);
+        params.put("pageSize", Integer.MAX_VALUE);
+
+        Integer notepad = 800002, AIO = 800003, chassis = 800004, pad = 800005, monitor = 800005;
+        Map<Integer, String> categoryMap = new HashMap<>();
+        categoryMap.put(notepad, "笔记本");
+        categoryMap.put(AIO, "一体机");
+        categoryMap.put(chassis, "台式机");
+        categoryMap.put(pad, "平板电脑");
+        categoryMap.put(monitor, "显示器");
+
+        for (Map.Entry<Integer, String> entry : categoryMap.entrySet()) {
+            List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByCategoryId(entry.getKey());
+            Map<String, ProductCategoryPropertyValueDO> productCategoryPropertyValueDOMap = ListUtil.listToMap(productCategoryPropertyValueDOList, "propertyValueName");
+            // 处理笔记本电脑逻辑
+            if (notepad.equals(entry.getKey())) {
+                System.out.println("获得Excel表格的内容:");
+                for (int i = 1; i <= map.size(); i++) {
+                    Object a = map.get(i).get(0);
+                    Object b = map.get(i).get(1);
+                    Object c = map.get(i).get(2);
+                    Object d = map.get(i).get(3);
+                    Object e = map.get(i).get(4);
+                    Object f = map.get(i).get(5);
+                    Object g = map.get(i).get(6);
+                    Object h = map.get(i).get(7);
                 }
             }
         }
