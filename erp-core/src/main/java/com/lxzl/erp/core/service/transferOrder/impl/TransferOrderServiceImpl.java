@@ -670,6 +670,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         //todo 以后转出类型会增加，此时不知道以后的类型是什么，所以先不能修改
 //        transferOrderDO.setTransferOrderType();
         transferOrderDO.setTransferOrderName(transferOrder.getTransferOrderName());
+        transferOrderDO.setRemark(transferOrder.getRemark());
         transferOrderDO.setUpdateTime(now);
         transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         transferOrderMapper.update(transferOrderDO);
