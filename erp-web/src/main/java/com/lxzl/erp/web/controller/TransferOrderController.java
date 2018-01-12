@@ -116,7 +116,7 @@ public class TransferOrderController {
      */
     @RequestMapping(value = "cancelTransferOrder", method = RequestMethod.POST)
     public Result cancelTransferOrder(@RequestBody @Validated(IdGroup.class) TransferOrder transferOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = transferOrderService.cancelTransferOrder(transferOrder.getTransferOrderNo());
+        ServiceResult<String, String> serviceResult = transferOrderService.cancelTransferOrder(transferOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

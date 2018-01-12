@@ -487,6 +487,10 @@ public class ErrorCode {
     public static final String TRANSFER_ORDER_MODE_IS_NOT_OUT = "J1200025";
     public static final String TRANSFER_ORDER_MATERIAL_NOT_EXISTS = "J1200026";
     public static final String TRANSFER_ORDER_PRODUCT_IS_NEW_NOT_NULL = "J1200027";
+    public static final String TRANSFER_ORDER_MATERIAL_COUNT_NOT_ENOUGH = "J1200028";
+    public static final String TRANSFER_ORDER_PRODUCT_SKU_ID_CAN_NOT_SAME = "J1200029";
+    public static final String TRANSFER_ORDER_MATERIAL_NO_CAN_NOT_SAME = "J1200030";
+    public static final String TRANSFER_ORDER_MATERIAL_COUNT_NOT_ZERO = "J1200031";
 
     public static final String ASSEMBLE_ORDER_ID_NOT_NULL = "J1300001";
     public static final String ASSEMBLE_ORDER_MATERIAL_ID_NOT_NULL = "J1300002";
@@ -971,6 +975,11 @@ public class ErrorCode {
         MAP.put(TRANSFER_ORDER_PRODUCT_EQUIPMENT_NO_NOT_NULL, "转移单下的商品设备编号不能为空");
         MAP.put(BULK_MATERIAL_IN_TRANSFER_ORDER_IS_NOT_IDLE, "该物料下的散料有不处于空闲状态，不能进行转移操作");
         MAP.put(TRANSFER_ORDER_PRODUCT_IS_NEW_NOT_NULL, "转移单商品表下的商品设备是否全新不能为空");
+        MAP.put(TRANSFER_ORDER_MATERIAL_COUNT_NOT_ENOUGH, "该转移单配件表需要清货的物料数量不足");
+        MAP.put(TRANSFER_ORDER_PRODUCT_SKU_ID_CAN_NOT_SAME, "不允许传入重复的商品skuID和全新选项");
+        MAP.put(TRANSFER_ORDER_MATERIAL_NO_CAN_NOT_SAME, "不允许传入重复的物料编号和全新选项");
+        MAP.put(TRANSFER_ORDER_MATERIAL_COUNT_NOT_ZERO, "配件清货时转移单物料数量不能为0");
+
 
         MAP.put(ASSEMBLE_ORDER_ID_NOT_NULL, "组装单ID不能为空");
         MAP.put(ASSEMBLE_ORDER_NOT_EXISTS, "组装单不存在");

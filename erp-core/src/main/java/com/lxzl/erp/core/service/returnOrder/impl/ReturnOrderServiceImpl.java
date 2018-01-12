@@ -291,7 +291,11 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         //由于按天租赁无需授信额度，需交押金，所以当订单按月或按天租赁时，修改客户已用授信额度
         if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDOMap.get(orderProductEquipmentDO.getOrderProductId()).getRentType())) {
             CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(returnOrderDO.getCustomerId());
-            customerRiskManagementDO.setCreditAmountUsed(BigDecimalUtil.add(customerRiskManagementDO.getCreditAmountUsed(), productEquipmentDO.getEquipmentPrice()));
+            BigDecimal amount = BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmountUsed(), productEquipmentDO.getEquipmentPrice());
+            if(BigDecimalUtil.compare(amount,BigDecimal.ZERO)<0){
+                amount = BigDecimal.ZERO;
+            }
+            customerRiskManagementDO.setCreditAmountUsed(amount);
             customerRiskManagementMapper.update(customerRiskManagementDO);
         }
         //修改订单,全部归还状态，最后一件归还时间
