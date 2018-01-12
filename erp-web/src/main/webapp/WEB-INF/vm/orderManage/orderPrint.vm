@@ -153,11 +153,11 @@
                         <th colspan="12" class="text-center printH2">商品租赁明细</th>
                     </tr>
                     <tr class="bg-light">
-                        <th class="text-center">序号</th>
+                        <th class="text-center" style="white-space: nowrap;">序号</th>
                         <th class="text-center">商品名称</th>
                         <th class="text-center">商品参数</th>
                         <th class="text-center">商品价值</th>
-                        <th class="text-center">数量</th>
+                        <th class="text-center" style="white-space: nowrap;">数量</th>
                         <th class="text-center">租赁单价</th>
                         <th class="text-center">租期</th>
                         <th class="text-center">订单总价</th>
@@ -210,11 +210,11 @@
                         <th colspan="12" class="text-center printH2">配件租赁明细</th>
                     </tr>
                     <tr class="bg-light">
-                        <th class="text-center">序号</th>
+                        <th class="text-center" style="white-space: nowrap;">序号</th>
                         <th class="text-center">配件名称</th>
                         <th class="text-center">配件参数</th>
                         <th class="text-center">配件价值</th>
-                        <th class="text-center">数量</th>
+                        <th class="text-center" style="white-space: nowrap;">数量</th>
                         <th class="text-center">租赁单价</th>
                         <th class="text-center">租期</th>
                         <th class="text-center">支付方式</th>
@@ -278,7 +278,7 @@
 
                     </div>
                     <div class="col-xs-4 text-center">
-                        第 {{pagerIndex}} 页
+                        第{{pagerIndex}}页&nbsp;/&nbsp;共{{pageSize}}页
                     </div>
                     <div class="col-xs-4">
                         <p class="pull-right">技术支持电话：400-678-5482</p>
