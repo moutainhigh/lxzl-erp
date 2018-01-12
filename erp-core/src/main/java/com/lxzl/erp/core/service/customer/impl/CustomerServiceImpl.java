@@ -579,6 +579,12 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
+
+        List<Integer> dataAccessPassiveUserList = dataAccessSupport.getDataAccessPassiveUserList();
+        if (!userSupport.getCurrentUserId().equals(customerDO.getOwner()) && !dataAccessPassiveUserList.contains(customerDO.getOwner())) {
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return serviceResult;
+        }
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         customerResult.setCustomerAccount(customerAccount);
@@ -1022,7 +1028,7 @@ public class CustomerServiceImpl implements CustomerService {
         Date currentTime = new Date();
         CustomerDO customerDO = customerMapper.findByNo(customer.getCustomerNo());
 
-        if(customerDO == null){
+        if (customerDO == null) {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
@@ -1044,7 +1050,7 @@ public class CustomerServiceImpl implements CustomerService {
         Date currentTime = new Date();
         CustomerDO customerDO = customerMapper.findByNo(customer.getCustomerNo());
 
-        if(customerDO == null){
+        if (customerDO == null) {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }

@@ -127,7 +127,7 @@
 				</if>
 			</where>
 			order by ed.parent_department_id,ed.data_order desc
-		) department left join erp_role er on er.department_id = department.id and er.data_status = 1
+		) department left join erp_role er on er.department_id = department.id and er.data_status = 1 and er.is_super_admin = 0
 		order by er.data_order desc, er.create_time desc
 	</select>
 

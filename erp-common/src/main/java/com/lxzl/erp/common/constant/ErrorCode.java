@@ -12,6 +12,7 @@ public class ErrorCode {
     public static final String SYSTEM_DEVELOPING = "J000001";
     public static final String EMAIL_ERROR = "J000002";
     public static final String DATA_NOT_BELONG_TO_YOU = "J000003";
+    public static final String DATA_HAVE_NO_PERMISSION = "J000004";
     public static final String COMMITTED_CAN_NOT_REPEAT = "J000991";
     public static final String COMMIT_ONLY_SELF = "J000992";
     public static final String RECORD_USED_CAN_NOT_DELETE = "J000993";
@@ -326,17 +327,17 @@ public class ErrorCode {
     public static final String DEPLOYMENT_ORDER_BULK_MATERIAL_NOT_ENOUGH = "J400097";
     public static final String DEPLOYMENT_ORDER_NOT_EXISTS = "J400098";
     public static final String DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_HAVE_RETURNED = "J400096";
-    public static final String PURCHASE_APPLY_ORDER_NO_NOT_NULL = "J500060";
-    public static final String PURCHASE_APPLY_ORDER_NOT_EXISTS = "J500061";
-    public static final String BULK_MATERIAL_HAVE_NOT_ENOUGH_BY_PARAM = "J500062";
-    public static final String PURCHASE_APPLY_CAN_NOT_UPDATE = "J500063";
-    public static final String PURCHASE_APPLY_CAN_NOT_CANCEL_BY_STATUS = "J500064";
-    public static final String PURCHASE_APPLY_YET_RECEIVE_CAN_NOT_CANCEL = "J500065";
-    public static final String PURCHASE_APPLY_USE_TIME_NOT_NUll = "J500066";
-    public static final String PURCHASE_APPLY_CAN_NOT_PAUSE = "J500067";
-    public static final String PURCHASE_APPLY_CAN_NOT_CONTINUE = "J500068";
-    public static final String PURCHASE_APPLY_CAN_NOT_END = "J500069";
-    public static final String PURCHASE_NOT_HAVE_APPLY = "J500070";
+    public static final String PURCHASE_APPLY_ORDER_NO_NOT_NULL = "J400097";
+    public static final String PURCHASE_APPLY_ORDER_NOT_EXISTS = "J400098";
+    public static final String BULK_MATERIAL_HAVE_NOT_ENOUGH_BY_PARAM = "J400099";
+    public static final String PURCHASE_APPLY_CAN_NOT_UPDATE = "J400100";
+    public static final String PURCHASE_APPLY_CAN_NOT_CANCEL_BY_STATUS = "J400101";
+    public static final String PURCHASE_APPLY_YET_RECEIVE_CAN_NOT_CANCEL = "J400102";
+    public static final String PURCHASE_APPLY_USE_TIME_NOT_NUll = "J400103";
+    public static final String PURCHASE_APPLY_CAN_NOT_PAUSE = "J400104";
+    public static final String PURCHASE_APPLY_CAN_NOT_CONTINUE = "J400105";
+    public static final String PURCHASE_APPLY_CAN_NOT_END = "J400106";
+    public static final String PURCHASE_NOT_HAVE_APPLY = "J400107";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -503,6 +504,7 @@ public class ErrorCode {
         MAP.put(SYSTEM_DEVELOPING, "开发中……");
         MAP.put(EMAIL_ERROR, "邮箱格式有误");
         MAP.put(DATA_NOT_BELONG_TO_YOU, "数据不属于你，无法操作！");
+        MAP.put(DATA_HAVE_NO_PERMISSION, "您没有权限这么做，别痴心妄想了！");
         MAP.put(COMMITTED_CAN_NOT_REPEAT, "重复提交！");
         MAP.put(COMMIT_ONLY_SELF, "只能提交自己的数据");
         MAP.put(RECORD_USED_CAN_NOT_DELETE, "数据被使用，无法删除");

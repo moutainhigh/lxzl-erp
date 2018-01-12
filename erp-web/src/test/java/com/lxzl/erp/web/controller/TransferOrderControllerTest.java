@@ -112,7 +112,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
         TransferOrderProduct transferOrderProduct4 = new TransferOrderProduct();
         transferOrderProduct4.setProductSkuId(96);
         transferOrderProduct4.setProductCount(2);
-        transferOrderProduct4.setIsNew(1);
+        transferOrderProduct4.setIsNew(0);
 
         transferOrderProductList.add(transferOrderProduct1);
         transferOrderProductList.add(transferOrderProduct2);

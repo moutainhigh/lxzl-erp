@@ -25,6 +25,21 @@ public class DataAccessSupport {
     @Autowired
     private WarehouseService warehouseService;
 
+    public List<Integer> getDataAccessPassiveUserList() {
+
+        //数据级权限控制-查找用户可查看用户列表
+        Integer currentUserId = userSupport.getCurrentUserId();
+        //获取用户最【新的】最终可观察用户列表
+        List<UserDO> userDOList = userMapper.getPassiveUserByUser(currentUserId);
+        List<Integer> passiveUserIdList = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(userDOList)) {
+            for (UserDO userDO : userDOList) {
+                passiveUserIdList.add(userDO.getId());
+            }
+        }
+        return passiveUserIdList;
+    }
+
     public void setDataAccessPassiveUserList(BasePageParam basePageParam) {
 
         //数据级权限控制-查找用户可查看用户列表
