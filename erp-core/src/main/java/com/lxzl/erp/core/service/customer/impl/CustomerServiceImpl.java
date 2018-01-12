@@ -579,12 +579,16 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
-
         List<Integer> dataAccessPassiveUserList = dataAccessSupport.getDataAccessPassiveUserList();
-        if (!userSupport.getCurrentUserId().equals(customerDO.getOwner()) && !dataAccessPassiveUserList.contains(customerDO.getOwner())) {
+        //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人  并且当前用户的可观察列表中不包含当前数据的创建人，则不允许看此条数据
+        if (!userSupport.getCurrentUserId().equals(customerDO.getOwner()) &&
+                !userSupport.getCurrentUserId().equals(customerDO.getUnionUser()) &&
+                !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser()))&&
+                !dataAccessPassiveUserList.contains(Integer.parseInt(customerDO.getCreateUser()))) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
+
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         customerResult.setCustomerAccount(customerAccount);
