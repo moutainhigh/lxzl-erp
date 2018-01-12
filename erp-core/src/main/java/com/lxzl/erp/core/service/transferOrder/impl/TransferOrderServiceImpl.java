@@ -201,90 +201,19 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             return serviceResult;
         }
 
-        Map<Integer,TransferOrderProduct> productEquipmentIsNewMap = new HashMap<>();
-        Map<Integer,TransferOrderProduct> productEquipmentIsOldMap = new HashMap<>();
-        //加入设备是否全新的分类判断
-        if (CollectionUtil.isNotEmpty(transferOrder.getTransferOrderProductList())){
-            for (TransferOrderProduct transferOrderProduct : transferOrder.getTransferOrderProductList()){
-                //不是全新的
-                if (CommonConstant.COMMON_CONSTANT_NO.equals(transferOrderProduct.getIsNew())){
-                    if (productEquipmentIsOldMap.get(transferOrderProduct.getProductSkuId()) == null){
-                        productEquipmentIsOldMap.put(transferOrderProduct.getProductSkuId(),transferOrderProduct);
-                    }else{
-                        serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_PRODUCT_SKU_ID_CAN_NOT_SAME);
-                        return serviceResult;
-                    }
-                }else{
-                    //是全新
-                    if (productEquipmentIsNewMap.get(transferOrderProduct.getProductSkuId()) == null){
-                        productEquipmentIsNewMap.put(transferOrderProduct.getProductSkuId(),transferOrderProduct);
-                    }else{
-                        serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_PRODUCT_SKU_ID_CAN_NOT_SAME);
-                        return serviceResult;
-                    }
-                }
-            }
-        }
-
-        //更改的是全新的设备
-        serviceResult = updateTransferOrderProductInfo(productEquipmentIsNewMap,CommonConstant.COMMON_CONSTANT_YES,transferOrderDO.getId(), userSupport.getCurrentUser(), now);
+        serviceResult = updateTransferOrderProductInfo(transferOrder.getTransferOrderProductList(),transferOrderDO.getId(), userSupport.getCurrentUser(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
         }
 
-        //更改的不是全新的设备
-        serviceResult = updateTransferOrderProductInfo(productEquipmentIsOldMap,CommonConstant.COMMON_CONSTANT_NO,transferOrderDO.getId(), userSupport.getCurrentUser(), now);
+        serviceResult = updateTransferOrderMaterialInfo(transferOrder.getTransferOrderMaterialList(), transferOrderDO.getId(), userSupport.getCurrentUser(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
         }
-
-//        List<TransferOrderMaterial> transferOrderMaterialOldList = new ArrayList<>();
-//        List<TransferOrderMaterial> transferOrderMaterialNewList = new ArrayList<>();
-        Map<String,TransferOrderMaterial> bulkMaterialIsNewMap = new HashMap<>();
-        Map<String,TransferOrderMaterial> bulkMaterialIsOldMap = new HashMap<>();
-        //加入散料是否全新的分类判断
-        if (CollectionUtil.isNotEmpty(transferOrder.getTransferOrderMaterialList())){
-            for (TransferOrderMaterial transferOrderMaterial : transferOrder.getTransferOrderMaterialList()){
-                //不是全新的
-                if (CommonConstant.COMMON_CONSTANT_NO.equals(transferOrderMaterial.getIsNew())){
-                    if (bulkMaterialIsOldMap.get(transferOrderMaterial.getMaterialNo()) == null){
-                        bulkMaterialIsOldMap.put(transferOrderMaterial.getMaterialNo(),transferOrderMaterial);
-                    }else{
-                        serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_MATERIAL_NO_CAN_NOT_SAME);
-                        return serviceResult;
-                    }
-                }else{
-                    //是全新
-                    if (bulkMaterialIsNewMap.get(transferOrderMaterial.getMaterialNo()) == null){
-                        bulkMaterialIsNewMap.put(transferOrderMaterial.getMaterialNo(),transferOrderMaterial);
-                    }else{
-                        serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_MATERIAL_NO_CAN_NOT_SAME);
-                        return serviceResult;
-                    }
-                }
-            }
-        }
-
-        //更改的是全新的散料
-        serviceResult = updateTransferOrderMaterialInfo(bulkMaterialIsNewMap,CommonConstant.COMMON_CONSTANT_YES, transferOrderDO.getId(), userSupport.getCurrentUser(), now);
-        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            serviceResult.setErrorCode(serviceResult.getErrorCode());
-            return serviceResult;
-        }
-
-        //更改的不是全新的散料
-        serviceResult = updateTransferOrderMaterialInfo(bulkMaterialIsOldMap,CommonConstant.COMMON_CONSTANT_NO, transferOrderDO.getId(), userSupport.getCurrentUser(), now);
-        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            serviceResult.setErrorCode(serviceResult.getErrorCode());
-            return serviceResult;
-        }
-
 
         transferOrderDO.setTransferOrderName(transferOrder.getTransferOrderName());
         transferOrderDO.setRemark(transferOrder.getRemark());
@@ -645,11 +574,8 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         }
         //todo 如果传入的物料数量为0
         if (transferOrderMaterial.getMaterialCount() == 0 ){
-            transferOrderMaterialDO.setMaterialCount(0);
-            transferOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-            transferOrderMaterialDO.setUpdateTime(now);
-            transferOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            transferOrderMaterialMapper.update(transferOrderMaterialDO);
+            serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_MATERIAL_COUNT_NOT_ZERO);
+            return serviceResult;
         }
 
         //如果清货的数量大于原转移单配件表中物料的数量
@@ -737,15 +663,21 @@ public class TransferOrderServiceImpl implements TransferOrderService {
 
 
     @Override
-    public ServiceResult<String, String> cancelTransferOrder(String transferOrderNo) {
+    public ServiceResult<String, String> cancelTransferOrder(TransferOrder transferOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        TransferOrderDO transferOrderDO = transferOrderMapper.findByNo(transferOrderNo);
+        TransferOrderDO transferOrderDO = transferOrderMapper.findByNo(transferOrder.getTransferOrderNo());
+        if (transferOrderDO == null) {
+            serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+
         if (transferOrderDO.getTransferOrderStatus() == null || !TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT.equals(transferOrderDO.getTransferOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_STATUS_IS_ERROR);
             return serviceResult;
         }
 
         transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_CANCEL);
+        transferOrderDO.setRemark(transferOrder.getRemark());
         transferOrderDO.setUpdateTime(new Date());
         transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         transferOrderMapper.update(transferOrderDO);
@@ -803,8 +735,6 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                 return serviceResult;
             }
         } else {
-            //todo 如果是转入单就入库
-            //todo 如果是转出单就...
             transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_SUCCESS);
             transferOrderDO.setUpdateTime(now);
             transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -905,30 +835,30 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         return serviceResult;
     }
 
-    private ServiceResult<String, String> updateTransferOrderProductInfo( Map<Integer,TransferOrderProduct> transferOrderProductMap,Integer isNew, Integer transferOrderId, User loginUser, Date now) {
+    private ServiceResult<String, String> updateTransferOrderProductInfo(List<TransferOrderProduct> transferOrderProductList, Integer transferOrderId, User loginUser, Date now) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        Map<Integer, TransferOrderProduct> updateTransferOrderProductMap = new HashMap<>();
-        List<TransferOrderProductDO> dbTransferOrderProductDOList = transferOrderProductMapper.findByTransferOrderIdAndIsNew(transferOrderId,isNew);
-        Map<Integer, TransferOrderProductDO> dbTransferOrderProductDOMap = ListUtil.listToMap(dbTransferOrderProductDOList, "productSkuId");
-        if (transferOrderProductMap.size() > 0) {
-            for (Integer productSkuID : transferOrderProductMap.keySet()) {
+        Map<String, TransferOrderProduct> updateTransferOrderProductMap = new HashMap<>();
+        List<TransferOrderProductDO> dbTransferOrderProductDOList = transferOrderProductMapper.findByTransferOrderId(transferOrderId);
+        Map<String,TransferOrderProductDO> dbTransferOrderProductDOMap = ListUtil.listToMap(dbTransferOrderProductDOList,"productSkuId","isNew");
+        if (CollectionUtil.isNotEmpty(transferOrderProductList)) {
+            for (TransferOrderProduct transferOrderProduct : transferOrderProductList) {
                 //如果原单中有更改单的ProductSkuId
-                if (dbTransferOrderProductDOMap.get(productSkuID) != null &&
-                        dbTransferOrderProductDOMap.get(productSkuID).getProductCount().equals(transferOrderProductMap.get(productSkuID).getProductCount())) {
+                if (dbTransferOrderProductDOMap.get(transferOrderProduct.getProductSkuId() +"-"+ transferOrderProduct.getIsNew()) != null &&
+                        dbTransferOrderProductDOMap.get(transferOrderProduct.getProductSkuId() +"-"+ transferOrderProduct.getIsNew()).getProductCount().equals(transferOrderProduct.getProductCount())) {
                     //将原设备维修单明细中已经存入到updateRepairOrderEquipmentDOMap的数据删除
-                    dbTransferOrderProductDOMap.remove(productSkuID);
+                    dbTransferOrderProductDOMap.remove(transferOrderProduct.getProductSkuId() +"-"+ transferOrderProduct.getIsNew());
                 } else {
                     //将原单和现单中都存在的数据，存入此Map
-                    updateTransferOrderProductMap.put(productSkuID, transferOrderProductMap.get(productSkuID));
+                    updateTransferOrderProductMap.put(transferOrderProduct.getProductSkuId() +"-"+ transferOrderProduct.getIsNew(), transferOrderProduct);
                 }
             }
         }
 
         if (updateTransferOrderProductMap.size() > 0) {
-            for (Integer productSkuId : updateTransferOrderProductMap.keySet()) {
-                TransferOrderProductDO transferOrderProductDO = ConverterUtil.convert(updateTransferOrderProductMap.get(productSkuId), TransferOrderProductDO.class);
+            for (String transferOrderProductKey : updateTransferOrderProductMap.keySet()) {
+                TransferOrderProductDO transferOrderProductDO = ConverterUtil.convert(updateTransferOrderProductMap.get(transferOrderProductKey), TransferOrderProductDO.class);
                 //通过productSku获取productId
-                ProductSkuDO productSkuDO = productSkuMapper.findById(productSkuId);
+                ProductSkuDO productSkuDO = productSkuMapper.findById(transferOrderProductDO.getProductSkuId());
                 if (productSkuDO == null) {
                     serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                     return serviceResult;
@@ -945,11 +875,13 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         }
 
         if (dbTransferOrderProductDOMap.size() > 0) {
-            for (Integer productSkuId : dbTransferOrderProductDOMap.keySet()) {
-                TransferOrderProductDO dbTransferOrderProductDO = dbTransferOrderProductDOMap.get(productSkuId);
+            for (String  transferOrderProductKey : dbTransferOrderProductDOMap.keySet()) {
+                TransferOrderProductDO dbTransferOrderProductDO = dbTransferOrderProductDOMap.get(transferOrderProductKey);
+                dbTransferOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 dbTransferOrderProductDO.setUpdateUser(loginUser.getUserId().toString());
                 dbTransferOrderProductDO.setUpdateTime(now);
-                transferOrderProductMapper.clearDateStatusByTransferIdAndProductSkuIdAndIsNew(productSkuId, transferOrderId, dbTransferOrderProductDO.getIsNew());
+                transferOrderProductMapper.update(dbTransferOrderProductDO);
+//                transferOrderProductMapper.clearDateStatusByTransferIdAndProductSkuIdAndIsNew(productSkuId, transferOrderId, dbTransferOrderProductDO.getIsNew());
             }
         }
 
@@ -957,28 +889,28 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         return serviceResult;
     }
 
-    private ServiceResult<String, String> updateTransferOrderMaterialInfo(Map<String,TransferOrderMaterial> transferOrderMaterialMap,Integer isNew,Integer transferOrderId, User loginUser, Date now) {
+    private ServiceResult<String, String> updateTransferOrderMaterialInfo(List<TransferOrderMaterial> transferOrderMaterialList,Integer transferOrderId, User loginUser, Date now) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Map<String, TransferOrderMaterial> updateTransferOrderMaterialMap = new HashMap<>();
-        List<TransferOrderMaterialDO> dbTransferOrderMaterialDOList = transferOrderMaterialMapper.findByTransferOrderIdAndIsNew(transferOrderId,isNew);
-        Map<String, TransferOrderMaterialDO> dbTransferOrderMaterialDOMap = ListUtil.listToMap(dbTransferOrderMaterialDOList, "materialNo");
-        if (transferOrderMaterialMap.size() > 0) {
-            for (String materialNo : transferOrderMaterialMap.keySet()) {
+        List<TransferOrderMaterialDO> dbTransferOrderMaterialDOList = transferOrderMaterialMapper.findByTransferOrderId(transferOrderId);
+        Map<String, TransferOrderMaterialDO> dbTransferOrderMaterialDOMap = ListUtil.listToMap(dbTransferOrderMaterialDOList, "materialNo","isNew");
+        if (CollectionUtil.isNotEmpty(transferOrderMaterialList)) {
+            for (TransferOrderMaterial transferOrderMaterial : transferOrderMaterialList) {
                 //如果原单中有更改单中的数据
-                if (dbTransferOrderMaterialDOMap.get(materialNo) != null &&
-                        dbTransferOrderMaterialDOMap.get(materialNo).getMaterialCount().equals(transferOrderMaterialMap.get(materialNo).getMaterialCount())) {
+                if (dbTransferOrderMaterialDOMap.get(transferOrderMaterial.getMaterialNo() +"-"+ transferOrderMaterial.getIsNew()) != null &&
+                        dbTransferOrderMaterialDOMap.get(transferOrderMaterial.getMaterialNo() +"-"+ transferOrderMaterial.getIsNew()).getMaterialCount().equals(transferOrderMaterial.getMaterialCount())) {
                     //将原设备维修单明细中已经存入到updateRepairOrderEquipmentDOMap的数据删除
-                    dbTransferOrderMaterialDOMap.remove(materialNo);
+                    dbTransferOrderMaterialDOMap.remove(transferOrderMaterial.getMaterialNo() +"-"+ transferOrderMaterial.getIsNew());
                 } else {
                     //将原单和现单中都存在的数据，存入此Map
-                    updateTransferOrderMaterialMap.put(materialNo, transferOrderMaterialMap.get(materialNo));
+                    updateTransferOrderMaterialMap.put(transferOrderMaterial.getMaterialNo() +"-"+ transferOrderMaterial.getIsNew(),transferOrderMaterial);
                 }
             }
         }
 
         if (updateTransferOrderMaterialMap.size() > 0) {
-            for (String materialNo : updateTransferOrderMaterialMap.keySet()) {
-                TransferOrderMaterialDO transferOrderMaterialDO = ConverterUtil.convert(updateTransferOrderMaterialMap.get(materialNo), TransferOrderMaterialDO.class);
+            for (String transferOrderMaterialKy : updateTransferOrderMaterialMap.keySet()) {
+                TransferOrderMaterialDO transferOrderMaterialDO = ConverterUtil.convert(updateTransferOrderMaterialMap.get(transferOrderMaterialKy), TransferOrderMaterialDO.class);
 
                 //通过materialNo获取materialId
                 MaterialDO materialDO = materialMapper.findByNo(transferOrderMaterialDO.getMaterialNo());
@@ -1001,9 +933,11 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         if (dbTransferOrderMaterialDOMap.size() > 0) {
             for (String materialNo : dbTransferOrderMaterialDOMap.keySet()) {
                 TransferOrderMaterialDO dbTransferOrderMaterialDO = dbTransferOrderMaterialDOMap.get(materialNo);
+                dbTransferOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 dbTransferOrderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
                 dbTransferOrderMaterialDO.setUpdateTime(now);
-                transferOrderMaterialMapper.clearDateStatusByTransferIdAndMaterialNoAndIsNew(materialNo, transferOrderId, dbTransferOrderMaterialDO.getIsNew());
+                transferOrderMaterialMapper.update(dbTransferOrderMaterialDO);
+//                transferOrderMaterialMapper.clearDateStatusByTransferIdAndMaterialNoAndIsNew(materialNo, transferOrderId, dbTransferOrderMaterialDO.getIsNew());
             }
         }
 
@@ -1031,7 +965,6 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                     productEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     productEquipmentMapper.update(productEquipmentDO);
 
-                    //todo updateList
                     //改变该设备下散料的状态
                     List<BulkMaterialDO> dbBulkMaterialDOList = bulkMaterialMapper.findByEquipmentNo(productEquipmentDO.getEquipmentNo());
                     for (BulkMaterialDO bulkMaterialDO : dbBulkMaterialDOList){
@@ -1131,7 +1064,6 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                     transferOrderProductEquipmentDO.setCreateUser(transferOrderDO.getCreateUser());
                     transferOrderProductEquipmentDO.setUpdateTime(now);
                     transferOrderProductEquipmentDO.setUpdateUser(transferOrderDO.getUpdateUser());
-                    //todo saveList
                     transferOrderProductEquipmentDOList.add(transferOrderProductEquipmentDO);
                 }
                 transferOrderProductEquipmentMapper.saveList(transferOrderProductEquipmentDOList);

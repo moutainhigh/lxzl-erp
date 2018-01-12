@@ -33,10 +33,10 @@ public interface TransferOrderService extends VerifyReceiver {
 
     /**
      * 取消增加转移单
-     * @param transferOrderNo
+     * @param transferOrder
      * @return
      */
-    ServiceResult<String,String> cancelTransferOrder(String transferOrderNo);
+    ServiceResult<String,String> cancelTransferOrder(TransferOrder transferOrder);
 
     /**
      * 提交转移单进行审核

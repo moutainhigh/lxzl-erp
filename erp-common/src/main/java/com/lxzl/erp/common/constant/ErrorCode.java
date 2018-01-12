@@ -489,6 +489,7 @@ public class ErrorCode {
     public static final String TRANSFER_ORDER_MATERIAL_COUNT_NOT_ENOUGH = "J1200028";
     public static final String TRANSFER_ORDER_PRODUCT_SKU_ID_CAN_NOT_SAME = "J1200029";
     public static final String TRANSFER_ORDER_MATERIAL_NO_CAN_NOT_SAME = "J1200030";
+    public static final String TRANSFER_ORDER_MATERIAL_COUNT_NOT_ZERO = "J1200031";
 
     public static final String ASSEMBLE_ORDER_ID_NOT_NULL = "J1300001";
     public static final String ASSEMBLE_ORDER_MATERIAL_ID_NOT_NULL = "J1300002";
@@ -976,6 +977,7 @@ public class ErrorCode {
         MAP.put(TRANSFER_ORDER_MATERIAL_COUNT_NOT_ENOUGH, "该转移单配件表需要清货的物料数量不足");
         MAP.put(TRANSFER_ORDER_PRODUCT_SKU_ID_CAN_NOT_SAME, "不允许传入重复的商品skuID和全新选项");
         MAP.put(TRANSFER_ORDER_MATERIAL_NO_CAN_NOT_SAME, "不允许传入重复的物料编号和全新选项");
+        MAP.put(TRANSFER_ORDER_MATERIAL_COUNT_NOT_ZERO, "配件清货时转移单物料数量不能为0");
 
 
         MAP.put(ASSEMBLE_ORDER_ID_NOT_NULL, "组装单ID不能为空");
