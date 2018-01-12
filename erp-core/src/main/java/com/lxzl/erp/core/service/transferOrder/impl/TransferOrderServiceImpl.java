@@ -572,7 +572,6 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_MATERIAL_NOT_EXISTS);
             return serviceResult;
         }
-        //todo 如果传入的物料数量为0
         if (transferOrderMaterial.getMaterialCount() == 0 ){
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_MATERIAL_COUNT_NOT_ZERO);
             return serviceResult;
@@ -630,7 +629,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                 transferOrderMaterialDO.setMaterialCount(0);
                 transferOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
             }else{
-                transferOrderMaterialDO.setMaterialCount(transferOrderMaterial.getMaterialCount());
+                transferOrderMaterialDO.setMaterialCount(transferOrderMaterialDO.getMaterialCount()-transferOrderMaterial.getMaterialCount());
             }
             transferOrderMaterialDO.setRemark(transferOrderMaterial.getRemark());
             transferOrderMaterialDO.setUpdateTime(now);
