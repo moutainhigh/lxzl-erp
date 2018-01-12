@@ -141,7 +141,8 @@ public class UserSupport {
         if (CollectionUtil.isNotEmpty(userRoleList)) {
             for (Role role : userRoleList) {
                 DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
-                if (DepartmentType.DEPARTMENT_TYPE_SERVICE.equals(departmentDO.getDepartmentType())) {
+                if (DepartmentType.DEPARTMENT_TYPE_SERVICE.equals(departmentDO.getDepartmentType())
+                        || DepartmentType.DEPARTMENT_TYPE_WAREHOUSE.equals(departmentDO.getDepartmentType())) {
                     return true;
                 }
             }

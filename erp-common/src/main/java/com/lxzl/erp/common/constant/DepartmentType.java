@@ -51,4 +51,12 @@ public class DepartmentType {
      * 售后部
      */
     public static final Integer DEPARTMENT_TYPE_SERVICE = 300011;
+    /**
+     * 仓库
+     */
+    public static final Integer DEPARTMENT_TYPE_WAREHOUSE = 300012;
+    /**
+     * 售后部
+     */
+    public static final Integer DEPARTMENT_TYPE_RISK = 300013;
 }

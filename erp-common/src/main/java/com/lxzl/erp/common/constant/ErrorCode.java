@@ -338,6 +338,7 @@ public class ErrorCode {
     public static final String PURCHASE_APPLY_CAN_NOT_CONTINUE = "J400105";
     public static final String PURCHASE_APPLY_CAN_NOT_END = "J400106";
     public static final String PURCHASE_NOT_HAVE_APPLY = "J400107";
+    public static final String ORDER_RENT_LENGTH_MORE_THAN_90 = "订单租期不允许";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
