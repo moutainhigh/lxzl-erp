@@ -64,6 +64,13 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             return result;
         }
 
+        WarehouseDO warehouseDO = warehouseSupport.getAvailableWarehouse(deploymentOrder.getSrcWarehouseId());
+        if (warehouseDO == null) {
+            result.setErrorCode(ErrorCode.WAREHOUSE_NOT_AVAILABLE);
+            return result;
+        }
+
+
         DeploymentOrderDO deploymentOrderDO = ConverterUtil.convert(deploymentOrder, DeploymentOrderDO.class);
         deploymentOrderDO.setDeploymentOrderNo(generateNoSupport.generateDeploymentOrderNo(currentTime, deploymentOrderDO.getSrcWarehouseId(), deploymentOrderDO.getTargetWarehouseId()));
         deploymentOrderDO.setDeploymentOrderStatus(DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT);
@@ -136,8 +143,8 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         if (updateDeploymentOrderProductDOMap.size() > 0) {
             for (Map.Entry<Integer, DeploymentOrderProductDO> entry : updateDeploymentOrderProductDOMap.entrySet()) {
                 DeploymentOrderProductDO deploymentOrderProductDO = entry.getValue();
-                DeploymentOrderProductDO oldDeploymentOrderProductDO = deploymentOrderProductMapper.findByDeploymentOrderNoAndSkuId(deploymentOrderNo,deploymentOrderProductDO.getDeploymentProductSkuId());
-                if(oldDeploymentOrderProductDO==null){
+                DeploymentOrderProductDO oldDeploymentOrderProductDO = deploymentOrderProductMapper.findByDeploymentOrderNoAndSkuId(deploymentOrderNo, deploymentOrderProductDO.getDeploymentProductSkuId());
+                if (oldDeploymentOrderProductDO == null) {
                     throw new BusinessException(ErrorCode.RECORD_NOT_EXISTS);
                 }
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(deploymentOrderProductDO.getDeploymentProductSkuId());
@@ -332,6 +339,11 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_STATUS_ERROR);
             return result;
         }
+        WarehouseDO warehouseDO = warehouseSupport.getAvailableWarehouse(deploymentOrder.getSrcWarehouseId());
+        if (warehouseDO == null) {
+            result.setErrorCode(ErrorCode.WAREHOUSE_NOT_AVAILABLE);
+            return result;
+        }
 
         DeploymentOrderDO deploymentOrderDO = ConverterUtil.convert(deploymentOrder, DeploymentOrderDO.class);
         deploymentOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -374,6 +386,11 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         }
         if (!DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT.equals(dbDeploymentOrderDO.getDeploymentOrderStatus())) {
             result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_STATUS_ERROR);
+            return result;
+        }
+        WarehouseDO warehouseDO = warehouseSupport.getAvailableWarehouse(dbDeploymentOrderDO.getSrcWarehouseId());
+        if (warehouseDO == null) {
+            result.setErrorCode(ErrorCode.WAREHOUSE_NOT_AVAILABLE);
             return result;
         }
 
@@ -424,6 +441,11 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         if (!CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())
                 && !CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(param.getOperationType())) {
             result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+            return result;
+        }
+        WarehouseDO warehouseDO = warehouseSupport.getAvailableWarehouse(deploymentOrderDO.getTargetWarehouseId());
+        if (warehouseDO == null) {
+            result.setErrorCode(ErrorCode.WAREHOUSE_NOT_AVAILABLE);
             return result;
         }
 
