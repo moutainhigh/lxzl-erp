@@ -968,13 +968,13 @@ public class ErrorCode {
         MAP.put(USER_CAN_NOT_OPERATION_TRANSFER_ORDER_WAREHOUSE, "该用户不能操作这个仓库下的转移单。");
         MAP.put(PRODUCT_EQUIPMENT_AND_USER_NOT_SAME_WAREHOUSE, "编号【%s 】的设备与用户不在同一个仓库");
         MAP.put(TRANSFER_ORDER_PRODUCT_NOT_EXISTS_BY_EQUIPMENT_NO, "编号【%s 】的设备对应的转移单商品表不存在");
-        MAP.put(TRANSFER_ORDER_IS_NEW_NOT_NULL, "转移单配件表下的散料是否全新不能为空");
+        MAP.put(TRANSFER_ORDER_IS_NEW_NOT_NULL, "转移单配件表下的散料全新字段不能为空");
         MAP.put(PRODUCT_EQUIPMENT_IN_TRANSFER_ORDER_ID_NOT_EXISTS, "该设备并不在此转移单中");
         MAP.put(TRANSFER_ORDER_MODE_IS_NOT_OUT, "该转移单不是转出类型");
         MAP.put(TRANSFER_ORDER_MATERIAL_NOT_EXISTS, "转移单配件表不存在");
         MAP.put(TRANSFER_ORDER_PRODUCT_EQUIPMENT_NO_NOT_NULL, "转移单下的商品设备编号不能为空");
         MAP.put(BULK_MATERIAL_IN_TRANSFER_ORDER_IS_NOT_IDLE, "该物料下的散料有不处于空闲状态，不能进行转移操作");
-        MAP.put(TRANSFER_ORDER_PRODUCT_IS_NEW_NOT_NULL, "转移单商品表下的商品设备是否全新不能为空");
+        MAP.put(TRANSFER_ORDER_PRODUCT_IS_NEW_NOT_NULL, "转移单商品表下的商品设备全新字段不能为空");
         MAP.put(TRANSFER_ORDER_MATERIAL_COUNT_NOT_ENOUGH, "该转移单配件表需要清货的物料数量不足");
         MAP.put(TRANSFER_ORDER_PRODUCT_SKU_ID_CAN_NOT_SAME, "不允许传入重复的商品skuID和全新选项");
         MAP.put(TRANSFER_ORDER_MATERIAL_NO_CAN_NOT_SAME, "不允许传入重复的物料编号和全新选项");
