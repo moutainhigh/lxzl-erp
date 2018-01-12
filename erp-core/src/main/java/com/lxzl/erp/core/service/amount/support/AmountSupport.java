@@ -40,6 +40,9 @@ public class AmountSupport {
         // 如果结束的日期日，大于开始的日期日，那么就证明最后一期在同一个月，否则就要算前一个月和后一个月的金额
         if (returnEndDateDay >= rentStartDateDay) {
             nextSurplusDays = returnEndDateDay - rentStartDateDay + 1;
+        } else if ((returnEndDateDay + 1) == rentStartDateDay) {
+            // 如果起租日期在结算日期的后一天，证明是整月，按照整月算
+            monthSpace = monthSpace + 1;
         } else {
             // 计算前一个月时，算当天，所以要增加一天
             previousSurplusDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(DateUtil.monthInterval(returnEndDate, -1)) - rentStartDateDay + 1;

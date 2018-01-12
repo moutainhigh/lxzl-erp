@@ -1351,6 +1351,10 @@ public class OrderServiceImpl implements OrderService {
 
         if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
             for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())
+                        && orderProductDO.getRentTimeLength() >= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
+                    throw new BusinessException(ErrorCode.ORDER_RENT_LENGTH_MORE_THAN_90);
+                }
 
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
                 Product product = productServiceResult.getResult();
@@ -1381,8 +1385,6 @@ public class OrderServiceImpl implements OrderService {
                         orderProductDO.setPayMode(customerRiskManagementDO.getPayMode());
                     }
                 } else {
-                    orderProductDO.setDepositCycle(1);
-                    orderProductDO.setPaymentCycle(1);
                     if(orderProductDO.getPayMode() == null){
                         throw new BusinessException(ErrorCode.ORDER_PAY_MODE_NOT_NULL);
                     }
@@ -1419,8 +1421,6 @@ public class OrderServiceImpl implements OrderService {
                         orderMaterialDO.setPayMode(customerRiskManagementDO.getPayMode());
                     }
                 } else {
-                    orderMaterialDO.setDepositCycle(1);
-                    orderMaterialDO.setPaymentCycle(1);
                     if(orderMaterialDO.getPayMode() == null){
                         throw new BusinessException(ErrorCode.ORDER_PAY_MODE_NOT_NULL);
                     }
