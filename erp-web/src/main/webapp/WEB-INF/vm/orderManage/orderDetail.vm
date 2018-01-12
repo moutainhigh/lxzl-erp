@@ -79,7 +79,7 @@
                             <div class="col-md-4">
                                 <dl class="dl-horizontal dl-horizontal-rental">
                                     <dt><label style="letter-spacing: 0.5em;">起租日期</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{#time}}{{rentStartTime}}{{/time}}&nbsp;</dd>
+                                    <dd class="mb5">{{#shortTime}}{{rentStartTime}}{{/shortTime}}&nbsp;</dd>
 
                                     <dt><label>预计归还日期</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{#shortTime}}{{expectReturnTime}}{{/shortTime}}</dd>
