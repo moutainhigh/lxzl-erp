@@ -582,46 +582,6 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             //todo 等下需要确定
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_MATERIAL_COUNT_NOT_ENOUGH);
             return serviceResult;
-//            //从同一个仓库中获取该物料下指定新旧的散料数量
-//            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(transferOrderDO.getWarehouseId(), materialDO.getId(), transferOrderMaterial.getMaterialCount() - transferOrderMaterialDO.getMaterialCount(), transferOrderMaterial.getIsNew());
-//            //判断库存是否充足
-//            if (bulkMaterialDOList.size() < (transferOrderMaterial.getMaterialCount() - transferOrderMaterialDO.getMaterialCount())){
-//                serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_MATERIAL_STOCK_NOT_ENOUGH);
-//                return serviceResult;
-//            }
-//            for (BulkMaterialDO bulkMaterialDO : bulkMaterialDOList){
-//                //判断散料是否在订单
-//                if (StringUtil.isNotEmpty(bulkMaterialDO.getOrderNo())){
-//                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT,bulkMaterialDO.getBulkMaterialNo());
-//                    return serviceResult;
-//                }
-//            }
-//            //改变转移单配件表的物料数量
-//            transferOrderMaterialDO.setMaterialCount(transferOrderMaterialDO.getMaterialCount() + bulkMaterialDOList.size());
-//            transferOrderMaterialDO.setRemark(transferOrderMaterial.getRemark());
-//            transferOrderMaterialDO.setUpdateTime(now);
-//            transferOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-//            transferOrderMaterialMapper.update(transferOrderMaterialDO);
-//
-//            //生成转移单配件散料表
-//            for (BulkMaterialDO bulkMaterialDO : bulkMaterialDOList) {
-//                TransferOrderMaterialBulkDO transferOrderMaterialBulkDO = new TransferOrderMaterialBulkDO();
-//                transferOrderMaterialBulkDO.setTransferOrderId(transferOrderDO.getId());
-//                transferOrderMaterialBulkDO.setTransferOrderMaterialId(transferOrderMaterialDO.getId());
-//                transferOrderMaterialBulkDO.setBulkMaterialNo(bulkMaterialDO.getBulkMaterialNo());
-//                transferOrderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-//                transferOrderMaterialBulkDO.setCreateTime(now);
-//                transferOrderMaterialBulkDO.setCreateUser(userSupport.getCurrentUserId().toString());
-//                transferOrderMaterialBulkDO.setUpdateTime(now);
-//                transferOrderMaterialBulkDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-//                transferOrderMaterialBulkMapper.save(transferOrderMaterialBulkDO);
-//
-//                //散料生成转移单配件散料表，改变该散料的状态为转移中
-//                bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_TRANSFER_OUTING);
-//                bulkMaterialDO.setUpdateTime(now);
-//                bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-//                bulkMaterialMapper.update(bulkMaterialDO);
-//            }
         }else{
             //如果清货的数量小于原转移单配件表中物料的数量
             //改变转移单配件表的物料数量
@@ -880,7 +840,6 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                 dbTransferOrderProductDO.setUpdateUser(loginUser.getUserId().toString());
                 dbTransferOrderProductDO.setUpdateTime(now);
                 transferOrderProductMapper.update(dbTransferOrderProductDO);
-//                transferOrderProductMapper.clearDateStatusByTransferIdAndProductSkuIdAndIsNew(productSkuId, transferOrderId, dbTransferOrderProductDO.getIsNew());
             }
         }
 
@@ -936,7 +895,6 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                 dbTransferOrderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
                 dbTransferOrderMaterialDO.setUpdateTime(now);
                 transferOrderMaterialMapper.update(dbTransferOrderMaterialDO);
-//                transferOrderMaterialMapper.clearDateStatusByTransferIdAndMaterialNoAndIsNew(materialNo, transferOrderId, dbTransferOrderMaterialDO.getIsNew());
             }
         }
 
@@ -1071,17 +1029,19 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             if (CollectionUtil.isNotEmpty(transferOrderMaterialDOList)) {
                 List<StockOrderBulkMaterialDO> stockOrderBulkMaterialDOList = stockOrderBulkMaterialMapper.findByStockOrderNo(stockOrderDO.getStockOrderNo());
                 for (StockOrderBulkMaterialDO stockOrderBulkMaterialDO : stockOrderBulkMaterialDOList) {
-                    TransferOrderMaterialBulkDO transferOrderMaterialBulkDO = new TransferOrderMaterialBulkDO();
-                    transferOrderMaterialBulkDO.setTransferOrderId(transferOrderDO.getId());
-                    transferOrderMaterialBulkDO.setTransferOrderMaterialId(stockOrderBulkMaterialDO.getItemReferId());
-                    transferOrderMaterialBulkDO.setBulkMaterialNo(stockOrderBulkMaterialDO.getBulkMaterialNo());
-                    transferOrderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                    transferOrderMaterialBulkDO.setRemark(stockOrderBulkMaterialDO.getRemark());
-                    transferOrderMaterialBulkDO.setCreateTime(now);
-                    transferOrderMaterialBulkDO.setCreateUser(transferOrderDO.getCreateUser());
-                    transferOrderMaterialBulkDO.setUpdateTime(now);
-                    transferOrderMaterialBulkDO.setUpdateUser(transferOrderDO.getUpdateUser());
-                    transferOrderMaterialBulkMapper.save(transferOrderMaterialBulkDO);
+                    if (StockItemReferType.TRANSFER_ORDER_MATERIAL.equals(stockOrderBulkMaterialDO.getItemReferType())){
+                        TransferOrderMaterialBulkDO transferOrderMaterialBulkDO = new TransferOrderMaterialBulkDO();
+                        transferOrderMaterialBulkDO.setTransferOrderId(transferOrderDO.getId());
+                        transferOrderMaterialBulkDO.setTransferOrderMaterialId(stockOrderBulkMaterialDO.getItemReferId());
+                        transferOrderMaterialBulkDO.setBulkMaterialNo(stockOrderBulkMaterialDO.getBulkMaterialNo());
+                        transferOrderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                        transferOrderMaterialBulkDO.setRemark(stockOrderBulkMaterialDO.getRemark());
+                        transferOrderMaterialBulkDO.setCreateTime(now);
+                        transferOrderMaterialBulkDO.setCreateUser(transferOrderDO.getCreateUser());
+                        transferOrderMaterialBulkDO.setUpdateTime(now);
+                        transferOrderMaterialBulkDO.setUpdateUser(transferOrderDO.getUpdateUser());
+                        transferOrderMaterialBulkMapper.save(transferOrderMaterialBulkDO);
+                    }
                 }
             }
         }
