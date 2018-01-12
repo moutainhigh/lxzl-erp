@@ -6,7 +6,7 @@
         <span class="panel-title">收货地址</span>
         <div class="widget-menu pull-right">
             {{#addButton}}
-            <button class="btn btn-xs btn-default {{class}}">{{text}}</button>
+            <button class="btn btn-xs btn-default {{class}}" data-customerno="{{customerno}}">{{text}}</button>
             {{/addButton}}
         </div>
     </div>
