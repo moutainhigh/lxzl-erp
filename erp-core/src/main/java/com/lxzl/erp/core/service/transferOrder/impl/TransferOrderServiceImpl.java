@@ -5,7 +5,6 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.pojo.MaterialInStorage;
 import com.lxzl.erp.common.domain.product.pojo.Product;
-import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
@@ -671,7 +670,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         }
 
         //提交审核判断
-        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_TRANSFER_ORDER);
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER);
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
             serviceResult.setErrorCode(needVerifyResult.getErrorCode());
             return serviceResult;
@@ -681,7 +680,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                 return serviceResult;
             }
             //调用提交审核服务
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_ORDER, transferOrderNo, verifyUser, commitRemark);
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER, transferOrderNo, verifyUser, commitRemark);
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_VERIFYING);
