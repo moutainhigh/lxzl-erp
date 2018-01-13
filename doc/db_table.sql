@@ -2424,7 +2424,7 @@ CREATE TABLE `erp_transfer_order` (
   `transfer_order_name` varchar(100) NOT NULL COMMENT '转移单名称',
   `transfer_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '转移单状态，0初始化，4审批中，8转移成功，16取消转移',
   `transfer_order_mode` int(11) NOT NULL COMMENT '转移方式，1转入，2转出（凭空转入转出）',
-  `transfer_order_type` int(11) NOT NULL COMMENT '转移类型，1外借入库转入，2试验机转入，99其他',
+  `transfer_order_type` int(11) NOT NULL COMMENT '	转入类型：1外借入库转入，2试验机转入，3原有资产，99其他。 转出类型：51丢失，52售出，99其他',
   `warehouse_id` int(20) DEFAULT NULL COMMENT '仓库ID，哪个库房转移',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
