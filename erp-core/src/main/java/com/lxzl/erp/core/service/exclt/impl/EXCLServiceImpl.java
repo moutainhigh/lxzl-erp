@@ -677,7 +677,7 @@ public class EXCLServiceImpl implements EXCLService {
             }
             customer.setCustomerCompany(customerCompany);
             customer.setCustomerRiskManagement(customerRiskManagement);
-            customer.setCustomerConsignInfo(customerConsignInfo);
+//            customer.setCustomerConsignInfo(customerConsignInfo);
 
             ServiceResult<String, String> stringStringServiceResult = customerService.addCompany(customer);
         }
