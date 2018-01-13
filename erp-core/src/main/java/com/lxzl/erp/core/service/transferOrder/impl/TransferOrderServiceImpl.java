@@ -788,7 +788,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
     }
 
     @Override
-    public ServiceResult<String, TransferOrder> detailTransferOrderById(String transferOrderNo) {
+    public ServiceResult<String, TransferOrder> detailTransferOrderByNo(String transferOrderNo) {
         ServiceResult<String, TransferOrder> serviceResult = new ServiceResult<>();
 
         TransferOrderDO transferOrderDO = transferOrderMapper.findByNo(transferOrderNo);

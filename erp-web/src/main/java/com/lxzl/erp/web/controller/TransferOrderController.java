@@ -153,14 +153,14 @@ public class TransferOrderController {
     /**
      * 转移单详情
      */
-    @RequestMapping(value = "detailTransferOrderById", method = RequestMethod.POST)
-    public Result detailTransferOrderById(@RequestBody @Validated(IdGroup.class) TransferOrder transferOrder, BindingResult validResult) {
-        ServiceResult<String, TransferOrder> serviceResult = transferOrderService.detailTransferOrderById(transferOrder.getTransferOrderNo());
+    @RequestMapping(value = "detailTransferOrderByNo", method = RequestMethod.POST)
+    public Result detailTransferOrderByNo(@RequestBody @Validated(IdGroup.class) TransferOrder transferOrder, BindingResult validResult) {
+        ServiceResult<String, TransferOrder> serviceResult = transferOrderService.detailTransferOrderByNo(transferOrder.getTransferOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     /**
-     * 转移单商品详情
+     * 转移单商品s设备详情
      */
     @RequestMapping(value = "detailTransferOrderProductEquipmentById", method = RequestMethod.POST)
     public Result detailTransferOrderProductEquipmentById(@RequestBody Integer transferOrderProductId, BindingResult validResult) {

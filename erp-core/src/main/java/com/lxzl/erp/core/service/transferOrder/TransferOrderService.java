@@ -110,7 +110,7 @@ public interface TransferOrderService extends VerifyReceiver {
      * @param transferOrderNo
      * @return
      */
-    ServiceResult<String,TransferOrder> detailTransferOrderById(String transferOrderNo);
+    ServiceResult<String,TransferOrder> detailTransferOrderByNo(String transferOrderNo);
 
     /**
      * 转移单商品设备详情
