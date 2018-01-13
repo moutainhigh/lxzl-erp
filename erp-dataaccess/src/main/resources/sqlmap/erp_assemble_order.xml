@@ -47,12 +47,26 @@
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(eao.id) FROM erp_assemble_order eao
+		LEFT JOIN erp_warehouse ew ON eao.warehouse_id = ew.id
+		LEFT JOIN erp_product ep ON eao.assemble_product_id = ep.id
 		<where>
 			<if test="maps.queryParam.assembleOrderId != null">
 				AND eao.id = #{maps.queryParam.assembleOrderId,jdbcType=INTEGER}
 			</if>
 			<if test="maps.queryParam.assembleOrderNo != null &amp;&amp; maps.queryParam.assembleOrderNo != ''">
 				AND eao.assemble_order_no = #{maps.queryParam.assembleOrderNo,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.warehouseNo != null &amp;&amp; maps.queryParam.warehouseNo != ''">
+				AND ew.warehouse_no = #{maps.queryParam.warehouseNo,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.queryParam.warehouseName != null &amp;&amp; maps.queryParam.warehouseName != ''">
+				AND ew.warehouse_name LIKE  CONCAT('%','${maps.queryParam.warehouseName}','%')
+			</if>
+			<if test="maps.queryParam.productName != null &amp;&amp; maps.queryParam.productName != ''">
+				AND ep.product_name LIKE  CONCAT('%','${maps.queryParam.productName}','%')
+			</if>
+			<if test="maps.queryParam.assembleOrderStatus != null">
+				AND eao.assemble_order_status = #{maps.queryParam.assembleOrderStatus,jdbcType=INTEGER}
 			</if>
 			<if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
 				<![CDATA[ AND eao.create_time >= #{maps.queryParam.createStartTime} ]]>
@@ -142,8 +156,22 @@
 	SELECT
 	<include refid="column_List"/>
 	FROM erp_assemble_order eao
+	LEFT JOIN erp_warehouse ew ON eao.warehouse_id = ew.id
+	LEFT JOIN erp_product ep ON eao.assemble_product_id = ep.id
 	<where>
-		<if test="maps.queryParam.assembleOrderNo != null &amp;&amp; maps.queryParam.jointProductId != null">
+		<if test="maps.queryParam.warehouseNo != null &amp;&amp; maps.queryParam.warehouseNo != ''">
+			AND ew.warehouse_no = #{maps.queryParam.warehouseNo,jdbcType=VARCHAR}
+		</if>
+		<if test="maps.queryParam.warehouseName != null &amp;&amp; maps.queryParam.warehouseName != ''">
+			AND ew.warehouse_name LIKE  CONCAT('%','${maps.queryParam.warehouseName}','%')
+		</if>
+		<if test="maps.queryParam.productName != null &amp;&amp; maps.queryParam.productName != ''">
+			AND ep.product_name LIKE  CONCAT('%','${maps.queryParam.productName}','%')
+		</if>
+		<if test="maps.queryParam.assembleOrderStatus != null">
+			AND eao.assemble_order_status = #{maps.queryParam.assembleOrderStatus,jdbcType=INTEGER}
+		</if>
+		<if test="maps.queryParam.assembleOrderId != null &amp;&amp; maps.queryParam.assembleOrderId != null">
 			and eao.id = #{maps.queryParam.assembleOrderId,jdbcType=INTEGER}
 		</if>
 		<if test="maps.queryParam.assembleOrderNo != null &amp;&amp; maps.queryParam.assembleOrderNo != ''">

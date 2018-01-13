@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.domain.assembleOder.AssembleOrderQueryParam;
 import com.lxzl.erp.common.domain.assembleOder.pojo.AssembleOrder;
 import com.lxzl.erp.common.domain.assembleOder.pojo.AssembleOrderMaterial;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * User : XiaoLuYu
@@ -53,9 +55,14 @@ public class AssembleOrderControllerTest extends ERPTransactionalTest {
 
     @Test
     public void pageAssembleOrder() throws Exception {
-        AssembleOrder assembleOrder = new AssembleOrder();
-        assembleOrder.setAssembleOrderId(18);
-        TestResult result = getJsonTestResult("/assemble/page", assembleOrder);
+        AssembleOrderQueryParam assembleOrderQueryParam = new AssembleOrderQueryParam();
+//        assembleOrderQueryParam.setProductName("一个小小的台式机商品");
+//        assembleOrderQueryParam.setWarehouseName("总公司仓库");
+        assembleOrderQueryParam.setAssembleOrderStatus(0);
+//        assembleOrderQueryParam.setWarehouseNo("LXW10001");
+        TestResult result = getJsonTestResult("/assemble/page", assembleOrderQueryParam);
+        Map<String, Object> map = result.getResultMap();
+        Object data = map.get("data");
     }
 
 }

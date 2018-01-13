@@ -25,6 +25,15 @@ public class MaterialQueryParam extends BasePageParam {
     private Integer brandId;
     private Date createStartTime;
     private Date createEndTime;
+    private String materialMode;
+
+    public String getMaterialMode() {
+        return materialMode;
+    }
+
+    public void setMaterialMode(String materialMode) {
+        this.materialMode = materialMode;
+    }
 
     public String getMaterialNo() {
         return materialNo;

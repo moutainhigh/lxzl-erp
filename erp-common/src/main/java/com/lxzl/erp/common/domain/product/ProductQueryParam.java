@@ -12,11 +12,20 @@ public class ProductQueryParam extends BasePageParam {
 
     private Integer productId;
     private String productName;
+    private String productModel;
     private Integer isRent;
     private Integer brandId;
     private Integer categoryId;
     private Date createStartTime;
     private Date createEndTime;
+
+    public String getProductModel() {
+        return productModel;
+    }
+
+    public void setProductModel(String productModel) {
+        this.productModel = productModel;
+    }
 
     public Integer getProductId() {
         return productId;
