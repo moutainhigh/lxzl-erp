@@ -1509,7 +1509,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         BigDecimal totalAmount = purchaseReceiveOrderDO.getTotalAmount() == null ? BigDecimal.ZERO : purchaseReceiveOrderDO.getTotalAmount();
         if (CollectionUtil.isNotEmpty(productEquipmentList)) {
             List<StockOrderEquipmentDO> stockOrderEquipmentDOList = stockOrderEquipmentMapper.findByStockOrderNo(stockOrderNo);
-            Map<Integer, StockOrderEquipmentDO> purchaseOrderProductDOMap = ListUtil.listToMap(stockOrderEquipmentDOList, "equipmentNo");
+            Map<String, StockOrderEquipmentDO> purchaseOrderProductDOMap = ListUtil.listToMap(stockOrderEquipmentDOList, "equipmentNo");
             for (ProductEquipment productEquipment : productEquipmentList) {
                 if (purchaseOrderProductDOMap.get(productEquipment.getEquipmentNo()) == null) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -1528,7 +1528,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
         if (CollectionUtil.isNotEmpty(bulkMaterialList)) {
             List<StockOrderBulkMaterialDO> stockOrderBulkMaterialDOList = stockOrderBulkMaterialMapper.findByStockOrderNo(stockOrderNo);
-            Map<Integer, StockOrderBulkMaterialDO> purchaseOrderMaterialDOMap = ListUtil.listToMap(stockOrderBulkMaterialDOList, "bulkMaterialNo");
+            Map<String, StockOrderBulkMaterialDO> purchaseOrderMaterialDOMap = ListUtil.listToMap(stockOrderBulkMaterialDOList, "bulkMaterialNo");
             for (BulkMaterial bulkMaterial : bulkMaterialList) {
                 if (purchaseOrderMaterialDOMap.get(bulkMaterial.getBulkMaterialNo()) == null) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
