@@ -14,8 +14,8 @@
 		<result column="district_name" jdbcType="VARCHAR" property="districtName" />
 		<result column="address" jdbcType="VARCHAR" property="address" />
 		<result column="tel" jdbcType="VARCHAR" property="tel" />
-		<result column="contactName" jdbcType="VARCHAR" property="contactName" />
-		<result column="contactPhone" jdbcType="VARCHAR" property="contactPhone" />
+		<result column="contact_name" jdbcType="VARCHAR" property="contactName" />
+		<result column="contact_phone" jdbcType="VARCHAR" property="contactPhone" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -29,7 +29,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		es.id,es.supplier_no,es.supplier_name,es.province,es.city,es.district,es.address,es.tel,es.contactName,es.contactPhone,es.data_status,es.remark,es.create_time,es.create_user,es.update_time,es.update_user,es.beneficiary_name,es.beneficiary_account,es.beneficiary_bank_name,es.supplier_code
+		es.id,es.supplier_no,es.supplier_name,es.province,es.city,es.district,es.address,es.tel,es.contact_name,es.contact_phone,es.data_status,es.remark,es.create_time,es.create_user,es.update_time,es.update_user,es.beneficiary_name,es.beneficiary_account,es.beneficiary_bank_name,es.supplier_code
 	</sql>
 
 	<select id="findById" resultMap="SupplierDO" parameterType="java.lang.Integer">
@@ -144,10 +144,10 @@
 				tel = #{tel,jdbcType=VARCHAR},
 			</if>
 			<if test="contactName != null">
-				contactName = #{contactName,jdbcType=VARCHAR},
+				contact_name = #{contactName,jdbcType=VARCHAR},
 			</if>
 			<if test="contactPhone != null">
-				contactPhone = #{contactPhone,jdbcType=VARCHAR},
+				contact_phone = #{contactPhone,jdbcType=VARCHAR},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},

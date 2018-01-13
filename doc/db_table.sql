@@ -214,8 +214,8 @@ CREATE TABLE `erp_supplier` (
   `district` int(20) COMMENT '区ID，对应区ID',
   `address` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
   `tel` varchar(100) COMMENT '电话号码',
-  `contactName` varchar(100) COMMENT '联系人姓名',
-  `contactPhone` varchar(20) COMMENT '联系手机号',
+  `contact_name` varchar(100) COMMENT '联系人姓名',
+  `contact_phone` varchar(20) COMMENT '联系手机号',
   `beneficiary_name` varchar(100) COMMENT '收款户名',
   `beneficiary_account` varchar(50) COMMENT '收款帐号',
   `beneficiary_bank_name` varchar(100) COMMENT '收款开户行',
@@ -228,6 +228,32 @@ CREATE TABLE `erp_supplier` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_supplier_no` (`supplier_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='供应商表';
+
+DROP TABLE if exists `erp_peer`;
+CREATE TABLE `erp_peer` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `peer_no` varchar(100) NOT NULL COMMENT '供应商编码',
+  `peer_name` varchar(100) NOT NULL DEFAULT '' COMMENT '供应商名称',
+  `peer_code` varchar(100) COLLATE utf8_bin COMMENT '供应商自定义编码',
+  `province` int(20) COMMENT '省份ID，省份ID',
+  `city` int(20) COMMENT '城市ID，对应城市ID',
+  `district` int(20) COMMENT '区ID，对应区ID',
+  `address` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
+  `tel` varchar(100) COMMENT '电话号码',
+  `contact_name` varchar(100) COMMENT '联系人姓名',
+  `contact_phone` varchar(20) COMMENT '联系手机号',
+  `beneficiary_name` varchar(100) COMMENT '收款户名',
+  `beneficiary_account` varchar(50) COMMENT '收款帐号',
+  `beneficiary_bank_name` varchar(100) COMMENT '收款开户行',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_peer_no` (`peer_no`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='同行表';
 
 -- ****************************************地区表**************************************** --
 
@@ -992,7 +1018,7 @@ DROP TABLE if exists `erp_order`;
 CREATE TABLE `erp_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `order_no` varchar(100) NOT NULL COMMENT '订单编号',
-  `delivery_mode` int(11) COMMENT '发货方式，1快递，2自提',
+  `delivery_mode` int(11) COMMENT '发货方式，1快递，2自提,3凌雄配送',
   `buyer_customer_id` int(20) NOT NULL COMMENT '购买人ID',
   `expect_delivery_time` datetime NOT NULL COMMENT '送货时间',
   `rent_start_time` datetime NOT NULL COMMENT '起租时间',
@@ -1283,6 +1309,132 @@ CREATE TABLE `erp_deployment_order_material_bulk` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='货物调拨配件项散料表';
 
+
+-- -------------------------------------同行货物调拨单（同行间调拨）-------------------------------------------------
+DROP TABLE if exists `erp_peer_deployment_order`;
+CREATE TABLE `erp_peer_deployment_order` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `peer_deployment_order_no` varchar(100) NOT NULL COMMENT '同行调配单编号',
+  `peer_id` int(20) NOT NULL COMMENT '同行ID',
+  `rent_start_time` datetime COMMENT '起租时间',
+  `rent_type` int(11) NOT NULL DEFAULT '0' COMMENT '租赁方式，1按天租，2按月租',
+  `rent_time_length` int(11) NOT NULL DEFAULT '0' COMMENT '租赁期限',
+  `warehouse_id` int(20) NOT NULL COMMENT '目标仓库ID',
+  `warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '目标仓位ID',
+  `delivery_mode` int(11) COMMENT '发货方式，1快递，2自提,3凌雄配送',
+  `tax_rate` double NOT NULL DEFAULT 0 COMMENT '税率',
+  `peer_deployment_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '调配单状态，0未提交，4审批中，8处理中，16确认收货，20已退回，24取消',
+  `total_product_count` int(11) NOT NULL DEFAULT '0' COMMENT '商品总数',
+  `total_product_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '商品总价',
+  `total_material_count` int(11) NOT NULL DEFAULT '0' COMMENT '配件总数',
+  `total_material_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '配件总价',
+  `total_order_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '订单总价',
+  `total_discount_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '共计优惠金额',
+  `expect_return_time` datetime DEFAULT NULL COMMENT '预计归还时间',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_deployment_order_no` (`deployment_order_no`)
+) ENGINE=InnoDB AUTO_INCREMENT=9000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='同行货物调配单';
+
+DROP TABLE if exists `erp_peer_deployment_order_product`;
+CREATE TABLE `erp_peer_deployment_order_product` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `peer_deployment_order_id` int(20) NOT NULL COMMENT '调拨单ID',
+  `peer_deployment_order_no` varchar(100) NOT NULL COMMENT '货物调拨单编号',
+  `product_sku_id` int(20) NOT NULL  COMMENT '货物调拨单商品SKU_ID',
+  `product_unit_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '商品单价',
+  `product_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '商品总价格',
+  `product_sku_count` int(11) NOT NULL DEFAULT 0 COMMENT '货物调拨单商品SKU数量',
+  `product_sku_snapshot` text COMMENT '货物调拨单商品SKU快照',
+  `is_new` int(11) NOT NULL COMMENT '是否全新机',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='同行货物调拨商品项表';
+
+DROP TABLE if exists `erp_peer_deployment_order_material`;
+CREATE TABLE `erp_peer_deployment_order_material` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `peer_deployment_order_id` int(20) NOT NULL COMMENT '货物调拨单ID',
+  `peer_deployment_order_no` varchar(100) NOT NULL COMMENT '货物调拨单编号',
+  `material_id` int(20) NOT NULL COMMENT '货物调拨配件ID',
+  `material_unit_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '配件单价',
+  `material_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '配件总价格',
+  `product_material_count` int(11) COMMENT '货物调拨配件数量',
+  `product_material_snapshot` text COMMENT '货物调拨配件快照',
+  `is_new` int(11) NOT NULL COMMENT '是否全新机',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='同行货物调拨配件项表';
+
+DROP TABLE if exists `erp_peer_deployment_order_product_equipment`;
+CREATE TABLE `erp_peer_deployment_order_product_equipment` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `peer_deployment_order_product_id` int(20) NOT NULL COMMENT '货物调拨商品项ID',
+  `peer_deployment_order_id` int(20) NOT NULL COMMENT '货物调拨单ID',
+  `peer_deployment_order_no` varchar(100) NOT NULL COMMENT '货物调拨单编号',
+  `equipment_id` int(20) NOT NULL COMMENT '设备ID',
+  `equipment_no` varchar(100) NOT NULL COMMENT '设备编号',
+  `return_time` datetime DEFAULT NULL COMMENT '退还时间',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='同行货物调拨商品项设备表';
+
+DROP TABLE if exists `erp_peer_deployment_order_material_bulk`;
+CREATE TABLE `erp_peer_deployment_order_material_bulk` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `peer_deployment_order_material_id` int(20) NOT NULL COMMENT '货物调拨配件项ID',
+  `peer_deployment_order_id` int(20) NOT NULL COMMENT '货物调拨单ID',
+  `peer_deployment_order_no` varchar(100) NOT NULL COMMENT '货物调拨单编号',
+  `bulk_material_id` int(20) NOT NULL COMMENT '散料ID',
+  `bulk_material_no` varchar(100) NOT NULL COMMENT '散料编号',
+  `return_time` datetime DEFAULT NULL COMMENT '退还时间',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='同行货物调拨配件项散料表';
+
+DROP TABLE if exists `erp_peer_deployment_order_consign_info`;
+CREATE TABLE `erp_peer_deployment_order_consign_info` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `peer_deployment_order_id` int(20) NOT NULL COMMENT '货物调拨单ID',
+  `contact_name` varchar(64) COLLATE utf8_bin COMMENT '联系人姓名',
+  `contact_phone` varchar(24) CHARACTER SET ascii COMMENT '联系人手机号',
+  `province` int(20) DEFAULT NULL COMMENT '省份ID，省份ID',
+  `city` int(20) DEFAULT NULL COMMENT '城市ID，对应城市ID',
+  `district` int(20) DEFAULT NULL COMMENT '区ID，对应区ID',
+  `address` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='同行货物调拨单收货地址表';
 
 -- -------------------------------------租赁退还订单-------------------------------------------------
 DROP TABLE if exists `erp_return_order`;

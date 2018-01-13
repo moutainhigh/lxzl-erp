@@ -509,7 +509,7 @@ public class ErrorCode {
         MAP.put(SYSTEM_DEVELOPING, "开发中……");
         MAP.put(EMAIL_ERROR, "邮箱格式有误");
         MAP.put(DATA_NOT_BELONG_TO_YOU, "数据不属于你，无法操作！");
-        MAP.put(DATA_HAVE_NO_PERMISSION, "您没有权限这么做，别痴心妄想了！");
+        MAP.put(DATA_HAVE_NO_PERMISSION, "您没有权限这么做！");
         MAP.put(COMMITTED_CAN_NOT_REPEAT, "重复提交！");
         MAP.put(COMMIT_ONLY_SELF, "只能提交自己的数据");
         MAP.put(RECORD_USED_CAN_NOT_DELETE, "数据被使用，无法删除");
