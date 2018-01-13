@@ -94,7 +94,6 @@ public class RepairOrderServiceImpl implements RepairOrderService {
         //如果存在设备需要维修
         if (CollectionUtil.isNotEmpty(repairOrder.getRepairOrderEquipmentList())) {
             serviceResult = saveRepairOrderEquipmentInfo(repairOrder.getRepairOrderEquipmentList(), repairOrderNo, userSupport.getCurrentUser(), now, equipmentCount);
-            //todo 判断错误  已改
             if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
                 serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
                 return serviceResult;
@@ -708,7 +707,6 @@ public class RepairOrderServiceImpl implements RepairOrderService {
                     serviceResult.setErrorCode(ErrorCode.EQUIPMENT_NOT_EXISTS, EquipmentNo);
                     return serviceResult;
                 }
-                //todo 设备状态未改变 已改
                 //如果设备只有处于空闲或者租赁中，就不能进行新增维修操作
                 if (ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE.equals(productEquipmentDO.getEquipmentStatus()) ||
                         ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_BUSY.equals(productEquipmentDO.getEquipmentStatus())) {

@@ -2,8 +2,9 @@ package com.lxzl.erp.dataaccess.dao.mysql.transferOrder;
 
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderProductEquipmentDO;import org.apache.ibatis.annotations.Param;
-import java.util.List;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -13,7 +14,7 @@ public interface TransferOrderProductEquipmentMapper extends BaseMysqlDAO<Transf
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
-    List<TransferOrderProductEquipmentDO> findByTransferOrderIdAndTransferOrderProductId(@Param("transferOrderId") Integer transferOrderId,@Param("transferOrderProductId") Integer transferOrderProductId);
+    List<TransferOrderProductEquipmentDO> findByTransferOrderIdAndTransferOrderProductId(@Param("transferOrderId") Integer transferOrderId,@Param("transferOrderProductId")Integer transferOrderMaterialId);
 
 	List<TransferOrderProductEquipmentDO> findByTransferOrderId(@Param("transferOrderId")Integer transferOrderId);
 
@@ -22,4 +23,6 @@ public interface TransferOrderProductEquipmentMapper extends BaseMysqlDAO<Transf
 	TransferOrderProductEquipmentDO findByTransferOrderIdAndEquipmentNo(@Param("transferOrderId")Integer transferOrderId,@Param("productEquipmentNo")String productEquipmentNo);
 
     Integer saveList(List<TransferOrderProductEquipmentDO> transferOrderProductEquipmentDOList);
+
+	List<TransferOrderProductEquipmentDO> findByTransferOrderProductId(@Param("transferOrderProductId")Integer transferOrderProductId);
 }

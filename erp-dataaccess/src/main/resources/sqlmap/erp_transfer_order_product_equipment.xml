@@ -13,6 +13,12 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="product_id" jdbcType="INTEGER" property="productId" />
+		<result column="sku_id" jdbcType="INTEGER" property="skuId" />
+		<result column="equipment_status" jdbcType="INTEGER" property="equipmentStatus" />
+		<result column="current_warehouse_id" jdbcType="INTEGER" property="currentWarehouseId" />
+		<result column="owner_warehouse_id" jdbcType="INTEGER" property="ownerWarehouseId" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -111,4 +117,28 @@
 			#{transferOrderProductEquipmentDO.createUser},#{transferOrderProductEquipmentDO.updateTime},#{transferOrderProductEquipmentDO.updateUser})
 		</foreach>
 	</insert>
+
+	<!--<select id="findByTransferOrderProductId" resultMap="TransferOrderProductEquipmentDO" parameterType="java.lang.Integer">-->
+		<!--SELECT <include refid="column_List"/>,-->
+		<!--epe1.product_id AS product_id ,epe2.sku_id AS sku_id ,epe3.equipment_status AS equipment_status,epe4.current_warehouse_id AS current_warehouse_id,epe5.owner_warehouse_id AS owner_warehouse_id-->
+		<!--FROM (-->
+			<!--SELECT <include refid="column_List"/>FROM erp_transfer_order_product_equipment etope WHERE-->
+			<!--etope.transfer_order_product_id = #{transferOrderProductId,jdbcType=INTEGER} AND etope.data_status = 1-->
+		<!--) etope-->
+		<!--left join erp_product_equipment epe1 ON epe1.equipment_no = etope.product_equipment_no and epe1.data_status =1-->
+		<!--left join erp_product_equipment epe2 ON epe2.equipment_no = etope.product_equipment_no and epe2.data_status =1-->
+		<!--left join erp_product_equipment epe3 ON epe3.equipment_no = etope.product_equipment_no and epe3.data_status =1-->
+		<!--left join erp_product_equipment epe4 ON epe4.equipment_no = etope.product_equipment_no and epe4.data_status =1-->
+		<!--left join erp_product_equipment epe5 ON epe5.equipment_no = etope.product_equipment_no and epe5.data_status =1-->
+	<!--</select>-->
+
+	<select id="findByTransferOrderProductId" resultMap="TransferOrderProductEquipmentDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/>,
+		epe.product_id AS product_id ,epe.sku_id AS sku_id ,epe.equipment_status AS equipment_status,epe.current_warehouse_id AS current_warehouse_id,epe.owner_warehouse_id AS owner_warehouse_id
+		FROM (
+		SELECT <include refid="column_List"/>FROM erp_transfer_order_product_equipment etope WHERE
+		etope.transfer_order_product_id = #{transferOrderProductId,jdbcType=INTEGER} AND etope.data_status = 1
+		) etope
+		left join erp_product_equipment epe ON epe.equipment_no = etope.product_equipment_no and epe.data_status =1
+	</select>
 </mapper>

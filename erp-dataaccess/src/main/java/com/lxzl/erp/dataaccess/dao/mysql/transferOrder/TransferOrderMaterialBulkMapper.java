@@ -17,4 +17,5 @@ public interface TransferOrderMaterialBulkMapper extends BaseMysqlDAO<TransferOr
 
     List<TransferOrderMaterialBulkDO> findByTransferOrderId(@Param("transferOrderId")Integer transferOrderId);
 
+    List<TransferOrderMaterialBulkDO> findByTransferOrderMaterialId(@Param("transferOrderMaterialId")Integer transferOrderMaterialId);
 }

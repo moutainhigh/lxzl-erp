@@ -32,10 +32,6 @@ public class TransferOrderProduct extends BasePO {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 
-	@Valid
-	private List<TransferOrderProductEquipment> transferOrderProductEquipmentList;
-
-
 	public Integer getTransferOrderProductId(){
 		return transferOrderProductId;
 	}
@@ -132,11 +128,4 @@ public class TransferOrderProduct extends BasePO {
 		this.updateUser = updateUser;
 	}
 
-	public List<TransferOrderProductEquipment> getTransferOrderProductEquipmentList() {
-		return transferOrderProductEquipmentList;
-	}
-
-	public void setTransferOrderProductEquipmentList(List<TransferOrderProductEquipment> transferOrderProductEquipmentList) {
-		this.transferOrderProductEquipmentList = transferOrderProductEquipmentList;
-	}
 }

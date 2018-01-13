@@ -4,14 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
-import com.lxzl.erp.common.domain.validGroup.TransferOrder.TramsferOrderMaterialOutGroup;
 import com.lxzl.erp.common.domain.validGroup.TransferOrder.DumpTransferOrderMaterialOutGroup;
+import com.lxzl.erp.common.domain.validGroup.TransferOrder.TramsferOrderMaterialOutGroup;
 import com.lxzl.erp.common.domain.validGroup.TransferOrder.UpdateTransferOrderIntoGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -34,7 +33,6 @@ public class TransferOrderMaterial extends BasePO {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 
-	private List<TransferOrderMaterialBulk> transferOrderMaterialBulkList;
 
 	public Integer getTransferOrderMaterialId(){
 		return transferOrderMaterialId;
@@ -132,11 +130,4 @@ public class TransferOrderMaterial extends BasePO {
 		this.updateUser = updateUser;
 	}
 
-	public List<TransferOrderMaterialBulk> getTransferOrderMaterialBulkList() {
-		return transferOrderMaterialBulkList;
-	}
-
-	public void setTransferOrderMaterialBulkList(List<TransferOrderMaterialBulk> transferOrderMaterialBulkList) {
-		this.transferOrderMaterialBulkList = transferOrderMaterialBulkList;
-	}
 }
