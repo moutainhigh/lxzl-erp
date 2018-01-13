@@ -584,7 +584,9 @@ public class CustomerServiceImpl implements CustomerService {
         if (!userSupport.getCurrentUserId().equals(customerDO.getOwner()) &&
                 !userSupport.getCurrentUserId().equals(customerDO.getUnionUser()) &&
                 !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser()))&&
-                !dataAccessPassiveUserList.contains(Integer.parseInt(customerDO.getCreateUser()))) {
+                !dataAccessPassiveUserList.contains(Integer.parseInt(customerDO.getCreateUser()))&&
+                !dataAccessPassiveUserList.contains(customerDO.getOwner())&&
+                !dataAccessPassiveUserList.contains(customerDO.getUnionUser())) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
