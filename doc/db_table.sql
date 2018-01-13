@@ -1321,7 +1321,7 @@ CREATE TABLE `erp_peer_deployment_order` (
   `rent_time_length` int(11) NOT NULL DEFAULT '0' COMMENT '租赁期限',
   `warehouse_id` int(20) NOT NULL COMMENT '目标仓库ID',
   `warehouse_position_id` int(20) NOT NULL DEFAULT 0 COMMENT '目标仓位ID',
-  `delivery_mode` int(11) COMMENT '发货方式，1快递，2自提,3凌雄配送',
+  `delivery_mode` int(11) COMMENT '发货方式，1快递，2自提',
   `tax_rate` double NOT NULL DEFAULT 0 COMMENT '税率',
   `peer_deployment_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '调配单状态，0未提交，4审批中，8处理中，16确认收货，20已退回，24取消',
   `total_product_count` int(11) NOT NULL DEFAULT '0' COMMENT '商品总数',
@@ -1331,6 +1331,7 @@ CREATE TABLE `erp_peer_deployment_order` (
   `total_order_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '订单总价',
   `total_discount_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '共计优惠金额',
   `expect_return_time` datetime DEFAULT NULL COMMENT '预计归还时间',
+  `real_return_time` datetime DEFAULT NULL COMMENT '实际归还时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -1338,7 +1339,7 @@ CREATE TABLE `erp_peer_deployment_order` (
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_deployment_order_no` (`deployment_order_no`)
+  UNIQUE KEY `index_peer_deployment_order_no` (`peer_deployment_order_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='同行货物调配单';
 
 DROP TABLE if exists `erp_peer_deployment_order_product`;
