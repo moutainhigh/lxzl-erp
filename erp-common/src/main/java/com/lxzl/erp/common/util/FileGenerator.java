@@ -14,8 +14,8 @@ public class FileGenerator {
 
     public static void main(String[] args) throws Exception {
 //        generateDomains("erp_customer");
-        generateDomainsByDir("erp_purchase_apply_order_product","purchaseApply");
-        generateDomainsByDir("erp_purchase_apply_order_material","purchaseApply");
+        generateDomainsByDir("erp_peer","peer");
+//        generateDomainsByDir("erp_purchase_apply_order_material","purchaseApply");
 
 //        generateDomains("erp_purchase_delivery_order_material");
 //        String dir = "customer";
