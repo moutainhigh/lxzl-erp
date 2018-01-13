@@ -11,6 +11,7 @@ public class ReturnOrderPageParam extends BasePageParam {
 
     private String returnOrderNo;
     private String customerNo;
+    private String customerName;
     private Integer returnOrderStatus;
     private Integer isDamage;
     private Integer returnMode;
@@ -19,6 +20,14 @@ public class ReturnOrderPageParam extends BasePageParam {
     private Date createEndTime;
 
     private List<Integer> passiveUserIdList;
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
 
     public String getReturnOrderNo() {
         return returnOrderNo;

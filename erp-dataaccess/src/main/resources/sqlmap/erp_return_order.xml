@@ -227,12 +227,16 @@
 		SELECT count(ero.id)
 		FROM erp_return_order ero
 		left join erp_user eu on ero.owner = eu.id
+		left join erp_customer ec on ero.customer_id = ec.id
 		<where>
 			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.returnOrderNo != null &amp;&amp; maps.queryParam.returnOrderNo != ''">
 				and ero.return_order_no like CONCAT('%','${maps.queryParam.returnOrderNo}','%' )
 			</if>
 			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
 				and ero.customer_no like CONCAT('%','${maps.queryParam.customerNo}','%' )
+			</if>
+			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.customerName != null &amp;&amp; maps.queryParam.customerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.queryParam.customerName}','%' )
 			</if>
 			<if test="maps.queryParam.returnOrderStatus != null">
 				and ero.return_order_status = #{maps.queryParam.returnOrderStatus, jdbcType=INTEGER}
@@ -264,12 +268,16 @@
 		SELECT <include refid="column_List"/>
 		FROM erp_return_order ero
 		left join erp_user eu on ero.owner = eu.id
+		left join erp_customer ec on ero.customer_id = ec.id
 		<where>
 			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.returnOrderNo != null &amp;&amp; maps.queryParam.returnOrderNo != ''">
 				and ero.return_order_no like CONCAT('%','${maps.queryParam.returnOrderNo}','%' )
 			</if>
 			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
 				and ero.customer_no like CONCAT('%','${maps.queryParam.customerNo}','%' )
+			</if>
+			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.customerName != null &amp;&amp; maps.queryParam.customerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.queryParam.customerName}','%' )
 			</if>
 			<if test="maps.queryParam.returnOrderStatus != null">
 				and ero.return_order_status = #{maps.queryParam.returnOrderStatus, jdbcType=INTEGER}

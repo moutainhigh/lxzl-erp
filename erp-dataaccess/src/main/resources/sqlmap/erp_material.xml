@@ -138,6 +138,9 @@
 			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialCapacityValue != null &amp;&amp; maps.materialQueryParam.materialCapacityValue != ''">
 				and em.material_capacity_value = #{maps.materialQueryParam.materialCapacityValue, jdbcType=DOUBLE}
 			</if>
+			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialMode != null &amp;&amp; maps.materialQueryParam.materialMode != ''">
+				and em.material_model like CONCAT('%','${maps.materialQueryParam.materialMode}','%' )
+			</if>
 			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialNo != null &amp;&amp; maps.materialQueryParam.materialNo != ''">
 				and em.material_no like CONCAT('%','${maps.materialQueryParam.materialNo}','%' )
 			</if>
@@ -190,6 +193,9 @@
 				</if>
 				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialName != null &amp;&amp; maps.materialQueryParam.materialName != ''">
 					and em.material_name like CONCAT('%','${maps.materialQueryParam.materialName}','%' )
+				</if>
+				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialMode != null &amp;&amp; maps.materialQueryParam.materialMode != ''">
+					and em.material_model like CONCAT('%','${maps.materialQueryParam.materialMode}','%' )
 				</if>
 				<if test="maps.materialQueryParam.brandId != null &amp;&amp; maps.materialQueryParam.brandId != ''">
 					and em.brand_id = #{maps.materialQueryParam.brandId, jdbcType=INTEGER}

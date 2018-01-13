@@ -43,7 +43,9 @@ public class BulkMaterialControllerTest extends ERPUnTransactionalTest {
     }
     @Test
     public void queryAllMaterial() throws Exception{
-        MaterialQueryParam materialQueryParam = JSON.parseObject("{pageNo: 1, pageSize: 15, materialType: 3, materialModelId: 4, materialName: \"\", materialNo: \"\"}",MaterialQueryParam.class);
+//        MaterialQueryParam materialQueryParam = JSON.parseObject("{pageNo: 1, pageSize: 15, materialType: 3, materialModelId: 4, materialName: \"\", materialNo: \"\"}",MaterialQueryParam.class);
+        MaterialQueryParam materialQueryParam = new MaterialQueryParam();
+        materialQueryParam.setMaterialMode("Intel core I5 5200");
         TestResult result = getJsonTestResult("/material/queryAllMaterial",materialQueryParam);
     }
 }
