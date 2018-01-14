@@ -5,12 +5,9 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.TransferOrder.UpdateTransferOrderIntoGroup;
-import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
