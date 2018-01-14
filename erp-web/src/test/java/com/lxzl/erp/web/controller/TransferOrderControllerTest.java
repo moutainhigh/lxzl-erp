@@ -65,7 +65,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     @Test
     public void createTransferOrderOut() throws Exception{
         TransferOrder transferOrder = new TransferOrder();
-        transferOrder.setTransferOrderName("转移单转出商品1236");
+        transferOrder.setTransferOrderName("转移单转出商品peng");
         transferOrder.setTransferOrderType(TransferOrderType.INTEGER_ORDER_TYPE_OUT_SOLD);
         transferOrder.setRemark("转出123备注");
 
@@ -212,7 +212,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     @Test
     public void commitTransferOrder() throws Exception{
         TransferOrderCommitParam transferOrderCommitParam = new TransferOrderCommitParam();
-        transferOrderCommitParam.setTransferOrderNo("LXT40000012018011493");
+        transferOrderCommitParam.setTransferOrderNo("LXT40000012018011496");
         transferOrderCommitParam.setVerifyUserId(500006);
         transferOrderCommitParam.setRemark("提交转出转移单审核的备注");
         TestResult testResult = getJsonTestResult("/transferOrder/commitTransferOrder", transferOrderCommitParam);

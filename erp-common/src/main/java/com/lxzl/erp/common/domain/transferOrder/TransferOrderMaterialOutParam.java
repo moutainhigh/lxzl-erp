@@ -18,7 +18,6 @@ public class TransferOrderMaterialOutParam {
 
     @NotNull(message = ErrorCode.TRANSFER_ORDER_NO_NOT_NULL,groups = {TramsferOrderMaterialOutGroup.class,DumpTransferOrderMaterialOutGroup.class})
     private String transferOrderNo;   //转移单NO
-    private Integer materialId;   //物料ID
     @NotBlank(message = ErrorCode.TRANSFER_ORDER_MATERIAL_NO_NOT_NULL,groups = {TramsferOrderMaterialOutGroup.class,DumpTransferOrderMaterialOutGroup.class})
     private String materialNo;   //物料编号
     @NotNull(message = ErrorCode.TRANSFER_ORDER_MATERIAL_COUNT_NOT_NULL,groups = {TramsferOrderMaterialOutGroup.class,DumpTransferOrderMaterialOutGroup.class})
@@ -34,14 +33,6 @@ public class TransferOrderMaterialOutParam {
 
     public void setTransferOrderNo(String transferOrderNo) {
         this.transferOrderNo = transferOrderNo;
-    }
-
-    public Integer getMaterialId() {
-        return materialId;
-    }
-
-    public void setMaterialId(Integer materialId) {
-        this.materialId = materialId;
     }
 
     public String getMaterialNo() {

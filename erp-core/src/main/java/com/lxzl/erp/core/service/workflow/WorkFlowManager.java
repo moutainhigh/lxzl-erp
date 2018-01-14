@@ -55,7 +55,8 @@ public class WorkFlowManager {
             return returnOrderService;
         } else if (WorkflowType.WORKFLOW_TYPE_PURCHASE_APPLY_ORDER.equals(workflowType)) {
             return purchaseApplyOrderService;
-        } else if(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER.equals(workflowType)){
+        } else if(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER.equals(workflowType)
+                ||WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER.equals(workflowType)){
             return transferOrderService;
         }
         return null;
