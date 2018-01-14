@@ -1,0 +1,58 @@
+<div id="stockUpMaterial" class="popup-basic admin-form mfp-with-anim">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i><span class="modalTitle"></span></span>
+        </div>
+        <form method="post" class="inputForm">
+            <div class="panel-body p25">
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="materialCount" class="field-label">配件</label>
+                        <div class="smart-widget sm-right smr-50">
+                            <label class="field">
+                                <input type="hidden" name="materialNo" id="materialNo" class="required"/>
+                                <input type="text" name="materialName" id="materialName" class="gui-input required" readonly />
+                            </label>
+                            <button type="button" class="button btn-primary bradiusN" id="chooseMaterial"> <i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="materialCount" class="field-label">数量</label>
+                        <label for="materialCount" class="field prepend-icon">
+                            <input type="text" name="materialCount" id="materialCount" class="gui-input required number" maxlength="10">
+                            <label for="materialCount" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="materialCount" class="field-label">配件属性</label>
+                        <label class="field select">
+                            <select id="isNew" name="isNew" class="isNew">
+                                <option value="0">旧配件</option>
+                                <option value="1">新配件</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="remark" class="field-label">备注</label>
+                        <label for="remark" class="field prepend-icon">
+                            <textarea class="gui-textarea" id="remark" name="remark" style="height: 170px;" placeholder="输入备注"></textarea>
+                            <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <button type="submit" class="button btn-primary">确定</button>
+                <button type="button" class="button btn-default cancelButton">取消</button>
+            </div>
+        </form>
+    </div>
+</div>

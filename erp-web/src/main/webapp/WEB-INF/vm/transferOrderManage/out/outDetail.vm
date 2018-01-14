@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-流转单管理-流出单详情</title>
+    #parse("layout/header.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+            <form class="" id="detailTransferOutOrderForm">
+                <div class="panel panel-primary panel-border top mb35">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>流出单编号：<small id="transferOrderNo"></small></h5>
+                            </div>
+                            <div class="col-md-8 text-right">
+                                <script type="text/html" id="actionButtonsTpl">
+                                    {{#acitonButtons}}
+                                    <a href="${ctx}{{menuUrl}}?no={{no}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">{{text}}</a>
+                                    {{/acitonButtons}}
+                                </script>
+                                <div class="btn-group" id="actionButtons"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script type="text/html" id="orderBaseInfoTpl">
+                        {{#data}}
+                        <div class="form-horizontal panel-body bg-light dark br-t-n">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">流出单名称</dt><dd>{{transferOrderName}}</dd>
+                                        <dt class="mb10">类型</dt><dd>{{transferOrderTypeValue}}</dd>
+                                        <dt class="mb10">备注</dt><dd>{{remark}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">状态</dt><dd class="{{transferOrderStatusClass}}">{{transferOrderStatusValue}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">创建人</dt><dd>{{createUserRealName}}</dd>
+                                        <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        {{/data}}
+                    </script>
+
+                    <div id="orderBaseInfo"></div>
+
+                    <div class="panel-heading">
+                        <div class="row">
+                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
+                                <li class="active">
+                                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
+                                </li>
+                                <li>
+                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="panel-body dark pn">
+                        <div class="tab-content pn br-n">
+                            <div id="purchaseOrderProductItems" class="tab-pane active">
+                                <script type="text/html" id="stockUpProductButtonsTpl">
+                                    {{#hasActionButtons}}
+                                    <div class="panel-menu p12 br-n br-b">
+                                        <div class="row">
+                                            <div class="pull-left ml10">
+                                                <div class="btn-group actionCommonButtons" id="stockUpProductButtons">
+                                                    {{#acitonButtons}}
+                                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">{{text}}</a>
+                                                    {{/acitonButtons}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{/hasActionButtons}}
+                                </script>
+                                <div id="stockUpProductButtons"></div>
+
+                                <div class="table-responsive">
+                                    <script type="text/html" id="dataListTpl">
+                                        <thead>
+                                        <tr class="bg-light">
+                                            <th>商品名称</th>
+                                            <th>类别</th>
+                                            <th>品牌</th>
+                                            <th>商品参数（SKU）</th>
+                                            <th>数量</th>
+                                            <th class="text-right">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#listData}}
+                                        <tr class="productRow skuRow" productRowKey="{{productId}}">
+                                            <td>{{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}{{productName}}</td>
+                                            <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+                                            <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                                            <td>{{propertiesToStr}}</td>
+                                            <td class="productUnitAmountTd">
+                                                {{productCount}}
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="btn-group text-right">
+                                                    {{#rowActionButtons}}
+                                                    <a href="${ctx}{{menuUrl}}?id={{transferOrderProductId}}" type="button"
+                                                       class="btn btn-default btn-xs {{class}}"
+                                                       data-skuid="{{skuId}}"
+                                                       data-productid="{{productId}}"
+                                                       data-transferOrderProductId="{{transferOrderProductId}}">{{text}}</a>
+                                                    {{/rowActionButtons}}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">没有选择商品</td>
+                                        </tr>
+                                        {{/listData}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                                </div>
+                            </div>
+                            <div id="purchaseOrderMaterialItems" class="tab-pane">
+                                <script type="text/html" id="stockUpMaterialButtonsTpl">
+                                    {{#hasActionButtons}}
+                                    <div class="panel-menu p12 br-n br-b">
+                                        <div class="row">
+                                            <div class="pull-left ml10">
+                                                <div class="btn-group actionCommonButtons" id="stockUpMaterialButtons">
+                                                    {{#acitonButtons}}
+                                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">{{text}}</a>
+                                                    {{/acitonButtons}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{/hasActionButtons}}
+                                </script>
+                                <div id="stockUpMaterialButtons"></div>
+
+                                <div class="table-responsive">
+                                    <script type="text/html" id="materialDataListTpl">
+                                        <thead>
+                                        <tr>
+                                            <th>配件名称</th>
+                                            <th>品牌</th>
+                                            <th>类型</th>
+                                            <th>配件价值</th>
+                                            <th>数量</th>
+                                            <th class="text-right">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr class="materialRow">
+                                            <td>{{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}{{materialName}}</td>
+                                            <td>{{brandName}}</td>
+                                            <td>{{materialTypeStr}}</td>
+                                            <td>{{#price}}{{materialPrice}}{{/price}}</td>
+                                            <td class="materialUnitAmountTd">
+                                                {{materialCount}}
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="btn-group text-right">
+                                                    {{#rowActionButtons}}
+                                                    <a href="#" type="button" class="btn btn-default btn-xs {{class}}"
+                                                       data-materialno="{{materialNo}}"
+                                                       data-materialcount="{{materialCount}}"
+                                                       data-transferOrderMaterialid="{{transferOrderMaterialId}}">{{text}}</a>
+                                                    {{/rowActionButtons}}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">没有选择配件</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialDataListTable"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer clearfix">
+                        <button class="btn btn-default pull-right ml15 goBack">返回</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js',
+            'manage.transfer.order.handle.mixin.js',
+            'manage.transfer.order.mixin.js',
+            'manage.transfer.in.order.equiment.list.js',
+            'manage.transfer.in.order.material.list.js',
+            'manage.transfer.out.order.detail.js',
+            'manage.order.item.render.js',
+            'manage.order.util.js',
+            'modal.submit.audit.js',
+            'manage.order.picking.js',
+            'modal.input.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    DetailTransferOutOrder.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+</script>
+
+</body>
+</html>

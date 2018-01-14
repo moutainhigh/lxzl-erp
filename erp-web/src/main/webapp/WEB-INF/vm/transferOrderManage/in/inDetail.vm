@@ -42,12 +42,13 @@
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
                                         <dt class="mb10">流入单名称</dt><dd>{{transferOrderName}}</dd>
-                                        <dt class="mb10">状态</dt><dd class="{{transferOrderStatusClass}}">{{transferOrderStatusValue}}</dd>
+                                        <dt class="mb10">类型</dt><dd>{{transferOrderTypeValue}}</dd>
+                                        <dt class="mb10">备注</dt><dd>{{remark}}</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
-                                        <dt class="mb10">类型</dt><dd>{{transferOrderTypeValue}}</dd>
+                                        <dt class="mb10">状态</dt><dd class="{{transferOrderStatusClass}}">{{transferOrderStatusValue}}</dd>
                                         <dt class="mb10">仓库</dt><dd>{{warehouseName}}</dd>
                                     </dl>
                                 </div>
@@ -55,7 +56,7 @@
                                     <dl class="dl-horizontal">
                                         <dt class="mb10">创建人</dt><dd>{{createUserRealName}}</dd>
                                         <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}</dd>
-                                        <dt class="mb10">备注</dt><dd>{{remark}}</dd>
+
                                     </dl>
                                 </div>
                             </div>

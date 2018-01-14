@@ -510,6 +510,10 @@ public class PageController extends BaseController {
     public String transferOutOrdermanageEdit() {
         return "/transferOrderManage/out/outEdit";
     }
+    @RequestMapping("/order-transfer-out-manage/stock-up-material-modal")
+    public String transferOutOrdermanageStockUpMaterialModal() {
+        return "/component/transferOrder/stockUpMaterialModal";
+    }
 
 
     //结算单
