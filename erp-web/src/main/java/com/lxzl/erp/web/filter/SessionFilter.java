@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by liuke on 2016/11/04.
@@ -48,7 +50,9 @@ public class SessionFilter implements Filter {
         }else
         {
             for (String page : excludedPageArray) {//判断是否在过滤url之外
-                if(requestPath.endsWith(page)){
+                Pattern pattern = Pattern.compile(page);
+                Matcher matcher = pattern.matcher(requestPath);
+                if(requestPath.endsWith(page) || matcher.find()){
                     isExcludedPage = true;
                     break;
                 }

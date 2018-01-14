@@ -918,6 +918,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public ServiceResult<String, Page<Order>> queryOrderByUserIdInterface(OrderQueryParam orderQueryParam) {
+        ServiceResult<String, Page<Order>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        orderQueryParam.setBuyerCustomerId(orderQueryParam.getBuyerCustomerId());
+        maps.put("orderQueryParam", orderQueryParam);
+
+        Integer totalCount = orderMapper.findOrderCountByParams(maps);
+        List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
+        Page<Order> page = new Page<>(ConverterUtil.convertList(orderDOList, Order.class), totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
+    @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> processOrder(ProcessOrderParam param) {
         ServiceResult<String, String> result = new ServiceResult<>();
@@ -1011,7 +1029,7 @@ public class OrderServiceImpl implements OrderService {
             }
 
             boolean isMatching = false;
-            Map<String, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(), "productSkuId", "rentType", "rentTimeLength", "isNewProduct");
+            Map<String, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(), "productSkuId", "rentType", "rentTimeLength");
             OrderProductDO matchingOrderProductDO = null;
 
             // 匹配SKU
@@ -1029,7 +1047,6 @@ public class OrderServiceImpl implements OrderService {
                 for (Map.Entry<String, OrderProductDO> entry : orderProductDOMap.entrySet()) {
                     OrderProductDO orderProductDO = entry.getValue();
                     // 如果输入进来的设备productId,订单项中包含，就匹配 为当前订单项需要的，那么就匹配
-                    // TODO 需要确定，下单时，如果需要全新，发个次新是否可以，反过来也一样
                     if (orderProductDO.getProductId().equals(productEquipmentDO.getProductId())) {
                         matchingOrderProductDO = orderProductDO;
                         break;
@@ -1092,7 +1109,7 @@ public class OrderServiceImpl implements OrderService {
 
         if (materialId != null) {
             boolean isMatching = false;
-            Map<String, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId", "rentType", "rentTimeLength", "isNewMaterial");
+            Map<String, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId", "rentType", "rentTimeLength");
             for (Map.Entry<String, OrderMaterialDO> entry : orderMaterialDOMap.entrySet()) {
                 String key = entry.getKey();
                 // 如果输入进来的散料ID 为当前订单项需要的，那么就匹配

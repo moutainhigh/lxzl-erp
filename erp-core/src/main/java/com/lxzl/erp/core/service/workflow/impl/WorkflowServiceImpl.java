@@ -474,6 +474,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             // 根据不同业务，回调业务系统
             VerifyReceiver verifyReceiver = workFlowManager.getService(workflowLinkDO.getWorkflowType());
             if (verifyReceiver == null) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
                 result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
                 return result;
             }

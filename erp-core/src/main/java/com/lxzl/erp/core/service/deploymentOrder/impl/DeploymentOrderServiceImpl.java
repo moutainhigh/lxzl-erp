@@ -18,6 +18,7 @@ import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
 import com.lxzl.erp.core.service.material.MaterialService;
+import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
@@ -622,20 +623,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             }
 
             // 必须是当前库房闲置的物料
-            BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
-            bulkMaterialQueryParam.setMaterialId(materialId);
-            bulkMaterialQueryParam.setCurrentWarehouseId(deploymentOrderDO.getSrcWarehouseId());
-            bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
-
-            if (deploymentOrderMaterialDO.getIsNew() != null) {
-                bulkMaterialQueryParam.setIsNew(deploymentOrderMaterialDO.getIsNew());
-            }
-
-            Map<String, Object> bulkQueryParam = new HashMap<>();
-            bulkQueryParam.put("start", 0);
-            bulkQueryParam.put("pageSize", materialCount);
-            bulkQueryParam.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
-            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(bulkQueryParam);
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(deploymentOrderDO.getSrcWarehouseId(),materialId, materialCount, deploymentOrderMaterialDO.getIsNew());
             if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
                 result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
                 return result;
@@ -964,6 +952,9 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
 
     @Autowired
     private BulkMaterialMapper bulkMaterialMapper;
+
+    @Autowired
+    private BulkMaterialSupport bulkMaterialSupport;
 
     @Autowired
     private ProductEquipmentMapper productEquipmentMapper;

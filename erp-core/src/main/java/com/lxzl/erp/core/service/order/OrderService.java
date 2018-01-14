@@ -81,6 +81,14 @@ public interface OrderService extends VerifyReceiver {
     ServiceResult<String, Page<Order>> queryOrderByUserId(OrderQueryParam param);
 
     /**
+     * 根据用户ID查询订单
+     *
+     * @param param 参数
+     * @return 订单列表
+     */
+    ServiceResult<String, Page<Order>> queryOrderByUserIdInterface(OrderQueryParam param);
+
+    /**
      * 处理订单
      *
      * @param param 处理订单
