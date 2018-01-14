@@ -169,14 +169,10 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </th>
-##                            <th>编号</th>
                             <th>配件名称</th>
                             <th>品牌</th>
                             <th>类型</th>
                             <th>配件价值</th>
-##                            <th>租赁价格</th>
-##                            <th>描述</th>
-##                            <th>图片</th>
                             <th>调拨单价</th>
                             <th>调拨数量</th>
                             <th>配件小计</th>
@@ -193,17 +189,10 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-##                            <td>{{materialNo}}</td>
-                            <td>{{brandName}}</td>
                             <td>{{materialName}}</td>
+                            <td>{{brandName}}</td>
                             <td>{{materialTypeStr}}</td>
                             <td>{{#price}}{{materialPrice}}{{/price}}</td>
-##                            <td>
-##                                <p>日租：￥{{dayRentPriceFormat}}</p>
-##                                <p>月租：￥{{monthRentPriceFormat}}</p>
-##                            </td>
-##                            <td>{{materialDesc}}</td>
-##                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                             <td class="materialUnitAmountTd">
                                 <div class="smart-widget sm-right smr-50">
                                     <label class="field prepend-icon">
