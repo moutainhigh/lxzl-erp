@@ -466,6 +466,43 @@ public class PageController extends BaseController {
         return "/component/deploymentOrder/stockUpMaterialModal";
     }
 
+    //流转单-转入
+    @RequestMapping("/order-transfer-in-manage/list")
+    public String transferOrdermanageList() {
+        return "/transferOrderManage/in/inList";
+    }
+    @RequestMapping("/order-transfer-in-manage/detail")
+    public String transferOrdermanageDetail() {
+        return "/transferOrderManage/in/inDetail";
+    }
+    @RequestMapping("/order-transfer-in-manage/add")
+    public String transferOrdermanageAdd() {
+        return "/transferOrderManage/in/inAdd";
+    }
+    @RequestMapping("/order-transfer-in-manage/edit")
+    public String transferOrdermanageEdit() {
+        return "/transferOrderManage/in/inEdit";
+    }
+
+    //流转单-转出
+    @RequestMapping("/order-transfer-out-manage/list")
+    public String transferOutOrdermanageList() {
+        return "/transferOrderManage/out/outList";
+    }
+    @RequestMapping("/order-transfer-out-manage/detail")
+    public String transferOutOrdermanageDetail() {
+        return "/transferOrderManage/out/outDetail";
+    }
+    @RequestMapping("/order-transfer-out-manage/add")
+    public String transferOutOrdermanageAdd() {
+        return "/transferOrderManage/out/outAdd";
+    }
+    @RequestMapping("/order-transfer-out-manage/edit")
+    public String transferOutOrdermanageEdit() {
+        return "/transferOrderManage/out/outEdit";
+    }
+
+
     //结算单
     @RequestMapping("/statement-order/list")
     public String statementOrderList() {

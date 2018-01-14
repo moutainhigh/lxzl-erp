@@ -497,6 +497,14 @@ public class ErrorCode {
     public static final String ASSEMBLE_ORDER_NOT_EXISTS = "J1300003";
     public static final String ASSEMBLE_ORDER_MATERIAL_NOT_NULL = "J1300004";
 
+    public static final String PEER_ID_NOT_NULL = "J1400001";
+    public static final String PEER_NAME_NOT_NULL = "J1400002";
+    public static final String PEER_CODE_NOT_NULL = "J1400003";
+    public static final String PEER_CODE_EXISTS = "J1400004";
+    public static final String PEER_NAME_EXISTS = "J1400005";
+    public static final String PEER_NO_EXISTS = "J1400006";
+    public static final String PEER_NOT_EXISTS = "J1400007";
+
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -985,6 +993,14 @@ public class ErrorCode {
         MAP.put(ASSEMBLE_ORDER_NOT_EXISTS, "组装单不存在");
         MAP.put(ASSEMBLE_ORDER_MATERIAL_ID_NOT_NULL, "组装单配件ID不能为空");
         MAP.put(ASSEMBLE_ORDER_MATERIAL_NOT_NULL, "组装单配件不能为空");
+
+        MAP.put(PEER_ID_NOT_NULL, "同行唯一标识不能为空");
+        MAP.put(PEER_NAME_NOT_NULL, "同行供应商名称不能为空");
+        MAP.put(PEER_CODE_NOT_NULL, "同行供应商自定义编码不能为空");
+        MAP.put(PEER_NAME_EXISTS, "同行供应商名称已存在");
+        MAP.put(PEER_CODE_EXISTS, "同行供应商自定义编码已存在");
+        MAP.put(PEER_NO_EXISTS, "同行供应商编码已存在");
+        MAP.put(PEER_NOT_EXISTS, "同行供应不存在");
 
 
     }
