@@ -7,7 +7,7 @@
         <form class="editForm">
             <div class="panel-body pn">
                 <div class="table-responsive">
-                    <script type="text/html" id="dataListTpl">
+                    <script type="text/html" class="dataListTpl">
                         <thead>
                         <tr>
                             <th>散料编号</th>
@@ -19,7 +19,6 @@
                             <th>配件编号</th>
                             <th>归属仓库</th>
                             <th>当前仓库</th>
-                            <th>所在设备编号</th>
                             <th>状态</th>
                         </tr>
                         </thead>
@@ -28,7 +27,7 @@
                         {{#listData}}
                         <tr>
                             <td>
-                                {{#isNewValueBadge}}{{isNew}}{{/isNewValueBadge}}
+##                                {{#isNewValueBadge}}{{isNew}}{{/isNewValueBadge}}
                                 {{bulkMaterialNo}}
                             </td>
                             <td>{{bulkMaterialName}}</td>
@@ -39,7 +38,6 @@
                             <td>{{materialNo}}</td>
                             <td>{{ownerWarehouseName}}</td>
                             <td>{{currentWarehouseName}}</td>
-                            <td>{{currentEquipmentNo}}</td>
                             <td class="{{bulkMaterialStatusClass}}">{{bulkMaterialStatusValue}}</td>
                         </tr>
                         {{/listData}}
@@ -51,7 +49,7 @@
                         {{/dataSource}}
                         </tbody>
                     </script>
-                    <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                    <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13 dataListTable" ></table>
                 </div>
             </div>
             <div class="panel-footer">

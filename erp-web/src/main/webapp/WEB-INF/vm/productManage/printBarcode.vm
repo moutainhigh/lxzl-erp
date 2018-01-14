@@ -8,80 +8,56 @@
         common_load_css('${staticCommon}/rental/css','dropzone.css');
     </script>
     <style>
+        @page {
+            size: 50mm*30mm;
+            margin: 0;
+        }
+        #printContainer {
+            width:50mm;
+            margin: auto;
+        }
         .qrcodeCanvas{ height: 100%; width: 50%; float: left; text-align: center;}
         .qrcodeCanvas img{ height: 100%; margin: auto;}
         .qcodeItem {
             /*margin: auto;*/
             float: left;
+            box-shadow: 0 0 5px 2px #ddd;
+            padding: 0 2mm;
+            overflow: hidden;
         }
-        /*.barcode50MM24MM {*/
-            /*width:50mm;*/
-            /*height: 30mm;*/
-            /*!*margin-bottom:6mm;*!*/
-            /*padding: 4mm;*/
-        /*}*/
-        /*.qrcodeCanvas {*/
-            /*width: 18mm;*/
-            /*height:18mm;*/
-            /*!*margin-top: 1mm;*!*/
-        /*}*/
-        /*.qrcodeCanvas:first-child {*/
-            /*float: left;*/
-        /*}*/
-        /*.qrcodeCanvas:last-child {*/
-           /*float: right;*/
-        /*}*/
-        #printContainer {
-            width: 101mm;
-            margin: auto;
+        .code {
+            width: 100%;
         }
+        .barcode50MM30MM {
+            width:50mm;
+            height: 30mm;
+            margin-bottom: 1.5mm;
+        }
+        .barcode50MM30MM  .qrcodeCanvas {
+            width: 18mm;
+            height:18mm;
+        }
+        .barcode50MM30MM .qrcodeTitle, .barcode50MM30MM .equimentno {
+            clear: both;
+            margin: 0;
+            width: 100%;
+            font-size: 6pt;
+        }
+
+        .barcode40MM30MM {
+            width:40mm;
+            height: 30mm;
+            margin-bottom: 1.5mm;
+        }
+        .barcode40MM30MM  .qrcodeCanvas {
+            width: 16mm;
+            height:16mm;
+        }
+
     </style>
 </head>
 <body class="invoice-page">
-##    #parse("layout/toolbox.vm")
-##    <div id="main">
-##        #parse("layout/navbar.vm")
-##        #parse("layout/sidebar.vm")
-##        <section id="content_wrapper">
-##            #parse("layout/topbarDropmenu.vm")
-##            #parse("layout/topbar.vm")
-##            <section id="content" class="animated fadeIn">
-##                #parse("component/loading.vm")
-##                <div class="panel panel-primary panel-border top invoice-panel"">
-##                    <div class="panel-menu p12 noprint">
-##                        <div class="row">
-##                            <div class="col-md-3">
-##                                <div class="btn-group" id="actionButtons">
-##                                    <a href="javascript:window.print()" class="btn btn-primary btn-sm ml5 bradius">
-##                                        <i class="fa fa-print fs13"></i> 打印
-##                                    </a>
-##                                </div>
-##                            </div>
-##                            <div class="col-md-9 text-right">
-##                                <form id="searchForm" class="form-horizontal">
-##                                    <div class="pull-right">
-##                                        <button type="reset" class="btn btn-primary btn-sm">设置</button>
-##                                    </div>
-##                                    <div class="form-group pull-right mn mr10" style="width: 260px;">
-##                                        <div class="input-group">
-##                                            <select name="barcodeWH" id="barcodeWH" defaultValue="barcode50MM24MM" class="hide"></select>
-##                                            <span class="input-group-addon cursor input-sm bradiusR">标签长度*标签宽度</span>
-##                                        </div>
-##                                    </div>
-##                                </form>
-##                            </div>
-##                        </div>
-##                    </div>
-##                    <div class="panel-body p15" id="printContainer"></div>
-##                    <div class="panel-footer noprint"></div>
-##                </div>
-##            </section>
-##        </section>
-##        #parse("layout/sidebarRight.vm")
-##    </div>
-
-
-    <div class="panel panel-primary panel-border">
+    <div class="panel panel-primary panel-border mn">
         <div class="panel-menu p12 noprint">
             <div class="row">
                 <div class="col-md-9 text-right">

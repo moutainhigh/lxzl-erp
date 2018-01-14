@@ -33,8 +33,8 @@
                             <th>商品名</th>
                             <th>商品图</th>
                             <th>SKUID</th>
-                            <th>设备状态</th>
-                            <th>备注</th>
+##                            <th>设备状态</th>
+##                            <th>备注</th>
                             {{#hasRowActionButtons}}
                             <th class="text-right">操作</th>
                             {{/hasRowActionButtons}}
@@ -46,18 +46,18 @@
                         <tr class="equipmentTr">
                             <td>
                                 <label class="option block mn">
-                                    <input type="checkbox" name="checkItem" value="{{equipmentNo}}">
+                                    <input type="checkbox" name="checkItem" value="{{productEquipmentNo}}">
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                            <td>{{equipmentNo}}</td>
+                            <td>{{productEquipmentNo}}</td>
                             <td>{{ownerWarehouseName}}</td>
                             <td>{{productId}}</td>
                             <td>{{productName}}</td>
                             <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                             <td>{{skuId}}</td>
-                            <td>{{equipmentStatusStr}}</td>
-                            <td>{{remark}}</td>
+##                            <td>{{equipmentStatusStr}}</td>
+##                            <td>{{remark}}</td>
                         </tr>
                         {{/listData}}
                         {{^listData}}
