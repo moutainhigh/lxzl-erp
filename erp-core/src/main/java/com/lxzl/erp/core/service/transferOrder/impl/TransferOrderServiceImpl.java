@@ -8,6 +8,8 @@ import com.lxzl.erp.common.domain.material.pojo.MaterialInStorage;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
+import com.lxzl.erp.common.domain.transferOrder.TransferOrderMaterialBulkQueryParam;
+import com.lxzl.erp.common.domain.transferOrder.TransferOrderProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
 import com.lxzl.erp.common.domain.transferOrder.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -37,7 +39,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
-import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.transferOrder.*;
@@ -238,8 +239,8 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             return serviceResult;
         }
 
-        //todo 是否需要加入转移类型的修改
         transferOrderDO.setTransferOrderName(transferOrder.getTransferOrderName());
+        transferOrderDO.setTransferOrderType(transferOrder.getTransferOrderType());
         transferOrderDO.setRemark(transferOrder.getRemark());
         transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         transferOrderDO.setUpdateTime(now);
@@ -264,8 +265,8 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_STATUS_IS_ERROR);
             return serviceResult;
         }
-        //todo 以后转出类型会增加，此时不知道以后的类型是什么，所以先不用修改
-//        transferOrderDO.setTransferOrderType();
+
+        transferOrderDO.setTransferOrderType(transferOrder.getTransferOrderType());
         transferOrderDO.setTransferOrderName(transferOrder.getTransferOrderName());
         transferOrderDO.setRemark(transferOrder.getRemark());
         transferOrderDO.setUpdateTime(now);
@@ -283,7 +284,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
 
-        TransferOrderDO transferOrderDO = transferOrderMapper.findById(transferOrder.getTransferOrderId());
+        TransferOrderDO transferOrderDO = transferOrderMapper.findByNo(transferOrder.getTransferOrderNo());
         if (transferOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_NOT_EXISTS);
             return serviceResult;
@@ -395,7 +396,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
 
-        TransferOrderDO transferOrderDO = transferOrderMapper.findById(transferOrder.getTransferOrderId());
+        TransferOrderDO transferOrderDO = transferOrderMapper.findByNo(transferOrder.getTransferOrderNo());
         if (transferOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_NOT_EXISTS);
             return serviceResult;
@@ -857,57 +858,42 @@ public class TransferOrderServiceImpl implements TransferOrderService {
     }
 
     @Override
-    public ServiceResult<String,  List<TransferOrderProductEquipment>> detailTransferOrderProductEquipmentById(Integer transferOrderProductId) {
-        ServiceResult<String,  List<TransferOrderProductEquipment>> serviceResult = new ServiceResult<>();
+    public ServiceResult<String,  Page<TransferOrderProductEquipment>> detailTransferOrderProductEquipmentById(TransferOrderProductEquipmentQueryParam transferOrderProductEquipmentQueryParam) {
+        ServiceResult<String,   Page<TransferOrderProductEquipment>> serviceResult = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(transferOrderProductEquipmentQueryParam.getPageNo(), transferOrderProductEquipmentQueryParam.getPageSize());
 
-        if(transferOrderProductId == null){
-            serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_PRODUCT_ID_NOT_NULL);
-            return serviceResult;
-        }
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("queryParam", transferOrderProductEquipmentQueryParam);
 
-        List<TransferOrderProductEquipmentDO> transferOrderProductEquipmentDOList = transferOrderProductEquipmentMapper.findByTransferOrderProductId(transferOrderProductId);
-        for (TransferOrderProductEquipmentDO transferOrderProductEquipmentDO : transferOrderProductEquipmentDOList){
-            ProductDO productDO = productMapper.findByProductId(transferOrderProductEquipmentDO.getProductId());
-            ProductSkuDO productSkuDO = productSkuMapper.findById(transferOrderProductEquipmentDO.getSkuId());
-            WarehouseDO currentWarehouseDO = warehouseMapper.findById(transferOrderProductEquipmentDO.getCurrentWarehouseId());
-            WarehouseDO ownerWarehouseDO = warehouseMapper.findById(transferOrderProductEquipmentDO.getOwnerWarehouseId());
-
-            transferOrderProductEquipmentDO.setProductName(productDO.getProductName());
-            transferOrderProductEquipmentDO.setSkuName(productSkuDO.getSkuName());
-            transferOrderProductEquipmentDO.setCurrentWarehouseName(currentWarehouseDO.getWarehouseName());
-            transferOrderProductEquipmentDO.setOwnerWarehouseName(ownerWarehouseDO.getWarehouseName());
-        }
-
-        List<TransferOrderProductEquipment> transferOrderProductEquipmentList = ConverterUtil.convertList(transferOrderProductEquipmentDOList,TransferOrderProductEquipment.class);
+        Integer totalCount = transferOrderProductEquipmentMapper.findTransferOrderProductEquipmentCountByParams(maps);
+        List<TransferOrderProductEquipmentDO> transferOrderProductEquipmentDOList = transferOrderProductEquipmentMapper.findTransferOrderProductEquipmentByParams(maps);
+        List<TransferOrderProductEquipment> transferOrderProductEquipmentList = ConverterUtil.convertList(transferOrderProductEquipmentDOList, TransferOrderProductEquipment.class);
+        Page<TransferOrderProductEquipment> page = new Page<>(transferOrderProductEquipmentList, totalCount, transferOrderProductEquipmentQueryParam.getPageNo(), transferOrderProductEquipmentQueryParam.getPageSize());
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(transferOrderProductEquipmentList);
+        serviceResult.setResult(page);
         return serviceResult;
     }
 
     @Override
-    public ServiceResult<String, List<TransferOrderMaterialBulk>> detailTransferOrderMaterialBulkById(Integer transferOrderMaterialId) {
-        ServiceResult<String, List<TransferOrderMaterialBulk>> serviceResult = new ServiceResult<>();
+    public ServiceResult<String,Page<TransferOrderMaterialBulk>> detailTransferOrderMaterialBulkById(TransferOrderMaterialBulkQueryParam transferOrderMaterialBulkQueryParam) {
+        ServiceResult<String,Page<TransferOrderMaterialBulk>> serviceResult = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(transferOrderMaterialBulkQueryParam.getPageNo(), transferOrderMaterialBulkQueryParam.getPageSize());
 
-        if(transferOrderMaterialId == null){
-            serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_MATERIAL_ID_NOT_NULL);
-            return serviceResult;
-        }
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("queryParam", transferOrderMaterialBulkQueryParam);
 
-        List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList = transferOrderMaterialBulkMapper.findByTransferOrderMaterialId(transferOrderMaterialId);
-        for (TransferOrderMaterialBulkDO transferOrderMaterialBulkDO: transferOrderMaterialBulkDOList){
-            MaterialDO materialDO = materialMapper.findByNo(transferOrderMaterialBulkDO.getMaterialNo());
-            WarehouseDO currentWarehouseDO = warehouseMapper.findById(transferOrderMaterialBulkDO.getCurrentWarehouseId());
-            WarehouseDO ownerWarehouseDO = warehouseMapper.findById(transferOrderMaterialBulkDO.getOwnerWarehouseId());
-            transferOrderMaterialBulkDO.setBrandName(materialDO.getBrandName());
-            transferOrderMaterialBulkDO.setCurrentWarehouseName(currentWarehouseDO.getWarehouseName());
-            transferOrderMaterialBulkDO.setOwnerWarehouseName(ownerWarehouseDO.getWarehouseName());
-        }
-
-        List<TransferOrderMaterialBulk> transferOrderMaterialBulkList = ConverterUtil.convertList(transferOrderMaterialBulkDOList,TransferOrderMaterialBulk.class);
+        Integer totalCount = transferOrderMaterialBulkMapper.findTransferOrderMaterialBulkCountByParams(maps);
+        List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList = transferOrderMaterialBulkMapper.findTransferOrderMaterialBulkByParams(maps);
+        List<TransferOrderMaterialBulk> transferOrderMaterialBulkList = ConverterUtil.convertList(transferOrderMaterialBulkDOList, TransferOrderMaterialBulk.class);
+        Page<TransferOrderMaterialBulk> page = new Page<>(transferOrderMaterialBulkList, totalCount, transferOrderMaterialBulkQueryParam.getPageNo(), transferOrderMaterialBulkQueryParam.getPageSize());
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(transferOrderMaterialBulkList);
+        serviceResult.setResult(page);
         return serviceResult;
     }
 

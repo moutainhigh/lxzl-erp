@@ -1,9 +1,11 @@
 package com.lxzl.erp.dataaccess.dao.mysql.transferOrder;
 
+import com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderMaterialBulkDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
-import com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderMaterialBulkDO;import org.apache.ibatis.annotations.Param;
-import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -18,4 +20,8 @@ public interface TransferOrderMaterialBulkMapper extends BaseMysqlDAO<TransferOr
     List<TransferOrderMaterialBulkDO> findByTransferOrderId(@Param("transferOrderId")Integer transferOrderId);
 
     List<TransferOrderMaterialBulkDO> findByTransferOrderMaterialId(@Param("transferOrderMaterialId")Integer transferOrderMaterialId);
+
+    Integer findTransferOrderMaterialBulkCountByParams(@Param("maps")Map<String, Object> maps);
+
+    List<TransferOrderMaterialBulkDO> findTransferOrderMaterialBulkByParams(@Param("maps")Map<String, Object> maps);
 }

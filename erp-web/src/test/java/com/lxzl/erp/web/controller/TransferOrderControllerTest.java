@@ -2,12 +2,11 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
-import com.lxzl.erp.common.constant.TransferOrderMode;
 import com.lxzl.erp.common.constant.TransferOrderType;
-import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrder;
-import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterial;
-import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderProduct;
+import com.lxzl.erp.common.domain.transferOrder.TransferOrderMaterialBulkQueryParam;
+import com.lxzl.erp.common.domain.transferOrder.TransferOrderProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
+import com.lxzl.erp.common.domain.transferOrder.pojo.*;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     public void createTransferOrderInto() throws Exception{
         TransferOrder transferOrder = new TransferOrder();
         transferOrder.setTransferOrderName("测试转移单转入");
-        transferOrder.setTransferOrderType(TransferOrderType.INTEGER_ORDER_TYPE_LEND_OUT_INTO_STOCK);
+        transferOrder.setTransferOrderType(TransferOrderType.INTEGER_ORDER_TYPE_INTO_LEND_OUT_INTO_STOCK);
         transferOrder.setRemark("转入的转移单备注");
         transferOrder.setWarehouseId(4000001);
 
@@ -79,7 +78,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     public void createTransferOrderOut() throws Exception{
         TransferOrder transferOrder = new TransferOrder();
         transferOrder.setTransferOrderName("转移单转出商品1234");
-        transferOrder.setTransferOrderType(TransferOrderType.INTEGER_ORDER_TYPE_OUT);
+        transferOrder.setTransferOrderType(TransferOrderType.INTEGER_ORDER_TYPE_OUT_SOLD);
         transferOrder.setRemark("转出123备注");
 
         TestResult testResult = getJsonTestResult("/transferOrder/createTransferOrderOut", transferOrder);
@@ -88,7 +87,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     @Test
     public void updateTransferOrderInto() throws Exception{
         TransferOrder transferOrder = new TransferOrder();
-        transferOrder.setTransferOrderNo("LXT40000012018011386");
+        transferOrder.setTransferOrderNo("LXT40000012018011488");
         transferOrder.setTransferOrderName("测试转移单转入update");
         transferOrder.setRemark("update测试备注");
 
@@ -153,7 +152,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     public void transferOrderProductEquipmentOut() throws Exception{
 
         TransferOrder transferOrder = new TransferOrder();
-        transferOrder.setTransferOrderId(96);
+        transferOrder.setTransferOrderNo("LXT40000012018010916");
         transferOrder.setProductEquipmentNo("LX-1000--2018011001815");
 
         List<String> strings = new ArrayList<>();
@@ -173,7 +172,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     public void dumpTransferOrderProductEquipmentOut() throws Exception{
 
         TransferOrder transferOrder = new TransferOrder();
-        transferOrder.setTransferOrderId(44);
+        transferOrder.setTransferOrderNo("LXT40000012018010916");
         transferOrder.setProductEquipmentNo("LX-1000--2018011001812");
 
         TestResult testResult = getJsonTestResult("/transferOrder/dumpTransferOrderProductEquipmentOut",transferOrder);
@@ -224,7 +223,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     @Test
     public void commitTransferOrder() throws Exception{
         TransferOrder transferOrder = new TransferOrder();
-        transferOrder.setTransferOrderNo("LXT40000012018011272");
+        transferOrder.setTransferOrderNo("LXT40000012018011488");
         transferOrder.setVerifyUser(500006);
         transferOrder.setCommitRemark("提交转出转移单审核的备注");
         TestResult testResult = getJsonTestResult("/transferOrder/commitTransferOrder", transferOrder);
@@ -234,29 +233,31 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     public void pageTransferOrder() throws Exception{
         TransferOrderQueryParam transferOrderQueryParam = new TransferOrderQueryParam();
 //        transferOrderQueryParam.setTransferOrderName("庄凯麟");
-        transferOrderQueryParam.setTransferOrderNo("LXT40000012018011386");
+        transferOrderQueryParam.setTransferOrderNo("LXT40000012018011488");
         TestResult testResult = getJsonTestResult("/transferOrder/pageTransferOrder", transferOrderQueryParam);
     }
 
     @Test
     public void detailTransferOrderByNo() throws Exception{
         TransferOrder transferOrder = new TransferOrder();
-        transferOrder.setTransferOrderNo("LXT40000012018011386");
+        transferOrder.setTransferOrderNo("LXT40000012018011488");
         TestResult testResult = getJsonTestResult("/transferOrder/detailTransferOrderByNo", transferOrder);
     }
 
     @Test
     public void detailTransferOrderProductEquipmentById() throws Exception{
-        Integer transferOrderProductId = 220;
+        TransferOrderProductEquipmentQueryParam transferOrderProductEquipmentQueryParam = new TransferOrderProductEquipmentQueryParam();
+        transferOrderProductEquipmentQueryParam.setTransferOrderProductId(233);
 
-        TestResult testResult = getJsonTestResult("/transferOrder/detailTransferOrderProductEquipmentById", transferOrderProductId);
+        TestResult testResult = getJsonTestResult("/transferOrder/detailTransferOrderProductEquipmentById", transferOrderProductEquipmentQueryParam);
     }
 
     @Test
     public void detailTransferOrderMaterialBulkById() throws Exception{
-        Integer transferOrderMaterialId = 227;
+        TransferOrderMaterialBulkQueryParam transferOrderMaterialBulkQueryParam = new TransferOrderMaterialBulkQueryParam();
+        transferOrderMaterialBulkQueryParam.setTransferOrderMaterialId(194);
 
-        TestResult testResult = getJsonTestResult("/transferOrder/detailTransferOrderMaterialBulkById", transferOrderMaterialId);
+        TestResult testResult = getJsonTestResult("/transferOrder/detailTransferOrderMaterialBulkById", transferOrderMaterialBulkQueryParam);
     }
 
 }
