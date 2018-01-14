@@ -483,6 +483,15 @@ public class PageController extends BaseController {
     public String transferOrdermanageEdit() {
         return "/transferOrderManage/in/inEdit";
     }
+    @RequestMapping("/order-transfer-in-manage/equiment-list")
+    public String transferOrderInManageEquimentList() {
+        return "/component/transferOrder/equimentList";
+    }
+    @RequestMapping("/order-transfer-in-manage/bulk-material-list")
+    public String transferOrderInManageMaterialList() {
+        return "/component/transferOrder/bulkMaterialList";
+    }
+
 
     //流转单-转出
     @RequestMapping("/order-transfer-out-manage/list")

@@ -1,0 +1,72 @@
+<div class="popup-basic popup-xl admin-form mfp-with-anim theme-primary " id="chooseProductModal">
+
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-search"></i>配件散料列表</span>
+        </div>
+        <form class="editForm">
+            <div class="panel-body pn">
+                <div class="table-responsive">
+                    <script type="text/html" id="dataListTpl">
+                        <thead>
+                        <tr>
+                            <th>散料编号</th>
+                            <th>散料名称</th>
+                            <th>品牌</th>
+                            <th>散料类型</th>
+                            <th>面值大小</th>
+                            <th>散料价值</th>
+                            <th>配件编号</th>
+                            <th>归属仓库</th>
+                            <th>当前仓库</th>
+                            <th>所在设备编号</th>
+                            <th>状态</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#dataSource}}
+                        {{#listData}}
+                        <tr>
+                            <td>
+                                {{#isNewValueBadge}}{{isNew}}{{/isNewValueBadge}}
+                                {{bulkMaterialNo}}
+                            </td>
+                            <td>{{bulkMaterialName}}</td>
+                            <td>{{brandName}}</td>
+                            <td>{{bulkMaterialTypeValue}}</td>
+                            <td>{{#memorysize}}{{materialCapacityValue}}{{/memorysize}}</td>
+                            <td>￥{{#price}}{{bulkMaterialPrice}}{{/price}}</td>
+                            <td>{{materialNo}}</td>
+                            <td>{{ownerWarehouseName}}</td>
+                            <td>{{currentWarehouseName}}</td>
+                            <td>{{currentEquipmentNo}}</td>
+                            <td class="{{bulkMaterialStatusClass}}">{{bulkMaterialStatusValue}}</td>
+                        </tr>
+                        {{/listData}}
+                        {{^listData}}
+                        <tr>
+                            <td valign="top" colspan="14" class="text-center">没有查询到散料信息</td>
+                        </tr>
+                        {{/listData}}
+                        {{/dataSource}}
+                        </tbody>
+                    </script>
+                    <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                        #parse("component/pager.vm")
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <button type="button" class="button btn-default cancelButton"">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
