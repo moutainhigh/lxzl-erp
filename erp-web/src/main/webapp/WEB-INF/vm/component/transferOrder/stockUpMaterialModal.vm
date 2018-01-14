@@ -13,7 +13,7 @@
                                 <input type="hidden" name="materialNo" id="materialNo" class="required"/>
                                 <input type="text" name="materialName" id="materialName" class="gui-input required" readonly />
                             </label>
-                            <button type="button" class="button btn-primary bradiusN" id="chooseMaterial"> <i class="fa fa-search"></i></button>
+                            <button type="button" class="button btn-primary bradiusN chooseMaterial"> <i class="fa fa-search"></i></button>
                         </div>
                     </div>
                 </div>

@@ -217,7 +217,9 @@
 
     #parse("layout/sidebarRight.vm")
 </div>
+
     #parse("layout/footer.vm")
+
 <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
 <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
 <script type="text/javascript">
@@ -231,7 +233,8 @@
             'manage.order.util.js',
             'modal.submit.audit.js',
             'manage.order.picking.js',
-            'modal.input.js');
+            'modal.input.js',
+            'modal.choose.material.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化
