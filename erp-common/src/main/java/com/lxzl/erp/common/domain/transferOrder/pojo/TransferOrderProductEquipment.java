@@ -1,14 +1,8 @@
 package com.lxzl.erp.common.domain.transferOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
-import com.lxzl.erp.common.domain.validGroup.QueryGroup;
-import com.lxzl.erp.common.domain.validGroup.TransferOrder.DumpTransferOrderMaterialOutGroup;
-import com.lxzl.erp.common.domain.validGroup.TransferOrder.TramsferOrderMaterialOutGroup;
-import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 

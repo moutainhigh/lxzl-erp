@@ -2,17 +2,11 @@ package com.lxzl.erp.core.service.transferOrder;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.transferOrder.TransferOrderMaterialBulkQueryParam;
-import com.lxzl.erp.common.domain.transferOrder.TransferOrderProductEquipmentQueryParam;
+import com.lxzl.erp.common.domain.transferOrder.*;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrder;
-import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
-import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterial;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterialBulk;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderProductEquipment;
 import com.lxzl.erp.core.service.VerifyReceiver;
-import com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderProductEquipmentDO;
-
-import java.util.List;
 
 
 /**
@@ -48,11 +42,11 @@ public interface TransferOrderService extends VerifyReceiver {
     /**
      * 提交转移单进行审核
      * @param transferOrderNo
-     * @param verifyUser
-     * @param commitRemark
+     * @param verifyUserId
+     * @param remark
      * @return
      */
-    ServiceResult<String,String> commitTransferOrder(String transferOrderNo, Integer verifyUser, String commitRemark);
+    ServiceResult<String,String> commitTransferOrder(String transferOrderNo, Integer verifyUserId, String remark);
 
     /**
      * 新增转移单转出
@@ -63,27 +57,28 @@ public interface TransferOrderService extends VerifyReceiver {
 
     /**
      *  商品设备转出备货
-     * @param transferOrder
+     * @param transferOrderProductEquipmentOutParam
      * @return
      */
-    ServiceResult<String,String> transferOrderProductEquipmentOut(TransferOrder transferOrder);
+    ServiceResult<String,String> transferOrderProductEquipmentOut(TransferOrderProductEquipmentOutParam transferOrderProductEquipmentOutParam);
 
     /**
      * 商品设备转出清货
      */
-    ServiceResult<String,String> dumpTransferOrderProductEquipmentOut(TransferOrder transferOrder);
+    ServiceResult<String,String> dumpTransferOrderProductEquipmentOut(TransferOrderProductEquipmentOutParam transferOrderProductEquipmentOutParam);
 
     /**
      * 物料转出备货
+     * * @param transferOrderMaterialOutParam
      */
-    ServiceResult<String,String> transferOrderMaterialOut(TransferOrderMaterial transferOrderMaterial);
+    ServiceResult<String,String> transferOrderMaterialOut(TransferOrderMaterialOutParam transferOrderMaterialOutParam);
 
     /**
      * 物料转出清货
-     * @param transferOrderMaterial
+     * @param transferOrderMaterialOutParam
      * @return
      */
-    ServiceResult<String,String> dumpTransferOrderMaterialOut(TransferOrderMaterial transferOrderMaterial);
+    ServiceResult<String,String> dumpTransferOrderMaterialOut(TransferOrderMaterialOutParam transferOrderMaterialOutParam);
 
     /**
      * 更改转出的转移单

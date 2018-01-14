@@ -5,9 +5,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
-import com.lxzl.erp.common.domain.validGroup.QueryGroup;
 import com.lxzl.erp.common.domain.validGroup.TransferOrder.*;
-import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
@@ -25,7 +23,6 @@ public class TransferOrder extends BasePO {
 	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NAME_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class,UpdateTransferOrderIntoGroup.class,UpdateTransferOrderOutGroup.class})
 	private String transferOrderName;   //转移单名称
 	private Integer transferOrderStatus;   //转移单状态，0初始化，4审批中，8转移成功，16取消转移，20转移结束
-	@NotNull(message = ErrorCode.TRANSFER_ORDER_MODE_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class})
 	private Integer transferOrderMode;   //转移方式，1转入，2转出（凭空转入转出）
 	@NotNull(message = ErrorCode.TRANSFER_ORDER_TYPE_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class})
 	private Integer transferOrderType;   //	转入类型：1外借入库转入，2试验机转入，3原有资产，99其他。 转出类型：51丢失，52售出，53试验机归还，99其他
@@ -42,13 +39,6 @@ public class TransferOrder extends BasePO {
 	private List<TransferOrderProduct> transferOrderProductList;
 	@Valid
 	private List<TransferOrderMaterial> transferOrderMaterialList;
-
-	@NotBlank(message = ErrorCode.TRANSFER_ORDER_PRODUCT_EQUIPMENT_NO_NOT_NULL ,groups = {TransferOrderProductEquipmentOutGroup.class, DumpTransferOrderProductEquipmentOutGroup.class})
-	private String productEquipmentNo;//设备编号
-
-	// 审核人和提交审核信息,只提供给审核的时候用
-	private Integer verifyUser;
-	private String commitRemark;
 
 	private String warehouseName;
 
@@ -170,30 +160,6 @@ public class TransferOrder extends BasePO {
 
 	public void setTransferOrderMaterialList(List<TransferOrderMaterial> transferOrderMaterialList) {
 		this.transferOrderMaterialList = transferOrderMaterialList;
-	}
-
-	public Integer getVerifyUser() {
-		return verifyUser;
-	}
-
-	public void setVerifyUser(Integer verifyUser) {
-		this.verifyUser = verifyUser;
-	}
-
-	public String getCommitRemark() {
-		return commitRemark;
-	}
-
-	public void setCommitRemark(String commitRemark) {
-		this.commitRemark = commitRemark;
-	}
-
-	public String getProductEquipmentNo() {
-		return productEquipmentNo;
-	}
-
-	public void setProductEquipmentNo(String productEquipmentNo) {
-		this.productEquipmentNo = productEquipmentNo;
 	}
 
 	public String getWarehouseName() {

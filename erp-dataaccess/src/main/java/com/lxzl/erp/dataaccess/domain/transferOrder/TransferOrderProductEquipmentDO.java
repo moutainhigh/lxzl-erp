@@ -3,8 +3,6 @@ package com.lxzl.erp.dataaccess.domain.transferOrder;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
-import java.util.Date;
-
 
 public class TransferOrderProductEquipmentDO  extends BaseDO {
 
@@ -33,7 +31,6 @@ public class TransferOrderProductEquipmentDO  extends BaseDO {
 	private String skuName;
 	@Transient
 	private Integer equipmentStatus;
-
 
 	public Integer getId(){
 		return id;

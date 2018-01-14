@@ -2,11 +2,8 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.transferOrder.TransferOrderMaterialBulkQueryParam;
-import com.lxzl.erp.common.domain.transferOrder.TransferOrderProductEquipmentQueryParam;
-import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
+import com.lxzl.erp.common.domain.transferOrder.*;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrder;
-import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterial;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterialBulk;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderProductEquipment;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
@@ -24,8 +21,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.util.List;
 
 /**
  * @Author: your name
@@ -85,8 +80,8 @@ public class TransferOrderController {
      * 商品设备转出备货
      */
     @RequestMapping(value = "transferOrderProductEquipmentOut", method = RequestMethod.POST)
-    public Result transferOrderProductEquipmentOut(@RequestBody  @Validated(TransferOrderProductEquipmentOutGroup.class)TransferOrder transferOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = transferOrderService.transferOrderProductEquipmentOut(transferOrder);
+    public Result transferOrderProductEquipmentOut(@RequestBody  @Validated(TransferOrderProductEquipmentOutGroup.class)TransferOrderProductEquipmentOutParam transferOrderProductEquipmentOutParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = transferOrderService.transferOrderProductEquipmentOut(transferOrderProductEquipmentOutParam);
         return resultGenerator.generate(serviceResult);
     }
 
@@ -94,8 +89,8 @@ public class TransferOrderController {
      * 商品设备转出清货
      */
     @RequestMapping(value = "dumpTransferOrderProductEquipmentOut", method = RequestMethod.POST)
-    public Result dumpTransferOrderProductEquipmentOut(@RequestBody  @Validated(DumpTransferOrderProductEquipmentOutGroup.class)TransferOrder transferOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = transferOrderService.dumpTransferOrderProductEquipmentOut(transferOrder);
+    public Result dumpTransferOrderProductEquipmentOut(@RequestBody  @Validated(DumpTransferOrderProductEquipmentOutGroup.class)TransferOrderProductEquipmentOutParam transferOrderProductEquipmentOutParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = transferOrderService.dumpTransferOrderProductEquipmentOut(transferOrderProductEquipmentOutParam);
         return resultGenerator.generate(serviceResult);
     }
 
@@ -103,8 +98,8 @@ public class TransferOrderController {
      * 物料转出备货
      */
     @RequestMapping(value = "transferOrderMaterialOut", method = RequestMethod.POST)
-    public Result transferOrderMaterialOut(@RequestBody @Validated(TramsferOrderMaterialOutGroup.class) TransferOrderMaterial transferOrderMaterial, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = transferOrderService.transferOrderMaterialOut(transferOrderMaterial);
+    public Result transferOrderMaterialOut(@RequestBody @Validated(TramsferOrderMaterialOutGroup.class) TransferOrderMaterialOutParam transferOrderMaterialOutParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = transferOrderService.transferOrderMaterialOut(transferOrderMaterialOutParam);
         return resultGenerator.generate(serviceResult);
     }
 
@@ -112,8 +107,8 @@ public class TransferOrderController {
      * 物料转出清货
      */
     @RequestMapping(value = "dumpTransferOrderMaterialOut", method = RequestMethod.POST)
-    public Result dumpTransferOrderMaterialOut(@RequestBody @Validated(DumpTransferOrderMaterialOutGroup.class)TransferOrderMaterial transferOrderMaterial, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = transferOrderService.dumpTransferOrderMaterialOut(transferOrderMaterial);
+    public Result dumpTransferOrderMaterialOut(@RequestBody @Validated(DumpTransferOrderMaterialOutGroup.class)TransferOrderMaterialOutParam transferOrderMaterialOutParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = transferOrderService.dumpTransferOrderMaterialOut(transferOrderMaterialOutParam);
         return resultGenerator.generate(serviceResult);
     }
 
@@ -130,8 +125,8 @@ public class TransferOrderController {
      * 提交审核转移单
      */
     @RequestMapping(value = "commitTransferOrder", method = RequestMethod.POST)
-    public Result commitTransferOrder(@RequestBody  @Validated(IdGroup.class) TransferOrder transferOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = transferOrderService.commitTransferOrder(transferOrder.getTransferOrderNo(), transferOrder.getVerifyUser(), transferOrder.getCommitRemark());
+    public Result commitTransferOrder(@RequestBody  @Validated(IdGroup.class) TransferOrderCommitParam transferOrderCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = transferOrderService.commitTransferOrder(transferOrderCommitParam.getTransferOrderNo(), transferOrderCommitParam.getVerifyUserId(), transferOrderCommitParam.getRemark());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
