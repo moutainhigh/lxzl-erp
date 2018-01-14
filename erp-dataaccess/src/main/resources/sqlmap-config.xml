@@ -92,33 +92,35 @@
         <mapper resource="sqlmap/erp_change_order_product.xml" />
         <mapper resource="sqlmap/erp_change_order_material_bulk.xml" />
         <mapper resource="sqlmap/erp_change_order_product_equipment.xml" />
-
         <mapper resource="sqlmap/erp_repair_order.xml" />
         <mapper resource="sqlmap/erp_repair_order_bulk_material.xml" />
         <mapper resource="sqlmap/erp_repair_order_equipment.xml" />
-
         <mapper resource="sqlmap/erp_joint_product.xml" />
         <mapper resource="sqlmap/erp_joint_material.xml" />
         <mapper resource="sqlmap/erp_joint_product_sku.xml" />
         <mapper resource="sqlmap/erp_order_time_axis.xml" />
-
         <mapper resource="sqlmap/erp_assemble_order.xml" />
         <mapper resource="sqlmap/erp_assemble_order_material.xml" />
         <mapper resource="sqlmap/erp_assemble_order_product_equipment.xml" />
-
         <mapper resource="sqlmap/erp_transfer_order.xml" />
         <mapper resource="sqlmap/erp_transfer_order_material.xml" />
         <mapper resource="sqlmap/erp_transfer_order_material_bulk.xml" />
         <mapper resource="sqlmap/erp_transfer_order_product.xml" />
         <mapper resource="sqlmap/erp_transfer_order_product_equipment.xml" />
-
         <mapper resource="sqlmap/erp_purchase_apply_order.xml" />
         <mapper resource="sqlmap/erp_purchase_apply_order_product.xml" />
         <mapper resource="sqlmap/erp_purchase_apply_order_material.xml" />
         <mapper resource="sqlmap/erp_purchase_apply_product_relation.xml" />
         <mapper resource="sqlmap/erp_purchase_apply_material_relation.xml" />
-
         <mapper resource="sqlmap/erp_peer.xml" />
+
+        <mapper resource="sqlmap/erp_k3_mapping_brand.xml" />
+        <mapper resource="sqlmap/erp_k3_mapping_category.xml" />
+        <mapper resource="sqlmap/erp_k3_mapping_customer.xml" />
+        <mapper resource="sqlmap/erp_k3_mapping_material.xml" />
+        <mapper resource="sqlmap/erp_k3_mapping_product.xml" />
+        <mapper resource="sqlmap/erp_k3_mapping_supplier.xml" />
+        <mapper resource="sqlmap/erp_k3_send_record.xml" />
     </mappers>
 
 </configuration>

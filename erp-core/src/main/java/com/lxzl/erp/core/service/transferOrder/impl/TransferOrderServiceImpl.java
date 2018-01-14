@@ -12,7 +12,10 @@ import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
 import com.lxzl.erp.common.domain.transferOrder.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
-import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.common.util.FastJsonUtil;
+import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
@@ -42,7 +45,6 @@ import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderBulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
-import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mongo.config.PageQuery;
 import org.slf4j.Logger;
@@ -53,7 +55,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import sun.org.mozilla.javascript.internal.ast.IfStatement;
 
 import java.util.*;
 
@@ -855,7 +856,6 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         return serviceResult;
     }
 
-
     @Override
     public ServiceResult<String,  List<TransferOrderProductEquipment>> detailTransferOrderProductEquipmentById(Integer transferOrderProductId) {
         ServiceResult<String,  List<TransferOrderProductEquipment>> serviceResult = new ServiceResult<>();
@@ -896,10 +896,10 @@ public class TransferOrderServiceImpl implements TransferOrderService {
 
         List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList = transferOrderMaterialBulkMapper.findByTransferOrderMaterialId(transferOrderMaterialId);
         for (TransferOrderMaterialBulkDO transferOrderMaterialBulkDO: transferOrderMaterialBulkDOList){
-            MaterialDO MaterialDO = materialMapper.findByNo(transferOrderMaterialBulkDO.getMaterialNo());
+            MaterialDO materialDO = materialMapper.findByNo(transferOrderMaterialBulkDO.getMaterialNo());
             WarehouseDO currentWarehouseDO = warehouseMapper.findById(transferOrderMaterialBulkDO.getCurrentWarehouseId());
             WarehouseDO ownerWarehouseDO = warehouseMapper.findById(transferOrderMaterialBulkDO.getOwnerWarehouseId());
-            transferOrderMaterialBulkDO.setBrandName(MaterialDO.getBrandName());
+            transferOrderMaterialBulkDO.setBrandName(materialDO.getBrandName());
             transferOrderMaterialBulkDO.setCurrentWarehouseName(currentWarehouseDO.getWarehouseName());
             transferOrderMaterialBulkDO.setOwnerWarehouseName(ownerWarehouseDO.getWarehouseName());
         }

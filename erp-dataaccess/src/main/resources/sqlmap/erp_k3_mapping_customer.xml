@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCustomerMapper">
+
+	<resultMap id="K3MappingCustomerDO" type="com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="erp_customer_code" jdbcType="VARCHAR" property="erpCustomerCode" />
+		<result column="k3_customer_code" jdbcType="VARCHAR" property="k3CustomerCode" />
+		<result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+	</resultMap>
+
+	<sql id="column_List">
+		ekmc.id,ekmc.erp_customer_code,ekmc.k3_customer_code,ekmc.customer_name
+	</sql>
+
+	<select id="findById" resultMap="K3MappingCustomerDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_k3_mapping_customer ekmc 
+		WHERE ekmc.id = #{id, jdbcType=INTEGER} AND ekmc.data_status = 1 
+	</select>
+
+	<select id="findByErpCode" resultMap="K3MappingCustomerDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_k3_mapping_customer ekmc
+		WHERE ekmc.erp_customer_code = #{erpCode, jdbcType=VARCHAR} AND ekmc.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ekmc.id) FROM erp_k3_mapping_customer ekmc 
+		<where>
+			<if test="true">
+				AND ekmc.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="K3MappingCustomerDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_k3_mapping_customer ekmc 
+		<where>
+			<if test="true">
+				AND ekmc.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="erpCustomerCode != null">
+				erp_customer_code = #{erpCustomerCode,jdbcType=VARCHAR},
+			</if>
+			<if test="k3CustomerCode != null">
+				k3_customer_code = #{k3CustomerCode,jdbcType=VARCHAR},
+			</if>
+			<if test="customerName != null">
+				customer_name = #{customerName,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO">
+		INSERT INTO erp_k3_mapping_customer <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO">
+		UPDATE erp_k3_mapping_customer <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

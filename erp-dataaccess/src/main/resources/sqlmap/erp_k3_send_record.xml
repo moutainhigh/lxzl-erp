@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper">
+
+	<resultMap id="K3SendRecordDO" type="com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="record_type" jdbcType="VARCHAR" property="recordType" />
+		<result column="record_json" jdbcType="VARCHAR" property="recordJson" />
+		<result column="send_result" jdbcType="VARCHAR" property="sendResult" />
+		<result column="receive_result" jdbcType="VARCHAR" property="receiveResult" />
+		<result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
+	</resultMap>
+
+	<sql id="column_List">
+		eksr.id,eksr.record_type,eksr.record_json,eksr.send_result,eksr.receive_result,eksr.send_time
+	</sql>
+
+	<select id="findById" resultMap="K3SendRecordDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_k3_send_record eksr 
+		WHERE eksr.id = #{id, jdbcType=INTEGER} AND eksr.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eksr.id) FROM erp_k3_send_record eksr 
+		<where>
+			<if test="true">
+				AND eksr.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="K3SendRecordDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_k3_send_record eksr 
+		<where>
+			<if test="true">
+				AND eksr.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="recordType != null">
+				record_type = #{recordType,jdbcType=VARCHAR},
+			</if>
+			<if test="recordJson != null">
+				record_json = #{recordJson,jdbcType=VARCHAR},
+			</if>
+			<if test="sendResult != null">
+				send_result = #{sendResult,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveResult != null">
+				receive_result = #{receiveResult,jdbcType=VARCHAR},
+			</if>
+			<if test="sendTime != null">
+				send_time = #{sendTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO">
+		INSERT INTO erp_k3_send_record <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO">
+		UPDATE erp_k3_send_record <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
