@@ -2,6 +2,8 @@ package com.lxzl.erp.core.service.transferOrder;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.transferOrder.TransferOrderMaterialBulkQueryParam;
+import com.lxzl.erp.common.domain.transferOrder.TransferOrderProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrder;
 import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterial;
@@ -114,17 +116,17 @@ public interface TransferOrderService extends VerifyReceiver {
 
     /**
      * 转移单商品设备详情
-     * @param transferOrderProductId
+     * @param transferOrderProductEquipmentQueryParam
      * @return
      */
-    ServiceResult<String, List<TransferOrderProductEquipment>> detailTransferOrderProductEquipmentById(Integer transferOrderProductId);
+    ServiceResult<String, Page<TransferOrderProductEquipment>> detailTransferOrderProductEquipmentById(TransferOrderProductEquipmentQueryParam transferOrderProductEquipmentQueryParam);
 
     /**
      * 转移单配件散料详情
-     * @param transferOrderMaterialId
+     * @param transferOrderMaterialBulkQueryParam
      * @return
      */
-    ServiceResult<String,List<TransferOrderMaterialBulk>> detailTransferOrderMaterialBulkById(Integer transferOrderMaterialId);
+    ServiceResult<String,Page<TransferOrderMaterialBulk>> detailTransferOrderMaterialBulkById(TransferOrderMaterialBulkQueryParam transferOrderMaterialBulkQueryParam);
 }
 
 

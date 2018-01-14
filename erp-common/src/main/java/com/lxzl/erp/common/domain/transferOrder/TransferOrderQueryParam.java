@@ -13,7 +13,7 @@ public class TransferOrderQueryParam extends BasePageParam {
     private String transferOrderName;   //转移单名称
     private Integer transferOrderStatus;   //转移单状态，0初始化，4审批中，8转移成功，16取消转移
     private Integer transferOrderMode;   //转移方式，1转入，2转出（凭空转入转出）
-    private Integer transferOrderType;   //转移类型，1外借入库转入，2试验机转入，99其他
+    private Integer transferOrderType;   //	转入类型：1外借入库转入，2试验机转入，3原有资产，99其他。 转出类型：51丢失，52售出，53试验机归还，99其他
     private Integer warehouseId;   //仓库ID，哪个库房转移
 
     public String getTransferOrderNo() {

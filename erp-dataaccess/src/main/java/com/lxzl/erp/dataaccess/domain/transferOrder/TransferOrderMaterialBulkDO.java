@@ -1,8 +1,11 @@
 package com.lxzl.erp.dataaccess.domain.transferOrder;
 
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.validGroup.QueryGroup;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 
@@ -10,6 +13,7 @@ public class TransferOrderMaterialBulkDO  extends BaseDO {
 
 	private Integer id;
 	private Integer transferOrderId;
+
 	private Integer transferOrderMaterialId;
 	private String bulkMaterialNo;
 	private Integer dataStatus;

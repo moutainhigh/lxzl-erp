@@ -2,6 +2,8 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.transferOrder.TransferOrderMaterialBulkQueryParam;
+import com.lxzl.erp.common.domain.transferOrder.TransferOrderProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrder;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterial;
@@ -9,6 +11,7 @@ import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterialBulk;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderProductEquipment;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.QueryGroup;
 import com.lxzl.erp.common.domain.validGroup.TransferOrder.*;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -91,7 +94,7 @@ public class TransferOrderController {
      * 商品设备转出清货
      */
     @RequestMapping(value = "dumpTransferOrderProductEquipmentOut", method = RequestMethod.POST)
-    public Result cancelTransferOrderProductEquipmentOut(@RequestBody  @Validated(DumpTransferOrderProductEquipmentOutGroup.class)TransferOrder transferOrder, BindingResult validResult) {
+    public Result dumpTransferOrderProductEquipmentOut(@RequestBody  @Validated(DumpTransferOrderProductEquipmentOutGroup.class)TransferOrder transferOrder, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = transferOrderService.dumpTransferOrderProductEquipmentOut(transferOrder);
         return resultGenerator.generate(serviceResult);
     }
@@ -163,8 +166,8 @@ public class TransferOrderController {
      * 转移单商品设备详情
      */
     @RequestMapping(value = "detailTransferOrderProductEquipmentById", method = RequestMethod.POST)
-    public Result detailTransferOrderProductEquipmentById(@RequestBody Integer transferOrderProductId, BindingResult validResult) {
-        ServiceResult<String, List<TransferOrderProductEquipment>> serviceResult = transferOrderService.detailTransferOrderProductEquipmentById(transferOrderProductId);
+    public Result detailTransferOrderProductEquipmentById(@RequestBody @Validated(QueryGroup.class) TransferOrderProductEquipmentQueryParam transferOrderProductEquipmentQueryParam, BindingResult validResult) {
+        ServiceResult<String,  Page<TransferOrderProductEquipment>> serviceResult = transferOrderService.detailTransferOrderProductEquipmentById(transferOrderProductEquipmentQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -172,8 +175,8 @@ public class TransferOrderController {
      * 转移单配件散料详情
      */
     @RequestMapping(value = "detailTransferOrderMaterialBulkById", method = RequestMethod.POST)
-    public Result detailTransferOrderMaterialBulkById(@RequestBody Integer transferOrderMaterialId, BindingResult validResult) {
-        ServiceResult<String, List<TransferOrderMaterialBulk>> serviceResult = transferOrderService.detailTransferOrderMaterialBulkById(transferOrderMaterialId);
+    public Result detailTransferOrderMaterialBulkById(@RequestBody @Validated(QueryGroup.class)TransferOrderMaterialBulkQueryParam transferOrderMaterialBulkQueryParam, BindingResult validResult) {
+        ServiceResult<String,Page<TransferOrderMaterialBulk>> serviceResult = transferOrderService.detailTransferOrderMaterialBulkById(transferOrderMaterialBulkQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }
