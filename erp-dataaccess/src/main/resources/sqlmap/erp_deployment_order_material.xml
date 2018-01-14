@@ -11,6 +11,7 @@
 		<result column="deployment_material_amount" jdbcType="DECIMAL" property="deploymentMaterialAmount" />
 		<result column="deployment_product_material_count" jdbcType="INTEGER" property="deploymentProductMaterialCount" />
 		<result column="deployment_product_material_snapshot" jdbcType="VARCHAR" property="deploymentProductMaterialSnapshot" />
+		<result column="is_new" jdbcType="INTEGER" property="isNew" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -20,7 +21,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		edom.id,edom.deployment_order_id,edom.deployment_order_no,edom.deployment_material_id,edom.deployment_material_unit_amount,edom.deployment_material_amount,edom.deployment_product_material_count,edom.deployment_product_material_snapshot,edom.data_status,edom.remark,edom.create_time,edom.create_user,edom.update_time,edom.update_user
+		edom.id,edom.deployment_order_id,edom.deployment_order_no,edom.deployment_material_id,edom.deployment_material_unit_amount,edom.deployment_material_amount,edom.deployment_product_material_count,edom.deployment_product_material_snapshot,edom.is_new,edom.data_status,edom.remark,edom.create_time,edom.create_user,edom.update_time,edom.update_user
 	</sql>
 
 	<select id="findById" resultMap="DeploymentOrderMaterialDO" parameterType="java.lang.Integer">
@@ -79,6 +80,9 @@
 			</if>
 			<if test="deploymentProductMaterialSnapshot != null">
 				deployment_product_material_snapshot = #{deploymentProductMaterialSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="isNew != null">
+				is_new = #{isNew,jdbcType=INTEGER},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},

@@ -5,9 +5,10 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrder;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterial;
+import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterialBulk;
+import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderProductEquipment;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
-import com.lxzl.erp.common.domain.validGroup.QueryGroup;
 import com.lxzl.erp.common.domain.validGroup.TransferOrder.*;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -20,6 +21,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 /**
  * @Author: your name
@@ -130,6 +133,15 @@ public class TransferOrderController {
     }
 
     /**
+     * 结束转移
+     */
+    @RequestMapping(value = "endTransferOrder", method = RequestMethod.POST)
+    public Result endTransferOrder(@RequestBody @Validated(IdGroup.class)TransferOrder transferOrder, BindingResult validResult) {
+        ServiceResult<String,String> serviceResult = transferOrderService.endTransferOrder(transferOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
      * 分页展示
      */
     @RequestMapping(value = "pageTransferOrder", method = RequestMethod.POST)
@@ -141,12 +153,27 @@ public class TransferOrderController {
     /**
      * 转移单详情
      */
-    @RequestMapping(value = "detailTransferOrderById", method = RequestMethod.POST)
-    public Result detailTransferOrderById(@RequestBody @Validated(QueryGroup.class) TransferOrder transferOrder, BindingResult validResult) {
-        ServiceResult<String, TransferOrder> serviceResult = transferOrderService.detailTransferOrderById(transferOrder.getTransferOrderId());
+    @RequestMapping(value = "detailTransferOrderByNo", method = RequestMethod.POST)
+    public Result detailTransferOrderByNo(@RequestBody @Validated(IdGroup.class) TransferOrder transferOrder, BindingResult validResult) {
+        ServiceResult<String, TransferOrder> serviceResult = transferOrderService.detailTransferOrderByNo(transferOrder.getTransferOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    /**
+     * 转移单商品s设备详情
+     */
+    @RequestMapping(value = "detailTransferOrderProductEquipmentById", method = RequestMethod.POST)
+    public Result detailTransferOrderProductEquipmentById(@RequestBody Integer transferOrderProductId, BindingResult validResult) {
+        ServiceResult<String, List<TransferOrderProductEquipment>> serviceResult = transferOrderService.detailTransferOrderProductEquipmentById(transferOrderProductId);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 
-
+    /**
+     * 转移单配件散料详情
+     */
+    @RequestMapping(value = "detailTransferOrderMaterialBulkById", method = RequestMethod.POST)
+    public Result detailTransferOrderMaterialBulkById(@RequestBody Integer transferOrderMaterialId, BindingResult validResult) {
+        ServiceResult<String, List<TransferOrderMaterialBulk>> serviceResult = transferOrderService.detailTransferOrderMaterialBulkById(transferOrderMaterialId);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }

@@ -106,14 +106,14 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         Map<Integer, DeploymentOrderProductDO> saveDeploymentOrderProductDOMap = new HashMap<>();
         Map<Integer, DeploymentOrderProductDO> updateDeploymentOrderProductDOMap = new HashMap<>();
         List<DeploymentOrderProductDO> dbDeploymentOrderProductDOList = deploymentOrderProductMapper.findByDeploymentOrderNo(deploymentOrderNo);
-        Map<Integer, DeploymentOrderProductDO> dbDeploymentOrderProductDOMap = ListUtil.listToMap(dbDeploymentOrderProductDOList, "deploymentProductSkuId");
+        Map<Integer, DeploymentOrderProductDO> dbDeploymentOrderProductDOMap = ListUtil.listToMap(dbDeploymentOrderProductDOList, "id");
         if (CollectionUtil.isNotEmpty(deploymentOrderProductDOList)) {
             for (DeploymentOrderProductDO deploymentOrderProductDO : deploymentOrderProductDOList) {
-                if (dbDeploymentOrderProductDOMap.get(deploymentOrderProductDO.getDeploymentProductSkuId()) != null) {
-                    updateDeploymentOrderProductDOMap.put(deploymentOrderProductDO.getDeploymentProductSkuId(), deploymentOrderProductDO);
-                    dbDeploymentOrderProductDOMap.remove(deploymentOrderProductDO.getDeploymentProductSkuId());
+                if (dbDeploymentOrderProductDOMap.get(deploymentOrderProductDO.getId()) != null) {
+                    updateDeploymentOrderProductDOMap.put(deploymentOrderProductDO.getId(), deploymentOrderProductDO);
+                    dbDeploymentOrderProductDOMap.remove(deploymentOrderProductDO.getId());
                 } else {
-                    saveDeploymentOrderProductDOMap.put(deploymentOrderProductDO.getDeploymentProductSkuId(), deploymentOrderProductDO);
+                    saveDeploymentOrderProductDOMap.put(deploymentOrderProductDO.getId(), deploymentOrderProductDO);
                 }
             }
         }
@@ -177,14 +177,14 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         Map<Integer, DeploymentOrderMaterialDO> saveDeploymentOrderMaterialDOMap = new HashMap<>();
         Map<Integer, DeploymentOrderMaterialDO> updateDeploymentOrderMaterialDOMap = new HashMap<>();
         List<DeploymentOrderMaterialDO> dbDeploymentOrderMaterialDOList = deploymentOrderMaterialMapper.findByDeploymentOrderNo(deploymentOrderNo);
-        Map<Integer, DeploymentOrderMaterialDO> dbDeploymentOrderMaterialDOMap = ListUtil.listToMap(dbDeploymentOrderMaterialDOList, "deploymentMaterialId");
+        Map<Integer, DeploymentOrderMaterialDO> dbDeploymentOrderMaterialDOMap = ListUtil.listToMap(dbDeploymentOrderMaterialDOList, "id");
         if (CollectionUtil.isNotEmpty(deploymentOrderMaterialDOList)) {
             for (DeploymentOrderMaterialDO deploymentOrderMaterialDO : deploymentOrderMaterialDOList) {
-                if (dbDeploymentOrderMaterialDOMap.get(deploymentOrderMaterialDO.getDeploymentMaterialId()) != null) {
-                    updateDeploymentOrderMaterialDOMap.put(deploymentOrderMaterialDO.getDeploymentMaterialId(), deploymentOrderMaterialDO);
-                    dbDeploymentOrderMaterialDOMap.remove(deploymentOrderMaterialDO.getDeploymentMaterialId());
+                if (dbDeploymentOrderMaterialDOMap.get(deploymentOrderMaterialDO.getId()) != null) {
+                    updateDeploymentOrderMaterialDOMap.put(deploymentOrderMaterialDO.getId(), deploymentOrderMaterialDO);
+                    dbDeploymentOrderMaterialDOMap.remove(deploymentOrderMaterialDO.getId());
                 } else {
-                    saveDeploymentOrderMaterialDOMap.put(deploymentOrderMaterialDO.getDeploymentMaterialId(), deploymentOrderMaterialDO);
+                    saveDeploymentOrderMaterialDOMap.put(deploymentOrderMaterialDO.getId(), deploymentOrderMaterialDO);
                 }
             }
         }
@@ -579,6 +579,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                 result.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, equipmentNo, currentWarehouse.getWarehouseName());
                 return result;
             }
+            // 需要确定，货物调拨如果要新的，可否给旧的
             Map<Integer, DeploymentOrderProductDO> deploymentOrderProductDOMap = ListUtil.listToMap(deploymentOrderDO.getDeploymentOrderProductDOList(), "deploymentProductSkuId");
             DeploymentOrderProductDO deploymentOrderProductDO = deploymentOrderProductDOMap.get(productEquipmentDO.getSkuId());
             if (deploymentOrderProductDO == null) {

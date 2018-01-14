@@ -117,6 +117,8 @@
         <mapper resource="sqlmap/erp_purchase_apply_order_material.xml" />
         <mapper resource="sqlmap/erp_purchase_apply_product_relation.xml" />
         <mapper resource="sqlmap/erp_purchase_apply_material_relation.xml" />
+
+        <mapper resource="sqlmap/erp_peer.xml" />
     </mappers>
 
 </configuration>

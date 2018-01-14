@@ -1,9 +1,6 @@
 package com.lxzl.erp.dataaccess.domain.transferOrder;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import org.springframework.data.annotation.Transient;
-
-import java.util.List;
 
 
 public class TransferOrderMaterialDO  extends BaseDO {
@@ -16,9 +13,6 @@ public class TransferOrderMaterialDO  extends BaseDO {
 	private Integer isNew;
 	private Integer dataStatus;
 	private String remark;
-
-	@Transient
-	private List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList;
 
 
 	public Integer getId(){
@@ -85,11 +79,4 @@ public class TransferOrderMaterialDO  extends BaseDO {
 		this.remark = remark;
 	}
 
-	public List<TransferOrderMaterialBulkDO> getTransferOrderMaterialBulkDOList() {
-		return transferOrderMaterialBulkDOList;
-	}
-
-	public void setTransferOrderMaterialBulkDOList(List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList) {
-		this.transferOrderMaterialBulkDOList = transferOrderMaterialBulkDOList;
-	}
 }

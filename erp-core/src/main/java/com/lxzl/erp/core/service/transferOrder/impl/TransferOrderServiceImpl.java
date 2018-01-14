@@ -8,9 +8,7 @@ import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
 import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
-import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrder;
-import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterial;
-import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderProduct;
+import com.lxzl.erp.common.domain.transferOrder.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.util.CollectionUtil;
@@ -27,13 +25,16 @@ import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.transferOrder.*;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderBulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.transferOrder.*;
@@ -619,8 +620,6 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         return serviceResult;
     }
 
-
-
     @Override
     public ServiceResult<String, String> cancelTransferOrder(TransferOrder transferOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
@@ -671,7 +670,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         }
 
         //提交审核判断
-        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_TRANSFER_ORDER);
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER);
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
             serviceResult.setErrorCode(needVerifyResult.getErrorCode());
             return serviceResult;
@@ -681,7 +680,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                 return serviceResult;
             }
             //调用提交审核服务
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_ORDER, transferOrderNo, verifyUser, commitRemark);
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER, transferOrderNo, verifyUser, commitRemark);
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_VERIFYING);
@@ -735,11 +734,37 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             transferOrderMapper.update(transferOrderDO);
             return true;
         } catch (Exception e) {
-            logger.error("审批设备维修单通知失败： {}", transferOrderNo);
+            logger.error("审批设备转移单通知失败： {}", transferOrderNo);
             return false;
         }
     }
 
+    @Override
+    public ServiceResult<String,String> endTransferOrder(TransferOrder transferOrder) {
+        ServiceResult<String,String> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+
+        TransferOrderDO transferOrderDO = transferOrderMapper.findDetailByNo(transferOrder.getTransferOrderNo());
+        if (transferOrderDO == null){
+            serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        if (transferOrderDO.getTransferOrderStatus() == null && !TransferOrderStatus.TRANSFER_ORDER_STATUS_END.equals(transferOrderDO.getTransferOrderStatus())){
+            serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_STATUS_IS_ERROR);
+            return serviceResult;
+        }
+
+        transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_END);
+        transferOrderDO.setRemark(transferOrder.getRemark());
+        transferOrderDO.setUpdateTime(new Date());
+        transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        transferOrderMapper.update(transferOrderDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(transferOrderDO.getTransferOrderNo());
+        return serviceResult;
+    }
 
     @Override
     public ServiceResult<String, Page<TransferOrder>> pageTransferOrder(TransferOrderQueryParam transferOrderQueryParam) {
@@ -762,28 +787,13 @@ public class TransferOrderServiceImpl implements TransferOrderService {
     }
 
     @Override
-    public ServiceResult<String, TransferOrder> detailTransferOrderById(Integer transferOrderId) {
+    public ServiceResult<String, TransferOrder> detailTransferOrderByNo(String transferOrderNo) {
         ServiceResult<String, TransferOrder> serviceResult = new ServiceResult<>();
 
-        TransferOrderDO transferOrderDO = transferOrderMapper.findDetailById(transferOrderId);
+        TransferOrderDO transferOrderDO = transferOrderMapper.findByNo(transferOrderNo);
         if (transferOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_NOT_EXISTS);
             return serviceResult;
-        }
-
-        List<TransferOrderProductDO> transferOrderProductDOList = transferOrderDO.getTransferOrderProductDOList();
-        List<TransferOrderMaterialDO> transferOrderMaterialDOList = transferOrderDO.getTransferOrderMaterialDOList();
-
-        //获取转移单商品设备单
-        for (TransferOrderProductDO transferOrderProductDO : transferOrderProductDOList) {
-            List<TransferOrderProductEquipmentDO> transferOrderProductEquipmentDOList = transferOrderProductEquipmentMapper.findByTransferOrderIdAndTransferOrderProductId(transferOrderProductDO.getTransferOrderId(), transferOrderProductDO.getId());
-            transferOrderProductDO.setTransferOrderProductEquipmentDOList(transferOrderProductEquipmentDOList);
-        }
-
-        //获取转移单配件散料单
-        for (TransferOrderMaterialDO transferOrderMaterialDO : transferOrderMaterialDOList) {
-            List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList = transferOrderMaterialBulkMapper.findByTransferOrderIdAndTransferOrderMaterialId(transferOrderMaterialDO.getTransferOrderId(), transferOrderMaterialDO.getId());
-            transferOrderMaterialDO.setTransferOrderMaterialBulkDOList(transferOrderMaterialBulkDOList);
         }
 
         //转化为前端需要展示的类型
@@ -793,6 +803,63 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         serviceResult.setResult(transferOrder);
         return serviceResult;
     }
+
+
+    @Override
+    public ServiceResult<String,  List<TransferOrderProductEquipment>> detailTransferOrderProductEquipmentById(Integer transferOrderProductId) {
+        ServiceResult<String,  List<TransferOrderProductEquipment>> serviceResult = new ServiceResult<>();
+
+        if(transferOrderProductId == null){
+            serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_PRODUCT_ID_NOT_NULL);
+            return serviceResult;
+        }
+
+        List<TransferOrderProductEquipmentDO> transferOrderProductEquipmentDOList = transferOrderProductEquipmentMapper.findByTransferOrderProductId(transferOrderProductId);
+        for (TransferOrderProductEquipmentDO transferOrderProductEquipmentDO : transferOrderProductEquipmentDOList){
+            ProductDO productDO = productMapper.findByProductId(transferOrderProductEquipmentDO.getProductId());
+            ProductSkuDO productSkuDO = productSkuMapper.findById(transferOrderProductEquipmentDO.getSkuId());
+            WarehouseDO currentWarehouseDO = warehouseMapper.findById(transferOrderProductEquipmentDO.getCurrentWarehouseId());
+            WarehouseDO ownerWarehouseDO = warehouseMapper.findById(transferOrderProductEquipmentDO.getOwnerWarehouseId());
+
+            transferOrderProductEquipmentDO.setProductName(productDO.getProductName());
+            transferOrderProductEquipmentDO.setSkuName(productSkuDO.getSkuName());
+            transferOrderProductEquipmentDO.setCurrentWarehouseName(currentWarehouseDO.getWarehouseName());
+            transferOrderProductEquipmentDO.setOwnerWarehouseName(ownerWarehouseDO.getWarehouseName());
+        }
+
+        List<TransferOrderProductEquipment> transferOrderProductEquipmentList = ConverterUtil.convertList(transferOrderProductEquipmentDOList,TransferOrderProductEquipment.class);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(transferOrderProductEquipmentList);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, List<TransferOrderMaterialBulk>> detailTransferOrderMaterialBulkById(Integer transferOrderMaterialId) {
+        ServiceResult<String, List<TransferOrderMaterialBulk>> serviceResult = new ServiceResult<>();
+
+        if(transferOrderMaterialId == null){
+            serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_MATERIAL_ID_NOT_NULL);
+            return serviceResult;
+        }
+
+        List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList = transferOrderMaterialBulkMapper.findByTransferOrderMaterialId(transferOrderMaterialId);
+        for (TransferOrderMaterialBulkDO transferOrderMaterialBulkDO: transferOrderMaterialBulkDOList){
+            MaterialDO MaterialDO = materialMapper.findByNo(transferOrderMaterialBulkDO.getMaterialNo());
+            WarehouseDO currentWarehouseDO = warehouseMapper.findById(transferOrderMaterialBulkDO.getCurrentWarehouseId());
+            WarehouseDO ownerWarehouseDO = warehouseMapper.findById(transferOrderMaterialBulkDO.getOwnerWarehouseId());
+            transferOrderMaterialBulkDO.setBrandName(MaterialDO.getBrandName());
+            transferOrderMaterialBulkDO.setCurrentWarehouseName(currentWarehouseDO.getWarehouseName());
+            transferOrderMaterialBulkDO.setOwnerWarehouseName(ownerWarehouseDO.getWarehouseName());
+        }
+
+        List<TransferOrderMaterialBulk> transferOrderMaterialBulkList = ConverterUtil.convertList(transferOrderMaterialBulkDOList,TransferOrderMaterialBulk.class);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(transferOrderMaterialBulkList);
+        return serviceResult;
+    }
+
 
     private ServiceResult<String, String> updateTransferOrderProductInfo(List<TransferOrderProduct> transferOrderProductList, Integer transferOrderId, User loginUser, Date now) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
@@ -1107,5 +1174,12 @@ public class TransferOrderServiceImpl implements TransferOrderService {
 
     @Autowired
     private BulkMaterialSupport bulkMaterialSupport;
+
+    @Autowired
+    private ProductMapper productMapper;
+
+    @Autowired
+    private WarehouseMapper warehouseMapper;
+
 }
 

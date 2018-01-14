@@ -32,21 +32,23 @@ import java.util.*;
 public class EXCLTest extends ERPUnTransactionalTest {
     @Test
     public void say() throws Exception {
-        FileInputStream fileIn = new FileInputStream("C:\\Users\\Administrator\\Desktop\\企业客户信息及风控模板(1).xlsx");
+        FileInputStream fileIn = new FileInputStream("C:\\Users\\Administrator\\Desktop\\企业客户信息及风控模板20180110.xlsx");
         XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileIn);
-        XSSFSheet xssfSheet = xssfWorkbook.getSheet("Sheet1");
+        XSSFSheet xssfSheet = xssfWorkbook.getSheet("商务版");
         Map<String, String> map = creatMap();
-        Customer customer = new Customer();
-        // 获取当前工作薄的每一行
 
+        // 获取当前工作薄的每一行
+//        try {
         for (int rowNum = 2; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
             //公司
             CustomerCompany customerCompany = new CustomerCompany();
             //风控
             CustomerRiskManagement customerRiskManagement = new CustomerRiskManagement();
+            //客户
+            Customer customer = new Customer();
             Field[] customerCompanyFields = customerCompany.getClass().getDeclaredFields();
             Field[] customerRiskManagementFields = customerRiskManagement.getClass().getDeclaredFields();
-
+            Field[] declaredFields = customer.getClass().getDeclaredFields();
             //每一行
             XSSFRow xssfRow = xssfSheet.getRow(rowNum);
             if (xssfRow == null) {
@@ -63,10 +65,19 @@ public class EXCLTest extends ERPUnTransactionalTest {
             }
 
             Map<String, Field> customerRiskManagementAttributes = new HashMap<>();
+
             for (Field field : customerRiskManagementFields) {
                 field.setAccessible(true);
                 customerRiskManagementAttributes.put(field.getName(), field);
             }
+
+            Map<String, Field> customerAttributes = new HashMap<>();
+
+            for (Field field : declaredFields) {
+                field.setAccessible(true);
+                customerAttributes.put(field.getName(), field);
+            }
+
             int j = 0;
             //每行的每个元素
             for (int i = 0; i < xssfRow.getLastCellNum(); i++) {
@@ -80,14 +91,20 @@ public class EXCLTest extends ERPUnTransactionalTest {
                     }
                     boolean contains = false;
                     boolean contains1 = false;
+                    boolean contains2 = false;
                     //判断CustomerCompany是否有属性
-                    if(customerCompanyAttributes.containsKey(param)){
+                    if (customerCompanyAttributes.containsKey(param)) {
                         contains = true;
                     }
 
                     //判断CustomerRiskManagement是否有属性
-                    if(customerRiskManagementAttributes.containsKey(param)){
+                    if (customerRiskManagementAttributes.containsKey(param)) {
                         contains1 = true;
+                    }
+
+                    //判断Customer是否有属性
+                    if (customerAttributes.containsKey(param)) {
+                        contains2 = true;
                     }
 
                     XSSFCell xssfCell = xssfRow.getCell(i);
@@ -96,6 +113,18 @@ public class EXCLTest extends ERPUnTransactionalTest {
                     }
                     //以下都是一些文字的判断,以后还需要根据文件的内容不同增加或者重新设置
                     String value = getValue(xssfCell);
+                    if (stringCellValue.equals("租赁方案")) {
+                        if (value.contains("%") || value.contains("设备押")) {
+                            continue;
+                        }
+                    }
+
+                    if (stringCellValue.equals("押金期数*")) {
+                        if (value.contains("%") || value.contains("设备押")) {
+                            continue;
+                        }
+                    }
+
                     if (value.indexOf("押") == 0 && value.indexOf("付") > 1) {
                         int indexOf = value.indexOf("押");
                         int indexOf1 = value.indexOf("付");
@@ -104,9 +133,11 @@ public class EXCLTest extends ERPUnTransactionalTest {
                         value = substring + substring1;
                     }
 
-                    if (value.indexOf("首付") == 0 && value.indexOf("后付") == 3) {
-                        String substring = value.substring(2, 3);
-                        String substring1 = value.substring(5, 6);
+                    if (value.indexOf("首付") == 0 && value.indexOf("后付") > 2) {
+                        int indexOf = value.indexOf("首付");
+                        int lastIndexOf = value.lastIndexOf("后付");
+                        String substring1 = value.substring(indexOf + 2, lastIndexOf);
+                        String substring = value.substring(lastIndexOf + 2, value.length());
                         value = substring + substring1;
                     }
 
@@ -128,12 +159,27 @@ public class EXCLTest extends ERPUnTransactionalTest {
                         continue;
                     }
 
-
                     if (value == "" || StringUtil.isBlank(value)) {
                         continue;
                     }
                     int qwe = 0;
                     boolean flag = false;
+
+                    if (value.indexOf("Y") == 0) {
+                        qwe = 0;
+                        flag = true;
+                    }
+
+                    if (value.indexOf("单台") == 0) {
+                        value = value.substring(2);
+                    }
+
+                    if (stringCellValue.equals("经营面积")) {
+                        if (value.contains("无")) {
+                            qwe = 0;
+                            flag = true;
+                        }
+                    }
 
                     switch (value) {
                         case "是":
@@ -159,6 +205,62 @@ public class EXCLTest extends ERPUnTransactionalTest {
                             qwe = 1;
                             flag = true;
                             break;
+                        case "每2个月回访一次":
+                            qwe = 2;
+                            flag = true;
+                            break;
+                        case "每2个月回访一次。":
+                            qwe = 2;
+                            flag = true;
+                            break;
+                        case "每两个月回访一次":
+                            qwe = 2;
+                            flag = true;
+                            break;
+                        case "每两月回访一次":
+                            qwe = 2;
+                            flag = true;
+                            break;
+                        case "每月回访一次":
+                            qwe = 2;
+                            flag = true;
+                            break;
+                        case "每两月回复一次":
+                            qwe = 2;
+                            flag = true;
+                            break;
+                        case "每季度回访一次":
+                            qwe = 3;
+                            flag = true;
+                            break;
+                        case "每周回访一次":
+                            qwe = 3;
+                            flag = true;
+                            break;
+                        case "地推活动":
+                            qwe = 1;
+                            flag = true;
+                            break;
+                        case "展会了解":
+                            qwe = 2;
+                            flag = true;
+                            break;
+                        case "业务联系":
+                            qwe = 3;
+                            flag = true;
+                            break;
+                        case "百度推广":
+                            qwe = 4;
+                            flag = true;
+                            break;
+                        case "朋友推荐":
+                            qwe = 5;
+                            flag = true;
+                            break;
+                        case "其他广告":
+                            qwe = 6;
+                            flag = true;
+                            break;
                     }
                     if (flag) {
                         value = String.valueOf(qwe);
@@ -173,6 +275,10 @@ public class EXCLTest extends ERPUnTransactionalTest {
                     if (contains1) {
                         field = customerRiskManagementAttributes.get(param);
                     }
+                    if(contains2){
+                        field = customerAttributes.get(param);
+                    }
+
                     //开始往属性中set值
                     if (field != null) {
                         String name = param.substring(0, 1).toUpperCase() + param.substring(1); //将属性的首字符大写，方便构造get，set方法
@@ -186,14 +292,19 @@ public class EXCLTest extends ERPUnTransactionalTest {
                                 Method m = customerRiskManagement.getClass().getMethod("set" + name, String.class);
                                 m.invoke(customerRiskManagement, value);    //调用getter方法获取属性值
                             }
-
+                            if (contains2) {
+                                Method m = customer.getClass().getMethod("set" + name, String.class);
+                                m.invoke(customer, value);    //调用getter方法获取属性值
+                            }
                             continue;
                         }
                         if (type.equals("class java.lang.Double")) {   //如果type是类类型，则前面包含"class "，后面跟类名
                             int ping = value.indexOf("平");
                             if (ping > 0) {
                                 value = value.substring(0, ping);
+
                             }
+
                             if (contains) {
                                 Method m = customerCompany.getClass().getMethod("set" + name, Double.class);
                                 m.invoke(customerCompany, Double.parseDouble(value));    //调用getter方法获取属性值
@@ -201,6 +312,10 @@ public class EXCLTest extends ERPUnTransactionalTest {
                             if (contains1) {
                                 Method m = customerRiskManagement.getClass().getMethod("set" + name, Double.class);
                                 m.invoke(customerRiskManagement, Double.parseDouble(value));    //调用getter方法获取属性值
+                            }
+                            if (contains2) {
+                                Method m = customer.getClass().getMethod("set" + name, Double.class);
+                                m.invoke(customer, Double.parseDouble(value));    //调用getter方法获取属性值
                             }
                             continue;
                         }
@@ -213,6 +328,10 @@ public class EXCLTest extends ERPUnTransactionalTest {
                                 Method m = customerRiskManagement.getClass().getMethod("set" + name, Boolean.class);
                                 m.invoke(customerRiskManagement, Boolean.parseBoolean(value));    //调用getter方法获取属性值
                             }
+                            if (contains2) {
+                                Method m = customer.getClass().getMethod("set" + name, Boolean.class);
+                                m.invoke(customer, Boolean.parseBoolean(value));    //调用getter方法获取属性值
+                            }
                             continue;
                         }
                         if (type.equals("class java.lang.Integer")) {   //如果type是类类型，则前面包含"class "，后面跟类名
@@ -224,6 +343,10 @@ public class EXCLTest extends ERPUnTransactionalTest {
                                 Method m = customerRiskManagement.getClass().getMethod("set" + name, Integer.class);
                                 m.invoke(customerRiskManagement, (int) Double.parseDouble(value));    //调用getter方法获取属性值
                             }
+                            if (contains2) {
+                                Method m = customer.getClass().getMethod("set" + name, Integer.class);
+                                m.invoke(customer, (int) Double.parseDouble(value));    //调用getter方法获取属性值
+                            }
                             continue;
                         }
 
@@ -233,32 +356,57 @@ public class EXCLTest extends ERPUnTransactionalTest {
                                 int i1 = value.length() - 1;
                                 int i2 = value.lastIndexOf("万");
                                 if (i2 == i1) {
-                                    String aaa = value.substring(0, i2 - 1);
-                                    BigDecimal bd=new BigDecimal(aaa);
-                                    BigDecimal bd1=new BigDecimal("10000");
+                                    String aaa = value.substring(0, i2);
+                                    BigDecimal bd = null;
+                                    try {
+                                        bd = new BigDecimal(aaa);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    BigDecimal bd1 = new BigDecimal("10000");
                                     BigDecimal multiply = bd.multiply(bd1);
                                     BigDecimal bigDecimal = multiply.setScale(2, BigDecimal.ROUND_HALF_UP);
                                     m.invoke(customerCompany, bigDecimal);    //调用getter方法获取属性值
                                     continue;
                                 }
-                                m.invoke(customerCompany, new BigDecimal(value));    //调用getter方法获取属性值
+                                try{
+                                    m.invoke(customerCompany, new BigDecimal(value));    //调用getter方法获取属性值
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
                                 continue;
                             }
 
-                            if (contains) {
+                            if (contains1) {
                                 Method m = customerRiskManagement.getClass().getMethod("set" + name, BigDecimal.class);
                                 int i1 = value.length() - 1;
                                 int i2 = value.lastIndexOf("万");
                                 if (i2 == i1) {
-                                    String aaa = value.substring(0, i2 - 1);
-                                    BigDecimal bd=new BigDecimal(aaa);
-                                    BigDecimal bd1=new BigDecimal("10000");
+                                    String aaa = value.substring(0, i2);
+                                    BigDecimal bd = new BigDecimal(aaa);
+                                    BigDecimal bd1 = new BigDecimal("10000");
                                     BigDecimal multiply = bd.multiply(bd1);
                                     BigDecimal bigDecimal = multiply.setScale(2, BigDecimal.ROUND_HALF_UP);
                                     m.invoke(customerRiskManagement, bigDecimal);    //调用getter方法获取属性值
                                     continue;
                                 }
                                 m.invoke(customerRiskManagement, new BigDecimal(value));    //调用getter方法获取属性值
+                                continue;
+                            }
+                            if (contains2) {
+                                Method m = customer.getClass().getMethod("set" + name, BigDecimal.class);
+                                int i1 = value.length() - 1;
+                                int i2 = value.lastIndexOf("万");
+                                if (i2 == i1) {
+                                    String aaa = value.substring(0, i2);
+                                    BigDecimal bd = new BigDecimal(aaa);
+                                    BigDecimal bd1 = new BigDecimal("10000");
+                                    BigDecimal multiply = bd.multiply(bd1);
+                                    BigDecimal bigDecimal = multiply.setScale(2, BigDecimal.ROUND_HALF_UP);
+                                    m.invoke(customer, bigDecimal);    //调用getter方法获取属性值
+                                    continue;
+                                }
+                                m.invoke(customer, new BigDecimal(value));    //调用getter方法获取属性值
                                 continue;
                             }
 
@@ -272,6 +420,10 @@ public class EXCLTest extends ERPUnTransactionalTest {
                                 Method m = customerRiskManagement.getClass().getMethod("set" + name, Date.class);
                                 m.invoke(customerRiskManagement, new SimpleDateFormat("yyyy/MM/dd").parse(value));    //调用getter方法获取属性值
                             }
+                            if (contains2) {
+                                Method m = customer.getClass().getMethod("set" + name, Date.class);
+                                m.invoke(customer, new SimpleDateFormat("yyyy/MM/dd").parse(value));    //调用getter方法获取属性值
+                            }
                             continue;
                         }
                     }
@@ -282,33 +434,23 @@ public class EXCLTest extends ERPUnTransactionalTest {
             if (xssfRow == null) {
                 return;
             }
-            try {
-                customer.setCustomerCompany(customerCompany);
-                customer.setCustomerRiskManagement(customerRiskManagement);
-//                TestResult testResult = getJsonTestResult("/customer/addCompany", customer);
-                System.out.println(customer);
-            } catch (Exception e) {
-                //错误提示
-                String stringCellValue = xssfSheet.getRow(1).getCell(j).getStringCellValue();
-                Logger log = LoggerFactory.getLogger(NetworkUtil.class);
-                log.debug("列:"+stringCellValue+"错误,客户编号:"+customerCompany.getCustomerNo());
-                //这里错误回滚
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            }
+
+            customer.setCustomerCompany(customerCompany);
+            customer.setCustomerRiskManagement(customerRiskManagement);
+            TestResult testResult = getJsonTestResult("/customer/addCompany", customer);
+            System.out.println(customer);
         }
+//        } catch (Exception e) {
+        //错误提示
+//            String stringCellValue = xssfSheet.getRow(1).getCell(j).getStringCellValue();
+//            Logger log = LoggerFactory.getLogger(NetworkUtil.class);
+//            log.debug("列:" + stringCellValue + "错误,客户编号:" + customerCompany.getCustomerNo());
+        //这里错误回滚
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//        }
     }
 
     private String getValue(XSSFCell xssfCell) {
-//        if (DateUtil.isCellDateFormatted(xssfRow)) {
-//            Date d = xssfRow.getDateCellValue();
-//            DateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
-//            return  formater.format(d);
-//        } else if (xssfRow.getCellType() == xssfRow.CELL_TYPE_NUMERIC) {
-//            return String.valueOf(xssfRow.getNumericCellValue());
-//        } else if (xssfRow.getCellType() == xssfRow.CELL_TYPE_STRING) {
-//            return String.valueOf(xssfRow.getStringCellValue());
-//        }
-//        return null;
         switch (xssfCell.getCellType()) {
             case 0:
                 if (DateUtil.isCellDateFormatted(xssfCell)) {
@@ -316,7 +458,7 @@ public class EXCLTest extends ERPUnTransactionalTest {
                     return sdf.format(xssfCell.getDateCellValue());
                 }
                 double value = xssfCell.getNumericCellValue();
-                if (value > 1000000) {
+                if (value > 1000000000) {
                     DecimalFormat decimalFormat = new DecimalFormat("##0");//格式化设置
                     return decimalFormat.format(value);
                 } else {
@@ -407,7 +549,7 @@ public class EXCLTest extends ERPUnTransactionalTest {
         Map<String, String> maps = new HashMap<>();
         maps.put("客户编码*", "customerNo");
         maps.put("客户名称*", "companyName");
-        maps.put("业务员*", "salesMan");
+        maps.put("业务员*", "ownerName");
         maps.put("联合区域", "unionArea");
         maps.put("联合业务员", "unionSalesMan");
         maps.put("客户来源*", "customerOrigin");
@@ -434,24 +576,27 @@ public class EXCLTest extends ERPUnTransactionalTest {
         maps.put("关联企业", "affiliatedEnterprise");
         maps.put("首次所需设备*", "listFirstNeedProducts");
         maps.put("后期所需设备", "listLaterNeedProducts");
+        maps.put("前端备注", "remark");
         maps.put("授信额度*", "creditAmount");
         maps.put("押金期数*", "depositCycle");
         maps.put("付款期数*", "paymentCycle");
         maps.put("支付方式*", "payMode");
         maps.put("租赁方案", null);
-        maps.put("单台设备价值*", null);
-        maps.put("是否限制苹果*", null);
+        maps.put("单台设备价值*", "singleLimitPrice");
+        maps.put("是否限制苹果*", "isLimitApple");
         maps.put("苹果押金期数*", "appleDepositCycle");
         maps.put("苹果付款期数*", "applePaymentCycle");
         maps.put("苹果设备支付方式*", "applePayMode");
-        maps.put("是否限制全新*", null);
+        maps.put("是否限制全新*", "isLimitNew");
         maps.put("全新设备押金期数*", "newDepositCycle");
         maps.put("全新设备付款期数*", "newPaymentCycle");
         maps.put("全新设备支付方式*", "newPayMode");
-        maps.put("回访频率", null);
-        maps.put("送货方式*", null);
+        maps.put("回访频率（*个月回访一次）", "returnVisitFrequency");
+        maps.put("送货方式", null);
         maps.put("是否支持货到付款", null);
         maps.put("风控备注", "remark");
+        maps.put("后期申请额度", "laterApplyAmount");
+        maps.put("首期申请额度", "firstApplyAmount");
 
         return maps;
     }

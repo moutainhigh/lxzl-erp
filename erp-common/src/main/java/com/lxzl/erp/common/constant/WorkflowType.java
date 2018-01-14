@@ -34,12 +34,17 @@ public class WorkflowType {
     public static Integer WORKFLOW_TYPE_REPAIR = 6;
 
     /**
-     * 转移单审批
-     */
-    public static Integer WORKFLOW_TYPE_TRANSFER_ORDER = 7;
-
-    /**
      * 采购申请单审批
      */
     public static Integer WORKFLOW_TYPE_PURCHASE_APPLY_ORDER = 8;
+
+    /**
+     * 转移单入审批
+     */
+    public static Integer WORKFLOW_TYPE_TRANSFER_IN_ORDER = 9;
+
+    /**
+     * 转移单出审批
+     */
+    public static Integer WORKFLOW_TYPE_TRANSFER_OUT_ORDER = 10;
 }

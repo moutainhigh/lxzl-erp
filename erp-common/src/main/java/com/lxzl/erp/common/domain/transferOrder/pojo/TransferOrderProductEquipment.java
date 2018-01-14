@@ -1,13 +1,8 @@
 package com.lxzl.erp.common.domain.transferOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
-import com.lxzl.erp.common.domain.validGroup.AddGroup;
-import com.lxzl.erp.common.domain.validGroup.TransferOrder.TransferOrderOutGroup;
-import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 
@@ -24,6 +19,16 @@ public class TransferOrderProductEquipment extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+
+	private Integer productId;
+	private String productName;
+	private Integer currentWarehouseId;
+	private String currentWarehouseName;
+	private Integer ownerWarehouseId;
+	private String ownerWarehouseName;
+	private Integer skuId;
+	private String skuName;
+	private Integer equipmentStatus;
 
 
 	public Integer getTransferOrderProductEquipmentId(){
@@ -106,4 +111,75 @@ public class TransferOrderProductEquipment extends BasePO {
 		this.updateUser = updateUser;
 	}
 
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public Integer getCurrentWarehouseId() {
+		return currentWarehouseId;
+	}
+
+	public void setCurrentWarehouseId(Integer currentWarehouseId) {
+		this.currentWarehouseId = currentWarehouseId;
+	}
+
+	public String getCurrentWarehouseName() {
+		return currentWarehouseName;
+	}
+
+	public void setCurrentWarehouseName(String currentWarehouseName) {
+		this.currentWarehouseName = currentWarehouseName;
+	}
+
+	public Integer getOwnerWarehouseId() {
+		return ownerWarehouseId;
+	}
+
+	public void setOwnerWarehouseId(Integer ownerWarehouseId) {
+		this.ownerWarehouseId = ownerWarehouseId;
+	}
+
+	public String getOwnerWarehouseName() {
+		return ownerWarehouseName;
+	}
+
+	public void setOwnerWarehouseName(String ownerWarehouseName) {
+		this.ownerWarehouseName = ownerWarehouseName;
+	}
+
+	public String getSkuName() {
+		return skuName;
+	}
+
+	public void setSkuName(String skuName) {
+		this.skuName = skuName;
+	}
+
+	public Integer getEquipmentStatus() {
+		return equipmentStatus;
+	}
+
+	public void setEquipmentStatus(Integer equipmentStatus) {
+		this.equipmentStatus = equipmentStatus;
+	}
+
+	public Integer getProductId() {
+		return productId;
+	}
+
+	public void setProductId(Integer productId) {
+		this.productId = productId;
+	}
+
+	public Integer getSkuId() {
+		return skuId;
+	}
+
+	public void setSkuId(Integer skuId) {
+		this.skuId = skuId;
+	}
 }

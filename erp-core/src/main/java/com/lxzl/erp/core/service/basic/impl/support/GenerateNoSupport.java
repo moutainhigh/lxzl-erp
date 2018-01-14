@@ -32,6 +32,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.deploymentOrder.DeploymentOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.peer.PeerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseDeliveryOrderMapper;
@@ -656,6 +657,24 @@ public class GenerateNoSupport {
             return builder.toString();
         }
     }
+
+    /**
+     * 生成同行供应商编号
+     */
+    public String generatePeerNo(Integer cityId) {
+        synchronized (this) {
+            AreaCityDO areaCityDO = areaCityMapper.findById(cityId);
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("supplierQueryParam", null);
+            Integer count = peerMapper.listCount(paramMap);
+            StringBuilder builder = new StringBuilder();
+            builder.append("LXPEER");
+            builder.append(areaCityDO.getCityCode());
+            builder.append(String.format("%05d", count + 1));
+            return builder.toString();
+        }
+    }
+
     @Autowired
     private SupplierMapper supplierMapper;
     @Autowired
@@ -702,4 +721,6 @@ public class GenerateNoSupport {
     private MaterialMapper materialMapper;
     @Autowired
     private PurchaseApplyOrderMapper purchaseApplyOrderMapper;
+    @Autowired
+    private PeerMapper peerMapper;
 }

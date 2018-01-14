@@ -1011,7 +1011,7 @@ public class OrderServiceImpl implements OrderService {
             }
 
             boolean isMatching = false;
-            Map<String, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(), "productSkuId", "rentType", "rentTimeLength");
+            Map<String, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(), "productSkuId", "rentType", "rentTimeLength", "isNewProduct");
             OrderProductDO matchingOrderProductDO = null;
 
             // 匹配SKU
@@ -1029,6 +1029,7 @@ public class OrderServiceImpl implements OrderService {
                 for (Map.Entry<String, OrderProductDO> entry : orderProductDOMap.entrySet()) {
                     OrderProductDO orderProductDO = entry.getValue();
                     // 如果输入进来的设备productId,订单项中包含，就匹配 为当前订单项需要的，那么就匹配
+                    // TODO 需要确定，下单时，如果需要全新，发个次新是否可以，反过来也一样
                     if (orderProductDO.getProductId().equals(productEquipmentDO.getProductId())) {
                         matchingOrderProductDO = orderProductDO;
                         break;
@@ -1091,7 +1092,7 @@ public class OrderServiceImpl implements OrderService {
 
         if (materialId != null) {
             boolean isMatching = false;
-            Map<String, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId", "rentType", "rentTimeLength");
+            Map<String, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId", "rentType", "rentTimeLength", "isNewMaterial");
             for (Map.Entry<String, OrderMaterialDO> entry : orderMaterialDOMap.entrySet()) {
                 String key = entry.getKey();
                 // 如果输入进来的散料ID 为当前订单项需要的，那么就匹配

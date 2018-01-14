@@ -12,5 +12,6 @@ public class TransferOrderStatus {
     public static final Integer TRANSFER_ORDER_STATUS_VERIFYING = 4 ;  //4审批中
     public static final Integer TRANSFER_ORDER_STATUS_SUCCESS = 8 ;  //8转移成功
     public static final Integer TRANSFER_ORDER_STATUS_CANCEL = 16 ;  //16取消转移
+    public static final Integer TRANSFER_ORDER_STATUS_END = 20 ;  //20结束转移
 
 }

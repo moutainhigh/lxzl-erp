@@ -39,6 +39,7 @@
 		<result column="product_deployment_product_amount" jdbcType="DECIMAL" property="deploymentProductAmount" />
 		<result column="product_deployment_product_sku_count" jdbcType="INTEGER" property="deploymentProductSkuCount" />
 		<result column="product_deployment_product_sku_snapshot" jdbcType="VARCHAR" property="deploymentProductSkuSnapshot" />
+		<result column="product_is_new" jdbcType="INTEGER" property="isNew" />
 		<result column="product_data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="product_remark" jdbcType="VARCHAR" property="remark" />
 		<result column="product_create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -56,6 +57,7 @@
 		<result column="material_deployment_material_amount" jdbcType="DECIMAL" property="deploymentMaterialAmount" />
 		<result column="material_deployment_product_material_count" jdbcType="INTEGER" property="deploymentProductMaterialCount" />
 		<result column="material_deployment_product_material_snapshot" jdbcType="VARCHAR" property="deploymentProductMaterialSnapshot" />
+		<result column="material_is_new" jdbcType="INTEGER" property="isNew" />
 		<result column="material_data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="material_remark" jdbcType="VARCHAR" property="remark" />
 		<result column="material_create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -69,11 +71,11 @@
 	</sql>
 
 	<sql id="product_column_List">
-		edop.id as product_id,edop.deployment_order_id as product_deployment_order_id,edop.deployment_order_no as product_deployment_order_no,edop.deployment_product_sku_id as product_deployment_product_sku_id,edop.deployment_product_unit_amount as product_deployment_product_unit_amount,edop.deployment_product_amount as product_deployment_product_amount,edop.deployment_product_sku_count as product_deployment_product_sku_count,edop.deployment_product_sku_snapshot as product_deployment_product_sku_snapshot,edop.data_status as product_data_status,edop.remark as product_remark,edop.create_time as product_create_time,edop.create_user as product_create_user,edop.update_time as product_update_time,edop.update_user as product_update_user
+		edop.id as product_id,edop.deployment_order_id as product_deployment_order_id,edop.deployment_order_no as product_deployment_order_no,edop.deployment_product_sku_id as product_deployment_product_sku_id,edop.deployment_product_unit_amount as product_deployment_product_unit_amount,edop.deployment_product_amount as product_deployment_product_amount,edop.deployment_product_sku_count as product_deployment_product_sku_count,edop.deployment_product_sku_snapshot as product_deployment_product_sku_snapshot,edop.is_new as product_is_new,edop.data_status as product_data_status,edop.remark as product_remark,edop.create_time as product_create_time,edop.create_user as product_create_user,edop.update_time as product_update_time,edop.update_user as product_update_user
 	</sql>
 
 	<sql id="material_column_List">
-		edom.id as material_id,edom.deployment_order_id as material_deployment_order_id,edom.deployment_order_no as material_deployment_order_no,edom.deployment_material_id as material_deployment_material_id,edom.deployment_material_unit_amount as material_deployment_material_unit_amount,edom.deployment_material_amount as material_deployment_material_amount,edom.deployment_product_material_count as material_deployment_product_material_count,edom.deployment_product_material_snapshot as material_deployment_product_material_snapshot,edom.data_status as material_data_status,edom.remark as material_remark,edom.create_time as material_create_time,edom.create_user as material_create_user,edom.update_time as material_update_time,edom.update_user as material_update_user
+		edom.id as material_id,edom.deployment_order_id as material_deployment_order_id,edom.deployment_order_no as material_deployment_order_no,edom.deployment_material_id as material_deployment_material_id,edom.deployment_material_unit_amount as material_deployment_material_unit_amount,edom.deployment_material_amount as material_deployment_material_amount,edom.deployment_product_material_count as material_deployment_product_material_count,edom.deployment_product_material_snapshot as material_deployment_product_material_snapshot,edom.is_new as material_is_new,edom.data_status as material_data_status,edom.remark as material_remark,edom.create_time as material_create_time,edom.create_user as material_create_user,edom.update_time as material_update_time,edom.update_user as material_update_user
 	</sql>
 
 	<select id="findById" resultMap="DeploymentOrderDO" parameterType="java.lang.Integer">

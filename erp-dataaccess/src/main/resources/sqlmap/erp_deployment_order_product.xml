@@ -11,6 +11,7 @@
 		<result column="deployment_product_amount" jdbcType="DECIMAL" property="deploymentProductAmount" />
 		<result column="deployment_product_sku_count" jdbcType="INTEGER" property="deploymentProductSkuCount" />
 		<result column="deployment_product_sku_snapshot" jdbcType="VARCHAR" property="deploymentProductSkuSnapshot" />
+		<result column="is_new" jdbcType="INTEGER" property="isNew" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -20,7 +21,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		edop.id,edop.deployment_order_id,edop.deployment_order_no,edop.deployment_product_sku_id,edop.deployment_product_unit_amount,edop.deployment_product_amount,edop.deployment_product_sku_count,edop.deployment_product_sku_snapshot,edop.data_status,edop.remark,edop.create_time,edop.create_user,edop.update_time,edop.update_user
+		edop.id,edop.deployment_order_id,edop.deployment_order_no,edop.deployment_product_sku_id,edop.deployment_product_unit_amount,edop.deployment_product_amount,edop.deployment_product_sku_count,edop.deployment_product_sku_snapshot,edom.is_new,edop.data_status,edop.remark,edop.create_time,edop.create_user,edop.update_time,edop.update_user
 	</sql>
 
 	<select id="findById" resultMap="DeploymentOrderProductDO" parameterType="java.lang.Integer">
@@ -78,6 +79,9 @@
 			</if>
 			<if test="deploymentProductSkuSnapshot != null">
 				deployment_product_sku_snapshot = #{deploymentProductSkuSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="isNew != null">
+				is_new = #{isNew,jdbcType=INTEGER},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},

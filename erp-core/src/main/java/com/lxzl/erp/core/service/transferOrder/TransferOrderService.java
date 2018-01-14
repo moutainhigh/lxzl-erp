@@ -5,7 +5,12 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrder;
 import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterial;
+import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterialBulk;
+import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderProductEquipment;
 import com.lxzl.erp.core.service.VerifyReceiver;
+import com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderProductEquipmentDO;
+
+import java.util.List;
 
 
 /**
@@ -86,6 +91,14 @@ public interface TransferOrderService extends VerifyReceiver {
     ServiceResult<String,String> updateTransferOrderOut(TransferOrder transferOrder);
 
     /**
+     * 结束转移单
+     *
+     * @param transferOrder
+     * @return
+     */
+    ServiceResult<String,String> endTransferOrder(TransferOrder transferOrder);
+
+    /**
      * 分页展示转移单
      * @param transferOrderQueryParam
      * @return
@@ -93,13 +106,25 @@ public interface TransferOrderService extends VerifyReceiver {
     ServiceResult<String,Page<TransferOrder>> pageTransferOrder(TransferOrderQueryParam transferOrderQueryParam);
 
     /**
-     * 根据ID查询转移单
-     * @param transferOrderId
+     * 根据编号查询转移单
+     * @param transferOrderNo
      * @return
      */
-    ServiceResult<String,TransferOrder> detailTransferOrderById(Integer transferOrderId);
+    ServiceResult<String,TransferOrder> detailTransferOrderByNo(String transferOrderNo);
 
+    /**
+     * 转移单商品设备详情
+     * @param transferOrderProductId
+     * @return
+     */
+    ServiceResult<String, List<TransferOrderProductEquipment>> detailTransferOrderProductEquipmentById(Integer transferOrderProductId);
 
+    /**
+     * 转移单配件散料详情
+     * @param transferOrderMaterialId
+     * @return
+     */
+    ServiceResult<String,List<TransferOrderMaterialBulk>> detailTransferOrderMaterialBulkById(Integer transferOrderMaterialId);
 }
 
 

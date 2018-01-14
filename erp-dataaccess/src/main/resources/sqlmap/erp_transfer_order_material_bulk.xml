@@ -13,6 +13,15 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="bulk_material_name" jdbcType="VARCHAR" property="bulkMaterialName" />
+		<result column="current_warehouse_id" jdbcType="INTEGER" property="currentWarehouseId" />
+		<result column="owner_warehouse_id" jdbcType="INTEGER" property="ownerWarehouseId" />
+		<result column="bulk_material_status" jdbcType="INTEGER" property="bulkMaterialStatus" />
+		<result column="bulk_material_type" jdbcType="INTEGER" property="bulkMaterialType" />
+		<result column="material_capacity_value" jdbcType="DOUBLE" property="materialCapacityValue" />
+		<result column="bulk_material_price" jdbcType="DECIMAL" property="bulkMaterialPrice" />
+		<result column="material_no" jdbcType="VARCHAR" property="materialNo" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -93,5 +102,32 @@
 		etomb.transfer_order_id = #{transferOrderId,jdbcType=INTEGER} AND etomb.data_status = 1
 	</select>
 
+	<!--<select id="findByTransferOrderMaterialId" resultMap="TransferOrderMaterialBulkDO" parameterType="java.lang.Integer">-->
+		<!--SELECT <include refid="column_List"/>,ebm1.bulk_material_name AS bulk_material_name,ebm2.current_warehouse_id AS current_warehouse_id,ebm3.owner_warehouse_id AS owner_warehouse_id,-->
+		<!--ebm4.bulk_material_status AS bulk_material_status,ebm5.bulk_material_type AS bulk_material_type_id,ebm6.material_capacity_value AS material_capacity_value,-->
+		<!--ebm7.bulk_material_price AS bulk_material_price,ebm8.material_no AS material_no-->
+		<!--FROM (-->
+		<!--SELECT <include refid="column_List"/>FROM erp_transfer_order_material_bulk etomb WHERE-->
+		<!--etomb.transfer_order_material_id = #{transferOrderMaterialId,jdbcType=INTEGER} AND etomb.data_status = 1-->
+		<!--) etomb-->
+		<!--left join erp_bulk_material ebm1 ON ebm1.bulk_material_no = etomb.bulk_material_no and ebm1.data_status = 1-->
+		<!--left join erp_bulk_material ebm2 ON ebm2.bulk_material_no = etomb.bulk_material_no and ebm2.data_status = 1-->
+		<!--left join erp_bulk_material ebm3 ON ebm3.bulk_material_no = etomb.bulk_material_no and ebm3.data_status = 1-->
+		<!--left join erp_bulk_material ebm4 ON ebm4.bulk_material_no = etomb.bulk_material_no and ebm4.data_status = 1-->
+		<!--left join erp_bulk_material ebm5 ON ebm5.bulk_material_no = etomb.bulk_material_no and ebm5.data_status = 1-->
+		<!--left join erp_bulk_material ebm6 ON ebm6.bulk_material_no = etomb.bulk_material_no and ebm6.data_status = 1-->
+		<!--left join erp_bulk_material ebm7 ON ebm7.bulk_material_no = etomb.bulk_material_no and ebm7.data_status = 1-->
+		<!--left join erp_bulk_material ebm8 ON ebm8.bulk_material_no = etomb.bulk_material_no and ebm8.data_status = 1-->
+	<!--</select>-->
+
+	<select id="findByTransferOrderMaterialId" resultMap="TransferOrderMaterialBulkDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/>,ebm.bulk_material_name AS bulk_material_name,ebm.current_warehouse_id AS current_warehouse_id,ebm.owner_warehouse_id AS owner_warehouse_id,ebm.bulk_material_status AS bulk_material_status,
+		ebm.bulk_material_type AS bulk_material_type,ebm.material_capacity_value AS material_capacity_value,ebm.bulk_material_price AS bulk_material_price,ebm.material_no AS material_no
+		FROM (
+		SELECT <include refid="column_List"/>FROM erp_transfer_order_material_bulk etomb WHERE
+		etomb.transfer_order_material_id = #{transferOrderMaterialId,jdbcType=INTEGER} AND etomb.data_status = 1
+		) etomb
+		left join erp_bulk_material ebm ON ebm.bulk_material_no = etomb.bulk_material_no and ebm.data_status = 1
+	</select>
 
 </mapper>

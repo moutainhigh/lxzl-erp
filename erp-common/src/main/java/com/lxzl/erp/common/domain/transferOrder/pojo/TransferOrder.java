@@ -19,13 +19,13 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TransferOrder extends BasePO {
 
-	@NotNull(message = ErrorCode.TRANSFER_ORDER_ID_NOT_NULL ,groups = {QueryGroup.class,TransferOrderProductEquipmentOutGroup.class,DumpTransferOrderProductEquipmentOutGroup.class})
+	@NotNull(message = ErrorCode.TRANSFER_ORDER_ID_NOT_NULL ,groups = {TransferOrderProductEquipmentOutGroup.class,DumpTransferOrderProductEquipmentOutGroup.class})
 	private Integer transferOrderId;   //唯一标识
 	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NO_NOT_NULL ,groups = {IdGroup.class, UpdateTransferOrderIntoGroup.class,UpdateTransferOrderOutGroup.class})
 	private String transferOrderNo;   //转移单编号
 	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NAME_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class,UpdateTransferOrderIntoGroup.class,UpdateTransferOrderOutGroup.class})
 	private String transferOrderName;   //转移单名称
-	private Integer transferOrderStatus;   //转移单状态，0初始化，4审批中，8转移成功，16取消转移
+	private Integer transferOrderStatus;   //转移单状态，0初始化，4审批中，8转移成功，16取消转移，20转移结束
 	@NotNull(message = ErrorCode.TRANSFER_ORDER_MODE_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class})
 	private Integer transferOrderMode;   //转移方式，1转入，2转出（凭空转入转出）
 	@NotNull(message = ErrorCode.TRANSFER_ORDER_TYPE_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class})
