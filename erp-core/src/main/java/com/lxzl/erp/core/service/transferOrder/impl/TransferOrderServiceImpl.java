@@ -454,10 +454,10 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         productEquipmentDO.setUpdateTime(now);
         productEquipmentMapper.update(productEquipmentDO);
 
-        //修改该商品设备中的所有散料状态为租赁中
+        //修改该商品设备中的所有散料状态为空闲
         List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findByEquipmentNo(productEquipmentDO.getEquipmentNo());
         for (BulkMaterialDO bulkMaterialDO : bulkMaterialDOList){
-            bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
+            bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
             bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             bulkMaterialDO.setUpdateTime(now);
             bulkMaterialMapper.update(bulkMaterialDO);

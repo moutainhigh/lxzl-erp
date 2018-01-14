@@ -3,10 +3,12 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.TransferOrderType;
+import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.transferOrder.*;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrder;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterial;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderProduct;
+import com.lxzl.erp.common.util.FastJsonUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -140,8 +142,8 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     public void transferOrderProductEquipmentOut() throws Exception{
 
         TransferOrderProductEquipmentOutParam transferOrderProductEquipmentOutParam = new TransferOrderProductEquipmentOutParam();
-        transferOrderProductEquipmentOutParam.setTransferOrderNo("LXT40000012018011492");
-        transferOrderProductEquipmentOutParam.setProductEquipmentNo("LX-1000--2018011402071");
+        transferOrderProductEquipmentOutParam.setTransferOrderNo("LXT40000012018011490");
+        transferOrderProductEquipmentOutParam.setProductEquipmentNo("LX-EQUIPMENT-4000001-2017121610107");
 
         List<String> strings = new ArrayList<>();
 
@@ -159,8 +161,21 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     public void dumpTransferOrderProductEquipmentOut() throws Exception{
 
         TransferOrderProductEquipmentOutParam transferOrderProductEquipmentOutParam = new TransferOrderProductEquipmentOutParam();
-        transferOrderProductEquipmentOutParam.setTransferOrderNo("LXT40000012018011492");
-        transferOrderProductEquipmentOutParam.setProductEquipmentNo("LX-E-4000001-2017122915452");
+        transferOrderProductEquipmentOutParam.setTransferOrderNo("LXT40000012018011490");
+        transferOrderProductEquipmentOutParam.setProductEquipmentNo("LX-EQUIPMENT-4000001-2017121610107");
+
+        TestResult testResult = getJsonTestResult("/transferOrder/dumpTransferOrderProductEquipmentOut", transferOrderProductEquipmentOutParam);
+    }
+
+    @Test
+    public void testDumpTransferOrderProductEquipmentOut() throws Exception{
+
+        String str = "{\n" +
+                "\t\"transferOrderNo\": \"LXT40000012018011490\",\n" +
+                "\t\"productEquipmentNo\": \"LX-EQUIPMENT-4000001-2017122210004\"\n" +
+                "}";
+
+        TransferOrderProductEquipmentOutParam transferOrderProductEquipmentOutParam =  FastJsonUtil.toBean(str, TransferOrderProductEquipmentOutParam.class);
 
         TestResult testResult = getJsonTestResult("/transferOrder/dumpTransferOrderProductEquipmentOut", transferOrderProductEquipmentOutParam);
     }
@@ -236,7 +251,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     @Test
     public void detailTransferOrderProductEquipmentById() throws Exception{
         TransferOrderProductEquipmentQueryParam transferOrderProductEquipmentQueryParam = new TransferOrderProductEquipmentQueryParam();
-        transferOrderProductEquipmentQueryParam.setTransferOrderProductId(233);
+        transferOrderProductEquipmentQueryParam.setTransferOrderProductId(254);
 
         TestResult testResult = getJsonTestResult("/transferOrder/detailTransferOrderProductEquipmentById", transferOrderProductEquipmentQueryParam);
     }
