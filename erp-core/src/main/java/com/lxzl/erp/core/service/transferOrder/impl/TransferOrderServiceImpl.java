@@ -940,8 +940,16 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                     serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                     return serviceResult;
                 }
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(productSkuDO.getId());
+                if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                    return serviceResult;
+                }
+                Product product = productServiceResult.getResult();
                 transferOrderProductDO.setProductId(productSkuDO.getProductId());
                 transferOrderProductDO.setTransferOrderId(transferOrderId);
+                transferOrderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(product));
                 transferOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 transferOrderProductDO.setCreateTime(now);
                 transferOrderProductDO.setCreateUser(userSupport.getCurrentUserId().toString());
@@ -994,9 +1002,16 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                     serviceResult.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                     return serviceResult;
                 }
-
+                ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(materialDO.getId());
+                if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(materialServiceResult.getErrorCode());
+                    return serviceResult;
+                }
+                Material material = materialServiceResult.getResult();
                 transferOrderMaterialDO.setMaterialId(materialDO.getId());
                 transferOrderMaterialDO.setTransferOrderId(transferOrderId);
+                transferOrderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(material));
                 transferOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 transferOrderMaterialDO.setCreateTime(now);
                 transferOrderMaterialDO.setCreateUser(userSupport.getCurrentUserId().toString());

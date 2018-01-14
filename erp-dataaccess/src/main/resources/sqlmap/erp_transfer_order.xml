@@ -158,7 +158,7 @@
 		) eto
 		left join erp_transfer_order_product etop on etop.transfer_order_id = eto.id and etop.data_status =1
 		left join erp_transfer_order_material etom on etom.transfer_order_id = eto.id and etom.data_status =1
-		LEFT JOIN erp_warehouse ew ON ew.id = eto.warehouse_id
+		LEFT JOIN erp_warehouse ew ON ew.id = eto.warehouse_id and ew.data_status =1
 	</select>
 
 	<select id="findDetailById" resultMap="TransferOrderDO" parameterType="java.lang.Integer">
@@ -169,7 +169,7 @@
 		) eto
 		left join erp_transfer_order_product etop on etop.transfer_order_id = eto.id and etop.data_status =1
 		left join erp_transfer_order_material etom on etom.transfer_order_id = eto.id and etom.data_status =1
-		LEFT JOIN erp_warehouse ew ON ew.id = eto.warehouse_id
+		LEFT JOIN erp_warehouse ew ON ew.id = eto.warehouse_id and ew.data_status =1
 	</select>
 
 	<select id="findTransferOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
@@ -232,9 +232,7 @@
 		) eto
 		LEFT JOIN erp_transfer_order_product etop on etop.transfer_order_id = eto.id and etop.data_status=1
 		LEFT JOIN erp_transfer_order_material etom on etom.transfer_order_id = eto.id and etom.data_status=1
-		LEFT JOIN erp_warehouse ew ON ew.id = eto.warehouse_id
+		LEFT JOIN erp_warehouse ew ON ew.id = eto.warehouse_id AND ew.data_status =1
 		order by eto.create_time desc
 	</select>
-
-
 </mapper>
