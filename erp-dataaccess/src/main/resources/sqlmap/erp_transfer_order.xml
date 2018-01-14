@@ -35,6 +35,7 @@
 		<result column="etop_create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="etop_update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="etop_update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="etop_product_sku_snapshot" jdbcType="VARCHAR" property="productSkuSnapshot" />
 	</resultMap>
 
 	<resultMap id="TransferOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderMaterialDO">
@@ -50,6 +51,7 @@
 		<result column="etom_create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="etom_update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="etom_update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="etom_material_snapshot" jdbcType="VARCHAR" property="materialSnapshot" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -57,11 +59,11 @@
 	</sql>
 
 	<sql id="product_column_List">
-		etop.id AS etop_id,etop.transfer_order_id AS etop_transfer_order_id,etop.product_id AS etop_product_id,etop.product_sku_id AS etop_product_sku_id,etop.product_count AS etop_product_count,etop.is_new AS etop_is_new,etop.data_status AS etop_data_status,etop.remark AS etop_remark,etop.create_time AS etop_create_time,etop.create_user AS etop_create_user,etop.update_time AS etop_update_time,etop.update_user AS etop_update_user
+		etop.id AS etop_id,etop.transfer_order_id AS etop_transfer_order_id,etop.product_id AS etop_product_id,etop.product_sku_id AS etop_product_sku_id,etop.product_count AS etop_product_count,etop.is_new AS etop_is_new,etop.data_status AS etop_data_status,etop.remark AS etop_remark,etop.create_time AS etop_create_time,etop.create_user AS etop_create_user,etop.update_time AS etop_update_time,etop.update_user AS etop_update_user,etop.product_sku_snapshot AS etop_product_sku_snapshot
 	</sql>
 
 	<sql id="material_column_List">
-		etom.id AS etom_id,etom.transfer_order_id AS etom_transfer_order_id,etom.material_id AS etom_material_id,etom.material_no AS etom_material_no,etom.material_count AS etom_material_count,etom.is_new AS etom_is_new,etom.data_status AS etom_data_status,etom.remark AS etom_remark,etom.create_time AS etom_create_time,etom.create_user AS etom_create_user,etom.update_time AS etom_update_time,etom.update_user AS etom_update_user
+		etom.id AS etom_id,etom.transfer_order_id AS etom_transfer_order_id,etom.material_id AS etom_material_id,etom.material_no AS etom_material_no,etom.material_count AS etom_material_count,etom.is_new AS etom_is_new,etom.data_status AS etom_data_status,etom.remark AS etom_remark,etom.create_time AS etom_create_time,etom.create_user AS etom_create_user,etom.update_time AS etom_update_time,etom.update_user AS etom_update_user,etom.material_snapshot AS etom_material_snapshot
 	</sql>
 
 	<select id="findById" resultMap="TransferOrderDO" parameterType="java.lang.Integer">
@@ -149,13 +151,14 @@
 	</select>
 
 	<select id="findDetailByNo" resultMap="TransferOrderDO" parameterType="java.lang.String">
-		SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>
+		SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>,ew.warehouse_name
 		FROM(
 		select <include refid="column_List"/> from erp_transfer_order eto
 		where eto.transfer_order_no = #{transferOrderNo, jdbcType=VARCHAR} and data_status = 1
 		) eto
 		left join erp_transfer_order_product etop on etop.transfer_order_id = eto.id and etop.data_status =1
 		left join erp_transfer_order_material etom on etom.transfer_order_id = eto.id and etom.data_status =1
+		LEFT JOIN erp_warehouse ew ON ew.id = eto.warehouse_id
 	</select>
 
 	<select id="findDetailById" resultMap="TransferOrderDO" parameterType="java.lang.Integer">

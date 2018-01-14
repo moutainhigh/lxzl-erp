@@ -25,7 +25,7 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     @Test
     public void verifyWorkFlow() throws Exception {
         VerifyWorkflowParam workflowParam = new VerifyWorkflowParam();
-        workflowParam.setWorkflowLinkNo("LXWF5000142018010800230");
+        workflowParam.setWorkflowLinkNo("LXWF5000062018011200281");
         workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
         workflowParam.setReturnType(1);
 //        workflowParam.setNextVerifyUser(500003);

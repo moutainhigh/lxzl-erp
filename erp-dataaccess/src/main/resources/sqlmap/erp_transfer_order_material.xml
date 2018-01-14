@@ -15,10 +15,11 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="material_snapshot" jdbcType="VARCHAR" property="materialSnapshot" />
 	</resultMap>
 
 	<sql id="column_List">
-		etom.id,etom.transfer_order_id,etom.material_id,etom.material_no,etom.material_count,etom.is_new,etom.data_status,etom.remark,etom.create_time,etom.create_user,etom.update_time,etom.update_user
+		etom.id,etom.transfer_order_id,etom.material_id,etom.material_no,etom.material_count,etom.is_new,etom.data_status,etom.remark,etom.create_time,etom.create_user,etom.update_time,etom.update_user,etom.material_snapshot
 	</sql>
 
 	<select id="findById" resultMap="TransferOrderMaterialDO" parameterType="java.lang.Integer">
@@ -79,6 +80,9 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="materialSnapshot != null">
+				material_snapshot = #{materialSnapshot,jdbcType=VARCHAR},
 			</if>
 		</set>
 	</sql>

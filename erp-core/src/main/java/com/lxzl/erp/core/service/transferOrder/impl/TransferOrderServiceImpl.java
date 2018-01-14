@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.transferOrder.impl;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.material.pojo.MaterialInStorage;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
@@ -11,10 +12,9 @@ import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
 import com.lxzl.erp.common.domain.transferOrder.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.transferOrder.TransferOrderService;
@@ -42,6 +42,7 @@ import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderBulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
+import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mongo.config.PageQuery;
 import org.slf4j.Logger;
@@ -52,6 +53,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import sun.org.mozilla.javascript.internal.ast.IfStatement;
 
 import java.util.*;
 
@@ -88,6 +90,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         TransferOrderDO transferOrderDO = ConverterUtil.convert(transferOrder, TransferOrderDO.class);
         transferOrderDO.setTransferOrderNo(generateNoSupport.generateTransferOrderNo(now,warehouseDO.getId()));
         transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT);
+        transferOrderDO.setTransferOrderMode(TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO);
         transferOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         transferOrderDO.setCreateTime(now);
         transferOrderDO.setCreateUser(userSupport.getCurrentUserId().toString());
@@ -105,9 +108,18 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                     serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                     return serviceResult;
                 }
+
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(productSkuDO.getId());
+                if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                    return serviceResult;
+                }
+                Product product = productServiceResult.getResult();
                 TransferOrderProductDO transferOrderProductDO = ConverterUtil.convert(transferOrderProduct, TransferOrderProductDO.class);
                 transferOrderProductDO.setProductId(productSkuDO.getProductId());
                 transferOrderProductDO.setTransferOrderId(transferOrderDO.getId());
+                transferOrderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(product));
                 transferOrderProductDO.setRemark(transferOrderProduct.getRemark());
                 transferOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 transferOrderProductDO.setCreateTime(now);
@@ -130,9 +142,17 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                     serviceResult.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                     return serviceResult;
                 }
+                ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(materialDO.getId());
+                if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(materialServiceResult.getErrorCode());
+                    return serviceResult;
+                }
+                Material material = materialServiceResult.getResult();
                 TransferOrderMaterialDO transferOrderMaterialDO = ConverterUtil.convert(transferOrderMaterial, TransferOrderMaterialDO.class);
                 transferOrderMaterialDO.setMaterialId(materialDO.getId());
                 transferOrderMaterialDO.setTransferOrderId(transferOrderDO.getId());
+                transferOrderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(material));
                 transferOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 transferOrderMaterialDO.setCreateTime(now);
                 transferOrderMaterialDO.setCreateUser(userSupport.getCurrentUserId().toString());
@@ -159,6 +179,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         TransferOrderDO transferOrderDO = ConverterUtil.convert(transferOrder,TransferOrderDO.class);
         transferOrderDO.setTransferOrderNo(generateNoSupport.generateTransferOrderNo(now,userWarehouseDO.getId()));
         transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT);
+        transferOrderDO.setTransferOrderMode(TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_OUT);
         transferOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         transferOrderDO.setWarehouseId(userWarehouseDO.getId());
         transferOrderDO.setRemark(transferOrder.getRemark());
@@ -216,6 +237,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             return serviceResult;
         }
 
+        //todo 是否需要加入转移类型的修改
         transferOrderDO.setTransferOrderName(transferOrder.getTransferOrderName());
         transferOrderDO.setRemark(transferOrder.getRemark());
         transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -304,6 +326,13 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             return serviceResult;
         }
 
+        ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(productEquipmentDO.getSkuId());
+        if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
+            serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+            return serviceResult;
+        }
+        Product product = productServiceResult.getResult();
+
         //生成转移单商品表
         TransferOrderProductDO transferOrderProductDO = transferOrderProductMapper.findByTransferOrderIdAndSkuIdAndIsNew(transferOrderDO.getId(),productEquipmentDO.getSkuId(),productEquipmentDO.getIsNew());
         if (transferOrderProductDO == null){
@@ -312,6 +341,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             transferOrderProductDO.setProductId(productEquipmentDO.getProductId());
             transferOrderProductDO.setProductSkuId(productEquipmentDO.getSkuId());
             transferOrderProductDO.setProductCount(1);
+            transferOrderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(product));
             transferOrderProductDO.setIsNew(productEquipmentDO.getIsNew());
             transferOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             transferOrderProductDO.setCreateUser(userSupport.getCurrentUserId().toString());
@@ -488,12 +518,20 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                 return serviceResult;
             }
         }
+        ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(materialDO.getId());
+        if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            serviceResult.setErrorCode(materialServiceResult.getErrorCode());
+            return serviceResult;
+        }
+        Material material = materialServiceResult.getResult();
 
         //生成转移单配件表
         TransferOrderMaterialDO transferOrderMaterialDO = transferOrderMaterialMapper.findByTransferOrderIdAndMaterialNoAndIsNew(transferOrderDO.getId(),transferOrderMaterial.getMaterialNo(),transferOrderMaterial.getIsNew());
         if (transferOrderMaterialDO == null){
             transferOrderMaterialDO= ConverterUtil.convert(transferOrderMaterial,TransferOrderMaterialDO.class);
             transferOrderMaterialDO.setMaterialId(materialDO.getId());
+            transferOrderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(material));
             transferOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             transferOrderMaterialDO.setCreateTime(now);
             transferOrderMaterialDO.setCreateUser(userSupport.getCurrentUserId().toString());
@@ -669,8 +707,15 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             return serviceResult;
         }
 
+        ServiceResult<String, Boolean> needVerifyResult = new ServiceResult<>();
         //提交审核判断
-        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER);
+        //提交转入的转移单
+        if (TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO.equals(transferOrderDO.getTransferOrderMode())){
+            needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER);
+        }else{
+            //提交转出的转移单
+            needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER);
+        }
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
             serviceResult.setErrorCode(needVerifyResult.getErrorCode());
             return serviceResult;
@@ -680,7 +725,14 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                 return serviceResult;
             }
             //调用提交审核服务
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER, transferOrderNo, verifyUser, commitRemark);
+            ServiceResult<String, String> verifyResult = new ServiceResult<>();
+            //转入的转移单审核
+            if(TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO.equals(transferOrderDO.getTransferOrderMode())){
+                verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER, transferOrderNo, verifyUser, commitRemark);
+            }else{
+                //转出的转移单审核
+                verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER, transferOrderNo, verifyUser, commitRemark);
+            }
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_VERIFYING);
@@ -790,13 +842,12 @@ public class TransferOrderServiceImpl implements TransferOrderService {
     public ServiceResult<String, TransferOrder> detailTransferOrderByNo(String transferOrderNo) {
         ServiceResult<String, TransferOrder> serviceResult = new ServiceResult<>();
 
-        TransferOrderDO transferOrderDO = transferOrderMapper.findByNo(transferOrderNo);
+        TransferOrderDO transferOrderDO = transferOrderMapper.findDetailByNo(transferOrderNo);
         if (transferOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_NOT_EXISTS);
             return serviceResult;
         }
 
-        //转化为前端需要展示的类型
         TransferOrder transferOrder = ConverterUtil.convert(transferOrderDO, TransferOrder.class);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -1180,6 +1231,9 @@ public class TransferOrderServiceImpl implements TransferOrderService {
 
     @Autowired
     private WarehouseMapper warehouseMapper;
+
+    @Autowired
+    private MaterialService materialService;
 
 }
 

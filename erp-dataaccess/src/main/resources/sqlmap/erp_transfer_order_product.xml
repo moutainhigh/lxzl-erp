@@ -15,10 +15,11 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="product_sku_snapshot" jdbcType="VARCHAR" property="productSkuSnapshot" />
 	</resultMap>
 
 	<sql id="column_List">
-		etop.id,etop.transfer_order_id,etop.product_id,etop.product_sku_id,etop.product_count,etop.is_new,etop.data_status,etop.remark,etop.create_time,etop.create_user,etop.update_time,etop.update_user
+		etop.id,etop.transfer_order_id,etop.product_id,etop.product_sku_id,etop.product_count,etop.is_new,etop.data_status,etop.remark,etop.create_time,etop.create_user,etop.update_time,etop.update_user,etop.product_sku_snapshot
 	</sql>
 
 	<select id="findById" resultMap="TransferOrderProductDO" parameterType="java.lang.Integer">
@@ -79,6 +80,9 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="productSkuSnapshot != null">
+				product_sku_snapshot = #{productSkuSnapshot,jdbcType=VARCHAR},
 			</if>
 		</set>
 	</sql>

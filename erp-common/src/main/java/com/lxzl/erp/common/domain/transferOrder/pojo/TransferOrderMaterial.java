@@ -32,7 +32,7 @@ public class TransferOrderMaterial extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
-
+	private String materialSnapshot ;// 配件冗余信息，防止物料修改留存快照
 
 	public Integer getTransferOrderMaterialId(){
 		return transferOrderMaterialId;
@@ -130,4 +130,12 @@ public class TransferOrderMaterial extends BasePO {
 		this.updateUser = updateUser;
 	}
 
+
+	public String getMaterialSnapshot() {
+		return materialSnapshot;
+	}
+
+	public void setMaterialSnapshot(String materialSnapshot) {
+		this.materialSnapshot = materialSnapshot;
+	}
 }

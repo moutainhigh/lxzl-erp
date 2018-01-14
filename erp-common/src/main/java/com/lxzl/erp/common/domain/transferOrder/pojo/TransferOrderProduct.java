@@ -31,6 +31,7 @@ public class TransferOrderProduct extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+	private String productSkuSnapshot ;// 商品冗余信息，防止商品修改留存快照
 
 	public Integer getTransferOrderProductId(){
 		return transferOrderProductId;
@@ -128,4 +129,11 @@ public class TransferOrderProduct extends BasePO {
 		this.updateUser = updateUser;
 	}
 
+	public String getProductSkuSnapshot() {
+		return productSkuSnapshot;
+	}
+
+	public void setProductSkuSnapshot(String productSkuSnapshot) {
+		this.productSkuSnapshot = productSkuSnapshot;
+	}
 }

@@ -20,15 +20,15 @@ public class TransferOrderProductEquipment extends BasePO {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 
-	private Integer productId;
-	private String productName;
-	private Integer currentWarehouseId;
-	private String currentWarehouseName;
-	private Integer ownerWarehouseId;
-	private String ownerWarehouseName;
-	private Integer skuId;
-	private String skuName;
-	private Integer equipmentStatus;
+	private Integer productId; //商品ID
+	private String productName; //商品名称
+	private Integer currentWarehouseId; //当前仓库ID
+	private String currentWarehouseName; //当前仓库名称
+	private Integer ownerWarehouseId; //所属仓库ID
+	private String ownerWarehouseName; //所处仓库名称
+	private Integer skuId; //SKUID
+	private String skuName; //SKU名称
+	private Integer equipmentStatus; //设备状态
 
 
 	public Integer getTransferOrderProductEquipmentId(){

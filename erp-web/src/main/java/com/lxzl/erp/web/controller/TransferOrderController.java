@@ -160,7 +160,7 @@ public class TransferOrderController {
     }
 
     /**
-     * 转移单商品s设备详情
+     * 转移单商品设备详情
      */
     @RequestMapping(value = "detailTransferOrderProductEquipmentById", method = RequestMethod.POST)
     public Result detailTransferOrderProductEquipmentById(@RequestBody Integer transferOrderProductId, BindingResult validResult) {

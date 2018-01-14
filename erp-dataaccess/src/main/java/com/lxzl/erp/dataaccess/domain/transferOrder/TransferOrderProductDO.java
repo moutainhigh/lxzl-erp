@@ -13,6 +13,7 @@ public class TransferOrderProductDO  extends BaseDO {
 	private Integer isNew;
 	private Integer dataStatus;
 	private String remark;
+	private String productSkuSnapshot ;// 商品冗余信息，防止商品修改留存快照
 
 	public Integer getId(){
 		return id;
@@ -78,4 +79,11 @@ public class TransferOrderProductDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public String getProductSkuSnapshot() {
+		return productSkuSnapshot;
+	}
+
+	public void setProductSkuSnapshot(String productSkuSnapshot) {
+		this.productSkuSnapshot = productSkuSnapshot;
+	}
 }

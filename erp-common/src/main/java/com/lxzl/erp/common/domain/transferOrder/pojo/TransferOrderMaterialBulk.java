@@ -21,18 +21,18 @@ public class TransferOrderMaterialBulk extends BasePO {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 
-	private String bulkMaterialName;
-	private String brandName;
-	private Integer bulkMaterialType;
-	private String materialNo;
-	private Integer currentWarehouseId;
-	private String currentWarehouseName;
-	private Integer ownerWarehouseId;
-	private String ownerWarehouseName;
-	private Double materialCapacityValue;
-	private BigDecimal bulkMaterialPrice;
-	private String currentEquipmentNo;
-	private Integer bulkMaterialStatus;
+	private String bulkMaterialName; //散料名称
+	private String brandName; //品牌
+	private Integer bulkMaterialType; //散料类型
+	private String materialNo; // 配件编号
+	private Integer currentWarehouseId; //当前仓库ID
+	private String currentWarehouseName;//当前仓库名称
+	private Integer ownerWarehouseId; //所属仓库ID
+	private String ownerWarehouseName; //所属仓库名称
+	private Double materialCapacityValue; //面料大小
+	private BigDecimal bulkMaterialPrice; //散料价值
+	private String currentEquipmentNo; //当前设备编号
+	private Integer bulkMaterialStatus; //散料状态
 
 	public Integer getTransferOrderMaterialBulkId(){
 		return transferOrderMaterialBulkId;

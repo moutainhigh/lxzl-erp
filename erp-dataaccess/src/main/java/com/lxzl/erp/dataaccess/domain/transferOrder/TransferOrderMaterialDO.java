@@ -13,7 +13,7 @@ public class TransferOrderMaterialDO  extends BaseDO {
 	private Integer isNew;
 	private Integer dataStatus;
 	private String remark;
-
+	private String materialSnapshot ;// 配件冗余信息，防止物料修改留存快照
 
 	public Integer getId(){
 		return id;
@@ -79,4 +79,11 @@ public class TransferOrderMaterialDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public String getMaterialSnapshot() {
+		return materialSnapshot;
+	}
+
+	public void setMaterialSnapshot(String materialSnapshot) {
+		this.materialSnapshot = materialSnapshot;
+	}
 }
