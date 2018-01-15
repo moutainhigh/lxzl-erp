@@ -74,6 +74,7 @@
                                     <th>客户编号</th>
                                     <th>真实姓名</th>
                                     <th>联系方式</th>
+                                    <th>客户状态</th>
                                     <th>创建人</th>
                                     {{#hasRowActionButtons}}
                                     <th class="text-right">操作</th>
@@ -98,6 +99,9 @@
                                         <p class="mn">{{customerPerson.email}}</p>
                                         <p class="mn mt5"><i class="fa fa-mobile mr5"></i>{{customerPerson.phone}}</p>
                                         <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{addressForamt}}</p>
+                                    </td>
+                                    <td>
+                                        {{customerStatusValue}}
                                     </td>
                                     <td>
                                         <p class="mn">{{createUserRealName}}</p>
@@ -143,9 +147,8 @@
     #parse("layout/footer.vm")
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
+                'manage.customer.handle.mixin.js',
                 'manage.customer.js',
-                'manage.customer.add.js',
-                'manage.customer.edit.js',
                 'manage.customer.risk.js',
                 'manage.customer.address.add.js');
     </script>
