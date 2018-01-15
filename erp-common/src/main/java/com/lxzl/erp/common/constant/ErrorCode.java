@@ -491,6 +491,9 @@ public class ErrorCode {
     public static final String TRANSFER_ORDER_PRODUCT_SKU_ID_CAN_NOT_SAME = "J1200029";
     public static final String TRANSFER_ORDER_MATERIAL_NO_CAN_NOT_SAME = "J1200030";
     public static final String TRANSFER_ORDER_MATERIAL_COUNT_NOT_ZERO = "J1200031";
+    public static final String TRANSFER_ORDER_INTO_STATUS_NEED_INIT = "J1200032";
+    public static final String TRANSFER_ORDER_OUT_STATUS_NEED_CHOICE_GOODS = "J1200033";
+    public static final String TRANSFER_ORDER_OUT_NOT_NULL = "J1200034";
 
     public static final String ASSEMBLE_ORDER_ID_NOT_NULL = "J1300001";
     public static final String ASSEMBLE_ORDER_MATERIAL_ID_NOT_NULL = "J1300002";
@@ -995,6 +998,9 @@ public class ErrorCode {
         MAP.put(TRANSFER_ORDER_PRODUCT_SKU_ID_CAN_NOT_SAME, "不允许传入重复的商品skuID和全新选项");
         MAP.put(TRANSFER_ORDER_MATERIAL_NO_CAN_NOT_SAME, "不允许传入重复的物料编号和全新选项");
         MAP.put(TRANSFER_ORDER_MATERIAL_COUNT_NOT_ZERO, "配件清货时转移单物料数量不能为0");
+        MAP.put(TRANSFER_ORDER_INTO_STATUS_NEED_INIT, "提交的转入单状态必须为初始化");
+        MAP.put(TRANSFER_ORDER_OUT_STATUS_NEED_CHOICE_GOODS, "提交的转出单状态必须为配货中");
+        MAP.put(TRANSFER_ORDER_OUT_NOT_NULL, "转出单不能提交设备列表和散料列表同时为空的数据");
 
 
         MAP.put(ASSEMBLE_ORDER_ID_NOT_NULL, "组装单ID不能为空");

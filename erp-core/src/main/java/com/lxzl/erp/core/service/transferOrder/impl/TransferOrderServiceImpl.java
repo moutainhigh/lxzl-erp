@@ -723,9 +723,9 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                 }
             }
 
-            //如果是审批中
+            //如果是审批中,强制取消
             if (TransferOrderStatus.TRANSFER_ORDER_STATUS_VERIFYING.equals(transferOrderDO.getTransferOrderStatus())){
-                ServiceResult<String, String> cancelWorkFlowResult = workflowService.cancelWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER, transferOrderDO.getTransferOrderNo());
+                ServiceResult<String, String> cancelWorkFlowResult = workflowService.cancelWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER, transferOrderDO.getTransferOrderNo());
                 if (!ErrorCode.SUCCESS.equals(cancelWorkFlowResult.getErrorCode())) {
                     return cancelWorkFlowResult;
                 }
@@ -736,7 +736,6 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                     cancelBulkMaterial(transferOrderDO.getId(),userSupport.getCurrentUser(),now);
                 }
             }
-
         }
 
         transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_CANCEL);
@@ -785,7 +784,6 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         }
     }
 
-
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> commitTransferOrder(String transferOrderNo, Integer verifyUser, String commitRemark) {
@@ -798,28 +796,36 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             return serviceResult;
         }
 
-        //只有状态为初始化或者备货中的转移单才能进行提交审核操作
-        if (!TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT.equals(transferOrderDO.getTransferOrderStatus())
-                && !TransferOrderStatus.TRANSFER_ORDER_STATUS_CHOICE_GOODS.equals(transferOrderDO.getTransferOrderStatus())) {
-            serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_STATUS_IS_ERROR);
-            return serviceResult;
-        }
-
+        //只有创建维修单本人可以提交
         if (!transferOrderDO.getCreateUser().equals(userSupport.getCurrentUserId().toString())) {
-            //只有创建维修单本人可以提交
             serviceResult.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
             return serviceResult;
         }
 
         ServiceResult<String, Boolean> needVerifyResult = new ServiceResult<>();
-        //提交审核判断
-        //提交转入的转移单
+
         if (TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO.equals(transferOrderDO.getTransferOrderMode())){
+            //转入只能状态为初始化
+            if (!TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT.equals(transferOrderDO.getTransferOrderStatus())) {
+                serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_INTO_STATUS_NEED_INIT);
+                return serviceResult;
+            }
+           //提交转入的转移单,判断是否需要审核
             needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER);
         }else{
-            //提交转出的转移单
+            //转出单是备货中的才能进行提交审核操作
+            if (!TransferOrderStatus.TRANSFER_ORDER_STATUS_CHOICE_GOODS.equals(transferOrderDO.getTransferOrderStatus())) {
+                serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_OUT_STATUS_NEED_CHOICE_GOODS);
+                return serviceResult;
+            }
+            if (CollectionUtil.isEmpty(transferOrderDO.getTransferOrderProductDOList()) && CollectionUtil.isEmpty(transferOrderDO.getTransferOrderMaterialDOList())){
+                serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_OUT_NOT_NULL);
+                return serviceResult;
+            }
+            //提交转出的转移单，判断是否需要审核
             needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER);
         }
+
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
             serviceResult.setErrorCode(needVerifyResult.getErrorCode());
             return serviceResult;
@@ -1272,7 +1278,6 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
-
 
 
     @Autowired

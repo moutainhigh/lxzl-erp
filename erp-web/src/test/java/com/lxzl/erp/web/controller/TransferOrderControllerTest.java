@@ -66,7 +66,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     @Test
     public void createTransferOrderOut() throws Exception{
         TransferOrder transferOrder = new TransferOrder();
-        transferOrder.setTransferOrderName("转移单转出商品peng");
+        transferOrder.setTransferOrderName("转移单转出商品pengbinjie");
         transferOrder.setTransferOrderType(TransferOrderType.INTEGER_ORDER_TYPE_OUT_SOLD);
         transferOrder.setRemark("转出123备注");
 
@@ -141,8 +141,8 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     public void transferOrderProductEquipmentOut() throws Exception{
 
         TransferOrderProductEquipmentOutParam transferOrderProductEquipmentOutParam = new TransferOrderProductEquipmentOutParam();
-        transferOrderProductEquipmentOutParam.setTransferOrderNo("LXT40000012018011490");
-        transferOrderProductEquipmentOutParam.setProductEquipmentNo("LX-EQUIPMENT-4000001-2017121610107");
+        transferOrderProductEquipmentOutParam.setTransferOrderNo("LXT40000012018011598");
+        transferOrderProductEquipmentOutParam.setProductEquipmentNo("LX-EQUIPMENT-4000001-2017121610113");
 
         List<String> strings = new ArrayList<>();
 
@@ -160,8 +160,8 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     public void dumpTransferOrderProductEquipmentOut() throws Exception{
 
         TransferOrderProductEquipmentOutParam transferOrderProductEquipmentOutParam = new TransferOrderProductEquipmentOutParam();
-        transferOrderProductEquipmentOutParam.setTransferOrderNo("LXT40000012018011490");
-        transferOrderProductEquipmentOutParam.setProductEquipmentNo("LX-EQUIPMENT-4000001-2017121610107");
+        transferOrderProductEquipmentOutParam.setTransferOrderNo("LXT40000012018011492");
+        transferOrderProductEquipmentOutParam.setProductEquipmentNo("LX-1000--2018011402071");
 
         TestResult testResult = getJsonTestResult("/transferOrder/dumpTransferOrderProductEquipmentOut", transferOrderProductEquipmentOutParam);
     }
@@ -226,7 +226,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     @Test
     public void commitTransferOrder() throws Exception{
         TransferOrderCommitParam transferOrderCommitParam = new TransferOrderCommitParam();
-        transferOrderCommitParam.setTransferOrderNo("LXT40000012018011597");
+        transferOrderCommitParam.setTransferOrderNo("LXT40000012018011598");
         transferOrderCommitParam.setVerifyUserId(500006);
         transferOrderCommitParam.setRemark("提交转出转移单审核的备注");
         TestResult testResult = getJsonTestResult("/transferOrder/commitTransferOrder", transferOrderCommitParam);
