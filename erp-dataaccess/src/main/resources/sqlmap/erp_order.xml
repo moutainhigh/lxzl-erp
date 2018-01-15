@@ -354,7 +354,7 @@
                 <if test="true">
                     and eo.data_status = 1
                 </if>
-                <include refid="data_access_sql.order_control"/>
+                <include refid="permission_sql.order_control"/>
             </where>
             ORDER BY eo.create_time DESC
             LIMIT #{maps.start},#{maps.pageSize}
@@ -432,7 +432,7 @@
             <if test="true">
                 and eo.data_status = 1
             </if>
-            <include refid="data_access_sql.order_control"/>
+            <include refid="permission_sql.order_control"/>
         </where>
     </select>
 

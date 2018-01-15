@@ -264,9 +264,7 @@
 			<if test="laterApplyAmount != null">
 				later_apply_amount = #{laterApplyAmount,jdbcType=DECIMAL},
 			</if>
-			<if test="unionUser != null">
-				union_user = #{unionUser,jdbcType=INTEGER},
-			</if>
+			union_user = #{unionUser,jdbcType=INTEGER},
 		</set>
 	</sql>
 
@@ -281,6 +279,7 @@
 
 		SELECT count(ecc.id)
 		FROM erp_customer_company ecc
+		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1
 		<where>
 			<if test="maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
 				and ecc.customer_no LIKE CONCAT('%','${maps.queryParam.customerNo}','%' )
@@ -306,7 +305,7 @@
 			<if test="true">
 				AND ecc.data_status = 1
 			</if>
-			<include refid="data_access_sql.customer_company_control"/>
+			<include refid="permission_sql.customer_company_control"/>
 		</where>
 
 	</select>
@@ -320,6 +319,7 @@
 		(
 		SELECT <include refid="company_column_List"/>
 		FROM erp_customer_company ecc
+		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1
 		<where>
 			<if test="maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
 				and ecc.customer_no LIKE CONCAT('%','${maps.queryParam.customerNo}','%' )
@@ -345,7 +345,7 @@
 			<if test="true">
 				AND ecc.data_status = 1
 			</if>
-			<include refid="data_access_sql.customer_company_control"/>
+			<include refid="permission_sql.customer_company_control"/>
 		</where>
 		ORDER BY ecc.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
@@ -393,7 +393,7 @@
 			<if test="true">
 				AND ec.data_status = 1 AND ec.customer_type=2
 			</if>
-			<include refid="data_access_sql.customer_control"/>
+			<include refid="permission_sql.customer_control"/>
 		</where>
 	</select>
 	<select id="findCustomerPersonByParams" resultMap="CustomerDO" parameterType="map">
@@ -437,7 +437,7 @@
 			<if test="true">
 				AND ec.data_status = 1 AND ec.customer_type=2
 			</if>
-			<include refid="data_access_sql.customer_control"/>
+			<include refid="permission_sql.customer_control"/>
 		</where>
 		ORDER BY ec.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}

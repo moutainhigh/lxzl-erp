@@ -17,7 +17,7 @@ import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.company.CompanyService;
-import com.lxzl.erp.core.service.dataAccess.DataAccessSupport;
+import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
@@ -121,7 +121,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Autowired
     private GenerateNoSupport generateNoSupport;
     @Autowired
-    private DataAccessSupport dataAccessSupport;
+    private PermissionSupport permissionSupport;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
@@ -718,12 +718,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             purchaseOrderQueryParam.setWarehouseId(warehouseDO.getId());
         }
 
-        dataAccessSupport.setDataAccessPassiveUserList(purchaseOrderQueryParam);
-
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("queryParam", purchaseOrderQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = purchaseOrderMapper.findPurchaseOrderCountByParams(maps);
         List<PurchaseOrderDO> purchaseOrderDOList = purchaseOrderMapper.findPurchaseOrderByParams(maps);
@@ -880,12 +879,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             }
             purchaseDeliveryOrderQueryParam.setWarehouseId(warehouseDO.getId());
         }
-        dataAccessSupport.setDataAccessPassiveUserList(purchaseDeliveryOrderQueryParam);
-
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("queryParam", purchaseDeliveryOrderQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = purchaseDeliveryOrderMapper.findPurchaseDeliveryOrderCountByParams(maps);
         List<PurchaseDeliveryOrderDO> purchaseDeliveryOrderDOList = purchaseDeliveryOrderMapper.findPurchaseDeliveryOrderByParams(maps);
@@ -1325,13 +1323,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             purchaseReceiveOrderQueryParam.setPurchaseDeliveryOrderId(purchaseDeliveryOrderDO.getId());
         }
 
-        dataAccessSupport.setDataAccessPassiveUserList(purchaseReceiveOrderQueryParam);
-        dataAccessSupport.setDataAccessWarehouseList(purchaseReceiveOrderQueryParam);
-
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("queryParam", purchaseReceiveOrderQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER,PermissionType.PERMISSION_TYPE_WAREHOUSE));
 
         Integer totalCount = purchaseReceiveOrderMapper.findPurchaseReceiveOrderCountByParams(maps);
         List<PurchaseReceiveOrderDO> purchaseReceiveOrderDOList = purchaseReceiveOrderMapper.findPurchaseReceiveOrderByParams(maps);

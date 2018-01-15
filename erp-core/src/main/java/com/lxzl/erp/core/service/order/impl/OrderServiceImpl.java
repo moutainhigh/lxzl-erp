@@ -16,7 +16,7 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
-import com.lxzl.erp.core.service.dataAccess.DataAccessSupport;
+import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.material.impl.support.MaterialSupport;
@@ -880,14 +880,12 @@ public class OrderServiceImpl implements OrderService {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
 
-        dataAccessSupport.setDataAccessPassiveUserList(orderQueryParam);
-        dataAccessSupport.setDataAccessSubCompany(orderQueryParam);
-
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
 
         maps.put("orderQueryParam", orderQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE,PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
@@ -2086,7 +2084,7 @@ public class OrderServiceImpl implements OrderService {
     private GenerateNoSupport generateNoSupport;
 
     @Autowired
-    private DataAccessSupport dataAccessSupport;
+    private PermissionSupport permissionSupport;
 
     @Autowired
     private SubCompanyMapper subCompanyMapper;

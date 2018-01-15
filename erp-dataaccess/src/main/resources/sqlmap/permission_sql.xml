@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="permission_sql">
+	<sql id="purchase_control">
+		<if test="maps.permissionParam!=null &amp;&amp; maps.permissionParam.permissionUserIdList != null">
+			AND epo.create_user in
+			<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</sql>
+	<sql id="purchase_delivery_control">
+		<if test="maps.permissionParam!=null &amp;&amp; maps.permissionParam.permissionUserIdList != null">
+			AND epdo.create_user in
+			<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</sql>
+	<sql id="purchase_receive_control">
+		<if test="maps.permissionParam!=null">
+			AND (
+			<if test="maps.permissionParam.permissionUserIdList!= null" >
+				(epro.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+			<if test="maps.permissionParam.permissionWarehouseIdList!= null" >
+				or (epro.warehouse_id in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionWarehouseIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				)
+			</if>
+			)
+		</if>
+	</sql>
+
+	<sql id="order_control">
+		<if test="maps.permissionParam!=null">
+			AND (
+			<if test="maps.permissionParam.permissionUserIdList!= null" >
+				(eo.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+											separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.union_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.owner in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+			<if test="maps.permissionParam.permissionSubCompanyId!= null" >
+				OR (
+					eo.order_sub_company_id = #{maps.permissionParam.permissionSubCompanyId, jdbcType=INTEGER}
+				)
+			</if>
+			)
+		</if>
+	</sql>
+
+	<sql id="customer_control">
+		<if test="maps.permissionParam.permissionUserIdList != null">
+			AND ec.create_user in
+			<foreach item="item" index="index" collection="maps.queryParam.permissionUserIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</sql>
+	<sql id="customer_company_control">
+		<if test="maps.permissionParam!=null &amp;&amp; maps.permissionParam.permissionUserIdList != null">
+			AND
+			<if test="maps.permissionParam.permissionUserIdList!= null" >
+				(ecc.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.union_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.owner in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+		</if>
+	</sql>
+	<sql id="change_order_control">
+		<if test="maps.permissionParam!=null &amp;&amp; maps.permissionParam.permissionUserIdList != null">
+			AND eco.create_user in
+			<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</sql>
+
+	<sql id="return_order_control">
+		<if test="maps.permissionParam!=null &amp;&amp; maps.permissionParam.permissionUserIdList != null">
+			AND ero.create_user in
+			<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</sql>
+
+
+</mapper>
