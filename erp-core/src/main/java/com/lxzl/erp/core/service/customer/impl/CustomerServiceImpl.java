@@ -96,7 +96,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_COMPANY));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_COMPANY);
         if (customer.getIsDisabled() == null) {
-            customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);
+            customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
         } else {
             customerDO.setIsDisabled(customer.getIsDisabled());
         }
@@ -193,7 +193,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_PERSON));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
         if (customer.getIsDisabled() == null) {
-            customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);
+            customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
         } else {
             customerDO.setIsDisabled(customer.getIsDisabled());
         }
