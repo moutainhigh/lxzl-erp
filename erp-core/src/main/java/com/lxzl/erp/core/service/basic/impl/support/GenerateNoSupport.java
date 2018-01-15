@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrder;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.product.ProductQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
@@ -33,6 +34,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.peer.PeerMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.peerDeploymentOrder.PeerDeploymentOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseDeliveryOrderMapper;
@@ -635,6 +637,25 @@ public class GenerateNoSupport {
     }
 
     /**
+     * 同行调拨单编号
+     */
+    public String generatePeerDeploymentOrderNo(Date date, Integer warehouseId) {
+        HashMap<String, Object> maps = new HashMap<>();
+        TransferOrderOrderQueryParam transferOrderOrderQueryParam = new TransferOrderOrderQueryParam();
+        transferOrderOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+        transferOrderOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+        maps.put("queryParam",transferOrderOrderQueryParam);
+        Integer count = peerDeploymentOrderMapper.listCount(maps);
+        StringBuilder builder = new StringBuilder();
+        builder.append("LXPDO");
+        builder.append(warehouseId);
+        builder.append(new SimpleDateFormat("yyyyMMdd").format(date));
+        builder.append(count + 1);
+        return builder.toString();
+    }
+
+
+    /**
      * 生成采购申请单编号
      */
     public String generatePurchaseApplyOrderNo(String cityCode) {
@@ -674,6 +695,8 @@ public class GenerateNoSupport {
             return builder.toString();
         }
     }
+
+
 
     @Autowired
     private SupplierMapper supplierMapper;
@@ -723,4 +746,6 @@ public class GenerateNoSupport {
     private PurchaseApplyOrderMapper purchaseApplyOrderMapper;
     @Autowired
     private PeerMapper peerMapper;
+    @Autowired
+    private PeerDeploymentOrderMapper peerDeploymentOrderMapper;
 }
