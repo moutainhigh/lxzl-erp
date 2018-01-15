@@ -87,13 +87,12 @@ public interface TransferOrderService extends VerifyReceiver {
      */
     ServiceResult<String,String> updateTransferOrderOut(TransferOrder transferOrder);
 
-    /**
-     * 结束转移单
-     *
-     * @param transferOrder
-     * @return
-     */
-    ServiceResult<String,String> endTransferOrder(TransferOrder transferOrder);
+//    /**
+//     * 结束转移单
+//     * @param transferOrder
+//     * @return
+//     */
+//    ServiceResult<String,String> endTransferOrder(TransferOrder transferOrder);
 
     /**
      * 分页展示转移单

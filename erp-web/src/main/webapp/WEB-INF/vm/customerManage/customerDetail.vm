@@ -15,68 +15,127 @@
             #parse("layout/topbar.vm")
             <section id="content" class="pn animated fadeIn">
                 <form id="customerDetail">
-                <div class="pv30 ph40 bg-light dark br-b br-grey posr">
-                    <script type="text/html" id="customerHeadTpl">
-                        {{#customer}}
-                        <div class="w200 text-center pr30 hidden-xs">
-                            <img src="${staticManagement}img/author.png" class="responsive" width="100%" />
-                        </div>
-                        <div class="va-t m30">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h2 class=""> {{customerPerson.realName}} <small>{{customerNo}}</small></h2>
-                                    <p class="fs15"><b>用户类型：</b>{{cutomerTypeValue}}</p>
-                                    <p class="fs15"><b>是否禁用：</b>{{isDisabledValue}}</p>
-                                    <p class="fs15"><b>联系方式：</b><span class="mr10">{{customerPerson.email}}</span><span>{{customerPerson.phone}}</span></p>
-                                    <p class="fs15"><b>创建时间：</b>{{createTimeFormat}}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p class="fs15"><b>省份：</b>{{customerPerson.provinceName}}</p>
-                                    <p class="fs15"><b>城市：</b>{{customerPerson.cityName}}</p>
-                                    <p class="fs15"><b>地区：</b>{{customerPerson.districtName}}</p>
-                                    <p class="fs15"><b>地址：</b>{{customerPerson.address}}</p>
-                                    <p class="fs15"><b>备注：</b>{{customerPerson.remark}}</p>
-                                </div>
-                            </div>
-                            <hr />
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <p class="fs15"><b>账户金额：</b>￥{{#price}}{{customerAccount.balanceAmount}}{{/price}}</p>
-                                    <div class="btn-group" id="actionButtons">
-                                        {{#manualActionButtons}}
-                                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-customerno="{{customerNo}}">
-                                            <i class="{{iClass}}"></i> {{text}}
-                                        </a>
-                                        {{/manualActionButtons}}
+                    <div class="pv30 ph40 bg-light dark br-b br-grey posr">
+                        <script type="text/html" id="customerHeadTpl">
+                            {{#customer}}
+                            <div class="va-t m30">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <dl class="dl-horizontal">
+                                            <dt class="mb10">客户编号</dt><dd>{{customerNo}}</dd>
+                                            <dt class="mb10">客户姓名</dt><dd>{{customerPerson.realName}}</dd>
+                                            <dt class="mb10">身份证号</dt><dd>{{customerPerson.personNo}}</dd>
+                                            <dt class="mb10">邮箱</dt><dd>{{customerPerson.email}}</dd>
+                                            <dt class="mb10">手机号</dt><dd>{{customerPerson.phone}}</dd>
+                                            <dt class="mb10">个人地址</dt><dd>{{customerPerson.provinceName}}{{customerPerson.cityName}}{{customerPerson.districtName}}{{customerPerson.address}}</dd>
+                                            <dt class="mb10">紧急联系人</dt><dd>{{customerPerson.connectRealName}}<i class="fa fa-mobile mr5 ml10"></i>{{customerPerson.connectPhone}}</dd>
+                                            <dt class="mb10">备注</dt><dd>{{customerPerson.remark}}</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <dl class="dl-horizontal">
+                                            <dt class="mb10">首期申请额度</dt><dd class="text-danger">￥{{#price}}{{firstApplyAmount}}{{/price}}</dd>
+                                            <dt class="mb10">后期申请额度</dt><dd class="text-danger">￥{{#price}}{{laterApplyAmount}}{{/price}}</dd>
+                                            <dt class="mb10">用户类型</dt><dd>{{cutomerTypeValue}}</dd>
+                                            <dt class="mb10">是否禁用</dt><dd>{{isDisabledValue}}</dd>
+                                            <dt class="mb10">客户状态</dt><dd>{{customerStatusValue}}</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <dl class="dl-horizontal">
+                                            <dt class="mb10">创建人</dt><dd>{{createUserRealName}}</dd>
+                                            <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}</dd>
+                                            <dt class="mb10">联合开发人</dt><dd>{{unionUserName}}</dd>
+                                            <dt class="mb10">业务员</dt><dd>{{ownerName}}</dd>
+                                        </dl>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <p class="fs15"><b>冻结金额：</b>￥{{#price}}{{customerAccount.totalFrozenAmount}}{{/price}}</p>
-                                </div>
-                                <div class="col-md-3">
-                                    <p class="fs15"><b>租金押金：</b>￥{{#price}}{{customerAccount.rentDepositAmount}}{{/price}}</p>
-                                </div>
-                                <div class="col-md-3">
-                                    <p class="fs15"><b>设备押金：</b>￥{{#price}}{{customerAccount.depositAmount}}{{/price}}</p>
+                                <hr />
+                                <div class="row">
+
+                                    <div class="col-md-3">
+                                        <div class="panel panel-tile text-center">
+                                            <div class="panel-body bg-primary light">
+                                                <h1 class="fs35 mbn">￥{{#price}}{{customerAccount.balanceAmount}}{{/price}}</h1>
+                                                <h6 class="text-white">账户金额</h6>
+                                            </div>
+                                            <div class="panel-footer bg-white br-t br-light p12">
+                                                <div class="btn-group">
+                                                    {{#manualActionButtons}}
+                                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}} mr15" title="{{menuName}}" data-customerno="{{customerNo}}">
+                                                        <i class="{{iClass}}"></i> {{text}}
+                                                    </a>
+                                                    {{/manualActionButtons}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="panel panel-tile text-center">
+                                            <div class="panel-body">
+                                                <h1 class="fs35 mbn">￥{{#price}}{{customerAccount.totalFrozenAmount}}{{/price}}</h1>
+                                                <h6 class="text-primary">冻结金额</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="panel panel-tile text-center">
+                                            <div class="panel-body">
+                                                <h1 class="fs35 mbn">￥{{#price}}{{customerAccount.rentDepositAmount}}{{/price}}</h1>
+                                                <h6 class="text-primary">租金押金</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="panel panel-tile text-center">
+                                            <div class="panel-body">
+                                                <h1 class="fs35 mbn">￥{{#price}}{{customerAccount.depositAmount}}{{/price}}</h1>
+                                                <h6 class="text-primary">设备押金</h6>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        {{/customer}}
-                    </script>
-                    <div class="table-layout" id="customerHead"></div>
-                </div>
-                <div class="p25 pt35">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <h4 class="page-header mtn br-light text-muted hidden">用户信息</h4>
-                            #parse("component/customer/risk.vm")
-                            #parse("component/customer/address.vm")
-                        </div>
-                        <div class="col-md-8">
-                            #parse("component/customer/orders.vm")
+                            {{/customer}}
+                        </script>
+                        <div class="table-layout" id="customerHead"></div>
+
+                    </div>
+##                    <div class="p25 pt35">
+##                        <div class="row">
+##                            <div class="col-md-4">
+##                                <h4 class="page-header mtn br-light text-muted hidden">用户信息</h4>
+##                                #parse("component/customer/risk.vm")
+##                                #parse("component/customer/address.vm")
+##                            </div>
+##                            <div class="col-md-8">
+##                                #parse("component/customer/orders.vm")
+##                            </div>
+##                        </div>
+##                    </div>
+
+                    <div class="p25 pt">
+                        <div class="row">
+                            #parse("component/customer/riskInfo.vm")
                         </div>
                     </div>
-                </div>
+
+                    <div class="p25 ptn">
+                        <div class="row">
+                            <div class="col-md-12">
+                                #parse("component/customer/addressInfo.vm")
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p25 ptn">
+                        <div class="row">
+                            <div class="col-md-12">
+                                #parse("component/customer/orders.vm")
+                            </div>
+                        </div>
+                    </div>
+
                 </form>
             </section>
         </section>
@@ -87,6 +146,7 @@
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
+                'manage.customer.mixin.js',
                 'manage.customer.handle.mixin.js',
                 'manage.customer.detail.js',
                 'manage.customer.risk.js',

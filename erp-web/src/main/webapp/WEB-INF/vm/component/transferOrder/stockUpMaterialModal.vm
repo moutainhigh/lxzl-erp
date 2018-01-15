@@ -1,58 +1,219 @@
-<div id="stockUpMaterial" class="popup-basic admin-form mfp-with-anim">
+##<div id="stockUpMaterial" class="popup-basic admin-form mfp-with-anim">
+##    <div class="panel">
+##        <div class="panel-heading">
+##            <span class="panel-title"><i class="fa fa-pencil"></i><span class="modalTitle"></span></span>
+##        </div>
+##        <form method="post" class="inputForm">
+##            <div class="panel-body p25">
+##                <div class="section row">
+##                    <div class="col-md-12">
+##                        <label for="materialCount" class="field-label">配件</label>
+##                        <div class="smart-widget sm-right smr-50">
+##                            <label class="field">
+##                                <input type="hidden" name="materialNo" id="materialNo" class="required"/>
+##                                <input type="text" name="materialName" id="materialName" class="gui-input required" readonly />
+##                            </label>
+##                            <button type="button" class="button btn-primary bradiusN chooseMaterial"> <i class="fa fa-search"></i></button>
+##                        </div>
+##                    </div>
+##                </div>
+##                <div class="section row">
+##                    <div class="col-md-12">
+##                        <label for="materialCount" class="field-label">数量</label>
+##                        <label for="materialCount" class="field prepend-icon">
+##                            <input type="text" name="materialCount" id="materialCount" class="gui-input required number" maxlength="10">
+##                            <label for="materialCount" class="field-icon"><i class="fa fa-tag"></i>
+##                            </label>
+##                        </label>
+##                    </div>
+##                </div>
+##                <div class="section row">
+##                    <div class="col-md-12">
+##                        <label for="materialCount" class="field-label">配件属性</label>
+##                        <label class="field select">
+##                            <select id="isNew" name="isNew" class="isNew">
+##                                <option value="0">旧配件</option>
+##                                <option value="1">新配件</option>
+##                            </select>
+##                            <i class="arrow"></i>
+##                        </label>
+##                    </div>
+##                </div>
+##                <div class="section row">
+##                    <div class="col-md-12">
+##                        <label for="remark" class="field-label">备注</label>
+##                        <label for="remark" class="field prepend-icon">
+##                            <textarea class="gui-textarea" id="remark" name="remark" style="height: 170px;" placeholder="输入备注"></textarea>
+##                            <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
+##                        </label>
+##                    </div>
+##                </div>
+##            </div>
+##            <div class="panel-footer text-right">
+##                <button type="submit" class="button btn-primary">确定</button>
+##                <button type="button" class="button btn-default cancelButton">取消</button>
+##            </div>
+##        </form>
+##    </div>
+##</div>
+
+<div class="popup-basic popup-xl admin-form mfp-with-anim theme-primary " id="chooseMaterialModal">
     <div class="panel">
         <div class="panel-heading">
-            <span class="panel-title"><i class="fa fa-pencil"></i><span class="modalTitle"></span></span>
+            <span class="panel-title"><i class="fa fa-search"></i><span class="modalTitle"></span></span>
         </div>
-        <form method="post" class="inputForm">
-            <div class="panel-body p25">
-                <div class="section row">
-                    <div class="col-md-12">
-                        <label for="materialCount" class="field-label">配件</label>
-                        <div class="smart-widget sm-right smr-50">
-                            <label class="field">
-                                <input type="hidden" name="materialNo" id="materialNo" class="required"/>
-                                <input type="text" name="materialName" id="materialName" class="gui-input required" readonly />
-                            </label>
-                            <button type="button" class="button btn-primary bradiusN chooseMaterial"> <i class="fa fa-search"></i></button>
+        <div class="panel-menu p12">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <form id="chooseMaterialSearchForm" class="form-horizontal">
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                            <button type="reset" class="btn btn-default btn-sm">重置</button>
                         </div>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <label for="materialCount" class="field-label">数量</label>
-                        <label for="materialCount" class="field prepend-icon">
-                            <input type="text" name="materialCount" id="materialCount" class="gui-input required number" maxlength="10">
-                            <label for="materialCount" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <label for="materialCount" class="field-label">配件属性</label>
-                        <label class="field select">
-                            <select id="isNew" name="isNew" class="isNew">
-                                <option value="0">旧配件</option>
-                                <option value="1">新配件</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <label for="remark" class="field-label">备注</label>
-                        <label for="remark" class="field prepend-icon">
-                            <textarea class="gui-textarea" id="remark" name="remark" style="height: 170px;" placeholder="输入备注"></textarea>
-                            <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
-                        </label>
-                    </div>
+                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                            <div class="input-group">
+                                <input type="text" name="materialName" id="materialName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入配件名称">
+                            </div>
+                        </div>
+                        <div class="form-group pull-right mn mr10" style="width: 120px;">
+                            <div class="input-group">
+                                <input type="text" name="materialNo" id="materialNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入配件编号">
+                            </div>
+                        </div>
+                        <div class="form-group pull-right mn mr10">
+                            <div class="input-group">
+                                <select class="form-control input-sm bradius" name="materialType" id="materialType"></select>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-            <div class="panel-footer text-right">
-                <button type="submit" class="button btn-primary">确定</button>
-                <button type="button" class="button btn-default cancelButton">取消</button>
+        </div>
+        <div class="panel-body pn">
+            <div class="table-responsive">
+                <script type="text/html" id="chooseMaterialModalDataListTpl">
+                    <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>图片</th>
+                        <th>名称</th>
+                        <th>型号</th>
+                        <th>类型</th>
+                        <th>配件值大小</th>
+                        <th>配件价值</th>
+                        <th>租赁价格</th>
+                        <th>库存</th>
+##                        {{#showIsNewCheckBox}}
+##                        <th>配件属性</th>
+##                        {{/showIsNewCheckBox}}
+                        <th class="text-right">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#dataSource}}
+                    {{#listData}}
+                    <tr class="materialRow">
+                        <td>{{materialNo}}</td>
+                        <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                        <td>{{materialName}}</td>
+                        <td>{{materialModelName}}</td>
+                        <td>{{materialTypeStr}}</td>
+                        <td>{{#memorysize}}{{materialCapacityValue}}{{/memorysize}}</td>
+                        <td>￥{{#price}}{{materialPriceFormat}}{{/price}}</td>
+                        <td>
+                            <p style="white-space:nowrap">日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
+                            <p style="white-space:nowrap">月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
+                        </td>
+                        <td>
+                            <p style="white-space:nowrap">新：{{newMaterialCount}}</p>
+                            <p style="white-space:nowrap">次新：{{oldMaterialCount}}</p>
+                        </td>
+                        <td class="text-right">
+                            <div class="btn-group text-right">
+                                <a href="#" type="button" class="btn btn-default btn-xs chooseButton" data-materialNo="{{materialNo}}" data-material="{{materialJSONString}}">选择</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="stockMatrialRow bg-light br-n" style="height: 0">
+                        <td colspan="11" class="pn mn br-n" style="height: 0">
+                            <div class="panel stockMatrialPanel" style="display: none;">
+                                <form method="post" class="inputForm">
+                                    <div class="panel-heading pn ph8">
+                                        <span class="panelTitle"></span>
+                                    </div>
+                                    <div class="panel-body p25">
+                                        <div class="section row">
+##                                            <div class="col-md-4">
+##                                                <label for="materialCount" class="field-label">配件</label>
+##                                                <div class="smart-widget sm-right smr-50">
+##                                                    <label class="field">
+##                                                        <input type="hidden" name="materialNo" id="materialNo" class="required"/>
+##                                                        <input type="text" name="materialName" id="materialName" class="gui-input required" readonly />
+##                                                    </label>
+##                                                    <button type="button" class="button btn-primary bradiusN chooseMaterial"> <i class="fa fa-search"></i></button>
+##                                                </div>
+##                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="materialCount" class="field-label">数量</label>
+                                                <label for="materialCount" class="field prepend-icon">
+                                                    <input type="hidden" name="materialNo" id="materialNo" class="required" value="{{materialNo}}" />
+                                                    <input type="text" name="materialCount" id="materialCount" class="gui-input required number" maxlength="10">
+                                                    <label for="materialCount" class="field-icon"><i class="fa fa-tag"></i>
+                                                    </label>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="materialCount" class="field-label">配件属性</label>
+                                                <label class="field select">
+                                                    <select id="isNew" name="isNew" class="isNew">
+                                                        <option value="0">旧配件</option>
+                                                        <option value="1">新配件</option>
+                                                    </select>
+                                                    <i class="arrow"></i>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="section row">
+                                            <div class="col-md-12">
+                                                <label for="remark" class="field-label">备注</label>
+                                                <label for="remark" class="field prepend-icon">
+                                                    <textarea class="gui-textarea" id="remark" name="remark" style="height: 100px;" placeholder="输入备注"></textarea>
+                                                    <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-footer text-right">
+                                      <div class="btn-group">
+                                          <button type="submit" class="btn btn-xs btn-primary">确定</button>
+                                          <button type="button" class="btn btn-xs btn-default cancelStockMaterialButton ml15">取消</button>
+                                      </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {{/listData}}
+                    {{^listData}}
+                    <tr>
+                        <td valign="top" colspan="14" class="text-center">没有查询到配件信息</td>
+                    </tr>
+                    {{/listData}}
+                    {{/dataSource}}
+                    </tbody>
+                </script>
+                <table class="table  admin-form theme-warning tc-checkbox-1 fs13" id="chooseMaterialDataListTable"></table>
             </div>
-        </form>
+        </div>
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                    #parse("component/pager.vm")
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+
+

@@ -10,7 +10,7 @@
     </settings>
 
     <mappers>
-        <mapper resource="sqlmap/data_access_sql.xml" />
+        <mapper resource="sqlmap/permission_sql.xml" />
         <mapper resource="sqlmap/erp_role.xml" />
         <mapper resource="sqlmap/erp_role_menu.xml" />
         <mapper resource="sqlmap/erp_sys_menu.xml" />

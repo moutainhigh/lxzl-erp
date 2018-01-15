@@ -22,7 +22,7 @@ public class TransferOrder extends BasePO {
 	private String transferOrderNo;   //转移单编号
 	@NotBlank(message = ErrorCode.TRANSFER_ORDER_NAME_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class,UpdateTransferOrderIntoGroup.class,UpdateTransferOrderOutGroup.class})
 	private String transferOrderName;   //转移单名称
-	private Integer transferOrderStatus;   //转移单状态，0初始化，4审批中，8转移成功，16取消转移，20转移结束
+	private Integer transferOrderStatus;   //转移单状态，0初始化，2备货中,4审批中，8转移成功，16取消转移，20转移结束
 	private Integer transferOrderMode;   //转移方式，1转入，2转出（凭空转入转出）
 	@NotNull(message = ErrorCode.TRANSFER_ORDER_TYPE_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class})
 	private Integer transferOrderType;   //	转入类型：1外借入库转入，2试验机转入，3原有资产，99其他。 转出类型：51丢失，52售出，53试验机归还，99其他

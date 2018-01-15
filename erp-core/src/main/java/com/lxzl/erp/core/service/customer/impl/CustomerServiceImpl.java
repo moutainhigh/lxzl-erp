@@ -22,8 +22,8 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.CustomerService;
-import com.lxzl.erp.core.service.dataAccess.DataAccessSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
+import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
@@ -79,7 +79,7 @@ public class CustomerServiceImpl implements CustomerService {
     private SubCompanyMapper subCompanyMapper;
 
     @Autowired
-    private DataAccessSupport dataAccessSupport;
+    private PermissionSupport permissionSupport;
 
 
     @Override
@@ -95,11 +95,7 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerDO customerDO = ConverterUtil.convert(customer, CustomerDO.class);
         customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_COMPANY));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_COMPANY);
-        if (customer.getIsDisabled() == null) {
-            customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);
-        } else {
-            customerDO.setIsDisabled(customer.getIsDisabled());
-        }
+        customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
         customerDO.setCustomerName(customer.getCustomerCompany().getCompanyName());
         customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
         customerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -109,9 +105,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         //加入业务员和联合开发员
         customerDO.setOwner(customer.getOwner());
-        if (customer.getUnionUser() != null) {
-            customerDO.setUnionUser(customer.getUnionUser());
-        }
+        customerDO.setUnionUser(customer.getUnionUser());
         customerMapper.save(customerDO);
 
         CustomerCompanyDO customerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
@@ -192,11 +186,7 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerDO customerDO = ConverterUtil.convert(customer, CustomerDO.class);
         customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_PERSON));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
-        if (customer.getIsDisabled() == null) {
-            customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_YES);
-        } else {
-            customerDO.setIsDisabled(customer.getIsDisabled());
-        }
+        customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
         customerDO.setCustomerName(customer.getCustomerPerson().getRealName());
         customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
         customerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -206,9 +196,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerDO.setOwner(customer.getOwner());
         //加入业务员和联合开发员
-        if (customer.getUnionUser() != null) {
-            customerDO.setUnionUser(customer.getUnionUser());
-        }
+        customerDO.setUnionUser(customer.getUnionUser());
         customerMapper.save(customerDO);
 
         CustomerPersonDO customerPersonDO = ConverterUtil.convert(customer.getCustomerPerson(), CustomerPersonDO.class);
@@ -398,9 +386,8 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
         //更改联合开发人
-        if (customer.getUnionUser() != null && !customerDO.getOwner().equals(customer.getUnionUser())) {
-            customerDO.setUnionUser(customer.getUnionUser());
-        }
+        customerDO.setUnionUser(customer.getUnionUser());
+        customerDO.setIsDisabled(null);
         customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
         customerDO.setCustomerName(newCustomerCompanyDO.getCompanyName());
         customerDO.setOwner(customer.getOwner());
@@ -450,9 +437,8 @@ public class CustomerServiceImpl implements CustomerService {
         customerPersonMapper.update(newCustomerPersonDO);
 
         //更改联合开发人
-        if (customer.getUnionUser() != null && !customerDO.getOwner().equals(customer.getUnionUser())) {
-            customerDO.setUnionUser(customer.getUnionUser());
-        }
+        customerDO.setUnionUser(customer.getUnionUser());
+        customerDO.setIsDisabled(null);
         customerDO.setFirstApplyAmount(customer.getFirstApplyAmount());
         customerDO.setLaterApplyAmount(customer.getLaterApplyAmount());
         customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
@@ -532,12 +518,11 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, Page<Customer>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
 
-        dataAccessSupport.setDataAccessPassiveUserList(customerCompanyQueryParam);
-
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("queryParam", customerCompanyQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = customerMapper.findCustomerCompanyCountByParams(maps);
         List<CustomerDO> customerDOList = customerMapper.findCustomerCompanyByParams(maps);
@@ -554,12 +539,11 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, Page<Customer>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(customerPersonQueryParam.getPageNo(), customerPersonQueryParam.getPageSize());
 
-        dataAccessSupport.setDataAccessPassiveUserList(customerPersonQueryParam);
-
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("queryParam", customerPersonQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = customerMapper.findCustomerPersonCountByParams(maps);
         List<CustomerDO> customerDOList = customerMapper.findCustomerPersonByParams(maps);
@@ -579,13 +563,13 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
-        List<Integer> dataAccessPassiveUserList = dataAccessSupport.getDataAccessPassiveUserList();
+        List<Integer> dataAccessPassiveUserList = permissionSupport.getCanAccessPassiveUserList(userSupport.getCurrentUserId());
         //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人  并且当前用户的可观察列表中不包含当前数据的创建人，则不允许看此条数据
         if (!userSupport.getCurrentUserId().equals(customerDO.getOwner()) &&
                 !userSupport.getCurrentUserId().equals(customerDO.getUnionUser()) &&
-                !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser()))&&
-                !dataAccessPassiveUserList.contains(Integer.parseInt(customerDO.getCreateUser()))&&
-                !dataAccessPassiveUserList.contains(customerDO.getOwner())&&
+                !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser())) &&
+                !dataAccessPassiveUserList.contains(Integer.parseInt(customerDO.getCreateUser())) &&
+                !dataAccessPassiveUserList.contains(customerDO.getOwner()) &&
                 !dataAccessPassiveUserList.contains(customerDO.getUnionUser())) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
@@ -1060,7 +1044,6 @@ public class CustomerServiceImpl implements CustomerService {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
-
         customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
         customerDO.setUpdateTime(currentTime);
         customerDO.setUpdateUser(currentUserId);
@@ -1404,4 +1387,5 @@ public class CustomerServiceImpl implements CustomerService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
+
 }

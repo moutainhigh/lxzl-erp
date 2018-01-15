@@ -3,7 +3,6 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.TransferOrderType;
-import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.transferOrder.*;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrder;
 import com.lxzl.erp.common.domain.transferOrder.pojo.TransferOrderMaterial;
@@ -59,7 +58,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
         TransferOrderMaterialList.add(transferOrderMaterial2);
 
         transferOrder.setTransferOrderProductList(transferOrderProductList);
-        transferOrder.setTransferOrderMaterialList(TransferOrderMaterialList);
+//        transferOrder.setTransferOrderMaterialList(TransferOrderMaterialList);
 
         TestResult testResult = getJsonTestResult("/transferOrder/createTransferOrderInto", transferOrder);
     }
@@ -216,18 +215,18 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     }
 
 
-    @Test
-    public void endTransferOrder() throws Exception{
-        TransferOrder transferOrder = new TransferOrder();
-        transferOrder.setTransferOrderNo("LXT40000012018010922");
-
-        TestResult testResult = getJsonTestResult("/transferOrder/endTransferOrder", transferOrder);
-    }
+//    @Test
+//    public void endTransferOrder() throws Exception{
+//        TransferOrder transferOrder = new TransferOrder();
+//        transferOrder.setTransferOrderNo("LXT40000012018010922");
+//
+//        TestResult testResult = getJsonTestResult("/transferOrder/endTransferOrder", transferOrder);
+//    }
 
     @Test
     public void commitTransferOrder() throws Exception{
         TransferOrderCommitParam transferOrderCommitParam = new TransferOrderCommitParam();
-        transferOrderCommitParam.setTransferOrderNo("LXT40000012018011496");
+        transferOrderCommitParam.setTransferOrderNo("LXT40000012018011597");
         transferOrderCommitParam.setVerifyUserId(500006);
         transferOrderCommitParam.setRemark("提交转出转移单审核的备注");
         TestResult testResult = getJsonTestResult("/transferOrder/commitTransferOrder", transferOrderCommitParam);
