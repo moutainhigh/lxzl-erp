@@ -445,7 +445,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", repairOrderQueryParam);
+        maps.put("repairOrderQueryParam", repairOrderQueryParam);
 
         Integer totalCount = repairOrderMapper.findRepairOrderCountByParams(maps);
         List<RepairOrderDO> RepairOrderDOList = repairOrderMapper.findRepairOrderByParams(maps);

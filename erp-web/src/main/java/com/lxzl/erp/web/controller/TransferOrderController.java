@@ -130,14 +130,14 @@ public class TransferOrderController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    /**
-     * 结束转移
-     */
-    @RequestMapping(value = "endTransferOrder", method = RequestMethod.POST)
-    public Result endTransferOrder(@RequestBody @Validated(IdGroup.class)TransferOrder transferOrder, BindingResult validResult) {
-        ServiceResult<String,String> serviceResult = transferOrderService.endTransferOrder(transferOrder);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
+//    /**
+//     * 结束转移
+//     */
+//    @RequestMapping(value = "endTransferOrder", method = RequestMethod.POST)
+//    public Result endTransferOrder(@RequestBody @Validated(IdGroup.class)TransferOrder transferOrder, BindingResult validResult) {
+//        ServiceResult<String,String> serviceResult = transferOrderService.endTransferOrder(transferOrder);
+//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+//    }
 
     /**
      * 分页展示

@@ -37,4 +37,14 @@ public class PeerDeploymentOrderController extends BaseController {
         ServiceResult<String, String> serviceResult = peerDeploymentOrderService.createPeerDeploymentOrder(peerDeploymentOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    /**
+     * 取消同行调拨单
+     */
+    @RequestMapping(value = "cancel", method = RequestMethod.POST)
+    public Result cancel(@RequestBody PeerDeploymentOrder peerDeploymentOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.cancel(peerDeploymentOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 }
