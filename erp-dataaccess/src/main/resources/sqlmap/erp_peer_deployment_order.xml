@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.peerDeploymentOrder.PeerDeploymentOrderMaterialMapper">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.peerDeploymentOrder.PeerDeploymentOrderMapper">
 
 	<resultMap id="PeerDeploymentOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
@@ -32,6 +32,12 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(epdom.id) FROM erp_peer_deployment_order_material epdom
 		<where>
+			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.createStartTime != null ">
+				<![CDATA[ AND epdom.create_time >= #{maps.queryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.createEndTime != null">
+				<![CDATA[ AND epdom.create_time <= #{maps.queryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				AND epdom.data_status = 1
 			</if>

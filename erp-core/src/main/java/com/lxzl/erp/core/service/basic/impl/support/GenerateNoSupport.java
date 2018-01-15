@@ -2,7 +2,6 @@ package com.lxzl.erp.core.service.basic.impl.support;
 
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.CustomerType;
-import com.lxzl.erp.common.domain.TransferOrderOrderQueryParam;
 import com.lxzl.erp.common.domain.assembleOder.AssembleOrderQueryParam;
 import com.lxzl.erp.common.domain.changeOrder.ChangeOrderPageParam;
 import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
@@ -10,7 +9,7 @@ import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
-import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrder;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.product.ProductQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
@@ -20,6 +19,7 @@ import com.lxzl.erp.common.domain.purchaseApply.PurchaseApplyOrderPageParam;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderQueryParam;
 import com.lxzl.erp.common.domain.returnOrder.ReturnOrderPageParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
 import com.lxzl.erp.common.domain.warehouse.StockOrderQueryParam;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.common.util.DateUtil;
@@ -623,10 +623,10 @@ public class GenerateNoSupport {
      */
     public String generateTransferOrderNo(Date date, Integer warehouseId) {
         HashMap<String, Object> maps = new HashMap<>();
-        TransferOrderOrderQueryParam transferOrderOrderQueryParam = new TransferOrderOrderQueryParam();
-        transferOrderOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-        transferOrderOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
-        maps.put("queryParam",transferOrderOrderQueryParam);
+        TransferOrderQueryParam transferOrderQueryParam = new TransferOrderQueryParam();
+        transferOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+        transferOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+        maps.put("queryParam",transferOrderQueryParam);
         Integer count = transferOrderMapper.listCount(maps);
         StringBuilder builder = new StringBuilder();
         builder.append("LXT");
@@ -639,16 +639,17 @@ public class GenerateNoSupport {
     /**
      * 同行调拨单编号
      */
-    public String generatePeerDeploymentOrderNo(Date date, Integer warehouseId) {
+    public String generatePeerDeploymentOrderNo(Date date, Integer cityId) {
         HashMap<String, Object> maps = new HashMap<>();
-        TransferOrderOrderQueryParam transferOrderOrderQueryParam = new TransferOrderOrderQueryParam();
-        transferOrderOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-        transferOrderOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
-        maps.put("queryParam",transferOrderOrderQueryParam);
+        PeerDeploymentOrderQueryParam peerDeploymentOrderQueryParam = new PeerDeploymentOrderQueryParam();
+        peerDeploymentOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+        peerDeploymentOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+        maps.put("queryParam",peerDeploymentOrderQueryParam);
         Integer count = peerDeploymentOrderMapper.listCount(maps);
+        AreaCityDO areaCityDO = areaCityMapper.findById(cityId);
         StringBuilder builder = new StringBuilder();
         builder.append("LXPDO");
-        builder.append(warehouseId);
+        builder.append(areaCityDO.getCityCode());
         builder.append(new SimpleDateFormat("yyyyMMdd").format(date));
         builder.append(count + 1);
         return builder.toString();
