@@ -147,6 +147,13 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         return false;
     }
 
+    /**
+     * 保存同行调拨单商品转入
+     * @param peerDeploymentOrderProductDOList
+     * @param peerDeploymentOrderNo
+     * @param loginUser
+     * @param currentTime
+     */
     private void savePeerDeploymentOrderProductInfo(List<PeerDeploymentOrderProductDO> peerDeploymentOrderProductDOList, String peerDeploymentOrderNo, User loginUser, Date currentTime) {
         Map<Integer, PeerDeploymentOrderProductDO> savePeerDeploymentOrderProductDOMap = new HashMap<>();
         Map<Integer, PeerDeploymentOrderProductDO> updatePeerDeploymentOrderProductDOMap = new HashMap<>();
@@ -217,6 +224,13 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         }
     }
 
+    /**
+     * 保存同行调拨单配件转入
+     * @param peerDeploymentOrderMaterialDOList
+     * @param peerDeploymentOrderNo
+     * @param loginUser
+     * @param currentTime
+     */
     private void savePeerDeploymentOrderMaterialInfo(List<PeerDeploymentOrderMaterialDO> peerDeploymentOrderMaterialDOList, String peerDeploymentOrderNo, User loginUser, Date currentTime) {
         Map<Integer, PeerDeploymentOrderMaterialDO> savePeerDeploymentOrderMaterialDOMap = new HashMap<>();
         Map<Integer, PeerDeploymentOrderMaterialDO> updatePeerDeploymentOrderMaterialDOMap = new HashMap<>();
@@ -283,6 +297,13 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         }
     }
 
+    /**
+     * 保存同行调拨单收货信息
+     * @param peerDeploymentOrderConsignInfoDO
+     * @param peerDeploymentOrderId
+     * @param loginUser
+     * @param currentTime
+     */
     private void savePeerDeploymentOrderConsignInfo(PeerDeploymentOrderConsignInfoDO peerDeploymentOrderConsignInfoDO, Integer peerDeploymentOrderId, User loginUser, Date currentTime) {
 
         PeerDeploymentOrderConsignInfoDO dbPeerDeploymentOrderConsignInfoDO = peerDeploymentOrderConsignInfoMapper.findByPeerDeploymentOrderConsignInfoId(peerDeploymentOrderId);

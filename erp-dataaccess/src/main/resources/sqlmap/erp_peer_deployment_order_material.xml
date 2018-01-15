@@ -109,11 +109,11 @@
 	</select>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_deployment_order_material (deployment_order_id,deployment_order_no,deployment_material_id,deployment_material_unit_amount,deployment_material_amount,deployment_product_material_count,deployment_product_material_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
-		<foreach item="PeerDeploymentOrderMaterialDO" collection="deploymentOrderMaterialDOList" separator="UNION ALL">
-			SELECT edo.id,#{deploymentOrderMaterialDO.deploymentOrderNo},#{deploymentOrderMaterialDO.deploymentMaterialId},#{deploymentOrderMaterialDO.deploymentMaterialUnitAmount},#{deploymentOrderMaterialDO.deploymentMaterialAmount},#{deploymentOrderMaterialDO.deploymentProductMaterialCount},#{deploymentOrderMaterialDO.deploymentProductMaterialSnapshot},
-			#{deploymentOrderMaterialDO.dataStatus},#{deploymentOrderMaterialDO.remark},#{deploymentOrderMaterialDO.createTime},#{deploymentOrderMaterialDO.createUser},#{deploymentOrderMaterialDO.updateTime},#{deploymentOrderMaterialDO.updateUser}
-			FROM erp_deployment_order edo WHERE edo.deployment_order_no = #{deploymentOrderMaterialDO.deploymentOrderNo}
+		insert into erp_peer_deployment_order_material (peer_deployment_order_id,peer_deployment_order_no,material_id,material_unit_amount,material_amount,product_material_count,product_material_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
+		<foreach item="PeerDeploymentOrderMaterialDO" collection="peerDeploymentOrderMaterialDOList" separator="UNION ALL">
+			SELECT epdo.id,#{peerDeploymentOrderMaterialDO.peerDeploymentOrderNo},#{peerDeploymentOrderMaterialDO.materialId},#{peerDeploymentOrderMaterialDO.materialUnitAmount},#{peerDeploymentOrderMaterialDO.materialAmount},#{peerDeploymentOrderMaterialDO.productMaterialCount},#{peerDeploymentOrderMaterialDO.productMaterialSnapshot},
+			#{peerDeploymentOrderMaterialDO.dataStatus},#{peerDeploymentOrderMaterialDO.remark},#{peerDeploymentOrderMaterialDO.createTime},#{peerDeploymentOrderMaterialDO.createUser},#{peerDeploymentOrderMaterialDO.updateTime},#{peerDeploymentOrderMaterialDO.updateUser}
+			FROM erp_peer_deployment_order epdo WHERE epdo.peer_deployment_order_no = #{peerDeploymentOrderMaterialDO.peerDeploymentOrderNo}
 		</foreach>
 	</insert>
 
