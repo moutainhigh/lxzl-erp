@@ -234,7 +234,7 @@
 			<if test="true">
 				and epo.data_status = 1
 			</if>
-			<include refid="data_access_sql.purchase_control"/>
+			<include refid="permission_sql.purchase_control"/>
 		</where>
 	</select>
 	<select id="findPurchaseOrderByParams" resultMap="PurchaseOrderDO" parameterType="map">
@@ -275,7 +275,7 @@
 				and epo.data_status = 1
 			</if>
 
-			<include refid="data_access_sql.purchase_control"/>
+			<include refid="permission_sql.purchase_control"/>
 		</where>
 		order by epo.create_time desc
 		LIMIT #{maps.start},#{maps.pageSize}

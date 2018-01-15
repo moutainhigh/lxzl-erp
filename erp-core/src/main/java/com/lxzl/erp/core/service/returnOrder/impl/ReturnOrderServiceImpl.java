@@ -16,7 +16,7 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
-import com.lxzl.erp.core.service.dataAccess.DataAccessSupport;
+import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.returnOrder.ReturnOrderService;
@@ -33,7 +33,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.*;
-import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
@@ -42,8 +41,6 @@ import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.returnOrder.*;
-import com.lxzl.erp.dataaccess.domain.user.UserDO;
-import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -585,11 +582,11 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         ServiceResult<String, Page<ReturnOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(returnOrderPageParam.getPageNo(), returnOrderPageParam.getPageSize());
 
-        dataAccessSupport.setDataAccessPassiveUserList(returnOrderPageParam);
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("queryParam", returnOrderPageParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = returnOrderMapper.findReturnOrderCountByParams(maps);
         List<ReturnOrderDO> purchaseOrderDOList = returnOrderMapper.findReturnOrderByParams(maps);
@@ -1098,7 +1095,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     @Autowired
     private GenerateNoSupport generateNoSupport;
     @Autowired
-    private DataAccessSupport dataAccessSupport;
+    private PermissionSupport permissionSupport;
 
 
 }

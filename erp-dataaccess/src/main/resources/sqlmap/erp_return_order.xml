@@ -259,7 +259,7 @@
 			<if test="true">
 				and ero.data_status = 1
 			</if>
-			<include refid="data_access_sql.return_order_control"/>
+			<include refid="permission_sql.return_order_control"/>
 		</where>
 	</select>
 	<select id="findReturnOrderByParams" resultMap="ReturnOrderDO" parameterType="map">
@@ -295,7 +295,7 @@
 			<if test="true">
 				and ero.data_status = 1
 			</if>
-			<include refid="data_access_sql.return_order_control"/>
+			<include refid="permission_sql.return_order_control"/>
 		</where>
 		order by ero.create_time desc
 		LIMIT #{maps.start},#{maps.pageSize}

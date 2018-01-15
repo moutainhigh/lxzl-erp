@@ -250,7 +250,7 @@
 			<if test="true">
 				and eco.data_status = 1
 			</if>
-			<include refid="data_access_sql.change_order_control"/>
+			<include refid="permission_sql.change_order_control"/>
 		</where>
 	</select>
 	<select id="findChangeOrderByParams" resultMap="ChangeOrderDO" parameterType="map">
@@ -282,7 +282,7 @@
 			<if test="true">
 				and eco.data_status = 1
 			</if>
-			<include refid="data_access_sql.change_order_control"/>
+			<include refid="permission_sql.change_order_control"/>
 		</where>
 		order by eco.create_time desc
 		LIMIT #{maps.start},#{maps.pageSize}

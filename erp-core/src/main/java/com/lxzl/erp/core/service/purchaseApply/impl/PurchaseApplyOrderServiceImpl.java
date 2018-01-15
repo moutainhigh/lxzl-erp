@@ -15,7 +15,7 @@ import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
-import com.lxzl.erp.core.service.dataAccess.DataAccessSupport;
+import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.purchase.impl.PurchaseOrderServiceImpl;
 import com.lxzl.erp.core.service.purchaseApply.PurchaseApplyOrderService;
@@ -69,7 +69,7 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
     @Autowired
     private WorkflowService workflowService;
     @Autowired
-    private DataAccessSupport dataAccessSupport;
+    private PermissionSupport permissionSupport;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
@@ -528,12 +528,12 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
     public ServiceResult<String, Page<PurchaseApplyOrder>> queryAll(PurchaseApplyOrderPageParam purchaseApplyOrderPageParam) {
         ServiceResult<String, Page<PurchaseApplyOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(purchaseApplyOrderPageParam.getPageNo(), purchaseApplyOrderPageParam.getPageSize());
-        dataAccessSupport.setDataAccessPassiveUserList(purchaseApplyOrderPageParam);
 
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("queryParam", purchaseApplyOrderPageParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = purchaseApplyOrderMapper.listCount(maps);
         List<PurchaseApplyOrderDO> purchaseApplyOrderDOList = purchaseApplyOrderMapper.listPage(maps);

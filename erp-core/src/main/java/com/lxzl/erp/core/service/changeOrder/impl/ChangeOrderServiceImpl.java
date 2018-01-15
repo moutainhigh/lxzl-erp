@@ -15,7 +15,7 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.changeOrder.ChangeOrderService;
 import com.lxzl.erp.core.service.customer.order.CustomerOrderSupport;
-import com.lxzl.erp.core.service.dataAccess.DataAccessSupport;
+import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.material.BulkMaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.order.OrderService;
@@ -33,7 +33,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.changeOrder.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
@@ -44,7 +43,6 @@ import com.lxzl.erp.dataaccess.domain.order.OrderProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
-import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -1106,12 +1104,11 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         ServiceResult<String, Page<ChangeOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(changeOrderPageParam.getPageNo(), changeOrderPageParam.getPageSize());
 
-        dataAccessSupport.setDataAccessPassiveUserList(changeOrderPageParam);
-
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("queryParam", changeOrderPageParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = changeOrderMapper.findChangeOrderCountByParams(maps);
         List<ChangeOrderDO> changeOrderDOList = changeOrderMapper.findChangeOrderByParams(maps);
@@ -1439,5 +1436,5 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     @Autowired
     private GenerateNoSupport generateNoSupport;
     @Autowired
-    private DataAccessSupport dataAccessSupport;
+    private PermissionSupport permissionSupport;
 }

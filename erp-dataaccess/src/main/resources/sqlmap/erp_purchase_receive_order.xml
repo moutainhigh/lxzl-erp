@@ -273,7 +273,7 @@
 			<if test="true">
 				AND epro.data_status = 1
 			</if>
-			<include refid="data_access_sql.purchase_receive_control"/>
+			<include refid="permission_sql.purchase_receive_control"/>
 		</where>
 	</select>
 	<select id="findPurchaseReceiveOrderByParams" resultMap="PurchaseReceiveOrderDO" parameterType="map">
@@ -325,7 +325,7 @@
 			<if test="true">
 				AND epro.data_status = 1
 			</if>
-			<include refid="data_access_sql.purchase_receive_control"/>
+			<include refid="permission_sql.purchase_receive_control"/>
 
 		</where>
 		ORDER BY epro.create_time DESC
