@@ -1,6 +1,10 @@
 package com.lxzl.erp.common.domain.transferOrder;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePageParam;
+
+import java.util.Date;
+
 
 /**
  * @Author: your name
@@ -8,6 +12,7 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
  * @Date: Created in 18:03 2018/1/3
  * @Modified By:
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TransferOrderQueryParam extends BasePageParam {
     private String transferOrderNo;   //转移单编号
     private String transferOrderName;   //转移单名称
@@ -15,6 +20,24 @@ public class TransferOrderQueryParam extends BasePageParam {
     private Integer transferOrderMode;   //转移方式，1转入，2转出（凭空转入转出）
     private Integer transferOrderType;   //	转入类型：1外借入库转入，2试验机转入，3原有资产，99其他。 转出类型：51丢失，52售出，53试验机归还，99其他
     private Integer warehouseId;   //仓库ID，哪个库房转移
+    private Date createStartTime;
+    private Date createEndTime;
+
+    public Date getCreateStartTime() {
+        return createStartTime;
+    }
+
+    public void setCreateStartTime(Date createStartTime) {
+        this.createStartTime = createStartTime;
+    }
+
+    public Date getCreateEndTime() {
+        return createEndTime;
+    }
+
+    public void setCreateEndTime(Date createEndTime) {
+        this.createEndTime = createEndTime;
+    }
 
     public String getTransferOrderNo() {
         return transferOrderNo;

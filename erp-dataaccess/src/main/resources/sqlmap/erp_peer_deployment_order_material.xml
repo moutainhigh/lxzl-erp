@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.peerDeploymentOrder.PeerDeploymentOrderMaterialMapper">
+
+	<resultMap id="PeerDeploymentOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="peer_deployment_order_id" jdbcType="INTEGER" property="peerDeploymentOrderId" />
+		<result column="peer_deployment_order_no" jdbcType="VARCHAR" property="peerDeploymentOrderNo" />
+		<result column="material_id" jdbcType="INTEGER" property="materialId" />
+		<result column="material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount" />
+		<result column="material_amount" jdbcType="DECIMAL" property="materialAmount" />
+		<result column="product_material_count" jdbcType="INTEGER" property="productMaterialCount" />
+		<result column="product_material_snapshot" jdbcType="VARCHAR" property="productMaterialSnapshot" />
+		<result column="is_new" jdbcType="INTEGER" property="isNew" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		epdom.id,epdom.peer_deployment_order_id,epdom.peer_deployment_order_no,epdom.material_id,epdom.material_unit_amount,epdom.material_amount,epdom.product_material_count,epdom.product_material_snapshot,epdom.is_new,epdom.data_status,epdom.remark,epdom.create_time,epdom.create_user,epdom.update_time,epdom.update_user
+	</sql>
+
+	<select id="findById" resultMap="PeerDeploymentOrderMaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order_material epdom
+		WHERE epdom.id = #{id, jdbcType=INTEGER} AND epdom.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(epdom.id) FROM erp_peer_deployment_order_material epdom
+		<where>
+			<if test="true">
+				AND epdom.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="PeerDeploymentOrderMaterialDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order_material epdom
+		<where>
+			<if test="true">
+				AND epdom.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="peerDeploymentOrderId != null">
+				peer_deployment_order_id = #{peerDeploymentOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="peerDeploymentOrderNo != null">
+				peer_deployment_order_no = #{peerDeploymentOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="materialId != null">
+				material_id = #{materialId,jdbcType=INTEGER},
+			</if>
+			<if test="materialUnitAmount != null">
+				material_unit_amount = #{materialUnitAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="materialAmount != null">
+				material_amount = #{materialAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="productMaterialCount != null">
+				product_material_count = #{productMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="productMaterialSnapshot != null">
+				product_material_snapshot = #{productMaterialSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="isNew != null">
+				is_new = #{isNew,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialDO">
+		INSERT INTO erp_peer_deployment_order_material <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialDO">
+		UPDATE erp_peer_deployment_order_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<select id="findByPeerDeploymentOrderNo" resultMap="PeerDeploymentOrderMaterialDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order_material epdom
+		WHERE epdom.peer_deployment_order_no = #{peerDeploymentOrderNo, jdbcType=INTEGER} AND epdom.data_status = 1
+	</select>
+
+	<insert id="saveList" parameterType="java.util.ArrayList">
+		insert into erp_peer_deployment_order_material (peer_deployment_order_id,peer_deployment_order_no,material_id,material_unit_amount,material_amount,product_material_count,product_material_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
+		<foreach item="peerDeploymentOrderMaterialDO" collection="peerDeploymentOrderMaterialDOList" separator="UNION ALL">
+			SELECT epdo.id,#{peerDeploymentOrderMaterialDO.peerDeploymentOrderNo},#{peerDeploymentOrderMaterialDO.materialId},#{peerDeploymentOrderMaterialDO.materialUnitAmount},#{peerDeploymentOrderMaterialDO.materialAmount},#{peerDeploymentOrderMaterialDO.productMaterialCount},#{peerDeploymentOrderMaterialDO.productMaterialSnapshot},
+			#{peerDeploymentOrderMaterialDO.dataStatus},#{peerDeploymentOrderMaterialDO.remark},#{peerDeploymentOrderMaterialDO.createTime},#{peerDeploymentOrderMaterialDO.createUser},#{peerDeploymentOrderMaterialDO.updateTime},#{peerDeploymentOrderMaterialDO.updateUser}
+			FROM erp_peer_deployment_order epdo WHERE epdo.peer_deployment_order_no = #{peerDeploymentOrderMaterialDO.peerDeploymentOrderNo}
+		</foreach>
+	</insert>
+
+</mapper>

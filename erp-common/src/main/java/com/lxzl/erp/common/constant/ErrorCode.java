@@ -505,6 +505,14 @@ public class ErrorCode {
     public static final String PEER_NO_EXISTS = "J1400006";
     public static final String PEER_NOT_EXISTS = "J1400007";
 
+    public static final String PEER_DEPLOYMENT_ORDER_ID_NOT_NULL = "J1500001";
+    public static final String PEER_DEPLOYMENT_ORDER_NO_NOT_NULL = "J1500002";
+    public static final String PEER_DEPLOYMENT_ORDER_START_TIME_NOT_NULL = "J1500003";
+    public static final String PEER_DEPLOYMENT_ORDER_TOTAL_DISCOUNT_AMOUNT_NOT_NULL = "J1500004";
+    public static final String PEER_DEPLOYMENT_ORDER_TAX_RATE_ERROR = "J1500005";
+    public static final String PEER_DEPLOYMENT_ORDER_RENT_TIME_LENGTH_NOT_NULL = "J1500006";
+
+
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1002,6 +1010,12 @@ public class ErrorCode {
         MAP.put(PEER_NO_EXISTS, "同行供应商编码已存在");
         MAP.put(PEER_NOT_EXISTS, "同行供应不存在");
 
+        MAP.put(PEER_DEPLOYMENT_ORDER_ID_NOT_NULL, "同行调拨单唯一标识不能为空");
+        MAP.put(PEER_DEPLOYMENT_ORDER_NO_NOT_NULL, "同行调拨单编号不能为空");
+        MAP.put(PEER_DEPLOYMENT_ORDER_START_TIME_NOT_NULL, "同行调拨单起租时间不能为空");
+        MAP.put(PEER_DEPLOYMENT_ORDER_TOTAL_DISCOUNT_AMOUNT_NOT_NULL, "同行调拨单优惠金额不能为空");
+        MAP.put(PEER_DEPLOYMENT_ORDER_TAX_RATE_ERROR, "同行调拨单税率有误");
+        MAP.put(PEER_DEPLOYMENT_ORDER_RENT_TIME_LENGTH_NOT_NULL, "同行调拨单租赁期限不能为空");
 
     }
 

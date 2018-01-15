@@ -25,4 +25,10 @@ public class StockCauseType {
      * 转移入库
      */
     public static final Integer STOCK_CAUSE_TYPE_TRANSFER_ORDER = 4;
+
+    /**
+     * 同行调拨入库
+     */
+    public static final Integer STOCK_CAUSE_TYPE_PEER_DEPLOYMENT = 5;
+
 }
