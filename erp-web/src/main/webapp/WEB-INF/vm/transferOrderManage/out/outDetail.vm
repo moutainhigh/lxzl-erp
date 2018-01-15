@@ -111,7 +111,7 @@
                                         <tbody>
                                         {{#listData}}
                                         <tr class="productRow skuRow" productRowKey="{{productId}}">
-                                            <td>{{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}{{productName}}</td>
+                                            <td>{{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}{{productName}}</td>
                                             <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                                             <td>{{propertiesToStr}}</td>
@@ -175,7 +175,7 @@
                                         {{#dataSource}}
                                         {{#listData}}
                                         <tr class="materialRow">
-                                            <td>{{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}{{materialName}}</td>
+                                            <td>{{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}{{materialName}}</td>
                                             <td>{{brandName}}</td>
                                             <td>{{materialTypeStr}}</td>
                                             <td>{{#price}}{{materialPrice}}{{/price}}</td>
