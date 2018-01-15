@@ -175,23 +175,23 @@
 	<select id="findTransferOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(id) FROM erp_transfer_order eto
 		<where>
-			<if test="maps.queryParam.transferOrderNo != null &amp;&amp; maps.queryParam.transferOrderNo != '' ">
-				and eto.transfer_order_no = #{maps.queryParam.transferOrderNo, jdbcType=VARCHAR}
+			<if test="maps.transferOrderQueryParam.transferOrderNo != null &amp;&amp; maps.transferOrderQueryParam.transferOrderNo != '' ">
+				and eto.transfer_order_no = #{maps.transferOrderQueryParam.transferOrderNo, jdbcType=VARCHAR}
 			</if>
-			<if test="maps.queryParam.transferOrderName != null &amp;&amp; maps.queryParam.transferOrderName != '' ">
-				and eto.transfer_order_name LIKE CONCAT('%','${maps.queryParam.transferOrderName}','%' )
+			<if test="maps.transferOrderQueryParam.transferOrderName != null &amp;&amp; maps.transferOrderQueryParam.transferOrderName != '' ">
+				and eto.transfer_order_name LIKE CONCAT('%','${maps.transferOrderQueryParam.transferOrderName}','%' )
 			</if>
-			<if test="maps.queryParam.transferOrderStatus != null">
-				and eto.transfer_order_status = #{maps.queryParam.transferOrderStatus, jdbcType=INTEGER}
+			<if test="maps.transferOrderQueryParam.transferOrderStatus != null">
+				and eto.transfer_order_status = #{maps.transferOrderQueryParam.transferOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.transferOrderMode != null">
-				and eto.transfer_order_mode = #{maps.queryParam.transferOrderMode, jdbcType=INTEGER}
+			<if test="maps.transferOrderQueryParam.transferOrderMode != null">
+				and eto.transfer_order_mode = #{maps.transferOrderQueryParam.transferOrderMode, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.transferOrderType != null">
-				and eto.transfer_order_type = #{maps.queryParam.transferOrderType, jdbcType=INTEGER}
+			<if test="maps.transferOrderQueryParam.transferOrderType != null">
+				and eto.transfer_order_type = #{maps.transferOrderQueryParam.transferOrderType, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.warehouseId != null">
-				and eto.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
+			<if test="maps.transferOrderQueryParam.warehouseId != null">
+				and eto.warehouse_id = #{maps.transferOrderQueryParam.warehouseId, jdbcType=INTEGER}
 			</if>
 			<if test="true">
 				and eto.data_status = 1
@@ -205,23 +205,23 @@
 		SELECT <include refid="column_List"/>
 		FROM erp_transfer_order eto
 		<where>
-			<if test="maps.queryParam.transferOrderNo != null &amp;&amp; maps.queryParam.transferOrderNo != '' ">
-				and eto.transfer_order_no = #{maps.queryParam.transferOrderNo, jdbcType=VARCHAR}
+			<if test="maps.transferOrderQueryParam.transferOrderNo != null &amp;&amp; maps.transferOrderQueryParam.transferOrderNo != '' ">
+				and eto.transfer_order_no = #{maps.transferOrderQueryParam.transferOrderNo, jdbcType=VARCHAR}
 			</if>
-			<if test="maps.queryParam.transferOrderName != null &amp;&amp; maps.queryParam.transferOrderName != '' ">
-				and eto.transfer_order_name LIKE CONCAT('%','${maps.queryParam.transferOrderName}','%' )
+			<if test="maps.transferOrderQueryParam.transferOrderName != null &amp;&amp; maps.transferOrderQueryParam.transferOrderName != '' ">
+				and eto.transfer_order_name LIKE CONCAT('%','${maps.transferOrderQueryParam.transferOrderName}','%' )
 			</if>
-			<if test="maps.queryParam.transferOrderStatus != null">
-				and eto.transfer_order_status = #{maps.queryParam.transferOrderStatus, jdbcType=INTEGER}
+			<if test="maps.transferOrderQueryParam.transferOrderStatus != null">
+				and eto.transfer_order_status = #{maps.transferOrderQueryParam.transferOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.transferOrderMode != null">
-				and eto.transfer_order_mode = #{maps.queryParam.transferOrderMode, jdbcType=INTEGER}
+			<if test="maps.transferOrderQueryParam.transferOrderMode != null">
+				and eto.transfer_order_mode = #{maps.transferOrderQueryParam.transferOrderMode, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.transferOrderType != null">
-				and eto.transfer_order_type = #{maps.queryParam.transferOrderType, jdbcType=INTEGER}
+			<if test="maps.transferOrderQueryParam.transferOrderType != null">
+				and eto.transfer_order_type = #{maps.transferOrderQueryParam.transferOrderType, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.warehouseId != null">
-				and eto.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
+			<if test="maps.transferOrderQueryParam.warehouseId != null">
+				and eto.warehouse_id = #{maps.transferOrderQueryParam.warehouseId, jdbcType=INTEGER}
 			</if>
 			<if test="true">
 				and eto.data_status = 1

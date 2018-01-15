@@ -134,7 +134,6 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         if (CollectionUtil.isNotEmpty(transferOrder.getTransferOrderMaterialList())) {
             for (TransferOrderMaterial transferOrderMaterial : transferOrder.getTransferOrderMaterialList()) {
 
-
                 //通过materialNo获取materialId
                 MaterialDO materialDO = materialMapper.findByNo(transferOrderMaterial.getMaterialNo());
                 if (materialDO == null) {
@@ -689,7 +688,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
 
-        TransferOrderDO transferOrderDO = transferOrderMapper.findByNo(transferOrderNo);
+        TransferOrderDO transferOrderDO = transferOrderMapper.findDetailByNo(transferOrderNo);
         if (transferOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_NOT_EXISTS);
             return serviceResult;
@@ -751,6 +750,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             transferOrderMapper.update(transferOrderDO);
             serviceResult = updateTransferOrderRelevantStatus(transferOrderDO, now);
             if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(serviceResult.getErrorCode());
                 return serviceResult;
             }
@@ -826,7 +826,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", transferOrderQueryParam);
+        maps.put("transferOrderQueryParam", transferOrderQueryParam);
 
         Integer totalCount = transferOrderMapper.findTransferOrderCountByParams(maps);
         List<TransferOrderDO> transferOrderDOList = transferOrderMapper.findTransferOrderByParams(maps);
@@ -863,7 +863,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", transferOrderProductEquipmentQueryParam);
+        maps.put("transferOrderProductEquipmentQueryParam", transferOrderProductEquipmentQueryParam);
 
         Integer totalCount = transferOrderProductEquipmentMapper.findTransferOrderProductEquipmentCountByParams(maps);
         List<TransferOrderProductEquipmentDO> transferOrderProductEquipmentDOList = transferOrderProductEquipmentMapper.findTransferOrderProductEquipmentByParams(maps);
@@ -883,7 +883,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", transferOrderMaterialBulkQueryParam);
+        maps.put("transferOrderMaterialBulkQueryParam", transferOrderMaterialBulkQueryParam);
 
         Integer totalCount = transferOrderMaterialBulkMapper.findTransferOrderMaterialBulkCountByParams(maps);
         List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList = transferOrderMaterialBulkMapper.findTransferOrderMaterialBulkByParams(maps);
