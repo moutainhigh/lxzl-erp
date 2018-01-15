@@ -9,6 +9,7 @@ package com.lxzl.erp.common.constant;
 public class TransferOrderStatus {
 
     public static final Integer TRANSFER_ORDER_STATUS_INIT = 0 ;  //0初始化
+    public static final Integer TRANSFER_ORDER_STATUS_CHOICE_GOODS = 2 ;  //4备货中
     public static final Integer TRANSFER_ORDER_STATUS_VERIFYING = 4 ;  //4审批中
     public static final Integer TRANSFER_ORDER_STATUS_SUCCESS = 8 ;  //8转移成功
     public static final Integer TRANSFER_ORDER_STATUS_CANCEL = 16 ;  //16取消转移
