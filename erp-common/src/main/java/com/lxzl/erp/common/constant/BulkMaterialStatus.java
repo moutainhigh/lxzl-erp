@@ -8,4 +8,6 @@ public class BulkMaterialStatus {
     public static final Integer BULK_MATERIAL_STATUS_DEPLOYING = 5;         // 调拨中
     public static final Integer BULK_MATERIAL_STATUS_TRANSFER_OUTING = 6;         // 转移中
     public static final Integer BULK_MATERIAL_STATUS_TRANSFER_OUT_END = 7;         // 转移出
+    public static final Integer BULK_MATERIAL_STATUS_PEER_RETURNING = 8;         // 退回中
+    public static final Integer BULK_MATERIAL_STATUS_PEER_RETURN_END = 9;         // 已退回
 }

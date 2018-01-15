@@ -97,10 +97,10 @@
             <if test="maps.queryParam != null &amp;&amp; maps.queryParam.districtId != null &amp;&amp; maps.queryParam.districtId != ''">
                 and ep.district = #{maps.queryParam.districtId,jdbcType=VARCHAR}
             </if>
-            <if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
                 <![CDATA[ AND ejp.create_time >= #{maps.queryParam.createStartTime} ]]>
             </if>
-            <if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
                 <![CDATA[ AND ejp.create_time <= #{maps.queryParam.createEndTime} ]]>
             </if>
 			<if test="true">
@@ -134,10 +134,10 @@
             <if test="maps.queryParam != null &amp;&amp; maps.queryParam.districtId != null &amp;&amp; maps.queryParam.districtId != ''">
                 and ep.district = #{maps.queryParam.districtId,jdbcType=VARCHAR}
             </if>
-            <if test="maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
+            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
                 <![CDATA[ AND ejp.create_time >= #{maps.queryParam.createStartTime} ]]>
             </if>
-            <if test="maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
+            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
                 <![CDATA[ AND ejp.create_time <= #{maps.queryParam.createEndTime} ]]>
             </if>
 			<if test="true">

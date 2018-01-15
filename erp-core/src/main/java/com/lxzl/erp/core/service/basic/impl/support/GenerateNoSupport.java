@@ -2,7 +2,6 @@ package com.lxzl.erp.core.service.basic.impl.support;
 
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.CustomerType;
-import com.lxzl.erp.common.domain.TransferOrderOrderQueryParam;
 import com.lxzl.erp.common.domain.assembleOder.AssembleOrderQueryParam;
 import com.lxzl.erp.common.domain.changeOrder.ChangeOrderPageParam;
 import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
@@ -10,6 +9,7 @@ import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.product.ProductQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
@@ -19,6 +19,7 @@ import com.lxzl.erp.common.domain.purchaseApply.PurchaseApplyOrderPageParam;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderQueryParam;
 import com.lxzl.erp.common.domain.returnOrder.ReturnOrderPageParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
 import com.lxzl.erp.common.domain.warehouse.StockOrderQueryParam;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.common.util.DateUtil;
@@ -33,6 +34,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.peer.PeerMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.peerDeploymentOrder.PeerDeploymentOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseDeliveryOrderMapper;
@@ -602,44 +604,70 @@ public class GenerateNoSupport {
      * 生成组装单编号
      */
     public String generateAssemblerOderNo(Date date, Integer warehouseId) {
-        HashMap<String, Object> maps = new HashMap<>();
-        AssembleOrderQueryParam assembleOrderQueryParam = new AssembleOrderQueryParam();
-        assembleOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-        assembleOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
-        maps.put("queryParam",assembleOrderQueryParam);
-        Integer count = assembleOrderMapper.listCount(maps);
-        StringBuilder builder = new StringBuilder();
-        builder.append("LXA");
-        builder.append(warehouseId);
-        builder.append(new SimpleDateFormat("yyyyMMdd").format(date));
-        builder.append(count + 1);
-        return builder.toString();
+        synchronized (this) {
+            HashMap<String, Object> maps = new HashMap<>();
+            AssembleOrderQueryParam assembleOrderQueryParam = new AssembleOrderQueryParam();
+            assembleOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+            assembleOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            maps.put("queryParam", assembleOrderQueryParam);
+            Integer count = assembleOrderMapper.listCount(maps);
+            StringBuilder builder = new StringBuilder();
+            builder.append("LXA");
+            builder.append(warehouseId);
+            builder.append(new SimpleDateFormat("yyyyMMdd").format(date));
+            builder.append(count + 1);
+            return builder.toString();
+        }
     }
 
     /**
      * 转移单编号
      */
     public String generateTransferOrderNo(Date date, Integer warehouseId) {
-        HashMap<String, Object> maps = new HashMap<>();
-        TransferOrderOrderQueryParam transferOrderOrderQueryParam = new TransferOrderOrderQueryParam();
-        transferOrderOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-        transferOrderOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
-        maps.put("queryParam",transferOrderOrderQueryParam);
-        Integer count = transferOrderMapper.listCount(maps);
-        StringBuilder builder = new StringBuilder();
-        builder.append("LXT");
-        builder.append(warehouseId);
-        builder.append(new SimpleDateFormat("yyyyMMdd").format(date));
-        builder.append(count + 1);
-        return builder.toString();
+        synchronized (this) {
+            HashMap<String, Object> maps = new HashMap<>();
+            TransferOrderQueryParam transferOrderQueryParam = new TransferOrderQueryParam();
+            transferOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+            transferOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            maps.put("queryParam", transferOrderQueryParam);
+            Integer count = transferOrderMapper.listCount(maps);
+            StringBuilder builder = new StringBuilder();
+            builder.append("LXT");
+            builder.append(warehouseId);
+            builder.append(new SimpleDateFormat("yyyyMMdd").format(date));
+            builder.append(count + 1);
+            return builder.toString();
+        }
     }
+
+    /**
+     * 同行调拨单编号
+     */
+    public String generatePeerDeploymentOrderNo(Date date, Integer cityId) {
+        synchronized (this) {
+            HashMap<String, Object> maps = new HashMap<>();
+            PeerDeploymentOrderQueryParam peerDeploymentOrderQueryParam = new PeerDeploymentOrderQueryParam();
+            peerDeploymentOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+            peerDeploymentOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            maps.put("queryParam", peerDeploymentOrderQueryParam);
+            Integer count = peerDeploymentOrderMapper.listCount(maps);
+            AreaCityDO areaCityDO = areaCityMapper.findById(cityId);
+            StringBuilder builder = new StringBuilder();
+            builder.append("LXPDO");
+            builder.append(areaCityDO.getCityCode());
+            builder.append(new SimpleDateFormat("yyyyMMdd").format(date));
+            builder.append(count + 1);
+            return builder.toString();
+        }
+    }
+
 
     /**
      * 生成采购申请单编号
      */
     public String generatePurchaseApplyOrderNo(String cityCode) {
-        Date currentTime = new Date();
         synchronized (this) {
+            Date currentTime = new Date();
             PurchaseApplyOrderPageParam purchaseApplyOrderPageParam = new PurchaseApplyOrderPageParam();
             Map<String, Object> maps = new HashMap<>();
             maps.put("start", 0);
@@ -665,7 +693,7 @@ public class GenerateNoSupport {
         synchronized (this) {
             AreaCityDO areaCityDO = areaCityMapper.findById(cityId);
             Map<String, Object> paramMap = new HashMap<>();
-            paramMap.put("supplierQueryParam", null);
+            paramMap.put("queryParam", null);
             Integer count = peerMapper.listCount(paramMap);
             StringBuilder builder = new StringBuilder();
             builder.append("LXPEER");
@@ -674,6 +702,7 @@ public class GenerateNoSupport {
             return builder.toString();
         }
     }
+
 
     @Autowired
     private SupplierMapper supplierMapper;
@@ -723,4 +752,6 @@ public class GenerateNoSupport {
     private PurchaseApplyOrderMapper purchaseApplyOrderMapper;
     @Autowired
     private PeerMapper peerMapper;
+    @Autowired
+    private PeerDeploymentOrderMapper peerDeploymentOrderMapper;
 }

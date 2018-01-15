@@ -47,4 +47,14 @@ public class WorkflowType {
      * 转移单出审批
      */
     public static Integer WORKFLOW_TYPE_TRANSFER_OUT_ORDER = 10;
+
+    /**
+     * 同行调拨单入审批
+     */
+    public static Integer WORKFLOW_TYPE_PEER_DEPLOYMENT_INTO = 11;
+
+    /**
+     * 同行调拨单出审批
+     */
+    public static Integer WORKFLOW_TYPE_PEER_DEPLOYMENT_OUT = 12;
 }
