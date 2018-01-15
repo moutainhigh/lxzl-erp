@@ -55,8 +55,11 @@ public class PeerDeploymentOrder extends BasePO {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 
+	@Valid
 	private List<PeerDeploymentOrderProduct> peerDeploymentOrderProductList;
+	@Valid
 	private List<PeerDeploymentOrderMaterial> peerDeploymentOrderMaterialList;
+	@Valid
 	private PeerDeploymentOrderConsignInfo peerDeploymentOrderConsignInfo;
 
 	// 审核人和提交审核信息,只提供给审核的时候用

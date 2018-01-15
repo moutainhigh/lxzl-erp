@@ -2,10 +2,7 @@ package com.lxzl.erp.core.service.peerDeploymentOrder;
 
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrder;
-import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderMaterial;
 import com.lxzl.erp.core.service.VerifyReceiver;
-
-import java.util.List;
 
 /**
  * @Author: kai
@@ -22,11 +19,5 @@ public interface PeerDeploymentOrderService extends VerifyReceiver {
      */
     ServiceResult<String,String> createPeerDeploymentOrder(PeerDeploymentOrder peerDeploymentOrder);
 
-    /**
-     * 同行调拨单详情
-     * @param peerDeploymentOrderNo
-     * @return
-     */
-    ServiceResult<String,PeerDeploymentOrder> detailPeerDeploymentOrderNo(String peerDeploymentOrderNo);
 
 }

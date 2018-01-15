@@ -2,53 +2,130 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.peerDeploymentOrder.PeerDeploymentOrderMapper">
 
-	<resultMap id="PeerDeploymentOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialDO">
+	<resultMap id="PeerDeploymentOrderDO" type="com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
-		<result column="peer_deployment_order_id" jdbcType="INTEGER" property="peerDeploymentOrderId" />
 		<result column="peer_deployment_order_no" jdbcType="VARCHAR" property="peerDeploymentOrderNo" />
-		<result column="material_id" jdbcType="INTEGER" property="materialId" />
-		<result column="material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount" />
-		<result column="material_amount" jdbcType="DECIMAL" property="materialAmount" />
-		<result column="product_material_count" jdbcType="INTEGER" property="productMaterialCount" />
-		<result column="product_material_snapshot" jdbcType="VARCHAR" property="productMaterialSnapshot" />
-		<result column="is_new" jdbcType="INTEGER" property="isNew" />
+		<result column="peer_id" jdbcType="INTEGER" property="peerId" />
+		<result column="peer_name" jdbcType="VARCHAR" property="peerName" />
+		<result column="rent_start_time" jdbcType="TIMESTAMP" property="rentStartTime" />
+		<result column="rent_type" jdbcType="INTEGER" property="rentType" />
+		<result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+		<result column="warehouse_id" jdbcType="INTEGER" property="warehouseId" />
+		<result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+		<result column="warehouse_position_id" jdbcType="INTEGER" property="warehousePositionId" />
+		<result column="delivery_mode" jdbcType="INTEGER" property="deliveryMode" />
+		<result column="tax_rate" jdbcType="DOUBLE" property="taxRate" />
+		<result column="peer_deployment_order_status" jdbcType="INTEGER" property="peerDeploymentOrderStatus" />
+		<result column="total_product_count" jdbcType="INTEGER" property="totalProductCount" />
+		<result column="total_product_amount" jdbcType="DECIMAL" property="totalProductAmount" />
+		<result column="total_material_count" jdbcType="INTEGER" property="totalMaterialCount" />
+		<result column="total_material_amount" jdbcType="DECIMAL" property="totalMaterialAmount" />
+		<result column="total_order_amount" jdbcType="DECIMAL" property="totalOrderAmount" />
+		<result column="total_discount_amount" jdbcType="DECIMAL" property="totalDiscountAmount" />
+		<result column="expect_return_time" jdbcType="TIMESTAMP" property="expectReturnTime" />
+		<result column="real_return_time" jdbcType="TIMESTAMP" property="realReturnTime" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<collection property="peerDeploymentOrderProductDOList" resultMap="PeerDeploymentOrderProductDO" />
+		<collection property="peerDeploymentOrderMaterialDOList" resultMap="PeerDeploymentOrderMaterialDO" />
+		<collection property="peerDeploymentOrderConsignInfoDO" resultMap="PeerDeploymentOrderConsignInfoDO" />
+	</resultMap>
+
+	<resultMap id="PeerDeploymentOrderConsignInfoDO" type="com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderConsignInfoDO">
+		<id column="consign_id" jdbcType="INTEGER" property="id" />
+		<result column="consign_peer_deployment_order_id" jdbcType="INTEGER" property="peerDeploymentOrderId" />
+		<result column="consign_contact_name" jdbcType="VARCHAR" property="contactName" />
+		<result column="consign_contact_phone" jdbcType="VARCHAR" property="contactPhone" />
+		<result column="consign_province" jdbcType="INTEGER" property="province" />
+		<result column="consign_city" jdbcType="INTEGER" property="city" />
+		<result column="consign_district" jdbcType="INTEGER" property="district" />
+		<result column="province_name" property="provinceName"/>
+		<result column="city_name" property="cityName"/>
+		<result column="district_name" property="districtName"/>
+		<result column="consign_address" jdbcType="VARCHAR" property="address" />
+		<result column="consign_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="consign_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="consign_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="consign_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="consign_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="consign_update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<resultMap id="PeerDeploymentOrderProductDO" type="com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderProductDO">
+		<id column="product_id" jdbcType="INTEGER" property="id" />
+		<result column="product_peer_deployment_order_id" jdbcType="INTEGER" property="peerDeploymentOrderId" />
+		<result column="product_peer_deployment_order_no" jdbcType="VARCHAR" property="peerDeploymentOrderNo" />
+		<result column="product_product_sku_id" jdbcType="INTEGER" property="productSkuId" />
+		<result column="product_product_unit_amount" jdbcType="DECIMAL" property="productUnitAmount" />
+		<result column="product_product_amount" jdbcType="DECIMAL" property="productAmount" />
+		<result column="product_product_sku_count" jdbcType="INTEGER" property="productSkuCount" />
+		<result column="product_product_sku_snapshot" jdbcType="VARCHAR" property="productSkuSnapshot" />
+		<result column="product_is_new" jdbcType="INTEGER" property="isNew" />
+		<result column="product_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="product_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="product_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="product_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="product_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="product_update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<resultMap id="PeerDeploymentOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialDO">
+		<id column="material_id" jdbcType="INTEGER" property="id" />
+		<result column="material_peer_deployment_order_id" jdbcType="INTEGER" property="peerDeploymentOrderId" />
+		<result column="material_peer_deployment_order_no" jdbcType="VARCHAR" property="peerDeploymentOrderNo" />
+		<result column="material_material_id" jdbcType="INTEGER" property="materialId" />
+		<result column="material_material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount" />
+		<result column="material_material_amount" jdbcType="DECIMAL" property="materialAmount" />
+		<result column="material_product_material_count" jdbcType="INTEGER" property="productMaterialCount" />
+		<result column="material_product_material_snapshot" jdbcType="VARCHAR" property="productMaterialSnapshot" />
+		<result column="material_is_new" jdbcType="INTEGER" property="isNew" />
+		<result column="material_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="material_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="material_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="material_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="material_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="material_update_user" jdbcType="VARCHAR" property="updateUser" />
 	</resultMap>
 
 	<sql id="column_List">
-		epdom.id,epdom.peer_deployment_order_id,epdom.peer_deployment_order_no,epdom.material_id,epdom.material_unit_amount,epdom.material_amount,epdom.product_material_count,epdom.product_material_snapshot,epdom.is_new,epdom.data_status,epdom.remark,epdom.create_time,epdom.create_user,epdom.update_time,epdom.update_user
+		epdo.id,epdo.peer_deployment_order_no,epdo.peer_id,epdo.rent_start_time,epdo.rent_type,epdo.rent_time_length,epdo.warehouse_id,epdo.warehouse_position_id,epdo.delivery_mode,epdo.tax_rate,epdo.peer_deployment_order_status,epdo.total_product_count,epdo.total_product_amount,epdo.total_material_count,epdo.total_material_amount,epdo.total_order_amount,epdo.total_discount_amount,epdo.expect_return_time,epdo.real_return_time,epdo.data_status,epdo.remark,epdo.create_time,epdo.create_user,epdo.update_time,epdo.update_user
 	</sql>
 
-	<select id="findById" resultMap="PeerDeploymentOrderMaterialDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order_material epdom
-		WHERE epdom.id = #{id, jdbcType=INTEGER} AND epdom.data_status = 1
+	<sql id="consign_column_List">
+		epdoci.id AS consign_id,epdoci.peer_deployment_order_id AS consign_peer_deployment_order_id,epdoci.contact_name AS consign_contact_name,epdoci.contact_phone AS consign_contact_phone,epdoci.province AS consign_province,epdoci.city AS consign_city,epdoci.district AS consign_district,epdoci.address AS consign_address,epdoci.data_status AS consign_data_status,epdoci.remark AS consign_remark,epdoci.create_time AS consign_create_time,epdoci.create_user AS consign_create_user,epdoci.update_time AS consign_update_time,epdoci.update_user AS consign_update_user
+	</sql>
+
+	<sql id="product_column_List">
+		epdop.id AS product_id,epdop.peer_deployment_order_id AS product_peer_deployment_order_id,epdop.peer_deployment_order_no AS product_peer_deployment_order_no,epdop.product_sku_id AS product_product_sku_id,epdop.product_unit_amount AS product_product_unit_amount,epdop.product_amount AS product_product_amount,epdop.product_sku_count AS product_product_sku_count,epdop.product_sku_snapshot AS product_product_sku_snapshot,epdop.is_new AS product_is_new,epdop.data_status AS product_data_status,epdop.remark AS product_remark,epdop.create_time AS product_create_time,epdop.create_user AS product_create_user,epdop.update_time AS product_update_time,epdop.update_user AS product_update_user
+	</sql>
+
+	<sql id="material_column_List">
+		epdom.id AS material_id,epdom.peer_deployment_order_id AS material_peer_deployment_order_id,epdom.peer_deployment_order_no AS material_peer_deployment_order_no,epdom.material_id AS material_material_id,epdom.material_unit_amount AS material_material_unit_amount,epdom.material_amount AS material_material_amount,epdom.product_material_count AS material_product_material_count,epdom.product_material_snapshot AS material_product_material_snapshot,epdom.is_new AS material_is_new,epdom.data_status AS material_data_status,epdom.remark AS material_remark,epdom.create_time AS material_create_time,epdom.create_user AS material_create_user,epdom.update_time AS material_update_time,epdom.update_user AS material_update_user
+	</sql>
+
+	<select id="findById" resultMap="PeerDeploymentOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order epdo
+		WHERE epdo.id = #{id, jdbcType=INTEGER} AND epdo.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(epdom.id) FROM erp_peer_deployment_order_material epdom
+		SELECT count(epdo.id) FROM erp_peer_deployment_order epdo
 		<where>
-			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.createStartTime != null ">
-				<![CDATA[ AND epdom.create_time >= #{maps.queryParam.createStartTime} ]]>
-			</if>
-			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.createEndTime != null">
-				<![CDATA[ AND epdom.create_time <= #{maps.queryParam.createEndTime} ]]>
-			</if>
 			<if test="true">
-				AND epdom.data_status = 1
+				AND epdo.data_status = 1
 			</if>
 		</where>
 	</select>
 
-	<select id="listPage" resultMap="PeerDeploymentOrderMaterialDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order_material epdom
+	<select id="listPage" resultMap="PeerDeploymentOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order epdo
 		<where>
 			<if test="true">
-				AND epdom.data_status = 1
+				AND epdo.data_status = 1
 			</if>
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}
@@ -56,29 +133,59 @@
 
 	<sql id="set_column_sql">
 		<set>
-			<if test="peerDeploymentOrderId != null">
-				peer_deployment_order_id = #{peerDeploymentOrderId,jdbcType=INTEGER},
-			</if>
 			<if test="peerDeploymentOrderNo != null">
 				peer_deployment_order_no = #{peerDeploymentOrderNo,jdbcType=VARCHAR},
 			</if>
-			<if test="materialId != null">
-				material_id = #{materialId,jdbcType=INTEGER},
+			<if test="peerId != null">
+				peer_id = #{peerId,jdbcType=INTEGER},
 			</if>
-			<if test="materialUnitAmount != null">
-				material_unit_amount = #{materialUnitAmount,jdbcType=DECIMAL},
+			<if test="rentStartTime != null">
+				rent_start_time = #{rentStartTime,jdbcType=TIMESTAMP},
 			</if>
-			<if test="materialAmount != null">
-				material_amount = #{materialAmount,jdbcType=DECIMAL},
+			<if test="rentType != null">
+				rent_type = #{rentType,jdbcType=INTEGER},
 			</if>
-			<if test="productMaterialCount != null">
-				product_material_count = #{productMaterialCount,jdbcType=INTEGER},
+			<if test="rentTimeLength != null">
+				rent_time_length = #{rentTimeLength,jdbcType=INTEGER},
 			</if>
-			<if test="productMaterialSnapshot != null">
-				product_material_snapshot = #{productMaterialSnapshot,jdbcType=VARCHAR},
+			<if test="warehouseId != null">
+				warehouse_id = #{warehouseId,jdbcType=INTEGER},
 			</if>
-			<if test="isNew != null">
-				is_new = #{isNew,jdbcType=INTEGER},
+			<if test="warehousePositionId != null">
+				warehouse_position_id = #{warehousePositionId,jdbcType=INTEGER},
+			</if>
+			<if test="deliveryMode != null">
+				delivery_mode = #{deliveryMode,jdbcType=INTEGER},
+			</if>
+			<if test="taxRate != null">
+				tax_rate = #{taxRate,jdbcType=DOUBLE},
+			</if>
+			<if test="peerDeploymentOrderStatus != null">
+				peer_deployment_order_status = #{peerDeploymentOrderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="totalProductCount != null">
+				total_product_count = #{totalProductCount,jdbcType=INTEGER},
+			</if>
+			<if test="totalProductAmount != null">
+				total_product_amount = #{totalProductAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="totalMaterialCount != null">
+				total_material_count = #{totalMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="totalMaterialAmount != null">
+				total_material_amount = #{totalMaterialAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="totalOrderAmount != null">
+				total_order_amount = #{totalOrderAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="totalDiscountAmount != null">
+				total_discount_amount = #{totalDiscountAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="expectReturnTime != null">
+				expect_return_time = #{expectReturnTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="realReturnTime != null">
+				real_return_time = #{realReturnTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
@@ -101,26 +208,58 @@
 		</set>
 	</sql>
 
-	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialDO">
-		INSERT INTO erp_peer_deployment_order_material <include refid="set_column_sql"/>
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderDO">
+		INSERT INTO erp_peer_deployment_order <include refid="set_column_sql"/>
 	</insert>
 
-	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialDO">
-		UPDATE erp_peer_deployment_order_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderDO">
+		UPDATE erp_peer_deployment_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
 
-	<select id="findByPeerDeploymentOrderNo" resultMap="PeerDeploymentOrderMaterialDO" parameterType="java.lang.String">
-		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order_material epdom
-		WHERE epdom.peer_deployment_order_no = #{peerDeploymentOrderNo, jdbcType=INTEGER} AND epdom.data_status = 1
+	<select id="findByPeerDeploymentOrderNo" resultMap="PeerDeploymentOrderDO" parameterType="java.lang.String">
+		SELECT epd_order.*
+		<trim prefix=",">
+			<include refid="product_column_List" />
+		</trim>
+		<trim prefix=",">
+			<include refid="material_column_List" />
+		</trim>
+		FROM (
+		SELECT <include refid="column_List"/>
+		<trim prefix=",">
+			<include refid="consign_column_List" />
+		</trim>
+		<trim prefix=",">
+			eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name,ep.peer_name AS peer_name,ew.warehouse_name AS warehouse_name
+		</trim>
+		FROM erp_peer_deployment_order epdo
+		LEFT JOIN erp_peer_deployment_order_consign_info epdoci ON epdo.id = epdoci.peer_deployment_order_id and epdoci.data_status = 1
+		LEFT JOIN erp_area_province eap ON eap.id = epdoci.province
+		LEFT JOIN erp_area_city eac ON eac.id = epdoci.city
+		LEFT JOIN erp_area_district ead ON ead.id = epdoci.district
+		LEFT JOIN erp_peer ep ON ep.id = epdo.peer_id AND ep.data_status = 1
+		LEFT JOIN erp_warehouse ew ON ew.id = epdo.warehouse_position_id AND ew.data_status = 1
+		WHERE epdo.peer_deployment_order_no = #{peerDeploymentOrderNo, jdbcType=INTEGER} AND epdo.data_status = 1
+		) epd_order
+		LEFT JOIN erp_peer_deployment_order_product epdop ON epd_order.id = epdop.peer_deployment_order_id AND epdop.data_status = 1
+		LEFT JOIN erp_peer_deployment_order_material epdom ON epd_order.id = epdom.peer_deployment_order_id AND epdop.data_status = 1
 	</select>
 
-	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_deployment_order_material (deployment_order_id,deployment_order_no,deployment_material_id,deployment_material_unit_amount,deployment_material_amount,deployment_product_material_count,deployment_product_material_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
-		<foreach item="PeerDeploymentOrderMaterialDO" collection="deploymentOrderMaterialDOList" separator="UNION ALL">
-			SELECT edo.id,#{deploymentOrderMaterialDO.deploymentOrderNo},#{deploymentOrderMaterialDO.deploymentMaterialId},#{deploymentOrderMaterialDO.deploymentMaterialUnitAmount},#{deploymentOrderMaterialDO.deploymentMaterialAmount},#{deploymentOrderMaterialDO.deploymentProductMaterialCount},#{deploymentOrderMaterialDO.deploymentProductMaterialSnapshot},
-			#{deploymentOrderMaterialDO.dataStatus},#{deploymentOrderMaterialDO.remark},#{deploymentOrderMaterialDO.createTime},#{deploymentOrderMaterialDO.createUser},#{deploymentOrderMaterialDO.updateTime},#{deploymentOrderMaterialDO.updateUser}
-			FROM erp_deployment_order edo WHERE edo.deployment_order_no = #{deploymentOrderMaterialDO.deploymentOrderNo}
-		</foreach>
-	</insert>
-
+	<select id="findByNo" resultMap="PeerDeploymentOrderDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/>
+		<trim prefix=",">
+			<include refid="consign_column_List" />
+		</trim>
+		<trim prefix=",">
+			eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name,ep.peer_name AS peer_name,ew.warehouse_name AS warehouse_name
+		</trim>
+		FROM erp_peer_deployment_order epdo
+		LEFT JOIN erp_peer_deployment_order_consign_info epdoci ON epdo.id = epdoci.peer_deployment_order_id and epdoci.data_status = 1
+		LEFT JOIN erp_area_province eap ON eap.id = epdoci.province
+		LEFT JOIN erp_area_city eac ON eac.id = epdoci.city
+		LEFT JOIN erp_area_district ead ON ead.id = epdoci.district
+		LEFT JOIN erp_peer ep ON ep.id = epdo.peer_id AND ep.data_status = 1
+		LEFT JOIN erp_warehouse ew ON ew.id = epdo.warehouse_position_id AND ew.data_status = 1
+		WHERE epdo.peer_deployment_order_no = #{peerDeploymentOrderNo, jdbcType=INTEGER} AND epdo.data_status = 1
+	</select>
 </mapper>

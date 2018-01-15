@@ -65,9 +65,7 @@ public class PeerDeploymentOrderDO  extends BaseDO {
 		this.peerId = peerId;
 	}
 
-	public Date getRentStartTime(){
-		return rentStartTime;
-	}
+	public Date getRentStartTime(){ return rentStartTime; }
 
 	public void setRentStartTime(Date rentStartTime){
 		this.rentStartTime = rentStartTime;

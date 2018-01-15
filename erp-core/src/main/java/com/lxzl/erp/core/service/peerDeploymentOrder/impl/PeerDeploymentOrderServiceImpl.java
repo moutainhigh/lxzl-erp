@@ -51,27 +51,6 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
 
     private static Logger logger = LoggerFactory.getLogger(PeerDeploymentOrderServiceImpl.class);
 
-    @Autowired
-    private UserSupport userSupport;
-    @Autowired
-    private PeerDeploymentOrderMapper peerDeploymentOrderMapper;
-    @Autowired
-    private PeerMapper peerMapper;
-    @Autowired
-    private WarehouseSupport warehouseSupport;
-    @Autowired
-    private GenerateNoSupport generateNoSupport;
-    @Autowired
-    private PeerDeploymentOrderProductMapper peerDeploymentOrderProductMapper;
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private PeerDeploymentOrderMaterialMapper peerDeploymentOrderMaterialMapper;
-    @Autowired
-    private MaterialService materialService;
-    @Autowired
-    private PeerDeploymentOrderConsignInfoMapper peerDeploymentOrderConsignInfoMapper;
-
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> createPeerDeploymentOrder(PeerDeploymentOrder peerDeploymentOrder) {
@@ -87,25 +66,30 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
             return result;
         }
-        //判断天租还是月租--计算预计归还时间
-//        Date rentStartTime = peerDeploymentOrder.getRentStartTime();
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTime(rentStartTime);
-//        if(peerDeploymentOrder.getRentType() == PeerDeploymentOrderRentType.RENT_TYPE_DAY){
-//            calendar.add(Calendar.DATE,peerDeploymentOrder.getRentTimeLength());
-//            rentStartTime = calendar.getTime();
-//            peerDeploymentOrder.setExpectReturnTime(rentStartTime);
-//        }else{
-//            calendar.add(Calendar.MONTH,peerDeploymentOrder.getRentTimeLength());
-//            calendar.add(Calendar.DATE,-1);
-//            rentStartTime = calendar.getTime();
-//            peerDeploymentOrder.setExpectReturnTime(rentStartTime);
-//        }
 
-        Date expectReturnTime = peerDeploymentOrderExpectReturnTime(peerDeploymentOrder.getRentStartTime(), peerDeploymentOrder.getRentType(), peerDeploymentOrder.getRentTimeLength());
 
         PeerDeploymentOrderDO peerDeploymentOrderDO = ConverterUtil.convert(peerDeploymentOrder,PeerDeploymentOrderDO.class);
-        peerDeploymentOrderDO.setPeerDeploymentOrderNo(generateNoSupport.generatePeerDeploymentOrderNo(currentTime,peerDO.getId()));
+        Date expectReturnTime = peerDeploymentOrderExpectReturnTime(peerDeploymentOrderDO.getRentStartTime(), peerDeploymentOrderDO.getRentType(), peerDeploymentOrderDO.getRentTimeLength());
+
+//        //判断天租还是月租--计算预计归还时间
+//        Date rentStartTime = peerDeploymentOrderDO.getRentStartTime();
+//
+//        if(PeerDeploymentOrderRentType.RENT_TYPE_DAY.equals(peerDeploymentOrderDO.getRentType())){
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.setTime(rentStartTime);
+//            calendar.add(Calendar.DATE,peerDeploymentOrderDO.getRentTimeLength()-1);
+//            rentStartTime = calendar.getTime();
+//            peerDeploymentOrderDO.setExpectReturnTime(rentStartTime);
+//        }else{
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.setTime(rentStartTime);
+//            calendar.add(Calendar.MONTH,peerDeploymentOrderDO.getRentTimeLength());
+//            calendar.add(Calendar.DATE,-1);
+//            rentStartTime = calendar.getTime();
+//            peerDeploymentOrderDO.setExpectReturnTime(rentStartTime);
+//        }
+
+        peerDeploymentOrderDO.setPeerDeploymentOrderNo(generateNoSupport.generatePeerDeploymentOrderNo(currentTime,peerDO.getCity()));
         peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT);
         peerDeploymentOrderDO.setExpectReturnTime(expectReturnTime);
         peerDeploymentOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -114,9 +98,10 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         peerDeploymentOrderDO.setUpdateTime(currentTime);
         peerDeploymentOrderDO.setUpdateUser(loginUser.getUserId().toString());
         peerDeploymentOrderMapper.save(peerDeploymentOrderDO);
+        Integer id = peerDeploymentOrderDO.getId();
         savePeerDeploymentOrderProductInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderProductList(),PeerDeploymentOrderProductDO.class),peerDeploymentOrderDO.getPeerDeploymentOrderNo(),loginUser,currentTime);
         savePeerDeploymentOrderMaterialInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderMaterialList(), PeerDeploymentOrderMaterialDO.class), peerDeploymentOrderDO.getPeerDeploymentOrderNo(),loginUser, currentTime);
-        savePeerDeploymentOrderConsignInfo(ConverterUtil.convert(peerDeploymentOrder.getPeerDeploymentOrderConsignInfo(),PeerDeploymentOrderConsignInfoDO.class), peerDeploymentOrderDO.getId(), loginUser, currentTime);
+        savePeerDeploymentOrderConsignInfo(ConverterUtil.convert(peerDeploymentOrder.getPeerDeploymentOrderConsignInfo(),PeerDeploymentOrderConsignInfoDO.class), id, loginUser, currentTime);
 
         PeerDeploymentOrderDO newestPeerDeploymentOrderDO = peerDeploymentOrderMapper.findByPeerDeploymentOrderNo(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
         for (PeerDeploymentOrderProductDO peerDeploymentOrderProductDO : newestPeerDeploymentOrderDO.getPeerDeploymentOrderProductDOList()) {
@@ -136,10 +121,6 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         return result;
     }
 
-    @Override
-    public ServiceResult<String, PeerDeploymentOrder> detailPeerDeploymentOrderNo(String peerDeploymentOrderNo) {
-        return null;
-    }
 
     @Override
     public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
@@ -346,5 +327,26 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         }
         return null;
     }
+
+    @Autowired
+    private UserSupport userSupport;
+    @Autowired
+    private PeerDeploymentOrderMapper peerDeploymentOrderMapper;
+    @Autowired
+    private PeerMapper peerMapper;
+    @Autowired
+    private WarehouseSupport warehouseSupport;
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
+    @Autowired
+    private PeerDeploymentOrderProductMapper peerDeploymentOrderProductMapper;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private PeerDeploymentOrderMaterialMapper peerDeploymentOrderMaterialMapper;
+    @Autowired
+    private MaterialService materialService;
+    @Autowired
+    private PeerDeploymentOrderConsignInfoMapper peerDeploymentOrderConsignInfoMapper;
 
 }
