@@ -52,7 +52,6 @@
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'manage.customer.mixin.js',
-            'manage.customer.business.js',
             'manage.customer.business.edit.js',
             'modal.choose.user.js');
 </script>

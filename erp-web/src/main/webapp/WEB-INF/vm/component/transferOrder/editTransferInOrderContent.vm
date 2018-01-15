@@ -107,7 +107,7 @@
                             <td>{{propertiesToStr}}</td>
                             <td class="productUnitAmountTd">
                                 <div class="smart-widget sm-right smr-50">
-                                    <input type="hidden" name="isNewProduct" value="{{isNewProduct}}" class="isNewProduct" />
+                                    <input type="hidden" name="isNewProduct" value="{{isNewIntValue}}" class="isNewProduct" />
                                     <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
                                     <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
                                     <label class="field prepend-icon">
@@ -181,7 +181,7 @@
                             <td>{{#price}}{{materialPrice}}{{/price}}</td>
                             <td class="materialUnitAmountTd">
                                 <div class="smart-widget sm-right smr-50">
-                                    <input type="hidden" name="isNewMaterial" value="{{isNewMaterial}}" class="isNewMaterial" />
+                                    <input type="hidden" name="isNewMaterial" value="{{isNewIntValue}}" class="isNewMaterial" />
                                     <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
                                     <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
                                     <label class="field prepend-icon">
