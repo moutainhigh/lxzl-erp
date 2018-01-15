@@ -5,6 +5,7 @@ import com.lxzl.erp.core.service.VerifyReceiver;
 import com.lxzl.erp.core.service.changeOrder.ChangeOrderService;
 import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
 import com.lxzl.erp.core.service.order.OrderService;
+import com.lxzl.erp.core.service.peerDeploymentOrder.PeerDeploymentOrderService;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.core.service.purchaseApply.PurchaseApplyOrderService;
 import com.lxzl.erp.core.service.repairOrder.RepairOrderService;
@@ -39,6 +40,8 @@ public class WorkFlowManager {
     private PurchaseApplyOrderService purchaseApplyOrderService;
     @Autowired
     private TransferOrderService transferOrderService;
+    @Autowired
+    private PeerDeploymentOrderService peerDeploymentOrderService;
 
     public VerifyReceiver getService(Integer workflowType) {
         if (WorkflowType.WORKFLOW_TYPE_PURCHASE.equals(workflowType)) {
@@ -58,6 +61,9 @@ public class WorkFlowManager {
         } else if(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER.equals(workflowType)
                 ||WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER.equals(workflowType)){
             return transferOrderService;
+        }else if(WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_INTO.equals(workflowType)
+                ||WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_OUT.equals(workflowType)){
+            return peerDeploymentOrderService;
         }
         return null;
     }

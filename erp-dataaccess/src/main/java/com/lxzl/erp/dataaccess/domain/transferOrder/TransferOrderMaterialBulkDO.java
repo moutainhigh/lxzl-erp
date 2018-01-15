@@ -10,7 +10,6 @@ public class TransferOrderMaterialBulkDO  extends BaseDO {
 
 	private Integer id;
 	private Integer transferOrderId;
-
 	private Integer transferOrderMaterialId;
 	private String bulkMaterialNo;
 	private Integer dataStatus;
