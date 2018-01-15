@@ -74,12 +74,6 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(eto.id) FROM erp_transfer_order eto
 		<where>
-			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.createStartTime != null ">
-				<![CDATA[ AND eto.create_time >= #{maps.queryParam.createStartTime} ]]>
-			</if>
-			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.createEndTime != null">
-				<![CDATA[ AND eto.create_time <= #{maps.queryParam.createEndTime} ]]>
-			</if>
 			<if test="true">
 				AND eto.data_status = 1
 			</if>
@@ -193,6 +187,12 @@
 			<if test="maps.transferOrderQueryParam.warehouseId != null">
 				and eto.warehouse_id = #{maps.transferOrderQueryParam.warehouseId, jdbcType=INTEGER}
 			</if>
+			<if test="maps.transferOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND eto.create_time >= #{maps.transferOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.transferOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam.createEndTime != null">
+				<![CDATA[ AND eto.create_time <= #{maps.transferOrderQueryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				and eto.data_status = 1
 			</if>
@@ -222,6 +222,12 @@
 			</if>
 			<if test="maps.transferOrderQueryParam.warehouseId != null">
 				and eto.warehouse_id = #{maps.transferOrderQueryParam.warehouseId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.transferOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND eto.create_time >= #{maps.transferOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.transferOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam.createEndTime != null">
+				<![CDATA[ AND eto.create_time <= #{maps.transferOrderQueryParam.createEndTime} ]]>
 			</if>
 			<if test="true">
 				and eto.data_status = 1

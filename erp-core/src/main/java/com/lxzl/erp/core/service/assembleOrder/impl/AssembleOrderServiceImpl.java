@@ -255,7 +255,7 @@ public class AssembleOrderServiceImpl implements AssembleOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", assembleOrderQueryParam);
+        maps.put("assembleOrderQueryParam", assembleOrderQueryParam);
         Integer assembleOrderCount = assembleOrderMapper.listCount(maps);
         List<AssembleOrderDO> assembleOrderDOList = assembleOrderMapper.findAssembleOrderByParams(maps);
         List<AssembleOrder> assembleOrderList = ConverterUtil.convertList(assembleOrderDOList, AssembleOrder.class);

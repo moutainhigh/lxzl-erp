@@ -203,33 +203,33 @@
 		SELECT count(id)
 		FROM erp_purchase_order epo
 		<where>
-			<if test="maps.queryParam.purchaseNo != null &amp;&amp; maps.queryParam.purchaseNo != ''">
-				and epo.purchase_no like CONCAT('%','${maps.queryParam.purchaseNo}','%' )
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.purchaseNo != null &amp;&amp; maps.purchaseOrderQueryParam.purchaseNo != ''">
+				and epo.purchase_no like CONCAT('%','${maps.purchaseOrderQueryParam.purchaseNo}','%' )
 			</if>
-			<if test="maps.queryParam.productSupplierId != null">
-				and epo.product_supplier_id = #{maps.queryParam.productSupplierId, jdbcType=INTEGER}
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.productSupplierId != null">
+				and epo.product_supplier_id = #{maps.purchaseOrderQueryParam.productSupplierId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.warehouseId != null">
-				and epo.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.warehouseId != null">
+				and epo.warehouse_id = #{maps.purchaseOrderQueryParam.warehouseId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.isInvoice != null">
-				and epo.is_invoice = #{maps.queryParam.isInvoice, jdbcType=INTEGER}
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.isInvoice != null">
+				and epo.is_invoice = #{maps.purchaseOrderQueryParam.isInvoice, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.isNew != null">
-				and epo.is_new = #{maps.queryParam.isNew, jdbcType=INTEGER}
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.isNew != null">
+				and epo.is_new = #{maps.purchaseOrderQueryParam.isNew, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.purchaseType != null">
-				and epo.purchase_type = #{maps.queryParam.purchaseType, jdbcType=INTEGER}
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.purchaseType != null">
+				and epo.purchase_type = #{maps.purchaseOrderQueryParam.purchaseType, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.purchaseOrderStatus != null">
-				and epo.purchase_order_status = #{maps.queryParam.purchaseOrderStatus, jdbcType=INTEGER}
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.purchaseOrderStatus != null">
+				and epo.purchase_order_status = #{maps.purchaseOrderQueryParam.purchaseOrderStatus, jdbcType=INTEGER}
 			</if>
 
-			<if test="maps.queryParam.createStartTime != null ">
-				<![CDATA[ AND epo.create_time >= #{maps.queryParam.createStartTime} ]]>
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND epo.create_time >= #{maps.purchaseOrderQueryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null ">
-				<![CDATA[ AND epo.create_time <= #{maps.queryParam.createEndTime} ]]>
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.createEndTime != null ">
+				<![CDATA[ AND epo.create_time <= #{maps.purchaseOrderQueryParam.createEndTime} ]]>
 			</if>
 			<if test="true">
 				and epo.data_status = 1
@@ -244,32 +244,32 @@
 		SELECT <include refid="column_List"/>
 		FROM erp_purchase_order epo
 		<where>
-			<if test="maps.queryParam.purchaseNo != null &amp;&amp; maps.queryParam.purchaseNo != ''">
-				and epo.purchase_no like CONCAT('%','${maps.queryParam.purchaseNo}','%' )
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.purchaseNo != null &amp;&amp; maps.purchaseOrderQueryParam.purchaseNo != ''">
+				and epo.purchase_no like CONCAT('%','${maps.purchaseOrderQueryParam.purchaseNo}','%' )
 			</if>
-			<if test="maps.queryParam.productSupplierId != null">
-				and epo.product_supplier_id = #{maps.queryParam.productSupplierId, jdbcType=INTEGER}
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.productSupplierId != null">
+				and epo.product_supplier_id = #{maps.purchaseOrderQueryParam.productSupplierId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.warehouseId != null">
-				and epo.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.warehouseId != null">
+				and epo.warehouse_id = #{maps.purchaseOrderQueryParam.warehouseId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.isInvoice != null">
-				and epo.is_invoice = #{maps.queryParam.isInvoice, jdbcType=INTEGER}
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.isInvoice != null">
+				and epo.is_invoice = #{maps.purchaseOrderQueryParam.isInvoice, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.isNew != null">
-				and epo.is_new = #{maps.queryParam.isNew, jdbcType=INTEGER}
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.isNew != null">
+				and epo.is_new = #{maps.purchaseOrderQueryParam.isNew, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.purchaseType != null">
-				and epo.purchase_type = #{maps.queryParam.purchaseType, jdbcType=INTEGER}
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.purchaseType != null">
+				and epo.purchase_type = #{maps.purchaseOrderQueryParam.purchaseType, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.purchaseOrderStatus != null">
-				and epo.purchase_order_status = #{maps.queryParam.purchaseOrderStatus, jdbcType=INTEGER}
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.purchaseOrderStatus != null">
+				and epo.purchase_order_status = #{maps.purchaseOrderQueryParam.purchaseOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.createStartTime != null ">
-				<![CDATA[ AND epo.create_time >= #{maps.queryParam.createStartTime} ]]>
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND epo.create_time >= #{maps.purchaseOrderQueryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null ">
-				<![CDATA[ AND epo.create_time <= #{maps.queryParam.createEndTime} ]]>
+			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.createEndTime != null ">
+				<![CDATA[ AND epo.create_time <= #{maps.purchaseOrderQueryParam.createEndTime} ]]>
 			</if>
 			<if test="true">
 				and epo.data_status = 1

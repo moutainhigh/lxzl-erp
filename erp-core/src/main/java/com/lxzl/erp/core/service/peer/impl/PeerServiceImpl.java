@@ -151,7 +151,7 @@ public class PeerServiceImpl implements PeerService {
         Map<String, Object> map = new HashMap<>();
         map.put("start", pageQuery.getStart());
         map.put("pageSize", pageQuery.getPageSize());
-        map.put("queryParam", peerQueryParam);
+        map.put("peerQueryParam", peerQueryParam);
         Integer count = peerMapper.listCount(map);
         List<PeerDO> peerDOList = peerMapper.listPage(map);
         List<Peer> peerList = ConverterUtil.convertList(peerDOList, Peer.class);

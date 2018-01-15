@@ -166,29 +166,35 @@
 	<select id="findRepairOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ero.id) from erp_repair_order ero
 		<where>
-			<if test="maps.queryParam.repairOrderNo != null &amp;&amp; maps.queryParam.repairOrderNo != ''">
-				maps.queryParam.repair_order_no = #{maps.queryParam.repairOrderNo,jdbcType=VARCHAR},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.repairOrderNo != null &amp;&amp; maps.repairOrderQueryParam.repairOrderNo != ''">
+				maps.repairOrderQueryParam.repair_order_no = #{maps.repairOrderQueryParam.repairOrderNo,jdbcType=VARCHAR},
 			</if>
-			<if test="maps.queryParam.repairReason != null  &amp;&amp; maps.queryParam.repairReason != ''">
-				maps.queryParam.repair_reason = #{maps.queryParam.repairReason,jdbcType=VARCHAR},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.repairReason != null  &amp;&amp; maps.repairOrderQueryParam.repairReason != ''">
+				maps.repairOrderQueryParam.repair_reason = #{maps.repairOrderQueryParam.repairReason,jdbcType=VARCHAR},
 			</if>
-			<if test="maps.queryParam.repairEquipmentCount != null">
-				maps.queryParam.repair_equipment_count = #{maps.queryParam.repairEquipmentCount,jdbcType=INTEGER},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.repairEquipmentCount != null">
+				maps.repairOrderQueryParam.repair_equipment_count = #{maps.repairOrderQueryParam.repairEquipmentCount,jdbcType=INTEGER},
 			</if>
-			<if test="maps.queryParam.repairBulkMaterialCount != null">
-				maps.queryParam.repair_bulk_material_count = #{maps.queryParam.repairBulkMaterialCount,jdbcType=INTEGER},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.repairBulkMaterialCount != null">
+				maps.repairOrderQueryParam.repair_bulk_material_count = #{maps.repairOrderQueryParam.repairBulkMaterialCount,jdbcType=INTEGER},
 			</if>
-			<if test="maps.queryParam.fixEquipmentCount != null">
-				maps.queryParam.fix_equipment_count = #{maps.queryParam.fixEquipmentCount,jdbcType=INTEGER},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.fixEquipmentCount != null">
+				maps.repairOrderQueryParam.fix_equipment_count = #{maps.repairOrderQueryParam.fixEquipmentCount,jdbcType=INTEGER},
 			</if>
-			<if test="maps.queryParam.fixBulkMaterialCount != null">
-				maps.queryParam.fix_bulk_material_count = #{maps.queryParam.fixBulkMaterialCount,jdbcType=INTEGER},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.fixBulkMaterialCount != null">
+				maps.repairOrderQueryParam.fix_bulk_material_count = #{maps.repairOrderQueryParam.fixBulkMaterialCount,jdbcType=INTEGER},
 			</if>
-			<if test="maps.queryParam.warehouseNo != null &amp;&amp; maps.queryParam.warehouseNo != ''">
-				maps.queryParam.warehouse_no = #{maps.queryParam.warehouseNo,jdbcType=VARCHAR},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.warehouseNo != null &amp;&amp; maps.repairOrderQueryParam.warehouseNo != ''">
+				maps.repairOrderQueryParam.warehouse_no = #{maps.repairOrderQueryParam.warehouseNo,jdbcType=VARCHAR},
 			</if>
-			<if test="maps.queryParam.repairOrderStatus != null">
-				maps.queryParam.repair_order_status = #{maps.queryParam.repairOrderStatus,jdbcType=INTEGER},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.repairOrderStatus != null">
+				maps.repairOrderQueryParam.repair_order_status = #{maps.repairOrderQueryParam.repairOrderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND ero.create_time >= #{maps.repairOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.createEndTime != null ">
+				<![CDATA[ AND ero.create_time <= #{maps.repairOrderQueryParam.createEndTime} ]]>
 			</if>
 			<if test="true">
 				AND ero.data_status = 1
@@ -199,29 +205,35 @@
 	<select id="findRepairOrderByParams" resultMap="RepairOrderDO" parameterType="map">
 		SELECT <include refid="column_List"/> from erp_repair_order ero
 		<where>
-			<if test="maps.queryParam.repairOrderNo != null &amp;&amp; maps.queryParam.repairOrderNo != ''">
-				maps.queryParam.repair_order_no = #{maps.queryParam.repairOrderNo,jdbcType=VARCHAR},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.repairOrderNo != null &amp;&amp; maps.repairOrderQueryParam.repairOrderNo != ''">
+				maps.repairOrderQueryParam.repair_order_no = #{maps.repairOrderQueryParam.repairOrderNo,jdbcType=VARCHAR},
 			</if>
-			<if test="maps.queryParam.repairReason != null  &amp;&amp; maps.queryParam.repairReason != ''">
-				maps.queryParam.repair_reason = #{maps.queryParam.repairReason,jdbcType=VARCHAR},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.repairReason != null  &amp;&amp; maps.repairOrderQueryParam.repairReason != ''">
+				maps.repairOrderQueryParam.repair_reason = #{maps.repairOrderQueryParam.repairReason,jdbcType=VARCHAR},
 			</if>
-			<if test="maps.queryParam.repairEquipmentCount != null">
-				maps.queryParam.repair_equipment_count = #{maps.queryParam.repairEquipmentCount,jdbcType=INTEGER},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.repairEquipmentCount != null">
+				maps.repairOrderQueryParam.repair_equipment_count = #{maps.repairOrderQueryParam.repairEquipmentCount,jdbcType=INTEGER},
 			</if>
-			<if test="maps.queryParam.repairBulkMaterialCount != null">
-				maps.queryParam.repair_bulk_material_count = #{maps.queryParam.repairBulkMaterialCount,jdbcType=INTEGER},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.repairBulkMaterialCount != null">
+				maps.repairOrderQueryParam.repair_bulk_material_count = #{maps.repairOrderQueryParam.repairBulkMaterialCount,jdbcType=INTEGER},
 			</if>
-			<if test="maps.queryParam.fixEquipmentCount != null">
-				maps.queryParam.fix_equipment_count = #{maps.queryParam.fixEquipmentCount,jdbcType=INTEGER},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.fixEquipmentCount != null">
+				maps.repairOrderQueryParam.fix_equipment_count = #{maps.repairOrderQueryParam.fixEquipmentCount,jdbcType=INTEGER},
 			</if>
-			<if test="maps.queryParam.fixBulkMaterialCount != null">
-				maps.queryParam.fix_bulk_material_count = #{maps.queryParam.fixBulkMaterialCount,jdbcType=INTEGER},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.fixBulkMaterialCount != null">
+				maps.repairOrderQueryParam.fix_bulk_material_count = #{maps.repairOrderQueryParam.fixBulkMaterialCount,jdbcType=INTEGER},
 			</if>
-			<if test="maps.queryParam.warehouseNo != null &amp;&amp; maps.queryParam.warehouseNo != ''">
-				maps.queryParam.warehouse_no = #{maps.queryParam.warehouseNo,jdbcType=VARCHAR},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.warehouseNo != null &amp;&amp; maps.repairOrderQueryParam.warehouseNo != ''">
+				maps.repairOrderQueryParam.warehouse_no = #{maps.repairOrderQueryParam.warehouseNo,jdbcType=VARCHAR},
 			</if>
-			<if test="maps.queryParam.repairOrderStatus != null">
-				maps.queryParam.repair_order_status = #{maps.queryParam.repairOrderStatus,jdbcType=INTEGER},
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.repairOrderStatus != null">
+				maps.repairOrderQueryParam.repair_order_status = #{maps.repairOrderQueryParam.repairOrderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND ero.create_time >= #{maps.repairOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.createEndTime != null ">
+				<![CDATA[ AND ero.create_time <= #{maps.repairOrderQueryParam.createEndTime} ]]>
 			</if>
 			<if test="true">
 				AND ero.data_status = 1

@@ -170,26 +170,26 @@
 		SELECT count(id)
 		FROM erp_purchase_delivery_order epdo
 		<where>
-			<if test="maps.queryParam.purchaseOrderId != null">
-				and epdo.purchase_order_id = #{maps.queryParam.purchaseOrderId, jdbcType=INTEGER}
+			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.purchaseOrderId != null">
+				and epdo.purchase_order_id = #{maps.purchaseDeliveryOrderQueryParam.purchaseOrderId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.warehouseId != null">
-				and epdo.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
+			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.warehouseId != null">
+				and epdo.warehouse_id = #{maps.purchaseDeliveryOrderQueryParam.warehouseId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.isInvoice != null">
-				and epdo.is_invoice = #{maps.queryParam.isInvoice, jdbcType=INTEGER}
+			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.isInvoice != null">
+				and epdo.is_invoice = #{maps.purchaseDeliveryOrderQueryParam.isInvoice, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.isNew != null">
-				and epdo.is_new = #{maps.queryParam.isNew, jdbcType=INTEGER}
+			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.isNew != null">
+				and epdo.is_new = #{maps.purchaseDeliveryOrderQueryParam.isNew, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.purchaseDeliveryOrderStatus != null">
-				and epdo.purchase_delivery_order_status = #{maps.queryParam.purchaseDeliveryOrderStatus, jdbcType=INTEGER}
+			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.purchaseDeliveryOrderStatus != null">
+				and epdo.purchase_delivery_order_status = #{maps.purchaseDeliveryOrderQueryParam.purchaseDeliveryOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.createStartTime != null ">
-				<![CDATA[ AND epdo.create_time >= #{maps.queryParam.createStartTime} ]]>
+			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND epdo.create_time >= #{maps.purchaseDeliveryOrderQueryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null ">
-				<![CDATA[ AND epdo.create_time <= #{maps.queryParam.createEndTime} ]]>
+			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.createEndTime != null ">
+				<![CDATA[ AND epdo.create_time <= #{maps.purchaseDeliveryOrderQueryParam.createEndTime} ]]>
 			</if>
 			<if test="true">
 				and epdo.data_status = 1
@@ -203,26 +203,26 @@
 		SELECT <include refid="column_List"/>
 		FROM erp_purchase_delivery_order epdo
 		<where>
-			<if test="maps.queryParam.purchaseOrderId != null">
-				and epdo.purchase_order_id = #{maps.queryParam.purchaseOrderId, jdbcType=INTEGER}
+			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.purchaseOrderId != null">
+				and epdo.purchase_order_id = #{maps.purchaseDeliveryOrderQueryParam.purchaseOrderId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.warehouseId != null">
-				and epdo.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
+			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.warehouseId != null">
+				and epdo.warehouse_id = #{maps.purchaseDeliveryOrderQueryParam.warehouseId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.isInvoice != null">
-				and epdo.is_invoice = #{maps.queryParam.isInvoice, jdbcType=INTEGER}
+			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.isInvoice != null">
+				and epdo.is_invoice = #{maps.purchaseDeliveryOrderQueryParam.isInvoice, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.isNew != null">
-				and epdo.is_new = #{maps.queryParam.isNew, jdbcType=INTEGER}
+			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.isNew != null">
+				and epdo.is_new = #{maps.purchaseDeliveryOrderQueryParam.isNew, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.purchaseDeliveryOrderStatus != null">
-				and epdo.purchase_delivery_order_status = #{maps.queryParam.purchaseDeliveryOrderStatus, jdbcType=INTEGER}
+			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.purchaseDeliveryOrderStatus != null">
+				and epdo.purchase_delivery_order_status = #{maps.purchaseDeliveryOrderQueryParam.purchaseDeliveryOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.createStartTime != null ">
-				<![CDATA[ AND epdo.create_time >= #{maps.queryParam.createStartTime} ]]>
+			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND epdo.create_time >= #{maps.purchaseDeliveryOrderQueryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null ">
-				<![CDATA[ AND epdo.create_time <= #{maps.queryParam.createEndTime} ]]>
+			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.createEndTime != null ">
+				<![CDATA[ AND epdo.create_time <= #{maps.purchaseDeliveryOrderQueryParam.createEndTime} ]]>
 			</if>
 			<if test="true">
 				and epdo.data_status = 1

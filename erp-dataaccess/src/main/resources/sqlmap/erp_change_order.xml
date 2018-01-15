@@ -229,23 +229,23 @@
 		FROM erp_change_order eco
 		left join erp_user eu on eco.owner = eu.id
 		<where>
-			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.changeOrderNo != null &amp;&amp; maps.queryParam.changeOrderNo != ''">
-				and eco.change_order_no like CONCAT('%','${maps.queryParam.changeOrderNo}','%' )
+			<if test="maps.changeOrderPageParam != null &amp;&amp;maps.changeOrderPageParam.changeOrderNo != null &amp;&amp; maps.changeOrderPageParam.changeOrderNo != ''">
+				and eco.change_order_no like CONCAT('%','${maps.changeOrderPageParam.changeOrderNo}','%' )
 			</if>
-			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
-				and eco.customer_no like CONCAT('%','${maps.queryParam.customerNo}','%' )
+			<if test="maps.changeOrderPageParam != null &amp;&amp;maps.changeOrderPageParam.customerNo != null &amp;&amp; maps.changeOrderPageParam.customerNo != ''">
+				and eco.customer_no like CONCAT('%','${maps.changeOrderPageParam.customerNo}','%' )
 			</if>
-			<if test="maps.queryParam.changeOrderStatus != null">
-				and eco.change_order_status = #{maps.queryParam.changeOrderStatus, jdbcType=INTEGER}
+			<if test="maps.changeOrderPageParam != null &amp;&amp; maps.changeOrderPageParam.changeOrderStatus != null">
+				and eco.change_order_status = #{maps.changeOrderPageParam.changeOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.ownerName != null &amp;&amp; maps.queryParam.ownerName != ''">
-				and eu.real_name like CONCAT('%','${maps.queryParam.ownerName}','%' )
+			<if test="maps.changeOrderPageParam != null &amp;&amp;maps.changeOrderPageParam.ownerName != null &amp;&amp; maps.changeOrderPageParam.ownerName != ''">
+				and eu.real_name like CONCAT('%','${maps.changeOrderPageParam.ownerName}','%' )
 			</if>
-			<if test="maps.queryParam.createStartTime != null ">
-				<![CDATA[ AND eco.create_time >= #{maps.queryParam.createStartTime} ]]>
+			<if test="maps.changeOrderPageParam != null &amp;&amp; maps.changeOrderPageParam.createStartTime != null ">
+				<![CDATA[ AND eco.create_time >= #{maps.changeOrderPageParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null ">
-				<![CDATA[ AND eco.create_time <= #{maps.queryParam.createEndTime} ]]>
+			<if test="maps.changeOrderPageParam != null &amp;&amp; maps.changeOrderPageParam.createEndTime != null ">
+				<![CDATA[ AND eco.create_time <= #{maps.changeOrderPageParam.createEndTime} ]]>
 			</if>
 			<if test="true">
 				and eco.data_status = 1
@@ -260,23 +260,23 @@
 		FROM erp_change_order eco
 		left join erp_user eu on eco.owner = eu.id
 		<where>
-			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.changeOrderNo != null &amp;&amp; maps.queryParam.changeOrderNo != ''">
-				and eco.change_order_no like CONCAT('%','${maps.queryParam.changeOrderNo}','%' )
+			<if test="maps.changeOrderPageParam != null &amp;&amp;maps.changeOrderPageParam.changeOrderNo != null &amp;&amp; maps.changeOrderPageParam.changeOrderNo != ''">
+				and eco.change_order_no like CONCAT('%','${maps.changeOrderPageParam.changeOrderNo}','%' )
 			</if>
-			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
-				and eco.customer_no like CONCAT('%','${maps.queryParam.customerNo}','%' )
+			<if test="maps.changeOrderPageParam != null &amp;&amp;maps.changeOrderPageParam.customerNo != null &amp;&amp; maps.changeOrderPageParam.customerNo != ''">
+				and eco.customer_no like CONCAT('%','${maps.changeOrderPageParam.customerNo}','%' )
 			</if>
-			<if test="maps.queryParam.changeOrderStatus != null">
-				and eco.change_order_status = #{maps.queryParam.changeOrderStatus, jdbcType=INTEGER}
+			<if test="maps.changeOrderPageParam != null &amp;&amp; maps.changeOrderPageParam.changeOrderStatus != null">
+				and eco.change_order_status = #{maps.changeOrderPageParam.changeOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.ownerName != null &amp;&amp; maps.queryParam.ownerName != ''">
-				and eu.real_name like CONCAT('%','${maps.queryParam.ownerName}','%' )
+			<if test="maps.changeOrderPageParam != null &amp;&amp;maps.changeOrderPageParam.ownerName != null &amp;&amp; maps.changeOrderPageParam.ownerName != ''">
+				and eu.real_name like CONCAT('%','${maps.changeOrderPageParam.ownerName}','%' )
 			</if>
-			<if test="maps.queryParam.createStartTime != null ">
-				<![CDATA[ AND eco.create_time >= #{maps.queryParam.createStartTime} ]]>
+			<if test="maps.changeOrderPageParam != null &amp;&amp; maps.changeOrderPageParam.createStartTime != null ">
+				<![CDATA[ AND eco.create_time >= #{maps.changeOrderPageParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null ">
-				<![CDATA[ AND eco.create_time <= #{maps.queryParam.createEndTime} ]]>
+			<if test="maps.changeOrderPageParam != null &amp;&amp; maps.changeOrderPageParam.createEndTime != null ">
+				<![CDATA[ AND eco.create_time <= #{maps.changeOrderPageParam.createEndTime} ]]>
 			</if>
 
 			<if test="true">

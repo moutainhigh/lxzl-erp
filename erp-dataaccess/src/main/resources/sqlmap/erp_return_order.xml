@@ -229,32 +229,32 @@
 		left join erp_user eu on ero.owner = eu.id
 		left join erp_customer ec on ero.customer_id = ec.id
 		<where>
-			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.returnOrderNo != null &amp;&amp; maps.queryParam.returnOrderNo != ''">
-				and ero.return_order_no like CONCAT('%','${maps.queryParam.returnOrderNo}','%' )
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.returnOrderNo != null &amp;&amp; maps.returnOrderPageParam.returnOrderNo != ''">
+				and ero.return_order_no like CONCAT('%','${maps.returnOrderPageParam.returnOrderNo}','%' )
 			</if>
-			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
-				and ero.customer_no like CONCAT('%','${maps.queryParam.customerNo}','%' )
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.customerNo != null &amp;&amp; maps.returnOrderPageParam.customerNo != ''">
+				and ero.customer_no like CONCAT('%','${maps.returnOrderPageParam.customerNo}','%' )
 			</if>
-			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.customerName != null &amp;&amp; maps.queryParam.customerName != ''">
-				and ec.customer_name like CONCAT('%','${maps.queryParam.customerName}','%' )
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.customerName != null &amp;&amp; maps.returnOrderPageParam.customerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.returnOrderPageParam.customerName}','%' )
 			</if>
-			<if test="maps.queryParam.returnOrderStatus != null">
-				and ero.return_order_status = #{maps.queryParam.returnOrderStatus, jdbcType=INTEGER}
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.returnOrderStatus != null">
+				and ero.return_order_status = #{maps.returnOrderPageParam.returnOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.isDamage != null">
-				and ero.is_damage = #{maps.queryParam.isDamage, jdbcType=INTEGER}
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.isDamage != null">
+				and ero.is_damage = #{maps.returnOrderPageParam.isDamage, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.returnMode != null">
-				and ero.return_mode = #{maps.queryParam.returnMode, jdbcType=INTEGER}
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.returnMode != null">
+				and ero.return_mode = #{maps.returnOrderPageParam.returnMode, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.ownerName != null &amp;&amp; maps.queryParam.ownerName != ''">
-				and eu.real_name like CONCAT('%','${maps.queryParam.ownerName}','%' )
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.ownerName != null &amp;&amp; maps.returnOrderPageParam.ownerName != ''">
+				and eu.real_name like CONCAT('%','${maps.returnOrderPageParam.ownerName}','%' )
 			</if>
-			<if test="maps.queryParam.createStartTime != null ">
-				<![CDATA[ AND ero.create_time >= #{maps.queryParam.createStartTime} ]]>
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.createStartTime != null ">
+				<![CDATA[ AND ero.create_time >= #{maps.returnOrderPageParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null ">
-				<![CDATA[ AND ero.create_time <= #{maps.queryParam.createEndTime} ]]>
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.createEndTime != null ">
+				<![CDATA[ AND ero.create_time <= #{maps.returnOrderPageParam.createEndTime} ]]>
 			</if>
 			<if test="true">
 				and ero.data_status = 1
@@ -270,26 +270,26 @@
 		left join erp_user eu on ero.owner = eu.id
 		left join erp_customer ec on ero.customer_id = ec.id
 		<where>
-			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.returnOrderNo != null &amp;&amp; maps.queryParam.returnOrderNo != ''">
-				and ero.return_order_no like CONCAT('%','${maps.queryParam.returnOrderNo}','%' )
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.returnOrderNo != null &amp;&amp; maps.returnOrderPageParam.returnOrderNo != ''">
+				and ero.return_order_no like CONCAT('%','${maps.returnOrderPageParam.returnOrderNo}','%' )
 			</if>
-			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
-				and ero.customer_no like CONCAT('%','${maps.queryParam.customerNo}','%' )
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.customerNo != null &amp;&amp; maps.returnOrderPageParam.customerNo != ''">
+				and ero.customer_no like CONCAT('%','${maps.returnOrderPageParam.customerNo}','%' )
 			</if>
-			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.customerName != null &amp;&amp; maps.queryParam.customerName != ''">
-				and ec.customer_name like CONCAT('%','${maps.queryParam.customerName}','%' )
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.customerName != null &amp;&amp; maps.returnOrderPageParam.customerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.returnOrderPageParam.customerName}','%' )
 			</if>
-			<if test="maps.queryParam.returnOrderStatus != null">
-				and ero.return_order_status = #{maps.queryParam.returnOrderStatus, jdbcType=INTEGER}
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.returnOrderStatus != null">
+				and ero.return_order_status = #{maps.returnOrderPageParam.returnOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam != null &amp;&amp;maps.queryParam.ownerName != null &amp;&amp; maps.queryParam.ownerName != ''">
-				and eu.real_name like CONCAT('%','${maps.queryParam.ownerName}','%' )
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.ownerName != null &amp;&amp; maps.returnOrderPageParam.ownerName != ''">
+				and eu.real_name like CONCAT('%','${maps.returnOrderPageParam.ownerName}','%' )
 			</if>
-			<if test="maps.queryParam.createStartTime != null ">
-				<![CDATA[ AND ero.create_time >= #{maps.queryParam.createStartTime} ]]>
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.createStartTime != null ">
+				<![CDATA[ AND ero.create_time >= #{maps.returnOrderPageParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null ">
-				<![CDATA[ AND ero.create_time <= #{maps.queryParam.createEndTime} ]]>
+			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.createEndTime != null ">
+				<![CDATA[ AND ero.create_time <= #{maps.returnOrderPageParam.createEndTime} ]]>
 			</if>
 
 			<if test="true">

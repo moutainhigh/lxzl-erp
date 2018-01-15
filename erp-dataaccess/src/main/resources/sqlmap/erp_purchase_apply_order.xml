@@ -49,38 +49,38 @@
 		LEFT JOIN erp_purchase_apply_order_product epaop ON epaop.purchase_apply_order_id = epao.id AND epaop.data_status=1
 		LEFT JOIN erp_purchase_apply_order_material epaom ON epaom.purchase_apply_order_id = epao.id AND epaom.data_status=1
 		<where>
-			<if test="maps.queryParam.purchaseApplyOrderNo != null &amp;&amp; maps.queryParam.purchaseApplyOrderNo != ''">
-				and epao.purchase_apply_order_no like CONCAT('%','${maps.queryParam.purchaseApplyOrderNo}','%' )
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.purchaseApplyOrderNo != null &amp;&amp; maps.purchaseApplyOrderPageParam.purchaseApplyOrderNo != ''">
+				and epao.purchase_apply_order_no like CONCAT('%','${maps.purchaseApplyOrderPageParam.purchaseApplyOrderNo}','%' )
 			</if>
-			<if test="maps.queryParam.applyUserName != null &amp;&amp; maps.queryParam.applyUserName != ''">
-				and eu.real_name like CONCAT('%','${maps.queryParam.applyUserName}','%' )
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.applyUserName != null &amp;&amp; maps.purchaseApplyOrderPageParam.applyUserName != ''">
+				and eu.real_name like CONCAT('%','${maps.purchaseApplyOrderPageParam.applyUserName}','%' )
 			</if>
-			<if test="maps.queryParam.warehouseName != null &amp;&amp; maps.queryParam.warehouseName != ''">
-				and ew.warehouse_name like CONCAT('%','${maps.queryParam.warehouseName}','%' )
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.warehouseName != null &amp;&amp; maps.purchaseApplyOrderPageParam.warehouseName != ''">
+				and ew.warehouse_name like CONCAT('%','${maps.purchaseApplyOrderPageParam.warehouseName}','%' )
 			</if>
-			<if test="maps.queryParam.departmentName != null &amp;&amp; maps.queryParam.departmentName != ''">
-				and ed.department_name like CONCAT('%','${maps.queryParam.departmentName}','%' )
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.departmentName != null &amp;&amp; maps.purchaseApplyOrderPageParam.departmentName != ''">
+				and ed.department_name like CONCAT('%','${maps.purchaseApplyOrderPageParam.departmentName}','%' )
 			</if>
-			<if test="maps.queryParam.purchaseApplyOrderStatus != null">
-				and epao.purchase_apply_order_status = #{maps.queryParam.purchaseApplyOrderStatus, jdbcType=INTEGER}
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.purchaseApplyOrderStatus != null">
+				and epao.purchase_apply_order_status = #{maps.purchaseApplyOrderPageParam.purchaseApplyOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.useStartTime != null">
-				AND (<![CDATA[ epao.all_use_time >= #{maps.queryParam.useStartTime} ]]>
-					or <![CDATA[ epaop.use_time >= #{maps.queryParam.useStartTime} ]]>
-					or <![CDATA[ epaom.use_time >= #{maps.queryParam.useStartTime} ]]>
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.useStartTime != null">
+				AND (<![CDATA[ epao.all_use_time >= #{maps.purchaseApplyOrderPageParam.useStartTime} ]]>
+				or <![CDATA[ epaop.use_time >= #{maps.purchaseApplyOrderPageParam.useStartTime} ]]>
+				or <![CDATA[ epaom.use_time >= #{maps.purchaseApplyOrderPageParam.useStartTime} ]]>
 				)
 			</if>
-			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.useEndTime != null">
-				AND (<![CDATA[epao.all_use_time <= #{maps.queryParam.useEndTime} ]]>
-				or <![CDATA[ epaop.use_time <= #{maps.queryParam.useEndTime} ]]>
-				or <![CDATA[ epaom.use_time <= #{maps.queryParam.useEndTime} ]]>
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.useEndTime != null">
+				AND (<![CDATA[epao.all_use_time <= #{maps.purchaseApplyOrderPageParam.useEndTime} ]]>
+				or <![CDATA[ epaop.use_time <= #{maps.purchaseApplyOrderPageParam.useEndTime} ]]>
+				or <![CDATA[ epaom.use_time <= #{maps.purchaseApplyOrderPageParam.useEndTime} ]]>
 				)
 			</if>
-			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.createStartTime != null">
-				<![CDATA[ AND epao.create_time >= #{maps.queryParam.createStartTime} ]]>
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.createStartTime != null">
+				<![CDATA[ AND epao.create_time >= #{maps.purchaseApplyOrderPageParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.createEndTime != null">
-				<![CDATA[ AND epao.create_time <= #{maps.queryParam.createEndTime} ]]>
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.createEndTime != null">
+				<![CDATA[ AND epao.create_time <= #{maps.purchaseApplyOrderPageParam.createEndTime} ]]>
 			</if>
 			<if test="true">
 				AND epao.data_status = 1
@@ -102,38 +102,38 @@
 		LEFT JOIN erp_purchase_apply_order_product epaop ON epaop.purchase_apply_order_id = epao.id AND epaop.data_status=1
 		LEFT JOIN erp_purchase_apply_order_material epaom ON epaom.purchase_apply_order_id = epao.id AND epaom.data_status=1
 		<where>
-			<if test="maps.queryParam.purchaseApplyOrderNo != null &amp;&amp; maps.queryParam.purchaseApplyOrderNo != ''">
-				and epao.purchase_apply_order_no like CONCAT('%','${maps.queryParam.purchaseApplyOrderNo}','%' )
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.purchaseApplyOrderNo != null &amp;&amp; maps.purchaseApplyOrderPageParam.purchaseApplyOrderNo != ''">
+				and epao.purchase_apply_order_no like CONCAT('%','${maps.purchaseApplyOrderPageParam.purchaseApplyOrderNo}','%' )
 			</if>
-			<if test="maps.queryParam.applyUserName != null &amp;&amp; maps.queryParam.applyUserName != ''">
-				and eu.real_name like CONCAT('%','${maps.queryParam.applyUserName}','%' )
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.applyUserName != null &amp;&amp; maps.purchaseApplyOrderPageParam.applyUserName != ''">
+				and eu.real_name like CONCAT('%','${maps.purchaseApplyOrderPageParam.applyUserName}','%' )
 			</if>
-			<if test="maps.queryParam.warehouseName != null &amp;&amp; maps.queryParam.warehouseName != ''">
-				and ew.warehouse_name like CONCAT('%','${maps.queryParam.warehouseName}','%' )
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.warehouseName != null &amp;&amp; maps.purchaseApplyOrderPageParam.warehouseName != ''">
+				and ew.warehouse_name like CONCAT('%','${maps.purchaseApplyOrderPageParam.warehouseName}','%' )
 			</if>
-			<if test="maps.queryParam.departmentName != null &amp;&amp; maps.queryParam.departmentName != ''">
-				and ed.department_name like CONCAT('%','${maps.queryParam.departmentName}','%' )
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.departmentName != null &amp;&amp; maps.purchaseApplyOrderPageParam.departmentName != ''">
+				and ed.department_name like CONCAT('%','${maps.purchaseApplyOrderPageParam.departmentName}','%' )
 			</if>
-			<if test="maps.queryParam.purchaseApplyOrderStatus != null">
-				and epao.purchase_apply_order_status = #{maps.queryParam.purchaseApplyOrderStatus, jdbcType=INTEGER}
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.purchaseApplyOrderStatus != null">
+				and epao.purchase_apply_order_status = #{maps.purchaseApplyOrderPageParam.purchaseApplyOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.useStartTime != null">
-				AND (<![CDATA[ epao.all_use_time >= #{maps.queryParam.useStartTime} ]]>
-				or <![CDATA[ epaop.use_time >= #{maps.queryParam.useStartTime} ]]>
-				or <![CDATA[ epaom.use_time >= #{maps.queryParam.useStartTime} ]]>
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.useStartTime != null">
+				AND (<![CDATA[ epao.all_use_time >= #{maps.purchaseApplyOrderPageParam.useStartTime} ]]>
+				or <![CDATA[ epaop.use_time >= #{maps.purchaseApplyOrderPageParam.useStartTime} ]]>
+				or <![CDATA[ epaom.use_time >= #{maps.purchaseApplyOrderPageParam.useStartTime} ]]>
 				)
 			</if>
-			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.useEndTime != null">
-				AND (<![CDATA[epao.all_use_time <= #{maps.queryParam.useEndTime} ]]>
-				or <![CDATA[ epaop.use_time <= #{maps.queryParam.useEndTime} ]]>
-				or <![CDATA[ epaom.use_time <= #{maps.queryParam.useEndTime} ]]>
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.useEndTime != null">
+				AND (<![CDATA[epao.all_use_time <= #{maps.purchaseApplyOrderPageParam.useEndTime} ]]>
+				or <![CDATA[ epaop.use_time <= #{maps.purchaseApplyOrderPageParam.useEndTime} ]]>
+				or <![CDATA[ epaom.use_time <= #{maps.purchaseApplyOrderPageParam.useEndTime} ]]>
 				)
 			</if>
-			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.createStartTime != null">
-				<![CDATA[ AND epao.create_time >= #{maps.queryParam.createStartTime} ]]>
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.createStartTime != null">
+				<![CDATA[ AND epao.create_time >= #{maps.purchaseApplyOrderPageParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.createEndTime != null">
-				<![CDATA[ AND epao.create_time <= #{maps.queryParam.createEndTime} ]]>
+			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.createEndTime != null">
+				<![CDATA[ AND epao.create_time <= #{maps.purchaseApplyOrderPageParam.createEndTime} ]]>
 			</if>
 			<if test="true">
 				AND epao.data_status = 1

@@ -17,6 +17,30 @@ import java.util.List;
  */
 public class GenerateNoSupportTest extends ERPUnTransactionalTest {
     @Test
+    public void generateBulkMaterialNo2() throws Exception {
+        String materialNo = generateNoSupport.generateMaterialNo("0121");
+        System.out.println(materialNo);
+    }
+
+    @Test
+    public void generateStockOrderNo() throws Exception {
+        String orderNo = generateNoSupport.generateStockOrderNo();
+        System.out.println(orderNo);
+    }
+
+    @Test
+    public void generateProductNo() throws Exception {
+        String productNo = generateNoSupport.generateProductNo("MAC110");
+        System.out.println(productNo);
+    }
+
+    @Test
+    public void generatePurchaseApplyOrderNo() throws Exception {
+        String orderNo = generateNoSupport.generatePurchaseApplyOrderNo("0755");
+        System.out.println(orderNo);
+    }
+
+    @Test
     public void generatePeerDeploymentOrderNo() throws Exception {
         String orderNo = generateNoSupport.generatePeerDeploymentOrderNo(new Date(), 1);
         System.out.println(orderNo);
@@ -43,23 +67,26 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
     @Test
     public void generateSupplierNo() throws Exception {
         long startTime = System.currentTimeMillis();
-        generateNoSupport.generateSupplierNo(1);
+        String supplierNo = generateNoSupport.generateSupplierNo(1);
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(supplierNo);
         //执行时间：0.023s
     }
 
     /**
-     * ProductEquipmentNo 批量
+     * ProductEquipmentNo
      */
     @Test
     public void generateProductEquipmentNo() throws Exception {
         long startTime = System.currentTimeMillis();
-        List<String> strings = generateNoSupport.generateProductEquipmentNoList(null,"", 1);
+//        String aaaa = generateNoSupport.generateProductEquipmentNo("aaaa", "1qweqwe");
+        List<String> strings = generateNoSupport.generateProductEquipmentNoList(null,"", 3);
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(strings);
         //执行时间：0.08s
 
     }
@@ -70,24 +97,26 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
     @Test
     public void generateBulkMaterialNo1() throws Exception {
         long startTime = System.currentTimeMillis();
-        List<String> strings = generateNoSupport.generateBulkMaterialNoList(null,"1000",1);
+        List<String> strings = generateNoSupport.generateBulkMaterialNoList(null,"1000",3);
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(strings);
         //一次 执行时间：0.087s
 
     }
 
     @Test
     public void generateBulkMaterialNo() throws Exception {
-//        generateNoSupport.generateBulkMaterialNo(new Date(),4000001);
+        String materialNo = generateNoSupport.generateBulkMaterialNo(new Date(), 4000001);
         long startTime = System.currentTimeMillis();
 //        for (int i = 0;i<3000;i++) {
-        generateNoSupport.generateBulkMaterialNo(new Date(), 4000001);
+//        String materialNo = generateNoSupport.generateBulkMaterialNo("AsA", "0755",2);
 //        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(materialNo);
         //一次 执行时间：0.061s
 
     }
@@ -95,72 +124,78 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
     @Test
     public void generatePurchaseOrderNo() throws Exception {
         long startTime = System.currentTimeMillis();
-        for (int i = 0; i < 3000; i++) {
-            generateNoSupport.generatePurchaseOrderNo(new Date(), 4000001);
-        }
+//        for (int i = 0; i < 3000; i++) {
+        String orderNo = generateNoSupport.generatePurchaseOrderNo(new Date(), 4000001);
+//        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(orderNo);
         //执行时间：40.55s
     }
 
     @Test
     public void generatePurchaseDeliveryOrderNo() throws Exception {
         long startTime = System.currentTimeMillis();
-        for (int i = 0; i < 3000; i++) {
-            generateNoSupport.generatePurchaseDeliveryOrderNo(new Date(), 4000001);
-        }
+//        for (int i = 0; i < 3000; i++) {
+        String orderNo = generateNoSupport.generatePurchaseDeliveryOrderNo(new Date(), 4000001);
+//        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(orderNo);
         //执行时间：39.685s
     }
 
     @Test
     public void generatePurchaseReceiveOrderNo() throws Exception {
         long startTime = System.currentTimeMillis();
-        for (int i = 0; i < 3000; i++) {
-            generateNoSupport.generatePurchaseReceiveOrderNo(new Date(), 4000001);
-        }
+//        for (int i = 0; i < 3000; i++) {
+        String orderNo = generateNoSupport.generatePurchaseReceiveOrderNo(new Date(), 4000001);
+//        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(orderNo);
         //执行时间：40.719s
     }
 
     @Test
     public void generateEquipmentNo() throws Exception {
         long startTime = System.currentTimeMillis();
-        for (int i = 0; i < 3000; i++) {
-            generateNoSupport.generateProductEquipmentNo(null, "null");
-        }
+//        for (int i = 0; i < 3000; i++) {
+            String equipmentNo = generateNoSupport.generateEquipmentNo("MAC110", "0755",1);
+//        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(equipmentNo);
         //执行时间：44.096s
     }
 
     @Test
     public void generateWarehouseNo() throws Exception {
         long startTime = System.currentTimeMillis();
-        for (int i = 0; i < 3000; i++) {
-            generateNoSupport.generateWarehouseNo(2, 1);
-        }
+//        for (int i = 0; i < 3000; i++) {
+        String warehouseNo = generateNoSupport.generateWarehouseNo(2, 1);
+//        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(warehouseNo);
         //执行时间：14.448s
     }
 
     @Test
     public void generateWorkflowLinkNo() throws Exception {
         long startTime = System.currentTimeMillis();
-        for (int i = 0; i < 3000; i++) {
-            generateNoSupport.generateWorkflowLinkNo(new Date(), 500006);
-        }
+//        for (int i = 0; i < 3000; i++) {
+        String linkNo = generateNoSupport.generateWorkflowLinkNo(new Date(), 500006);
+//        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(linkNo);
         //执行时间：11.621s
     }
 
@@ -168,12 +203,13 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
     public void generateReturnOrderNo() throws Exception {
 
         long startTime = System.currentTimeMillis();
-        for (int i = 0; i < 3000; i++) {
-            generateNoSupport.generateReturnOrderNo(new Date(), 700003);
-        }
+//        for (int i = 0; i < 3000; i++) {
+        String returnOrderNo = generateNoSupport.generateReturnOrderNo(new Date(), 700003);
+//        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(returnOrderNo);
         //执行时间：12.833s
     }
 
@@ -182,11 +218,12 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
 //        generateNoSupport.generateChangeOrderNo(new Date(), 700003);
         long startTime = System.currentTimeMillis();
 //        for (int i = 0; i < 3000; i++) {
-        generateNoSupport.generateChangeOrderNo(new Date(), 700003);
+        String orderNo = generateNoSupport.generateChangeOrderNo(new Date(), 700003);
 //        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(orderNo);
         //执行时间：12.414s
     }
 
@@ -208,11 +245,12 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
 //        generateNoSupport.generateRepairOrderNo(new Date(), "W201708081508");
         long startTime = System.currentTimeMillis();
 //        for (int i = 0; i < 3000; i++) {
-        generateNoSupport.generateRepairOrderNo(new Date(), "W201708081508");
+        String repairOrderNo = generateNoSupport.generateRepairOrderNo(new Date(), "LXW10001");
 //        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(repairOrderNo);
         //执行时间：39.425s
     }
 
@@ -228,11 +266,12 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
 //        generateNoSupport.generateOrderNo(new Date(), 700003);
         long startTime = System.currentTimeMillis();
 //        for (int i = 0; i < 3000; i++) {
-        generateNoSupport.generateOrderNo(new Date(), 700003);
+        String orderNo = generateNoSupport.generateOrderNo(new Date(), 700003);
 //        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(orderNo);
         //执行时间：30.127s
     }
 
@@ -241,11 +280,12 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
 //        generateNoSupport.generateCustomerNo(new Date(), 500001, 1);
         long startTime = System.currentTimeMillis();
 //        for (int i = 0;i<3000;i++) {
-        generateNoSupport.generateCustomerNo(new Date(),  1);
+        String customerNo = generateNoSupport.generateCustomerNo(new Date(), 1);
 //        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(customerNo);
         //执行时间：60.069s
         //一次 执行时间：0.066s
     }
@@ -255,11 +295,12 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
 //        generateNoSupport.generateDeploymentOrderNo(new Date(), 4000002, 4000001);
         long startTime = System.currentTimeMillis();
 //        for (int i = 0;i<3000;i++) {
-        generateNoSupport.generateDeploymentOrderNo(new Date(), 4000002, 4000001);
+        String orderNo = generateNoSupport.generateDeploymentOrderNo(new Date(), 4000002, 4000001);
 //        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(orderNo);
         //执行时间：89.916s
         //一次 执行时间：0.07s
     }

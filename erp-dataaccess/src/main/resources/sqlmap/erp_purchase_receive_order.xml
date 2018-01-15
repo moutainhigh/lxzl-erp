@@ -231,44 +231,44 @@
 		SELECT COUNT(id)
 		FROM erp_purchase_receive_order epro
 		<where>
-			<if test="maps.queryParam.purchaseReceiveNo != null &amp;&amp; maps.queryParam.purchaseReceiveNo != ''">
-				AND epro.purchase_receive_no = #{maps.queryParam.purchaseReceiveNo, jdbcType=VARCHAR}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.purchaseReceiveNo != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.purchaseReceiveNo != ''">
+				AND epro.purchase_receive_no = #{maps.purchaseReceiveOrderQueryParam.purchaseReceiveNo, jdbcType=VARCHAR}
 			</if>
-			<if test="maps.queryParam.purchaseOrderId != null">
-				AND epro.purchase_order_id = #{maps.queryParam.purchaseOrderId, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.purchaseOrderId != null">
+				AND epro.purchase_order_id = #{maps.purchaseReceiveOrderQueryParam.purchaseOrderId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.purchaseDeliveryOrderId != null">
-				AND epro.purchase_delivery_order_id = #{maps.queryParam.purchaseDeliveryOrderId, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.purchaseDeliveryOrderId != null">
+				AND epro.purchase_delivery_order_id = #{maps.purchaseReceiveOrderQueryParam.purchaseDeliveryOrderId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.warehouseId != null">
-				AND epro.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.warehouseId != null">
+				AND epro.warehouse_id = #{maps.purchaseReceiveOrderQueryParam.warehouseId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.productSupplierId != null">
-				AND epro.product_supplier_id = #{maps.queryParam.productSupplierId, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.productSupplierId != null">
+				AND epro.product_supplier_id = #{maps.purchaseReceiveOrderQueryParam.productSupplierId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.autoAllotStatus != null">
-				AND epro.auto_allot_status = #{maps.queryParam.autoAllotStatus, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.autoAllotStatus != null">
+				AND epro.auto_allot_status = #{maps.purchaseReceiveOrderQueryParam.autoAllotStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.isInvoice != null">
-				AND epro.is_invoice = #{maps.queryParam.isInvoice, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.isInvoice != null">
+				AND epro.is_invoice = #{maps.purchaseReceiveOrderQueryParam.isInvoice, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.isNew != null">
-				AND epro.is_new = #{maps.queryParam.isNew, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.isNew != null">
+				AND epro.is_new = #{maps.purchaseReceiveOrderQueryParam.isNew, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.purchaseReceiveOrderStatus != null">
-				AND epro.purchase_receive_order_status = #{maps.queryParam.purchaseReceiveOrderStatus, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.purchaseReceiveOrderStatus != null">
+				AND epro.purchase_receive_order_status = #{maps.purchaseReceiveOrderQueryParam.purchaseReceiveOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.createStartTime != null ">
-				<![CDATA[ AND epro.create_time >= #{maps.queryParam.createStartTime} ]]>
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND epro.create_time >= #{maps.purchaseReceiveOrderQueryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null ">
-				<![CDATA[ AND epro.create_time <= #{maps.queryParam.createEndTime} ]]>
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.createEndTime != null ">
+				<![CDATA[ AND epro.create_time <= #{maps.purchaseReceiveOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="maps.queryParam.confirmStartTime != null ">
-				<![CDATA[ AND epro.confirm_time >= #{maps.queryParam.confirmStartTime} ]]>
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.confirmStartTime != null ">
+				<![CDATA[ AND epro.confirm_time >= #{maps.purchaseReceiveOrderQueryParam.confirmStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.confirmEndTime != null ">
-				<![CDATA[ AND epro.confirm_time <= #{maps.queryParam.confirmEndTime} ]]>
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.confirmEndTime != null ">
+				<![CDATA[ AND epro.confirm_time <= #{maps.purchaseReceiveOrderQueryParam.confirmEndTime} ]]>
 			</if>
 			<if test="true">
 				AND epro.data_status = 1
@@ -282,44 +282,44 @@
 		SELECT <include refid="column_List"/>
 		FROM erp_purchase_receive_order epro
 		<where>
-			<if test="maps.queryParam.purchaseReceiveNo != null &amp;&amp; maps.queryParam.purchaseReceiveNo != ''">
-				AND epro.purchase_receive_no = #{maps.queryParam.purchaseReceiveNo, jdbcType=VARCHAR}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.purchaseReceiveNo != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.purchaseReceiveNo != ''">
+				AND epro.purchase_receive_no = #{maps.purchaseReceiveOrderQueryParam.purchaseReceiveNo, jdbcType=VARCHAR}
 			</if>
-			<if test="maps.queryParam.purchaseOrderId != null">
-				AND epro.purchase_order_id = #{maps.queryParam.purchaseOrderId, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.purchaseOrderId != null">
+				AND epro.purchase_order_id = #{maps.purchaseReceiveOrderQueryParam.purchaseOrderId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.purchaseDeliveryOrderId != null">
-				AND epro.purchase_delivery_order_id = #{maps.queryParam.purchaseDeliveryOrderId, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.purchaseDeliveryOrderId != null">
+				AND epro.purchase_delivery_order_id = #{maps.purchaseReceiveOrderQueryParam.purchaseDeliveryOrderId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.warehouseId != null">
-				AND epro.warehouse_id = #{maps.queryParam.warehouseId, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.warehouseId != null">
+				AND epro.warehouse_id = #{maps.purchaseReceiveOrderQueryParam.warehouseId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.productSupplierId != null">
-				AND epro.product_supplier_id = #{maps.queryParam.productSupplierId, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.productSupplierId != null">
+				AND epro.product_supplier_id = #{maps.purchaseReceiveOrderQueryParam.productSupplierId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.autoAllotStatus != null">
-				AND epro.auto_allot_status = #{maps.queryParam.autoAllotStatus, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.autoAllotStatus != null">
+				AND epro.auto_allot_status = #{maps.purchaseReceiveOrderQueryParam.autoAllotStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.isInvoice != null">
-				AND epro.is_invoice = #{maps.queryParam.isInvoice, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.isInvoice != null">
+				AND epro.is_invoice = #{maps.purchaseReceiveOrderQueryParam.isInvoice, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.isNew != null">
-				AND epro.is_new = #{maps.queryParam.isNew, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.isNew != null">
+				AND epro.is_new = #{maps.purchaseReceiveOrderQueryParam.isNew, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.purchaseReceiveOrderStatus != null">
-				AND epro.purchase_receive_order_status = #{maps.queryParam.purchaseReceiveOrderStatus, jdbcType=INTEGER}
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.purchaseReceiveOrderStatus != null">
+				AND epro.purchase_receive_order_status = #{maps.purchaseReceiveOrderQueryParam.purchaseReceiveOrderStatus, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.createStartTime != null ">
-				<![CDATA[ AND epro.create_time >= #{maps.queryParam.createStartTime} ]]>
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND epro.create_time >= #{maps.purchaseReceiveOrderQueryParam.createStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.createEndTime != null ">
-				<![CDATA[ AND epro.create_time <= #{maps.queryParam.createEndTime} ]]>
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.createEndTime != null ">
+				<![CDATA[ AND epro.create_time <= #{maps.purchaseReceiveOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="maps.queryParam.confirmStartTime != null ">
-				<![CDATA[ AND epro.confirm_time >= #{maps.queryParam.confirmStartTime} ]]>
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.confirmStartTime != null ">
+				<![CDATA[ AND epro.confirm_time >= #{maps.purchaseReceiveOrderQueryParam.confirmStartTime} ]]>
 			</if>
-			<if test="maps.queryParam.confirmEndTime != null ">
-				<![CDATA[ AND epro.confirm_time <= #{maps.queryParam.confirmEndTime} ]]>
+			<if test="maps.purchaseReceiveOrderQueryParam != null &amp;&amp; maps.purchaseReceiveOrderQueryParam.confirmEndTime != null ">
+				<![CDATA[ AND epro.confirm_time <= #{maps.purchaseReceiveOrderQueryParam.confirmEndTime} ]]>
 			</if>
 
 			<if test="true">

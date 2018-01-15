@@ -82,27 +82,27 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ep.id) FROM erp_peer ep
 		<where>
-			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.peerName != null &amp;&amp; maps.queryParam.peerName != ''">
-				and ep.peer_name = #{maps.queryParam.peerName,jdbcType=VARCHAR}
+			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.peerName != null &amp;&amp; maps.peerQueryParam.peerName != ''">
+				and ep.peer_name = #{maps.peerQueryParam.peerName,jdbcType=VARCHAR}
 			</if>
-			<if test="maps.queryParam != null &amp;&amp; maps.queryParam.peerCode != null &amp;&amp; maps.queryParam.peerCode != ''">
-				and ep.peer_code = #{maps.queryParam.peerCode,jdbcType=VARCHAR}
+			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.peerCode != null &amp;&amp; maps.peerQueryParam.peerCode != ''">
+				and ep.peer_code = #{maps.peerQueryParam.peerCode,jdbcType=VARCHAR}
 			</if>
-            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.provinceId != null &amp;&amp; maps.queryParam.provinceId != ''">
-                and ep.province = #{maps.queryParam.provinceId,jdbcType=VARCHAR}
-            </if>
-            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.cityId != null &amp;&amp; maps.queryParam.cityId != ''">
-                and ep.city = #{maps.queryParam.cityId,jdbcType=VARCHAR}
-            </if>
-            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.districtId != null &amp;&amp; maps.queryParam.districtId != ''">
-                and ep.district = #{maps.queryParam.districtId,jdbcType=VARCHAR}
-            </if>
-            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
-                <![CDATA[ AND ejp.create_time >= #{maps.queryParam.createStartTime} ]]>
-            </if>
-            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
-                <![CDATA[ AND ejp.create_time <= #{maps.queryParam.createEndTime} ]]>
-            </if>
+			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.provinceId != null &amp;&amp; maps.peerQueryParam.provinceId != ''">
+				and ep.province = #{maps.peerQueryParam.provinceId,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.cityId != null &amp;&amp; maps.peerQueryParam.cityId != ''">
+				and ep.city = #{maps.peerQueryParam.cityId,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.districtId != null &amp;&amp; maps.peerQueryParam.districtId != ''">
+				and ep.district = #{maps.peerQueryParam.districtId,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.createStartTime != null &amp;&amp; maps.peerQueryParam.createStartTime != ''">
+				<![CDATA[ AND ejp.create_time >= #{maps.peerQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.createEndTime != null &amp;&amp; maps.peerQueryParam.createEndTime != ''">
+				<![CDATA[ AND ejp.create_time <= #{maps.peerQueryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				AND ep.data_status = 1
 			</if>
@@ -111,40 +111,40 @@
 
 	<select id="listPage" resultMap="PeerDO" parameterType="map">
 		SELECT <include refid="column_List"/> ,<include refid="province_column_List"/>,<include refid="district_column_List"/>,<include refid="city_column_List"/>
-        FROM erp_peer ep
-        LEFT JOIN erp_area_city eac ON ep.city = eac.id AND eac.data_status = 1
-        LEFT JOIN erp_area_district ead ON ep.city = ead.id AND ead.data_status = 1
-        LEFT JOIN erp_area_province eap ON ep.city = eap.id AND eap.data_status = 1
+		FROM erp_peer ep
+		LEFT JOIN erp_area_city eac ON ep.city = eac.id AND eac.data_status = 1
+		LEFT JOIN erp_area_district ead ON ep.city = ead.id AND ead.data_status = 1
+		LEFT JOIN erp_area_province eap ON ep.city = eap.id AND eap.data_status = 1
 		<where>
-            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.peerName != null &amp;&amp; maps.queryParam.peerName != ''">
-                and ep.peer_name = #{maps.queryParam.peerName,jdbcType=VARCHAR}
-            </if>
-            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.peerCode != null &amp;&amp; maps.queryParam.peerCode != ''">
-                and ep.peer_code = #{maps.queryParam.peerCode,jdbcType=VARCHAR}
-            </if>
-            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.provinceId != null &amp;&amp; maps.queryParam.provinceId != ''">
-                and ep.province = #{maps.queryParam.provinceId,jdbcType=VARCHAR}
-            </if>
-            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.peerNo != null &amp;&amp; maps.queryParam.peerNo != ''">
-                and ep.peer_no = #{maps.queryParam.peerNo,jdbcType=VARCHAR}
-            </if>
-            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.cityId != null &amp;&amp; maps.queryParam.cityId != ''">
-                and ep.city = #{maps.queryParam.cityId,jdbcType=VARCHAR}
-            </if>
-            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.districtId != null &amp;&amp; maps.queryParam.districtId != ''">
-                and ep.district = #{maps.queryParam.districtId,jdbcType=VARCHAR}
-            </if>
-            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.createStartTime != null &amp;&amp; maps.queryParam.createStartTime != ''">
-                <![CDATA[ AND ejp.create_time >= #{maps.queryParam.createStartTime} ]]>
-            </if>
-            <if test="maps.queryParam != null &amp;&amp; maps.queryParam.createEndTime != null &amp;&amp; maps.queryParam.createEndTime != ''">
-                <![CDATA[ AND ejp.create_time <= #{maps.queryParam.createEndTime} ]]>
-            </if>
+			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.peerName != null &amp;&amp; maps.peerQueryParam.peerName != ''">
+				and ep.peer_name = #{maps.peerQueryParam.peerName,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.peerCode != null &amp;&amp; maps.peerQueryParam.peerCode != ''">
+				and ep.peer_code = #{maps.peerQueryParam.peerCode,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.provinceId != null &amp;&amp; maps.peerQueryParam.provinceId != ''">
+				and ep.province = #{maps.peerQueryParam.provinceId,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.peerNo != null &amp;&amp; maps.peerQueryParam.peerNo != ''">
+				and ep.peer_no = #{maps.peerQueryParam.peerNo,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.cityId != null &amp;&amp; maps.peerQueryParam.cityId != ''">
+				and ep.city = #{maps.peerQueryParam.cityId,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.districtId != null &amp;&amp; maps.peerQueryParam.districtId != ''">
+				and ep.district = #{maps.peerQueryParam.districtId,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.createStartTime != null &amp;&amp; maps.peerQueryParam.createStartTime != ''">
+				<![CDATA[ AND ejp.create_time >= #{maps.peerQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.createEndTime != null &amp;&amp; maps.peerQueryParam.createEndTime != ''">
+				<![CDATA[ AND ejp.create_time <= #{maps.peerQueryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				AND ep.data_status = 1
 			</if>
 		</where>
-        ORDER BY ep.create_time DESC
+		ORDER BY ep.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 

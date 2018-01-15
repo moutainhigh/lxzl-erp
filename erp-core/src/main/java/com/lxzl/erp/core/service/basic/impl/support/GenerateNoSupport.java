@@ -41,6 +41,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseDeliveryOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseReceiveOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchaseApply.PurchaseApplyOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.repairOrder.RepairOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
@@ -79,9 +80,11 @@ public class GenerateNoSupport {
             maps.put("orderQueryParam", orderQueryParam);
             Integer orderCount = orderMapper.findOrderCountByParams(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXO");
+            builder.append("LXO-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
             builder.append(buyerCustomerId);
+            builder.append("-");
             builder.append(String.format("%05d", orderCount + 1));
             return builder.toString();
         }
@@ -109,14 +112,14 @@ public class GenerateNoSupport {
             builder.append(productModel);
             builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
-
+            builder.append("-");
             builder.append(String.format("%05d", productCount + 1));
             return builder.toString();
         }
     }
 
     /**
-     * 生成商品编号
+     * 生成物料编号
      */
     public String generateEquipmentNo(String productModel, String cityCode, Integer counter) {
         Date currentTime = new Date();
@@ -132,13 +135,13 @@ public class GenerateNoSupport {
             maps.put("productEquipmentQueryParam", productEquipmentQueryParam);
             Integer productCount = productEquipmentMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LX-");
+            builder.append("LXE-");
             builder.append(cityCode);
             builder.append("-");
             builder.append(productModel);
             builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
-
+            builder.append("-");
             builder.append(String.format("%05d", productCount + counter));
             return builder.toString();
         }
@@ -160,8 +163,9 @@ public class GenerateNoSupport {
             maps.put("stockOrderQueryParam", stockOrderQueryParam);
             Integer count = stockOrderMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXSO");
+            builder.append("LXSO-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
             builder.append(String.format("%05d", count + 1));
             return builder.toString();
         }
@@ -184,19 +188,20 @@ public class GenerateNoSupport {
             maps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
             Integer count = bulkMaterialMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LX-");
+            builder.append("LXBM-");
             builder.append(cityCode);
             builder.append("-");
             builder.append(materialModel);
             builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
             builder.append(String.format("%05d", count + counter));
             return builder.toString();
         }
     }
 
     /**
-     * 生成散料编号
+     * 生成物料编号
      */
     public String generateMaterialNo(String materialModel) {
         Date currentTime = new Date();
@@ -211,10 +216,11 @@ public class GenerateNoSupport {
             maps.put("materialQueryParam", materialQueryParam);
             Integer count = materialMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LX-");
+            builder.append("LXM-");
             builder.append(materialModel);
             builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
             builder.append(String.format("%05d", count + 1));
             return builder.toString();
         }
@@ -237,13 +243,15 @@ public class GenerateNoSupport {
             Integer count = customerMapper.listCount(maps);
 
             if (customerType.equals(CustomerType.CUSTOMER_TYPE_COMPANY)) {
-                builder.append("LXCC");
+                builder.append("LXCC-");
             }
             if (customerType.equals(CustomerType.CUSTOMER_TYPE_PERSON)) {
-                builder.append("LXCD");
+                builder.append("LXCD-");
             }
             builder.append(subCompanyCode);
+            builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
             builder.append(String.format("%05d", count + 1));
             return builder.toString();
         }
@@ -267,12 +275,15 @@ public class GenerateNoSupport {
             deploymentOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             deploymentOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
             Map<String, Object> maps = new HashMap<>();
-            maps.put("departmentQueryParam", deploymentOrderQueryParam);
+            maps.put("deploymentOrderQueryParam", deploymentOrderQueryParam);
             Integer count = deploymentOrderMapper.listCount(maps);
-            builder.append("LXC");
+            builder.append("LXD-");
             builder.append(srcAreaCityDO.getCityCode());
+            builder.append("-");
             builder.append(targetAreaCityDO.getCityCode());
+            builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
             builder.append(String.format("%04d", count + 1));
             return builder.toString();
         }
@@ -291,12 +302,14 @@ public class GenerateNoSupport {
             PurchaseOrderQueryParam purchaseOrderQueryParam = new PurchaseOrderQueryParam();
             purchaseOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             purchaseOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
-            maps.put("queryParam", purchaseOrderQueryParam);
+            maps.put("purchaseOrderQueryParam", purchaseOrderQueryParam);
             Integer customerCompanyCount = purchaseOrderMapper.findPurchaseOrderCountByParams(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXPO");
+            builder.append("LXPO-");
             builder.append(subCompanyCode);
+            builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
             builder.append(String.format("%04d", customerCompanyCount + 1));
             return builder.toString();
         }
@@ -315,13 +328,15 @@ public class GenerateNoSupport {
             PurchaseDeliveryOrderQueryParam purchaseDeliveryOrderQueryParam = new PurchaseDeliveryOrderQueryParam();
             purchaseDeliveryOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             purchaseDeliveryOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
-            maps.put("queryParam", purchaseDeliveryOrderQueryParam);
+            maps.put("purchaseDeliveryOrderQueryParam", purchaseDeliveryOrderQueryParam);
             Integer purchaseDeliveryOrderCount = purchaseDeliveryOrderMapper.findPurchaseDeliveryOrderCountByParams(maps);
 
             StringBuilder builder = new StringBuilder();
-            builder.append("LXPD");
+            builder.append("LXPD-");
             builder.append(subCompanyDO.getSubCompanyCode());
+            builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
             builder.append(String.format("%04d", purchaseDeliveryOrderCount + 1));
             return builder.toString();
         }
@@ -341,12 +356,14 @@ public class GenerateNoSupport {
             PurchaseReceiveOrderQueryParam purchaseReceiveOrderQueryParam = new PurchaseReceiveOrderQueryParam();
             purchaseReceiveOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             purchaseReceiveOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
-            maps.put("queryParam", purchaseReceiveOrderQueryParam);
+            maps.put("purchaseReceiveOrderQueryParam", purchaseReceiveOrderQueryParam);
             Integer purchaseReceiveOrderCount = purchaseReceiveOrderMapper.findPurchaseReceiveOrderCountByParams(maps);
 
-            builder.append("LXPR");
+            builder.append("LXPR-");
             builder.append(subCompanyDO.getSubCompanyCode());
+            builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
             builder.append(String.format("%04d", purchaseReceiveOrderCount + 1));
             return builder.toString();
         }
@@ -366,12 +383,13 @@ public class GenerateNoSupport {
             Integer listCount = productEquipmentMapper.listCount(maps);
 
             StringBuilder builder = new StringBuilder();
-            builder.append("LX-");
+            builder.append("LXPE-");
             builder.append(cityCode);
             builder.append("-");
             builder.append(productModel);
             builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
             builder.append(String.format("%06d", listCount + 1));
             return builder.toString();
         }
@@ -386,8 +404,9 @@ public class GenerateNoSupport {
             //分公司
             SubCompanyDO subCompanyDO = subCompanyMapper.findById(subCompanyId);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXW");
+            builder.append("LXW-");
             builder.append(subCompanyDO.getSubCompanyCode());
+            builder.append("-");
             builder.append(warehouseTypeId);
             return builder.toString();
         }
@@ -402,12 +421,14 @@ public class GenerateNoSupport {
             workflowLinkQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             workflowLinkQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
             Map<String, Object> maps = new HashMap<>();
-            maps.put("queryParam", workflowLinkQueryParam);
+            maps.put("workflowQueryParam", workflowLinkQueryParam);
             Integer count = workflowLinkMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXWF");
+            builder.append("LXWF-");
             builder.append(commitUserId);
+            builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
             builder.append(String.format("%05d", count + 1));
             return builder.toString();
         }
@@ -422,12 +443,14 @@ public class GenerateNoSupport {
             returnOrderPageParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             returnOrderPageParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
             Map<String, Object> maps = new HashMap<>();
-            maps.put("queryParam", returnOrderPageParam);
+            maps.put("returnOrderPageParam", returnOrderPageParam);
             Integer returnOrderCount = returnOrderMapper.findReturnOrderCountByParams(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXRO");
+            builder.append("LXRO-");
             builder.append(customerId);
+            builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
             builder.append(String.format("%05d", returnOrderCount + 1));
             return builder.toString();
         }
@@ -443,12 +466,14 @@ public class GenerateNoSupport {
             changeOrderPageParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             changeOrderPageParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
             Map<String, Object> maps = new HashMap<>();
-            maps.put("queryParam", changeOrderPageParam);
+            maps.put("changeOrderPageParam", changeOrderPageParam);
             Integer changeOrderCount = changeOrderMapper.findChangeOrderCountByParams(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXCO");
+            builder.append("LXCO-");
             builder.append(customerId);
+            builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
             builder.append(String.format("%05d", changeOrderCount + 1));
             return builder.toString();
         }
@@ -463,12 +488,14 @@ public class GenerateNoSupport {
             statementOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             statementOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
             Map<String, Object> maps = new HashMap<>();
-            maps.put("queryParam", statementOrderQueryParam);
+            maps.put("statementOrderQueryParam", statementOrderQueryParam);
             Integer count = statementOrderMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXSO");
+            builder.append("LXSO-");
             builder.append(customerId);
+            builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(expectPayTime));
+            builder.append("-");
             builder.append(String.format("%05d", count + 1));
             return builder.toString();
         }
@@ -483,16 +510,18 @@ public class GenerateNoSupport {
             repairOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             repairOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
             Map<String, Object> maps = new HashMap<>();
-            maps.put("queryParam", repairOrderQueryParam);
-            Integer count = statementOrderMapper.listCount(maps);
+            maps.put("repairOrderQueryParam", repairOrderQueryParam);
+            Integer count = repairOrderMapper.findRepairOrderCountByParams(maps);
             //仓库
             WarehouseDO warehouseDO = warehouseMapper.finByNo(warehouseNo);
             //分公司
             SubCompanyDO subCompanyDO = subCompanyMapper.findById(warehouseDO.getSubCompanyId());
             StringBuilder builder = new StringBuilder();
-            builder.append("LXRE");
+            builder.append("LXRE-");
             builder.append(subCompanyDO.getSubCompanyCode());
+            builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
             builder.append(String.format("%05d", count + 1));
             return builder.toString();
         }
@@ -507,7 +536,7 @@ public class GenerateNoSupport {
             bulkMaterialQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             bulkMaterialQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
             Map<String, Object> maps = new HashMap<>();
-            maps.put("queryParam", bulkMaterialQueryParam);
+            maps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
             Integer count = bulkMaterialMapper.listCount(maps);
             //仓库
             WarehouseDO warehouseDO = warehouseMapper.findById(warehouseId);
@@ -515,9 +544,11 @@ public class GenerateNoSupport {
             SubCompanyDO subCompanyDO = subCompanyMapper.findById(warehouseDO.getSubCompanyId());
 
             StringBuilder builder = new StringBuilder();
-            builder.append("LXBM");
+            builder.append("LXBM-");
             builder.append(subCompanyDO.getSubCompanyCode());
+            builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
             builder.append(String.format("%06d", count + 1));
             return builder.toString();
         }
@@ -539,12 +570,13 @@ public class GenerateNoSupport {
             ArrayList<String> ProductEquipmentNos = new ArrayList<>();
             for (int i = 0; i < equipmentCount; i++) {
                 StringBuilder builder = new StringBuilder();
-                builder.append("LX-");
+                builder.append("LXPE-");
                 builder.append(cityCode);
                 builder.append("-");
                 builder.append(productModel);
                 builder.append("-");
                 builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+                builder.append("-");
                 builder.append(String.format("%06d", listCount + 1));
                 ProductEquipmentNos.add(builder.toString());
                 listCount++;
@@ -563,18 +595,19 @@ public class GenerateNoSupport {
             bulkMaterialQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             bulkMaterialQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
             Map<String, Object> maps = new HashMap<>();
-            maps.put("queryParam", bulkMaterialQueryParam);
+            maps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
             Integer count = bulkMaterialMapper.listCount(maps);
 
             ArrayList<String> BulkMaterialNos = new ArrayList<>();
             for (int i = 0; i < bulkMaterialCount; i++) {
                 StringBuilder builder = new StringBuilder();
-                builder.append("LX-");
+                builder.append("LXBM-");
                 builder.append(cityCode);
                 builder.append("-");
                 builder.append(materialModel);
                 builder.append("-");
                 builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+                builder.append("-");
                 builder.append(String.format("%06d", count + 1));
                 BulkMaterialNos.add(builder.toString());
                 count++;
@@ -593,8 +626,9 @@ public class GenerateNoSupport {
             paramMap.put("supplierQueryParam", null);
             Integer count = supplierMapper.listCount(paramMap);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXS");
+            builder.append("LXS-");
             builder.append(areaCityDO.getCityCode());
+            builder.append("-");
             builder.append(String.format("%05d", count + 1));
             return builder.toString();
         }
@@ -609,13 +643,15 @@ public class GenerateNoSupport {
             AssembleOrderQueryParam assembleOrderQueryParam = new AssembleOrderQueryParam();
             assembleOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             assembleOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
-            maps.put("queryParam", assembleOrderQueryParam);
+            maps.put("assembleOrderQueryParam", assembleOrderQueryParam);
             Integer count = assembleOrderMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXA");
+            builder.append("LXA-");
             builder.append(warehouseId);
+            builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(date));
-            builder.append(count + 1);
+            builder.append("-");
+            builder.append(String.format("%05d", count + 1));
             return builder.toString();
         }
     }
@@ -629,13 +665,15 @@ public class GenerateNoSupport {
             TransferOrderQueryParam transferOrderQueryParam = new TransferOrderQueryParam();
             transferOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             transferOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
-            maps.put("queryParam", transferOrderQueryParam);
-            Integer count = transferOrderMapper.listCount(maps);
+            maps.put("transferOrderQueryParam", transferOrderQueryParam);
+            Integer count = transferOrderMapper.findTransferOrderCountByParams(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXT");
+            builder.append("LXT-");
             builder.append(warehouseId);
+            builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(date));
-            builder.append(count + 1);
+            builder.append("-");
+            builder.append(String.format("%05d", count + 1));
             return builder.toString();
         }
     }
@@ -649,14 +687,16 @@ public class GenerateNoSupport {
             PeerDeploymentOrderQueryParam peerDeploymentOrderQueryParam = new PeerDeploymentOrderQueryParam();
             peerDeploymentOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             peerDeploymentOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
-            maps.put("queryParam", peerDeploymentOrderQueryParam);
+            maps.put("peerDeploymentOrderQueryParam", peerDeploymentOrderQueryParam);
             Integer count = peerDeploymentOrderMapper.listCount(maps);
             AreaCityDO areaCityDO = areaCityMapper.findById(cityId);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXPDO");
+            builder.append("LXPDO-");
             builder.append(areaCityDO.getCityCode());
+            builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(date));
-            builder.append(count + 1);
+            builder.append("-");
+            builder.append(String.format("%04d", count + 1));
             return builder.toString();
         }
     }
@@ -674,14 +714,15 @@ public class GenerateNoSupport {
             maps.put("pageSize", Integer.MAX_VALUE);
             purchaseApplyOrderPageParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             purchaseApplyOrderPageParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
-            maps.put("queryParam", purchaseApplyOrderPageParam);
+            maps.put("purchaseApplyOrderPageParam", purchaseApplyOrderPageParam);
             Integer count = purchaseApplyOrderMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
             builder.append("LXPA-");
             builder.append(cityCode);
             builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
-            builder.append(String.format("%05d", count));
+            builder.append("-");
+            builder.append(String.format("%05d", count + 1));
             return builder.toString();
         }
     }
@@ -693,11 +734,12 @@ public class GenerateNoSupport {
         synchronized (this) {
             AreaCityDO areaCityDO = areaCityMapper.findById(cityId);
             Map<String, Object> paramMap = new HashMap<>();
-            paramMap.put("queryParam", null);
+            paramMap.put("peerQueryParam", null);
             Integer count = peerMapper.listCount(paramMap);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXPEER");
+            builder.append("LXPEER-");
             builder.append(areaCityDO.getCityCode());
+            builder.append("-");
             builder.append(String.format("%05d", count + 1));
             return builder.toString();
         }
@@ -754,4 +796,6 @@ public class GenerateNoSupport {
     private PeerMapper peerMapper;
     @Autowired
     private PeerDeploymentOrderMapper peerDeploymentOrderMapper;
+    @Autowired
+    private RepairOrderMapper repairOrderMapper;
 }
