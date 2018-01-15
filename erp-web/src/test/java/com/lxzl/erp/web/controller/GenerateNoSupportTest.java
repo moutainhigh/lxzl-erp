@@ -16,6 +16,11 @@ import java.util.List;
  * Time : Created in ${Time}
  */
 public class GenerateNoSupportTest extends ERPUnTransactionalTest {
+    @Test
+    public void generatePeerNo() throws Exception {
+        String peerNo = generateNoSupport.generatePeerNo(12);
+        System.out.println(peerNo);
+    }
 
     public void generateTransferOrderNo() throws Exception {
         String s = generateNoSupport.generateTransferOrderNo(new Date(), 1);

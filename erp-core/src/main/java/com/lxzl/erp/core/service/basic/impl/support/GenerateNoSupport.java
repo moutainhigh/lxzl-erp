@@ -686,7 +686,7 @@ public class GenerateNoSupport {
         synchronized (this) {
             AreaCityDO areaCityDO = areaCityMapper.findById(cityId);
             Map<String, Object> paramMap = new HashMap<>();
-            paramMap.put("supplierQueryParam", null);
+            paramMap.put("queryParam", null);
             Integer count = peerMapper.listCount(paramMap);
             StringBuilder builder = new StringBuilder();
             builder.append("LXPEER");
