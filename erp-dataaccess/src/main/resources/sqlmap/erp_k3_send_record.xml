@@ -6,13 +6,14 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="record_type" jdbcType="INTEGER" property="recordType" />
 		<result column="record_json" jdbcType="VARCHAR" property="recordJson" />
+		<result column="response_json" jdbcType="VARCHAR" property="responseJson" />
 		<result column="send_result" jdbcType="INTEGER" property="sendResult" />
 		<result column="receive_result" jdbcType="INTEGER" property="receiveResult" />
 		<result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
 	</resultMap>
 
 	<sql id="column_List">
-		eksr.id,eksr.record_type,eksr.record_json,eksr.send_result,eksr.receive_result,eksr.send_time
+		eksr.id,eksr.record_type,eksr.record_json,eksr.response_json,eksr.send_result,eksr.receive_result,eksr.send_time
 	</sql>
 
 	<select id="findById" resultMap="K3SendRecordDO" parameterType="java.lang.Integer">
@@ -46,6 +47,9 @@
 			</if>
 			<if test="recordJson != null">
 				record_json = #{recordJson,jdbcType=VARCHAR},
+			</if>
+			<if test="responseJson != null">
+				response_json = #{responseJson,jdbcType=VARCHAR},
 			</if>
 			<if test="sendResult != null">
 				send_result = #{sendResult,jdbcType=INTEGER},

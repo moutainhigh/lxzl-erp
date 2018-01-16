@@ -11,6 +11,7 @@ public class K3SendRecord extends BasePO {
 	private Integer k3SendRecordId;   //唯一标识
 	private Integer recordType;   //记录类型，1客户、2供应商、3商品、4配件、5订单
 	private String recordJson;   //推送的json数据
+	private String responseJson;   //返回的json数据
 	private Integer sendResult;   //是否推送成功，1是0否
 	private Integer receiveResult;   //是否接收成功，1是0否
 	private Date sendTime;   //发送时间
@@ -38,6 +39,14 @@ public class K3SendRecord extends BasePO {
 
 	public void setRecordJson(String recordJson){
 		this.recordJson = recordJson;
+	}
+
+	public String getResponseJson() {
+		return responseJson;
+	}
+
+	public void setResponseJson(String responseJson) {
+		this.responseJson = responseJson;
 	}
 
 	public Integer getSendResult(){

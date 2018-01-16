@@ -598,7 +598,12 @@ public class PurchaseOrderControllerTest extends ERPTransactionalTest {
 //        purchaseReceiveOrderQueryParam.setConfirmEndTime(confirmEndTime.getTime());//确认签单结束时间
         TestResult testResult = getJsonTestResult("/purchaseOrder/pagePurchaseReceive", purchaseReceiveOrderQueryParam);
     }
-
+    @Test
+    public void pagePurchaseReceiveJSON() throws Exception {
+        String json = "{\"pageNo\":1,\"pageSize\":15,\"purchaseNo\":\"\",\"purchaseReceiveNo\":\"\",\"purchaseDeliveryNo\":\"\",\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\",\"purchaseReceiveOrderStatus\":\"\"}";
+        PurchaseReceiveOrderQueryParam purchaseReceiveOrderQueryParam = JSON.parseObject(json,PurchaseReceiveOrderQueryParam.class);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/pagePurchaseReceive", purchaseReceiveOrderQueryParam);
+    }
     @Test
     public void queryPurchaseReceiveOrderByNo() throws Exception {
         PurchaseReceiveOrder purchaseReceiveOrder = new PurchaseReceiveOrder();

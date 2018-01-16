@@ -2560,6 +2560,7 @@ CREATE TABLE `erp_k3_send_record` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `record_type` int(20) COMMENT '记录类型，1客户、2供应商、3商品、4配件、5订单',
   `record_json` text COMMENT '推送的json数据',
+  `response_json` text COMMENT '返回的json数据',
   `send_result` int(20) COMMENT '是否推送成功，1是0否',
   `receive_result` int(20) COMMENT '是否接收成功，1是0否',
   `send_time` datetime DEFAULT NULL COMMENT '发送时间',
