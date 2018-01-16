@@ -446,14 +446,14 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
             return result;
         }
-        WarehouseDO warehouseDO = warehouseSupport.getAvailableWarehouse(deploymentOrderDO.getTargetWarehouseId());
+        WarehouseDO warehouseDO = warehouseSupport.getAvailableWarehouse(deploymentOrderDO.getSrcWarehouseId());
         if (warehouseDO == null) {
             result.setErrorCode(ErrorCode.WAREHOUSE_NOT_AVAILABLE);
             return result;
         }
 
         if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())) {
-            ServiceResult<String, Object> addDeploymentOrderItemResult = addDeploymentOrderItem(deploymentOrderDO, param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), loginUser.getUserId(), currentTime);
+            ServiceResult<String, Object> addDeploymentOrderItemResult = addDeploymentOrderItem(deploymentOrderDO, param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), param.getIsNewMaterial(), loginUser.getUserId(), currentTime);
             if (!ErrorCode.SUCCESS.equals(addDeploymentOrderItemResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(addDeploymentOrderItemResult.getErrorCode(), addDeploymentOrderItemResult.getFormatArgs());
@@ -560,7 +560,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         return result;
     }
 
-    private ServiceResult<String, Object> addDeploymentOrderItem(DeploymentOrderDO deploymentOrderDO, String equipmentNo, Integer materialId, Integer materialCount, Integer loginUserId, Date currentTime) {
+    private ServiceResult<String, Object> addDeploymentOrderItem(DeploymentOrderDO deploymentOrderDO, String equipmentNo, Integer materialId, Integer materialCount, Integer isNewMaterial, Integer loginUserId, Date currentTime) {
         ServiceResult<String, Object> result = new ServiceResult<>();
         // 处理调拨设备业务
         if (equipmentNo != null) {
@@ -616,11 +616,16 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
 
         // 处理调拨物料业务
         if (materialId != null) {
+            ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(materialId);
+            if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
+                throw new BusinessException(materialServiceResult.getErrorCode());
+            }
+            Material material = materialServiceResult.getResult();
 
-            Map<Integer, DeploymentOrderMaterialDO> deploymentOrderMaterialDOMap = ListUtil.listToMap(deploymentOrderDO.getDeploymentOrderMaterialDOList(), "deploymentMaterialId");
-            DeploymentOrderMaterialDO deploymentOrderMaterialDO = deploymentOrderMaterialDOMap.get(materialId);
+            Map<String, DeploymentOrderMaterialDO> deploymentOrderMaterialDOMap = ListUtil.listToMap(deploymentOrderDO.getDeploymentOrderMaterialDOList(), "deploymentMaterialId", "isNew");
+            DeploymentOrderMaterialDO deploymentOrderMaterialDO = deploymentOrderMaterialDOMap.get(materialId + "-" + isNewMaterial);
             if (deploymentOrderMaterialDO == null) {
-                result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
+                result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, material.getMaterialName());
                 return result;
             }
 

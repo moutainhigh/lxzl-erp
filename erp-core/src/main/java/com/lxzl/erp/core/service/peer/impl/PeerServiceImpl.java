@@ -11,7 +11,9 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.peer.PeerService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.dataaccess.dao.mysql.area.AreaCityMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.peer.PeerMapper;
+import com.lxzl.erp.dataaccess.domain.area.AreaCityDO;
 import com.lxzl.erp.dataaccess.domain.peer.PeerDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mongo.config.PageQuery;
@@ -52,7 +54,8 @@ public class PeerServiceImpl implements PeerService {
         }
         Date now = new Date();
         PeerDO peerDO = ConverterUtil.convert(peer, PeerDO.class);
-        peerDO.setPeerNo(generateNoSupport.generatePeerNo(peer.getCity()));
+        AreaCityDO areaCityDO = areaCityMapper.findById(peer.getCity());
+        peerDO.setPeerNo(generateNoSupport.generatePeerNo(areaCityDO.getCityCode()));
         peerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         peerDO.setCreateTime(now);
         peerDO.setCreateUser(userSupport.getCurrentUserId().toString());
@@ -246,9 +249,11 @@ public class PeerServiceImpl implements PeerService {
     }
 
     @Autowired
-    PeerMapper peerMapper;
+    private PeerMapper peerMapper;
     @Autowired
-    GenerateNoSupport generateNoSupport;
+    private GenerateNoSupport generateNoSupport;
     @Autowired
-    UserSupport userSupport;
+    private UserSupport userSupport;
+    @Autowired
+    private AreaCityMapper areaCityMapper;
 }

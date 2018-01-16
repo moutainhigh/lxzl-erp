@@ -266,11 +266,9 @@ public class GenerateNoSupport {
             //获取入方的城市区号
             WarehouseDO srcWarehouseDO = warehouseMapper.findById(srcWarehouseId);
             SubCompanyDO srcSubCompanyDO = subCompanyMapper.findById(srcWarehouseDO.getSubCompanyId());
-            AreaCityDO srcAreaCityDO = areaCityMapper.findById(srcSubCompanyDO.getCity());
             //获取出方的城市区号
             WarehouseDO targetWarehouseDO = warehouseMapper.findById(targetWarehouseId);
             SubCompanyDO targetSubCompanyDO = subCompanyMapper.findById(targetWarehouseDO.getSubCompanyId());
-            AreaCityDO targetAreaCityDO = areaCityMapper.findById(targetSubCompanyDO.getCity());
             DeploymentOrderQueryParam deploymentOrderQueryParam = new DeploymentOrderQueryParam();
             deploymentOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
             deploymentOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
@@ -278,9 +276,9 @@ public class GenerateNoSupport {
             maps.put("deploymentOrderQueryParam", deploymentOrderQueryParam);
             Integer count = deploymentOrderMapper.listCount(maps);
             builder.append("LXD-");
-            builder.append(srcAreaCityDO.getCityCode());
+            builder.append(srcSubCompanyDO.getSubCompanyCode());
             builder.append("-");
-            builder.append(targetAreaCityDO.getCityCode());
+            builder.append(targetSubCompanyDO.getSubCompanyCode());
             builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
             builder.append("-");
@@ -619,15 +617,14 @@ public class GenerateNoSupport {
     /**
      * 生成供应商编号
      */
-    public String generateSupplierNo(Integer cityId) {
+    public String generateSupplierNo(String cityCode) {
         synchronized (this) {
-            AreaCityDO areaCityDO = areaCityMapper.findById(cityId);
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("supplierQueryParam", null);
             Integer count = supplierMapper.listCount(paramMap);
             StringBuilder builder = new StringBuilder();
             builder.append("LXS-");
-            builder.append(areaCityDO.getCityCode());
+            builder.append(cityCode);
             builder.append("-");
             builder.append(String.format("%05d", count + 1));
             return builder.toString();
@@ -681,7 +678,7 @@ public class GenerateNoSupport {
     /**
      * 同行调拨单编号
      */
-    public String generatePeerDeploymentOrderNo(Date date, Integer cityId) {
+    public String generatePeerDeploymentOrderNo(Date date, String cityCode) {
         synchronized (this) {
             HashMap<String, Object> maps = new HashMap<>();
             PeerDeploymentOrderQueryParam peerDeploymentOrderQueryParam = new PeerDeploymentOrderQueryParam();
@@ -689,10 +686,9 @@ public class GenerateNoSupport {
             peerDeploymentOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
             maps.put("peerDeploymentOrderQueryParam", peerDeploymentOrderQueryParam);
             Integer count = peerDeploymentOrderMapper.listCount(maps);
-            AreaCityDO areaCityDO = areaCityMapper.findById(cityId);
             StringBuilder builder = new StringBuilder();
             builder.append("LXPDO-");
-            builder.append(areaCityDO.getCityCode());
+            builder.append(cityCode);
             builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(date));
             builder.append("-");
@@ -730,15 +726,14 @@ public class GenerateNoSupport {
     /**
      * 生成同行供应商编号
      */
-    public String generatePeerNo(Integer cityId) {
+    public String generatePeerNo(String cityCode) {
         synchronized (this) {
-            AreaCityDO areaCityDO = areaCityMapper.findById(cityId);
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("peerQueryParam", null);
             Integer count = peerMapper.listCount(paramMap);
             StringBuilder builder = new StringBuilder();
             builder.append("LXPEER-");
-            builder.append(areaCityDO.getCityCode());
+            builder.append(cityCode);
             builder.append("-");
             builder.append(String.format("%05d", count + 1));
             return builder.toString();

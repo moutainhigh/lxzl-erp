@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -42,13 +43,13 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
 
     @Test
     public void generatePeerDeploymentOrderNo() throws Exception {
-        String orderNo = generateNoSupport.generatePeerDeploymentOrderNo(new Date(), 1);
+        String orderNo = generateNoSupport.generatePeerDeploymentOrderNo(new Date(), "0755");
         System.out.println(orderNo);
     }
 
     @Test
     public void generatePeerNo() throws Exception {
-        String peerNo = generateNoSupport.generatePeerNo(12);
+        String peerNo = generateNoSupport.generatePeerNo("0755");
         System.out.println(peerNo);
     }
     @Test
@@ -67,7 +68,7 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
     @Test
     public void generateSupplierNo() throws Exception {
         long startTime = System.currentTimeMillis();
-        String supplierNo = generateNoSupport.generateSupplierNo(1);
+        String supplierNo = generateNoSupport.generateSupplierNo("0755");
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
@@ -82,7 +83,7 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
     public void generateProductEquipmentNo() throws Exception {
         long startTime = System.currentTimeMillis();
 //        String aaaa = generateNoSupport.generateProductEquipmentNo("aaaa", "1qweqwe");
-        List<String> strings = generateNoSupport.generateProductEquipmentNoList(null,"", 3);
+        List<String> strings = generateNoSupport.generateProductEquipmentNoList("aaa1","1qweqwe", 3);
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
@@ -97,7 +98,7 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
     @Test
     public void generateBulkMaterialNo1() throws Exception {
         long startTime = System.currentTimeMillis();
-        List<String> strings = generateNoSupport.generateBulkMaterialNoList(null,"1000",3);
+        List<String> strings = generateNoSupport.generateBulkMaterialNoList("aaa","1000",3);
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
@@ -108,10 +109,10 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
 
     @Test
     public void generateBulkMaterialNo() throws Exception {
-        String materialNo = generateNoSupport.generateBulkMaterialNo(new Date(), 4000001);
+//        String materialNo = generateNoSupport.generateBulkMaterialNo(new Date(), 4000001);
         long startTime = System.currentTimeMillis();
 //        for (int i = 0;i<3000;i++) {
-//        String materialNo = generateNoSupport.generateBulkMaterialNo("AsA", "0755",2);
+        String materialNo = generateNoSupport.generateBulkMaterialNo("AsA", "0755",2);
 //        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
@@ -232,11 +233,12 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
 //        generateNoSupport.generateStatementOrderNo(new Date(), 700003);
         long startTime = System.currentTimeMillis();
 //        for (int i = 0;i<3000;i++) {
-        generateNoSupport.generateStatementOrderNo(new Date(), 700003);
+        String orderNo = generateNoSupport.generateStatementOrderNo(new Date(), 700003);
 //        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;
         System.out.println("执行时间：" + excTime + "s");
+        System.out.println(orderNo);
         //执行时间：10.872s
     }
 
@@ -308,5 +310,8 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
     @Test
     public void generateCustomerNo2() throws Exception {
         TestResult result = getJsonTestResult("/generate/createCustomerNo",null);
+        Map<String, Object> resultMap = result.getResultMap();
+        Object data = resultMap.get("data");
+        System.out.println(data);
     }
 }

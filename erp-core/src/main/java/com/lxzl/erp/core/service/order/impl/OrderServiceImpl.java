@@ -968,14 +968,14 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD.equals(param.getOperationType())) {
-            ServiceResult<String, Object> addOrderItemResult = addOrderItem(orderDO, param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), loginUser.getUserId(), currentTime);
+            ServiceResult<String, Object> addOrderItemResult = addOrderItem(orderDO, param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(),param.getIsNewMaterial(), loginUser.getUserId(), currentTime);
             if (!ErrorCode.SUCCESS.equals(addOrderItemResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(addOrderItemResult.getErrorCode(), addOrderItemResult.getFormatArgs());
                 return result;
             }
         } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(param.getOperationType())) {
-            ServiceResult<String, Object> removeOrderItemResult = removeOrderItem(orderDO, param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), loginUser.getUserId(), currentTime);
+            ServiceResult<String, Object> removeOrderItemResult = removeOrderItem(orderDO, param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), param.getIsNewMaterial(),loginUser.getUserId(), currentTime);
             if (!ErrorCode.SUCCESS.equals(removeOrderItemResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(removeOrderItemResult.getErrorCode(), removeOrderItemResult.getFormatArgs());
@@ -998,7 +998,7 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
-    private ServiceResult<String, Object> addOrderItem(OrderDO orderDO, String equipmentNo, Integer materialId, Integer materialCount, Integer loginUserId, Date currentTime) {
+    private ServiceResult<String, Object> addOrderItem(OrderDO orderDO, String equipmentNo, Integer materialId, Integer materialCount, Integer isNewMaterial, Integer loginUserId, Date currentTime) {
         ServiceResult<String, Object> result = new ServiceResult<>();
         // 计算预计归还时间
         if (equipmentNo != null) {
@@ -1112,7 +1112,7 @@ public class OrderServiceImpl implements OrderService {
                 String key = entry.getKey();
                 OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(key);
                 // 如果输入进来的散料ID 为当前订单项需要的，那么就匹配
-                if (key.startsWith(materialId.toString())) {
+                if (key.startsWith(materialId.toString()) && orderMaterialDO.getIsNewMaterial().equals(isNewMaterial)) {
                     //已经配好的
                     List<OrderMaterialBulkDO> orderMaterialBulkDOList = orderMaterialBulkMapper.findByOrderMaterialId(orderMaterialDO.getId());
                     if (orderMaterialBulkDOList != null && orderMaterialBulkDOList.size() >= orderMaterialDO.getMaterialCount()) {
@@ -1183,7 +1183,7 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
-    private ServiceResult<String, Object> removeOrderItem(OrderDO orderDO, String equipmentNo, Integer materialId, Integer materialCount, Integer loginUserId, Date currentTime) {
+    private ServiceResult<String, Object> removeOrderItem(OrderDO orderDO, String equipmentNo, Integer materialId, Integer materialCount,Integer isNewMaterial, Integer loginUserId, Date currentTime) {
         ServiceResult<String, Object> result = new ServiceResult<>();
         if (equipmentNo != null) {
             ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(equipmentNo);
@@ -1222,35 +1222,43 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (materialId != null) {
-            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryBusyBulkMaterialDOList(orderDO.getOrderNo(), materialId, materialCount);
-            if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
-                result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
-                return result;
-            }
-            for (int i = 0; i < materialCount; i++) {
-                BulkMaterialDO bulkMaterialDO = bulkMaterialDOList.get(i);
-                OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderIdAndBulkMaterialNo(orderDO.getId(), bulkMaterialDO.getBulkMaterialNo());
-                if (orderMaterialBulkDO == null) {
-                    result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
-                    return result;
+            Map<String, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(), "materialId", "rentType", "rentTimeLength", "isNewMaterial");
+            for (Map.Entry<String, OrderMaterialDO> entry : orderMaterialDOMap.entrySet()) {
+                String key = entry.getKey();
+                OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(key);
+                // 如果输入进来的散料ID 为当前订单项需要的，那么就匹配
+                if (key.startsWith(materialId.toString()) && orderMaterialDO.getIsNewMaterial().equals(isNewMaterial)) {
+                    List<OrderMaterialBulkDO> orderMaterialBulkDOList = orderMaterialBulkMapper.findByOrderMaterialId(orderMaterialDO.getId());
+                    if (CollectionUtil.isEmpty(orderMaterialBulkDOList)) {
+                        result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, materialId);
+                        return result;
+                    }
+
+                    if (orderMaterialBulkDOList.size() < materialCount) {
+                        result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
+                        return result;
+                    }
+                    for(int i=0;i<materialCount;i++){
+                        OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkDOList.get(i);
+                        BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(orderMaterialBulkDO.getBulkMaterialNo());
+                        bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+                        bulkMaterialDO.setOrderNo("");
+                        bulkMaterialDO.setUpdateTime(currentTime);
+                        bulkMaterialDO.setUpdateUser(loginUserId.toString());
+                        bulkMaterialMapper.update(bulkMaterialDO);
+
+                        orderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                        orderMaterialBulkDO.setUpdateTime(currentTime);
+                        orderMaterialBulkDO.setUpdateUser(loginUserId.toString());
+                        orderMaterialBulkMapper.update(orderMaterialBulkDO);
+                    }
+
+                    String operateMaterialStockResult = materialSupport.operateMaterialStock(materialId, materialCount);
+                    if (!ErrorCode.SUCCESS.equals(operateMaterialStockResult)) {
+                        result.setErrorCode(operateMaterialStockResult);
+                        return result;
+                    }
                 }
-
-                bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
-                bulkMaterialDO.setOrderNo("");
-                bulkMaterialDO.setUpdateTime(currentTime);
-                bulkMaterialDO.setUpdateUser(loginUserId.toString());
-                bulkMaterialMapper.update(bulkMaterialDO);
-
-                orderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                orderMaterialBulkDO.setUpdateTime(currentTime);
-                orderMaterialBulkDO.setUpdateUser(loginUserId.toString());
-                orderMaterialBulkMapper.update(orderMaterialBulkDO);
-            }
-
-            String operateMaterialStockResult = materialSupport.operateMaterialStock(materialId, materialCount);
-            if (!ErrorCode.SUCCESS.equals(operateMaterialStockResult)) {
-                result.setErrorCode(operateMaterialStockResult);
-                return result;
             }
         }
 

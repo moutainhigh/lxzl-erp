@@ -1332,6 +1332,7 @@ CREATE TABLE `erp_peer_deployment_order` (
   `total_material_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '配件总价',
   `total_order_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '订单总价',
   `total_discount_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '共计优惠金额',
+  `confirm_time` datetime DEFAULT NULL COMMENT '确认收货时间',
   `expect_return_time` datetime DEFAULT NULL COMMENT '预计归还时间',
   `real_return_time` datetime DEFAULT NULL COMMENT '实际归还时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
