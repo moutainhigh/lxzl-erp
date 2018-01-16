@@ -26,7 +26,6 @@ public class TransferOrder extends BasePO {
 	private Integer transferOrderMode;   //转移方式，1转入，2转出（凭空转入转出）
 	@NotNull(message = ErrorCode.TRANSFER_ORDER_TYPE_NOT_NULL ,groups = {AddGroup.class,TransferOrderOutGroup.class})
 	private Integer transferOrderType;   //	转入类型：1外借入库转入，2试验机转入，3原有资产，99其他。 转出类型：51丢失，52售出，53试验机归还，99其他
-	@NotNull(message = ErrorCode.WAREHOUSE_ID_NOT_NULL ,groups = {AddGroup.class})
 	private Integer warehouseId;   //仓库ID，哪个库房转移
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注

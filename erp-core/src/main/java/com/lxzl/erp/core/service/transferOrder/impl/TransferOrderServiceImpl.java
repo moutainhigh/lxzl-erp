@@ -906,7 +906,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             transferOrderMapper.update(transferOrderDO);
             return true;
         } catch (Exception e) {
-            logger.error("审批设备转移单通知失败： {}", transferOrderNo);
+            logger.error("审批转移单通知失败： {}", transferOrderNo,e.toString());
             return false;
         }
     }
