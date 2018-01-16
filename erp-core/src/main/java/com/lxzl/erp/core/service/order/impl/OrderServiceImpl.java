@@ -1230,7 +1230,7 @@ public class OrderServiceImpl implements OrderService {
                 if (key.startsWith(materialId.toString()) && orderMaterialDO.getIsNewMaterial().equals(isNewMaterial)) {
                     List<OrderMaterialBulkDO> orderMaterialBulkDOList = orderMaterialBulkMapper.findByOrderMaterialId(orderMaterialDO.getId());
                     if (CollectionUtil.isEmpty(orderMaterialBulkDOList)) {
-                        result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
+                        result.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM, materialId);
                         return result;
                     }
 
