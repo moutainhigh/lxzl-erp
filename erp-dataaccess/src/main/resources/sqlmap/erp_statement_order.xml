@@ -177,7 +177,7 @@
 				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != ''">
 					and ec.customer_name like CONCAT('%','${maps.statementOrderQueryParam.statementOrderCustomerName}','%' )
 				</if>
-				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp;">
+				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null">
 					and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
 				</if>
 				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
