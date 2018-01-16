@@ -151,6 +151,22 @@ public class UserSupport {
     }
 
     /**
+     * 是否是库房人员
+     */
+    public boolean isDepartmentPerson() {
+        List<Role> userRoleList = getCurrentUser().getRoleList();
+        if (CollectionUtil.isNotEmpty(userRoleList)) {
+            for (Role role : userRoleList) {
+                DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
+                if (DepartmentType.DEPARTMENT_TYPE_WAREHOUSE.equals(departmentDO.getDepartmentType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * 校验当前人是否能使用当前部门，如果返回
      */
     public DepartmentDO getAvailableDepartment(Integer departmentId) {

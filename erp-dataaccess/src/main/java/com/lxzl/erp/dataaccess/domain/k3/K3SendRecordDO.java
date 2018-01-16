@@ -9,6 +9,7 @@ public class K3SendRecordDO  extends BaseDO {
 	private Integer id;
 	private Integer recordType;
 	private String recordJson;
+	private String responseJson;
 	private Integer sendResult;
 	private Integer receiveResult;
 	private Date sendTime;
@@ -35,6 +36,14 @@ public class K3SendRecordDO  extends BaseDO {
 
 	public void setRecordJson(String recordJson){
 		this.recordJson = recordJson;
+	}
+
+	public String getResponseJson() {
+		return responseJson;
+	}
+
+	public void setResponseJson(String responseJson) {
+		this.responseJson = responseJson;
 	}
 
 	public Integer getSendResult(){

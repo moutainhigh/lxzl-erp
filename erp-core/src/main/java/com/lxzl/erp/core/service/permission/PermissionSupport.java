@@ -93,7 +93,9 @@ public class PermissionSupport {
             permissionParam.setPermissionUserIdList(getCanAccessPassiveUserList(userId));
         }
         if (permissionSet.contains(PermissionType.PERMISSION_TYPE_WAREHOUSE)) {
-            permissionParam.setPermissionWarehouseIdList(getCanAccessWarehouseIdList());
+            if (userSupport.isDepartmentPerson()) {
+                permissionParam.setPermissionWarehouseIdList(getCanAccessWarehouseIdList());
+            }
         }
         if (permissionSet.contains(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE)) {
             permissionParam.setPermissionSubCompanyId(getCanAccessSubCompanyForService(userId));

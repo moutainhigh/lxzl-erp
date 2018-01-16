@@ -5,11 +5,13 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -716,5 +718,41 @@ public class HttpClientUtil{
 		public int getCode() {
 			return code;
 		}
+	}
+
+	public static String post(String url, List<NameValuePair> params, String charSet) throws Exception {
+		String responseStr = null;
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		HttpPost httpPost = new HttpPost(url);
+
+		try {
+			UrlEncodedFormEntity uefEntity = new UrlEncodedFormEntity(params, charSet);
+			httpPost.setEntity(uefEntity);
+			CloseableHttpResponse response = httpClient.execute(httpPost);
+
+			try {
+				HttpEntity entity = response.getEntity();
+				if (entity != null) {
+					responseStr = EntityUtils.toString(entity, charSet);
+				}
+			} finally {
+				response.close();
+			}
+		} catch (ClientProtocolException var32) {
+			logger.error("Http post request error", var32);
+		} catch (UnsupportedEncodingException var33) {
+			logger.error("Http post request error", var33);
+		} catch (IOException var34) {
+			logger.error("Http post request error", var34);
+		} finally {
+			try {
+				httpClient.close();
+			} catch (IOException var30) {
+				logger.error("Httpclient close error", var30);
+			}
+
+		}
+
+		return responseStr;
 	}
 }

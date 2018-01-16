@@ -57,7 +57,7 @@ public class DeploymentOrderController extends BaseController {
     @RequestMapping(value = "process", method = RequestMethod.POST)
     public Result process(@RequestBody ProcessDeploymentOrderParam param, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = deploymentOrderService.processDeploymentOrder(param);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        return resultGenerator.generate(serviceResult);
     }
 
     @RequestMapping(value = "delivery", method = RequestMethod.POST)

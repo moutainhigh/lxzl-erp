@@ -446,7 +446,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
             return result;
         }
-        WarehouseDO warehouseDO = warehouseSupport.getAvailableWarehouse(deploymentOrderDO.getTargetWarehouseId());
+        WarehouseDO warehouseDO = warehouseSupport.getAvailableWarehouse(deploymentOrderDO.getSrcWarehouseId());
         if (warehouseDO == null) {
             result.setErrorCode(ErrorCode.WAREHOUSE_NOT_AVAILABLE);
             return result;
@@ -616,11 +616,16 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
 
         // 处理调拨物料业务
         if (materialId != null) {
+            ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(materialId);
+            if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
+                throw new BusinessException(materialServiceResult.getErrorCode());
+            }
+            Material material = materialServiceResult.getResult();
 
             Map<String, DeploymentOrderMaterialDO> deploymentOrderMaterialDOMap = ListUtil.listToMap(deploymentOrderDO.getDeploymentOrderMaterialDOList(), "deploymentMaterialId", "isNew");
             DeploymentOrderMaterialDO deploymentOrderMaterialDO = deploymentOrderMaterialDOMap.get(materialId + "-" + isNewMaterial);
             if (deploymentOrderMaterialDO == null) {
-                result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, equipmentNo);
+                result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, material.getMaterialName());
                 return result;
             }
 

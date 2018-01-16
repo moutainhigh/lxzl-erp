@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -18,6 +20,7 @@ import java.util.List;
 public class PeerDeploymentOrder extends BasePO {
 
     private Integer peerDeploymentOrderId;   //唯一标识
+    @NotBlank(message = ErrorCode.PEER_DEPLOYMENT_ORDER_NO_NOT_NULL, groups = {IdGroup.class})
     private String peerDeploymentOrderNo;   //同行调配单编号
     @NotNull(message = ErrorCode.PEER_ID_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
     private Integer peerId;   //同行ID
@@ -48,6 +51,7 @@ public class PeerDeploymentOrder extends BasePO {
     private String createUser;   //添加人
     private Date updateTime;   //修改时间
     private String updateUser;   //修改人
+    private Date confirmTime;   //确认收货时间
 
     @Valid
     private List<PeerDeploymentOrderProduct> peerDeploymentOrderProductList;
@@ -299,4 +303,8 @@ public class PeerDeploymentOrder extends BasePO {
     public void setPeerName(String peerName) {
         this.peerName = peerName;
     }
+
+    public Date getConfirmTime() { return confirmTime; }
+
+    public void setConfirmTime(Date confirmTime) { this.confirmTime = confirmTime; }
 }
