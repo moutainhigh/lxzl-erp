@@ -515,8 +515,42 @@ public class PageController extends BaseController {
         return "/component/transferOrder/stockUpMaterialModal";
     }
 
+    //同行管理
+    @RequestMapping("/peer-manage/supplier-list")
+    public String peerManageSupplierList() {
+        return "/peerManage/peerSupplier/peerSupplierList";
+    }
+    @RequestMapping("/peer-manage/supplier-detail")
+    public String peerManageSupplierDetail() {
+        return "/peerManage/peerSupplier/peerSupplierDetail";
+    }
+    @RequestMapping("/peer-manage/supplier-add")
+    public String peerManageSupplierAdd() {
+        return "/peerManage/peerSupplier/peerSupplierAdd";
+    }
+    @RequestMapping("/peer-manage/supplier-edit")
+    public String peerManageSupplierEdit() {
+        return "/peerManage/peerSupplier/peerSupplierEdit";
+    }
+    @RequestMapping("/peer-manage/order-list")
+    public String peerManageOrderList() {
+        return "/peerManage/peerOrder/peerOrderList";
+    }
+    @RequestMapping("/peer-manage/order-detail")
+    public String peerManageOrderDetail() {
+        return "/peerManage/peerOrder/peerOrderDetail";
+    }
+    @RequestMapping("/peer-manage/order-add")
+    public String peerManageOrderAdd() {
+        return "/peerManage/peerOrder/peerOrderAdd";
+    }
+    @RequestMapping("/peer-manage/order-edit")
+    public String peerManageOrderEdit() {
+        return "/peerManage/peerOrder/peerOrderEdit";
+    }
 
-    //结算单
+
+        //结算单
     @RequestMapping("/statement-order/list")
     public String statementOrderList() {
         return "/statementOrderManage/statementOrderList";
