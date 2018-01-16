@@ -74,10 +74,16 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
 
-        //判断传入的仓库是否存在，同时查看当前操作是否有权操作此仓库
-        WarehouseDO warehouseDO = warehouseSupport.getAvailableWarehouse(transferOrder.getWarehouseId());
-        if (warehouseDO == null) {
-            serviceResult.setErrorCode(ErrorCode.USER_CAN_NOT_OP_WAREHOUSE);
+//        //判断传入的仓库是否存在，同时查看当前操作是否有权操作此仓库
+//        WarehouseDO warehouseDO = warehouseSupport.getAvailableWarehouse(transferOrder.getWarehouseId());
+//        if (warehouseDO == null) {
+//            serviceResult.setErrorCode(ErrorCode.USER_CAN_NOT_OP_WAREHOUSE);
+//            return serviceResult;
+//        }
+
+        WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
+        if (warehouseDO == null){
+            serviceResult.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
             return serviceResult;
         }
 
@@ -91,6 +97,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         transferOrderDO.setTransferOrderNo(generateNoSupport.generateTransferOrderNo(now,warehouseDO.getId()));
         transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT);
         transferOrderDO.setTransferOrderMode(TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO);
+        transferOrderDO.setWarehouseId(warehouseDO.getId());
         transferOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         transferOrderDO.setCreateTime(now);
         transferOrderDO.setCreateUser(userSupport.getCurrentUserId().toString());
