@@ -45,7 +45,6 @@
                                         <dt class="mb10">调拨类型</dt><dd>{{deploymentTypeValue}}</dd>
                                         <dt class="mb10">源库房</dt><dd>{{srcWarehouseName}}</dd>
                                         <dt class="mb10">目标库房</dt><dd>{{targetWarehouseName}}</dd>
-##                                        <dt class="mb10">调拨日期</dt><dd>{{#time}}{{expectReturnTime}}{{/time}}</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
