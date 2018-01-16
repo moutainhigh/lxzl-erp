@@ -254,7 +254,7 @@
 		WHERE epdo.peer_deployment_order_no = #{peerDeploymentOrderNo, jdbcType=INTEGER} AND epdo.data_status = 1
 		) epd_order
 		LEFT JOIN erp_peer_deployment_order_product epdop ON epd_order.id = epdop.peer_deployment_order_id AND epdop.data_status = 1
-		LEFT JOIN erp_peer_deployment_order_material epdom ON epd_order.id = epdom.peer_deployment_order_id AND epdop.data_status = 1
+		LEFT JOIN erp_peer_deployment_order_material epdom ON epd_order.id = epdom.peer_deployment_order_id AND epdom.data_status = 1
 	</select>
 
 	<select id="findByNo" resultMap="PeerDeploymentOrderDO" parameterType="java.lang.String">

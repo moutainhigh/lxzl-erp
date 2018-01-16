@@ -4,16 +4,14 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.DeliveryMode;
 import com.lxzl.erp.common.constant.PeerDeploymentOrderRentType;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderCommitParam;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrder;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderConsignInfo;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderMaterial;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderProduct;
-import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,16 +24,20 @@ import java.util.List;
  */
 public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
 
+    /**
+     * Test 创建同行调拨单
+     * @throws Exception
+     */
     @Test
     public void createPeerDeploymentOrderTest() throws Exception {
         PeerDeploymentOrder peerDeploymentOrder = new PeerDeploymentOrder();
         peerDeploymentOrder.setPeerId(5);
 
-        String str = "2018-1-15";
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date now = sdf.parse(str);
+//        String str = "2018-1-15";
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        Date rentStartTime = sdf.parse(str);
 
-        peerDeploymentOrder.setRentStartTime(now);
+        peerDeploymentOrder.setRentStartTime(new Date());
         peerDeploymentOrder.setRentType(PeerDeploymentOrderRentType.RENT_TYPE_DAY);
         peerDeploymentOrder.setRentTimeLength(5);
         peerDeploymentOrder.setWarehouseId(4000001);
@@ -52,10 +54,10 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         peerDeploymentOrderProduct.setRemark("kai创建同行调拨单商品测试");
 
         PeerDeploymentOrderProduct peerDeploymentOrderProduct2 = new PeerDeploymentOrderProduct();
-        peerDeploymentOrderProduct2.setProductSkuId(40);
+        peerDeploymentOrderProduct2.setProductSkuId(92);
         peerDeploymentOrderProduct2.setProductSkuCount(1);
         peerDeploymentOrderProduct2.setProductUnitAmount(new BigDecimal(20));
-        peerDeploymentOrderProduct2.setIsNew(0);
+        peerDeploymentOrderProduct2.setIsNew(1);
         peerDeploymentOrderProduct2.setRemark("kai创建同行调拨单商品测试");
 
         peerDeploymentOrderProductList.add(peerDeploymentOrderProduct);
@@ -74,7 +76,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         peerDeploymentOrderMaterial2.setMaterialId(24);
         peerDeploymentOrderMaterial2.setProductMaterialCount(2);
         peerDeploymentOrderMaterial2.setMaterialUnitAmount(new BigDecimal(10));
-        peerDeploymentOrderMaterial2.setIsNew(1);
+        peerDeploymentOrderMaterial2.setIsNew(0);
         peerDeploymentOrderMaterial2.setRemark("kai创建同行调拨单配件测试");
 
         peerDeploymentOrderMaterialList.add(peerDeploymentOrderMaterial);
@@ -94,4 +96,90 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
 
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/create", peerDeploymentOrder);
     }
+
+    /**
+     * Test修改调拨单
+     * @throws Exception
+     */
+    @Test
+    public void updatePeerDeploymentOrderTest() throws Exception {
+        PeerDeploymentOrder peerDeploymentOrder = new PeerDeploymentOrder();
+
+        peerDeploymentOrder.setPeerDeploymentOrderId(9000041);
+        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO0317201801162");
+
+        peerDeploymentOrder.setPeerId(2);
+
+//        String str = "2018-1-19";
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        Date rentStartTime = sdf.parse(str);
+
+        peerDeploymentOrder.setRentStartTime(new Date());
+        peerDeploymentOrder.setRentType(PeerDeploymentOrderRentType.RENT_TYPE_MONTH);
+        peerDeploymentOrder.setRentTimeLength(2);
+        peerDeploymentOrder.setWarehouseId(4000001);
+        peerDeploymentOrder.setDeliveryMode(DeliveryMode.DELIVERY_MODE_SINCE);
+        peerDeploymentOrder.setTaxRate(0.06);
+        peerDeploymentOrder.setRemark("kai修改同行调拨单测试");
+
+        List<PeerDeploymentOrderProduct> peerDeploymentOrderProductList = new ArrayList<>();
+        PeerDeploymentOrderProduct peerDeploymentOrderProduct = new PeerDeploymentOrderProduct();
+        peerDeploymentOrderProduct.setProductSkuId(92);
+        peerDeploymentOrderProduct.setProductSkuCount(2);
+        peerDeploymentOrderProduct.setProductUnitAmount(new BigDecimal(50));
+        peerDeploymentOrderProduct.setIsNew(1);
+        peerDeploymentOrderProduct.setRemark("kai修改同行调拨单商品测试");
+
+        PeerDeploymentOrderProduct peerDeploymentOrderProduct2 = new PeerDeploymentOrderProduct();
+        peerDeploymentOrderProduct2.setProductSkuId(40);
+        peerDeploymentOrderProduct2.setProductSkuCount(5);
+        peerDeploymentOrderProduct2.setProductUnitAmount(new BigDecimal(20));
+        peerDeploymentOrderProduct2.setIsNew(0);
+        peerDeploymentOrderProduct2.setRemark("kai修改同行调拨单商品测试");
+
+        peerDeploymentOrderProductList.add(peerDeploymentOrderProduct);
+        peerDeploymentOrderProductList.add(peerDeploymentOrderProduct2);
+        peerDeploymentOrder.setPeerDeploymentOrderProductList(peerDeploymentOrderProductList);
+
+        List<PeerDeploymentOrderMaterial> peerDeploymentOrderMaterialList = new ArrayList<>();
+        PeerDeploymentOrderMaterial peerDeploymentOrderMaterial = new PeerDeploymentOrderMaterial();
+        peerDeploymentOrderMaterial.setMaterialId(24);
+        peerDeploymentOrderMaterial.setProductMaterialCount(10);
+        peerDeploymentOrderMaterial.setMaterialUnitAmount(new BigDecimal(10));
+        peerDeploymentOrderMaterial.setIsNew(1);
+        peerDeploymentOrderMaterial.setRemark("kai修改同行调拨单配件测试");
+
+        PeerDeploymentOrderMaterial peerDeploymentOrderMaterial2 = new PeerDeploymentOrderMaterial();
+        peerDeploymentOrderMaterial2.setMaterialId(24);
+        peerDeploymentOrderMaterial2.setProductMaterialCount(5);
+        peerDeploymentOrderMaterial2.setMaterialUnitAmount(new BigDecimal(20));
+        peerDeploymentOrderMaterial2.setIsNew(0);
+        peerDeploymentOrderMaterial2.setRemark("kai修改同行调拨单配件测试");
+
+        peerDeploymentOrderMaterialList.add(peerDeploymentOrderMaterial);
+        peerDeploymentOrderMaterialList.add(peerDeploymentOrderMaterial2);
+        peerDeploymentOrder.setPeerDeploymentOrderMaterialList(peerDeploymentOrderMaterialList);
+
+        PeerDeploymentOrderConsignInfo peerDeploymentOrderConsignInfo = new PeerDeploymentOrderConsignInfo();
+
+        peerDeploymentOrderConsignInfo.setContactName("kai修改");
+        peerDeploymentOrderConsignInfo.setContactPhone("666");
+        peerDeploymentOrderConsignInfo.setProvince(19);
+        peerDeploymentOrderConsignInfo.setCity(202);
+        peerDeploymentOrderConsignInfo.setDistrict(1956);
+        peerDeploymentOrderConsignInfo.setAddress("鬼屋-修改");
+
+        peerDeploymentOrder.setPeerDeploymentOrderConsignInfo(peerDeploymentOrderConsignInfo);
+
+        TestResult testResult = getJsonTestResult("/peerDeploymentOrder/update", peerDeploymentOrder);
+    }
+
+    @Test
+    public void commitPeerDeploymentOrderTest() throws Exception {
+        PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam = new PeerDeploymentOrderCommitParam();
+        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO0317201801163");
+        peerDeploymentOrderCommitParam.setVerifyUserId(500006);
+        TestResult testResult = getJsonTestResult("/peerDeploymentOrder/commit",peerDeploymentOrderCommitParam);
+    }
+
 }

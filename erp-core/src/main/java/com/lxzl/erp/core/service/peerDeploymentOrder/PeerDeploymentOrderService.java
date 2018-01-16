@@ -1,6 +1,7 @@
 package com.lxzl.erp.core.service.peerDeploymentOrder;
 
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderCommitParam;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrder;
 import com.lxzl.erp.core.service.VerifyReceiver;
 
@@ -19,5 +20,19 @@ public interface PeerDeploymentOrderService extends VerifyReceiver {
      */
     ServiceResult<String,String> createPeerDeploymentOrder(PeerDeploymentOrder peerDeploymentOrder);
 
+    /**
+     * 修改同行调拨单
+     * @param peerDeploymentOrder
+     * @return
+     */
+    ServiceResult<String,String> updatePeerDeploymentOrder(PeerDeploymentOrder peerDeploymentOrder);
 
+    /**
+     * 提交同行调拨单
+     * @param peerDeploymentOrderNo 同行调拨单编号
+     * @param verifyUser    审核人员
+     * @param commitRemark  提交备注
+     * @return
+     */
+    ServiceResult<String,String> commitPeerDeploymentOrder(PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam);
 }
