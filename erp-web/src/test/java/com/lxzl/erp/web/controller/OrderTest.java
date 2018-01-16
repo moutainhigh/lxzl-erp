@@ -191,7 +191,6 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        processOrderParam.setMaterialId(61);
 //        processOrderParam.setMaterialCount(6);
         processOrderParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
-        processOrderParam.setWarehouseId(4000001);
         TestResult testResult = getJsonTestResult("/order/process", processOrderParam);
     }
 
