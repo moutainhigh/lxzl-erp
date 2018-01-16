@@ -21,7 +21,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		edop.id,edop.deployment_order_id,edop.deployment_order_no,edop.deployment_product_sku_id,edop.deployment_product_unit_amount,edop.deployment_product_amount,edop.deployment_product_sku_count,edop.deployment_product_sku_snapshot,edom.is_new,edop.data_status,edop.remark,edop.create_time,edop.create_user,edop.update_time,edop.update_user
+		edop.id,edop.deployment_order_id,edop.deployment_order_no,edop.deployment_product_sku_id,edop.deployment_product_unit_amount,edop.deployment_product_amount,edop.deployment_product_sku_count,edop.deployment_product_sku_snapshot,edop.is_new,edop.data_status,edop.remark,edop.create_time,edop.create_user,edop.update_time,edop.update_user
 	</sql>
 
 	<select id="findById" resultMap="DeploymentOrderProductDO" parameterType="java.lang.Integer">
