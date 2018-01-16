@@ -110,7 +110,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         Map<String, DeploymentOrderProductDO> dbDeploymentOrderProductDOMap = ListUtil.listToMap(dbDeploymentOrderProductDOList, "deploymentProductSkuId","isNew");
         if (CollectionUtil.isNotEmpty(deploymentOrderProductDOList)) {
             for (DeploymentOrderProductDO deploymentOrderProductDO : deploymentOrderProductDOList) {
-                String productRecordKey = deploymentOrderProductDO.getDeploymentProductSkuId() + "" + deploymentOrderProductDO.getIsNew();
+                String productRecordKey = deploymentOrderProductDO.getDeploymentProductSkuId() + "-" + deploymentOrderProductDO.getIsNew();
                 if (dbDeploymentOrderProductDOMap.get(productRecordKey) != null) {
                     updateDeploymentOrderProductDOMap.put(productRecordKey, deploymentOrderProductDO);
                     dbDeploymentOrderProductDOMap.remove(productRecordKey);
@@ -145,7 +145,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         if (updateDeploymentOrderProductDOMap.size() > 0) {
             for (Map.Entry<String, DeploymentOrderProductDO> entry : updateDeploymentOrderProductDOMap.entrySet()) {
                 DeploymentOrderProductDO deploymentOrderProductDO = entry.getValue();
-                DeploymentOrderProductDO oldDeploymentOrderProductDO = deploymentOrderProductMapper.findByDeploymentOrderNoAndSkuId(deploymentOrderNo, deploymentOrderProductDO.getDeploymentProductSkuId());
+                DeploymentOrderProductDO oldDeploymentOrderProductDO = deploymentOrderProductMapper.findByDeploymentOrderNoAndSkuIdAndIsNew(deploymentOrderNo, deploymentOrderProductDO.getDeploymentProductSkuId(), deploymentOrderProductDO.getIsNew());
                 if (oldDeploymentOrderProductDO == null) {
                     throw new BusinessException(ErrorCode.RECORD_NOT_EXISTS);
                 }
@@ -460,7 +460,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
                 return result;
             }
         } else if (CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE.equals(param.getOperationType())) {
-            ServiceResult<String, Object> removeDeploymentOrderItemResult = removeDeploymentOrderItem(deploymentOrderDO, param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), loginUser.getUserId(), currentTime);
+            ServiceResult<String, Object> removeDeploymentOrderItemResult = removeDeploymentOrderItem(deploymentOrderDO, param.getEquipmentNo(), param.getMaterialId(), param.getMaterialCount(), param.getIsNewMaterial(), loginUser.getUserId(), currentTime);
             if (!ErrorCode.SUCCESS.equals(removeDeploymentOrderItemResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(removeDeploymentOrderItemResult.getErrorCode(), removeDeploymentOrderItemResult.getFormatArgs());
@@ -662,7 +662,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         return result;
     }
 
-    private ServiceResult<String, Object> removeDeploymentOrderItem(DeploymentOrderDO deploymentOrderDO, String equipmentNo, Integer materialId, Integer materialCount, Integer loginUserId, Date currentTime) {
+    private ServiceResult<String, Object> removeDeploymentOrderItem(DeploymentOrderDO deploymentOrderDO, String equipmentNo, Integer materialId, Integer materialCount, Integer isNewMaterial, Integer loginUserId, Date currentTime) {
         ServiceResult<String, Object> result = new ServiceResult<>();
         // 处理调拨设备业务
         if (equipmentNo != null) {
@@ -690,7 +690,9 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             productEquipmentDO.setUpdateUser(loginUserId.toString());
             productEquipmentMapper.update(productEquipmentDO);
         }
-        DeploymentOrderMaterialDO deploymentOrderMaterialDO = deploymentOrderMaterialMapper.findByDeploymentOrderNoAndMaterialId(deploymentOrderDO.getDeploymentOrderNo(), materialId);
+
+        // 处理全新的
+        DeploymentOrderMaterialDO deploymentOrderMaterialDO = deploymentOrderMaterialMapper.findByDeploymentOrderNoAndMaterialIdAndIsNew(deploymentOrderDO.getDeploymentOrderNo(), materialId, isNewMaterial);
         if (deploymentOrderMaterialDO == null) {
             result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM);
             return result;
@@ -883,7 +885,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
 
         List<DeploymentOrderMaterialBulkDO> returnDeploymentOrderBulkMaterialDOList = new ArrayList<>();
         if (param.getMaterialId() != null && param.getMaterialCount() > 0) {
-            DeploymentOrderMaterialDO deploymentOrderMaterialDO = deploymentOrderMaterialMapper.findByDeploymentOrderNoAndMaterialId(deploymentOrderDO.getDeploymentOrderNo(), param.getMaterialId());
+            DeploymentOrderMaterialDO deploymentOrderMaterialDO = deploymentOrderMaterialMapper.findByDeploymentOrderNoAndMaterialIdAndIsNew(deploymentOrderDO.getDeploymentOrderNo(), param.getMaterialId(), param.getIsNewMaterial());
             List<DeploymentOrderMaterialBulkDO> deploymentOrderMaterialBulkDOList = deploymentOrderMaterialBulkMapper.findByDeploymentOrderMaterialId(deploymentOrderMaterialDO.getId());
             if (deploymentOrderMaterialBulkDOList == null) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

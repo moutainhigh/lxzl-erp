@@ -69,7 +69,41 @@ public class OrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void testCreateOrderJSON() throws Exception {
-        String str = "{\"buyerCustomerNo\":\"LXCC10002018010400019\",\"rentStartTime\":1515196800000,\"expectDeliveryTime\":1515110400000,\"logisticsAmount\":\"10\",\"buyerRemark\":\"\",\"customerConsignId\":\"119\",\"highTaxRate\":\"2\",\"lowTaxRate\":\"98\",\"deliveryMode\":\"2\",\"orderProductList\":[{\"productId\":\"2000050\",\"productSkuId\":\"180\",\"productUnitAmount\":\"400\",\"productCount\":\"2\",\"rentType\":\"2\",\"rentTimeLength\":\"2\",\"insuranceAmount\":\"\",\"isNewProduct\":\"0\",\"depositAmount\":0}]}";
+        String str = "{\n" +
+                "  \"buyerCustomerNo\": \"LXCC10002018010800033\",\n" +
+                "  \"rentStartTime\": 1516060800000,\n" +
+                "  \"expectDeliveryTime\": 1516060800000,\n" +
+                "  \"logisticsAmount\": \"100\",\n" +
+                "  \"buyerRemark\": \"\",\n" +
+                "  \"customerConsignId\": \"137\",\n" +
+                "  \"highTaxRate\": \"12\",\n" +
+                "  \"lowTaxRate\": \"88\",\n" +
+                "  \"deliveryMode\": \"2\",\n" +
+                "  \"orderProductList\": [\n" +
+                "    {\n" +
+                "      \"productId\": \"2000057\",\n" +
+                "      \"productSkuId\": \"210\",\n" +
+                "      \"productUnitAmount\": \"500\",\n" +
+                "      \"productCount\": \"10\",\n" +
+                "      \"rentType\": \"2\",\n" +
+                "      \"rentTimeLength\": \"12\",\n" +
+                "      \"insuranceAmount\": \"\",\n" +
+                "      \"isNewProduct\": \"0\",\n" +
+                "      \"depositAmount\": 0\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"productId\": \"2000057\",\n" +
+                "      \"productSkuId\": \"210\",\n" +
+                "      \"productUnitAmount\": \"500\",\n" +
+                "      \"productCount\": \"10\",\n" +
+                "      \"rentType\": \"2\",\n" +
+                "      \"rentTimeLength\": \"12\",\n" +
+                "      \"insuranceAmount\": \"\",\n" +
+                "      \"isNewProduct\": \"1\",\n" +
+                "      \"depositAmount\": 0\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}";
         Order order = JSONUtil.convertJSONToBean(str, Order.class);
 
         TestResult testResult = getJsonTestResult("/order/create", order);

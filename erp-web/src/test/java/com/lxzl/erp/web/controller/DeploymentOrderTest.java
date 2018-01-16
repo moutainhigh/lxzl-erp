@@ -43,15 +43,26 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
     @Test
     public void testUpdateJson() throws Exception {
         String json = "{\n" +
-                "\t\"deploymentOrderNo\": \"LXC010010201801080031\",\n" +
-                "\t\"deploymentType\": \"1\",\n" +
-                "\t\"srcWarehouseId\": \"4000002\",\n" +
-                "\t\"targetWarehouseId\": \"4000001\",\n" +
-                "\t\"expectReturnTime\": 1533600000000,\n" +
+                "\t\"deploymentOrderNo\": \"LXC010010201801120035\",\n" +
+                "\t\"deploymentType\": \"2\",\n" +
+                "\t\"srcWarehouseId\": \"4000001\",\n" +
+                "\t\"targetWarehouseId\": \"4000002\",\n" +
+                "\t\"expectReturnTime\": null,\n" +
                 "\t\"deploymentOrderProductList\": [{\n" +
                 "\t\t\"deploymentProductSkuId\": 178,\n" +
-                "\t\t\"deploymentProductSkuCount\": \"4\",\n" +
-                "\t\t\"deploymentProductUnitAmount\": \"2000\"\n" +
+                "\t\t\"deploymentProductSkuCount\": 10,\n" +
+                "\t\t\"deploymentProductUnitAmount\": 1000,\n" +
+                "\t\t\"isNew\": 0\n" +
+                "\t}, {\n" +
+                "\t\t\"deploymentProductSkuId\": 211,\n" +
+                "\t\t\"deploymentProductSkuCount\": \"8\",\n" +
+                "\t\t\"deploymentProductUnitAmount\": \"800\",\n" +
+                "\t\t\"isNew\": 0\n" +
+                "\t}, {\n" +
+                "\t\t\"deploymentProductSkuId\": 211,\n" +
+                "\t\t\"deploymentProductSkuCount\": \"7\",\n" +
+                "\t\t\"deploymentProductUnitAmount\": \"700\",\n" +
+                "\t\t\"isNew\": 1\n" +
                 "\t}]\n" +
                 "}\n";
         DeploymentOrder deploymentOrder = JSON.parseObject(json,DeploymentOrder.class);
@@ -61,21 +72,23 @@ public class DeploymentOrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCreateOrderJson() throws Exception {
         String str = "{\n" +
-                "  \"deploymentType\": \"1\",\n" +
-                "  \"srcWarehouseId\": \"4000002\",\n" +
-                "  \"targetWarehouseId\": \"4000003\",\n" +
-                "  \"expectReturnTime\": 1513814400000,\n" +
-                "  \"deploymentOrderProductList\": [{\n" +
-                "    \"deploymentProductSkuId\": 81,\n" +
-                "    \"deploymentProductSkuCount\": \"1\",\n" +
-                "    \"deploymentProductUnitAmount\": \"100\"\n" +
-                "  }],\n" +
-                "  \"deploymentOrderMaterialList\": [{\n" +
-                "    \"deploymentMaterialId\": \"24\",\n" +
-                "    \"deploymentProductMaterialCount\": \"1\",\n" +
-                "    \"deploymentMaterialUnitAmount\": \"100\"\n" +
-                "  }]\n" +
-                "}";
+                "\t\"deploymentOrderNo\": \"LXD-010-010-20180116-0025\",\n" +
+                "\t\"deploymentType\": \"1\",\n" +
+                "\t\"srcWarehouseId\": \"4000001\",\n" +
+                "\t\"targetWarehouseId\": \"4000002\",\n" +
+                "\t\"expectReturnTime\": 1516147200000,\n" +
+                "\t\"deploymentOrderProductList\": [{\n" +
+                "\t\t\"deploymentProductSkuId\": 211,\n" +
+                "\t\t\"deploymentProductSkuCount\": 1,\n" +
+                "\t\t\"deploymentProductUnitAmount\": 888,\n" +
+                "\t\t\"isNew\": 0\n" +
+                "\t}, {\n" +
+                "\t\t\"deploymentProductSkuId\": 211,\n" +
+                "\t\t\"deploymentProductSkuCount\": \"2\",\n" +
+                "\t\t\"deploymentProductUnitAmount\": \"777\",\n" +
+                "\t\t\"isNew\": 1\n" +
+                "\t}]\n" +
+                "}\n";
         DeploymentOrder deploymentOrder = JSONUtil.convertJSONToBean(str, DeploymentOrder.class);
         TestResult testResult = getJsonTestResult("/deploymentOrder/create", deploymentOrder);
     }

@@ -16,6 +16,7 @@ public class ReturnDeploymentOrderParam implements Serializable {
     private List<String> equipmentNoList;
     private Integer materialId;
     private Integer materialCount;
+    private Integer isNewMaterial;
 
     public String getDeploymentOrderNo() {
         return deploymentOrderNo;
@@ -55,5 +56,13 @@ public class ReturnDeploymentOrderParam implements Serializable {
 
     public void setMaterialCount(Integer materialCount) {
         this.materialCount = materialCount;
+    }
+
+    public Integer getIsNewMaterial() {
+        return isNewMaterial;
+    }
+
+    public void setIsNewMaterial(Integer isNewMaterial) {
+        this.isNewMaterial = isNewMaterial;
     }
 }

@@ -33,9 +33,9 @@
 		SELECT <include refid="column_List"/> FROM erp_deployment_order_product edop
 		WHERE edop.deployment_order_no = #{deploymentOrderNo, jdbcType=VARCHAR} AND edop.data_status = 1
 	</select>
-	<select id="findByDeploymentOrderNoAndSkuId" resultMap="DeploymentOrderProductDO">
+	<select id="findByDeploymentOrderNoAndSkuIdAndIsNew" resultMap="DeploymentOrderProductDO">
 		SELECT <include refid="column_List"/> FROM erp_deployment_order_product edop
-		WHERE edop.deployment_order_no = #{deploymentOrderNo, jdbcType=VARCHAR} AND edop.deployment_product_sku_id = #{skuId, jdbcType=INTEGER} AND edop.data_status = 1
+		WHERE edop.deployment_order_no = #{deploymentOrderNo, jdbcType=VARCHAR} AND edop.deployment_product_sku_id = #{skuId, jdbcType=INTEGER}  AND edop.is_new = #{isNew, jdbcType=INTEGER} AND edop.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -113,10 +113,10 @@
 	</update>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_deployment_order_product (deployment_order_id,deployment_order_no,deployment_product_sku_id,deployment_product_unit_amount,deployment_product_amount,deployment_product_sku_count,deployment_product_sku_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
+		insert into erp_deployment_order_product (deployment_order_id,deployment_order_no,deployment_product_sku_id,deployment_product_unit_amount,deployment_product_amount,deployment_product_sku_count,deployment_product_sku_snapshot,is_new,data_status,remark,create_time,create_user,update_time,update_user)
 		<foreach item="deploymentOrderProductDO" collection="deploymentOrderProductDOList" separator="UNION ALL">
 			SELECT edo.id,#{deploymentOrderProductDO.deploymentOrderNo},#{deploymentOrderProductDO.deploymentProductSkuId},#{deploymentOrderProductDO.deploymentProductUnitAmount},#{deploymentOrderProductDO.deploymentProductAmount},#{deploymentOrderProductDO.deploymentProductSkuCount},#{deploymentOrderProductDO.deploymentProductSkuSnapshot},
-			#{deploymentOrderProductDO.dataStatus},#{deploymentOrderProductDO.remark},#{deploymentOrderProductDO.createTime},#{deploymentOrderProductDO.createUser},#{deploymentOrderProductDO.updateTime},#{deploymentOrderProductDO.updateUser}
+			#{deploymentOrderProductDO.isNew},#{deploymentOrderProductDO.dataStatus},#{deploymentOrderProductDO.remark},#{deploymentOrderProductDO.createTime},#{deploymentOrderProductDO.createUser},#{deploymentOrderProductDO.updateTime},#{deploymentOrderProductDO.updateUser}
 			FROM erp_deployment_order edo WHERE edo.deployment_order_no = #{deploymentOrderProductDO.deploymentOrderNo}
 		</foreach>
 	</insert>

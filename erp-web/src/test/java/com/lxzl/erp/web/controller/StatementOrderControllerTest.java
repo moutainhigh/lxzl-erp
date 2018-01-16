@@ -4,14 +4,17 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.util.FastJsonUtil;
+import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
+
 /**
  * 描述: ${DESCRIPTION}
  *
  * @author gaochao
  * @date 2017-12-12 8:52
  */
-public class StatementOrderControllerTest  extends ERPUnTransactionalTest {
+public class StatementOrderControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void createNew() throws Exception {
@@ -44,6 +47,14 @@ public class StatementOrderControllerTest  extends ERPUnTransactionalTest {
     @Test
     public void page() throws Exception {
         StatementOrderPayParam param = new StatementOrderPayParam();
+        TestResult testResult = getJsonTestResult("/statementOrder/page", param);
+    }
+
+    @Test
+    public void pageJSON() throws Exception {
+        String jsonStr = "{\"pageNo\":1,\"pageSize\":15,\"statementOrderNo\":\"\",\"statementOrderCustomerName\":\"\",\"statementExpectPayStartTime\":\"\",\"statementExpectPayEndTime\":\"\",\"createTimePicker\":\"\"}";
+        StatementOrderQueryParam param = FastJsonUtil.toBean(jsonStr, StatementOrderQueryParam.class);
+
         TestResult testResult = getJsonTestResult("/statementOrder/page", param);
     }
 

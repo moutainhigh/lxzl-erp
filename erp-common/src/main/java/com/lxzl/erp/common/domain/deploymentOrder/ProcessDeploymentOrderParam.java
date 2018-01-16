@@ -14,6 +14,7 @@ public class ProcessDeploymentOrderParam implements Serializable {
     private String equipmentNo;
     private Integer materialId;
     private Integer materialCount;
+    private Integer isNewMaterial;
     private Integer operationType;
 
     public String getDeploymentOrderNo() {
@@ -54,5 +55,13 @@ public class ProcessDeploymentOrderParam implements Serializable {
 
     public void setOperationType(Integer operationType) {
         this.operationType = operationType;
+    }
+
+    public Integer getIsNewMaterial() {
+        return isNewMaterial;
+    }
+
+    public void setIsNewMaterial(Integer isNewMaterial) {
+        this.isNewMaterial = isNewMaterial;
     }
 }

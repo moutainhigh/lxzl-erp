@@ -15,8 +15,9 @@ public interface DeploymentOrderMaterialMapper extends BaseMysqlDAO<DeploymentOr
 
     List<DeploymentOrderMaterialDO> findByDeploymentOrderNo(@Param("deploymentOrderNo") String deploymentOrderNo);
 
-    DeploymentOrderMaterialDO findByDeploymentOrderNoAndMaterialId(@Param("deploymentOrderNo") String deploymentOrderNo,
-                                                                   @Param("materialId") Integer materialId);
+    DeploymentOrderMaterialDO findByDeploymentOrderNoAndMaterialIdAndIsNew(@Param("deploymentOrderNo") String deploymentOrderNo,
+                                                                           @Param("materialId") Integer materialId,
+                                                                           @Param("isNew") Integer isNew);
 
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
