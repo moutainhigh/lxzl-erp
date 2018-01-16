@@ -10,7 +10,9 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.supplier.SupplierService;
+import com.lxzl.erp.dataaccess.dao.mysql.area.AreaCityMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
+import com.lxzl.erp.dataaccess.domain.area.AreaCityDO;
 import com.lxzl.erp.dataaccess.domain.supplier.SupplierDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
@@ -43,6 +45,9 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Autowired
     private GenerateNoSupport generateNoSupport;
+
+    @Autowired
+    private AreaCityMapper areaCityMapper;
 
     @Override
     public ServiceResult<String, Page<Supplier>> getSupplier(SupplierQueryParam supplierQueryParam) {
@@ -104,7 +109,8 @@ public class SupplierServiceImpl implements SupplierService {
         }
 
         SupplierDO supplierDO = ConverterUtil.convert(supplier, SupplierDO.class);
-        supplierDO.setSupplierNo(generateNoSupport.generateSupplierNo(supplierDO.getCity()));
+        AreaCityDO areaCityDO = areaCityMapper.findById(supplierDO.getCity());
+        supplierDO.setSupplierNo(generateNoSupport.generateSupplierNo(areaCityDO.getCityCode()));
         supplierDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         supplierDO.setUpdateUser(loginUser.getUserId().toString());
         supplierDO.setCreateUser(loginUser.getUserId().toString());
