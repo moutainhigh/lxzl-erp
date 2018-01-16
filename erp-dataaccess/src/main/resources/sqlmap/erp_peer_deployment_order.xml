@@ -30,6 +30,9 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="peer_name" jdbcType="VARCHAR" property="peerName" />
+		<result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
 		<collection property="peerDeploymentOrderProductDOList" resultMap="PeerDeploymentOrderProductDO" />
 		<collection property="peerDeploymentOrderMaterialDOList" resultMap="PeerDeploymentOrderMaterialDO" />
 		<collection property="peerDeploymentOrderConsignInfoDO" resultMap="PeerDeploymentOrderConsignInfoDO" />
@@ -274,4 +277,106 @@
 		LEFT JOIN erp_warehouse ew ON ew.id = epdo.warehouse_position_id AND ew.data_status = 1
 		WHERE epdo.peer_deployment_order_no = #{peerDeploymentOrderNo, jdbcType=INTEGER} AND epdo.data_status = 1
 	</select>
+
+	<select id="findDetailByNo" resultMap="PeerDeploymentOrderDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> , <include refid="product_column_List"/>,<include refid="material_column_List"/>,ew.warehouse_name,ep.peer_name
+		FROM(
+		select <include refid="column_List"/> from erp_peer_deployment_order epdo
+		where epdo.peer_deployment_order_no = #{peerDeploymentOrderNo, jdbcType=VARCHAR} and epdo.data_status = 1
+		) epdo
+		LEFT JOIN erp_peer_deployment_order_product epdop on epdop.peer_deployment_order_id = epdo.id and epdop.data_status=1
+		LEFT JOIN erp_peer_deployment_order_material epdom on epdom.peer_deployment_order_id = epdo.id and epdom.data_status=1
+		LEFT JOIN erp_warehouse ew ON ew.id = epdo.warehouse_id AND ew.data_status =1
+		LEFT JOIN erp_peer ep ON ep.id = epdo.peer_id AND ep.data_status =1
+	</select>
+
+	<select id="findPeerDeploymentOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(id) FROM erp_peer_deployment_order epdo
+		<where>
+			<if test="maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo != null &amp;&amp; maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo != '' ">
+				and epdo.peer_deployment_order_no = #{maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam.peerId != null">
+				and epdo.peer_id = #{maps.peerDeploymentOrderQueryParam.peerId,jdbcType=INTEGER}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam.rentType != null">
+				and epdo.rent_type = #{maps.peerDeploymentOrderQueryParam.rentType,jdbcType=INTEGER}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam.rentTimeLength != null">
+				and epdo.rent_time_length = #{maps.peerDeploymentOrderQueryParam.rentTimeLength,jdbcType=INTEGER}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam.warehouseId != null">
+				and epdo.warehouse_id = #{maps.peerDeploymentOrderQueryParam.warehouseId,jdbcType=INTEGER}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam.deliveryMode != null">
+				and epdo.delivery_mode = #{maps.peerDeploymentOrderQueryParam.deliveryMode,jdbcType=INTEGER}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam.taxRate != null">
+				and epdo.tax_rate = #{maps.peerDeploymentOrderQueryParam.taxRate,jdbcType=DOUBLE}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam.peerDeploymentOrderStatus != null">
+				and epdo.peer_deployment_order_status = #{maps.peerDeploymentOrderQueryParam.peerDeploymentOrderStatus,jdbcType=INTEGER}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND epdo.create_time >= #{maps.transferOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam.createEndTime != null">
+				<![CDATA[ AND epdo.create_time <= #{maps.transferOrderQueryParam.createEndTime} ]]>
+			</if>
+			<if test="true">
+				and epdo.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="findPeerDeploymentOrderByParams" resultMap="PeerDeploymentOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/> , <include refid="product_column_List"/>, <include refid="material_column_List"/>,ew.warehouse_name,ep.peer_name
+		FROM (
+		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order epdo
+		<where>
+			<if test="maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo != null &amp;&amp; maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo != '' ">
+				and epdo.peer_deployment_order_no = #{maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam.peerId != null">
+				and epdo.peer_id = #{maps.peerDeploymentOrderQueryParam.peerId,jdbcType=INTEGER}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam.rentType != null">
+				and epdo.rent_type = #{maps.peerDeploymentOrderQueryParam.rentType,jdbcType=INTEGER}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam.rentTimeLength != null">
+				and epdo.rent_time_length = #{maps.peerDeploymentOrderQueryParam.rentTimeLength,jdbcType=INTEGER}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam.warehouseId != null">
+				and epdo.warehouse_id = #{maps.peerDeploymentOrderQueryParam.warehouseId,jdbcType=INTEGER}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam.deliveryMode != null">
+				and epdo.delivery_mode = #{maps.peerDeploymentOrderQueryParam.deliveryMode,jdbcType=INTEGER}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam.taxRate != null">
+				and epdo.tax_rate = #{maps.peerDeploymentOrderQueryParam.taxRate,jdbcType=DOUBLE}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam.peerDeploymentOrderStatus != null">
+				and epdo.peer_deployment_order_status = #{maps.peerDeploymentOrderQueryParam.peerDeploymentOrderStatus,jdbcType=INTEGER}
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam.createStartTime != null ">
+				<![CDATA[ AND epdo.create_time >= #{maps.transferOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.peerDeploymentOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam.createEndTime != null">
+				<![CDATA[ AND epdo.create_time <= #{maps.transferOrderQueryParam.createEndTime} ]]>
+			</if>
+			<if test="true">
+				and epdo.data_status = 1
+			</if>
+		</where>
+		order by epdo.create_time desc
+		LIMIT #{maps.start},#{maps.pageSize}
+		) epdo
+		LEFT JOIN erp_peer_deployment_order_product epdop on epdop.peer_deployment_order_id = epdo.id and epdop.data_status=1
+		LEFT JOIN erp_peer_deployment_order_material epdom on epdom.peer_deployment_order_id = epdo.id and epdom.data_status=1
+		LEFT JOIN erp_warehouse ew ON ew.id = epdo.warehouse_id AND ew.data_status =1
+		LEFT JOIN erp_peer ep ON ep.id = epdo.peer_id AND ep.data_status =1
+		order by epdo.create_time desc
+	</select>
+
+
 </mapper>

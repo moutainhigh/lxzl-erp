@@ -1,7 +1,9 @@
 package com.lxzl.erp.core.service.peerDeploymentOrder;
 
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderCommitParam;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrder;
 import com.lxzl.erp.core.service.VerifyReceiver;
 
@@ -35,4 +37,18 @@ public interface PeerDeploymentOrderService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String,String> commitPeerDeploymentOrder(PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam);
+
+    /**
+     * 同行调拨单分页显示
+     * @param peerDeploymentOrderQueryParam
+     * @return
+     */
+    ServiceResult<String,Page<PeerDeploymentOrder>> page(PeerDeploymentOrderQueryParam peerDeploymentOrderQueryParam);
+
+    /**
+     * 同行调拨单详情
+     * @param peerDeploymentOrder
+     * @return
+     */
+    ServiceResult<String,PeerDeploymentOrder> detailPeerDeploymentOrder(PeerDeploymentOrder peerDeploymentOrder);
 }

@@ -4,6 +4,8 @@ import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderCo
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderMaterial;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderProduct;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 import java.math.BigDecimal;
 import java.util.List;
@@ -32,15 +34,16 @@ public class PeerDeploymentOrderDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
+	@Transient
 	private List<PeerDeploymentOrderProductDO> peerDeploymentOrderProductDOList;
+	@Transient
 	private List<PeerDeploymentOrderMaterialDO> peerDeploymentOrderMaterialDOList;
+	@Transient
 	private PeerDeploymentOrderConsignInfoDO peerDeploymentOrderConsignInfoDO;
 
-	// 审核人和提交审核信息,只提供给审核的时候用
-	private Integer verifyUser;
-	private String commitRemark;
-
+	@Transient
 	private String peerName;
+	@Transient
 	private String warehouseName;
 
 	public Integer getId(){
@@ -204,14 +207,6 @@ public class PeerDeploymentOrderDO  extends BaseDO {
 	public void setRemark(String remark){
 		this.remark = remark;
 	}
-
-	public Integer getVerifyUser() { return verifyUser; }
-
-	public void setVerifyUser(Integer verifyUser) { this.verifyUser = verifyUser; }
-
-	public String getCommitRemark() { return commitRemark; }
-
-	public void setCommitRemark(String commitRemark) { this.commitRemark = commitRemark; }
 
 	public String getWarehouseName() { return warehouseName; }
 

@@ -1,10 +1,13 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderCommitParam;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrder;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -72,4 +75,23 @@ public class PeerDeploymentOrderController extends BaseController {
         ServiceResult<String, String> serviceResult = peerDeploymentOrderService.commitPeerDeploymentOrder(peerDeploymentOrderCommitParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    /**
+     * 同行调拨单分页显示
+     */
+    @RequestMapping(value = "page", method = RequestMethod.POST)
+    public Result page(@RequestBody PeerDeploymentOrderQueryParam peerDeploymentOrderQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<PeerDeploymentOrder>> serviceResult = peerDeploymentOrderService.page(peerDeploymentOrderQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 同行调拨单详情列表
+     */
+    @RequestMapping(value = "detailPeerDeploymentOrder", method = RequestMethod.POST)
+    public Result detailPeerDeploymentOrder(@RequestBody @Validated(IdGroup.class) PeerDeploymentOrder peerDeploymentOrder, BindingResult validResult) {
+        ServiceResult<String, PeerDeploymentOrder> serviceResult = peerDeploymentOrderService.detailPeerDeploymentOrder(peerDeploymentOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 }
