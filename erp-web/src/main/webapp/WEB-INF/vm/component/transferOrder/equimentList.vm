@@ -28,7 +28,8 @@
                                 </label>
                             </th>
                             <th>设备编号</th>
-                            <th>仓库</th>
+                            <th>归属仓库</th>
+                            <th>所在仓库</th>
                             <th>商品ID</th>
                             <th>商品名</th>
                             <th>商品图</th>
@@ -52,6 +53,7 @@
                             </td>
                             <td>{{productEquipmentNo}}</td>
                             <td>{{ownerWarehouseName}}</td>
+                            <td>{{currentWarehouseName}}</td>
                             <td>{{productId}}</td>
                             <td>{{productName}}</td>
                             <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
