@@ -96,7 +96,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		epdo.id,epdo.peer_deployment_order_no,epdo.peer_id,epdo.rent_start_time,epdo.rent_type,epdo.rent_time_length,epdo.warehouse_id,epdo.warehouse_position_id,epdo.delivery_mode,epdo.tax_rate,epdo.peer_deployment_order_status,epdo.total_product_count,epdo.total_product_amount,epdo.total_material_count,epdo.total_material_amount,epdo.total_order_amount,epdo.total_discount_amount,epdo.expect_return_time,epdo.real_return_time,epdo.data_status,epdo.remark,epdo.create_time,epdo.create_user,epdo.update_time,epdo.update_user
+		epdo.id,epdo.peer_deployment_order_no,epdo.peer_id,epdo.rent_start_time,epdo.rent_type,epdo.rent_time_length,epdo.warehouse_id,epdo.warehouse_position_id,epdo.delivery_mode,epdo.tax_rate,epdo.peer_deployment_order_status,epdo.total_product_count,epdo.total_product_amount,epdo.total_material_count,epdo.total_material_amount,epdo.total_order_amount,epdo.total_discount_amount,epdo.expect_return_time,epdo.real_return_time,epdo.data_status,epdo.remark,epdo.create_time,epdo.create_user,epdo.update_time,epdo.update_user,epdo.confirm_time
 	</sql>
 
 	<sql id="consign_column_List">
