@@ -109,9 +109,9 @@
 	</select>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		INSERT INTO erp_peer_deployment_order_product (peer_deployment_order_id,peer_deployment_order_no,product_sku_id,product_unit_amount,product_amount,product_sku_count,product_sku_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
+		INSERT INTO erp_peer_deployment_order_product (peer_deployment_order_id,peer_deployment_order_no,product_sku_id,product_unit_amount,product_amount,product_sku_count,product_sku_snapshot,is_new,data_status,remark,create_time,create_user,update_time,update_user)
 		<foreach item="peerDeploymentOrderProductDO" collection="peerDeploymentOrderProductDOList" separator="UNION ALL">
-			SELECT epdo.id,#{peerDeploymentOrderProductDO.peerDeploymentOrderNo},#{peerDeploymentOrderProductDO.productSkuId},#{peerDeploymentOrderProductDO.productUnitAmount},#{peerDeploymentOrderProductDO.productAmount},#{peerDeploymentOrderProductDO.productSkuCount},#{peerDeploymentOrderProductDO.productSkuSnapshot},
+			SELECT epdo.id,#{peerDeploymentOrderProductDO.peerDeploymentOrderNo},#{peerDeploymentOrderProductDO.productSkuId},#{peerDeploymentOrderProductDO.productUnitAmount},#{peerDeploymentOrderProductDO.productAmount},#{peerDeploymentOrderProductDO.productSkuCount},#{peerDeploymentOrderProductDO.productSkuSnapshot},#{peerDeploymentOrderProductDO.isNew},
 			#{peerDeploymentOrderProductDO.dataStatus},#{peerDeploymentOrderProductDO.remark},#{peerDeploymentOrderProductDO.createTime},#{peerDeploymentOrderProductDO.createUser},#{peerDeploymentOrderProductDO.updateTime},#{peerDeploymentOrderProductDO.updateUser}
 			FROM erp_peer_deployment_order epdo WHERE epdo.peer_deployment_order_no = #{peerDeploymentOrderProductDO.peerDeploymentOrderNo}
 		</foreach>

@@ -514,6 +514,17 @@ public class ErrorCode {
     public static final String PEER_DEPLOYMENT_ORDER_TOTAL_DISCOUNT_AMOUNT_NOT_NULL = "J1500004";
     public static final String PEER_DEPLOYMENT_ORDER_TAX_RATE_ERROR = "J1500005";
     public static final String PEER_DEPLOYMENT_ORDER_RENT_TIME_LENGTH_NOT_NULL = "J1500006";
+    public static final String PEER_DEPLOYMENT_ORDER_TOTAL_PRODUCT_COUNT_NOT_NULL = "J1500007";
+    public static final String PEER_DEPLOYMENT_ORDER_TOTAL_MATERIAL_COUNT_NOT_NULL = "J1500008";
+    public static final String PEER_DEPLOYMENT_ORDER_UNIT_AMOUNT_NOT_NULL = "J1500009";
+    public static final String PEER_DEPLOYMENT_ORDER_UNIT_AMOUNT_IS_MATH  = "J1500010";
+    public static final String PEER_DEPLOYMENT_ORDER_COUNT_NOT_NULL  = "J1500011";
+    public static final String PEER_DEPLOYMENT_ORDER_ERROR  = "J1500012";
+    public static final String PEER_DEPLOYMENT_ORDER_IS_NEW_NOT_NULL  = "J1500013";
+    public static final String PEER_DEPLOYMENT_ORDER_NOT_EXISTS  = "J1500014";
+    public static final String PEER_DEPLOYMENT_ORDER_STATUS_ERROR  = "J1500015";
+    public static final String PEER_DEPLOYMENT_ORDER_PRODUCT_MATERIAL_LIST_NOT_NULL  = "J1500016";
+    public static final String PEER_DEPLOYMENT_ORDER_RENT_TYPE_NOT_NULL  = "J1500017";
 
 
 
@@ -1022,6 +1033,17 @@ public class ErrorCode {
         MAP.put(PEER_DEPLOYMENT_ORDER_TOTAL_DISCOUNT_AMOUNT_NOT_NULL, "同行调拨单优惠金额不能为空");
         MAP.put(PEER_DEPLOYMENT_ORDER_TAX_RATE_ERROR, "同行调拨单税率有误");
         MAP.put(PEER_DEPLOYMENT_ORDER_RENT_TIME_LENGTH_NOT_NULL, "同行调拨单租赁期限不能为空");
+        MAP.put(PEER_DEPLOYMENT_ORDER_TOTAL_PRODUCT_COUNT_NOT_NULL, "同行调拨单商品总数不能为空");
+        MAP.put(PEER_DEPLOYMENT_ORDER_TOTAL_MATERIAL_COUNT_NOT_NULL, "同行调拨单配件总数不能为空");
+        MAP.put(PEER_DEPLOYMENT_ORDER_UNIT_AMOUNT_NOT_NULL, "同行调拨单单价不能为空");
+        MAP.put(PEER_DEPLOYMENT_ORDER_UNIT_AMOUNT_IS_MATH, "同行调拨单单价只能输入数字");
+        MAP.put(PEER_DEPLOYMENT_ORDER_COUNT_NOT_NULL, "同行调拨单数量不能为空");
+        MAP.put(PEER_DEPLOYMENT_ORDER_ERROR, "同行调拨单数量格式错误");
+        MAP.put(PEER_DEPLOYMENT_ORDER_IS_NEW_NOT_NULL, "同行调拨单全新或次新不能为空");
+        MAP.put(PEER_DEPLOYMENT_ORDER_NOT_EXISTS, "同行调拨单不存在");
+        MAP.put(PEER_DEPLOYMENT_ORDER_STATUS_ERROR, "同行调拨单状态有误");
+        MAP.put(PEER_DEPLOYMENT_ORDER_PRODUCT_MATERIAL_LIST_NOT_NULL, "同行调拨单商品或配件不能为空");
+        MAP.put(PEER_DEPLOYMENT_ORDER_RENT_TYPE_NOT_NULL, "同行调拨单租赁方式不能为空");
 
     }
 

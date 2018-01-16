@@ -1,7 +1,14 @@
 package com.lxzl.erp.common.domain.peerDeploymentOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import com.lxzl.erp.common.util.validate.constraints.In;
+
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,11 +19,16 @@ public class PeerDeploymentOrderProduct extends BasePO {
 	private Integer peerDeploymentOrderProductId;   //唯一标识
 	private Integer peerDeploymentOrderId;   //调拨单ID
 	private String peerDeploymentOrderNo;   //货物调拨单编号
+	@NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
 	private Integer productSkuId;   //货物调拨单商品SKU_ID
+	@NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_UNIT_AMOUNT_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
 	private BigDecimal productUnitAmount;   //商品单价
 	private BigDecimal productAmount;   //商品总价格
+	@NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_COUNT_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
 	private Integer productSkuCount;   //货物调拨单商品SKU数量
 	private String productSkuSnapshot;   //货物调拨单商品SKU快照
+	@NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_IS_NEW_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
+	@In(value = {CommonConstant.YES, CommonConstant.NO}, message = ErrorCode.IS_NEW_VALUE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
 	private Integer isNew;   //是否全新机
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注

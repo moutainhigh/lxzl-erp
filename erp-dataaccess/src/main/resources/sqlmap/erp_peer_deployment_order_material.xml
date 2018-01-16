@@ -109,9 +109,9 @@
 	</select>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		insert into erp_peer_deployment_order_material (peer_deployment_order_id,peer_deployment_order_no,material_id,material_unit_amount,material_amount,product_material_count,product_material_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
+		insert into erp_peer_deployment_order_material (peer_deployment_order_id,peer_deployment_order_no,material_id,material_unit_amount,material_amount,product_material_count,product_material_snapshot,is_new,data_status,remark,create_time,create_user,update_time,update_user)
 		<foreach item="peerDeploymentOrderMaterialDO" collection="peerDeploymentOrderMaterialDOList" separator="UNION ALL">
-			SELECT epdo.id,#{peerDeploymentOrderMaterialDO.peerDeploymentOrderNo},#{peerDeploymentOrderMaterialDO.materialId},#{peerDeploymentOrderMaterialDO.materialUnitAmount},#{peerDeploymentOrderMaterialDO.materialAmount},#{peerDeploymentOrderMaterialDO.productMaterialCount},#{peerDeploymentOrderMaterialDO.productMaterialSnapshot},
+			SELECT epdo.id,#{peerDeploymentOrderMaterialDO.peerDeploymentOrderNo},#{peerDeploymentOrderMaterialDO.materialId},#{peerDeploymentOrderMaterialDO.materialUnitAmount},#{peerDeploymentOrderMaterialDO.materialAmount},#{peerDeploymentOrderMaterialDO.productMaterialCount},#{peerDeploymentOrderMaterialDO.productMaterialSnapshot},#{peerDeploymentOrderMaterialDO.isNew},
 			#{peerDeploymentOrderMaterialDO.dataStatus},#{peerDeploymentOrderMaterialDO.remark},#{peerDeploymentOrderMaterialDO.createTime},#{peerDeploymentOrderMaterialDO.createUser},#{peerDeploymentOrderMaterialDO.updateTime},#{peerDeploymentOrderMaterialDO.updateUser}
 			FROM erp_peer_deployment_order epdo WHERE epdo.peer_deployment_order_no = #{peerDeploymentOrderMaterialDO.peerDeploymentOrderNo}
 		</foreach>

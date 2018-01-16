@@ -1,7 +1,11 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderCommitParam;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrder;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.peerDeploymentOrder.PeerDeploymentOrderService;
@@ -10,6 +14,7 @@ import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,19 +37,39 @@ public class PeerDeploymentOrderController extends BaseController {
     @Autowired
     private ResultGenerator resultGenerator;
 
+    /**
+     * 创建同行调拨单
+     * @param peerDeploymentOrder
+     * @param validResult
+     * @return
+     */
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public Result create(@RequestBody PeerDeploymentOrder peerDeploymentOrder, BindingResult validResult) {
+    public Result create(@RequestBody @Validated(AddGroup.class)PeerDeploymentOrder peerDeploymentOrder, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = peerDeploymentOrderService.createPeerDeploymentOrder(peerDeploymentOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-//    /**
-//     * 取消同行调拨单
-//     */
-//    @RequestMapping(value = "cancel", method = RequestMethod.POST)
-//    public Result cancel(@RequestBody PeerDeploymentOrder peerDeploymentOrder, BindingResult validResult) {
-//        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.cancel(peerDeploymentOrder);
-//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-//    }
+    /**
+     * 修改同行调拨单
+     * @param peerDeploymentOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public Result update(@RequestBody @Validated(UpdateGroup.class)PeerDeploymentOrder peerDeploymentOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.updatePeerDeploymentOrder(peerDeploymentOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 
+    /**
+     * 提交同行调拨单
+     * @param peerDeploymentOrderCommitParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "commit", method = RequestMethod.POST)
+    public Result commit(@RequestBody @Validated(ExtendGroup.class) PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.commitPeerDeploymentOrder(peerDeploymentOrderCommitParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }
