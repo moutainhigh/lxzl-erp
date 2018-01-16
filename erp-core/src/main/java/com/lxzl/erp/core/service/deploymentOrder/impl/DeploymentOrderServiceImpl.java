@@ -104,24 +104,25 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
 
     private void saveDeploymentOrderProduct(String deploymentOrderNo, List<DeploymentOrderProductDO> deploymentOrderProductDOList, User loginUser, Date currentTime) {
 
-        Map<Integer, DeploymentOrderProductDO> saveDeploymentOrderProductDOMap = new HashMap<>();
-        Map<Integer, DeploymentOrderProductDO> updateDeploymentOrderProductDOMap = new HashMap<>();
+        Map<String, DeploymentOrderProductDO> saveDeploymentOrderProductDOMap = new HashMap<>();
+        Map<String, DeploymentOrderProductDO> updateDeploymentOrderProductDOMap = new HashMap<>();
         List<DeploymentOrderProductDO> dbDeploymentOrderProductDOList = deploymentOrderProductMapper.findByDeploymentOrderNo(deploymentOrderNo);
-        Map<Integer, DeploymentOrderProductDO> dbDeploymentOrderProductDOMap = ListUtil.listToMap(dbDeploymentOrderProductDOList, "id");
+        Map<String, DeploymentOrderProductDO> dbDeploymentOrderProductDOMap = ListUtil.listToMap(dbDeploymentOrderProductDOList, "deploymentProductSkuId","isNew");
         if (CollectionUtil.isNotEmpty(deploymentOrderProductDOList)) {
             for (DeploymentOrderProductDO deploymentOrderProductDO : deploymentOrderProductDOList) {
-                if (dbDeploymentOrderProductDOMap.get(deploymentOrderProductDO.getId()) != null) {
-                    updateDeploymentOrderProductDOMap.put(deploymentOrderProductDO.getId(), deploymentOrderProductDO);
-                    dbDeploymentOrderProductDOMap.remove(deploymentOrderProductDO.getId());
+                String productRecordKey = deploymentOrderProductDO.getDeploymentProductSkuId() + "" + deploymentOrderProductDO.getIsNew();
+                if (dbDeploymentOrderProductDOMap.get(productRecordKey) != null) {
+                    updateDeploymentOrderProductDOMap.put(productRecordKey, deploymentOrderProductDO);
+                    dbDeploymentOrderProductDOMap.remove(productRecordKey);
                 } else {
-                    saveDeploymentOrderProductDOMap.put(deploymentOrderProductDO.getId(), deploymentOrderProductDO);
+                    saveDeploymentOrderProductDOMap.put(productRecordKey, deploymentOrderProductDO);
                 }
             }
         }
 
         if (saveDeploymentOrderProductDOMap.size() > 0) {
             List<DeploymentOrderProductDO> saveList = new ArrayList<>();
-            for (Map.Entry<Integer, DeploymentOrderProductDO> entry : saveDeploymentOrderProductDOMap.entrySet()) {
+            for (Map.Entry<String, DeploymentOrderProductDO> entry : saveDeploymentOrderProductDOMap.entrySet()) {
                 DeploymentOrderProductDO deploymentOrderProductDO = entry.getValue();
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(deploymentOrderProductDO.getDeploymentProductSkuId());
                 if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
@@ -142,7 +143,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         }
 
         if (updateDeploymentOrderProductDOMap.size() > 0) {
-            for (Map.Entry<Integer, DeploymentOrderProductDO> entry : updateDeploymentOrderProductDOMap.entrySet()) {
+            for (Map.Entry<String, DeploymentOrderProductDO> entry : updateDeploymentOrderProductDOMap.entrySet()) {
                 DeploymentOrderProductDO deploymentOrderProductDO = entry.getValue();
                 DeploymentOrderProductDO oldDeploymentOrderProductDO = deploymentOrderProductMapper.findByDeploymentOrderNoAndSkuId(deploymentOrderNo, deploymentOrderProductDO.getDeploymentProductSkuId());
                 if (oldDeploymentOrderProductDO == null) {
@@ -163,7 +164,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         }
 
         if (dbDeploymentOrderProductDOMap.size() > 0) {
-            for (Map.Entry<Integer, DeploymentOrderProductDO> entry : dbDeploymentOrderProductDOMap.entrySet()) {
+            for (Map.Entry<String, DeploymentOrderProductDO> entry : dbDeploymentOrderProductDOMap.entrySet()) {
                 DeploymentOrderProductDO deploymentOrderProductDO = entry.getValue();
                 deploymentOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 deploymentOrderProductDO.setUpdateUser(loginUser.getUserId().toString());
@@ -175,24 +176,25 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
 
     private void saveDeploymentOrderMaterial(String deploymentOrderNo, List<DeploymentOrderMaterialDO> deploymentOrderMaterialDOList, User loginUser, Date currentTime) {
 
-        Map<Integer, DeploymentOrderMaterialDO> saveDeploymentOrderMaterialDOMap = new HashMap<>();
-        Map<Integer, DeploymentOrderMaterialDO> updateDeploymentOrderMaterialDOMap = new HashMap<>();
+        Map<String, DeploymentOrderMaterialDO> saveDeploymentOrderMaterialDOMap = new HashMap<>();
+        Map<String, DeploymentOrderMaterialDO> updateDeploymentOrderMaterialDOMap = new HashMap<>();
         List<DeploymentOrderMaterialDO> dbDeploymentOrderMaterialDOList = deploymentOrderMaterialMapper.findByDeploymentOrderNo(deploymentOrderNo);
-        Map<Integer, DeploymentOrderMaterialDO> dbDeploymentOrderMaterialDOMap = ListUtil.listToMap(dbDeploymentOrderMaterialDOList, "id");
+        Map<String, DeploymentOrderMaterialDO> dbDeploymentOrderMaterialDOMap = ListUtil.listToMap(dbDeploymentOrderMaterialDOList, "deploymentMaterialId", "isNew" );
         if (CollectionUtil.isNotEmpty(deploymentOrderMaterialDOList)) {
             for (DeploymentOrderMaterialDO deploymentOrderMaterialDO : deploymentOrderMaterialDOList) {
-                if (dbDeploymentOrderMaterialDOMap.get(deploymentOrderMaterialDO.getId()) != null) {
-                    updateDeploymentOrderMaterialDOMap.put(deploymentOrderMaterialDO.getId(), deploymentOrderMaterialDO);
-                    dbDeploymentOrderMaterialDOMap.remove(deploymentOrderMaterialDO.getId());
+                String materialRecordKey = deploymentOrderMaterialDO.getDeploymentMaterialId() + "-" + deploymentOrderMaterialDO.getIsNew();
+                if (dbDeploymentOrderMaterialDOMap.get(materialRecordKey) != null) {
+                    updateDeploymentOrderMaterialDOMap.put(materialRecordKey, deploymentOrderMaterialDO);
+                    dbDeploymentOrderMaterialDOMap.remove(materialRecordKey);
                 } else {
-                    saveDeploymentOrderMaterialDOMap.put(deploymentOrderMaterialDO.getId(), deploymentOrderMaterialDO);
+                    saveDeploymentOrderMaterialDOMap.put(materialRecordKey, deploymentOrderMaterialDO);
                 }
             }
         }
 
         if (saveDeploymentOrderMaterialDOMap.size() > 0) {
             List<DeploymentOrderMaterialDO> saveList = new ArrayList<>();
-            for (Map.Entry<Integer, DeploymentOrderMaterialDO> entry : saveDeploymentOrderMaterialDOMap.entrySet()) {
+            for (Map.Entry<String, DeploymentOrderMaterialDO> entry : saveDeploymentOrderMaterialDOMap.entrySet()) {
                 DeploymentOrderMaterialDO deploymentOrderMaterialDO = entry.getValue();
                 ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(deploymentOrderMaterialDO.getDeploymentMaterialId());
                 if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
@@ -213,7 +215,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         }
 
         if (updateDeploymentOrderMaterialDOMap.size() > 0) {
-            for (Map.Entry<Integer, DeploymentOrderMaterialDO> entry : updateDeploymentOrderMaterialDOMap.entrySet()) {
+            for (Map.Entry<String, DeploymentOrderMaterialDO> entry : updateDeploymentOrderMaterialDOMap.entrySet()) {
                 DeploymentOrderMaterialDO deploymentOrderMaterialDO = entry.getValue();
                 ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(deploymentOrderMaterialDO.getDeploymentMaterialId());
                 if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
@@ -230,7 +232,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         }
 
         if (dbDeploymentOrderMaterialDOMap.size() > 0) {
-            for (Map.Entry<Integer, DeploymentOrderMaterialDO> entry : dbDeploymentOrderMaterialDOMap.entrySet()) {
+            for (Map.Entry<String, DeploymentOrderMaterialDO> entry : dbDeploymentOrderMaterialDOMap.entrySet()) {
                 DeploymentOrderMaterialDO deploymentOrderMaterialDO = entry.getValue();
                 deploymentOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 deploymentOrderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
