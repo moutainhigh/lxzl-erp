@@ -71,7 +71,7 @@
 	<sql id="customer_control">
 		<if test="maps.permissionParam.permissionUserIdList != null">
 			AND ec.create_user in
-			<foreach item="item" index="index" collection="maps.queryParam.permissionUserIdList" open="(" separator="," close=")">
+			<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="(" separator="," close=")">
 				#{item}
 			</foreach>
 		</if>
