@@ -5,7 +5,6 @@ import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderMa
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderProduct;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
-
 import java.util.Date;
 import java.math.BigDecimal;
 import java.util.List;
@@ -33,6 +32,7 @@ public class PeerDeploymentOrderDO  extends BaseDO {
 	private Date realReturnTime;
 	private Integer dataStatus;
 	private String remark;
+	private Date confirmTime;
 
 	@Transient
 	private List<PeerDeploymentOrderProductDO> peerDeploymentOrderProductDOList;
@@ -216,9 +216,7 @@ public class PeerDeploymentOrderDO  extends BaseDO {
 
 	public void setPeerName(String peerName) { this.peerName = peerName; }
 
-	public List<PeerDeploymentOrderProductDO> getPeerDeploymentOrderProductDOList() {
-		return peerDeploymentOrderProductDOList;
-	}
+	public List<PeerDeploymentOrderProductDO> getPeerDeploymentOrderProductDOList() { return peerDeploymentOrderProductDOList; }
 
 	public void setPeerDeploymentOrderProductDOList(List<PeerDeploymentOrderProductDO> peerDeploymentOrderProductDOList) { this.peerDeploymentOrderProductDOList = peerDeploymentOrderProductDOList; }
 
@@ -229,4 +227,8 @@ public class PeerDeploymentOrderDO  extends BaseDO {
 	public PeerDeploymentOrderConsignInfoDO getPeerDeploymentOrderConsignInfoDO() { return peerDeploymentOrderConsignInfoDO; }
 
 	public void setPeerDeploymentOrderConsignInfoDO(PeerDeploymentOrderConsignInfoDO peerDeploymentOrderConsignInfoDO) { this.peerDeploymentOrderConsignInfoDO = peerDeploymentOrderConsignInfoDO; }
+
+	public Date getConfirmTime() { return confirmTime; }
+
+	public void setConfirmTime(Date confirmTime) { this.confirmTime = confirmTime; }
 }

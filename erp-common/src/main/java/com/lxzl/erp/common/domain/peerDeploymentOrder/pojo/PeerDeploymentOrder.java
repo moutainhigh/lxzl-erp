@@ -51,6 +51,7 @@ public class PeerDeploymentOrder extends BasePO {
     private String createUser;   //添加人
     private Date updateTime;   //修改时间
     private String updateUser;   //修改人
+    private Date confirmTime;   //确认收货时间
 
     @Valid
     private List<PeerDeploymentOrderProduct> peerDeploymentOrderProductList;
@@ -62,7 +63,6 @@ public class PeerDeploymentOrder extends BasePO {
     // 审核人和提交审核信息,只提供给审核的时候用
     private Integer verifyUser;
     private String commitRemark;
-
 
     private String peerName;
     private String warehouseName;
@@ -303,4 +303,8 @@ public class PeerDeploymentOrder extends BasePO {
     public void setPeerName(String peerName) {
         this.peerName = peerName;
     }
+
+    public Date getConfirmTime() { return confirmTime; }
+
+    public void setConfirmTime(Date confirmTime) { this.confirmTime = confirmTime; }
 }

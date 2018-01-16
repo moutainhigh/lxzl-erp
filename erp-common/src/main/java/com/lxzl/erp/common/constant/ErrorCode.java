@@ -525,6 +525,7 @@ public class ErrorCode {
     public static final String PEER_DEPLOYMENT_ORDER_STATUS_ERROR  = "J1500015";
     public static final String PEER_DEPLOYMENT_ORDER_PRODUCT_MATERIAL_LIST_NOT_NULL  = "J1500016";
     public static final String PEER_DEPLOYMENT_ORDER_RENT_TYPE_NOT_NULL  = "J1500017";
+    public static final String PEER_DEPLOYMENT_ORDER_STATUS_IS_COMMIT  = "J1500018";
 
 
 
@@ -1044,6 +1045,7 @@ public class ErrorCode {
         MAP.put(PEER_DEPLOYMENT_ORDER_STATUS_ERROR, "同行调拨单状态有误");
         MAP.put(PEER_DEPLOYMENT_ORDER_PRODUCT_MATERIAL_LIST_NOT_NULL, "同行调拨单商品或配件不能为空");
         MAP.put(PEER_DEPLOYMENT_ORDER_RENT_TYPE_NOT_NULL, "同行调拨单租赁方式不能为空");
+        MAP.put(PEER_DEPLOYMENT_ORDER_STATUS_IS_COMMIT, "同行调拨单只能未提交状态进行修改");
 
     }
 

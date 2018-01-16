@@ -30,6 +30,7 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="confirm_time" jdbcType="TIMESTAMP" property="confirmTime" />
 
 		<result column="peer_name" jdbcType="VARCHAR" property="peerName" />
 		<result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
@@ -220,6 +221,9 @@
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
 			</if>
+			<if test="confirmTime != null">
+				confirm_time = #{confirmTime,jdbcType=TIMESTAMP},
+			</if>
 		</set>
 	</sql>
 
@@ -277,6 +281,7 @@
 		LEFT JOIN erp_warehouse ew ON ew.id = epdo.warehouse_position_id AND ew.data_status = 1
 		WHERE epdo.peer_deployment_order_no = #{peerDeploymentOrderNo, jdbcType=INTEGER} AND epdo.data_status = 1
 	</select>
+
 
 	<select id="findDetailByNo" resultMap="PeerDeploymentOrderDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> , <include refid="product_column_List"/>,<include refid="material_column_List"/>,ew.warehouse_name,ep.peer_name
@@ -377,6 +382,4 @@
 		LEFT JOIN erp_peer ep ON ep.id = epdo.peer_id AND ep.data_status =1
 		order by epdo.create_time desc
 	</select>
-
-
 </mapper>
