@@ -131,17 +131,17 @@
         SELECT COUNT(id)
         FROM erp_joint_product ejp
         <where>
-            <if test="maps.queryParam.jointProductId != null">
-                and ejp.id = #{maps.queryParam.jointProductId,jdbcType=INTEGER}
+            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductId != null">
+                and ejp.id = #{maps.jointProductQueryParam.jointProductId,jdbcType=INTEGER}
             </if>
-            <if test="maps.queryParam.jointProductName != null &amp;&amp; maps.queryParam.jointProductName != ''">
-                and ejp.joint_product_name like CONCAT('%','${maps.queryParam.jointProductName}','%' )
+            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductName != null &amp;&amp; maps.jointProductQueryParam.jointProductName != ''">
+                and ejp.joint_product_name like CONCAT('%','${maps.jointProductQueryParam.jointProductName}','%' )
             </if>
-            <if test="maps.queryParam.startDate != null &amp;&amp; maps.queryParam.startDate != ''">
-                <![CDATA[ AND ejp.create_time >= #{maps.queryParam.startDate} ]]>
+            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.startDate != null &amp;&amp; maps.jointProductQueryParam.startDate != ''">
+                <![CDATA[ AND ejp.create_time >= #{maps.jointProductQueryParam.startDate} ]]>
             </if>
-            <if test="maps.queryParam.endDate != null &amp;&amp; maps.queryParam.endDate != ''">
-                <![CDATA[ AND ejp.create_time <= #{maps.queryParam.endDate} ]]>
+            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.endDate != null &amp;&amp; maps.jointProductQueryParam.endDate != ''">
+                <![CDATA[ AND ejp.create_time <= #{maps.jointProductQueryParam.endDate} ]]>
             </if>
             <if test="true">
                 and ejp.data_status = 1
@@ -156,17 +156,17 @@
         <include refid="column_List"/>
         FROM erp_joint_product ejp
         <where>
-            <if test="maps.queryParam.jointProductId != null">
-                and ejp.id = #{maps.queryParam.jointProductId,jdbcType=INTEGER}
+            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductId != null">
+                and ejp.id = #{maps.jointProductQueryParam.jointProductId,jdbcType=INTEGER}
             </if>
-            <if test="maps.queryParam.jointProductName != null &amp;&amp; maps.queryParam.jointProductName != ''">
-                and ejp.joint_product_name like CONCAT('%','${maps.queryParam.jointProductName}','%' )
+            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductName != null &amp;&amp; maps.jointProductQueryParam.jointProductName != ''">
+                and ejp.joint_product_name like CONCAT('%','${maps.jointProductQueryParam.jointProductName}','%' )
             </if>
-            <if test="maps.queryParam.startDate != null &amp;&amp; maps.queryParam.startDate != ''">
-                <![CDATA[ AND ejp.create_time >= #{maps.queryParam.startDate} ]]>
+            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.startDate != null &amp;&amp; maps.jointProductQueryParam.startDate != ''">
+                <![CDATA[ AND ejp.create_time >= #{maps.jointProductQueryParam.startDate} ]]>
             </if>
-            <if test="maps.queryParam.endDate != null &amp;&amp; maps.queryParam.endDate != ''">
-                <![CDATA[ AND ejp.create_time <= #{maps.queryParam.endDate} ]]>
+            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.endDate != null &amp;&amp; maps.jointProductQueryParam.endDate != ''">
+                <![CDATA[ AND ejp.create_time <= #{maps.jointProductQueryParam.endDate} ]]>
             </if>
             <if test="true">
                 and ejp.data_status = 1

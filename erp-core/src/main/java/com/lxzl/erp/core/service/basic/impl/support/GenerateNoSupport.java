@@ -24,7 +24,6 @@ import com.lxzl.erp.common.domain.warehouse.StockOrderQueryParam;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
-import com.lxzl.erp.dataaccess.dao.mysql.area.AreaCityMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.assembleOder.AssembleOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
@@ -49,7 +48,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.transferOrder.TransferOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
-import com.lxzl.erp.dataaccess.domain.area.AreaCityDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -745,8 +743,6 @@ public class GenerateNoSupport {
     private SupplierMapper supplierMapper;
     @Autowired
     private OrderMapper orderMapper;
-    @Autowired
-    private AreaCityMapper areaCityMapper;
     @Autowired
     private WarehouseMapper warehouseMapper;
     @Autowired

@@ -108,60 +108,60 @@
 	<update id="clearDateStatus" parameterType="java.lang.String">
 		UPDATE erp_repair_order_equipment set data_status = 2  WHERE repair_order_no = #{repairOrderNo, jdbcType=VARCHAR};
 	</update>
-	
+
 	<select id="findRepairOrderEquipmentCountByParams" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(id) FROM erp_repair_order_equipment eroe
 		<where>
-			<if test = "maps.queryParam.repairOrderNo != null &amp;&amp; maps.queryParam.repairOrderNo != ''">
-				maps.queryParam.repair_order_no = #{maps.queryParam.repairOrderNo,jdbcType=VARCHAR},
+			<if test = "maps.repairOrderEquipmentQueryParam != null &amp;&amp; maps.repairOrderEquipmentQueryParam.repairOrderNo != null &amp;&amp; maps.repairOrderEquipmentQueryParam.repairOrderNo != ''">
+				maps.repairOrderEquipmentQueryParam.repair_order_no = #{maps.repairOrderEquipmentQueryParam.repairOrderNo,jdbcType=VARCHAR},
 			</if>
-			<if test = "maps.queryParam.equipmentId != null ">
-				maps.queryParam.equipment_id = #{maps.queryParam.equipmentId,jdbcType=INTEGER},
+			<if test = "maps.repairOrderEquipmentQueryParam != null &amp;&amp; maps.repairOrderEquipmentQueryParam.equipmentId != null ">
+				maps.repairOrderEquipmentQueryParam.equipment_id = #{maps.repairOrderEquipmentQueryParam.equipmentId,jdbcType=INTEGER},
 			</if>
-			<if test = "maps.queryParam.equipmentNo !=null &amp;&amp; maps.queryParam.equipmentNo != ''">
-				maps.queryParam.equipment_no = #{maps.queryParam.equipmentNo,jdbcType=VARCHAR},
+			<if test = "maps.repairOrderEquipmentQueryParam != null &amp;&amp; maps.repairOrderEquipmentQueryParam.equipmentNo !=null &amp;&amp; maps.repairOrderEquipmentQueryParam.equipmentNo != ''">
+				maps.repairOrderEquipmentQueryParam.equipment_no = #{maps.repairOrderEquipmentQueryParam.equipmentNo,jdbcType=VARCHAR},
 			</if>
-			<if test = "maps.queryParam.repairEndTime != null">
-				maps.queryParam.repair_end_time = #{maps.queryParam.repairEndTime,jdbcType=TIMESTAMP},
+			<if test = "maps.repairOrderEquipmentQueryParam != null &amp;&amp; maps.repairOrderEquipmentQueryParam.repairEndTime != null">
+				maps.repairOrderEquipmentQueryParam.repair_end_time = #{maps.repairOrderEquipmentQueryParam.repairEndTime,jdbcType=TIMESTAMP},
 			</if>
-			<if test = "maps.queryParam.dataStatus != null">
-				maps.queryParam.data_status = #{maps.queryParam.dataStatus,jdbcType=INTEGER},
+			<if test = "maps.repairOrderEquipmentQueryParam != null &amp;&amp; maps.repairOrderEquipmentQueryParam.dataStatus != null">
+				maps.repairOrderEquipmentQueryParam.data_status = #{maps.repairOrderEquipmentQueryParam.dataStatus,jdbcType=INTEGER},
 			</if>
-			<if test = "maps.queryParam.orderId != null">
-				maps.queryParam.order_id = #{maps.queryParam.orderId,jdbcType=INTEGER},
+			<if test = "maps.repairOrderEquipmentQueryParam != null &amp;&amp; maps.repairOrderEquipmentQueryParam.orderId != null">
+				maps.repairOrderEquipmentQueryParam.order_id = #{maps.repairOrderEquipmentQueryParam.orderId,jdbcType=INTEGER},
 			</if>
-			<if test = "maps.queryParam.orderProductId != null" >
-				maps.queryParam.order_product_id = #{maps.queryParam.orderProductId,jdbcType=INTEGER},
+			<if test = "maps.repairOrderEquipmentQueryParam != null &amp;&amp; maps.repairOrderEquipmentQueryParam.orderProductId != null" >
+				maps.repairOrderEquipmentQueryParam.order_product_id = #{maps.repairOrderEquipmentQueryParam.orderProductId,jdbcType=INTEGER},
 			</if>
 			<if test="true">
 				AND eroe.data_status = 1
 			</if>
 		</where>
 	</select>
-	
+
 	<select id="findRepairOrderEquipmentByParams" resultMap="RepairOrderEquipmentDO" parameterType="map">
 		SELECT <include refid="column_List" /> FROM erp_repair_order_equipment eroe
 		<where>
-			<if test = "maps.queryParam.repairOrderNo != null &amp;&amp; maps.queryParam.repairOrderNo != ''">
-				maps.queryParam.repair_order_no = #{maps.queryParam.repairOrderNo,jdbcType=VARCHAR},
+			<if test = "maps.repairOrderEquipmentQueryParam != null &amp;&amp; maps.repairOrderEquipmentQueryParam.repairOrderNo != null &amp;&amp; maps.repairOrderEquipmentQueryParam.repairOrderNo != ''">
+				maps.repairOrderEquipmentQueryParam.repair_order_no = #{maps.repairOrderEquipmentQueryParam.repairOrderNo,jdbcType=VARCHAR},
 			</if>
-			<if test = "maps.queryParam.equipmentId != null ">
-				maps.queryParam.equipment_id = #{maps.queryParam.equipmentId,jdbcType=INTEGER},
+			<if test = "maps.repairOrderEquipmentQueryParam != null &amp;&amp; maps.repairOrderEquipmentQueryParam.equipmentId != null ">
+				maps.repairOrderEquipmentQueryParam.equipment_id = #{maps.repairOrderEquipmentQueryParam.equipmentId,jdbcType=INTEGER},
 			</if>
-			<if test = "maps.queryParam.equipmentNo !=null &amp;&amp; maps.queryParam.equipmentNo != ''">
-				maps.queryParam.equipment_no = #{maps.queryParam.equipmentNo,jdbcType=VARCHAR},
+			<if test = "maps.repairOrderEquipmentQueryParam != null &amp;&amp; maps.repairOrderEquipmentQueryParam.equipmentNo !=null &amp;&amp; maps.repairOrderEquipmentQueryParam.equipmentNo != ''">
+				maps.repairOrderEquipmentQueryParam.equipment_no = #{maps.repairOrderEquipmentQueryParam.equipmentNo,jdbcType=VARCHAR},
 			</if>
-			<if test = "maps.queryParam.repairEndTime != null">
-				maps.queryParam.repair_end_time = #{maps.queryParam.repairEndTime,jdbcType=TIMESTAMP},
+			<if test = "maps.repairOrderEquipmentQueryParam != null &amp;&amp; maps.repairOrderEquipmentQueryParam.repairEndTime != null">
+				maps.repairOrderEquipmentQueryParam.repair_end_time = #{maps.repairOrderEquipmentQueryParam.repairEndTime,jdbcType=TIMESTAMP},
 			</if>
-			<if test = "maps.queryParam.dataStatus != null">
-				maps.queryParam.data_status = #{maps.queryParam.dataStatus,jdbcType=INTEGER},
+			<if test = "maps.repairOrderEquipmentQueryParam != null &amp;&amp; maps.repairOrderEquipmentQueryParam.dataStatus != null">
+				maps.repairOrderEquipmentQueryParam.data_status = #{maps.repairOrderEquipmentQueryParam.dataStatus,jdbcType=INTEGER},
 			</if>
-			<if test = "maps.queryParam.orderId != null">
-				maps.queryParam.order_id = #{maps.queryParam.orderId,jdbcType=INTEGER},
+			<if test = "maps.repairOrderEquipmentQueryParam != null &amp;&amp; maps.repairOrderEquipmentQueryParam.orderId != null">
+				maps.repairOrderEquipmentQueryParam.order_id = #{maps.repairOrderEquipmentQueryParam.orderId,jdbcType=INTEGER},
 			</if>
-			<if test = "maps.queryParam.orderProductId != null" >
-				maps.queryParam.order_product_id = #{maps.queryParam.orderProductId,jdbcType=INTEGER},
+			<if test = "maps.repairOrderEquipmentQueryParam != null &amp;&amp; maps.repairOrderEquipmentQueryParam.orderProductId != null" >
+				maps.repairOrderEquipmentQueryParam.order_product_id = #{maps.repairOrderEquipmentQueryParam.orderProductId,jdbcType=INTEGER},
 			</if>
 			<if test="true">
 				AND eroe.data_status = 1

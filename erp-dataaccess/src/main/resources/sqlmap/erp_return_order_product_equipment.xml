@@ -33,8 +33,8 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(erope.id) FROM erp_return_order_product_equipment erope 
 		<where>
-			<if test="maps.queryParam.returnOrderProductId != null">
-				and erope.return_order_product_id = #{maps.queryParam.returnOrderProductId, jdbcType=INTEGER}
+			<if test="maps.returnEquipmentPageParam != null &amp;&amp; maps.returnEquipmentPageParam.returnOrderProductId != null">
+				and erope.return_order_product_id = #{maps.returnEquipmentPageParam.returnOrderProductId, jdbcType=INTEGER}
 			</if>
 			<if test="true">
 				AND erope.data_status = 1
@@ -45,8 +45,8 @@
 	<select id="listPage" resultMap="ReturnOrderProductEquipmentDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_return_order_product_equipment erope
 		<where>
-			<if test="maps.queryParam.returnOrderProductId != null">
-				and erope.return_order_product_id = #{maps.queryParam.returnOrderProductId, jdbcType=INTEGER}
+			<if test="maps.returnEquipmentPageParam != null &amp;&amp; maps.returnEquipmentPageParam.returnOrderProductId != null">
+				and erope.return_order_product_id = #{maps.returnEquipmentPageParam.returnOrderProductId, jdbcType=INTEGER}
 			</if>
 			<if test="true">
 				AND erope.data_status = 1

@@ -721,7 +721,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", purchaseOrderQueryParam);
+        maps.put("purchaseOrderQueryParam", purchaseOrderQueryParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = purchaseOrderMapper.findPurchaseOrderCountByParams(maps);
@@ -882,7 +882,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", purchaseDeliveryOrderQueryParam);
+        maps.put("purchaseDeliveryOrderQueryParam", purchaseDeliveryOrderQueryParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = purchaseDeliveryOrderMapper.findPurchaseDeliveryOrderCountByParams(maps);
@@ -1326,7 +1326,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", purchaseReceiveOrderQueryParam);
+        maps.put("purchaseReceiveOrderQueryParam", purchaseReceiveOrderQueryParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER,PermissionType.PERMISSION_TYPE_WAREHOUSE));
 
         Integer totalCount = purchaseReceiveOrderMapper.findPurchaseReceiveOrderCountByParams(maps);
@@ -1556,7 +1556,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", pageParam);
+        maps.put("purchaseReceiveOrderProductEquipmentPageParam", pageParam);
 
         Integer totalCount = productEquipmentMapper.listByPurchaseReceiveOrderProductIdCount(maps);
         List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.listByPurchaseReceiveOrderProductId(maps);
@@ -1575,7 +1575,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", pageParam);
+        maps.put("purchaseReceiveOrderMaterialBulkPageParam", pageParam);
 
         Integer totalCount = bulkMaterialMapper.listByPurchaseReceiveOrderMaterialIdCount(maps);
         List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listByPurchaseReceiveOrderMaterialId(maps);
@@ -1768,7 +1768,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", 0);
         maps.put("pageSize", Integer.MAX_VALUE);
-        maps.put("queryParam", purchaseReceiveOrderMaterialBulkPageParam);
+        maps.put("purchaseReceiveOrderMaterialBulkPageParam", purchaseReceiveOrderMaterialBulkPageParam);
         return bulkMaterialMapper.listByPurchaseReceiveOrderMaterialId(maps);
     }
 

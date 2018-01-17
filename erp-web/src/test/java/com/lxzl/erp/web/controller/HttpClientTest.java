@@ -1,5 +1,8 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.ERPTransactionalTest;
+import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
 import com.lxzl.erp.dataaccess.dao.mysql.area.AreaDistrictMapper;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -25,45 +28,16 @@ import java.util.List;
  * Date : Created in ${Date}
  * Time : Created in ${Time}
  */
-public class HttpClientTest {
+public class HttpClientTest extends ERPTransactionalTest{
 
     @Autowired
     AreaDistrictMapper areaDistrictMapper;
 
     @Test
-    public void say() throws IOException, URISyntaxException {
-        // 创建Httpclient对象
-//        CloseableHttpClient httpclient = HttpClients.createDefault();
-//        List<String> lists = areaDistrictMapper.selectAreaDistrictDOs();
-//        String code = "邮政编码";
-//        // 定义请求的参数
-//        URI uri = new URIBuilder("http://www.baidu.com/s").setParameter("wd", "蓟　县邮政编码").build();
-//
-//        // 创建http GET请求
-//        HttpGet httpGet = new HttpGet(uri);
-//
-//        CloseableHttpResponse response = null;
-//        try {
-//            // 执行请求
-//            response = httpclient.execute(httpGet);
-//            // 判断返回状态是否为200
-//            if (response.getStatusLine().getStatusCode() == 200) {
-//                String content = EntityUtils.toString(response.getEntity(), "UTF-8");
-//                Document document = Jsoup.parse(content);
-//                Elements op_exactqa_s_answer = document.select(".op_exactqa_s_answer");
-//                for (Element element:op_exactqa_s_answer) {
-//                    String text = element.select(".op_exactqa_s_answer").text();
-//                    System.out.println(text);
-//                }
-//            }
-//
-//        } finally {
-//            if (response != null) {
-//                response.close();
-//            }
-//            httpclient.close();
-//        }
-
+    public void say() throws Exception {
+        CustomerQueryParam queryParam = new CustomerQueryParam();
+        queryParam.setCustomerName("百度");
+        TestResult result = getJsonTestResult("/interface/queryCustomer", queryParam);
     }
 
     @Test

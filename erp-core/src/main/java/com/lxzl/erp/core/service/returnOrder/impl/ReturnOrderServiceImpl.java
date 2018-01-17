@@ -585,7 +585,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", returnOrderPageParam);
+        maps.put("returnOrderPageParam", returnOrderPageParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = returnOrderMapper.findReturnOrderCountByParams(maps);
@@ -683,7 +683,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", returnEquipmentPageParam);
+        maps.put("returnEquipmentPageParam", returnEquipmentPageParam);
 
         Integer totalCount = returnOrderProductEquipmentMapper.listCount(maps);
         List<ReturnOrderProductEquipmentDO> returnOrderProductEquipmentDOList = returnOrderProductEquipmentMapper.listPage(maps);
@@ -707,7 +707,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", returnBulkPageParam);
+        maps.put("returnBulkPageParam", returnBulkPageParam);
 
         Integer totalCount = returnOrderMaterialBulkMapper.listCount(maps);
         List<ReturnOrderMaterialBulkDO> returnOrderMaterialBulkDOList = returnOrderMaterialBulkMapper.listPage(maps);
