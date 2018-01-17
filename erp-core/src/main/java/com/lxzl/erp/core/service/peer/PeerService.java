@@ -32,11 +32,11 @@ public interface PeerService {
      * 查询详情
      * @Author : XiaoLuYu
      * @Date : Created in 2018/1/13 14:50
-     * @param : peer
+     * @param : peerNo
     * @param : validResult
      * @Return : com.lxzl.se.common.domain.Result
      */
-    ServiceResult<String, Peer> queryDetail(Integer peerId);
+    ServiceResult<String, Peer> queryDetail(String peerNo);
     /**
      * 查询分页
      * @Author : XiaoLuYu

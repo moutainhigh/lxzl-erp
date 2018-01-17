@@ -505,8 +505,9 @@ public class ErrorCode {
     public static final String PEER_CODE_NOT_NULL = "J1400003";
     public static final String PEER_CODE_EXISTS = "J1400004";
     public static final String PEER_NAME_EXISTS = "J1400005";
-    public static final String PEER_NO_EXISTS = "J1400006";
+    public static final String PEER_NO_NOT_EXISTS = "J1400006";
     public static final String PEER_NOT_EXISTS = "J1400007";
+    public static final String PEER_EXISTS = "J1400008";
 
     public static final String PEER_DEPLOYMENT_ORDER_ID_NOT_NULL = "J1500001";
     public static final String PEER_DEPLOYMENT_ORDER_NO_NOT_NULL = "J1500002";
@@ -1029,8 +1030,9 @@ public class ErrorCode {
         MAP.put(PEER_CODE_NOT_NULL, "同行供应商自定义编码不能为空");
         MAP.put(PEER_NAME_EXISTS, "同行供应商名称已存在");
         MAP.put(PEER_CODE_EXISTS, "同行供应商自定义编码已存在");
-        MAP.put(PEER_NO_EXISTS, "同行供应商编码已存在");
+        MAP.put(PEER_EXISTS, "同行供应商编码已存在");
         MAP.put(PEER_NOT_EXISTS, "同行供应不存在");
+        MAP.put(PEER_NO_NOT_EXISTS, "同行供应商编码不存在");
 
         MAP.put(PEER_DEPLOYMENT_ORDER_ID_NOT_NULL, "同行调拨单唯一标识不能为空");
         MAP.put(PEER_DEPLOYMENT_ORDER_NO_NOT_NULL, "同行调拨单编号不能为空");

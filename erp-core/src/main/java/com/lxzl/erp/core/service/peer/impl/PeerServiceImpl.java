@@ -79,38 +79,33 @@ public class PeerServiceImpl implements PeerService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> updatePeer(Peer peer) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
-        PeerDO peerDO = peerMapper.findById(peer.getPeerId());
-        if(peerDO == null){
+        //peerNo查对象
+        PeerQueryParam peerNoQueryParam = new PeerQueryParam();
+        peerNoQueryParam.setPeerNo(peer.getPeerNo());
+        Map<String, Object> queryPeerNoMap = new HashMap<>();
+        queryPeerNoMap.put("start", 0);
+        queryPeerNoMap.put("pageSize", Integer.MAX_VALUE);
+        queryPeerNoMap.put("peerQueryParam", peerNoQueryParam);
+        List<PeerDO> queryPeerDOListByPeerNo = peerMapper.listPage(queryPeerNoMap);
+        if( CollectionUtil.isEmpty(queryPeerDOListByPeerNo)){
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
-        //供应商编码是否存在
-        if (StringUtil.isNotEmpty(peer.getPeerNo())) {
-            Map<String, Object> map = new HashMap<>();
-            PeerQueryParam peerNameQueryParam = new PeerQueryParam();
-            peerNameQueryParam.setPeerNo(peer.getPeerNo());
-            map.put("queryParam", peerNameQueryParam);
-            map.put("start",0);
-            map.put("pageSize",Integer.MAX_VALUE);
-            List<PeerDO> peerDOList = peerMapper.listPage(map);
-            if (peerDOList.get(0).getPeerNo() != peer.getPeerNo()) {
-                serviceResult.setErrorCode(ErrorCode.PEER_NO_EXISTS);
-                return serviceResult;
-            }
-        }
+        PeerDO peerDO = queryPeerDOListByPeerNo.get(0);
 
         //检验 供应商名称 和 供应商自定义编码
         ServiceResult<String, Integer> result = updateQueryParam(peer);
         if (result != null) {
             return result;
         }
-        peerDO = ConverterUtil.convert(peer, PeerDO.class);
+        PeerDO newPeerDO = ConverterUtil.convert(peer, PeerDO.class);
         Date now = new Date();
-        peerDO.setCreateTime(now);
-        peerDO.setCreateUser(userSupport.getCurrentUserId().toString());
-        peerDO.setUpdateTime(now);
-        peerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        peerMapper.update(peerDO);
+        newPeerDO.setId(peerDO.getId());
+        newPeerDO.setCreateTime(now);
+        newPeerDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        newPeerDO.setUpdateTime(now);
+        newPeerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        peerMapper.update(newPeerDO);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(peerDO.getId());
         return serviceResult;
@@ -119,20 +114,29 @@ public class PeerServiceImpl implements PeerService {
     /**
      * 查询详情
      *
-     * @param : peerId
+     * @param : peerNo
      * @Author : XiaoLuYu
      * @Date : Created in 2018/1/13 14:50
      * @Return : com.lxzl.se.common.domain.Result
      */
     @Override
-    public ServiceResult<String, Peer> queryDetail(Integer peerId) {
+    public ServiceResult<String, Peer> queryDetail(String peerNo) {
 
         ServiceResult<String, Peer> serviceResult = new ServiceResult<>();
-        PeerDO peerDO = peerMapper.findDetailByPeerId(peerId);
-        if (peerDO == null) {
-            serviceResult.setErrorCode(ErrorCode.PEER_NOT_EXISTS);
+
+        PeerQueryParam peerNoQueryParam = new PeerQueryParam();
+        peerNoQueryParam.setPeerNo(peerNo);
+        Map<String, Object> queryPeerNoMap = new HashMap<>();
+        queryPeerNoMap.put("start", 0);
+        queryPeerNoMap.put("pageSize", Integer.MAX_VALUE);
+        queryPeerNoMap.put("peerQueryParam", peerNoQueryParam);
+        List<PeerDO> queryPeerDOListByPeerNo = peerMapper.listPage(queryPeerNoMap);
+        if( CollectionUtil.isEmpty(queryPeerDOListByPeerNo)){
+            serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
+        PeerDO peerDO = queryPeerDOListByPeerNo.get(0);
+
         Peer peer = ConverterUtil.convert(peerDO, Peer.class);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(peer);
@@ -186,7 +190,7 @@ public class PeerServiceImpl implements PeerService {
         map.put("pageSize",Integer.MAX_VALUE);
         List<PeerDO> queryByPeerNameDOList = peerMapper.listPage(map);
         if (CollectionUtil.isNotEmpty(queryByPeerNameDOList)) {
-            if (queryByPeerNameDOList.get(0).getId() != peer.getPeerId()) {
+            if (queryByPeerNameDOList.get(0).getPeerNo().equals(peer.getPeerNo())) {
                 serviceResult.setErrorCode(ErrorCode.PEER_NAME_EXISTS);
                 return serviceResult;
             }
@@ -200,7 +204,7 @@ public class PeerServiceImpl implements PeerService {
         map.put("pageSize",Integer.MAX_VALUE);
         List<PeerDO> queryByPeerCodeList = peerMapper.listPage(map);
         if (CollectionUtil.isNotEmpty(queryByPeerCodeList)) {
-            if (queryByPeerCodeList.get(0).getId() != peer.getPeerId()) {
+            if (queryByPeerNameDOList.get(0).getPeerNo().equals(peer.getPeerNo())) {
                 serviceResult.setErrorCode(ErrorCode.PEER_CODE_EXISTS);
                 return serviceResult;
             }
