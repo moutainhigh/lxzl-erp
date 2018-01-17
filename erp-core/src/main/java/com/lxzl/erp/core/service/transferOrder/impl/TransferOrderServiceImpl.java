@@ -902,7 +902,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                 if (TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO.equals(transferOrderDO.getTransferOrderMode())){
                     transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT);
                 }else{
-                    transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_VERIFYING);
+                    transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_CHOICE_GOODS);
                 }
             }
             transferOrderDO.setUpdateTime(new Date());
