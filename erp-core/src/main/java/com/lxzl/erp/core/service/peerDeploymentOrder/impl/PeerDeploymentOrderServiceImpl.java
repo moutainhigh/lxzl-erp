@@ -396,7 +396,45 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         result.setResult(dbPeerDeploymentOrderDO.getPeerDeploymentOrderNo());
         return result;
     }
-    
+
+    /**
+     * 取消同行调拨单（未提交和审核中状态取消）
+     * @param peerDeploymentOrder
+     * @return
+     */
+    @Override
+    public ServiceResult<String, String> cancelPeerDeploymentOrder(PeerDeploymentOrder peerDeploymentOrder) {
+
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date now = new Date();
+        PeerDeploymentOrderDO peerDeploymentOrderDO = peerDeploymentOrderMapper.findByPeerDeploymentOrderNo(peerDeploymentOrder.getPeerDeploymentOrderNo());
+        if(peerDeploymentOrderDO == null){
+            result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_NOT_EXISTS);
+            return result;
+        }
+        if(!PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus()) && !PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())){
+            result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_STATUS_ERROR);
+            return result;
+        }
+
+        //判断状态审核中执行工作流取消审核
+        if(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())){
+            ServiceResult<String,String> cancelWorkFlowResult = workflowService.cancelWorkFlow(WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_INTO,peerDeploymentOrderDO.getPeerDeploymentOrderNo());
+            if(!ErrorCode.SUCCESS.equals(cancelWorkFlowResult.getErrorCode())){
+                result.setErrorCode(cancelWorkFlowResult.getErrorCode());
+                return result;
+            }
+        }
+        peerDeploymentOrderDO.setUpdateTime(now);
+        peerDeploymentOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_CANCEL);
+        peerDeploymentOrderMapper.update(peerDeploymentOrderDO);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
+        return result;
+    }
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
@@ -406,14 +444,25 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 return false;
             }
             //不是审核中状态的同行调拨单，拒绝处理
-            if (!PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())) {
+            if (!PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())
+                    && !PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING_OUT.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())) {
                 return false;
             }
 
             if (verifyResult) {
-                peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_PROCESSING);
+                if (PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())){
+                    peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_PROCESSING);
+                }
+                if (PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING_OUT.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())){
+                    peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_PROCESSING_OUT);
+                }
             } else {
-                peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT);
+                if (PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())){
+                    peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT);
+                }
+                if (PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING_OUT.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())){
+                    peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_CONFIRM);
+                }
             }
             peerDeploymentOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             peerDeploymentOrderDO.setUpdateTime(new Date());
@@ -426,6 +475,67 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             logger.error("【数据已回滚】");
             return false;
         }
+    }
+
+    @Override
+    public ServiceResult<String, String> commitPeerDeploymentOrderReturn(String peerDeploymentOrderNo, Integer verifyUserId, String remark) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date now = new Date();
+
+        PeerDeploymentOrderDO peerDeploymentOrderDO = peerDeploymentOrderMapper.findByPeerDeploymentOrderNo(peerDeploymentOrderNo);
+        if (peerDeploymentOrderDO == null) {
+            serviceResult.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        //只有确认收货状态可以提交
+        if (!PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_CONFIRM.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())) {
+            serviceResult.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_STATUS_NEED_CONFIRM);
+            return serviceResult;
+        }
+
+        //只有创建同行调拨单本人可以提交
+        if (!peerDeploymentOrderDO.getCreateUser().equals(loginUser.getUserId().toString())) {
+            serviceResult.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
+            return serviceResult;
+        }
+
+        ServiceResult<String, Boolean> needVerifyResult = new ServiceResult<>();
+        //判断是否需要审核
+        needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_OUT);
+        if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
+            serviceResult.setErrorCode(needVerifyResult.getErrorCode());
+            return serviceResult;
+        } else if (needVerifyResult.getResult()) {
+            if (verifyUserId == null) {
+                serviceResult.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
+                return serviceResult;
+            }
+            //调用提交审核服务
+            ServiceResult<String, String> verifyResult = new ServiceResult<>();
+            //同行调拨单审核
+            verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER, peerDeploymentOrderNo, verifyUserId, remark);
+            //修改提交审核状态
+            if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
+                peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING_OUT);
+                peerDeploymentOrderDO.setUpdateTime(now);
+                peerDeploymentOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                peerDeploymentOrderMapper.update(peerDeploymentOrderDO);
+                return verifyResult;
+            } else {
+                serviceResult.setErrorCode(verifyResult.getErrorCode());
+                return serviceResult;
+            }
+        }else{
+            peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING_OUT);
+            peerDeploymentOrderDO.setUpdateTime(now);
+            peerDeploymentOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            peerDeploymentOrderMapper.update(peerDeploymentOrderDO);
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
+        return serviceResult;
     }
 
     @Override
@@ -565,7 +675,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                     throw new BusinessException(productServiceResult.getErrorCode());
                 }
                 Product product = productServiceResult.getResult();
-                peerDeploymentOrderProductDO.setProductAmount(BigDecimalUtil.mul(peerDeploymentOrderProductDO.getProductUnitAmount(), new BigDecimal(peerDeploymentOrderProductDO.getProductSkuCount())));
+                peerDeploymentOrderProductDO.setProductAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(peerDeploymentOrderProductDO.getProductUnitAmount(), new BigDecimal(peerDeploymentOrderProductDO.getProductSkuCount())), new BigDecimal(peerDeploymentOrderDO.getRentTimeLength())));
                 peerDeploymentOrderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(product));
                 peerDeploymentOrderProductDO.setPeerDeploymentOrderId(peerDeploymentOrderDO.getId());
                 peerDeploymentOrderProductDO.setPeerDeploymentOrderNo(peerDeploymentOrderNo);
@@ -593,7 +703,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 }
                 Product product = productServiceResult.getResult();
                 peerDeploymentOrderProductDO.setId(oldPeerDeploymentOrderProductDO.getId());
-                peerDeploymentOrderProductDO.setProductAmount(BigDecimalUtil.mul(peerDeploymentOrderProductDO.getProductUnitAmount(), new BigDecimal(peerDeploymentOrderProductDO.getProductSkuCount())));
+                peerDeploymentOrderProductDO.setProductAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(peerDeploymentOrderProductDO.getProductUnitAmount(), new BigDecimal(peerDeploymentOrderProductDO.getProductSkuCount())), new BigDecimal(peerDeploymentOrderDO.getRentTimeLength())));
                 peerDeploymentOrderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(product));
                 peerDeploymentOrderProductDO.setUpdateUser(loginUser.getUserId().toString());
                 peerDeploymentOrderProductDO.setUpdateTime(currentTime);
@@ -647,7 +757,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                     throw new BusinessException(materialServiceResult.getErrorCode());
                 }
                 Material material = materialServiceResult.getResult();
-                peerDeploymentOrderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(peerDeploymentOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(peerDeploymentOrderMaterialDO.getProductMaterialCount())));
+                peerDeploymentOrderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(peerDeploymentOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(peerDeploymentOrderMaterialDO.getProductMaterialCount())), new BigDecimal(peerDeploymentOrderDO.getRentTimeLength())));
                 peerDeploymentOrderMaterialDO.setProductMaterialSnapshot(FastJsonUtil.toJSONString(material));
                 peerDeploymentOrderMaterialDO.setPeerDeploymentOrderId(peerDeploymentOrderDO.getId());
                 peerDeploymentOrderMaterialDO.setPeerDeploymentOrderNo(peerDeploymentOrderNo);
@@ -671,7 +781,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                     throw new BusinessException(materialServiceResult.getErrorCode());
                 }
                 Material material = materialServiceResult.getResult();
-                peerDeploymentOrderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(peerDeploymentOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(peerDeploymentOrderMaterialDO.getProductMaterialCount())));
+                peerDeploymentOrderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(peerDeploymentOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(peerDeploymentOrderMaterialDO.getProductMaterialCount())), new BigDecimal(peerDeploymentOrderDO.getRentTimeLength())));
                 peerDeploymentOrderMaterialDO.setProductMaterialSnapshot(FastJsonUtil.toJSONString(material));
                 peerDeploymentOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 peerDeploymentOrderMaterialDO.setUpdateUser(loginUser.getUserId().toString());

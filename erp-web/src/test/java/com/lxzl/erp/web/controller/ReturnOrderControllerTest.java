@@ -179,7 +179,7 @@ public class ReturnOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void pageReturnBulk() throws Exception {
         ReturnBulkPageParam returnBulkPageParam = new ReturnBulkPageParam();
-        returnBulkPageParam.setReturnOrderMaterialId(5);
+        returnBulkPageParam.setReturnOrderMaterialId(12);
         TestResult testResult = getJsonTestResult("/returnOrder/pageReturnBulk", returnBulkPageParam);
     }
 

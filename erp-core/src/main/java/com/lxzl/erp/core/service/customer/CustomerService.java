@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
+import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.*;
 
 public interface CustomerService {
@@ -89,4 +90,13 @@ public interface CustomerService {
      * @return
      */
     ServiceResult<String,String> enableCustomer(Customer customer);
+
+    /**
+    * 通过公司名称查找
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/1/17 9:46
+    * @param : customerQueryParam
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.common.domain.Page<com.lxzl.erp.common.domain.customer.pojo.Customer>>
+    */
+    ServiceResult<String, Customer> queryCustomerDetailsByCustomerName(CustomerQueryParam customerQueryParam);
 }

@@ -2,10 +2,13 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
+import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
+import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
@@ -33,6 +36,9 @@ public class InterfaceController extends BaseController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private CustomerService customerService;
+
     @RequestMapping(value = "queryOrderByNo", method = RequestMethod.POST)
     public Result queryOrderByNo(@RequestBody Order order, BindingResult validResult) {
         ServiceResult<String, Order> serviceResult = orderService.queryOrderByNo(order.getOrderNo());
@@ -42,6 +48,12 @@ public class InterfaceController extends BaseController {
     @RequestMapping(value = "queryAllOrder", method = RequestMethod.POST)
     public Result queryAllOrder(@RequestBody OrderQueryParam param, BindingResult validResult) {
         ServiceResult<String, Page<Order>> serviceResult = orderService.queryOrderByUserIdInterface(param);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "queryCustomer", method = RequestMethod.POST)
+    public Result queryCustomerByCustomerName(@RequestBody CustomerQueryParam customerQueryParam, BindingResult validResult) {
+        ServiceResult<String, Customer> serviceResult = customerService.queryCustomerDetailsByCustomerName(customerQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }

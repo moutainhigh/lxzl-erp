@@ -24,6 +24,7 @@
             .rightPanelTitle .erp{font-size: 24px; font-weight: bold;}
             .rightPanelTitle .cut{font-size: 21px;}
             .rightPanelTitle .text{font-size: 21px;}
+
         </style>
     </head>
     <body class="external-page sb-l-c sb-r-c loginPage">

@@ -108,54 +108,54 @@
 	<update id="clearDateStatus" parameterType="java.lang.String">
 		UPDATE erp_repair_order_bulk_material set data_status = 2  WHERE repair_order_no = #{repairOrderNo, jdbcType=VARCHAR};
 	</update>
-	
+
 	<select id="findRepairOrderBulkMaterialCountByParams" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(erobm.id) FROM erp_repair_order_bulk_material erobm
 		<where>
-			<if test = "maps.queryParam.repairOrderNo != null &amp;&amp; maps.queryParam.repairOrderNo != ''">
-				maps.queryParam.repair_order_no = #{maps.queryParam.repairOrderNo,jdbcType=VARCHAR},
+			<if test = "maps.repairOrderBulkMaterialQueryParam != null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.repairOrderNo != null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.repairOrderNo != ''">
+				maps.repairOrderBulkMaterialQueryParam.repair_order_no = #{maps.repairOrderBulkMaterialQueryParam.repairOrderNo,jdbcType=VARCHAR},
 			</if>
-			<if test = "maps.queryParam.bulkMaterialId != null ">
-				maps.queryParam.bulk_material_id = #{maps.queryParam.bulkMaterialId,jdbcType=INTEGER},
+			<if test = "maps.repairOrderBulkMaterialQueryParam != null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.bulkMaterialId != null ">
+				maps.repairOrderBulkMaterialQueryParam.bulk_material_id = #{maps.repairOrderBulkMaterialQueryParam.bulkMaterialId,jdbcType=INTEGER},
 			</if>
-			<if test = "maps.queryParam.bulkMaterialNo !=null &amp;&amp; maps.queryParam.bulkMaterialNo != ''">
-				maps.queryParam.bulk_material_no = #{maps.queryParam.bulkMaterialNo,jdbcType=VARCHAR},
+			<if test = "maps.repairOrderBulkMaterialQueryParam != null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.bulkMaterialNo !=null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.bulkMaterialNo != ''">
+				maps.repairOrderBulkMaterialQueryParam.bulk_material_no = #{maps.repairOrderBulkMaterialQueryParam.bulkMaterialNo,jdbcType=VARCHAR},
 			</if>
-			<if test = "maps.queryParam.repairEndTime != null">
-				maps.queryParam.repair_end_time = #{maps.queryParam.repairEndTime,jdbcType=TIMESTAMP},
+			<if test = "maps.repairOrderBulkMaterialQueryParam != null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.repairEndTime != null">
+				maps.repairOrderBulkMaterialQueryParam.repair_end_time = #{maps.repairOrderBulkMaterialQueryParam.repairEndTime,jdbcType=TIMESTAMP},
 			</if>
-			<if test = "maps.queryParam.orderId != null">
-				maps.queryParam.order_id = #{maps.queryParam.orderId,jdbcType=INTEGER},
+			<if test = "maps.repairOrderBulkMaterialQueryParam != null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.orderId != null">
+				maps.repairOrderBulkMaterialQueryParam.order_id = #{maps.repairOrderBulkMaterialQueryParam.orderId,jdbcType=INTEGER},
 			</if>
-			<if test = "maps.queryParam.orderMaterialId != null" >
-				maps.queryParam.order_material_id = #{maps.queryParam.orderMaterialId,jdbcType=INTEGER},
+			<if test = "maps.repairOrderBulkMaterialQueryParam != null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.orderMaterialId != null" >
+				maps.repairOrderBulkMaterialQueryParam.order_material_id = #{maps.repairOrderBulkMaterialQueryParam.orderMaterialId,jdbcType=INTEGER},
 			</if>
 			<if test="true">
 				AND erobm.data_status = 1
 			</if>
 		</where>
 	</select>
-	
+
 	<select id="findRepairOrderBulkMaterialByParams" resultMap="RepairOrderBulkMaterialDO" parameterType="map">
 		SELECT <include refid="column_List"></include> FROM erp_repair_order_bulk_material erobm
 		<where>
-			<if test = "maps.queryParam.repairOrderNo != null &amp;&amp; maps.queryParam.repairOrderNo != ''">
-				maps.queryParam.repair_order_no = #{maps.queryParam.repairOrderNo,jdbcType=VARCHAR},
+			<if test = "maps.repairOrderBulkMaterialQueryParam != null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.repairOrderNo != null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.repairOrderNo != ''">
+				maps.repairOrderBulkMaterialQueryParam.repair_order_no = #{maps.repairOrderBulkMaterialQueryParam.repairOrderNo,jdbcType=VARCHAR},
 			</if>
-			<if test = "maps.queryParam.bulkMaterialId != null ">
-				maps.queryParam.bulk_material_id = #{maps.queryParam.bulkMaterialId,jdbcType=INTEGER},
+			<if test = "maps.repairOrderBulkMaterialQueryParam != null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.bulkMaterialId != null ">
+				maps.repairOrderBulkMaterialQueryParam.bulk_material_id = #{maps.repairOrderBulkMaterialQueryParam.bulkMaterialId,jdbcType=INTEGER},
 			</if>
-			<if test = "maps.queryParam.bulkMaterialNo !=null &amp;&amp; maps.queryParam.bulkMaterialNo != ''">
-				maps.queryParam.bulk_material_no = #{maps.queryParam.bulkMaterialNo,jdbcType=VARCHAR},
+			<if test = "maps.repairOrderBulkMaterialQueryParam != null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.bulkMaterialNo !=null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.bulkMaterialNo != ''">
+				maps.repairOrderBulkMaterialQueryParam.bulk_material_no = #{maps.repairOrderBulkMaterialQueryParam.bulkMaterialNo,jdbcType=VARCHAR},
 			</if>
-			<if test = "maps.queryParam.repairEndTime != null">
-				maps.queryParam.repair_end_time = #{maps.queryParam.repairEndTime,jdbcType=TIMESTAMP},
+			<if test = "maps.repairOrderBulkMaterialQueryParam != null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.repairEndTime != null">
+				maps.repairOrderBulkMaterialQueryParam.repair_end_time = #{maps.repairOrderBulkMaterialQueryParam.repairEndTime,jdbcType=TIMESTAMP},
 			</if>
-			<if test = "maps.queryParam.orderId != null">
-				maps.queryParam.order_id = #{maps.queryParam.orderId,jdbcType=INTEGER},
+			<if test = "maps.repairOrderBulkMaterialQueryParam != null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.orderId != null">
+				maps.repairOrderBulkMaterialQueryParam.order_id = #{maps.repairOrderBulkMaterialQueryParam.orderId,jdbcType=INTEGER},
 			</if>
-			<if test = "maps.queryParam.orderMaterialId != null" >
-				maps.queryParam.order_material_id = #{maps.queryParam.orderMaterialId,jdbcType=INTEGER},
+			<if test = "maps.repairOrderBulkMaterialQueryParam != null &amp;&amp; maps.repairOrderBulkMaterialQueryParam.orderMaterialId != null" >
+				maps.repairOrderBulkMaterialQueryParam.order_material_id = #{maps.repairOrderBulkMaterialQueryParam.orderMaterialId,jdbcType=INTEGER},
 			</if>
 			<if test="true">
 				AND erobm.data_status = 1

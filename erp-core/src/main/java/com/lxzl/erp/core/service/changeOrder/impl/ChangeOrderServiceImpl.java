@@ -1107,7 +1107,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", changeOrderPageParam);
+        maps.put("changeOrderPageParam", changeOrderPageParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = changeOrderMapper.findChangeOrderCountByParams(maps);
@@ -1126,7 +1126,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", changeEquipmentPageParam);
+        maps.put("changeEquipmentPageParam", changeEquipmentPageParam);
 
         Integer totalCount = changeOrderProductEquipmentMapper.listCount(maps);
         List<ChangeOrderProductEquipmentDO> changeOrderProductEquipmentDOList = changeOrderProductEquipmentMapper.listPage(maps);
@@ -1156,7 +1156,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", changeBulkPageParam);
+        maps.put("changeBulkPageParam", changeBulkPageParam);
 
         Integer totalCount = changeOrderMaterialBulkMapper.listCount(maps);
         List<ChangeOrderMaterialBulkDO> changeOrderMaterialBulkDOList = changeOrderMaterialBulkMapper.listPage(maps);

@@ -109,10 +109,10 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
 
     @Test
     public void generateBulkMaterialNo() throws Exception {
-//        String materialNo = generateNoSupport.generateBulkMaterialNo(new Date(), 4000001);
+        String materialNo = generateNoSupport.generateBulkMaterialNo(new Date(), 4000001);
         long startTime = System.currentTimeMillis();
 //        for (int i = 0;i<3000;i++) {
-        String materialNo = generateNoSupport.generateBulkMaterialNo("AsA", "0755",2);
+//        String materialNo = generateNoSupport.generateBulkMaterialNo("AsA", "0755",2);
 //        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;

@@ -532,7 +532,7 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", purchaseApplyOrderPageParam);
+        maps.put("purchaseApplyOrderPageParam", purchaseApplyOrderPageParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = purchaseApplyOrderMapper.listCount(maps);

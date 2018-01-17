@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-基础信息管理-同行列表-添加同行</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+            <div class="row">
+                <div class="col-md-12 center-block">
+                    <div class="admin-form theme-primary">
+                        <form method="post" id="addPeerSupplierForm">
+                            <div class="panel panel-default panel-border top">
+                                <div class="panel-heading">
+                                    <span class="panel-title"><i class="fa fa-pencil"></i>添加同行</span>
+                                </div>
+                                #parse("component/peer/editPeerSupplierContent.vm")
+                                <div class="panel-footer text-right">
+                                    <button type="submit" class="button btn-primary">确定</button>
+                                    <button type="button" class="button btn-default goBack">返回</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js', 'manage.peer.supplier.add.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    AddPeerSupplier.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+
+</script>
+</body>
+</html>
+

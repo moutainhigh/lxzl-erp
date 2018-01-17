@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
+import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerCompanyNeed;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
@@ -521,7 +522,7 @@ public class CustomerServiceImpl implements CustomerService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", customerCompanyQueryParam);
+        maps.put("customerCompanyQueryParam", customerCompanyQueryParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = customerMapper.findCustomerCompanyCountByParams(maps);
@@ -542,7 +543,7 @@ public class CustomerServiceImpl implements CustomerService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", customerPersonQueryParam);
+        maps.put("customerPersonQueryParam", customerPersonQueryParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = customerMapper.findCustomerPersonCountByParams(maps);
@@ -961,7 +962,7 @@ public class CustomerServiceImpl implements CustomerService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", customerConsignInfoQueryParam);
+        maps.put("customerConsignInfoQueryParam", customerConsignInfoQueryParam);
 
         Integer totalCount = customerConsignInfoMapper.findCustomerConsignInfoCountByParams(maps);
         List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findCustomerConsignInfoByParams(maps);
@@ -1388,4 +1389,39 @@ public class CustomerServiceImpl implements CustomerService {
         return serviceResult;
     }
 
+    @Override
+    public ServiceResult<String, Customer> queryCustomerDetailsByCustomerName(CustomerQueryParam customerQueryParam) {
+        ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
+        CustomerDO customerDO = customerMapper.findByName(customerQueryParam.getCustomerName());
+        if (customerDO == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+        if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
+            customerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
+        } else if (CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
+            customerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
+        }
+        CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
+        Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
+        //显示联合开发原的省，市，区
+        if (customerDO.getUnionUser() != null) {
+            Integer companyId = userSupport.getCompanyIdByUser(customerDO.getUnionUser());
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(companyId);
+            customerResult.setUnionAreaProvinceName(subCompanyDO.getProvinceName());
+            customerResult.setUnionAreaCityName(subCompanyDO.getCityName());
+            customerResult.setUnionAreaDistrictName(subCompanyDO.getDistrictName());
+        }
+        customerResult.setCustomerAccount(customerAccount);
+
+        if (customerResult.getOwner() != null) {
+            customerResult.setCustomerOwnerUser(CommonCache.userMap.get(customerResult.getOwner()));
+        }
+        if (customerResult.getUnionUser() != null) {
+            customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(customerResult);
+        return serviceResult;
+    }
 }

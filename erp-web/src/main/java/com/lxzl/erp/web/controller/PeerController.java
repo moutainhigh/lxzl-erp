@@ -65,7 +65,7 @@ public class PeerController {
     */
     @RequestMapping(value = "queryDetail",method = RequestMethod.POST)
     public Result queryDetail(@RequestBody @Validated(IdGroup.class) Peer peer, BindingResult validResult){
-        ServiceResult<String, Peer> result = peerService.queryDetail(peer.getPeerId());
+        ServiceResult<String, Peer> result = peerService.queryDetail(peer.getPeerNo());
         return resultGenerator.generate(result.getErrorCode(),result.getResult());
     }
     /**

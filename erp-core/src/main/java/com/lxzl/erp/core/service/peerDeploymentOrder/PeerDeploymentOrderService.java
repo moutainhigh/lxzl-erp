@@ -41,11 +41,28 @@ public interface PeerDeploymentOrderService extends VerifyReceiver {
     ServiceResult<String,String> commitPeerDeploymentOrderInto(PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam);
 
     /**
+     * 提交同行调拨单归还的审核
+     *
+     * @param peerDeploymentOrderNo
+     * @param verifyUserId
+     * @param remark
+     * @return
+     */
+    ServiceResult<String,String> commitPeerDeploymentOrderReturn(String peerDeploymentOrderNo, Integer verifyUserId, String remark);
+
+    /**
      * 同行调拨单确认收货
      * @param peerDeploymentOrder
      * @return
      */
     ServiceResult<String,String> confirmPeerDeploymentOrderInto(String peerDeploymentOrder);
+
+    /**
+     * 取消同行调拨单
+     * @param peerDeploymentOrder
+     * @return
+     */
+    ServiceResult<String,String> cancelPeerDeploymentOrder(PeerDeploymentOrder peerDeploymentOrder);
 
     /**
      * 同行调拨单分页显示
