@@ -81,6 +81,16 @@ public class PeerDeploymentOrderController extends BaseController {
     }
 
     /**
+     * 提交同行调拨单归还审核
+     */
+    @RequestMapping(value = "commitPeerDeploymentOrderReturn", method = RequestMethod.POST)
+    public Result commitPeerDeploymentOrderReturn(@RequestBody @Validated(ExtendGroup.class) PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.commitPeerDeploymentOrderReturn(peerDeploymentOrderCommitParam.getPeerDeploymentOrderNo(),peerDeploymentOrderCommitParam.getVerifyUserId(),peerDeploymentOrderCommitParam.getRemark());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+
+    /**
      * 确认收货同行调配单
      * @param peerDeploymentOrderCommitParam
      * @param validResult

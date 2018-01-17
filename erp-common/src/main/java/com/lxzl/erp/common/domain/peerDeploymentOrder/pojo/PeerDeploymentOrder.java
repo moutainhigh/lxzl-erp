@@ -38,7 +38,7 @@ public class PeerDeploymentOrder extends BasePO {
     @Min(value = 0, message = ErrorCode.PEER_DEPLOYMENT_ORDER_TAX_RATE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
     @Max(value = 1, message = ErrorCode.PEER_DEPLOYMENT_ORDER_TAX_RATE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
     private Double taxRate;   //税率
-    private Integer peerDeploymentOrderStatus;   //调配单状态，0未提交，4审批中，8处理中，16确认收货，20退回审批中，24退回处理中，28已退回，32取消
+    private Integer peerDeploymentOrderStatus;   //调配单状态，0未提交，4审批中，8处理中，12确认收货，16退回审批中，20退回处理中，24已退回，28取消
     private Integer totalProductCount;   //商品总数
     private BigDecimal totalProductAmount;   //商品总价
     private Integer totalMaterialCount;   //配件总数

@@ -444,14 +444,25 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 return false;
             }
             //不是审核中状态的同行调拨单，拒绝处理
-            if (!PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())) {
+            if (!PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())
+                    && !PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING_OUT.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())) {
                 return false;
             }
 
             if (verifyResult) {
-                peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_PROCESSING);
+                if (PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())){
+                    peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_PROCESSING);
+                }
+                if (PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING_OUT.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())){
+                    peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_PROCESSING_OUT);
+                }
             } else {
-                peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT);
+                if (PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())){
+                    peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT);
+                }
+                if (PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING_OUT.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())){
+                    peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_CONFIRM);
+                }
             }
             peerDeploymentOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             peerDeploymentOrderDO.setUpdateTime(new Date());
@@ -464,6 +475,67 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             logger.error("【数据已回滚】");
             return false;
         }
+    }
+
+    @Override
+    public ServiceResult<String, String> commitPeerDeploymentOrderReturn(String peerDeploymentOrderNo, Integer verifyUserId, String remark) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date now = new Date();
+
+        PeerDeploymentOrderDO peerDeploymentOrderDO = peerDeploymentOrderMapper.findByPeerDeploymentOrderNo(peerDeploymentOrderNo);
+        if (peerDeploymentOrderDO == null) {
+            serviceResult.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        //只有确认收货状态可以提交
+        if (!PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_CONFIRM.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())) {
+            serviceResult.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_STATUS_NEED_CONFIRM);
+            return serviceResult;
+        }
+
+        //只有创建同行调拨单本人可以提交
+        if (!peerDeploymentOrderDO.getCreateUser().equals(loginUser.getUserId().toString())) {
+            serviceResult.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
+            return serviceResult;
+        }
+
+        ServiceResult<String, Boolean> needVerifyResult = new ServiceResult<>();
+        //判断是否需要审核
+        needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_OUT);
+        if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
+            serviceResult.setErrorCode(needVerifyResult.getErrorCode());
+            return serviceResult;
+        } else if (needVerifyResult.getResult()) {
+            if (verifyUserId == null) {
+                serviceResult.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
+                return serviceResult;
+            }
+            //调用提交审核服务
+            ServiceResult<String, String> verifyResult = new ServiceResult<>();
+            //同行调拨单审核
+            verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER, peerDeploymentOrderNo, verifyUserId, remark);
+            //修改提交审核状态
+            if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
+                peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING_OUT);
+                peerDeploymentOrderDO.setUpdateTime(now);
+                peerDeploymentOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                peerDeploymentOrderMapper.update(peerDeploymentOrderDO);
+                return verifyResult;
+            } else {
+                serviceResult.setErrorCode(verifyResult.getErrorCode());
+                return serviceResult;
+            }
+        }else{
+            peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING_OUT);
+            peerDeploymentOrderDO.setUpdateTime(now);
+            peerDeploymentOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            peerDeploymentOrderMapper.update(peerDeploymentOrderDO);
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
+        return serviceResult;
     }
 
     @Override
