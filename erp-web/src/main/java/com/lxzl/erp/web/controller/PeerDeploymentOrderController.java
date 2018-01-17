@@ -93,6 +93,18 @@ public class PeerDeploymentOrderController extends BaseController {
     }
 
     /**
+     * 取消确认收货
+     * @param peerDeploymentOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "cancel", method = RequestMethod.POST)
+    public Result cancel(@RequestBody @Validated(IdGroup.class)PeerDeploymentOrder peerDeploymentOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.cancelPeerDeploymentOrder(peerDeploymentOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
      * 同行调拨单分页显示
      */
     @RequestMapping(value = "page", method = RequestMethod.POST)

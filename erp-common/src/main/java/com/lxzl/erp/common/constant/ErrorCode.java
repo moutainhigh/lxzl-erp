@@ -526,6 +526,7 @@ public class ErrorCode {
     public static final String PEER_DEPLOYMENT_ORDER_PRODUCT_MATERIAL_LIST_NOT_NULL  = "J1500016";
     public static final String PEER_DEPLOYMENT_ORDER_RENT_TYPE_NOT_NULL  = "J1500017";
     public static final String PEER_DEPLOYMENT_ORDER_STATUS_IS_COMMIT  = "J1500018";
+    public static final String PEER_DEPLOYMENT_ORDER_DELIVERY_MODE_NOT_NULL  = "J1500019";
 
 
     public static final String PEER_DEPLOYMENT_ORDER_PRODUCT_ID_NOT_NULL  = "J1510001";
@@ -1049,6 +1050,7 @@ public class ErrorCode {
         MAP.put(PEER_DEPLOYMENT_ORDER_RENT_TYPE_NOT_NULL, "同行调拨单租赁方式不能为空");
         MAP.put(PEER_DEPLOYMENT_ORDER_STATUS_IS_COMMIT, "同行调拨单只能未提交状态进行修改");
         MAP.put(PEER_DEPLOYMENT_ORDER_PRODUCT_ID_NOT_NULL, "同行调拨单货物调拨商品项ID不能为空");
+        MAP.put(PEER_DEPLOYMENT_ORDER_DELIVERY_MODE_NOT_NULL, "同行调拨单发货方式不能为空");
 
 
 

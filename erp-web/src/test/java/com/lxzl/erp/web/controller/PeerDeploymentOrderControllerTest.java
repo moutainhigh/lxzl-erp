@@ -12,6 +12,7 @@ import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrder;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderConsignInfo;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderMaterial;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderProduct;
+import com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderDO;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -184,7 +185,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void commitPeerDeploymentOrderIntoTest() throws Exception {
         PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam = new PeerDeploymentOrderCommitParam();
-        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0317-20180117-0005");
+        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0317-20180117-0007");
         peerDeploymentOrderCommitParam.setVerifyUserId(500006);
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/commitPeerDeploymentOrderInto",peerDeploymentOrderCommitParam);
     }
@@ -197,6 +198,13 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam = new PeerDeploymentOrderCommitParam();
         peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0317-20180117-0005");
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/confirmPeerDeploymentOrderInto",peerDeploymentOrderCommitParam);
+    }
+
+    @Test
+    public void cancelPeerDeploymentOrderTest() throws Exception {
+        PeerDeploymentOrderDO peerDeploymentOrderDO = new PeerDeploymentOrderDO();
+        peerDeploymentOrderDO.setPeerDeploymentOrderNo("LXPDO-0317-20180117-0007");
+        TestResult testResult = getJsonTestResult("/peerDeploymentOrder/cancel",peerDeploymentOrderDO);
     }
 
     @Test

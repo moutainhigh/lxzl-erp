@@ -48,6 +48,13 @@ public interface PeerDeploymentOrderService extends VerifyReceiver {
     ServiceResult<String,String> confirmPeerDeploymentOrderInto(String peerDeploymentOrder);
 
     /**
+     * 取消同行调拨单
+     * @param peerDeploymentOrder
+     * @return
+     */
+    ServiceResult<String,String> cancelPeerDeploymentOrder(PeerDeploymentOrder peerDeploymentOrder);
+
+    /**
      * 同行调拨单分页显示
      * @param peerDeploymentOrderQueryParam
      * @return
