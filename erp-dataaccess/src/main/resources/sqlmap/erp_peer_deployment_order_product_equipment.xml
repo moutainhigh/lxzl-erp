@@ -94,4 +94,13 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderProductEquipmentDO">
 		UPDATE erp_peer_deployment_order_product_equipment <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<insert id="saveList" parameterType="java.util.ArrayList">
+		INSERT INTO erp_peer_deployment_order_product_equipment(peer_deployment_order_product_id,peer_deployment_order_id,peer_deployment_order_no,equipment_id,equipment_no,data_status,remark,create_time,create_user,update_time,update_user) VALUES
+		<foreach collection="list" item="peerDeploymentOrderProductEquipmentDO"  separator=",">
+			( #{peerDeploymentOrderProductEquipmentDO.peerDeploymentOrderProductId},#{peerDeploymentOrderProductEquipmentDO.peerDeploymentOrderId},#{peerDeploymentOrderProductEquipmentDO.peerDeploymentOrderNo},#{peerDeploymentOrderProductEquipmentDO.equipmentId},#{peerDeploymentOrderProductEquipmentDO.equipmentNo},
+			#{peerDeploymentOrderProductEquipmentDO.dataStatus},#{peerDeploymentOrderProductEquipmentDO.remark},#{peerDeploymentOrderProductEquipmentDO.createTime},
+			#{peerDeploymentOrderProductEquipmentDO.createUser},#{peerDeploymentOrderProductEquipmentDO.updateTime},#{peerDeploymentOrderProductEquipmentDO.updateUser})
+		</foreach>
+	</insert>
 </mapper>

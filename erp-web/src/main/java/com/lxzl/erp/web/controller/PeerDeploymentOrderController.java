@@ -70,9 +70,21 @@ public class PeerDeploymentOrderController extends BaseController {
      * @param validResult
      * @return
      */
-    @RequestMapping(value = "commit", method = RequestMethod.POST)
-    public Result commit(@RequestBody @Validated(ExtendGroup.class) PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.commitPeerDeploymentOrder(peerDeploymentOrderCommitParam);
+    @RequestMapping(value = "commitPeerDeploymentOrderInto", method = RequestMethod.POST)
+    public Result commitPeerDeploymentOrderInto(@RequestBody @Validated(ExtendGroup.class) PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.commitPeerDeploymentOrderInto(peerDeploymentOrderCommitParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 确认收货同行调配单
+     * @param peerDeploymentOrderCommitParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "confirmPeerDeploymentOrderInto", method = RequestMethod.POST)
+    public Result confirmPeerDeploymentOrderInto(@RequestBody PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.confirmPeerDeploymentOrderInto(peerDeploymentOrderCommitParam.getPeerDeploymentOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

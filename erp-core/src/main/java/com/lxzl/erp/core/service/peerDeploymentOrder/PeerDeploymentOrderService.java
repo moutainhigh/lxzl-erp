@@ -34,14 +34,14 @@ public interface PeerDeploymentOrderService extends VerifyReceiver {
      * @param peerDeploymentOrderCommitParam
      * @return
      */
-    ServiceResult<String,String> commitPeerDeploymentOrder(PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam);
+    ServiceResult<String,String> commitPeerDeploymentOrderInto(PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam);
 
     /**
      * 同行调拨单确认收货
      * @param peerDeploymentOrder
      * @return
      */
-    ServiceResult<String,String> confirmPeerDeploymentOrder(String peerDeploymentOrder);
+    ServiceResult<String,String> confirmPeerDeploymentOrderInto(String peerDeploymentOrder);
 
     /**
      * 同行调拨单分页显示
