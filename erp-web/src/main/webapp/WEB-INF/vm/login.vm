@@ -4,8 +4,29 @@
         <title>登录-凌雄-中国领先的IT设备租赁服务商</title>
         #parse("layout/header.vm")
         #parse("layout/theme.vm")
+        <style>
+            body.external-page #main {  background: url('${staticManagement}img/login/background.jpg') no-repeat top center #2d494d !important;  background-size: cover  !important;  }
+            header {  height: 82px;  background-color: rgba(255, 255, 255, 0.2);  box-shadow: 0px 5px 18px 5px rgba(0, 0, 0, 0.03); /*opacity: 0.2;*/  }
+            .rowGird {  width: 1000px;  margin: auto;  }
+            header .logo {  height: 52px;  margin-top: 15px;  }
+            header .logo img{  height: 100%;  }
+
+            .leftPanel {
+                background-image: linear-gradient(-51deg,
+                rgba(15, 103, 211, 0.9) 24%,
+                rgba(34, 142, 243, 0.9) 100%),
+                linear-gradient(rgba(40, 120, 199, 0.9), rgba(40, 120, 199, 0.9));  background-blend-mode: normal,
+                normal;
+                opacity: 0.9;
+            }
+            .leftPanel .description { text-align: center; color:#fff; font-family: SourceHanSansCN-Normal; opacity: 0.8;}
+            .rightPanelTitle span{float: left; margin-right: 5px;color: #2b82e0; height: 30px; line-height: 30px; }
+            .rightPanelTitle .erp{font-size: 24px; font-weight: bold;}
+            .rightPanelTitle .cut{font-size: 21px;}
+            .rightPanelTitle .text{font-size: 21px;}
+        </style>
     </head>
-    <body class="external-page sb-l-c sb-r-c">
+    <body class="external-page sb-l-c sb-r-c loginPage">
 
     <!-- Start: Main -->
     <div id="main" class="animated fadeIn">
@@ -18,57 +39,35 @@
                 <canvas id="demo-canvas"></canvas>
             </div>
 
+            <header>
+                <div class="rowGird">
+                    <a href="#" class="logo pull-left pl15"><img src="${staticCommon}rental/img/logos/logo.png" class="img-responsive pull-left" alt="凌雄租赁"></a>
+                </div>
+            </header>
+
             <!-- Begin: Content -->
             <section id="content">
 
                 <div class="admin-form theme-info" id="login1">
-
-                    <div class="row mb15 table-layout">
-
-                        <div class="col-xs-6 va-m pln">
-                            <a href="#" title="Return to Dashboard">
-                                <img src="${staticCommon}/rental/img/logo-white.png" title="凌雄租赁" class="img-responsive">
-                            </a>
-                        </div>
-
-                        <div class="col-xs-6 text-right va-b pr5">
-                            <div class="login-links">
-                                <a class="active" title="Sign In">ERP系统</a>
-                            </div>
-
-                        </div>
-
-                    </div>
-
                     <div class="panel panel-info mt10 br-n">
-
-                        <div class="panel-heading heading-border bg-white">
-                            <div class="section row mn">
-                                <div class="col-sm-6">
-                                    <a href="http://www.lxzl.com.cn" class="button btn-social facebook span-left mr5 btn-block" target="_blank">
-                                        <span><i class="fa fa-shopping-cart"></i>
-                                        </span>租赁商城</a>
-                                </div>
-                                <div class="col-sm-6">
-                                    <a href="http://busi.lxzl.com.cn/" class="button btn-social twitter span-left mr5 btn-block" target="_blank">
-                                        <span><i class="fa fa-cog"></i>
-                                        </span>运营管理系统</a>
-                                </div>
-                                #*<div class="col-sm-4">
-                                    <a href="http://my.fecxiao.com/" class="button btn-social googleplus span-left btn-block" target="_blank">
-                                        <span><i class="fa fa-users"></i>
-                                        </span>客户关系管理系统</a>
-                                </div>*#
-                            </div>
-                        </div>
 
                         <!-- end .form-header section -->
                         <form method="post" action="$ctx/user/login" id="loginForm" callback-func="Login.callBakcFunc">
-                            <div class="panel-body bg-light p30">
-                                <div class="row">
-                                    <div class="col-sm-7 pr30">
-                                        <div class="section">
-                                            <label for="username" class="field-label text-muted fs18 mb10">用户名</label>
+                            <div class="panel-body bg-light pn">
+                                <div class="section">
+                                    <div class="col-sm-5 leftPanel pt50 pb50">
+                                        <div class="center-block text-center">
+                                            <img src="${staticManagement}img/login/logo.png" alt="凌雄租赁"></a>
+                                        </div>
+                                        <hr style="opacity: 0.6; width: 88%; margin-left: auto; margin-right: auto;" />
+                                        <p class="description">中国领先的IT设备租赁服务提供商</p>
+                                    </div>
+                                    <div class="col-sm-7 pl50 pr50 pt30 rightPanel">
+                                        <div class="section row mb30">
+                                            <p class="rightPanelTitle"><span class="erp">ERP</span><span class="cut">|</span><span class="text">凌雄资源管理系统</span></p>
+                                        </div>
+                                        <div class="section row">
+##                                            <label for="username" class="field-label text-muted fs18 mb10">用户名</label>
                                             <label for="username" class="field prepend-icon">
                                                 <input type="text" name="userName" id="userName" class="gui-input required" placeholder="请输入用户名" value="" />
                                                 <label for="username" class="field-icon"><i class="fa fa-user"></i>
@@ -77,40 +76,20 @@
                                         </div>
                                         <!-- end section -->
 
-                                        <div class="section">
-                                            <label for="username" class="field-label text-muted fs18 mb10">密码</label>
+                                        <div class="section row">
+##                                            <label for="username" class="field-label text-muted fs18 mb10">密码</label>
                                             <label for="password" class="field prepend-icon">
                                                 <input type="password" name="password" id="password" class="gui-input required" placeholder="请输入登录密码" value="" />
                                                 <label for="password" class="field-icon"><i class="fa fa-lock"></i>
                                                 </label>
                                             </label>
                                         </div>
-                                        <!-- end section -->
-
-                                    </div>
-                                    <div class="col-sm-5 br-l br-grey pl30">
-                                        <h3 class="mb25"> 浏览器兼容性:</h3>
-                                        <p class="mb15">
-                                            <span class="fa fa-check text-success pr5"></span> IE9+</p>
-                                        <p class="mb15">
-                                            <span class="fa fa-check text-success pr5"></span> safari</p>
-                                        <p class="mb15">
-                                            <span class="fa fa-check text-success pr5"></span> firefox</p>
-                                        <p class="mb15">
-                                            <span class="fa fa-check text-success pr5"></span> chrome</p>
+                                        <div class="section row">
+                                            <button type="submit" class="button btn-primary" style="width: 100%; letter-spacing: 5px;">登录</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <!-- end .form-body section -->
-                            <div class="panel-footer clearfix p10 ph15">
-                                <button type="submit" class="button btn-primary mr10 pull-right">登录</button>
-                                #*<label class="switch block switch-primary pull-left input-align mt10">
-                                    <input type="checkbox" name="remember" id="remember">
-                                    <label for="remember" data-on="是" data-off="否"></label>
-                                    <span>一周内免登录</span>
-                                </label>*#
-                            </div>
-                            <!-- end .form-footer section -->
                         </form>
                     </div>
                 </div>
