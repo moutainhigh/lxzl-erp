@@ -1,9 +1,11 @@
 package com.lxzl.erp.dataaccess.dao.mysql.peerDeploymentOrder;
 
+import com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialBulkDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
-import com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialBulkDO;import org.apache.ibatis.annotations.Param;
-import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -13,4 +15,8 @@ public interface PeerDeploymentOrderMaterialBulkMapper extends BaseMysqlDAO<Peer
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
+
+    Integer findPeerDeploymentOrderMaterialBulkCountByParams(@Param("maps")Map<String, Object> maps);
+
+	List<PeerDeploymentOrderMaterialBulkDO> findPeerDeploymentOrderMaterialBulkByParams(@Param("maps")Map<String, Object> maps);
 }

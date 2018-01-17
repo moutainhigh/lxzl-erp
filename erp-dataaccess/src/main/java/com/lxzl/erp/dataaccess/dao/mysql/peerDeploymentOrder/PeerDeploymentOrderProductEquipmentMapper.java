@@ -15,4 +15,8 @@ public interface PeerDeploymentOrderProductEquipmentMapper extends BaseMysqlDAO<
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	Integer saveList(List<PeerDeploymentOrderProductEquipmentDO> peerDeploymentOrderProductEquipmentDOList);
+
+	Integer findPeerDeploymentOrderProductEquipmentCountByParams(@Param("maps")Map<String, Object> maps);
+
+	List<PeerDeploymentOrderProductEquipmentDO> findPeerDeploymentOrderProductEquipmentByParams(@Param("maps")Map<String, Object> maps);
 }

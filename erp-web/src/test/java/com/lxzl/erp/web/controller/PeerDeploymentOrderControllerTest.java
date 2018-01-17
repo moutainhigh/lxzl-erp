@@ -5,6 +5,8 @@ import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.DeliveryMode;
 import com.lxzl.erp.common.constant.PeerDeploymentOrderRentType;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderCommitParam;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialBulkQueryGroup;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderProductEquipmentQueryGroup;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrder;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderConsignInfo;
@@ -213,6 +215,22 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO0317201801162");
 
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/detailPeerDeploymentOrder",peerDeploymentOrder);
+    }
+
+    @Test
+    public void detailPeerDeploymentOrderProductEquipment() throws Exception {
+        PeerDeploymentOrderProductEquipmentQueryGroup peerDeploymentOrderProductEquipmentQueryGroup = new PeerDeploymentOrderProductEquipmentQueryGroup();
+        peerDeploymentOrderProductEquipmentQueryGroup.setPeerDeploymentOrderProductId(153);
+
+        TestResult testResult = getJsonTestResult("/peerDeploymentOrder/detailPeerDeploymentOrderProductEquipment",peerDeploymentOrderProductEquipmentQueryGroup);
+    }
+
+    @Test
+    public void detailPeerDeploymentOrderMaterialBulk() throws Exception {
+        PeerDeploymentOrderMaterialBulkQueryGroup peerDeploymentOrderMaterialBulkQueryGroup = new PeerDeploymentOrderMaterialBulkQueryGroup();
+        peerDeploymentOrderMaterialBulkQueryGroup.setPeerDeploymentOrderMaterialId(130);
+
+        TestResult testResult = getJsonTestResult("/peerDeploymentOrder/detailPeerDeploymentOrderMaterialBulk",peerDeploymentOrderMaterialBulkQueryGroup);
     }
 
 

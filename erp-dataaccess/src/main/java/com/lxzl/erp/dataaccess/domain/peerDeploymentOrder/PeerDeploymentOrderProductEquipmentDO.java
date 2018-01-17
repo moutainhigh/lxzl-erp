@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.peerDeploymentOrder;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
+
 import java.util.Date;
 
 
@@ -15,6 +17,26 @@ public class PeerDeploymentOrderProductEquipmentDO  extends BaseDO {
 	private Date returnTime;
 	private Integer dataStatus;
 	private String remark;
+
+	@Transient
+	private Integer productId; //商品ID
+	@Transient
+	private String productName; //商品名称
+	@Transient
+	private Integer currentWarehouseId; //当前仓库ID
+	@Transient
+	private String currentWarehouseName; //当前仓库名称
+	@Transient
+	private Integer ownerWarehouseId; //所属仓库ID
+	@Transient
+	private String ownerWarehouseName; //所处仓库名称
+	@Transient
+	private Integer skuId; //SKUID
+	@Transient
+	private String skuName; //SKU名称
+	@Transient
+	private Integer equipmentStatus; //设备状态
+
 
 	public Integer getId(){
 		return id;
@@ -82,4 +104,75 @@ public class PeerDeploymentOrderProductEquipmentDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public Integer getProductId() {
+		return productId;
+	}
+
+	public void setProductId(Integer productId) {
+		this.productId = productId;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public Integer getCurrentWarehouseId() {
+		return currentWarehouseId;
+	}
+
+	public void setCurrentWarehouseId(Integer currentWarehouseId) {
+		this.currentWarehouseId = currentWarehouseId;
+	}
+
+	public String getCurrentWarehouseName() {
+		return currentWarehouseName;
+	}
+
+	public void setCurrentWarehouseName(String currentWarehouseName) {
+		this.currentWarehouseName = currentWarehouseName;
+	}
+
+	public Integer getOwnerWarehouseId() {
+		return ownerWarehouseId;
+	}
+
+	public void setOwnerWarehouseId(Integer ownerWarehouseId) {
+		this.ownerWarehouseId = ownerWarehouseId;
+	}
+
+	public String getOwnerWarehouseName() {
+		return ownerWarehouseName;
+	}
+
+	public void setOwnerWarehouseName(String ownerWarehouseName) {
+		this.ownerWarehouseName = ownerWarehouseName;
+	}
+
+	public Integer getSkuId() {
+		return skuId;
+	}
+
+	public void setSkuId(Integer skuId) {
+		this.skuId = skuId;
+	}
+
+	public String getSkuName() {
+		return skuName;
+	}
+
+	public void setSkuName(String skuName) {
+		this.skuName = skuName;
+	}
+
+	public Integer getEquipmentStatus() {
+		return equipmentStatus;
+	}
+
+	public void setEquipmentStatus(Integer equipmentStatus) {
+		this.equipmentStatus = equipmentStatus;
+	}
 }

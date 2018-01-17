@@ -3,8 +3,12 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderCommitParam;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialBulkQueryGroup;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderProductEquipmentQueryGroup;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrder;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderMaterialBulk;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderProductEquipment;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
@@ -98,7 +102,7 @@ public class PeerDeploymentOrderController extends BaseController {
     }
 
     /**
-     * 同行调拨单详情列表
+     * 同行调拨单详情显示
      */
     @RequestMapping(value = "detailPeerDeploymentOrder", method = RequestMethod.POST)
     public Result detailPeerDeploymentOrder(@RequestBody @Validated(IdGroup.class) PeerDeploymentOrder peerDeploymentOrder, BindingResult validResult) {
@@ -106,4 +110,31 @@ public class PeerDeploymentOrderController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    /**
+     * 确认退回
+     */
+    @RequestMapping(value = "endPeerDeploymentOrderOut", method = RequestMethod.POST)
+    public Result endPeerDeploymentOrderOut(@RequestBody @Validated(IdGroup.class) PeerDeploymentOrder peerDeploymentOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.endPeerDeploymentOrderOut(peerDeploymentOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+
+    /**
+     * 同行调拨单商品详情列表
+     */
+    @RequestMapping(value = "detailPeerDeploymentOrderProductEquipment", method = RequestMethod.POST)
+    public Result detailPeerDeploymentOrderProductEquipment(@RequestBody @Validated(IdGroup.class) PeerDeploymentOrderProductEquipmentQueryGroup peerDeploymentOrderProductEquipmentQueryGroup, BindingResult validResult) {
+        ServiceResult<String, Page<PeerDeploymentOrderProductEquipment>> serviceResult = peerDeploymentOrderService.detailPeerDeploymentOrderProductEquipment(peerDeploymentOrderProductEquipmentQueryGroup);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 同行调拨单散料详情列表
+     */
+    @RequestMapping(value = "detailPeerDeploymentOrderMaterialBulk", method = RequestMethod.POST)
+    public Result detailPeerDeploymentOrderMaterialBulk(@RequestBody @Validated(IdGroup.class) PeerDeploymentOrderMaterialBulkQueryGroup peerDeploymentOrderMaterialBulkQueryGroup, BindingResult validResult) {
+        ServiceResult<String, Page<PeerDeploymentOrderMaterialBulk>> serviceResult = peerDeploymentOrderService.detailPeerDeploymentOrderMaterialBulk(peerDeploymentOrderMaterialBulkQueryGroup);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }

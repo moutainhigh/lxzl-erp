@@ -6,8 +6,12 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.material.pojo.MaterialInStorage;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderCommitParam;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialBulkQueryGroup;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderProductEquipmentQueryGroup;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrder;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderMaterialBulk;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderProductEquipment;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
@@ -425,6 +429,28 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
     }
 
     @Override
+    public ServiceResult<String, String> endPeerDeploymentOrderOut(PeerDeploymentOrder peerDeploymentOrder) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+
+        PeerDeploymentOrderDO peerDeploymentOrderDO = peerDeploymentOrderMapper.findByNo(peerDeploymentOrder.getPeerDeploymentOrderNo());
+        if (peerDeploymentOrderDO == null){
+            result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_NOT_EXISTS);
+            return result;
+        }
+
+        if (!PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_PROCESSING_OUT.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())){
+            result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_NOT_EXISTS);
+            return result;
+        }
+        //todo 还没有做完
+
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
+        return result;
+    }
+
+    @Override
     public ServiceResult<String, Page<PeerDeploymentOrder>> page(PeerDeploymentOrderQueryParam peerDeploymentOrderQueryParam) {
         ServiceResult<String, Page<PeerDeploymentOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(peerDeploymentOrderQueryParam.getPageNo(), peerDeploymentOrderQueryParam.getPageSize());
@@ -450,11 +476,56 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         ServiceResult<String, PeerDeploymentOrder> result = new ServiceResult<>();
 
         PeerDeploymentOrderDO peerDeploymentOrderDO = peerDeploymentOrderMapper.findDetailByNo(peerDeploymentOrder.getPeerDeploymentOrderNo());
+        if (peerDeploymentOrderDO == null){
+            result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_NOT_EXISTS);
+            return result;
+        }
 
         PeerDeploymentOrder dbPeerDeploymentOrder = ConverterUtil.convert(peerDeploymentOrderDO, PeerDeploymentOrder.class);
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(dbPeerDeploymentOrder);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Page<PeerDeploymentOrderProductEquipment>> detailPeerDeploymentOrderProductEquipment(PeerDeploymentOrderProductEquipmentQueryGroup peerDeploymentOrderProductEquipmentQueryGroup) {
+        ServiceResult<String, Page<PeerDeploymentOrderProductEquipment>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(peerDeploymentOrderProductEquipmentQueryGroup.getPageNo(), peerDeploymentOrderProductEquipmentQueryGroup.getPageSize());
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("peerDeploymentOrderProductEquipmentQueryGroup", peerDeploymentOrderProductEquipmentQueryGroup);
+
+        Integer totalCount = peerDeploymentOrderProductEquipmentMapper.findPeerDeploymentOrderProductEquipmentCountByParams(maps);
+        List<PeerDeploymentOrderProductEquipmentDO> peerDeploymentOrderProductEquipmentDOList = peerDeploymentOrderProductEquipmentMapper.findPeerDeploymentOrderProductEquipmentByParams(maps);
+        List<PeerDeploymentOrderProductEquipment>  peerDeploymentOrderProductEquipmentList = ConverterUtil.convertList(peerDeploymentOrderProductEquipmentDOList, PeerDeploymentOrderProductEquipment.class);
+        Page<PeerDeploymentOrderProductEquipment> page = new Page<>(peerDeploymentOrderProductEquipmentList, totalCount, peerDeploymentOrderProductEquipmentQueryGroup.getPageNo(), peerDeploymentOrderProductEquipmentQueryGroup.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+
+    }
+
+    @Override
+    public ServiceResult<String, Page<PeerDeploymentOrderMaterialBulk>> detailPeerDeploymentOrderMaterialBulk(PeerDeploymentOrderMaterialBulkQueryGroup peerDeploymentOrderMaterialBulkQueryGroup) {
+        ServiceResult<String, Page<PeerDeploymentOrderMaterialBulk>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(peerDeploymentOrderMaterialBulkQueryGroup.getPageNo(), peerDeploymentOrderMaterialBulkQueryGroup.getPageSize());
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("peerDeploymentOrderMaterialBulkQueryGroup", peerDeploymentOrderMaterialBulkQueryGroup);
+
+        Integer totalCount = peerDeploymentOrderMaterialBulkMapper.findPeerDeploymentOrderMaterialBulkCountByParams(maps);
+        List<PeerDeploymentOrderMaterialBulkDO> peerDeploymentOrderMaterialBulkDOList = peerDeploymentOrderMaterialBulkMapper.findPeerDeploymentOrderMaterialBulkByParams(maps);
+        List<PeerDeploymentOrderMaterialBulk> peerDeploymentOrderMaterialBulkList = ConverterUtil.convertList(peerDeploymentOrderMaterialBulkDOList, PeerDeploymentOrderMaterialBulk.class);
+        Page<PeerDeploymentOrderMaterialBulk> page = new Page<>(peerDeploymentOrderMaterialBulkList, totalCount, peerDeploymentOrderMaterialBulkQueryGroup.getPageNo(), peerDeploymentOrderMaterialBulkQueryGroup.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
         return result;
     }
 
