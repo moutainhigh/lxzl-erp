@@ -24,6 +24,13 @@
             .rightPanelTitle .erp{font-size: 24px; font-weight: bold;}
             .rightPanelTitle .cut{font-size: 21px;}
             .rightPanelTitle .text{font-size: 21px;}
+
+            :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+                color: #999; opacity: 1; }
+            ::-moz-placeholder { /* Mozilla Firefox 19+ */
+                color: #999; opacity: 1; }
+            input:-ms-input-placeholder { color: #999; opacity: 1; }
+            input::-webkit-input-placeholder { color: #999; opacity: 1; }
         </style>
     </head>
     <body class="external-page sb-l-c sb-r-c loginPage">
