@@ -23,16 +23,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group field">
-                    <label class="col-md-3 control-label">仓库</label>
-                    <div class="col-md-9">
-                        <div class="input-group bringContainer">
-                            <input type="hidden" name="warehouseId" />
-                            <input type="text" id="warehouseName" name="warehouseName" bringFiled="warehouseName" class="form-control required" readonly placeholder="请选择仓库" />
-                            <span class="input-group-addon cursor chooseWarehouseId" id="chooseWarehouseId"><i class="fa fa-search mr5"></i>选择</span>
-                        </div>
-                    </div>
-                </div>
+##                <div class="form-group field">
+##                    <label class="col-md-3 control-label">仓库</label>
+##                    <div class="col-md-9">
+##                        <div class="input-group bringContainer">
+##                            <input type="hidden" name="warehouseId" />
+##                            <input type="text" id="warehouseName" name="warehouseName" bringFiled="warehouseName" class="form-control required" readonly placeholder="请选择仓库" />
+##                            <span class="input-group-addon cursor chooseWarehouseId" id="chooseWarehouseId"><i class="fa fa-search mr5"></i>选择</span>
+##                        </div>
+##                    </div>
+##                </div>
                 <div class="form-group field">
                     <label class="col-md-3 control-label">备注</label>
                     <div class="col-md-9">
