@@ -17,4 +17,9 @@ public class OrderPayMode {
      * 先用后付
      */
     public static final Integer PAY_MODE_PAY_AFTER = 2;
+
+    /**
+     * 首付百分比
+     */
+    public static final Integer PAY_MODE_PAY_BEFORE_PERCENT = 3;
 }

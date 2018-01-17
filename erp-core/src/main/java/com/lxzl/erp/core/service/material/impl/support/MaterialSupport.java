@@ -19,16 +19,16 @@ public class MaterialSupport {
     @Autowired
     private MaterialMapper materialMapper;
 
-    public String operateMaterialStock(Integer materialId, Integer stock) {
+    public String operateMaterialStock(Integer materialId, Integer opStock) {
         Date currentTime = new Date();
         MaterialDO materialDO = materialMapper.findById(materialId);
         if (materialDO == null) {
             return ErrorCode.MATERIAL_NOT_EXISTS;
         }
-        if (materialDO.getStock() < stock) {
+        if (opStock < 0 && materialDO.getStock() < Math.abs(opStock)) {
             return ErrorCode.STOCK_NOT_ENOUGH;
         }
-        materialDO.setStock(materialDO.getStock() - stock);
+        materialDO.setStock(materialDO.getStock() + opStock);
         materialDO.setUpdateTime(currentTime);
         materialMapper.update(materialDO);
         return ErrorCode.SUCCESS;

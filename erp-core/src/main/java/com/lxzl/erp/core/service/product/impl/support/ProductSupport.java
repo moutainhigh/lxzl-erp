@@ -27,10 +27,10 @@ public class ProductSupport {
         if (productSkuDO == null) {
             return ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS;
         }
-        if (productSkuDO.getStock() < opStock) {
+        if (opStock < 0 && productSkuDO.getStock() < Math.abs(opStock)) {
             return ErrorCode.STOCK_NOT_ENOUGH;
         }
-        productSkuDO.setStock(productSkuDO.getStock() - opStock);
+        productSkuDO.setStock(productSkuDO.getStock() + opStock);
         productSkuDO.setUpdateTime(currentTime);
         productSkuMapper.update(productSkuDO);
         return ErrorCode.SUCCESS;

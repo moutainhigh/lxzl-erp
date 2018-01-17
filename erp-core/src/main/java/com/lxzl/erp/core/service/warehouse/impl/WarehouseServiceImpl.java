@@ -20,6 +20,8 @@ import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.material.impl.support.MaterialSupport;
+import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
@@ -45,6 +47,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.*;
 
@@ -66,6 +69,9 @@ public class WarehouseServiceImpl implements WarehouseService {
     private ProductSkuMapper productSkuMapper;
 
     @Autowired
+    private ProductSupport productSupport;
+
+    @Autowired
     private StockOrderMapper stockOrderMapper;
 
     @Autowired
@@ -85,6 +91,9 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Autowired
     private MaterialMapper materialMapper;
+
+    @Autowired
+    private MaterialSupport materialSupport;
 
     @Autowired
     private UserSupport userSupport;
@@ -355,8 +364,8 @@ public class WarehouseServiceImpl implements WarehouseService {
 
         // 初始化计数器
         ProductInStockCounter productInStockCounter = new ProductInStockCounter();
-        productInStockCounter.setProductEquipmentCount(0);
-        productInStockCounter.setBulkMaterialCount(0);
+        productInStockCounter.setProductEquipmentCount(1);
+        productInStockCounter.setBulkMaterialCount(1);
 
         // 目前支持采购，转移入库，同行调拨入库
         if (StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE.equals(causeType)|| StockCauseType.STOCK_CAUSE_TYPE_TRANSFER_ORDER.equals(causeType)
@@ -364,21 +373,23 @@ public class WarehouseServiceImpl implements WarehouseService {
             if (CollectionUtil.isNotEmpty(productInStorageList)) {
                 for (ProductInStorage productInStorage : productInStorageList) {
                     saveProductEquipment(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, productInStorage, currentTime, productInStockCounter);
-                    ProductSkuDO productSkuDO = productSkuMapper.findById(productInStorage.getProductSkuId());
-                    productSkuDO.setStock(productSkuDO.getStock() + productInStorage.getProductCount());
-                    productSkuDO.setUpdateUser(loginUser.getUserId().toString());
-                    productSkuDO.setUpdateTime(currentTime);
-                    productSkuMapper.update(productSkuDO);
+                    String operateSkuStockResult = productSupport.operateSkuStock(productInStorage.getProductSkuId(), productInStorage.getProductCount());
+                    if (!ErrorCode.SUCCESS.equals(operateSkuStockResult)) {
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        result.setErrorCode(operateSkuStockResult);
+                        return result;
+                    }
                 }
             }
             if (CollectionUtil.isNotEmpty(materialInStorageList)) {
                 for (MaterialInStorage materialInStorage : materialInStorageList) {
                     saveBulkMaterial(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, materialInStorage, currentTime, productInStockCounter);
-                    MaterialDO materialDO = materialMapper.findById(materialInStorage.getMaterialId());
-                    materialDO.setStock(materialDO.getStock() + materialInStorage.getMaterialCount());
-                    materialDO.setUpdateUser(loginUser.getUserId().toString());
-                    materialDO.setUpdateTime(currentTime);
-                    materialMapper.update(materialDO);
+                    String operateMaterialStockResult = materialSupport.operateMaterialStock(materialInStorage.getMaterialId(), materialInStorage.getMaterialCount());
+                    if (!ErrorCode.SUCCESS.equals(operateMaterialStockResult)) {
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        result.setErrorCode(operateMaterialStockResult);
+                        return result;
+                    }
                 }
             }
         } else {

@@ -111,7 +111,9 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         if (CollectionUtil.isNotEmpty(deploymentOrderProductDOList)) {
             for (DeploymentOrderProductDO deploymentOrderProductDO : deploymentOrderProductDOList) {
                 String productRecordKey = deploymentOrderProductDO.getDeploymentProductSkuId() + "-" + deploymentOrderProductDO.getIsNew();
-                if (dbDeploymentOrderProductDOMap.get(productRecordKey) != null) {
+                DeploymentOrderProductDO dbDeploymentOrderProductDO = dbDeploymentOrderProductDOMap.get(productRecordKey);
+                if (dbDeploymentOrderProductDO != null) {
+                    deploymentOrderProductDO.setId(dbDeploymentOrderProductDO.getId());
                     updateDeploymentOrderProductDOMap.put(productRecordKey, deploymentOrderProductDO);
                     dbDeploymentOrderProductDOMap.remove(productRecordKey);
                 } else {
