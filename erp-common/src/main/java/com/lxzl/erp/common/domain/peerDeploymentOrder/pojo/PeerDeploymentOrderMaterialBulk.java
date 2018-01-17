@@ -2,6 +2,8 @@ package com.lxzl.erp.common.domain.peerDeploymentOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePO;
+
+import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -21,6 +23,20 @@ public class PeerDeploymentOrderMaterialBulk extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+
+
+	private String bulkMaterialName; //散料名称
+	private String brandName; //品牌
+	private Integer bulkMaterialType; //散料类型
+	private String materialNo; // 配件编号
+	private Integer currentWarehouseId; //当前仓库ID
+	private String currentWarehouseName;//当前仓库名称
+	private Integer ownerWarehouseId; //所属仓库ID
+	private String ownerWarehouseName; //所属仓库名称
+	private Double materialCapacityValue; //面料大小
+	private BigDecimal bulkMaterialPrice; //散料价值
+	private String currentEquipmentNo; //当前设备编号
+	private Integer bulkMaterialStatus; //散料状态
 
 
 	public Integer getPeerDeploymentOrderMaterialBulkId(){
@@ -119,4 +135,99 @@ public class PeerDeploymentOrderMaterialBulk extends BasePO {
 		this.updateUser = updateUser;
 	}
 
+	public String getBulkMaterialName() {
+		return bulkMaterialName;
+	}
+
+	public void setBulkMaterialName(String bulkMaterialName) {
+		this.bulkMaterialName = bulkMaterialName;
+	}
+
+	public String getBrandName() {
+		return brandName;
+	}
+
+	public void setBrandName(String brandName) {
+		this.brandName = brandName;
+	}
+
+	public Integer getBulkMaterialType() {
+		return bulkMaterialType;
+	}
+
+	public void setBulkMaterialType(Integer bulkMaterialType) {
+		this.bulkMaterialType = bulkMaterialType;
+	}
+
+	public String getMaterialNo() {
+		return materialNo;
+	}
+
+	public void setMaterialNo(String materialNo) {
+		this.materialNo = materialNo;
+	}
+
+	public Integer getCurrentWarehouseId() {
+		return currentWarehouseId;
+	}
+
+	public void setCurrentWarehouseId(Integer currentWarehouseId) {
+		this.currentWarehouseId = currentWarehouseId;
+	}
+
+	public String getCurrentWarehouseName() {
+		return currentWarehouseName;
+	}
+
+	public void setCurrentWarehouseName(String currentWarehouseName) {
+		this.currentWarehouseName = currentWarehouseName;
+	}
+
+	public Integer getOwnerWarehouseId() {
+		return ownerWarehouseId;
+	}
+
+	public void setOwnerWarehouseId(Integer ownerWarehouseId) {
+		this.ownerWarehouseId = ownerWarehouseId;
+	}
+
+	public String getOwnerWarehouseName() {
+		return ownerWarehouseName;
+	}
+
+	public void setOwnerWarehouseName(String ownerWarehouseName) {
+		this.ownerWarehouseName = ownerWarehouseName;
+	}
+
+	public Double getMaterialCapacityValue() {
+		return materialCapacityValue;
+	}
+
+	public void setMaterialCapacityValue(Double materialCapacityValue) {
+		this.materialCapacityValue = materialCapacityValue;
+	}
+
+	public BigDecimal getBulkMaterialPrice() {
+		return bulkMaterialPrice;
+	}
+
+	public void setBulkMaterialPrice(BigDecimal bulkMaterialPrice) {
+		this.bulkMaterialPrice = bulkMaterialPrice;
+	}
+
+	public String getCurrentEquipmentNo() {
+		return currentEquipmentNo;
+	}
+
+	public void setCurrentEquipmentNo(String currentEquipmentNo) {
+		this.currentEquipmentNo = currentEquipmentNo;
+	}
+
+	public Integer getBulkMaterialStatus() {
+		return bulkMaterialStatus;
+	}
+
+	public void setBulkMaterialStatus(Integer bulkMaterialStatus) {
+		this.bulkMaterialStatus = bulkMaterialStatus;
+	}
 }

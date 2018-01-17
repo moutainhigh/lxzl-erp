@@ -17,5 +17,5 @@ public interface PeerDeploymentOrderProductMapper extends BaseMysqlDAO<PeerDeplo
 	//todo
 	Integer saveList(@Param("peerDeploymentOrderProductDOList") List<PeerDeploymentOrderProductDO> peerDeploymentOrderProductDOList);
 	//todo
-	PeerDeploymentOrderProductDO findByPeerDeploymentOrderNoAndSkuId(@Param("peerDeploymentOrderNo") String deploymentOrderNo, @Param("skuId") Integer skuId);
+	PeerDeploymentOrderProductDO findByPeerDeploymentOrderNoAndSkuIdAndIsNew(@Param("peerDeploymentOrderNo") String deploymentOrderNo, @Param("productSkuId") Integer productSkuId ,@Param("isNew") Integer isNew);
 }

@@ -5,6 +5,8 @@ import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.DeliveryMode;
 import com.lxzl.erp.common.constant.PeerDeploymentOrderRentType;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderCommitParam;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialBulkQueryGroup;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderProductEquipmentQueryGroup;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrder;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderConsignInfo;
@@ -55,10 +57,10 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         peerDeploymentOrderProduct.setRemark("kai创建同行调拨单商品测试");
 
         PeerDeploymentOrderProduct peerDeploymentOrderProduct2 = new PeerDeploymentOrderProduct();
-        peerDeploymentOrderProduct2.setProductSkuId(92);
+        peerDeploymentOrderProduct2.setProductSkuId(40);
         peerDeploymentOrderProduct2.setProductSkuCount(1);
         peerDeploymentOrderProduct2.setProductUnitAmount(new BigDecimal(20));
-        peerDeploymentOrderProduct2.setIsNew(1);
+        peerDeploymentOrderProduct2.setIsNew(0);
         peerDeploymentOrderProduct2.setRemark("kai创建同行调拨单商品测试");
 
         peerDeploymentOrderProductList.add(peerDeploymentOrderProduct);
@@ -86,12 +88,12 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
 
         PeerDeploymentOrderConsignInfo peerDeploymentOrderConsignInfo = new PeerDeploymentOrderConsignInfo();
 
-        peerDeploymentOrderConsignInfo.setContactName("kai");
-        peerDeploymentOrderConsignInfo.setContactPhone("12345678900");
-        peerDeploymentOrderConsignInfo.setProvince(19);
-        peerDeploymentOrderConsignInfo.setCity(202);
-        peerDeploymentOrderConsignInfo.setDistrict(1956);
-        peerDeploymentOrderConsignInfo.setAddress("鬼屋");
+//        peerDeploymentOrderConsignInfo.setContactName("kai");
+//        peerDeploymentOrderConsignInfo.setContactPhone("12345678900");
+//        peerDeploymentOrderConsignInfo.setProvince(19);
+//        peerDeploymentOrderConsignInfo.setCity(202);
+//        peerDeploymentOrderConsignInfo.setDistrict(1956);
+//        peerDeploymentOrderConsignInfo.setAddress("鬼屋");
 
         peerDeploymentOrder.setPeerDeploymentOrderConsignInfo(peerDeploymentOrderConsignInfo);
 
@@ -106,8 +108,8 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
     public void updatePeerDeploymentOrderTest() throws Exception {
         PeerDeploymentOrder peerDeploymentOrder = new PeerDeploymentOrder();
 
-        peerDeploymentOrder.setPeerDeploymentOrderId(9000041);
-        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO0317201801162");
+        peerDeploymentOrder.setPeerDeploymentOrderId(9000044);
+        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO-0317-20180117-0005");
 
         peerDeploymentOrder.setPeerId(2);
 
@@ -126,14 +128,14 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         List<PeerDeploymentOrderProduct> peerDeploymentOrderProductList = new ArrayList<>();
         PeerDeploymentOrderProduct peerDeploymentOrderProduct = new PeerDeploymentOrderProduct();
         peerDeploymentOrderProduct.setProductSkuId(92);
-        peerDeploymentOrderProduct.setProductSkuCount(2);
-        peerDeploymentOrderProduct.setProductUnitAmount(new BigDecimal(50));
+        peerDeploymentOrderProduct.setProductSkuCount(1);
+        peerDeploymentOrderProduct.setProductUnitAmount(new BigDecimal(60));
         peerDeploymentOrderProduct.setIsNew(1);
         peerDeploymentOrderProduct.setRemark("kai修改同行调拨单商品测试");
 
         PeerDeploymentOrderProduct peerDeploymentOrderProduct2 = new PeerDeploymentOrderProduct();
-        peerDeploymentOrderProduct2.setProductSkuId(40);
-        peerDeploymentOrderProduct2.setProductSkuCount(5);
+        peerDeploymentOrderProduct2.setProductSkuId(92);
+        peerDeploymentOrderProduct2.setProductSkuCount(1);
         peerDeploymentOrderProduct2.setProductUnitAmount(new BigDecimal(20));
         peerDeploymentOrderProduct2.setIsNew(0);
         peerDeploymentOrderProduct2.setRemark("kai修改同行调拨单商品测试");
@@ -144,16 +146,16 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
 
         List<PeerDeploymentOrderMaterial> peerDeploymentOrderMaterialList = new ArrayList<>();
         PeerDeploymentOrderMaterial peerDeploymentOrderMaterial = new PeerDeploymentOrderMaterial();
-        peerDeploymentOrderMaterial.setMaterialId(24);
-        peerDeploymentOrderMaterial.setProductMaterialCount(10);
+        peerDeploymentOrderMaterial.setMaterialId(1);
+        peerDeploymentOrderMaterial.setProductMaterialCount(2);
         peerDeploymentOrderMaterial.setMaterialUnitAmount(new BigDecimal(10));
         peerDeploymentOrderMaterial.setIsNew(1);
         peerDeploymentOrderMaterial.setRemark("kai修改同行调拨单配件测试");
 
         PeerDeploymentOrderMaterial peerDeploymentOrderMaterial2 = new PeerDeploymentOrderMaterial();
-        peerDeploymentOrderMaterial2.setMaterialId(24);
-        peerDeploymentOrderMaterial2.setProductMaterialCount(5);
-        peerDeploymentOrderMaterial2.setMaterialUnitAmount(new BigDecimal(20));
+        peerDeploymentOrderMaterial2.setMaterialId(1);
+        peerDeploymentOrderMaterial2.setProductMaterialCount(2);
+        peerDeploymentOrderMaterial2.setMaterialUnitAmount(new BigDecimal(15));
         peerDeploymentOrderMaterial2.setIsNew(0);
         peerDeploymentOrderMaterial2.setRemark("kai修改同行调拨单配件测试");
 
@@ -175,12 +177,26 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/update", peerDeploymentOrder);
     }
 
+    /**
+     * Test提交同行调拨单
+     * @throws Exception
+     */
     @Test
-    public void commitPeerDeploymentOrderTest() throws Exception {
+    public void commitPeerDeploymentOrderIntoTest() throws Exception {
         PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam = new PeerDeploymentOrderCommitParam();
-        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO0317201801163");
+        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0317-20180117-0005");
         peerDeploymentOrderCommitParam.setVerifyUserId(500006);
-        TestResult testResult = getJsonTestResult("/peerDeploymentOrder/commit",peerDeploymentOrderCommitParam);
+        TestResult testResult = getJsonTestResult("/peerDeploymentOrder/commitPeerDeploymentOrderInto",peerDeploymentOrderCommitParam);
+    }
+    /**
+     * Test确认收货同行调拨单
+     * @throws Exception
+     */
+    @Test
+    public void confirmPeerDeploymentOrderIntoTest() throws Exception {
+        PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam = new PeerDeploymentOrderCommitParam();
+        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0317-20180117-0005");
+        TestResult testResult = getJsonTestResult("/peerDeploymentOrder/confirmPeerDeploymentOrderInto",peerDeploymentOrderCommitParam);
     }
 
     @Test
@@ -199,6 +215,22 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO0317201801162");
 
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/detailPeerDeploymentOrder",peerDeploymentOrder);
+    }
+
+    @Test
+    public void detailPeerDeploymentOrderProductEquipment() throws Exception {
+        PeerDeploymentOrderProductEquipmentQueryGroup peerDeploymentOrderProductEquipmentQueryGroup = new PeerDeploymentOrderProductEquipmentQueryGroup();
+        peerDeploymentOrderProductEquipmentQueryGroup.setPeerDeploymentOrderProductId(153);
+
+        TestResult testResult = getJsonTestResult("/peerDeploymentOrder/detailPeerDeploymentOrderProductEquipment",peerDeploymentOrderProductEquipmentQueryGroup);
+    }
+
+    @Test
+    public void detailPeerDeploymentOrderMaterialBulk() throws Exception {
+        PeerDeploymentOrderMaterialBulkQueryGroup peerDeploymentOrderMaterialBulkQueryGroup = new PeerDeploymentOrderMaterialBulkQueryGroup();
+        peerDeploymentOrderMaterialBulkQueryGroup.setPeerDeploymentOrderMaterialId(130);
+
+        TestResult testResult = getJsonTestResult("/peerDeploymentOrder/detailPeerDeploymentOrderMaterialBulk",peerDeploymentOrderMaterialBulkQueryGroup);
     }
 
 

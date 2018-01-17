@@ -19,7 +19,9 @@ import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
+import com.lxzl.erp.core.service.material.impl.support.MaterialSupport;
 import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.transferOrder.TransferOrderService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
@@ -28,13 +30,11 @@ import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.transferOrder.*;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderBulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
@@ -813,8 +813,8 @@ public class TransferOrderServiceImpl implements TransferOrderService {
 
         ServiceResult<String, Boolean> needVerifyResult = new ServiceResult<>();
 
+        //转入只能状态为初始化
         if (TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO.equals(transferOrderDO.getTransferOrderMode())){
-            //转入只能状态为初始化
             if (!TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT.equals(transferOrderDO.getTransferOrderStatus())) {
                 serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_INTO_STATUS_NEED_INIT);
                 return serviceResult;
@@ -899,7 +899,11 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                     return false;
                 }
             } else {
-                transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT);
+                if (TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO.equals(transferOrderDO.getTransferOrderMode())){
+                    transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT);
+                }else{
+                    transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_CHOICE_GOODS);
+                }
             }
             transferOrderDO.setUpdateTime(new Date());
             transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -1151,6 +1155,16 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             List<TransferOrderMaterialDO> dbTransferOrderMaterialDOList = transferOrderDO.getTransferOrderMaterialDOList();
 
             if (CollectionUtil.isNotEmpty(dbTransferOrderProductDOList)){
+
+                //调用商品设备出库的方法
+                for (TransferOrderProductDO transferOrderProductDO : dbTransferOrderProductDOList){
+                    String operateSkuStockResult = productSupport.operateSkuStock(transferOrderProductDO.getProductSkuId(),transferOrderProductDO.getProductCount());
+                    if (!ErrorCode.SUCCESS.equals(operateSkuStockResult)){
+                        serviceResult.setErrorCode(operateSkuStockResult);
+                        return serviceResult;
+                    }
+                }
+
                 List<BulkMaterialDO> bulkMaterialDOList = new ArrayList<>();
                 //获取转移单商品设备单
                 List<TransferOrderProductEquipmentDO> transferOrderProductEquipmentDOList = transferOrderProductEquipmentMapper.findByTransferOrderId(transferOrderDO.getId());
@@ -1174,6 +1188,16 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             }
 
             if (CollectionUtil.isNotEmpty(dbTransferOrderMaterialDOList)){
+
+                //调用散料料出库的方法
+                for (TransferOrderMaterialDO transferOrderMaterialDO : dbTransferOrderMaterialDOList){
+                    String operateMaterialStockResult = materialSupport.operateMaterialStock(transferOrderMaterialDO.getMaterialId(),transferOrderMaterialDO.getMaterialCount());
+                    if (!ErrorCode.SUCCESS.equals(operateMaterialStockResult)){
+                        serviceResult.setErrorCode(operateMaterialStockResult);
+                        return serviceResult;
+                    }
+                }
+
                 List<BulkMaterialDO> bulkMaterialDOList = new ArrayList<>();
                 //获取转移单配件散料单
                 List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList = transferOrderMaterialBulkMapper.findByTransferOrderId(transferOrderDO.getId());
@@ -1347,15 +1371,13 @@ public class TransferOrderServiceImpl implements TransferOrderService {
     private BulkMaterialSupport bulkMaterialSupport;
 
     @Autowired
-    private ProductMapper productMapper;
-
-    @Autowired
-    private WarehouseMapper warehouseMapper;
-
-    @Autowired
     private MaterialService materialService;
 
+    @Autowired
+    private ProductSupport productSupport;
 
+    @Autowired
+    private MaterialSupport materialSupport;
 
 }
 

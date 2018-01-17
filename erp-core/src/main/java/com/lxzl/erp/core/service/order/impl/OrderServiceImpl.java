@@ -1579,7 +1579,9 @@ public class OrderServiceImpl implements OrderService {
             for (OrderProductDO orderProductDO : orderProductDOList) {
                 // "productSkuId", "rentType", "rentTimeLength", "isNewProduct"
                 String productRecordKey = orderProductDO.getProductSkuId() + "-" + orderProductDO.getRentType() + "-" + orderProductDO.getRentTimeLength() + "-" + orderProductDO.getIsNewProduct();
-                if (dbOrderProductDOMap.get(productRecordKey) != null) {
+                OrderProductDO dbOrderProductDO = dbOrderProductDOMap.get(productRecordKey);
+                if (dbOrderProductDO != null) {
+                    orderProductDO.setId(dbOrderProductDO.getId());
                     updateOrderProductDOMap.put(productRecordKey, orderProductDO);
                     dbOrderProductDOMap.remove(productRecordKey);
                 } else {

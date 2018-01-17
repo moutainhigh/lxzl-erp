@@ -117,8 +117,8 @@
 		</foreach>
 	</insert>
 
-	<select id="findByPeerDeploymentOrderNoAndSkuId" resultMap="PeerDeploymentOrderProductDO">
+	<select id="findByPeerDeploymentOrderNoAndSkuIdAndIsNew" resultMap="PeerDeploymentOrderProductDO">
 		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order_product epdop
-		WHERE epdop.peer_deployment_order_no = #{peerDeploymentOrderNo, jdbcType=VARCHAR} AND epdop.product_sku_id = #{skuId, jdbcType=INTEGER} AND epdop.data_status = 1
+		WHERE epdop.peer_deployment_order_no = #{peerDeploymentOrderNo, jdbcType=VARCHAR} AND epdop.product_sku_id = #{productSkuId, jdbcType=INTEGER} AND epdop.is_new = #{isNew, jdbcType=INTEGER} AND epdop.data_status = 1
 	</select>
 </mapper>

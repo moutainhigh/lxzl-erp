@@ -16,6 +16,18 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="bulk_material_name" jdbcType="VARCHAR" property="bulkMaterialName" />
+		<result column="current_warehouse_id" jdbcType="INTEGER" property="currentWarehouseId" />
+		<result column="current_warehouse_name" jdbcType="INTEGER" property="currentWarehouseName" />
+		<result column="owner_warehouse_id" jdbcType="INTEGER" property="ownerWarehouseId" />
+		<result column="owner_warehouse_name" jdbcType="INTEGER" property="ownerWarehouseName" />
+		<result column="bulk_material_status" jdbcType="INTEGER" property="bulkMaterialStatus" />
+		<result column="bulk_material_type" jdbcType="INTEGER" property="bulkMaterialType" />
+		<result column="material_capacity_value" jdbcType="DOUBLE" property="materialCapacityValue" />
+		<result column="bulk_material_price" jdbcType="DECIMAL" property="bulkMaterialPrice" />
+		<result column="material_no" jdbcType="VARCHAR" property="materialNo" />
+		<result column="brand_name" jdbcType="VARCHAR" property="brandName" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -94,5 +106,42 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialBulkDO">
 		UPDATE erp_peer_deployment_order_material_bulk <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="findPeerDeploymentOrderMaterialBulkCountByParams" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(id) FROM erp_peer_deployment_order_material_bulk epdomb
+		<where>
+			<if test="maps.peerDeploymentOrderMaterialBulkQueryGroup.peerDeploymentOrderMaterialId != null">
+				and epdomb.peer_deployment_order_material_id = #{maps.peerDeploymentOrderMaterialBulkQueryGroup.peerDeploymentOrderMaterialId,jdbcType=INTEGER}
+			</if>
+			<if test="true">
+				and epdomb.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="findPeerDeploymentOrderMaterialBulkByParams" resultMap="PeerDeploymentOrderMaterialBulkDO" parameterType="map">
+		SELECT <include refid="column_List"/>,ebm.bulk_material_name AS bulk_material_name,ebm.current_warehouse_id AS current_warehouse_id,
+		ebm.owner_warehouse_id AS owner_warehouse_id,ebm.bulk_material_status AS bulk_material_status,ebm.bulk_material_type AS bulk_material_type,
+		ebm.material_capacity_value AS material_capacity_value,ebm.bulk_material_price AS bulk_material_price,ebm.material_no AS material_no,
+		ew1.warehouse_name AS current_warehouse_name,ew2.warehouse_name AS owner_warehouse_name,eb.brand_name AS brand_name
+		FROM (
+		SELECT <include refid="column_List"/>FROM erp_peer_deployment_order_material_bulk epdomb
+		<where>
+			<if test="maps.peerDeploymentOrderMaterialBulkQueryGroup.peerDeploymentOrderMaterialId != null">
+				and epdomb.peer_deployment_order_material_id = #{maps.peerDeploymentOrderMaterialBulkQueryGroup.peerDeploymentOrderMaterialId,jdbcType=INTEGER}
+			</if>
+			<if test="true">
+				and epdomb.data_status = 1
+			</if>
+		</where>
+		order by epdomb.create_time desc
+		LIMIT #{maps.start},#{maps.pageSize}
+		) epdomb
+		left join erp_bulk_material ebm ON ebm.bulk_material_no = epdomb.bulk_material_no and ebm.data_status = 1
+		left join erp_brand eb ON eb.id = ebm.brand_id AND eb.data_status =1
+		left join erp_warehouse ew1 ON ew1.id = ebm.current_warehouse_id AND ew1.data_status =1
+		left join erp_warehouse ew2 ON ew2.id = ebm.owner_warehouse_id AND ew2.data_status =1
+		order by epdomb.create_time desc
+	</select>
 
 </mapper>
