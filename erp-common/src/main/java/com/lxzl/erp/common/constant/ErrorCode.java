@@ -338,7 +338,7 @@ public class ErrorCode {
     public static final String PURCHASE_APPLY_CAN_NOT_CONTINUE = "J400105";
     public static final String PURCHASE_APPLY_CAN_NOT_END = "J400106";
     public static final String PURCHASE_NOT_HAVE_APPLY = "J400107";
-    public static final String ORDER_RENT_LENGTH_MORE_THAN_90 = "订单租期不允许";
+    public static final String ORDER_RENT_LENGTH_MORE_THAN_90 = "J400108";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -687,6 +687,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_APPLY_CAN_NOT_CONTINUE, "此采购申请单不能恢复暂停");
         MAP.put(PURCHASE_APPLY_CAN_NOT_END, "此采购申请单不能结束");
         MAP.put(PURCHASE_NOT_HAVE_APPLY, "采购计划中没有【%s】");
+        MAP.put(ORDER_RENT_LENGTH_MORE_THAN_90, "订单租期不允许");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");

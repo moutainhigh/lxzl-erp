@@ -378,7 +378,7 @@ public class OrderServiceImpl implements OrderService {
                 }
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())
                         && orderProductDO.getRentTimeLength() < CommonConstant.ORDER_NEED_VERIFY_DAYS
-                        && OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderProductDO.getPayMode())) {
+                        && (OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderProductDO.getPayMode()) || OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderProductDO.getPayMode()))) {
                     isNeedVerify = true;
                     break;
                 }
@@ -418,7 +418,7 @@ public class OrderServiceImpl implements OrderService {
 
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())
                         && orderMaterialDO.getRentTimeLength() < CommonConstant.ORDER_NEED_VERIFY_DAYS
-                        && OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderMaterialDO.getPayMode())) {
+                        && OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderMaterialDO.getPayMode()) || OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderMaterialDO.getPayMode())) {
                     isNeedVerify = true;
                     break;
                 }
