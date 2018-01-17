@@ -687,7 +687,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_APPLY_CAN_NOT_CONTINUE, "此采购申请单不能恢复暂停");
         MAP.put(PURCHASE_APPLY_CAN_NOT_END, "此采购申请单不能结束");
         MAP.put(PURCHASE_NOT_HAVE_APPLY, "采购计划中没有【%s】");
-        MAP.put(ORDER_RENT_LENGTH_MORE_THAN_90, "J400108");
+        MAP.put(ORDER_RENT_LENGTH_MORE_THAN_90, "订单租期不允许");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
