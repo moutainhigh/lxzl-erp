@@ -24,6 +24,7 @@ public class PeerDeploymentOrder extends BasePO {
     private String peerDeploymentOrderNo;   //同行调配单编号
     @NotNull(message = ErrorCode.PEER_ID_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
     private Integer peerId;   //同行ID
+    @NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_START_TIME_NOT_NULL ,groups = {AddGroup.class,UpdateGroup.class})
     private Date rentStartTime;   //起租时间
     @NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_RENT_TYPE_NOT_NULL ,groups = {AddGroup.class,UpdateGroup.class})
     private Integer rentType;   //租赁方式，1按天租，2按月租
@@ -32,11 +33,12 @@ public class PeerDeploymentOrder extends BasePO {
     @NotNull(message = ErrorCode.WAREHOUSE_ID_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
     private Integer warehouseId;   //目标仓库ID
     private Integer warehousePositionId;   //目标仓位ID
+    @NotNull(message = ErrorCode.WAREHOUSE_ID_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
     private Integer deliveryMode;   //发货方式，1快递，2自提
     @Min(value = 0, message = ErrorCode.PEER_DEPLOYMENT_ORDER_TAX_RATE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
     @Max(value = 1, message = ErrorCode.PEER_DEPLOYMENT_ORDER_TAX_RATE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
     private Double taxRate;   //税率
-    private Integer peerDeploymentOrderStatus;   //调配单状态，0未提交，4审批中，8处理中，16确认收货，20退回审批中，24退回处理中，28已退回，32取消
+    private Integer peerDeploymentOrderStatus;   //调配单状态，0未提交，4审批中，8处理中，12确认收货，16退回审批中，20退回处理中，24已退回，28取消
     private Integer totalProductCount;   //商品总数
     private BigDecimal totalProductAmount;   //商品总价
     private Integer totalMaterialCount;   //配件总数

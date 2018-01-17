@@ -465,7 +465,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", repairOrderEquipmentQueryParam);
+        maps.put("repairOrderEquipmentQueryParam", repairOrderEquipmentQueryParam);
 
         Integer totalCount = repairOrderEquipmentMapper.findRepairOrderEquipmentCountByParams(maps);
         List<RepairOrderEquipmentDO> repairOrderEquipmentDOList = repairOrderEquipmentMapper.findRepairOrderEquipmentByParams(maps);
@@ -485,7 +485,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", repairOrderBulkMaterialQueryParam);
+        maps.put("repairOrderBulkMaterialQueryParam", repairOrderBulkMaterialQueryParam);
 
         Integer totalCount = repairOrderBulkMaterialMapper.findRepairOrderBulkMaterialCountByParams(maps);
         List<RepairOrderBulkMaterialDO> repairOrderBulkMaterialDOList = repairOrderBulkMaterialMapper.findRepairOrderBulkMaterialByParams(maps);

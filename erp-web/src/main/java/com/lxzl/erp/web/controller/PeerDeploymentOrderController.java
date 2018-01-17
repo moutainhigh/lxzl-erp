@@ -81,6 +81,16 @@ public class PeerDeploymentOrderController extends BaseController {
     }
 
     /**
+     * 提交同行调拨单归还审核
+     */
+    @RequestMapping(value = "commitPeerDeploymentOrderReturn", method = RequestMethod.POST)
+    public Result commitPeerDeploymentOrderReturn(@RequestBody @Validated(ExtendGroup.class) PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.commitPeerDeploymentOrderReturn(peerDeploymentOrderCommitParam.getPeerDeploymentOrderNo(),peerDeploymentOrderCommitParam.getVerifyUserId(),peerDeploymentOrderCommitParam.getRemark());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+
+    /**
      * 确认收货同行调配单
      * @param peerDeploymentOrderCommitParam
      * @param validResult
@@ -89,6 +99,18 @@ public class PeerDeploymentOrderController extends BaseController {
     @RequestMapping(value = "confirmPeerDeploymentOrderInto", method = RequestMethod.POST)
     public Result confirmPeerDeploymentOrderInto(@RequestBody PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = peerDeploymentOrderService.confirmPeerDeploymentOrderInto(peerDeploymentOrderCommitParam.getPeerDeploymentOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 取消确认收货
+     * @param peerDeploymentOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "cancel", method = RequestMethod.POST)
+    public Result cancel(@RequestBody @Validated(IdGroup.class)PeerDeploymentOrder peerDeploymentOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.cancelPeerDeploymentOrder(peerDeploymentOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

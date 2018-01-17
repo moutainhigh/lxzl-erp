@@ -811,6 +811,11 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             return serviceResult;
         }
 
+        if (CollectionUtil.isEmpty(transferOrderDO.getTransferOrderProductDOList()) && CollectionUtil.isEmpty(transferOrderDO.getTransferOrderMaterialDOList())){
+            serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_PRODUCT_AND_MATERIAL_NOT_NULL);
+            return serviceResult;
+        }
+
         ServiceResult<String, Boolean> needVerifyResult = new ServiceResult<>();
 
         //转入只能状态为初始化
@@ -825,10 +830,6 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             //转出单是备货中的才能进行提交审核操作
             if (!TransferOrderStatus.TRANSFER_ORDER_STATUS_CHOICE_GOODS.equals(transferOrderDO.getTransferOrderStatus())) {
                 serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_OUT_STATUS_NEED_CHOICE_GOODS);
-                return serviceResult;
-            }
-            if (CollectionUtil.isEmpty(transferOrderDO.getTransferOrderProductDOList()) && CollectionUtil.isEmpty(transferOrderDO.getTransferOrderMaterialDOList())){
-                serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_OUT_NOT_NULL);
                 return serviceResult;
             }
             //提交转出的转移单，判断是否需要审核

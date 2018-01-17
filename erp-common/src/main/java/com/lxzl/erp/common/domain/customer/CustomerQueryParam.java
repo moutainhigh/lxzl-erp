@@ -14,6 +14,15 @@ public class CustomerQueryParam implements Serializable {
     private String customerNo;
     private Date createStartTime;
     private Date createEndTime;
+    private String customerName;
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
 
     public Date getCreateStartTime() {
         return createStartTime;

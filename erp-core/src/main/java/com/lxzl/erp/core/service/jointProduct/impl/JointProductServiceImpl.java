@@ -357,7 +357,7 @@ public class JointProductServiceImpl implements JointProductService {
         HashMap<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("queryParam", jointProductQueryParam);
+        maps.put("jointProductQueryParam", jointProductQueryParam);
         Integer jointProductCount = jointProductMapper.findJointProductCountByParam(maps);
         List<JointProductDO> jointProductDOList = jointProductMapper.findJointProductByParams(maps);
         List<JointProduct> jointProductList = ConverterUtil.convertList(jointProductDOList, JointProduct.class);

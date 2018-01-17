@@ -281,26 +281,26 @@
 		FROM erp_customer_company ecc
 		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1
 		<where>
-			<if test="maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
-				and ecc.customer_no LIKE CONCAT('%','${maps.queryParam.customerNo}','%' )
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != ''">
+				and ecc.customer_no LIKE CONCAT('%','${maps.customerCompanyQueryParam.customerNo}','%' )
 			</if>
-			<if test="maps.queryParam.connectRealName != null &amp;&amp; maps.queryParam.connectRealName != ''">
-				and ecc.connect_real_name LIKE CONCAT('%','${maps.queryParam.connectRealName}','%' )
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.connectRealName != null &amp;&amp; maps.customerCompanyQueryParam.connectRealName != ''">
+				and ecc.connect_real_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.connectRealName}','%' )
 			</if>
-			<if test="maps.queryParam.connectPhone != null &amp;&amp; maps.queryParam.connectPhone != ''">
-				and ecc.connect_phone LIKE CONCAT('%','${maps.queryParam.connectPhone}','%' )
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.connectPhone != null &amp;&amp; maps.customerCompanyQueryParam.connectPhone != ''">
+				and ecc.connect_phone LIKE CONCAT('%','${maps.customerCompanyQueryParam.connectPhone}','%' )
 			</if>
-			<if test="maps.queryParam.companyName != null &amp;&amp; maps.queryParam.companyName != ''">
-				AND ecc.company_name LIKE CONCAT('%','${maps.queryParam.companyName}','%' )
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.companyName != null &amp;&amp; maps.customerCompanyQueryParam.companyName != ''">
+				AND ecc.company_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.companyName}','%' )
 			</if>
-			<if test="maps.queryParam.province != null">
-				AND ecc.province = #{maps.queryParam.province, jdbcType=INTEGER}
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.province != null">
+				AND ecc.province = #{maps.customerCompanyQueryParam.province, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.city != null">
-				AND ecc.city = #{maps.queryParam.city, jdbcType=INTEGER}
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.city != null">
+				AND ecc.city = #{maps.customerCompanyQueryParam.city, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.district != null">
-				AND ecc.district = #{maps.queryParam.district, jdbcType=INTEGER}
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.district != null">
+				AND ecc.district = #{maps.customerCompanyQueryParam.district, jdbcType=INTEGER}
 			</if>
 			<if test="true">
 				AND ecc.data_status = 1
@@ -321,26 +321,26 @@
 		FROM erp_customer_company ecc
 		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1
 		<where>
-			<if test="maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
-				and ecc.customer_no LIKE CONCAT('%','${maps.queryParam.customerNo}','%' )
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != ''">
+				and ecc.customer_no LIKE CONCAT('%','${maps.customerCompanyQueryParam.customerNo}','%' )
 			</if>
-			<if test="maps.queryParam.connectRealName != null &amp;&amp; maps.queryParam.connectRealName != ''">
-				and ecc.connect_real_name LIKE CONCAT('%','${maps.queryParam.connectRealName}','%' )
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.connectRealName != null &amp;&amp; maps.customerCompanyQueryParam.connectRealName != ''">
+				and ecc.connect_real_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.connectRealName}','%' )
 			</if>
-			<if test="maps.queryParam.connectPhone != null &amp;&amp; maps.queryParam.connectPhone != ''">
-				and ecc.connect_phone LIKE CONCAT('%','${maps.queryParam.connectPhone}','%' )
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.connectPhone != null &amp;&amp; maps.customerCompanyQueryParam.connectPhone != ''">
+				and ecc.connect_phone LIKE CONCAT('%','${maps.customerCompanyQueryParam.connectPhone}','%' )
 			</if>
-			<if test="maps.queryParam.companyName != null &amp;&amp; maps.queryParam.companyName != ''">
-				AND ecc.company_name LIKE CONCAT('%','${maps.queryParam.companyName}','%' )
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.companyName != null &amp;&amp; maps.customerCompanyQueryParam.companyName != ''">
+				AND ecc.company_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.companyName}','%' )
 			</if>
-			<if test="maps.queryParam.province != null">
-				AND ecc.province = #{maps.queryParam.province, jdbcType=INTEGER}
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.province != null">
+				AND ecc.province = #{maps.customerCompanyQueryParam.province, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.city != null">
-				AND ecc.city = #{maps.queryParam.city, jdbcType=INTEGER}
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.city != null">
+				AND ecc.city = #{maps.customerCompanyQueryParam.city, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.district != null">
-				AND ecc.district = #{maps.queryParam.district, jdbcType=INTEGER}
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.district != null">
+				AND ecc.district = #{maps.customerCompanyQueryParam.district, jdbcType=INTEGER}
 			</if>
 			<if test="true">
 				AND ecc.data_status = 1
@@ -363,32 +363,32 @@
 		SELECT COUNT(*)
 		FROM erp_customer ec LEFT JOIN erp_customer_person ecp ON ec.id=ecp.customer_id AND ecp.data_status=1
 		<where>
-			<if test="maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
-				AND ec.customer_no LIKE CONCAT('%','${maps.queryParam.customerNo}','%' )
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerNo != null &amp;&amp; maps.customerPersonQueryParam.customerNo != ''">
+				AND ec.customer_no LIKE CONCAT('%','${maps.customerPersonQueryParam.customerNo}','%' )
 			</if>
-			<if test="maps.queryParam.realName != null &amp;&amp; maps.queryParam.realName != null">
-				AND ecp.real_name LIKE CONCAT('%','${maps.queryParam.realName}','%' )
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.realName != null &amp;&amp; maps.customerPersonQueryParam.realName != null">
+				AND ecp.real_name LIKE CONCAT('%','${maps.customerPersonQueryParam.realName}','%' )
 			</if>
-			<if test="maps.queryParam.phone != null &amp;&amp; maps.queryParam.phone != ''">
-				AND ecp.phone LIKE CONCAT('%','${maps.queryParam.phone}','%' )
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.phone != null &amp;&amp; maps.customerPersonQueryParam.phone != ''">
+				AND ecp.phone LIKE CONCAT('%','${maps.customerPersonQueryParam.phone}','%' )
 			</if>
-			<if test="maps.queryParam.province != null">
-				AND ecp.province = #{maps.queryParam.province, jdbcType=INTEGER}
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.province != null">
+				AND ecp.province = #{maps.customerPersonQueryParam.province, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.city != null">
-				AND ecp.city = #{maps.queryParam.city, jdbcType=INTEGER}
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.city != null">
+				AND ecp.city = #{maps.customerPersonQueryParam.city, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.district != null">
-				AND ecp.district = #{maps.queryParam.district, jdbcType=INTEGER}
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.district != null">
+				AND ecp.district = #{maps.customerPersonQueryParam.district, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.personNo != null &amp;&amp; maps.queryParam.personNo != ''">
-				AND ecp.person_no LIKE CONCAT('%','${maps.queryParam.personNo}','%' )
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.personNo != null &amp;&amp; maps.customerPersonQueryParam.personNo != ''">
+				AND ecp.person_no LIKE CONCAT('%','${maps.customerPersonQueryParam.personNo}','%' )
 			</if>
-			<if test="maps.queryParam.connectRealName != null &amp;&amp; maps.queryParam.connectRealName != ''">
-				AND ecp.connect_real_name LIKE CONCAT('%','${maps.queryParam.connectRealName}','%' )
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.connectRealName != null &amp;&amp; maps.customerPersonQueryParam.connectRealName != ''">
+				AND ecp.connect_real_name LIKE CONCAT('%','${maps.customerPersonQueryParam.connectRealName}','%' )
 			</if>
-			<if test="maps.queryParam.connectPhone != null &amp;&amp; maps.queryParam.connectPhone != ''">
-				AND ecp.connect_phone LIKE CONCAT('%','${maps.queryParam.connectPhone}','%' )
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.connectPhone != null &amp;&amp; maps.customerPersonQueryParam.connectPhone != ''">
+				AND ecp.connect_phone LIKE CONCAT('%','${maps.customerPersonQueryParam.connectPhone}','%' )
 			</if>
 			<if test="true">
 				AND ec.data_status = 1 AND ec.customer_type=2
@@ -407,32 +407,32 @@
 		LEFT JOIN erp_area_city eac ON ecp.city=eac.id AND eac.data_status=1
 		LEFT JOIN erp_area_district ead ON ecp.district=ead.id AND ead.data_status=1
 		<where>
-			<if test="maps.queryParam.customerNo != null &amp;&amp; maps.queryParam.customerNo != ''">
-				AND ec.customer_no LIKE CONCAT('%','${maps.queryParam.customerNo}','%' )
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerNo != null &amp;&amp; maps.customerPersonQueryParam.customerNo != ''">
+				AND ec.customer_no LIKE CONCAT('%','${maps.customerPersonQueryParam.customerNo}','%' )
 			</if>
-			<if test="maps.queryParam.realName != null &amp;&amp; maps.queryParam.realName != null">
-				AND ecp.real_name LIKE CONCAT('%','${maps.queryParam.realName}','%' )
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.realName != null &amp;&amp; maps.customerPersonQueryParam.realName != null">
+				AND ecp.real_name LIKE CONCAT('%','${maps.customerPersonQueryParam.realName}','%' )
 			</if>
-			<if test="maps.queryParam.phone != null &amp;&amp; maps.queryParam.phone != ''">
-				AND ecp.phone LIKE CONCAT('%','${maps.queryParam.phone}','%' )
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.phone != null &amp;&amp; maps.customerPersonQueryParam.phone != ''">
+				AND ecp.phone LIKE CONCAT('%','${maps.customerPersonQueryParam.phone}','%' )
 			</if>
-			<if test="maps.queryParam.province != null">
-				AND ecp.province = #{maps.queryParam.province, jdbcType=INTEGER}
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.province != null">
+				AND ecp.province = #{maps.customerPersonQueryParam.province, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.city != null">
-				AND ecp.city = #{maps.queryParam.city, jdbcType=INTEGER}
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.city != null">
+				AND ecp.city = #{maps.customerPersonQueryParam.city, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.district != null">
-				AND ecp.district = #{maps.queryParam.district, jdbcType=INTEGER}
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.district != null">
+				AND ecp.district = #{maps.customerPersonQueryParam.district, jdbcType=INTEGER}
 			</if>
-			<if test="maps.queryParam.personNo != null &amp;&amp; maps.queryParam.personNo != ''">
-				AND ecp.person_no LIKE CONCAT('%','${maps.queryParam.personNo}','%' )
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.personNo != null &amp;&amp; maps.customerPersonQueryParam.personNo != ''">
+				AND ecp.person_no LIKE CONCAT('%','${maps.customerPersonQueryParam.personNo}','%' )
 			</if>
-			<if test="maps.queryParam.connectRealName != null &amp;&amp; maps.queryParam.connectRealName != ''">
-				AND ecp.connect_real_name LIKE CONCAT('%','${maps.queryParam.connectRealName}','%' )
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.connectRealName != null &amp;&amp; maps.customerPersonQueryParam.connectRealName != ''">
+				AND ecp.connect_real_name LIKE CONCAT('%','${maps.customerPersonQueryParam.connectRealName}','%' )
 			</if>
-			<if test="maps.queryParam.connectPhone != null &amp;&amp; maps.queryParam.connectPhone != ''">
-				AND ecp.connect_phone LIKE CONCAT('%','${maps.queryParam.connectPhone}','%' )
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.connectPhone != null &amp;&amp; maps.customerPersonQueryParam.connectPhone != ''">
+				AND ecp.connect_phone LIKE CONCAT('%','${maps.customerPersonQueryParam.connectPhone}','%' )
 			</if>
 			<if test="true">
 				AND ec.data_status = 1 AND ec.customer_type=2

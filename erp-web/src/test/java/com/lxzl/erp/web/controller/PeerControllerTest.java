@@ -31,9 +31,9 @@ public class PeerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updatePeer() throws Exception {
         Peer peer = new Peer();
-        peer.setPeerId(2);
-        peer.setPeerName("李四");
-        peer.setPeerCode("2222");
+        peer.setPeerNo("LXPEER099900003");
+        peer.setPeerName("hahah");
+        peer.setPeerCode("1111");
         peer.setProvince(11);
         peer.setCity(10);
         peer.setDistrict(9);
@@ -43,7 +43,8 @@ public class PeerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryDetail() throws Exception {
         Peer peer = new Peer();
-        peer.setPeerId(2);
+//        peer.setPeerId(2);
+        peer.setPeerNo("LXPEER099900003");
         TestResult result = getJsonTestResult("/peer/queryDetail", peer);
     }
 

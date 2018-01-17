@@ -35,8 +35,8 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(eromb.id) FROM erp_return_order_material_bulk eromb 
 		<where>
-			<if test="maps.queryParam.returnOrderMaterialId != null">
-				and eromb.return_order_material_id = #{maps.queryParam.returnOrderMaterialId, jdbcType=INTEGER}
+			<if test="maps.returnBulkPageParam != null &amp;&amp; maps.returnBulkPageParam.returnOrderMaterialId != null">
+				and eromb.return_order_material_id = #{maps.returnBulkPageParam.returnOrderMaterialId, jdbcType=INTEGER}
 			</if>
 			<if test="true">
 				AND eromb.data_status = 1
@@ -47,8 +47,8 @@
 	<select id="listPage" resultMap="ReturnOrderMaterialBulkDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_return_order_material_bulk eromb 
 		<where>
-			<if test="maps.queryParam.returnOrderMaterialId != null">
-				and eromb.return_order_material_id = #{maps.queryParam.returnOrderMaterialId, jdbcType=INTEGER}
+			<if test="maps.returnBulkPageParam != null &amp;&amp; maps.returnBulkPageParam.returnOrderMaterialId != null">
+				and eromb.return_order_material_id = #{maps.returnBulkPageParam.returnOrderMaterialId, jdbcType=INTEGER}
 			</if>
 			<if test="true">
 				AND eromb.data_status = 1

@@ -17,9 +17,9 @@ import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Peer extends BasePO {
-	@Min(value = 0, message = ErrorCode.COUNT_MORE_THAN_ZERO, groups = {UpdateGroup.class,IdGroup.class})
-	@NotNull(message = ErrorCode.PEER_ID_NOT_NULL,groups = {UpdateGroup.class, IdGroup.class})
+
 	private Integer peerId;   //唯一标识
+	@NotNull(message = ErrorCode.PEER_NOT_EXISTS,groups = {UpdateGroup.class, IdGroup.class})
 	private String peerNo;   //供应商编码
 	@NotNull(message = ErrorCode.PEER_NAME_NOT_NULL,groups = {AddGroup.class})
 	private String peerName;   //供应商名称
