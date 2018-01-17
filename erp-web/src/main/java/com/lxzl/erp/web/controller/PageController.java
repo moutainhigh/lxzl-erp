@@ -548,6 +548,10 @@ public class PageController extends BaseController {
     public String peerManageOrderEdit() {
         return "/peerManage/peerOrder/peerOrderEdit";
     }
+    @RequestMapping("/peer-supplier-modal/choose")
+    public String choosePeerSuppliserModal() {
+        return "/component/peer/choosePeerSupplierModal";
+    }
 
 
         //结算单
