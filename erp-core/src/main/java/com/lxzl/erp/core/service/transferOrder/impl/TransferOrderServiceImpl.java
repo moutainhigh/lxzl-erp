@@ -813,8 +813,8 @@ public class TransferOrderServiceImpl implements TransferOrderService {
 
         ServiceResult<String, Boolean> needVerifyResult = new ServiceResult<>();
 
+        //转入只能状态为初始化
         if (TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO.equals(transferOrderDO.getTransferOrderMode())){
-            //转入只能状态为初始化
             if (!TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT.equals(transferOrderDO.getTransferOrderStatus())) {
                 serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_INTO_STATUS_NEED_INIT);
                 return serviceResult;
@@ -899,7 +899,11 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                     return false;
                 }
             } else {
-                transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT);
+                if (TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO.equals(transferOrderDO.getTransferOrderMode())){
+                    transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT);
+                }else{
+                    transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_VERIFYING);
+                }
             }
             transferOrderDO.setUpdateTime(new Date());
             transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
