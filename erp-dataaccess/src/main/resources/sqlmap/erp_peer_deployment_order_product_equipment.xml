@@ -150,4 +150,10 @@
 		left join erp_warehouse ew2 ON ew2.id = epe.owner_warehouse_id AND ew2.data_status =1
 		order by epdope.create_time desc
 	</select>
+
+	<select id="findByPeerDeploymentOrderProductId" resultMap="PeerDeploymentOrderProductEquipmentDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order_product_equipment epdope WHERE
+		epdope.peer_deployment_order_id =  = #{peerDeploymentOrderId, jdbcType=INTEGER} AND epdope.data_status = 1
+
+	</select>
 </mapper>

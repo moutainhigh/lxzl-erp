@@ -77,18 +77,8 @@ public class PeerDeploymentOrderController extends BaseController {
     @RequestMapping(value = "commitPeerDeploymentOrderInto", method = RequestMethod.POST)
     public Result commitPeerDeploymentOrderInto(@RequestBody @Validated(ExtendGroup.class) PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = peerDeploymentOrderService.commitPeerDeploymentOrderInto(peerDeploymentOrderCommitParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        return resultGenerator.generate(serviceResult);
     }
-
-    /**
-     * 提交同行调拨单归还审核
-     */
-    @RequestMapping(value = "commitPeerDeploymentOrderReturn", method = RequestMethod.POST)
-    public Result commitPeerDeploymentOrderReturn(@RequestBody @Validated(ExtendGroup.class) PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.commitPeerDeploymentOrderReturn(peerDeploymentOrderCommitParam.getPeerDeploymentOrderNo(),peerDeploymentOrderCommitParam.getVerifyUserId(),peerDeploymentOrderCommitParam.getRemark());
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
-
 
     /**
      * 确认收货同行调配单
@@ -115,6 +105,24 @@ public class PeerDeploymentOrderController extends BaseController {
     }
 
     /**
+     * 提交同行调拨单归还审核
+     */
+    @RequestMapping(value = "commitPeerDeploymentOrderReturn", method = RequestMethod.POST)
+    public Result commitPeerDeploymentOrderOut(@RequestBody @Validated(ExtendGroup.class) PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.commitPeerDeploymentOrderOut(peerDeploymentOrderCommitParam.getPeerDeploymentOrderNo(),peerDeploymentOrderCommitParam.getVerifyUserId(),peerDeploymentOrderCommitParam.getRemark());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 确认退回
+     */
+    @RequestMapping(value = "endPeerDeploymentOrderOut", method = RequestMethod.POST)
+    public Result endPeerDeploymentOrderOut(@RequestBody @Validated(IdGroup.class) PeerDeploymentOrder peerDeploymentOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.endPeerDeploymentOrderOut(peerDeploymentOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
      * 同行调拨单分页显示
      */
     @RequestMapping(value = "page", method = RequestMethod.POST)
@@ -129,15 +137,6 @@ public class PeerDeploymentOrderController extends BaseController {
     @RequestMapping(value = "detailPeerDeploymentOrder", method = RequestMethod.POST)
     public Result detailPeerDeploymentOrder(@RequestBody @Validated(IdGroup.class) PeerDeploymentOrder peerDeploymentOrder, BindingResult validResult) {
         ServiceResult<String, PeerDeploymentOrder> serviceResult = peerDeploymentOrderService.detailPeerDeploymentOrder(peerDeploymentOrder);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
-
-    /**
-     * 确认退回
-     */
-    @RequestMapping(value = "endPeerDeploymentOrderOut", method = RequestMethod.POST)
-    public Result endPeerDeploymentOrderOut(@RequestBody @Validated(IdGroup.class) PeerDeploymentOrder peerDeploymentOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.endPeerDeploymentOrderOut(peerDeploymentOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

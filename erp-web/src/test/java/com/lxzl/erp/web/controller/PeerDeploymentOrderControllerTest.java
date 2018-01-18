@@ -60,14 +60,14 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
 
         PeerDeploymentOrderProduct peerDeploymentOrderProduct2 = new PeerDeploymentOrderProduct();
         peerDeploymentOrderProduct2.setProductSkuId(40);
-        peerDeploymentOrderProduct2.setProductSkuCount(1);
+        peerDeploymentOrderProduct2.setProductSkuCount(3);
         peerDeploymentOrderProduct2.setProductUnitAmount(new BigDecimal(20));
         peerDeploymentOrderProduct2.setIsNew(0);
         peerDeploymentOrderProduct2.setRemark("kai创建同行调拨单商品测试");
 
         peerDeploymentOrderProductList.add(peerDeploymentOrderProduct);
         peerDeploymentOrderProductList.add(peerDeploymentOrderProduct2);
-        peerDeploymentOrder.setPeerDeploymentOrderProductList(peerDeploymentOrderProductList);
+//        peerDeploymentOrder.setPeerDeploymentOrderProductList(peerDeploymentOrderProductList);
 
         List<PeerDeploymentOrderMaterial> peerDeploymentOrderMaterialList = new ArrayList<>();
         PeerDeploymentOrderMaterial peerDeploymentOrderMaterial = new PeerDeploymentOrderMaterial();
@@ -200,7 +200,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void confirmPeerDeploymentOrderIntoTest() throws Exception {
         PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam = new PeerDeploymentOrderCommitParam();
-        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0471-20180118-0014");
+        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0452-20180118-0013");
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/confirmPeerDeploymentOrderInto",peerDeploymentOrderCommitParam);
     }
 
@@ -210,6 +210,26 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         peerDeploymentOrderDO.setPeerDeploymentOrderNo("LXPDO-0317-20180117-0006");
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/cancel",peerDeploymentOrderDO);
     }
+
+    /**
+     * Test提交同行调拨单
+     * @throws Exception
+     */
+    @Test
+    public void commitPeerDeploymentOrderReturn() throws Exception {
+        PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam = new PeerDeploymentOrderCommitParam();
+        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0452-20180118-0013");
+        peerDeploymentOrderCommitParam.setVerifyUserId(500006);
+        TestResult testResult = getJsonTestResult("/peerDeploymentOrder/commitPeerDeploymentOrderReturn",peerDeploymentOrderCommitParam);
+    }
+
+    @Test
+    public void endPeerDeploymentOrderOut() throws Exception {
+        PeerDeploymentOrder peerDeploymentOrder = new PeerDeploymentOrder();
+        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO-0452-20180118-0013");
+        TestResult testResult = getJsonTestResult("/peerDeploymentOrder/endPeerDeploymentOrderOut",peerDeploymentOrder);
+    }
+
 
     @Test
     public void page() throws Exception {
@@ -224,7 +244,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailPeerDeploymentOrder() throws Exception {
         PeerDeploymentOrder peerDeploymentOrder = new PeerDeploymentOrder();
-        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO-0471-20180118-0011");
+        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO-0317-20180116-0004");
 
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/detailPeerDeploymentOrder",peerDeploymentOrder);
     }

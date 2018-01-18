@@ -32,6 +32,8 @@
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="confirm_time" jdbcType="TIMESTAMP" property="confirmTime" />
 
+		<result column="peer_no" jdbcType="VARCHAR" property="peerNo" />
+		<result column="warehouse_no" jdbcType="VARCHAR" property="warehouseNo" />
 		<result column="peer_name" jdbcType="VARCHAR" property="peerName" />
 		<result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
 		<collection property="peerDeploymentOrderProductDOList" resultMap="PeerDeploymentOrderProductDO" />
@@ -93,6 +95,8 @@
 		<result column="material_create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="material_update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="material_update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="material_no" jdbcType="VARCHAR" property="materialNo" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -285,7 +289,7 @@
 
 	<select id="findDetailByNo" resultMap="PeerDeploymentOrderDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> , <include refid="product_column_List"/>,<include refid="material_column_List"/>,<include refid="consign_column_List"/>
-		,ew.warehouse_name,ep.peer_name,eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name
+		,ew.warehouse_name,ew.warehouse_no,ep.peer_name,ep.peer_no,em.material_no,eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name
 		FROM(
 		select <include refid="column_List"/> from erp_peer_deployment_order epdo
 		where epdo.peer_deployment_order_no = #{peerDeploymentOrderNo, jdbcType=VARCHAR} and epdo.data_status = 1
@@ -298,6 +302,7 @@
 		LEFT JOIN erp_area_district ead ON ead.id = epdoci.district AND ead.data_status = 1
 		LEFT JOIN erp_warehouse ew ON ew.id = epdo.warehouse_id AND ew.data_status =1
 		LEFT JOIN erp_peer ep ON ep.id = epdo.peer_id AND ep.data_status =1
+		LEFT JOIN erp_material em ON em.id = epdom.material_id AND em.data_status = 1
 	</select>
 
 	<select id="findPeerDeploymentOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
@@ -340,7 +345,8 @@
 	</select>
 
 	<select id="findPeerDeploymentOrderByParams" resultMap="PeerDeploymentOrderDO" parameterType="map">
-		SELECT <include refid="column_List"/> , <include refid="product_column_List"/>, <include refid="material_column_List"/>,ew.warehouse_name,ep.peer_name
+		SELECT <include refid="column_List"/> , <include refid="product_column_List"/>, <include refid="material_column_List"/>,
+		ew.warehouse_name,ew.warehouse_no,ep.peer_name,ep.peer_no,em.material_no
 		FROM (
 		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order epdo
 		<where>
@@ -385,6 +391,7 @@
 		LEFT JOIN erp_peer_deployment_order_material epdom on epdom.peer_deployment_order_id = epdo.id and epdom.data_status=1
 		LEFT JOIN erp_warehouse ew ON ew.id = epdo.warehouse_id AND ew.data_status =1
 		LEFT JOIN erp_peer ep ON ep.id = epdo.peer_id AND ep.data_status =1
+		LEFT JOIN erp_material em ON em.id = epdom.material_id AND em.data_status = 1
 		order by epdo.create_time desc
 	</select>
 </mapper>

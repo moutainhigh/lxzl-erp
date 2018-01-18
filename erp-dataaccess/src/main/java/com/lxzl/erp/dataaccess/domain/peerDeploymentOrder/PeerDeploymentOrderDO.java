@@ -34,6 +34,8 @@ public class PeerDeploymentOrderDO  extends BaseDO {
 	private String remark;
 	private Date confirmTime;
 
+
+
 	@Transient
 	private List<PeerDeploymentOrderProductDO> peerDeploymentOrderProductDOList;
 	@Transient
@@ -45,6 +47,10 @@ public class PeerDeploymentOrderDO  extends BaseDO {
 	private String peerName;
 	@Transient
 	private String warehouseName;
+	@Transient
+	private String warehouseNo;   //仓库编号
+	@Transient
+	private String peerNo;   //同行供应商编码
 
 	public Integer getId(){
 		return id;
@@ -231,4 +237,20 @@ public class PeerDeploymentOrderDO  extends BaseDO {
 	public Date getConfirmTime() { return confirmTime; }
 
 	public void setConfirmTime(Date confirmTime) { this.confirmTime = confirmTime; }
+
+	public String getWarehouseNo() {
+		return warehouseNo;
+	}
+
+	public void setWarehouseNo(String warehouseNo) {
+		this.warehouseNo = warehouseNo;
+	}
+
+	public String getPeerNo() {
+		return peerNo;
+	}
+
+	public void setPeerNo(String peerNo) {
+		this.peerNo = peerNo;
+	}
 }

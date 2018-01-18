@@ -20,6 +20,8 @@ public class PeerDeploymentOrderMaterialDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
+	private String materialNo;   //配件编号
+
 	private List<PeerDeploymentOrderMaterialBulkDO> peerDeploymentOrderMaterialBulkDOList;
 
 	public Integer getId(){
@@ -107,4 +109,12 @@ public class PeerDeploymentOrderMaterialDO  extends BaseDO {
 	public List<PeerDeploymentOrderMaterialBulkDO> getPeerDeploymentOrderMaterialBulkDOList() { return peerDeploymentOrderMaterialBulkDOList; }
 
 	public void setPeerDeploymentOrderMaterialBulkDOList(List<PeerDeploymentOrderMaterialBulkDO> peerDeploymentOrderMaterialBulkDOList) { this.peerDeploymentOrderMaterialBulkDOList = peerDeploymentOrderMaterialBulkDOList; }
+
+	public String getMaterialNo() {
+		return materialNo;
+	}
+
+	public void setMaterialNo(String materialNo) {
+		this.materialNo = materialNo;
+	}
 }

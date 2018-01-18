@@ -8,7 +8,6 @@ import com.lxzl.erp.core.service.exclt.EXCLService;
 import com.lxzl.se.common.domain.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;

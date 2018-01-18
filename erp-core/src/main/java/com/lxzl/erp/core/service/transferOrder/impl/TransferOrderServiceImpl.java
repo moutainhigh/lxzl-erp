@@ -261,12 +261,16 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
 
-        //todo 判断是否是转出单
         TransferOrderDO transferOrderDO = transferOrderMapper.findDetailByNo(transferOrder.getTransferOrderNo());
         if (transferOrderDO == null){
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_NOT_EXISTS);
             return serviceResult;
         }
+        if (!TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_OUT.equals(transferOrderDO.getTransferOrderMode())){
+            serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_MODE_IS_NOT_OUT);
+            return serviceResult;
+        }
+
         if (transferOrderDO.getTransferOrderStatus() == null || !TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT.equals(transferOrderDO.getTransferOrderStatus())) {
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_STATUS_IS_ERROR);
             return serviceResult;
@@ -1159,6 +1163,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
 
                 //调用商品设备出库的方法
                 for (TransferOrderProductDO transferOrderProductDO : dbTransferOrderProductDOList){
+                    //todo 调用商品出库的接口出错
                     String operateSkuStockResult = productSupport.operateSkuStock(transferOrderProductDO.getProductSkuId(),transferOrderProductDO.getProductCount());
                     if (!ErrorCode.SUCCESS.equals(operateSkuStockResult)){
                         serviceResult.setErrorCode(operateSkuStockResult);

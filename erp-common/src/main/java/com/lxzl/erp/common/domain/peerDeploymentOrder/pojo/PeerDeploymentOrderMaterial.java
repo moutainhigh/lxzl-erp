@@ -22,10 +22,10 @@ public class PeerDeploymentOrderMaterial extends BasePO {
 	private Integer peerDeploymentOrderId;   //货物调拨单ID
 	private String peerDeploymentOrderNo;   //货物调拨单编号
 	private Integer materialId;   //货物调拨配件ID
-	@NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL,groups = {AddGroup.class, UpdateGroup.class})
-	private String materialNo;   //配件编号
 	@NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_UNIT_AMOUNT_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
 	private BigDecimal materialUnitAmount;   //配件单价
+	@NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL,groups = {AddGroup.class, UpdateGroup.class})
+	private String materialNo;   //配件编号
 	private BigDecimal materialAmount;   //配件总价格
 	@NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_COUNT_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
 	private Integer productMaterialCount;   //货物调拨配件数量
