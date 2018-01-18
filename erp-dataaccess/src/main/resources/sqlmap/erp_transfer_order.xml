@@ -206,7 +206,7 @@
 		FROM erp_transfer_order eto
 		<where>
 			<if test="maps.transferOrderQueryParam.transferOrderNo != null &amp;&amp; maps.transferOrderQueryParam.transferOrderNo != '' ">
-				and eto.transfer_order_no = #{maps.transferOrderQueryParam.transferOrderNo, jdbcType=VARCHAR}
+				and eto.transfer_order_no LIKE CONCAT('%','${maps.transferOrderQueryParam.transferOrderNo}','%' )
 			</if>
 			<if test="maps.transferOrderQueryParam.transferOrderName != null &amp;&amp; maps.transferOrderQueryParam.transferOrderName != '' ">
 				and eto.transfer_order_name LIKE CONCAT('%','${maps.transferOrderQueryParam.transferOrderName}','%' )
