@@ -901,7 +901,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             }
         }
         //判断配件数据校验
-        if (CollectionUtil.isNotEmpty(peerDeploymentOrder.getPeerDeploymentOrderProductList())) {
+        if (CollectionUtil.isNotEmpty(peerDeploymentOrder.getPeerDeploymentOrderMaterialList())) {
             for(PeerDeploymentOrderMaterial peerDeploymentOrderMaterial : peerDeploymentOrder.getPeerDeploymentOrderMaterialList()){
                 MaterialDO materialDO = materialMapper.findByNo(peerDeploymentOrderMaterial.getMaterialNo());
                 if(materialDO == null){
