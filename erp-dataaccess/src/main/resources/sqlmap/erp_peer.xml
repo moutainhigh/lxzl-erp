@@ -23,9 +23,9 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
-		<collection property="areaCityDO" resultMap="AreaCityDO" />
-		<collection property="areaDistrictDO" resultMap="AreaDistrictDO" />
-		<collection property="areaProvinceDO" resultMap="AreaProvinceDO" />
+		<result column="province_name" jdbcType="VARCHAR" property="provinceName" />
+		<result column="city_name" jdbcType="VARCHAR" property="cityName" />
+		<result column="district_name" jdbcType="VARCHAR" property="districtName" />
 	</resultMap>
 
 	<sql id="column_List">
