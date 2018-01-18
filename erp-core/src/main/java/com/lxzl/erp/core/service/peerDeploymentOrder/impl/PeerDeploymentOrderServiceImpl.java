@@ -60,6 +60,7 @@ import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mongo.config.PageQuery;
+import com.lxzl.se.dataaccess.mysql.source.interceptor.SqlLogInterceptor;
 import org.apache.ibatis.jdbc.Null;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,10 +91,10 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> createPeerDeploymentOrder(PeerDeploymentOrder peerDeploymentOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = userSupport.getCurrentUser();
+        String currentUserId = userSupport.getCurrentUserId().toString();
         Date currentTime = new Date();
 
         PeerDO peerDO = peerMapper.finByNo(peerDeploymentOrder.getPeerNo());
@@ -126,15 +127,15 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         peerDeploymentOrderDO.setExpectReturnTime(expectReturnTime);
         peerDeploymentOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         peerDeploymentOrderDO.setCreateTime(currentTime);
-        peerDeploymentOrderDO.setCreateUser(loginUser.getUserId().toString());
+        peerDeploymentOrderDO.setCreateUser(currentUserId);
         peerDeploymentOrderDO.setUpdateTime(currentTime);
-        peerDeploymentOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        peerDeploymentOrderDO.setUpdateUser(currentUserId);
         peerDeploymentOrderMapper.save(peerDeploymentOrderDO);
 
         //产品和配件和收货信息数据
-        savePeerDeploymentOrderProductInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderProductList(),PeerDeploymentOrderProductDO.class),peerDeploymentOrderDO.getPeerDeploymentOrderNo(),loginUser,currentTime);
-        savePeerDeploymentOrderMaterialInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderMaterialList(), PeerDeploymentOrderMaterialDO.class), peerDeploymentOrderDO.getPeerDeploymentOrderNo(),loginUser, currentTime);
-        savePeerDeploymentOrderConsignInfo(peerDeploymentOrderDO.getPeerId(), peerDeploymentOrderDO.getId(), loginUser, currentTime);
+        savePeerDeploymentOrderProductInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderProductList(),PeerDeploymentOrderProductDO.class),peerDeploymentOrderDO.getPeerDeploymentOrderNo(),currentUserId,currentTime);
+        savePeerDeploymentOrderMaterialInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderMaterialList(), PeerDeploymentOrderMaterialDO.class), peerDeploymentOrderDO.getPeerDeploymentOrderNo(),currentUserId, currentTime);
+        savePeerDeploymentOrderConsignInfo(peerDeploymentOrderDO.getPeerId(), peerDeploymentOrderDO.getId(), currentUserId, currentTime);
         //判断产品和配件 总数与总额
         PeerDeploymentOrderDO newestPeerDeploymentOrderDO = peerDeploymentOrderMapper.findByPeerDeploymentOrderNo(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
         for (PeerDeploymentOrderProductDO peerDeploymentOrderProductDO : newestPeerDeploymentOrderDO.getPeerDeploymentOrderProductDOList()) {
@@ -163,7 +164,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updatePeerDeploymentOrder(PeerDeploymentOrder peerDeploymentOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = userSupport.getCurrentUser();
+        String currentUserId = userSupport.getCurrentUserId().toString();
         Date currentTime = new Date();
 
         PeerDeploymentOrderDO peerDeploymentOrderDO = peerDeploymentOrderMapper.findByPeerDeploymentOrderNo(peerDeploymentOrder.getPeerDeploymentOrderNo());
@@ -202,13 +203,13 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         peerDeploymentOrderDO.setWarehouseId(warehouseDO.getId());
         peerDeploymentOrderDO.setExpectReturnTime(expectReturnTime);
         peerDeploymentOrderDO.setUpdateTime(currentTime);
-        peerDeploymentOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        peerDeploymentOrderDO.setUpdateUser(currentUserId);
         peerDeploymentOrderMapper.update(peerDeploymentOrderDO);
 
         //产品和配件和收货信息数据
-        savePeerDeploymentOrderProductInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderProductList(),PeerDeploymentOrderProductDO.class),peerDeploymentOrderDO.getPeerDeploymentOrderNo(),loginUser,currentTime);
-        savePeerDeploymentOrderMaterialInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderMaterialList(), PeerDeploymentOrderMaterialDO.class), peerDeploymentOrderDO.getPeerDeploymentOrderNo(),loginUser, currentTime);
-        savePeerDeploymentOrderConsignInfo(peerDeploymentOrderDO.getPeerId(), peerDeploymentOrderDO.getId(), loginUser, currentTime);
+        savePeerDeploymentOrderProductInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderProductList(),PeerDeploymentOrderProductDO.class),peerDeploymentOrderDO.getPeerDeploymentOrderNo(),currentUserId,currentTime);
+        savePeerDeploymentOrderMaterialInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderMaterialList(), PeerDeploymentOrderMaterialDO.class), peerDeploymentOrderDO.getPeerDeploymentOrderNo(),currentUserId, currentTime);
+        savePeerDeploymentOrderConsignInfo(peerDeploymentOrderDO.getPeerId(), peerDeploymentOrderDO.getId(), currentUserId, currentTime);
 
         //判断产品和配件 总数与总额
         PeerDeploymentOrderDO newestPeerDeploymentOrderDO = peerDeploymentOrderMapper.findByPeerDeploymentOrderNo(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
@@ -393,6 +394,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 peerDeploymentOrderProductEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
                 peerDeploymentOrderProductEquipmentDOList.add(peerDeploymentOrderProductEquipmentDO);
             }
+            SqlLogInterceptor.setExecuteSql("skip print peerDeploymentOrderProductEquipmentMapper.saveList  sql ......");
             peerDeploymentOrderProductEquipmentMapper.saveList(peerDeploymentOrderProductEquipmentDOList);
         }
 
@@ -417,6 +419,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                     peerDeploymentOrderMaterialBulkDOList.add(peerDeploymentOrderMaterialBulkDO);
                 }
             }
+            SqlLogInterceptor.setExecuteSql("skip print peerDeploymentOrderMaterialBulkMapper.saveList  sql ......");
             peerDeploymentOrderMaterialBulkMapper.saveList(peerDeploymentOrderMaterialBulkDOList);
         }
         //判断确认收货时间与预计归还时间修整
@@ -789,10 +792,10 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
      * 保存同行调拨单商品转入
      * @param peerDeploymentOrderProductDOList
      * @param peerDeploymentOrderNo
-     * @param loginUser
+     * @param currentUserId
      * @param currentTime
      */
-    private void savePeerDeploymentOrderProductInfo(List<PeerDeploymentOrderProductDO> peerDeploymentOrderProductDOList, String peerDeploymentOrderNo, User loginUser, Date currentTime) {
+    private void savePeerDeploymentOrderProductInfo(List<PeerDeploymentOrderProductDO> peerDeploymentOrderProductDOList, String peerDeploymentOrderNo, String currentUserId, Date currentTime) {
         Map<String, PeerDeploymentOrderProductDO> savePeerDeploymentOrderProductDOMap = new HashMap<>();
         Map<String, PeerDeploymentOrderProductDO> updatePeerDeploymentOrderProductDOMap = new HashMap<>();
         List<PeerDeploymentOrderProductDO> dbPeerDeploymentOrderProductDOList = peerDeploymentOrderProductMapper.findByPeerDeploymentOrderNo(peerDeploymentOrderNo);
@@ -826,12 +829,13 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 peerDeploymentOrderProductDO.setPeerDeploymentOrderId(peerDeploymentOrderDO.getId());
                 peerDeploymentOrderProductDO.setPeerDeploymentOrderNo(peerDeploymentOrderNo);
                 peerDeploymentOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                peerDeploymentOrderProductDO.setUpdateUser(loginUser.getUserId().toString());
-                peerDeploymentOrderProductDO.setCreateUser(loginUser.getUserId().toString());
+                peerDeploymentOrderProductDO.setUpdateUser(currentUserId);
+                peerDeploymentOrderProductDO.setCreateUser(currentUserId);
                 peerDeploymentOrderProductDO.setUpdateTime(currentTime);
                 peerDeploymentOrderProductDO.setCreateTime(currentTime);
                 saveList.add(peerDeploymentOrderProductDO);
             }
+            SqlLogInterceptor.setExecuteSql("skip print  peerDeploymentOrderProductMapper.saveList  sql ......");
             peerDeploymentOrderProductMapper.saveList(saveList);
 
         }
@@ -851,7 +855,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 peerDeploymentOrderProductDO.setId(oldPeerDeploymentOrderProductDO.getId());
                 peerDeploymentOrderProductDO.setProductAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(peerDeploymentOrderProductDO.getProductUnitAmount(), new BigDecimal(peerDeploymentOrderProductDO.getProductSkuCount())), new BigDecimal(peerDeploymentOrderDO.getRentTimeLength())));
                 peerDeploymentOrderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(product));
-                peerDeploymentOrderProductDO.setUpdateUser(loginUser.getUserId().toString());
+                peerDeploymentOrderProductDO.setUpdateUser(currentUserId);
                 peerDeploymentOrderProductDO.setUpdateTime(currentTime);
                 peerDeploymentOrderProductMapper.update(peerDeploymentOrderProductDO);
             }
@@ -861,7 +865,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             for (Map.Entry<String, PeerDeploymentOrderProductDO> entry : dbPeerDeploymentOrderProductDOMap.entrySet()) {
                 PeerDeploymentOrderProductDO peerDeploymentOrderProductDO = entry.getValue();
                 peerDeploymentOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                peerDeploymentOrderProductDO.setUpdateUser(loginUser.getUserId().toString());
+                peerDeploymentOrderProductDO.setUpdateUser(currentUserId);
                 peerDeploymentOrderProductDO.setUpdateTime(currentTime);
                 peerDeploymentOrderProductMapper.update(peerDeploymentOrderProductDO);
             }
@@ -872,10 +876,10 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
      * 保存同行调拨单配件转入
      * @param peerDeploymentOrderMaterialDOList
      * @param peerDeploymentOrderNo
-     * @param loginUser
+     * @param currentUserId
      * @param currentTime
      */
-    private void savePeerDeploymentOrderMaterialInfo(List<PeerDeploymentOrderMaterialDO> peerDeploymentOrderMaterialDOList, String peerDeploymentOrderNo, User loginUser, Date currentTime) {
+    private void savePeerDeploymentOrderMaterialInfo(List<PeerDeploymentOrderMaterialDO> peerDeploymentOrderMaterialDOList, String peerDeploymentOrderNo, String currentUserId, Date currentTime) {
         Map<String, PeerDeploymentOrderMaterialDO> savePeerDeploymentOrderMaterialDOMap = new HashMap<>();
         Map<String, PeerDeploymentOrderMaterialDO> updatePeerDeploymentOrderMaterialDOMap = new HashMap<>();
         List<PeerDeploymentOrderMaterialDO> dbPeerDeploymentOrderMaterialDOList = peerDeploymentOrderMaterialMapper.findByPeerDeploymentOrderNo(peerDeploymentOrderNo);
@@ -908,13 +912,14 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 peerDeploymentOrderMaterialDO.setPeerDeploymentOrderId(peerDeploymentOrderDO.getId());
                 peerDeploymentOrderMaterialDO.setPeerDeploymentOrderNo(peerDeploymentOrderNo);
                 peerDeploymentOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                peerDeploymentOrderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
-                peerDeploymentOrderMaterialDO.setCreateUser(loginUser.getUserId().toString());
+                peerDeploymentOrderMaterialDO.setUpdateUser(currentUserId);
+                peerDeploymentOrderMaterialDO.setCreateUser(currentUserId);
                 peerDeploymentOrderMaterialDO.setUpdateTime(currentTime);
                 peerDeploymentOrderMaterialDO.setCreateTime(currentTime);
                 saveList.add(peerDeploymentOrderMaterialDO);
 
             }
+            SqlLogInterceptor.setExecuteSql("skip print peerDeploymentOrderMaterialMapper.saveList  sql ......");
             peerDeploymentOrderMaterialMapper.saveList(saveList);
 
         }
@@ -930,7 +935,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 peerDeploymentOrderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(peerDeploymentOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(peerDeploymentOrderMaterialDO.getMaterialCount())), new BigDecimal(peerDeploymentOrderDO.getRentTimeLength())));
                 peerDeploymentOrderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(material));
                 peerDeploymentOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                peerDeploymentOrderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+                peerDeploymentOrderMaterialDO.setUpdateUser(currentUserId);
                 peerDeploymentOrderMaterialDO.setUpdateTime(currentTime);
                 peerDeploymentOrderMaterialMapper.update(peerDeploymentOrderMaterialDO);
             }
@@ -940,7 +945,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             for (Map.Entry<String, PeerDeploymentOrderMaterialDO> entry : dbPeerDeploymentOrderMaterialDOMap.entrySet()) {
                 PeerDeploymentOrderMaterialDO peerDeploymentOrderMaterialDO = entry.getValue();
                 peerDeploymentOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                peerDeploymentOrderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
+                peerDeploymentOrderMaterialDO.setUpdateUser(currentUserId);
                 peerDeploymentOrderMaterialDO.setUpdateTime(currentTime);
                 peerDeploymentOrderMaterialMapper.update(peerDeploymentOrderMaterialDO);
             }
@@ -951,10 +956,10 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
      * 保存同行调拨单收货信息
      * @param peerId
      * @param peerDeploymentOrderId
-     * @param loginUser
+     * @param currentUserId
      * @param currentTime
      */
-    private void savePeerDeploymentOrderConsignInfo(Integer peerId, Integer peerDeploymentOrderId, User loginUser, Date currentTime) {
+    private void savePeerDeploymentOrderConsignInfo(Integer peerId, Integer peerDeploymentOrderId, String currentUserId, Date currentTime) {
 
         PeerDO peerDO = peerMapper.findById(peerId);
         PeerDeploymentOrderConsignInfoDO dbPeerDeploymentOrderConsignInfoDO = peerDeploymentOrderConsignInfoMapper.findByPeerDeploymentOrderConsignInfoId(peerDeploymentOrderId);
@@ -971,21 +976,21 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
 
         if (dbPeerDeploymentOrderConsignInfoDO == null) {
             peerDeploymentOrderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            peerDeploymentOrderConsignInfoDO.setCreateUser(loginUser.getUserId().toString());
-            peerDeploymentOrderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+            peerDeploymentOrderConsignInfoDO.setCreateUser(currentUserId);
+            peerDeploymentOrderConsignInfoDO.setUpdateUser(currentUserId);
             peerDeploymentOrderConsignInfoDO.setCreateTime(currentTime);
             peerDeploymentOrderConsignInfoDO.setUpdateTime(currentTime);
             peerDeploymentOrderConsignInfoMapper.save(peerDeploymentOrderConsignInfoDO);
         } else {
             dbPeerDeploymentOrderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-            dbPeerDeploymentOrderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+            dbPeerDeploymentOrderConsignInfoDO.setUpdateUser(currentUserId);
             dbPeerDeploymentOrderConsignInfoDO.setUpdateTime(currentTime);
             peerDeploymentOrderConsignInfoMapper.update(dbPeerDeploymentOrderConsignInfoDO);
 
             peerDeploymentOrderConsignInfoDO.setPeerDeploymentOrderId(peerDeploymentOrderId);
             peerDeploymentOrderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            peerDeploymentOrderConsignInfoDO.setCreateUser(loginUser.getUserId().toString());
-            peerDeploymentOrderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+            peerDeploymentOrderConsignInfoDO.setCreateUser(currentUserId);
+            peerDeploymentOrderConsignInfoDO.setUpdateUser(currentUserId);
             peerDeploymentOrderConsignInfoDO.setCreateTime(currentTime);
             peerDeploymentOrderConsignInfoDO.setUpdateTime(currentTime);
             peerDeploymentOrderConsignInfoMapper.save(peerDeploymentOrderConsignInfoDO);
