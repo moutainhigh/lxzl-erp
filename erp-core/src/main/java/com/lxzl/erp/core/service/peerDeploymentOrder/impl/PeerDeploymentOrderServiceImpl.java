@@ -416,8 +416,8 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                     peerDeploymentOrderMaterialBulkDO.setUpdateUser(loginUser.getUserId().toString());
                     peerDeploymentOrderMaterialBulkDOList.add(peerDeploymentOrderMaterialBulkDO);
                 }
-                peerDeploymentOrderMaterialBulkMapper.saveList(peerDeploymentOrderMaterialBulkDOList);
             }
+            peerDeploymentOrderMaterialBulkMapper.saveList(peerDeploymentOrderMaterialBulkDOList);
         }
         //判断确认收货时间与预计归还时间修整
         dbPeerDeploymentOrderDO.setRealReturnTime(currentTime);
