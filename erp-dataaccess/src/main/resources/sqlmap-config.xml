@@ -113,7 +113,6 @@
         <mapper resource="sqlmap/erp_purchase_apply_product_relation.xml" />
         <mapper resource="sqlmap/erp_purchase_apply_material_relation.xml" />
         <mapper resource="sqlmap/erp_peer.xml" />
-        <mapper resource="sqlmap/erp_peer_deployment_order.xml" />
 
         <mapper resource="sqlmap/erp_k3_mapping_brand.xml" />
         <mapper resource="sqlmap/erp_k3_mapping_category.xml" />

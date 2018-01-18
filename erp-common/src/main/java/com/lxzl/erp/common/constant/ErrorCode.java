@@ -339,6 +339,7 @@ public class ErrorCode {
     public static final String PURCHASE_APPLY_CAN_NOT_END = "J400106";
     public static final String PURCHASE_NOT_HAVE_APPLY = "J400107";
     public static final String ORDER_RENT_LENGTH_MORE_THAN_90 = "J400108";
+    public static final String BULK_MATERIAL_NOT_IN_THE_WAREHOUSE = "J400109";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -532,7 +533,7 @@ public class ErrorCode {
 
     public static final String PEER_DEPLOYMENT_ORDER_PRODUCT_ID_NOT_NULL  = "J1510001";
     public static final String PEER_DEPLOYMENT_ORDER_STATUS_NEED_CONFIRM  = "J1510002";
-
+    public static final String USER_CAN_NOT_OPERATION_PEER_DEPLOYMENT_ORDER_WAREHOUSE  = "J1510003";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -688,6 +689,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_APPLY_CAN_NOT_END, "此采购申请单不能结束");
         MAP.put(PURCHASE_NOT_HAVE_APPLY, "采购计划中没有【%s】");
         MAP.put(ORDER_RENT_LENGTH_MORE_THAN_90, "订单租期不允许");
+        MAP.put(BULK_MATERIAL_NOT_IN_THE_WAREHOUSE, "编号【%s 】的散料不在【%s 】库房中");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -1056,8 +1058,7 @@ public class ErrorCode {
         MAP.put(PEER_DEPLOYMENT_ORDER_PRODUCT_ID_NOT_NULL, "同行调拨单货物调拨商品项ID不能为空");
         MAP.put(PEER_DEPLOYMENT_ORDER_DELIVERY_MODE_NOT_NULL, "同行调拨单发货方式不能为空");
         MAP.put(PEER_DEPLOYMENT_ORDER_STATUS_NEED_CONFIRM, "同行调拨单只有确认收货状态，才能进行归还审核");
-
-
+        MAP.put(USER_CAN_NOT_OPERATION_PEER_DEPLOYMENT_ORDER_WAREHOUSE, "该用户不能操作这个仓库下的同行调拨单。");
     }
 
     public static String getMessage(String code) {
