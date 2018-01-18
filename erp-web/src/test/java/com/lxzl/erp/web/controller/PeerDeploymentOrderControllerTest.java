@@ -113,7 +113,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         PeerDeploymentOrder peerDeploymentOrder = new PeerDeploymentOrder();
 
 //        peerDeploymentOrder.setPeerDeploymentOrderId(9000044);
-        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO-0471-20180118-0014");
+        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO-0471-20180118-0021");
 
         peerDeploymentOrder.setPeerNo("LXS031700019");
 
