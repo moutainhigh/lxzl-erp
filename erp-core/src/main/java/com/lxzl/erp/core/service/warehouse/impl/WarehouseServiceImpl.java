@@ -362,10 +362,31 @@ public class WarehouseServiceImpl implements WarehouseService {
         stockOrderDO.setCreateTime(currentTime);
         stockOrderMapper.save(stockOrderDO);
 
+
+        BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
+        bulkMaterialQueryParam.setCreateStartTime(DateUtil.getBeginOfDay(currentTime));
+        bulkMaterialQueryParam.setCreateEndTime(DateUtil.getEndOfDay(currentTime));
+        Map<String, Object> paramMaps = new HashMap<>();
+        paramMaps.put("start", 0);
+        paramMaps.put("pageSize", Integer.MAX_VALUE);
+        paramMaps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
+        Integer bulkCount = bulkMaterialMapper.listCount(paramMaps);
+        bulkCount = bulkCount == null ? 0 : bulkCount;
+
+        ProductEquipmentQueryParam param = new ProductEquipmentQueryParam();
+        param.setCreateStartTime(DateUtil.getBeginOfDay(currentTime));
+        param.setCreateEndTime(DateUtil.getEndOfDay(currentTime));
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", 0);
+        maps.put("pageSize", Integer.MAX_VALUE);
+        maps.put("productEquipmentQueryParam", param);
+        Integer productEquipmentCount = productEquipmentMapper.listCount(maps);
+        productEquipmentCount = productEquipmentCount == null ? 0 : productEquipmentCount;
+
         // 初始化计数器
         ProductInStockCounter productInStockCounter = new ProductInStockCounter();
-        productInStockCounter.setProductEquipmentCount(1);
-        productInStockCounter.setBulkMaterialCount(1);
+        productInStockCounter.setProductEquipmentCount(productEquipmentCount);
+        productInStockCounter.setBulkMaterialCount(bulkCount);
 
         // 目前支持采购，转移入库，同行调拨入库
         if (StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE.equals(causeType)|| StockCauseType.STOCK_CAUSE_TYPE_TRANSFER_ORDER.equals(causeType)
