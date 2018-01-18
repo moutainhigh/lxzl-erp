@@ -58,7 +58,29 @@ public class WarehouseSupport {
         }
         return null;
     }
-
+    public WarehouseDO getAvailableWarehouse(String warehouseNo) {
+        if (warehouseNo == null) {
+            return null;
+        }
+        WarehouseQueryParam param = new WarehouseQueryParam();
+        User loginUser = userSupport.getCurrentUser();
+        List<Integer> subCompanyIdList = new ArrayList<>();
+        for (Role role : loginUser.getRoleList()) {
+            subCompanyIdList.add(role.getSubCompanyId());
+        }
+        param.setSubCompanyIdList(subCompanyIdList);
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("start", 0);
+        paramMap.put("pageSize", Integer.MAX_VALUE);
+        paramMap.put("warehouseQueryParam", param);
+        List<WarehouseDO> warehouseDOList = warehouseMapper.listPage(paramMap);
+        for (WarehouseDO warehouseDO : warehouseDOList) {
+            if (warehouseNo.equals(warehouseDO.getWarehouseNo())) {
+                return warehouseDO;
+            }
+        }
+        return null;
+    }
 
 
 

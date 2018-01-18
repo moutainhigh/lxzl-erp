@@ -9,9 +9,7 @@ import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderCommitP
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialBulkQueryGroup;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderProductEquipmentQueryGroup;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderQueryParam;
-import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrder;
-import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderMaterialBulk;
-import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderProductEquipment;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.*;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
@@ -20,6 +18,7 @@ import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
+import com.lxzl.erp.core.service.peer.PeerService;
 import com.lxzl.erp.core.service.peerDeploymentOrder.PeerDeploymentOrderService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -27,6 +26,7 @@ import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.area.AreaCityMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.peer.PeerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.peerDeploymentOrder.PeerDeploymentOrderConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.peerDeploymentOrder.PeerDeploymentOrderMapper;
@@ -37,7 +37,9 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderBulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
 import com.lxzl.erp.dataaccess.domain.area.AreaCityDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.peer.PeerDO;
 import com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderDO;
@@ -52,6 +54,7 @@ import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mongo.config.PageQuery;
+import org.apache.ibatis.jdbc.Null;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,13 +90,24 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
 
-        PeerDO peerDO = peerMapper.findById(peerDeploymentOrder.getPeerId());
-        //判断传入的仓库是否存在，同时查看当前操作是否有权操作此仓库
-        WarehouseDO warehouseDO = warehouseSupport.getAvailableWarehouse(peerDeploymentOrder.getWarehouseId());
-        if (warehouseDO == null) {
-            result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
+        PeerDO peerDO = peerMapper.finByNo(peerDeploymentOrder.getPeerNo());
+        if(peerDO == null){
+            result.setErrorCode(ErrorCode.PEER_NO_NOT_EXISTS);
             return result;
         }
+        //判断传入的仓库是否存在，同时查看当前操作是否有权操作此仓库
+        WarehouseDO warehouseDO = warehouseSupport.getAvailableWarehouse(peerDeploymentOrder.getWarehouseNo());
+        if (warehouseDO == null) {
+            result.setErrorCode(ErrorCode.USER_CAN_NOT_OP_WAREHOUSE);
+            return result;
+        }
+        //验证数据
+        String verifyCode = verifyPeerDeploymentOrderInfo(peerDeploymentOrder);
+        if (!ErrorCode.SUCCESS.equals(verifyCode)) {
+            result.setErrorCode(verifyCode);
+            return result;
+        }
+
 
         PeerDeploymentOrderDO peerDeploymentOrderDO = ConverterUtil.convert(peerDeploymentOrder,PeerDeploymentOrderDO.class);
         Date expectReturnTime = peerDeploymentOrderExpectReturnTime(peerDeploymentOrderDO.getRentStartTime(), peerDeploymentOrderDO.getRentType(), peerDeploymentOrderDO.getRentTimeLength());
@@ -101,6 +115,8 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         AreaCityDO areaCityDO = areaCityMapper.findById(peerDO.getCity());
         peerDeploymentOrderDO.setPeerDeploymentOrderNo(generateNoSupport.generatePeerDeploymentOrderNo(currentTime,areaCityDO.getCityCode()));
         peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT);
+        peerDeploymentOrderDO.setPeerId(peerDO.getId());
+        peerDeploymentOrderDO.setWarehouseId(warehouseDO.getId());
         peerDeploymentOrderDO.setExpectReturnTime(expectReturnTime);
         peerDeploymentOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         peerDeploymentOrderDO.setCreateTime(currentTime);
@@ -149,22 +165,35 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_NOT_EXISTS);
             return result;
         }
+        peerDeploymentOrder.setPeerDeploymentOrderId(peerDeploymentOrderDO.getId());
         //判断未提交状态才能修改
         if(!PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())){
             result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_NOT_EXISTS);
             return result;
         }
-
+        PeerDO peerDO = peerMapper.finByNo(peerDeploymentOrder.getPeerNo());
+        if(peerDO == null){
+            result.setErrorCode(ErrorCode.PEER_NO_NOT_EXISTS);
+            return result;
+        }
         //判断传入的仓库是否存在，同时查看当前操作是否有权操作此仓库
-        WarehouseDO warehouseDO = warehouseSupport.getAvailableWarehouse(peerDeploymentOrder.getWarehouseId());
+        WarehouseDO warehouseDO = warehouseSupport.getAvailableWarehouse(peerDeploymentOrder.getWarehouseNo());
         if (warehouseDO == null) {
-            result.setErrorCode(ErrorCode.WAREHOUSE_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.USER_CAN_NOT_OP_WAREHOUSE);
+            return result;
+        }
+        //验证数据
+        String verifyCode = verifyPeerDeploymentOrderInfo(peerDeploymentOrder);
+        if (!ErrorCode.SUCCESS.equals(verifyCode)) {
+            result.setErrorCode(verifyCode);
             return result;
         }
 
         peerDeploymentOrderDO = ConverterUtil.convert(peerDeploymentOrder,PeerDeploymentOrderDO.class);
         Date expectReturnTime = peerDeploymentOrderExpectReturnTime(peerDeploymentOrderDO.getRentStartTime(), peerDeploymentOrderDO.getRentType(), peerDeploymentOrderDO.getRentTimeLength());
 
+        peerDeploymentOrderDO.setPeerId(peerDO.getId());
+        peerDeploymentOrderDO.setWarehouseId(warehouseDO.getId());
         peerDeploymentOrderDO.setExpectReturnTime(expectReturnTime);
         peerDeploymentOrderDO.setUpdateTime(currentTime);
         peerDeploymentOrderDO.setUpdateUser(loginUser.getUserId().toString());
@@ -849,6 +878,48 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         return null;
     }
 
+    private String verifyPeerDeploymentOrderInfo(PeerDeploymentOrder peerDeploymentOrder) {
+
+
+        //商品项列表和物料项列表至少有一个不为空
+        if (CollectionUtil.isEmpty(peerDeploymentOrder.getPeerDeploymentOrderProductList()) && CollectionUtil.isEmpty(peerDeploymentOrder.getPeerDeploymentOrderMaterialList())) {
+            return ErrorCode.PEER_DEPLOYMENT_ORDER_PRODUCT_MATERIAL_LIST_NOT_NULL;
+        }
+        //判断商品数据校验
+        if (CollectionUtil.isNotEmpty(peerDeploymentOrder.getPeerDeploymentOrderProductList())) {
+            for (PeerDeploymentOrderProduct peerDeploymentOrderProduct : peerDeploymentOrder.getPeerDeploymentOrderProductList()) {
+                ProductSkuDO productSkuDO = productSkuMapper.findById(peerDeploymentOrderProduct.getProductSkuId());
+                if(productSkuDO == null){
+                    return ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS;
+                }
+                if (peerDeploymentOrderProduct.getProductSkuCount() == null) {
+                    return ErrorCode.PARAM_IS_ERROR;
+                }
+                if (peerDeploymentOrderProduct.getProductUnitAmount() == null || BigDecimalUtil.compare(peerDeploymentOrderProduct.getProductUnitAmount(), BigDecimal.ZERO) <= 0) {
+                    return ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO;
+                }
+            }
+        }
+        //判断配件数据校验
+        if (CollectionUtil.isNotEmpty(peerDeploymentOrder.getPeerDeploymentOrderProductList())) {
+            for(PeerDeploymentOrderMaterial peerDeploymentOrderMaterial : peerDeploymentOrder.getPeerDeploymentOrderMaterialList()){
+                MaterialDO materialDO = materialMapper.findByNo(peerDeploymentOrderMaterial.getMaterialNo());
+                if(materialDO == null){
+                    return ErrorCode.MATERIAL_NOT_EXISTS;
+                }
+                peerDeploymentOrderMaterial.setMaterialId(materialDO.getId());
+
+                if (peerDeploymentOrderMaterial.getProductMaterialCount() == null) {
+                    return ErrorCode.PARAM_IS_ERROR;
+                }
+                if (peerDeploymentOrderMaterial.getMaterialUnitAmount() == null || BigDecimalUtil.compare(peerDeploymentOrderMaterial.getMaterialUnitAmount(), BigDecimal.ZERO) <= 0) {
+                    return ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO;
+                }
+            }
+        }
+        return ErrorCode.SUCCESS;
+    }
+
     @Autowired
     private UserSupport userSupport;
     @Autowired
@@ -887,5 +958,11 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
     private StockOrderBulkMaterialMapper stockOrderBulkMaterialMapper;
     @Autowired
     private PeerDeploymentOrderMaterialBulkMapper peerDeploymentOrderMaterialBulkMapper;
+    @Autowired
+    private PeerService peerService;
+    @Autowired
+    private WarehouseMapper warehouseMapper;
+    @Autowired
+    private MaterialMapper materialMapper;
 
 }

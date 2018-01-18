@@ -2,11 +2,15 @@ package com.lxzl.erp.common.domain.peerDeploymentOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.PeerDeploymentOrderMode;
+import com.lxzl.erp.common.constant.PeerDeploymentOrderRentType;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import com.lxzl.erp.common.util.validate.constraints.In;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -22,18 +26,22 @@ public class PeerDeploymentOrder extends BasePO {
     private Integer peerDeploymentOrderId;   //唯一标识
     @NotBlank(message = ErrorCode.PEER_DEPLOYMENT_ORDER_NO_NOT_NULL, groups = {IdGroup.class})
     private String peerDeploymentOrderNo;   //同行调配单编号
-    @NotNull(message = ErrorCode.PEER_ID_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
     private Integer peerId;   //同行ID
+    @NotEmpty(message = ErrorCode.PEER_NO_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
+    private String peerNo;   //同行供应商编码
     @NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_START_TIME_NOT_NULL ,groups = {AddGroup.class,UpdateGroup.class})
     private Date rentStartTime;   //起租时间
     @NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_RENT_TYPE_NOT_NULL ,groups = {AddGroup.class,UpdateGroup.class})
+//    @In(value = {PeerDeploymentOrderRentType.RENT_TYPE_DAY, PeerDeploymentOrderRentType.RENT_TYPE_MONTH}, message = ErrorCode.PEER_DEPLOYMENT_ORDER_RENT_TYPE_IS_ERROR, groups = {AddGroup.class, UpdateGroup.class})
     private Integer rentType;   //租赁方式，1按天租，2按月租
     @NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_TOTAL_DISCOUNT_AMOUNT_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
     private Integer rentTimeLength;   //租赁期限
-    @NotNull(message = ErrorCode.WAREHOUSE_ID_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
     private Integer warehouseId;   //目标仓库ID
+    @NotEmpty(message = ErrorCode.WAREHOUSE_NO_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
+    private String warehouseNo;   //仓库编号
     private Integer warehousePositionId;   //目标仓位ID
-    @NotNull(message = ErrorCode.WAREHOUSE_ID_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
+    @NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_DELIVERY_MODE_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
+    @In(value = {PeerDeploymentOrderMode.DELIVERY_MODE_EXPRESS, PeerDeploymentOrderMode.DELIVERY_MODE_SINCE}, message = ErrorCode.PEER_DEPLOYMENT_ORDER_DELIVERY_MODE_IS_ERROR, groups = {AddGroup.class, UpdateGroup.class})
     private Integer deliveryMode;   //发货方式，1快递，2自提
     @Min(value = 0, message = ErrorCode.PEER_DEPLOYMENT_ORDER_TAX_RATE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
     @Max(value = 1, message = ErrorCode.PEER_DEPLOYMENT_ORDER_TAX_RATE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
@@ -309,4 +317,20 @@ public class PeerDeploymentOrder extends BasePO {
     public Date getConfirmTime() { return confirmTime; }
 
     public void setConfirmTime(Date confirmTime) { this.confirmTime = confirmTime; }
+
+    public String getPeerNo() {
+        return peerNo;
+    }
+
+    public void setPeerNo(String peerNo) {
+        this.peerNo = peerNo;
+    }
+
+    public String getWarehouseNo() {
+        return warehouseNo;
+    }
+
+    public void setWarehouseNo(String warehouseNo) {
+        this.warehouseNo = warehouseNo;
+    }
 }

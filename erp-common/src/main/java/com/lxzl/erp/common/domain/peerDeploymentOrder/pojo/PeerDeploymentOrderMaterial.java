@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.changeOrder.AddChangeOrderParam;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import com.lxzl.erp.common.domain.validGroup.returnOrder.AddReturnOrderGroup;
 import com.lxzl.erp.common.util.validate.constraints.In;
 
 import javax.validation.constraints.NotNull;
@@ -19,8 +21,9 @@ public class PeerDeploymentOrderMaterial extends BasePO {
 	private Integer peerDeploymentOrderMaterialId;   //唯一标识
 	private Integer peerDeploymentOrderId;   //货物调拨单ID
 	private String peerDeploymentOrderNo;   //货物调拨单编号
-	@NotNull(message = ErrorCode.MATERIAL_ID_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
 	private Integer materialId;   //货物调拨配件ID
+	@NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL,groups = {AddGroup.class, UpdateGroup.class})
+	private String materialNo;   //配件编号
 	@NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_UNIT_AMOUNT_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
 	private BigDecimal materialUnitAmount;   //配件单价
 	private BigDecimal materialAmount;   //配件总价格
@@ -155,4 +158,12 @@ public class PeerDeploymentOrderMaterial extends BasePO {
 	public List<PeerDeploymentOrderMaterialBulk> getPeerDeploymentOrderMaterialBulkList() { return peerDeploymentOrderMaterialBulkList; }
 
 	public void setPeerDeploymentOrderMaterialBulkList(List<PeerDeploymentOrderMaterialBulk> peerDeploymentOrderMaterialBulkList) { this.peerDeploymentOrderMaterialBulkList = peerDeploymentOrderMaterialBulkList; }
+
+	public String getMaterialNo() {
+		return materialNo;
+	}
+
+	public void setMaterialNo(String materialNo) {
+		this.materialNo = materialNo;
+	}
 }

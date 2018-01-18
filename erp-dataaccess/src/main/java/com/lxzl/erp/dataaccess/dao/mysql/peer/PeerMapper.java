@@ -14,4 +14,6 @@ public interface PeerMapper extends BaseMysqlDAO<PeerDO> {
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	PeerDO findDetailByPeerId(@Param("peerId") Integer peerId);
+
+	PeerDO finByNo(@Param("peerNo") String peerNo);
 }

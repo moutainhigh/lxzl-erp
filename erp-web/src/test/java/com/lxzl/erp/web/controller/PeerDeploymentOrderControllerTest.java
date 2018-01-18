@@ -35,7 +35,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void createPeerDeploymentOrderTest() throws Exception {
         PeerDeploymentOrder peerDeploymentOrder = new PeerDeploymentOrder();
-        peerDeploymentOrder.setPeerId(5);
+        peerDeploymentOrder.setPeerNo("LXPEER099900003");
 
 //        String str = "2018-1-15";
 //        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -44,7 +44,8 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         peerDeploymentOrder.setRentStartTime(new Date());
         peerDeploymentOrder.setRentType(PeerDeploymentOrderRentType.RENT_TYPE_DAY);
         peerDeploymentOrder.setRentTimeLength(5);
-        peerDeploymentOrder.setWarehouseId(4000001);
+//        peerDeploymentOrder.setWarehouseId(4000001);
+        peerDeploymentOrder.setWarehouseNo("LXW10001");
         peerDeploymentOrder.setDeliveryMode(DeliveryMode.DELIVERY_MODE_SINCE);
         peerDeploymentOrder.setTaxRate(0.17);
         peerDeploymentOrder.setRemark("kai创建同行调拨单测试");
@@ -70,14 +71,16 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
 
         List<PeerDeploymentOrderMaterial> peerDeploymentOrderMaterialList = new ArrayList<>();
         PeerDeploymentOrderMaterial peerDeploymentOrderMaterial = new PeerDeploymentOrderMaterial();
-        peerDeploymentOrderMaterial.setMaterialId(24);
+//        peerDeploymentOrderMaterial.setMaterialId(24);
+        peerDeploymentOrderMaterial.setMaterialNo("M201711291745413251585");
         peerDeploymentOrderMaterial.setProductMaterialCount(2);
         peerDeploymentOrderMaterial.setMaterialUnitAmount(new BigDecimal(10));
         peerDeploymentOrderMaterial.setIsNew(1);
         peerDeploymentOrderMaterial.setRemark("kai创建同行调拨单配件测试");
 
         PeerDeploymentOrderMaterial peerDeploymentOrderMaterial2 = new PeerDeploymentOrderMaterial();
-        peerDeploymentOrderMaterial2.setMaterialId(24);
+//        peerDeploymentOrderMaterial2.setMaterialId(24);
+        peerDeploymentOrderMaterial2.setMaterialNo("M201711291745413251585");
         peerDeploymentOrderMaterial2.setProductMaterialCount(2);
         peerDeploymentOrderMaterial2.setMaterialUnitAmount(new BigDecimal(10));
         peerDeploymentOrderMaterial2.setIsNew(0);
@@ -109,10 +112,10 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
     public void updatePeerDeploymentOrderTest() throws Exception {
         PeerDeploymentOrder peerDeploymentOrder = new PeerDeploymentOrder();
 
-        peerDeploymentOrder.setPeerDeploymentOrderId(9000044);
-        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO-0317-20180117-0005");
+//        peerDeploymentOrder.setPeerDeploymentOrderId(9000044);
+        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO-0471-20180118-0014");
 
-        peerDeploymentOrder.setPeerId(2);
+        peerDeploymentOrder.setPeerNo("LXS031700019");
 
 //        String str = "2018-1-19";
 //        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -121,7 +124,8 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         peerDeploymentOrder.setRentStartTime(new Date());
         peerDeploymentOrder.setRentType(PeerDeploymentOrderRentType.RENT_TYPE_MONTH);
         peerDeploymentOrder.setRentTimeLength(2);
-        peerDeploymentOrder.setWarehouseId(4000001);
+//        peerDeploymentOrder.setWarehouseId(4000001);
+        peerDeploymentOrder.setWarehouseNo("LXW10001");
         peerDeploymentOrder.setDeliveryMode(DeliveryMode.DELIVERY_MODE_SINCE);
         peerDeploymentOrder.setTaxRate(0.06);
         peerDeploymentOrder.setRemark("kai修改同行调拨单测试");
@@ -147,14 +151,14 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
 
         List<PeerDeploymentOrderMaterial> peerDeploymentOrderMaterialList = new ArrayList<>();
         PeerDeploymentOrderMaterial peerDeploymentOrderMaterial = new PeerDeploymentOrderMaterial();
-        peerDeploymentOrderMaterial.setMaterialId(1);
+        peerDeploymentOrderMaterial.setMaterialNo("M201711171838059981292");
         peerDeploymentOrderMaterial.setProductMaterialCount(2);
         peerDeploymentOrderMaterial.setMaterialUnitAmount(new BigDecimal(10));
         peerDeploymentOrderMaterial.setIsNew(1);
         peerDeploymentOrderMaterial.setRemark("kai修改同行调拨单配件测试");
 
         PeerDeploymentOrderMaterial peerDeploymentOrderMaterial2 = new PeerDeploymentOrderMaterial();
-        peerDeploymentOrderMaterial2.setMaterialId(1);
+        peerDeploymentOrderMaterial2.setMaterialNo("M201712250956366751399");
         peerDeploymentOrderMaterial2.setProductMaterialCount(2);
         peerDeploymentOrderMaterial2.setMaterialUnitAmount(new BigDecimal(15));
         peerDeploymentOrderMaterial2.setIsNew(0);
@@ -185,7 +189,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void commitPeerDeploymentOrderIntoTest() throws Exception {
         PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam = new PeerDeploymentOrderCommitParam();
-        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0317-20180117-0007");
+        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0471-20180118-0014");
         peerDeploymentOrderCommitParam.setVerifyUserId(500006);
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/commitPeerDeploymentOrderInto",peerDeploymentOrderCommitParam);
     }
@@ -196,14 +200,14 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void confirmPeerDeploymentOrderIntoTest() throws Exception {
         PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam = new PeerDeploymentOrderCommitParam();
-        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0317-20180117-0005");
+        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0471-20180118-0014");
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/confirmPeerDeploymentOrderInto",peerDeploymentOrderCommitParam);
     }
 
     @Test
     public void cancelPeerDeploymentOrderTest() throws Exception {
         PeerDeploymentOrderDO peerDeploymentOrderDO = new PeerDeploymentOrderDO();
-        peerDeploymentOrderDO.setPeerDeploymentOrderNo("LXPDO-0317-20180117-0007");
+        peerDeploymentOrderDO.setPeerDeploymentOrderNo("LXPDO-0317-20180117-0006");
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/cancel",peerDeploymentOrderDO);
     }
 
@@ -220,7 +224,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailPeerDeploymentOrder() throws Exception {
         PeerDeploymentOrder peerDeploymentOrder = new PeerDeploymentOrder();
-        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO0317201801162");
+        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO-0471-20180118-0011");
 
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/detailPeerDeploymentOrder",peerDeploymentOrder);
     }

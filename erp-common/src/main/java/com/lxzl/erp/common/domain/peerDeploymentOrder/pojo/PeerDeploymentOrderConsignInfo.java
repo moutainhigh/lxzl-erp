@@ -1,8 +1,12 @@
 package com.lxzl.erp.common.domain.peerDeploymentOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 
@@ -12,6 +16,7 @@ public class PeerDeploymentOrderConsignInfo extends BasePO {
 	private Integer peerDeploymentOrderConsignInfoId;   //唯一标识
 	private Integer peerDeploymentOrderId;   //货物调拨单ID
 	private String contactName;   //联系人姓名
+	@Pattern(regexp = "^[0-9-]+$",message = ErrorCode.PEER_DEPLOYMENT_ORDER_CONSIGN_INFO_PHONE_IS_MATH,groups = {AddGroup.class, UpdateGroup.class})
 	private String contactPhone;   //联系人手机号
 	private Integer province;   //省份ID，省份ID
 	private Integer city;   //城市ID，对应城市ID
