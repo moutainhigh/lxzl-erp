@@ -73,7 +73,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         PeerDeploymentOrderMaterial peerDeploymentOrderMaterial = new PeerDeploymentOrderMaterial();
 //        peerDeploymentOrderMaterial.setMaterialId(24);
         peerDeploymentOrderMaterial.setMaterialNo("M201711291745413251585");
-        peerDeploymentOrderMaterial.setProductMaterialCount(2);
+        peerDeploymentOrderMaterial.setMaterialCount(2);
         peerDeploymentOrderMaterial.setMaterialUnitAmount(new BigDecimal(10));
         peerDeploymentOrderMaterial.setIsNew(1);
         peerDeploymentOrderMaterial.setRemark("kai创建同行调拨单配件测试");
@@ -81,7 +81,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         PeerDeploymentOrderMaterial peerDeploymentOrderMaterial2 = new PeerDeploymentOrderMaterial();
 //        peerDeploymentOrderMaterial2.setMaterialId(24);
         peerDeploymentOrderMaterial2.setMaterialNo("M201711291745413251585");
-        peerDeploymentOrderMaterial2.setProductMaterialCount(2);
+        peerDeploymentOrderMaterial2.setMaterialCount(2);
         peerDeploymentOrderMaterial2.setMaterialUnitAmount(new BigDecimal(10));
         peerDeploymentOrderMaterial2.setIsNew(0);
         peerDeploymentOrderMaterial2.setRemark("kai创建同行调拨单配件测试");
@@ -113,7 +113,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         PeerDeploymentOrder peerDeploymentOrder = new PeerDeploymentOrder();
 
 //        peerDeploymentOrder.setPeerDeploymentOrderId(9000044);
-        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO-0471-20180118-0014");
+        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO-0471-20180118-0021");
 
         peerDeploymentOrder.setPeerNo("LXS031700019");
 
@@ -152,14 +152,14 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         List<PeerDeploymentOrderMaterial> peerDeploymentOrderMaterialList = new ArrayList<>();
         PeerDeploymentOrderMaterial peerDeploymentOrderMaterial = new PeerDeploymentOrderMaterial();
         peerDeploymentOrderMaterial.setMaterialNo("M201711171838059981292");
-        peerDeploymentOrderMaterial.setProductMaterialCount(2);
+        peerDeploymentOrderMaterial.setMaterialCount(2);
         peerDeploymentOrderMaterial.setMaterialUnitAmount(new BigDecimal(10));
         peerDeploymentOrderMaterial.setIsNew(1);
         peerDeploymentOrderMaterial.setRemark("kai修改同行调拨单配件测试");
 
         PeerDeploymentOrderMaterial peerDeploymentOrderMaterial2 = new PeerDeploymentOrderMaterial();
         peerDeploymentOrderMaterial2.setMaterialNo("M201712250956366751399");
-        peerDeploymentOrderMaterial2.setProductMaterialCount(2);
+        peerDeploymentOrderMaterial2.setMaterialCount(2);
         peerDeploymentOrderMaterial2.setMaterialUnitAmount(new BigDecimal(15));
         peerDeploymentOrderMaterial2.setIsNew(0);
         peerDeploymentOrderMaterial2.setRemark("kai修改同行调拨单配件测试");

@@ -822,7 +822,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
 
         ServiceResult<String, Boolean> needVerifyResult = new ServiceResult<>();
 
-        //转入只能状态为初始化
+        //转入的转移单状态只能为初始化
         if (TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO.equals(transferOrderDO.getTransferOrderMode())){
             if (!TransferOrderStatus.TRANSFER_ORDER_STATUS_INIT.equals(transferOrderDO.getTransferOrderStatus())) {
                 serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_INTO_STATUS_NEED_INIT);
@@ -1163,8 +1163,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
 
                 //调用商品设备出库的方法
                 for (TransferOrderProductDO transferOrderProductDO : dbTransferOrderProductDOList){
-                    //todo 调用商品出库的接口出错
-                    String operateSkuStockResult = productSupport.operateSkuStock(transferOrderProductDO.getProductSkuId(),transferOrderProductDO.getProductCount());
+                    String operateSkuStockResult = productSupport.operateSkuStock(transferOrderProductDO.getProductSkuId(),transferOrderProductDO.getProductCount() * -1);
                     if (!ErrorCode.SUCCESS.equals(operateSkuStockResult)){
                         serviceResult.setErrorCode(operateSkuStockResult);
                         return serviceResult;
@@ -1197,7 +1196,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
 
                 //调用散料料出库的方法
                 for (TransferOrderMaterialDO transferOrderMaterialDO : dbTransferOrderMaterialDOList){
-                    String operateMaterialStockResult = materialSupport.operateMaterialStock(transferOrderMaterialDO.getMaterialId(),transferOrderMaterialDO.getMaterialCount());
+                    String operateMaterialStockResult = materialSupport.operateMaterialStock(transferOrderMaterialDO.getMaterialId(),transferOrderMaterialDO.getMaterialCount() * -1);
                     if (!ErrorCode.SUCCESS.equals(operateMaterialStockResult)){
                         serviceResult.setErrorCode(operateMaterialStockResult);
                         return serviceResult;

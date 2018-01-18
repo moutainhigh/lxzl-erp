@@ -14,8 +14,8 @@ public class PeerDeploymentOrderMaterialDO  extends BaseDO {
 	private Integer materialId;
 	private BigDecimal materialUnitAmount;
 	private BigDecimal materialAmount;
-	private Integer productMaterialCount;
-	private String productMaterialSnapshot;
+	private Integer materialCount;
+	private String materialSnapshot;
 	private Integer isNew;
 	private Integer dataStatus;
 	private String remark;
@@ -68,19 +68,21 @@ public class PeerDeploymentOrderMaterialDO  extends BaseDO {
 		this.materialAmount = materialAmount;
 	}
 
-	public Integer getProductMaterialCount(){
-		return productMaterialCount;
+	public Integer getMaterialCount() {
+		return materialCount;
 	}
 
-	public void setProductMaterialCount(Integer productMaterialCount){
-		this.productMaterialCount = productMaterialCount;
+	public void setMaterialCount(Integer materialCount) {
+		this.materialCount = materialCount;
 	}
 
-	public String getProductMaterialSnapshot(){
-		return productMaterialSnapshot;
+	public String getMaterialSnapshot() {
+		return materialSnapshot;
 	}
 
-	public void setProductMaterialSnapshot(String productMaterialSnapshot){ this.productMaterialSnapshot = productMaterialSnapshot; }
+	public void setMaterialSnapshot(String materialSnapshot) {
+		this.materialSnapshot = materialSnapshot;
+	}
 
 	public Integer getIsNew(){
 		return isNew;
