@@ -56,7 +56,7 @@ public class PeerControllerTest extends ERPUnTransactionalTest {
 //        peerQueryParam.setPeerNo("LXPEER031700002");
 //        peerQueryParam.setProvinceId(12);
 //        peerQueryParam.setCityId(10);
-        peerQueryParam.setDistrictId(14);
+        peerQueryParam.setDistrictId(1);
         TestResult result = getJsonTestResult("/peer/queryPage", peerQueryParam);
     }
 

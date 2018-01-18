@@ -29,32 +29,32 @@ public class PeerDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
-	private AreaCityDO areaCityDO;  //地区城市
-	private AreaDistrictDO areaDistrictDO;  //地区行政区
-	private AreaProvinceDO areaProvinceDO;  //地区省份
+	private String provinceName;  //省份名称
+	private String cityName;  //城市名称
+	private String districtName;  //区名称
 
-	public AreaCityDO getAreaCityDO() {
-		return areaCityDO;
+	public String getProvinceName() {
+		return provinceName;
 	}
 
-	public void setAreaCityDO(AreaCityDO areaCityDO) {
-		this.areaCityDO = areaCityDO;
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
 	}
 
-	public AreaDistrictDO getAreaDistrictDO() {
-		return areaDistrictDO;
+	public String getCityName() {
+		return cityName;
 	}
 
-	public void setAreaDistrictDO(AreaDistrictDO areaDistrictDO) {
-		this.areaDistrictDO = areaDistrictDO;
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
 	}
 
-	public AreaProvinceDO getAreaProvinceDO() {
-		return areaProvinceDO;
+	public String getDistrictName() {
+		return districtName;
 	}
 
-	public void setAreaProvinceDO(AreaProvinceDO areaProvinceDO) {
-		this.areaProvinceDO = areaProvinceDO;
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
 	}
 
 	public Integer getId(){

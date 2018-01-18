@@ -47,33 +47,32 @@ public class Peer extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+	private String provinceName;  //省份名称
+	private String cityName;  //城市名称
+	private String districtName;  //区名称
 
-	private AreaCity areaCity;  //地区城市
-	private AreaDistrict areaDistrict;  //地区行政区
-	private AreaProvince areaProvince;  //地区省份
-
-	public AreaCity getAreaCity() {
-		return areaCity;
+	public String getProvinceName() {
+		return provinceName;
 	}
 
-	public void setAreaCity(AreaCity areaCity) {
-		this.areaCity = areaCity;
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
 	}
 
-	public AreaDistrict getAreaDistrict() {
-		return areaDistrict;
+	public String getCityName() {
+		return cityName;
 	}
 
-	public void setAreaDistrict(AreaDistrict areaDistrict) {
-		this.areaDistrict = areaDistrict;
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
 	}
 
-	public AreaProvince getAreaProvince() {
-		return areaProvince;
+	public String getDistrictName() {
+		return districtName;
 	}
 
-	public void setAreaProvince(AreaProvince areaProvince) {
-		this.areaProvince = areaProvince;
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
 	}
 
 	public Integer getPeerId(){

@@ -28,48 +28,6 @@
 		<collection property="areaProvinceDO" resultMap="AreaProvinceDO" />
 	</resultMap>
 
-	<resultMap id="AreaCityDO" type="com.lxzl.erp.dataaccess.domain.area.AreaCityDO">
-		<id column="eac_id" jdbcType="INTEGER" property="id" />
-		<result column="eac_provinceId" jdbcType="INTEGER" property="provinceId" />
-		<result column="eac_cityName" jdbcType="VARCHAR" property="cityName" />
-		<result column="eac_cityCode" jdbcType="VARCHAR" property="cityCode" />
-		<result column="eac_postCode" jdbcType="VARCHAR" property="postCode" />
-		<result column="eac_abbCn" jdbcType="VARCHAR" property="abbCn" />
-		<result column="eac_abbEn" jdbcType="VARCHAR" property="abbEn" />
-		<result column="eac_dataStatus" jdbcType="INTEGER" property="dataStatus" />
-		<result column="eac_remark" jdbcType="VARCHAR" property="remark" />
-	</resultMap>
-
-	<resultMap id="AreaDistrictDO" type="com.lxzl.erp.dataaccess.domain.area.AreaDistrictDO">
-		<id column="ead_id" jdbcType="INTEGER" property="id" />
-		<result column="ead_provinceId" jdbcType="INTEGER" property="provinceId" />
-		<result column="ead_cityId" jdbcType="INTEGER" property="cityId" />
-		<result column="ead_districtName" jdbcType="VARCHAR" property="districtName" />
-		<result column="ead_postCode" jdbcType="VARCHAR" property="postCode" />
-		<result column="ead_abbCn" jdbcType="VARCHAR" property="abbCn" />
-		<result column="ead_abbEn" jdbcType="VARCHAR" property="abbEn" />
-		<result column="ead_dataStatus" jdbcType="INTEGER" property="dataStatus" />
-		<result column="ead_remark" jdbcType="VARCHAR" property="remark" />
-	</resultMap>
-	<resultMap id="AreaProvinceDO" type="com.lxzl.erp.dataaccess.domain.area.AreaProvinceDO">
-		<id column="eap_id" jdbcType="INTEGER" property="id" />
-		<result column="eap_provinceName" jdbcType="VARCHAR" property="provinceName" />
-		<result column="eap_areaType" jdbcType="INTEGER" property="areaType" />
-		<result column="eap_abbCn" jdbcType="VARCHAR" property="abbCn" />
-		<result column="eap_abbEn" jdbcType="VARCHAR" property="abbEn" />
-		<result column="eap_dataStatus" jdbcType="INTEGER" property="dataStatus" />
-		<result column="eap_remark" jdbcType="VARCHAR" property="remark" />
-	</resultMap>
-
-	<sql id="province_column_List">
-		eap.id AS eap_id,eap.province_name AS eap_provinceName,eap.area_type AS eap_areaType,eap.abb_cn AS eap_abbCn,eap.abb_en AS eap_abbEn,eap.data_status AS eap_dataStatus,eap.remark AS eap_remark
-	</sql>
-	<sql id="district_column_List">
-		ead.id AS ead_id,ead.province_id AS ead_provinceId,ead.city_id AS ead_cityId,ead.district_name AS ead_districtName,ead.post_code AS ead_postCode,ead.abb_cn AS ead_abbCn,ead.abb_en AS ead_abbEn,ead.data_status AS ead_dataStatus,ead.remark AS ead_remark
-	</sql>
-	<sql id="city_column_List">
-		eac.id AS eac_id,eac.province_id AS eac_provinceId,eac.city_name AS eac_cityName,eac.city_code AS eac_cityCode,eac.post_code AS eac_postCode,eac.abb_cn AS eac_abbCn,eac.abb_en AS eac_abbEn,eac.data_status AS eac_dataStatus,eac.remark AS eac_remark
-	</sql>
 	<sql id="column_List">
 		ep.id,ep.peer_no,ep.peer_name,ep.peer_code,ep.province,ep.city,ep.district,ep.address,ep.tel,ep.contact_name,ep.contact_phone,ep.beneficiary_name,ep.beneficiary_account,ep.beneficiary_bank_name,ep.data_status,ep.remark,ep.create_time,ep.create_user,ep.update_time,ep.update_user
 	</sql>
@@ -110,7 +68,7 @@
 	</select>
 
 	<select id="listPage" resultMap="PeerDO" parameterType="map">
-		SELECT <include refid="column_List"/> ,<include refid="province_column_List"/>,<include refid="district_column_List"/>,<include refid="city_column_List"/>
+		SELECT <include refid="column_List"/> ,eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name
 		FROM erp_peer ep
 		LEFT JOIN erp_area_city eac ON ep.city = eac.id AND eac.data_status = 1
 		LEFT JOIN erp_area_district ead ON ep.city = ead.id AND ead.data_status = 1
@@ -219,7 +177,7 @@
 	</update>
 
 	<select id="findDetailByPeerId" resultMap="PeerDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/>,<include refid="province_column_List"/>,<include refid="district_column_List"/>,<include refid="city_column_List"/>
+		SELECT <include refid="column_List"/>,eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name
             FROM erp_peer ep
             LEFT JOIN erp_area_city eac ON ep.city = eac.id AND eac.data_status = 1
             LEFT JOIN erp_area_district ead ON ep.city = ead.id AND ead.data_status = 1
