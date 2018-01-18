@@ -89,7 +89,7 @@ public class PeerDeploymentOrderMaterial extends BasePO {
 		return materialCount;
 	}
 
-	public void setMaterialCount(Integer productMaterialCount){
+	public void setMaterialCount(Integer materialCount){
 		this.materialCount = materialCount;
 	}
 
@@ -97,7 +97,7 @@ public class PeerDeploymentOrderMaterial extends BasePO {
 		return materialSnapshot;
 	}
 
-	public void setMaterialSnapshot(String productMaterialSnapshot){ this.materialSnapshot = materialSnapshot; }
+	public void setMaterialSnapshot(String materialSnapshot){ this.materialSnapshot = materialSnapshot; }
 
 	public Integer getIsNew(){
 		return isNew;
