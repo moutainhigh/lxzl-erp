@@ -9,7 +9,8 @@
                     <label class="col-md-3 control-label">同行</label>
                     <div class="col-md-9">
                         <div class="input-group bringContainer">
-                            <input id="buyerCustomerName" name="customerName" bringFiled="customerName" class="form-control required" type="text" readonly placeholder="选择同行" />
+                            <input type="hidden" id="peerNo" name="peerNo" />
+                            <input id="peerName" name="peerName" bringFiled="peerName" class="form-control required" type="text" readonly placeholder="选择同行" />
                             <span class="input-group-addon cursor choosePeerSupplier" id="choosePeerSupplier"><i class="fa fa-search mr5"></i>选择同行</span>
                         </div>
                     </div>
@@ -18,7 +19,7 @@
                     <label class="col-md-3 control-label">优惠金额</label>
                     <div class="col-md-9">
                         <div class="input-group" style="width: 100%;">
-                            <input type="text" class="form-control required number" name="totalDiscountAmount" id="totalDiscountAmount" />
+                            <input type="text" class="form-control required moneyNumber" name="totalDiscountAmount" id="totalDiscountAmount" />
                         </div>
                     </div>
                 </div>
@@ -39,19 +40,19 @@
                                 </span>
                                 <span class="panel-title">归还地址</span>
                                 <div class="widget-menu pull-right">
-                                    <button class="btn btn-xs btn-default" id="addAddressButton">添加同行收货地址</button>
-                                    <button class="btn btn-xs btn-default" id="chooseCustomerAddressButton">选择同行地址</button>
+                                    <button class="btn btn-xs btn-default" id="editAddressButton">编辑</button>
+                                    <button class="btn btn-xs btn-default" id="userPeerDefaultAddress">同行默认地址</button>
                                 </div>
                             </div>
                             <div class="panel-body pb5 admin-form">
                                 <script type="text/html" id="orderConsignInfoTpl">
                                     {{#address}}
                                     <address class="mn">
-                                        <strong>{{consigneeName}}</strong>
+                                        <strong>{{contactName}}</strong>
                                         <br>
                                         {{provinceName}}{{cityName}}{{districtName}}{{address}}
                                         <br>
-                                        <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{consigneePhone}}
+                                        <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{contactPhone}}
                                     </address>
                                     {{/address}}
                                     {{^address}}
@@ -73,36 +74,62 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group field">
-                    <label class="col-md-3 control-label">起租日期</label>
+                    <label class="col-md-3 control-label">仓库</label>
                     <div class="col-md-9">
-                        <div class="input-group date" id="createTimePicker">
-                            <input id="rentStartTime" name="rentStartTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择起租日期" />
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <div class="input-group bringContainer">
+                            <input type="hidden" name="warehouseNo" />
+                            <input type="text" id="warehouseName" name="warehouseName" bringFiled="warehouseName" class="form-control required" readonly placeholder="请选择仓库" />
+                            <span class="input-group-addon cursor chooseWarehouseId" id="chooseWarehouseId"><i class="fa fa-search mr5"></i>选择</span>
                         </div>
                     </div>
                 </div>
                 <div class="form-group field">
-                    <label class="col-md-3 control-label">租赁方式</label>
+                    <label class="col-md-3 control-label">配送方式</label>
                     <div class="col-md-9">
                         <div class="input-group" style="width: 100%;">
-                            <select class="form-control required" name="rentType">
+                            <select class="form-control required" name="deliveryMode">
                                 <option value="">请选择</option>
                             </select>
                         </div>
                     </div>
                 </div>
                 <div class="form-group field">
-                    <label class="col-md-3 control-label">租期</label>
+                    <label class="col-md-3 control-label">起租日期</label>
                     <div class="col-md-9">
-                        <div class="input-group" style="width: 100%;">
-                            <input type="text" class="form-control required number" name="rentTimeLength" id="rentTimeLength" />
+                        <div class="input-group date" id="rentStartTimePicker">
+                            <input id="rentStartTime" name="rentStartTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择起租日期" />
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-6">
+                        <div class="form-group field">
+                            <label class="col-md-6 control-label">租赁方式</label>
+                            <div class="col-md-6">
+                                <div class="input-group" style="width: 100%;">
+                                    <select class="form-control required" name="rentType">
+                                        <option value="">请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group field">
+                            <label class="col-md-6 control-label">租期</label>
+                            <div class="col-md-6">
+                                <div class="input-group" style="width: 100%;">
+                                    <input type="text" class="form-control required number" name="rentTimeLength" id="rentTimeLength" />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="form-group field">
                     <label class="col-md-3 control-label">备注</label>
                     <div class="col-md-9">
-                        <textarea class="form-control" id="remark" rows="3"  name="remark" style="height: 140px"></textarea>
+                        <textarea class="form-control" id="remark" rows="3"  name="remark" style="height: 90px"></textarea>
                     </div>
                 </div>
             </div>
@@ -154,6 +181,7 @@
                             <th>类别</th>
                             <th>品牌</th>
                             <th>商品参数（SKU）</th>
+                            <td>单价</td>
                             <th>数量</th>
                             <th class="text-right">操作</th>
                         </tr>
@@ -177,9 +205,14 @@
                                     <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
                                     <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
                                     <label class="field prepend-icon">
-                                        <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入调拨数量" />
+                                        <input type="text" name="productUnitAmount-{{skuId}}-{{rowKey}}" value="{{productUnitAmount}}" class="productUnitAmount form-control required moneyNumber pl10" placeholder="输入商品单价" />
                                     </label>
                                 </div>
+                            </td>
+                            <td>
+                                <label class="field prepend-icon">
+                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productSkuCount}}" class="productSkuCount form-control required number pl10" placeholder="输入调拨数量" />
+                                </label>
                             </td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
@@ -227,6 +260,7 @@
                             <th>品牌</th>
                             <th>类型</th>
                             <th>配件价值</th>
+                            <th>单价</th>
                             <th>数量</th>
                             <th class="text-right">操作</th>
                         </tr>
@@ -251,9 +285,14 @@
                                     <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
                                     <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
                                     <label class="field prepend-icon">
-                                        <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入调拨数量" />
+                                        <input type="text" name="materialUnitAmount-{{materialNo}}" value="{{materialUnitAmount}}" class="materialUnitAmount form-control required moneyNumber pl10" placeholder="输入配件单价" />
                                     </label>
                                 </div>
+                            </td>
+                            <td>
+                                <label class="field prepend-icon">
+                                    <input type="text" name="materialCount-{{materialNo}}" value="{{productMaterialCount}}" class="productMaterialCount form-control required number pl10" placeholder="输入调拨数量" />
+                                </label>
                             </td>
                             <td class="text-right">
                                 <div class="btn-group text-right">

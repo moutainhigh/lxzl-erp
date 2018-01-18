@@ -57,7 +57,7 @@
                     <tbody>
                     {{#dataSource}}
                     {{#listData}}
-                    <tr>
+                    <tr data-rowdata="{{rowData}}">
                         {{#hasCommonActionButtons}}
                         <td>
                             <label class="option block mn">
@@ -85,7 +85,7 @@
                         </td>
                         <td class="text-right">
                             <div class="btn-group text-right">
-                                <a href="#" type="button" class="btn btn-default btn-xs" data-no="{{peerNo}}">选择</a>
+                                <a href="#" type="button" class="btn btn-default btn-xs chooseButton" data-no="{{peerNo}}">选择</a>
                             </div>
                         </td>
                     </tr>
