@@ -399,6 +399,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         //设置同行调拨单配件散料单
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderMaterialDOList)) {
             List<StockOrderBulkMaterialDO> stockOrderBulkMaterialDOList = stockOrderBulkMaterialMapper.findByStockOrderNo(stockOrderDO.getStockOrderNo());
+            List<PeerDeploymentOrderMaterialBulkDO> peerDeploymentOrderMaterialBulkDOList = new ArrayList<>();
             for (StockOrderBulkMaterialDO stockOrderBulkMaterialDO : stockOrderBulkMaterialDOList) {
                 if (StockItemReferType.PEER_DEPLOYMENT_MATERIAL.equals(stockOrderBulkMaterialDO.getItemReferType())){
                     PeerDeploymentOrderMaterialBulkDO peerDeploymentOrderMaterialBulkDO = new PeerDeploymentOrderMaterialBulkDO();
@@ -413,8 +414,9 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                     peerDeploymentOrderMaterialBulkDO.setCreateUser(loginUser.getUserId().toString());
                     peerDeploymentOrderMaterialBulkDO.setUpdateTime(currentTime);
                     peerDeploymentOrderMaterialBulkDO.setUpdateUser(loginUser.getUserId().toString());
-                    peerDeploymentOrderMaterialBulkMapper.save(peerDeploymentOrderMaterialBulkDO);
+                    peerDeploymentOrderMaterialBulkDOList.add(peerDeploymentOrderMaterialBulkDO);
                 }
+                peerDeploymentOrderMaterialBulkMapper.saveList(peerDeploymentOrderMaterialBulkDOList);
             }
         }
         //判断确认收货时间与预计归还时间修整
