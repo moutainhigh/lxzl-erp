@@ -237,7 +237,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         peerDeploymentOrderQueryParam.setPageNo(1);
         peerDeploymentOrderQueryParam.setPageSize(5);
 //        peerDeploymentOrderQueryParam.setRentType(2);
-//        peerDeploymentOrderQueryParam.setPeerDeploymentOrderNo("LXPDO0317201801162");
+        peerDeploymentOrderQueryParam.setPeerDeploymentOrderNo("-0452");
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/page",peerDeploymentOrderQueryParam);
     }
 

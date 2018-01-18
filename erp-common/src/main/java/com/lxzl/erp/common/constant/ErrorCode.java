@@ -538,6 +538,7 @@ public class ErrorCode {
     public static final String PEER_DEPLOYMENT_ORDER_PRODUCT_ID_NOT_NULL  = "J1510001";
     public static final String PEER_DEPLOYMENT_ORDER_STATUS_NEED_CONFIRM  = "J1510002";
     public static final String USER_CAN_NOT_OPERATION_PEER_DEPLOYMENT_ORDER_WAREHOUSE  = "J1510003";
+    public static final String PEER_DEPLOYMENT_ORDER_STATUS_NEED_PROCESSING_OUT  = "J1510004";
 
 
     static {
@@ -1068,6 +1069,7 @@ public class ErrorCode {
         MAP.put(PEER_DEPLOYMENT_ORDER_CONSIGN_INFO_PHONE_IS_MATH, "同行调拨收货信息单只能輸入数字");
         MAP.put(PEER_DEPLOYMENT_ORDER_RENT_TYPE_IS_ERROR, "同行调拨单租赁方式只能选天租和月租");
         MAP.put(PEER_DEPLOYMENT_ORDER_DELIVERY_MODE_IS_ERROR, "同行调拨单发货方式只能快递和自提");
+        MAP.put(PEER_DEPLOYMENT_ORDER_STATUS_NEED_PROCESSING_OUT, "只有状态为退回处理中的同行调拨单才能进行此操作");
 
 
 
