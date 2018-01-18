@@ -134,7 +134,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         //产品和配件和收货信息数据
         savePeerDeploymentOrderProductInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderProductList(),PeerDeploymentOrderProductDO.class),peerDeploymentOrderDO.getPeerDeploymentOrderNo(),loginUser,currentTime);
         savePeerDeploymentOrderMaterialInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderMaterialList(), PeerDeploymentOrderMaterialDO.class), peerDeploymentOrderDO.getPeerDeploymentOrderNo(),loginUser, currentTime);
-        savePeerDeploymentOrderConsignInfo(ConverterUtil.convert(peerDeploymentOrder.getPeerDeploymentOrderConsignInfo(),PeerDeploymentOrderConsignInfoDO.class), peerDeploymentOrderDO.getId(), loginUser, currentTime);
+        savePeerDeploymentOrderConsignInfo(peerDeploymentOrderDO.getPeerId(), peerDeploymentOrderDO.getId(), loginUser, currentTime);
         //判断产品和配件 总数与总额
         PeerDeploymentOrderDO newestPeerDeploymentOrderDO = peerDeploymentOrderMapper.findByPeerDeploymentOrderNo(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
         for (PeerDeploymentOrderProductDO peerDeploymentOrderProductDO : newestPeerDeploymentOrderDO.getPeerDeploymentOrderProductDOList()) {
@@ -208,7 +208,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         //产品和配件和收货信息数据
         savePeerDeploymentOrderProductInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderProductList(),PeerDeploymentOrderProductDO.class),peerDeploymentOrderDO.getPeerDeploymentOrderNo(),loginUser,currentTime);
         savePeerDeploymentOrderMaterialInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderMaterialList(), PeerDeploymentOrderMaterialDO.class), peerDeploymentOrderDO.getPeerDeploymentOrderNo(),loginUser, currentTime);
-        savePeerDeploymentOrderConsignInfo(ConverterUtil.convert(peerDeploymentOrder.getPeerDeploymentOrderConsignInfo(),PeerDeploymentOrderConsignInfoDO.class), peerDeploymentOrderDO.getId(), loginUser, currentTime);
+        savePeerDeploymentOrderConsignInfo(peerDeploymentOrderDO.getPeerId(), peerDeploymentOrderDO.getId(), loginUser, currentTime);
 
         //判断产品和配件 总数与总额
         PeerDeploymentOrderDO newestPeerDeploymentOrderDO = peerDeploymentOrderMapper.findByPeerDeploymentOrderNo(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
@@ -947,17 +947,27 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
 
     /**
      * 保存同行调拨单收货信息
-     * @param peerDeploymentOrderConsignInfoDO
+     * @param peerId
      * @param peerDeploymentOrderId
      * @param loginUser
      * @param currentTime
      */
-    private void savePeerDeploymentOrderConsignInfo(PeerDeploymentOrderConsignInfoDO peerDeploymentOrderConsignInfoDO, Integer peerDeploymentOrderId, User loginUser, Date currentTime) {
+    private void savePeerDeploymentOrderConsignInfo(Integer peerId, Integer peerDeploymentOrderId, User loginUser, Date currentTime) {
 
+        PeerDO peerDO = peerMapper.findById(peerId);
         PeerDeploymentOrderConsignInfoDO dbPeerDeploymentOrderConsignInfoDO = peerDeploymentOrderConsignInfoMapper.findByPeerDeploymentOrderConsignInfoId(peerDeploymentOrderId);
 
+        PeerDeploymentOrderConsignInfoDO peerDeploymentOrderConsignInfoDO = new PeerDeploymentOrderConsignInfoDO();
+        peerDeploymentOrderConsignInfoDO.setPeerDeploymentOrderId(peerDeploymentOrderId);
+        peerDeploymentOrderConsignInfoDO.setPeerDeploymentOrderId(peerDeploymentOrderId);
+        peerDeploymentOrderConsignInfoDO.setContactName(peerDO.getContactName());
+        peerDeploymentOrderConsignInfoDO.setContactPhone(peerDO.getContactPhone());
+        peerDeploymentOrderConsignInfoDO.setProvince(peerDO.getProvince());
+        peerDeploymentOrderConsignInfoDO.setCity(peerDO.getCity());
+        peerDeploymentOrderConsignInfoDO.setDistrict(peerDO.getDistrict());
+        peerDeploymentOrderConsignInfoDO.setAddress(peerDO.getAddress());
+
         if (dbPeerDeploymentOrderConsignInfoDO == null) {
-            peerDeploymentOrderConsignInfoDO.setPeerDeploymentOrderId(peerDeploymentOrderId);
             peerDeploymentOrderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             peerDeploymentOrderConsignInfoDO.setCreateUser(loginUser.getUserId().toString());
             peerDeploymentOrderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
