@@ -18,7 +18,7 @@ public interface PeerDeploymentOrderMapper extends BaseMysqlDAO<PeerDeploymentOr
 	PeerDeploymentOrderDO findByNo(@Param("peerDeploymentOrderNo") String peerDeploymentOrderNo);
 
 
-
+	PeerDeploymentOrderDO findPeerDeploymentOrderByNo(@Param("peerDeploymentOrderNo")String peerDeploymentOrderNo);
 
 	PeerDeploymentOrderDO findDetailByNo(@Param("peerDeploymentOrderNo")String peerDeploymentOrderNo);
 
