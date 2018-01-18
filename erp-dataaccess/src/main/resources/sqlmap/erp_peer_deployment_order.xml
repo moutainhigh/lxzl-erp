@@ -86,8 +86,8 @@
 		<result column="material_material_id" jdbcType="INTEGER" property="materialId" />
 		<result column="material_material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount" />
 		<result column="material_material_amount" jdbcType="DECIMAL" property="materialAmount" />
-		<result column="material_product_material_count" jdbcType="INTEGER" property="productMaterialCount" />
-		<result column="material_product_material_snapshot" jdbcType="VARCHAR" property="productMaterialSnapshot" />
+		<result column="material_material_count" jdbcType="INTEGER" property="materialCount" />
+		<result column="material_material_snapshot" jdbcType="VARCHAR" property="materialSnapshot" />
 		<result column="material_is_new" jdbcType="INTEGER" property="isNew" />
 		<result column="material_data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="material_remark" jdbcType="VARCHAR" property="remark" />
@@ -112,7 +112,7 @@
 	</sql>
 
 	<sql id="material_column_List">
-		epdom.id AS material_id,epdom.peer_deployment_order_id AS material_peer_deployment_order_id,epdom.peer_deployment_order_no AS material_peer_deployment_order_no,epdom.material_id AS material_material_id,epdom.material_unit_amount AS material_material_unit_amount,epdom.material_amount AS material_material_amount,epdom.product_material_count AS material_product_material_count,epdom.product_material_snapshot AS material_product_material_snapshot,epdom.is_new AS material_is_new,epdom.data_status AS material_data_status,epdom.remark AS material_remark,epdom.create_time AS material_create_time,epdom.create_user AS material_create_user,epdom.update_time AS material_update_time,epdom.update_user AS material_update_user
+		epdom.id AS material_id,epdom.peer_deployment_order_id AS material_peer_deployment_order_id,epdom.peer_deployment_order_no AS material_peer_deployment_order_no,epdom.material_id AS material_material_id,epdom.material_unit_amount AS material_material_unit_amount,epdom.material_amount AS material_material_amount,epdom.material_count AS material_material_count,epdom.material_snapshot AS material_material_snapshot,epdom.is_new AS material_is_new,epdom.data_status AS material_data_status,epdom.remark AS material_remark,epdom.create_time AS material_create_time,epdom.create_user AS material_create_user,epdom.update_time AS material_update_time,epdom.update_user AS material_update_user
 	</sql>
 
 	<select id="findById" resultMap="PeerDeploymentOrderDO" parameterType="java.lang.Integer">

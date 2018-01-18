@@ -142,7 +142,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             peerDeploymentOrderDO.setTotalProductAmount(BigDecimalUtil.add(peerDeploymentOrderDO.getTotalProductAmount(), peerDeploymentOrderProductDO.getProductAmount()));
         }
         for (PeerDeploymentOrderMaterialDO peerDeploymentOrderMaterialDO : newestPeerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList()) {
-            peerDeploymentOrderDO.setTotalMaterialCount(peerDeploymentOrderDO.getTotalMaterialCount() == null ? peerDeploymentOrderMaterialDO.getProductMaterialCount() : (peerDeploymentOrderDO.getTotalMaterialCount() + peerDeploymentOrderMaterialDO.getProductMaterialCount()));
+            peerDeploymentOrderDO.setTotalMaterialCount(peerDeploymentOrderDO.getTotalMaterialCount() == null ? peerDeploymentOrderMaterialDO.getMaterialCount() : (peerDeploymentOrderDO.getTotalMaterialCount() + peerDeploymentOrderMaterialDO.getMaterialCount()));
             peerDeploymentOrderDO.setTotalMaterialAmount(BigDecimalUtil.add(peerDeploymentOrderDO.getTotalMaterialAmount(), peerDeploymentOrderMaterialDO.getMaterialAmount()));
         }
         peerDeploymentOrderDO.setTotalOrderAmount(BigDecimalUtil.add(peerDeploymentOrderDO.getTotalProductAmount(), peerDeploymentOrderDO.getTotalMaterialAmount()));
@@ -217,7 +217,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             peerDeploymentOrderDO.setTotalProductAmount(BigDecimalUtil.add(peerDeploymentOrderDO.getTotalProductAmount(), peerDeploymentOrderProductDO.getProductAmount()));
         }
         for (PeerDeploymentOrderMaterialDO peerDeploymentOrderMaterialDO : newestPeerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList()) {
-            peerDeploymentOrderDO.setTotalMaterialCount(peerDeploymentOrderDO.getTotalMaterialCount() == null ? peerDeploymentOrderMaterialDO.getProductMaterialCount() : (peerDeploymentOrderDO.getTotalMaterialCount() + peerDeploymentOrderMaterialDO.getProductMaterialCount()));
+            peerDeploymentOrderDO.setTotalMaterialCount(peerDeploymentOrderDO.getTotalMaterialCount() == null ? peerDeploymentOrderMaterialDO.getMaterialCount() : (peerDeploymentOrderDO.getTotalMaterialCount() + peerDeploymentOrderMaterialDO.getMaterialCount()));
             peerDeploymentOrderDO.setTotalMaterialAmount(BigDecimalUtil.add(peerDeploymentOrderDO.getTotalMaterialAmount(), peerDeploymentOrderMaterialDO.getMaterialAmount()));
         }
         peerDeploymentOrderDO.setTotalOrderAmount(BigDecimalUtil.add(peerDeploymentOrderDO.getTotalProductAmount(), peerDeploymentOrderDO.getTotalMaterialAmount()));
@@ -353,7 +353,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             for (PeerDeploymentOrderMaterialDO peerDeploymentOrderMaterialDO : peerDeploymentOrderMaterialDOList) {
                 MaterialInStorage materialInStorage = new MaterialInStorage();
                 materialInStorage.setMaterialId(peerDeploymentOrderMaterialDO.getMaterialId());
-                materialInStorage.setMaterialCount(peerDeploymentOrderMaterialDO.getProductMaterialCount());
+                materialInStorage.setMaterialCount(peerDeploymentOrderMaterialDO.getMaterialCount());
                 materialInStorage.setIsNew(peerDeploymentOrderMaterialDO.getIsNew());
                 materialInStorage.setItemReferId(peerDeploymentOrderMaterialDO.getId());
                 materialInStorage.setItemReferType(StockItemReferType.PEER_DEPLOYMENT_MATERIAL);
@@ -666,7 +666,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             List<PeerDeploymentOrderMaterialDO> peerDeploymentOrderMaterialDOList = peerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList();
             //调用散料料出库的方法
             for (PeerDeploymentOrderMaterialDO peerDeploymentOrderMaterialDO : peerDeploymentOrderMaterialDOList){
-                String operateMaterialStockResult = materialSupport.operateMaterialStock(peerDeploymentOrderMaterialDO.getMaterialId(),peerDeploymentOrderMaterialDO.getProductMaterialCount() * -1);
+                String operateMaterialStockResult = materialSupport.operateMaterialStock(peerDeploymentOrderMaterialDO.getMaterialId(),peerDeploymentOrderMaterialDO.getMaterialCount() * -1);
                 if (!ErrorCode.SUCCESS.equals(operateMaterialStockResult)){
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     serviceResult.setErrorCode(operateMaterialStockResult);
@@ -902,8 +902,8 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                     throw new BusinessException(materialServiceResult.getErrorCode());
                 }
                 Material material = materialServiceResult.getResult();
-                peerDeploymentOrderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(peerDeploymentOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(peerDeploymentOrderMaterialDO.getProductMaterialCount())), new BigDecimal(peerDeploymentOrderDO.getRentTimeLength())));
-                peerDeploymentOrderMaterialDO.setProductMaterialSnapshot(FastJsonUtil.toJSONString(material));
+                peerDeploymentOrderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(peerDeploymentOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(peerDeploymentOrderMaterialDO.getMaterialCount())), new BigDecimal(peerDeploymentOrderDO.getRentTimeLength())));
+                peerDeploymentOrderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(material));
                 peerDeploymentOrderMaterialDO.setPeerDeploymentOrderId(peerDeploymentOrderDO.getId());
                 peerDeploymentOrderMaterialDO.setPeerDeploymentOrderNo(peerDeploymentOrderNo);
                 peerDeploymentOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -926,8 +926,8 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                     throw new BusinessException(materialServiceResult.getErrorCode());
                 }
                 Material material = materialServiceResult.getResult();
-                peerDeploymentOrderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(peerDeploymentOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(peerDeploymentOrderMaterialDO.getProductMaterialCount())), new BigDecimal(peerDeploymentOrderDO.getRentTimeLength())));
-                peerDeploymentOrderMaterialDO.setProductMaterialSnapshot(FastJsonUtil.toJSONString(material));
+                peerDeploymentOrderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(peerDeploymentOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(peerDeploymentOrderMaterialDO.getMaterialCount())), new BigDecimal(peerDeploymentOrderDO.getRentTimeLength())));
+                peerDeploymentOrderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(material));
                 peerDeploymentOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 peerDeploymentOrderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
                 peerDeploymentOrderMaterialDO.setUpdateTime(currentTime);
@@ -1024,7 +1024,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 }
                 peerDeploymentOrderMaterial.setMaterialId(materialDO.getId());
 
-                if (peerDeploymentOrderMaterial.getProductMaterialCount() == null) {
+                if (peerDeploymentOrderMaterial.getMaterialCount() == null) {
                     return ErrorCode.PARAM_IS_ERROR;
                 }
                 if (peerDeploymentOrderMaterial.getMaterialUnitAmount() == null || BigDecimalUtil.compare(peerDeploymentOrderMaterial.getMaterialUnitAmount(), BigDecimal.ZERO) <= 0) {

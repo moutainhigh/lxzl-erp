@@ -28,8 +28,8 @@ public class PeerDeploymentOrderMaterial extends BasePO {
 	private String materialNo;   //配件编号
 	private BigDecimal materialAmount;   //配件总价格
 	@NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_COUNT_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
-	private Integer productMaterialCount;   //货物调拨配件数量
-	private String productMaterialSnapshot;   //货物调拨配件快照
+	private Integer materialCount;   //货物调拨配件数量
+	private String materialSnapshot;   //货物调拨配件快照
 	@NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_IS_NEW_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
 	@In(value = {CommonConstant.YES, CommonConstant.NO}, message = ErrorCode.IS_NEW_VALUE_ERROR, groups = {AddGroup.class, UpdateGroup.class})
 	private Integer isNew;   //是否全新机
@@ -85,19 +85,19 @@ public class PeerDeploymentOrderMaterial extends BasePO {
 		this.materialAmount = materialAmount;
 	}
 
-	public Integer getProductMaterialCount(){
-		return productMaterialCount;
+	public Integer getMaterialCount(){
+		return materialCount;
 	}
 
-	public void setProductMaterialCount(Integer productMaterialCount){
-		this.productMaterialCount = productMaterialCount;
+	public void setMaterialCount(Integer productMaterialCount){
+		this.materialCount = materialCount;
 	}
 
-	public String getProductMaterialSnapshot(){
-		return productMaterialSnapshot;
+	public String getMaterialSnapshot(){
+		return materialSnapshot;
 	}
 
-	public void setProductMaterialSnapshot(String productMaterialSnapshot){ this.productMaterialSnapshot = productMaterialSnapshot; }
+	public void setMaterialSnapshot(String productMaterialSnapshot){ this.materialSnapshot = materialSnapshot; }
 
 	public Integer getIsNew(){
 		return isNew;
