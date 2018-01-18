@@ -176,6 +176,8 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
 
         TransferOrderMaterialOutParam transferOrderMaterialOutParam = new TransferOrderMaterialOutParam();
         transferOrderMaterialOutParam.setTransferOrderNo("LXT-4000001-20180118-00110");
+
+
         transferOrderMaterialOutParam.setMaterialNo("M201711201500267591516");
         transferOrderMaterialOutParam.setMaterialCount(10);
         transferOrderMaterialOutParam.setIsNew(1);
@@ -228,7 +230,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     public void pageTransferOrder() throws Exception{
         TransferOrderQueryParam transferOrderQueryParam = new TransferOrderQueryParam();
 //        transferOrderQueryParam.setTransferOrderName("庄凯麟");
-        transferOrderQueryParam.setTransferOrderNo("LXT40000012018011488");
+        transferOrderQueryParam.setTransferOrderNo("LXT400000120");
         TestResult testResult = getJsonTestResult("/transferOrder/pageTransferOrder", transferOrderQueryParam);
     }
 

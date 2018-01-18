@@ -10,7 +10,6 @@ import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
-import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
@@ -153,7 +152,7 @@ public class StatementServiceImpl implements StatementService {
                             }
                         } else {
                             // 中间期数
-                            StatementOrderDetailDO statementOrderDetailDO = calculateMiddleStatementOrderDetail(buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), lastCalculateDate, orderProductDO.getPaymentCycle(), orderProductDO.getProductUnitAmount(), orderProductDO.getProductCount(), statementDays, orderProductDO.getPayMode(), currentTime, loginUser.getUserId());
+                            StatementOrderDetailDO statementOrderDetailDO = calculateMiddleStatementOrderDetail(orderProductDO.getRentType(),buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), lastCalculateDate, orderProductDO.getPaymentCycle(), orderProductDO.getProductUnitAmount(), orderProductDO.getProductCount(), statementDays, orderProductDO.getPayMode(), currentTime, loginUser.getUserId());
                             if (statementOrderDetailDO != null) {
                                 statementOrderDetailDO.setStatementDetailPhase(i);
                                 addStatementOrderDetailDOList.add(statementOrderDetailDO);
@@ -204,7 +203,7 @@ public class StatementServiceImpl implements StatementService {
                             }
                         } else {
                             // 中间期数
-                            StatementOrderDetailDO statementOrderDetailDO = calculateMiddleStatementOrderDetail(buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), lastCalculateDate, orderMaterialDO.getPaymentCycle(), orderMaterialDO.getMaterialUnitAmount(), orderMaterialDO.getMaterialCount(), statementDays, orderMaterialDO.getPayMode(), currentTime, loginUser.getUserId());
+                            StatementOrderDetailDO statementOrderDetailDO = calculateMiddleStatementOrderDetail(orderMaterialDO.getRentType(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), lastCalculateDate, orderMaterialDO.getPaymentCycle(), orderMaterialDO.getMaterialUnitAmount(), orderMaterialDO.getMaterialCount(), statementDays, orderMaterialDO.getPayMode(), currentTime, loginUser.getUserId());
                             if (statementOrderDetailDO != null) {
                                 statementOrderDetailDO.setStatementDetailPhase(i);
                                 addStatementOrderDetailDOList.add(statementOrderDetailDO);
@@ -910,22 +909,21 @@ public class StatementServiceImpl implements StatementService {
         if (OrderRentType.RENT_TYPE_DAY.equals(rentType)) {
             statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(rentStartTime, rentTimeLength);
             statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(statementEndTime, -1);
-            if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
-                statementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(rentStartTime, rentTimeLength);
+            if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
+                statementExpectPayTime = rentStartTime;
+            } else if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
+                statementExpectPayTime = statementEndTime;
             }
         } else if (OrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
             statementEndTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, rentTimeLength);
             statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(statementEndTime, -1);
-            if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
+            if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
+                statementExpectPayTime = rentStartTime;
+            } else if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
                 statementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, rentTimeLength);
             }
         }
 
-        if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
-            statementExpectPayTime = rentStartTime;
-        } else if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(payMode)) {
-            statementExpectPayTime = statementEndTime;
-        }
 
         // 保险金额
         BigDecimal totalInsuranceAmount = BigDecimal.ZERO;
@@ -952,7 +950,7 @@ public class StatementServiceImpl implements StatementService {
             statementEndTimeCalendar.set(Calendar.DAY_OF_MONTH, statementDays);
         }
         statementEndTime = statementEndTimeCalendar.getTime();
-        Date statementExpectPayTime;
+        Date statementExpectPayTime = null;
         BigDecimal firstPhaseAmount;
         if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
             statementExpectPayTime = rentStartTime;
@@ -961,7 +959,12 @@ public class StatementServiceImpl implements StatementService {
             statementExpectPayTime = rentStartTime;
             firstPhaseAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(BigDecimalUtil.mul(unitAmount, new BigDecimal(itemCount)), new BigDecimal(rentLength)), new BigDecimal(0.3));
         } else {
-            statementExpectPayTime = statementEndTime;
+            // 如果按天的，本期结束就要还款，如果是按月的，本期结束第二天还款
+            if (OrderRentType.RENT_TYPE_DAY.equals(rentType)) {
+                statementExpectPayTime = statementEndTime;
+            } else if (OrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
+                statementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(statementEndTime, 1);
+            }
             firstPhaseAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, BigDecimalUtil.mul(unitAmount, new BigDecimal(itemCount)));
         }
 
@@ -984,27 +987,32 @@ public class StatementServiceImpl implements StatementService {
         } else if (OrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
             orderLastDate = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, rentTimeLength);
         }
-        // 最后一期的金额
-        BigDecimal lastPhaseAmount = BigDecimalUtil.sub(itemAllAmount, alreadyPaidAmount);
         // 剩余的天数
         int surplusDays = DateUtil.daysBetween(lastPhaseStartTime, orderLastDate);
         // 最后一期的结束时间
         Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(lastPhaseStartTime, surplusDays - 1);
 
         lastPhaseStartTime = lastPhaseStartTime.getTime() > statementEndTime.getTime() ? statementEndTime : lastPhaseStartTime;
-        Date statementExpectPayTime;
+        Date statementExpectPayTime = null;
         if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
             statementExpectPayTime = lastPhaseStartTime;
         } else {
-            statementExpectPayTime = statementEndTime;
+            // 如果按天的，本期结束就要还款，如果是按月的，本期结束第二天还款
+            if (OrderRentType.RENT_TYPE_DAY.equals(rentType)) {
+                statementExpectPayTime = statementEndTime;
+            } else if (OrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
+                statementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(statementEndTime, 1);
+            }
         }
+        // 最后一期的金额
+        BigDecimal lastPhaseAmount = BigDecimalUtil.sub(itemAllAmount, alreadyPaidAmount);
         return buildStatementOrderDetailDO(customerId, OrderType.ORDER_TYPE_ORDER, orderId, orderItemType, orderItemReferId, statementExpectPayTime, lastPhaseStartTime, statementEndTime, lastPhaseAmount, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId);
     }
 
     /**
      * 计算多期中的中间期明细
      */
-    StatementOrderDetailDO calculateMiddleStatementOrderDetail(Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date lastCalculateDate, Integer paymentCycle, BigDecimal itemUnitAmount, Integer itemCount, Integer statementDays, Integer payMode, Date currentTime, Integer loginUserId) {
+    StatementOrderDetailDO calculateMiddleStatementOrderDetail(Integer rentType,Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date lastCalculateDate, Integer paymentCycle, BigDecimal itemUnitAmount, Integer itemCount, Integer statementDays, Integer payMode, Date currentTime, Integer loginUserId) {
         // 中间期数
         Date thisPhaseStartTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(lastCalculateDate, 1);
         Date thisPhaseDate = com.lxzl.se.common.util.date.DateUtil.monthInterval(lastCalculateDate, paymentCycle);
@@ -1018,11 +1026,16 @@ public class StatementServiceImpl implements StatementService {
             statementEndTimeCalendar.set(Calendar.DAY_OF_MONTH, lastMonthSurplusDays);
             statementEndTime = statementEndTimeCalendar.getTime();
         }
-        Date statementExpectPayTime;
+        Date statementExpectPayTime = null;
         if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
             statementExpectPayTime = thisPhaseStartTime;
         } else {
-            statementExpectPayTime = statementEndTime;
+            // 如果按天的，本期结束就要还款，如果是按月的，本期结束第二天还款
+            if (OrderRentType.RENT_TYPE_DAY.equals(rentType)) {
+                statementExpectPayTime = statementEndTime;
+            } else if (OrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
+                statementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(statementEndTime, 1);
+            }
         }
         return buildStatementOrderDetailDO(customerId, OrderType.ORDER_TYPE_ORDER, orderId, orderItemType, orderItemReferId, statementExpectPayTime, thisPhaseStartTime, statementEndTime, middlePhaseAmount, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUserId);
     }

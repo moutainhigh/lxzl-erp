@@ -144,9 +144,18 @@
 		order by epdomb.create_time desc
 	</select>
 
-	<select id="findPeerDeploymentOrderId" resultMap="PeerDeploymentOrderMaterialBulkDO" parameterType="java.lang.Integer">
+	<select id="findByPeerDeploymentOrderId" resultMap="PeerDeploymentOrderMaterialBulkDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order_material_bulk epdomb WHERE
-		epdomb.peer_deployment_order_id = #{peerDeploymentOrderId,jdbcType=INTEGER} AND epdomb.data_satatus = 1
+		epdomb.peer_deployment_order_id = #{peerDeploymentOrderId,jdbcType=INTEGER} AND epdomb.data_status = 1
 	</select>
+
+	<insert id="saveList" parameterType="java.util.ArrayList">
+		INSERT INTO erp_peer_deployment_order_material_bulk(peer_deployment_order_material_id,peer_deployment_order_id,peer_deployment_order_no,bulk_material_id,bulk_material_no,data_status,remark,create_time,create_user,update_time,update_user) VALUES
+		<foreach collection="list" item="peerDeploymentOrderMaterialBulkDO"  separator=",">
+			( #{peerDeploymentOrderMaterialBulkDO.peerDeploymentOrderMaterialId},#{peerDeploymentOrderMaterialBulkDO.peerDeploymentOrderId},#{peerDeploymentOrderMaterialBulkDO.peerDeploymentOrderNo},#{peerDeploymentOrderMaterialBulkDO.bulkMaterialId},#{peerDeploymentOrderMaterialBulkDO.bulkMaterialNo},
+			#{peerDeploymentOrderMaterialBulkDO.dataStatus},#{peerDeploymentOrderMaterialBulkDO.remark},#{peerDeploymentOrderMaterialBulkDO.createTime},
+			#{peerDeploymentOrderMaterialBulkDO.createUser},#{peerDeploymentOrderMaterialBulkDO.updateTime},#{peerDeploymentOrderMaterialBulkDO.updateUser})
+		</foreach>
+	</insert>
 
 </mapper>

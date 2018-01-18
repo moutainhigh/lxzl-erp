@@ -351,7 +351,7 @@
 		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order epdo
 		<where>
 			<if test="maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo != null &amp;&amp; maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo != '' ">
-				and epdo.peer_deployment_order_no = #{maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo,jdbcType=VARCHAR}
+				and epdo.peer_deployment_order_no LIKE CONCAT('%','${maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo}','%' )
 			</if>
 			<if test="maps.peerDeploymentOrderQueryParam.peerId != null">
 				and epdo.peer_id = #{maps.peerDeploymentOrderQueryParam.peerId,jdbcType=INTEGER}
