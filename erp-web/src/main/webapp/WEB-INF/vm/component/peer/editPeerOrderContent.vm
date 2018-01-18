@@ -291,7 +291,7 @@
                             </td>
                             <td>
                                 <label class="field prepend-icon">
-                                    <input type="text" name="materialCount-{{materialNo}}" value="{{productMaterialCount}}" class="productMaterialCount form-control required number pl10" placeholder="输入调拨数量" />
+                                    <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入调拨数量" />
                                 </label>
                             </td>
                             <td class="text-right">

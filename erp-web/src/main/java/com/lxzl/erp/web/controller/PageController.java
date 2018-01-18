@@ -552,6 +552,14 @@ public class PageController extends BaseController {
     public String choosePeerSuppliserModal() {
         return "/component/peer/choosePeerSupplierModal";
     }
+    @RequestMapping("/peer-order-manage/equiment-list")
+    public String peerOrderManageEquimentList() {
+        return "/component/peer/equimentList";
+    }
+    @RequestMapping("/peer-order-manage/bulk-material-list")
+    public String peerOrderManageBulkMaterialList() {
+        return "/component/peer/bulkMaterialList";
+    }
 
 
         //结算单

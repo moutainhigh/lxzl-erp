@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-流转单管理-编辑同行调拨单</title>
+    <title>凌雄ERP-流转单管理-同行调拨单详情</title>
     #parse("layout/header.vm")
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
@@ -17,8 +17,194 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
-            <form class="" id="editPeerOrderForm">
-                #parse("component/peer/editPeerOrderContent.vm")
+            <form class="" id="detailPeerOrderForm">
+                <div class="panel panel-primary panel-border top mb35">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>同行调拨单编号：<small id="peerDeploymentOrderNo"></small></h5>
+                            </div>
+                            <div class="col-md-8 text-right">
+                                <script type="text/html" id="actionButtonsTpl">
+                                    {{#acitonButtons}}
+                                    <a href="${ctx}{{menuUrl}}?no={{no}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">{{text}}</a>
+                                    {{/acitonButtons}}
+                                </script>
+                                <div class="btn-group" id="actionButtons"></div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <script type="text/html" id="orderBaseInfoTpl">
+                        {{#data}}
+                        <div class="form-horizontal panel-body bg-light dark br-t-n">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt>同行</dt><dd class="mb10">{{peerName}}</dd>
+
+                                        <dt>优惠金额</dt><dd class="mb10">￥{{#price}}{{totalDiscountAmount}}{{/price}}</dd>
+
+                                        <dt>税率</dt><dd class="mb10">{{taxRate}}</dd>
+
+                                        <dt>归还地址</dt>
+                                        <dd class="mb10">
+                                            <p class="mn">{{peerDeploymentOrderConsignInfo.contactName}}</p>
+                                            <p class="mn mt5"><i class="fa fa-mobile mr5"></i>{{peerDeploymentOrderConsignInfo.contactPhone}}</p>
+                                            <p class="mn mt5 mw200">
+                                                <i class="fa fa-map-marker mr5"></i>
+                                                {{peerDeploymentOrderConsignInfo.provinceName}}
+                                                {{peerDeploymentOrderConsignInfo.cityName}}
+                                                {{peerDeploymentOrderConsignInfo.districtName}}
+                                                {{peerDeploymentOrderConsignInfo.address}}
+                                            </p>
+                                        </dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt>状态</dt><dd class="mb10 {{peerDeploymentOrderStatusClass}}">{{peerDeploymentOrderStatusValue}}</dd>
+                                        <dt>仓库</dt><dd class="mb10">{{warehouseName}}</dd>
+                                        <dt>配送方式</dt><dd class="mb10">{{deliveryModeValue}}</dd>
+                                        <dt>租期</dt><dd class="mb10"><span class="mr5">{{rentTypeValue}}</span><span>{{rentTimeLength}}{{rentTypeUnit}}</span></dd>
+                                        <dt>起租日期</dt><dd class="mb10">{{#shortTime}}{{rentStartTime}}{{/shortTime}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">创建人</dt><dd>{{createUserRealName}}</dd>
+                                        <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}</dd>
+                                        <dt class="mb10">备注</dt><dd>{{remark}}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        {{/data}}
+                    </script>
+                    <div id="orderBaseInfo"></div>
+
+                    <div class="panel-heading">
+                        <div class="row">
+                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
+                                <li class="active">
+                                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
+                                </li>
+                                <li>
+                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="panel-body dark pn">
+                        <div class="tab-content pn br-n">
+                            <div id="purchaseOrderProductItems" class="tab-pane active">
+                                <div class="table-responsive">
+                                    <script type="text/html" id="dataListTpl">
+                                        <thead>
+                                        <tr class="bg-light">
+                                            <th>商品名称</th>
+                                            <th>类别</th>
+                                            <th>品牌</th>
+                                            <th>商品参数（SKU）</th>
+                                            <td>单价</td>
+                                            <th>数量</th>
+                                            <th class="text-right">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#listData}}
+                                        <tr class="productRow skuRow" productRowKey="{{productId}}">
+                                            <td>{{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}{{productName}}</td>
+                                            <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+                                            <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                                            <td>{{propertiesToStr}}</td>
+                                            <td class="productUnitAmountTd">
+                                               ￥{{#price}}{{productUnitAmount}}{{/price}}
+                                            </td>
+                                            <td>
+                                               {{productSkuCount}}
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="btn-group text-right">
+                                                    {{#rowActionButtons}}
+                                                    <a href="${ctx}{{menuUrl}}?id={{peerDeploymentOrderProductId}}" type="button"
+                                                       class="btn btn-default btn-xs {{class}}"
+                                                       data-skuid="{{skuId}}"
+                                                       data-productid="{{productId}}"
+                                                       data-itemid="{{peerDeploymentOrderProductId}}">{{text}}</a>
+                                                    {{/rowActionButtons}}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">没有选择商品</td>
+                                        </tr>
+                                        {{/listData}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                                </div>
+                            </div>
+                            <div id="purchaseOrderMaterialItems" class="tab-pane">
+                                <div class="table-responsive">
+                                    <script type="text/html" id="materialDataListTpl">
+                                        <thead>
+                                        <tr>
+                                            <th>配件名称</th>
+                                            <th>品牌</th>
+                                            <th>类型</th>
+                                            <th>配件价值</th>
+                                            <th>单价</th>
+                                            <th>数量</th>
+                                            <th class="text-right">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr class="materialRow">
+                                            <td>{{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}{{materialName}}</td>
+                                            <td>{{brandName}}</td>
+                                            <td>{{materialTypeStr}}</td>
+                                            <td>{{#price}}{{materialPrice}}{{/price}}</td>
+                                            <td class="materialUnitAmountTd">
+                                               ￥{{#price}}{{materialUnitAmount}}{{/price}}
+                                            </td>
+                                            <td>
+                                                {{materialCount}}
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="btn-group text-right">
+                                                    {{#rowActionButtons}}
+                                                    <a href="#" type="button" class="btn btn-default btn-xs {{class}}"
+                                                       data-materialno="{{materialNo}}"
+                                                       data-materialcount="{{materialCount}}"
+                                                       data-itemid="{{peerDeploymentOrderMaterialId}}">{{text}}</a>
+                                                    {{/rowActionButtons}}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">没有选择配件</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialDataListTable"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer clearfix">
+                        <button class="btn btn-default pull-right ml15 goBack">返回</button>
+                    </div>
+                </div>
             </form>
         </section>
     </section>
@@ -34,8 +220,11 @@
             'manage.peer.order.handle.mixin.js',
             'manage.peer.order.mixin.js',
             'manage.peer.order.detail.js',
+            'manage.peer.order.equiment.list.js',
+            'manage.peer.order.material.list.js',
             'manage.order.item.render.js',
-            'manage.order.util.js');
+            'manage.order.util.js',
+            'modal.submit.audit.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化
