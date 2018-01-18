@@ -32,6 +32,26 @@ public class PaymentServiceImpl implements PaymentService {
     private UserSupport userSupport;
 
     @Override
+    public CustomerAccount queryCustomerAccountNoLogin(String customerNo) {
+        CustomerAccountQueryParam param = new CustomerAccountQueryParam();
+        param.setBusinessCustomerNo(customerNo);
+        param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = FastJsonUtil.toJSONString(param);
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryCustomerAccountURL, requestJson, headerBuilder, "UTF-8");
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                return JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), CustomerAccount.class);
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+    @Override
     public CustomerAccount queryCustomerAccount(String customerNo) {
         CustomerAccountQueryParam param = new CustomerAccountQueryParam();
         param.setBusinessCustomerNo(customerNo);
@@ -52,7 +72,6 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BusinessException(e.getMessage());
         }
     }
-
     @Override
     public ServiceResult<String, Boolean> manualCharge(ManualChargeParam param) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();

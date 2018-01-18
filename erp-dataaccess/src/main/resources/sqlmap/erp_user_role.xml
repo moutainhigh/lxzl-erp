@@ -29,6 +29,30 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
 
+    <resultMap id="SubCompanyDO" type="com.lxzl.erp.dataaccess.domain.company.SubCompanyDO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
+        <result column="sub_company_type" jdbcType="INTEGER" property="subCompanyType" />
+        <result column="sub_company_code" jdbcType="VARCHAR" property="subCompanyCode" />
+        <result column="province" jdbcType="INTEGER" property="province" />
+        <result column="city" jdbcType="INTEGER" property="city" />
+        <result column="district" jdbcType="INTEGER" property="district" />
+        <result column="data_order" jdbcType="INTEGER" property="dataOrder" />
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+        <result column="province_name" jdbcType="INTEGER" property="provinceName" />
+        <result column="city_name" jdbcType="INTEGER" property="cityName" />
+        <result column="district_name" jdbcType="INTEGER" property="districtName" />
+    </resultMap>
+
+    <sql id="sub_company_column_List">
+        esc.id,esc.sub_company_name,esc.sub_company_type,esc.sub_company_code,esc.province,esc.city,esc.district,esc.data_order,esc.data_status,esc.remark,esc.create_time,esc.create_user,esc.update_time,esc.update_user
+    </sql>
+
     <sql id="role_column_List">
         er.id,er.role_name,er.role_desc,er.is_super_admin,er.data_status,er.remark,er.create_time,er.update_time
     </sql>
@@ -157,4 +181,15 @@
         <include refid="set_column_sql"/>
         WHERE id = #{id, jdbcType=INTEGER}
     </update>
+
+    <select id="findSubCompanyByUserId" resultMap="SubCompanyDO" parameterType="java.lang.Integer">
+       SELECT <include refid="sub_company_column_List"/> from erp_sub_company esc WHERE esc.id = (
+		  SELECT ed.sub_company_id from erp_department ed WHERE ed.id = (
+				SELECT er.department_id from erp_role er WHERE er.id = (
+							SELECT eur.role_id from erp_user_role eur WHERE eur.user_id = #{userId, jdbcType=INTEGER} limit 1
+				) limit 1
+		  ) limit 1
+        ) limit 1
+    </select>
+
 </mapper>

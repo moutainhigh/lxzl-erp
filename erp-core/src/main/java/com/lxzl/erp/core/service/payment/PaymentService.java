@@ -22,6 +22,13 @@ public interface PaymentService extends BaseService {
      * @return 客户帐户信息
      */
     CustomerAccount queryCustomerAccount(String customerNo);
+    /**
+     * 不登录状态查询客户账户
+     *
+     * @param customerNo 客户编码
+     * @return 客户帐户信息
+     */
+    CustomerAccount queryCustomerAccountNoLogin(String customerNo);
 
     /**
      * 手动充值

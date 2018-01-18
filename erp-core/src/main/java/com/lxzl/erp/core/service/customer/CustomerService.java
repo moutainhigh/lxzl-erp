@@ -98,5 +98,5 @@ public interface CustomerService {
     * @param : customerQueryParam
     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.common.domain.Page<com.lxzl.erp.common.domain.customer.pojo.Customer>>
     */
-    ServiceResult<String, Customer> queryCustomerDetailsByCustomerName(CustomerQueryParam customerQueryParam);
+    ServiceResult<String, Customer> queryCustomerByCompanyName(String companyName);
 }

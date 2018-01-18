@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
@@ -25,7 +26,7 @@ public class MaterialTest extends ERPUnTransactionalTest {
     @Test
     public void addMaterial() throws Exception {
         Material material = new Material();
-        material.setMaterialName("固态/128G SSD");
+        material.setMaterialName("固态/300G SSD");
         material.setMaterialType(8);
         material.setMaterialCapacityValue(128.0);
         material.setIsRent(CommonConstant.YES);
@@ -33,6 +34,9 @@ public class MaterialTest extends ERPUnTransactionalTest {
         material.setDayRentPrice(new BigDecimal(5000.0));
         material.setMonthRentPrice(new BigDecimal(5000.0));
         material.setMaterialDesc("测试备注");
+        material.setNewMaterialPrice(new BigDecimal("12.00"));
+        material.setNewDayRentPrice(new BigDecimal("13.00"));
+        material.setNewMonthRentPrice(new BigDecimal("14.00"));
 
         List<MaterialImg> materialImgList = new ArrayList<>();
         MaterialImg materialImg = new MaterialImg();
@@ -45,15 +49,18 @@ public class MaterialTest extends ERPUnTransactionalTest {
     @Test
     public void updateMaterial() throws Exception {
         Material material = new Material();
-        material.setMaterialNo("M201711201356145971009");
+        material.setMaterialNo("LXM--20180118-00002");
         material.setMaterialDesc("M201711201356145971009");
+        material.setNewMaterialPrice(new BigDecimal("22.00"));
+        material.setNewDayRentPrice(new BigDecimal("23.00"));
+        material.setNewMonthRentPrice(new BigDecimal("24.00"));
         TestResult testResult = getJsonTestResult("/material/update", material);
     }
 
     @Test
     public void deleteMaterial() throws Exception {
         Material material = new Material();
-        material.setMaterialNo("M201711251159171311112");
+        material.setMaterialNo("LXM--20180118-00002");
         TestResult testResult = getJsonTestResult("/material/delete", material);
     }
 
@@ -62,6 +69,7 @@ public class MaterialTest extends ERPUnTransactionalTest {
         MaterialQueryParam materialQueryParam = new MaterialQueryParam();
         materialQueryParam.setPageNo(1);
         materialQueryParam.setPageSize(15);
+        materialQueryParam.setMaterialNo("LXM--20180118-00002");
         TestResult testResult = getJsonTestResult("/material/queryAllMaterial", materialQueryParam);
     }
 

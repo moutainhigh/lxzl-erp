@@ -44,6 +44,33 @@ public class Material extends BasePO {
     private String createUser;   //添加人
     private Date updateTime;   //修改时间
     private String updateUser;   //修改人
+    private BigDecimal newMaterialPrice;  //全新配件本身的价值(单价)
+    private BigDecimal newDayRentPrice;  //全新天租赁价格
+    private BigDecimal newMonthRentPrice;  //全新月租赁价格
+
+    public BigDecimal getNewMaterialPrice() {
+        return newMaterialPrice;
+    }
+
+    public void setNewMaterialPrice(BigDecimal newMaterialPrice) {
+        this.newMaterialPrice = newMaterialPrice;
+    }
+
+    public BigDecimal getNewDayRentPrice() {
+        return newDayRentPrice;
+    }
+
+    public void setNewDayRentPrice(BigDecimal newDayRentPrice) {
+        this.newDayRentPrice = newDayRentPrice;
+    }
+
+    public BigDecimal getNewMonthRentPrice() {
+        return newMonthRentPrice;
+    }
+
+    public void setNewMonthRentPrice(BigDecimal newMonthRentPrice) {
+        this.newMonthRentPrice = newMonthRentPrice;
+    }
 
     private List<MaterialImg> materialImgList;
 

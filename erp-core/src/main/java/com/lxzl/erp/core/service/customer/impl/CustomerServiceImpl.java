@@ -9,7 +9,6 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerCompanyNeed;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
@@ -17,6 +16,7 @@ import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.system.pojo.Image;
+import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -27,12 +27,18 @@ import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.dataaccess.dao.mysql.area.AreaCityMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.area.AreaDistrictMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.area.AreaProvinceMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.*;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -1390,38 +1396,71 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult<String, Customer> queryCustomerDetailsByCustomerName(CustomerQueryParam customerQueryParam) {
+    public ServiceResult<String, Customer> queryCustomerByCompanyName(String companyName) {
         ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
-        CustomerDO customerDO = customerMapper.findByName(customerQueryParam.getCustomerName());
+        CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
+        customerCompanyQueryParam.setCompanyName(companyName);
+        Map<String, Object> map = new HashMap<>();
+        map.put("start", 0);
+        map.put("pageSize", Integer.MAX_VALUE);
+        map.put("customerCompanyQueryParam", customerCompanyQueryParam);
+        List<CustomerCompanyDO> customerCompanyDOList = customerCompanyMapper.findCustomerCompanyByParams(map);
+        if (CollectionUtil.isEmpty(customerCompanyDOList)) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        //公司客户信息
+        CustomerCompanyDO customerCompanyDO = customerCompanyDOList.get(0);
+        //客户信息
+        CustomerDO customerDO = customerMapper.findById(customerCompanyDO.getCustomerId());
         if (customerDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
-        if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
-            customerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
-        } else if (CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
-            customerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
-        }
-        CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
-        Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
-        //显示联合开发原的省，市，区
-        if (customerDO.getUnionUser() != null) {
-            Integer companyId = userSupport.getCompanyIdByUser(customerDO.getUnionUser());
-            SubCompanyDO subCompanyDO = subCompanyMapper.findById(companyId);
-            customerResult.setUnionAreaProvinceName(subCompanyDO.getProvinceName());
-            customerResult.setUnionAreaCityName(subCompanyDO.getCityName());
-            customerResult.setUnionAreaDistrictName(subCompanyDO.getDistrictName());
-        }
-        customerResult.setCustomerAccount(customerAccount);
 
-        if (customerResult.getOwner() != null) {
-            customerResult.setCustomerOwnerUser(CommonCache.userMap.get(customerResult.getOwner()));
+        //客户分控信息
+        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerDO.getId());
+        if (customerRiskManagementDO != null) {
+            customerDO.setCustomerRiskManagementDO(customerRiskManagementDO);
         }
-        if (customerResult.getUnionUser() != null) {
-            customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
+        //业务员信息
+        UserDO ownerUserDO = userMapper.findByUserId(customerDO.getOwner());
+        if (ownerUserDO != null) {
+            customerDO.setOwnerName(ownerUserDO.getUserName());
         }
+
+        //联合开发人
+        UserDO unionUserDO = userMapper.findByUserId(customerDO.getUnionUser());
+        if (unionUserDO != null) {
+            customerDO.setUnionUserName(unionUserDO.getUserName());
+        }
+
+        customerDO.setCustomerCompanyDO(customerCompanyDO);
+        CustomerAccount customerAccount = paymentService.queryCustomerAccountNoLogin(customerDO.getCustomerNo());
+        //封装数据
+        Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
+
+        if (customerAccount != null) {
+            customerResult.setCustomerAccount(customerAccount);
+        }
+        customerResult.setCustomerOwnerUser(ConverterUtil.convert(ownerUserDO, User.class));
+        customerResult.setCustomerUnionUser(ConverterUtil.convert(unionUserDO, User.class));
+        SubCompanyDO subCompanyDO = userRoleMapper.findSubCompanyByUserId(unionUserDO.getId());
+
+        subCompanyDO = subCompanyMapper.findById(subCompanyDO.getId());
+        customerResult.setUnionAreaProvinceName(subCompanyDO.getProvinceName());
+        customerResult.setUnionAreaCityName(subCompanyDO.getCityName());
+        customerResult.setUnionAreaDistrictName(subCompanyDO.getDistrictName());
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
         return serviceResult;
     }
+
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private UserRoleMapper userRoleMapper;
+
 }

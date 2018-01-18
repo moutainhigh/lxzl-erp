@@ -35,9 +35,9 @@ public class HttpClientTest extends ERPTransactionalTest{
 
     @Test
     public void say() throws Exception {
-        CustomerQueryParam queryParam = new CustomerQueryParam();
-        queryParam.setCustomerName("百度");
-        TestResult result = getJsonTestResult("/interface/queryCustomer", queryParam);
+//        CustomerQueryParam queryParam = new CustomerQueryParam();
+//        queryParam.setCustomerName("百度");
+//        TestResult result = getJsonTestResult("/interface/queryCustomer", queryParam);
     }
 
     @Test

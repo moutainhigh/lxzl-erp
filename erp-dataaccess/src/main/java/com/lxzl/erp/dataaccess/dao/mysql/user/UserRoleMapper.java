@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.user;
 
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.erp.dataaccess.domain.user.UserRoleDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
@@ -26,4 +27,6 @@ public interface UserRoleMapper extends BaseMysqlDAO<UserRoleDO> {
     List<RoleDO> findRoleListByUserId(@Param("userId") Integer userId);
     List<Integer> findRoleIdListByUserId(@Param("userId") Integer userId);
     List<UserRoleDO> findListByRoleId(@Param("roleId") Integer roleId);
+    //获取分公司信息
+    SubCompanyDO findSubCompanyByUserId(@Param("userId")Integer userId);
 }
