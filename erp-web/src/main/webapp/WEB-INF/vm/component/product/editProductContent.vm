@@ -193,7 +193,7 @@
 
 
         <script type="text/html" id="skuTableTpl">
-            <table class="table admin-form theme-warning tc-checkbox-1 fs13 atl-tabl">
+            <table class="table admin-form theme-warning tc-checkbox-1 fs13 atl-tabl table-bordered">
                 <thead>
                 <tr class="bg-light">
                     {{#ths}}
@@ -213,24 +213,56 @@
                     <td>{{propertyValueName}}</td>
                     {{/property}}
                     <td>
-                        <label class="field prepend-icon">
-                            <input type="hidden" name="skuId" value="{{skuId}}" />
-                            <input type="hidden" name="rowId" class="rowId" value="{{rowId}}" />
-                            <input type="text" name="skuPrice-{{rowId}}" value="{{skuPrice}}" class="skuPrice form-control required moneyNumber" />
-                            <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                        </label>
+                        <input type="hidden" name="skuId" value="{{skuId}}" />
+                        <input type="hidden" name="rowId" class="rowId" value="{{rowId}}" />
+
+                        <div class="smart-widget sm-left sml-80">
+                            <label class="field prepend-icon">
+                                <input type="text" name="skuPrice-{{rowId}}" value="{{skuPrice}}" class="skuPrice form-control gui-input required moneyNumber" />
+                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                            </label>
+                            <label for="verification" class="button bradiusN">次新</label>
+                        </div>
+                        <div class="smart-widget sm-left sml-80 mt10">
+                            <label class="field prepend-icon">
+                                <input type="text" name="newSkuPrice-{{rowId}}" value="{{newSkuPrice}}" class="newSkuPrice form-control gui-input required moneyNumber" />
+                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                            </label>
+                            <label for="verification" class="button bradiusN">全新</label>
+                        </div>
+
                     </td>
                     <td>
-                        <label class="field prepend-icon">
-                            <input type="text" name="dayRentPrice-{{rowId}}" value="{{dayRentPrice}}" class="dayRentPrice form-control required moneyNumber" />
-                            <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                        </label>
+                        <div class="smart-widget sm-left sml-80">
+                            <label class="field prepend-icon">
+                                <input type="text" name="dayRentPrice-{{rowId}}" value="{{dayRentPrice}}" class="dayRentPrice form-control gui-input required moneyNumber" />
+                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                            </label>
+                            <label for="verification" class="button bradiusN">次新</label>
+                        </div>
+                        <div class="smart-widget sm-left sml-80 mt10">
+                            <label class="field prepend-icon">
+                                <input type="text" name="newDayRentPrice-{{rowId}}" value="{{newDayRentPrice}}" class="newDayRentPrice form-control gui-input required moneyNumber" />
+                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                            </label>
+                            <label for="verification" class="button bradiusN">全新</label>
+                        </div>
                     </td>
                     <td>
-                        <label class="field prepend-icon">
-                            <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                            <input type="text" name="monthRentPrice-{{rowId}}" value="{{monthRentPrice}}" class="monthRentPrice form-control required moneyNumber" />
-                        </label>
+                        <div class="smart-widget sm-left sml-80">
+                            <label class="field prepend-icon">
+                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                <input type="text" name="monthRentPrice-{{rowId}}" value="{{monthRentPrice}}" class="monthRentPrice form-control gui-input required moneyNumber" />
+                            </label>
+                            <label for="verification" class="button bradiusN">次新</label>
+                        </div>
+                        <div class="smart-widget sm-left sml-80 mt10">
+                            <label class="field prepend-icon">
+                                <input type="text" name="newMonthRentPrice-{{rowId}}" value="{{newMonthRentPrice}}" class="newMonthRentPrice form-control gui-input required moneyNumber" />
+                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                            </label>
+                            <label for="verification" class="button bradiusN">全新</label>
+                        </div>
                     </td>
                     <td class="text-right">
                         <div class="btn-group text-right">

@@ -1,15 +1,10 @@
 package com.lxzl.erp.web.controller;
 
-import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.peer.PeerQueryParam;
 import com.lxzl.erp.common.domain.peer.pojo.Peer;
 import org.junit.Test;
-
-import java.util.Date;
-
-import static org.junit.Assert.*;
 
 /**
  * @Author : XiaoLuYu
@@ -35,9 +30,11 @@ public class PeerControllerTest extends ERPUnTransactionalTest {
         peer.setPeerNo("LXPEER099900003");
         peer.setPeerName("hahah");
         peer.setPeerCode("222");
+//        peer.setBeneficiaryAccount("12345678aaaaaaaaa");
         peer.setProvince(11);
         peer.setCity(10);
         peer.setDistrict(9);
+        peer.setBeneficiaryAccount("6666 6666 6666 6666 6666");
         TestResult result = getJsonTestResult("/peer/updatePeer", peer);
     }
 

@@ -420,20 +420,19 @@
                                     <script type="text/html" id="statementOrderDetailListTpl">
                                         <thead>
                                         <tr class="bg-light">
-##                                            <th>ID</th>
-##                                            <th>类型</th>
-##                                            <th>订单编号</th>
-##                                            <th>订单项类型</th>
                                             <th>商品名</th>
                                             <th>单价</th>
                                             <th>商品数量</th>
                                             <th>租赁类型</th>
                                             <th>期数</th>
+                                            <th>结算单金额</th>
+                                            <th>其它费用</th>
                                             <th>预计支付时间</th>
                                             <th>已经支付金额</th>
-                                            <th>结算单金额</th>
                                             <th>结算支付时间</th>
                                             <th>逾期金额</th>
+                                            <th>退还租金押金</th>
+                                            <th>退还押金</th>
                                             <th>状态</th>
                                             <th class="text-right">结算时间</th>
                                         </tr>
@@ -442,10 +441,6 @@
                                         {{#dataSource}}
                                         {{#listData}}
                                         <tr>
-##                                            <td>{{statementOrderDetailId}}</td>
-##                                            <td>{{orderTypeValue}}</td>
-##                                            <td>{{orderNo}}</td>
-##                                            <td>{{orderItemTypeValue}}</td>
                                             <td>
                                                 <div class="mw200">
                                                     {{itemName}}
@@ -455,13 +450,22 @@
                                             <td>{{itemCount}}</td>
                                             <td>{{itemRentTypeValue}}</td>
                                             <td>{{statementDetailPhase}}</td>
+                                            <td>￥{{#price}}{{statementDetailAmount}}{{/price}}</td>
+                                            <td>￥{{#price}}{{statementDetailOtherAmount}}{{/price}}</td>
                                             <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
                                             <td>￥{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>
-                                            <td>￥{{#price}}{{statementDetailAmount}}{{/price}}</td>
                                             <td>{{#shortTime}}{{statementDetailPaidTime}}{{/shortTime}}</td>
                                             <td>￥{{#price}}{{statementDetailOverdueAmount}}{{/price}}</td>
+                                            <td>
+                                                <p class="mn">￥{{#price}}{{statementDetailRentDepositReturnAmount}}{{/price}}</p>
+                                                <p class="mn mt5">{{#clockTime}}{{statementDetailRentDepositReturnTime}}{{/clockTime}}</p>
+                                            </td>
+                                            <td>
+                                                <p class="mn">￥{{#price}}{{statementDetailDepositReturnAmount}}{{/price}}</p>
+                                                <p class="mn mt5">{{#clockTime}}{{statementDetailDepositReturnTime}}{{/clockTime}}</p>
+                                            </td>
                                             <td>{{statementDetailStatusValue}}</td>
-                                            <td class="text-right">
+                                            <td>
                                                 <p class="mn">开始：{{#clockShorTime}}{{statementStartTime}}{{/clockShorTime}}</p>
                                                 <p class="mn mt5">结束：{{#clockShorTime}}{{statementEndTime}}{{/clockShorTime}}</p>
                                             </td>

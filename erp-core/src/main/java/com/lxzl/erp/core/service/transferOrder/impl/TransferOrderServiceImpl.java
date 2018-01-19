@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.material.pojo.MaterialInStorage;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
+import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.transferOrder.*;
 import com.lxzl.erp.common.domain.transferOrder.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -46,6 +47,7 @@ import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mongo.config.PageQuery;
+import com.lxzl.se.dataaccess.mysql.source.interceptor.SqlLogInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1240,10 +1242,16 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                     productInStorage.setItemReferId(transferOrderProductDO.getId());
                     productInStorage.setItemReferType(StockItemReferType.TRANSFER_ORDER_PRODUCT);
 
-                    ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(transferOrderProductDO.getProductSkuId());
-                    List<ProductMaterial> productMaterialList = productServiceResult.getResult().getProductSkuList().get(0).getProductMaterialList();
-                    productInStorage.setProductMaterialList(productMaterialList);
-                    productInStorageList.add(productInStorage);
+//                    ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(transferOrderProductDO.getProductSkuId());
+                    //直接取出快照
+                    Product product = FastJsonUtil.toBean(transferOrderProductDO.getProductSkuSnapshot(), Product.class);
+                    if (product != null && CollectionUtil.isNotEmpty(product.getProductSkuList())) {
+                        for (ProductSku productSku : product.getProductSkuList()) {
+                            List<ProductMaterial> productMaterialList = productSku.getProductMaterialList();
+                            productInStorage.setProductMaterialList(productMaterialList);
+                            productInStorageList.add(productInStorage);
+                        }
+                    }
                 }
             }
 
@@ -1276,6 +1284,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             //通过存库单的编号，查询设备和散料
             //设置转移单商品设备单
             if (CollectionUtil.isNotEmpty(transferOrderProductDOList)) {
+                SqlLogInterceptor.setExecuteSql("skip print stockOrderEquipmentMapper.findByStockOrderNo  sql ......");
                 List<StockOrderEquipmentDO> stockOrderEquipmentDOList = stockOrderEquipmentMapper.findByStockOrderNo(stockOrderDO.getStockOrderNo());
                 List<TransferOrderProductEquipmentDO> transferOrderProductEquipmentDOList = new ArrayList<>();
                 for (StockOrderEquipmentDO stockOrderEquipmentDO : stockOrderEquipmentDOList) {
@@ -1291,10 +1300,13 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                     transferOrderProductEquipmentDO.setUpdateUser(transferOrderDO.getUpdateUser());
                     transferOrderProductEquipmentDOList.add(transferOrderProductEquipmentDO);
                 }
+                SqlLogInterceptor.setExecuteSql("skip print transferOrderProductEquipmentMapper.saveList  sql ......");
                 transferOrderProductEquipmentMapper.saveList(transferOrderProductEquipmentDOList);
             }
             //设置转移单配件散料单
             if (CollectionUtil.isNotEmpty(transferOrderMaterialDOList)) {
+                List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList = new ArrayList<>();
+                SqlLogInterceptor.setExecuteSql("skip print stockOrderBulkMaterialMapper.findByStockOrderNo  sql ......");
                 List<StockOrderBulkMaterialDO> stockOrderBulkMaterialDOList = stockOrderBulkMaterialMapper.findByStockOrderNo(stockOrderDO.getStockOrderNo());
                 for (StockOrderBulkMaterialDO stockOrderBulkMaterialDO : stockOrderBulkMaterialDOList) {
                     if (StockItemReferType.TRANSFER_ORDER_MATERIAL.equals(stockOrderBulkMaterialDO.getItemReferType())){
@@ -1308,9 +1320,11 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                         transferOrderMaterialBulkDO.setCreateUser(transferOrderDO.getCreateUser());
                         transferOrderMaterialBulkDO.setUpdateTime(now);
                         transferOrderMaterialBulkDO.setUpdateUser(transferOrderDO.getUpdateUser());
-                        transferOrderMaterialBulkMapper.save(transferOrderMaterialBulkDO);
+                        transferOrderMaterialBulkDOList.add(transferOrderMaterialBulkDO);
                     }
                 }
+                SqlLogInterceptor.setExecuteSql("skip print transferOrderMaterialBulkMapper.saveList  sql ......");
+                transferOrderMaterialBulkMapper.saveList(transferOrderMaterialBulkDOList);
             }
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);

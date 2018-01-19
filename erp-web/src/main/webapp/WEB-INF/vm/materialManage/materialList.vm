@@ -115,8 +115,8 @@
                                 <td>{{materialTypeStr}}</td>
                                 <td>{{#memorysize}}{{materialCapacityValue}}{{/memorysize}}</td>
                                 <td>
-                                    <p class="mn" style="white-space:nowrap">全新：{{newMaterialCount}}</p>
                                     <p class="mn mt5" style="white-space:nowrap">次新：{{oldMaterialCount}}</p>
+                                    <p class="mn" style="white-space:nowrap">全新：{{newMaterialCount}}</p>
                                 </td>
                                 <td>
                                     <p class="mn">次新：￥{{#price}}{{materialPrice}}{{/price}}</p>
