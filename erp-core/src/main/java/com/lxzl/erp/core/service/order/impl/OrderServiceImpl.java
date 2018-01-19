@@ -494,7 +494,7 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
             Product product = queryProductResult.getResult();
-            List<Map<String, Object>> productSkuLastPriceMap = orderProductMapper.queryLastPrice(customerDO.getId(), request.getProductSkuId());
+            List<Map<String, Object>> productSkuLastPriceMap = orderProductMapper.queryLastPrice(customerDO.getId(), request.getProductSkuId(), request.getIsNewProduct());
             for (Map<String, Object> map : productSkuLastPriceMap) {
                 if (map.get("rent_type") != null && OrderRentType.RENT_TYPE_DAY.equals(map.get("rent_type"))) {
                     productLastDayAmount = (BigDecimal) (map.get("product_unit_amount"));
@@ -516,7 +516,7 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
             Material material = queryMaterialResult.getResult();
-            List<Map<String, Object>> materialSkuLastPriceMap = orderMaterialMapper.queryLastPrice(customerDO.getId(), request.getProductSkuId());
+            List<Map<String, Object>> materialSkuLastPriceMap = orderMaterialMapper.queryLastPrice(customerDO.getId(), request.getProductSkuId(), request.getIsNewProduct());
             for (Map<String, Object> map : materialSkuLastPriceMap) {
                 if (map.get("rent_type") != null && OrderRentType.RENT_TYPE_DAY.equals(map.get("rent_type"))) {
                     monthLastDayAmount = (BigDecimal) (map.get("product_unit_amount"));

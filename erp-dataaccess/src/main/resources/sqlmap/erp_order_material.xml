@@ -35,7 +35,7 @@
 
 	<select id="queryLastPrice" resultType="java.util.Map" parameterType="java.util.Map">
 		select eom_main.rent_type,eom_main.product_unit_amount from erp_order_product eom_main inner join
-		(select eom.rent_type,max(eom.id) as id from erp_order_material eom inner join erp_order eo on eo.id = eom.order_id where eo.buyer_customer_id = #{customerId, jdbcType=INTEGER} and eom.material_id = #{materialId, jdbcType=INTEGER} and eo.data_status = 1 and eom.data_status = 1 group by eom.rent_type) eom_max
+		(select eom.rent_type,max(eom.id) as id from erp_order_material eom inner join erp_order eo on eo.id = eom.order_id where eo.buyer_customer_id = #{customerId, jdbcType=INTEGER} and eom.material_id = #{materialId, jdbcType=INTEGER} and eom.is_new_material = #{isNewMaterial, jdbcType=INTEGER} and eo.data_status = 1 and eom.data_status = 1 group by eom.rent_type) eom_max
 		on eom_max.id = eom_main.id
 	</select>
 
