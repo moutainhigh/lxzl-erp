@@ -108,6 +108,17 @@ public class SupplierServiceImpl implements SupplierService {
             return result;
         }
 
+        String beneficiaryAccount = supplier.getBeneficiaryAccount();
+        if(beneficiaryAccount != null){
+            beneficiaryAccount = beneficiaryAccount.replaceAll("\\s{1,}", "");
+            if(beneficiaryAccount.matches("^[0-9]*$") && beneficiaryAccount.length()<19 && beneficiaryAccount.length()>16){
+                supplier.setBeneficiaryAccount(beneficiaryAccount);
+            }else{
+                result.setErrorCode(ErrorCode.BANK_NO_ERROR);
+                return result;
+            }
+        }
+
         SupplierDO supplierDO = ConverterUtil.convert(supplier, SupplierDO.class);
         AreaCityDO areaCityDO = areaCityMapper.findById(supplierDO.getCity());
         supplierDO.setSupplierNo(generateNoSupport.generateSupplierNo(areaCityDO.getCityCode()));
@@ -153,6 +164,17 @@ public class SupplierServiceImpl implements SupplierService {
             return result;
         }
 
+        String beneficiaryAccount = supplier.getBeneficiaryAccount();
+        if(beneficiaryAccount != null){
+            beneficiaryAccount = beneficiaryAccount.replaceAll("\\s{1,}", "");
+            if(beneficiaryAccount.matches("^[0-9]*$") && beneficiaryAccount.length()<19 && beneficiaryAccount.length()>16){
+                supplier.setBeneficiaryAccount(beneficiaryAccount);
+            }else{
+                result.setErrorCode(ErrorCode.BANK_NO_ERROR);
+                return result;
+            }
+        }
+
         SupplierDO supplierDO = ConverterUtil.convert(supplier, SupplierDO.class);
         supplierDO.setId(dbSupplierDO.getId());
         supplierDO.setSupplierNo(dbSupplierDO.getSupplierNo());
@@ -192,5 +214,4 @@ public class SupplierServiceImpl implements SupplierService {
         }
         return ErrorCode.SUCCESS;
     }
-
 }

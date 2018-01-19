@@ -33,8 +33,6 @@ public class Supplier extends BasePO {
 	private String updateUser;   //修改人
 	@Length(max = 100,message = ErrorCode.BENEFICIARY_NAME_IS_LENGTH,groups = {AddGroup.class, UpdateGroup.class})
 	private String beneficiaryName;   //收款户名
-	@Length(max = 30,message = ErrorCode.BENEFICIARY_ACCOUNT_IS_LENGTH,groups = {AddGroup.class, UpdateGroup.class})
-	@Pattern(regexp = "^[0-9-]+$",message = ErrorCode.BENEFICIARY_ACCOUNT_IS_MATH,groups = {AddGroup.class, UpdateGroup.class})
 	private String beneficiaryAccount;   //收款帐号
 	@Length(max = 100,message = ErrorCode.BENEFICIARY_BANK_NAME_IS_LENGTH,groups = {AddGroup.class, UpdateGroup.class})
 	private String beneficiaryBankName;   //收款开户行
