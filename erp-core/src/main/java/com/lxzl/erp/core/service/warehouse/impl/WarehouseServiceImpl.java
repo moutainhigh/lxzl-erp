@@ -595,6 +595,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         Map<Integer, MaterialDO> materialMap = new HashMap<>();
         Map<String, BulkMaterialDO> allBulkMaterialDOMap = new HashMap<>();
         Integer isNewMaterial = materialInStorage.getIsNew() == null ? CommonConstant.COMMON_CONSTANT_NO : materialInStorage.getIsNew();
+        LinkedList<String> linkedList = generateNoSupport.batchGenerateBulkMaterialNo(cityCode, productInStockCounter.getBulkMaterialCount(),materialInStorage.getMaterialCount());
         for (int i = 0; i < materialInStorage.getMaterialCount(); i++) {
 
             if (!materialMap.containsKey(materialInStorage.getMaterialId())) {
@@ -604,7 +605,11 @@ public class WarehouseServiceImpl implements WarehouseService {
             MaterialDO materialDO = materialMap.get(materialInStorage.getMaterialId());
 
             BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
-            bulkMaterialDO.setBulkMaterialNo(generateNoSupport.generateBulkMaterialNo(materialDO.getMaterialModel(), cityCode, productInStockCounter.getBulkMaterialCount()));
+            //优化编号生成方式
+            String materialModel = materialDO.getMaterialModel()==null?"":materialDO.getMaterialModel();
+            bulkMaterialDO.setBulkMaterialNo(String.format(linkedList.getFirst(),materialModel));
+            linkedList.removeFirst();
+//            bulkMaterialDO.setBulkMaterialNo(generateNoSupport.generateBulkMaterialNo(materialDO.getMaterialModel(), cityCode, productInStockCounter.getBulkMaterialCount()));
             bulkMaterialDO.setMaterialId(materialInStorage.getMaterialId());
             bulkMaterialDO.setCurrentWarehouseId(warehouseId);
             bulkMaterialDO.setCurrentWarehousePositionId(warehousePositionId);
@@ -687,9 +692,20 @@ public class WarehouseServiceImpl implements WarehouseService {
 
         Map<Integer, MaterialDO> materialMap = new HashMap<>();
         Integer isNewProductEquipment = productInStorage.getIsNew() == null ? CommonConstant.COMMON_CONSTANT_NO : productInStorage.getIsNew();
+        Integer bulkCount = 0;
+        for(int i = 0; i < productInStorage.getProductCount(); i++){
+            for (ProductMaterial productMaterial : productInStorage.getProductMaterialList()) {
+                bulkCount += productMaterial.getMaterialCount();
+            }
+        }
+        LinkedList<String> bulkNoLinkedList = generateNoSupport.batchGenerateBulkMaterialNo(cityCode, productInStockCounter.getBulkMaterialCount(),bulkCount);
+        LinkedList<String> productNoLinkedList = generateNoSupport.batchGenerateEquipmentNo(cityCode, productInStockCounter.getProductEquipmentCount(),productInStorage.getProductCount());
         for (int i = 0; i < productInStorage.getProductCount(); i++) {
             ProductEquipmentDO productEquipmentDO = new ProductEquipmentDO();
-            productEquipmentDO.setEquipmentNo(generateNoSupport.generateEquipmentNo(productDO.getProductModel(), cityCode, productInStockCounter.getProductEquipmentCount()));
+            String productModel = productDO.getProductModel()==null?"":productDO.getProductModel();
+            productEquipmentDO.setEquipmentNo(String.format(productNoLinkedList.getFirst(),productModel));
+            productNoLinkedList.removeFirst();
+//            productEquipmentDO.setEquipmentNo(generateNoSupport.generateEquipmentNo(productDO.getProductModel(), cityCode, productInStockCounter.getProductEquipmentCount()));
             productEquipmentDO.setProductId(productInStorage.getProductId());
             productEquipmentDO.setSkuId(productInStorage.getProductSkuId());
             productEquipmentDO.setEquipmentPrice(CommonConstant.COMMON_CONSTANT_YES.equals(isNewProductEquipment) ? productSkuDO.getSkuPrice() : productSkuDO.getSkuPrice());
@@ -739,7 +755,10 @@ public class WarehouseServiceImpl implements WarehouseService {
                     for (int j = 0; j < productMaterial.getMaterialCount(); j++) {
                         MaterialDO materialDO = materialMap.get(productMaterial.getMaterialId());
                         BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
-                        bulkMaterialDO.setBulkMaterialNo(generateNoSupport.generateBulkMaterialNo(materialDO.getMaterialModel(), cityCode, productInStockCounter.getBulkMaterialCount()));
+                        String materialModel = materialDO.getMaterialModel()==null?"":materialDO.getMaterialModel();
+                        bulkMaterialDO.setBulkMaterialNo(String.format(bulkNoLinkedList.getFirst(),materialModel));
+                        bulkNoLinkedList.removeFirst();
+//                        bulkMaterialDO.setBulkMaterialNo(generateNoSupport.generateBulkMaterialNo(materialDO.getMaterialModel(), cityCode, productInStockCounter.getBulkMaterialCount()));
                         bulkMaterialDO.setMaterialId(productMaterial.getMaterialId());
                         bulkMaterialDO.setCurrentWarehouseId(warehouseId);
                         bulkMaterialDO.setCurrentWarehousePositionId(warehousePositionId);

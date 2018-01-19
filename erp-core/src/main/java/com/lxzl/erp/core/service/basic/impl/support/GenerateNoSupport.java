@@ -146,6 +146,39 @@ public class GenerateNoSupport {
     }
 
     /**
+     * 批量生成设备编号
+     */
+    public LinkedList<String> batchGenerateEquipmentNo(String cityCode, Integer counter , Integer productCount) {
+        LinkedList<String> linkedList = new LinkedList<>();
+        Date currentTime = new Date();
+        counter = counter == null ? 1 : counter;
+        synchronized (this) {
+            ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("start", 0);
+            maps.put("pageSize", Integer.MAX_VALUE);
+            productEquipmentQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+            productEquipmentQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            maps.put("productEquipmentQueryParam", productEquipmentQueryParam);
+            Integer count = productEquipmentMapper.listCount(maps);
+            for(int i = 0 ; i<productCount;i++){
+                StringBuilder builder = new StringBuilder();
+                builder.append("LXE-");
+                builder.append(cityCode);
+                builder.append("-");
+                builder.append("%s");
+                builder.append("-");
+                builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+                builder.append("-");
+                builder.append(String.format("%05d", productCount + counter));
+                linkedList.add(builder.toString());
+
+            }
+            return linkedList;
+        }
+    }
+
+    /**
      * 生成入库单号
      */
     public String generateStockOrderNo() {
@@ -195,6 +228,38 @@ public class GenerateNoSupport {
             builder.append("-");
             builder.append(String.format("%05d", count + counter));
             return builder.toString();
+        }
+    }
+    /**
+     * 批量生成散料编号
+     */
+    public LinkedList<String> batchGenerateBulkMaterialNo(String cityCode, Integer counter , Integer bulkCount) {
+        LinkedList<String> linkedList = new LinkedList<>();
+        Date currentTime = new Date();
+        counter = counter == null ? 1 : counter;
+        synchronized (this) {
+            BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("start", 0);
+            maps.put("pageSize", Integer.MAX_VALUE);
+            bulkMaterialQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+            bulkMaterialQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            maps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
+            Integer count = bulkMaterialMapper.listCount(maps);
+            for(int i = 0 ; i < bulkCount ; i ++)
+            {
+                StringBuilder builder = new StringBuilder();
+                builder.append("LXBM-");
+                builder.append(cityCode);
+                builder.append("-");
+                builder.append("%s");
+                builder.append("-");
+                builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+                builder.append("-");
+                builder.append(String.format("%05d", count+i + counter));
+                linkedList.add(builder.toString());
+            }
+            return linkedList;
         }
     }
 
