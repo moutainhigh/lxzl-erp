@@ -86,7 +86,8 @@
                                 <th>配件值大小</th>
                                 <th>库存</th>
                                 <th>价值</th>
-                                <th>租金</th>
+                                <th>次新租金</th>
+                                <th>全新租金</th>
                                 <th>创建人</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
@@ -113,11 +114,21 @@
                                 <td>{{materialModelName}}</td>
                                 <td>{{materialTypeStr}}</td>
                                 <td>{{#memorysize}}{{materialCapacityValue}}{{/memorysize}}</td>
-                                <td>{{stock}}</td>
-                                <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
+                                <td>
+                                    <p class="mn" style="white-space:nowrap">全新：{{newMaterialCount}}</p>
+                                    <p class="mn mt5" style="white-space:nowrap">次新：{{oldMaterialCount}}</p>
+                                </td>
+                                <td>
+                                    <p class="mn">次新：￥{{#price}}{{materialPrice}}{{/price}}</p>
+                                    <p class="mn mt5">全新：￥{{#price}}{{materialPrice}}{{/price}}</p>
+                                </td>
                                 <td>
                                     <p class="mn">日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
-                                    <p class="mn mt5">月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
+                                    <p class="mn mt5">月租：￥{{#price}}{{newMaterialPrice}}{{/price}}</p>
+                                </td>
+                                <td>
+                                    <p class="mn">日租：￥{{#price}}{{newDayRentPrice}}{{/price}}</p>
+                                    <p class="mn mt5">月租：￥{{#price}}{{newMonthRentPrice}}{{/price}}</p>
                                 </td>
                                 <td>
                                     <p class="mn">{{createUserRealName}}</p>

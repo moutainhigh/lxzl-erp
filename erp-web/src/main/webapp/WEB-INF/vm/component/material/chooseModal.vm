@@ -62,19 +62,28 @@
                         <td>{{materialModelName}}</td>
                         <td>{{materialTypeStr}}</td>
                         <td>{{#memorysize}}{{materialCapacityValue}}{{/memorysize}}</td>
-                        <td>￥{{#price}}{{materialPriceFormat}}{{/price}}</td>
                         <td>
-                            <p style="white-space:nowrap">日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
-                            <p style="white-space:nowrap">月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
+                            <p class="isUsed">￥{{#price}}{{materialPriceFormat}}{{/price}}</p>
+                            <p class="isNew hide">￥{{#price}}{{newMaterialPriceFormat}}{{/price}}</p>
                         </td>
                         <td>
-                            <p style="white-space:nowrap">新：{{newMaterialCount}}</p>
-                            <p style="white-space:nowrap">次新：{{oldMaterialCount}}</p>
+                            <div class="isUsed">
+                                <p style="white-space:nowrap">日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
+                                <p style="white-space:nowrap">月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
+                            </div>
+                            <div class="isNew hide">
+                                <p style="white-space:nowrap">日租：￥{{#price}}{{newDayRentPrice}}{{/price}}</p>
+                                <p style="white-space:nowrap">月租：￥{{#price}}{{newMonthRentPrice}}{{/price}}</p>
+                            </div>
+                        </td>
+                        <td>
+                            <p class="isUsed" style="white-space:nowrap">{{oldMaterialCount}}</p>
+                            <p class="isNew hide" style="white-space:nowrap">{{newMaterialCount}}</p>
                         </td>
                         {{#showIsNewCheckBox}}
                         <td>
                             <label class="block mn switch switch-primary">
-                                <input type="checkbox" name="isNewMaterial" id="isNewMaterial-{{materialNo}}" value="1">
+                                <input type="checkbox" name="isNewMaterial" id="isNewMaterial-{{materialNo}}" value="1" />
                                 <label for="isNewMaterial-{{materialNo}}" data-on="全新" data-off="次新"></label>
                                 <span></span>
                             </label>

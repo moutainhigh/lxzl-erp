@@ -15,6 +15,9 @@ public class ProductSku extends BasePO {
     private BigDecimal skuPrice;
     private BigDecimal dayRentPrice;
     private BigDecimal monthRentPrice;
+    private BigDecimal newSkuPrice;
+    private BigDecimal newDayRentPrice;
+    private BigDecimal newMonthRentPrice;
     private String customCode;
     private String barCode;
     private String properties;
@@ -195,5 +198,29 @@ public class ProductSku extends BasePO {
 
     public void setOldProductSkuCount(Integer oldProductSkuCount) {
         this.oldProductSkuCount = oldProductSkuCount;
+    }
+
+    public BigDecimal getNewSkuPrice() {
+        return newSkuPrice;
+    }
+
+    public void setNewSkuPrice(BigDecimal newSkuPrice) {
+        this.newSkuPrice = newSkuPrice;
+    }
+
+    public BigDecimal getNewDayRentPrice() {
+        return newDayRentPrice;
+    }
+
+    public void setNewDayRentPrice(BigDecimal newDayRentPrice) {
+        this.newDayRentPrice = newDayRentPrice;
+    }
+
+    public BigDecimal getNewMonthRentPrice() {
+        return newMonthRentPrice;
+    }
+
+    public void setNewMonthRentPrice(BigDecimal newMonthRentPrice) {
+        this.newMonthRentPrice = newMonthRentPrice;
     }
 }

@@ -41,7 +41,6 @@
     <script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
-//                'manage.material.util.js',
                 'api.data.js',
                 'manage.material.mixin.js',
                 'manage.material.add.js',
