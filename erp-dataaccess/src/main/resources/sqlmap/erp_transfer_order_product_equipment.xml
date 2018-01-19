@@ -98,20 +98,10 @@
 		UPDATE erp_transfer_order_product_equipment <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
 
-	<select id="findByTransferOrderIdAndTransferOrderProductId" resultMap="TransferOrderProductEquipmentDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_transfer_order_product_equipment etope WHERE
-		etope.transfer_order_id = #{transferOrderId,jdbcType=INTEGER} AND etope.transfer_order_product_id = #{transferOrderProductId,jdbcType=INTEGER} and etope.data_status = 1
-	</select>
-
 	<select id="findByTransferOrderId" resultMap="TransferOrderProductEquipmentDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_transfer_order_product_equipment etope WHERE
 		etope.transfer_order_id = #{transferOrderId,jdbcType=INTEGER} and etope.data_status = 1
 	</select>
-
-	<update id="clearDateStatusByTransferOrderIdAndProductEquipmentNo" >
-		UPDATE erp_transfer_order_product_equipment  SET date_status = 2 WHERE
-		transfer_order_id = #{transferOrderId,jdbcType=INTEGER} and product_equipment_no = #{productEquipmentNo,jdbcType=VARCHAR}
-	</update>
 
 	<select id="findByTransferOrderIdAndEquipmentNo" resultMap="TransferOrderProductEquipmentDO">
 		SELECT <include refid="column_List"/> FROM erp_transfer_order_product_equipment etope WHERE

@@ -537,6 +537,12 @@ public class ErrorCode {
     public static final String PEER_DEPLOYMENT_ORDER_CONSIGN_INFO_PHONE_IS_MATH  = "J1500020";
     public static final String PEER_DEPLOYMENT_ORDER_RENT_TYPE_IS_ERROR  = "J1500021";
     public static final String PEER_DEPLOYMENT_ORDER_DELIVERY_MODE_IS_ERROR  = "J1500022";
+    public static final String PEER_DEPLOYMENT_ORDER_TIME_LENGTH_IS_ZERO  = "J1500023";
+    public static final String PEER_DEPLOYMENT_ORDER_START_TIME_DATE_IS_ERROR  = "J1500024";
+    public static final String PEER_DEPLOYMENT_ORDER_MONEY_IS_ERROR  = "J1500025";
+    public static final String PEER_DEPLOYMENT_ORDER_COUNT_IS_ZERO  = "J1500026";
+    public static final String PEER_DEPLOYMENT_ORDER_MONEY_IS_ZERO  = "J1500027";
+    public static final String PEER_DEPLOYMENT_ORDER_DISCOUNT_MONEY_IS_ZERO  = "J1500028";
 
 
     public static final String PEER_DEPLOYMENT_ORDER_PRODUCT_ID_NOT_NULL  = "J1510001";
@@ -1080,6 +1086,13 @@ public class ErrorCode {
         MAP.put(PEER_DEPLOYMENT_ORDER_DELIVERY_MODE_IS_ERROR, "同行调拨单发货方式只能快递和自提");
         MAP.put(PEER_DEPLOYMENT_ORDER_STATUS_NEED_PROCESSING_OUT, "只有状态为退回处理中的同行调拨单才能进行此操作");
         MAP.put(BANK_NO_ERROR, "银行卡号不正确");
+        MAP.put(PEER_DEPLOYMENT_ORDER_TIME_LENGTH_IS_ZERO, "同行调拨单租赁期限必须大于0");
+        MAP.put(PEER_DEPLOYMENT_ORDER_START_TIME_DATE_IS_ERROR, "同行调拨单起时间必须大于等于当天");
+        MAP.put(PEER_DEPLOYMENT_ORDER_MONEY_IS_ERROR, "同行调拨单优惠金额大过订单金额");
+        MAP.put(PEER_DEPLOYMENT_ORDER_COUNT_IS_ZERO, "同行调拨单配件和商品总数需大于等于0");
+        MAP.put(PEER_DEPLOYMENT_ORDER_MONEY_IS_ZERO, "同行调拨单配件和商品金额需大于等于0");
+        MAP.put(PEER_DEPLOYMENT_ORDER_DISCOUNT_MONEY_IS_ZERO, "同行调拨单优惠金额需大于等于0");
+
 
 
 

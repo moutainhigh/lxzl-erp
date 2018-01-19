@@ -5,7 +5,6 @@ import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 @Repository
@@ -14,6 +13,8 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
     Integer saveList(List<BulkMaterialDO> bulkMaterialDOList);
 
     Integer updateList(@Param("bulkMaterialDOList") List<BulkMaterialDO> bulkMaterialDOList);
+
+    Integer simpleUpdateList(@Param("maps") Map<String,Object> maps);
 
     Integer updateEquipmentOrderNo(@Param("equipmentNo") String equipmentNo, @Param("orderNo") String orderNo);
 
@@ -45,4 +46,6 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
     void returnEquipment(@Param("equipmentNo") String equipmentNo);
 
     List<BulkMaterialDO> findByEquipmentNo(@Param("equipmentNo")String equipmentNo);
+
+//    Integer updateStatusList(@Param("bulkMaterialDOList") List<BulkMaterialDO> bulkMaterialDOList);
 }

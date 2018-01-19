@@ -151,4 +151,68 @@
 			#{transferOrderMaterialBulkDO.remark},#{transferOrderMaterialBulkDO.createTime},#{transferOrderMaterialBulkDO.createUser},#{transferOrderMaterialBulkDO.updateTime},#{transferOrderMaterialBulkDO.updateUser})
 		</foreach>
 	</insert>
+
+	<update id="updateList" parameterType="java.util.ArrayList">
+		update erp_transfer_order_material_bulk
+		SET
+		<trim>
+			transfer_order_id =
+			<foreach item="transferOrderMaterialBulkDO" collection="transferOrderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{transferOrderMaterialBulkDO.id,jdbcType=INTEGER} then #{transferOrderMaterialBulkDO.transferOrderId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			transfer_order_material_id =
+			<foreach item="transferOrderMaterialBulkDO" collection="transferOrderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{transferOrderMaterialBulkDO.id,jdbcType=INTEGER} then #{transferOrderMaterialBulkDO.transferOrderMaterialId,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			bulk_material_no =
+			<foreach item="transferOrderMaterialBulkDO" collection="transferOrderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{transferOrderMaterialBulkDO.id,jdbcType=INTEGER} then #{transferOrderMaterialBulkDO.bulkMaterialNo,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			data_status =
+			<foreach item="transferOrderMaterialBulkDO" collection="transferOrderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{transferOrderMaterialBulkDO.id,jdbcType=INTEGER} then #{transferOrderMaterialBulkDO.dataStatus,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			remark =
+			<foreach item="transferOrderMaterialBulkDO" collection="transferOrderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{transferOrderMaterialBulkDO.id,jdbcType=INTEGER} then #{transferOrderMaterialBulkDO.transferOrderMaterialId,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			create_time =
+			<foreach item="transferOrderMaterialBulkDO" collection="transferOrderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{transferOrderMaterialBulkDO.id,jdbcType=INTEGER} then #{transferOrderMaterialBulkDO.createTime,jdbcType=TIMESTAMP}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			create_user =
+			<foreach item="transferOrderMaterialBulkDO" collection="transferOrderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{transferOrderMaterialBulkDO.id,jdbcType=INTEGER} then #{transferOrderMaterialBulkDO.createUser,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach item="transferOrderMaterialBulkDO" collection="transferOrderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{transferOrderMaterialBulkDO.id,jdbcType=INTEGER} then #{transferOrderMaterialBulkDO.updateTime,jdbcType=TIMESTAMP}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_user =
+			<foreach item="transferOrderMaterialBulkDO" collection="transferOrderMaterialBulkDOList"  index="index" separator=" " open="case id" close="end">
+				when #{transferOrderMaterialBulkDO.id,jdbcType=INTEGER} then #{transferOrderMaterialBulkDO.updateUser,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="transferOrderMaterialBulkDOList" index="index" item="transferOrderMaterialBulkDO"
+				 separator="," open="(" close=")">
+			#{transferOrderMaterialBulkDO.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
 </mapper>

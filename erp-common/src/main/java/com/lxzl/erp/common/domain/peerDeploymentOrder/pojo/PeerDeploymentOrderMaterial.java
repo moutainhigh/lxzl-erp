@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.domain.validGroup.returnOrder.AddReturnOrderGroup;
 import com.lxzl.erp.common.util.validate.constraints.In;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.math.BigDecimal;
@@ -23,11 +24,13 @@ public class PeerDeploymentOrderMaterial extends BasePO {
 	private String peerDeploymentOrderNo;   //货物调拨单编号
 	private Integer materialId;   //货物调拨配件ID
 	@NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_UNIT_AMOUNT_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
+	@Min(value = 0, message = ErrorCode.PEER_DEPLOYMENT_ORDER_MONEY_IS_ZERO, groups = {AddGroup.class, UpdateGroup.class})
 	private BigDecimal materialUnitAmount;   //配件单价
 	@NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL,groups = {AddGroup.class, UpdateGroup.class})
 	private String materialNo;   //配件编号
 	private BigDecimal materialAmount;   //配件总价格
 	@NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_COUNT_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
+	@Min(value = 0, message = ErrorCode.PEER_DEPLOYMENT_ORDER_COUNT_IS_ZERO, groups = {AddGroup.class, UpdateGroup.class})
 	private Integer materialCount;   //货物调拨配件数量
 	private String materialSnapshot;   //货物调拨配件快照
 	@NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_IS_NEW_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})

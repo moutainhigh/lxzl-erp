@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.transferOrder.impl;
 
+import ch.qos.logback.core.joran.action.ConversionRuleAction;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -383,18 +384,18 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         transferOrderProductEquipmentMapper.save(transferOrderProductEquipmentDO);
 
         //将转移单的状态改为备货中
-        if (!TransferOrderStatus.TRANSFER_ORDER_STATUS_CHOICE_GOODS.equals(transferOrderDO.getTransferOrderStatus())){
-            transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_CHOICE_GOODS);
-            transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            transferOrderDO.setUpdateTime(now);
-            transferOrderMapper.update(transferOrderDO);
-        }
+        transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_CHOICE_GOODS);
+        transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        transferOrderDO.setUpdateTime(now);
+        transferOrderMapper.update(transferOrderDO);
+
 
         //锁定该商品设备的状态为转移中
         productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_TRANSFER_OUTING);
         productEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         productEquipmentDO.setUpdateTime(now);
         productEquipmentMapper.update(productEquipmentDO);
+
 
         //锁定该商品设备中的所有散料状态为转移中
         List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findByEquipmentNo(productEquipmentDO.getEquipmentNo());
@@ -529,34 +530,35 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         }
 
         //从同一个仓库中获取该物料下指定新旧的散料数量
-        List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(transferOrderDO.getWarehouseId(), materialDO.getId(), transferOrderMaterialOutParam.getMaterialCount(), transferOrderMaterialOutParam.getIsNew());
+        List<BulkMaterialDO> dbBulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(transferOrderDO.getWarehouseId(), materialDO.getId(), transferOrderMaterialOutParam.getMaterialCount(), transferOrderMaterialOutParam.getIsNew());
         //判断库存是否充足
-        if (bulkMaterialDOList.size() < transferOrderMaterialOutParam.getMaterialCount()){
+        if (dbBulkMaterialDOList.size() < transferOrderMaterialOutParam.getMaterialCount()){
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_MATERIAL_STOCK_NOT_ENOUGH);
             return serviceResult;
         }
-        for (BulkMaterialDO bulkMaterialDO : bulkMaterialDOList){
-            //判断散料是否在订单或者设备上
-            if (StringUtil.isNotEmpty(bulkMaterialDO.getOrderNo())){
-                serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT,bulkMaterialDO.getBulkMaterialNo());
-                return serviceResult;
-            }
-        }
-        ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(materialDO.getId());
-        if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            serviceResult.setErrorCode(materialServiceResult.getErrorCode());
-            return serviceResult;
-        }
-        Material material = materialServiceResult.getResult();
+//        for (BulkMaterialDO bulkMaterialDO : dbBulkMaterialDOList){
+//            //判断散料是否在订单或者设备上
+//            if (StringUtil.isNotEmpty(bulkMaterialDO.getOrderNo())){
+//                serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT,bulkMaterialDO.getBulkMaterialNo());
+//                return serviceResult;
+//            }
+//        }
+//        ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(materialDO.getId());
+//        if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//            serviceResult.setErrorCode(materialServiceResult.getErrorCode());
+//            return serviceResult;
+//        }
+//        Material material = materialServiceResult.getResult();
 
         //生成转移单配件表
         TransferOrderMaterialDO transferOrderMaterialDO = transferOrderMaterialMapper.findByTransferOrderIdAndMaterialNoAndIsNew(transferOrderDO.getId(), transferOrderMaterialOutParam.getMaterialNo(), transferOrderMaterialOutParam.getIsNew());
         if (transferOrderMaterialDO == null){
+            //todo
             transferOrderMaterialDO= ConverterUtil.convert(transferOrderMaterialOutParam,TransferOrderMaterialDO.class);
             transferOrderMaterialDO.setTransferOrderId(transferOrderDO.getId());
             transferOrderMaterialDO.setMaterialId(materialDO.getId());
-            transferOrderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(material));
+            transferOrderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(ConverterUtil.convert(materialDO,Material.class)));
             transferOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             transferOrderMaterialDO.setCreateTime(now);
             transferOrderMaterialDO.setCreateUser(userSupport.getCurrentUserId().toString());
@@ -570,8 +572,10 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             transferOrderMaterialMapper.update(transferOrderMaterialDO);
         }
 
+        List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList = new ArrayList<>();
+        List<BulkMaterialDO> bulkMaterialDOList = new ArrayList<>();
         //生成转移单配件散料表
-        for (BulkMaterialDO bulkMaterialDO : bulkMaterialDOList){
+        for (BulkMaterialDO bulkMaterialDO : dbBulkMaterialDOList){
             TransferOrderMaterialBulkDO transferOrderMaterialBulkDO = new TransferOrderMaterialBulkDO();
             transferOrderMaterialBulkDO.setTransferOrderId(transferOrderDO.getId());
             transferOrderMaterialBulkDO.setTransferOrderMaterialId(transferOrderMaterialDO.getId());
@@ -581,22 +585,29 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             transferOrderMaterialBulkDO.setCreateUser(userSupport.getCurrentUserId().toString());
             transferOrderMaterialBulkDO.setUpdateTime(now);
             transferOrderMaterialBulkDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            transferOrderMaterialBulkMapper.save(transferOrderMaterialBulkDO);
+            transferOrderMaterialBulkDOList.add(transferOrderMaterialBulkDO);
 
-            //散料生成转移单配件散料表，改变该散料的状态为转移中
+            //改变该散料的状态为转移中
             bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_TRANSFER_OUTING);
             bulkMaterialDO.setUpdateTime(now);
             bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            bulkMaterialMapper.update(bulkMaterialDO);
+            bulkMaterialDOList.add(bulkMaterialDO);
         }
+        SqlLogInterceptor.setExecuteSql("skip print transferOrderMaterialBulkMapper.saveList  sql ......");
+        transferOrderMaterialBulkMapper.saveList(transferOrderMaterialBulkDOList);
+        SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.updateList  sql ......");
+        Map<String,Object> map = new HashMap<>();
+        map.put("materialId",materialDO.getId());
+        map.put("bulkMaterialDOList",bulkMaterialDOList);
+        bulkMaterialMapper.simpleUpdateList(map);
+
 
         //将转移单的状态改为备货中
-        if (!TransferOrderStatus.TRANSFER_ORDER_STATUS_CHOICE_GOODS.equals(transferOrderDO.getTransferOrderStatus())){
-            transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_CHOICE_GOODS);
-            transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            transferOrderDO.setUpdateTime(now);
-            transferOrderMapper.update(transferOrderDO);
-        }
+
+        transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_CHOICE_GOODS);
+        transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        transferOrderDO.setUpdateTime(now);
+        transferOrderMapper.update(transferOrderDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(transferOrderDO.getTransferOrderNo());
@@ -668,22 +679,33 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             transferOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             transferOrderMaterialMapper.update(transferOrderMaterialDO);
 
+            List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList = new ArrayList<>();
+            List<BulkMaterialDO> bulkMaterialDOList = new ArrayList<>();
+
             //改变转移单配件散料表
-            List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList = transferOrderMaterialBulkMapper.findByTransferOrderIdAndTransferOrderMaterialId(transferOrderMaterialDO.getTransferOrderId(),transferOrderMaterialDO.getId());
+            List<TransferOrderMaterialBulkDO> dbTransferOrderMaterialBulkDOList = transferOrderMaterialBulkMapper.findByTransferOrderIdAndTransferOrderMaterialId(transferOrderMaterialDO.getTransferOrderId(),transferOrderMaterialDO.getId());
             for(int i = 0; i< transferOrderMaterialOutParam.getMaterialCount(); i++){
-                TransferOrderMaterialBulkDO transferOrderMaterialBulkDO = transferOrderMaterialBulkDOList.get(i);
+                TransferOrderMaterialBulkDO transferOrderMaterialBulkDO = dbTransferOrderMaterialBulkDOList.get(i);
                 transferOrderMaterialBulkDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 transferOrderMaterialBulkDO.setUpdateTime(now);
                 transferOrderMaterialBulkDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                transferOrderMaterialBulkMapper.update(transferOrderMaterialBulkDO);
+                transferOrderMaterialBulkDOList.add(transferOrderMaterialBulkDO);
 
                 //更改对应的散料的状态为空闲
+                SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.findByNo  sql ......");
                 BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(transferOrderMaterialBulkDO.getBulkMaterialNo());
                 bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
                 bulkMaterialDO.setUpdateTime(now);
                 bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                bulkMaterialMapper.update(bulkMaterialDO);
+                bulkMaterialDOList.add(bulkMaterialDO);
             }
+//            List<BulkMaterialDO> bulkMaterialDOList1 = bulkMaterialMapper.findListByNO()
+
+
+            SqlLogInterceptor.setExecuteSql("skip print transferOrderMaterialBulkMapper.updateList  sql ......");
+            transferOrderMaterialBulkMapper.updateList(transferOrderMaterialBulkDOList);
+            SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.updateList  sql ......");
+            bulkMaterialMapper.updateList(bulkMaterialDOList);
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -859,7 +881,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                 //转出的转移单审核
                 verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER, transferOrderNo, verifyUser, commitRemark);
             }
-            //修改提交审核状态
+            //提交审核后，修改转移单的状态为审核中
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_VERIFYING);
                 transferOrderDO.setUpdateTime(now);
@@ -871,6 +893,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                 return serviceResult;
             }
         } else {
+            //不用审核，直接改变转移单状态
             transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_SUCCESS);
             transferOrderDO.setUpdateTime(now);
             transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -1173,6 +1196,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                 }
 
                 List<BulkMaterialDO> bulkMaterialDOList = new ArrayList<>();
+                List<ProductEquipmentDO> productEquipmentDOList = new ArrayList<>();
                 //获取转移单商品设备单
                 List<TransferOrderProductEquipmentDO> transferOrderProductEquipmentDOList = transferOrderProductEquipmentMapper.findByTransferOrderId(transferOrderDO.getId());
                 for (TransferOrderProductEquipmentDO transferOrderProductEquipmentDO : transferOrderProductEquipmentDOList){
@@ -1180,7 +1204,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                     productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_TRANSFER_OUT_END);
                     productEquipmentDO.setUpdateTime(now);
                     productEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                    productEquipmentMapper.update(productEquipmentDO);
+                    productEquipmentDOList.add(productEquipmentDO);
 
                     //改变该设备下散料的状态
                     List<BulkMaterialDO> dbBulkMaterialDOList = bulkMaterialMapper.findByEquipmentNo(productEquipmentDO.getEquipmentNo());
@@ -1191,6 +1215,9 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                         bulkMaterialDOList.add(bulkMaterialDO);
                     }
                 }
+                SqlLogInterceptor.setExecuteSql("skip print productEquipmentMapper.updateList  sql ......");
+                productEquipmentMapper.updateList(productEquipmentDOList);
+                SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.updateList  sql ......");
                 bulkMaterialMapper.updateList(bulkMaterialDOList);
             }
 
@@ -1215,11 +1242,12 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                     bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     bulkMaterialDOList.add(bulkMaterialDO);
                 }
+                SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.updateList  sql ......");
                 bulkMaterialMapper.updateList(bulkMaterialDOList);
             }
         }
 
-        //如果转移单方式市转入，就要调用货物入库的方法
+        //如果转移单方式是转入，就要调用货物入库的方法
         if (TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO.equals(transferOrderDO.getTransferOrderMode())){
             // 进行商品入库操作
             //组装入库接口数据

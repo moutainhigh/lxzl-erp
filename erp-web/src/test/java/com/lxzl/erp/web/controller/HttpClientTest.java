@@ -1,58 +1,46 @@
 package com.lxzl.erp.web.controller;
 
-import com.lxzl.erp.ERPTransactionalTest;
-import com.lxzl.erp.TestResult;
-import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
+import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.dataaccess.dao.mysql.area.AreaDistrictMapper;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
 
 /**
  * User : XiaoLuYu
  * Date : Created in ${Date}
  * Time : Created in ${Time}
  */
-public class HttpClientTest extends ERPTransactionalTest{
+public class HttpClientTest{
 
     @Autowired
     AreaDistrictMapper areaDistrictMapper;
 
     @Test
     public void say() throws Exception {
-//        CustomerQueryParam queryParam = new CustomerQueryParam();
-//        queryParam.setCustomerName("百度");
-//        TestResult result = getJsonTestResult("/interface/queryCustomer", queryParam);
+        CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
+        customerCompanyQueryParam.setCompanyName("清华同方科技有限公司");
+
+        RestTemplate rest = new RestTemplate();
+        String customer = rest.postForObject("http://192.168.10.93:8080/http/test11",customerCompanyQueryParam,String.class);
+        System.out.println(customer);
     }
 
     @Test
-    public void say1(){
+    public void say1() {
         String str = "崇礼县";
         int i = str.indexOf("县");
         String substring = str.substring(0, i);
         System.out.println(substring);
         String substring1 = str.substring(str.length() - 1, str.length());
-        System.out.println("截取最后一个字符"+substring1);
+        System.out.println("截取最后一个字符" + substring1);
     }
 
 
     @Test
-    public void say2(){
+    public void say2() {
         String str = "xlxl";
         String s = str.toUpperCase();
         System.out.println(s);
@@ -62,16 +50,17 @@ public class HttpClientTest extends ERPTransactionalTest{
 }
 
 
-class ChineseCharToEn{
-    private final static int[] li_SecPosValue = { 1601, 1637, 1833, 2078, 2274,
+class ChineseCharToEn {
+    private final static int[] li_SecPosValue = {1601, 1637, 1833, 2078, 2274,
             2302, 2433, 2594, 2787, 3106, 3212, 3472, 3635, 3722, 3730, 3858,
-            4027, 4086, 4390, 4558, 4684, 4925, 5249, 5590 };
-    private final static String[] lc_FirstLetter = { "a", "b", "c", "d", "e",
+            4027, 4086, 4390, 4558, 4684, 4925, 5249, 5590};
+    private final static String[] lc_FirstLetter = {"a", "b", "c", "d", "e",
             "f", "g", "h", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
-            "t", "w", "x", "y", "z" };
+            "t", "w", "x", "y", "z"};
 
     /**
      * 取得给定汉字串的首字母串,即声母串
+     *
      * @param str 给定汉字串
      * @return 声母串
      */
@@ -90,6 +79,7 @@ class ChineseCharToEn{
 
     /**
      * 取得给定汉字的首字母,即声母
+     *
      * @param chinese 给定的汉字
      * @return 给定汉字的声母
      */
@@ -126,12 +116,13 @@ class ChineseCharToEn{
 
     /**
      * 字符串编码转换
-     * @param str 要转换编码的字符串
-     * @param charsetName 原来的编码
+     *
+     * @param str           要转换编码的字符串
+     * @param charsetName   原来的编码
      * @param toCharsetName 转换后的编码
      * @return 经过编码转换后的字符串
      */
-    private String conversionStr(String str, String charsetName,String toCharsetName) {
+    private String conversionStr(String str, String charsetName, String toCharsetName) {
         try {
             str = new String(str.getBytes(charsetName), toCharsetName);
         } catch (UnsupportedEncodingException ex) {

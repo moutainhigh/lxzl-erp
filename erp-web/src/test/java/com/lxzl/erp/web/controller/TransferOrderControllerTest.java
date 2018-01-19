@@ -32,7 +32,7 @@ public class TransferOrderControllerTest extends ERPTransactionalTest {
         List<TransferOrderProduct> transferOrderProductList= new ArrayList<>();
         TransferOrderProduct transferOrderProduct1 = new TransferOrderProduct();
         transferOrderProduct1.setProductSkuId(57);
-        transferOrderProduct1.setProductCount(1000);
+        transferOrderProduct1.setProductCount(2000);
         transferOrderProduct1.setIsNew(0);
 
         TransferOrderProduct transferOrderProduct2 = new TransferOrderProduct();
@@ -47,7 +47,7 @@ public class TransferOrderControllerTest extends ERPTransactionalTest {
         List<TransferOrderMaterial> TransferOrderMaterialList = new ArrayList<>();
         TransferOrderMaterial transferOrderMaterial1 = new TransferOrderMaterial();
         transferOrderMaterial1.setMaterialNo("M201711201501547451898");
-        transferOrderMaterial1.setMaterialCount(10);
+        transferOrderMaterial1.setMaterialCount(2000);
         transferOrderMaterial1.setIsNew(0);
 
         TransferOrderMaterial transferOrderMaterial2 = new TransferOrderMaterial();
@@ -76,7 +76,7 @@ public class TransferOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void updateTransferOrderInto() throws Exception{
         TransferOrder transferOrder = new TransferOrder();
-        transferOrder.setTransferOrderNo("LXT40000012018011488");
+        transferOrder.setTransferOrderNo("LXT-4000001-20180119-00117");
         transferOrder.setTransferOrderName("测试转移单转入update");
         transferOrder.setRemark("update测试备注");
 
@@ -98,7 +98,7 @@ public class TransferOrderControllerTest extends ERPTransactionalTest {
 
         TransferOrderProduct transferOrderProduct4 = new TransferOrderProduct();
         transferOrderProduct4.setProductSkuId(96);
-        transferOrderProduct4.setProductCount(4);
+        transferOrderProduct4.setProductCount(2000);
         transferOrderProduct4.setIsNew(1);
 
 //        transferOrderProductList.add(transferOrderProduct1);
@@ -114,10 +114,10 @@ public class TransferOrderControllerTest extends ERPTransactionalTest {
 
         TransferOrderMaterial transferOrderMaterial2 = new TransferOrderMaterial();
         transferOrderMaterial2.setMaterialNo("M201712251528189361350");
-        transferOrderMaterial2.setMaterialCount(4);
+        transferOrderMaterial2.setMaterialCount(2000);
         transferOrderMaterial2.setIsNew(0);
 
-        TransferOrderMaterialList.add(transferOrderMaterial1);
+//        TransferOrderMaterialList.add(transferOrderMaterial1);
         TransferOrderMaterialList.add(transferOrderMaterial2);
 
         transferOrder.setTransferOrderProductList(transferOrderProductList);
@@ -141,8 +141,8 @@ public class TransferOrderControllerTest extends ERPTransactionalTest {
     public void transferOrderProductEquipmentOut() throws Exception{
 
         TransferOrderProductEquipmentOutParam transferOrderProductEquipmentOutParam = new TransferOrderProductEquipmentOutParam();
-        transferOrderProductEquipmentOutParam.setTransferOrderNo("LXT-4000001-20180118-00110");
-        transferOrderProductEquipmentOutParam.setProductEquipmentNo("LX-EQUIPMENT-4000002-2017121610000");
+        transferOrderProductEquipmentOutParam.setTransferOrderNo("LXT-4000001-20180119-00118");
+        transferOrderProductEquipmentOutParam.setProductEquipmentNo("LXE-1000--20180119-29310");
 
 
         TestResult testResult = getJsonTestResult("/transferOrder/transferOrderProductEquipmentOut", transferOrderProductEquipmentOutParam);
@@ -176,12 +176,11 @@ public class TransferOrderControllerTest extends ERPTransactionalTest {
     public void transferOrderMaterialOut() throws Exception{
 
         TransferOrderMaterialOutParam transferOrderMaterialOutParam = new TransferOrderMaterialOutParam();
-        transferOrderMaterialOutParam.setTransferOrderNo("LXT-4000001-20180118-00110");
+        transferOrderMaterialOutParam.setTransferOrderNo("LXT-4000001-20180119-00118");
 
-
-        transferOrderMaterialOutParam.setMaterialNo("M201711201500267591516");
-        transferOrderMaterialOutParam.setMaterialCount(10);
-        transferOrderMaterialOutParam.setIsNew(1);
+        transferOrderMaterialOutParam.setMaterialNo("M201712251528189361350");
+        transferOrderMaterialOutParam.setMaterialCount(500);
+        transferOrderMaterialOutParam.setIsNew(0);
         transferOrderMaterialOutParam.setRemark("物料备货");
 
         TestResult testResult = getJsonTestResult("/transferOrder/transferOrderMaterialOut",transferOrderMaterialOutParam);
@@ -192,9 +191,9 @@ public class TransferOrderControllerTest extends ERPTransactionalTest {
     public void dumpTransferOrderMaterialOut() throws Exception{
 
         TransferOrderMaterialOutParam transferOrderMaterialOutParam = new TransferOrderMaterialOutParam();
-        transferOrderMaterialOutParam.setTransferOrderNo("LXT40000012018011492");
-        transferOrderMaterialOutParam.setMaterialNo("M201711291547098231693");
-        transferOrderMaterialOutParam.setMaterialCount(2);
+        transferOrderMaterialOutParam.setTransferOrderNo("LXT-4000001-20180119-00118");
+        transferOrderMaterialOutParam.setMaterialNo("M201712251528189361350");
+        transferOrderMaterialOutParam.setMaterialCount(500);
         transferOrderMaterialOutParam.setIsNew(0);
         transferOrderMaterialOutParam.setRemark("物料清货货");
 
@@ -221,7 +220,7 @@ public class TransferOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void commitTransferOrder() throws Exception{
         TransferOrderCommitParam transferOrderCommitParam = new TransferOrderCommitParam();
-        transferOrderCommitParam.setTransferOrderNo("LXT-4000001-20180119-00113");
+        transferOrderCommitParam.setTransferOrderNo("LXT-4000001-20180119-00117");
         transferOrderCommitParam.setVerifyUserId(500006);
         transferOrderCommitParam.setRemark("提交转出转移单审核的备注");
         TestResult testResult = getJsonTestResult("/transferOrder/commitTransferOrder", transferOrderCommitParam);
