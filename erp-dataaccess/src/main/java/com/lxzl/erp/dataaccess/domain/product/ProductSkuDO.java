@@ -14,6 +14,9 @@ public class ProductSkuDO extends BaseDO {
     private BigDecimal skuPrice;
     private BigDecimal dayRentPrice;
     private BigDecimal monthRentPrice;
+    private BigDecimal newSkuPrice;
+    private BigDecimal newDayRentPrice;
+    private BigDecimal newMonthRentPrice;
     private String customCode;
     private String barCode;
     private String properties;
@@ -163,5 +166,29 @@ public class ProductSkuDO extends BaseDO {
 
     public void setCanProcessCount(Integer canProcessCount) {
         this.canProcessCount = canProcessCount;
+    }
+
+    public BigDecimal getNewSkuPrice() {
+        return newSkuPrice;
+    }
+
+    public void setNewSkuPrice(BigDecimal newSkuPrice) {
+        this.newSkuPrice = newSkuPrice;
+    }
+
+    public BigDecimal getNewDayRentPrice() {
+        return newDayRentPrice;
+    }
+
+    public void setNewDayRentPrice(BigDecimal newDayRentPrice) {
+        this.newDayRentPrice = newDayRentPrice;
+    }
+
+    public BigDecimal getNewMonthRentPrice() {
+        return newMonthRentPrice;
+    }
+
+    public void setNewMonthRentPrice(BigDecimal newMonthRentPrice) {
+        this.newMonthRentPrice = newMonthRentPrice;
     }
 }
