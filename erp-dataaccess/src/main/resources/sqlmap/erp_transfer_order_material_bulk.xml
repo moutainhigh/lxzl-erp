@@ -144,4 +144,11 @@
 		order by etomb.create_time desc
 	</select>
 
+	<insert id="saveList" parameterType="java.util.List">
+		INSERT INTO erp_transfer_order_material_bulk(transfer_order_id,transfer_order_material_id,bulk_material_no,data_status,remark,create_time,create_user,update_time,update_user) VALUES
+		<foreach collection="list" item="transferOrderMaterialBulkDO"  separator=",">
+			( #{transferOrderMaterialBulkDO.transferOrderId},#{transferOrderMaterialBulkDO.transferOrderMaterialId},#{transferOrderMaterialBulkDO.bulkMaterialNo},#{transferOrderMaterialBulkDO.dataStatus},
+			#{transferOrderMaterialBulkDO.remark},#{transferOrderMaterialBulkDO.createTime},#{transferOrderMaterialBulkDO.createUser},#{transferOrderMaterialBulkDO.updateTime},#{transferOrderMaterialBulkDO.updateUser})
+		</foreach>
+	</insert>
 </mapper>

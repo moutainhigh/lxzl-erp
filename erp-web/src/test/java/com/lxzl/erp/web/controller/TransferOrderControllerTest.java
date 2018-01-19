@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.TransferOrderType;
@@ -19,19 +20,19 @@ import java.util.List;
  * @Date: Created in 19:46 2018/1/4
  * @Modified By:
  */
-public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
+public class TransferOrderControllerTest extends ERPTransactionalTest {
 
     @Test
     public void createTransferOrderInto() throws Exception{
         TransferOrder transferOrder = new TransferOrder();
         transferOrder.setTransferOrderName("测试转移单转入");
         transferOrder.setTransferOrderType(TransferOrderType.INTEGER_ORDER_TYPE_INTO_LEND_OUT_INTO_STOCK);
-        transferOrder.setRemark("转入的转移单备注");
+        transferOrder.setRemark("peng转入的转移单备注");
 
         List<TransferOrderProduct> transferOrderProductList= new ArrayList<>();
         TransferOrderProduct transferOrderProduct1 = new TransferOrderProduct();
         transferOrderProduct1.setProductSkuId(57);
-        transferOrderProduct1.setProductCount(3);
+        transferOrderProduct1.setProductCount(1000);
         transferOrderProduct1.setIsNew(0);
 
         TransferOrderProduct transferOrderProduct2 = new TransferOrderProduct();
@@ -40,13 +41,13 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
         transferOrderProduct2.setIsNew(1);
 
         transferOrderProductList.add(transferOrderProduct1);
-        transferOrderProductList.add(transferOrderProduct2);
+//        transferOrderProductList.add(transferOrderProduct2);
 
 
         List<TransferOrderMaterial> TransferOrderMaterialList = new ArrayList<>();
         TransferOrderMaterial transferOrderMaterial1 = new TransferOrderMaterial();
         transferOrderMaterial1.setMaterialNo("M201711201501547451898");
-        transferOrderMaterial1.setMaterialCount(3);
+        transferOrderMaterial1.setMaterialCount(10);
         transferOrderMaterial1.setIsNew(0);
 
         TransferOrderMaterial transferOrderMaterial2 = new TransferOrderMaterial();
@@ -54,7 +55,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
         transferOrderMaterial2.setMaterialCount(3);
         transferOrderMaterial2.setIsNew(0);
         TransferOrderMaterialList.add(transferOrderMaterial1);
-        TransferOrderMaterialList.add(transferOrderMaterial2);
+//        TransferOrderMaterialList.add(transferOrderMaterial2);
 
         transferOrder.setTransferOrderProductList(transferOrderProductList);
 //        transferOrder.setTransferOrderMaterialList(TransferOrderMaterialList);
@@ -220,7 +221,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest  {
     @Test
     public void commitTransferOrder() throws Exception{
         TransferOrderCommitParam transferOrderCommitParam = new TransferOrderCommitParam();
-        transferOrderCommitParam.setTransferOrderNo("LXT-4000001-20180118-00110");
+        transferOrderCommitParam.setTransferOrderNo("LXT-4000001-20180119-00113");
         transferOrderCommitParam.setVerifyUserId(500006);
         transferOrderCommitParam.setRemark("提交转出转移单审核的备注");
         TestResult testResult = getJsonTestResult("/transferOrder/commitTransferOrder", transferOrderCommitParam);
