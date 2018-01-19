@@ -27,6 +27,7 @@ import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.*;
@@ -38,6 +39,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.purchase.*;
@@ -122,6 +124,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private GenerateNoSupport generateNoSupport;
     @Autowired
     private PermissionSupport permissionSupport;
+    @Autowired
+    private MaterialTypeMapper materialTypeMapper;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
@@ -424,7 +428,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 return ErrorCode.MATERIAL_NOT_EXISTS;
             }
             //如果是小配件
-            if (!MaterialType.isMainMaterial(materialDO.getMaterialType())) {
+            MaterialTypeDO materialTypeDO = materialTypeMapper.findById(materialDO.getMaterialType());
+            if (!CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsMainMaterial())) {
                 haveSmall = true;
             }
             materialIdSet.add(materialDO.getId());

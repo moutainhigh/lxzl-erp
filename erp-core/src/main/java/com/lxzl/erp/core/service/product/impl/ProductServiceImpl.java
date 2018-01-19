@@ -2,7 +2,6 @@ package com.lxzl.erp.core.service.product.impl;
 
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.MaterialType;
 import com.lxzl.erp.common.constant.ProductEquipmentStatus;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -19,8 +18,10 @@ import com.lxzl.erp.core.service.product.impl.support.ProductImageConverter;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO;
 import com.lxzl.erp.dataaccess.domain.product.*;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
@@ -718,24 +719,10 @@ public class ProductServiceImpl implements ProductService {
                     break;
                 }
             }
-            if (MaterialType.MATERIAL_TYPE_MEMORY.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_MEMORY_NOT_MATCHING);
-            } else if (MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_MAIN_BOARD_NOT_MATCHING);
-            } else if (MaterialType.MATERIAL_TYPE_CPU.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_CPU_NOT_MATCHING);
-            } else if (MaterialType.MATERIAL_TYPE_HDD.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_HDD_NOT_MATCHING);
-            } else if (MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_GRAPHICS_CARD_NOT_MATCHING);
-            } else if (MaterialType.MATERIAL_TYPE_POWER_SUPPLY.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_POWER_SUPPLY_NOT_MATCHING);
-            } else if (MaterialType.MATERIAL_TYPE_RADIATOR.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_RADIATOR_NOT_MATCHING);
-            } else if (MaterialType.MATERIAL_TYPE_SSD.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_SSD_NOT_MATCHING);
-            } else if (MaterialType.MATERIAL_TYPE_BOX.equals(materialType)) {
-                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_BOX_NOT_MATCHING);
+
+            MaterialTypeDO materialTypeDO = materialTypeMapper.findById(materialType);
+            if (materialTypeDO != null) {
+                result.setErrorCode(ErrorCode.PRODUCT_MATERIAL_NOT_MATCHING, materialTypeDO.getMaterialTypeName());
             }
             return result;
         }
@@ -1170,7 +1157,7 @@ public class ProductServiceImpl implements ProductService {
     private ProductMaterialMapper productMaterialMapper;
 
     @Autowired
-    private ProductCategoryMapper productCategoryMapper;
+    private MaterialTypeMapper materialTypeMapper;
 
     @Autowired
     private WarehouseSupport warehouseSupport;

@@ -3,7 +3,6 @@ package com.lxzl.erp.core.service.material.impl;
 import com.lxzl.erp.common.constant.BulkMaterialStatus;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.MaterialType;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
@@ -24,19 +23,13 @@ import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.MaterialImageConverter;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
-import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialImgMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialModelMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyValueMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuPropertyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderMaterialMapper;
-import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
-import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
-import com.lxzl.erp.dataaccess.domain.material.MaterialImgDO;
-import com.lxzl.erp.dataaccess.domain.material.MaterialModelDO;
+import com.lxzl.erp.dataaccess.domain.material.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductMaterialDO;
@@ -71,6 +64,9 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Autowired
     private MaterialMapper materialMapper;
+
+    @Autowired
+    private MaterialTypeMapper materialTypeMapper;
 
     @Autowired
     private MaterialImgMapper materialImgMapper;
@@ -183,7 +179,9 @@ public class MaterialServiceImpl implements MaterialService {
         }
 
         MaterialDO dbMaterialDO = null;
-        if (MaterialType.isCapacityMaterial(material.getMaterialType())) {
+        MaterialTypeDO materialTypeDO = materialTypeMapper.findById(material.getMaterialType());
+
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())) {
             dbMaterialDO = materialMapper.findByMaterialTypeAndCapacity(material.getMaterialType(), material.getMaterialCapacityValue());
             material.setMaterialModelId(null);
         } else {
@@ -196,7 +194,7 @@ public class MaterialServiceImpl implements MaterialService {
         }
         MaterialDO materialDO = ConverterUtil.convert(material, MaterialDO.class);
 
-        if (MaterialType.isMainMaterial(materialDO.getMaterialType())) {
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsMainMaterial())) {
             materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_YES);
         } else {
             materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_NO);
@@ -228,7 +226,9 @@ public class MaterialServiceImpl implements MaterialService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        if (MaterialType.isCapacityMaterial(dbRecord.getMaterialType())) {
+
+        MaterialTypeDO materialTypeDO = materialTypeMapper.findById(dbRecord.getMaterialType());
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())) {
             material.setMaterialModelId(null);
         } else {
             material.setMaterialCapacityValue(null);
@@ -288,7 +288,8 @@ public class MaterialServiceImpl implements MaterialService {
 
     void saveProductMaterial(MaterialDO materialDO, Integer loginUserId, Date currentTime) {
         List<ProductCategoryPropertyValueDO> productCategoryPropertyValueDOList = new ArrayList<>();
-        if (MaterialType.isCapacityMaterial(materialDO.getMaterialType())) {
+        MaterialTypeDO materialTypeDO = materialTypeMapper.findById(materialDO.getMaterialType());
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())) {
             productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByMaterialTypeAndCapacityValue(materialDO.getMaterialType(), materialDO.getMaterialCapacityValue());
         } else {
             productCategoryPropertyValueDOList = productCategoryPropertyValueMapper.findByMaterialModelId(materialDO.getMaterialModelId());
@@ -377,10 +378,11 @@ public class MaterialServiceImpl implements MaterialService {
             return ErrorCode.PARAM_IS_NOT_ENOUGH;
         }
 
-        if (MaterialType.isCapacityMaterial(material.getMaterialType())
+        MaterialTypeDO materialTypeDO = materialTypeMapper.findById(material.getMaterialType());
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())
                 && material.getMaterialCapacityValue() == null) {
             return ErrorCode.MATERIAL_CAPACITY_VALUE_NOT_NULL;
-        } else if (MaterialType.isModelMaterial(material.getMaterialType())
+        } else if (!CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())
                 && material.getMaterialModelId() == null) {
             return ErrorCode.MATERIAL_MODEL_NOT_NULL;
         }
@@ -562,13 +564,8 @@ public class MaterialServiceImpl implements MaterialService {
             return false;
         }
         for (Material material : materialList) {
-            if (material.getMaterialType() == null
-                    || (!MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
-                    && !MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(material.getMaterialType())
-                    && !MaterialType.MATERIAL_TYPE_CPU.equals(material.getMaterialType())
-                    && !MaterialType.MATERIAL_TYPE_HDD.equals(material.getMaterialType())
-                    && !MaterialType.MATERIAL_TYPE_SSD.equals(material.getMaterialType())
-                    && !MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(material.getMaterialType()))) {
+            MaterialTypeDO materialTypeDO = materialTypeMapper.findById(material.getMaterialType());
+            if (material.getMaterialType() == null || !CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsMainMaterial())) {
                 return false;
             }
         }
@@ -581,13 +578,8 @@ public class MaterialServiceImpl implements MaterialService {
             return false;
         }
         for (Material material : materialList) {
-            if (material.getMaterialType() == null
-                    || MaterialType.MATERIAL_TYPE_MEMORY.equals(material.getMaterialType())
-                    || MaterialType.MATERIAL_TYPE_MAIN_BOARD.equals(material.getMaterialType())
-                    || MaterialType.MATERIAL_TYPE_CPU.equals(material.getMaterialType())
-                    || MaterialType.MATERIAL_TYPE_HDD.equals(material.getMaterialType())
-                    || MaterialType.MATERIAL_TYPE_SSD.equals(material.getMaterialType())
-                    || MaterialType.MATERIAL_TYPE_GRAPHICS_CARD.equals(material.getMaterialType())) {
+            MaterialTypeDO materialTypeDO = materialTypeMapper.findById(material.getMaterialType());
+            if (material.getMaterialType() == null || CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsMainMaterial())) {
                 return false;
             }
         }
@@ -599,14 +591,15 @@ public class MaterialServiceImpl implements MaterialService {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
-        if (materialModel == null
+
+        MaterialTypeDO materialTypeDO = materialTypeMapper.findById(materialModel.getMaterialType());
+        if (materialTypeDO == null
                 || materialModel.getMaterialType() == null
-                || materialModel.getModelName() == null
-                || !MaterialType.inThisScope(materialModel.getMaterialType())) {
+                || materialModel.getModelName() == null) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
-        if (MaterialType.isCapacityMaterial(materialModel.getMaterialType())) {
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())) {
             result.setErrorCode(ErrorCode.MATERIAL_TYPE_HAVE_NO_MODEL);
             return result;
         }
