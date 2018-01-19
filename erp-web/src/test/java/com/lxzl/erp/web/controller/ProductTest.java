@@ -32,7 +32,7 @@ public class ProductTest extends ERPUnTransactionalTest {
     @Test
     public void queryProductById() throws Exception {
         Product product = new Product();
-        product.setProductId(2000060);
+        product.setProductId(2000062);
         TestResult testResult = getJsonTestResult("/product/queryProductById", product);
     }
     @Test
@@ -104,7 +104,7 @@ public class ProductTest extends ERPUnTransactionalTest {
     @Test
     public void testUpdateProduct() throws Exception {
         Product product = new Product();
-        product.setProductId(2000060);
+        product.setProductId(2000062);
         product.setProductName("一个小小的台式机商品");
         product.setCategoryId(800003);
         product.setBrandId(1);
@@ -115,16 +115,16 @@ public class ProductTest extends ERPUnTransactionalTest {
 
         List<ProductSku> productSkuList = new ArrayList<>();
         ProductSku productSku = new ProductSku();
-        productSku.setSkuId(212);
+        productSku.setSkuId(214);
         productSku.setSkuPrice(new BigDecimal(5100.00));
         productSku.setDayRentPrice(new BigDecimal(98.00));
         productSku.setMonthRentPrice(new BigDecimal(98.00));
-        productSku.setNewSkuPrice(new BigDecimal(1.00));
-        productSku.setNewDayRentPrice(new BigDecimal(2.00));
-        productSku.setNewMonthRentPrice(new BigDecimal(3.00));
+        productSku.setNewSkuPrice(new BigDecimal(5.00));
+        productSku.setNewDayRentPrice(new BigDecimal(6.00));
+        productSku.setNewMonthRentPrice(new BigDecimal(7.00));
         List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
         ProductSkuProperty productSkuProperty = new ProductSkuProperty();
-        productSkuProperty.setPropertyId(1366);
+        productSkuProperty.setPropertyId(1372);
         productSkuProperty.setPropertyValueId(1);
         productSkuPropertyList.add(productSkuProperty);
         ProductSkuProperty productSkuProperty2 = new ProductSkuProperty();
