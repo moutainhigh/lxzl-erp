@@ -383,7 +383,7 @@
         <trim prefix=",">
             order_no =
             <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
-                when #{productEquipmentDO.id} then (CASE WHEN #{productEquipmentDO.orderno}='' THEN NULL ELSE #{productEquipmentDO.orderno} END)
+                when #{productEquipmentDO.id} then (CASE WHEN #{productEquipmentDO.orderNo}='' THEN NULL ELSE #{productEquipmentDO.orderNo} END)
             </foreach>
         </trim>
         <trim prefix=",">
