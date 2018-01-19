@@ -13,6 +13,7 @@ import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.*;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
+import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.warehouse.ProductInStockParam;
 import com.lxzl.erp.common.util.*;
@@ -58,10 +59,8 @@ import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
-import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mongo.config.PageQuery;
 import com.lxzl.se.dataaccess.mysql.source.interceptor.SqlLogInterceptor;
-import org.apache.ibatis.jdbc.Null;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +72,9 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
 import java.util.*;
+
+import static com.lxzl.erp.common.util.DateUtil.daysBetween;
+import static com.lxzl.se.common.util.date.DateUtil.*;
 
 /**
  * @Author: kai
@@ -108,18 +110,24 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             result.setErrorCode(ErrorCode.USER_CAN_NOT_OP_WAREHOUSE);
             return result;
         }
-        //验证数据
-        String verifyCode = verifyPeerDeploymentOrderInfo(peerDeploymentOrder);
-        if (!ErrorCode.SUCCESS.equals(verifyCode)) {
-            result.setErrorCode(verifyCode);
+        AreaCityDO areaCityDO = areaCityMapper.findById(peerDO.getCity());
+        if(areaCityDO == null){
+            result.setErrorCode(ErrorCode.PEER_CODE_NOT_NULL);
+            return result;
+        }
+        if (CollectionUtil.isEmpty(peerDeploymentOrder.getPeerDeploymentOrderProductList()) && CollectionUtil.isEmpty(peerDeploymentOrder.getPeerDeploymentOrderMaterialList())) {
+            result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_PRODUCT_MATERIAL_LIST_NOT_NULL);
             return result;
         }
 
+        if(daysBetween(currentTime,peerDeploymentOrder.getRentStartTime()) < 0 ){
+            result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_START_TIME_DATE_IS_ERROR);
+            return result;
+        }
 
         PeerDeploymentOrderDO peerDeploymentOrderDO = ConverterUtil.convert(peerDeploymentOrder,PeerDeploymentOrderDO.class);
         Date expectReturnTime = peerDeploymentOrderExpectReturnTime(peerDeploymentOrderDO.getRentStartTime(), peerDeploymentOrderDO.getRentType(), peerDeploymentOrderDO.getRentTimeLength());
 
-        AreaCityDO areaCityDO = areaCityMapper.findById(peerDO.getCity());
         peerDeploymentOrderDO.setPeerDeploymentOrderNo(generateNoSupport.generatePeerDeploymentOrderNo(currentTime,areaCityDO.getCityCode()));
         peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT);
         peerDeploymentOrderDO.setPeerId(peerDO.getId());
@@ -133,11 +141,19 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         peerDeploymentOrderMapper.save(peerDeploymentOrderDO);
 
         //产品和配件和收货信息数据
-        savePeerDeploymentOrderProductInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderProductList(),PeerDeploymentOrderProductDO.class),peerDeploymentOrderDO.getPeerDeploymentOrderNo(),currentUserId,currentTime);
-        savePeerDeploymentOrderMaterialInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderMaterialList(), PeerDeploymentOrderMaterialDO.class), peerDeploymentOrderDO.getPeerDeploymentOrderNo(),currentUserId, currentTime);
+        String savePeerDeploymentOrderProductInfo = savePeerDeploymentOrderProductInfo(peerDeploymentOrderDO.getPeerDeploymentOrderProductDOList(),peerDeploymentOrderDO.getPeerDeploymentOrderNo(),currentUserId,currentTime);
+        if (!ErrorCode.SUCCESS.equals(savePeerDeploymentOrderProductInfo)) {
+            result.setErrorCode(savePeerDeploymentOrderProductInfo);
+            return result;
+        }
+        String savePeerDeploymentOrderMaterialInfo = addPeerDeploymentOrderMaterialInfo(peerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList(), peerDeploymentOrderDO.getPeerDeploymentOrderNo(),currentUserId, currentTime);
+        if (!ErrorCode.SUCCESS.equals(savePeerDeploymentOrderMaterialInfo)) {
+            result.setErrorCode(savePeerDeploymentOrderMaterialInfo);
+            return result;
+        }
         savePeerDeploymentOrderConsignInfo(peerDeploymentOrderDO.getPeerId(), peerDeploymentOrderDO.getId(), currentUserId, currentTime);
         //判断产品和配件 总数与总额
-        PeerDeploymentOrderDO newestPeerDeploymentOrderDO = peerDeploymentOrderMapper.findByPeerDeploymentOrderNo(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
+        PeerDeploymentOrderDO newestPeerDeploymentOrderDO = peerDeploymentOrderMapper.findPeerDeploymentOrderByNo(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
         for (PeerDeploymentOrderProductDO peerDeploymentOrderProductDO : newestPeerDeploymentOrderDO.getPeerDeploymentOrderProductDOList()) {
             peerDeploymentOrderDO.setTotalProductCount(peerDeploymentOrderDO.getTotalProductCount() == null ? peerDeploymentOrderProductDO.getProductSkuCount() : (peerDeploymentOrderDO.getTotalProductCount() + peerDeploymentOrderProductDO.getProductSkuCount()));
             peerDeploymentOrderDO.setTotalProductAmount(BigDecimalUtil.add(peerDeploymentOrderDO.getTotalProductAmount(), peerDeploymentOrderProductDO.getProductAmount()));
@@ -148,6 +164,12 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         }
         peerDeploymentOrderDO.setTotalOrderAmount(BigDecimalUtil.add(peerDeploymentOrderDO.getTotalProductAmount(), peerDeploymentOrderDO.getTotalMaterialAmount()));
         peerDeploymentOrderDO.setTotalOrderAmount(BigDecimalUtil.sub(peerDeploymentOrderDO.getTotalOrderAmount(), peerDeploymentOrderDO.getTotalDiscountAmount()));
+        if(peerDeploymentOrderDO.getTotalOrderAmount().compareTo(BigDecimal.ZERO) == -1){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_MONEY_IS_ERROR);
+            return result;
+        }
+
         peerDeploymentOrderMapper.update(peerDeploymentOrderDO);
 
         result.setResult(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
@@ -161,7 +183,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updatePeerDeploymentOrder(PeerDeploymentOrder peerDeploymentOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
         String currentUserId = userSupport.getCurrentUserId().toString();
@@ -189,10 +211,13 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             result.setErrorCode(ErrorCode.USER_CAN_NOT_OP_WAREHOUSE);
             return result;
         }
-        //验证数据
-        String verifyCode = verifyPeerDeploymentOrderInfo(peerDeploymentOrder);
-        if (!ErrorCode.SUCCESS.equals(verifyCode)) {
-            result.setErrorCode(verifyCode);
+        if (CollectionUtil.isEmpty(peerDeploymentOrder.getPeerDeploymentOrderProductList()) && CollectionUtil.isEmpty(peerDeploymentOrder.getPeerDeploymentOrderMaterialList())) {
+            result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_PRODUCT_MATERIAL_LIST_NOT_NULL);
+            return result;
+        }
+
+        if(daysBetween(currentTime,peerDeploymentOrder.getRentStartTime()) < 0 ){
+            result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_START_TIME_DATE_IS_ERROR);
             return result;
         }
 
@@ -207,12 +232,20 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         peerDeploymentOrderMapper.update(peerDeploymentOrderDO);
 
         //产品和配件和收货信息数据
-        savePeerDeploymentOrderProductInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderProductList(),PeerDeploymentOrderProductDO.class),peerDeploymentOrderDO.getPeerDeploymentOrderNo(),currentUserId,currentTime);
-        savePeerDeploymentOrderMaterialInfo(ConverterUtil.convertList(peerDeploymentOrder.getPeerDeploymentOrderMaterialList(), PeerDeploymentOrderMaterialDO.class), peerDeploymentOrderDO.getPeerDeploymentOrderNo(),currentUserId, currentTime);
+        String savePeerDeploymentOrderProductInfo = savePeerDeploymentOrderProductInfo(peerDeploymentOrderDO.getPeerDeploymentOrderProductDOList(),peerDeploymentOrderDO.getPeerDeploymentOrderNo(),currentUserId,currentTime);
+        if (!ErrorCode.SUCCESS.equals(savePeerDeploymentOrderProductInfo)) {
+            result.setErrorCode(savePeerDeploymentOrderProductInfo);
+            return result;
+        }
+        String savePeerDeploymentOrderMaterialInfo = addPeerDeploymentOrderMaterialInfo(peerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList(), peerDeploymentOrderDO.getPeerDeploymentOrderNo(),currentUserId, currentTime);
+        if (!ErrorCode.SUCCESS.equals(savePeerDeploymentOrderMaterialInfo)) {
+            result.setErrorCode(savePeerDeploymentOrderMaterialInfo);
+            return result;
+        }
         savePeerDeploymentOrderConsignInfo(peerDeploymentOrderDO.getPeerId(), peerDeploymentOrderDO.getId(), currentUserId, currentTime);
 
         //判断产品和配件 总数与总额
-        PeerDeploymentOrderDO newestPeerDeploymentOrderDO = peerDeploymentOrderMapper.findByPeerDeploymentOrderNo(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
+        PeerDeploymentOrderDO newestPeerDeploymentOrderDO = peerDeploymentOrderMapper.findPeerDeploymentOrderByNo(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
         for (PeerDeploymentOrderProductDO peerDeploymentOrderProductDO : newestPeerDeploymentOrderDO.getPeerDeploymentOrderProductDOList()) {
             peerDeploymentOrderDO.setTotalProductCount(peerDeploymentOrderDO.getTotalProductCount() == null ? peerDeploymentOrderProductDO.getProductSkuCount() : (peerDeploymentOrderDO.getTotalProductCount() + peerDeploymentOrderProductDO.getProductSkuCount()));
             peerDeploymentOrderDO.setTotalProductAmount(BigDecimalUtil.add(peerDeploymentOrderDO.getTotalProductAmount(), peerDeploymentOrderProductDO.getProductAmount()));
@@ -223,6 +256,11 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         }
         peerDeploymentOrderDO.setTotalOrderAmount(BigDecimalUtil.add(peerDeploymentOrderDO.getTotalProductAmount(), peerDeploymentOrderDO.getTotalMaterialAmount()));
         peerDeploymentOrderDO.setTotalOrderAmount(BigDecimalUtil.sub(peerDeploymentOrderDO.getTotalOrderAmount(), peerDeploymentOrderDO.getTotalDiscountAmount()));
+        if(peerDeploymentOrderDO.getTotalOrderAmount().compareTo(BigDecimal.ZERO) == -1){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_MONEY_IS_ERROR);
+            return result;
+        }
         peerDeploymentOrderMapper.update(peerDeploymentOrderDO);
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -236,12 +274,12 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> commitPeerDeploymentOrderInto(PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
-        PeerDeploymentOrderDO dbPeerDeploymentOrderDO = peerDeploymentOrderMapper.findByPeerDeploymentOrderNo(peerDeploymentOrderCommitParam.getPeerDeploymentOrderNo());
+        PeerDeploymentOrderDO dbPeerDeploymentOrderDO = peerDeploymentOrderMapper.findPeerDeploymentOrderByNo(peerDeploymentOrderCommitParam.getPeerDeploymentOrderNo());
         if(dbPeerDeploymentOrderDO == null){
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
@@ -306,12 +344,12 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
      * @return
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> confirmPeerDeploymentOrderInto(String peerDeploymentOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
-        PeerDeploymentOrderDO dbPeerDeploymentOrderDO = peerDeploymentOrderMapper.findByPeerDeploymentOrderNo(peerDeploymentOrderNo);
+        PeerDeploymentOrderDO dbPeerDeploymentOrderDO = peerDeploymentOrderMapper.findPeerDeploymentOrderByNo(peerDeploymentOrderNo);
         if (dbPeerDeploymentOrderDO == null) {
             result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_NOT_EXISTS);
             return result;
@@ -321,10 +359,12 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_STATUS_ERROR);
             return result;
         }
+
+
         //进行商品与配件入库操作
         ProductInStockParam productInStockParam = new ProductInStockParam();
         productInStockParam.setTargetWarehouseId(dbPeerDeploymentOrderDO.getWarehouseId());
-        productInStockParam.setCauseType(StockCauseType.STOCK_CAUSE_TYPE_TRANSFER_ORDER);
+        productInStockParam.setCauseType(StockCauseType.STOCK_CAUSE_TYPE_PEER_DEPLOYMENT);
         productInStockParam.setReferNo(dbPeerDeploymentOrderDO.getPeerDeploymentOrderNo());
         List<ProductInStorage> productInStorageList = new ArrayList<>();
         List<MaterialInStorage> materialInStorageList = new ArrayList<>();
@@ -343,10 +383,20 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 productInStorage.setItemReferId(peerDeploymentOrderProductDO.getId());
                 productInStorage.setItemReferType(StockItemReferType.PEER_DEPLOYMENT_PRODUCT);
 
-                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(peerDeploymentOrderProductDO.getProductSkuId());
-                List<ProductMaterial> productMaterialList = productServiceResult.getResult().getProductSkuList().get(0).getProductMaterialList();
-                productInStorage.setProductMaterialList(productMaterialList);
-                productInStorageList.add(productInStorage);
+//                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(peerDeploymentOrderProductDO.getProductSkuId());
+//                List<ProductMaterial> productMaterialList = productServiceResult.getResult().getProductSkuList().get(0).getProductMaterialList();
+//                productInStorage.setProductMaterialList(productMaterialList);
+//                productInStorageList.add(productInStorage);
+
+                //直接取出快照
+                Product product = FastJsonUtil.toBean(peerDeploymentOrderProductDO.getProductSkuSnapshot(), Product.class);
+                if (product != null && CollectionUtil.isNotEmpty(product.getProductSkuList())) {
+                    for (ProductSku productSku : product.getProductSkuList()) {
+                        List<ProductMaterial> productMaterialList = productSku.getProductMaterialList();
+                        productInStorage.setProductMaterialList(productMaterialList);
+                        productInStorageList.add(productInStorage);
+                    }
+                }
             }
         }
         //处理同行调拨单配件物料
@@ -376,6 +426,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         //通过存库单的编号，查询设备和散料
         //设置同行调拨单商品设备单
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderProductDOList)) {
+            SqlLogInterceptor.setExecuteSql("skip print stockOrderEquipmentMapper.findByStockOrderNo  sql ......");
             List<StockOrderEquipmentDO> stockOrderEquipmentDOList = stockOrderEquipmentMapper.findByStockOrderNo(stockOrderDO.getStockOrderNo());
             List<PeerDeploymentOrderProductEquipmentDO> peerDeploymentOrderProductEquipmentDOList = new ArrayList<>();
             for (StockOrderEquipmentDO stockOrderEquipmentDO : stockOrderEquipmentDOList) {
@@ -400,6 +451,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
 
         //设置同行调拨单配件散料单
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderMaterialDOList)) {
+            SqlLogInterceptor.setExecuteSql("skip print stockOrderBulkMaterialMapper.findByStockOrderNo  sql ......");
             List<StockOrderBulkMaterialDO> stockOrderBulkMaterialDOList = stockOrderBulkMaterialMapper.findByStockOrderNo(stockOrderDO.getStockOrderNo());
             List<PeerDeploymentOrderMaterialBulkDO> peerDeploymentOrderMaterialBulkDOList = new ArrayList<>();
             for (StockOrderBulkMaterialDO stockOrderBulkMaterialDO : stockOrderBulkMaterialDOList) {
@@ -788,22 +840,28 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         return result;
     }
 
-    /**
-     * 保存同行调拨单商品转入
-     * @param peerDeploymentOrderProductDOList
-     * @param peerDeploymentOrderNo
-     * @param currentUserId
-     * @param currentTime
-     */
-    private void savePeerDeploymentOrderProductInfo(List<PeerDeploymentOrderProductDO> peerDeploymentOrderProductDOList, String peerDeploymentOrderNo, String currentUserId, Date currentTime) {
+    private String savePeerDeploymentOrderProductInfo(List<PeerDeploymentOrderProductDO> peerDeploymentOrderProductDOList, String peerDeploymentOrderNo, String currentUserId, Date currentTime) {
         Map<String, PeerDeploymentOrderProductDO> savePeerDeploymentOrderProductDOMap = new HashMap<>();
         Map<String, PeerDeploymentOrderProductDO> updatePeerDeploymentOrderProductDOMap = new HashMap<>();
         List<PeerDeploymentOrderProductDO> dbPeerDeploymentOrderProductDOList = peerDeploymentOrderProductMapper.findByPeerDeploymentOrderNo(peerDeploymentOrderNo);
         PeerDeploymentOrderDO peerDeploymentOrderDO = peerDeploymentOrderMapper.findByNo(peerDeploymentOrderNo);
         Map<String, PeerDeploymentOrderProductDO> dbPeerDeploymentOrderProductDOMap = ListUtil.listToMap(dbPeerDeploymentOrderProductDOList, "productSkuId","isNew");
-
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderProductDOList)) {
+            // 验证商品项是否合法
             for (PeerDeploymentOrderProductDO peerDeploymentOrderProductDO : peerDeploymentOrderProductDOList) {
+                ProductSkuDO productSkuDO = productSkuMapper.findById(peerDeploymentOrderProductDO.getProductSkuId());
+                if(productSkuDO == null){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS;
+                }
+                if (peerDeploymentOrderProductDO.getProductSkuCount() == null) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return ErrorCode.PARAM_IS_ERROR;
+                }
+                if (peerDeploymentOrderProductDO.getProductUnitAmount() == null || BigDecimalUtil.compare(peerDeploymentOrderProductDO.getProductUnitAmount(), BigDecimal.ZERO) < 0) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO;
+                }
                 String productKey = peerDeploymentOrderProductDO.getProductSkuId() + "-" + peerDeploymentOrderProductDO.getIsNew();
                 if (dbPeerDeploymentOrderProductDOMap.get(peerDeploymentOrderProductDO.getId()) != null) {
                     updatePeerDeploymentOrderProductDOMap.put(productKey, peerDeploymentOrderProductDO);
@@ -821,6 +879,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 PeerDeploymentOrderProductDO peerDeploymentOrderProductDO = entry.getValue();
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(peerDeploymentOrderProductDO.getProductSkuId());
                 if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     throw new BusinessException(productServiceResult.getErrorCode());
                 }
                 Product product = productServiceResult.getResult();
@@ -837,7 +896,6 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             }
             SqlLogInterceptor.setExecuteSql("skip print  peerDeploymentOrderProductMapper.saveList  sql ......");
             peerDeploymentOrderProductMapper.saveList(saveList);
-
         }
 
         if (updatePeerDeploymentOrderProductDOMap.size() > 0) {
@@ -845,10 +903,12 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 PeerDeploymentOrderProductDO peerDeploymentOrderProductDO = entry.getValue();
                 PeerDeploymentOrderProductDO oldPeerDeploymentOrderProductDO = peerDeploymentOrderProductMapper.findByPeerDeploymentOrderNoAndSkuIdAndIsNew(peerDeploymentOrderNo, peerDeploymentOrderProductDO.getProductSkuId(),peerDeploymentOrderProductDO.getIsNew());
                 if (oldPeerDeploymentOrderProductDO == null) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     throw new BusinessException(ErrorCode.RECORD_NOT_EXISTS);
                 }
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(peerDeploymentOrderProductDO.getProductSkuId());
                 if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     throw new BusinessException(productServiceResult.getErrorCode());
                 }
                 Product product = productServiceResult.getResult();
@@ -860,7 +920,6 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 peerDeploymentOrderProductMapper.update(peerDeploymentOrderProductDO);
             }
         }
-
         if (dbPeerDeploymentOrderProductDOMap.size() > 0) {
             for (Map.Entry<String, PeerDeploymentOrderProductDO> entry : dbPeerDeploymentOrderProductDOMap.entrySet()) {
                 PeerDeploymentOrderProductDO peerDeploymentOrderProductDO = entry.getValue();
@@ -870,16 +929,10 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 peerDeploymentOrderProductMapper.update(peerDeploymentOrderProductDO);
             }
         }
+        return ErrorCode.SUCCESS;
     }
 
-    /**
-     * 保存同行调拨单配件转入
-     * @param peerDeploymentOrderMaterialDOList
-     * @param peerDeploymentOrderNo
-     * @param currentUserId
-     * @param currentTime
-     */
-    private void savePeerDeploymentOrderMaterialInfo(List<PeerDeploymentOrderMaterialDO> peerDeploymentOrderMaterialDOList, String peerDeploymentOrderNo, String currentUserId, Date currentTime) {
+    private String addPeerDeploymentOrderMaterialInfo(List<PeerDeploymentOrderMaterialDO> peerDeploymentOrderMaterialDOList, String peerDeploymentOrderNo, String currentUserId, Date currentTime) {
         Map<String, PeerDeploymentOrderMaterialDO> savePeerDeploymentOrderMaterialDOMap = new HashMap<>();
         Map<String, PeerDeploymentOrderMaterialDO> updatePeerDeploymentOrderMaterialDOMap = new HashMap<>();
         List<PeerDeploymentOrderMaterialDO> dbPeerDeploymentOrderMaterialDOList = peerDeploymentOrderMaterialMapper.findByPeerDeploymentOrderNo(peerDeploymentOrderNo);
@@ -888,6 +941,21 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
 
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderMaterialDOList)) {
             for (PeerDeploymentOrderMaterialDO peerDeploymentOrderMaterialDO : peerDeploymentOrderMaterialDOList) {
+                MaterialDO materialDO = materialMapper.findByNo(peerDeploymentOrderMaterialDO.getMaterialNo());
+                if(materialDO == null){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return ErrorCode.MATERIAL_NOT_EXISTS;
+                }
+                peerDeploymentOrderMaterialDO.setMaterialId(materialDO.getId());
+
+                if (peerDeploymentOrderMaterialDO.getMaterialCount() == null) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return ErrorCode.PARAM_IS_ERROR;
+                }
+                if (peerDeploymentOrderMaterialDO.getMaterialUnitAmount() == null || BigDecimalUtil.compare(peerDeploymentOrderMaterialDO.getMaterialUnitAmount(), BigDecimal.ZERO) < 0) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO;
+                }
                 String materialKey = peerDeploymentOrderMaterialDO.getMaterialId() + "-" + peerDeploymentOrderMaterialDO.getIsNew();
                 if (dbPeerDeploymentOrderMaterialDOMap.get(peerDeploymentOrderMaterialDO.getId()) != null) {
                     updatePeerDeploymentOrderMaterialDOMap.put(materialKey, peerDeploymentOrderMaterialDO);
@@ -904,6 +972,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 PeerDeploymentOrderMaterialDO peerDeploymentOrderMaterialDO = entry.getValue();
                 ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(peerDeploymentOrderMaterialDO.getMaterialId());
                 if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     throw new BusinessException(materialServiceResult.getErrorCode());
                 }
                 Material material = materialServiceResult.getResult();
@@ -919,16 +988,14 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 saveList.add(peerDeploymentOrderMaterialDO);
 
             }
-            SqlLogInterceptor.setExecuteSql("skip print peerDeploymentOrderMaterialMapper.saveList  sql ......");
             peerDeploymentOrderMaterialMapper.saveList(saveList);
-
         }
-
         if (updatePeerDeploymentOrderMaterialDOMap.size() > 0) {
             for (Map.Entry<String, PeerDeploymentOrderMaterialDO> entry : updatePeerDeploymentOrderMaterialDOMap.entrySet()) {
                 PeerDeploymentOrderMaterialDO peerDeploymentOrderMaterialDO = entry.getValue();
                 ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(peerDeploymentOrderMaterialDO.getMaterialId());
                 if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     throw new BusinessException(materialServiceResult.getErrorCode());
                 }
                 Material material = materialServiceResult.getResult();
@@ -950,6 +1017,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 peerDeploymentOrderMaterialMapper.update(peerDeploymentOrderMaterialDO);
             }
         }
+        return ErrorCode.SUCCESS;
     }
 
     /**
@@ -1003,52 +1071,11 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
      */
     private Date peerDeploymentOrderExpectReturnTime(Date rentStartTime, Integer rentType, Integer rentTimeLength) {
         if (PeerDeploymentOrderRentType.RENT_TYPE_DAY.equals(rentType)) {
-            return DateUtil.dateInterval(rentStartTime, rentTimeLength - 1);
+            return dateInterval(rentStartTime, rentTimeLength - 1);
         } else if (PeerDeploymentOrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
-            return DateUtil.dateInterval(DateUtil.monthInterval(rentStartTime, rentTimeLength), -1);
+            return dateInterval(monthInterval(rentStartTime, rentTimeLength), -1);
         }
         return null;
-    }
-
-
-    private String verifyPeerDeploymentOrderInfo(PeerDeploymentOrder peerDeploymentOrder) {
-
-        if (CollectionUtil.isEmpty(peerDeploymentOrder.getPeerDeploymentOrderProductList()) && CollectionUtil.isEmpty(peerDeploymentOrder.getPeerDeploymentOrderMaterialList())) {
-            return ErrorCode.PEER_DEPLOYMENT_ORDER_PRODUCT_MATERIAL_LIST_NOT_NULL;
-        }
-        //判断商品数据校验
-        if (CollectionUtil.isNotEmpty(peerDeploymentOrder.getPeerDeploymentOrderProductList())) {
-            for (PeerDeploymentOrderProduct peerDeploymentOrderProduct : peerDeploymentOrder.getPeerDeploymentOrderProductList()) {
-                ProductSkuDO productSkuDO = productSkuMapper.findById(peerDeploymentOrderProduct.getProductSkuId());
-                if(productSkuDO == null){
-                    return ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS;
-                }
-                if (peerDeploymentOrderProduct.getProductSkuCount() == null) {
-                    return ErrorCode.PARAM_IS_ERROR;
-                }
-                if (peerDeploymentOrderProduct.getProductUnitAmount() == null || BigDecimalUtil.compare(peerDeploymentOrderProduct.getProductUnitAmount(), BigDecimal.ZERO) <= 0) {
-                    return ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO;
-                }
-            }
-        }
-        //判断配件数据校验
-        if (CollectionUtil.isNotEmpty(peerDeploymentOrder.getPeerDeploymentOrderMaterialList())) {
-            for(PeerDeploymentOrderMaterial peerDeploymentOrderMaterial : peerDeploymentOrder.getPeerDeploymentOrderMaterialList()){
-                MaterialDO materialDO = materialMapper.findByNo(peerDeploymentOrderMaterial.getMaterialNo());
-                if(materialDO == null){
-                    return ErrorCode.MATERIAL_NOT_EXISTS;
-                }
-                peerDeploymentOrderMaterial.setMaterialId(materialDO.getId());
-
-                if (peerDeploymentOrderMaterial.getMaterialCount() == null) {
-                    return ErrorCode.PARAM_IS_ERROR;
-                }
-                if (peerDeploymentOrderMaterial.getMaterialUnitAmount() == null || BigDecimalUtil.compare(peerDeploymentOrderMaterial.getMaterialUnitAmount(), BigDecimal.ZERO) <= 0) {
-                    return ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO;
-                }
-            }
-        }
-        return ErrorCode.SUCCESS;
     }
 
     /**

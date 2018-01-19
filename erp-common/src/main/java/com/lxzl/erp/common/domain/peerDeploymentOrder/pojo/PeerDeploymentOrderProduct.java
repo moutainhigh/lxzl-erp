@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.util.validate.constraints.In;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.math.BigDecimal;
@@ -22,9 +23,11 @@ public class PeerDeploymentOrderProduct extends BasePO {
 	@NotNull(message = ErrorCode.PRODUCT_SKU_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
 	private Integer productSkuId;   //货物调拨单商品SKU_ID
 	@NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_UNIT_AMOUNT_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
+	@Min(value = 0, message = ErrorCode.PEER_DEPLOYMENT_ORDER_MONEY_IS_ZERO, groups = {AddGroup.class, UpdateGroup.class})
 	private BigDecimal productUnitAmount;   //商品单价
 	private BigDecimal productAmount;   //商品总价格
 	@NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_COUNT_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
+	@Min(value = 0, message = ErrorCode.PEER_DEPLOYMENT_ORDER_COUNT_IS_ZERO, groups = {AddGroup.class, UpdateGroup.class})
 	private Integer productSkuCount;   //货物调拨单商品SKU数量
 	private String productSkuSnapshot;   //货物调拨单商品SKU快照
 	@NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_IS_NEW_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})

@@ -35,6 +35,7 @@ public class PeerDeploymentOrder extends BasePO {
 //    @In(value = {PeerDeploymentOrderRentType.RENT_TYPE_DAY, PeerDeploymentOrderRentType.RENT_TYPE_MONTH}, message = ErrorCode.PEER_DEPLOYMENT_ORDER_RENT_TYPE_IS_ERROR, groups = {AddGroup.class, UpdateGroup.class})
     private Integer rentType;   //租赁方式，1按天租，2按月租
     @NotNull(message = ErrorCode.PEER_DEPLOYMENT_ORDER_TOTAL_DISCOUNT_AMOUNT_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
+    @Min(value = 1, message = ErrorCode.PEER_DEPLOYMENT_ORDER_TIME_LENGTH_IS_ZERO, groups = {AddGroup.class, UpdateGroup.class})
     private Integer rentTimeLength;   //租赁期限
     private Integer warehouseId;   //目标仓库ID
     @NotEmpty(message = ErrorCode.WAREHOUSE_NO_NOT_NULL, groups = {AddGroup.class, UpdateGroup.class})
@@ -52,6 +53,7 @@ public class PeerDeploymentOrder extends BasePO {
     private Integer totalMaterialCount;   //配件总数
     private BigDecimal totalMaterialAmount;   //配件总价
     private BigDecimal totalOrderAmount;   //订单总价
+    @Min(value = 0, message = ErrorCode.PEER_DEPLOYMENT_ORDER_DISCOUNT_MONEY_IS_ZERO, groups = {AddGroup.class, UpdateGroup.class})
     private BigDecimal totalDiscountAmount;   //共计优惠金额
     private Date expectReturnTime;   //预计归还时间
     private Date realReturnTime;   //实际归还时间
