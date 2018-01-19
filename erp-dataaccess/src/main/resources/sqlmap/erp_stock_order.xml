@@ -70,31 +70,7 @@
 	</sql>
 
 	<select id="findById" resultMap="StockOrderDO" parameterType="java.lang.Integer">
-		select order_main.*
-		<trim prefix=",">
-			<include refid="equipment_column_List" />
-		</trim>
-		<trim prefix=",">
-			<include refid="bulk_material_column_List" />
-		</trim>
-		<trim prefix=",">
-			ep.id AS equipment_product_id, ep.product_name AS equipment_product_name, eps.id as equipment_product_sku_id, eps.sku_name as equipment_product_sku_name, ebm.bulk_material_name as bulk_material_name
-		</trim>
-		FROM
-		(
-			select <include refid="column_List"/>
-			<trim prefix=",">
-				ews.warehouse_name as src_warehouse_name,ewt.warehouse_name AS target_warehouse_name
-			</trim> from erp_stock_order eso
-			LEFT JOIN erp_warehouse ews ON ews.id = eso.src_warehouse_id and ews.data_status = 1
-			LEFT JOIN erp_warehouse ewt ON ewt.id = eso.target_warehouse_id and ewt.data_status = 1
-			where eso.id = #{id, jdbcType=INTEGER} and eso.data_status = 1
-		) order_main LEFT JOIN erp_stock_order_equipment esoe ON esoe.stock_order_no = order_main.stock_order_no and esoe.data_status = 1
-		LEFT JOIN erp_stock_order_bulk_material esobm ON esobm.stock_order_no = order_main.stock_order_no and esobm.data_status = 1
-		LEFT JOIN erp_product_equipment epe ON epe.equipment_no = esoe.equipment_no
-		LEFT JOIN erp_product ep ON ep.id = epe.product_id
-		LEFT JOIN erp_product_sku eps ON eps.id = epe.sku_id
-		LEFT JOIN erp_bulk_material ebm ON ebm.id = esobm.bulk_material_id
+		select  <include refid="column_List"/> from erp_stock_order eso where eso.id = #{id, jdbcType=INTEGER} and eso.data_status = 1
 	</select>
 	<select id="findNoByTypeAndRefer" resultType="java.lang.String" parameterType="map">
 		select eso.stock_order_no
