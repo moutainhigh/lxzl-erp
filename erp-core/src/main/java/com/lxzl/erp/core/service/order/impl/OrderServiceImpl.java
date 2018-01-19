@@ -1047,7 +1047,7 @@ public class OrderServiceImpl implements OrderService {
                 for (Map.Entry<String, OrderProductDO> entry : orderProductDOMap.entrySet()) {
                     OrderProductDO orderProductDO = entry.getValue();
                     // 如果输入进来的设备productId,订单项中包含，就匹配 为当前订单项需要的，那么就匹配
-                    if (orderProductDO.getProductId().equals(productEquipmentDO.getProductId())) {
+                    if (orderProductDO.getProductId().equals(productEquipmentDO.getProductId()) && productEquipmentDO.getIsNew().equals(orderProductDO.getIsNewProduct())) {
                         matchingOrderProductDO = orderProductDO;
                         break;
                     }
