@@ -97,7 +97,7 @@
 			WHERE eso.id = #{id, jdbcType=INTEGER} AND eso.data_status = 1
 		) statement_main
 		LEFT JOIN erp_statement_order_detail esod ON statement_main.id = esod.statement_order_id AND esod.data_status = 1
-		ORDER BY esod.id
+		ORDER BY statement_main.statement_expect_pay_time ASC, esod.statement_expect_pay_time ASC
 	</select>
 
 	<select id="findByNo" resultMap="StatementOrderDO" parameterType="java.lang.String">
@@ -116,7 +116,7 @@
 			WHERE eso.statement_order_no = #{statementOrderNo, jdbcType=INTEGER} AND eso.data_status = 1
 		) statement_main
 		LEFT JOIN erp_statement_order_detail esod ON statement_main.id = esod.statement_order_id AND esod.data_status = 1
-		ORDER BY esod.id
+		ORDER BY statement_main.statement_expect_pay_time ASC, esod.statement_expect_pay_time ASC
 	</select>
 
 	<select id="findByCustomerId" resultMap="StatementOrderDO" parameterType="java.lang.Integer">

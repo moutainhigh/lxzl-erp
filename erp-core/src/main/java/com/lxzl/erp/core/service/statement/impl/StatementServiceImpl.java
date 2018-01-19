@@ -518,7 +518,9 @@ public class StatementServiceImpl implements StatementService {
 
                 Date returnTime = returnOrderProductEquipmentDO.getCreateTime();
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
-                BigDecimal thisPhaseAmount = BigDecimalUtil.mul(orderProductEquipmentDO.getProductEquipmentUnitAmount(), new BigDecimal(orderProductDO.getPaymentCycle()));
+                BigDecimal thisPhaseAmount = BigDecimalUtil.div(orderProductDO.getProductAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
+                BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
+                BigDecimal thisReturnDepositAmount = BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
                 if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
                     for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
                         BigDecimal payReturnAmount = BigDecimal.ZERO;
@@ -527,16 +529,14 @@ public class StatementServiceImpl implements StatementService {
                             // 第一期如果支付了押金，就要退押金，否则不退了
                             if (i == 0) {
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
-                                BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
-                                BigDecimal thisReturnDepositAmount = BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
 
-                                if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), thisReturnDepositAmount) >= 0) {
+                                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(),statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
                                     totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, thisReturnDepositAmount);
                                     statementOrderDetailDO.setStatementDetailDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositReturnAmount(), thisReturnDepositAmount));
                                     statementOrderDetailDO.setStatementDetailDepositReturnTime(currentTime);
                                     statementOrderDO.setStatementDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositReturnAmount(), thisReturnDepositAmount));
                                 }
-                                if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), thisReturnRentDepositAmount) >= 0) {
+                                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount()), thisReturnRentDepositAmount) >= 0) {
                                     totalReturnRentDepositAmount = BigDecimalUtil.add(totalReturnRentDepositAmount, thisReturnRentDepositAmount);
                                     statementOrderDetailDO.setStatementDetailRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositReturnAmount(), thisReturnRentDepositAmount));
                                     statementOrderDetailDO.setStatementDetailRentDepositReturnTime(currentTime);
@@ -557,7 +557,7 @@ public class StatementServiceImpl implements StatementService {
                         BigDecimal needPayAmount = BigDecimal.ZERO;
                         // 如果退货时间在本期开始时间之后，证明先用后付，要计未缴纳费用。
                         if (returnTime.getTime() > statementDetailStartTime.getTime()) {
-                            needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderProductEquipmentDO.getProductEquipmentUnitAmount());
+                            needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, statementOrderDetailDO.getStatementDetailRentAmount());
                         }
                         // 正常全额退
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, thisPhaseAmount);
@@ -598,7 +598,9 @@ public class StatementServiceImpl implements StatementService {
 
                 Date returnTime = returnOrderMaterialBulkDO.getCreateTime();
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId());
-                BigDecimal thisPhaseAmount = BigDecimalUtil.mul(orderMaterialBulkDO.getMaterialBulkUnitAmount(), new BigDecimal(orderMaterialDO.getPaymentCycle()));
+                BigDecimal thisPhaseAmount = BigDecimalUtil.div(orderMaterialDO.getMaterialAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE);
+                BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.div(orderMaterialDO.getRentDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE);
+                BigDecimal thisReturnDepositAmount = BigDecimalUtil.div(orderMaterialDO.getDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE);
                 if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
                     for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
                         BigDecimal payReturnAmount = BigDecimal.ZERO;
@@ -606,15 +608,13 @@ public class StatementServiceImpl implements StatementService {
                         if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                             // 第一期如果支付了押金，就要退押金，否则不退了
                             if (i == 0) {
-                                BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.div(orderMaterialDO.getRentDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), 2);
-                                BigDecimal thisReturnDepositAmount = BigDecimalUtil.div(orderMaterialDO.getDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), 2);
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
-                                if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), thisReturnDepositAmount) >= 0) {
+                                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(),statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
                                     totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, thisReturnDepositAmount);
                                     statementOrderDetailDO.setStatementDetailDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositReturnAmount(), thisReturnDepositAmount));
                                     statementOrderDO.setStatementDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositReturnAmount(), thisReturnDepositAmount));
                                 }
-                                if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), thisReturnRentDepositAmount) >= 0) {
+                                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount()), thisReturnRentDepositAmount) >= 0) {
                                     totalReturnRentDepositAmount = BigDecimalUtil.add(totalReturnRentDepositAmount, thisReturnRentDepositAmount);
                                     statementOrderDetailDO.setStatementDetailRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositReturnAmount(), thisReturnRentDepositAmount));
                                     statementOrderDO.setStatementRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositReturnAmount(), thisReturnRentDepositAmount));
