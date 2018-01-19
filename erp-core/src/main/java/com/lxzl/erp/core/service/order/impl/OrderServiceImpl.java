@@ -1047,7 +1047,7 @@ public class OrderServiceImpl implements OrderService {
                 for (Map.Entry<String, OrderProductDO> entry : orderProductDOMap.entrySet()) {
                     OrderProductDO orderProductDO = entry.getValue();
                     // 如果输入进来的设备productId,订单项中包含，就匹配 为当前订单项需要的，那么就匹配
-                    if (orderProductDO.getProductId().equals(productEquipmentDO.getProductId()) && productEquipmentDO.getIsNew().equals(orderProductDO.getIsNewProduct())) {
+                    if (orderProductDO.getProductId().equals(productEquipmentDO.getProductId())) {
                         matchingOrderProductDO = orderProductDO;
                         break;
                     }
@@ -1061,7 +1061,7 @@ public class OrderServiceImpl implements OrderService {
                     return result;
                 }
                 if (!productEquipmentDO.getIsNew().equals(matchingOrderProductDO.getIsNewProduct())) {
-                    result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_NOT_MATCHING);
+                    result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_NEW_NOT_MATCHING);
                     return result;
                 }
 
@@ -1382,11 +1382,12 @@ public class OrderServiceImpl implements OrderService {
                     throw new BusinessException(ErrorCode.ORDER_RENT_LENGTH_MORE_THAN_90);
                 }
 
-                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
-                Product product = productServiceResult.getResult();
-                ProductSku productSku = productServiceResult.getResult().getProductSkuList().get(0);
                 // 如果走风控
                 if (isCheckRiskManagement) {
+                    ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
+                    Product product = productServiceResult.getResult();
+                    ProductSku productSku = productServiceResult.getResult().getProductSkuList().get(0);
+
                     if (BrandId.BRAND_ID_APPLE.equals(product.getBrandId()) && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsLimitApple())) {
                         throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_APPLE_LIMIT);
                     }
@@ -1396,6 +1397,14 @@ public class OrderServiceImpl implements OrderService {
                     BigDecimal skuPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? productSku.getNewSkuPrice() : productSku.getSkuPrice();
                     if (customerRiskManagementDO.getSingleLimitPrice() != null && BigDecimalUtil.compare(skuPrice, customerRiskManagementDO.getSingleLimitPrice()) >= 0) {
                         throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT);
+                    }
+
+                    isCheckRiskManagement = isCheckRiskManagement(orderProductDO, null);
+                    if (!isCheckRiskManagement) {
+                        if (orderProductDO.getPayMode() == null) {
+                            throw new BusinessException(ErrorCode.ORDER_PAY_MODE_NOT_NULL);
+                        }
+                        continue;
                     }
                     // 商品品牌为苹果品牌
                     if (BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) {
@@ -1423,6 +1432,7 @@ public class OrderServiceImpl implements OrderService {
             for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
                 ServiceResult<String, Material> materialResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
                 Material material = materialResult.getResult();
+
                 // 如果走风控
                 if (isCheckRiskManagement) {
                     if (BrandId.BRAND_ID_APPLE.equals(material.getBrandId()) && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsLimitApple())) {
@@ -1434,6 +1444,13 @@ public class OrderServiceImpl implements OrderService {
                     BigDecimal materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ? material.getNewMaterialPrice() : material.getMaterialPrice();
                     if (customerRiskManagementDO.getSingleLimitPrice() != null && BigDecimalUtil.compare(materialPrice, customerRiskManagementDO.getSingleLimitPrice()) >= 0) {
                         throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT);
+                    }
+                    isCheckRiskManagement = isCheckRiskManagement(null, orderMaterialDO);
+                    if (!isCheckRiskManagement) {
+                        if (orderMaterialDO.getPayMode() == null) {
+                            throw new BusinessException(ErrorCode.ORDER_PAY_MODE_NOT_NULL);
+                        }
+                        continue;
                     }
                     if (BrandId.BRAND_ID_APPLE.equals(material.getBrandId())) {
                         orderMaterialDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
@@ -1457,6 +1474,28 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    private boolean isCheckRiskManagement(OrderProductDO orderProductDO, OrderMaterialDO orderMaterialDO) {
+        if (orderProductDO != null) {
+            if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())
+                    && orderProductDO.getRentTimeLength() >= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
+                return true;
+            }
+            if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
+                return true;
+            }
+        }
+        if (orderMaterialDO != null) {
+            if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())
+                    && orderMaterialDO.getRentTimeLength() >= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
+                return true;
+            }
+            if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean isCheckRiskManagement(OrderDO orderDO) {
 
         BigDecimal totalProductAmount = BigDecimal.ZERO;
@@ -1464,11 +1503,8 @@ public class OrderServiceImpl implements OrderService {
         Integer totalProductCount = 0;
         if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
             for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
-                if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())
-                        && orderProductDO.getRentTimeLength() >= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
-                    return true;
-                }
-                if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
+                boolean isCheckRiskManagement = isCheckRiskManagement(orderProductDO, null);
+                if (isCheckRiskManagement) {
                     return true;
                 }
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
@@ -1481,11 +1517,9 @@ public class OrderServiceImpl implements OrderService {
 
         if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
             for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
-                if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())
-                        && orderMaterialDO.getRentTimeLength() >= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
-                    return true;
-                }
-                if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
+
+                boolean isCheckRiskManagement = isCheckRiskManagement(null, orderMaterialDO);
+                if (isCheckRiskManagement) {
                     return true;
                 }
                 ServiceResult<String, Material> materialResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
