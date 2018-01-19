@@ -185,12 +185,12 @@ public class PeerServiceImpl implements PeerService {
 
         //同行名称是否重复
         peerNameQueryParam.setPeerName(peer.getPeerName());
-        map.put("queryParam", peerNameQueryParam);
+        map.put("peerQueryParam", peerNameQueryParam);
         map.put("start",0);
         map.put("pageSize",Integer.MAX_VALUE);
         List<PeerDO> queryByPeerNameDOList = peerMapper.listPage(map);
         if (CollectionUtil.isNotEmpty(queryByPeerNameDOList)) {
-            if (queryByPeerNameDOList.get(0).getPeerNo().equals(peer.getPeerNo())) {
+            if (!(queryByPeerNameDOList.get(0).getPeerNo().equals(peer.getPeerNo()))) {
                 serviceResult.setErrorCode(ErrorCode.PEER_NAME_EXISTS);
                 return serviceResult;
             }
@@ -199,12 +199,12 @@ public class PeerServiceImpl implements PeerService {
         //同行自定义编码是否重复
         PeerQueryParam peerCodeQueryParam = new PeerQueryParam();
         peerCodeQueryParam.setPeerCode(peer.getPeerCode());
-        map.put("queryParam", peerCodeQueryParam);
+        map.put("peerQueryParam", peerCodeQueryParam);
         map.put("start",0);
         map.put("pageSize",Integer.MAX_VALUE);
         List<PeerDO> queryByPeerCodeList = peerMapper.listPage(map);
         if (CollectionUtil.isNotEmpty(queryByPeerCodeList)) {
-            if (queryByPeerNameDOList.get(0).getPeerNo().equals(peer.getPeerNo())) {
+            if (!(queryByPeerNameDOList.get(0).getPeerNo().equals(peer.getPeerNo()))) {
                 serviceResult.setErrorCode(ErrorCode.PEER_CODE_EXISTS);
                 return serviceResult;
             }
@@ -228,7 +228,7 @@ public class PeerServiceImpl implements PeerService {
 
         //同行名称是否重复
         peerNameQueryParam.setPeerName(peer.getPeerName());
-        map.put("queryParam", peerNameQueryParam);
+        map.put("peerQueryParam", peerNameQueryParam);
         map.put("start",0);
         map.put("pageSize",Integer.MAX_VALUE);
         List<PeerDO> queryByPeerNameDOList = peerMapper.listPage(map);
@@ -240,7 +240,7 @@ public class PeerServiceImpl implements PeerService {
         //同行自定义编码是否重复
         PeerQueryParam peerCodeQueryParam = new PeerQueryParam();
         peerCodeQueryParam.setPeerCode(peer.getPeerCode());
-        map.put("queryParam", peerCodeQueryParam);
+        map.put("peerQueryParam", peerCodeQueryParam);
         map.put("start",0);
         map.put("pageSize",Integer.MAX_VALUE);
         List<PeerDO> queryByPeerCodeList = peerMapper.listPage(map);
