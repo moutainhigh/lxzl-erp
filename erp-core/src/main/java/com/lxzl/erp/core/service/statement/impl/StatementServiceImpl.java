@@ -530,13 +530,13 @@ public class StatementServiceImpl implements StatementService {
                             if (i == 0) {
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
 
-                                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(),statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
+                                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
                                     totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, thisReturnDepositAmount);
                                     statementOrderDetailDO.setStatementDetailDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositReturnAmount(), thisReturnDepositAmount));
                                     statementOrderDetailDO.setStatementDetailDepositReturnTime(currentTime);
                                     statementOrderDO.setStatementDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositReturnAmount(), thisReturnDepositAmount));
                                 }
-                                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount()), thisReturnRentDepositAmount) >= 0) {
+                                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), statementOrderDetailDO.getStatementDetailRentDepositReturnAmount()), thisReturnRentDepositAmount) >= 0) {
                                     totalReturnRentDepositAmount = BigDecimalUtil.add(totalReturnRentDepositAmount, thisReturnRentDepositAmount);
                                     statementOrderDetailDO.setStatementDetailRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositReturnAmount(), thisReturnRentDepositAmount));
                                     statementOrderDetailDO.setStatementDetailRentDepositReturnTime(currentTime);
@@ -555,9 +555,16 @@ public class StatementServiceImpl implements StatementService {
                         }
 
                         BigDecimal needPayAmount = BigDecimal.ZERO;
-                        // 如果退货时间在本期开始时间之后，证明先用后付，要计未缴纳费用。
-                        if (returnTime.getTime() > statementDetailStartTime.getTime()) {
-                            needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, statementOrderDetailDO.getStatementDetailRentAmount());
+                        if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
+                            // 如果退货时间在本期开始时间之后，证明先用后付，要计未缴纳费用。
+                            if (returnTime.getTime() > statementDetailStartTime.getTime()) {
+                                needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderProductEquipmentDO.getProductEquipmentUnitAmount());
+                            }
+                        } else {
+                            // 如果退货时间在本期开始时间之后，证明先用后付，要计未缴纳费用。
+                            if (returnTime.getTime() > statementDetailStartTime.getTime()) {
+                                needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, statementOrderDetailDO.getStatementDetailRentAmount());
+                            }
                         }
                         // 正常全额退
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, thisPhaseAmount);
@@ -609,12 +616,12 @@ public class StatementServiceImpl implements StatementService {
                             // 第一期如果支付了押金，就要退押金，否则不退了
                             if (i == 0) {
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
-                                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(),statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
+                                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
                                     totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, thisReturnDepositAmount);
                                     statementOrderDetailDO.setStatementDetailDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositReturnAmount(), thisReturnDepositAmount));
                                     statementOrderDO.setStatementDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositReturnAmount(), thisReturnDepositAmount));
                                 }
-                                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount()), thisReturnRentDepositAmount) >= 0) {
+                                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), statementOrderDetailDO.getStatementDetailRentDepositReturnAmount()), thisReturnRentDepositAmount) >= 0) {
                                     totalReturnRentDepositAmount = BigDecimalUtil.add(totalReturnRentDepositAmount, thisReturnRentDepositAmount);
                                     statementOrderDetailDO.setStatementDetailRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositReturnAmount(), thisReturnRentDepositAmount));
                                     statementOrderDO.setStatementRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositReturnAmount(), thisReturnRentDepositAmount));
@@ -632,9 +639,17 @@ public class StatementServiceImpl implements StatementService {
                         }
 
                         BigDecimal needPayAmount = BigDecimal.ZERO;
-                        // 如果开始时间在当前时间之前，证明先用后付，要计费。
-                        if (returnTime.getTime() > statementDetailStartTime.getTime()) {
-                            needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderMaterialBulkDO.getMaterialBulkUnitAmount());
+
+                        if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
+                            // 如果退货时间在本期开始时间之后，证明先用后付，要计未缴纳费用。
+                            if (returnTime.getTime() > statementDetailStartTime.getTime()) {
+                                needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderMaterialBulkDO.getMaterialBulkUnitAmount());
+                            }
+                        } else {
+                            // 如果开始时间在当前时间之前，证明先用后付，要计费。
+                            if (returnTime.getTime() > statementDetailStartTime.getTime()) {
+                                needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, statementOrderDetailDO.getStatementDetailRentAmount());
+                            }
                         }
 
                         payReturnAmount = BigDecimalUtil.add(payReturnAmount, thisPhaseAmount);
@@ -942,9 +957,9 @@ public class StatementServiceImpl implements StatementService {
         Calendar statementEndTimeCalendar = Calendar.getInstance();
         statementEndTimeCalendar.setTime(statementEndTime);
         int statementEndMonthDays = DateUtil.getActualMaximum(statementEndTime);
-        if(OrderRentType.RENT_TYPE_DAY.equals(rentType)){
+        if (OrderRentType.RENT_TYPE_DAY.equals(rentType)) {
             // 不做任何动作，只是当天
-        }else if (statementDays > statementEndMonthDays) {
+        } else if (statementDays > statementEndMonthDays) {
             statementEndTimeCalendar.set(Calendar.DAY_OF_MONTH, statementEndMonthDays);
             statementEndTime = statementEndTimeCalendar.getTime();
         } else {
