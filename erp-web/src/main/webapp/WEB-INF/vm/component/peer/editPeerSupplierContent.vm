@@ -26,7 +26,7 @@
                 <div class="col-md-6">
                     <div class="section">
                         <label class="field select">
-                            <select id="province" name="province" class="required">
+                            <select id="province" name="province" class="required" placeholder="请选择省份">
                                 <option value="">请选择</option>
                             </select>
                             <i class="arrow"></i>
@@ -34,7 +34,7 @@
                     </div>
                     <div class="section">
                         <label class="field select">
-                            <select id="city" name="city" class="required">
+                            <select id="city" name="city" class="required" placeholder="请选择城市">
                                 <option value="">请选择</option>
                             </select>
                             <i class="arrow"></i>
@@ -59,25 +59,25 @@
         </div>
         <div class="col-md-3">
             <div class="section-divider mv40" id="spy2">
-                <span><em class="text-danger">*</em>联系方式</span>
+                <span>联系方式</span>
             </div>
             <div class="section">
                 <label for="contactName" class="field prepend-icon">
-                    <input type="text" name="contactName" id="contactName" class="gui-input required letterOrChinese" placeholder="输入联系人姓名">
+                    <input type="text" name="contactName" id="contactName" class="gui-input letterOrChinese" placeholder="输入联系人姓名">
                     <label for="contactName" class="field-icon"><i class="fa fa-user"></i>
                     </label>
                 </label>
             </div>
             <div class="section">
                 <label for="contactPhone" class="field prepend-icon">
-                    <input type="text" name="contactPhone" id="contactPhone" class="gui-input required mobilephone" placeholder="输入联系人手机号">
+                    <input type="text" name="contactPhone" id="contactPhone" class="gui-input mobilephone" placeholder="输入联系人手机号">
                     <label for="contactPhone" class="field-icon"><i class="fa fa-mobile"></i>
                     </label>
                 </label>
             </div>
             <div class="section">
                 <label for="tel" class="field prepend-icon">
-                    <input type="text" name="tel" id="tel" class="gui-input required telephone" placeholder="输入座机号（例如：0755-4006785432）">
+                    <input type="text" name="tel" id="tel" class="gui-input telephone" placeholder="输入座机号（例如：0755-4006785432）">
                     <label for="tel" class="field-icon"><i class="fa fa-phone"></i>
                     </label>
                 </label>
@@ -85,11 +85,11 @@
         </div>
         <div class="col-md-3">
             <div class="section-divider mv40" id="spy2">
-                <span><em class="text-danger">*</em>收款信息</span>
+                <span>收款信息</span>
             </div>
             <div class="section">
                 <label for="beneficiaryName" class="field prepend-icon">
-                    <input type="text" name="beneficiaryName" id="beneficiaryName" class="gui-input required letterOrChinese" placeholder="输入收款人姓名">
+                    <input type="text" name="beneficiaryName" id="beneficiaryName" class="gui-input letterOrChinese" placeholder="输入收款人姓名">
                     <label for="beneficiaryName" class="field-icon"><i class="fa fa-user"></i>
                     </label>
                 </label>
@@ -103,7 +103,7 @@
             </div>
             <div class="section">
                 <label for="beneficiaryBankName" class="field prepend-icon">
-                    <input type="text" name="beneficiaryBankName" id="beneficiaryBankName" class="gui-input required" placeholder="输入开户行">
+                    <input type="text" name="beneficiaryBankName" id="beneficiaryBankName" class="gui-input" placeholder="输入开户行">
                     <label for="beneficiaryBankName" class="field-icon"><i class="fa fa-tag"></i>
                     </label>
                 </label>
