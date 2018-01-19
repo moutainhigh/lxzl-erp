@@ -15,7 +15,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.area.AreaCityMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.peer.PeerMapper;
 import com.lxzl.erp.dataaccess.domain.area.AreaCityDO;
 import com.lxzl.erp.dataaccess.domain.peer.PeerDO;
-import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mongo.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -178,7 +177,11 @@ public class PeerServiceImpl implements PeerService {
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
      */
     public ServiceResult<String, Integer> updateQueryParam(Peer peer) {
-        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
+        ServiceResult<String, Integer> serviceResult = verifyBankInformation(peer);
+
+        if(serviceResult != null){
+            return serviceResult;
+        }
 
         PeerQueryParam peerNameQueryParam = new PeerQueryParam();
         Map<String, Object> map = new HashMap<>();
@@ -221,7 +224,11 @@ public class PeerServiceImpl implements PeerService {
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
      */
     public ServiceResult<String, Integer> addQueryParam(Peer peer) {
-        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
+        ServiceResult<String, Integer> serviceResult = verifyBankInformation(peer);
+
+        if(serviceResult != null){
+            return serviceResult;
+        }
 
         PeerQueryParam peerNameQueryParam = new PeerQueryParam();
         Map<String, Object> map = new HashMap<>();
@@ -251,6 +258,30 @@ public class PeerServiceImpl implements PeerService {
 
         return null;
     }
+
+    /**
+    * 非必填,校验银行账号
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/1/19 14:39
+    * @param : peer
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+    */
+
+    public ServiceResult<String, Integer> verifyBankInformation(Peer peer){
+        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
+        String beneficiaryAccount = peer.getBeneficiaryAccount();
+        if(beneficiaryAccount!=null){
+            beneficiaryAccount=beneficiaryAccount.replaceAll("\\s{1,}", "");
+            if(beneficiaryAccount.matches("^[0-9]*$") && beneficiaryAccount.length()<19 && beneficiaryAccount.length()>16){
+                peer.setBeneficiaryAccount(beneficiaryAccount);
+            }else{
+                serviceResult.setErrorCode(ErrorCode.BANK_NO_ERROR);
+                return serviceResult;
+            }
+        }
+        return null;
+    }
+
 
     @Autowired
     private PeerMapper peerMapper;
