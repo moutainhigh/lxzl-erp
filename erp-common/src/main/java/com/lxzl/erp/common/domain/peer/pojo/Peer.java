@@ -11,6 +11,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 
@@ -39,8 +40,8 @@ public class Peer extends BasePO {
 	private String contactPhone;   //联系手机号
 	@Length(max = 100,message = ErrorCode.BENEFICIARY_NAME_IS_LENGTH,groups = {AddGroup.class, UpdateGroup.class})
 	private String beneficiaryName;   //收款户名
-	@Max(value = 19, message = ErrorCode.BANK_NO_ERROR, groups = {AddGroup.class,UpdateGroup.class})
-	@Min(value = 16 ,message = ErrorCode.BANK_NO_ERROR,groups = {AddGroup.class, UpdateGroup.class})
+	@Length(min = 16,max = 19,message = ErrorCode.BANK_NO_ERROR,groups = {AddGroup.class, UpdateGroup.class})
+	@Pattern(regexp = "^[0-9-]+$",message = ErrorCode.BANK_NO_ERROR,groups = {AddGroup.class, UpdateGroup.class})
 	private String beneficiaryAccount;   //收款帐号
 	@Length(max = 100,message = ErrorCode.BENEFICIARY_BANK_NAME_IS_LENGTH,groups = {AddGroup.class, UpdateGroup.class})
 	private String beneficiaryBankName;   //收款开户行
