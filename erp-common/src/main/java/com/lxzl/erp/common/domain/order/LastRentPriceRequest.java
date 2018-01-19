@@ -11,7 +11,9 @@ import java.io.Serializable;
 public class LastRentPriceRequest implements Serializable {
 
     private Integer productSkuId;
+    private Integer isNewProduct;
     private Integer materialId;
+    private Integer isNewMaterial;
     private String customerNo;
 
     public Integer getProductSkuId() {
@@ -36,5 +38,21 @@ public class LastRentPriceRequest implements Serializable {
 
     public void setCustomerNo(String customerNo) {
         this.customerNo = customerNo;
+    }
+
+    public Integer getIsNewProduct() {
+        return isNewProduct;
+    }
+
+    public void setIsNewProduct(Integer isNewProduct) {
+        this.isNewProduct = isNewProduct;
+    }
+
+    public Integer getIsNewMaterial() {
+        return isNewMaterial;
+    }
+
+    public void setIsNewMaterial(Integer isNewMaterial) {
+        this.isNewMaterial = isNewMaterial;
     }
 }

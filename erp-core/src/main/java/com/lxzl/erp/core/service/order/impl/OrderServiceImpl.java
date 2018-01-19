@@ -393,9 +393,9 @@ public class OrderServiceImpl implements OrderService {
 
                 BigDecimal productUnitAmount = null;
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
-                    productUnitAmount = thisProductSku.getDayRentPrice();
+                    productUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? thisProductSku.getNewDayRentPrice() : thisProductSku.getDayRentPrice();
                 } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
-                    productUnitAmount = thisProductSku.getMonthRentPrice();
+                    productUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? thisProductSku.getMonthRentPrice(): thisProductSku.getNewMonthRentPrice();
                 }
                 // 订单价格低于商品租赁价，需要商务审批
                 if (BigDecimalUtil.compare(orderProductDO.getProductUnitAmount(), productUnitAmount) < 0) {
@@ -434,9 +434,9 @@ public class OrderServiceImpl implements OrderService {
 
                 BigDecimal materialUnitAmount = null;
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())) {
-                    materialUnitAmount = material.getDayRentPrice();
+                    materialUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ? material.getNewDayRentPrice() : material.getDayRentPrice();
                 } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
-                    materialUnitAmount = material.getMonthRentPrice();
+                    materialUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?  material.getNewMonthRentPrice():material.getMonthRentPrice();
                 }
                 // 订单价格低于商品租赁价，需要商务审批
                 if (BigDecimalUtil.compare(orderMaterialDO.getMaterialUnitAmount(), materialUnitAmount) < 0) {
@@ -505,8 +505,8 @@ public class OrderServiceImpl implements OrderService {
             response.setProductSkuId(request.getProductSkuId());
             response.setProductSkuLastDayPrice(productLastDayAmount);
             response.setProductSkuLastMonthPrice(productLastMonthAmount);
-            response.setProductSkuDayPrice(product.getProductSkuList().get(0).getDayRentPrice());
-            response.setProductSkuMonthPrice(product.getProductSkuList().get(0).getMonthRentPrice());
+            response.setProductSkuDayPrice(request.getIsNewProduct() == null || CommonConstant.COMMON_CONSTANT_NO.equals(request.getIsNewProduct()) ? product.getProductSkuList().get(0).getDayRentPrice() : product.getProductSkuList().get(0).getNewDayRentPrice());
+            response.setProductSkuMonthPrice(request.getIsNewProduct() == null || CommonConstant.COMMON_CONSTANT_NO.equals(request.getIsNewProduct()) ? product.getProductSkuList().get(0).getMonthRentPrice() : product.getProductSkuList().get(0).getNewMonthRentPrice());
         }
 
         if (request.getMaterialId() != null) {
@@ -527,8 +527,8 @@ public class OrderServiceImpl implements OrderService {
             response.setMaterialId(request.getMaterialId());
             response.setMaterialLastDayPrice(monthLastDayAmount);
             response.setMaterialLastMonthPrice(monthLastMonthAmount);
-            response.setMaterialDayPrice(material.getDayRentPrice());
-            response.setMaterialMonthPrice(material.getMonthRentPrice());
+            response.setMaterialDayPrice(request.getIsNewMaterial() == null || CommonConstant.COMMON_CONSTANT_NO.equals(request.getIsNewMaterial()) ? material.getDayRentPrice() : material.getNewDayRentPrice());
+            response.setMaterialMonthPrice(request.getIsNewMaterial() == null || CommonConstant.COMMON_CONSTANT_NO.equals(request.getIsNewMaterial()) ? material.getMonthRentPrice() : material.getNewMonthRentPrice());
         }
 
         result.setResult(response);
@@ -1404,6 +1404,9 @@ public class OrderServiceImpl implements OrderService {
                         if (orderProductDO.getPayMode() == null) {
                             throw new BusinessException(ErrorCode.ORDER_PAY_MODE_NOT_NULL);
                         }
+                        // 如果不走风控，就押0付0
+                        orderProductDO.setDepositCycle(0);
+                        orderProductDO.setPaymentCycle(0);
                         continue;
                     }
                     // 商品品牌为苹果品牌
@@ -1450,6 +1453,9 @@ public class OrderServiceImpl implements OrderService {
                         if (orderMaterialDO.getPayMode() == null) {
                             throw new BusinessException(ErrorCode.ORDER_PAY_MODE_NOT_NULL);
                         }
+                        // 如果不走风控，就押0付0
+                        orderMaterialDO.setDepositCycle(0);
+                        orderMaterialDO.setPaymentCycle(0);
                         continue;
                     }
                     if (BrandId.BRAND_ID_APPLE.equals(material.getBrandId())) {
