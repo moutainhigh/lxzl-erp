@@ -1,6 +1,5 @@
 package com.lxzl.erp.core.service.transferOrder.impl;
 
-import ch.qos.logback.core.joran.action.ConversionRuleAction;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -46,7 +45,6 @@ import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderBulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
-import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mongo.config.PageQuery;
 import com.lxzl.se.dataaccess.mysql.source.interceptor.SqlLogInterceptor;
 import org.slf4j.Logger;
@@ -530,7 +528,13 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         }
 
         //从同一个仓库中获取该物料下指定新旧的散料数量
-        List<BulkMaterialDO> dbBulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(transferOrderDO.getWarehouseId(), materialDO.getId(), transferOrderMaterialOutParam.getMaterialCount(), transferOrderMaterialOutParam.getIsNew());
+//        List<BulkMaterialDO> dbBulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(transferOrderDO.getWarehouseId(), materialDO.getId(), transferOrderMaterialOutParam.getMaterialCount(), transferOrderMaterialOutParam.getIsNew());
+        Map<String,Object> fitMap = new HashMap<>();
+        fitMap.put("warehouseId",transferOrderDO.getWarehouseId());
+        fitMap.put("materialId",materialDO.getId());
+        fitMap.put("materialCount",transferOrderMaterialOutParam.getMaterialCount());
+        fitMap.put("isNew",transferOrderMaterialOutParam.getIsNew());
+        List<BulkMaterialDO> dbBulkMaterialDOList = bulkMaterialMapper.findBatchUseFromIdle(fitMap);
         //判断库存是否充足
         if (dbBulkMaterialDOList.size() < transferOrderMaterialOutParam.getMaterialCount()){
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_MATERIAL_STOCK_NOT_ENOUGH);
@@ -588,20 +592,22 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             transferOrderMaterialBulkDOList.add(transferOrderMaterialBulkDO);
 
             //改变该散料的状态为转移中
-            bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_TRANSFER_OUTING);
-            bulkMaterialDO.setUpdateTime(now);
-            bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            bulkMaterialDOList.add(bulkMaterialDO);
+//            bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_TRANSFER_OUTING);
+//            bulkMaterialDO.setUpdateTime(now);
+//            bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+//            bulkMaterialDOList.add(bulkMaterialDO);
         }
         SqlLogInterceptor.setExecuteSql("skip print transferOrderMaterialBulkMapper.saveList  sql ......");
         transferOrderMaterialBulkMapper.saveList(transferOrderMaterialBulkDOList);
-        SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.updateList  sql ......");
-        Map<String,Object> map = new HashMap<>();
-        map.put("materialId",materialDO.getId());
-        map.put("bulkMaterialDOList",bulkMaterialDOList);
-        bulkMaterialMapper.simpleUpdateList(map);
-
-
+//        SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.updateList  sql ......");
+//        Map<String,Object> map = new HashMap<>();
+//        map.put("materialId",materialDO.getId());
+//        map.put("bulkMaterialDOList",bulkMaterialDOList);
+//        bulkMaterialMapper.simpleUpdateList(map);
+        fitMap.put("updateUser",userSupport.getCurrentUserId().toString());
+        fitMap.put("updateTime",now);
+        fitMap.put("bulkMaterialStatus",BulkMaterialStatus.BULK_MATERIAL_STATUS_TRANSFER_OUTING);
+        bulkMaterialMapper.batchUseFromIdle(fitMap);
         //将转移单的状态改为备货中
 
         transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_CHOICE_GOODS);

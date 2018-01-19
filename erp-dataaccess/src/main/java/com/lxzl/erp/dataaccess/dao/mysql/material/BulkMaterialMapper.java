@@ -48,4 +48,10 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
     List<BulkMaterialDO> findByEquipmentNo(@Param("equipmentNo")String equipmentNo);
 
 //    Integer updateStatusList(@Param("bulkMaterialDOList") List<BulkMaterialDO> bulkMaterialDOList);
+
+    List<BulkMaterialDO> findBatchUseFromIdle(@Param("maps") Map<String,Object> map );
+
+    Integer batchUseFromIdle(@Param("maps") Map<String,Object> map );
+
+
 }
