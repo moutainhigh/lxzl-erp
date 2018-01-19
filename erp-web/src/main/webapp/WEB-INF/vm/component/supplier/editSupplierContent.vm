@@ -1,0 +1,123 @@
+<div class="panel-body p25">
+
+    <div class="section row">
+        <div class="col-md-6">
+            <label for="supplierName" class="field-label"><em class="text-danger">*</em>供应商名称</label>
+            <label for="supplierName" class="field prepend-icon">
+                <input type="text" name="supplierName" id="supplierName" class="gui-input required" />
+                <label for="supplierName" class="field-icon"><i class="fa fa-tag"></i></label>
+            </label>
+        </div>
+        <div class="col-md-6">
+            <label for="remark" class="field-label"><em class="text-danger">*</em>自定义编码</label>
+            <label for="supplierCode" class="field prepend-icon">
+                <input type="text" name="supplierCode" id="supplierCode" class="gui-input required" />
+                <label for="supplierCode" class="field-icon"><i class="fa fa-tag"></i></label>
+            </label>
+        </div>
+    </div>
+
+    <div class="section row">
+        <div class="col-md-6">
+            <div class="section-divider mv40" id="spy2">
+                <span><em class="text-danger">*</em>供应商地址信息</span>
+            </div>
+            <div class="section row">
+                <div class="col-md-6">
+                    <div class="section">
+                        <label class="field select">
+                            <select id="province" name="province" class="required" placeholder="请选择省份">
+                                <option value="">请选择</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label class="field select">
+                            <select id="city" name="city" class="required" placeholder="请选择城市">
+                                <option value="">请选择</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label class="field select">
+                            <select id="district" name="district" class="required">
+                                <option value="">请选择</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="address" class="field prepend-icon">
+                        <textarea class="gui-textarea required" id="address" name="address" style="height: 170px;" placeholder="输入详细地址（街道信息）"></textarea>
+                        <label for="address" class="field-icon"><i class="fa fa-map-marker"></i></label>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="section-divider mv40" id="spy2">
+                <span>联系方式</span>
+            </div>
+            <div class="section">
+                <label for="contactName" class="field prepend-icon">
+                    <input type="text" name="contactName" id="contactName" class="gui-input letterOrChinese" placeholder="输入联系人姓名">
+                    <label for="contactName" class="field-icon"><i class="fa fa-user"></i>
+                    </label>
+                </label>
+            </div>
+            <div class="section">
+                <label for="contactPhone" class="field prepend-icon">
+                    <input type="text" name="contactPhone" id="contactPhone" class="gui-input mobilephone" placeholder="输入联系人手机号">
+                    <label for="contactPhone" class="field-icon"><i class="fa fa-mobile"></i>
+                    </label>
+                </label>
+            </div>
+            <div class="section">
+                <label for="tel" class="field prepend-icon">
+                    <input type="text" name="tel" id="tel" class="gui-input telephone" placeholder="输入座机号（例如：0755-4006785432）">
+                    <label for="tel" class="field-icon"><i class="fa fa-phone"></i>
+                    </label>
+                </label>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="section-divider mv40" id="spy2">
+                <span>收款信息</span>
+            </div>
+            <div class="section">
+                <label for="beneficiaryName" class="field prepend-icon">
+                    <input type="text" name="beneficiaryName" id="beneficiaryName" class="gui-input letterOrChinese" placeholder="输入收款人姓名">
+                    <label for="beneficiaryName" class="field-icon"><i class="fa fa-user"></i>
+                    </label>
+                </label>
+            </div>
+            <div class="section">
+                <label for="beneficiaryAccount" class="field prepend-icon">
+                    <input type="text" name="beneficiaryAccount" id="beneficiaryAccount" class="gui-input bankcard" placeholder="输入收款人账号">
+                    <label for="beneficiaryAccount" class="field-icon"><i class="fa fa-credit-card"></i>
+                    </label>
+                </label>
+            </div>
+            <div class="section">
+                <label for="beneficiaryBankName" class="field prepend-icon">
+                    <input type="text" name="beneficiaryBankName" id="beneficiaryBankName" class="gui-input" placeholder="输入开户行">
+                    <label for="beneficiaryBankName" class="field-icon"><i class="fa fa-tag"></i>
+                    </label>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="section row">
+        <div class="col-md-12">
+            <label for="remark" class="field-label">备注</label>
+            <label for="remark" class="field prepend-icon">
+                <textarea class="gui-textarea" id="remark" name="remark" placeholder="请输入备注"></textarea>
+                <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
+            </label>
+        </div>
+    </div>
+</div>

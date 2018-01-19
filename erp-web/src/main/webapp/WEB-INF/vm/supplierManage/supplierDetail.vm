@@ -1,87 +1,58 @@
-<div id="viewSupplierModal" class="popup-basic popup-xl admin-form mfp-with-anim "> ##mfp-hide
-    <div class="panel">
-        <div class="panel-heading">
-            <span class="panel-title"><i class="fa fa-pencil"></i>查看供应商</span>
-        </div>
-        <form method="post" id="viewSupplierForm" description="查看供应商">
-            <div class="panel-body p25">
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="supplierName" class="field-label">供应商名称</label>
-                        <label for="supplierName" class="field prepend-icon">
-                            <input type="text" name="supplierName" id="supplierName" class="gui-input required" placeholder="请输入供应商名称" />
-                            <label for="supplierName" class="field-icon"><i class="fa fa-user"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="contactName" class="field-label">联系人姓名</label>
-                        <label for="contactName" class="field prepend-icon">
-                            <input type="text" name="contactName" id="contactName" class="gui-input required letterOrChinese" placeholder="请输入联系人姓名" />
-                            <label for="contactName" class="field-icon"><i class="fa fa-user"></i></label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="contactPhone" class="field-label">联系人手机号</label>
-                        <label for="contactPhone" class="field prepend-icon">
-                            <input type="text" name="contactPhone" id="contactPhone" class="gui-input required mobilephone" placeholder="请输入联系人手机号" />
-                            <label for="contactPhone" class="field-icon"><i class="fa fa-user"></i>
-                            </label>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="province" class="field-label">省份</label>
-                        <label class="field select">
-                            <select id="province" name="province" class="required">
-                                <option value="">请选择</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="city" class="field-label">城市</label>
-                        <label class="field select">
-                            <select id="city" name="city" class="required">
-                                <option value="">请选择</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="district" class="field-label">地区</label>
-                        <label class="field select">
-                            <select id="district" name="district" class="required">
-                                <option value="">请选择</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <label for="address" class="field-label">详细地址</label>
-                        <label for="address" class="field prepend-icon">
-                            <textarea class="gui-textarea" id="address" name="address" placeholder="请输入详细地址"></textarea>
-                            <label for="address" class="field-icon"><i class="fa fa-map-marker"></i></label>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <label for="remark" class="field-label">备注</label>
-                        <label for="remark" class="field prepend-icon">
-                            <textarea class="gui-textarea" id="remark" name="remark" placeholder="请输入备注"></textarea>
-                            <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
-                        </label>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-基础信息管理-供应商列表-编辑供应商</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+            <div class="row">
+                <div class="col-md-12 center-block">
+                    <div class="admin-form theme-primary">
+                        <form method="post" id="editSupplierForm">
+                            <div class="panel panel-default panel-border top">
+                                <div class="panel-heading">
+                                    <span class="panel-title"><i class="fa fa-search"></i>查看供应商</span>
+                                </div>
+                                #parse("component/supplier/editSupplierContent.vm")
+                                <div class="panel-footer text-right">
+                                    <button type="button" class="button btn-default goBack">返回</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="panel-footer text-right">
-                <button type="button" class="button btn-default cancelButton">取消</button>
-##                <button type="submit" class="button btn-primary">确定</button>
-            </div>
-        </form>
-    </div>
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
 </div>
+    #parse("layout/footer.vm")
+
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js', 'manage.supplier.detail.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    SupplierDetail.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+
+</script>
+</body>
+</html>
+
