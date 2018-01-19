@@ -630,7 +630,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             bulkMaterialDO.setBrandId(materialDO.getBrandId());
             bulkMaterialDO.setMaterialModelId(materialDO.getMaterialModelId());
             bulkMaterialDO.setMaterialCapacityValue(materialDO.getMaterialCapacityValue());
-            bulkMaterialDO.setBulkMaterialPrice(CommonConstant.COMMON_CONSTANT_YES.equals(isNewMaterial) ? materialDO.getMaterialPrice() : materialDO.getMaterialPrice());
+            bulkMaterialDO.setBulkMaterialPrice(CommonConstant.COMMON_CONSTANT_YES.equals(isNewMaterial) ? materialDO.getNewMaterialPrice() : materialDO.getMaterialPrice());
             allBulkMaterialDOList.add(bulkMaterialDO);
             allBulkMaterialDOMap.put(bulkMaterialDO.getBulkMaterialNo(), bulkMaterialDO);
 
@@ -708,7 +708,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 //            productEquipmentDO.setEquipmentNo(generateNoSupport.generateEquipmentNo(productDO.getProductModel(), cityCode, productInStockCounter.getProductEquipmentCount()));
             productEquipmentDO.setProductId(productInStorage.getProductId());
             productEquipmentDO.setSkuId(productInStorage.getProductSkuId());
-            productEquipmentDO.setEquipmentPrice(CommonConstant.COMMON_CONSTANT_YES.equals(isNewProductEquipment) ? productSkuDO.getSkuPrice() : productSkuDO.getSkuPrice());
+            productEquipmentDO.setEquipmentPrice(CommonConstant.COMMON_CONSTANT_YES.equals(isNewProductEquipment) ? productSkuDO.getNewSkuPrice() : productSkuDO.getSkuPrice());
             productEquipmentDO.setCurrentWarehouseId(warehouseId);
             productEquipmentDO.setCurrentWarehousePositionId(warehousePositionId);
             productEquipmentDO.setOwnerWarehouseId(warehouseId);
@@ -780,7 +780,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                         bulkMaterialDO.setBrandId(materialDO.getBrandId());
                         bulkMaterialDO.setMaterialModelId(materialDO.getMaterialModelId());
                         bulkMaterialDO.setMaterialCapacityValue(materialDO.getMaterialCapacityValue());
-                        bulkMaterialDO.setBulkMaterialPrice(CommonConstant.COMMON_CONSTANT_YES.equals(isNewProductEquipment) ? materialDO.getMaterialPrice() : materialDO.getMaterialPrice());
+                        bulkMaterialDO.setBulkMaterialPrice(CommonConstant.COMMON_CONSTANT_YES.equals(isNewProductEquipment) ? materialDO.getNewMaterialPrice() : materialDO.getMaterialPrice());
                         allBulkMaterialDOList.add(bulkMaterialDO);
                         allBulkMaterialDOMap.put(bulkMaterialDO.getBulkMaterialNo(), bulkMaterialDO);
 

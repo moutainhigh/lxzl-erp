@@ -761,6 +761,18 @@ public class ProductServiceImpl implements ProductService {
                 return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
             }
 
+            if (productSku.getNewSkuPrice() == null || BigDecimalUtil.compare(productSku.getNewSkuPrice(), BigDecimal.ZERO) < 0) {
+                return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
+            }
+
+            if (productSku.getNewDayRentPrice() == null || BigDecimalUtil.compare(productSku.getNewDayRentPrice(), BigDecimal.ZERO) < 0) {
+                return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
+            }
+
+            if (productSku.getNewMonthRentPrice() == null || BigDecimalUtil.compare(productSku.getNewMonthRentPrice(), BigDecimal.ZERO) < 0) {
+                return ErrorCode.PRODUCT_SKU_PRICE_ERROR;
+            }
+
             if (productSku.getProductSkuPropertyList() == null || productSku.getProductSkuPropertyList().isEmpty()) {
                 return ErrorCode.PRODUCT_SKU_PROPERTY_NOT_NULL;
             }
