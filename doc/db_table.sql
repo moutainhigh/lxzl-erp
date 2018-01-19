@@ -683,6 +683,21 @@ CREATE TABLE `erp_product_sku_property` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='商品SKU基本属性表';
 
+DROP TABLE if exists `erp_material_type`;
+CREATE TABLE `erp_material_type` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `material_type_name` varchar(100) COLLATE utf8_bin COMMENT '配件类型名称',
+  `is_main_material` int(11) NOT NULL DEFAULT '0' COMMENT '是否为主要配件',
+  `is_capacity_material` int(11) NOT NULL DEFAULT '0' COMMENT '是否为带字面量配件,硬盘、内存之类是',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='配件类型表';
+
 
 DROP TABLE if exists `erp_material`;
 CREATE TABLE `erp_material` (

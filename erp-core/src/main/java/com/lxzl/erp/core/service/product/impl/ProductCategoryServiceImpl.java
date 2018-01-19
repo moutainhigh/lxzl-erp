@@ -3,7 +3,6 @@ package com.lxzl.erp.core.service.product.impl;
 import com.lxzl.erp.common.constant.CategoryType;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.MaterialType;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.ProductCategoryQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategory;
@@ -18,11 +17,13 @@ import com.lxzl.erp.core.service.product.impl.support.ProductCategoryConverter;
 import com.lxzl.erp.core.service.product.impl.support.ProductCategoryPropertyConverter;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialModelMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyValueMapper;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialModelDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
@@ -114,11 +115,12 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             return result;
         }
         if (productCategoryPropertyDO.getMaterialType() != null) {
-            if (MaterialType.isCapacityMaterial(productCategoryPropertyDO.getMaterialType())
+            MaterialTypeDO materialTypeDO = materialTypeMapper.findById(productCategoryPropertyDO.getMaterialType());
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())
                     && productCategoryPropertyValueDO.getPropertyCapacityValue() == null) {
                 result.setErrorCode(ErrorCode.MATERIAL_CAPACITY_VALUE_NOT_NULL);
                 return result;
-            } else if (MaterialType.isModelMaterial(productCategoryPropertyDO.getMaterialType())
+            } else if (!CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())
                     && productCategoryPropertyValueDO.getMaterialModelId() == null) {
                 result.setErrorCode(ErrorCode.MATERIAL_MODEL_NOT_NULL);
                 return result;
@@ -154,12 +156,13 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             return;
         }
         MaterialDO dbMaterialDO = null;
-        if(MaterialType.isCapacityMaterial(productCategoryPropertyDO.getMaterialType())){
+        MaterialTypeDO materialTypeDO = materialTypeMapper.findById(productCategoryPropertyDO.getMaterialType());
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsCapacityMaterial())) {
             dbMaterialDO = materialMapper.findByMaterialTypeAndCapacity(productCategoryPropertyDO.getMaterialType(), productCategoryPropertyValueDO.getPropertyCapacityValue());
-        }else if(MaterialType.isModelMaterial(productCategoryPropertyDO.getMaterialType())){
+        } else {
             dbMaterialDO = materialMapper.findByMaterialTypeAndModelId(productCategoryPropertyDO.getMaterialType(), productCategoryPropertyValueDO.getMaterialModelId());
         }
-        if(dbMaterialDO != null){
+        if (dbMaterialDO != null) {
             return;
         }
 
@@ -167,7 +170,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         materialDO.setMaterialType(productCategoryPropertyDO.getMaterialType());
         materialDO.setMaterialModelId(productCategoryPropertyValueDO.getMaterialModelId());
         materialDO.setMaterialCapacityValue(productCategoryPropertyValueDO.getPropertyCapacityValue());
-        if (MaterialType.isMainMaterial(materialDO.getMaterialType())) {
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsMainMaterial())) {
             materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_YES);
         } else {
             materialDO.setIsMainMaterial(CommonConstant.COMMON_CONSTANT_NO);
@@ -232,4 +235,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     @Autowired
     private MaterialModelMapper materialModelMapper;
 
+    @Autowired
+    private MaterialTypeMapper materialTypeMapper;
 }

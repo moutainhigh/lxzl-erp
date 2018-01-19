@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper">
+
+	<resultMap id="MaterialTypeDO" type="com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="material_type_name" jdbcType="VARCHAR" property="materialTypeName" />
+		<result column="is_main_material" jdbcType="INTEGER" property="isMainMaterial" />
+		<result column="is_capacity_material" jdbcType="INTEGER" property="isCapacityMaterial" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		emt.id,emt.material_type_name,emt.is_main_material,emt.is_capacity_material,emt.data_status,emt.remark,emt.create_time,emt.create_user,emt.update_time,emt.update_user
+	</sql>
+
+	<select id="findById" resultMap="MaterialTypeDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_material_type emt 
+		WHERE emt.id = #{id, jdbcType=INTEGER} AND emt.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(emt.id) FROM erp_material_type emt 
+		<where>
+			<if test="true">
+				AND emt.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="MaterialTypeDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_material_type emt 
+		<where>
+			<if test="true">
+				AND emt.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="materialTypeName != null">
+				material_type_name = #{materialTypeName,jdbcType=VARCHAR},
+			</if>
+			<if test="isMainMaterial != null">
+				is_main_material = #{isMainMaterial,jdbcType=INTEGER},
+			</if>
+			<if test="isCapacityMaterial != null">
+				is_capacity_material = #{isCapacityMaterial,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO">
+		INSERT INTO erp_material_type <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO">
+		UPDATE erp_material_type <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

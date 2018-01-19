@@ -170,7 +170,7 @@ public class GenerateNoSupport {
                 builder.append("-");
                 builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
                 builder.append("-");
-                builder.append(String.format("%05d", productCount + counter));
+                builder.append(String.format("%05d", count+ i + counter));
                 linkedList.add(builder.toString());
 
             }

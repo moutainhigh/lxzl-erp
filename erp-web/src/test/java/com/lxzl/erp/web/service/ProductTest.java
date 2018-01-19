@@ -1,13 +1,14 @@
 package com.lxzl.erp.web.service;
 
 import com.alibaba.fastjson.JSON;
-import com.lxzl.erp.common.constant.CategoryType;
 import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.MaterialType;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.pojo.MaterialModel;
-import com.lxzl.erp.common.domain.product.*;
+import com.lxzl.erp.common.domain.product.ProductCategoryQueryParam;
+import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
+import com.lxzl.erp.common.domain.product.ProductQueryParam;
+import com.lxzl.erp.common.domain.product.ProductSkuQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.util.AlgorithmUtil;
 import com.lxzl.erp.common.util.ListUtil;
@@ -25,7 +26,6 @@ import com.lxzl.se.unit.test.BaseUnTransactionalTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -417,7 +417,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         MaterialModel materialModel = new MaterialModel();
-                        materialModel.setMaterialType(MaterialType.MATERIAL_TYPE_CPU);
+                        materialModel.setMaterialType(productCategoryPropertyDO.getMaterialType());
                         materialModel.setModelName(value);
                         Integer modeId = materialService.addMaterialModel(materialModel).getResult();
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, modeId, (valueName.length - i));
@@ -431,7 +431,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         MaterialModel materialModel = new MaterialModel();
-                        materialModel.setMaterialType(MaterialType.MATERIAL_TYPE_GRAPHICS_CARD);
+                        materialModel.setMaterialType(productCategoryPropertyDO.getMaterialType());
                         materialModel.setModelName(value);
                         Integer modeId = materialService.addMaterialModel(materialModel).getResult();
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, modeId, (valueName.length - i));
@@ -514,7 +514,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         MaterialModel materialModel = new MaterialModel();
-                        materialModel.setMaterialType(MaterialType.MATERIAL_TYPE_CPU);
+                        materialModel.setMaterialType(productCategoryPropertyDO.getMaterialType());
                         materialModel.setModelName(value);
                         Integer modeId = materialService.addMaterialModel(materialModel).getResult();
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, modeId, (valueName.length - i));
@@ -528,7 +528,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         MaterialModel materialModel = new MaterialModel();
-                        materialModel.setMaterialType(MaterialType.MATERIAL_TYPE_GRAPHICS_CARD);
+                        materialModel.setMaterialType(productCategoryPropertyDO.getMaterialType());
                         materialModel.setModelName(value);
                         Integer modeId = materialService.addMaterialModel(materialModel).getResult();
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, modeId, (valueName.length - i));
@@ -583,7 +583,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         MaterialModel materialModel = new MaterialModel();
-                        materialModel.setMaterialType(MaterialType.MATERIAL_TYPE_CPU);
+                        materialModel.setMaterialType(productCategoryPropertyDO.getMaterialType());
                         materialModel.setModelName(value);
                         Integer modeId = materialService.addMaterialModel(materialModel).getResult();
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, modeId, (valueName.length - i));
@@ -597,7 +597,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         MaterialModel materialModel = new MaterialModel();
-                        materialModel.setMaterialType(MaterialType.MATERIAL_TYPE_GRAPHICS_CARD);
+                        materialModel.setMaterialType(productCategoryPropertyDO.getMaterialType());
                         materialModel.setModelName(value);
                         Integer modeId = materialService.addMaterialModel(materialModel).getResult();
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, modeId, (valueName.length - i));
@@ -677,7 +677,7 @@ public class ProductTest extends BaseUnTransactionalTest {
                     for (int i = 0; i < valueName.length; i++) {
                         String value = valueName[i];
                         MaterialModel materialModel = new MaterialModel();
-                        materialModel.setMaterialType(MaterialType.MATERIAL_TYPE_CPU);
+                        materialModel.setMaterialType(productCategoryPropertyDO.getMaterialType());
                         materialModel.setModelName(value);
                         Integer modeId = materialService.addMaterialModel(materialModel).getResult();
                         ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(value, productCategoryPropertyDO.getId(), productCategoryPropertyDO.getCategoryId(), null, modeId, (valueName.length - i));

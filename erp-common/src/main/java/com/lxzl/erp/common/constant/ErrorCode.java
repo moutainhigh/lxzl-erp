@@ -614,7 +614,7 @@ public class ErrorCode {
         MAP.put(PRODUCT_EQUIPMENT_STATUS_ERROR, "商品设备状态有误。");
         MAP.put(BULK_MATERIAL_STATUS_ERROR, "编号【%s 】散料状态有误。");
         MAP.put(BULK_MATERIAL_NOT_IN_THIS_WAREHOUSE, "散料不在该库房。");
-        MAP.put(PRODUCT_MATERIAL_NOT_MATCHING, "商品配件不足。");
+        MAP.put(PRODUCT_MATERIAL_NOT_MATCHING, "商品【%s】配件不匹配。");
         MAP.put(PRODUCT_MATERIAL_MEMORY_NOT_MATCHING, "商品【内存】配件不匹配");
         MAP.put(PRODUCT_MATERIAL_MAIN_BOARD_NOT_MATCHING, "商品【主板】配件不匹配");
         MAP.put(PRODUCT_MATERIAL_CPU_NOT_MATCHING, "商品【CPU】配件不匹配");
