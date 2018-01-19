@@ -20,7 +20,7 @@ public class PeerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addPeer() throws Exception {
         Peer peer = new Peer();
-        peer.setPeerName("王五");
+        peer.setPeerName("王五1");
         peer.setPeerCode("asndjkan11");
         peer.setProvince(34);
         peer.setCity(35);
@@ -33,7 +33,7 @@ public class PeerControllerTest extends ERPUnTransactionalTest {
         Peer peer = new Peer();
         peer.setPeerNo("LXPEER099900003");
         peer.setPeerName("hahah");
-        peer.setPeerCode("1111");
+        peer.setPeerCode("222");
         peer.setProvince(11);
         peer.setCity(10);
         peer.setDistrict(9);
