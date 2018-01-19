@@ -1,8 +1,11 @@
 package com.lxzl.erp.common.domain.product.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -15,8 +18,11 @@ public class ProductSku extends BasePO {
     private BigDecimal skuPrice;
     private BigDecimal dayRentPrice;
     private BigDecimal monthRentPrice;
+    @NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL,groups = {AddGroup.class})
     private BigDecimal newSkuPrice;
+    @NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL,groups = {AddGroup.class})
     private BigDecimal newDayRentPrice;
+    @NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL,groups = {AddGroup.class})
     private BigDecimal newMonthRentPrice;
     private String customCode;
     private String barCode;

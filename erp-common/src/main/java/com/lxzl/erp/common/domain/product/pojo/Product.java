@@ -3,7 +3,7 @@ package com.lxzl.erp.common.domain.product.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePO;
 
-import java.io.Serializable;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -28,6 +28,7 @@ public class Product extends BasePO {
 
     private List<ProductImg> productImgList;           // 商品图片
     private List<ProductImg> productDescImgList;           // 商品图片
+    @Valid
     private List<ProductSku> productSkuList;                // 商品SKU
     private List<ProductSkuProperty> productPropertyList;   // 商品属性
     private List<ProductCategoryProperty> productCategoryPropertyList;

@@ -7,7 +7,6 @@ import com.lxzl.erp.common.domain.validGroup.returnOrder.AddReturnOrderGroup;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +35,9 @@ public class Material extends BasePO {
     private Integer stock;              // 库存
     private BigDecimal dayRentPrice;    // 日租价格
     private BigDecimal monthRentPrice;  // 月租价格
+    private BigDecimal newMaterialPrice;  //全新配件本身的价值(单价)
+    private BigDecimal newDayRentPrice;  //全新天租赁价格
+    private BigDecimal newMonthRentPrice;  //全新月租赁价格
     private Integer isConsumable;       // 是否是消耗品
     private String materialDesc;   //物料描述
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -44,9 +46,6 @@ public class Material extends BasePO {
     private String createUser;   //添加人
     private Date updateTime;   //修改时间
     private String updateUser;   //修改人
-    private BigDecimal newMaterialPrice;  //全新配件本身的价值(单价)
-    private BigDecimal newDayRentPrice;  //全新天租赁价格
-    private BigDecimal newMonthRentPrice;  //全新月租赁价格
 
     private List<MaterialImg> materialImgList;
 
@@ -300,7 +299,6 @@ public class Material extends BasePO {
         this.materialModel = materialModel;
     }
 
-
     public BigDecimal getNewMaterialPrice() {
         return newMaterialPrice;
     }
@@ -324,5 +322,4 @@ public class Material extends BasePO {
     public void setNewMonthRentPrice(BigDecimal newMonthRentPrice) {
         this.newMonthRentPrice = newMonthRentPrice;
     }
-
 }

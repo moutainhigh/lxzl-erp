@@ -3,9 +3,13 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.product.*;
+import com.lxzl.erp.common.domain.product.ProductCategoryQueryParam;
+import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
+import com.lxzl.erp.common.domain.product.ProductQueryParam;
+import com.lxzl.erp.common.domain.product.ProductSkuQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.domain.system.pojo.Image;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -49,7 +53,7 @@ public class ProductController extends BaseController {
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public Result add(@RequestBody Product product, BindingResult validResult) {
+    public Result add(@RequestBody @Validated(AddGroup.class) Product product, BindingResult validResult) {
         ServiceResult<String, Integer> serviceResult = productService.addProduct(product);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }

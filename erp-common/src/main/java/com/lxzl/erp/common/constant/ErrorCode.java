@@ -118,6 +118,9 @@ public class ErrorCode {
     public static final String WAREHOUSE_NOT_AVAILABLE = "J200069";
     public static final String PRODUCT_EQUIPMENT_NOT_NEW = "J200070";
     public static final String PRODUCT_EQUIPMENT_NOT_OLD = "J200071";
+    public static final String PRODUCT_NEW_SKU_PRICE_IS_NOT_NULL = "J200072";
+    public static final String PRODUCT_NEW_DAY_RENT_PRICE_IS_NOT_NULL = "J200073";
+    public static final String PRODUCT_NEW_MONTH_RENT_PRICE_IS_NOT_NULL = "J200074";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -539,6 +542,7 @@ public class ErrorCode {
     public static final String PEER_DEPLOYMENT_ORDER_STATUS_NEED_CONFIRM  = "J1510002";
     public static final String USER_CAN_NOT_OPERATION_PEER_DEPLOYMENT_ORDER_WAREHOUSE  = "J1510003";
     public static final String PEER_DEPLOYMENT_ORDER_STATUS_NEED_PROCESSING_OUT  = "J1510004";
+    public static final String BANK_NO_ERROR  = "J1510005";
 
 
     static {
@@ -696,6 +700,9 @@ public class ErrorCode {
         MAP.put(PURCHASE_NOT_HAVE_APPLY, "采购计划中没有【%s】");
         MAP.put(ORDER_RENT_LENGTH_MORE_THAN_90, "订单租期不允许");
         MAP.put(BULK_MATERIAL_NOT_IN_THE_WAREHOUSE, "编号【%s 】的散料不在【%s 】库房中");
+        MAP.put(PRODUCT_NEW_SKU_PRICE_IS_NOT_NULL, "全新商品本身的价值不能为空");
+        MAP.put(PRODUCT_NEW_DAY_RENT_PRICE_IS_NOT_NULL, "全新天租赁价格不能为空");
+        MAP.put(PRODUCT_NEW_MONTH_RENT_PRICE_IS_NOT_NULL, "全新月租赁价格不能为空");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -1070,6 +1077,7 @@ public class ErrorCode {
         MAP.put(PEER_DEPLOYMENT_ORDER_RENT_TYPE_IS_ERROR, "同行调拨单租赁方式只能选天租和月租");
         MAP.put(PEER_DEPLOYMENT_ORDER_DELIVERY_MODE_IS_ERROR, "同行调拨单发货方式只能快递和自提");
         MAP.put(PEER_DEPLOYMENT_ORDER_STATUS_NEED_PROCESSING_OUT, "只有状态为退回处理中的同行调拨单才能进行此操作");
+        MAP.put(BANK_NO_ERROR, "银行卡号不正确");
 
 
 

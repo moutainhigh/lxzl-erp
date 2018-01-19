@@ -14,8 +14,10 @@ import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.material.pojo.MaterialImg;
 import com.lxzl.erp.common.domain.material.pojo.MaterialModel;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.common.util.FileUtil;
+import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
@@ -26,13 +28,19 @@ import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialImgMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialModelMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.product.*;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyValueMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuPropertyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialImgDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialModelDO;
-import com.lxzl.erp.dataaccess.domain.product.*;
+import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentMaterialDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductMaterialDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO;
 import com.lxzl.erp.dataaccess.domain.purchase.PurchaseOrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.util.StringUtil;
@@ -362,7 +370,10 @@ public class MaterialServiceImpl implements MaterialService {
                 || material.getMaterialType() == null
                 || material.getMaterialPrice() == null
                 || material.getDayRentPrice() == null
-                || material.getMonthRentPrice() == null) {
+                || material.getMonthRentPrice() == null
+                || material.getNewMaterialPrice() == null
+                || material.getNewDayRentPrice() == null
+                || material.getNewMonthRentPrice() == null) {
             return ErrorCode.PARAM_IS_NOT_ENOUGH;
         }
 

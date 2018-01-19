@@ -2,14 +2,13 @@ package com.lxzl.erp.common.domain.peer.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.domain.area.AreaCity;
-import com.lxzl.erp.common.domain.area.AreaDistrict;
-import com.lxzl.erp.common.domain.area.AreaProvince;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -38,8 +37,12 @@ public class Peer extends BasePO {
 	private String tel;   //电话号码
 	private String contactName;   //联系人姓名
 	private String contactPhone;   //联系手机号
+	@Length(max = 100,message = ErrorCode.BENEFICIARY_NAME_IS_LENGTH,groups = {AddGroup.class, UpdateGroup.class})
 	private String beneficiaryName;   //收款户名
+	@Max(value = 19, message = ErrorCode.BANK_NO_ERROR, groups = {AddGroup.class,UpdateGroup.class})
+	@Min(value = 16 ,message = ErrorCode.BANK_NO_ERROR,groups = {AddGroup.class, UpdateGroup.class})
 	private String beneficiaryAccount;   //收款帐号
+	@Length(max = 100,message = ErrorCode.BENEFICIARY_BANK_NAME_IS_LENGTH,groups = {AddGroup.class, UpdateGroup.class})
 	private String beneficiaryBankName;   //收款开户行
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
