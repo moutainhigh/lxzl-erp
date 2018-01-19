@@ -15,11 +15,7 @@ public interface TransferOrderProductEquipmentMapper extends BaseMysqlDAO<Transf
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
-    List<TransferOrderProductEquipmentDO> findByTransferOrderIdAndTransferOrderProductId(@Param("transferOrderId") Integer transferOrderId,@Param("transferOrderProductId")Integer transferOrderProductId);
-
 	List<TransferOrderProductEquipmentDO> findByTransferOrderId(@Param("transferOrderId")Integer transferOrderId);
-
-	void clearDateStatusByTransferOrderIdAndProductEquipmentNo(@Param("transferOrderId")Integer transferOrderId,@Param("productEquipmentNo")String productEquipmentNo);
 
 	TransferOrderProductEquipmentDO findByTransferOrderIdAndEquipmentNo(@Param("transferOrderId")Integer transferOrderId,@Param("productEquipmentNo")String productEquipmentNo);
 

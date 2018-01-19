@@ -473,6 +473,62 @@
 		</foreach>
 	</update>
 
+	<update id="simpleUpdateList" parameterType="map">
+		update erp_bulk_material
+		SET
+		<trim>
+			order_no =
+			<foreach item="bulkMaterialDO" collection="maps.bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.orderNo,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			current_equipment_id =
+			<foreach item="bulkMaterialDO" collection="maps.bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then (CASE WHEN  #{bulkMaterialDO.currentEquipmentId,jdbcType=INTEGER} = 0 THEN NULL ELSE  #{bulkMaterialDO.currentEquipmentId,jdbcType=INTEGER} END)
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			current_equipment_no =
+			<foreach item="bulkMaterialDO" collection="maps.bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then (CASE WHEN  #{bulkMaterialDO.currentEquipmentNo,jdbcType=VARCHAR} = '' THEN NULL ELSE  #{bulkMaterialDO.currentEquipmentNo,jdbcType=VARCHAR} END)
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			bulk_material_status =
+			<foreach item="bulkMaterialDO" collection="maps.bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.bulkMaterialStatus,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			is_new =
+			<foreach item="bulkMaterialDO" collection="maps.bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.isNew,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach item="bulkMaterialDO" collection="maps.bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.updateTime,jdbcType=TIMESTAMP}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_user =
+			<foreach item="bulkMaterialDO" collection="maps.bulkMaterialDOList"  index="index" separator=" " open="case id" close="end">
+				when #{bulkMaterialDO.id,jdbcType=INTEGER} then #{bulkMaterialDO.updateUser,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		WHERE
+		<if test="maps.materialId != null">
+			material_id = #{maps.materialId,jdbcType=INTEGER} and
+		</if>
+		data_status = 1 and id in
+		<foreach collection="maps.bulkMaterialDOList" index="index" item="bulkMaterialDO"
+				 separator="," open="(" close=")">
+			#{bulkMaterialDO.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+
 	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO">
 		INSERT INTO erp_bulk_material <include refid="set_column_sql"/>
 	</insert>
