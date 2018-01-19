@@ -17,12 +17,15 @@ public class StatementOrderDetailDO extends BaseDO {
     private Integer statementDetailPhase;
     private Date statementExpectPayTime;
     private BigDecimal statementDetailAmount;
+    private BigDecimal statementDetailOtherAmount;
     private BigDecimal statementDetailRentDepositAmount;
     private BigDecimal statementDetailRentDepositPaidAmount;
     private BigDecimal statementDetailRentDepositReturnAmount;
+    private Date statementDetailRentDepositReturnTime;
     private BigDecimal statementDetailDepositAmount;
     private BigDecimal statementDetailDepositPaidAmount;
     private BigDecimal statementDetailDepositReturnAmount;
+    private Date statementDetailDepositReturnTime;
     private BigDecimal statementDetailRentAmount;
     private BigDecimal statementDetailRentPaidAmount;
     private Date statementDetailPaidTime;
@@ -231,5 +234,29 @@ public class StatementOrderDetailDO extends BaseDO {
 
     public void setStatementDetailPhase(Integer statementDetailPhase) {
         this.statementDetailPhase = statementDetailPhase;
+    }
+
+    public Date getStatementDetailDepositReturnTime() {
+        return statementDetailDepositReturnTime;
+    }
+
+    public void setStatementDetailDepositReturnTime(Date statementDetailDepositReturnTime) {
+        this.statementDetailDepositReturnTime = statementDetailDepositReturnTime;
+    }
+
+    public Date getStatementDetailRentDepositReturnTime() {
+        return statementDetailRentDepositReturnTime;
+    }
+
+    public void setStatementDetailRentDepositReturnTime(Date statementDetailRentDepositReturnTime) {
+        this.statementDetailRentDepositReturnTime = statementDetailRentDepositReturnTime;
+    }
+
+    public BigDecimal getStatementDetailOtherAmount() {
+        return statementDetailOtherAmount;
+    }
+
+    public void setStatementDetailOtherAmount(BigDecimal statementDetailOtherAmount) {
+        this.statementDetailOtherAmount = statementDetailOtherAmount;
     }
 }

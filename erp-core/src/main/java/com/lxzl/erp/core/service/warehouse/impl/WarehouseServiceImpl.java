@@ -389,8 +389,8 @@ public class WarehouseServiceImpl implements WarehouseService {
         productInStockCounter.setBulkMaterialCount(bulkCount);
 
         // 目前支持采购，转移入库，同行调拨入库
-        if (StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE.equals(causeType)|| StockCauseType.STOCK_CAUSE_TYPE_TRANSFER_ORDER.equals(causeType)
-                ||StockCauseType.STOCK_CAUSE_TYPE_PEER_DEPLOYMENT.equals(causeType) ) {
+        if (StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE.equals(causeType) || StockCauseType.STOCK_CAUSE_TYPE_TRANSFER_ORDER.equals(causeType)
+                || StockCauseType.STOCK_CAUSE_TYPE_PEER_DEPLOYMENT.equals(causeType)) {
             if (CollectionUtil.isNotEmpty(productInStorageList)) {
                 for (ProductInStorage productInStorage : productInStorageList) {
                     saveProductEquipment(stockOrderDO.getStockOrderNo(), targetWarehouseId, targetWarehousePositionId, productInStorage, currentTime, productInStockCounter);
@@ -594,6 +594,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         User loginUser = userSupport.getCurrentUser();
         Map<Integer, MaterialDO> materialMap = new HashMap<>();
         Map<String, BulkMaterialDO> allBulkMaterialDOMap = new HashMap<>();
+        Integer isNewMaterial = materialInStorage.getIsNew() == null ? CommonConstant.COMMON_CONSTANT_NO : materialInStorage.getIsNew();
         for (int i = 0; i < materialInStorage.getMaterialCount(); i++) {
 
             if (!materialMap.containsKey(materialInStorage.getMaterialId())) {
@@ -610,7 +611,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             bulkMaterialDO.setOwnerWarehouseId(warehouseId);
             bulkMaterialDO.setOwnerWarehousePositionId(warehousePositionId);
             bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
-            bulkMaterialDO.setIsNew(materialInStorage.getIsNew() == null ? CommonConstant.COMMON_CONSTANT_NO : materialInStorage.getIsNew());
+            bulkMaterialDO.setIsNew(isNewMaterial);
             bulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             bulkMaterialDO.setUpdateUser(loginUser.getUserId().toString());
             bulkMaterialDO.setCreateUser(loginUser.getUserId().toString());
@@ -624,7 +625,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             bulkMaterialDO.setBrandId(materialDO.getBrandId());
             bulkMaterialDO.setMaterialModelId(materialDO.getMaterialModelId());
             bulkMaterialDO.setMaterialCapacityValue(materialDO.getMaterialCapacityValue());
-            bulkMaterialDO.setBulkMaterialPrice(materialDO.getMaterialPrice());
+            bulkMaterialDO.setBulkMaterialPrice(CommonConstant.COMMON_CONSTANT_YES.equals(isNewMaterial) ? materialDO.getMaterialPrice() : materialDO.getMaterialPrice());
             allBulkMaterialDOList.add(bulkMaterialDO);
             allBulkMaterialDOMap.put(bulkMaterialDO.getBulkMaterialNo(), bulkMaterialDO);
 
@@ -685,17 +686,18 @@ public class WarehouseServiceImpl implements WarehouseService {
         ProductDO productDO = productMapper.findByProductId(productSkuDO.getProductId());
 
         Map<Integer, MaterialDO> materialMap = new HashMap<>();
+        Integer isNewProductEquipment = productInStorage.getIsNew() == null ? CommonConstant.COMMON_CONSTANT_NO : productInStorage.getIsNew();
         for (int i = 0; i < productInStorage.getProductCount(); i++) {
             ProductEquipmentDO productEquipmentDO = new ProductEquipmentDO();
             productEquipmentDO.setEquipmentNo(generateNoSupport.generateEquipmentNo(productDO.getProductModel(), cityCode, productInStockCounter.getProductEquipmentCount()));
             productEquipmentDO.setProductId(productInStorage.getProductId());
             productEquipmentDO.setSkuId(productInStorage.getProductSkuId());
-            productEquipmentDO.setEquipmentPrice(productSkuDO.getSkuPrice());
+            productEquipmentDO.setEquipmentPrice(CommonConstant.COMMON_CONSTANT_YES.equals(isNewProductEquipment) ? productSkuDO.getSkuPrice() : productSkuDO.getSkuPrice());
             productEquipmentDO.setCurrentWarehouseId(warehouseId);
             productEquipmentDO.setCurrentWarehousePositionId(warehousePositionId);
             productEquipmentDO.setOwnerWarehouseId(warehouseId);
             productEquipmentDO.setOwnerWarehousePositionId(warehousePositionId);
-            productEquipmentDO.setIsNew(productInStorage.getIsNew() == null ? CommonConstant.COMMON_CONSTANT_NO : productInStorage.getIsNew());
+            productEquipmentDO.setIsNew(isNewProductEquipment);
             productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
             productEquipmentDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             productEquipmentDO.setUpdateUser(loginUser.getUserId().toString());
@@ -743,7 +745,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                         bulkMaterialDO.setCurrentWarehousePositionId(warehousePositionId);
                         bulkMaterialDO.setOwnerWarehouseId(warehouseId);
                         bulkMaterialDO.setOwnerWarehousePositionId(warehousePositionId);
-                        bulkMaterialDO.setIsNew(productInStorage.getIsNew() == null ? CommonConstant.COMMON_CONSTANT_NO : productInStorage.getIsNew());
+                        bulkMaterialDO.setIsNew(isNewProductEquipment);
                         bulkMaterialDO.setCurrentEquipmentNo(productEquipmentDO.getEquipmentNo());
                         bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
                         bulkMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -759,7 +761,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                         bulkMaterialDO.setBrandId(materialDO.getBrandId());
                         bulkMaterialDO.setMaterialModelId(materialDO.getMaterialModelId());
                         bulkMaterialDO.setMaterialCapacityValue(materialDO.getMaterialCapacityValue());
-                        bulkMaterialDO.setBulkMaterialPrice(materialDO.getMaterialPrice());
+                        bulkMaterialDO.setBulkMaterialPrice(CommonConstant.COMMON_CONSTANT_YES.equals(isNewProductEquipment) ? materialDO.getMaterialPrice() : materialDO.getMaterialPrice());
                         allBulkMaterialDOList.add(bulkMaterialDO);
                         allBulkMaterialDOMap.put(bulkMaterialDO.getBulkMaterialNo(), bulkMaterialDO);
 

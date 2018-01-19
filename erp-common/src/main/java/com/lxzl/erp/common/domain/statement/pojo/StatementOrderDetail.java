@@ -21,13 +21,16 @@ public class StatementOrderDetail extends BasePO {
     private Integer statementDetailPhase;   // 结算单期数
     private Date statementExpectPayTime;    // 结算单预计支付时间
     private BigDecimal statementDetailAmount;   //结算单金额
+    private BigDecimal statementDetailOtherAmount;   //结算单其他金额
     private BigDecimal statementDetailPaidAmount;    // 已付总金额
     private BigDecimal statementDetailRentDepositAmount;    // 结算租金押金金额
     private BigDecimal statementDetailRentDepositPaidAmount;    // 已付租金押金金额
     private BigDecimal statementDetailRentDepositReturnAmount;    // 退还租金押金金额
+    private Date statementDetailRentDepositReturnTime;      // 退还租金押金时间
     private BigDecimal statementDetailDepositAmount;   //结算押金金额
     private BigDecimal statementDetailDepositPaidAmount;   //已付押金金额
     private BigDecimal statementDetailDepositReturnAmount;   //退还押金金额
+    private Date statementDetailDepositReturnTime;      // 退还押金时间
     private BigDecimal statementDetailRentAmount;                // 结算单租金金额
     private BigDecimal statementDetailRentPaidAmount;            // 租金已付金额
     private Date statementDetailPaidTime;            // 结算单支付时间
@@ -326,5 +329,29 @@ public class StatementOrderDetail extends BasePO {
 
     public void setItemRentType(Integer itemRentType) {
         this.itemRentType = itemRentType;
+    }
+
+    public Date getStatementDetailRentDepositReturnTime() {
+        return statementDetailRentDepositReturnTime;
+    }
+
+    public void setStatementDetailRentDepositReturnTime(Date statementDetailRentDepositReturnTime) {
+        this.statementDetailRentDepositReturnTime = statementDetailRentDepositReturnTime;
+    }
+
+    public Date getStatementDetailDepositReturnTime() {
+        return statementDetailDepositReturnTime;
+    }
+
+    public void setStatementDetailDepositReturnTime(Date statementDetailDepositReturnTime) {
+        this.statementDetailDepositReturnTime = statementDetailDepositReturnTime;
+    }
+
+    public BigDecimal getStatementDetailOtherAmount() {
+        return statementDetailOtherAmount;
+    }
+
+    public void setStatementDetailOtherAmount(BigDecimal statementDetailOtherAmount) {
+        this.statementDetailOtherAmount = statementDetailOtherAmount;
     }
 }

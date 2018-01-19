@@ -112,8 +112,8 @@ public class OrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void testUpdateOrderJSON() throws Exception {
-        String str = "{\"orderNo\":\"O201712171440529091845\",\"buyerCustomerNo\":\"CC201712091546467081096\",\"rentStartTime\":1513555200000,\"logisticsAmount\":\"1\",\"orderSellerId\":500001,\"orderSubCompanyId\":5,\"buyerRemark\":\"包装好好打着，别弄坏了\",\"customerConsignId\":\"40\",\"orderProductList\":[{\"productId\":\"2000013\",\"productSkuId\":\"40\",\"productUnitAmount\":\"150\",\"productCount\":\"2\",\"rentType\":\"2\",\"rentTimeLength\":\"12\",\"insuranceAmount\":\"1\",\"payMode\":\"2\"}]}";
-        Order order = JSONUtil.convertJSONToBean(str, Order.class);
+        String str = "{\"orderNo\":\"LXO-20180116-701366-00068\",\"buyerCustomerNo\":\"LXCC10002018011200040\",\"rentStartTime\":1516147200000,\"expectDeliveryTime\":1516060800000,\"logisticsAmount\":\"80\",\"buyerRemark\":\"\",\"customerConsignId\":\"160\",\"highTaxRate\":\"18\",\"lowTaxRate\":\"82\",\"deliveryMode\":\"3\",\"orderProductList\":[{\"productId\":\"2000058\",\"productSkuId\":211,\"productUnitAmount\":\"10\",\"productCount\":\"10\",\"rentType\":\"1\",\"rentTimeLength\":\"10\",\"insuranceAmount\":\"\",\"payMode\":\"1\",\"isNewProduct\":0,\"depositAmount\":\"2000\"},{\"productId\":\"2000058\",\"productSkuId\":211,\"productUnitAmount\":\"9\",\"productCount\":\"9\",\"rentType\":\"2\",\"rentTimeLength\":\"10\",\"insuranceAmount\":\"\",\"isNewProduct\":1,\"depositAmount\":0}],\"orderMaterialList\":[{\"materialNo\":\"M201711201500267591516\",\"materialId\":\"9\",\"materialUnitAmount\":\"10\",\"materialCount\":\"1\",\"rentType\":\"1\",\"rentTimeLength\":\"10\",\"insuranceAmount\":\"\",\"payMode\":\"2\",\"isNewMaterial\":0,\"depositAmount\":\"100\"},{\"materialNo\":\"M201711201500267591516\",\"materialId\":\"9\",\"materialUnitAmount\":\"10\",\"materialCount\":\"1\",\"rentType\":\"2\",\"rentTimeLength\":\"10\",\"insuranceAmount\":\"\",\"isNewMaterial\":1,\"depositAmount\":0}]}";
+        Order order = FastJsonUtil.toBean(str, Order.class);
 
         TestResult testResult = getJsonTestResult("/order/update", order);
     }

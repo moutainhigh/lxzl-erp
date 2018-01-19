@@ -12,12 +12,15 @@
 		<result column="order_item_refer_id" jdbcType="INTEGER" property="orderItemReferId" />
 		<result column="statement_detail_phase" jdbcType="INTEGER" property="statementDetailPhase" />
 		<result column="statement_detail_amount" jdbcType="DECIMAL" property="statementDetailAmount" />
+		<result column="statement_detail_other_amount" jdbcType="DECIMAL" property="statementDetailOtherAmount" />
 		<result column="statement_detail_rent_deposit_amount" jdbcType="DECIMAL" property="statementDetailRentDepositAmount" />
 		<result column="statement_detail_rent_deposit_paid_amount" jdbcType="DECIMAL" property="statementDetailRentDepositPaidAmount" />
 		<result column="statement_detail_rent_deposit_return_amount" jdbcType="DECIMAL" property="statementDetailRentDepositReturnAmount" />
+		<result column="statement_detail_rent_deposit_return_time" jdbcType="TIMESTAMP" property="statementDetailRentDepositReturnTime" />
 		<result column="statement_detail_deposit_amount" jdbcType="DECIMAL" property="statementDetailDepositAmount" />
 		<result column="statement_detail_deposit_paid_amount" jdbcType="DECIMAL" property="statementDetailDepositPaidAmount" />
 		<result column="statement_detail_deposit_return_amount" jdbcType="DECIMAL" property="statementDetailDepositReturnAmount" />
+		<result column="statement_detail_deposit_return_time" jdbcType="TIMESTAMP" property="statementDetailDepositReturnTime" />
 		<result column="statement_detail_rent_amount" jdbcType="DECIMAL" property="statementDetailRentAmount" />
 		<result column="statement_detail_rent_paid_amount" jdbcType="DECIMAL" property="statementDetailRentPaidAmount" />
 		<result column="statement_detail_paid_time" jdbcType="DATE" property="statementDetailPaidTime" />
@@ -35,7 +38,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		esod.id,esod.statement_order_id,esod.customer_id,esod.order_type,esod.order_id,esod.order_item_type,esod.order_item_refer_id,esod.statement_detail_phase,esod.statement_detail_amount,esod.statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount,esod.statement_detail_rent_deposit_return_amount,esod.statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount,esod.statement_detail_rent_amount,esod.statement_detail_rent_paid_amount,esod.statement_detail_paid_time,esod.statement_detail_overdue_amount,esod.statement_detail_status,esod.statement_expect_pay_time,esod.statement_start_time,esod.statement_end_time,esod.data_status,esod.remark,esod.create_time,esod.create_user,esod.update_time,esod.update_user
+		esod.id,esod.statement_order_id,esod.customer_id,esod.order_type,esod.order_id,esod.order_item_type,esod.order_item_refer_id,esod.statement_detail_phase,esod.statement_detail_amount,esod.statement_detail_other_amount,esod.statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount,esod.statement_detail_rent_deposit_return_amount,esod.statement_detail_rent_deposit_return_time,esod.statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount,esod.statement_detail_deposit_return_time,esod.statement_detail_rent_amount,esod.statement_detail_rent_paid_amount,esod.statement_detail_paid_time,esod.statement_detail_overdue_amount,esod.statement_detail_status,esod.statement_expect_pay_time,esod.statement_start_time,esod.statement_end_time,esod.data_status,esod.remark,esod.create_time,esod.create_user,esod.update_time,esod.update_user
 	</sql>
 
 	<select id="findById" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
@@ -51,7 +54,7 @@
 	<select id="findByOrderId" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_statement_order_detail esod
 		WHERE esod.order_id = #{orderId, jdbcType=INTEGER} AND order_type = 1  AND esod.data_status = 1
-		ORDER BY esod.statement_expect_pay_time ASC
+		ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC
 	</select>
 
 	<select id="findByOrderItemTypeAndId" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
@@ -110,6 +113,9 @@
 			<if test="statementDetailAmount != null">
 				statement_detail_amount = #{statementDetailAmount,jdbcType=DECIMAL},
 			</if>
+			<if test="statementDetailOtherAmount != null">
+				statement_detail_other_amount = #{statementDetailOtherAmount,jdbcType=DECIMAL},
+			</if>
 			<if test="statementDetailRentDepositAmount != null">
 				statement_detail_rent_deposit_amount = #{statementDetailRentDepositAmount,jdbcType=DECIMAL},
 			</if>
@@ -119,6 +125,9 @@
 			<if test="statementDetailRentDepositReturnAmount != null">
 				statement_detail_rent_deposit_return_amount = #{statementDetailRentDepositReturnAmount,jdbcType=DECIMAL},
 			</if>
+			<if test="statementDetailRentDepositReturnTime != null">
+				statement_detail_rent_deposit_return_time = #{statementDetailRentDepositReturnTime,jdbcType=TIMESTAMP},
+			</if>
 			<if test="statementDetailDepositAmount != null">
 				statement_detail_deposit_amount = #{statementDetailDepositAmount,jdbcType=DECIMAL},
 			</if>
@@ -127,6 +136,9 @@
 			</if>
 			<if test="statementDetailDepositReturnAmount != null">
 				statement_detail_deposit_return_amount = #{statementDetailDepositReturnAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementDetailDepositReturnTime != null">
+				statement_detail_deposit_return_time = #{statementDetailDepositReturnTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="statementDetailRentAmount != null">
 				statement_detail_rent_amount = #{statementDetailRentAmount,jdbcType=DECIMAL},
@@ -182,10 +194,10 @@
 	</update>
 
 	<insert id="saveList" parameterType="java.util.ArrayList">
-		INSERT INTO erp_statement_order_detail (statement_order_id,customer_id,order_type,order_id,order_item_type,order_item_refer_id,statement_detail_phase,statement_expect_pay_time,statement_detail_amount,statement_detail_rent_deposit_amount,statement_detail_rent_deposit_paid_amount,statement_detail_rent_deposit_return_amount,statement_detail_deposit_amount,statement_detail_deposit_paid_amount,statement_detail_deposit_return_amount,statement_detail_rent_amount,statement_detail_rent_paid_amount,statement_detail_paid_time,statement_detail_overdue_amount,statement_detail_status,statement_start_time,statement_end_time,data_status,remark,create_time,create_user,update_time,update_user)
+		INSERT INTO erp_statement_order_detail (statement_order_id,customer_id,order_type,order_id,order_item_type,order_item_refer_id,statement_detail_phase,statement_expect_pay_time,statement_detail_amount,statement_detail_other_amount,statement_detail_rent_deposit_amount,statement_detail_rent_deposit_paid_amount,statement_detail_rent_deposit_return_amount,statement_detail_deposit_amount,statement_detail_deposit_paid_amount,statement_detail_deposit_return_amount,statement_detail_rent_amount,statement_detail_rent_paid_amount,statement_detail_paid_time,statement_detail_overdue_amount,statement_detail_status,statement_start_time,statement_end_time,data_status,remark,create_time,create_user,update_time,update_user)
 		VALUES
 		<foreach item="statementOrderDetailDO" index="index" collection="statementOrderDetailDOList" separator=",">
-			(#{statementOrderDetailDO.statementOrderId},#{statementOrderDetailDO.customerId},#{statementOrderDetailDO.orderType},#{statementOrderDetailDO.orderId},#{statementOrderDetailDO.orderItemType},#{statementOrderDetailDO.orderItemReferId},#{statementOrderDetailDO.statementDetailPhase},#{statementOrderDetailDO.statementExpectPayTime},#{statementOrderDetailDO.statementDetailAmount},#{statementOrderDetailDO.statementDetailRentDepositAmount},#{statementOrderDetailDO.statementDetailRentDepositPaidAmount},#{statementOrderDetailDO.statementDetailRentDepositReturnAmount},#{statementOrderDetailDO.statementDetailDepositAmount},#{statementOrderDetailDO.statementDetailDepositPaidAmount},#{statementOrderDetailDO.statementDetailDepositReturnAmount},#{statementOrderDetailDO.statementDetailRentAmount},#{statementOrderDetailDO.statementDetailRentPaidAmount},#{statementOrderDetailDO.statementDetailPaidTime},#{statementOrderDetailDO.statementDetailOverdueAmount},#{statementOrderDetailDO.statementDetailStatus},#{statementOrderDetailDO.statementStartTime},#{statementOrderDetailDO.statementEndTime},#{statementOrderDetailDO.dataStatus},#{statementOrderDetailDO.remark},#{statementOrderDetailDO.createTime},#{statementOrderDetailDO.createUser},#{statementOrderDetailDO.updateTime},#{statementOrderDetailDO.updateUser})
+			(#{statementOrderDetailDO.statementOrderId},#{statementOrderDetailDO.customerId},#{statementOrderDetailDO.orderType},#{statementOrderDetailDO.orderId},#{statementOrderDetailDO.orderItemType},#{statementOrderDetailDO.orderItemReferId},#{statementOrderDetailDO.statementDetailPhase},#{statementOrderDetailDO.statementExpectPayTime},#{statementOrderDetailDO.statementDetailAmount},#{statementOrderDetailDO.statementDetailOtherAmount},#{statementOrderDetailDO.statementDetailRentDepositAmount},#{statementOrderDetailDO.statementDetailRentDepositPaidAmount},#{statementOrderDetailDO.statementDetailRentDepositReturnAmount},#{statementOrderDetailDO.statementDetailDepositAmount},#{statementOrderDetailDO.statementDetailDepositPaidAmount},#{statementOrderDetailDO.statementDetailDepositReturnAmount},#{statementOrderDetailDO.statementDetailRentAmount},#{statementOrderDetailDO.statementDetailRentPaidAmount},#{statementOrderDetailDO.statementDetailPaidTime},#{statementOrderDetailDO.statementDetailOverdueAmount},#{statementOrderDetailDO.statementDetailStatus},#{statementOrderDetailDO.statementStartTime},#{statementOrderDetailDO.statementEndTime},#{statementOrderDetailDO.dataStatus},#{statementOrderDetailDO.remark},#{statementOrderDetailDO.createTime},#{statementOrderDetailDO.createUser},#{statementOrderDetailDO.updateTime},#{statementOrderDetailDO.updateUser})
 		</foreach>
 	</insert>
 </mapper>

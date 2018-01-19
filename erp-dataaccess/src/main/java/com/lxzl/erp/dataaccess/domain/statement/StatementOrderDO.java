@@ -14,6 +14,7 @@ public class StatementOrderDO extends BaseDO {
     private Integer customerId;
     private Date statementExpectPayTime;
     private BigDecimal statementAmount;
+    private BigDecimal statementOtherAmount;   // 结算单其他金额
     private BigDecimal statementRentDepositAmount;
     private BigDecimal statementRentDepositPaidAmount;
     private BigDecimal statementRentDepositReturnAmount;
@@ -208,5 +209,13 @@ public class StatementOrderDO extends BaseDO {
 
     public void setStatementDepositReturnAmount(BigDecimal statementDepositReturnAmount) {
         this.statementDepositReturnAmount = statementDepositReturnAmount;
+    }
+
+    public BigDecimal getStatementOtherAmount() {
+        return statementOtherAmount;
+    }
+
+    public void setStatementOtherAmount(BigDecimal statementOtherAmount) {
+        this.statementOtherAmount = statementOtherAmount;
     }
 }
