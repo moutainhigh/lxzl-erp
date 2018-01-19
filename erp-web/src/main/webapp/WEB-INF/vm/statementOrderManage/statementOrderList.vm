@@ -78,10 +78,10 @@
                                     <th>结算单编号</th>
                                     <th>客户</th>
                                     <th>结算单金额</th>
+                                    <th>其它费用(运费等)</th>
                                     <th>结算日期</th>
                                     <th>预计支付日期</th>
                                     <th>已支付金额</th>
-##                                    <th>支付时间</th>
                                     <th>逾期金额</th>
                                     <th>结算状态</th>
                                     {{#hasRowActionButtons}}
@@ -104,6 +104,7 @@
                                     <td>{{statementOrderNo}}</td>
                                     <td>{{customerName}}</td>
                                     <td>￥{{#price}}{{statementAmount}}{{/price}}</td>
+                                    <td>￥{{#price}}{{statementOhterAmount}}{{/price}}</td>
                                     <td>
                                         <p class="mn" title="结算明细最早的一个日期">开始：{{#clockShorTime}}{{statementStartTime}}{{/clockShorTime}}</p>
                                         <p class="mn mt5" title="结算明细最晚的一个日期">结束：{{#clockShorTime}}{{statementEndTime}}{{/clockShorTime}}</p>
