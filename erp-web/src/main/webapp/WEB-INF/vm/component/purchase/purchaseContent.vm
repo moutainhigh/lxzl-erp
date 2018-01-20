@@ -142,108 +142,111 @@
                             <th>商品ID</th>
                             <th>图片</th>
                             <th>商品名称</th>
-                            <th>SKU</th>
+                            <th>商品配置（SKU）</th>
+                            <th>商品价值</th>
+                            <th>采购单价</th>
+                            <th>采购数量</th>
+                            <th class="text-right">操作</th>
                         </tr>
                         </thead>
                         <tbody>
                         {{#dataSource}}
                         {{#listData}}
-                        <tr class="productRow" productRowKey="{{productId}}">
+                        <tr class="productRow skuRow" productRowKey="{{productId}}">
                             <td>
                                 <label class="option block mn">
-                                    <input type="checkbox" name="checkItem" value="{{productId}}">
+                                    <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}" />
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
                             <td>{{productId}}</td>
                             <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-                            <td class="br-r">{{productName}}</td>
-                            <td class="pn">
-                                <table class="table">
-                                    {{#chooseSkuList}}
-                                    {{#skuList}}
-                                    <tr class="skuRow">
-                                        <td style="width: 20%">{{propertiesToStr}}</td>
-                                        <td width="20%">
-                                            商品价值：￥{{#price}}{{skuPrice}}{{/price}}
-                                        </td>
-                                        <td>
-                                            <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
-                                            <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
-                                            <label class="field prepend-icon mw200">
-                                                <input type="text" name="productAmount-{{skuId}}-{{rowKey}}" value="{{productAmount}}" class="productAmount form-control required moneyNumber" placeholder="输入采购价格" />
-                                                <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="field prepend-icon mw200">
-                                                <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入采购数量" />
-                                            </label>
-                                        </td>
-                                        <td class="text-right">
-                                            <div class="btn-group text-right">
-                                                <a href="#" type="button" class="btn btn-default btn-xs editMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">编辑配件</a>
-                                                <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="bg-light editMaterialTr" style="height: 0;">
-                                        <td colspan="4" class="pn br-n" style="height:0;">
-                                            <div class="panel m15 editMaterialPannel" style="display: none;">
-                                                <div class="panel-heading pn ph8">
-                                                    <span>选择配件</span>
-                                                </div>
-                                                <div class="panel-body pn">
-                                                    <table class="table">
-                                                        {{#shouldMaterialList}}
-                                                        <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
-                                                            <td class="br-r">{{propertyName}}：{{propertyValueName}}</td>
-                                                            <td class="pn">
-                                                                <input type="hidden" name="propertyCapacityValue" value="{{propertyCapacityValue}}" />
-                                                                <table class="table pn br-r materialInputTable" >
-                                                                    {{#materialList}}
-                                                                    <tr class="materialInputRow">
-                                                                        <td style="width: 50%;">
-                                                                            <div class="field">
-                                                                                <div class="input-group bringContainer">
-                                                                                    <input type="hidden" name="materialCapacityValue" value="{{materialCapacityValue}}" class="materialCapacityValue" />
-                                                                                    <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
-                                                                                    <input name="materialName-{{skuId}}-{{rowKey}}-{{materialType}}" value="{{materialName}}" bringfiled="warehouseName" class="materialName form-control required" type="text" readonly placeholder="选择配件" />
-                                                                                    <span class="input-group-addon cursor chooseMaterialButton" data-materialtype="{{materialType}}" data-materialmodelid="{{materialModelId}}"><i class="fa fa-search"></i></span>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="width: 40%;">
-                                                                            <label class="field prepend-icon mw200">
-                                                                                <input type="text" name="productAmount-{{skuId}}-{{rowKey}}" value="{{materialCount}}" class="materialCount form-control required number" placeholder="填写数量" />
-                                                                            </label>
-                                                                        </td>
-                                                                        <td style="width: 10%;">
-                                                                            <div class="btn-group text-right" style="display: none;">
-                                                                                <a href="#" type="button" class="btn btn-default btn-xs delSkuMaterialButton">删除</a>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    {{/materialList}}
-                                                                </table>
+                            <td>{{productName}}</td>
+                            <td>{{propertiesToStr}}</td>
+                            <td>
+                                ￥{{#price}}{{skuPrice}}{{/price}}
+                            </td>
+                            <td>
+                                <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
+                                <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+                                <label class="field prepend-icon mw200">
+                                    <input type="text" name="productAmount-{{skuId}}-{{rowKey}}" value="{{productAmount}}" class="productAmount form-control required moneyNumber" placeholder="输入采购价格" />
+                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                </label>
+                            </td>
+                            <td>
+                                <label class="field prepend-icon mw200">
+                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入采购数量" />
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <div class="btn-group text-right">
+                                    <a href="#" type="button" class="btn btn-default btn-xs editMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">编辑配件</a>
+                                    <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="bg-light editMaterialTr" style="height: 0;">
+                            <td colspan="11" class="pn br-n" style="height:0;">
+                                <div class="panel m15 editMaterialPannel" style="display: none;">
+                                    <div class="panel-heading pn ph8">
+                                        <span>选择配件</span>
+                                    </div>
+                                    <div class="panel-body pn">
+                                        <table class="table">
+                                            <thead>
+                                            <tr class="bg-light">
+                                                <th>配置</th>
+                                                <th>选择配件</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{#shouldMaterialList}}
+                                            <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
+                                                <td class="br-r">{{propertyName}}：{{propertyValueName}}</td>
+                                                <td class="pn">
+                                                    <input type="hidden" name="propertyCapacityValue" value="{{propertyCapacityValue}}" />
+                                                    <table class="table pn br-r materialInputTable" >
+                                                        {{#materialList}}
+                                                        <tr class="materialInputRow">
+                                                            <td style="width: 50%;">
+                                                                <div class="field">
+                                                                    <div class="input-group bringContainer">
+                                                                        <input type="hidden" name="materialCapacityValue" value="{{materialCapacityValue}}" class="materialCapacityValue" />
+                                                                        <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
+                                                                        <input name="materialName-{{skuId}}-{{rowKey}}-{{materialType}}" value="{{materialName}}" bringfiled="warehouseName" class="materialName form-control required" type="text" readonly placeholder="选择配件" />
+                                                                        <span class="input-group-addon cursor chooseMaterialButton" data-materialtype="{{materialType}}" data-materialmodelid="{{materialModelId}}"><i class="fa fa-search"></i></span>
+                                                                    </div>
+                                                                </div>
                                                             </td>
-                                                            <td class="text-right">
-                                                                <div class="btn-group text-right">
-                                                                    {{#canAdd}}
-                                                                    <a href="#" type="button" class="btn btn-default btn-xs newSkuMaterialButton">新增</a>
-                                                                    {{/canAdd}}
+                                                            <td style="width: 40%;">
+                                                                <label class="field prepend-icon mw200">
+                                                                    <input type="text" name="productAmount-{{skuId}}-{{rowKey}}" value="{{materialCount}}" class="materialCount form-control required number" placeholder="填写数量" />
+                                                                </label>
+                                                            </td>
+                                                            <td style="width: 10%;">
+                                                                <div class="btn-group text-right" style="display: none;">
+                                                                    <a href="#" type="button" class="btn btn-default btn-xs delSkuMaterialButton">删除</a>
                                                                 </div>
                                                             </td>
                                                         </tr>
-                                                        {{/shouldMaterialList}}
+                                                        {{/materialList}}
                                                     </table>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {{/skuList}}
-                                    {{/chooseSkuList}}
-                                </table>
+                                                </td>
+                                                <td class="text-right">
+                                                    <div class="btn-group text-right">
+                                                        {{#canAdd}}
+                                                        <a href="#" type="button" class="btn btn-default btn-xs newSkuMaterialButton">新增</a>
+                                                        {{/canAdd}}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {{/shouldMaterialList}}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                         {{/listData}}
@@ -298,10 +301,8 @@
                             <th>名称</th>
                             <th>类型</th>
                             <th>本身价值</th>
-                            <th>租赁价格</th>
-                            <th>描述</th>
                             <th>图片</th>
-                            <th>采购价</th>
+                            <th>采购单价</th>
                             <th>数量</th>
                             <th class="text-right">操作</th>
                         </tr>
@@ -319,9 +320,7 @@
                             <td>{{materialNo}}</td>
                             <td>{{materialName}}</td>
                             <td>{{materialTypeStr}}</td>
-                            <td>{{materialPriceFormat}}</td>
-                            <td>{{rentPriceFormat}}</td>
-                            <td>{{materialDesc}}</td>
+                            <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
                             <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                             <td>
                                 <label class="field prepend-icon mw200">

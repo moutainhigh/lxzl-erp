@@ -110,8 +110,10 @@
                                         <th>商品ID</th>
                                         <th>图片</th>
                                         <th>商品名称</th>
-                                        <th>列表价格</th>
-                                        <th>SKU</th>
+                                        <th>商品配置（SKU）</th>
+                                        <th>商品价值</th>
+                                        <th>采购数量</th>
+                                        <th class="text-right">操作</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -121,63 +123,52 @@
                                         <td>{{productId}}</td>
                                         <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                         <td>{{productName}}</td>
-                                        <td class="br-r">{{listPriceFixed}}</td>
-                                        <td class="pn">
-                                            <table class="table">
-                                                {{#chooseSkuList}}
-                                                {{#skuList}}
-                                                <tr class="skuRow">
-                                                    <td style="width: 40%">{{propertiesToStr}}</td>
-                                                    <td style="width: 20%">
-                                                        <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
-                                                        <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
-                                                        <label class="field prepend-icon mw200">
-                                                            采购价：￥{{productAmount}}
-                                                        </label>
-                                                    </td>
-                                                    <td style="width: 20%">
-                                                        <label class="field prepend-icon mw200">
-                                                            数量：{{productCount}}
-                                                        </label>
-                                                    </td>
-                                                    <td style="width:20%" class="text-right">
-                                                        <div class="btn-group text-right">
-                                                            <a href="#" type="button" class="btn btn-default btn-xs showMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">查看配件</a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr class="bg-light editMaterialTr" style="height: 0;">
-                                                    <td colspan="4" class="pn br-n" style="height:0;">
-                                                        <div class="panel m15 editMaterialPannel" style="display: none;">
-                                                            <div class="panel-heading pn ph8">
-                                                                <span>配件信息</span>
-                                                            </div>
-                                                            <div class="panel-body pn">
-                                                                <table class="table">
-                                                                    {{#shouldMaterialList}}
-                                                                    <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
-                                                                        <td class="br-r">{{propertyName}}：{{propertyValueName}}</td>
-                                                                        <td class="pn">
-                                                                            <input type="hidden" name="propertyCapacityValue" value="{{propertyCapacityValue}}" />
-                                                                            <table class="table pn br-r materialInputTable" >
-                                                                                {{#materialList}}
-                                                                                <tr class="materialInputRow">
-                                                                                    <td style="width: 60%;">配件名：{{materialName}}</td>
-                                                                                    <td style="width: 40%;">数量：{{materialCount}}</td>
-                                                                                </tr>
-                                                                                {{/materialList}}
-                                                                            </table>
-                                                                        </td>
+                                        <td>{{propertiesToStr}}</td>
+                                        <td>
+                                            <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
+                                            <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+                                            <label class="field prepend-icon mw200">
+                                               ￥{{productAmount}}
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label class="field prepend-icon mw200">
+                                               {{productCount}}
+                                            </label>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="btn-group text-right">
+                                                <a href="#" type="button" class="btn btn-default btn-xs showMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">查看配件</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-light editMaterialTr" style="height: 0;">
+                                        <td colspan="11" class="pn br-n" style="height:0;">
+                                            <div class="panel m15 editMaterialPannel" style="display: none;">
+                                                <div class="panel-heading pn ph8">
+                                                    <span>配件信息</span>
+                                                </div>
+                                                <div class="panel-body pn">
+                                                    <table class="table">
+                                                        {{#shouldMaterialList}}
+                                                        <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
+                                                            <td class="br-r">{{propertyName}}：{{propertyValueName}}</td>
+                                                            <td class="pn">
+                                                                <input type="hidden" name="propertyCapacityValue" value="{{propertyCapacityValue}}" />
+                                                                <table class="table pn br-r materialInputTable" >
+                                                                    {{#materialList}}
+                                                                    <tr class="materialInputRow">
+                                                                        <td style="width: 60%;">配件名：{{materialName}}</td>
+                                                                        <td style="width: 40%;">数量：{{materialCount}}</td>
                                                                     </tr>
-                                                                    {{/shouldMaterialList}}
+                                                                    {{/materialList}}
                                                                 </table>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                {{/skuList}}
-                                                {{/chooseSkuList}}
-                                            </table>
+                                                            </td>
+                                                        </tr>
+                                                        {{/shouldMaterialList}}
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                     {{/listData}}
@@ -200,9 +191,7 @@
                                         <th>编号</th>
                                         <th>名称</th>
                                         <th>类型</th>
-                                        <th>本身价值</th>
-##                                        <th>租赁价格</th>
-                                        <th>描述</th>
+                                        <th>配件价值</th>
                                         <th>图片</th>
                                         <th>采购价</th>
                                         <th>数量</th>
@@ -215,9 +204,7 @@
                                         <td>{{materialNo}}</td>
                                         <td>{{materialName}}</td>
                                         <td>{{materialTypeStr}}</td>
-                                        <td>{{materialPriceFormat}}</td>
-##                                        <td>{{rentPriceFormat}}</td>
-                                        <td>{{materialDesc}}</td>
+                                        <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
                                         <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                         <td>{{materialAmount}}</td>
                                         <td>{{materialCount}}</td>
