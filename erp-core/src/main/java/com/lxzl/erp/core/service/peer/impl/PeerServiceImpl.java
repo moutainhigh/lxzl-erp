@@ -177,10 +177,11 @@ public class PeerServiceImpl implements PeerService {
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
      */
     public ServiceResult<String, Integer> updateQueryParam(Peer peer) {
-        ServiceResult<String, Integer> serviceResult = verifyBankInformation(peer);
+        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
+        ServiceResult<String, Integer> verifyBankInformationServiceResult = verifyBankInformation(peer);
 
-        if(serviceResult != null){
-            return serviceResult;
+        if(verifyBankInformationServiceResult != null){
+            return verifyBankInformationServiceResult;
         }
 
         PeerQueryParam peerNameQueryParam = new PeerQueryParam();
@@ -207,7 +208,7 @@ public class PeerServiceImpl implements PeerService {
         map.put("pageSize",Integer.MAX_VALUE);
         List<PeerDO> queryByPeerCodeList = peerMapper.listPage(map);
         if (CollectionUtil.isNotEmpty(queryByPeerCodeList)) {
-            if (!(queryByPeerNameDOList.get(0).getPeerNo().equals(peer.getPeerNo()))) {
+            if (!(queryByPeerCodeList.get(0).getPeerNo().equals(peer.getPeerNo()))) {
                 serviceResult.setErrorCode(ErrorCode.PEER_CODE_EXISTS);
                 return serviceResult;
             }
@@ -224,10 +225,11 @@ public class PeerServiceImpl implements PeerService {
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
      */
     public ServiceResult<String, Integer> addQueryParam(Peer peer) {
-        ServiceResult<String, Integer> serviceResult = verifyBankInformation(peer);
+        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
+        ServiceResult<String, Integer> verifyBankInformationServiceResult = verifyBankInformation(peer);
 
-        if(serviceResult != null){
-            return serviceResult;
+        if(verifyBankInformationServiceResult != null){
+            return verifyBankInformationServiceResult;
         }
 
         PeerQueryParam peerNameQueryParam = new PeerQueryParam();
