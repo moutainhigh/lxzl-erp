@@ -23,4 +23,6 @@ public interface PeerDeploymentOrderMaterialBulkMapper extends BaseMysqlDAO<Peer
     List<PeerDeploymentOrderMaterialBulkDO> findByPeerDeploymentOrderId(@Param("peerDeploymentOrderId") Integer peerDeploymentOrderId);
 
 	Integer saveList(List<PeerDeploymentOrderMaterialBulkDO> peerDeploymentOrderMaterialBulkDOList);
+
+    Integer updateBatchReturnTime(@Param("maps")Map<String, Object> maps);
 }

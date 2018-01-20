@@ -489,4 +489,26 @@
         <include refid="set_column_sql"/>
     </insert>
 
+    <select id="findBatchByEquipmentNoInPeerDeploymentOrder" parameterType="map" resultMap="ProductEquipmentDO">
+    SELECT <include refid="column_List"/> FROM erp_product_equipment epe WHERE epe.data_status=1 AND epe.equipment_status = #{maps.oldEquipmentStatus}
+    AND epe.current_warehouse_id = #{maps.warehouseId} AND epe.equipment_no IN
+    <foreach collection="maps.peerDeploymentOrderProductEquipmentDOList" item="PeerDeploymentOrderProductEquipmentDO" open="(" close=")"
+             separator=",">
+        #{PeerDeploymentOrderProductEquipmentDO.equipmentNo,jdbcType=VARCHAR}
+    </foreach>
+    ORDER BY epe.id LIMIT 0,#{maps.equipmentCount}
+    </select>
+
+    <update id="updateStatusBathByEquipmentNoInMap" parameterType="map">
+        UPDATE erp_product_equipment epe1 INNER JOIN (
+        SELECT <include refid="column_List"/> FROM erp_product_equipment epe WHERE epe.data_status=1 AND epe.equipment_status = #{maps.oldEquipmentStatus}
+        AND epe.current_warehouse_id = #{maps.warehouseId} AND epe.equipment_no IN
+        <foreach collection="maps.peerDeploymentOrderProductEquipmentDOList" item="PeerDeploymentOrderProductEquipmentDO" open="(" close=")"
+                 separator=",">
+            #{PeerDeploymentOrderProductEquipmentDO.equipmentNo,jdbcType=VARCHAR}
+        </foreach>
+        ORDER BY epe.id LIMIT 0,#{maps.equipmentCount}
+        ) epe2 ON epe1.id = epe2.id SET epe1.update_time = #{maps.updateTime},epe1.update_user = #{maps.updateUser},epe1.equipment_status=#{maps.newEquipmentStatus}
+    </update>
+
 </mapper>

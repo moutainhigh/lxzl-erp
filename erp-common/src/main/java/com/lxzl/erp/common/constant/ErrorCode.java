@@ -550,6 +550,7 @@ public class ErrorCode {
     public static final String USER_CAN_NOT_OPERATION_PEER_DEPLOYMENT_ORDER_WAREHOUSE  = "J1510003";
     public static final String PEER_DEPLOYMENT_ORDER_STATUS_NEED_PROCESSING_OUT  = "J1510004";
     public static final String BANK_NO_ERROR  = "J1510005";
+    public static final String PRODUCT_EQUIPMENT_MATCH_PEER_DEPLOYMENT_ORDER_NOT_ENOUGH  = "J1510006";
 
 
     static {
@@ -1092,6 +1093,7 @@ public class ErrorCode {
         MAP.put(PEER_DEPLOYMENT_ORDER_COUNT_IS_ZERO, "同行调拨单配件和商品总数需大于等于0");
         MAP.put(PEER_DEPLOYMENT_ORDER_MONEY_IS_ZERO, "同行调拨单配件和商品金额需大于等于0");
         MAP.put(PEER_DEPLOYMENT_ORDER_DISCOUNT_MONEY_IS_ZERO, "同行调拨单优惠金额需大于等于0");
+        MAP.put(PRODUCT_EQUIPMENT_MATCH_PEER_DEPLOYMENT_ORDER_NOT_ENOUGH, "查找到的设备数量与该同行调拨单下设备数量不相等");
 
 
 

@@ -1,6 +1,7 @@
 package com.lxzl.erp.dataaccess.dao.mysql.material;
 
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
+import com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderMaterialBulkDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -47,11 +48,21 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
 
     List<BulkMaterialDO> findByEquipmentNo(@Param("equipmentNo")String equipmentNo);
 
-//    Integer updateStatusList(@Param("bulkMaterialDOList") List<BulkMaterialDO> bulkMaterialDOList);
-
     List<BulkMaterialDO> findBatchUseFromIdle(@Param("maps") Map<String,Object> map );
 
     Integer batchUseFromIdle(@Param("maps") Map<String,Object> map );
 
+    List<BulkMaterialDO> findListByBulkMaterialNO(@Param("transferOrderMaterialBulkDOList") List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList);
 
+    List<BulkMaterialDO> findBatchByBulkMaterialNoInTransferOrder(@Param("maps") Map<String, Object> maps);
+
+    Integer UpdateBatchByBulkMaterialNoInTransferOrder(@Param("maps")Map<String, Object> maps);
+
+    List<BulkMaterialDO> findBatchByEquipmentNo(@Param("maps")Map<String, Object> maps);
+
+    Integer UpdateStatusBatchByEquipmentNo(@Param("maps")Map<String, Object> maps);
+
+    List<BulkMaterialDO> findBatchByBulkMaterialNoInPeerDeploymentOrder(@Param("maps")Map<String, Object> maps);
+
+    Integer UpdateBatchByBulkMaterialNoInPeerDeploymentOrder(@Param("maps")Map<String, Object> maps);
 }

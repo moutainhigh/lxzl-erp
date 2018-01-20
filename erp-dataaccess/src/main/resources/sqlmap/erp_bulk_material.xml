@@ -535,26 +535,26 @@
 		AND current_equipment_id IS NULL AND order_no IS NULL AND bulk_material_status = 1
 		AND current_warehouse_id = #{warehouseId}
 	</select>
+
 	<select id="findBatchUseFromIdle" parameterType="map" resultMap="BulkMaterialDO">
 		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm WHERE ebm.material_id = #{maps.materialId} AND ebm.data_status=1 AND ebm.is_new=#{maps.isNew}
 		AND ebm.current_equipment_id IS NULL AND ebm.order_no IS NULL AND ebm.bulk_material_status = 1
 		AND ebm.current_warehouse_id = #{maps.warehouseId}
 		ORDER BY ebm.id LIMIT 0,#{maps.materialCount}
 	</select>
+
 	<update id="batchUseFromIdle" parameterType="map">
-		UPDATE erp_bulk_material a INNER JOIN (
+		UPDATE erp_bulk_material ebm1 INNER JOIN (
 			SELECT * FROM erp_bulk_material WHERE material_id = #{maps.materialId} AND data_status=1 AND is_new=#{maps.isNew}
 			AND current_equipment_id IS NULL AND order_no IS NULL AND bulk_material_status = 1
 			AND current_warehouse_id = #{maps.warehouseId}
 			ORDER BY id
 			LIMIT 0,#{maps.materialCount}
-		) b ON a.id = b.id SET a.update_time = #{maps.updateTime},a.update_user = #{maps.updateUser},a.bulk_material_status=#{maps.bulkMaterialStatus}
+		) ebm2 ON ebm1.id = ebm2.id SET ebm1.update_time = #{maps.updateTime},ebm1.update_user = #{maps.updateUser},ebm1.bulk_material_status=#{maps.bulkMaterialStatus}
 		<if test="maps.orderNo != null">
-			,a.order_no = #{maps.orderNo}
+			,ebm1.order_no = #{maps.orderNo}
 		</if>
-
 	</update>
-
 
 	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO">
 		INSERT INTO erp_bulk_material <include refid="set_column_sql"/>
@@ -563,8 +563,6 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO">
 		UPDATE erp_bulk_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
-
-
 
 	<update id="updateEquipmentOrderNo" parameterType="java.util.Map">
 		UPDATE erp_bulk_material SET order_no = #{orderNo, jdbcType=VARCHAR}
@@ -578,6 +576,7 @@
 		</choose>
 		WHERE current_equipment_no = #{equipmentNo, jdbcType=VARCHAR}
 	</update>
+
 	<update id="returnEquipment" parameterType="java.lang.String">
 		UPDATE erp_bulk_material SET order_no = null,bulk_material_status=1,is_new=0
 		WHERE current_equipment_no = #{equipmentNo, jdbcType=VARCHAR}
@@ -592,4 +591,90 @@
 		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm WHERE
 		ebm.current_equipment_no = #{equipmentNo,jdbcType=VARCHAR} AND ebm.data_status = 1
 	</select>
+
+	<select id="findListByBulkMaterialNO" resultMap="BulkMaterialDO" parameterType="java.util.ArrayList">
+		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm
+		WHERE ebm.bulk_material_no IN
+		<foreach collection="transferOrderMaterialBulkDOList" item="transferOrderMaterialBulkDO" open="(" close=")"
+				 separator=",">
+			#{transferOrderMaterialBulkDO.bulkMaterialNo,jdbcType=VARCHAR}
+		</foreach>
+		AND ebm.data_status = 1
+	</select>
+
+	<select id="findBatchByBulkMaterialNoInTransferOrder" parameterType="map" resultMap="BulkMaterialDO">
+		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm WHERE ebm.material_id = #{maps.materialId} AND ebm.data_status=1 AND ebm.is_new=#{maps.isNew}
+		AND ebm.current_equipment_id IS NULL AND ebm.order_no IS NULL AND ebm.bulk_material_status = 1
+		AND ebm.current_warehouse_id = #{maps.warehouseId} AND ebm.bulk_material_no IN
+		<foreach collection="maps.transferOrderMaterialBulkDOList" item="transferOrderMaterialBulkDO" open="(" close=")"
+				 separator=",">
+			#{transferOrderMaterialBulkDO.bulkMaterialNo,jdbcType=VARCHAR}
+		</foreach>
+		ORDER BY ebm.id LIMIT 0,#{maps.materialCount}
+	</select>
+
+	<update id="UpdateBatchByBulkMaterialNoInTransferOrder" parameterType="map">
+		UPDATE erp_bulk_material ebm1 INNER JOIN (
+		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm WHERE ebm.material_id = #{maps.materialId} AND ebm.data_status=1 AND ebm.is_new=#{maps.isNew}
+		AND ebm.current_equipment_id IS NULL AND ebm.order_no IS NULL AND ebm.bulk_material_status = 1
+		AND ebm.current_warehouse_id = #{maps.warehouseId} AND ebm.bulk_material_no IN
+		<foreach collection="maps.transferOrderMaterialBulkDOList" item="transferOrderMaterialBulkDO" open="(" close=")"
+				 separator=",">
+			#{transferOrderMaterialBulkDO.bulkMaterialNo,jdbcType=VARCHAR}
+		</foreach>
+		ORDER BY ebm.id LIMIT 0,#{maps.materialCount}
+		) ebm2 ON ebm1.id = ebm2.id SET ebm1.update_time = #{maps.updateTime},ebm1.update_user = #{maps.updateUser},ebm1.bulk_material_status=#{maps.bulkMaterialStatus}
+		<if test="maps.orderNo != null">
+			,ebm1.order_no = #{maps.orderNo}
+		</if>
+	</update>
+
+	<select id="findBatchByEquipmentNo" resultMap="BulkMaterialDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm WHERE ebm.data_status = 1 AND ebm.bulk_material_status = #{maps.oldBulkMaterialStatus}
+		AND ebm.current_warehouse_id = #{maps.warehouseId} AND ebm.current_equipment_no IN
+		<foreach collection="maps.productEquipmentDOList" item="productEquipmentDO" open="(" close=")"
+				 separator=",">
+			#{productEquipmentDO.equipmentNo,jdbcType=VARCHAR}
+		</foreach>
+	</select>
+
+	<update id="UpdateStatusBatchByEquipmentNo" parameterType="map">
+		UPDATE erp_bulk_material ebm1 INNER JOIN (
+		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm WHERE ebm.data_status = 1 AND ebm.bulk_material_status = #{maps.oldBulkMaterialStatus}
+		AND ebm.current_warehouse_id = #{maps.warehouseId} AND ebm.current_equipment_no IN
+		<foreach collection="maps.productEquipmentDOList" item="productEquipmentDO" open="(" close=")"
+				 separator=",">
+			#{productEquipmentDO.equipmentNo,jdbcType=VARCHAR}
+		</foreach>
+		) ebm2 ON ebm1.id = ebm2.id SET ebm1.update_time = #{maps.updateTime},ebm1.update_user = #{maps.updateUser},ebm1.bulk_material_status=#{maps.newBulkMaterialStatus}
+		<if test="maps.orderNo != null">
+			,ebm1.order_no = #{maps.orderNo}
+		</if>
+	</update>
+
+	<select id="findBatchByBulkMaterialNoInPeerDeploymentOrder" parameterType="map" resultMap="BulkMaterialDO">
+		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm WHERE ebm.data_status=1 AND ebm.current_equipment_id IS NULL AND ebm.order_no IS NULL AND ebm.bulk_material_status =  #{maps.oldBulkMaterialStatus}
+		AND ebm.current_warehouse_id = #{maps.warehouseId} AND ebm.bulk_material_no IN
+		<foreach collection="maps.peerDeploymentOrderMaterialBulkDOList" item="peerDeploymentOrderMaterialBulkDO" open="(" close=")"
+				 separator=",">
+			#{peerDeploymentOrderMaterialBulkDO.bulkMaterialNo,jdbcType=VARCHAR}
+		</foreach>
+		ORDER BY ebm.id LIMIT 0,#{maps.materialCount}
+	</select>
+
+	<update id="UpdateBatchByBulkMaterialNoInPeerDeploymentOrder" parameterType="map">
+		UPDATE erp_bulk_material ebm1 INNER JOIN (
+		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm WHERE ebm.data_status=1 AND ebm.current_equipment_id IS NULL AND ebm.order_no IS NULL AND ebm.bulk_material_status =  #{maps.oldBulkMaterialStatus}
+		AND ebm.current_warehouse_id = #{maps.warehouseId} AND ebm.bulk_material_no IN
+		<foreach collection="maps.peerDeploymentOrderMaterialBulkDOList" item="peerDeploymentOrderMaterialBulkDO" open="(" close=")"
+				 separator=",">
+			#{peerDeploymentOrderMaterialBulkDO.bulkMaterialNo,jdbcType=VARCHAR}
+		</foreach>
+		ORDER BY ebm.id LIMIT 0,#{maps.materialCount}
+		) ebm2 ON ebm1.id = ebm2.id SET ebm1.update_time = #{maps.updateTime},ebm1.update_user = #{maps.updateUser},ebm1.bulk_material_status=#{maps.newBulkMaterialStatus}
+		<if test="maps.orderNo != null">
+			,ebm1.order_no = #{maps.orderNo}
+		</if>
+	</update>
+
 </mapper>

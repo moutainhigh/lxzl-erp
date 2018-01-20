@@ -21,4 +21,6 @@ public interface PeerDeploymentOrderProductEquipmentMapper extends BaseMysqlDAO<
 	List<PeerDeploymentOrderProductEquipmentDO> findPeerDeploymentOrderProductEquipmentByParams(@Param("maps")Map<String, Object> maps);
 
     List<PeerDeploymentOrderProductEquipmentDO> findByPeerDeploymentOrderProductId(@Param("peerDeploymentOrderId") Integer peerDeploymentOrderId);
+
+    Integer updateBatchReturnTime(@Param("maps")Map<String, Object> maps);
 }
