@@ -677,4 +677,17 @@
 		</if>
 	</update>
 
+	<select id="findBatchByPeerDeploymentOrderNo" parameterType="map" resultMap="BulkMaterialDO">
+		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm INNER JOIN erp_peer_deployment_order_material_bulk epdomb ON
+		ebm.id = epdomb.bulk_material_id AND epdomb.peer_deployment_order_no = #{maps.peerDeploymentOrderNo, jdbcType=VARCHAR}
+	</select>
+
+	<update id="updateStatusBatch" parameterType="map">
+		update erp_bulk_material ebm,erp_peer_deployment_order_material_bulk epdomb
+		set ebm.bulk_material_status = #{maps.bulkMaterialStatus, jdbcType=VARCHAR},ebm.update_time = #{maps.updateTime,jdbcType=TIMESTAMP},ebm.update_user = #{maps.updateUser,jdbcType=INTEGER}
+		where ebm.id = epdomb.bulk_material_id
+		and epdomb.peer_deployment_order_no = #{maps.peerDeploymentOrderNo, jdbcType=VARCHAR}
+	</update>
+
+
 </mapper>

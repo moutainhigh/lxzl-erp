@@ -65,4 +65,8 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
     List<BulkMaterialDO> findBatchByBulkMaterialNoInPeerDeploymentOrder(@Param("maps")Map<String, Object> maps);
 
     Integer UpdateBatchByBulkMaterialNoInPeerDeploymentOrder(@Param("maps")Map<String, Object> maps);
+
+    void updateStatusBatch(@Param("maps")Map<String, Object> maps);
+
+    List<BulkMaterialDO> findBatchByPeerDeploymentOrderNo(@Param("maps")Map<String, Object> maps);
 }

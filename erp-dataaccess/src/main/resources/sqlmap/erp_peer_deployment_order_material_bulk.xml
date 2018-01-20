@@ -160,10 +160,6 @@
 
 	<update id="updateBatchReturnTime" parameterType="map">
 		UPDATE erp_peer_deployment_order_material_bulk epdomb SET epdomb.return_time = #{maps.returnTime},epdomb.update_time = #{maps.updateTime},epdomb.update_user = #{maps.updateUser}
-		where epdomb.id IN
-		<foreach collection="maps.peerDeploymentOrderMaterialBulkDOList" item="peerDeploymentOrderMaterialBulkDO" open="(" close=")"
-				 separator=",">
-			#{peerDeploymentOrderMaterialBulkDO.id,jdbcType=VARCHAR}
-		</foreach>
+		where epdomb.peer_deployment_order_no = #{maps.peerDeploymentOrderNo, jdbcType=VARCHAR}
 	</update>
 </mapper>
