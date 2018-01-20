@@ -7,6 +7,7 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialModelQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialQueryParam;
+import com.lxzl.erp.common.domain.material.MaterialTypeQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.material.pojo.MaterialImg;
 import com.lxzl.erp.common.domain.material.pojo.MaterialModel;
@@ -132,5 +133,12 @@ public class MaterialTest extends ERPUnTransactionalTest {
     public void queryAllBulkMaterial() throws Exception {
         BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
         TestResult testResult = getJsonTestResult("/material/queryAllBulkMaterial", bulkMaterialQueryParam);
+    }
+
+    @Test
+    public void queryType() throws Exception {
+        MaterialTypeQueryParam materialTypeQueryParam = new MaterialTypeQueryParam();
+        materialTypeQueryParam.setIsMainMaterial(0);
+        TestResult testResult = getJsonTestResult("/material/queryType", materialTypeQueryParam);
     }
 }

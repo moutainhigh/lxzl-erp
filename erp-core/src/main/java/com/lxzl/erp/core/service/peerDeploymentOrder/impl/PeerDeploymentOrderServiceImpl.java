@@ -120,11 +120,6 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             return result;
         }
 
-        if(daysBetween(currentTime,peerDeploymentOrder.getRentStartTime()) < 0 ){
-            result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_START_TIME_DATE_IS_ERROR);
-            return result;
-        }
-
         PeerDeploymentOrderDO peerDeploymentOrderDO = ConverterUtil.convert(peerDeploymentOrder,PeerDeploymentOrderDO.class);
         Date expectReturnTime = peerDeploymentOrderExpectReturnTime(peerDeploymentOrderDO.getRentStartTime(), peerDeploymentOrderDO.getRentType(), peerDeploymentOrderDO.getRentTimeLength());
 
@@ -216,10 +211,6 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             return result;
         }
 
-        if(daysBetween(currentTime,peerDeploymentOrder.getRentStartTime()) < 0 ){
-            result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_START_TIME_DATE_IS_ERROR);
-            return result;
-        }
 
         peerDeploymentOrderDO = ConverterUtil.convert(peerDeploymentOrder,PeerDeploymentOrderDO.class);
         Date expectReturnTime = peerDeploymentOrderExpectReturnTime(peerDeploymentOrderDO.getRentStartTime(), peerDeploymentOrderDO.getRentType(), peerDeploymentOrderDO.getRentTimeLength());
@@ -415,6 +406,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         productInStockParam.setMaterialInStorageList(materialInStorageList);
 
         //调用入库接口
+        SqlLogInterceptor.setExecuteSql("skip print warehouseService.productInStock  sql ......");
         ServiceResult<String, Integer> inStockResult = warehouseService.productInStock(productInStockParam);
         if (!ErrorCode.SUCCESS.equals(inStockResult.getErrorCode())) {
             result.setErrorCode(inStockResult.getErrorCode());
@@ -476,9 +468,6 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         }
         //判断确认收货时间与预计归还时间修整
         dbPeerDeploymentOrderDO.setRealReturnTime(currentTime);
-        Date expectReturnTime = peerDeploymentOrderExpectReturnTime(currentTime, dbPeerDeploymentOrderDO.getRentType(), dbPeerDeploymentOrderDO.getRentTimeLength());
-        dbPeerDeploymentOrderDO.setExpectReturnTime(expectReturnTime);
-
         dbPeerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_CONFIRM);
         dbPeerDeploymentOrderDO.setUpdateTime(currentTime);
         dbPeerDeploymentOrderDO.setUpdateUser(loginUser.getUserId().toString());

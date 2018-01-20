@@ -6,10 +6,8 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialModelQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialQueryParam;
-import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
-import com.lxzl.erp.common.domain.material.pojo.Material;
-import com.lxzl.erp.common.domain.material.pojo.MaterialImg;
-import com.lxzl.erp.common.domain.material.pojo.MaterialModel;
+import com.lxzl.erp.common.domain.material.MaterialTypeQueryParam;
+import com.lxzl.erp.common.domain.material.pojo.*;
 import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -117,6 +115,12 @@ public class MaterialController extends BaseController {
     @RequestMapping(value = "queryModelById", method = RequestMethod.POST)
     public Result queryModelById(@RequestBody MaterialModelQueryParam materialModelQueryParam, BindingResult validResult) {
         ServiceResult<String, MaterialModel> serviceResult = materialService.queryMaterialModelById(materialModelQueryParam.getMaterialModelId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "queryType", method = RequestMethod.POST)
+    public Result queryType(@RequestBody MaterialTypeQueryParam materialTypeQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<MaterialType>> serviceResult = materialService.queryMaterialType(materialTypeQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

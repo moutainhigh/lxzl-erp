@@ -41,6 +41,8 @@ public class MaterialDO extends BaseDO {
     private Integer canProcessCount;
     @Transient
     private String materialModelName;
+    @Transient
+    private String materialTypeName;
     private BigDecimal newMaterialPrice;  //全新配件本身的价值(单价)
     private BigDecimal newDayRentPrice;  //全新天租赁价格
     private BigDecimal newMonthRentPrice;  //全新月租赁价格
@@ -258,5 +260,13 @@ public class MaterialDO extends BaseDO {
 
     public void setMaterialModel(String materialModel) {
         this.materialModel = materialModel;
+    }
+
+    public String getMaterialTypeName() {
+        return materialTypeName;
+    }
+
+    public void setMaterialTypeName(String materialTypeName) {
+        this.materialTypeName = materialTypeName;
     }
 }

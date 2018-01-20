@@ -8,6 +8,7 @@ public class MaterialModelDO  extends BaseDO {
 
 	private Integer id;
 	private Integer materialType;
+	private String materialTypeName;
 	private String modelName;
 	private Integer dataStatus;
 	private String remark;
@@ -52,4 +53,11 @@ public class MaterialModelDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public String getMaterialTypeName() {
+		return materialTypeName;
+	}
+
+	public void setMaterialTypeName(String materialTypeName) {
+		this.materialTypeName = materialTypeName;
+	}
 }
