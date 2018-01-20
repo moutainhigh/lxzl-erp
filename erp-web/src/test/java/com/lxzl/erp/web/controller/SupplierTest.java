@@ -23,14 +23,14 @@ public class SupplierTest extends ERPUnTransactionalTest {
     @Test
     public void add() throws Exception{
         Supplier supplier = new Supplier();
-        supplier.setSupplierName("庄凯麟的大盘商55");
+        supplier.setSupplierName("66644455");
         supplier.setProvince(19);
         supplier.setCity(202);
         supplier.setDistrict(1956);
         supplier.setBeneficiaryName("庄凯麟");
-        supplier.setBeneficiaryAccount("6225-5555");
+        supplier.setBeneficiaryAccount("1234567890123456789");
         supplier.setBeneficiaryBankName("工商银行深圳车公庙支行");
-        supplier.setSupplierCode("LX_-1234");
+        supplier.setSupplierCode("41445");
         TestResult testResult = getJsonTestResult("/supplier/add", supplier);
     }
 
