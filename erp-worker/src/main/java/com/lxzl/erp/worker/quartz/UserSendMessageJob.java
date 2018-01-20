@@ -9,19 +9,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@Component("countAmountJob")
-public class CountAmountJob extends BaseJob {
+@Component("userSendMessageJob")
+public class UserSendMessageJob extends BaseJob {
 
-    private static final Logger log = LoggerFactory.getLogger(CountAmountJob.class);
+    private static final Logger log = LoggerFactory.getLogger(UserSendMessageJob.class);
 
     @Override
     public Object executeJob(JobExecutionContext context) throws JobExecutionException {
         JobKey key = context.getJobDetail().getKey();
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
         String jobSays = dataMap.getString("jobSays");
-        log.info("Instance {} of countAmountJob says: {} ", key, jobSays);
-
+        log.info("Instance {} of UserSendMessageJob says: {} ", key, jobSays);
         return null;
     }
-
 }

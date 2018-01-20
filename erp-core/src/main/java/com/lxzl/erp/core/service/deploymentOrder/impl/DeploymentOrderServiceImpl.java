@@ -40,7 +40,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -57,7 +56,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> createDeploymentOrder(DeploymentOrder deploymentOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         String verifyCode = verifyDeploymentOrderInfo(deploymentOrder);
         if (!ErrorCode.SUCCESS.equals(verifyCode)) {
@@ -327,7 +326,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
     public ServiceResult<String, String> updateDeploymentOrder(DeploymentOrder deploymentOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
 
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
 
         DeploymentOrderDO dbDeploymentOrderDO = deploymentOrderMapper.findByNo(deploymentOrder.getDeploymentOrderNo());
@@ -382,7 +381,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
     public ServiceResult<String, String> commitDeploymentOrder(String deploymentOrderNo, Integer verifyUser, String commitRemark) {
 
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         DeploymentOrderDO dbDeploymentOrderDO = deploymentOrderMapper.findByNo(deploymentOrderNo);
         if (dbDeploymentOrderDO == null) {
@@ -427,7 +426,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> processDeploymentOrder(ProcessDeploymentOrderParam param) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         if (param == null) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
@@ -478,7 +477,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
     @Override
     public ServiceResult<String, String> cancelDeploymentOrder(String deploymentOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         if (deploymentOrderNo == null) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
@@ -522,7 +521,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
     @Override
     public ServiceResult<String, String> deliveryDeploymentOrder(String deploymentOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         if (deploymentOrderNo == null) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
@@ -733,7 +732,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> confirmDeploymentOrder(String deploymentOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         DeploymentOrderDO dbDeploymentOrderDO = deploymentOrderMapper.findByNo(deploymentOrderNo);
         if (dbDeploymentOrderDO == null) {
@@ -926,7 +925,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
 
     @Override
     public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         DeploymentOrderDO dbDeploymentOrderDO = deploymentOrderMapper.findByNo(businessNo);
         if (dbDeploymentOrderDO == null || !DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_VERIFYING.equals(dbDeploymentOrderDO.getDeploymentOrderStatus())) {
@@ -957,9 +956,6 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
 
     @Autowired
     private DeploymentOrderMaterialBulkMapper deploymentOrderMaterialBulkMapper;
-
-    @Autowired(required = false)
-    private HttpSession session;
 
     @Autowired
     private BulkMaterialMapper bulkMaterialMapper;
