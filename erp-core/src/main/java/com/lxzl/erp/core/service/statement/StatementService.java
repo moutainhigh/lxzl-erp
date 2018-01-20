@@ -34,6 +34,14 @@ public interface StatementService extends BaseService {
     ServiceResult<String, BigDecimal> createOrderStatement(String orderNo);
 
     /**
+     * 计算订单首次需要缴纳费用
+     *
+     * @param orderNo 订单号
+     * @return 发货前需要交多少钱
+     */
+    ServiceResult<String, BigDecimal> calculateOrderFirstNeedPayAmount(String orderNo);
+
+    /**
      * 支付结算单
      *
      * @param statementOrderNo 结算单编号
