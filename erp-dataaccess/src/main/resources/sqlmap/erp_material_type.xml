@@ -27,6 +27,18 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(emt.id) FROM erp_material_type emt 
 		<where>
+			<if test="maps.materialTypeQueryParam != null &amp;&amp; maps.materialTypeQueryParam.materialTypeName != null &amp;&amp; maps.materialTypeQueryParam.materialTypeName != ''">
+				and emt.material_type_name like CONCAT('%','${maps.materialTypeQueryParam.materialTypeName}','%' )
+			</if>
+			<if test="maps.materialTypeQueryParam.materialTypeId != null">
+				and emt.id = #{maps.materialTypeQueryParam.materialTypeId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.materialTypeQueryParam.isMainMaterial != null">
+				and emt.is_main_material = #{maps.materialTypeQueryParam.isMainMaterial, jdbcType=INTEGER}
+			</if>
+			<if test="maps.materialTypeQueryParam.isCapacityMaterial != null">
+				and emt.is_capacity_material = #{maps.materialTypeQueryParam.isCapacityMaterial, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				AND emt.data_status = 1
 			</if>
@@ -36,6 +48,18 @@
 	<select id="listPage" resultMap="MaterialTypeDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_material_type emt 
 		<where>
+			<if test="maps.materialTypeQueryParam != null &amp;&amp; maps.materialTypeQueryParam.materialTypeName != null &amp;&amp; maps.materialTypeQueryParam.materialTypeName != ''">
+				and emt.material_type_name like CONCAT('%','${maps.materialTypeQueryParam.materialTypeName}','%' )
+			</if>
+			<if test="maps.materialTypeQueryParam.materialTypeId != null">
+				and emt.id = #{maps.materialTypeQueryParam.materialTypeId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.materialTypeQueryParam.isMainMaterial != null">
+				and emt.is_main_material = #{maps.materialTypeQueryParam.isMainMaterial, jdbcType=INTEGER}
+			</if>
+			<if test="maps.materialTypeQueryParam.isCapacityMaterial != null">
+				and emt.is_capacity_material = #{maps.materialTypeQueryParam.isCapacityMaterial, jdbcType=INTEGER}
+			</if>
 			<if test="true">
 				AND emt.data_status = 1
 			</if>

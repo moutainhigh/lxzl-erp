@@ -5,6 +5,7 @@
 	<resultMap id="MaterialModelDO" type="com.lxzl.erp.dataaccess.domain.material.MaterialModelDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="material_type" jdbcType="INTEGER" property="materialType" />
+		<result column="material_type_name" jdbcType="VARCHAR" property="materialTypeName" />
 		<result column="model_name" jdbcType="VARCHAR" property="modelName" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -19,12 +20,22 @@
 	</sql>
 
 	<select id="findById" resultMap="MaterialModelDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_material_model emm 
+		SELECT <include refid="column_List"/>
+		<trim prefix=",">
+			emt.material_type_name as material_type_name
+		</trim>
+		FROM erp_material_model emm
+		LEFT JOIN erp_material_type emt ON emm.material_type = emt.id
 		WHERE emm.id = #{id, jdbcType=INTEGER} AND emm.data_status = 1 
 	</select>
 
 	<select id="findByTypeAndName" resultMap="MaterialModelDO" parameterType="java.util.Map">
-		SELECT <include refid="column_List"/> FROM erp_material_model emm
+		SELECT <include refid="column_List"/>
+		<trim prefix=",">
+			emt.material_type_name as material_type_name
+		</trim>
+		FROM erp_material_model emm
+		LEFT JOIN erp_material_type emt ON emm.material_type = emt.id
 		WHERE emm.material_type = #{materialType, jdbcType=INTEGER} AND emm.model_name = #{modelName, jdbcType=VARCHAR} AND emm.data_status = 1
 	</select>
 
@@ -44,16 +55,18 @@
 	</select>
 
 	<select id="listPage" resultMap="MaterialModelDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_material_model emm 
+		SELECT <include refid="column_List"/>
+		<trim prefix=",">
+			emt.material_type_name as material_type_name
+		</trim>
+		FROM erp_material_model emm
+		LEFT JOIN erp_material_type emt ON emm.material_type = emt.id
 		<where>
 			<if test="maps.materialModelQueryParam != null &amp;&amp; maps.materialModelQueryParam.modelName != null &amp;&amp; maps.materialModelQueryParam.modelName != ''">
 				and emm.model_name like CONCAT('%','${maps.materialModelQueryParam.modelName}','%' )
 			</if>
 			<if test="maps.materialModelQueryParam != null &amp;&amp; maps.materialModelQueryParam.materialType != null">
 				and emm.material_type = #{maps.materialModelQueryParam.materialType, jdbcType=INTEGER}
-			</if>
-			<if test="true">
-				AND emm.data_status = 1
 			</if>
 			<if test="true">
 				AND emm.data_status = 1

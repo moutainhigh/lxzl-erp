@@ -8,10 +8,8 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialModelQueryParam;
 import com.lxzl.erp.common.domain.material.MaterialQueryParam;
-import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
-import com.lxzl.erp.common.domain.material.pojo.Material;
-import com.lxzl.erp.common.domain.material.pojo.MaterialImg;
-import com.lxzl.erp.common.domain.material.pojo.MaterialModel;
+import com.lxzl.erp.common.domain.material.MaterialTypeQueryParam;
+import com.lxzl.erp.common.domain.material.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -722,4 +720,23 @@ public class MaterialServiceImpl implements MaterialService {
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
+
+    @Override
+    public ServiceResult<String, Page<MaterialType>> queryMaterialType(MaterialTypeQueryParam materialTypeQueryParam) {
+        ServiceResult<String, Page<MaterialType>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(materialTypeQueryParam.getPageNo(), materialTypeQueryParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("materialTypeQueryParam", materialTypeQueryParam);
+        Integer totalCount = materialTypeMapper.listCount(maps);
+        List<MaterialTypeDO> materialTypeDOList = materialTypeMapper.listPage(maps);
+        List<MaterialType> materialModelList = ConverterUtil.convertList(materialTypeDOList, MaterialType.class);
+        Page<MaterialType> page = new Page<>(materialModelList, totalCount, materialTypeQueryParam.getPageNo(), materialTypeQueryParam.getPageSize());
+        result.setResult(page);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+
 }

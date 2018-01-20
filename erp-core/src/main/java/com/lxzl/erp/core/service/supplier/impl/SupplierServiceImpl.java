@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.supplier.SupplierService;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.area.AreaCityMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
 import com.lxzl.erp.dataaccess.domain.area.AreaCityDO;
@@ -22,7 +23,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +41,7 @@ public class SupplierServiceImpl implements SupplierService {
     private SupplierMapper supplierMapper;
 
     @Autowired
-    private HttpSession session;
+    private UserSupport userSupport;
 
     @Autowired
     private GenerateNoSupport generateNoSupport;
@@ -81,7 +81,7 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public ServiceResult<String, String> addSupplier(Supplier supplier) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         String verifyCode = verifySupplier(supplier);
         if (!ErrorCode.SUCCESS.equals(verifyCode)) {
@@ -89,7 +89,7 @@ public class SupplierServiceImpl implements SupplierService {
             return result;
         }
         //setSupplierNo代码生成用到getCity需判断
-        if(supplier.getCity() == null){
+        if (supplier.getCity() == null) {
             result.setErrorCode(ErrorCode.CITY_ID_NOT_NULL);
             return result;
         }
@@ -103,17 +103,17 @@ public class SupplierServiceImpl implements SupplierService {
         supplier.setSupplierName(checkName);
         //自定义编码不重复
         SupplierDO supplierCodeDO = supplierMapper.findByCode(supplier.getSupplierCode());
-        if(supplierCodeDO != null){
+        if (supplierCodeDO != null) {
             result.setErrorCode(ErrorCode.SUPPLIER_CODE_IS_EXISTS);
             return result;
         }
 
         String beneficiaryAccount = supplier.getBeneficiaryAccount();
-        if(beneficiaryAccount != null){
-            beneficiaryAccount = beneficiaryAccount.replaceAll("\\s{1,}", "");
-            if(beneficiaryAccount.matches("^[0-9]*$") && beneficiaryAccount.length()<19 && beneficiaryAccount.length()>16){
+        if (beneficiaryAccount != null) {
+            beneficiaryAccount = beneficiaryAccount.replaceAll(" ", "");
+            if (beneficiaryAccount.matches("^[0-9]+$") && beneficiaryAccount.length() <= 19 && beneficiaryAccount.length() >= 16) {
                 supplier.setBeneficiaryAccount(beneficiaryAccount);
-            }else{
+            } else {
                 result.setErrorCode(ErrorCode.BANK_NO_ERROR);
                 return result;
             }
@@ -138,7 +138,7 @@ public class SupplierServiceImpl implements SupplierService {
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateSupplier(Supplier supplier) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         SupplierDO dbSupplierDO = supplierMapper.findByNo(supplier.getSupplierNo());
         if (dbSupplierDO == null) {
@@ -146,7 +146,7 @@ public class SupplierServiceImpl implements SupplierService {
             return result;
         }
         //供应商名称（前端填入，校验不重复，判断空格，判断供应商）
-        if(StringUtil.isBlank(supplier.getSupplierName())){
+        if (StringUtil.isBlank(supplier.getSupplierName())) {
             result.setErrorCode(ErrorCode.SUPPLIER_NAME_NOT_NULL);
             return result;
         }
@@ -159,17 +159,17 @@ public class SupplierServiceImpl implements SupplierService {
         supplier.setSupplierName(checkName);
         //自定义编码不重复
         SupplierDO supplierCodeDO = supplierMapper.findByCode(supplier.getSupplierCode());
-        if(supplierCodeDO != null && !supplierCodeDO.getSupplierCode().equals(dbSupplierDO.getSupplierCode())){
+        if (supplierCodeDO != null && !supplierCodeDO.getSupplierCode().equals(dbSupplierDO.getSupplierCode())) {
             result.setErrorCode(ErrorCode.SUPPLIER_CODE_IS_EXISTS);
             return result;
         }
 
         String beneficiaryAccount = supplier.getBeneficiaryAccount();
-        if(beneficiaryAccount != null){
-            beneficiaryAccount = beneficiaryAccount.replaceAll("\\s{1,}", "");
-            if(beneficiaryAccount.matches("^[0-9]*$") && beneficiaryAccount.length()<19 && beneficiaryAccount.length()>16){
+        if (beneficiaryAccount != null) {
+            beneficiaryAccount = beneficiaryAccount.replaceAll(" ", "");
+            if (beneficiaryAccount.matches("^[0-9]+$") && beneficiaryAccount.length() <= 19 && beneficiaryAccount.length() >= 16) {
                 supplier.setBeneficiaryAccount(beneficiaryAccount);
-            }else{
+            } else {
                 result.setErrorCode(ErrorCode.BANK_NO_ERROR);
                 return result;
             }
@@ -191,7 +191,7 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public ServiceResult<String, String> deleteSupplier(String supplierNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         SupplierDO supplierDO = supplierMapper.findByNo(supplierNo);
 

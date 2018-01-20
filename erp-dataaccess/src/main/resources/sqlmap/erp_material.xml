@@ -10,6 +10,7 @@
 		<result column="material_name" jdbcType="VARCHAR" property="materialName" />
 		<result column="material_model" jdbcType="VARCHAR" property="materialModel" />
 		<result column="material_type" jdbcType="INTEGER" property="materialType" />
+		<result column="material_type_name" jdbcType="VARCHAR" property="materialTypeName" />
 		<result column="is_main_material" jdbcType="INTEGER" property="isMainMaterial" />
 		<result column="material_capacity_value" jdbcType="DOUBLE" property="materialCapacityValue" />
 		<result column="material_model_id" jdbcType="INTEGER" property="materialModelId" />
@@ -68,10 +69,11 @@
 			select
 			<include refid="column_List"/>
 			<trim prefix=",">
-				emm.model_name AS material_model_name, eb.brand_name as brand_name
+				emm.model_name AS material_model_name, eb.brand_name as brand_name, emt.material_type_name as material_type_name
 			</trim>
 			from erp_material em
 			LEFT JOIN erp_material_model emm ON em.material_model_id = emm.id
+			LEFT JOIN erp_material_type emt ON em.material_type = emt.id
 			LEFT JOIN erp_brand eb ON eb.id = em.brand_id
 			where em.id = #{id, jdbcType=INTEGER} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
@@ -83,10 +85,11 @@
 			select
 			<include refid="column_List"/>
 			<trim prefix=",">
-				emm.model_name AS material_model_name, eb.brand_name as brand_name
+				emm.model_name AS material_model_name, eb.brand_name as brand_name, emt.material_type_name as material_type_name
 			</trim>
 			from erp_material em
 			LEFT JOIN erp_material_model emm ON em.material_model_id = emm.id
+			LEFT JOIN erp_material_type emt ON em.material_type = emt.id
 			LEFT JOIN erp_brand eb ON eb.id = em.brand_id
 			where em.material_no = #{materialNo, jdbcType=INTEGER} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
@@ -98,10 +101,11 @@
 			select
 			<include refid="column_List"/>
 			<trim prefix=",">
-				emm.model_name AS material_model_name, eb.brand_name as brand_name
+				emm.model_name AS material_model_name, eb.brand_name as brand_name, emt.material_type_name as material_type_name
 			</trim>
 			from erp_material em
 			LEFT JOIN erp_material_model emm ON em.material_model_id = emm.id
+			LEFT JOIN erp_material_type emt ON em.material_type = emt.id
 			LEFT JOIN erp_brand eb ON eb.id = em.brand_id
 			where em.material_type = #{materialType, jdbcType=INTEGER} and em.material_capacity_value = #{materialCapacityValue, jdbcType=DOUBLE} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
@@ -113,10 +117,11 @@
 			select
 			<include refid="column_List"/>
 			<trim prefix=",">
-				emm.model_name AS material_model_name, eb.brand_name as brand_name
+				emm.model_name AS material_model_name, eb.brand_name as brand_name, emt.material_type_name as material_type_name
 			</trim>
 			from erp_material em
 			LEFT JOIN erp_material_model emm ON em.material_model_id = emm.id
+			LEFT JOIN erp_material_type emt ON em.material_type = emt.id
 			LEFT JOIN erp_brand eb ON eb.id = em.brand_id
 			where em.material_type = #{materialType, jdbcType=INTEGER} and em.material_model_id = #{materialModelId, jdbcType=INTEGER} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
@@ -170,10 +175,11 @@
 		(
 			SELECT <include refid="column_List"/>
 			<trim prefix=",">
-				emm.model_name AS material_model_name, eb.brand_name as brand_name
+				emm.model_name AS material_model_name, eb.brand_name as brand_name, emt.material_type_name as material_type_name
 			</trim>
 			FROM erp_material em
 			LEFT JOIN erp_material_model emm ON em.material_model_id = emm.id
+			LEFT JOIN erp_material_type emt ON em.material_type = emt.id
 			LEFT JOIN erp_brand eb ON eb.id = em.brand_id
 			<where>
 				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialType != null &amp;&amp; maps.materialQueryParam.materialType != ''">
