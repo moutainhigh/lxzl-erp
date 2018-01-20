@@ -12,6 +12,7 @@ public class MaterialModel extends BasePO {
 
 	private Integer materialModelId;   //唯一标识
 	private Integer materialType;   //图片类型
+	private String materialTypeName;
 	private String modelName;   //文件原名
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -93,4 +94,11 @@ public class MaterialModel extends BasePO {
 		this.updateUser = updateUser;
 	}
 
+	public String getMaterialTypeName() {
+		return materialTypeName;
+	}
+
+	public void setMaterialTypeName(String materialTypeName) {
+		this.materialTypeName = materialTypeName;
+	}
 }

@@ -55,6 +55,7 @@ public class Material extends BasePO {
     private Integer returnCount;
     private Integer canProcessCount;
     private String materialModelName;
+    private String materialTypeName;
 
     private Integer newMaterialCount;
     private Integer oldMaterialCount;
@@ -321,5 +322,13 @@ public class Material extends BasePO {
 
     public void setNewMonthRentPrice(BigDecimal newMonthRentPrice) {
         this.newMonthRentPrice = newMonthRentPrice;
+    }
+
+    public String getMaterialTypeName() {
+        return materialTypeName;
+    }
+
+    public void setMaterialTypeName(String materialTypeName) {
+        this.materialTypeName = materialTypeName;
     }
 }

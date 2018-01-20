@@ -383,7 +383,7 @@ public class OrderServiceImpl implements OrderService {
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
                     productUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? thisProductSku.getNewDayRentPrice() : thisProductSku.getDayRentPrice();
                 } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
-                    productUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? thisProductSku.getMonthRentPrice(): thisProductSku.getNewMonthRentPrice();
+                    productUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? thisProductSku.getMonthRentPrice() : thisProductSku.getNewMonthRentPrice();
                 }
                 // 订单价格低于商品租赁价，需要商务审批
                 if (BigDecimalUtil.compare(orderProductDO.getProductUnitAmount(), productUnitAmount) < 0) {
@@ -410,7 +410,7 @@ public class OrderServiceImpl implements OrderService {
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())) {
                     materialUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ? material.getNewDayRentPrice() : material.getDayRentPrice();
                 } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
-                    materialUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?  material.getNewMonthRentPrice():material.getMonthRentPrice();
+                    materialUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ? material.getNewMonthRentPrice() : material.getMonthRentPrice();
                 }
                 // 订单价格低于商品租赁价，需要商务审批
                 if (BigDecimalUtil.compare(orderMaterialDO.getMaterialUnitAmount(), materialUnitAmount) < 0) {
@@ -765,9 +765,11 @@ public class OrderServiceImpl implements OrderService {
             order.setStatementOrder(statementOrderResult.getResult());
         }
 
-        ServiceResult<String, BigDecimal> firstNeedPayAmountResult = statementService.calculateOrderFirstNeedPayAmount(order.getOrderNo());
-        if (ErrorCode.SUCCESS.equals(firstNeedPayAmountResult.getErrorCode())) {
-            order.setFirstNeedPayAmount(firstNeedPayAmountResult.getResult());
+        if (orderDO.getFirstNeedPayAmount() == null || BigDecimalUtil.compare(orderDO.getFirstNeedPayAmount(), BigDecimal.ZERO) == 0) {
+            ServiceResult<String, BigDecimal> firstNeedPayAmountResult = statementService.calculateOrderFirstNeedPayAmount(order.getOrderNo());
+            if (ErrorCode.SUCCESS.equals(firstNeedPayAmountResult.getErrorCode())) {
+                order.setFirstNeedPayAmount(firstNeedPayAmountResult.getResult());
+            }
         }
 
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
