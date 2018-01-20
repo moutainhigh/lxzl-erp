@@ -272,7 +272,7 @@ public class PeerServiceImpl implements PeerService {
         String beneficiaryAccount = peer.getBeneficiaryAccount();
         if(beneficiaryAccount!=null){
             beneficiaryAccount=beneficiaryAccount.replaceAll("\\s{1,}", "");
-            if(beneficiaryAccount.matches("^[0-9]*$") && beneficiaryAccount.length()<19 && beneficiaryAccount.length()>16){
+            if(beneficiaryAccount.matches("^[0-9]*$") && beneficiaryAccount.length()<=19 && beneficiaryAccount.length()>=16){
                 peer.setBeneficiaryAccount(beneficiaryAccount);
             }else{
                 serviceResult.setErrorCode(ErrorCode.BANK_NO_ERROR);
