@@ -556,14 +556,15 @@ public class StatementServiceImpl implements StatementService {
 
                         BigDecimal needPayAmount = BigDecimal.ZERO;
                         if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
-                            // 如果退货时间在本期开始时间之后，证明先用后付，要计未缴纳费用。
-                            if (returnTime.getTime() > statementDetailStartTime.getTime()) {
-                                needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderProductEquipmentDO.getProductEquipmentUnitAmount());
+                            // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
+                            if (!DateUtil.isSameDay(returnTime, statementDetailStartTime) && returnTime.getTime() > statementDetailStartTime.getTime()) {
+                                needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, statementOrderDetailDO.getStatementDetailRentAmount());
                             }
                         } else {
-                            // 如果退货时间在本期开始时间之后，证明先用后付，要计未缴纳费用。
-                            if (returnTime.getTime() > statementDetailStartTime.getTime()) {
-                                needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, statementOrderDetailDO.getStatementDetailRentAmount());
+                            // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
+                            if (!DateUtil.isSameDay(returnTime, statementDetailStartTime) && returnTime.getTime() > statementDetailStartTime.getTime()) {
+                                int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime);
+                                needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(orderProductEquipmentDO.getProductEquipmentUnitAmount(), new BigDecimal(surplusDays)) : needPayAmount;
                             }
                         }
                         // 正常全额退
@@ -641,14 +642,15 @@ public class StatementServiceImpl implements StatementService {
                         BigDecimal needPayAmount = BigDecimal.ZERO;
 
                         if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
-                            // 如果退货时间在本期开始时间之后，证明先用后付，要计未缴纳费用。
-                            if (returnTime.getTime() > statementDetailStartTime.getTime()) {
+                            // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
+                            if (!DateUtil.isSameDay(returnTime, statementDetailStartTime) && returnTime.getTime() > statementDetailStartTime.getTime()) {
                                 needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderMaterialBulkDO.getMaterialBulkUnitAmount());
                             }
                         } else {
-                            // 如果开始时间在当前时间之前，证明先用后付，要计费。
-                            if (returnTime.getTime() > statementDetailStartTime.getTime()) {
-                                needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, statementOrderDetailDO.getStatementDetailRentAmount());
+                            // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
+                            if (!DateUtil.isSameDay(returnTime, statementDetailStartTime) && returnTime.getTime() > statementDetailStartTime.getTime()) {
+                                int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime);
+                                needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(orderMaterialBulkDO.getMaterialBulkUnitAmount(), new BigDecimal(surplusDays)) : needPayAmount;
                             }
                         }
 
@@ -1003,10 +1005,8 @@ public class StatementServiceImpl implements StatementService {
         } else if (OrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
             orderLastDate = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, rentTimeLength);
         }
-        // 剩余的天数
-        int surplusDays = DateUtil.daysBetween(lastPhaseStartTime, orderLastDate);
         // 最后一期的结束时间
-        Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(lastPhaseStartTime, surplusDays - 1);
+        Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(orderLastDate, -1);
 
         lastPhaseStartTime = lastPhaseStartTime.getTime() > statementEndTime.getTime() ? statementEndTime : lastPhaseStartTime;
         Date statementExpectPayTime = null;
