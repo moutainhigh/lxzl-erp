@@ -198,6 +198,7 @@
                                             <tr class="bg-light">
                                                 <th>配置</th>
                                                 <th>选择配件</th>
+                                                <th></th>
                                             </tr>
                                             </thead>
                                             <tbody>
