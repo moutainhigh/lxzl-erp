@@ -173,8 +173,10 @@ public class StatementServiceImpl implements StatementService {
                 Integer statementMonthCount = calculateStatementMonthCount(orderProductDO.getRentType(), orderProductDO.getRentTimeLength(), orderProductDO.getPaymentCycle(), orderProductDO.getPayMode(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
                 // 无论什么时候交租金，押金必须当天缴纳
                 StatementOrderDetailDO depositDetail = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, orderProductDO.getRentDepositAmount(), orderProductDO.getDepositAmount(), otherAmount, currentTime, loginUserId);
-                depositDetail.setStatementDetailPhase(0);
-                addStatementOrderDetailDOList.add(depositDetail);
+                if (depositDetail != null) {
+                    depositDetail.setStatementDetailPhase(0);
+                    addStatementOrderDetailDOList.add(depositDetail);
+                }
                 if (statementMonthCount == 1) {
                     StatementOrderDetailDO statementOrderDetailDO = calculateOneStatementOrderDetail(orderProductDO.getRentType(), orderProductDO.getRentTimeLength(), orderProductDO.getPayMode(), rentStartTime, orderProductDO.getProductAmount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), currentTime, loginUserId);
                     if (statementOrderDetailDO != null) {
@@ -224,8 +226,10 @@ public class StatementServiceImpl implements StatementService {
                 rentStartTimeCalendar.setTime(rentStartTime);
                 // 无论什么时候交租金，押金必须当天缴纳
                 StatementOrderDetailDO depositDetail = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, orderMaterialDO.getRentDepositAmount(), orderMaterialDO.getDepositAmount(), otherAmount, currentTime, loginUserId);
-                depositDetail.setStatementDetailPhase(0);
-                addStatementOrderDetailDOList.add(depositDetail);
+                if(depositDetail != null){
+                    depositDetail.setStatementDetailPhase(0);
+                    addStatementOrderDetailDOList.add(depositDetail);
+                }
                 // 先确定订单需要结算几期
                 Integer statementMonthCount = calculateStatementMonthCount(orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength(), orderMaterialDO.getPaymentCycle(), orderMaterialDO.getPayMode(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
                 if (statementMonthCount == 1) {
@@ -581,6 +585,13 @@ public class StatementServiceImpl implements StatementService {
                             }
                             continue;
                         }
+
+                        // 如果有押金还没交，不让退货
+                        if (statementOrderDetailDO.getStatementDetailPhase() == 0) {
+                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                            result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
+                            return result;
+                        }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
 
@@ -663,7 +674,7 @@ public class StatementServiceImpl implements StatementService {
                         StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
                         if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                             // 第一期如果支付了押金，就要退押金，否则不退了
-                            if (i == 0) {
+                            if (statementOrderDetailDO.getStatementDetailPhase() == 0) {
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                                 if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
                                     totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, thisReturnDepositAmount);
@@ -679,6 +690,13 @@ public class StatementServiceImpl implements StatementService {
                                 statementOrderMapper.update(statementOrderDO);
                             }
                             continue;
+                        }
+
+                        // 如果有押金还没交，不让退货
+                        if (statementOrderDetailDO.getStatementDetailPhase() == 0) {
+                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                            result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
+                            return result;
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
