@@ -53,7 +53,7 @@ public class InterfaceController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "queryCustomer", method = RequestMethod.POST)
+    @RequestMapping(value = "queryCustomerByCompanyName", method = RequestMethod.POST)
     public Result queryCustomerByCompanyName(@RequestBody @Validated(QueryCustomerGroup.class) CustomerCompany customerCompany, BindingResult validResult) {
         ServiceResult<String, Customer> serviceResult = customerService.queryCustomerByCompanyName(customerCompany.getCompanyName());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
