@@ -1,7 +1,10 @@
 package com.lxzl.erp.common.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LoginParam implements Serializable {
     private String userName;
     private String password;

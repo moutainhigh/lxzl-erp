@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.user.LoginParam;
+import com.lxzl.erp.common.domain.user.UpdatePasswordParam;
 import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
@@ -70,7 +71,17 @@ public class UserController extends BaseController {
         ServiceResult<String, Integer> serviceResult = userService.updateUserPassword(user);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
-
+    /**
+     * 未登录状态修改密码
+     *
+     * @param updatePasswordParam
+     * @return Result
+     */
+    @RequestMapping(value = "updatePasswordForNoLogin", method = RequestMethod.POST)
+    public Result updatePasswordForNoLogin(@RequestBody @Validated UpdatePasswordParam updatePasswordParam, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = userService.updatePasswordForNoLogin(updatePasswordParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
     /**
      * 用户登录
      *
@@ -78,9 +89,8 @@ public class UserController extends BaseController {
      * @return Result
      */
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public Result login(@RequestBody @Validated LoginParam loginParam, BindingResult validResult) {
-        ServiceResult<String, User> serviceResult = userService.login(loginParam, NetworkUtil.getIpAddress(request));
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    public Result login(@RequestBody LoginParam loginParam) {
+        return resultGenerator.generate(userService.login(loginParam, NetworkUtil.getIpAddress(request)));
     }
 
     @RequestMapping(value = "getUserById", method = RequestMethod.POST)

@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.user.LoginParam;
+import com.lxzl.erp.common.domain.user.UpdatePasswordParam;
 import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -15,13 +16,13 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
-import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMapper;
 import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.user.UserRoleDO;
+import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.secret.MD5Util;
 import com.lxzl.se.core.service.impl.BaseServiceImpl;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
@@ -71,6 +72,8 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             result.setErrorCode(ErrorCode.USER_NOT_ACTIVATED);
         } else if (!userDO.getPassword().equals(generateMD5Password(userDO.getUserName(), loginParam.getPassword(), ApplicationConfig.authKey))) {
             result.setErrorCode(ErrorCode.USER_PASSWORD_ERROR);
+        } else if (!isNotSimple(loginParam.getPassword())) {
+            result.setErrorCode(ErrorCode.USER_PASSWORD_TOO_SIMPLE);
         } else {
             User user = ConverterUtil.convert(userDO, User.class);
             userDO.setLastLoginIp(ip);
@@ -256,12 +259,18 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             result.setErrorCode(ErrorCode.USER_NOT_EXISTS);
             return result;
         }
-
         if (!userRoleService.isSuperAdmin(loginUser.getUserId()) && !loginUser.getUserId().equals(user.getUserId())) {
             result.setErrorCode(ErrorCode.OPERATOR_IS_NOT_YOURSELF);
             return result;
         }
-
+        if(StringUtil.isEmpty(user.getPassword())){
+            result.setErrorCode(ErrorCode.USER_PASSWORD_NOT_NULL);
+            return result;
+        }
+        if(!isNotSimple(user.getPassword())){
+            result.setErrorCode(ErrorCode.USER_PASSWORD_TOO_SIMPLE);
+            return result;
+        }
         userDO.setPassword(generateMD5Password(userDO.getUserName(), user.getPassword(), ApplicationConfig.authKey));
         userDO.setUpdateTime(currentTime);
         userDO.setUpdateUser(loginUser.getUserId().toString());
@@ -359,6 +368,54 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         return result;
     }
 
+    @Override
+    public ServiceResult<String, Integer> updatePasswordForNoLogin(UpdatePasswordParam updatePasswordParam) {
+
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        UserDO userDO = userMapper.findByUsername(updatePasswordParam.getUserName());
+        if (userDO == null) {
+            result.setErrorCode(ErrorCode.USER_NAME_NOT_FOUND);
+        } else if (userDO.getIsDisabled().equals(CommonConstant.COMMON_CONSTANT_YES)) {
+            result.setErrorCode(ErrorCode.USER_DISABLE);
+        } else if (userDO.getIsActivated().equals(CommonConstant.COMMON_CONSTANT_NO)) {
+            result.setErrorCode(ErrorCode.USER_NOT_ACTIVATED);
+        } else if (!userDO.getPassword().equals(generateMD5Password(userDO.getUserName(), updatePasswordParam.getOldPassword(), ApplicationConfig.authKey))) {
+            result.setErrorCode(ErrorCode.USER_PASSWORD_ERROR);
+        } else if(!isNotSimple(updatePasswordParam.getNewPassword())){
+            result.setErrorCode(ErrorCode.USER_PASSWORD_TOO_SIMPLE);
+        }else {
+            userDO.setPassword(generateMD5Password(userDO.getUserName(), updatePasswordParam.getNewPassword(), ApplicationConfig.authKey));
+            userDO.setUpdateUser(userDO.getId().toString());
+            userDO.setUpdateTime(new Date());
+            userMapper.update(userDO);
+            result.setResult(userDO.getId());
+            result.setErrorCode(ErrorCode.SUCCESS);
+        }
+        return result;
+    }
+    // 不使用正则表达式
+    private static boolean isNotSimple(String s) {
+        int len = s.length();
+        if (len < 8 || len > 20)
+            return false;
+        int flag = 0;
+        for (int i = 0; i < len; i++) {
+            char c = s.charAt(i);
+            if (c >= 'a' & c <= 'z') { // 包含a-z
+                flag |= 0b0001;
+            } else if (c >= 'A' & c <= 'Z') { // 包含A-Z
+                flag |= 0b0010;
+            } else if (c >= '0' & c <= '9') { // 包含0-9
+                flag |= 0b0100;
+            } else if ((c >= '!' & c <= '/') || (c >= ':' & c <= '@') || (c >= '[' & c <= '`')
+                    || (c >= '{' & c <= '~')) { // 包含特殊字符
+                flag |= 0b1000;
+            } else {
+                return false;
+            }
+        }
+        return Integer.bitCount(flag) >= 3;
+    }
     private String generateMD5Password(String username, String password, String md5Key) {
         String value = MD5Util.encryptWithKey(username + password, md5Key);
         return value;
