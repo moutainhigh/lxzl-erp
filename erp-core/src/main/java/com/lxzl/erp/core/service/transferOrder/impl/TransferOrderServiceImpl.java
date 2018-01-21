@@ -528,37 +528,15 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         }
 
         //从同一个仓库中获取该物料下指定新旧的散料数量
-//        List<BulkMaterialDO> dbBulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(transferOrderDO.getWarehouseId(), materialDO.getId(), transferOrderMaterialOutParam.getMaterialCount(), transferOrderMaterialOutParam.getIsNew());
-        Map<String,Object> fitMap = new HashMap<>();
-        fitMap.put("warehouseId",transferOrderDO.getWarehouseId());
-        fitMap.put("materialId",materialDO.getId());
-        fitMap.put("materialCount",transferOrderMaterialOutParam.getMaterialCount());
-        fitMap.put("isNew",transferOrderMaterialOutParam.getIsNew());
-        List<BulkMaterialDO> dbBulkMaterialDOList = bulkMaterialMapper.findBatchUseFromIdle(fitMap);
+        List<BulkMaterialDO> dbBulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(transferOrderDO.getWarehouseId(), materialDO.getId(), transferOrderMaterialOutParam.getMaterialCount(), transferOrderMaterialOutParam.getIsNew());
         //判断库存是否充足
         if (dbBulkMaterialDOList.size() < transferOrderMaterialOutParam.getMaterialCount()){
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_MATERIAL_STOCK_NOT_ENOUGH);
             return serviceResult;
         }
-//        for (BulkMaterialDO bulkMaterialDO : dbBulkMaterialDOList){
-//            //判断散料是否在订单或者设备上
-//            if (StringUtil.isNotEmpty(bulkMaterialDO.getOrderNo())){
-//                serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT,bulkMaterialDO.getBulkMaterialNo());
-//                return serviceResult;
-//            }
-//        }
-//        ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(materialDO.getId());
-//        if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
-//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//            serviceResult.setErrorCode(materialServiceResult.getErrorCode());
-//            return serviceResult;
-//        }
-//        Material material = materialServiceResult.getResult();
-
         //生成转移单配件表
         TransferOrderMaterialDO transferOrderMaterialDO = transferOrderMaterialMapper.findByTransferOrderIdAndMaterialNoAndIsNew(transferOrderDO.getId(), transferOrderMaterialOutParam.getMaterialNo(), transferOrderMaterialOutParam.getIsNew());
         if (transferOrderMaterialDO == null){
-            //todo
             transferOrderMaterialDO= ConverterUtil.convert(transferOrderMaterialOutParam,TransferOrderMaterialDO.class);
             transferOrderMaterialDO.setTransferOrderId(transferOrderDO.getId());
             transferOrderMaterialDO.setMaterialId(materialDO.getId());
@@ -577,8 +555,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         }
 
         List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList = new ArrayList<>();
-        List<BulkMaterialDO> bulkMaterialDOList = new ArrayList<>();
-        //生成转移单配件散料表
+        //生成转移单配件散料
         for (BulkMaterialDO bulkMaterialDO : dbBulkMaterialDOList){
             TransferOrderMaterialBulkDO transferOrderMaterialBulkDO = new TransferOrderMaterialBulkDO();
             transferOrderMaterialBulkDO.setTransferOrderId(transferOrderDO.getId());
@@ -590,26 +567,12 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             transferOrderMaterialBulkDO.setUpdateTime(now);
             transferOrderMaterialBulkDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             transferOrderMaterialBulkDOList.add(transferOrderMaterialBulkDO);
-
-            //改变该散料的状态为转移中
-//            bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_TRANSFER_OUTING);
-//            bulkMaterialDO.setUpdateTime(now);
-//            bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-//            bulkMaterialDOList.add(bulkMaterialDO);
         }
         SqlLogInterceptor.setExecuteSql("skip print transferOrderMaterialBulkMapper.saveList  sql ......");
         transferOrderMaterialBulkMapper.saveList(transferOrderMaterialBulkDOList);
-//        SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.updateList  sql ......");
-//        Map<String,Object> map = new HashMap<>();
-//        map.put("materialId",materialDO.getId());
-//        map.put("bulkMaterialDOList",bulkMaterialDOList);
-//        bulkMaterialMapper.simpleUpdateList(map);
-        fitMap.put("updateUser",userSupport.getCurrentUserId().toString());
-        fitMap.put("updateTime",now);
-        fitMap.put("bulkMaterialStatus",BulkMaterialStatus.BULK_MATERIAL_STATUS_TRANSFER_OUTING);
-        bulkMaterialMapper.batchUseFromIdle(fitMap);
-        //将转移单的状态改为备货中
+        Integer count = bulkMaterialMapper.updateStatusByTransferOrderMaterialId(transferOrderMaterialDO.getId(),BulkMaterialStatus.BULK_MATERIAL_STATUS_TRANSFER_OUTING,userSupport.getCurrentUserId().toString(),now);
 
+        //将转移单的状态改为备货中
         transferOrderDO.setTransferOrderStatus(TransferOrderStatus.TRANSFER_ORDER_STATUS_CHOICE_GOODS);
         transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         transferOrderDO.setUpdateTime(now);

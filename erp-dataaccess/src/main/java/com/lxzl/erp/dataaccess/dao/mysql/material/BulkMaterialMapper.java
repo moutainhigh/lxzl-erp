@@ -6,6 +6,7 @@ import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 @Repository
@@ -14,8 +15,6 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
     Integer saveList(List<BulkMaterialDO> bulkMaterialDOList);
 
     Integer updateList(@Param("bulkMaterialDOList") List<BulkMaterialDO> bulkMaterialDOList);
-
-    Integer simpleUpdateList(@Param("maps") Map<String,Object> maps);
 
     Integer updateEquipmentOrderNo(@Param("equipmentNo") String equipmentNo, @Param("orderNo") String orderNo);
 
@@ -48,10 +47,6 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
 
     List<BulkMaterialDO> findByEquipmentNo(@Param("equipmentNo")String equipmentNo);
 
-    List<BulkMaterialDO> findBatchUseFromIdle(@Param("maps") Map<String,Object> map );
-
-    Integer batchUseFromIdle(@Param("maps") Map<String,Object> map );
-
     List<BulkMaterialDO> findListByBulkMaterialNO(@Param("transferOrderMaterialBulkDOList") List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList);
 
     List<BulkMaterialDO> findBatchByBulkMaterialNoInTransferOrder(@Param("maps") Map<String, Object> maps);
@@ -69,4 +64,6 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
     void updateStatusBatch(@Param("maps")Map<String, Object> maps);
 
     List<BulkMaterialDO> findBatchByPeerDeploymentOrderNo(@Param("maps")Map<String, Object> maps);
+
+    Integer updateStatusByTransferOrderMaterialId(@Param("transferOrderMaterialId")Integer transferOrderMaterialId,@Param("bulkMaterialStatus")Integer bulkMaterialStatus,@Param("updateUser")String updateUser,@Param("updateTime")Date updateTime);
 }
