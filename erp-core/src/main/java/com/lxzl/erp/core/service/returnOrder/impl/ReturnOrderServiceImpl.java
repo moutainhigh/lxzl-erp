@@ -179,6 +179,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         returnOrderDO.setCustomerId(customerDO.getId());
         returnOrderDO.setCustomerNo(customerDO.getCustomerNo());
         returnOrderDO.setReturnMode(addReturnOrderParam.getReturnMode());
+        returnOrderDO.setReturnTime(addReturnOrderParam.getReturnTime());
         returnOrderDO.setIsCharging(addReturnOrderParam.getIsCharging());
         returnOrderDO.setTotalReturnProductCount(totalReturnProductCount);
         returnOrderDO.setTotalReturnMaterialCount(totalReturnMaterialCount);
@@ -631,6 +632,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         if (ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(returnOrderDO.getReturnOrderStatus())) {
             returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_END);
             returnOrderDO.setUpdateTime(new Date());
+            returnOrderDO.setReturnTime(returnOrder.getReturnTime());
             returnOrderDO.setServiceCost(returnOrder.getServiceCost());
             returnOrderDO.setDamageCost(returnOrder.getDamageCost());
             returnOrderDO.setIsDamage(returnOrder.getIsDamage());
@@ -924,6 +926,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         //修改租赁退还单
         returnOrderDO.setReturnMode(updateReturnOrderParam.getReturnMode());
         returnOrderDO.setIsCharging(updateReturnOrderParam.getIsCharging());
+        returnOrderDO.setReturnTime(updateReturnOrderParam.getReturnTime());
         returnOrderDO.setTotalReturnProductCount(totalReturnProductCount);
         returnOrderDO.setTotalReturnMaterialCount(totalReturnMaterialCount);
         returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
@@ -1070,8 +1073,6 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     private OrderMapper orderMapper;
     @Autowired
     private OrderProductEquipmentMapper orderProductEquipmentMapper;
-    @Autowired
-    private AmountSupport amountSupport;
     @Autowired
     private CustomerRiskManagementMapper customerRiskManagementMapper;
     @Autowired

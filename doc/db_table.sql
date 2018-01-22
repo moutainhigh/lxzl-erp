@@ -1491,6 +1491,7 @@ CREATE TABLE `erp_return_order` (
   `damage_cost` decimal(15,2) COMMENT '损坏加收费用',
   `is_damage` int(11) COMMENT '是否有损坏',
   `return_mode` int(11) NOT NULL COMMENT '退还方式，1-上门取件，2邮寄',
+  `return_time` datetime NOT NULL COMMENT '退还时间',
   `return_order_status` int(11) NOT NULL DEFAULT 0 COMMENT '归还订单状态，0-待提交，4-审核中，8-待取货，12-处理中，16-已取消，20-已完成',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',

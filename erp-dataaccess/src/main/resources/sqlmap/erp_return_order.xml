@@ -17,6 +17,7 @@
 		<result column="damage_cost" jdbcType="DECIMAL" property="damageCost" />
 		<result column="is_damage" jdbcType="INTEGER" property="isDamage" />
 		<result column="return_mode" jdbcType="INTEGER" property="returnMode" />
+		<result column="return_time" jdbcType="TIMESTAMP" property="returnTime" />
 		<result column="return_order_status" jdbcType="INTEGER" property="returnOrderStatus" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -34,7 +35,7 @@
 		<collection resultMap="ReturnOrderMaterialDO" property="returnOrderMaterialDOList" />
 	</resultMap>
 	<sql id="column_List">
-		ero.id,ero.return_order_no,ero.customer_id,ero.customer_no,ero.is_charging,ero.total_return_product_count,ero.total_return_material_count,ero.real_total_return_product_count,ero.real_total_return_material_count,ero.total_rent_cost,ero.service_cost,ero.damage_cost,ero.is_damage,ero.return_mode,ero.return_order_status,ero.data_status,ero.remark,ero.owner,ero.create_time,ero.create_user,ero.update_time,ero.update_user
+		ero.id,ero.return_order_no,ero.customer_id,ero.customer_no,ero.is_charging,ero.total_return_product_count,ero.total_return_material_count,ero.real_total_return_product_count,ero.real_total_return_material_count,ero.total_rent_cost,ero.service_cost,ero.damage_cost,ero.is_damage,ero.return_mode,ero.return_time,ero.return_order_status,ero.data_status,ero.remark,ero.owner,ero.create_time,ero.create_user,ero.update_time,ero.update_user
 	</sql>
 	<resultMap id="ReturnOrderConsignInfoDO" type="com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderConsignInfoDO">
 		<id column="eroci_id" jdbcType="INTEGER" property="id" />
@@ -187,6 +188,9 @@
 			</if>
 			<if test="returnMode != null">
 				return_mode = #{returnMode,jdbcType=INTEGER},
+			</if>
+			<if test="returnTime != null">
+				return_time = #{returnTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="returnOrderStatus != null">
 				return_order_status = #{returnOrderStatus,jdbcType=INTEGER},
