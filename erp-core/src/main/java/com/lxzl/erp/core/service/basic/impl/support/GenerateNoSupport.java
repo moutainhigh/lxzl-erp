@@ -133,7 +133,7 @@ public class GenerateNoSupport {
             maps.put("productEquipmentQueryParam", productEquipmentQueryParam);
             Integer productCount = productEquipmentMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXE-");
+            builder.append("LX-");
             builder.append(cityCode);
             builder.append("-");
             builder.append(productModel);
@@ -163,7 +163,7 @@ public class GenerateNoSupport {
             Integer count = productEquipmentMapper.listCount(maps);
             for(int i = 0 ; i<productCount;i++){
                 StringBuilder builder = new StringBuilder();
-                builder.append("LXE-");
+                builder.append("LX-");
                 builder.append(cityCode);
                 builder.append("-");
                 builder.append("%s");
@@ -219,7 +219,7 @@ public class GenerateNoSupport {
             maps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
             Integer count = bulkMaterialMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXBM-");
+            builder.append("LX-");
             builder.append(cityCode);
             builder.append("-");
             builder.append(materialModel);
@@ -249,7 +249,7 @@ public class GenerateNoSupport {
             for(int i = 0 ; i < bulkCount ; i ++)
             {
                 StringBuilder builder = new StringBuilder();
-                builder.append("LXBM-");
+                builder.append("LX-");
                 builder.append(cityCode);
                 builder.append("-");
                 builder.append("%s");
@@ -279,7 +279,7 @@ public class GenerateNoSupport {
             maps.put("materialQueryParam", materialQueryParam);
             Integer count = materialMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
-            builder.append("LXM-");
+            builder.append("LX-");
             builder.append(materialModel);
             builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
@@ -605,7 +605,7 @@ public class GenerateNoSupport {
             SubCompanyDO subCompanyDO = subCompanyMapper.findById(warehouseDO.getSubCompanyId());
 
             StringBuilder builder = new StringBuilder();
-            builder.append("LXBM-");
+            builder.append("LX-");
             builder.append(subCompanyDO.getSubCompanyCode());
             builder.append("-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
@@ -662,7 +662,7 @@ public class GenerateNoSupport {
             ArrayList<String> BulkMaterialNos = new ArrayList<>();
             for (int i = 0; i < bulkMaterialCount; i++) {
                 StringBuilder builder = new StringBuilder();
-                builder.append("LXBM-");
+                builder.append("LX-");
                 builder.append(cityCode);
                 builder.append("-");
                 builder.append(materialModel);
