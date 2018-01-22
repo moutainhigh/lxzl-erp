@@ -122,7 +122,7 @@
                             </td>
                             <td>
                                 <label class="field prepend-icon">
-                                    <input type="text" name="deploymentProductSkuCount-{{skuId}}-{{rowKey}}" value="{{deploymentProductSkuCount}}" class="deploymentProductSkuCount form-control required number pl10" placeholder="输入调拨数量" />
+                                    <input type="text" name="deploymentProductSkuCount-{{skuId}}-{{rowKey}}" value="{{deploymentProductSkuCount}}" class="deploymentProductSkuCount form-control required checkInteger pl10" placeholder="输入调拨数量" />
                                 </label>
                             </td>
                             <td>
@@ -207,7 +207,7 @@
                             </td>
                             <td>
                                 <label class="field prepend-icon">
-                                    <input type="text" name="deploymentProductMaterialCount-{{materialNo}}" value="{{deploymentProductMaterialCount}}" class="deploymentProductMaterialCount form-control required number pl10" placeholder="输入调拨数量" />
+                                    <input type="text" name="deploymentProductMaterialCount-{{materialNo}}" value="{{deploymentProductMaterialCount}}" class="deploymentProductMaterialCount form-control required checkInteger pl10" placeholder="输入调拨数量" />
                                 </label>
                             </td>
                             <td>
