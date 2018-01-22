@@ -871,7 +871,8 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                     return ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO;
                 }
                 String productKey = peerDeploymentOrderProductDO.getProductSkuId() + "-" + peerDeploymentOrderProductDO.getIsNew();
-                if (dbPeerDeploymentOrderProductDOMap.get(peerDeploymentOrderProductDO.getId()) != null) {
+                if (dbPeerDeploymentOrderProductDOMap.get(productKey) != null) {
+                    peerDeploymentOrderProductDO.setId(dbPeerDeploymentOrderProductDOMap.get(productKey).getId());
                     updatePeerDeploymentOrderProductDOMap.put(productKey, peerDeploymentOrderProductDO);
                     dbPeerDeploymentOrderProductDOMap.remove(productKey);
                 } else {
@@ -965,7 +966,8 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                     return ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO;
                 }
                 String materialKey = peerDeploymentOrderMaterialDO.getMaterialId() + "-" + peerDeploymentOrderMaterialDO.getIsNew();
-                if (dbPeerDeploymentOrderMaterialDOMap.get(peerDeploymentOrderMaterialDO.getId()) != null) {
+                if (dbPeerDeploymentOrderMaterialDOMap.get(materialKey) != null) {
+                    peerDeploymentOrderMaterialDO.setId(dbPeerDeploymentOrderMaterialDOMap.get(materialKey).getId());
                     updatePeerDeploymentOrderMaterialDOMap.put(materialKey, peerDeploymentOrderMaterialDO);
                     dbPeerDeploymentOrderMaterialDOMap.remove(materialKey);
                 } else {
