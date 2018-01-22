@@ -663,9 +663,7 @@ public class StatementServiceImpl implements StatementService {
                     result.setErrorCode(ErrorCode.ORDER_MATERIAL_NOT_EXISTS);
                     return result;
                 }
-
-
-                Date returnTime = returnOrderMaterialBulkDO.getCreateTime();
+                
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId());
                 BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.div(orderMaterialDO.getRentDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE);
                 BigDecimal thisReturnDepositAmount = BigDecimalUtil.div(orderMaterialDO.getDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE);
