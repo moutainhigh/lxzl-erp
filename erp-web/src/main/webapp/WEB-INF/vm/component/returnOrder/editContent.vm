@@ -1,10 +1,11 @@
-<div class="panel panel-primary panel-border top mb35">
+\<div class="panel panel-primary panel-border top mb35">
     <div class="panel-heading">
         <span class="panel-title">基本信息</span>
     </div>
     <div class="form-horizontal panel-body bg-light dark">
-        <div class="row">
+        <div class="section row">
             <div class="col-md-6">
+
                 <div class="form-group field">
                     <label class="col-md-3 control-label">客户</label>
                     <div class="col-md-9">
@@ -15,14 +16,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
+
                 <div class="form-group field">
                     <label class="col-md-3 control-label" style="visibility: hidden;">收货地址</label>
                     <div class="col-md-9">
-##                        #parse("component/customer/address.vm")
+                    ##                        #parse("component/customer/address.vm")
 
                         <div class="panel" id="customerAddressPannel">
                             <div class="panel-heading">
@@ -61,10 +59,7 @@
 
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
+
                 <div class="form-group field">
                     <label class="col-md-3 control-label">是否计费</label>
                     <div class="col-md-9">
@@ -77,10 +72,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
+
                 <div class="form-group field">
                     <label class="col-md-3 control-label">退货方式</label>
                     <div class="col-md-9">
@@ -93,16 +85,34 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
+                <div class="form-group field">
+                    <label class="col-md-3 control-label">退货日期</label>
+                    <div class="col-md-9">
+                        <div class="input-group date" id="returnTimePicker">
+                            <input id="returnTime" name="returnTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择起租日期" />
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group field">
+                    <label class="col-md-3 control-label">退货原因</label>
+                    <div class="col-md-9">
+                        <div class="input-group" style="width: 100%;">
+                            <select class="form-control required" name="returnReasonType" id="returnReasonType">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group field">
                     <label class="col-md-3 control-label">备注</label>
                     <div class="col-md-9">
                         <textarea class="form-control" id="remark" rows="3"  name="remark"></textarea>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

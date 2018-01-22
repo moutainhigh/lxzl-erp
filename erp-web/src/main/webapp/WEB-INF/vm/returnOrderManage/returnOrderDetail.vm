@@ -4,296 +4,300 @@
     <title>凌雄ERP-订单管理-退货单列表-退货单详细</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
     <div id="main">
-    #parse("layout/navbar.vm")
-    #parse("layout/sidebar.vm")
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
 
-    <section id="content_wrapper">
-        #parse("layout/topbarDropmenu.vm")
-        #parse("layout/topbar.vm")
-        <section id="content" class="animated fadeIn">
-            <form class="" id="detailOrderForm">
-                <div class="panel panel-primary panel-border top mb35">
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <h5>退还单编号：<small id="returnOrderNo"></small></h5>
-                            </div>
-                            <div class="col-md-8 text-right">
-                                <script type="text/html" id="actionButtonsTpl">
-                                    {{#acitonButtons}}
-                                    <a href="${ctx}{{menuUrl}}?no={{returnOrderNo}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-returnorderno="{{returnOrderNo}}">
-                                        <i class="{{iClass}}"></i> {{text}}
-                                    </a>
-                                    {{/acitonButtons}}
-                                </script>
-                                <div class="btn-group" id="actionButtons"></div>
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+                <form class="" id="detailOrderForm">
+                    <div class="panel panel-primary panel-border top mb35">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h5>退还单编号：<small id="returnOrderNo"></small></h5>
+                                </div>
+                                <div class="col-md-8 text-right">
+                                    <script type="text/html" id="actionButtonsTpl">
+                                        {{#acitonButtons}}
+                                        <a href="${ctx}{{menuUrl}}?no={{returnOrderNo}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-returnorderno="{{returnOrderNo}}">
+                                            <i class="{{iClass}}"></i> {{text}}
+                                        </a>
+                                        {{/acitonButtons}}
+                                    </script>
+                                    <div class="btn-group" id="actionButtons"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                   <script type="text/html" id="returnOrderBaseInfoTpl">
-                       {{#data}}
-                       <div class="form-horizontal panel-body bg-light dark br-t-n">
-                           <div class="row">
-                               <div class="col-md-4">
-                                   <dl class="dl-horizontal">
-                                       <dt class="mb10">客户</dt><dd>{{customerName}}</dd>
-                                       <dt class="mb10">客户编号</dt><dd>{{customerNo}}</dd>
-                                       <dt class="mb10">退货方式</dt><dd>{{returnModeStr}}</dd>
-                                       <dt class="">收货地址</dt>
-                                       {{#returnOrderConsignInfo}}
-                                            <dd>{{consigneeName}}</dd>
-                                            <dd><i class="fa fa-mobile mr5"></i>{{consigneePhone}}</dd>
-                                            <dd><i class="fa fa-map-marker mr5"></i>{{addressForamt}}</dd>
-                                       {{/returnOrderConsignInfo}}
-                                       {{^returnOrderConsignInfo}}
-                                            <dd>没有取货地址</dd>
-                                       {{/returnOrderConsignInfo}}
-                                   </dl>
-                               </div>
-                               <div class="col-md-4">
-                                   <dl class="dl-horizontal">
-                                       <dt class="mb10">订单状态</dt><dd>{{returnOrderStatusValue}}&nbsp;</dd>
-                                       <dt class="mb10">创建人</dt><dd>{{createUserRealName}}&nbsp;</dd>
-                                       <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
-##                                       <dt class="mb10">修改人</dt><dd>{{updateUserRealName}}&nbsp;</dd>
-##                                       <dt class="mb10">修改时间</dt><dd>{{#time}}{{updateTime}}{{/time}}&nbsp;</dd>
-                                       <dt class="mb10">备注</dt><dd>{{remark}}</dd>
-                                   </dl>
-                               </div>
-                               <div class="col-md-4">
-                                   <dl class="dl-horizontal">
-                                       <dt class="">退还商品总数</dt>
-                                       <dd>预计：{{totalReturnProductCount}}&nbsp;</dd>
-                                       <dd class="mb10">实际：{{realTotalReturnProductCount}}&nbsp;</dd>
-                                       <dt >退还配件总数</dt>
-                                       <dd>预计：{{totalReturnMaterialCount}}&nbsp;</dd>
-                                       <dd class="mb10">实际：{{realTotalReturnMaterialCount}}&nbsp;</dd>
-                                       <dt class="mb10">是否计费</dt><dd>{{isChargingStr}}</dd>
-                                       <dt class="mb10">服务费</dt><dd>￥{{#price}}{{serviceCost}}{{/price}}</dd>
-                                       <dt class="mb10">损坏费用</dt><dd>￥{{#price}}{{damageCost}}{{/price}}</dd>
-                                       <dt class="mb10">租赁总费用</dt><dd>￥{{#price}}{{totalRentCost}}{{/price}}</dd>
-                                   </dl>
+                       <script type="text/html" id="returnOrderBaseInfoTpl">
+                           {{#data}}
+                           <div class="form-horizontal panel-body bg-light dark br-t-n">
+                               <div class="row">
+                                   <div class="col-md-4">
+                                       <dl class="dl-horizontal">
+                                           <dt class="mb10">客户</dt><dd>{{customerName}}</dd>
+                                           <dt class="mb10">客户编号</dt><dd>{{customerNo}}</dd>
+                                           <dt class="mb10">退货日期:</dt><dd>{{#shortTime}}{{returnTime}}{{/shortTime}}</dd>
+                                           <dt class="mb10">退货方式</dt><dd>{{returnModeStr}}</dd>
+                                           <dt>收货地址</dt>
+                                           {{#returnOrderConsignInfo}}
+                                                <dd>{{consigneeName}}</dd>
+                                                <dd><i class="fa fa-mobile mr5"></i>{{consigneePhone}}</dd>
+                                                <dd class="mb10"><i class="fa fa-map-marker mr5"></i>{{addressForamt}}</dd>
+                                           {{/returnOrderConsignInfo}}
+                                           {{^returnOrderConsignInfo}}
+                                                <dd>没有取货地址</dd>
+                                           {{/returnOrderConsignInfo}}
+                                           <dt class="mb10">退货原因</dt><dd>{{returnReasonTypeValue}}</dd>
+                                       </dl>
+                                   </div>
+                                   <div class="col-md-4">
+                                       <dl class="dl-horizontal">
+                                           <dt class="mb10">订单状态</dt><dd>{{returnOrderStatusValue}}&nbsp;</dd>
+                                           <dt class="mb10">创建人</dt><dd>{{createUserRealName}}&nbsp;</dd>
+                                           <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
+                                           <dt class="mb10">备注</dt><dd>{{remark}}</dd>
+                                       </dl>
+                                   </div>
+                                   <div class="col-md-4">
+                                       <dl class="dl-horizontal">
+                                           <dt class="">退还商品总数</dt>
+                                           <dd>预计：{{totalReturnProductCount}}&nbsp;</dd>
+                                           <dd class="mb10">实际：{{realTotalReturnProductCount}}&nbsp;</dd>
+                                           <dt >退还配件总数</dt>
+                                           <dd>预计：{{totalReturnMaterialCount}}&nbsp;</dd>
+                                           <dd class="mb10">实际：{{realTotalReturnMaterialCount}}&nbsp;</dd>
+                                           <dt class="mb10">是否计费</dt><dd>{{isChargingStr}}</dd>
+                                           <dt class="mb10">服务费</dt><dd>￥{{#price}}{{serviceCost}}{{/price}}</dd>
+                                           <dt class="mb10">损坏费用</dt><dd>￥{{#price}}{{damageCost}}{{/price}}</dd>
+                                           <dt class="mb10">租赁总费用</dt><dd>￥{{#price}}{{totalRentCost}}{{/price}}</dd>
+                                       </dl>
+                                   </div>
                                </div>
                            </div>
-                       </div>
-                       {{/data}}
-                   </script>
+                           {{/data}}
+                       </script>
 
-                    <div id="returnOrderBaseInfo"></div>
+                        <div id="returnOrderBaseInfo"></div>
 
-                    <div class="panel-heading">
-                        <div class="row">
-                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
-                                <li class="active">
-                                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
-                                </li>
-                                <li>
-                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
-                                </li>
-                            </ul>
+                        <div class="panel-heading">
+                            <div class="row">
+                                <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
+                                    <li class="active">
+                                        <a href="#purchaseOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
+                                    </li>
+                                    <li>
+                                        <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <div class="panel-body dark pn">
-                        <div class="tab-content pn br-n">
-                            <div id="purchaseOrderProductItems" class="tab-pane active">
-                                <script type="text/html" id="returnEquipmentButtonsTpl">
-                                    {{#hasActionButtons}}
-                                    <div class="panel-menu p12 br-n br-b">
-                                        <div class="row">
-                                            <div class="pull-left ml10">
-                                                <div class="btn-group actionCommonButtons">
-                                                    {{#acitonButtons}}
-                                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-returnorderno="{{returnOrderNo}}">
-                                                        <i class="{{iClass}}"></i> {{text}}
-                                                    </a>
-                                                    {{/acitonButtons}}
+                        <div class="panel-body dark pn">
+                            <div class="tab-content pn br-n">
+                                <div id="purchaseOrderProductItems" class="tab-pane active">
+                                    <script type="text/html" id="returnEquipmentButtonsTpl">
+                                        {{#hasActionButtons}}
+                                        <div class="panel-menu p12 br-n br-b">
+                                            <div class="row">
+                                                <div class="pull-left ml10">
+                                                    <div class="btn-group actionCommonButtons">
+                                                        {{#acitonButtons}}
+                                                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-returnorderno="{{returnOrderNo}}">
+                                                            <i class="{{iClass}}"></i> {{text}}
+                                                        </a>
+                                                        {{/acitonButtons}}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        {{/hasActionButtons}}
+                                    </script>
+                                    <div id="returnEquipmentButtons"></div>
+                                    <div class="table-responsive">
+                                        <script type="text/html" id="dataListTpl">
+                                            <thead>
+                                            <tr class="bg-light">
+                                                <th>商品名称</th>
+                                                <th>类别</th>
+                                                <th>品牌</th>
+                                                <th>商品参数（SKU）</th>
+                                                <th>实际 / 预计（退货数量）</th>
+                                                <th class="text-right">操作</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{#listData}}
+                                            <tr class="productRow" productRowKey="{{productId}}">
+                                                <td>{{productName}}</td>
+                                                <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+                                                <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                                                <td>{{propertiesToStr}}</td>
+                                                <td>
+                                                   {{realReturnProductSkuCount}}/{{returnProductSkuCount}}
+                                                </td>
+                                                <td class="text-right">
+                                                    <div class="btn-group text-right">
+                                                        <a href="#" type="button" class="btn btn-default btn-xs viewAffix viewReturnEquipment" data-returnorderproductid="{{returnOrderProductId}}">查看已退设备</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="bg-light affixTr" style="height: 0;">
+                                                <td colspan="8" class="pn br-n" style="height:0;">
+                                                    <div class="panel m15 affixPanel"  style="display: none;">
+                                                        <div class="panel-heading pn ph8">
+                                                            <span>已退还设备：<span class="equimentListCount"></span></span>
+                                                        </div>
+                                                        <div class="panel-body pn">
+                                                            <table class="table">
+                                                                <tr><td class="br-r">正在加载...</td></tr>
+                                                            </table>
+                                                        </div>
+                                                        <div class="panel-footer pn pv5 ph15">
+                                                            <div class="row">
+                                                                <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{^listData}}
+                                            <tr>
+                                                <td valign="top" colspan="14" class="text-center">没有选择商品</td>
+                                            </tr>
+                                            {{/listData}}
+                                            </tbody>
+                                        </script>
+
+                                        <script type="text/html" id="returnEquipmentListTpl">
+                                            {{#equipmentList}}
+                                            <tr><td class="br-r text-left">{{equipmentNo}}</td></tr>
+                                            {{/equipmentList}}
+                                            {{^equipmentList}}
+                                            <tr><td class="br-r text-left">无退还设备信息</td></tr>
+                                            {{/equipmentList}}
+                                        </script>
+
+                                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                                     </div>
-                                    {{/hasActionButtons}}
-                                </script>
-                                <div id="returnEquipmentButtons"></div>
-                                <div class="table-responsive">
-                                    <script type="text/html" id="dataListTpl">
-                                        <thead>
-                                        <tr class="bg-light">
-                                            <th>商品名称</th>
-                                            <th>类别</th>
-                                            <th>品牌</th>
-                                            <th>商品参数（SKU）</th>
-                                            <th>实际 / 预计（退货数量）</th>
-                                            <th class="text-right">操作</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {{#listData}}
-                                        <tr class="productRow" productRowKey="{{productId}}">
-                                            <td>{{productName}}</td>
-                                            <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
-                                            <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
-                                            <td>{{propertiesToStr}}</td>
-                                            <td>
-                                               {{realReturnProductSkuCount}}/{{returnProductSkuCount}}
-                                            </td>
-                                            <td class="text-right">
-                                                <div class="btn-group text-right">
-                                                    <a href="#" type="button" class="btn btn-default btn-xs viewAffix viewReturnEquipment" data-returnorderproductid="{{returnOrderProductId}}">查看已退设备</a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="bg-light affixTr" style="height: 0;">
-                                            <td colspan="8" class="pn br-n" style="height:0;">
-                                                <div class="panel m15 affixPanel"  style="display: none;">
-                                                    <div class="panel-heading pn ph8">
-                                                        <span>已退还设备：<span class="equimentListCount"></span></span>
-                                                    </div>
-                                                    <div class="panel-body pn">
-                                                        <table class="table">
-                                                            <tr><td class="br-r">正在加载...</td></tr>
-                                                        </table>
-                                                    </div>
-                                                    <div class="panel-footer pn pv5 ph15">
-                                                        <div class="row">
-                                                            <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        {{/listData}}
-                                        {{^listData}}
-                                        <tr>
-                                            <td valign="top" colspan="14" class="text-center">没有选择商品</td>
-                                        </tr>
-                                        {{/listData}}
-                                        </tbody>
-                                    </script>
-
-                                    <script type="text/html" id="returnEquipmentListTpl">
-                                        {{#equipmentList}}
-                                        <tr><td class="br-r text-left">{{equipmentNo}}</td></tr>
-                                        {{/equipmentList}}
-                                        {{^equipmentList}}
-                                        <tr><td class="br-r text-left">无退还设备信息</td></tr>
-                                        {{/equipmentList}}
-                                    </script>
-
-                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                                 </div>
-                            </div>
-                            <div id="purchaseOrderMaterialItems" class="tab-pane">
-                                <div class="table-responsive">
-                                    <script type="text/html" id="materialDataListTpl">
-                                        <thead>
-                                        <tr>
-                                            <th>
-                                                <label class="option block mn">
-                                                    <input type="checkbox" name="checkAll" value="">
-                                                    <span class="checkbox mn"></span>
-                                                </label>
-                                            </th>
-                                            <th>配件名称</th>
-##                                            <th>图片</th>
-                                            <th>品牌</th>
-                                            <th>类型</th>
-                                            <th>配件价值</th>
-##                                            <th>预计退货数量</th>
-                                            <th>实际 / 预计(退货数量)</th>
-                                            <th class="text-right">操作</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {{#dataSource}}
-                                        {{#listData}}
-                                        <tr class="materialRow">
-                                            <td>
-                                                <label class="option block mn">
-                                                    <input type="checkbox" name="checkItem" value="{{materialNo}}">
-                                                    <span class="checkbox mn"></span>
-                                                </label>
-                                            </td>
-                                            <td>{{materialName}}</td>
-##                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-                                            <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
-                                            <td>{{materialTypeStr}}</td>
-                                            <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
-                                            <td>
-                                                {{realReturnMaterialCount}}/{{returnMaterialCount}}
-                                            </td>
-                                            <td class="text-right">
-                                                <div class="btn-group text-right">
-                                                    {{#rowActionButtons}}
-                                                    <a href="#" type="button" class="btn btn-default btn-xs {{class}}"
-                                                       data-materialno="{{materialNo}}"
-                                                       data-returnorderno="{{returnOrderNo}}"
-                                                       data-returnCount="{{returnMaterialCount}}"
-                                                       data-returnordermaterialid="{{returnOrderMaterialId}}">{{text}}</a>
-                                                    {{/rowActionButtons}}
-                                                    <a href="#" type="button" class="btn btn-default btn-xs viewAffix viewReturnMaterial" data-returnordermaterialid="{{returnOrderMaterialId}}">查看配货信息</a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="bg-light affixTr" style="height: 0;">
-                                            <td colspan="11" class="pn br-n" style="height:0;">
-                                                <div class="panel m15 affixPanel"  style="display: none;">
-                                                    <div class="panel-heading pn ph8">
-                                                        <span>已退还配件：<span class="materialListCount"></span></span>
+                                <div id="purchaseOrderMaterialItems" class="tab-pane">
+                                    <div class="table-responsive">
+                                        <script type="text/html" id="materialDataListTpl">
+                                            <thead>
+                                            <tr>
+                                                <th>
+                                                    <label class="option block mn">
+                                                        <input type="checkbox" name="checkAll" value="">
+                                                        <span class="checkbox mn"></span>
+                                                    </label>
+                                                </th>
+                                                <th>配件名称</th>
+    ##                                            <th>图片</th>
+                                                <th>品牌</th>
+                                                <th>类型</th>
+                                                <th>配件价值</th>
+    ##                                            <th>预计退货数量</th>
+                                                <th>实际 / 预计(退货数量)</th>
+                                                <th class="text-right">操作</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{#dataSource}}
+                                            {{#listData}}
+                                            <tr class="materialRow">
+                                                <td>
+                                                    <label class="option block mn">
+                                                        <input type="checkbox" name="checkItem" value="{{materialNo}}">
+                                                        <span class="checkbox mn"></span>
+                                                    </label>
+                                                </td>
+                                                <td>{{materialName}}</td>
+    ##                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                                                <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
+                                                <td>{{materialTypeStr}}</td>
+                                                <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
+                                                <td>
+                                                    {{realReturnMaterialCount}}/{{returnMaterialCount}}
+                                                </td>
+                                                <td class="text-right">
+                                                    <div class="btn-group text-right">
+                                                        {{#rowActionButtons}}
+                                                        <a href="#" type="button" class="btn btn-default btn-xs {{class}}"
+                                                           data-materialno="{{materialNo}}"
+                                                           data-returnorderno="{{returnOrderNo}}"
+                                                           data-returnCount="{{returnMaterialCount}}"
+                                                           data-returnordermaterialid="{{returnOrderMaterialId}}">{{text}}</a>
+                                                        {{/rowActionButtons}}
+                                                        <a href="#" type="button" class="btn btn-default btn-xs viewAffix viewReturnMaterial" data-returnordermaterialid="{{returnOrderMaterialId}}">查看配货信息</a>
                                                     </div>
-                                                    <div class="panel-body pn">
-                                                        <table class="table">
-                                                            <tr><td class="br-r">正在加载...</td></tr>
-                                                        </table>
-                                                    </div>
-                                                    <div class="panel-footer pn pv5 ph15">
-                                                        <div class="row">
-                                                            <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
+                                                </td>
+                                            </tr>
+                                            <tr class="bg-light affixTr" style="height: 0;">
+                                                <td colspan="11" class="pn br-n" style="height:0;">
+                                                    <div class="panel m15 affixPanel"  style="display: none;">
+                                                        <div class="panel-heading pn ph8">
+                                                            <span>已退还配件：<span class="materialListCount"></span></span>
+                                                        </div>
+                                                        <div class="panel-body pn">
+                                                            <table class="table">
+                                                                <tr><td class="br-r">正在加载...</td></tr>
+                                                            </table>
+                                                        </div>
+                                                        <div class="panel-footer pn pv5 ph15">
+                                                            <div class="row">
+                                                                <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        {{/listData}}
-                                        {{^listData}}
-                                        <tr>
-                                            <td valign="top" colspan="14" class="text-center">没有选择配件</td>
-                                        </tr>
-                                        {{/listData}}
-                                        {{/dataSource}}
-                                        </tbody>
-                                    </script>
+                                                </td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{^listData}}
+                                            <tr>
+                                                <td valign="top" colspan="14" class="text-center">没有选择配件</td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{/dataSource}}
+                                            </tbody>
+                                        </script>
 
-                                    <script type="text/html" id="returnBulkMaterialListTpl">
-                                        {{#bulkMaterialList}}
-                                        <tr><td class="br-r text-left">{{bulkMaterialNo}}</td></tr>
-                                        {{/bulkMaterialList}}
-                                        {{^bulkMaterialList}}
-                                        <tr><td class="br-r text-left">无退还配件信息</td></tr>
-                                        {{/bulkMaterialList}}
-                                    </script>
+                                        <script type="text/html" id="returnBulkMaterialListTpl">
+                                            {{#bulkMaterialList}}
+                                            <tr><td class="br-r text-left">{{bulkMaterialNo}}</td></tr>
+                                            {{/bulkMaterialList}}
+                                            {{^bulkMaterialList}}
+                                            <tr><td class="br-r text-left">无退还配件信息</td></tr>
+                                            {{/bulkMaterialList}}
+                                        </script>
 
-                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialDataListTable"></table>
+                                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialDataListTable"></table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="panel-footer clearfix">
+                            <button class="btn btn-default pull-right ml15 goBack">返回</button>
+                        </div>
                     </div>
-                    <div class="panel-footer clearfix">
-                        <button class="btn btn-default pull-right ml15 goBack">返回</button>
-                    </div>
-                </div>
 
-            </form>
+                </form>
+            </section>
         </section>
-    </section>
 
-    #parse("layout/sidebarRight.vm")
-</div>
+        #parse("layout/sidebarRight.vm")
+    </div>
     #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'manage.return.order.mixin.js',
