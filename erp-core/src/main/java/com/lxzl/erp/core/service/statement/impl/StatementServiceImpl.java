@@ -542,6 +542,7 @@ public class StatementServiceImpl implements StatementService {
 
         // 租金押金和设备押金
         BigDecimal totalReturnRentDepositAmount = BigDecimal.ZERO, totalReturnDepositAmount = BigDecimal.ZERO;
+        Date returnTime = returnOrderDO.getReturnTime();
 
         List<ReturnOrderProductEquipmentDO> returnOrderProductEquipmentDOList = returnOrderProductEquipmentMapper.findByReturnOrderNo(returnOrderNo);
         if (CollectionUtil.isNotEmpty(returnOrderProductEquipmentDOList)) {
@@ -557,7 +558,6 @@ public class StatementServiceImpl implements StatementService {
                     return result;
                 }
 
-                Date returnTime = returnOrderProductEquipmentDO.getCreateTime();
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
                 BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
                 BigDecimal thisReturnDepositAmount = BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);

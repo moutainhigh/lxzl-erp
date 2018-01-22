@@ -1380,8 +1380,8 @@ public class OrderServiceImpl implements OrderService {
                         throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT);
                     }
 
-                    isCheckRiskManagement = isCheckRiskManagement(orderProductDO, null);
-                    if (!isCheckRiskManagement) {
+                    boolean productIsCheckRiskManagement = isCheckRiskManagement(orderProductDO, null);
+                    if (!productIsCheckRiskManagement) {
                         if (orderProductDO.getPayMode() == null) {
                             throw new BusinessException(ErrorCode.ORDER_PAY_MODE_NOT_NULL);
                         }
@@ -1429,8 +1429,8 @@ public class OrderServiceImpl implements OrderService {
                     if (customerRiskManagementDO.getSingleLimitPrice() != null && BigDecimalUtil.compare(materialPrice, customerRiskManagementDO.getSingleLimitPrice()) >= 0) {
                         throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT);
                     }
-                    isCheckRiskManagement = isCheckRiskManagement(null, orderMaterialDO);
-                    if (!isCheckRiskManagement) {
+                    boolean materialIsCheckRiskManagement = isCheckRiskManagement(null, orderMaterialDO);
+                    if (!materialIsCheckRiskManagement) {
                         if (orderMaterialDO.getPayMode() == null) {
                             throw new BusinessException(ErrorCode.ORDER_PAY_MODE_NOT_NULL);
                         }
