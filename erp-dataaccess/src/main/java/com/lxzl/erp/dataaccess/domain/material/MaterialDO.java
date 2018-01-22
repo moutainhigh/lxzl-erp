@@ -47,6 +47,9 @@ public class MaterialDO extends BaseDO {
     private BigDecimal newDayRentPrice;  //全新天租赁价格
     private BigDecimal newMonthRentPrice;  //全新月租赁价格
 
+    private Integer newMaterialCount;
+    private Integer oldMaterialCount;
+
     public BigDecimal getNewMaterialPrice() {
         return newMaterialPrice;
     }
@@ -268,5 +271,21 @@ public class MaterialDO extends BaseDO {
 
     public void setMaterialTypeName(String materialTypeName) {
         this.materialTypeName = materialTypeName;
+    }
+
+    public Integer getNewMaterialCount() {
+        return newMaterialCount;
+    }
+
+    public void setNewMaterialCount(Integer newMaterialCount) {
+        this.newMaterialCount = newMaterialCount;
+    }
+
+    public Integer getOldMaterialCount() {
+        return oldMaterialCount;
+    }
+
+    public void setOldMaterialCount(Integer oldMaterialCount) {
+        this.oldMaterialCount = oldMaterialCount;
     }
 }

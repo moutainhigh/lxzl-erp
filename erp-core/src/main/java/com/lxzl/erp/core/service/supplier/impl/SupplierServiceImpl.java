@@ -109,11 +109,9 @@ public class SupplierServiceImpl implements SupplierService {
         }
 
         String beneficiaryAccount = supplier.getBeneficiaryAccount();
-        if(beneficiaryAccount == null){
-            supplier.setBeneficiaryAccount(null);
-        }else{
-            beneficiaryAccount=beneficiaryAccount.replaceAll(" ", "");
-            if (beneficiaryAccount.matches("^[0-9]*$") && beneficiaryAccount.length() <= 19 && beneficiaryAccount.length() >= 16) {
+        if(beneficiaryAccount != null && beneficiaryAccount != ""){
+            beneficiaryAccount=beneficiaryAccount.replaceAll("\\s{1,}", "");
+            if(beneficiaryAccount.matches("^[0-9]*$") && beneficiaryAccount.length()<=19 && beneficiaryAccount.length()>=16){
                 supplier.setBeneficiaryAccount(beneficiaryAccount);
             }else{
                 result.setErrorCode(ErrorCode.BANK_NO_ERROR);
@@ -167,11 +165,9 @@ public class SupplierServiceImpl implements SupplierService {
         }
 
         String beneficiaryAccount = supplier.getBeneficiaryAccount();
-        if(beneficiaryAccount == null){
-            supplier.setBeneficiaryAccount(null);
-        }else{
-            beneficiaryAccount=beneficiaryAccount.replaceAll(" ", "");
-            if (beneficiaryAccount.matches("^[0-9]*$") && beneficiaryAccount.length() <= 19 && beneficiaryAccount.length() >= 16) {
+        if(beneficiaryAccount != null && beneficiaryAccount != ""){
+            beneficiaryAccount=beneficiaryAccount.replaceAll("\\s{1,}", "");
+            if(beneficiaryAccount.matches("^[0-9]*$") && beneficiaryAccount.length()<=19 && beneficiaryAccount.length()>=16){
                 supplier.setBeneficiaryAccount(beneficiaryAccount);
             }else{
                 result.setErrorCode(ErrorCode.BANK_NO_ERROR);
