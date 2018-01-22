@@ -101,7 +101,7 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(epdo.id) from erp_purchase_delivery_order epdo 
 		<where>
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and epdo.data_status = 1
 			</if>
 		</where>
@@ -110,7 +110,7 @@
 	<select id="listPage" resultMap="PurchaseDeliveryOrderDO" parameterType="map">
 		select <include refid="column_List"/> from erp_purchase_delivery_order epdo 
 		<where>
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and epdo.data_status = 1
 			</if>
 		</where>
@@ -191,7 +191,7 @@
 			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.createEndTime != null ">
 				<![CDATA[ AND epdo.create_time <= #{maps.purchaseDeliveryOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and epdo.data_status = 1
 			</if>
 			<include refid="permission_sql.purchase_delivery_control"/>
@@ -224,7 +224,7 @@
 			<if test="maps.purchaseDeliveryOrderQueryParam != null &amp;&amp; maps.purchaseDeliveryOrderQueryParam.createEndTime != null ">
 				<![CDATA[ AND epdo.create_time <= #{maps.purchaseDeliveryOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and epdo.data_status = 1
 			</if>
 			<include refid="permission_sql.purchase_delivery_control"/>

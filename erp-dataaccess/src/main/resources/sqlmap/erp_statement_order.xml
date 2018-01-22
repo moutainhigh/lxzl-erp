@@ -155,8 +155,8 @@
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.createEndTime != null">
 				<![CDATA[ AND eso.create_time <= #{maps.statementOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
-				AND eso.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and eso.data_status = 1
 			</if>
 		</where>
 	</select>
@@ -190,8 +190,8 @@
 				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayEndTime != null ">
 					<![CDATA[ AND eso.statement_expect_pay_time <= #{maps.statementOrderQueryParam.statementExpectPayEndTime} ]]>
 				</if>
-				<if test="true">
-					AND eso.data_status = 1
+				<if test="maps.isQueryAll == null">
+					and eso.data_status = 1
 				</if>
 			</where>
 			ORDER BY eso.statement_expect_pay_time

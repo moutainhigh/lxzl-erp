@@ -79,8 +79,8 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ero.id) FROM erp_repair_order ero
 		<where>
-			<if test="true">
-				AND ero.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and ero.data_status = 1
 			</if>
 		</where>
 	</select>
@@ -88,8 +88,8 @@
 	<select id="listPage" resultMap="RepairOrderDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_repair_order ero
 		<where>
-			<if test="true">
-				AND ero.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and ero.data_status = 1
 			</if>
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}
@@ -196,8 +196,8 @@
 			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.createEndTime != null ">
 				<![CDATA[ AND ero.create_time <= #{maps.repairOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
-				AND ero.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and ero.data_status = 1
 			</if>
 		</where>
 	</select>
@@ -235,8 +235,8 @@
 			<if test="maps.repairOrderQueryParam != null &amp;&amp; maps.repairOrderQueryParam.createEndTime != null ">
 				<![CDATA[ AND ero.create_time <= #{maps.repairOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
-				AND ero.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and ero.data_status = 1
 			</if>
 		</where>
 		ORDER BY ero.create_time DESC

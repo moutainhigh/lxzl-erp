@@ -147,8 +147,8 @@
 			<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.createEndTime != null">
 				<![CDATA[ AND edo.create_time <= #{maps.deploymentOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
-				AND edo.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and edo.data_status = 1
 			</if>
 		</where>
 	</select>
@@ -187,8 +187,8 @@
 				<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderStatus != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderStatus != ''">
 					and edo.deployment_order_status = #{maps.deploymentOrderQueryParam.deploymentOrderStatus, jdbcType=INTEGER}
 				</if>
-				<if test="true">
-					AND edo.data_status = 1
+				<if test="maps.isQueryAll == null">
+					and edo.data_status = 1
 				</if>
 				ORDER BY edo.id DESC
 			</where>

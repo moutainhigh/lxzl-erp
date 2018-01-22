@@ -228,7 +228,7 @@
             <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != null">
                 <![CDATA[ AND epe.create_time <= #{maps.productEquipmentQueryParam.createEndTime} ]]>
             </if>
-            <if test="true">
+            <if test="maps.isQueryAll == null">
                 and epe.data_status = 1
             </if>
         </where>
@@ -279,7 +279,7 @@
             <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.createEndTime != null">
                 <![CDATA[ AND epe.create_time <= #{maps.productEquipmentQueryParam.createEndTime} ]]>
             </if>
-            <if test="true">
+            <if test="maps.isQueryAll == null">
                 and epe.data_status = 1
             </if>
         </where>

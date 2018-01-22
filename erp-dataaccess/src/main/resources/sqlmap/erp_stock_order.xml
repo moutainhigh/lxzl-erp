@@ -115,7 +115,7 @@
 			<if test="maps.stockOrderQueryParam.createEndTime != null">
 				<![CDATA[ AND eso.create_time <= #{maps.stockOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and eso.data_status = 1
 			</if>
 		</where>
@@ -148,7 +148,7 @@
 				<if test="maps.stockOrderQueryParam.createEndTime != null">
 					<![CDATA[ AND eso.create_time <= #{maps.stockOrderQueryParam.createEndTime} ]]>
 				</if>
-				<if test="true">
+				<if test="maps.isQueryAll == null">
 					and eso.data_status = 1
 				</if>
 			</where>

@@ -133,8 +133,8 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ero.id) FROM erp_return_order ero
 		<where>
-			<if test="true">
-				AND ero.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and ero.data_status = 1
 			</if>
 		</where>
 	</select>
@@ -142,8 +142,8 @@
 	<select id="listPage" resultMap="ReturnOrderDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_return_order ero
 		<where>
-			<if test="true">
-				AND ero.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and ero.data_status = 1
 			</if>
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}
@@ -267,7 +267,7 @@
 			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.createEndTime != null ">
 				<![CDATA[ AND ero.create_time <= #{maps.returnOrderPageParam.createEndTime} ]]>
 			</if>
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and ero.data_status = 1
 			</if>
 			<include refid="permission_sql.return_order_control"/>
@@ -306,7 +306,7 @@
 				<![CDATA[ AND ero.create_time <= #{maps.returnOrderPageParam.createEndTime} ]]>
 			</if>
 
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and ero.data_status = 1
 			</if>
 			<include refid="permission_sql.return_order_control"/>

@@ -126,8 +126,8 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(eco.id) FROM erp_change_order eco 
 		<where>
-			<if test="true">
-				AND eco.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and eco.data_status = 1
 			</if>
 		</where>
 	</select>
@@ -135,8 +135,8 @@
 	<select id="listPage" resultMap="ChangeOrderDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_change_order eco 
 		<where>
-			<if test="true">
-				AND eco.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and eco.data_status = 1
 			</if>
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}
@@ -247,7 +247,7 @@
 			<if test="maps.changeOrderPageParam != null &amp;&amp; maps.changeOrderPageParam.createEndTime != null ">
 				<![CDATA[ AND eco.create_time <= #{maps.changeOrderPageParam.createEndTime} ]]>
 			</if>
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and eco.data_status = 1
 			</if>
 			<include refid="permission_sql.change_order_control"/>
@@ -279,7 +279,7 @@
 				<![CDATA[ AND eco.create_time <= #{maps.changeOrderPageParam.createEndTime} ]]>
 			</if>
 
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and eco.data_status = 1
 			</if>
 			<include refid="permission_sql.change_order_control"/>

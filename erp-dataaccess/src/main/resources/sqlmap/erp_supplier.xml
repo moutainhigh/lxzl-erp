@@ -87,7 +87,7 @@
 			<if test="maps.supplierQueryParam != null &amp;&amp; maps.supplierQueryParam.supplierCode != null &amp;&amp; maps.supplierQueryParam.supplierCode != ''">
 				and es.supplier_code like CONCAT('%','${maps.supplierQueryParam.supplierCode}','%' )
 			</if>
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and es.data_status = 1
 			</if>
 		</where>
@@ -113,8 +113,8 @@
 			<if test="maps.supplierQueryParam != null &amp;&amp; maps.supplierQueryParam.supplierCode != null &amp;&amp; maps.supplierQueryParam.supplierCode != ''">
 				and es.supplier_code like CONCAT('%','${maps.supplierQueryParam.supplierCode}','%' )
 			</if>
-			<if test="true">
-				AND es.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and es.data_status = 1
 			</if>
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}
