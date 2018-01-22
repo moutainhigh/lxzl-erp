@@ -2,13 +2,21 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by gaochao on 2016/11/2.
  */
 @Controller("pageController")
 public class PageController extends BaseController {
+//    @RequestMapping(value = "/uppwd")
+//    public String uppwd(HttpServletRequest request, HttpServletResponse response, Model model) {
+//        return "/uppwd";
+//    }
 
     @RequestMapping("/index")
     public String index() {
