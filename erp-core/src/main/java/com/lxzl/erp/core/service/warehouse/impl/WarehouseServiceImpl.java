@@ -102,9 +102,6 @@ public class WarehouseServiceImpl implements WarehouseService {
     private ProductMapper productMapper;
 
     @Autowired
-    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
-
-    @Autowired
     private SqlSessionFactory sqlSessionFactory;
 
     @Autowired

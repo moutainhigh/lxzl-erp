@@ -45,6 +45,9 @@ public class ErrorCode {
     public static final String ACTIVE_USER_ID_NOT_NULL = "J100017";
     public static final String SUB_COMPANY_NAME_NOT_NULL = "J100018";
     public static final String DEPARTMENT_NOT_EXISTS = "J100019";
+    public static final String USER_PASSWORD_TOO_SIMPLE = "J100020";
+    public static final String USER_OLD_PASSWORD_NOT_NULL = "J100021";
+    public static final String USER_NEW_PASSWORD_NOT_NULL = "J100022";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -550,6 +553,7 @@ public class ErrorCode {
     public static final String USER_CAN_NOT_OPERATION_PEER_DEPLOYMENT_ORDER_WAREHOUSE  = "J1510003";
     public static final String PEER_DEPLOYMENT_ORDER_STATUS_NEED_PROCESSING_OUT  = "J1510004";
     public static final String BANK_NO_ERROR  = "J1510005";
+    public static final String PRODUCT_EQUIPMENT_MATCH_PEER_DEPLOYMENT_ORDER_NOT_ENOUGH  = "J1510006";
 
 
     static {
@@ -590,6 +594,9 @@ public class ErrorCode {
         MAP.put(ROLE_HAVE_USER, "角色包含用户");
         MAP.put(SUB_COMPANY_NAME_NOT_NULL, "子公司名称不能为空");
         MAP.put(DEPARTMENT_NOT_EXISTS, "部门不存在");
+        MAP.put(USER_PASSWORD_TOO_SIMPLE, "密码包含大写字母、小写字母、数字、特殊符号中的至少三类，且长度在8到20之间");
+        MAP.put(USER_OLD_PASSWORD_NOT_NULL, "旧密码不能为空");
+        MAP.put(USER_NEW_PASSWORD_NOT_NULL, "新密码不能为空");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
@@ -1092,6 +1099,7 @@ public class ErrorCode {
         MAP.put(PEER_DEPLOYMENT_ORDER_COUNT_IS_ZERO, "同行调拨单配件和商品总数需大于等于0");
         MAP.put(PEER_DEPLOYMENT_ORDER_MONEY_IS_ZERO, "同行调拨单配件和商品金额需大于等于0");
         MAP.put(PEER_DEPLOYMENT_ORDER_DISCOUNT_MONEY_IS_ZERO, "同行调拨单优惠金额需大于等于0");
+        MAP.put(PRODUCT_EQUIPMENT_MATCH_PEER_DEPLOYMENT_ORDER_NOT_ENOUGH, "查找到的设备数量与该同行调拨单下设备数量不相等");
 
 
 

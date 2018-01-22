@@ -30,4 +30,14 @@ public interface ProductEquipmentMapper extends BaseMysqlDAO<ProductEquipmentDO>
     List<ProductEquipmentDO> listByPurchaseReceiveOrderProductId(@Param("maps") Map<String, Object> paramMap);
 
     Integer listByPurchaseReceiveOrderProductIdCount(@Param("maps") Map<String, Object> paramMap);
+
+    List<ProductEquipmentDO> findBathByEquipmentNo(@Param("maps")Map<String, Object> maps);
+
+    Integer updateStatusBathByEquipmentNoInMap(@Param("maps")Map<String, Object> maps);
+
+    List<ProductEquipmentDO> findBatchByEquipmentNoInPeerDeploymentOrder(@Param("maps")Map<String, Object> maps);
+
+    Integer updateStatusBatch(@Param("maps")Map<String, Object> maps);
+
+    List<ProductEquipmentDO> findBatchByPeerDeploymentOrderNo(@Param("maps")Map<String, Object> maps);
 }

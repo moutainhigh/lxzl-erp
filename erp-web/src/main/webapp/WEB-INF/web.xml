@@ -45,7 +45,7 @@
         <filter-class>com.lxzl.erp.web.filter.SessionFilter</filter-class>
         <init-param>
             <param-name>excludedPages</param-name>
-            <param-value>/WEB-INF/*,/js/*,/img/*,/login,/user/login,/static/*,/interface/*,/QRCode/*</param-value>
+            <param-value>/WEB-INF/*,/js/*,/img/*,/login,/user/login,/static/*,/interface/*,/QRCode/*,/user/updatePasswordForNoLogin</param-value>
         </init-param>
     </filter>
     <filter-mapping>

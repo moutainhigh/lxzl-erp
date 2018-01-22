@@ -48,7 +48,7 @@ public interface PeerDeploymentOrderService extends VerifyReceiver {
      * @param remark
      * @return
      */
-    ServiceResult<String,String> commitPeerDeploymentOrderOut(String peerDeploymentOrderNo, Integer verifyUserId, String remark);
+    ServiceResult<String,String> commitPeerDeploymentOrderReturn(String peerDeploymentOrderNo, Integer verifyUserId, String remark);
 
     /**
      * 同行调拨单确认收货

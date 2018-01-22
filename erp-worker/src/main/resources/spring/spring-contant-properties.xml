@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:cache="http://www.springframework.org/schema/cache" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/cache 
+    	http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+    <bean id="paymentSystemConfig" class="com.lxzl.erp.common.domain.PaymentSystemConfig">
+        <property name="paymentSystemQueryCustomerAccountURL" value="${PAYMENT_SYSTEM_QUERY_CUSTOMER_ACCOUNT_URL}"/>
+        <property name="paymentSystemManualChargeURL" value="${PAYMENT_SYSTEM_MANUAL_CHARGE_URL}"/>
+        <property name="paymentSystemManualDeductURL" value="${PAYMENT_SYSTEM_MANUAL_DEDUCT_URL}"/>
+        <property name="paymentSystemBalancePayURL" value="${PAYMENT_SYSTEM_BALANCE_PAY_URL}"/>
+        <property name="paymentSystemReturnDepositURL" value="${PAYMENT_SYSTEM_RETURN_DEPOSIT_URL}"/>
+        <property name="paymentSystemAppId" value="${PAYMENT_SYSTEM_APP_ID}"/>
+        <property name="paymentSystemAppSecret" value="${PAYMENT_SYSTEM_APP_SECRET}"/>
+    </bean>
+
+</beans>

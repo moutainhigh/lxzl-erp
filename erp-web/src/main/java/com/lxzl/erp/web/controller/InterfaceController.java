@@ -42,7 +42,7 @@ public class InterfaceController extends BaseController {
     private CustomerService customerService;
 
     @RequestMapping(value = "queryOrderByNo", method = RequestMethod.POST)
-    public Result queryOrderByNo(@RequestBody Order order, BindingResult validResult) {
+    public Result queryOrderByNo(@RequestBody OrderQueryParam order, BindingResult validResult) {
         ServiceResult<String, Order> serviceResult = orderService.queryOrderByNo(order.getOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
@@ -53,9 +53,9 @@ public class InterfaceController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "queryCustomer", method = RequestMethod.POST)
-    public Result queryCustomerByCompanyName(@RequestBody @Validated(QueryCustomerGroup.class) CustomerCompany customerCompany, BindingResult validResult) {
-        ServiceResult<String, Customer> serviceResult = customerService.queryCustomerByCompanyName(customerCompany.getCompanyName());
+    @RequestMapping(value = "queryCustomerByName", method = RequestMethod.POST)
+    public Result queryCustomerByName(@RequestBody @Validated(QueryCustomerGroup.class) Customer customer, BindingResult validResult) {
+        ServiceResult<String, Customer> serviceResult = customerService.queryCustomerByCompanyName(customer.getCustomerName());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }

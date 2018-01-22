@@ -46,7 +46,9 @@ public class ERPTransactionalTest extends BaseTransactionalTest {
         try {
 //            sessionResult = getLoginSession("lxcs","123456");//采购部审核人
 //            sessionResult = getLoginSession("liuke","123456");
-            sessionResult = getLoginSession("chenchao", "123456");
+//            sessionResult = getLoginSession("chenchao", "123456");
+//            sessionResult = getLoginSession("cangku", "123456");
+            sessionResult = getLoginSession("admin", "123456");
             this.session = sessionResult.mockHttpSession;
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,7 +60,9 @@ public class ERPTransactionalTest extends BaseTransactionalTest {
      */
     @After
     public void destroy() {
-        session.clearAttributes();
+        if(session!=null){
+            session.clearAttributes();
+        }
     }
 
     /**

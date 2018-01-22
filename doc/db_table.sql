@@ -32,12 +32,11 @@ CREATE TABLE `erp_user_login_log` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `user_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '用户名',
   `login_ip` varchar(40) CHARACTER SET ascii DEFAULT NULL COMMENT '登录IP',
-  `login_mac_address` varchar(40) CHARACTER SET ascii DEFAULT NULL COMMENT '登录IP',
+  `login_mac_address` varchar(40) CHARACTER SET ascii DEFAULT NULL COMMENT '登录mac地址',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=500001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='用户登录日志表';
-
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='用户登录日志表';
 
 DROP TABLE if exists `erp_role`;
 CREATE TABLE `erp_role` (

@@ -489,4 +489,39 @@
         <include refid="set_column_sql"/>
     </insert>
 
+    <select id="findBatchByEquipmentNoInPeerDeploymentOrder" parameterType="map" resultMap="ProductEquipmentDO">
+    SELECT <include refid="column_List"/> FROM erp_product_equipment epe WHERE epe.data_status=1 AND epe.equipment_status = #{maps.oldEquipmentStatus}
+    AND epe.current_warehouse_id = #{maps.warehouseId} AND epe.id IN
+    <foreach collection="maps.peerDeploymentOrderProductEquipmentDOList" item="PeerDeploymentOrderProductEquipmentDO" open="(" close=")"
+             separator=",">
+        #{PeerDeploymentOrderProductEquipmentDO.equipmentId,jdbcType=VARCHAR}
+    </foreach>
+    ORDER BY epe.id LIMIT 0,#{maps.equipmentCount}
+    </select>
+
+    <update id="updateStatusBathByEquipmentNoInMap" parameterType="map">
+        UPDATE erp_product_equipment epe1 INNER JOIN (
+        SELECT <include refid="column_List"/> FROM erp_product_equipment epe WHERE epe.data_status=1 AND epe.equipment_status = #{maps.oldEquipmentStatus}
+        AND epe.current_warehouse_id = #{maps.warehouseId} AND epe.equipment_no IN
+        <foreach collection="maps.peerDeploymentOrderProductEquipmentDOList" item="PeerDeploymentOrderProductEquipmentDO" open="(" close=")"
+                 separator=",">
+            #{PeerDeploymentOrderProductEquipmentDO.equipmentNo,jdbcType=VARCHAR}
+        </foreach>
+        ORDER BY epe.id LIMIT 0,#{maps.equipmentCount}
+        ) epe2 ON epe1.id = epe2.id SET epe1.update_time = #{maps.updateTime},epe1.update_user = #{maps.updateUser},epe1.equipment_status=#{maps.newEquipmentStatus}
+    </update>
+
+
+    <select id="findBatchByPeerDeploymentOrderNo" parameterType="map" resultMap="ProductEquipmentDO">
+        SELECT <include refid="column_List"/> FROM erp_product_equipment epe INNER JOIN erp_peer_deployment_order_product_equipment epdomb ON
+        epe.id = epdomb.equipment_id AND epdomb.peer_deployment_order_no = #{maps.peerDeploymentOrderNo, jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateStatusBatch" parameterType="map">
+        update erp_product_equipment epe,erp_peer_deployment_order_product_equipment epdomb
+        set epe.equipment_status = #{maps.equipmentStatus, jdbcType=VARCHAR},epe.update_time = #{maps.updateTime,jdbcType=TIMESTAMP},epe.update_user = #{maps.updateUser,jdbcType=INTEGER}
+        where epe.id = epdomb.equipment_id
+        and epdomb.peer_deployment_order_no = #{maps.peerDeploymentOrderNo, jdbcType=VARCHAR}
+    </update>
+
 </mapper>

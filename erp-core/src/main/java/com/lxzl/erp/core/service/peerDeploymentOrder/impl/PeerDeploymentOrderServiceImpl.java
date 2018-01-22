@@ -571,7 +571,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> commitPeerDeploymentOrderOut(String peerDeploymentOrderNo, Integer verifyUserId, String remark) {
+    public ServiceResult<String, String> commitPeerDeploymentOrderReturn(String peerDeploymentOrderNo, Integer verifyUserId, String remark) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date now = new Date();
@@ -629,6 +629,13 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 return serviceResult;
             }
         }else{
+            serviceResult = commitPeerDeploymentOrderStatus(peerDeploymentOrderDO,loginUser.getUserId(),now);
+            if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
+                return serviceResult;
+            }
+
             //不需要审核，直接改变为退回处理中
             peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_PROCESSING_OUT);
             peerDeploymentOrderDO.setUpdateTime(now);
@@ -663,52 +670,55 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             return serviceResult;
         }
 
-        if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderProductDOList())){
+        Integer warehouseId = peerDeploymentOrderDO.getWarehouseId();
+        if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderProductDOList())) {
             List<PeerDeploymentOrderProductDO> peerDeploymentOrderProductDOList = peerDeploymentOrderDO.getPeerDeploymentOrderProductDOList();
 
             //调用出库的方法
-            for (PeerDeploymentOrderProductDO peerDeploymentOrderProductDO : peerDeploymentOrderProductDOList){
-                String operateSkuStockResult = productSupport.operateSkuStock(peerDeploymentOrderProductDO.getProductSkuId(),peerDeploymentOrderProductDO.getProductSkuCount() * -1);
-                if (!ErrorCode.SUCCESS.equals(operateSkuStockResult)){
+            for (PeerDeploymentOrderProductDO peerDeploymentOrderProductDO : peerDeploymentOrderProductDOList) {
+                String operateSkuStockResult = productSupport.operateSkuStock(peerDeploymentOrderProductDO.getProductSkuId(), peerDeploymentOrderProductDO.getProductSkuCount() * -1);
+                if (!ErrorCode.SUCCESS.equals(operateSkuStockResult)) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     serviceResult.setErrorCode(operateSkuStockResult);
                     return serviceResult;
                 }
             }
 
-            List<BulkMaterialDO> bulkMaterialDOList = new ArrayList<>();
-
             List<PeerDeploymentOrderProductEquipmentDO> peerDeploymentOrderProductEquipmentDOList = peerDeploymentOrderProductEquipmentMapper.findByPeerDeploymentOrderProductId(peerDeploymentOrderDO.getId());
-            for (PeerDeploymentOrderProductEquipmentDO peerDeploymentOrderProductEquipmentDO : peerDeploymentOrderProductEquipmentDOList){
-                //设置同行调拨单商品设备的退还时间
-                peerDeploymentOrderProductEquipmentDO.setReturnTime(now);
-                peerDeploymentOrderProductEquipmentDO.setUpdateTime(now);
-                peerDeploymentOrderProductEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                peerDeploymentOrderProductEquipmentMapper.update(peerDeploymentOrderProductEquipmentDO);
+            Map<String, Object> maps = new HashMap<>();
+            //获取同行调拨单下，所有的设备
+            maps.put("peerDeploymentOrderNo", peerDeploymentOrderDO.getPeerDeploymentOrderNo());
+            List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.findBatchByPeerDeploymentOrderNo(maps);
 
+            //改变所有设备的状态
+            maps.put("updateUser", userSupport.getCurrentUserId().toString());
+            maps.put("updateTime", now);
+            maps.put("equipmentStatus", ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_PEER_RETURN_END);
+            productEquipmentMapper.updateStatusBatch(maps);
 
-                ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(peerDeploymentOrderProductEquipmentDO.getEquipmentNo());
-                //更改设备状态
-                productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_PEER_RETURN_END);
-                productEquipmentDO.setUpdateTime(now);
-                productEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                productEquipmentMapper.update(productEquipmentDO);
+            //设置该同行调拨单下所有设备表的归还时间
+            maps.put("returnTime",now);
+            SqlLogInterceptor.setExecuteSql("skip print peerDeploymentOrderProductEquipmentMapper.updateBatchReturnTime  sql ......");
+            peerDeploymentOrderProductEquipmentMapper.updateBatchReturnTime(maps);
 
-                //改变该设备下散料的状态
-                List<BulkMaterialDO> dbBulkMaterialDOList = bulkMaterialMapper.findByEquipmentNo(productEquipmentDO.getEquipmentNo());
-                for (BulkMaterialDO bulkMaterialDO : dbBulkMaterialDOList){
-                    bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURN_END);
-                    bulkMaterialDO.setUpdateTime(now);
-                    bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                    bulkMaterialDOList.add(bulkMaterialDO);
-                }
+            maps.put("warehouseId", warehouseId);
+            maps.put("equipmentCount", peerDeploymentOrderProductEquipmentDOList.size());
+            maps.put("productEquipmentDOList", productEquipmentDOList);
+            maps.put("oldBulkMaterialStatus",BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURNING);
+            SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.findBatchByEquipmentNo  sql ......");
+            //获取所有设备下面的散料
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findBatchByEquipmentNo(maps);
+            if (CollectionUtil.isNotEmpty(bulkMaterialDOList)) {
+                //将设备下面所有散料状态改为已退回
+                maps.put("newBulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURN_END);
+                SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.UpdateStatusBatchByEquipmentNo  sql ......");
+                bulkMaterialMapper.UpdateStatusBatchByEquipmentNo(maps);
             }
-            bulkMaterialMapper.updateList(bulkMaterialDOList);
         }
-
 
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList())){
             List<PeerDeploymentOrderMaterialDO> peerDeploymentOrderMaterialDOList = peerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList();
+
             //调用散料料出库的方法
             for (PeerDeploymentOrderMaterialDO peerDeploymentOrderMaterialDO : peerDeploymentOrderMaterialDOList){
                 String operateMaterialStockResult = materialSupport.operateMaterialStock(peerDeploymentOrderMaterialDO.getMaterialId(),peerDeploymentOrderMaterialDO.getMaterialCount() * -1);
@@ -719,23 +729,23 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 }
             }
 
-            List<BulkMaterialDO> bulkMaterialDOList = new ArrayList<>();
             //获取转移单配件散料单
             List<PeerDeploymentOrderMaterialBulkDO> peerDeploymentOrderMaterialBulkDOList = peerDeploymentOrderMaterialBulkMapper.findByPeerDeploymentOrderId(peerDeploymentOrderDO.getId());
-            for (PeerDeploymentOrderMaterialBulkDO peerDeploymentOrderMaterialBulkDO : peerDeploymentOrderMaterialBulkDOList){
-                //设置同行调拨单配件散料的归还时间
-                peerDeploymentOrderMaterialBulkDO.setReturnTime(now);
-                peerDeploymentOrderMaterialBulkDO.setUpdateTime(now);
-                peerDeploymentOrderMaterialBulkDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                peerDeploymentOrderMaterialBulkMapper.update(peerDeploymentOrderMaterialBulkDO);
+            Map<String,Object> maps = new HashMap<>();
+            //获取同行调拨单物料表下面所有的散料
+            maps.put("peerDeploymentOrderNo", peerDeploymentOrderDO.getPeerDeploymentOrderNo());
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findBatchByPeerDeploymentOrderNo(maps);
 
-                BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(peerDeploymentOrderMaterialBulkDO.getBulkMaterialNo());
-                bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURN_END);
-                bulkMaterialDO.setUpdateTime(now);
-                bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                bulkMaterialDOList.add(bulkMaterialDO);
-            }
-            bulkMaterialMapper.updateList(bulkMaterialDOList);
+            //设置该同行调拨单下所有散料表的归还时间
+            maps.put("updateUser", userSupport.getCurrentUserId().toString());
+            maps.put("updateTime", now);
+            maps.put("returnTime",now);
+            SqlLogInterceptor.setExecuteSql("skip print peerDeploymentOrderProductEquipmentMapper.updateBatchReturnTime  sql ......");
+            peerDeploymentOrderMaterialBulkMapper.updateBatchReturnTime(maps);
+
+            //将所有散料的状态改为已退回
+            maps.put("bulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURN_END);
+            bulkMaterialMapper.updateStatusBatch(maps);
         }
 
         //同行调拨单实际归还时间和状态设置
@@ -1071,65 +1081,76 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
      * 提交同行调拨单归还时改变状态
      */
     private ServiceResult<String,String> commitPeerDeploymentOrderStatus(PeerDeploymentOrderDO peerDeploymentOrderDO, Integer userId, Date now) {
-        ServiceResult<String,String> serviceResult = new ServiceResult<>();
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
         Integer warehouseId = peerDeploymentOrderDO.getWarehouseId();
-        if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderProductDOList())){
-
-            List<BulkMaterialDO> bulkMaterialDOList = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderProductDOList())) {
 
             List<PeerDeploymentOrderProductEquipmentDO> peerDeploymentOrderProductEquipmentDOList = peerDeploymentOrderProductEquipmentMapper.findByPeerDeploymentOrderProductId(peerDeploymentOrderDO.getId());
-            for (PeerDeploymentOrderProductEquipmentDO peerDeploymentOrderProductEquipmentDO : peerDeploymentOrderProductEquipmentDOList){
-                ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(peerDeploymentOrderProductEquipmentDO.getEquipmentNo());
-                //判断设备当前仓库，以及设备的状态
-                if (!warehouseId.equals(productEquipmentDO.getOwnerWarehouseId())){
-                    serviceResult.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE,productEquipmentDO.getEquipmentNo(),warehouseId);
-                    return serviceResult;
-                }
-                if (!ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE.equals(productEquipmentDO.getEquipmentStatus())){
-                    serviceResult.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_IS_NOT_IDLE,productEquipmentDO.getEquipmentNo());
-                    return serviceResult;
-                }
-                //更改设备状态
-                productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_PEER_RETURNING);
-                productEquipmentDO.setUpdateTime(now);
-                productEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                productEquipmentMapper.update(productEquipmentDO);
+            Map<String, Object> maps = new HashMap<>();
 
-                //改变该设备下散料的状态
-                List<BulkMaterialDO> dbBulkMaterialDOList = bulkMaterialMapper.findByEquipmentNo(productEquipmentDO.getEquipmentNo());
-                for (BulkMaterialDO bulkMaterialDO : dbBulkMaterialDOList){
-                    bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_TRANSFER_OUT_END);
-                    bulkMaterialDO.setUpdateTime(now);
-                    bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                    bulkMaterialDOList.add(bulkMaterialDO);
+            maps.put("peerDeploymentOrderNo", peerDeploymentOrderDO.getPeerDeploymentOrderNo());
+            SqlLogInterceptor.setExecuteSql("skip print productEquipmentMapper.findBatchByEquipmentNoInPeerDeploymentOrder  sql ......");
+            //获取同行调拨单下，所有的设备
+            List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.findBatchByPeerDeploymentOrderNo(maps);
+//
+            for (ProductEquipmentDO productEquipmentDO : productEquipmentDOList) {
+                //判断设备当前仓库，以及设备的状态
+                if (!warehouseId.equals(productEquipmentDO.getOwnerWarehouseId())) {
+                    serviceResult.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, productEquipmentDO.getEquipmentNo(), warehouseId);
+                    return serviceResult;
+                }
+                if (!ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE.equals(productEquipmentDO.getEquipmentStatus())) {
+                    serviceResult.setErrorCode(ErrorCode.PRODUCT_EQUIPMENT_IS_NOT_IDLE, productEquipmentDO.getEquipmentNo());
+                    return serviceResult;
                 }
             }
-            bulkMaterialMapper.updateList(bulkMaterialDOList);
+
+            //改变所有设备的状态
+            maps.put("updateUser", userSupport.getCurrentUserId().toString());
+            maps.put("updateTime", now);
+            maps.put("equipmentStatus", ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_PEER_RETURNING);
+            productEquipmentMapper.updateStatusBatch(maps);
+
+            maps.put("warehouseId", warehouseId);
+            maps.put("equipmentCount", peerDeploymentOrderProductEquipmentDOList.size());
+            maps.put("productEquipmentDOList", productEquipmentDOList);
+            maps.put("oldBulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+            SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.findBatchByEquipmentNo  sql ......");
+            //获取所有设备下面的散料
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findBatchByEquipmentNo(maps);
+            if (CollectionUtil.isNotEmpty(bulkMaterialDOList)){
+                //将设备下面所有散料状态改为归还中
+                maps.put("newBulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURNING);
+                bulkMaterialMapper.UpdateStatusBatchByEquipmentNo(maps);
+            }
         }
 
-        if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList())){
-            List<BulkMaterialDO> bulkMaterialDOList = new ArrayList<>();
-
+        if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList())) {
             //获取转移单配件散料单
             List<PeerDeploymentOrderMaterialBulkDO> peerDeploymentOrderMaterialBulkDOList = peerDeploymentOrderMaterialBulkMapper.findByPeerDeploymentOrderId(peerDeploymentOrderDO.getId());
-            for (PeerDeploymentOrderMaterialBulkDO peerDeploymentOrderMaterialBulkDO : peerDeploymentOrderMaterialBulkDOList){
-                BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(peerDeploymentOrderMaterialBulkDO.getBulkMaterialNo());
+            Map<String,Object> maps = new HashMap<>();
+            //获取同行调拨单物料表下面所有的散料
+            maps.put("peerDeploymentOrderNo", peerDeploymentOrderDO.getPeerDeploymentOrderNo());
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findBatchByPeerDeploymentOrderNo(maps);
+
+            for (BulkMaterialDO bulkMaterialDO : bulkMaterialDOList) {
                 //判断散料是否处于同行调拨单的仓库，以及状态是否为空闲中
-                if (!warehouseId.equals(bulkMaterialDO.getOwnerWarehouseId())){
-                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_IN_THE_WAREHOUSE,bulkMaterialDO.getBulkMaterialNo(),warehouseId);
+                if (!warehouseId.equals(bulkMaterialDO.getOwnerWarehouseId())) {
+                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_NOT_IN_THE_WAREHOUSE, bulkMaterialDO.getBulkMaterialNo(), warehouseId);
                     return serviceResult;
                 }
-                if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE.equals(bulkMaterialDO.getBulkMaterialStatus())){
-                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NOT_IDLE,bulkMaterialDO.getBulkMaterialNo());
+                if (!BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE.equals(bulkMaterialDO.getBulkMaterialStatus())) {
+                    serviceResult.setErrorCode(ErrorCode.BULK_MATERIAL_IS_NOT_IDLE, bulkMaterialDO.getBulkMaterialNo());
                     return serviceResult;
                 }
-                bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURNING);
-                bulkMaterialDO.setUpdateTime(now);
-                bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                bulkMaterialDOList.add(bulkMaterialDO);
             }
-            bulkMaterialMapper.updateList(bulkMaterialDOList);
+
+            //将所有散料的状态改为归还中
+            maps.put("updateUser", userSupport.getCurrentUserId().toString());
+            maps.put("updateTime", now);
+            maps.put("bulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURNING);
+            bulkMaterialMapper.updateStatusBatch(maps);
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -1138,43 +1159,48 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
     }
 
     private void restorePeerDeploymentOrderStatus(PeerDeploymentOrderDO peerDeploymentOrderDO, User currentUser, Date now) {
+        Integer warehouseId = peerDeploymentOrderDO.getWarehouseId();
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderProductDOList())){
-            List<BulkMaterialDO> bulkMaterialDOList = new ArrayList<>();
 
             List<PeerDeploymentOrderProductEquipmentDO> peerDeploymentOrderProductEquipmentDOList = peerDeploymentOrderProductEquipmentMapper.findByPeerDeploymentOrderProductId(peerDeploymentOrderDO.getId());
-            for (PeerDeploymentOrderProductEquipmentDO peerDeploymentOrderProductEquipmentDO : peerDeploymentOrderProductEquipmentDOList){
-                ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(peerDeploymentOrderProductEquipmentDO.getEquipmentNo());
-                //更改设备状态
-                productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_PEER_RETURNING);
-                productEquipmentDO.setUpdateTime(now);
-                productEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                productEquipmentMapper.update(productEquipmentDO);
+            Map<String, Object> maps = new HashMap<>();
+            //获取同行调拨单下，所有的设备
+            maps.put("peerDeploymentOrderNo", peerDeploymentOrderDO.getPeerDeploymentOrderNo());
+            SqlLogInterceptor.setExecuteSql("skip print productEquipmentMapper.findBatchByEquipmentNoInPeerDeploymentOrder  sql ......");
+            List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.findBatchByPeerDeploymentOrderNo(maps);
 
-                //改变该设备下散料的状态
-                List<BulkMaterialDO> dbBulkMaterialDOList = bulkMaterialMapper.findByEquipmentNo(productEquipmentDO.getEquipmentNo());
-                for (BulkMaterialDO bulkMaterialDO : dbBulkMaterialDOList){
-                    bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_TRANSFER_OUT_END);
-                    bulkMaterialDO.setUpdateTime(now);
-                    bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                    bulkMaterialDOList.add(bulkMaterialDO);
-                }
+
+            //改变所有设备的状态
+            maps.put("updateUser", userSupport.getCurrentUserId().toString());
+            maps.put("updateTime", now);
+            maps.put("equipmentStatus", ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
+            productEquipmentMapper.updateStatusBatch(maps);
+
+            maps.put("warehouseId", warehouseId);
+//            maps.put("peerDeploymentOrderProductEquipmentDOList", peerDeploymentOrderProductEquipmentDOList);
+            maps.put("equipmentCount", peerDeploymentOrderProductEquipmentDOList.size());
+            maps.put("productEquipmentDOList", productEquipmentDOList);
+            maps.put("oldBulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURNING);
+            SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.findBatchByEquipmentNo  sql ......");
+            //获取所有设备下面的散料
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findBatchByEquipmentNo(maps);
+            if (CollectionUtil.isNotEmpty(bulkMaterialDOList)){
+                //将设备下面所有散料状态改为闲置中
+                maps.put("newBulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+                bulkMaterialMapper.UpdateStatusBatchByEquipmentNo(maps);
             }
-            bulkMaterialMapper.updateList(bulkMaterialDOList);
         }
 
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList())){
-            List<BulkMaterialDO> bulkMaterialDOList = new ArrayList<>();
-
             //获取转移单配件散料单
             List<PeerDeploymentOrderMaterialBulkDO> peerDeploymentOrderMaterialBulkDOList = peerDeploymentOrderMaterialBulkMapper.findByPeerDeploymentOrderId(peerDeploymentOrderDO.getId());
-            for (PeerDeploymentOrderMaterialBulkDO peerDeploymentOrderMaterialBulkDO : peerDeploymentOrderMaterialBulkDOList){
-                BulkMaterialDO bulkMaterialDO = bulkMaterialMapper.findByNo(peerDeploymentOrderMaterialBulkDO.getBulkMaterialNo());
-                bulkMaterialDO.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURNING);
-                bulkMaterialDO.setUpdateTime(now);
-                bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                bulkMaterialDOList.add(bulkMaterialDO);
-            }
-            bulkMaterialMapper.updateList(bulkMaterialDOList);
+            Map<String,Object> maps = new HashMap<>();
+            //将所有散料的状态改为闲置中
+            maps.put("peerDeploymentOrderNo", peerDeploymentOrderDO.getPeerDeploymentOrderNo());
+            maps.put("updateUser", userSupport.getCurrentUserId().toString());
+            maps.put("updateTime", now);
+            maps.put("bulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+            bulkMaterialMapper.updateStatusBatch(maps);
         }
     }
 

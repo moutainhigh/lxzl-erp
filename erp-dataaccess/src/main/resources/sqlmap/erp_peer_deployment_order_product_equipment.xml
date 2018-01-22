@@ -154,6 +154,10 @@
 	<select id="findByPeerDeploymentOrderProductId" resultMap="PeerDeploymentOrderProductEquipmentDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order_product_equipment epdope WHERE
 		epdope.peer_deployment_order_id = #{peerDeploymentOrderId, jdbcType=INTEGER} AND epdope.data_status = 1
-
 	</select>
+	
+	<update id="updateBatchReturnTime" parameterType="map">
+		UPDATE erp_peer_deployment_order_product_equipment epdope SET epdope.return_time = #{maps.returnTime},epdope.update_time = #{maps.updateTime},epdope.update_user = #{maps.updateUser}
+		where epdope.peer_deployment_order_no = #{maps.peerDeploymentOrderNo, jdbcType=VARCHAR}
+	</update>
 </mapper>
