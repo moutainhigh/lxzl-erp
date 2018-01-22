@@ -35,6 +35,8 @@
 		<result column="new_material_price" jdbcType="DECIMAL" property="newMaterialPrice" />
 		<result column="new_day_rent_price" jdbcType="DECIMAL" property="newDayRentPrice" />
 		<result column="new_month_rent_price" jdbcType="DECIMAL" property="newMonthRentPrice" />
+		<result column="new_material_count" jdbcType="INTEGER" property="newMaterialCount" />
+		<result column="old_material_count" jdbcType="INTEGER" property="oldMaterialCount" />
 		<collection property="materialImgDOList" resultMap="MaterialImgDO" />
 	</resultMap>
 
@@ -175,12 +177,32 @@
 		(
 			SELECT <include refid="column_List"/>
 			<trim prefix=",">
-				emm.model_name AS material_model_name, eb.brand_name as brand_name, emt.material_type_name as material_type_name
+				emm.model_name AS material_model_name, eb.brand_name as brand_name, emt.material_type_name as material_type_name, IFNULL(newCountRecord.new_material_count,0) as new_material_count,IFNULL(oldCountRecord.old_material_count,0) as old_material_count
 			</trim>
 			FROM erp_material em
 			LEFT JOIN erp_material_model emm ON em.material_model_id = emm.id
 			LEFT JOIN erp_material_type emt ON em.material_type = emt.id
 			LEFT JOIN erp_brand eb ON eb.id = em.brand_id
+			LEFT JOIN (SELECT ebm.material_id,count(ebm.id) AS old_material_count FROM erp_bulk_material ebm
+						<where>
+							<if test="maps.warehouseId != null">
+								and ebm.current_warehouse_id = #{maps.warehouseId, jdbcType=INTEGER}
+							</if>
+							<if test="true">
+								AND ebm.bulk_material_status = 1 and ebm.is_new = 0 AND ebm.data_status = 1
+							</if>
+						</where>
+						group by ebm.material_id) oldCountRecord ON oldCountRecord.material_id = em.id
+			LEFT JOIN (SELECT ebm.material_id,count(ebm.id) AS new_material_count FROM erp_bulk_material ebm
+						<where>
+							<if test="maps.warehouseId != null">
+								and ebm.current_warehouse_id = #{maps.warehouseId, jdbcType=INTEGER}
+							</if>
+							<if test="true">
+								AND ebm.bulk_material_status = 1 and ebm.is_new = 1 AND ebm.data_status = 1
+							</if>
+						</where>
+						group by ebm.material_id) newCountRecord ON newCountRecord.material_id = em.id
 			<where>
 				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialType != null &amp;&amp; maps.materialQueryParam.materialType != ''">
 					and em.material_type = #{maps.materialQueryParam.materialType, jdbcType=INTEGER}

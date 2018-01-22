@@ -406,30 +406,14 @@ public class MaterialServiceImpl implements MaterialService {
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("materialQueryParam", materialQueryParam);
 
+        if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
+            WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
+            maps.put("warehouseId", warehouseDO.getId());
+        }
+
         Integer totalCount = materialMapper.listCount(maps);
         List<MaterialDO> materialDOList = materialMapper.listPage(maps);
         List<Material> materialList = ConverterUtil.convertList(materialDOList, Material.class);
-        for (Material material : materialList) {
-            BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
-            bulkMaterialQueryParam.setMaterialId(material.getMaterialId());
-            bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
-
-            if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
-                WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
-                bulkMaterialQueryParam.setCurrentWarehouseId(warehouseDO.getId());
-            }
-
-            Map<String, Object> queryEquipmentCountParam = new HashMap<>();
-            queryEquipmentCountParam.put("start", 0);
-            queryEquipmentCountParam.put("pageSize", Integer.MAX_VALUE);
-            queryEquipmentCountParam.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
-            Integer newProductSkuCount = bulkMaterialMapper.listCount(queryEquipmentCountParam);
-            bulkMaterialQueryParam.setIsNew(CommonConstant.COMMON_CONSTANT_NO);
-            queryEquipmentCountParam.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
-            Integer oldProductSkuCount = bulkMaterialMapper.listCount(queryEquipmentCountParam);
-            material.setNewMaterialCount(newProductSkuCount);
-            material.setOldMaterialCount(oldProductSkuCount);
-        }
         Page<Material> page = new Page<>(materialList, totalCount, materialQueryParam.getPageNo(), materialQueryParam.getPageSize());
 
         result.setErrorCode(ErrorCode.SUCCESS);
