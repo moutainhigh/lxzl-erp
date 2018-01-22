@@ -533,6 +533,13 @@ public class CustomerServiceImpl implements CustomerService {
 
         Integer totalCount = customerMapper.findCustomerCompanyCountByParams(maps);
         List<CustomerDO> customerDOList = customerMapper.findCustomerCompanyByParams(maps);
+        if(CollectionUtil.isNotEmpty(customerDOList)){
+            for(CustomerDO customerDO : customerDOList){
+                //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
+                processCustomerPhone(customerDO);
+            }
+        }
+
         List<Customer> customerList = ConverterUtil.convertList(customerDOList, Customer.class);
         Page<Customer> page = new Page<>(customerList, totalCount, customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
 
@@ -554,6 +561,12 @@ public class CustomerServiceImpl implements CustomerService {
 
         Integer totalCount = customerMapper.findCustomerPersonCountByParams(maps);
         List<CustomerDO> customerDOList = customerMapper.findCustomerPersonByParams(maps);
+        if(CollectionUtil.isNotEmpty(customerDOList)){
+            for(CustomerDO customerDO : customerDOList){
+                //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
+                processCustomerPhone(customerDO);
+            }
+        }
         List<Customer> customerPersonList = ConverterUtil.convertList(customerDOList, Customer.class);
         Page<Customer> page = new Page<>(customerPersonList, totalCount, customerPersonQueryParam.getPageNo(), customerPersonQueryParam.getPageSize());
 
@@ -581,7 +594,8 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
-
+        //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
+        processCustomerPhone(customerDO);
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         customerResult.setCustomerAccount(customerAccount);
@@ -709,7 +723,38 @@ public class CustomerServiceImpl implements CustomerService {
         serviceResult.setResult(customerResult);
         return serviceResult;
     }
+    private String hidePhone(String phone){
+        String hidePhone = phone;
+        if(StringUtil.isNotEmpty(phone)&&phone.length()>=4){
+            hidePhone = phone.substring(0,phone.length()-4)+"****";
+        }
+        return hidePhone;
+    }
 
+    private void processCustomerPhone(CustomerDO customerDO){
+        if (!userSupport.getCurrentUserId().equals(customerDO.getOwner()) &&
+                !userSupport.getCurrentUserId().equals(customerDO.getUnionUser()) &&
+                !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser()))){
+            CustomerCompanyDO customerCompanyDO = customerDO.getCustomerCompanyDO();
+            if(customerCompanyDO!=null){
+//                customerCompanyDO.setConnectPhone(hidePhone(customerCompanyDO.getConnectPhone()));
+//                customerCompanyDO.setAgentPersonPhone(hidePhone(customerCompanyDO.getAgentPersonPhone()));
+//                customerCompanyDO.setLegalPersonPhone(hidePhone(customerCompanyDO.getLegalPersonPhone()));
+//                customerCompanyDO.setLandline(hidePhone(customerCompanyDO.getLandline()));
+                customerCompanyDO.setConnectPhone(null);
+                customerCompanyDO.setAgentPersonPhone(null);
+                customerCompanyDO.setLegalPersonPhone(null);
+                customerCompanyDO.setLandline(null);
+            }
+            CustomerPersonDO customerPersonDO = customerDO.getCustomerPersonDO();
+            if(customerPersonDO!=null){
+//                customerPersonDO.setPhone(hidePhone(customerPersonDO.getPhone()));
+//                customerPersonDO.setConnectPhone(hidePhone(customerPersonDO.getConnectPhone()));
+                customerPersonDO.setPhone(null);
+                customerPersonDO.setConnectPhone(null);
+            }
+        }
+    }
     @Override
     public ServiceResult<String, Customer> detailCustomer(String customerNo) {
         ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
@@ -724,6 +769,19 @@ public class CustomerServiceImpl implements CustomerService {
             customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
         }
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
+        List<Integer> dataAccessPassiveUserList = permissionSupport.getCanAccessPassiveUserList(userSupport.getCurrentUserId());
+        //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人  并且当前用户的可观察列表中不包含当前数据的创建人，则不允许看此条数据
+        if (!userSupport.getCurrentUserId().equals(customerDO.getOwner()) &&
+                !userSupport.getCurrentUserId().equals(customerDO.getUnionUser()) &&
+                !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser())) &&
+                !dataAccessPassiveUserList.contains(Integer.parseInt(customerDO.getCreateUser())) &&
+                !dataAccessPassiveUserList.contains(customerDO.getOwner()) &&
+                !dataAccessPassiveUserList.contains(customerDO.getUnionUser())) {
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return serviceResult;
+        }
+        //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
+        processCustomerPhone(customerDO);
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         //显示联合开发原的省，市，区
         if (customerDO.getUnionUser() != null) {
@@ -754,6 +812,19 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
+        List<Integer> dataAccessPassiveUserList = permissionSupport.getCanAccessPassiveUserList(userSupport.getCurrentUserId());
+        //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人  并且当前用户的可观察列表中不包含当前数据的创建人，则不允许看此条数据
+        if (!userSupport.getCurrentUserId().equals(customerDO.getOwner()) &&
+                !userSupport.getCurrentUserId().equals(customerDO.getUnionUser()) &&
+                !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser())) &&
+                !dataAccessPassiveUserList.contains(Integer.parseInt(customerDO.getCreateUser())) &&
+                !dataAccessPassiveUserList.contains(customerDO.getOwner()) &&
+                !dataAccessPassiveUserList.contains(customerDO.getUnionUser())) {
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return serviceResult;
+        }
+        //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
+        processCustomerPhone(customerDO);
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         //显示联合开发原的省，市，区

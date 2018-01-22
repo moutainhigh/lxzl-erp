@@ -179,7 +179,7 @@
                             </td>
                             <td>
                                 <label class="field prepend-icon mw200">
-                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入租赁数量" />
+                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
                                 </label>
                             </td>
                             <td>
@@ -196,7 +196,7 @@
                             <td>
                                 <div class="mw200">
                                     <label class="field prepend-icon">
-                                        <input type="text" name="rentTimeLength-{{skuId}}-{{rowKey}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required number pl10" placeholder="租赁时长" />
+                                        <input type="text" name="rentTimeLength-{{skuId}}-{{rowKey}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required checkInteger pl10" placeholder="租赁时长" />
                                     </label>
                                 </div>
                             </td>
@@ -307,7 +307,7 @@
                             </td>
                             <td>
                                 <label class="field prepend-icon mw200">
-                                    <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入租赁数量" />
+                                    <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
                                 </label>
                             </td>
                             <td>
@@ -324,7 +324,7 @@
                             <td>
                                 <div class="mw200">
                                     <label class="field prepend-icon">
-                                        <input type="text" name="rentTimeLength-{{materialNo}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required number pl10" placeholder="租赁时长" />
+                                        <input type="text" name="rentTimeLength-{{materialNo}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required checkInteger pl10" placeholder="租赁时长" />
                                     </label>
                                 </div>
                             </td>

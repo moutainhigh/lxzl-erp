@@ -44,7 +44,7 @@
                                     <dl class="dl-horizontal">
                                         <dt>同行</dt><dd class="mb10">{{peerName}}</dd>
 
-                                        <dt>优惠金额</dt><dd class="mb10">￥{{#price}}{{totalDiscountAmount}}{{/price}}</dd>
+##                                        <dt>优惠金额</dt><dd class="mb10">￥{{#price}}{{totalDiscountAmount}}{{/price}}</dd>
 
                                         <dt>税率</dt><dd class="mb10">{{taxRate}}</dd>
 

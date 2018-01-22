@@ -11,6 +11,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -28,10 +29,13 @@ public class UpdateReturnOrderParam {
     private String remark;
     @NotNull(message = ErrorCode.RETURN_ORDER_IS_CHARGING_IS_NOT_NULL)
     private Integer isCharging;
-
+    @NotNull(message = ErrorCode.RETURN_TIME_NOT_NULL)
+    private Date returnTime;
     @In(value = {ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR, ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_MAIL}, message = ErrorCode.RETURN_OR_CHANGE_MODE_ERROR)
     @NotNull(message = ErrorCode.RETURN_OR_CHANGE_MODE_NOT_NULL)
     private Integer returnMode;   //退还方式，1-上门取件，2邮寄
+    @NotNull(message = ErrorCode.RETURN_REASON_TYPE_NOT_NULL)
+    private Integer returnReasonType;   //退还原因类型
 
     public String getReturnOrderNo() {
         return returnOrderNo;
@@ -87,5 +91,21 @@ public class UpdateReturnOrderParam {
 
     public void setReturnMode(Integer returnMode) {
         this.returnMode = returnMode;
+    }
+
+    public Date getReturnTime() {
+        return returnTime;
+    }
+
+    public void setReturnTime(Date returnTime) {
+        this.returnTime = returnTime;
+    }
+
+    public Integer getReturnReasonType() {
+        return returnReasonType;
+    }
+
+    public void setReturnReasonType(Integer returnReasonType) {
+        this.returnReasonType = returnReasonType;
     }
 }

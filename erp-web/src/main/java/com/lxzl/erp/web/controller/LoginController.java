@@ -28,4 +28,9 @@ public class LoginController extends BaseController {
 		return "/login";
 	}
 
+	@RequestMapping(value = "/uppwd")
+	public String uppwd(HttpServletRequest request, HttpServletResponse response, Model model) {
+		return "/uppwd";
+	}
+
 }

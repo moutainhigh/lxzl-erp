@@ -15,14 +15,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group field">
-                    <label class="col-md-3 control-label">优惠金额</label>
-                    <div class="col-md-9">
-                        <div class="input-group" style="width: 100%;">
-                            <input type="text" class="form-control required moneyNumber" name="totalDiscountAmount" id="totalDiscountAmount" />
-                        </div>
-                    </div>
-                </div>
+##                <div class="form-group field">
+##                    <label class="col-md-3 control-label">优惠金额</label>
+##                    <div class="col-md-9">
+##                        <div class="input-group" style="width: 100%;">
+##                            <input type="text" class="form-control required moneyNumber" name="totalDiscountAmount" id="totalDiscountAmount" />
+##                        </div>
+##                    </div>
+##                </div>
                 <div class="form-group field">
                     <label class="col-md-3 control-label">税率</label>
                     <div class="col-md-9">
@@ -120,7 +120,7 @@
                             <label class="col-md-6 control-label">租期</label>
                             <div class="col-md-6">
                                 <div class="input-group" style="width: 100%;">
-                                    <input type="text" class="form-control required number" name="rentTimeLength" id="rentTimeLength" />
+                                    <input type="text" class="form-control required checkInteger" name="rentTimeLength" id="rentTimeLength" />
                                 </div>
                             </div>
                         </div>
@@ -211,7 +211,7 @@
                             </td>
                             <td>
                                 <label class="field prepend-icon">
-                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productSkuCount}}" class="productSkuCount form-control required number pl10" placeholder="输入调拨数量" />
+                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productSkuCount}}" class="productSkuCount form-control required checkInteger pl10" placeholder="输入调拨数量" />
                                 </label>
                             </td>
                             <td class="text-right">
@@ -291,7 +291,7 @@
                             </td>
                             <td>
                                 <label class="field prepend-icon">
-                                    <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入调拨数量" />
+                                    <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required checkInteger pl10" placeholder="输入调拨数量" />
                                 </label>
                             </td>
                             <td class="text-right">

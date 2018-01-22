@@ -176,7 +176,7 @@
                             </td>
                             <td>
                                 <label class="field prepend-icon mw200">
-                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入采购数量" />
+                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入采购数量" />
                                 </label>
                             </td>
                             <td class="text-right">
@@ -222,7 +222,7 @@
                                                             </td>
                                                             <td style="width: 40%;">
                                                                 <label class="field prepend-icon mw200">
-                                                                    <input type="text" name="productAmount-{{skuId}}-{{rowKey}}" value="{{materialCount}}" class="materialCount form-control required number" placeholder="填写数量" />
+                                                                    <input type="text" name="productAmount-{{skuId}}-{{rowKey}}" value="{{materialCount}}" class="materialCount form-control required checkInteger" placeholder="填写数量" />
                                                                 </label>
                                                             </td>
                                                             <td style="width: 10%;">
@@ -331,7 +331,7 @@
                             </td>
                             <td>
                                 <label class="field prepend-icon mw200">
-                                    <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入采购数量" />
+                                    <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required checkInteger pl10" placeholder="输入采购数量" />
                                 </label>
                             </td>
                             <td class="text-right">

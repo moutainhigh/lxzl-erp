@@ -1,7 +1,7 @@
 package com.lxzl.erp.web.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.lxzl.erp.ERPTransactionalTest;
+import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ReturnOrChangeMode;
@@ -10,19 +10,19 @@ import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderConsignInfo;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderMaterial;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProduct;
-import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 
-public class ReturnOrderControllerTest extends ERPTransactionalTest {
+public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void create() throws Exception {
         AddReturnOrderParam addReturnOrderParam = new AddReturnOrderParam();
         addReturnOrderParam.setCustomerNo("C201711152010206581143");
+        addReturnOrderParam.setReturnTime(new Date());
         addReturnOrderParam.setReturnMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
         List<ReturnOrderProduct> returnOrderProductList = new ArrayList<>();
         ReturnOrderProduct returnOrderProduct = new ReturnOrderProduct();
