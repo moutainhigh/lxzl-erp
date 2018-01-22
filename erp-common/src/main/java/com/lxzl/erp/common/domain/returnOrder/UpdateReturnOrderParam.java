@@ -36,6 +36,8 @@ public class UpdateReturnOrderParam {
     private Integer returnMode;   //退还方式，1-上门取件，2邮寄
     @NotNull(message = ErrorCode.RETURN_REASON_TYPE_NOT_NULL)
     private Integer returnReasonType;   //退还原因类型
+    @NotNull(message = ErrorCode.SALES_MAN_NOT_NULL)
+    private Integer owner;   //业务员用户ID
 
     public String getReturnOrderNo() {
         return returnOrderNo;
@@ -107,5 +109,13 @@ public class UpdateReturnOrderParam {
 
     public void setReturnReasonType(Integer returnReasonType) {
         this.returnReasonType = returnReasonType;
+    }
+
+    public Integer getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Integer owner) {
+        this.owner = owner;
     }
 }

@@ -367,9 +367,15 @@
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
                                                     {{#rowActionButtons}}
-                                                    <a href="#" type="button" class="btn btn-default btn-xs {{class}}" data-materialno="{{materialNo}}" data-materialid="{{materialId}}" data-orderno="{{orderNo}}" data-materialcount="{{materialCount}}">{{text}}</a>
+                                                    <a href="#"
+                                                       class="btn btn-default btn-xs {{class}}"
+                                                       data-materialno="{{materialNo}}"
+                                                       data-materialid="{{materialId}}"
+                                                       data-orderno="{{orderNo}}"
+                                                       data-materialcount="{{materialCount}}"
+                                                       data-isnewmaterial="{{isNewMaterial}}">{{text}}</a>
                                                     {{/rowActionButtons}}
-                                                    <a href="#" type="button" class="btn btn-default btn-xs viewAffix" >查看配货信息</a>
+                                                    <a href="#" class="btn btn-default btn-xs viewAffix" >查看配货信息</a>
                                                 </div>
                                             </td>
                                         </tr>
