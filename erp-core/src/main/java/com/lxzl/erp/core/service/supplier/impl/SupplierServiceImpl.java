@@ -109,11 +109,13 @@ public class SupplierServiceImpl implements SupplierService {
         }
 
         String beneficiaryAccount = supplier.getBeneficiaryAccount();
-        if (beneficiaryAccount != null) {
-            beneficiaryAccount = beneficiaryAccount.replaceAll(" ", "");
+        if(beneficiaryAccount == null){
+            supplier.setBeneficiaryAccount(null);
+        }else {
             if (beneficiaryAccount.matches("^[0-9]+$") && beneficiaryAccount.length() <= 19 && beneficiaryAccount.length() >= 16) {
+                beneficiaryAccount = beneficiaryAccount.replaceAll(" ", "");
                 supplier.setBeneficiaryAccount(beneficiaryAccount);
-            } else {
+            }else{
                 result.setErrorCode(ErrorCode.BANK_NO_ERROR);
                 return result;
             }
@@ -165,11 +167,13 @@ public class SupplierServiceImpl implements SupplierService {
         }
 
         String beneficiaryAccount = supplier.getBeneficiaryAccount();
-        if (beneficiaryAccount != null) {
-            beneficiaryAccount = beneficiaryAccount.replaceAll(" ", "");
+        if(beneficiaryAccount == null){
+            supplier.setBeneficiaryAccount(null);
+        }else{
             if (beneficiaryAccount.matches("^[0-9]+$") && beneficiaryAccount.length() <= 19 && beneficiaryAccount.length() >= 16) {
+                beneficiaryAccount = beneficiaryAccount.replaceAll(" ", "");
                 supplier.setBeneficiaryAccount(beneficiaryAccount);
-            } else {
+            }else{
                 result.setErrorCode(ErrorCode.BANK_NO_ERROR);
                 return result;
             }

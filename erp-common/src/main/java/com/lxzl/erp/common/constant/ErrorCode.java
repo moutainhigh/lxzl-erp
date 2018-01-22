@@ -821,7 +821,7 @@ public class ErrorCode {
         MAP.put(SUPPLIER_NAME_IS_NULL, "供应商名字有空格");
         MAP.put(MUST_HAVE_MAIN, "含有小配件的整机四大件采购单必须有整机");
         MAP.put(SUPPLIER_NAME_NOT_NULL, "供应商名字不能为空");
-        MAP.put(SUPPLIER_CODE_NOT_CN, "自定义编码只能输入英数和 _  - ");
+        MAP.put(SUPPLIER_CODE_NOT_CN, "自定义编码只能输入英文和数字和（下及中画线符号）");
         MAP.put(SUPPLIER_CODE_IS_LENGTH, "自定义编码长度超过20");
         MAP.put(BENEFICIARY_BANK_NAME_IS_LENGTH, "收款开户行长度超过100");
         MAP.put(BENEFICIARY_NAME_IS_LENGTH, "收款户名长度超过100");
@@ -1088,7 +1088,7 @@ public class ErrorCode {
         MAP.put(PEER_DEPLOYMENT_ORDER_DELIVERY_MODE_NOT_NULL, "同行调拨单发货方式不能为空");
         MAP.put(PEER_DEPLOYMENT_ORDER_STATUS_NEED_CONFIRM, "同行调拨单只有确认收货状态，才能进行归还审核");
         MAP.put(USER_CAN_NOT_OPERATION_PEER_DEPLOYMENT_ORDER_WAREHOUSE, "该用户不能操作这个仓库下的同行调拨单。");
-        MAP.put(PEER_DEPLOYMENT_ORDER_CONSIGN_INFO_PHONE_IS_MATH, "同行调拨收货信息单只能輸入数字");
+        MAP.put(PEER_DEPLOYMENT_ORDER_CONSIGN_INFO_PHONE_IS_MATH, "同行调拨收货信息单手机号只能輸入数字");
         MAP.put(PEER_DEPLOYMENT_ORDER_RENT_TYPE_IS_ERROR, "同行调拨单租赁方式只能选天租和月租");
         MAP.put(PEER_DEPLOYMENT_ORDER_DELIVERY_MODE_IS_ERROR, "同行调拨单发货方式只能快递和自提");
         MAP.put(PEER_DEPLOYMENT_ORDER_STATUS_NEED_PROCESSING_OUT, "只有状态为退回处理中的同行调拨单才能进行此操作");
