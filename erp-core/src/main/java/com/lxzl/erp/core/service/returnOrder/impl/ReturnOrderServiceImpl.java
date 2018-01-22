@@ -33,6 +33,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.*;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
@@ -41,6 +42,7 @@ import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.returnOrder.*;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +67,11 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         CustomerDO customerDO = customerMapper.findCustomerPersonByNo(addReturnOrderParam.getCustomerNo());
         if (customerDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+        UserDO owner = userMapper.findByUserId(addReturnOrderParam.getOwner());
+        if(owner==null){
+            serviceResult.setErrorCode(ErrorCode.SALES_MAN_NOT_NULL);
             return serviceResult;
         }
         //校验退还商品项sku不能重复
@@ -186,7 +193,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
         returnOrderDO.setReturnReasonType(addReturnOrderParam.getReturnReasonType());
         returnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        returnOrderDO.setOwner(userSupport.getCurrentUserId());
+        returnOrderDO.setOwner(owner.getId());
         returnOrderDO.setRemark(addReturnOrderParam.getRemark());
         returnOrderDO.setCreateTime(now);
         returnOrderDO.setUpdateTime(now);
@@ -739,6 +746,11 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_CAN_NOT_UPDATE);
             return serviceResult;
         }
+        UserDO owner = userMapper.findByUserId(updateReturnOrderParam.getOwner());
+        if(owner==null){
+            serviceResult.setErrorCode(ErrorCode.SALES_MAN_NOT_NULL);
+            return serviceResult;
+        }
         //校验退还商品项sku不能重复
         List<ReturnOrderProduct> returnOrderProductList = updateReturnOrderParam.getReturnOrderProductList();
         Set<Integer> skuIdSet = new HashSet<>();
@@ -933,7 +945,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
         returnOrderDO.setReturnReasonType(updateReturnOrderParam.getReturnReasonType());
         returnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        returnOrderDO.setOwner(userSupport.getCurrentUserId());
+        returnOrderDO.setOwner(owner.getId());
         returnOrderDO.setRemark(updateReturnOrderParam.getRemark());
         returnOrderDO.setUpdateTime(now);
         returnOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -1099,6 +1111,8 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     private GenerateNoSupport generateNoSupport;
     @Autowired
     private PermissionSupport permissionSupport;
+    @Autowired
+    private UserMapper userMapper;
 
 
 }

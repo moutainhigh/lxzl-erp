@@ -235,6 +235,7 @@
 		SELECT count(ero.id)
 		FROM erp_return_order ero
 		left join erp_user eu on ero.owner = eu.id
+		left join erp_user euc on ero.create_user = euc.id
 		left join erp_customer ec on ero.customer_id = ec.id
 		<where>
 			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.returnOrderNo != null &amp;&amp; maps.returnOrderPageParam.returnOrderNo != ''">
@@ -256,7 +257,9 @@
 				and ero.return_mode = #{maps.returnOrderPageParam.returnMode, jdbcType=INTEGER}
 			</if>
 			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.ownerName != null &amp;&amp; maps.returnOrderPageParam.ownerName != ''">
-				and eu.real_name like CONCAT('%','${maps.returnOrderPageParam.ownerName}','%' )
+				and (eu.real_name like CONCAT('%','${maps.returnOrderPageParam.ownerName}','%' )
+				or euc.real_name like CONCAT('%','${maps.returnOrderPageParam.ownerName}','%' )
+				)
 			</if>
 			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.createStartTime != null ">
 				<![CDATA[ AND ero.create_time >= #{maps.returnOrderPageParam.createStartTime} ]]>
@@ -276,6 +279,7 @@
 		SELECT <include refid="column_List"/>
 		FROM erp_return_order ero
 		left join erp_user eu on ero.owner = eu.id
+		left join erp_user euc on ero.create_user = euc.id
 		left join erp_customer ec on ero.customer_id = ec.id
 		<where>
 			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.returnOrderNo != null &amp;&amp; maps.returnOrderPageParam.returnOrderNo != ''">
@@ -291,7 +295,9 @@
 				and ero.return_order_status = #{maps.returnOrderPageParam.returnOrderStatus, jdbcType=INTEGER}
 			</if>
 			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.ownerName != null &amp;&amp; maps.returnOrderPageParam.ownerName != ''">
-				and eu.real_name like CONCAT('%','${maps.returnOrderPageParam.ownerName}','%' )
+				and (eu.real_name like CONCAT('%','${maps.returnOrderPageParam.ownerName}','%' )
+						or euc.real_name like CONCAT('%','${maps.returnOrderPageParam.ownerName}','%' )
+				)
 			</if>
 			<if test="maps.returnOrderPageParam != null &amp;&amp; maps.returnOrderPageParam.createStartTime != null ">
 				<![CDATA[ AND ero.create_time >= #{maps.returnOrderPageParam.createStartTime} ]]>

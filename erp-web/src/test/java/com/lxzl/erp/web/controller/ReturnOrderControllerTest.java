@@ -23,6 +23,8 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
         AddReturnOrderParam addReturnOrderParam = new AddReturnOrderParam();
         addReturnOrderParam.setCustomerNo("C201711152010206581143");
         addReturnOrderParam.setReturnTime(new Date());
+        addReturnOrderParam.setOwner(500005);
+        addReturnOrderParam.setReturnReasonType(1);
         addReturnOrderParam.setReturnMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
         List<ReturnOrderProduct> returnOrderProductList = new ArrayList<>();
         ReturnOrderProduct returnOrderProduct = new ReturnOrderProduct();
@@ -70,29 +72,29 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
     }
 
     @Test
-    public void create2() throws Exception {
-        AddReturnOrderParam addReturnOrderParam = JSON.parseObject("{\n" +
-                "  \"customerNo\": \"CP201712060843154191841\",\n" +
-                "  \"isCharging\": \"1\",\n" +
-                "  \"remark\": \"退货\",\n" +
-                "  \"returnMode\": \"1\",\n" +
-                "  \"returnOrderConsignInfo\": {\n" +
-                "    \"consigneeName\": \"黎文\",\n" +
-                "    \"consigneePhone\": \"18033402833\",\n" +
-                "    \"province\": 19,\n" +
-                "    \"city\": 202,\n" +
-                "    \"district\": 1956,\n" +
-                "    \"address\": \"车公庙安华工业区\"\n" +
-                "  },\n" +
-                "  \"returnOrderProductList\": [{\n" +
-                "    \"returnProductSkuId\": 76,\n" +
-                "    \"returnProductSkuCount\": \"4\"\n" +
-                "  }],\n" +
-                "  \"returnOrderMaterialList\": [{\n" +
-                "    \"returnMaterialNo\": \"M201711201356145971009\",\n" +
-                "    \"returnMaterialCount\": \"2\"\n" +
-                "  }]\n" +
-                "}", AddReturnOrderParam.class);
+    public void createJson() throws Exception {
+        String json = "{\n" +
+                "\t\"customerNo\": \"CP201712060843154191841\",\n" +
+                "\t\"isCharging\": \"1\",\n" +
+                "\t\"remark\": \"退货\",\n" +
+                "\t\"returnMode\": \"1\",\n" +
+                "\t\"returnTime\": 1516492800000,\n" +
+                "\t\"returnReasonType\": \"1\",\n" +
+                "\t\"returnOrderConsignInfo\": {\n" +
+                "\t\t\"consigneeName\": \"黎文彬\",\n" +
+                "\t\t\"consigneePhone\": \"13638699632\",\n" +
+                "\t\t\"province\": 1,\n" +
+                "\t\t\"city\": 1,\n" +
+                "\t\t\"district\": 1,\n" +
+                "\t\t\"address\": \"茶飘香\"\n" +
+                "\t},\n" +
+                "\t\"returnOrderProductList\": [{\n" +
+                "\t\t\"returnProductSkuId\": 215,\n" +
+                "\t\t\"returnProductSkuCount\": \"1\"\n" +
+                "\t}],\n" +
+                "\t\"returnOrderMaterialList\": []\n" +
+                "}\n";
+        AddReturnOrderParam addReturnOrderParam = JSON.parseObject(json, AddReturnOrderParam.class);
         TestResult testResult = getJsonTestResult("/returnOrder/add", addReturnOrderParam);
     }
 
@@ -156,7 +158,8 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void page() throws Exception {
         ReturnOrderPageParam returnOrderPageParam = new ReturnOrderPageParam();
-        returnOrderPageParam.setCustomerName("星期五早上_不要动");
+//        returnOrderPageParam.setCustomerName("星期五早上_不要动");
+        returnOrderPageParam.setOwnerName("毛涛");
 //        returnOrderPageParam.setReturnOrderNo("RO201711291746283331383");
 //        returnOrderPageParam.setEquipmentNo("LX-EQUIPMENT-4000002-2017112010006");
 //        returnOrderPageParam.setReturnOrderNo("RO20171129174628333138");
