@@ -39,6 +39,16 @@
                     </div>
                 </div>
                 <div class="section row">
+                   <div class="col-md-12">
+                       <label class="field-label">退还时间</label>
+                       <div for="returnTime" id="returnTimePicker" class="field prepend-icon">
+                           <input type="text" id="returnTime" name="returnTime" class="gui-input hasDatepicker required" placeholder="">
+                           <label class="field-icon"><i class="fa fa-calendar-o"></i>
+                           </label>
+                       </div>
+                   </div>
+                </div>
+                <div class="section row">
                     <div class="col-md-12">
                         <label for="remark" class="field-label">备注</label>
                         <label for="remark" class="field prepend-icon">

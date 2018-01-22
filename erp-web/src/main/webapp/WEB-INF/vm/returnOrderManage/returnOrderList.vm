@@ -84,6 +84,7 @@
                                 <th>服务费</th>
                                 <th>损坏加收费</th>
                                 <th>状态</th>
+                                <th>退还日期</th>
                                 <th>创建人</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
@@ -109,6 +110,7 @@
                                 <td>￥{{#price}}{{serviceCost}}{{/price}}</td>
                                 <td>￥{{#price}}{{damageCost}}{{/price}}</td>
                                 <td class="{{returnOrderStatusClass}}">{{returnOrderStatusValue}}</td>
+                                <td>{{#shortTime}}{{returnTime}}{{/shortTime}}</td>
                                 <td>
                                     <p class="mn">{{createUserRealName}}</p>
                                     <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
