@@ -737,15 +737,21 @@ public class CustomerServiceImpl implements CustomerService {
                 !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser()))){
             CustomerCompanyDO customerCompanyDO = customerDO.getCustomerCompanyDO();
             if(customerCompanyDO!=null){
-                customerCompanyDO.setConnectPhone(hidePhone(customerCompanyDO.getConnectPhone()));
-                customerCompanyDO.setAgentPersonPhone(hidePhone(customerCompanyDO.getAgentPersonPhone()));
-                customerCompanyDO.setLegalPersonPhone(hidePhone(customerCompanyDO.getLegalPersonPhone()));
-                customerCompanyDO.setLandline(hidePhone(customerCompanyDO.getLandline()));
+//                customerCompanyDO.setConnectPhone(hidePhone(customerCompanyDO.getConnectPhone()));
+//                customerCompanyDO.setAgentPersonPhone(hidePhone(customerCompanyDO.getAgentPersonPhone()));
+//                customerCompanyDO.setLegalPersonPhone(hidePhone(customerCompanyDO.getLegalPersonPhone()));
+//                customerCompanyDO.setLandline(hidePhone(customerCompanyDO.getLandline()));
+                customerCompanyDO.setConnectPhone(null);
+                customerCompanyDO.setAgentPersonPhone(null);
+                customerCompanyDO.setLegalPersonPhone(null);
+                customerCompanyDO.setLandline(null);
             }
             CustomerPersonDO customerPersonDO = customerDO.getCustomerPersonDO();
             if(customerPersonDO!=null){
-                customerPersonDO.setPhone(hidePhone(customerPersonDO.getPhone()));
-                customerPersonDO.setConnectPhone(hidePhone(customerPersonDO.getConnectPhone()));
+//                customerPersonDO.setPhone(hidePhone(customerPersonDO.getPhone()));
+//                customerPersonDO.setConnectPhone(hidePhone(customerPersonDO.getConnectPhone()));
+                customerPersonDO.setPhone(null);
+                customerPersonDO.setConnectPhone(null);
             }
         }
     }

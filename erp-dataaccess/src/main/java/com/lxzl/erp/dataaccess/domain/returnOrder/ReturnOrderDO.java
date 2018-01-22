@@ -24,6 +24,7 @@ public class ReturnOrderDO  extends BaseDO {
 	private Integer isDamage;
 	private Integer returnMode;
 	private Date returnTime;
+	private Integer returnReasonType;
 	private Integer returnOrderStatus;
 	private Integer dataStatus;
 	private String remark;
@@ -230,5 +231,13 @@ public class ReturnOrderDO  extends BaseDO {
 
 	public void setCustomerName(String customerName) {
 		this.customerName = customerName;
+	}
+
+	public Integer getReturnReasonType() {
+		return returnReasonType;
+	}
+
+	public void setReturnReasonType(Integer returnReasonType) {
+		this.returnReasonType = returnReasonType;
 	}
 }

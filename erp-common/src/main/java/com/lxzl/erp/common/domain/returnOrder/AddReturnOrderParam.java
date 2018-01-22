@@ -35,6 +35,8 @@ public class AddReturnOrderParam {
     @In(value = {ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR, ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_MAIL}, message = ErrorCode.RETURN_OR_CHANGE_MODE_ERROR)
     @NotNull(message = ErrorCode.RETURN_OR_CHANGE_MODE_NOT_NULL)
     private Integer returnMode;   //退还方式，1-上门取件，2邮寄
+    @NotNull(message = ErrorCode.RETURN_REASON_TYPE_NOT_NULL)
+    private Integer returnReasonType;   //退还原因类型
 
     public String getCustomerNo() {
         return customerNo;
@@ -98,5 +100,13 @@ public class AddReturnOrderParam {
 
     public void setReturnMode(Integer returnMode) {
         this.returnMode = returnMode;
+    }
+
+    public Integer getReturnReasonType() {
+        return returnReasonType;
+    }
+
+    public void setReturnReasonType(Integer returnReasonType) {
+        this.returnReasonType = returnReasonType;
     }
 }

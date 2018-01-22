@@ -39,6 +39,7 @@ public class ReturnOrder extends BasePO {
 	private Integer returnMode;   //退还方式，1-上门取件，2邮寄
 	@NotNull(message = ErrorCode.RETURN_TIME_NOT_NULL, groups = {ExtendGroup.class})
 	private Date returnTime;   //退还时间
+	private Integer returnReasonType;   //退还原因类型
 	private Integer returnOrderStatus;   //归还订单状态，1-待取货，5-处理中，9-已完成
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -276,5 +277,13 @@ public class ReturnOrder extends BasePO {
 
 	public void setCustomerName(String customerName) {
 		this.customerName = customerName;
+	}
+
+	public Integer getReturnReasonType() {
+		return returnReasonType;
+	}
+
+	public void setReturnReasonType(Integer returnReasonType) {
+		this.returnReasonType = returnReasonType;
 	}
 }

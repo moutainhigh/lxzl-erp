@@ -184,6 +184,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         returnOrderDO.setTotalReturnProductCount(totalReturnProductCount);
         returnOrderDO.setTotalReturnMaterialCount(totalReturnMaterialCount);
         returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
+        returnOrderDO.setReturnReasonType(addReturnOrderParam.getReturnReasonType());
         returnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         returnOrderDO.setOwner(userSupport.getCurrentUserId());
         returnOrderDO.setRemark(addReturnOrderParam.getRemark());
@@ -930,6 +931,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         returnOrderDO.setTotalReturnProductCount(totalReturnProductCount);
         returnOrderDO.setTotalReturnMaterialCount(totalReturnMaterialCount);
         returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
+        returnOrderDO.setReturnReasonType(updateReturnOrderParam.getReturnReasonType());
         returnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         returnOrderDO.setOwner(userSupport.getCurrentUserId());
         returnOrderDO.setRemark(updateReturnOrderParam.getRemark());

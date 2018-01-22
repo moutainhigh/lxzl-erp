@@ -348,6 +348,7 @@ public class ErrorCode {
     public static final String BULK_MATERIAL_NOT_IN_THE_WAREHOUSE = "J400109";
     public static final String ORDER_PRODUCT_EQUIPMENT_NEW_NOT_MATCHING = "J400110";
     public static final String RETURN_TIME_NOT_NULL = "J400111";
+    public static final String RETURN_REASON_TYPE_NOT_NULL = "J400112";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -720,6 +721,7 @@ public class ErrorCode {
         MAP.put(PRODUCT_NEW_MONTH_RENT_PRICE_IS_NOT_NULL, "全新月租赁价格不能为空");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_NEW_NOT_MATCHING, "订单设备项目的新旧属性不匹配。");
         MAP.put(RETURN_TIME_NOT_NULL, "退还时间不能为空");
+        MAP.put(RETURN_REASON_TYPE_NOT_NULL, "退换原因不能为空");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
