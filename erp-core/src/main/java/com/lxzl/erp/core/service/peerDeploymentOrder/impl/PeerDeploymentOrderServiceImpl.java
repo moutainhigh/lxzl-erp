@@ -136,6 +136,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         peerDeploymentOrderMapper.save(peerDeploymentOrderDO);
 
         //产品和配件和收货信息数据
+        //todo 数据不一致问题
         String savePeerDeploymentOrderProductInfo = savePeerDeploymentOrderProductInfo(peerDeploymentOrderDO.getPeerDeploymentOrderProductDOList(),peerDeploymentOrderDO.getPeerDeploymentOrderNo(),currentUserId,currentTime);
         if (!ErrorCode.SUCCESS.equals(savePeerDeploymentOrderProductInfo)) {
             result.setErrorCode(savePeerDeploymentOrderProductInfo);
@@ -153,6 +154,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         }
 
         //判断产品和配件 总数与总额
+        //todo 不要这样做
         PeerDeploymentOrderDO newestPeerDeploymentOrderDO = peerDeploymentOrderMapper.findPeerDeploymentOrderByNo(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
         for (PeerDeploymentOrderProductDO peerDeploymentOrderProductDO : newestPeerDeploymentOrderDO.getPeerDeploymentOrderProductDOList()) {
             peerDeploymentOrderDO.setTotalProductCount(peerDeploymentOrderDO.getTotalProductCount() == null ? peerDeploymentOrderProductDO.getProductSkuCount() : (peerDeploymentOrderDO.getTotalProductCount() + peerDeploymentOrderProductDO.getProductSkuCount()));
@@ -171,7 +173,6 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         }
 
         peerDeploymentOrderMapper.update(peerDeploymentOrderDO);
-
         result.setResult(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -476,6 +477,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             peerDeploymentOrderMaterialBulkMapper.saveList(peerDeploymentOrderMaterialBulkDOList);
         }
         //判断确认收货时间与预计归还时间修整
+        //todo 为什么修改实际归还时间
         dbPeerDeploymentOrderDO.setRealReturnTime(currentTime);
         dbPeerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_CONFIRM);
         dbPeerDeploymentOrderDO.setUpdateTime(currentTime);
@@ -502,6 +504,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_NOT_EXISTS);
             return result;
         }
+        //todo 审核通过也可以取消
         if(!PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus()) && !PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())){
             result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_STATUS_ERROR);
             return result;
@@ -581,6 +584,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> commitPeerDeploymentOrderReturn(String peerDeploymentOrderNo, Integer verifyUserId, String remark) {
+        //todo 设备有租赁中的也能退吗？而且提交审核的时候就应该把所有的设备改为锁定状态
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date now = new Date();
@@ -1145,6 +1149,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
 
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList())) {
             //获取转移单配件散料单
+            //todo 不用的查询就删掉
             List<PeerDeploymentOrderMaterialBulkDO> peerDeploymentOrderMaterialBulkDOList = peerDeploymentOrderMaterialBulkMapper.findByPeerDeploymentOrderId(peerDeploymentOrderDO.getId());
             Map<String,Object> maps = new HashMap<>();
             //获取同行调拨单物料表下面所有的散料
@@ -1182,6 +1187,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             List<PeerDeploymentOrderProductEquipmentDO> peerDeploymentOrderProductEquipmentDOList = peerDeploymentOrderProductEquipmentMapper.findByPeerDeploymentOrderProductId(peerDeploymentOrderDO.getId());
             Map<String, Object> maps = new HashMap<>();
             //获取同行调拨单下，所有的设备
+            //todo 不要找设备，散料状态通过一条update语句更新
             maps.put("peerDeploymentOrderNo", peerDeploymentOrderDO.getPeerDeploymentOrderNo());
             SqlLogInterceptor.setExecuteSql("skip print productEquipmentMapper.findBatchByEquipmentNoInPeerDeploymentOrder  sql ......");
             List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.findBatchByPeerDeploymentOrderNo(maps);
@@ -1191,6 +1197,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             maps.put("updateUser", userSupport.getCurrentUserId().toString());
             maps.put("updateTime", now);
             maps.put("equipmentStatus", ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
+            //todo 修改方法名，且sql语句要加未删除的状态条件
             productEquipmentMapper.updateStatusBatch(maps);
 
             maps.put("warehouseId", warehouseId);
@@ -1204,12 +1211,14 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             if (CollectionUtil.isNotEmpty(bulkMaterialDOList)){
                 //将设备下面所有散料状态改为闲置中
                 maps.put("newBulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+                //todo 以后方法名不要大写开头
                 bulkMaterialMapper.UpdateStatusBatchByEquipmentNo(maps);
             }
         }
 
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList())){
             //获取转移单配件散料单
+            //todo 不用的就删掉，另外这个更新是否可以和设备散料的合二为一
             List<PeerDeploymentOrderMaterialBulkDO> peerDeploymentOrderMaterialBulkDOList = peerDeploymentOrderMaterialBulkMapper.findByPeerDeploymentOrderId(peerDeploymentOrderDO.getId());
             Map<String,Object> maps = new HashMap<>();
             //将所有散料的状态改为闲置中
@@ -1259,10 +1268,6 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
     private StockOrderBulkMaterialMapper stockOrderBulkMaterialMapper;
     @Autowired
     private PeerDeploymentOrderMaterialBulkMapper peerDeploymentOrderMaterialBulkMapper;
-    @Autowired
-    private PeerService peerService;
-    @Autowired
-    private WarehouseMapper warehouseMapper;
     @Autowired
     private MaterialMapper materialMapper;
     @Autowired
