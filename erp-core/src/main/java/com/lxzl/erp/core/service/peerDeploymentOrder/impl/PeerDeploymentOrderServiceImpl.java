@@ -148,7 +148,11 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             result.setErrorCode(savePeerDeploymentOrderConsignInfo);
             return result;
         }
-        //计算总额与优惠
+        //计算商品与配件返回数据与总金额与优惠计算
+        peerDeploymentOrderDO.setTotalProductAmount(savePeerDeploymentOrderProductInfo.getResult().getTotalProductAmount());
+        peerDeploymentOrderDO.setTotalProductCount(savePeerDeploymentOrderProductInfo.getResult().getTotalProductCount());
+        peerDeploymentOrderDO.setTotalMaterialAmount(savePeerDeploymentOrderMaterialInfo.getResult().getTotalMaterialAmount());
+        peerDeploymentOrderDO.setTotalMaterialCount(savePeerDeploymentOrderMaterialInfo.getResult().getTotalMaterialCount());
         peerDeploymentOrderDO.setTotalOrderAmount(BigDecimalUtil.add(savePeerDeploymentOrderProductInfo.getResult().getTotalProductAmount(), savePeerDeploymentOrderMaterialInfo.getResult().getTotalMaterialAmount()));
         peerDeploymentOrderDO.setTotalOrderAmount(BigDecimalUtil.sub(peerDeploymentOrderDO.getTotalOrderAmount(), peerDeploymentOrderDO.getTotalDiscountAmount()));
         if(peerDeploymentOrderDO.getTotalOrderAmount().compareTo(BigDecimal.ZERO) == -1){
@@ -229,7 +233,11 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             result.setErrorCode(savePeerDeploymentOrderConsignInfo);
             return result;
         }
-        //计算总额与优惠
+        //计算商品与配件返回数据与总金额与优惠计算
+        peerDeploymentOrderDO.setTotalProductAmount(savePeerDeploymentOrderProductInfo.getResult().getTotalProductAmount());
+        peerDeploymentOrderDO.setTotalProductCount(savePeerDeploymentOrderProductInfo.getResult().getTotalProductCount());
+        peerDeploymentOrderDO.setTotalMaterialAmount(savePeerDeploymentOrderMaterialInfo.getResult().getTotalMaterialAmount());
+        peerDeploymentOrderDO.setTotalMaterialCount(savePeerDeploymentOrderMaterialInfo.getResult().getTotalMaterialCount());
         peerDeploymentOrderDO.setTotalOrderAmount(BigDecimalUtil.add(savePeerDeploymentOrderProductInfo.getResult().getTotalProductAmount(), savePeerDeploymentOrderMaterialInfo.getResult().getTotalMaterialAmount()));
         peerDeploymentOrderDO.setTotalOrderAmount(BigDecimalUtil.sub(peerDeploymentOrderDO.getTotalOrderAmount(), peerDeploymentOrderDO.getTotalDiscountAmount()));
         if(peerDeploymentOrderDO.getTotalOrderAmount().compareTo(BigDecimal.ZERO) == -1){
@@ -451,7 +459,8 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             SqlLogInterceptor.setExecuteSql("skip print peerDeploymentOrderMaterialBulkMapper.saveList  sql ......");
             peerDeploymentOrderMaterialBulkMapper.saveList(peerDeploymentOrderMaterialBulkDOList);
         }
-        dbPeerDeploymentOrderDO.setRealReturnTime(currentTime);
+
+        dbPeerDeploymentOrderDO.setConfirmTime(currentTime);
         dbPeerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_CONFIRM);
         dbPeerDeploymentOrderDO.setUpdateTime(currentTime);
         dbPeerDeploymentOrderDO.setUpdateUser(loginUser.getUserId().toString());
@@ -477,7 +486,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_NOT_EXISTS);
             return result;
         }
-        //todo 审核通过也可以取消
+        //只有在初始化 审核中 处理中 可以取消 判断
         if(!PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())
                 && !PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())
                 && !PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_PROCESSING.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())){
@@ -927,7 +936,6 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             }
         }
 
-        peerDeploymentOrderMapper.update(peerDeploymentOrderDO);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(peerDeploymentOrderDO);
         return result;
@@ -1028,7 +1036,6 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 peerDeploymentOrderMaterialMapper.update(peerDeploymentOrderMaterialDO);
             }
         }
-        peerDeploymentOrderMapper.update(peerDeploymentOrderDO);
         result.setResult(peerDeploymentOrderDO);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
