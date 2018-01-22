@@ -62,6 +62,7 @@
                                    <div class="col-md-4">
                                        <dl class="dl-horizontal">
                                            <dt class="mb10">订单状态</dt><dd>{{returnOrderStatusValue}}&nbsp;</dd>
+                                           <dt class="mb10">业务员</dt><dd>{{ownerName}}&nbsp;</dd>
                                            <dt class="mb10">创建人</dt><dd>{{createUserRealName}}&nbsp;</dd>
                                            <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
                                            <dt class="mb10">备注</dt><dd>{{remark}}</dd>
