@@ -23,6 +23,7 @@ public class ReturnOrderDO  extends BaseDO {
 	private BigDecimal damageCost;
 	private Integer isDamage;
 	private Integer returnMode;
+	private Date returnTime;
 	private Integer returnOrderStatus;
 	private Integer dataStatus;
 	private String remark;
@@ -149,6 +150,14 @@ public class ReturnOrderDO  extends BaseDO {
 
 	public void setReturnMode(Integer returnMode) {
 		this.returnMode = returnMode;
+	}
+
+	public Date getReturnTime() {
+		return returnTime;
+	}
+
+	public void setReturnTime(Date returnTime) {
+		this.returnTime = returnTime;
 	}
 
 	public Integer getReturnOrderStatus(){
