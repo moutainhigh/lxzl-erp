@@ -107,6 +107,7 @@
                                             <th>类别</th>
                                             <th>品牌</th>
                                             <th>商品参数（SKU）</th>
+                                            <td>商品价值</td>
                                             <td>单价</td>
                                             <th>数量</th>
                                             <th class="text-right">操作</th>
@@ -118,6 +119,9 @@
                                             <td>{{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}{{productName}}</td>
                                             <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                                            <td>
+                                                ￥{{currentSkuPrice}}
+                                            </td>
                                             <td>{{propertiesToStr}}</td>
                                             <td class="productUnitAmountTd">
                                                ￥{{#price}}{{productUnitAmount}}{{/price}}
@@ -169,7 +173,7 @@
                                             <td>{{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}{{materialName}}</td>
                                             <td>{{brandName}}</td>
                                             <td>{{materialTypeStr}}</td>
-                                            <td>{{#price}}{{materialPrice}}{{/price}}</td>
+                                            <td>￥{{currentMaterialPrice}}</td>
                                             <td class="materialUnitAmountTd">
                                                ￥{{#price}}{{materialUnitAmount}}{{/price}}
                                             </td>

@@ -63,8 +63,8 @@
                         <td>{{materialTypeStr}}</td>
                         <td>{{#memorysize}}{{materialCapacityValue}}{{/memorysize}}</td>
                         <td>
-                            <p class="isUsed">￥{{#price}}{{materialPriceFormat}}{{/price}}</p>
-                            <p class="isNew hide">￥{{#price}}{{newMaterialPriceFormat}}{{/price}}</p>
+                            <p class="isUsed">￥{{#price}}{{materialPrice}}{{/price}}</p>
+                            <p class="isNew hide">￥{{#price}}{{newMaterialPrice}}{{/price}}</p>
                         </td>
                         <td>
                             <div class="isUsed">

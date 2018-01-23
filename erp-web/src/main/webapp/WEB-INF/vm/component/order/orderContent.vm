@@ -164,7 +164,7 @@
                             <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                             <td>{{propertiesToStr}}</td>
-                            <td>￥{{#price}}{{skuPrice}}{{/price}}</td>
+                            <td>#*￥{{#price}}{{skuPrice}}{{/price}}*# ￥{{currentSkuPrice}}</td>
                             <td class="productUnitAmountTd">
                                 <div class="smart-widget sm-right smr-50">
                                     <input type="hidden" name="isNewProduct" value="{{isNewProduct}}" class="isNewProduct" />
@@ -292,7 +292,7 @@
                             </td>
                             <td>{{brandName}}</td>
                             <td>{{materialTypeStr}}</td>
-                            <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
+                            <td>￥{{currentMaterialPrice}}</td>
                             <td class="materialUnitAmountTd">
                                 <div class="smart-widget sm-right smr-50">
                                     <label class="field prepend-icon">

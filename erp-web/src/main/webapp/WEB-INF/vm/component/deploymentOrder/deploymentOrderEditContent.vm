@@ -90,7 +90,8 @@
                             <th>类别</th>
                             <th>品牌</th>
                             <th>商品参数（SKU）</th>
-                            <th>调拨商品单价</th>
+                            <td>商品价值</td>
+                            <th>调拨单价</th>
                             <th>调拨数量</th>
                             <th>商品小计</th>
                             <th class="text-right">操作</th>
@@ -109,6 +110,9 @@
                             <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                             <td>{{propertiesToStr}}</td>
+                            <td>
+                                ￥{{currentSkuPrice}}
+                            </td>
                             <td class="productUnitAmountTd">
                                 <div class="smart-widget sm-right smr-50">
                                     <input type="hidden" name="isNew" value="{{isNewIntValue}}" class="isNew" />
@@ -193,7 +197,7 @@
                             <td>{{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}{{materialName}}</td>
                             <td>{{brandName}}</td>
                             <td>{{materialTypeStr}}</td>
-                            <td>{{#price}}{{materialPrice}}{{/price}}</td>
+                            <td>￥{{currentMaterialPrice}}</td>
                             <td class="materialUnitAmountTd">
                                 <div class="smart-widget sm-right smr-50">
                                     <label class="field prepend-icon">

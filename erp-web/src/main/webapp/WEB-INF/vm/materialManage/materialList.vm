@@ -120,7 +120,7 @@
                                 </td>
                                 <td>
                                     <p class="mn">次新：￥{{#price}}{{materialPrice}}{{/price}}</p>
-                                    <p class="mn mt5">全新：￥{{#price}}{{materialPrice}}{{/price}}</p>
+                                    <p class="mn mt5">全新：￥{{#price}}{{newMaterialPrice}}{{/price}}</p>
                                 </td>
                                 <td>
                                     <p class="mn">日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>

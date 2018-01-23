@@ -110,6 +110,7 @@
                                             <th>类别</th>
                                             <th>品牌</th>
                                             <th>商品参数（SKU）</th>
+                                            <td>商品价值</td>
                                             <th>调拨单价</th>
                                             <th>调拨数量</th>
                                             <th>商品小计</th>
@@ -119,10 +120,13 @@
                                         <tbody>
                                         {{#listData}}
                                         <tr class="productRow" productRowKey="{{productId}}">
-                                            <td>{{productName}}</td>
+                                            <td>{{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}{{productName}}</td>
                                             <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                                             <td>{{propertiesToStr}}</td>
+                                            <td>
+                                                ￥{{currentSkuPrice}}
+                                            </td>
                                             <td class="productUnitAmountTd">
                                                 ￥{{#price}}{{deploymentProductUnitAmount}}{{/price}}
                                             </td>
@@ -191,9 +195,6 @@
                                             <th>品牌</th>
                                             <th>类型</th>
                                             <th>配件价值</th>
-##                                            <th>租赁价格</th>
-##                                            <th>描述</th>
-##                                            <th>图片</th>
                                             <th>调拨单价</th>
                                             <th>调拨数量</th>
                                             <th>配件小计</th>
@@ -208,13 +209,7 @@
                                             <td>{{materialName}}</td>
                                             <td>{{brandName}}</td>
                                             <td>{{materialTypeStr}}</td>
-                                            <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
-##                                            <td>
-##                                                <p>日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
-##                                                <p>月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
-##                                            </td>
-##                                            <td>{{materialDesc}}</td>
-##                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                                            <td>￥{{currentMaterialPrice}}</td>
                                             <td class="materialUnitAmountTd">
                                                 ￥{{#price}}{{deploymentMaterialUnitAmount}}{{/price}}
                                             </td>
