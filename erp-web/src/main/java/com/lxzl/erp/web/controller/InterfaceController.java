@@ -5,6 +5,8 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.validGroup.customer.QueryCustomerGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -59,6 +61,18 @@ public class InterfaceController extends BaseController {
     @RequestMapping(value = "queryCustomerByName", method = RequestMethod.POST)
     public Result queryCustomerByName(@RequestBody @Validated(QueryCustomerGroup.class) Customer customer, BindingResult validResult) {
         ServiceResult<String, Customer> serviceResult = customerService.queryCustomerByCompanyName(customer.getCustomerName());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "queryStatementOrder", method = RequestMethod.POST)
+    public Result queryStatementOrder(@RequestBody StatementOrderQueryParam statementOrderQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<StatementOrder>> serviceResult = statementService.queryStatementOrder(statementOrderQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "queryStatementOrderDetail", method = RequestMethod.POST)
+    public Result queryStatementOrderDetail(@RequestBody StatementOrderQueryParam statementOrderQueryParam, BindingResult validResult) {
+        ServiceResult<String, StatementOrder> serviceResult = statementService.queryStatementOrderDetail(statementOrderQueryParam.getStatementOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }
