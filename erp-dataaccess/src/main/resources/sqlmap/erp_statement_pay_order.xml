@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.statement.StatementPayOrderMapper">
+
+	<resultMap id="StatementPayOrderDO" type="com.lxzl.erp.dataaccess.domain.statement.StatementPayOrderDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="statement_pay_order_no" jdbcType="VARCHAR" property="statementPayOrderNo" />
+		<result column="statement_order_id" jdbcType="INTEGER" property="statementOrderId" />
+		<result column="pay_type" jdbcType="INTEGER" property="payType" />
+		<result column="pay_status" jdbcType="INTEGER" property="payStatus" />
+		<result column="payment_order_no" jdbcType="VARCHAR" property="paymentOrderNo" />
+		<result column="pay_amount" jdbcType="DECIMAL" property="payAmount" />
+		<result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+		<result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		espo.id,espo.statement_pay_order_no,espo.statement_order_id,espo.pay_type,espo.pay_status,espo.payment_order_no,espo.pay_amount,espo.pay_time,espo.end_time,espo.data_status,espo.remark,espo.create_time,espo.create_user,espo.update_time,espo.update_user
+	</sql>
+
+	<select id="findById" resultMap="StatementPayOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statement_pay_order espo 
+		WHERE espo.id = #{id, jdbcType=INTEGER} AND espo.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(espo.id) FROM erp_statement_pay_order espo 
+		<where>
+			<if test="maps.statementPayOrderQueryParam.createStartTime != null">
+				<![CDATA[ AND espo.create_time >= #{maps.statementPayOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.statementPayOrderQueryParam.createEndTime != null">
+				<![CDATA[ AND espo.create_time <= #{maps.statementPayOrderQueryParam.createEndTime} ]]>
+			</if>
+			<if test="maps.isQueryAll == null">
+				and espo.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="StatementPayOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_statement_pay_order espo 
+		<where>
+			<if test="maps.statementPayOrderQueryParam.createStartTime != null">
+				<![CDATA[ AND espo.create_time >= #{maps.statementPayOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.statementPayOrderQueryParam.createEndTime != null">
+				<![CDATA[ AND espo.create_time <= #{maps.statementPayOrderQueryParam.createEndTime} ]]>
+			</if>
+			<if test="maps.isQueryAll == null">
+				and espo.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="statementPayOrderNo != null">
+				statement_pay_order_no = #{statementPayOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="statementOrderId != null">
+				statement_order_id = #{statementOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="payType != null">
+				pay_type = #{payType,jdbcType=INTEGER},
+			</if>
+			<if test="payStatus != null">
+				pay_status = #{payStatus,jdbcType=INTEGER},
+			</if>
+			<if test="paymentOrderNo != null">
+				payment_order_no = #{paymentOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="payAmount != null">
+				pay_amount = #{payAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="payTime != null">
+				pay_time = #{payTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endTime != null">
+				end_time = #{endTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.statement.StatementPayOrderDO">
+		INSERT INTO erp_statement_pay_order <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.statement.StatementPayOrderDO">
+		UPDATE erp_statement_pay_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

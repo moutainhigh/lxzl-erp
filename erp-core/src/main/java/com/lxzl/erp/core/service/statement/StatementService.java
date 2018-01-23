@@ -47,7 +47,7 @@ public interface StatementService extends BaseService {
      * @param statementOrderNo 结算单编号
      * @return 是否支付成功
      */
-    ServiceResult<String, Boolean> payStatementOrder(String statementOrderNo);
+    ServiceResult<String, Boolean> payStatementOrder(String statementOrderNo, Integer statementOrderPayType);
 
 
     /**

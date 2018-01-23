@@ -56,7 +56,7 @@ public class StatementController extends BaseController {
 
     @RequestMapping(value = "pay", method = RequestMethod.POST)
     public Result pay(@RequestBody StatementOrderPayParam param, BindingResult validResult) {
-        ServiceResult<String, Boolean> serviceResult = statementService.payStatementOrder(param.getStatementOrderNo());
+        ServiceResult<String, Boolean> serviceResult = statementService.payStatementOrder(param.getStatementOrderNo(), param.getStatementOrderPayType());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
