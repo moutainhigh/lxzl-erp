@@ -70,39 +70,102 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCreateOrderJSON() throws Exception {
         String str = "{\n" +
-                "  \"buyerCustomerNo\": \"LXCC10002018010800033\",\n" +
-                "  \"rentStartTime\": 1516060800000,\n" +
-                "  \"expectDeliveryTime\": 1516060800000,\n" +
-                "  \"logisticsAmount\": \"100\",\n" +
-                "  \"buyerRemark\": \"\",\n" +
-                "  \"customerConsignId\": \"137\",\n" +
-                "  \"highTaxRate\": \"12\",\n" +
-                "  \"lowTaxRate\": \"88\",\n" +
-                "  \"deliveryMode\": \"2\",\n" +
-                "  \"orderProductList\": [\n" +
-                "    {\n" +
-                "      \"productId\": \"2000057\",\n" +
-                "      \"productSkuId\": \"210\",\n" +
-                "      \"productUnitAmount\": \"500\",\n" +
-                "      \"productCount\": \"10\",\n" +
-                "      \"rentType\": \"2\",\n" +
-                "      \"rentTimeLength\": \"12\",\n" +
-                "      \"insuranceAmount\": \"\",\n" +
-                "      \"isNewProduct\": \"0\",\n" +
-                "      \"depositAmount\": 0\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"productId\": \"2000057\",\n" +
-                "      \"productSkuId\": \"210\",\n" +
-                "      \"productUnitAmount\": \"500\",\n" +
-                "      \"productCount\": \"10\",\n" +
-                "      \"rentType\": \"2\",\n" +
-                "      \"rentTimeLength\": \"12\",\n" +
-                "      \"insuranceAmount\": \"\",\n" +
-                "      \"isNewProduct\": \"1\",\n" +
-                "      \"depositAmount\": 0\n" +
-                "    }\n" +
-                "  ]\n" +
+                "\t\"orderNo\": \"LXO-20180119-701366-00072\",\n" +
+                "\t\"buyerCustomerNo\": \"LXCC10002018011200040\",\n" +
+                "\t\"rentStartTime\": 1514764800000,\n" +
+                "\t\"expectDeliveryTime\": 1514764800000,\n" +
+                "\t\"logisticsAmount\": \"10\",\n" +
+                "\t\"buyerRemark\": \"\",\n" +
+                "\t\"customerConsignId\": \"160\",\n" +
+                "\t\"highTaxRate\": \"10\",\n" +
+                "\t\"lowTaxRate\": \"90\",\n" +
+                "\t\"deliveryMode\": \"3\",\n" +
+                "\t\"orderProductList\": [{\n" +
+                "\t\t\"productId\": \"2000057\",\n" +
+                "\t\t\"productSkuId\": 210,\n" +
+                "\t\t\"productUnitAmount\": \"1000\",\n" +
+                "\t\t\"productCount\": \"1\",\n" +
+                "\t\t\"rentType\": \"1\",\n" +
+                "\t\t\"rentTimeLength\": \"1\",\n" +
+                "\t\t\"insuranceAmount\": \"\",\n" +
+                "\t\t\"payMode\": \"3\",\n" +
+                "\t\t\"isNewProduct\": 0,\n" +
+                "\t\t\"depositAmount\": \"1500\"\n" +
+                "\t}],\n" +
+                "\t\"orderMaterialList\": [{\n" +
+                "\t\t\"materialId\": \"47\",\n" +
+                "\t\t\"materialUnitAmount\": \"100\",\n" +
+                "\t\t\"materialCount\": \"1\",\n" +
+                "\t\t\"rentType\": \"1\",\n" +
+                "\t\t\"rentTimeLength\": \"10\",\n" +
+                "\t\t\"insuranceAmount\": \"\",\n" +
+                "\t\t\"payMode\": \"3\",\n" +
+                "\t\t\"isNewMaterial\": 0,\n" +
+                "\t\t\"depositAmount\": \"100\"\n" +
+                "\t}, {\n" +
+                "\t\t\"materialId\": \"40\",\n" +
+                "\t\t\"materialUnitAmount\": \"100\",\n" +
+                "\t\t\"materialCount\": \"10\",\n" +
+                "\t\t\"rentType\": \"2\",\n" +
+                "\t\t\"rentTimeLength\": \"10\",\n" +
+                "\t\t\"insuranceAmount\": \"\",\n" +
+                "\t\t\"isNewMaterial\": 0,\n" +
+                "\t\t\"depositAmount\": 0\n" +
+                "\t}, {\n" +
+                "\t\t\"materialId\": \"24\",\n" +
+                "\t\t\"materialUnitAmount\": \"100\",\n" +
+                "\t\t\"materialCount\": \"10\",\n" +
+                "\t\t\"rentType\": \"2\",\n" +
+                "\t\t\"rentTimeLength\": \"10\",\n" +
+                "\t\t\"insuranceAmount\": \"\",\n" +
+                "\t\t\"isNewMaterial\": 0,\n" +
+                "\t\t\"depositAmount\": 0\n" +
+                "\t}, {\n" +
+                "\t\t\"materialId\": \"6\",\n" +
+                "\t\t\"materialUnitAmount\": \"100\",\n" +
+                "\t\t\"materialCount\": \"10\",\n" +
+                "\t\t\"rentType\": \"2\",\n" +
+                "\t\t\"rentTimeLength\": \"10\",\n" +
+                "\t\t\"insuranceAmount\": \"\",\n" +
+                "\t\t\"isNewMaterial\": 0,\n" +
+                "\t\t\"depositAmount\": 0\n" +
+                "\t}, {\n" +
+                "\t\t\"materialId\": \"5\",\n" +
+                "\t\t\"materialUnitAmount\": \"100\",\n" +
+                "\t\t\"materialCount\": \"10\",\n" +
+                "\t\t\"rentType\": \"2\",\n" +
+                "\t\t\"rentTimeLength\": \"10\",\n" +
+                "\t\t\"insuranceAmount\": \"\",\n" +
+                "\t\t\"isNewMaterial\": 0,\n" +
+                "\t\t\"depositAmount\": 0\n" +
+                "\t}, {\n" +
+                "\t\t\"materialId\": \"3\",\n" +
+                "\t\t\"materialUnitAmount\": \"100\",\n" +
+                "\t\t\"materialCount\": \"10\",\n" +
+                "\t\t\"rentType\": \"2\",\n" +
+                "\t\t\"rentTimeLength\": \"10\",\n" +
+                "\t\t\"insuranceAmount\": \"\",\n" +
+                "\t\t\"isNewMaterial\": 0,\n" +
+                "\t\t\"depositAmount\": 0\n" +
+                "\t}, {\n" +
+                "\t\t\"materialId\": \"2\",\n" +
+                "\t\t\"materialUnitAmount\": \"100\",\n" +
+                "\t\t\"materialCount\": \"10\",\n" +
+                "\t\t\"rentType\": \"2\",\n" +
+                "\t\t\"rentTimeLength\": \"10\",\n" +
+                "\t\t\"insuranceAmount\": \"\",\n" +
+                "\t\t\"isNewMaterial\": 0,\n" +
+                "\t\t\"depositAmount\": 0\n" +
+                "\t}, {\n" +
+                "\t\t\"materialId\": \"1\",\n" +
+                "\t\t\"materialUnitAmount\": \"100\",\n" +
+                "\t\t\"materialCount\": \"10\",\n" +
+                "\t\t\"rentType\": \"2\",\n" +
+                "\t\t\"rentTimeLength\": \"10\",\n" +
+                "\t\t\"insuranceAmount\": \"\",\n" +
+                "\t\t\"isNewMaterial\": 0,\n" +
+                "\t\t\"depositAmount\": 0\n" +
+                "\t}]\n" +
                 "}";
         Order order = JSONUtil.convertJSONToBean(str, Order.class);
 

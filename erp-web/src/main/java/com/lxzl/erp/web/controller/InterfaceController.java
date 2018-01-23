@@ -10,6 +10,7 @@ import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.order.OrderService;
+import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class InterfaceController extends BaseController {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private StatementService statementService;
 
     @RequestMapping(value = "queryOrderByNo", method = RequestMethod.POST)
     public Result queryOrderByNo(@RequestBody OrderQueryParam order, BindingResult validResult) {
