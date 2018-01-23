@@ -106,7 +106,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser, String commitRemark) {
+    public ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser,String verifyMatters, String commitRemark) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
         WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
@@ -130,7 +130,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         String workflowLinkNo;
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
         if (workflowLinkDO == null) {
-            workflowLinkNo = generateWorkflowLink(workflowTemplateDO, workflowReferNo, commitRemark, verifyUser, currentTime);
+            workflowLinkNo = generateWorkflowLink(workflowTemplateDO, workflowReferNo, commitRemark, verifyUser,verifyMatters, currentTime);
         } else {
             String errorCode = continueWorkflowLink(workflowLinkDO, commitRemark, verifyUser, currentTime);
             if (!ErrorCode.SUCCESS.equals(errorCode)) {
@@ -516,7 +516,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     /**
      * 生成工作流线，只适用于首次创建
      */
-    private String generateWorkflowLink(WorkflowTemplateDO workflowTemplateDO, String workflowReferNo, String commitRemark, Integer verifyUser, Date currentTime) {
+    private String generateWorkflowLink(WorkflowTemplateDO workflowTemplateDO, String workflowReferNo, String commitRemark, Integer verifyUser,String verifyMatters, Date currentTime) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         if (workflowTemplateDO == null) {
             return null;
@@ -539,6 +539,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowLinkDO.setCommitUser(loginUser.getUserId());
         workflowLinkDO.setCurrentVerifyUser(verifyUser);
         workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+        workflowLinkDO.setVerifyMatters(verifyMatters);
         workflowLinkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         workflowLinkDO.setUpdateUser(loginUser.getUserId().toString());
         workflowLinkDO.setCreateUser(loginUser.getUserId().toString());

@@ -19,6 +19,7 @@
 		<result column="current_verify_user" jdbcType="INTEGER" property="currentVerifyUser" />
 		<result column="current_verify_user_name" jdbcType="VARCHAR" property="currentVerifyUserName" />
 		<result column="current_verify_status" jdbcType="INTEGER" property="currentVerifyStatus" />
+		<result column="verify_matters" jdbcType="VARCHAR" property="verifyMatters" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -53,7 +54,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ewl.id,ewl.workflow_link_no,ewl.workflow_type,ewl.workflow_template_id,ewl.workflow_refer_no,ewl.workflow_step,ewl.workflow_last_step,ewl.workflow_current_node_id,ewl.commit_user,ewl.current_verify_user,ewl.current_verify_status,ewl.data_status,ewl.remark,ewl.create_time,ewl.create_user,ewl.update_time,ewl.update_user
+		ewl.id,ewl.workflow_link_no,ewl.workflow_type,ewl.workflow_template_id,ewl.workflow_refer_no,ewl.workflow_step,ewl.workflow_last_step,ewl.workflow_current_node_id,ewl.commit_user,ewl.current_verify_user,ewl.verify_matters,ewl.current_verify_status,ewl.data_status,ewl.remark,ewl.create_time,ewl.create_user,ewl.update_time,ewl.update_user
 	</sql>
 
 	<sql id="detail_column_List">
@@ -242,6 +243,9 @@
 			</if>
 			<if test="currentVerifyStatus != null">
 				current_verify_status = #{currentVerifyStatus,jdbcType=INTEGER},
+			</if>
+			<if test="verifyMatters != null">
+				verify_matters = #{verifyMatters,jdbcType=VARCHAR},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},

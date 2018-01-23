@@ -27,7 +27,7 @@ public interface WorkflowService extends BaseService {
      * @param commitRemark    提交备注
      * @return 错误代码，生成的工作流ID
      */
-    ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser, String commitRemark);
+    ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser, String verifyMatters,String commitRemark);
 
 
     /**

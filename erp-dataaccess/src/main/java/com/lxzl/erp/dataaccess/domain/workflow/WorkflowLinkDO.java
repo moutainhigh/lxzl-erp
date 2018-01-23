@@ -20,6 +20,7 @@ public class WorkflowLinkDO extends BaseDO {
     private Integer commitUser;
     private Integer currentVerifyUser;
     private Integer currentVerifyStatus;
+    private String verifyMatters;
     private Integer dataStatus;
     private String remark;
     private List<WorkflowLinkDetailDO> workflowLinkDetailDOList;
@@ -185,5 +186,13 @@ public class WorkflowLinkDO extends BaseDO {
 
     public void setWorkflowTemplateName(String workflowTemplateName) {
         this.workflowTemplateName = workflowTemplateName;
+    }
+
+    public String getVerifyMatters() {
+        return verifyMatters;
+    }
+
+    public void setVerifyMatters(String verifyMatters) {
+        this.verifyMatters = verifyMatters;
     }
 }

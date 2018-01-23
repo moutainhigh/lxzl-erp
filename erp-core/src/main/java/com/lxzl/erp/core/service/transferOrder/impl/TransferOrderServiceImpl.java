@@ -843,10 +843,10 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             ServiceResult<String, String> verifyResult = new ServiceResult<>();
             //转入的转移单审核
             if(TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO.equals(transferOrderDO.getTransferOrderMode())){
-                verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER, transferOrderNo, verifyUser, commitRemark);
+                verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER, transferOrderNo, verifyUser,null, commitRemark);
             }else{
                 //转出的转移单审核
-                verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER, transferOrderNo, verifyUser, commitRemark);
+                verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER, transferOrderNo, verifyUser,null, commitRemark);
             }
             //提交审核后，修改转移单的状态为审核中
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {

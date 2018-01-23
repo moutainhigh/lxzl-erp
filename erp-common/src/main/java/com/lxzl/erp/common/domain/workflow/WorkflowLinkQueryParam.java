@@ -17,6 +17,7 @@ public class WorkflowLinkQueryParam extends BasePageParam implements Serializabl
     private Integer workflowType;
     private String workflowReferNo;
     private Integer verifyStatus;
+    private String verifyMatters;
     private Integer commitUserId;
     private Integer currentVerifyUser;
     private Date createStartTime;
@@ -84,5 +85,13 @@ public class WorkflowLinkQueryParam extends BasePageParam implements Serializabl
 
     public void setWorkflowLinkNo(String workflowLinkNo) {
         this.workflowLinkNo = workflowLinkNo;
+    }
+
+    public String getVerifyMatters() {
+        return verifyMatters;
+    }
+
+    public void setVerifyMatters(String verifyMatters) {
+        this.verifyMatters = verifyMatters;
     }
 }

@@ -106,7 +106,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         Map<String, DeploymentOrderProductDO> saveDeploymentOrderProductDOMap = new HashMap<>();
         Map<String, DeploymentOrderProductDO> updateDeploymentOrderProductDOMap = new HashMap<>();
         List<DeploymentOrderProductDO> dbDeploymentOrderProductDOList = deploymentOrderProductMapper.findByDeploymentOrderNo(deploymentOrderNo);
-        Map<String, DeploymentOrderProductDO> dbDeploymentOrderProductDOMap = ListUtil.listToMap(dbDeploymentOrderProductDOList, "deploymentProductSkuId","isNew");
+        Map<String, DeploymentOrderProductDO> dbDeploymentOrderProductDOMap = ListUtil.listToMap(dbDeploymentOrderProductDOList, "deploymentProductSkuId", "isNew");
         if (CollectionUtil.isNotEmpty(deploymentOrderProductDOList)) {
             for (DeploymentOrderProductDO deploymentOrderProductDO : deploymentOrderProductDOList) {
                 String productRecordKey = deploymentOrderProductDO.getDeploymentProductSkuId() + "-" + deploymentOrderProductDO.getIsNew();
@@ -180,7 +180,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         Map<String, DeploymentOrderMaterialDO> saveDeploymentOrderMaterialDOMap = new HashMap<>();
         Map<String, DeploymentOrderMaterialDO> updateDeploymentOrderMaterialDOMap = new HashMap<>();
         List<DeploymentOrderMaterialDO> dbDeploymentOrderMaterialDOList = deploymentOrderMaterialMapper.findByDeploymentOrderNo(deploymentOrderNo);
-        Map<String, DeploymentOrderMaterialDO> dbDeploymentOrderMaterialDOMap = ListUtil.listToMap(dbDeploymentOrderMaterialDOList, "deploymentMaterialId", "isNew" );
+        Map<String, DeploymentOrderMaterialDO> dbDeploymentOrderMaterialDOMap = ListUtil.listToMap(dbDeploymentOrderMaterialDOList, "deploymentMaterialId", "isNew");
         if (CollectionUtil.isNotEmpty(deploymentOrderMaterialDOList)) {
             for (DeploymentOrderMaterialDO deploymentOrderMaterialDO : deploymentOrderMaterialDOList) {
                 String materialRecordKey = deploymentOrderMaterialDO.getDeploymentMaterialId() + "-" + deploymentOrderMaterialDO.getIsNew();
@@ -404,7 +404,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             return result;
         }
         if (isMeedVerifyResult.getResult()) {
-            ServiceResult<String, String> workFlowResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO, deploymentOrderNo, verifyUser, commitRemark);
+            ServiceResult<String, String> workFlowResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO, deploymentOrderNo, verifyUser, null, commitRemark);
             if (!ErrorCode.SUCCESS.equals(workFlowResult.getErrorCode())) {
                 result.setErrorCode(workFlowResult.getErrorCode());
                 return result;
@@ -631,7 +631,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             }
 
             // 必须是当前库房闲置的物料
-            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(deploymentOrderDO.getSrcWarehouseId(),materialId, materialCount, deploymentOrderMaterialDO.getIsNew());
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialSupport.queryFitBulkMaterialDOList(deploymentOrderDO.getSrcWarehouseId(), materialId, materialCount, deploymentOrderMaterialDO.getIsNew());
             if (CollectionUtil.isEmpty(bulkMaterialDOList) || bulkMaterialDOList.size() < materialCount) {
                 result.setErrorCode(ErrorCode.BULK_MATERIAL_HAVE_NOT_ENOUGH);
                 return result;

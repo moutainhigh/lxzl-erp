@@ -299,7 +299,7 @@ public class OrderServiceImpl implements OrderService {
         boolean isNeedVerify = isNeedVerifyResult.getResult();
 
         if (isNeedVerify) {
-            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, commitRemark);
+            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser,null, commitRemark);
             if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(workflowCommitResult.getErrorCode());

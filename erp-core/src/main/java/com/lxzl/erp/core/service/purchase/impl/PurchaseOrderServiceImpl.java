@@ -768,7 +768,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 return result;
             }
             //调用提交审核服务
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE, purchaseOrderDO.getPurchaseNo(), purchaseOrderCommitParam.getVerifyUserId(), purchaseOrderCommitParam.getRemark());
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE, purchaseOrderDO.getPurchaseNo(), purchaseOrderCommitParam.getVerifyUserId(), null, purchaseOrderCommitParam.getRemark());
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 purchaseOrderDO.setPurchaseOrderStatus(PurchaseOrderStatus.PURCHASE_ORDER_STATUS_VERIFYING);

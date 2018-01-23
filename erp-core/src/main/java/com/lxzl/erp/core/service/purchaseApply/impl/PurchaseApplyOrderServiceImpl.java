@@ -441,7 +441,7 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
                 return result;
             }
             //调用提交审核服务
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE_APPLY_ORDER, purchaseApplyOrderCommitParam.getPurchaseApplyOrderNo(), purchaseApplyOrderCommitParam.getVerifyUserId(), purchaseApplyOrderCommitParam.getRemark());
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PURCHASE_APPLY_ORDER, purchaseApplyOrderCommitParam.getPurchaseApplyOrderNo(), purchaseApplyOrderCommitParam.getVerifyUserId(),null, purchaseApplyOrderCommitParam.getRemark());
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 purchaseApplyOrderDO.setPurchaseApplyOrderStatus(PurchaseApplyOrderStatus.PURCHASE_APPLY_ORDER_STATUS_VERIFYING);
