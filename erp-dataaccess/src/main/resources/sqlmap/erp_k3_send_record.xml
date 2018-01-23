@@ -18,25 +18,15 @@
 
 	<select id="findById" resultMap="K3SendRecordDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_k3_send_record eksr 
-		WHERE eksr.id = #{id, jdbcType=INTEGER} AND eksr.data_status = 1 
+		WHERE eksr.id = #{id, jdbcType=INTEGER}
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(eksr.id) FROM erp_k3_send_record eksr 
-		<where>
-			<if test="true">
-				AND eksr.data_status = 1
-			</if>
-		</where>
+		SELECT count(eksr.id) FROM erp_k3_send_record eksr
 	</select>
 
 	<select id="listPage" resultMap="K3SendRecordDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_k3_send_record eksr 
-		<where>
-			<if test="true">
-				AND eksr.data_status = 1
-			</if>
-		</where>
+		SELECT <include refid="column_List"/> FROM erp_k3_send_record eksr
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 

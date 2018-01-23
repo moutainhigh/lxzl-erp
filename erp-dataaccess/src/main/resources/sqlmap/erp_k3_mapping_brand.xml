@@ -15,30 +15,20 @@
 
 	<select id="findById" resultMap="K3MappingBrandDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_k3_mapping_brand ekmb 
-		WHERE ekmb.id = #{id, jdbcType=INTEGER} AND ekmb.data_status = 1 
+		WHERE ekmb.id = #{id, jdbcType=INTEGER} 
 	</select>
 
 	<select id="findByErpCode" resultMap="K3MappingBrandDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> FROM erp_k3_mapping_brand ekmb
-		WHERE ekmb.erp_brand_code = #{erpCode, jdbcType=VARCHAR} AND ekmb.data_status = 1
+		WHERE ekmb.erp_brand_code = #{erpCode, jdbcType=VARCHAR} 
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(ekmb.id) FROM erp_k3_mapping_brand ekmb 
-		<where>
-			<if test="true">
-				AND ekmb.data_status = 1
-			</if>
-		</where>
+		SELECT count(ekmb.id) FROM erp_k3_mapping_brand ekmb
 	</select>
 
 	<select id="listPage" resultMap="K3MappingBrandDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_k3_mapping_brand ekmb 
-		<where>
-			<if test="true">
-				AND ekmb.data_status = 1
-			</if>
-		</where>
+		SELECT <include refid="column_List"/> FROM erp_k3_mapping_brand ekmb
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 

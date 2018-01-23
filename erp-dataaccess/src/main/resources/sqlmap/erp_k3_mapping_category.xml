@@ -15,30 +15,20 @@
 
 	<select id="findById" resultMap="K3MappingCategoryDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_k3_mapping_category ekmc 
-		WHERE ekmc.id = #{id, jdbcType=INTEGER} AND ekmc.data_status = 1 
+		WHERE ekmc.id = #{id, jdbcType=INTEGER}
 	</select>
 
 	<select id="findByErpCode" resultMap="K3MappingCategoryDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> FROM erp_k3_mapping_category ekmc
-		WHERE ekmc.erp_category_code = #{erpCode, jdbcType=VARCHAR} AND ekmc.data_status = 1
+		WHERE ekmc.erp_category_code = #{erpCode, jdbcType=VARCHAR}
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(ekmc.id) FROM erp_k3_mapping_category ekmc 
-		<where>
-			<if test="true">
-				AND ekmc.data_status = 1
-			</if>
-		</where>
+		SELECT count(ekmc.id) FROM erp_k3_mapping_category ekmc
 	</select>
 
 	<select id="listPage" resultMap="K3MappingCategoryDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_k3_mapping_category ekmc 
-		<where>
-			<if test="true">
-				AND ekmc.data_status = 1
-			</if>
-		</where>
+		SELECT <include refid="column_List"/> FROM erp_k3_mapping_category ekmc
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 
