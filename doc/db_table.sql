@@ -317,6 +317,9 @@ CREATE TABLE `erp_customer` (
   `customer_name` varchar(64) NOT NULL COMMENT '客户名称',
   `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人，跟单员',
   `union_user` int(20) COMMENT '联合开发人',
+  `localization_time` datetime DEFAULT NULL COMMENT '属地化时间',
+  `short_limit_receivable_amount` decimal(15,2) COMMENT '短租应收上限',
+  `statement_date` int(20) COMMENT '结算时间（天），20和31两种情况，如果为空取系统设定',
   `customer_status` int(4) NOT NULL DEFAULT '0' COMMENT '客户状态，0初始化，1资料提交，2审核通过，3资料驳回',
   `first_apply_amount` decimal(15,2) DEFAULT '0.00' COMMENT '首期申请额度',
   `later_apply_amount` decimal(15,2) DEFAULT '0.00' COMMENT '后期申请额度',
@@ -329,6 +332,19 @@ CREATE TABLE `erp_customer` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=700001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户表';
+
+DROP TABLE if exists `erp_customer_update_log`;
+CREATE TABLE `erp_customer_update_log` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `customer_id` int(20) NOT NULL COMMENT '客户ID',
+  `owner` int(20) COMMENT '数据归属人，跟单员',
+  `union_user` int(20) COMMENT '联合开发人',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户变更记录表';
 
 DROP TABLE if exists `erp_customer_person`;
 CREATE TABLE `erp_customer_person` (
@@ -1798,6 +1814,25 @@ CREATE TABLE `erp_statement_order` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='结算单';
 
+DROP TABLE if exists `erp_statement_order_return_detail`;
+CREATE TABLE `erp_statement_order_return_detail` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `statement_order_id` int(20) NOT NULL COMMENT '结算单ID',
+  `customer_id` int(20) NOT NULL COMMENT '客户ID',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `order_item_refer_id` int(20) NOT NULL COMMENT '订单项ID',
+  `returnType` int(20) NOT NULL COMMENT '退还类型，1退租金押金，2退押金。',
+  `return_amount` decimal(15,2) DEFAULT 0 COMMENT '退还租金押金金额',
+  `return_time` datetime DEFAULT NULL COMMENT '退还租金押金时间',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='结算单退还明细';
+
 DROP TABLE if exists `erp_statement_order_detail`;
 CREATE TABLE `erp_statement_order_detail` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
@@ -1807,6 +1842,7 @@ CREATE TABLE `erp_statement_order_detail` (
   `order_id` int(20) NOT NULL COMMENT '订单ID',
   `order_item_type` int(20) NOT NULL COMMENT '订单项类型，1为商品，2为配件',
   `order_item_refer_id` int(20) NOT NULL COMMENT '订单项ID',
+  `statement_detail_type` int(20) COMMENT '结算单明细类型',
   `statement_detail_phase` int(20) COMMENT '期数',
   `statement_detail_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '结算单总金额（租金+租金押金）',
   `statement_detail_other_amount` decimal(15,2) DEFAULT 0 COMMENT '其他费用（运费等）',
