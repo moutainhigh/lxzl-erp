@@ -3,6 +3,7 @@ package com.lxzl.erp.dataaccess.domain.user;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.user.pojo.Role;
+import com.lxzl.se.common.util.poi.ExcelField;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 
 import java.util.Date;
@@ -12,8 +13,10 @@ public class UserDO extends BaseDO {
 
 	private Integer id;
 	private Integer userType;
+	@ExcelField(order = 0, header = "用户名")
 	private String userName;
 	private String password;
+	@ExcelField(order = 2, header = "真实姓名")
 	private String realName;
 	private String email;
 	private String phone;
