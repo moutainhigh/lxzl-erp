@@ -109,7 +109,7 @@ public class PeerDeploymentOrderController extends BaseController {
      */
     @RequestMapping(value = "commitPeerDeploymentOrderReturn", method = RequestMethod.POST)
     public Result commitPeerDeploymentOrderReturn(@RequestBody @Validated(ExtendGroup.class) PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.commitPeerDeploymentOrderReturn(peerDeploymentOrderCommitParam.getPeerDeploymentOrderNo(),peerDeploymentOrderCommitParam.getVerifyUserId(),peerDeploymentOrderCommitParam.getRemark());
+        ServiceResult<String, String> serviceResult = peerDeploymentOrderService.commitPeerDeploymentOrderReturn(peerDeploymentOrderCommitParam.getPeerDeploymentOrderNo(),peerDeploymentOrderCommitParam.getVerifyUserId(),peerDeploymentOrderCommitParam.getVerifyMatters(),peerDeploymentOrderCommitParam.getRemark());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

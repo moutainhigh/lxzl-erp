@@ -4,6 +4,7 @@ public class BaseCommitParam {
 
     private Integer verifyUserId;
     private String remark;
+    private String verifyMatters;
 
     public Integer getVerifyUserId() {
         return verifyUserId;
@@ -20,4 +21,8 @@ public class BaseCommitParam {
     public void setRemark(String remark) {
         this.remark = remark;
     }
+
+    public String getVerifyMatters() { return verifyMatters; }
+
+    public void setVerifyMatters(String verifyMatters) { this.verifyMatters = verifyMatters; }
 }
