@@ -1,12 +1,10 @@
 package com.lxzl.erp.dataaccess.dao.mysql.material;
 
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
-import com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderMaterialBulkDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 @Repository
@@ -35,8 +33,6 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
 
     Integer getRentBulkCountByOrderNo(@Param("orderNo") String orderNo);
 
-    List<BulkMaterialDO> findByMaterialId(@Param("materialId") Integer materialId);
-
     List<BulkMaterialDO> findByPurchaseOrderNo(@Param("purchaseOrderNo") String purchaseOrderNo);
 
     List<BulkMaterialDO> listByPurchaseReceiveOrderMaterialId(@Param("maps") Map<String, Object> paramMap);
@@ -47,23 +43,18 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
 
     List<BulkMaterialDO> findByEquipmentNo(@Param("equipmentNo")String equipmentNo);
 
-    List<BulkMaterialDO> findListByBulkMaterialNO(@Param("transferOrderMaterialBulkDOList") List<TransferOrderMaterialBulkDO> transferOrderMaterialBulkDOList);
+    Integer updateBatchByBulkMaterialNoInTransferOrder(@Param("maps")Map<String, Object> maps);
 
-    List<BulkMaterialDO> findBatchByBulkMaterialNoInTransferOrder(@Param("maps") Map<String, Object> maps);
+    Integer updateBatchStatusByPeerDeploymentOrderId(@Param("maps")Map<String, Object> maps);
 
-    Integer UpdateBatchByBulkMaterialNoInTransferOrder(@Param("maps")Map<String, Object> maps);
+    List<BulkMaterialDO> findBatchByPeerDeploymentOrderId(@Param("maps")Map<String, Object> maps);
 
-    List<BulkMaterialDO> findBatchByEquipmentNo(@Param("maps")Map<String, Object> maps);
+    List<BulkMaterialDO> findBatchByMaterialIdAndIsNewAndWarehouseIdAndMaterialCount(@Param("maps")Map<String, Object> fitMap);
 
-    Integer UpdateStatusBatchByEquipmentNo(@Param("maps")Map<String, Object> maps);
+    Integer updateBatchStatusByPeerDeploymentOrderProductEquipment(@Param("maps")Map<String, Object> maps);
 
-    List<BulkMaterialDO> findBatchByBulkMaterialNoInPeerDeploymentOrder(@Param("maps")Map<String, Object> maps);
+    Integer updateBatchStatusByTransferOrderId(@Param("maps")Map<String, Object> maps);
 
-    Integer UpdateBatchByBulkMaterialNoInPeerDeploymentOrder(@Param("maps")Map<String, Object> maps);
+    Integer updateBatchStatusByTransferOrderProductEquipment(@Param("maps")Map<String, Object> maps);
 
-    void updateStatusBatch(@Param("maps")Map<String, Object> maps);
-
-    List<BulkMaterialDO> findBatchByPeerDeploymentOrderNo(@Param("maps")Map<String, Object> maps);
-
-    Integer updateStatusByTransferOrderMaterialId(@Param("transferOrderMaterialId")Integer transferOrderMaterialId,@Param("bulkMaterialStatus")Integer bulkMaterialStatus,@Param("updateUser")String updateUser,@Param("updateTime")Date updateTime);
 }

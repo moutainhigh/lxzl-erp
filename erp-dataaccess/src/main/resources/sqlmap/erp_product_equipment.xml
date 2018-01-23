@@ -489,39 +489,46 @@
         <include refid="set_column_sql"/>
     </insert>
 
-    <select id="findBatchByEquipmentNoInPeerDeploymentOrder" parameterType="map" resultMap="ProductEquipmentDO">
-    SELECT <include refid="column_List"/> FROM erp_product_equipment epe WHERE epe.data_status=1 AND epe.equipment_status = #{maps.oldEquipmentStatus}
-    AND epe.current_warehouse_id = #{maps.warehouseId} AND epe.id IN
-    <foreach collection="maps.peerDeploymentOrderProductEquipmentDOList" item="PeerDeploymentOrderProductEquipmentDO" open="(" close=")"
-             separator=",">
-        #{PeerDeploymentOrderProductEquipmentDO.equipmentId,jdbcType=VARCHAR}
-    </foreach>
-    ORDER BY epe.id LIMIT 0,#{maps.equipmentCount}
-    </select>
-
-    <update id="updateStatusBathByEquipmentNoInMap" parameterType="map">
-        UPDATE erp_product_equipment epe1 INNER JOIN (
-        SELECT <include refid="column_List"/> FROM erp_product_equipment epe WHERE epe.data_status=1 AND epe.equipment_status = #{maps.oldEquipmentStatus}
-        AND epe.current_warehouse_id = #{maps.warehouseId} AND epe.equipment_no IN
-        <foreach collection="maps.peerDeploymentOrderProductEquipmentDOList" item="PeerDeploymentOrderProductEquipmentDO" open="(" close=")"
-                 separator=",">
-            #{PeerDeploymentOrderProductEquipmentDO.equipmentNo,jdbcType=VARCHAR}
-        </foreach>
-        ORDER BY epe.id LIMIT 0,#{maps.equipmentCount}
-        ) epe2 ON epe1.id = epe2.id SET epe1.update_time = #{maps.updateTime},epe1.update_user = #{maps.updateUser},epe1.equipment_status=#{maps.newEquipmentStatus}
-    </update>
-
-
     <select id="findBatchByPeerDeploymentOrderNo" parameterType="map" resultMap="ProductEquipmentDO">
         SELECT <include refid="column_List"/> FROM erp_product_equipment epe INNER JOIN erp_peer_deployment_order_product_equipment epdomb ON
         epe.id = epdomb.equipment_id AND epdomb.peer_deployment_order_no = #{maps.peerDeploymentOrderNo, jdbcType=VARCHAR}
     </select>
 
-    <update id="updateStatusBatch" parameterType="map">
-        update erp_product_equipment epe,erp_peer_deployment_order_product_equipment epdomb
-        set epe.equipment_status = #{maps.equipmentStatus, jdbcType=VARCHAR},epe.update_time = #{maps.updateTime,jdbcType=TIMESTAMP},epe.update_user = #{maps.updateUser,jdbcType=INTEGER}
-        where epe.id = epdomb.equipment_id
-        and epdomb.peer_deployment_order_no = #{maps.peerDeploymentOrderNo, jdbcType=VARCHAR}
+    <update id="updateStatusBatchByPeerDeploymentOrderId" parameterType="map">
+        update erp_product_equipment epe,erp_peer_deployment_order_product_equipment epdope
+        set epe.equipment_status = #{maps.equipmentStatus, jdbcType=INTEGER},epe.update_time = #{maps.updateTime,jdbcType=TIMESTAMP},epe.update_user = #{maps.updateUser,jdbcType=VARCHAR}
+        where epe.id = epdope.equipment_id AND epdope.data_status = 1
+        and epdope.peer_deployment_order_id = #{maps.peerDeploymentOrderId, jdbcType=VARCHAR}
+    </update>
+
+    <select id="findBatchByTransferOrderNo" parameterType="map" resultMap="ProductEquipmentDO">
+        SELECT <include refid="column_List"/> FROM erp_product_equipment epe INNER JOIN erp_transfer_order_product_equipment etope ON
+        epe.equipment_no = etope.product_equipment_no AND etope.transfer_order_id = #{maps.transferOrderId, jdbcType=VARCHAR} AND etope.date_status = 1
+    </select>
+
+    <update id="updateBatchStatusByPeerDeploymentOrderProductEquipment" parameterType="map">
+        UPDATE erp_bulk_material ebm1 INNER JOIN
+        (
+        SELECT <include refid="column_List"/> FROM erp_bulk_material ebm INNER JOIN erp_peer_deployment_order_product_equipment epdope
+        ON ebm.current_equipment_id = epdope.equipment_id AND ebm.data_status = 1
+        WHERE epdope.peer_deployment_order_id = #{maps.peerDeploymentOrderId,jdbcType=INTEGER}  AND epdope.data_status = 1
+        ) ebm2
+        ON ebm1.id = ebm2.id SET ebm1.bulk_material_status = #{maps.bulkMaterialStatus,jdbcType=INTEGER} AND ebm1.update_time = #{maps.updateTime,jdbcType=TIMESTAMP} AND ebm1.update_user = #{maps.updateUser,jdbcType=VARCHAR}
+    </update>
+
+
+    <select id="findBatchByPeerDeploymentOrderId" resultMap="ProductEquipmentDO" parameterType="map">
+        SELECT <include refid="column_List"/> FROM erp_product_equipment epe INNER JOIN erp_peer_deployment_order_product_equipment epdope
+        ON epe.id = epdope.equipment_id AND epe.data_status = 1
+        WHERE epdope.peer_deployment_order_id = #{maps.peerDeploymentOrderId,jdbcType=INTEGER} AND epdope.data_status = 1
+    </select>
+
+
+    <update id="updateStatusBatchByTransferOrderId" parameterType="map">
+        update erp_product_equipment epe,erp_transfer_order_product_equipment etope
+        set epe.equipment_status = #{maps.equipmentStatus, jdbcType=INTEGER},epe.update_time = #{maps.updateTime,jdbcType=TIMESTAMP},epe.update_user = #{maps.updateUser,jdbcType=VARCHAR}
+        where epe.equipment_no  = etope.product_equipment_no AND etope.data_status = 1
+        and etope.transfer_order_id = #{maps.transferOrderId, jdbcType=INTEGER}
     </update>
 
 </mapper>
