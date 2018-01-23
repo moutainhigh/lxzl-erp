@@ -427,6 +427,7 @@
                                         <thead>
                                         <tr class="bg-light">
                                             <th>商品名</th>
+                                            <th>金额类型</th>
                                             <th>单价</th>
                                             <th>商品数量</th>
                                             <th>租赁类型</th>
@@ -452,6 +453,7 @@
                                                     {{itemName}}
                                                 </div>
                                             </td>
+                                            <td>{{statementDetailTypeValue}}</td>
                                             <td>￥{{#price}}{{unitAmount}}{{/price}}</td>
                                             <td>{{itemCount}}</td>
                                             <td>{{itemRentTypeValue}}</td>
