@@ -119,7 +119,7 @@
                                     <tbody>
                                     {{#dataSource}}
                                     {{#listData}}
-                                    <tr class="productRow" productRowKey="{{productId}}">
+                                    <tr class="productRow skuRow" productRowKey="{{productId}}">
                                         <td>{{productId}}</td>
                                         <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                         <td>{{productName}}</td>
