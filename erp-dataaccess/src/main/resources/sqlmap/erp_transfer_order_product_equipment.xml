@@ -56,8 +56,6 @@
 	</select>
 
 
-
-
 	<sql id="set_column_sql">
 		<set>
 			<if test="transferOrderId != null">

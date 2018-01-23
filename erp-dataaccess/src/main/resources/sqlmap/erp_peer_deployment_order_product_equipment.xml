@@ -157,7 +157,8 @@
 	</select>
 	
 	<update id="updateBatchReturnTime" parameterType="map">
-		UPDATE erp_peer_deployment_order_product_equipment epdope SET epdope.return_time = #{maps.returnTime},epdope.update_time = #{maps.updateTime},epdope.update_user = #{maps.updateUser}
-		where epdope.peer_deployment_order_no = #{maps.peerDeploymentOrderNo, jdbcType=VARCHAR}
+		UPDATE erp_peer_deployment_order_product_equipment epdope SET epdope.return_time = #{maps.returnTime, jdbcType=TIMESTAMP},epdope.update_time = #{maps.updateTime, jdbcType=TIMESTAMP},epdope.update_user = #{maps.updateUser, jdbcType=VARCHAR}
+		where epdope.peer_deployment_order_id = #{maps.peerDeploymentOrderId, jdbcType=INTEGER} AND epdope.data_status = 1
 	</update>
+
 </mapper>

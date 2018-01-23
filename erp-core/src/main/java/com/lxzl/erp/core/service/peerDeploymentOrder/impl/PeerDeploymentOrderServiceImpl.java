@@ -9,7 +9,9 @@ import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderCommitP
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialBulkQueryGroup;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderProductEquipmentQueryGroup;
 import com.lxzl.erp.common.domain.peerDeploymentOrder.PeerDeploymentOrderQueryParam;
-import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.*;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrder;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderMaterialBulk;
+import com.lxzl.erp.common.domain.peerDeploymentOrder.pojo.PeerDeploymentOrderProductEquipment;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
 import com.lxzl.erp.common.domain.product.pojo.ProductMaterial;
@@ -31,10 +33,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.area.AreaCityMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.peer.PeerMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.peerDeploymentOrder.PeerDeploymentOrderConsignInfoMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.peerDeploymentOrder.PeerDeploymentOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.peerDeploymentOrder.PeerDeploymentOrderMaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.peerDeploymentOrder.PeerDeploymentOrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.peerDeploymentOrder.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
@@ -45,10 +43,6 @@ import com.lxzl.erp.dataaccess.domain.area.AreaCityDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.peer.PeerDO;
-import com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderConsignInfoDO;
-import com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderDO;
-import com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderMaterialDO;
-import com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.PeerDeploymentOrderProductDO;
 import com.lxzl.erp.dataaccess.domain.peerDeploymentOrder.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
@@ -71,7 +65,8 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.lxzl.se.common.util.date.DateUtil.*;
+import static com.lxzl.se.common.util.date.DateUtil.dateInterval;
+import static com.lxzl.se.common.util.date.DateUtil.monthInterval;
 
 /**
  * @Author: kai
@@ -568,7 +563,6 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> commitPeerDeploymentOrderReturn(String peerDeploymentOrderNo, Integer verifyUserId, String remark) {
-        //todo 设备有租赁中的也能退吗？而且提交审核的时候就应该把所有的设备改为锁定状态
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date now = new Date();
@@ -588,6 +582,13 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         WarehouseDO userWarehouse = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
         if (!userWarehouse.getId().equals(peerDeploymentOrderDO.getWarehouseId())){
             serviceResult.setErrorCode(ErrorCode.USER_CAN_NOT_OPERATION_PEER_DEPLOYMENT_ORDER_WAREHOUSE);
+            return serviceResult;
+        }
+
+        //判断同行调拨单下设备和散料的状态是否可以提交审核
+        serviceResult = judgeProductEquipmentAndBulkMaterialStatus(peerDeploymentOrderDO);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+            serviceResult.setErrorCode(serviceResult.getErrorCode(),serviceResult.getFormatArgs());
             return serviceResult;
         }
 
@@ -633,7 +634,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 return serviceResult;
             }
 
-            //不需要审核，直接改变为退回处理中
+            //不需要审核，直接改变状态为退回处理中
             peerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_PROCESSING_OUT);
             peerDeploymentOrderDO.setUpdateTime(now);
             peerDeploymentOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -667,7 +668,6 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             return serviceResult;
         }
 
-        Integer warehouseId = peerDeploymentOrderDO.getWarehouseId();
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderProductDOList())) {
             List<PeerDeploymentOrderProductDO> peerDeploymentOrderProductDOList = peerDeploymentOrderDO.getPeerDeploymentOrderProductDOList();
 
@@ -681,36 +681,23 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 }
             }
 
-            List<PeerDeploymentOrderProductEquipmentDO> peerDeploymentOrderProductEquipmentDOList = peerDeploymentOrderProductEquipmentMapper.findByPeerDeploymentOrderProductId(peerDeploymentOrderDO.getId());
-            Map<String, Object> maps = new HashMap<>();
-            //获取同行调拨单下，所有的设备
-            maps.put("peerDeploymentOrderNo", peerDeploymentOrderDO.getPeerDeploymentOrderNo());
-            List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.findBatchByPeerDeploymentOrderNo(maps);
-
             //改变所有设备的状态
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("peerDeploymentOrderId", peerDeploymentOrderDO.getId());
             maps.put("updateUser", userSupport.getCurrentUserId().toString());
             maps.put("updateTime", now);
             maps.put("equipmentStatus", ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_PEER_RETURN_END);
-            productEquipmentMapper.updateStatusBatch(maps);
+            productEquipmentMapper.updateStatusBatchByPeerDeploymentOrderId(maps);
 
             //设置该同行调拨单下所有设备表的归还时间
             maps.put("returnTime",now);
             SqlLogInterceptor.setExecuteSql("skip print peerDeploymentOrderProductEquipmentMapper.updateBatchReturnTime  sql ......");
             peerDeploymentOrderProductEquipmentMapper.updateBatchReturnTime(maps);
 
-            maps.put("warehouseId", warehouseId);
-            maps.put("equipmentCount", peerDeploymentOrderProductEquipmentDOList.size());
-            maps.put("productEquipmentDOList", productEquipmentDOList);
-            maps.put("oldBulkMaterialStatus",BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURNING);
-            SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.findBatchByEquipmentNo  sql ......");
-            //获取所有设备下面的散料
-            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findBatchByEquipmentNo(maps);
-            if (CollectionUtil.isNotEmpty(bulkMaterialDOList)) {
-                //将设备下面所有散料状态改为已退回
-                maps.put("newBulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURN_END);
-                SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.UpdateStatusBatchByEquipmentNo  sql ......");
-                bulkMaterialMapper.UpdateStatusBatchByEquipmentNo(maps);
-            }
+            //改变同行调拨单下设备表包含的散料状态
+            maps.put("bulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURN_END);
+            bulkMaterialMapper.updateBatchStatusByPeerDeploymentOrderProductEquipment(maps);
+
         }
 
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList())){
@@ -726,14 +713,9 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 }
             }
 
-            //获取转移单配件散料单
-            List<PeerDeploymentOrderMaterialBulkDO> peerDeploymentOrderMaterialBulkDOList = peerDeploymentOrderMaterialBulkMapper.findByPeerDeploymentOrderId(peerDeploymentOrderDO.getId());
-            Map<String,Object> maps = new HashMap<>();
-            //获取同行调拨单物料表下面所有的散料
-            maps.put("peerDeploymentOrderNo", peerDeploymentOrderDO.getPeerDeploymentOrderNo());
-            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findBatchByPeerDeploymentOrderNo(maps);
-
             //设置该同行调拨单下所有散料表的归还时间
+            Map<String,Object> maps = new HashMap<>();
+            maps.put("peerDeploymentOrderId", peerDeploymentOrderDO.getId());
             maps.put("updateUser", userSupport.getCurrentUserId().toString());
             maps.put("updateTime", now);
             maps.put("returnTime",now);
@@ -742,7 +724,8 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
 
             //将所有散料的状态改为已退回
             maps.put("bulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURN_END);
-            bulkMaterialMapper.updateStatusBatch(maps);
+            bulkMaterialMapper.updateBatchStatusByPeerDeploymentOrderId(maps);
+
         }
 
         //同行调拨单实际归还时间和状态设置
@@ -1106,22 +1089,19 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
     }
 
     /**
-     * 提交同行调拨单归还时改变状态
+     *  提交审核时，判断所有设备和散料的状态是否可以满足提交审核条件
      */
-    private ServiceResult<String,String> commitPeerDeploymentOrderStatus(PeerDeploymentOrderDO peerDeploymentOrderDO, Integer userId, Date now) {
+    private ServiceResult<String,String> judgeProductEquipmentAndBulkMaterialStatus(PeerDeploymentOrderDO peerDeploymentOrderDO) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
         Integer warehouseId = peerDeploymentOrderDO.getWarehouseId();
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderProductDOList())) {
 
-            List<PeerDeploymentOrderProductEquipmentDO> peerDeploymentOrderProductEquipmentDOList = peerDeploymentOrderProductEquipmentMapper.findByPeerDeploymentOrderProductId(peerDeploymentOrderDO.getId());
             Map<String, Object> maps = new HashMap<>();
-
-            maps.put("peerDeploymentOrderNo", peerDeploymentOrderDO.getPeerDeploymentOrderNo());
-            SqlLogInterceptor.setExecuteSql("skip print productEquipmentMapper.findBatchByEquipmentNoInPeerDeploymentOrder  sql ......");
+            maps.put("peerDeploymentOrderId", peerDeploymentOrderDO.getId());
             //获取同行调拨单下，所有的设备
-            List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.findBatchByPeerDeploymentOrderNo(maps);
-//
+            List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.findBatchByPeerDeploymentOrderId(maps);
+
             for (ProductEquipmentDO productEquipmentDO : productEquipmentDOList) {
                 //判断设备当前仓库，以及设备的状态
                 if (!warehouseId.equals(productEquipmentDO.getOwnerWarehouseId())) {
@@ -1133,35 +1113,14 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                     return serviceResult;
                 }
             }
-
-            //改变所有设备的状态
-            maps.put("updateUser", userSupport.getCurrentUserId().toString());
-            maps.put("updateTime", now);
-            maps.put("equipmentStatus", ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_PEER_RETURNING);
-            productEquipmentMapper.updateStatusBatch(maps);
-
-            maps.put("warehouseId", warehouseId);
-            maps.put("equipmentCount", peerDeploymentOrderProductEquipmentDOList.size());
-            maps.put("productEquipmentDOList", productEquipmentDOList);
-            maps.put("oldBulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
-            SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.findBatchByEquipmentNo  sql ......");
-            //获取所有设备下面的散料
-            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findBatchByEquipmentNo(maps);
-            if (CollectionUtil.isNotEmpty(bulkMaterialDOList)){
-                //将设备下面所有散料状态改为归还中
-                maps.put("newBulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURNING);
-                bulkMaterialMapper.UpdateStatusBatchByEquipmentNo(maps);
-            }
         }
 
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList())) {
             //获取转移单配件散料单
-            //todo 不用的查询就删掉
-            List<PeerDeploymentOrderMaterialBulkDO> peerDeploymentOrderMaterialBulkDOList = peerDeploymentOrderMaterialBulkMapper.findByPeerDeploymentOrderId(peerDeploymentOrderDO.getId());
             Map<String,Object> maps = new HashMap<>();
             //获取同行调拨单物料表下面所有的散料
-            maps.put("peerDeploymentOrderNo", peerDeploymentOrderDO.getPeerDeploymentOrderNo());
-            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findBatchByPeerDeploymentOrderNo(maps);
+            maps.put("peerDeploymentOrderId", peerDeploymentOrderDO.getId());
+            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findBatchByPeerDeploymentOrderId(maps);
 
             for (BulkMaterialDO bulkMaterialDO : bulkMaterialDOList) {
                 //判断散料是否处于同行调拨单的仓库，以及状态是否为空闲中
@@ -1174,12 +1133,45 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                     return serviceResult;
                 }
             }
+        }
 
-            //将所有散料的状态改为归还中
-            maps.put("updateUser", userSupport.getCurrentUserId().toString());
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(peerDeploymentOrderDO.getPeerDeploymentOrderNo());
+        return serviceResult;
+    }
+
+
+    /**
+     * 提交同行调拨单归还时改变状态
+     */
+    private ServiceResult<String,String> commitPeerDeploymentOrderStatus(PeerDeploymentOrderDO peerDeploymentOrderDO, Integer userId, Date now) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+
+        if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderProductDOList())) {
+
+            //改变同行调拨单下，所有的设备的状态
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("peerDeploymentOrderId", peerDeploymentOrderDO.getId());
+            maps.put("updateUser", userId.toString());
+            maps.put("updateTime", now);
+            maps.put("equipmentStatus", ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_PEER_RETURNING);
+            productEquipmentMapper.updateStatusBatchByPeerDeploymentOrderId(maps);
+
+            //改变同行调拨单下设备表包含的散料状态
+            maps.put("peerDeploymentOrderId", peerDeploymentOrderDO.getId());
+            maps.put("bulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURNING);
+            bulkMaterialMapper.updateBatchStatusByPeerDeploymentOrderProductEquipment(maps);
+        }
+
+        if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList())) {
+
+            Map<String,Object> maps = new HashMap<>();
+            //将同行调拨单物料表下面所有的散料的状态改为归还中
+            maps.put("peerDeploymentOrderId", peerDeploymentOrderDO.getId());
+            maps.put("updateUser", userId.toString());
             maps.put("updateTime", now);
             maps.put("bulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURNING);
-            bulkMaterialMapper.updateStatusBatch(maps);
+            bulkMaterialMapper.updateBatchStatusByPeerDeploymentOrderId(maps);
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -1188,52 +1180,32 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
     }
 
     private void restorePeerDeploymentOrderStatus(PeerDeploymentOrderDO peerDeploymentOrderDO, User currentUser, Date now) {
-        Integer warehouseId = peerDeploymentOrderDO.getWarehouseId();
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderProductDOList())){
 
-            List<PeerDeploymentOrderProductEquipmentDO> peerDeploymentOrderProductEquipmentDOList = peerDeploymentOrderProductEquipmentMapper.findByPeerDeploymentOrderProductId(peerDeploymentOrderDO.getId());
-            Map<String, Object> maps = new HashMap<>();
-            //获取同行调拨单下，所有的设备
-            //todo 不要找设备，散料状态通过一条update语句更新
-            maps.put("peerDeploymentOrderNo", peerDeploymentOrderDO.getPeerDeploymentOrderNo());
-            SqlLogInterceptor.setExecuteSql("skip print productEquipmentMapper.findBatchByEquipmentNoInPeerDeploymentOrder  sql ......");
-            List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.findBatchByPeerDeploymentOrderNo(maps);
-
-
             //改变所有设备的状态
-            maps.put("updateUser", userSupport.getCurrentUserId().toString());
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("peerDeploymentOrderId", peerDeploymentOrderDO.getId());
+            maps.put("updateUser", currentUser.getUserId().toString());
             maps.put("updateTime", now);
             maps.put("equipmentStatus", ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
-            //todo 修改方法名，且sql语句要加未删除的状态条件
-            productEquipmentMapper.updateStatusBatch(maps);
+            productEquipmentMapper.updateStatusBatchByPeerDeploymentOrderId(maps);
 
-            maps.put("warehouseId", warehouseId);
-//            maps.put("peerDeploymentOrderProductEquipmentDOList", peerDeploymentOrderProductEquipmentDOList);
-            maps.put("equipmentCount", peerDeploymentOrderProductEquipmentDOList.size());
-            maps.put("productEquipmentDOList", productEquipmentDOList);
-            maps.put("oldBulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_PEER_RETURNING);
-            SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.findBatchByEquipmentNo  sql ......");
-            //获取所有设备下面的散料
-            List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.findBatchByEquipmentNo(maps);
-            if (CollectionUtil.isNotEmpty(bulkMaterialDOList)){
-                //将设备下面所有散料状态改为闲置中
-                maps.put("newBulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
-                //todo 以后方法名不要大写开头
-                bulkMaterialMapper.UpdateStatusBatchByEquipmentNo(maps);
-            }
+            //改变同行调拨单下设备表包含的散料状态
+            maps.put("peerDeploymentOrderId", peerDeploymentOrderDO.getId());
+            maps.put("bulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
+            bulkMaterialMapper.updateBatchStatusByPeerDeploymentOrderProductEquipment(maps);
         }
 
         if (CollectionUtil.isNotEmpty(peerDeploymentOrderDO.getPeerDeploymentOrderMaterialDOList())){
-            //获取转移单配件散料单
-            //todo 不用的就删掉，另外这个更新是否可以和设备散料的合二为一
-            List<PeerDeploymentOrderMaterialBulkDO> peerDeploymentOrderMaterialBulkDOList = peerDeploymentOrderMaterialBulkMapper.findByPeerDeploymentOrderId(peerDeploymentOrderDO.getId());
+            //改变同行调拨单下散料表对应的散料状态
             Map<String,Object> maps = new HashMap<>();
             //将所有散料的状态改为闲置中
-            maps.put("peerDeploymentOrderNo", peerDeploymentOrderDO.getPeerDeploymentOrderNo());
-            maps.put("updateUser", userSupport.getCurrentUserId().toString());
+            maps.put("peerDeploymentOrderId", peerDeploymentOrderDO.getId());
+            maps.put("updateUser", currentUser.getUserId().toString());
             maps.put("updateTime", now);
             maps.put("bulkMaterialStatus", BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
-            bulkMaterialMapper.updateStatusBatch(maps);
+            bulkMaterialMapper.updateBatchStatusByPeerDeploymentOrderId(maps);
+
         }
     }
 

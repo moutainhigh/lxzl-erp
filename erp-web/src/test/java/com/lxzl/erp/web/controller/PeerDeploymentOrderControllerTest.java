@@ -55,7 +55,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         List<PeerDeploymentOrderProduct> peerDeploymentOrderProductList = new ArrayList<>();
         PeerDeploymentOrderProduct peerDeploymentOrderProduct = new PeerDeploymentOrderProduct();
         peerDeploymentOrderProduct.setProductSkuId(216);
-        peerDeploymentOrderProduct.setProductSkuCount(500);
+        peerDeploymentOrderProduct.setProductSkuCount(1500);
         peerDeploymentOrderProduct.setProductUnitAmount(new BigDecimal(100));
         peerDeploymentOrderProduct.setIsNew(1);
         peerDeploymentOrderProduct.setRemark("kai创建同行调拨单商品测试");
@@ -74,8 +74,8 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         List<PeerDeploymentOrderMaterial> peerDeploymentOrderMaterialList = new ArrayList<>();
         PeerDeploymentOrderMaterial peerDeploymentOrderMaterial = new PeerDeploymentOrderMaterial();
 //        peerDeploymentOrderMaterial.setMaterialId(24);
-        peerDeploymentOrderMaterial.setMaterialNo("M201711291745413251585");
-        peerDeploymentOrderMaterial.setMaterialCount(1000);
+        peerDeploymentOrderMaterial.setMaterialNo("M201711171838059981293");
+        peerDeploymentOrderMaterial.setMaterialCount(2000);
         peerDeploymentOrderMaterial.setMaterialUnitAmount(new BigDecimal(10));
         peerDeploymentOrderMaterial.setIsNew(1);
         peerDeploymentOrderMaterial.setRemark("kai创建同行调拨单配件测试");
@@ -83,7 +83,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
         PeerDeploymentOrderMaterial peerDeploymentOrderMaterial2 = new PeerDeploymentOrderMaterial();
         peerDeploymentOrderMaterial2.setMaterialId(24);
         peerDeploymentOrderMaterial2.setMaterialNo("M201711291745413251585");
-        peerDeploymentOrderMaterial2.setMaterialCount(1000);
+        peerDeploymentOrderMaterial2.setMaterialCount(0);
         peerDeploymentOrderMaterial2.setMaterialUnitAmount(new BigDecimal(10));
         peerDeploymentOrderMaterial2.setIsNew(0);
         peerDeploymentOrderMaterial2.setRemark("kai创建同行调拨单配件测试");
@@ -193,7 +193,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void commitPeerDeploymentOrderIntoTest() throws Exception {
         PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam = new PeerDeploymentOrderCommitParam();
-        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0999-20180120-0088");
+        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0999-20180122-0120");
         peerDeploymentOrderCommitParam.setVerifyUserId(500006);
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/commitPeerDeploymentOrderInto",peerDeploymentOrderCommitParam);
     }
@@ -204,7 +204,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void confirmPeerDeploymentOrderIntoTest() throws Exception {
         PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam = new PeerDeploymentOrderCommitParam();
-        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0999-20180120-0088");
+        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0999-20180122-0119");
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/confirmPeerDeploymentOrderInto",peerDeploymentOrderCommitParam);
     }
 
@@ -222,7 +222,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void commitPeerDeploymentOrderReturn() throws Exception {
         PeerDeploymentOrderCommitParam peerDeploymentOrderCommitParam = new PeerDeploymentOrderCommitParam();
-        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0999-20180120-0088");
+        peerDeploymentOrderCommitParam.setPeerDeploymentOrderNo("LXPDO-0999-20180122-0119");
         peerDeploymentOrderCommitParam.setVerifyUserId(500006);
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/commitPeerDeploymentOrderReturn",peerDeploymentOrderCommitParam);
     }
@@ -230,7 +230,7 @@ public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void endPeerDeploymentOrderOut() throws Exception {
         PeerDeploymentOrder peerDeploymentOrder = new PeerDeploymentOrder();
-        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO-0999-20180120-0088");
+        peerDeploymentOrder.setPeerDeploymentOrderNo("LXPDO-0999-20180122-0120");
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/endPeerDeploymentOrderOut",peerDeploymentOrder);
     }
 
