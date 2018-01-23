@@ -15,6 +15,8 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StatementOrderQueryParam extends BasePageParam {
     private String statementOrderCustomerName;
+    private Integer statementOrderCustomerId;
+    private String statementOrderCustomerNo;
     private String statementOrderNo;
     private Integer statementOrderStatus;
     private Date statementExpectPayStartTime;
@@ -103,5 +105,21 @@ public class StatementOrderQueryParam extends BasePageParam {
 
     public void setChangeOrderNo(String changeOrderNo) {
         this.changeOrderNo = changeOrderNo;
+    }
+
+    public Integer getStatementOrderCustomerId() {
+        return statementOrderCustomerId;
+    }
+
+    public void setStatementOrderCustomerId(Integer statementOrderCustomerId) {
+        this.statementOrderCustomerId = statementOrderCustomerId;
+    }
+
+    public String getStatementOrderCustomerNo() {
+        return statementOrderCustomerNo;
+    }
+
+    public void setStatementOrderCustomerNo(String statementOrderCustomerNo) {
+        this.statementOrderCustomerNo = statementOrderCustomerNo;
     }
 }

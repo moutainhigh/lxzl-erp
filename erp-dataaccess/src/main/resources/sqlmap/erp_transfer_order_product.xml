@@ -100,18 +100,8 @@
 		WHERE etop.transfer_order_id = #{transferOrderId,jdbcType=INTEGER} AND etop.data_status = 1
 	</select>
 
-	<update id="clearDateStatusByTransferIdAndProductSkuIdAndIsNew" parameterType="java.lang.Integer">
-		UPDATE erp_transfer_order_product SET data_status = 2
-		WHERE product_sku_id = #{productSkuId ,jdbcType=INTEGER} AND transfer_order_id = #{transferOrderId ,jdbcType=INTEGER} AND is_new = #{isNew,jdbcType=INTEGER}
-	</update>
-
 	<select id="findByTransferOrderIdAndSkuIdAndIsNew" resultMap="TransferOrderProductDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_transfer_order_product etop WHERE
 		etop.transfer_order_id = #{transferOrderId,jdbcType=INTEGER} AND etop.product_sku_id = #{productSkuId,jdbcType=INTEGER} AND etop.is_new = #{isNew,jdbcType=INTEGER} AND etop.data_status = 1
-	</select>
-
-	<select id="findByTransferOrderIdAndIsNew" resultMap="TransferOrderProductDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_transfer_order_product etop WHERE
-		etop.transfer_order_id = #{transferOrderId,jdbcType=INTEGER} AND etop.is_new = #{isNew,jdbcType=INTEGER} AND etop.data_status = 1
 	</select>
 </mapper>

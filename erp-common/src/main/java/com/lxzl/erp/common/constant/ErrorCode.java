@@ -548,14 +548,12 @@ public class ErrorCode {
     public static final String PEER_DEPLOYMENT_ORDER_COUNT_IS_ZERO  = "J1500026";
     public static final String PEER_DEPLOYMENT_ORDER_MONEY_IS_ZERO  = "J1500027";
     public static final String PEER_DEPLOYMENT_ORDER_DISCOUNT_MONEY_IS_ZERO  = "J1500028";
-
-
-    public static final String PEER_DEPLOYMENT_ORDER_PRODUCT_ID_NOT_NULL  = "J1510001";
-    public static final String PEER_DEPLOYMENT_ORDER_STATUS_NEED_CONFIRM  = "J1510002";
-    public static final String USER_CAN_NOT_OPERATION_PEER_DEPLOYMENT_ORDER_WAREHOUSE  = "J1510003";
-    public static final String PEER_DEPLOYMENT_ORDER_STATUS_NEED_PROCESSING_OUT  = "J1510004";
-    public static final String BANK_NO_ERROR  = "J1510005";
-    public static final String PRODUCT_EQUIPMENT_MATCH_PEER_DEPLOYMENT_ORDER_NOT_ENOUGH  = "J1510006";
+    public static final String PEER_DEPLOYMENT_ORDER_PRODUCT_ID_NOT_NULL  = "J1500029";
+    public static final String PEER_DEPLOYMENT_ORDER_STATUS_NEED_CONFIRM  = "J1500030";
+    public static final String USER_CAN_NOT_OPERATION_PEER_DEPLOYMENT_ORDER_WAREHOUSE  = "J1500031";
+    public static final String PEER_DEPLOYMENT_ORDER_STATUS_NEED_PROCESSING_OUT  = "J1500032";
+    public static final String BANK_NO_ERROR  = "J1500033";
+    public static final String PRODUCT_EQUIPMENT_MATCH_PEER_DEPLOYMENT_ORDER_NOT_ENOUGH  = "J1500034";
 
 
     static {

@@ -31,13 +31,13 @@ public interface ProductEquipmentMapper extends BaseMysqlDAO<ProductEquipmentDO>
 
     Integer listByPurchaseReceiveOrderProductIdCount(@Param("maps") Map<String, Object> paramMap);
 
-    List<ProductEquipmentDO> findBathByEquipmentNo(@Param("maps")Map<String, Object> maps);
-
-    Integer updateStatusBathByEquipmentNoInMap(@Param("maps")Map<String, Object> maps);
-
-    List<ProductEquipmentDO> findBatchByEquipmentNoInPeerDeploymentOrder(@Param("maps")Map<String, Object> maps);
-
-    Integer updateStatusBatch(@Param("maps")Map<String, Object> maps);
+    Integer updateStatusBatchByPeerDeploymentOrderId(@Param("maps")Map<String, Object> maps);
 
     List<ProductEquipmentDO> findBatchByPeerDeploymentOrderNo(@Param("maps")Map<String, Object> maps);
+
+    List<ProductEquipmentDO> findBatchByTransferOrderNo(@Param("maps")Map<String, Object> maps);
+
+    List<ProductEquipmentDO> findBatchByPeerDeploymentOrderId(@Param("maps")Map<String, Object> maps);
+
+    Integer updateStatusBatchByTransferOrderId(@Param("maps")Map<String, Object> maps);
 }

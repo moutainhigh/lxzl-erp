@@ -1,9 +1,11 @@
 package com.lxzl.erp.dataaccess.dao.mysql.transferOrder;
 
+import com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderProductDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
-import com.lxzl.erp.dataaccess.domain.transferOrder.TransferOrderProductDO;import org.apache.ibatis.annotations.Param;
-import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -15,9 +17,6 @@ public interface TransferOrderProductMapper extends BaseMysqlDAO<TransferOrderPr
 
     List<TransferOrderProductDO> findByTransferOrderId(@Param("transferOrderId")Integer transferOrderId);
 
-	void clearDateStatusByTransferIdAndProductSkuIdAndIsNew(@Param("productSkuId")Integer productSkuId,@Param("transferOrderId")Integer transferOrderId,@Param("isNew")Integer isNew);
-
     TransferOrderProductDO findByTransferOrderIdAndSkuIdAndIsNew(@Param("transferOrderId")Integer transferOrderId,@Param("productSkuId")Integer productSkuId,@Param("isNew")Integer isNew);
 
-    List<TransferOrderProductDO> findByTransferOrderIdAndIsNew(@Param("transferOrderId")Integer transferOrderId,@Param("isNew")Integer isNew);
 }

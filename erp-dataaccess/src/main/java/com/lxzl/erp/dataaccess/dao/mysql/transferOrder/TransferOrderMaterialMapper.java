@@ -15,9 +15,6 @@ public interface TransferOrderMaterialMapper extends BaseMysqlDAO<TransferOrderM
 
     List<TransferOrderMaterialDO> findByTransferOrderId(@Param("transferOrderId")Integer transferOrderId);
 
-	void clearDateStatusByTransferIdAndMaterialNoAndIsNew(@Param("materialNo")String materialNo,@Param("transferOrderId") Integer transferOrderId,@Param("isNew")Integer isNew);
-
     TransferOrderMaterialDO findByTransferOrderIdAndMaterialNoAndIsNew(@Param("transferOrderId")Integer transferOrderId,@Param("materialNo") String materialNo,@Param("isNew")Integer isNew);
 
-    List<TransferOrderMaterialDO> findByTransferOrderIdAndIsNew(@Param("transferOrderId")Integer transferOrderId,@Param("isNew")Integer isNew);
 }
