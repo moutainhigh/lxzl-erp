@@ -74,8 +74,8 @@
 			<if test="maps.assembleOrderQueryParam != null &amp;&amp; maps.assembleOrderQueryParam.createEndTime != null &amp;&amp; maps.assembleOrderQueryParam.createEndTime != ''">
 				<![CDATA[ AND eao.create_time <= #{maps.assembleOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
-				AND eao.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and eao.data_status = 1
 			</if>
 		</where>
 	</select>
@@ -83,8 +83,8 @@
 	<select id="listPage" resultMap="AssembleOrderDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_assemble_order eao
 		<where>
-			<if test="true">
-				AND eao.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and eao.data_status = 1
 			</if>
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}
@@ -183,7 +183,7 @@
 			<if test="maps.assembleOrderQueryParam != null &amp;&amp; maps.assembleOrderQueryParam.createEndTime != null &amp;&amp; maps.assembleOrderQueryParam.createEndTime != ''">
 				<![CDATA[ AND eao.create_time <= #{maps.assembleOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and eao.data_status = 1
 			</if>
 		</where>

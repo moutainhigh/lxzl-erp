@@ -860,7 +860,8 @@ CREATE TABLE `erp_bulk_material` (
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_bulk_material_no` (`bulk_material_no`)
+  UNIQUE KEY `index_bulk_material_no` (`bulk_material_no`),
+  KEY `index_current_equipment_id` (`current_equipment_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='散料表';
 
 DROP TABLE if exists `erp_product_equipment_bulk_material`;
@@ -1434,7 +1435,9 @@ CREATE TABLE `erp_peer_deployment_order_product_equipment` (
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `index_peer_deployment_order_id` (`peer_deployment_order_id`),
+  KEY `index_equipment_id` (`equipment_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='同行货物调拨商品项设备表';
 
 DROP TABLE if exists `erp_peer_deployment_order_material_bulk`;

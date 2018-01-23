@@ -1414,11 +1414,15 @@ public class OrderServiceImpl implements OrderService {
 
         if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
             for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
-                ServiceResult<String, Material> materialResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
-                Material material = materialResult.getResult();
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())
+                        && orderMaterialDO.getRentTimeLength() >= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
+                    throw new BusinessException(ErrorCode.ORDER_RENT_LENGTH_MORE_THAN_90);
+                }
 
                 // 如果走风控
                 if (isCheckRiskManagement) {
+                    ServiceResult<String, Material> materialResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
+                    Material material = materialResult.getResult();
                     if (BrandId.BRAND_ID_APPLE.equals(material.getBrandId()) && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsLimitApple())) {
                         throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_APPLE_LIMIT);
                     }

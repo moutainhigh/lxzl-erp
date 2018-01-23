@@ -82,8 +82,8 @@
 			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.createEndTime != null">
 				<![CDATA[ AND epao.create_time <= #{maps.purchaseApplyOrderPageParam.createEndTime} ]]>
 			</if>
-			<if test="true">
-				AND epao.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and epao.data_status = 1
 			</if>
 		</where>
 	</select>
@@ -135,8 +135,8 @@
 			<if test="maps.purchaseApplyOrderPageParam != null &amp;&amp; maps.purchaseApplyOrderPageParam.createEndTime != null">
 				<![CDATA[ AND epao.create_time <= #{maps.purchaseApplyOrderPageParam.createEndTime} ]]>
 			</if>
-			<if test="true">
-				AND epao.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and epao.data_status = 1
 			</if>
 		</where>
 		)

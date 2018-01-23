@@ -129,8 +129,8 @@
 			<if test="maps.peerDeploymentOrderQueryParam != null &amp;&amp; maps.peerDeploymentOrderQueryParam.createEndTime != null ">
 				<![CDATA[ AND epdo.create_time <= #{maps.peerDeploymentOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
-				AND epdo.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and epdo.data_status = 1
 			</if>
 		</where>
 	</select>
@@ -144,8 +144,8 @@
 			<if test="maps.peerDeploymentOrderQueryParam != null &amp;&amp; maps.peerDeploymentOrderQueryParam.createEndTime != null ">
 				<![CDATA[ AND epdo.create_time <= #{maps.peerDeploymentOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
-				AND epdo.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and epdo.data_status = 1
 			</if>
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}
@@ -348,7 +348,7 @@
 			<if test="maps.peerDeploymentOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam.createEndTime != null">
 				<![CDATA[ AND epdo.create_time <= #{maps.transferOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and epdo.data_status = 1
 			</if>
 		</where>
@@ -390,7 +390,7 @@
 			<if test="maps.peerDeploymentOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam != null &amp;&amp; maps.transferOrderQueryParam.createEndTime != null">
 				<![CDATA[ AND epdo.create_time <= #{maps.transferOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and epdo.data_status = 1
 			</if>
 		</where>

@@ -351,7 +351,7 @@
                 <if test="maps.orderQueryParam.createEndTime != null ">
                     <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
                 </if>
-                <if test="true">
+                <if test="maps.isQueryAll == null">
                     and eo.data_status = 1
                 </if>
                 <include refid="permission_sql.order_control"/>
@@ -429,7 +429,7 @@
             <if test="maps.orderQueryParam.createEndTime != null">
                 <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
             </if>
-            <if test="true">
+            <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
             </if>
             <include refid="permission_sql.order_control"/>

@@ -188,7 +188,7 @@
                 <if test="maps.productQueryParam.createEndTime != null">
                     <![CDATA[ AND ep.create_time <= #{maps.productQueryParam.createEndTime} ]]>
                 </if>
-                <if test="true">
+                <if test="maps.isQueryAll == null">
                     and ep.data_status = 1
                 </if>
             </where>
@@ -227,7 +227,7 @@
             <if test="maps.productQueryParam.createEndTime != null">
                 <![CDATA[ AND ep.create_time <= #{maps.productQueryParam.createEndTime} ]]>
             </if>
-            <if test="true">
+            <if test="maps.isQueryAll == null">
                 and ep.data_status = 1
             </if>
         </where>

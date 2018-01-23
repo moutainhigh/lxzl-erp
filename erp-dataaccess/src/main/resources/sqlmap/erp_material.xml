@@ -166,8 +166,8 @@
 			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.createEndTime != null">
 				<![CDATA[ AND em.create_time <= #{maps.materialQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
-				AND em.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and em.data_status = 1
 			</if>
 		</where>
 	</select>
@@ -237,8 +237,8 @@
 				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.createEndTime != null">
 					<![CDATA[ AND em.create_time <= #{maps.materialQueryParam.createEndTime} ]]>
 				</if>
-				<if test="true">
-					AND em.data_status = 1
+				<if test="maps.isQueryAll == null">
+					and em.data_status = 1
 				</if>
 			</where>
 			LIMIT #{maps.start},#{maps.pageSize}

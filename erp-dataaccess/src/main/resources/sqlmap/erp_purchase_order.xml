@@ -108,7 +108,7 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(epo.id) from erp_purchase_order epo
 		<where>
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and epo.data_status = 1
 			</if>
 		</where>
@@ -118,7 +118,7 @@
 
 		select <include refid="column_List"/> from erp_purchase_order epo 
 		<where>
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and epo.data_status = 1
 			</if>
 		</where>
@@ -231,7 +231,7 @@
 			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.createEndTime != null ">
 				<![CDATA[ AND epo.create_time <= #{maps.purchaseOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and epo.data_status = 1
 			</if>
 			<include refid="permission_sql.purchase_control"/>
@@ -271,7 +271,7 @@
 			<if test="maps.purchaseOrderQueryParam != null &amp;&amp; maps.purchaseOrderQueryParam.createEndTime != null ">
 				<![CDATA[ AND epo.create_time <= #{maps.purchaseOrderQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
+			<if test="maps.isQueryAll == null">
 				and epo.data_status = 1
 			</if>
 

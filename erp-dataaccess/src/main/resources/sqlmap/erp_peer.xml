@@ -61,8 +61,8 @@
 			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.createEndTime != null &amp;&amp; maps.peerQueryParam.createEndTime != ''">
 				<![CDATA[ AND ejp.create_time <= #{maps.peerQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
-				AND ep.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and ep.data_status = 1
 			</if>
 		</where>
 	</select>
@@ -98,8 +98,8 @@
 			<if test="maps.peerQueryParam != null &amp;&amp; maps.peerQueryParam.createEndTime != null &amp;&amp; maps.peerQueryParam.createEndTime != ''">
 				<![CDATA[ AND ejp.create_time <= #{maps.peerQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
-				AND ep.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and ep.data_status = 1
 			</if>
 		</where>
 		ORDER BY ep.create_time DESC
@@ -186,9 +186,9 @@
                     <if test="peerId != null">
                         AND ep.id = ${peerId}
                     </if>
-                    <if test="true">
-                        AND ep.data_status = 1
-                    </if>
+					<if test="maps.isQueryAll == null">
+						and ep.data_status = 1
+					</if>
                 </where>
             ORDER BY ep.create_time DESC
 	</select>

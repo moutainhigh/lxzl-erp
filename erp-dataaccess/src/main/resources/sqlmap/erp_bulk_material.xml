@@ -104,8 +104,8 @@
 			<if test="maps.purchaseReceiveOrderMaterialBulkPageParam.purchaseReceiveOrderMaterialId != null ">
 				AND esobm.item_refer_id = #{maps.purchaseReceiveOrderMaterialBulkPageParam.purchaseReceiveOrderMaterialId}
 			</if>
-			<if test="true">
-				AND ebm.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and ebm.data_status = 1
 			</if>
 		</where>
 		order by  ebm.create_time desc
@@ -161,8 +161,8 @@
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.createEndTime != null">
 				<![CDATA[ AND ebm.create_time <= #{maps.bulkMaterialQueryParam.createEndTime} ]]>
 			</if>
-			<if test="true">
-				AND ebm.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and ebm.data_status = 1
 			</if>
 		</where>
 	</select>
@@ -210,8 +210,8 @@
 			<if test="maps.materialId != null">
 				and ebm.material_id = #{maps.materialId, jdbcType=INTEGER}
 			</if>
-			<if test="true">
-				AND ebm.data_status = 1
+			<if test="maps.isQueryAll == null">
+				and ebm.data_status = 1
 			</if>
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}
