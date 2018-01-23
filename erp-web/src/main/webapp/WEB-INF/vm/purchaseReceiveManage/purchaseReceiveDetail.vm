@@ -148,7 +148,7 @@
                                             <tbody>
                                             {{#dataSource}}
                                             {{#listData}}
-                                            <tr class="productRow" productRowKey="{{productId}}">
+                                            <tr class="productRow skuRow" productRowKey="{{productId}}">
                                                 <td>{{productId}}</td>
                                                 <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                                 <td>{{productName}}</td>
@@ -168,7 +168,7 @@
                                                 </td>
                                                 <td class="text-right">
                                                     <div class="btn-group text-right">
-                                                        <a href="#" type="button" class="btn btn-default btn-xs showMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">查看物料</a>
+                                                        <a href="#" type="button" class="btn btn-default btn-xs showMaterialButton" data-skuid="{{skuId}}" data-productid="{{productId}}">查看配件</a>
                                                         {{#rowActionButtons}}
                                                         <a href="${ctx}{{menuUrl}}?id={{purchaseReceiveOrderProductId}}" type="button"
                                                            class="btn btn-default btn-xs {{class}}"
@@ -184,7 +184,7 @@
                                                 <td colspan="11" class="pn br-n" style="height:0;">
                                                     <div class="panel m15 editMaterialPannel" style="display: none;">
                                                         <div class="panel-heading pn ph8">
-                                                            <span>物料信息</span>
+                                                            <span>配件信息</span>
                                                         </div>
                                                         <div class="panel-body pn">
                                                             <table class="table">
