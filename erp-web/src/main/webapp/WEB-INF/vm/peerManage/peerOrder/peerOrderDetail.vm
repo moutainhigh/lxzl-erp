@@ -43,11 +43,7 @@
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
                                         <dt>同行</dt><dd class="mb10">{{peerName}}</dd>
-
-##                                        <dt>优惠金额</dt><dd class="mb10">￥{{#price}}{{totalDiscountAmount}}{{/price}}</dd>
-
                                         <dt>税率</dt><dd class="mb10">{{taxRate}}</dd>
-
                                         <dt>归还地址</dt>
                                         <dd class="mb10">
                                             <p class="mn">{{peerDeploymentOrderConsignInfo.contactName}}</p>
@@ -69,6 +65,8 @@
                                         <dt>配送方式</dt><dd class="mb10">{{deliveryModeValue}}</dd>
                                         <dt>租期</dt><dd class="mb10"><span class="mr5">{{rentTypeValue}}</span><span>{{rentTimeLength}}{{rentTypeUnit}}</span></dd>
                                         <dt>起租日期</dt><dd class="mb10">{{#shortTime}}{{rentStartTime}}{{/shortTime}}</dd>
+                                        <dt>预计归还日期</dt><dd class="mb10">{{#shortTime}}{{expectReturnTime}}{{/shortTime}}</dd>
+                                        <dt>实际归还日期</dt><dd class="mb10">{{#time}}{{realReturnTime}}{{/time}}</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
