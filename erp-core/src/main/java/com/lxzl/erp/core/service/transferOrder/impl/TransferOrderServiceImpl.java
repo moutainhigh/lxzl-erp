@@ -69,7 +69,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
     private static Logger logger = LoggerFactory.getLogger(TransferOrderServiceImpl.class);
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> createTransferOrderInto(TransferOrder transferOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
