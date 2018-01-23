@@ -130,6 +130,7 @@
         <mapper resource="sqlmap/erp_peer_deployment_order_product_equipment.xml" />
 
         <mapper resource="sqlmap/erp_material_type.xml" />
+        <mapper resource="sqlmap/erp_statement_pay_order.xml" />
     </mappers>
 
 </configuration>

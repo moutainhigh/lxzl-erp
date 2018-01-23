@@ -13,6 +13,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StatementOrderPayParam implements Serializable {
     private String statementOrderNo;
+    private Integer statementOrderPayType;
 
     public String getStatementOrderNo() {
         return statementOrderNo;
@@ -20,5 +21,13 @@ public class StatementOrderPayParam implements Serializable {
 
     public void setStatementOrderNo(String statementOrderNo) {
         this.statementOrderNo = statementOrderNo;
+    }
+
+    public Integer getStatementOrderPayType() {
+        return statementOrderPayType;
+    }
+
+    public void setStatementOrderPayType(Integer statementOrderPayType) {
+        this.statementOrderPayType = statementOrderPayType;
     }
 }

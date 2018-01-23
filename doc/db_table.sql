@@ -1872,6 +1872,25 @@ CREATE TABLE `erp_statement_order_detail` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='结算单明细';
 
+DROP TABLE if exists `erp_statement_pay_order`;
+CREATE TABLE `erp_statement_pay_order` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `statement_pay_order_no` varchar(100) NOT NULL COMMENT '结算单支付编码',
+  `statement_order_id` int(20) NOT NULL COMMENT '结算单ID',
+  `pay_type` int(11) NOT NULL DEFAULT '0' COMMENT '支付方式类型，1余额支付，2微信支付',
+  `pay_status` int(11) NOT NULL DEFAULT '0' COMMENT '支付状态，详见paystatus',
+  `payment_order_no` varchar(100) COMMENT '支付系统支付编号',
+  `pay_amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '支付金额',
+  `pay_time` datetime DEFAULT NULL COMMENT '支付时间，即发起支付时间',
+  `end_time` datetime DEFAULT NULL COMMENT '结束时间，即收到返回时间',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='结算单支付记录';
 
 DROP TABLE if exists `erp_order_pay_plan`;
 CREATE TABLE `erp_order_pay_plan` (

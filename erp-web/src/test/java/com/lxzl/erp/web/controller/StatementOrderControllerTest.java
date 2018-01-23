@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.constant.StatementOrderPayType;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.util.FastJsonUtil;
@@ -40,7 +41,8 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pay() throws Exception {
         StatementOrderPayParam param = new StatementOrderPayParam();
-        param.setStatementOrderNo("LXSO-731452-20180101-00016");
+        param.setStatementOrderNo("LXSO-731444-20180101-00027");
+        param.setStatementOrderPayType(StatementOrderPayType.PAY_TYPE_BALANCE);
         TestResult testResult = getJsonTestResult("/statementOrder/pay", param);
     }
 

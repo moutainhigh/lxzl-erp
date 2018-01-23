@@ -416,6 +416,8 @@ public class ErrorCode {
     public static final String CUSTOMER_IS_DISABLED = "J500066";
     public static final String CUSTOMER_CAN_NOT_EDIT = "J500067";
     public static final String CUSTOMER_GET_CREDIT_NEED_RISK_INFO = "J500068";
+    public static final String STATEMENT_PAY_TYPE_ERROR = "J500069";
+    public static final String STATEMENT_PAY_FAILED = "J500070";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -798,6 +800,8 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONSIGN_NOT_EXISTS, "客户收货地址不存在");
         MAP.put(CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW, "客户授信额度超限");
         MAP.put(CUSTOMER_GET_CREDIT_NEED_RISK_INFO, "客户需要授信额度，未检测到风控信息");
+        MAP.put(STATEMENT_PAY_TYPE_ERROR, "结算单支付方式有误");
+        MAP.put(STATEMENT_PAY_FAILED, "结算单支付失败");
         MAP.put(STOCK_NOT_MATCH, "备货不匹配");
         MAP.put(STOCK_NOT_ENOUGH, "备货不足，请先继续备货");
         MAP.put(MATERIAL_NOT_RENT, "不是客户在租配件，不能退还");

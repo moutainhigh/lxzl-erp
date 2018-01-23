@@ -19,6 +19,7 @@ import com.lxzl.erp.common.domain.purchaseApply.PurchaseApplyOrderPageParam;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderQueryParam;
 import com.lxzl.erp.common.domain.returnOrder.ReturnOrderPageParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.statement.StatementPayOrderQueryParam;
 import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
 import com.lxzl.erp.common.domain.warehouse.StockOrderQueryParam;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
@@ -43,6 +44,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.purchaseApply.PurchaseApplyOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.repairOrder.RepairOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementPayOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.transferOrder.TransferOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
@@ -200,6 +202,30 @@ public class GenerateNoSupport {
             Integer count = stockOrderMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
             builder.append("LXSO-");
+            builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
+            builder.append(String.format("%05d", count + 1));
+            return builder.toString();
+        }
+    }
+    /**
+     * 生成结算支付单
+     * @return
+     */
+    public String generateStatementPayOrderNo() {
+        Date currentTime = new Date();
+        synchronized (this) {
+            StatementPayOrderQueryParam statementPayOrderQueryParam = new StatementPayOrderQueryParam();
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("start", 0);
+            maps.put("pageSize", Integer.MAX_VALUE);
+            maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
+            statementPayOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+            statementPayOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            maps.put("statementPayOrderQueryParam", statementPayOrderQueryParam);
+            Integer count = statementPayOrderMapper.listCount(maps);
+            StringBuilder builder = new StringBuilder();
+            builder.append("LXSPO-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
             builder.append("-");
             builder.append(String.format("%05d", count + 1));
@@ -882,4 +908,6 @@ public class GenerateNoSupport {
     private PeerDeploymentOrderMapper peerDeploymentOrderMapper;
     @Autowired
     private RepairOrderMapper repairOrderMapper;
+    @Autowired
+    private StatementPayOrderMapper statementPayOrderMapper;
 }
