@@ -128,7 +128,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private MaterialTypeMapper materialTypeMapper;
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> add(PurchaseOrder purchaseOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date now = new Date();
