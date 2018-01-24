@@ -253,7 +253,7 @@ public class StatementOrder extends BasePO {
     }
 
     public BigDecimal getStatementPaidAmount() {
-        return statementPaidAmount == null || BigDecimal.ZERO.equals(statementPaidAmount) ? BigDecimalUtil.add(BigDecimalUtil.add(statementRentPaidAmount, statementDepositPaidAmount), statementRentDepositPaidAmount) : statementPaidAmount;
+        return statementPaidAmount == null || BigDecimal.ZERO.equals(statementPaidAmount) ? BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(statementRentPaidAmount, statementDepositPaidAmount), statementRentDepositPaidAmount),statementOtherPaidAmount) : statementPaidAmount;
     }
 
     public void setStatementPaidAmount(BigDecimal statementPaidAmount) {
