@@ -278,7 +278,7 @@ public class StatementOrderDetail extends BasePO {
     }
 
     public BigDecimal getStatementDetailPaidAmount() {
-        return statementDetailPaidAmount == null || BigDecimal.ZERO.equals(statementDetailPaidAmount) ? BigDecimalUtil.add(BigDecimalUtil.add(statementDetailRentPaidAmount, statementDetailDepositPaidAmount), statementDetailRentDepositPaidAmount) : statementDetailPaidAmount;
+        return statementDetailPaidAmount == null || BigDecimal.ZERO.equals(statementDetailPaidAmount) ? BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(statementDetailRentPaidAmount, statementDetailDepositPaidAmount), statementDetailRentDepositPaidAmount), statementDetailOtherPaidAmount) : statementDetailPaidAmount;
     }
 
     public void setStatementDetailPaidAmount(BigDecimal statementDetailPaidAmount) {
