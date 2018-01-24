@@ -234,7 +234,7 @@
                                             <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                                             <td>{{propertiesToStr}}</td>
-                                            <td>￥{{#price}}{{skuPrice}}{{/price}}</td>
+                                            <td>￥{{currentSkuPrice}}/td>
                                             <td>
                                                 ￥{{#price}}{{productUnitAmount}}{{/price}}
                                             </td>
@@ -341,7 +341,7 @@
                                             <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{#isNewValue}}{{isNewMaterial}}{{/isNewValue}}</span>{{materialName}}</td>
                                             <td>{{brandName}}</td>
                                             <td>{{materialTypeStr}}</td>
-                                            <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
+                                            <td>￥{{currentMaterialPrice}}</td>
                                             <td>
                                                 ￥{{#price}}{{materialUnitAmount}}{{/price}}
                                             </td>
