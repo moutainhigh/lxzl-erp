@@ -15,6 +15,8 @@ public class CustomerCompanyQueryParam extends BasePageParam {
     private Integer province;   //省份ID，省份ID
     private Integer city;   //城市ID，对应城市ID
     private Integer district;   //区ID，对应区ID
+    private Integer isDisabled;   //是否禁用，0不可用；1可用
+
     private String legalPerson;   //法人姓名
     private String legalPersonNo;   //法人身份证号
     private String businessLicenseNo;   //营业执照号
@@ -197,5 +199,13 @@ public class CustomerCompanyQueryParam extends BasePageParam {
 
     public void setFullCompanyName(String fullCompanyName) {
         this.fullCompanyName = fullCompanyName;
+    }
+
+    public Integer getIsDisabled() {
+        return isDisabled;
+    }
+
+    public void setIsDisabled(Integer isDisabled) {
+        this.isDisabled = isDisabled;
     }
 }

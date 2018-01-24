@@ -14,7 +14,7 @@ public class CustomerPersonQueryParam extends BasePageParam {
     private Integer province;   //省份ID，省份ID
     private Integer city;   //城市ID，对应城市ID
     private Integer district;   //区ID，对应区ID
-
+    private Integer isDisabled;   //是否禁用，0不可用；1可用
 
     private String personNo;//身份证号'
     private String connectRealName;//紧急联系人姓名'
@@ -108,5 +108,13 @@ public class CustomerPersonQueryParam extends BasePageParam {
 
     public void setPassiveUserIdList(List<Integer> passiveUserIdList) {
         this.passiveUserIdList = passiveUserIdList;
+    }
+
+    public Integer getIsDisabled() {
+        return isDisabled;
+    }
+
+    public void setIsDisabled(Integer isDisabled) {
+        this.isDisabled = isDisabled;
     }
 }
