@@ -95,7 +95,7 @@
 				and ed.id = #{maps.departmentQueryParam.departmentId, jdbcType=INTEGER}
 			</if>
 			<if test="maps.departmentQueryParam != null &amp;&amp;maps.departmentQueryParam.departmentName != null &amp;&amp; maps.departmentQueryParam.departmentName != ''">
-				and ed.deparment_name like CONCAT('%','${maps.departmentQueryParam.departmentName}','%' )
+				and ed.department_name like CONCAT('%','${maps.departmentQueryParam.departmentName}','%' )
 			</if>
 			<if test="maps.departmentQueryParam != null &amp;&amp;maps.departmentQueryParam.subCompanyId != null &amp;&amp; maps.departmentQueryParam.subCompanyId != ''">
 				and ed.sub_company_id = #{maps.departmentQueryParam.subCompanyId, jdbcType=INTEGER}
