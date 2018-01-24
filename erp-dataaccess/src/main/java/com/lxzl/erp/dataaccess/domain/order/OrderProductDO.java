@@ -13,6 +13,7 @@ public class OrderProductDO extends BaseDO {
     private Integer orderId;
     private Integer rentType;
     private Integer rentTimeLength;
+    private Integer rentLengthType;
     private Integer productId;
     private String productName;
     private Integer productSkuId;
@@ -206,5 +207,13 @@ public class OrderProductDO extends BaseDO {
 
     public void setRentDepositAmount(BigDecimal rentDepositAmount) {
         this.rentDepositAmount = rentDepositAmount;
+    }
+
+    public Integer getRentLengthType() {
+        return rentLengthType;
+    }
+
+    public void setRentLengthType(Integer rentLengthType) {
+        this.rentLengthType = rentLengthType;
     }
 }

@@ -15,6 +15,7 @@ public class OrderMaterial extends BasePO {
 	private Integer orderId;   //订单ID
 	private Integer rentType;	// 租赁类型
 	private Integer rentTimeLength;		// 租赁时长
+	private Integer rentLengthType;
 	private Integer materialId;   //物料ID
 	private String materialName;   //物料名称
 	private Integer materialCount;   //物料总数
@@ -247,5 +248,13 @@ public class OrderMaterial extends BasePO {
 
 	public void setFirstNeedPayAmount(BigDecimal firstNeedPayAmount) {
 		this.firstNeedPayAmount = firstNeedPayAmount;
+	}
+
+	public Integer getRentLengthType() {
+		return rentLengthType;
+	}
+
+	public void setRentLengthType(Integer rentLengthType) {
+		this.rentLengthType = rentLengthType;
 	}
 }

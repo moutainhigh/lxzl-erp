@@ -65,6 +65,7 @@
         <result column="product_order_id" property="orderId"/>
         <result column="product_rent_type" jdbcType="INTEGER" property="rentType" />
         <result column="product_rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+        <result column="product_rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
         <result column="product_product_id" property="productId"/>
         <result column="product_product_name" property="productName"/>
         <result column="product_product_sku_id" property="productSkuId"/>
@@ -94,6 +95,7 @@
         <result column="material_order_id" jdbcType="INTEGER" property="orderId" />
         <result column="material_rent_type" jdbcType="INTEGER" property="rentType" />
         <result column="material_rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+        <result column="material_rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
         <result column="material_material_id" jdbcType="INTEGER" property="materialId" />
         <result column="material_material_name" jdbcType="VARCHAR" property="materialName" />
         <result column="material_material_count" jdbcType="INTEGER" property="materialCount" />
@@ -157,7 +159,7 @@
 	</sql>
 
     <sql id="product_column_List">
-        eop.id as order_product_id,eop.order_id as product_order_id,eop.rent_type as product_rent_type,eop.rent_time_length as product_rent_time_length,eop.product_id as product_product_id,eop.product_name as product_product_name,eop.product_sku_id as product_product_sku_id,eop.product_sku_name as product_product_sku_name,eop.product_count as product_product_count,eop.product_unit_amount as product_product_unit_amount,eop.product_amount as product_product_amount,eop.rent_deposit_amount as product_rent_deposit_amount,eop.deposit_amount as product_deposit_amount,eop.credit_deposit_amount as product_credit_deposit_amount,eop.insurance_amount as product_insurance_amount, eop.product_sku_snapshot as product_product_sku_snapshot,eop.deposit_cycle as product_deposit_cycle,eop.payment_cycle as product_payment_cycle,eop.pay_mode as product_pay_mode,eop.is_new_product as product_is_new_product,eop.data_status as product_data_status,eop.remark as product_remark,eop.create_time as product_create_time,eop.create_user as product_create_user,eop.update_time as product_update_time,eop.update_user as product_update_user
+        eop.id as order_product_id,eop.order_id as product_order_id,eop.rent_type as product_rent_type,eop.rent_time_length as product_rent_time_length,eop.rent_length_type as product_rent_length_type,eop.product_id as product_product_id,eop.product_name as product_product_name,eop.product_sku_id as product_product_sku_id,eop.product_sku_name as product_product_sku_name,eop.product_count as product_product_count,eop.product_unit_amount as product_product_unit_amount,eop.product_amount as product_product_amount,eop.rent_deposit_amount as product_rent_deposit_amount,eop.deposit_amount as product_deposit_amount,eop.credit_deposit_amount as product_credit_deposit_amount,eop.insurance_amount as product_insurance_amount, eop.product_sku_snapshot as product_product_sku_snapshot,eop.deposit_cycle as product_deposit_cycle,eop.payment_cycle as product_payment_cycle,eop.pay_mode as product_pay_mode,eop.is_new_product as product_is_new_product,eop.data_status as product_data_status,eop.remark as product_remark,eop.create_time as product_create_time,eop.create_user as product_create_user,eop.update_time as product_update_time,eop.update_user as product_update_user
 	</sql>
 
     <sql id="consign_column_List">
@@ -165,7 +167,7 @@
 	</sql>
 
     <sql id="material_column_List">
-        eom.id as material_id,eom.order_id as material_order_id,eom.rent_type as material_rent_type,eom.rent_time_length as material_rent_time_length,eom.material_id as material_material_id,eom.material_name as material_material_name,eom.material_count as material_material_count,eom.material_unit_amount as material_material_unit_amount,eom.material_amount as material_material_amount,eom.deposit_amount as material_deposit_amount,eom.credit_deposit_amount as material_credit_deposit_amount,eom.insurance_amount as material_insurance_amount,eom.material_snapshot as material_material_snapshot,eom.rent_deposit_amount as material_rent_deposit_amount,eom.deposit_cycle as material_deposit_cycle,eom.payment_cycle as material_payment_cycle,eom.pay_mode as material_pay_mode,eom.is_new_material as material_is_new_material,eom.data_status as material_data_status,eom.remark as material_remark,eom.create_time as material_create_time,eom.create_user as material_create_user,eom.update_time as material_update_time,eom.update_user as material_update_user
+        eom.id as material_id,eom.order_id as material_order_id,eom.rent_type as material_rent_type,eom.rent_time_length as material_rent_time_length,eom.rent_length_type as material_rent_length_type,eom.material_id as material_material_id,eom.material_name as material_material_name,eom.material_count as material_material_count,eom.material_unit_amount as material_material_unit_amount,eom.material_amount as material_material_amount,eom.deposit_amount as material_deposit_amount,eom.credit_deposit_amount as material_credit_deposit_amount,eom.insurance_amount as material_insurance_amount,eom.material_snapshot as material_material_snapshot,eom.rent_deposit_amount as material_rent_deposit_amount,eom.deposit_cycle as material_deposit_cycle,eom.payment_cycle as material_payment_cycle,eom.pay_mode as material_pay_mode,eom.is_new_material as material_is_new_material,eom.data_status as material_data_status,eom.remark as material_remark,eom.create_time as material_create_time,eom.create_user as material_create_user,eom.update_time as material_update_time,eom.update_user as material_update_user
     </sql>
 
     <sql id="time_axis_column_List">

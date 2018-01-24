@@ -46,6 +46,7 @@ public class CommonConstant {
     public static final String COMMON_CONSTANT_SEPARATOR = ",";
 
     public static final String NORMAL_STRING = "正常";
+    public static final Integer ORDER_RENT_TYPE_LONG_MIN = 6;
 
     public static final Integer ORDER_NEED_VERIFY_DAYS = 90;
     public static final Integer ORDER_NEED_VERIFY_MONTHS = 3;

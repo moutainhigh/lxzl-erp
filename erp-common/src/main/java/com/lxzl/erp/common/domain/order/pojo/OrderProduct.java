@@ -14,6 +14,7 @@ public class OrderProduct extends BasePO {
     private Integer orderId;
     private Integer rentType;
     private Integer rentTimeLength;
+    private Integer rentLengthType;
     private Integer productId;
     private String productName;
     private Integer productSkuId;
@@ -235,5 +236,13 @@ public class OrderProduct extends BasePO {
 
     public void setFirstNeedPayAmount(BigDecimal firstNeedPayAmount) {
         this.firstNeedPayAmount = firstNeedPayAmount;
+    }
+
+    public Integer getRentLengthType() {
+        return rentLengthType;
+    }
+
+    public void setRentLengthType(Integer rentLengthType) {
+        this.rentLengthType = rentLengthType;
     }
 }

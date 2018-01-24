@@ -1045,10 +1045,7 @@ public class StatementServiceImpl implements StatementService {
                 return statementMonthCount;
             }
             statementMonthCount = rentTimeLength / paymentCycle;
-            if (rentTimeLength % paymentCycle > 0) {
-                statementMonthCount++;
-            }
-            if (startDay > (statementDay + 1)) {
+            if ((rentTimeLength % paymentCycle > 0) || (startDay > (statementDay + 1))) {
                 statementMonthCount++;
             }
             return statementMonthCount;
