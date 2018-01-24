@@ -328,6 +328,7 @@
                                             <th>租期</th>
                                             <th>支付方式</th>
                                             <th>设备押金</th>
+                                            <th>配件总价</th>
                                             <th class="text-right">操作</th>
                                         </tr>
                                         </thead>
@@ -358,12 +359,9 @@
                                             <td>
                                                 ￥{{#price}}{{depositAmount}}{{/price}}
                                             </td>
-##                                            <td>
-##                                                {{rentTimeLength}}
-##                                            </td>
-##                                            <td>
-##                                                {{payModeValue}}
-##                                            </td>
+                                            <td>
+                                                ￥{{#price}}{{materialAmount}}{{/price}}
+                                            </td>
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
                                                     {{#rowActionButtons}}
