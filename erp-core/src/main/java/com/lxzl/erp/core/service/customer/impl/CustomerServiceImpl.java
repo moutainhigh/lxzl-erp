@@ -1470,7 +1470,7 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, Customer> queryCustomerByCompanyName(String companyName) {
         ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
         CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
-        customerCompanyQueryParam.setCompanyName(companyName);
+        customerCompanyQueryParam.setFullCompanyName(companyName);
         Map<String, Object> map = new HashMap<>();
         map.put("start", 0);
         map.put("pageSize", Integer.MAX_VALUE);
