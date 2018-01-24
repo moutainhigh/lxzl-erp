@@ -1501,28 +1501,28 @@ public class CustomerServiceImpl implements CustomerService {
             customerDO.setOwnerName(ownerUserDO.getUserName());
         }
 
+        //封装数据
+        Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         //联合开发人
         UserDO unionUserDO = userMapper.findByUserId(customerDO.getUnionUser());
         if (unionUserDO != null) {
             customerDO.setUnionUserName(unionUserDO.getUserName());
+            SubCompanyDO subCompanyDO = userRoleMapper.findSubCompanyByUserId(unionUserDO.getId());
+
+            subCompanyDO = subCompanyMapper.findById(subCompanyDO.getId());
+            customerResult.setUnionAreaProvinceName(subCompanyDO.getProvinceName());
+            customerResult.setUnionAreaCityName(subCompanyDO.getCityName());
+            customerResult.setUnionAreaDistrictName(subCompanyDO.getDistrictName());
         }
 
         customerDO.setCustomerCompanyDO(customerCompanyDO);
         CustomerAccount customerAccount = paymentService.queryCustomerAccountNoLogin(customerDO.getCustomerNo());
-        //封装数据
-        Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
 
         if (customerAccount != null) {
             customerResult.setCustomerAccount(customerAccount);
         }
         customerResult.setCustomerOwnerUser(ConverterUtil.convert(ownerUserDO, User.class));
         customerResult.setCustomerUnionUser(ConverterUtil.convert(unionUserDO, User.class));
-        SubCompanyDO subCompanyDO = userRoleMapper.findSubCompanyByUserId(unionUserDO.getId());
-
-        subCompanyDO = subCompanyMapper.findById(subCompanyDO.getId());
-        customerResult.setUnionAreaProvinceName(subCompanyDO.getProvinceName());
-        customerResult.setUnionAreaCityName(subCompanyDO.getCityName());
-        customerResult.setUnionAreaDistrictName(subCompanyDO.getDistrictName());
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
