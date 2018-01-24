@@ -11,6 +11,7 @@ public class CustomerCompanyQueryParam extends BasePageParam {
     private String connectRealName;   //紧急联系人
     private String connectPhone;   //紧急联系人手机号
     private String companyName;   //公司名称
+    private String fullCompanyName;   //公司完整名称
     private Integer province;   //省份ID，省份ID
     private Integer city;   //城市ID，对应城市ID
     private Integer district;   //区ID，对应区ID
@@ -188,5 +189,13 @@ public class CustomerCompanyQueryParam extends BasePageParam {
 
     public void setPassiveUserIdList(List<Integer> passiveUserIdList) {
         this.passiveUserIdList = passiveUserIdList;
+    }
+
+    public String getFullCompanyName() {
+        return fullCompanyName;
+    }
+
+    public void setFullCompanyName(String fullCompanyName) {
+        this.fullCompanyName = fullCompanyName;
     }
 }

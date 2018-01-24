@@ -258,6 +258,9 @@
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.companyName != null &amp;&amp; maps.customerCompanyQueryParam.companyName != ''">
 				and ecc.company_name like CONCAT('%','${maps.customerCompanyQueryParam.companyName}','%' )
 			</if>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.fullCompanyName != null &amp;&amp; maps.customerCompanyQueryParam.fullCompanyName != ''">
+				and ecc.company_name = #{maps.customerCompanyQueryParam.fullCompanyName, jdbcType=VARCHAR}
+			</if>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.province != null">
 				and ecc.province = #{maps.customerCompanyQueryParam.province, jdbcType=INTEGER}
 			</if>

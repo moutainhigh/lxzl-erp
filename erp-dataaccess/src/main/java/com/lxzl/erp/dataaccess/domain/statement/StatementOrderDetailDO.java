@@ -19,6 +19,7 @@ public class StatementOrderDetailDO extends BaseDO {
     private Date statementExpectPayTime;
     private BigDecimal statementDetailAmount;
     private BigDecimal statementDetailOtherAmount;
+    private BigDecimal statementDetailOtherPaidAmount;
     private BigDecimal statementDetailRentDepositAmount;
     private BigDecimal statementDetailRentDepositPaidAmount;
     private BigDecimal statementDetailRentDepositReturnAmount;
@@ -267,5 +268,13 @@ public class StatementOrderDetailDO extends BaseDO {
 
     public void setStatementDetailType(Integer statementDetailType) {
         this.statementDetailType = statementDetailType;
+    }
+
+    public BigDecimal getStatementDetailOtherPaidAmount() {
+        return statementDetailOtherPaidAmount;
+    }
+
+    public void setStatementDetailOtherPaidAmount(BigDecimal statementDetailOtherPaidAmount) {
+        this.statementDetailOtherPaidAmount = statementDetailOtherPaidAmount;
     }
 }

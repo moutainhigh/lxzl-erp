@@ -17,6 +17,7 @@ public class BalancePayParam extends PaymentIdentityParam {
     private String businessCustomerNo;
     private String businessOrderNo;
     private BigDecimal businessOrderAmount;
+    private BigDecimal businessOrderOtherAmount;
     private BigDecimal businessOrderRentDepositAmount;
     private BigDecimal businessOrderDepositAmount;
     private String businessOrderRemark;
@@ -76,5 +77,13 @@ public class BalancePayParam extends PaymentIdentityParam {
 
     public void setBusinessOrderRentDepositAmount(BigDecimal businessOrderRentDepositAmount) {
         this.businessOrderRentDepositAmount = businessOrderRentDepositAmount;
+    }
+
+    public BigDecimal getBusinessOrderOtherAmount() {
+        return businessOrderOtherAmount;
+    }
+
+    public void setBusinessOrderOtherAmount(BigDecimal businessOrderOtherAmount) {
+        this.businessOrderOtherAmount = businessOrderOtherAmount;
     }
 }

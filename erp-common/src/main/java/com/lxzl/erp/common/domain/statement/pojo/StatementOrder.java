@@ -19,6 +19,7 @@ public class StatementOrder extends BasePO {
     private Date statementExpectPayTime; // 结算单预计支付时间
     private BigDecimal statementAmount;   //结算单金额，结算单明细总和
     private BigDecimal statementOtherAmount;   // 结算单其他金额
+    private BigDecimal statementOtherPaidAmount;    // 结算单其他已支付金额
     private BigDecimal statementPaidAmount;   //结算单已付金额
     private BigDecimal statementRentDepositAmount;      // 结算租金押金金额
     private BigDecimal statementRentDepositPaidAmount;  // 已付租金押金金额
@@ -265,5 +266,13 @@ public class StatementOrder extends BasePO {
 
     public void setStatementOtherAmount(BigDecimal statementOtherAmount) {
         this.statementOtherAmount = statementOtherAmount;
+    }
+
+    public BigDecimal getStatementOtherPaidAmount() {
+        return statementOtherPaidAmount;
+    }
+
+    public void setStatementOtherPaidAmount(BigDecimal statementOtherPaidAmount) {
+        this.statementOtherPaidAmount = statementOtherPaidAmount;
     }
 }

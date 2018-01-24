@@ -131,6 +131,7 @@
 
         <mapper resource="sqlmap/erp_material_type.xml" />
         <mapper resource="sqlmap/erp_statement_pay_order.xml" />
+        <mapper resource="sqlmap/erp_statement_order_return_detail.xml" />
     </mappers>
 
 </configuration>
