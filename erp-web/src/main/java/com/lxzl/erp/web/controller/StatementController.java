@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.statement.StatementService;
+import com.lxzl.erp.web.util.NetworkUtil;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 /**
@@ -34,6 +36,9 @@ public class StatementController extends BaseController {
 
     @Autowired
     private ResultGenerator resultGenerator;
+
+    @Autowired
+    private HttpServletRequest request;
 
 
     @RequestMapping(value = "createNew", method = RequestMethod.POST)
@@ -56,7 +61,13 @@ public class StatementController extends BaseController {
 
     @RequestMapping(value = "pay", method = RequestMethod.POST)
     public Result pay(@RequestBody StatementOrderPayParam param, BindingResult validResult) {
-        ServiceResult<String, Boolean> serviceResult = statementService.payStatementOrder(param.getStatementOrderNo(), param.getStatementOrderPayType());
+        ServiceResult<String, Boolean> serviceResult = statementService.payStatementOrder(param.getStatementOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "weixinPay", method = RequestMethod.POST)
+    public Result weixinPay(@RequestBody StatementOrderPayParam param, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = statementService.weixinPayStatementOrder(param.getStatementOrderNo(), param.getOpenId(), NetworkUtil.getIpAddress(request));
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

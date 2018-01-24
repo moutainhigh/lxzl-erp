@@ -12,4 +12,6 @@ public interface StatementPayOrderMapper extends BaseMysqlDAO<StatementPayOrderD
 	List<StatementPayOrderDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+	StatementPayOrderDO findByStatementOrderId(@Param("statementOrderId") Integer statementOrderId);
 }

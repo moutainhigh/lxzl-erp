@@ -14,6 +14,7 @@ import java.io.Serializable;
 public class StatementOrderPayParam implements Serializable {
     private String statementOrderNo;
     private Integer statementOrderPayType;
+    private String openId;
 
     public String getStatementOrderNo() {
         return statementOrderNo;
@@ -29,5 +30,13 @@ public class StatementOrderPayParam implements Serializable {
 
     public void setStatementOrderPayType(Integer statementOrderPayType) {
         this.statementOrderPayType = statementOrderPayType;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 }

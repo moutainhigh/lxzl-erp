@@ -66,7 +66,8 @@ public class StatementPaySupport {
             return false;
         }
         if (!PayStatus.PAY_STATUS_PAID.equals(payStatus)
-                && !PayStatus.PAY_STATUS_FAILED.equals(payStatus)) {
+                && !PayStatus.PAY_STATUS_FAILED.equals(payStatus)
+                && !PayStatus.PAY_STATUS_TIME_OUT.equals(payStatus)) {
             return false;
         }
         statementPayOrderDO.setPayStatus(payStatus);
@@ -76,5 +77,9 @@ public class StatementPaySupport {
         statementPayOrderDO.setUpdateUser(loginUserId.toString());
         statementPayOrderMapper.update(statementPayOrderDO);
         return true;
+    }
+
+    public StatementPayOrderDO getLastRecord(Integer statementOrderId) {
+        return statementPayOrderMapper.findByStatementOrderId(statementOrderId);
     }
 }

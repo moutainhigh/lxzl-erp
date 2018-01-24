@@ -29,6 +29,12 @@
 		WHERE espo.id = #{id, jdbcType=INTEGER} AND espo.data_status = 1 
 	</select>
 
+	<select id="findByStatementOrderId" resultMap="StatementPayOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statement_pay_order espo
+		WHERE espo.statement_order_id = #{statementOrderId, jdbcType=INTEGER} AND espo.data_status = 1 ORDER BY create_time DESC
+		LIMIT 0,1
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(espo.id) FROM erp_statement_pay_order espo 
 		<where>
