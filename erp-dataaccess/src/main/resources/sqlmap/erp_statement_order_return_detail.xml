@@ -8,7 +8,7 @@
 		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
 		<result column="order_id" jdbcType="INTEGER" property="orderId" />
 		<result column="order_item_refer_id" jdbcType="INTEGER" property="orderItemReferId" />
-		<result column="returnType" jdbcType="INTEGER" property="returnType" />
+		<result column="return_type" jdbcType="INTEGER" property="returnType" />
 		<result column="return_amount" jdbcType="DECIMAL" property="returnAmount" />
 		<result column="return_time" jdbcType="TIMESTAMP" property="returnTime" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -20,7 +20,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		esord.id,esord.statement_order_id,esord.customer_id,esord.order_id,esord.order_item_refer_id,esord.returnType,esord.return_amount,esord.return_time,esord.data_status,esord.remark,esord.create_time,esord.create_user,esord.update_time,esord.update_user
+		esord.id,esord.statement_order_id,esord.customer_id,esord.order_id,esord.order_item_refer_id,esord.return_type,esord.return_amount,esord.return_time,esord.data_status,esord.remark,esord.create_time,esord.create_user,esord.update_time,esord.update_user
 	</sql>
 
 	<select id="findById" resultMap="StatementOrderReturnDetailDO" parameterType="java.lang.Integer">
@@ -62,7 +62,7 @@
 				order_item_refer_id = #{orderItemReferId,jdbcType=INTEGER},
 			</if>
 			<if test="returnType != null">
-				returnType = #{returnType,jdbcType=INTEGER},
+				return_type = #{returnType,jdbcType=INTEGER},
 			</if>
 			<if test="returnAmount != null">
 				return_amount = #{returnAmount,jdbcType=DECIMAL},

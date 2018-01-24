@@ -11,4 +11,5 @@ public class StatementOrderStatus {
     public static final Integer STATEMENT_ORDER_STATUS_SETTLED_PART = 4;     // 部分结算完成
     public static final Integer STATEMENT_ORDER_STATUS_SETTLED = 8;     // 结算完成
     public static final Integer STATEMENT_ORDER_STATUS_NO = 16;     // 无需结算
+    public static final Integer STATEMENT_ORDER_STATUS_SETTLEING = 20;     // 正在结算
 }

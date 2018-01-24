@@ -119,13 +119,14 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, Boolean> balancePay(String customerNo, String businessOrderNo, String businessOrderRemark, String businessNotifyUrl, BigDecimal payAmount, BigDecimal payRentDepositAmount, BigDecimal payDepositAmount) {
+    public ServiceResult<String, Boolean> balancePay(String customerNo, String businessOrderNo, String businessOrderRemark, String businessNotifyUrl, BigDecimal payAmount, BigDecimal payRentDepositAmount, BigDecimal payDepositAmount, BigDecimal payOtherAmount) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         BalancePayParam param = new BalancePayParam();
         param.setBusinessCustomerNo(customerNo);
         param.setBusinessOrderAmount(payAmount);
         param.setBusinessOrderDepositAmount(payDepositAmount);
         param.setBusinessOrderRentDepositAmount(payRentDepositAmount);
+        param.setBusinessOrderOtherAmount(payOtherAmount);
         param.setBusinessOrderNo(businessOrderNo);
         param.setBusinessOrderRemark(businessOrderRemark);
         param.setBusinessNotifyUrl(businessNotifyUrl);
