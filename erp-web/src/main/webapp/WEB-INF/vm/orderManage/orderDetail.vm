@@ -234,7 +234,7 @@
                                             <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                                             <td>{{propertiesToStr}}</td>
-                                            <td>￥{{currentSkuPrice}}/td>
+                                            <td>￥{{currentSkuPrice}}</td>
                                             <td>
                                                 ￥{{#price}}{{productUnitAmount}}{{/price}}
                                             </td>
