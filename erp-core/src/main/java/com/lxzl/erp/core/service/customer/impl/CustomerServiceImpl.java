@@ -1500,13 +1500,13 @@ public class CustomerServiceImpl implements CustomerService {
         if (ownerUserDO != null) {
             customerDO.setOwnerName(ownerUserDO.getUserName());
         }
-
+        customerDO.setCustomerCompanyDO(customerCompanyDO);
         //封装数据
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         //联合开发人
         UserDO unionUserDO = userMapper.findByUserId(customerDO.getUnionUser());
         if (unionUserDO != null) {
-            customerDO.setUnionUserName(unionUserDO.getUserName());
+            customerResult.setUnionUserName(unionUserDO.getUserName());
             SubCompanyDO subCompanyDO = userRoleMapper.findSubCompanyByUserId(unionUserDO.getId());
 
             subCompanyDO = subCompanyMapper.findById(subCompanyDO.getId());
@@ -1515,7 +1515,6 @@ public class CustomerServiceImpl implements CustomerService {
             customerResult.setUnionAreaDistrictName(subCompanyDO.getDistrictName());
         }
 
-        customerDO.setCustomerCompanyDO(customerCompanyDO);
         CustomerAccount customerAccount = paymentService.queryCustomerAccountNoLogin(customerDO.getCustomerNo());
 
         if (customerAccount != null) {
