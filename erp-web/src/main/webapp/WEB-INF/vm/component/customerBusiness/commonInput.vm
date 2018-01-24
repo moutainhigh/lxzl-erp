@@ -94,8 +94,6 @@
         </div>
         <div class="col-md-3">
             <label for="registeredCapital" class="field-label">注册资本</label>
-
-
             <div class="smart-widget sm-right">
                 <label for="registeredCapital" class="field prepend-icon">
                     <input type="text" name="registeredCapital" id="registeredCapital" class="gui-input number" />
@@ -125,12 +123,15 @@
             </label>
         </div>
         <div class="col-md-3">
-            <label for="operatingArea" class="field-label">经营面积</label>
-            <label for="operatingArea" class="field prepend-icon">
-                <input type="text" name="operatingArea" id="operatingArea" class="gui-input number" />
-                <label for="operatingArea" class="field-icon"><i class="fa fa-tag"></i>
+            <label for="registeredCapital" class="field-label">经营面积</label>
+            <div class="smart-widget sm-right">
+                <label for="operatingArea" class="field prepend-icon">
+                    <input type="text" name="operatingArea" id="operatingArea" class="gui-input number" />
+                    <label for="operatingArea" class="field-icon"><i class="fa fa-jpy"></i>
+                    </label>
                 </label>
-            </label>
+                <label for="operatingArea" class="button">㎡</label>
+            </div>
         </div>
         <div class="col-md-3">
             <label for="productPurpose" class="field-label">设备用途</label>
