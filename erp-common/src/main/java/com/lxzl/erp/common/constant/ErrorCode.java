@@ -427,7 +427,7 @@ public class ErrorCode {
     public static final String CUSTOMER_OWNER_IS_NOT_HEADER_COMPANY = "J500075";
     public static final String CUSTOMER_UNION_USER_IS_NOT_HEADER_COMPANY = "J500076";
     public static final String STATEMENT_DATE_NOT_NULL = "J500077";
-
+    public static final String CUSTOMER_OWNER_USER_AND_UNION_USER_NOT_SAME = "J500078";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -853,6 +853,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_OWNER_IS_NOT_HEADER_COMPANY, "客户的开发员不能为总公司人员");
         MAP.put(CUSTOMER_UNION_USER_IS_NOT_HEADER_COMPANY, "客户的联合开发员不能为总公司人员");
         MAP.put(STATEMENT_DATE_NOT_NULL, "客户的结算时间不能为空");
+        MAP.put(CUSTOMER_OWNER_USER_AND_UNION_USER_NOT_SAME, "客户的开发员和联合开发员不能同一个人");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");

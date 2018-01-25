@@ -135,6 +135,11 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_UNION_USER_IS_NOT_HEADER_COMPANY);
                 return serviceResult;
             }
+
+            if (customer.getOwner().equals(customer.getUnionUser())){
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_USER_AND_UNION_USER_NOT_SAME);
+                return serviceResult;
+            }
         }
         customerDO.setOwner(customer.getOwner());
         customerDO.setUnionUser(customer.getUnionUser());
@@ -251,6 +256,10 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_UNION_USER_IS_NOT_HEADER_COMPANY);
                 return serviceResult;
             }
+            if (customer.getOwner().equals(customer.getUnionUser())){
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_USER_AND_UNION_USER_NOT_SAME);
+                return serviceResult;
+            }
         }
         customerDO.setOwner(customer.getOwner());
         customerDO.setUnionUser(customer.getUnionUser());
@@ -322,6 +331,11 @@ public class CustomerServiceImpl implements CustomerService {
             UserDO userUnionDO = userMapper.findByUserId(customer.getUnionUser());
             if (userUnionDO == null){
                 serviceResult.setErrorCode(ErrorCode.USER_UNION_NOT_EXISTS);
+                return serviceResult;
+            }
+
+            if (customer.getOwner().equals(customer.getUnionUser())){
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_USER_AND_UNION_USER_NOT_SAME);
                 return serviceResult;
             }
         }
@@ -528,6 +542,11 @@ public class CustomerServiceImpl implements CustomerService {
             UserDO userUnionDO = userMapper.findByUserId(customer.getUnionUser());
             if (userUnionDO == null){
                 serviceResult.setErrorCode(ErrorCode.USER_UNION_NOT_EXISTS);
+                return serviceResult;
+            }
+
+            if (customer.getOwner().equals(customer.getUnionUser())){
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_USER_AND_UNION_USER_NOT_SAME);
                 return serviceResult;
             }
         }
@@ -1664,6 +1683,11 @@ public class CustomerServiceImpl implements CustomerService {
     private ServiceResult<String,String> updateCustomerOwnerAndUnionUser(CustomerDO customerDO,Customer customer,Date now) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
 
+        Integer userDOOnwer = customerDO.getOwner();
+        Integer userDOUnion = customerDO.getUnionUser();
+        Integer userOnwer = customer.getOwner();
+        Integer userUnion = customer.getUnionUser();
+
         //如果开发员被修改为总公司人员
         if (CommonConstant.HEADER_COMPANY_ID.equals(userSupport.getCompanyIdByUser(customer.getOwner()))){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_IS_NOT_HEADER_COMPANY);
@@ -1675,7 +1699,7 @@ public class CustomerServiceImpl implements CustomerService {
             Integer companyIdByUserDo = userSupport.getCompanyIdByUser(customerDO.getOwner());
             Integer companyIdByUser = userSupport.getCompanyIdByUser(customer.getOwner());
             //如果客户开发人不是电销人员，并且修改后的开发人是电销人员
-            if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUserDo) && !CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUser)){
+            if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUser)){
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_NOT_CHANGE_ELECTRIC_SALE_COMPANY);
                 return serviceResult;
             }
@@ -1699,7 +1723,7 @@ public class CustomerServiceImpl implements CustomerService {
                 Integer companyIdByUserDo = userSupport.getCompanyIdByUser(customerDO.getUnionUser());
                 Integer companyIdByUser = userSupport.getCompanyIdByUser(customer.getUnionUser());
                 //如果联合开发员不是电销，并且修改后联合开发员是电销
-                if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUserDo) &&CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUser)){
+                if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUser)){
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_UNION_USER_NOT_CHANGE_ELECTRIC_SALE_COMPANY);
                     return serviceResult;
                 }
@@ -1708,15 +1732,15 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //创建客户变更记录
-        if (!customerDO.getOwner().equals(customer.getOwner()) && customer.getUnionUser() == null) {
+        if (!userDOOnwer.equals(userOnwer) && (userUnion == null || userDOUnion.equals(userUnion))) {
             //如果开发员改变，并且联合开发员传入的为null既联合开发员未改变
-            createCustomerUpdateLog(customerDO.getId(), customer.getOwner(), customerDO.getUnionUser(), now);
-        }if (!customerDO.getOwner().equals(customer.getOwner()) && !customerDO.getUnionUser().equals(customer.getUnionUser())){
+            createCustomerUpdateLog(customerDO.getId(), userOnwer, userDOUnion, now);
+        }if (!userDOOnwer.equals(userOnwer) && !userDOUnion.equals(userUnion)){
             //如果开发员员和联合开发员都改变了
-            createCustomerUpdateLog(customerDO.getId(), customer.getOwner(), customer.getUnionUser(), now);
-        }if (customerDO.getOwner().equals(customer.getOwner()) && !customerDO.getUnionUser().equals(customer.getUnionUser())){
+            createCustomerUpdateLog(customerDO.getId(), userOnwer, userUnion, now);
+        }if (userDOOnwer.equals(userOnwer) && !userDOUnion.equals(userUnion)){
             //如果开发员未改变，并且联合开发员改变了
-            createCustomerUpdateLog(customerDO.getId(), customerDO.getOwner(), customer.getUnionUser(), now);
+            createCustomerUpdateLog(customerDO.getId(), userDOOnwer, userUnion, now);
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
