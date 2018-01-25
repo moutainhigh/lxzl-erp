@@ -124,7 +124,7 @@
                                 </td>
                                 <td>
                                     <p class="mn">日租：￥{{#price}}{{dayRentPrice}}{{/price}}</p>
-                                    <p class="mn mt5">月租：￥{{#price}}{{newMaterialPrice}}{{/price}}</p>
+                                    <p class="mn mt5">月租：￥{{#price}}{{monthRentPrice}}{{/price}}</p>
                                 </td>
                                 <td>
                                     <p class="mn">日租：￥{{#price}}{{newDayRentPrice}}{{/price}}</p>
