@@ -20,7 +20,7 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void createNew() throws Exception {
         StatementOrderQueryParam param = new StatementOrderQueryParam();
-        param.setOrderNo("LXO-20180124-731458-00092");
+        param.setOrderNo("LXO-20180124-731460-00094");
         TestResult testResult = getJsonTestResult("/statementOrder/createNew", param);
     }
 
@@ -44,6 +44,14 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
         param.setStatementOrderNo("LXSO-731458-20180124-00044");
         param.setStatementOrderPayType(StatementOrderPayType.PAY_TYPE_BALANCE);
         TestResult testResult = getJsonTestResult("/statementOrder/pay", param);
+    }
+
+    @Test
+    public void weixinPay() throws Exception {
+        StatementOrderPayParam param = new StatementOrderPayParam();
+        param.setStatementOrderNo("LXSO-731454-20180101-00025");
+        param.setOpenId("o_ORluFbHAHEKaa_PCRo1bky4R6U");
+        TestResult testResult = getJsonTestResult("/statementOrder/weixinPay", param);
     }
 
     @Test
