@@ -629,14 +629,6 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
             return serviceResult;
         }
-
-        //调用结算单接口
-        ServiceResult<String, BigDecimal> statementResult = statementService.createReturnOrderStatement(returnOrderDO.getReturnOrderNo());
-        if (!ErrorCode.SUCCESS.equals(statementResult.getErrorCode())) {
-            serviceResult.setErrorCode(statementResult.getErrorCode());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            return serviceResult;
-        }
         if (ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(returnOrderDO.getReturnOrderStatus())) {
             returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_END);
             returnOrderDO.setUpdateTime(new Date());
@@ -651,7 +643,13 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_STATUS_CAN_NOT_END);
             return serviceResult;
         }
-
+        //调用结算单接口
+        ServiceResult<String, BigDecimal> statementResult = statementService.createReturnOrderStatement(returnOrderDO.getReturnOrderNo());
+        if (!ErrorCode.SUCCESS.equals(statementResult.getErrorCode())) {
+            serviceResult.setErrorCode(statementResult.getErrorCode());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return serviceResult;
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(returnOrderDO.getReturnOrderNo());
         return serviceResult;
