@@ -6,6 +6,7 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="supplier_no" jdbcType="VARCHAR" property="supplierNo" />
 		<result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
+		<result column="supplier_type" jdbcType="INTEGER" property="supplierType" />
 		<result column="province" jdbcType="INTEGER" property="province" />
 		<result column="province_name" jdbcType="VARCHAR" property="provinceName" />
 		<result column="city" jdbcType="INTEGER" property="city" />
@@ -29,7 +30,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		es.id,es.supplier_no,es.supplier_name,es.province,es.city,es.district,es.address,es.tel,es.contact_name,es.contact_phone,es.data_status,es.remark,es.create_time,es.create_user,es.update_time,es.update_user,es.beneficiary_name,es.beneficiary_account,es.beneficiary_bank_name,es.supplier_code
+		es.id,es.supplier_no,es.supplier_name,es.province,es.city,es.district,es.address,es.tel,es.contact_name,es.contact_phone,es.data_status,es.remark,es.create_time,es.create_user,es.update_time,es.update_user,es.beneficiary_name,es.beneficiary_account,es.beneficiary_bank_name,es.supplier_code,es.supplier_type
 	</sql>
 
 	<select id="findById" resultMap="SupplierDO" parameterType="java.lang.Integer">
@@ -127,6 +128,9 @@
 			</if>
 			<if test="supplierNo != null">
 				supplier_no = #{supplierNo,jdbcType=VARCHAR},
+			</if>
+			<if test="supplierType != null">
+				supplier_type = #{supplierType,jdbcType=INTEGER},
 			</if>
 			<if test="province != null">
 				province = #{province,jdbcType=INTEGER},

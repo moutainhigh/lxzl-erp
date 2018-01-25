@@ -17,5 +17,5 @@ public interface IpAndMacService {
     * @param : request
     * @Return : com.lxzl.erp.common.domain.getIpAndMac.pojo.IpAndMac
     */
-    IpAndMac getIpAndMacService(HttpServletRequest request);
+    IpAndMac getIpAndMacService(HttpServletRequest request) throws Exception;
 }

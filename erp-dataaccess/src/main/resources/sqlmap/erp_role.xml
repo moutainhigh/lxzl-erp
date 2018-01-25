@@ -41,8 +41,11 @@
             <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.roleId != null">
                 and er.id = #{maps.roleQueryParam.roleId, jdbcType=INTEGER}
             </if>
-            <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.roleName != null">
+            <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.roleName != null &amp;&amp; maps.roleQueryParam.roleName != ''">
                 and er.role_name like CONCAT('%','${maps.roleQueryParam.roleName}','%' )
+            </if>
+            <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.fullRoleName != null &amp;&amp; maps.roleQueryParam.fullRoleName != ''">
+                and er.role_name  = #{maps.roleQueryParam.fullRoleName, jdbcType=VARCHAR}
             </if>
             <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.subCompanyId != null">
                 and ed.sub_company_id = #{maps.roleQueryParam.subCompanyId, jdbcType=INTEGER}
@@ -66,8 +69,11 @@
             <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.roleId != null">
                 and er.id = #{maps.roleQueryParam.roleId, jdbcType=INTEGER}
             </if>
-            <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.roleName != null">
+            <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.roleName != null &amp;&amp; maps.roleQueryParam.roleName != ''">
                 and er.role_name like CONCAT('%','${maps.roleQueryParam.roleName}','%' )
+            </if>
+            <if test="maps.roleQueryParam != null &amp;&amp; maps.roleQueryParam.fullRoleName != null &amp;&amp; maps.roleQueryParam.fullRoleName != ''">
+                and er.role_name = #{maps.roleQueryParam.fullRoleName, jdbcType=VARCHAR}
             </if>
             <if test="true">
                 and er.data_status = 1

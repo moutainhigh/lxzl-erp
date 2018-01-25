@@ -6,6 +6,8 @@ import com.lxzl.erp.common.domain.getIpAndMac.pojo.IpAndMac;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.area.AreaService;
 import com.lxzl.erp.core.service.exclt.EXCLService;
+import com.lxzl.erp.core.service.exclt.ImportSupplierAndPeerXlsxDataSerivice;
+import com.lxzl.erp.core.service.exclt.ImportUserXlsxDataSerivice;
 import com.lxzl.erp.core.service.getIpAndMac.IpAndMacService;
 import com.lxzl.se.common.domain.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,12 @@ public class HttpClientController {
 
     @Autowired
     IpAndMacService ipAndMacService;
+
+    @Autowired
+    ImportUserXlsxDataSerivice importUserXlsxDataSerivice;
+
+    @Autowired
+    ImportSupplierAndPeerXlsxDataSerivice importSupplierAndPeerXlsxDataSerivice;
 
     /**
      * 获取邮政编号
@@ -83,11 +91,42 @@ public class HttpClientController {
     */
 
     @RequestMapping(value = "test11", method = RequestMethod.GET)
-    public Result test11(HttpServletRequest request) throws IOException {
+    public Result test11(HttpServletRequest request) throws Exception {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         IpAndMac ipAndMacService = this.ipAndMacService.getIpAndMacService(request);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult("IP:"+ipAndMacService.getIp()+",MAC:"+ipAndMacService.getMac());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    /**
+     * 导入用户数据
+     *
+     * @param : EXCTName
+     * @param : shilt
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/1/11 10:32
+     * @Return : com.lxzl.se.common.domain.Result
+     */
+    @RequestMapping("importUser")
+    public Result ImportUserXlsxDataTest(String str) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ParseException, IOException {
+        ServiceResult<String, Map<String, String>> result = importUserXlsxDataSerivice.importData(str);
+        return resultGenerator.generate(result.getErrorCode(), result.getResult());
+    }
+
+    /**
+     * 导入供应商数据
+     *
+     * @param : EXCTName
+     * @param : shilt
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/1/11 10:32
+     * @Return : com.lxzl.se.common.domain.Result
+     */
+    @RequestMapping("importSupplier")
+    public Result ImportSupplierXlsxDataTest(String str) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ParseException, IOException {
+        ServiceResult<String, Map<String, String>> result = importSupplierAndPeerXlsxDataSerivice.importData(str);
+        return resultGenerator.generate(result.getErrorCode(), result.getResult());
+    }
+
 }
