@@ -152,7 +152,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, String> wechatPay(String customerNo, String businessOrderNo, String businessOrderRemark, BigDecimal payAmount,String openId, String ip) {
+    public ServiceResult<String, String> wechatPay(String customerNo, String businessOrderNo, String businessOrderRemark, BigDecimal payAmount,String openId, String ip, Integer loginUserId) {
         ServiceResult<String, String> result = new ServiceResult<>();
         WeixinPayParam param = new WeixinPayParam();
         param.setBusinessCustomerNo(customerNo);
@@ -166,7 +166,7 @@ public class PaymentServiceImpl implements PaymentService {
         param.setClientIp(ip);
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
-        param.setBusinessOperateUser(userSupport.getCurrentUserId().toString());
+        param.setBusinessOperateUser(loginUserId.toString());
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");

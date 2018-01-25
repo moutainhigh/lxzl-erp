@@ -352,7 +352,7 @@ public class StatementServiceImpl implements StatementService {
 
         logger.info("wechat pay customer: {} , orderNo: {} , payRentAmount: {} , payRentDepositAmount: {} , payDepositAmount: {} , otherAmount: {} , totalAmount: {} , ",
                 customerDO.getCustomerNo(), statementPayOrderDO.getPaymentOrderNo(), payRentAmount, payDepositAmount, otherAmount, totalAmount);
-        ServiceResult<String, String> wechatPayResult = paymentService.wechatPay(customerDO.getCustomerNo(), statementPayOrderDO.getPaymentOrderNo(), statementOrderDO.getRemark(), totalAmount, openId, ip);
+        ServiceResult<String, String> wechatPayResult = paymentService.wechatPay(customerDO.getCustomerNo(), statementPayOrderDO.getPaymentOrderNo(), statementOrderDO.getRemark(), totalAmount, openId, ip, loginUserId);
         if (!ErrorCode.SUCCESS.equals(wechatPayResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result.setErrorCode(wechatPayResult.getErrorCode());
