@@ -14,7 +14,7 @@ public class FileGenerator {
 
     public static void main(String[] args) throws Exception {
 //        generateDomains("erp_customer");
-        generateDomainsByDir("erp_statement_order_return_detail","statement");
+        generateDomainsByDir("erp_statement_pay_order","statement");
 //        generateDomainsByDir("erp_purchase_apply_order_material","purchaseApply");
 
 //        generateDomains("erp_purchase_delivery_order_material");
@@ -29,7 +29,7 @@ public class FileGenerator {
 //        System.out.println(xmlDir);
     }
 
-    private static String URL = "jdbc:mysql://192.168.10.205:3306/lxzl_erp?useUnicode=true&amp;characterEncoding=UTF-8";
+    private static String URL = "jdbc:mysql://192.168.10.205:3306/lxzl_erp_test?useUnicode=true&amp;characterEncoding=UTF-8";
     private static String USER = "lxzldev";
     private static String PASSWORD = "lxzldev";
 

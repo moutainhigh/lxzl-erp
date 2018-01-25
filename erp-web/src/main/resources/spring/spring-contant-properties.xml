@@ -29,6 +29,8 @@
         <property name="paymentSystemManualChargeURL" value="${PAYMENT_SYSTEM_MANUAL_CHARGE_URL}"/>
         <property name="paymentSystemManualDeductURL" value="${PAYMENT_SYSTEM_MANUAL_DEDUCT_URL}"/>
         <property name="paymentSystemBalancePayURL" value="${PAYMENT_SYSTEM_BALANCE_PAY_URL}"/>
+        <property name="paymentSystemWeixinPayURL" value="${PAYMENT_SYSTEM_WEIXIN_PAY_URL}"/>
+        <property name="paymentSystemWeixinPayCallbackURL" value="${PAYMENT_SYSTEM_WEIXIN_PAY_CALLBACK_URL}"/>
         <property name="paymentSystemReturnDepositURL" value="${PAYMENT_SYSTEM_RETURN_DEPOSIT_URL}"/>
         <property name="paymentSystemAppId" value="${PAYMENT_SYSTEM_APP_ID}"/>
         <property name="paymentSystemAppSecret" value="${PAYMENT_SYSTEM_APP_SECRET}"/>

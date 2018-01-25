@@ -31,12 +31,12 @@ public class StatementPaySupport {
      * 保存支付记录，返回支付状态
      *
      * @param statementOrderId
-     * @param payAmount
+     * @param payAmount        支付总金额
      * @param payType
      * @param currentTime
      * @return
      */
-    public StatementPayOrderDO saveStatementPayOrder(Integer statementOrderId, BigDecimal payAmount, Integer payType, Integer loginUserId, Date currentTime) {
+    public StatementPayOrderDO saveStatementPayOrder(Integer statementOrderId, BigDecimal payAmount, BigDecimal payRentAmount, BigDecimal payRentDepositAmount, BigDecimal payDepositAmount, BigDecimal otherAmount, Integer payType, Integer loginUserId, Date currentTime) {
         if (BigDecimalUtil.compare(payAmount, BigDecimal.ZERO) <= 0) {
             return null;
         }
@@ -44,6 +44,10 @@ public class StatementPaySupport {
         statementPayOrderDO.setStatementPayOrderNo(generateNoSupport.generateStatementPayOrderNo());
         statementPayOrderDO.setStatementOrderId(statementOrderId);
         statementPayOrderDO.setPayAmount(payAmount);
+        statementPayOrderDO.setPayRentAmount(payRentAmount);
+        statementPayOrderDO.setPayRentDepositAmount(payRentDepositAmount);
+        statementPayOrderDO.setPayDepositAmount(payDepositAmount);
+        statementPayOrderDO.setOtherAmount(otherAmount);
         statementPayOrderDO.setPayType(payType);
         statementPayOrderDO.setPayStatus(PayStatus.PAY_STATUS_PAYING);
         statementPayOrderDO.setPayTime(currentTime);
@@ -66,7 +70,8 @@ public class StatementPaySupport {
             return false;
         }
         if (!PayStatus.PAY_STATUS_PAID.equals(payStatus)
-                && !PayStatus.PAY_STATUS_FAILED.equals(payStatus)) {
+                && !PayStatus.PAY_STATUS_FAILED.equals(payStatus)
+                && !PayStatus.PAY_STATUS_TIME_OUT.equals(payStatus)) {
             return false;
         }
         statementPayOrderDO.setPayStatus(payStatus);
@@ -76,5 +81,9 @@ public class StatementPaySupport {
         statementPayOrderDO.setUpdateUser(loginUserId.toString());
         statementPayOrderMapper.update(statementPayOrderDO);
         return true;
+    }
+
+    public StatementPayOrderDO getLastRecord(Integer statementOrderId) {
+        return statementPayOrderMapper.findByStatementOrderId(statementOrderId);
     }
 }

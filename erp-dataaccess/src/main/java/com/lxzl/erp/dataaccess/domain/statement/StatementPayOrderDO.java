@@ -13,6 +13,10 @@ public class StatementPayOrderDO  extends BaseDO {
 	private Integer payStatus;
 	private String paymentOrderNo;
 	private BigDecimal payAmount;
+	private BigDecimal payRentAmount;
+	private BigDecimal payRentDepositAmount;
+	private BigDecimal payDepositAmount;
+	private BigDecimal otherAmount;
 	private Date payTime;
 	private Date endTime;
 	private Integer dataStatus;
@@ -72,6 +76,38 @@ public class StatementPayOrderDO  extends BaseDO {
 
 	public void setPayAmount(BigDecimal payAmount){
 		this.payAmount = payAmount;
+	}
+
+	public BigDecimal getPayRentAmount(){
+		return payRentAmount;
+	}
+
+	public void setPayRentAmount(BigDecimal payRentAmount){
+		this.payRentAmount = payRentAmount;
+	}
+
+	public BigDecimal getPayRentDepositAmount(){
+		return payRentDepositAmount;
+	}
+
+	public void setPayRentDepositAmount(BigDecimal payRentDepositAmount){
+		this.payRentDepositAmount = payRentDepositAmount;
+	}
+
+	public BigDecimal getPayDepositAmount(){
+		return payDepositAmount;
+	}
+
+	public void setPayDepositAmount(BigDecimal payDepositAmount){
+		this.payDepositAmount = payDepositAmount;
+	}
+
+	public BigDecimal getOtherAmount(){
+		return otherAmount;
+	}
+
+	public void setOtherAmount(BigDecimal otherAmount){
+		this.otherAmount = otherAmount;
 	}
 
 	public Date getPayTime(){

@@ -15,6 +15,10 @@ public class StatementPayOrder extends BasePO {
 	private Integer payStatus;   //支付状态，详见paystatus
 	private String paymentOrderNo;   //支付系统支付编号
 	private BigDecimal payAmount;   //支付金额
+	private BigDecimal payRentAmount;   //支付租金金额
+	private BigDecimal payRentDepositAmount;   //支付租金押金金额
+	private BigDecimal payDepositAmount;   //支付押金金额
+	private BigDecimal otherAmount;   //支付其他金额
 	private Date payTime;   //支付时间，即发起支付时间
 	private Date endTime;   //结束时间，即收到返回时间
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -79,6 +83,38 @@ public class StatementPayOrder extends BasePO {
 
 	public void setPayAmount(BigDecimal payAmount){
 		this.payAmount = payAmount;
+	}
+
+	public BigDecimal getPayRentAmount(){
+		return payRentAmount;
+	}
+
+	public void setPayRentAmount(BigDecimal payRentAmount){
+		this.payRentAmount = payRentAmount;
+	}
+
+	public BigDecimal getPayRentDepositAmount(){
+		return payRentDepositAmount;
+	}
+
+	public void setPayRentDepositAmount(BigDecimal payRentDepositAmount){
+		this.payRentDepositAmount = payRentDepositAmount;
+	}
+
+	public BigDecimal getPayDepositAmount(){
+		return payDepositAmount;
+	}
+
+	public void setPayDepositAmount(BigDecimal payDepositAmount){
+		this.payDepositAmount = payDepositAmount;
+	}
+
+	public BigDecimal getOtherAmount(){
+		return otherAmount;
+	}
+
+	public void setOtherAmount(BigDecimal otherAmount){
+		this.otherAmount = otherAmount;
 	}
 
 	public Date getPayTime(){

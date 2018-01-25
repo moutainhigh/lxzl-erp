@@ -12,6 +12,8 @@ public class PaymentSystemConfig {
     public static String paymentSystemManualChargeURL;
     public static String paymentSystemManualDeductURL;
     public static String paymentSystemBalancePayURL;
+    public static String paymentSystemWeixinPayURL;
+    public static String paymentSystemWeixinPayCallbackURL;
     public static String paymentSystemReturnDepositURL;
     public static String paymentSystemAppId;
     public static String paymentSystemAppSecret;
@@ -42,5 +44,13 @@ public class PaymentSystemConfig {
 
     public void setPaymentSystemReturnDepositURL(String paymentSystemReturnDepositURL) {
         PaymentSystemConfig.paymentSystemReturnDepositURL = paymentSystemReturnDepositURL;
+    }
+
+    public void setPaymentSystemWeixinPayURL(String paymentSystemWeixinPayURL) {
+        PaymentSystemConfig.paymentSystemWeixinPayURL = paymentSystemWeixinPayURL;
+    }
+
+    public void setPaymentSystemWeixinPayCallbackURL(String paymentSystemWeixinPayCallbackURL) {
+        PaymentSystemConfig.paymentSystemWeixinPayCallbackURL = paymentSystemWeixinPayCallbackURL;
     }
 }

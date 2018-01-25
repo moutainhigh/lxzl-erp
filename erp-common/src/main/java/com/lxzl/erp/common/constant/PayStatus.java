@@ -14,4 +14,5 @@ public class PayStatus {
     public static final Integer PAY_STATUS_REFUND = 16;         // 已退款
     public static final Integer PAY_STATUS_OVERDUE = 20;        // 逾期
     public static final Integer PAY_STATUS_FAILED = 24;        // 支付失败
+    public static final Integer PAY_STATUS_TIME_OUT = 28;        // 支付超时
 }

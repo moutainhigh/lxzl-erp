@@ -10,6 +10,10 @@
 		<result column="pay_status" jdbcType="INTEGER" property="payStatus" />
 		<result column="payment_order_no" jdbcType="VARCHAR" property="paymentOrderNo" />
 		<result column="pay_amount" jdbcType="DECIMAL" property="payAmount" />
+		<result column="pay_rent_amount" jdbcType="DECIMAL" property="payRentAmount" />
+		<result column="pay_rent_deposit_amount" jdbcType="DECIMAL" property="payRentDepositAmount" />
+		<result column="pay_deposit_amount" jdbcType="DECIMAL" property="payDepositAmount" />
+		<result column="other_amount" jdbcType="DECIMAL" property="otherAmount" />
 		<result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
 		<result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -21,7 +25,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		espo.id,espo.statement_pay_order_no,espo.statement_order_id,espo.pay_type,espo.pay_status,espo.payment_order_no,espo.pay_amount,espo.pay_time,espo.end_time,espo.data_status,espo.remark,espo.create_time,espo.create_user,espo.update_time,espo.update_user
+		espo.id,espo.statement_pay_order_no,espo.statement_order_id,espo.pay_type,espo.pay_status,espo.payment_order_no,espo.pay_amount,espo.pay_rent_amount,espo.pay_rent_deposit_amount,espo.pay_deposit_amount,espo.other_amount,espo.pay_time,espo.end_time,espo.data_status,espo.remark,espo.create_time,espo.create_user,espo.update_time,espo.update_user
 	</sql>
 
 	<select id="findById" resultMap="StatementPayOrderDO" parameterType="java.lang.Integer">
@@ -29,17 +33,17 @@
 		WHERE espo.id = #{id, jdbcType=INTEGER} AND espo.data_status = 1 
 	</select>
 
+	<select id="findByStatementOrderId" resultMap="StatementPayOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statement_pay_order espo
+		WHERE espo.statement_order_id = #{statementOrderId, jdbcType=INTEGER} AND espo.data_status = 1 ORDER BY create_time DESC
+		LIMIT 0,1
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(espo.id) FROM erp_statement_pay_order espo 
 		<where>
-			<if test="maps.statementPayOrderQueryParam.createStartTime != null">
-				<![CDATA[ AND espo.create_time >= #{maps.statementPayOrderQueryParam.createStartTime} ]]>
-			</if>
-			<if test="maps.statementPayOrderQueryParam.createEndTime != null">
-				<![CDATA[ AND espo.create_time <= #{maps.statementPayOrderQueryParam.createEndTime} ]]>
-			</if>
-			<if test="maps.isQueryAll == null">
-				and espo.data_status = 1
+			<if test="true">
+				AND espo.data_status = 1
 			</if>
 		</where>
 	</select>
@@ -47,14 +51,8 @@
 	<select id="listPage" resultMap="StatementPayOrderDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_statement_pay_order espo 
 		<where>
-			<if test="maps.statementPayOrderQueryParam.createStartTime != null">
-				<![CDATA[ AND espo.create_time >= #{maps.statementPayOrderQueryParam.createStartTime} ]]>
-			</if>
-			<if test="maps.statementPayOrderQueryParam.createEndTime != null">
-				<![CDATA[ AND espo.create_time <= #{maps.statementPayOrderQueryParam.createEndTime} ]]>
-			</if>
-			<if test="maps.isQueryAll == null">
-				and espo.data_status = 1
+			<if test="true">
+				AND espo.data_status = 1
 			</if>
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}
@@ -79,6 +77,18 @@
 			</if>
 			<if test="payAmount != null">
 				pay_amount = #{payAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="payRentAmount != null">
+				pay_rent_amount = #{payRentAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="payRentDepositAmount != null">
+				pay_rent_deposit_amount = #{payRentDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="payDepositAmount != null">
+				pay_deposit_amount = #{payDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="otherAmount != null">
+				other_amount = #{otherAmount,jdbcType=DECIMAL},
 			</if>
 			<if test="payTime != null">
 				pay_time = #{payTime,jdbcType=TIMESTAMP},

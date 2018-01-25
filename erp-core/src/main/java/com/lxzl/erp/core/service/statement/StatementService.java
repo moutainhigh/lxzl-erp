@@ -47,7 +47,15 @@ public interface StatementService extends BaseService {
      * @param statementOrderNo 结算单编号
      * @return 是否支付成功
      */
-    ServiceResult<String, Boolean> payStatementOrder(String statementOrderNo, Integer statementOrderPayType);
+    ServiceResult<String, Boolean> payStatementOrder(String statementOrderNo);
+
+    /**
+     * 微信支付结算单
+     *
+     * @param statementOrderNo 结算单编号
+     * @return 支付参数
+     */
+    ServiceResult<String, String> weixinPayStatementOrder(String statementOrderNo,String openId, String ip);
 
 
     /**

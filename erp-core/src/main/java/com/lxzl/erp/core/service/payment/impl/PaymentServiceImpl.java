@@ -5,6 +5,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.PaymentSystemConfig;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.base.PaymentResult;
+import com.lxzl.erp.common.domain.pay.WeixinPayResponse;
 import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.*;
 import com.lxzl.erp.common.util.FastJsonUtil;
@@ -119,17 +120,17 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, Boolean> balancePay(String customerNo, String businessOrderNo, String businessOrderRemark, String businessNotifyUrl, BigDecimal payAmount, BigDecimal payRentDepositAmount, BigDecimal payDepositAmount, BigDecimal payOtherAmount) {
+    public ServiceResult<String, Boolean> balancePay(String customerNo, String businessOrderNo, String businessOrderRemark, BigDecimal payRentAmount, BigDecimal payRentDepositAmount, BigDecimal payDepositAmount, BigDecimal payOtherAmount) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         BalancePayParam param = new BalancePayParam();
         param.setBusinessCustomerNo(customerNo);
-        param.setBusinessOrderAmount(payAmount);
+        param.setBusinessOrderAmount(payRentAmount);
         param.setBusinessOrderDepositAmount(payDepositAmount);
         param.setBusinessOrderRentDepositAmount(payRentDepositAmount);
         param.setBusinessOrderOtherAmount(payOtherAmount);
         param.setBusinessOrderNo(businessOrderNo);
         param.setBusinessOrderRemark(businessOrderRemark);
-        param.setBusinessNotifyUrl(businessNotifyUrl);
+        param.setBusinessNotifyUrl(null);
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
         param.setBusinessOperateUser(userSupport.getCurrentUserId().toString());
@@ -141,6 +142,39 @@ public class PaymentServiceImpl implements PaymentService {
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 result.setResult((Boolean) paymentResult.getResultMap().get("data"));
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ServiceResult<String, String> wechatPay(String customerNo, String businessOrderNo, String businessOrderRemark, BigDecimal payAmount,String openId, String ip) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        WeixinPayParam param = new WeixinPayParam();
+        param.setBusinessCustomerNo(customerNo);
+        param.setAmount(new BigDecimal(0.01));
+        param.setPayName("凌雄租赁");
+        param.setPayDescription("凌雄租赁商品");
+        param.setOpenId(openId);
+        param.setBusinessOrderNo(businessOrderNo);
+        param.setBusinessOrderRemark(businessOrderRemark);
+        param.setBusinessNotifyUrl(PaymentSystemConfig.paymentSystemWeixinPayCallbackURL);
+        param.setClientIp(ip);
+        param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        param.setBusinessOperateUser(userSupport.getCurrentUserId().toString());
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = FastJsonUtil.toJSONString(param);
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemWeixinPayURL, requestJson, headerBuilder, "UTF-8");
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                result.setResult((String) paymentResult.getResultMap().get("data"));
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
             }
