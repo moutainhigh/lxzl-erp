@@ -218,6 +218,7 @@ DROP TABLE if exists `erp_supplier`;
 CREATE TABLE `erp_supplier` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `supplier_no` varchar(100) NOT NULL COMMENT '供应商编码',
+  `supplier_type` int(11) DEFAULT 0 COMMENT '用户类型,0为普通供应商，1为发票供应商',
   `supplier_name` varchar(100) NOT NULL DEFAULT '' COMMENT '供应商名称',
   `supplier_code` varchar(100) COLLATE utf8_bin COMMENT '供应商自定义编码',
   `province` int(20) COMMENT '省份ID，省份ID',

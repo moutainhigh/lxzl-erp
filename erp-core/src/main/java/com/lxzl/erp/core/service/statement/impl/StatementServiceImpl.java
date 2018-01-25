@@ -297,6 +297,7 @@ public class StatementServiceImpl implements StatementService {
     public ServiceResult<String, String> weixinPayStatementOrder(String statementOrderNo, String openId, String ip) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
+        Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
         Date currentTime = new Date();
         StatementOrderDO statementOrderDO = statementOrderMapper.findByNo(statementOrderNo);
         if (statementOrderDO == null) {
@@ -322,7 +323,7 @@ public class StatementServiceImpl implements StatementService {
             // 如果本次支付和上一次支付价格不同
             if ((statementPayOrderLastRecord.getCreateTime().getTime() + (90 * 60 * 1000)) <= currentTime.getTime()) {
                 // 查询时间过去多久了，如果超过90分钟，即为失效，重新下单
-                boolean updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderLastRecord.getId(), PayStatus.PAY_STATUS_TIME_OUT, null, loginUser.getUserId(), currentTime);
+                boolean updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderLastRecord.getId(), PayStatus.PAY_STATUS_TIME_OUT, null, loginUserId, currentTime);
                 if (!updatePayOrderResult) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     result.setErrorCode(ErrorCode.STATEMENT_PAY_FAILED);
@@ -340,7 +341,7 @@ public class StatementServiceImpl implements StatementService {
         if (haveOldRecord) {
             statementPayOrderDO = statementPayOrderLastRecord;
         } else {
-            statementPayOrderDO = statementPaySupport.saveStatementPayOrder(statementOrderDO.getId(), totalAmount, payRentAmount, payRentDepositAmount, payDepositAmount, otherAmount, StatementOrderPayType.PAY_TYPE_WEIXIN, loginUser.getUserId(), currentTime);
+            statementPayOrderDO = statementPaySupport.saveStatementPayOrder(statementOrderDO.getId(), totalAmount, payRentAmount, payRentDepositAmount, payDepositAmount, otherAmount, StatementOrderPayType.PAY_TYPE_WEIXIN, loginUserId, currentTime);
         }
 
         if (statementPayOrderDO == null) {
