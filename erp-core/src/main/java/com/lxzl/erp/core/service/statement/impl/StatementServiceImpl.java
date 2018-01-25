@@ -98,7 +98,7 @@ public class StatementServiceImpl implements StatementService {
         Date currentTime = new Date();
         Date rentStartTime = orderDO.getRentStartTime();
 
-        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, loginUser == null ? null : loginUser.getUserId());
+        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId());
 
         // 生成单子后，本次需要付款的金额
         BigDecimal thisNeedPayAmount = BigDecimal.ZERO;
