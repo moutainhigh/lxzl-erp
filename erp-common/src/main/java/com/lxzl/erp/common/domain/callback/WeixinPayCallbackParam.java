@@ -20,8 +20,6 @@ public class WeixinPayCallbackParam {
     public static final String NOTIFY_STATUS_SUCCESS = "1";
     public static final String NOTIFY_STATUS_FAIL = "2";
     public static final String NOTIFY_STATUS_IN_PROCESS = "3";
-    public static final String NOTIFY_STATUS_EXCEPTION_SUCCESS = "4";
-    public static final String NOTIFY_STATUS_EXCEPTION_FAIL = "5";
 
     public BigDecimal getAmount() {
         return amount;

@@ -368,6 +368,24 @@ public class StatementServiceImpl implements StatementService {
     public ServiceResult<String, String> weixinPayCallback(WeixinPayCallbackParam param) {
         ServiceResult<String, String> result = new ServiceResult<>();
 
+        Date currentTime = new Date();
+        Integer loginUserId = CommonConstant.SUPER_USER_ID;
+        if (param == null
+                || (!WeixinPayCallbackParam.NOTIFY_STATUS_SUCCESS.equals(param.getNotifyStatus()) && !WeixinPayCallbackParam.NOTIFY_STATUS_FAIL.equals(param.getNotifyStatus()))) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+        StatementPayOrderDO statementPayOrderDO = statementPaySupport.findByNo(param.getBusinessOrderNo());
+        if (statementPayOrderDO == null
+                || PayStatus.PAY_STATUS_PAID.equals(statementPayOrderDO.getPayStatus())
+                || PayStatus.PAY_STATUS_FAILED.equals(statementPayOrderDO.getPayStatus())) {
+            result.setErrorCode(ErrorCode.SYSTEM_EXCEPTION);
+            return result;
+        }
+
+        StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementPayOrderDO.getStatementOrderId());
+        updateStatementOrderResult(statementOrderDO, statementPayOrderDO.getOtherAmount(), statementPayOrderDO.getPayRentAmount(), statementPayOrderDO.getPayRentDepositAmount(), statementPayOrderDO.getPayDepositAmount(), currentTime, loginUserId);
+
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -433,14 +451,22 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
 
+        updateStatementOrderResult(statementOrderDO, otherAmount, payRentAmount, payRentDepositAmount, payDepositAmount, currentTime, loginUser.getUserId());
+        result.setResult(true);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    void updateStatementOrderResult(StatementOrderDO statementOrderDO, BigDecimal otherAmount, BigDecimal rentAmount, BigDecimal rentDepositAmount, BigDecimal depositAmount, Date currentTime, Integer loginUserId) {
+
         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
         statementOrderDO.setStatementOtherPaidAmount(BigDecimalUtil.add(statementOrderDO.getStatementOtherPaidAmount(), otherAmount));
-        statementOrderDO.setStatementRentPaidAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentPaidAmount(), payRentAmount));
-        statementOrderDO.setStatementRentDepositPaidAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositPaidAmount(), payRentDepositAmount));
-        statementOrderDO.setStatementDepositPaidAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositPaidAmount(), payDepositAmount));
+        statementOrderDO.setStatementRentPaidAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentPaidAmount(), rentAmount));
+        statementOrderDO.setStatementRentDepositPaidAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositPaidAmount(), rentDepositAmount));
+        statementOrderDO.setStatementDepositPaidAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositPaidAmount(), depositAmount));
         statementOrderDO.setStatementPaidTime(currentTime);
         statementOrderDO.setUpdateTime(currentTime);
-        statementOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        statementOrderDO.setUpdateUser(loginUserId.toString());
         statementOrderMapper.update(statementOrderDO);
         Map<Integer, BigDecimal> orderPaidMap = new HashMap<>();
         for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDO.getStatementOrderDetailDOList()) {
@@ -456,7 +482,7 @@ public class StatementServiceImpl implements StatementService {
                 statementOrderDetailDO.setStatementDetailOtherPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailOtherPaidAmount(), needStatementDetailOtherPayAmount));
                 statementOrderDetailDO.setStatementDetailPaidTime(currentTime);
                 statementOrderDetailDO.setUpdateTime(currentTime);
-                statementOrderDetailDO.setUpdateUser(loginUser.getUserId().toString());
+                statementOrderDetailDO.setUpdateUser(loginUserId.toString());
                 statementOrderDetailMapper.update(statementOrderDetailDO);
                 orderPaidMap.put(statementOrderDetailDO.getOrderId(), BigDecimalUtil.add(orderPaidMap.get(statementOrderDetailDO.getOrderId()), needStatementDetailRentPayAmount));
             }
@@ -473,11 +499,8 @@ public class StatementServiceImpl implements StatementService {
             orderDO.setTotalPaidOrderAmount(BigDecimalUtil.add(orderDO.getTotalPaidOrderAmount(), paidAmount));
             orderDO.setPayTime(currentTime);
             orderMapper.update(orderDO);
-            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_PAID, null, currentTime, loginUser.getUserId());
+            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_PAID, null, currentTime, loginUserId);
         }
-        result.setResult(true);
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
     }
 
     @Override

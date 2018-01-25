@@ -86,4 +86,8 @@ public class StatementPaySupport {
     public StatementPayOrderDO getLastRecord(Integer statementOrderId) {
         return statementPayOrderMapper.findByStatementOrderId(statementOrderId);
     }
+
+    public StatementPayOrderDO findByNo(String statementPayOrderNo) {
+        return statementPayOrderMapper.findByNo(statementPayOrderNo);
+    }
 }
