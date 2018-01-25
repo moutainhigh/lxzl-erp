@@ -6,17 +6,16 @@ import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
-import com.lxzl.erp.common.domain.customer.pojo.*;
+import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerPersonGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.*;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.customer.CustomerService;
-import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerPersonGroup;
 import com.lxzl.se.common.domain.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -69,6 +68,18 @@ public class CustomerController {
     @RequestMapping(value = "verifyCustomer", method = RequestMethod.POST)
     public Result verifyCustomer(@RequestBody Customer customer, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = customerService.verifyCustomer(customer.getCustomerNo(), customer.getCustomerStatus(), customer.getVerifyRemark());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "addShortReceivableAmount", method = RequestMethod.POST)
+    public Result addShortReceivableAmount(@RequestBody @Validated(AddCustomerShortLimitReceivableAmountGroup.class)Customer customer, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.addShortReceivableAmount(customer);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "addStatementDate", method = RequestMethod.POST)
+    public Result addStatementDate(@RequestBody @Validated(AddCustomerStatementDateGroup.class)Customer customer, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.addStatementDate(customer);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -167,4 +178,5 @@ public class CustomerController {
         ServiceResult<String, String> serviceResult = customerService.enableCustomer(customer);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
 }

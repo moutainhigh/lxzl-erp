@@ -88,7 +88,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC10002018010100005");
+        customer.setCustomerNo("LXCC10002018010800035");
+        customer.setOwner(500003);
         CustomerCompany customerCompany = new CustomerCompany();
 
         //首次所需设备
@@ -427,5 +428,21 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         Customer customer = new Customer();
         customer.setCustomerNo("LXCC10002018010800035");
         TestResult testResult = getJsonTestResult("/customer/enableCustomer",customer);
+    }
+
+    @Test
+    public void addShortReceivableAmount() throws Exception {
+        Customer customer = new Customer();
+        customer.setCustomerNo("LXCC10002018010800035");
+        customer.setShortLimitReceivableAmount(new BigDecimal(5000));
+        TestResult testResult = getJsonTestResult("/customer/addShortReceivableAmount",customer);
+    }
+
+    @Test
+    public void addStatementDate() throws Exception {
+        Customer customer = new Customer();
+        customer.setCustomerNo("LXCC10002018010800035");
+        customer.setStatementDate(20);
+        TestResult testResult = getJsonTestResult("/customer/addStatementDate",customer);
     }
 }

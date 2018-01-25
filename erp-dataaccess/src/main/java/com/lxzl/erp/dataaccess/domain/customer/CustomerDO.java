@@ -4,6 +4,7 @@ import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class CustomerDO  extends BaseDO {
 
@@ -18,6 +19,9 @@ public class CustomerDO  extends BaseDO {
 	private Integer owner;		//数据归属人，跟单员
 	private Integer unionUser;  //联合开发人
 	private Integer customerStatus;  //客户状态，0初始化，1资料提交，2审核通过，3资料驳回
+    private Date localizationTime;	//属地化时间
+    private BigDecimal shortLimitReceivableAmount; //短租应收上限
+    private Integer statementDate; //结算时间（天），20和31两种情况，如果为空取系统设定
 
 	private BigDecimal firstApplyAmount;		// 首期申请额度
 	private BigDecimal laterApplyAmount;		// 后期申请额度
@@ -169,4 +173,28 @@ public class CustomerDO  extends BaseDO {
 	public void setLaterApplyAmount(BigDecimal laterApplyAmount) {
 		this.laterApplyAmount = laterApplyAmount;
 	}
+
+    public Date getLocalizationTime() {
+        return localizationTime;
+    }
+
+    public void setLocalizationTime(Date localizationTime) {
+        this.localizationTime = localizationTime;
+    }
+
+    public BigDecimal getShortLimitReceivableAmount() {
+        return shortLimitReceivableAmount;
+    }
+
+    public void setShortLimitReceivableAmount(BigDecimal shortLimitReceivableAmount) {
+        this.shortLimitReceivableAmount = shortLimitReceivableAmount;
+    }
+
+    public Integer getStatementDate() {
+        return statementDate;
+    }
+
+    public void setStatementDate(Integer statementDate) {
+        this.statementDate = statementDate;
+    }
 }

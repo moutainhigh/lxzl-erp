@@ -48,6 +48,8 @@ public class ErrorCode {
     public static final String USER_PASSWORD_TOO_SIMPLE = "J100020";
     public static final String USER_OLD_PASSWORD_NOT_NULL = "J100021";
     public static final String USER_NEW_PASSWORD_NOT_NULL = "J100022";
+    public static final String USER_OWNER_NOT_EXISTS = "J100023";
+    public static final String USER_UNION_NOT_EXISTS = "J100024";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -419,6 +421,13 @@ public class ErrorCode {
     public static final String STATEMENT_PAY_TYPE_ERROR = "J500069";
     public static final String STATEMENT_PAY_FAILED = "J500070";
     public static final String STATEMENT_PAY_AMOUNT_DIFF_ERROR = "J500071";
+    public static final String SHORT_LIMIT_RECEIVABLE_AMOUNT_NOT_NULL = "J500072";
+    public static final String CUSTOMER_OWNER_NOT_CHANGE_ELECTRIC_SALE_COMPANY = "J500073";
+    public static final String CUSTOMER_UNION_USER_NOT_CHANGE_ELECTRIC_SALE_COMPANY = "J500074";
+    public static final String CUSTOMER_OWNER_IS_NOT_HEADER_COMPANY = "J500075";
+    public static final String CUSTOMER_UNION_USER_IS_NOT_HEADER_COMPANY = "J500076";
+    public static final String STATEMENT_DATE_NOT_NULL = "J500077";
+
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -600,6 +609,8 @@ public class ErrorCode {
         MAP.put(USER_PASSWORD_TOO_SIMPLE, "密码包含大写字母、小写字母、数字、特殊符号中的至少三类，且长度在8到20之间");
         MAP.put(USER_OLD_PASSWORD_NOT_NULL, "旧密码不能为空");
         MAP.put(USER_NEW_PASSWORD_NOT_NULL, "新密码不能为空");
+        MAP.put(USER_OWNER_NOT_EXISTS, "不存在填写的开发员，请查询清楚");
+        MAP.put(USER_UNION_NOT_EXISTS, "不存在填写的联合开发员，请查询清楚");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
@@ -836,6 +847,12 @@ public class ErrorCode {
         MAP.put(BENEFICIARY_ACCOUNT_IS_MATH, "收款帐号只能数字和（-）");
         MAP.put(BENEFICIARY_ACCOUNT_IS_LENGTH, "收款帐号长度不能超过30");
         MAP.put(SUPPLIER_CODE_IS_EXISTS, "自定义供应商编号已经存在");
+        MAP.put(SHORT_LIMIT_RECEIVABLE_AMOUNT_NOT_NULL, "客户的短期应收上限金额不能为空");
+        MAP.put(CUSTOMER_OWNER_NOT_CHANGE_ELECTRIC_SALE_COMPANY, "客户的开发人员不能由地方分公司转为电销人员");
+        MAP.put(CUSTOMER_UNION_USER_NOT_CHANGE_ELECTRIC_SALE_COMPANY, "客户的联合开发员不能由地方分公司转为电销人员");
+        MAP.put(CUSTOMER_OWNER_IS_NOT_HEADER_COMPANY, "客户的开发员不能为总公司人员");
+        MAP.put(CUSTOMER_UNION_USER_IS_NOT_HEADER_COMPANY, "客户的联合开发员不能为总公司人员");
+        MAP.put(STATEMENT_DATE_NOT_NULL, "客户的结算时间不能为空");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
