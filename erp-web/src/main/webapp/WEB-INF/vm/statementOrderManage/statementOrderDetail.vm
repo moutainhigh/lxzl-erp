@@ -95,7 +95,7 @@
                                         <th>租赁类型</th>
                                         <th>期数</th>
                                         <th>结算单金额</th>
-                                        <th>其它费用</th>
+##                                        <th>其它费用</th>
                                         <th>预计支付时间</th>
                                         <th>已经支付金额</th>
                                         <th>结算支付时间</th>
@@ -125,7 +125,7 @@
                                         <td>{{itemRentTypeValue}}</td>
                                         <td>{{statementDetailPhase}}</td>
                                         <td>￥{{#price}}{{statementDetailAmount}}{{/price}}</td>
-                                        <td>￥{{#price}}{{statementDetailOtherAmount}}{{/price}}</td>
+##                                        <td>￥{{#price}}{{statementDetailOtherAmount}}{{/price}}</td>
                                         <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
                                         <td>￥{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>
                                         <td>{{#shortTime}}{{statementDetailPaidTime}}{{/shortTime}}</td>
