@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.statement.impl;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
@@ -97,7 +98,7 @@ public class StatementServiceImpl implements StatementService {
         Date currentTime = new Date();
         Date rentStartTime = orderDO.getRentStartTime();
 
-        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, loginUser.getUserId());
+        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, loginUser == null ? null : loginUser.getUserId());
 
         // 生成单子后，本次需要付款的金额
         BigDecimal thisNeedPayAmount = BigDecimal.ZERO;
@@ -291,7 +292,6 @@ public class StatementServiceImpl implements StatementService {
         return addStatementOrderDetailDOList;
     }
 
-
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> weixinPayStatementOrder(String statementOrderNo, String openId, String ip) {
@@ -361,6 +361,17 @@ public class StatementServiceImpl implements StatementService {
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
+
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> weixinPayCallback(WeixinPayCallbackParam param) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
 
     String payVerify(StatementOrderDO statementOrderDO) {
         if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())
