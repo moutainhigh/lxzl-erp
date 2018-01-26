@@ -44,8 +44,18 @@
                                         <input type="text" name="workflowReferNo" id="workflowReferNo" class="form-control input-sm bradius" autocomplete="off" placeholder="工作流关联编号">
                                     </div>
                                 </div>
-                                <select name="verifyStatus" id="verifyStatus" class="hide"></select>
-                                <select name="workflowType" id="workflowType" class="hide"></select>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="verifyStatus" id="verifyStatus"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="workflowType" id="workflowType"></select>
+                                    </div>
+                                </div>
+##                                <select name="verifyStatus" id="verifyStatus" class="hide"></select>
+##                                <select name="workflowType" id="workflowType" class="hide"></select>
                             </form>
                         </div>
                     </div>

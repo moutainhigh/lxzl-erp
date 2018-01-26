@@ -49,7 +49,12 @@
                                         <select class="form-control input-sm bradius" name="warehouseId" id="warehouseId"></select>
                                     </div>
                                 </div>
-                                <select name="peerDeploymentOrderStatus" id="peerDeploymentOrderStatus" class="hide"></select>
+##                                <select name="peerDeploymentOrderStatus" id="peerDeploymentOrderStatus" class="hide"></select>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="peerDeploymentOrderStatus" id="peerDeploymentOrderStatus"></select>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>

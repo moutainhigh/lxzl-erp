@@ -46,7 +46,11 @@
                                             <input type="text" name="modelName" id="modelName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入型号名称">
                                         </div>
                                     </div>
-                                    <select name="materialType" id="materialType" class="hide"></select>
+                                    <div class="form-group pull-right mn mr10">
+                                        <div class="input-group">
+                                            <select class="form-control input-sm bradius" name="materialType" id="materialType"></select>
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
                         </div>

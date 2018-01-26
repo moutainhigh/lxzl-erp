@@ -49,7 +49,12 @@
                                         <select class="form-control input-sm bradius" name="ownerWarehouseId" id="ownerWarehouseId"></select>
                                     </div>
                                 </div>
-                                <select name="equipmentStatus" id="equipmentStatus" class="hide"></select>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="equipmentStatus" id="equipmentStatus"></select>
+                                    </div>
+                                </div>
+##                                <select name="equipmentStatus" id="equipmentStatus" class="hide"></select>
                             </form>
                         </div>
                     </div>

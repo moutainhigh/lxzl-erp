@@ -54,7 +54,12 @@
                                             <option value="">目标仓库</option>
                                         </select>
                                     </div>
-                                    <select name="deploymentOrderStatus" id="deploymentOrderStatus" class="hide"></select>
+##                                    <select name="deploymentOrderStatus" id="deploymentOrderStatus" class="hide"></select>
+                                    <div class="form-group pull-right mn mr10">
+                                        <div class="input-group">
+                                            <select class="form-control input-sm bradius" name="deploymentOrderStatus" id="deploymentOrderStatus"></select>
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
                         </div>

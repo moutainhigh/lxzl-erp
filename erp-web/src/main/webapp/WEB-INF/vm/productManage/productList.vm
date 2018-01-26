@@ -57,7 +57,12 @@
                                             <select class="form-control input-sm bradius" name="brandId" id="brandId"></select>
                                         </div>
                                     </div>
-                                    <select name="isRent" id="isRentMultiselect" class="hide"></select>
+                                    <div class="form-group pull-right mn mr10">
+                                        <div class="input-group">
+                                            <select class="form-control input-sm bradius" name="isRent" id="isRent"></select>
+                                        </div>
+                                    </div>
+##                                    <select name="isRent" id="isRentMultiselect" class="hide"></select>
                                 </form>
                             </div>
                         </div>

@@ -48,6 +48,11 @@
                                     <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                         <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
                                     </div>
+                                    <div class="form-group pull-right mn mr10">
+                                        <div class="input-group">
+                                            <select class="form-control input-sm bradius" name="orderStatus" id="orderStatus"></select>
+                                        </div>
+                                    </div>
                                     <div class="form-group pull-right mn mr10" style="width: 210px;">
                                         <input type="hidden" name="createStartTime" id="createStartTime" />
                                         <input type="hidden" name="createEndTime" id="createEndTime" />
@@ -56,14 +61,6 @@
                                             <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                                         </div>
                                     </div>
-
-                                    <script type="text/html" id="orderStatusSelectTpl">
-                                        <option value="">全部</option>
-                                        {{#orderStatus}}
-                                        <option value={{num}}>{{value}}</option>
-                                        {{/orderStatus}}
-                                    </script>
-                                    <select name="orderStatus" id="orderStatus" class="hide"></select>
                                 </form>
                             </div>
                         </div>
