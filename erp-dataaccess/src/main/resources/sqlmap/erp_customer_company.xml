@@ -237,8 +237,11 @@
 	</select>
 	<select id="findCustomerCompanyByParams" resultMap="CustomerCompanyDO" parameterType="map">
 
-		SELECT <include refid="column_List"/>
+		SELECT <include refid="column_List"/>,eac.city_name as cityName,ead.district_name as districtName,eap.province_name as provinceName
 		FROM erp_customer_company ecc
+		LEFT JOIN erp_area_city eac on eac.id = ecc.city and eac.data_status=1
+		LEFT JOIN erp_area_district ead on ead.id = ecc.district and ead.data_status=1
+		LEFT JOIN erp_area_province eap on eap.id = ecc.province and eap.data_status=1
 		<where>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != ''">
 				and ecc.customer_no = #{maps.customerCompanyQueryParam.customerNo, jdbcType=VARCHAR}
