@@ -1,6 +1,8 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.statistics.StatisticsIncomePageParam;
+import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIncome;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIndexInfo;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -10,6 +12,7 @@ import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,6 +34,15 @@ public class StatisticsController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    /**
+     * 收入统计
+     * @param statisticsIncomePageParam
+     * @return
+     */
+    @RequestMapping(value = "queryIncome", method = RequestMethod.POST)
+    public Result queryIncome(@RequestBody @Validated StatisticsIncomePageParam statisticsIncomePageParam, BindingResult validResult) {
+        return resultGenerator.generate(statisticsService.queryIncome(statisticsIncomePageParam));
+    }
 
     @Autowired
     private ResultGenerator resultGenerator;

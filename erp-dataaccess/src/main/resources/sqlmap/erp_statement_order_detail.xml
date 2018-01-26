@@ -37,6 +37,10 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<result column="rent_type" jdbcType="INTEGER" property="rentType" />
+		<result column="goods_count" jdbcType="INTEGER" property="goodsCount" />
+		<result column="goods_unit_amount" jdbcType="DECIMAL" property="goodsUnitAmount" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -88,7 +92,39 @@
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
-
+	<select id="listAllForStatistics" resultMap="StatementOrderDetailDO" parameterType="map">
+		SELECT <include refid="column_List"/>,
+		(CASE WHEN esod.order_item_type = 1 THEN eop.rent_type WHEN esod.order_item_type = 2 THEN eom.rent_type end) rent_type,
+		(CASE WHEN esod.order_item_type = 1 THEN eop.product_count WHEN esod.order_item_type = 2 THEN eom.material_count end) goods_count,
+		(CASE WHEN esod.order_item_type = 1 THEN eop.product_unit_amount WHEN esod.order_item_type = 2 THEN eom.material_unit_amount end) goods_unit_amount
+		FROM erp_statement_order_detail esod
+		LEFT JOIN erp_order_product eop ON eop.id = esod.order_item_refer_id AND eop.data_status=1 AND esod.order_item_type = 1
+		LEFT JOIN erp_order_material eom ON eom.id = esod.order_item_refer_id AND eom.data_status=1 AND esod.order_item_type = 2
+		LEFT JOIN erp_customer ec ON esod.customer_id = ec.id
+		LEFT JOIN erp_order eo1 ON eop.order_id = eo1.id AND eo1.data_status=1
+		LEFT JOIN erp_order eo2 ON eom.order_id = eo2.id AND eo2.data_status=1
+		LEFT JOIN erp_user eu ON eu.id=(CASE WHEN esod.order_item_type = 1 THEN eo1.order_seller_id WHEN esod.order_item_type = 2 THEN eo2.order_seller_id END)
+		WHERE esod.data_status = 1 AND esod.order_type = 1
+		<if test="maps.incomeQueryParam.rentLengthType!=null">
+			AND (CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type WHEN esod.order_item_type = 2 THEN eom.rent_length_type end) = #{maps.incomeQueryParam.rentLengthType}
+		</if>
+		<if test="maps.incomeQueryParam.customerName!=null&amp;&amp; maps.incomeQueryParam.customerName != ''">
+			AND ec.customer_name LIKE CONCAT('%','${maps.incomeQueryParam.customerName}','%' )
+		</if>
+		<if test="maps.incomeQueryParam.subCompanyId!=null">
+			AND (CASE WHEN esod.order_item_type = 1 THEN eo1.order_sub_company_id WHEN esod.order_item_type = 2 THEN eo2.order_sub_company_id END) = #{maps.incomeQueryParam.subCompanyId}
+		</if>
+		<if test="maps.incomeQueryParam.salesmanName!=null&amp;&amp; maps.incomeQueryParam.salesmanName != ''">
+			AND eu.real_name LIKE CONCAT('%','${maps.incomeQueryParam.salesmanName}','%' )
+		</if>
+		AND (
+		(#{maps.incomeQueryParam.startTime}>=esod.statement_start_time
+		AND  esod.statement_end_time>= #{maps.incomeQueryParam.startTime})
+		OR
+		(#{maps.incomeQueryParam.endTime}>=esod.statement_start_time
+		AND  esod.statement_end_time>= #{maps.incomeQueryParam.endTime})
+		)
+	</select>
 	<sql id="set_column_sql">
 		<set>
 			<if test="statementOrderId != null">
