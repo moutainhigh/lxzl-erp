@@ -1134,6 +1134,12 @@ public class StatementServiceImpl implements StatementService {
                         statementOrderDO.setStatementAmount(BigDecimal.ZERO);
                         statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(), diffAmount));
                     }
+                    // 结算单不能为负数
+                    if (BigDecimalUtil.compare(statementOrderDO.getStatementRentAmount(), BigDecimal.ZERO) < 0) {
+                        BigDecimal diffAmount = BigDecimalUtil.sub(BigDecimal.ZERO, statementOrderDO.getStatementRentAmount());
+                        statementOrderDO.setStatementRentAmount(BigDecimal.ZERO);
+                        statementOrderDetailDO.setStatementDetailRentAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentAmount(), diffAmount));
+                    }
                     statementOrderDO.setStatementDepositAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositAmount(), statementOrderDetailDO.getStatementDetailDepositAmount()));
                     statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositAmount()));
                     statementOrderDO.setStatementRentAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentAmount(), statementOrderDetailDO.getStatementDetailRentAmount()));
