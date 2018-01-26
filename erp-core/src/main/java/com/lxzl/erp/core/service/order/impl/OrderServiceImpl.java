@@ -110,8 +110,7 @@ public class OrderServiceImpl implements OrderService {
         saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
-        Order saveOrder = queryOrderByNo(orderDO.getOrderNo()).getResult();
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), FastJsonUtil.toJSONString(saveOrder), currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(),null, currentTime, loginUser.getUserId());
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
@@ -321,8 +320,7 @@ public class OrderServiceImpl implements OrderService {
             customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
         }
 
-        Order saveOrder = queryOrderByNo(orderDO.getOrderNo()).getResult();
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), FastJsonUtil.toJSONString(saveOrder), currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
         result.setResult(orderNo);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -845,8 +843,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
         customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), orderDO.getTotalCreditDepositAmount());
         // 记录订单时间轴
-        Order saveOrder = queryOrderByNo(orderDO.getOrderNo()).getResult();
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), FastJsonUtil.toJSONString(saveOrder), currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
@@ -968,8 +965,7 @@ public class OrderServiceImpl implements OrderService {
 
 
         // 记录订单时间轴
-        Order saveOrder = queryOrderByNo(orderDO.getOrderNo()).getResult();
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), FastJsonUtil.toJSONString(saveOrder), currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
 
         result.setResult(param.getOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -1313,8 +1309,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(dbRecordOrder);
 
         // 记录订单时间轴
-        Order saveOrder = queryOrderByNo(dbRecordOrder.getOrderNo()).getResult();
-        orderTimeAxisSupport.addOrderTimeAxis(dbRecordOrder.getId(), dbRecordOrder.getOrderStatus(), FastJsonUtil.toJSONString(saveOrder), currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(dbRecordOrder.getId(), dbRecordOrder.getOrderStatus(), null, currentTime, loginUser.getUserId());
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order.getOrderNo());
@@ -1371,7 +1366,7 @@ public class OrderServiceImpl implements OrderService {
                         throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NEW_LIMIT);
                     }
                     BigDecimal skuPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? productSku.getNewSkuPrice() : productSku.getSkuPrice();
-                    if (customerRiskManagementDO.getSingleLimitPrice() != null && BigDecimalUtil.compare(skuPrice, customerRiskManagementDO.getSingleLimitPrice()) >= 0) {
+                    if (customerRiskManagementDO.getSingleLimitPrice() != null && BigDecimalUtil.compare(skuPrice, customerRiskManagementDO.getSingleLimitPrice()) > 0) {
                         throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT);
                     }
 
@@ -1549,8 +1544,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
 
         // 记录订单时间轴
-        Order saveOrder = queryOrderByNo(orderDO.getOrderNo()).getResult();
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), FastJsonUtil.toJSONString(saveOrder), currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
         return result;

@@ -421,6 +421,7 @@ CREATE TABLE `erp_customer_risk_management` (
   `credit_amount_used` decimal(15,2) NOT NULL DEFAULT '0.00' COMMENT '已用授信额度',
   `short_collect_credit_amount` decimal(15,2) NOT NULL DEFAULT '0.00' COMMENT '短租待收授信金额',
   `short_collect_credit_amount_used` decimal(15,2) NOT NULL DEFAULT '0.00' COMMENT '已用短租待收授信金额',
+  `is_full_deposit` int(11) NOT NULL DEFAULT '0' COMMENT '是否是全额押金客户',
   `deposit_cycle` int(11) DEFAULT NULL COMMENT '押金期数',
   `payment_cycle` int(11) DEFAULT NULL COMMENT '付款期数',
   `apple_deposit_cycle` int(11) DEFAULT NULL COMMENT '苹果设备押金期数',
