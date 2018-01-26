@@ -15,6 +15,7 @@
         <result column="order_seller_id" jdbcType="INTEGER" property="orderSellerId" />
         <result column="order_seller_name" jdbcType="VARCHAR" property="orderSellerName" />
         <result column="deposit_paid_amount" jdbcType="DECIMAL" property="depositPaidAmount" />
+        <result column="other_amount" jdbcType="DECIMAL" property="otherAmount" />
         <result column="rent_deposit_paid_amount" jdbcType="DECIMAL" property="rentDepositPaidAmount" />
         <result column="return_deposit_paid_amount" jdbcType="DECIMAL" property="returnDepositPaidAmount" />
         <result column="return_rent_deposit_paid_amount" jdbcType="DECIMAL" property="returnRentDepositPaidAmount" />
@@ -27,12 +28,14 @@
         <result column="total_rent_deposit" jdbcType="DECIMAL" property="totalRentDeposit" />
         <result column="total_return_deposit" jdbcType="DECIMAL" property="totalReturnDeposit" />
         <result column="total_return_rent_deposit" jdbcType="DECIMAL" property="totalReturnRentDeposit" />
+        <result column="total_other_paid" jdbcType="DECIMAL" property="totalOtherPaid" />
     </resultMap>
 
     <select id="queryIncomeCount" resultMap="StatisticsIncome" parameterType="map">
         SELECT COUNT(DISTINCT (esod.order_item_refer_id)) total_count,
         SUM(CASE WHEN esod.statement_detail_type = 2 THEN esod.statement_detail_rent_deposit_paid_amount ELSE 0 END ) total_rent_deposit,
         SUM(CASE WHEN esod.statement_detail_type = 2 THEN esod.statement_detail_deposit_paid_amount ELSE 0 END ) total_deposit,
+        SUM(esod.statement_detail_other_paid_amount) total_other_paid,
         SUM(CASE WHEN esord.return_type=1 THEN esord.return_amount ELSE 0 END ) total_return_rent_deposit,
         SUM(CASE WHEN esord.return_type=2 THEN esord.return_amount ELSE 0 END ) total_return_deposit
         FROM erp_statement_order_detail esod
@@ -76,6 +79,7 @@
         WHEN esod.order_item_type = 2 THEN eom.rent_length_type END ) rent_length_type,
         SUM(CASE WHEN esod.statement_detail_type = 2 THEN esod.statement_detail_rent_deposit_paid_amount ELSE 0 END ) rent_deposit_paid_amount,
         SUM(CASE WHEN esod.statement_detail_type = 2 THEN esod.statement_detail_deposit_paid_amount ELSE 0 END ) deposit_paid_amount,
+        SUM(esod.statement_detail_other_paid_amount) total_other_paid,
         SUM(CASE WHEN esord.return_type=1 THEN esord.return_amount ELSE 0 END ) return_rent_deposit_paid_amount,
         SUM(CASE WHEN esord.return_type=2 THEN esord.return_amount ELSE 0 END ) return_deposit_paid_amount,
         MIN(eu.id) order_seller_id,MIN(eu.real_name) order_seller_name,

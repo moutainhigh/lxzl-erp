@@ -22,6 +22,7 @@ public class StatisticsIncome implements Serializable {
     private BigDecimal totalReturnRentDeposit;    //总退租金押金
     private BigDecimal totalRent;    //总租金
     private BigDecimal totalPrepayRent;    //总预付租金
+    private BigDecimal totalOtherPaid;    //总其他费用
     private BigDecimal totalIncome;    //总收入
     private Page<StatisticsIncomeDetail> statisticsIncomeDetailPage;    //统计项分页
 
@@ -88,6 +89,14 @@ public class StatisticsIncome implements Serializable {
 
     public void setTotalIncome(BigDecimal totalIncome) {
         this.totalIncome = totalIncome;
+    }
+
+    public BigDecimal getTotalOtherPaid() {
+        return totalOtherPaid;
+    }
+
+    public void setTotalOtherPaid(BigDecimal totalOtherPaid) {
+        this.totalOtherPaid = totalOtherPaid;
     }
 
     public Page<StatisticsIncomeDetail> getStatisticsIncomeDetailPage() {
