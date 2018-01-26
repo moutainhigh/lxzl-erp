@@ -6,9 +6,6 @@
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
-##    <script type="text/javascript">
-##        common_load_css('${staticCommon}/rental/css','dropzone.css');
-##    </script>
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
@@ -65,13 +62,6 @@
                                         <select class="form-control input-sm bradius" name="bulkMaterialStatus" id="bulkMaterialStatus"></select>
                                     </div>
                                 </div>
-##                                <div class="form-group pull-right mn mr10" style="width: 120px;">
-##                                    <div class="input-group">
-##                                        <select class="form-control input-sm bradius" name="ownerWarehouseId" id="ownerWarehouseId"></select>
-##                                    </div>
-##                                </div>
-##                                <select name="bulkMaterialType" id="bulkMaterialType" class="hide"></select>
-##                                <select name="bulkMaterialStatus" id="bulkMaterialStatus" class="hide"></select>
                             </form>
                         </div>
                     </div>
