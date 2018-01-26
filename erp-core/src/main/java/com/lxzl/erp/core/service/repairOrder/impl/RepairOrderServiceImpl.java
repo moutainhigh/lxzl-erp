@@ -203,8 +203,10 @@ public class RepairOrderServiceImpl implements RepairOrderService {
                 serviceResult.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
                 return serviceResult;
             }
+            String verifyMatters = "1.维修原因，2维修的设备的数量和每个设备标号，3维修的物料数量和散料编号";
+
             //调用提交审核服务
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_REPAIR, repairOrderDO.getRepairOrderNo(), verifyUser, null, commitRemark);
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_REPAIR, repairOrderDO.getRepairOrderNo(), verifyUser, verifyMatters, commitRemark);
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 repairOrderDO.setRepairOrderStatus(RepairOrderStatus.REPAIR_ORDER_STATUS_VERIFYING);
@@ -217,7 +219,6 @@ public class RepairOrderServiceImpl implements RepairOrderService {
                 return serviceResult;
             }
         } else {
-            //todo 这里代表不需要审核，状态设置错误,  已改
             repairOrderDO.setRepairOrderStatus(RepairOrderStatus.REPAIR_ORDER_STATUS_WAIT_REPAIR);
             repairOrderDO.setUpdateTime(new Date());
             repairOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
