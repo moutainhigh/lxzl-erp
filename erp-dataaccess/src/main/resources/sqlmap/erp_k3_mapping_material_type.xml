@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingMaterialTypeMapper">
+
+	<resultMap id="K3MappingMaterialTypeDO" type="com.lxzl.erp.dataaccess.domain.k3.K3MappingMaterialTypeDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="erp_material_type_code" jdbcType="VARCHAR" property="erpMaterialTypeCode" />
+		<result column="k3_material_type_code" jdbcType="VARCHAR" property="k3MaterialTypeCode" />
+		<result column="material_type_name" jdbcType="VARCHAR" property="materialTypeName" />
+	</resultMap>
+
+	<sql id="column_List">
+		ekmmt.id,ekmmt.erp_material_type_code,ekmmt.k3_material_type_code,ekmmt.material_type_name
+	</sql>
+
+	<select id="findById" resultMap="K3MappingMaterialTypeDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_k3_mapping_material_type ekmmt 
+		WHERE ekmmt.id = #{id, jdbcType=INTEGER}
+	</select>
+	<select id="findByErpCode" resultMap="K3MappingMaterialTypeDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_k3_mapping_material_type ekmmt
+		WHERE ekmmt.erp_material_type_code = #{erpCode}
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ekmmt.id) FROM erp_k3_mapping_material_type ekmmt 
+
+	</select>
+
+	<select id="listPage" resultMap="K3MappingMaterialTypeDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_k3_mapping_material_type ekmmt 
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="erpMaterialTypeCode != null">
+				erp_material_type_code = #{erpMaterialTypeCode,jdbcType=VARCHAR},
+			</if>
+			<if test="k3MaterialTypeCode != null">
+				k3_material_type_code = #{k3MaterialTypeCode,jdbcType=VARCHAR},
+			</if>
+			<if test="materialTypeName != null">
+				material_type_name = #{materialTypeName,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3MappingMaterialTypeDO">
+		INSERT INTO erp_k3_mapping_material_type <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3MappingMaterialTypeDO">
+		UPDATE erp_k3_mapping_material_type <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
