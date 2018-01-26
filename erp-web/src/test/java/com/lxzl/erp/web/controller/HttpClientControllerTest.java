@@ -5,8 +5,11 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.DeploymentType;
 import com.lxzl.erp.common.domain.ApplicationConfig;
+import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrder;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrderProduct;
+import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.getIpAndMac.impl.IpAndMacServiceImpl;
 import com.lxzl.se.common.util.secret.MD5Util;
 import org.junit.Test;
@@ -25,6 +28,13 @@ import static org.junit.Assert.*;
  * Time : Created in ${Time}
  */
 public class HttpClientControllerTest extends ERPUnTransactionalTest {
+    @Autowired
+    CustomerService customerService;
+    @Test
+    public void test() throws Exception {
+        ServiceResult<String, Customer> serviceResult = customerService.queryCustomerByCompanyName("新的测试数据");
+    }
+
     @Test
     public void importSupplierXlsxDataTest() throws Exception {
 
