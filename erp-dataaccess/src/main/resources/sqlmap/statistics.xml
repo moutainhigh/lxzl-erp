@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper">
+
+    <resultMap id="StatisticsIncomeDetail" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsIncomeDetail">
+        <result column="order_item_refer_id" jdbcType="INTEGER" property="orderItemReferId" />
+        <result column="order_item_type" jdbcType="INTEGER" property="orderItemType" />
+        <result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+        <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
+        <result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
+        <result column="order_seller_id" jdbcType="INTEGER" property="orderSellerId" />
+        <result column="order_seller_name" jdbcType="VARCHAR" property="orderSellerName" />
+        <result column="deposit_paid_amount" jdbcType="DECIMAL" property="depositPaidAmount" />
+        <result column="rent_deposit_paid_amount" jdbcType="DECIMAL" property="rentDepositPaidAmount" />
+        <result column="return_deposit_paid_amount" jdbcType="DECIMAL" property="returnDepositPaidAmount" />
+        <result column="return_rent_deposit_paid_amount" jdbcType="DECIMAL" property="returnRentDepositPaidAmount" />
+        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+    </resultMap>
+
+    <resultMap id="StatisticsIncome" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsIncome">
+        <result column="total_count" jdbcType="INTEGER" property="totalCount" />
+        <result column="total_deposit" jdbcType="DECIMAL" property="totalDeposit" />
+        <result column="total_rent_deposit" jdbcType="DECIMAL" property="totalRentDeposit" />
+        <result column="total_return_deposit" jdbcType="DECIMAL" property="totalReturnDeposit" />
+        <result column="total_return_rent_deposit" jdbcType="DECIMAL" property="totalReturnRentDeposit" />
+    </resultMap>
+
+    <select id="queryIncomeCount" resultMap="StatisticsIncome" parameterType="map">
+        SELECT COUNT(DISTINCT (esod.order_item_refer_id)) total_count,
+        SUM(CASE WHEN esod.statement_detail_type = 2 THEN esod.statement_detail_rent_deposit_paid_amount ELSE 0 END ) total_rent_deposit,
+        SUM(CASE WHEN esod.statement_detail_type = 2 THEN esod.statement_detail_deposit_paid_amount ELSE 0 END ) total_deposit,
+        SUM(CASE WHEN esord.return_type=1 THEN esord.return_amount ELSE 0 END ) total_return_rent_deposit,
+        SUM(CASE WHEN esord.return_type=2 THEN esord.return_amount ELSE 0 END ) total_return_deposit
+        FROM erp_statement_order_detail esod
+        LEFT JOIN erp_order_product eop ON eop.id = esod.order_item_refer_id AND eop.data_status=1 AND esod.order_item_type = 1
+        LEFT JOIN erp_order_material eom ON eom.id = esod.order_item_refer_id AND eom.data_status=1 AND esod.order_item_type = 2
+        LEFT JOIN erp_statement_order_return_detail esord ON esod.id = esord.statement_order_id AND esord.data_status=1 AND esod.statement_detail_type = 4
+        AND esord.return_time>=#{maps.incomeQueryParam.startTime} AND #{maps.incomeQueryParam.endTime}>=esord.return_time
+        LEFT JOIN erp_customer ec ON esod.customer_id = ec.id
+        LEFT JOIN erp_order eo1 ON eop.order_id = eo1.id AND eo1.data_status=1
+        LEFT JOIN erp_order eo2 ON eom.order_id = eo2.id AND eo2.data_status=1
+        LEFT JOIN erp_user eu ON eu.id=(CASE WHEN esod.order_item_type = 1 THEN eo1.order_seller_id WHEN esod.order_item_type = 2 THEN eo2.order_seller_id END)
+        WHERE esod.data_status = 1 AND esod.order_type = 1
+        <if test="maps.incomeQueryParam.rentLengthType!=null">
+            AND (CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type WHEN esod.order_item_type = 2 THEN eom.rent_length_type end) = #{maps.incomeQueryParam.rentLengthType}
+        </if>
+        <if test="maps.incomeQueryParam.customerName!=null&amp;&amp; maps.incomeQueryParam.customerName != ''">
+            AND ec.customer_name LIKE CONCAT('%','${maps.incomeQueryParam.customerName}','%' )
+        </if>
+        <if test="maps.incomeQueryParam.subCompanyId!=null">
+            AND (CASE WHEN esod.order_item_type = 1 THEN eo1.order_sub_company_id WHEN esod.order_item_type = 2 THEN eo2.order_sub_company_id END) = #{maps.incomeQueryParam.subCompanyId}
+        </if>
+        <if test="maps.incomeQueryParam.salesmanName!=null&amp;&amp; maps.incomeQueryParam.salesmanName != ''">
+            AND eu.real_name LIKE CONCAT('%','${maps.incomeQueryParam.salesmanName}','%' )
+        </if>
+        AND (
+        esord.return_time>=#{maps.incomeQueryParam.startTime}
+        AND #{maps.incomeQueryParam.endTime}>=esord.return_time
+        OR
+        (
+        (#{maps.incomeQueryParam.startTime}>=esod.statement_start_time
+        AND  esod.statement_end_time>= #{maps.incomeQueryParam.startTime})
+        OR
+        (#{maps.incomeQueryParam.endTime}>=esod.statement_start_time
+        AND  esod.statement_end_time>= #{maps.incomeQueryParam.endTime})
+        )
+        )
+    </select>
+
+    <select id="queryIncome" resultMap="StatisticsIncomeDetail" parameterType="map">
+        SELECT esod.order_item_refer_id , esod.order_item_type ,(CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type
+        WHEN esod.order_item_type = 2 THEN eom.rent_length_type END ) rent_length_type,
+        SUM(CASE WHEN esod.statement_detail_type = 2 THEN esod.statement_detail_rent_deposit_paid_amount ELSE 0 END ) rent_deposit_paid_amount,
+        SUM(CASE WHEN esod.statement_detail_type = 2 THEN esod.statement_detail_deposit_paid_amount ELSE 0 END ) deposit_paid_amount,
+        SUM(CASE WHEN esord.return_type=1 THEN esord.return_amount ELSE 0 END ) return_rent_deposit_paid_amount,
+        SUM(CASE WHEN esord.return_type=2 THEN esord.return_amount ELSE 0 END ) return_deposit_paid_amount,
+        MIN(eu.id) order_seller_id,MIN(eu.real_name) order_seller_name,
+        MIN(esc.id) sub_company_id,MIN(esc.sub_company_name) sub_company_name,
+        MIN(ec.id) sub_company_id,MIN(esc.sub_company_name) sub_company_name,
+        MIN(ec.customer_no) customer_no,MIN(ec.customer_name)customer_name,
+        MIN(esod.statement_detail_paid_time) pay_time,MIN(esod.create_time) esod_create_time
+        FROM erp_statement_order_detail esod
+        LEFT JOIN erp_order_product eop ON eop.id = esod.order_item_refer_id AND eop.data_status=1 AND esod.order_item_type = 1
+        LEFT JOIN erp_order_material eom ON eom.id = esod.order_item_refer_id AND eom.data_status=1 AND esod.order_item_type = 2
+        LEFT JOIN erp_statement_order_return_detail esord ON esod.id = esord.statement_order_id AND esord.data_status=1 AND esod.statement_detail_type = 4
+        AND esord.return_time>=#{maps.incomeQueryParam.startTime} AND #{maps.incomeQueryParam.endTime}>=esord.return_time
+        LEFT JOIN erp_customer ec ON esod.customer_id = ec.id
+        LEFT JOIN erp_order eo1 ON eop.order_id = eo1.id AND eo1.data_status=1
+        LEFT JOIN erp_order eo2 ON eom.order_id = eo2.id AND eo2.data_status=1
+        LEFT JOIN erp_user eu ON eu.id=(CASE WHEN esod.order_item_type = 1 THEN eo1.order_seller_id WHEN esod.order_item_type = 2 THEN eo2.order_seller_id END)
+        LEFT JOIN erp_sub_company esc ON esc.id=(CASE WHEN esod.order_item_type = 1 THEN eo1.order_sub_company_id WHEN esod.order_item_type = 2 THEN eo2.order_sub_company_id END) and esc.data_status = 1
+        WHERE esod.data_status = 1 AND esod.order_type = 1
+        <if test="maps.incomeQueryParam.rentLengthType!=null">
+            AND (CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type WHEN esod.order_item_type = 2 THEN eom.rent_length_type end) = #{maps.incomeQueryParam.rentLengthType}
+        </if>
+        <if test="maps.incomeQueryParam.customerName!=null&amp;&amp; maps.incomeQueryParam.customerName != ''">
+            AND ec.customer_name LIKE CONCAT('%','${maps.incomeQueryParam.customerName}','%' )
+        </if>
+        <if test="maps.incomeQueryParam.subCompanyId!=null">
+            AND (CASE WHEN esod.order_item_type = 1 THEN eo1.order_sub_company_id WHEN esod.order_item_type = 2 THEN eo2.order_sub_company_id END) = #{maps.incomeQueryParam.subCompanyId}
+        </if>
+        <if test="maps.incomeQueryParam.salesmanName!=null&amp;&amp; maps.incomeQueryParam.salesmanName != ''">
+            AND eu.real_name LIKE CONCAT('%','${maps.incomeQueryParam.salesmanName}','%' )
+        </if>
+        AND (
+        esord.return_time>=#{maps.incomeQueryParam.startTime}
+        AND #{maps.incomeQueryParam.endTime}>=esord.return_time
+        OR
+        (
+        (#{maps.incomeQueryParam.startTime}>=esod.statement_start_time
+        AND  esod.statement_end_time>= #{maps.incomeQueryParam.startTime})
+        OR
+        (#{maps.incomeQueryParam.endTime}>=esod.statement_start_time
+        AND  esod.statement_end_time>= #{maps.incomeQueryParam.endTime})
+        )
+        )
+        GROUP BY rent_length_type,esod.order_item_refer_id,esod.order_item_type
+        ORDER BY esod_create_time ASC
+        LIMIT #{maps.start},#{maps.pageSize}
+    </select>
+</mapper>

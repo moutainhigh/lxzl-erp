@@ -149,9 +149,17 @@
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderNo != null &amp;&amp; maps.statementOrderQueryParam.statementOrderNo != ''">
 				and eso.statement_order_no like CONCAT('%','${maps.statementOrderQueryParam.statementOrderNo}','%' )
 			</if>
-			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null">
-				and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
-			</if>
+			<!--<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null">-->
+				<!--and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}-->
+			<!--</if>-->
+			<choose>
+				<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">
+					and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
+				</when>
+				<otherwise>
+					and eso.statement_status in (0,4,8,16,20)
+				</otherwise>
+			</choose>
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
 				<![CDATA[ AND eso.statement_expect_pay_time >= #{maps.statementOrderQueryParam.statementExpectPayStartTime} ]]>
 			</if>
@@ -196,9 +204,17 @@
 				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != ''">
 					and ec.customer_name like CONCAT('%','${maps.statementOrderQueryParam.statementOrderCustomerName}','%' )
 				</if>
-				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null">
-					and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
-				</if>
+				<!--<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null">-->
+					<!--and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}-->
+				<!--</if>-->
+				<choose>
+					<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">
+						and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
+					</when>
+					<otherwise>
+						and eso.statement_status in (0,4,8,16,20)
+					</otherwise>
+				</choose>
 				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
 					<![CDATA[ AND eso.statement_expect_pay_time >= #{maps.statementOrderQueryParam.statementExpectPayStartTime} ]]>
 				</if>

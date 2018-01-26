@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.base.BasePO;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -25,6 +26,8 @@ public class Product extends BasePO {
     private String keyword;
     private String remark;
     private Integer dataStatus;
+    protected Date createTime;
+    protected Date updateTime;
 
     private List<ProductImg> productImgList;           // 商品图片
     private List<ProductImg> productDescImgList;           // 商品图片
@@ -218,5 +221,21 @@ public class Product extends BasePO {
 
     public void setOldProductCount(Integer oldProductCount) {
         this.oldProductCount = oldProductCount;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

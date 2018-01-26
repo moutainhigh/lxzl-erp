@@ -13,6 +13,8 @@ public class ErrorCode {
     public static final String EMAIL_ERROR = "J000002";
     public static final String DATA_NOT_BELONG_TO_YOU = "J000003";
     public static final String DATA_HAVE_NO_PERMISSION = "J000004";
+    public static final String START_TIME_NOT_NULL = "J000989";
+    public static final String END_TIME_NOT_NULL = "J000990";
     public static final String COMMITTED_CAN_NOT_REPEAT = "J000991";
     public static final String COMMIT_ONLY_SELF = "J000992";
     public static final String RECORD_USED_CAN_NOT_DELETE = "J000993";
@@ -580,6 +582,8 @@ public class ErrorCode {
         MAP.put(EMAIL_ERROR, "邮箱格式有误");
         MAP.put(DATA_NOT_BELONG_TO_YOU, "数据不属于你，无法操作！");
         MAP.put(DATA_HAVE_NO_PERMISSION, "您没有权限这么做！");
+        MAP.put(START_TIME_NOT_NULL, "起始时间不能为空");
+        MAP.put(END_TIME_NOT_NULL, "结束时间不能为空");
         MAP.put(COMMITTED_CAN_NOT_REPEAT, "重复提交！");
         MAP.put(COMMIT_ONLY_SELF, "只能提交自己的数据");
         MAP.put(RECORD_USED_CAN_NOT_DELETE, "数据被使用，无法删除");
