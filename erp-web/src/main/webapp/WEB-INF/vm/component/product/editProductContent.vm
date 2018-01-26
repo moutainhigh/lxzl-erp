@@ -25,7 +25,6 @@
                     <label for="unit" class="field-label">单位</label>
                     <label for="unit" class="field select">
                         <select id="unit" name="unit">
-                            <option value="303719">件</option>
                         </select>
                     </label>
                 </div>
@@ -53,7 +52,7 @@
                     <label for="isRent" class="field-label">是否在租</label>
                     <label class="field select">
                         <select id="isRent" name="isRent">
-                            <option value="1">在租</option>
+                            <option value="1">上架</option>
                             <option value="0">下架</option>
                         </select>
                         <i class="arrow"></i>

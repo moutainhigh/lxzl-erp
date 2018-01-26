@@ -104,11 +104,11 @@
         </div>
         <div class="col-md-3">
             <div class="section">
-                <label for="userName" class="field-label">是否上架</label>
+                <label for="userName" class="field-label">是否在租</label>
                 <label class="field select">
                     <select id="isRent" name="isRent">
-                        <option value="1">是</option>
-                        <option value="0">否</option>
+                        <option value="1">上架</option>
+                        <option value="0">下架</option>
                     </select>
                     <i class="arrow"></i>
                 </label>
