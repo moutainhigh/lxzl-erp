@@ -17,6 +17,7 @@ public class Supplier extends BasePO {
 	private Integer supplierId;   //字典ID，唯一
 	private String supplierNo;   //供应商编号
 	private String supplierName;   //供应商名称
+	private Integer supplierType;   //供应商类型
 	private Integer province;   //省份ID，对应字典ID
 	private Integer city;   //城市ID，对应字典ID
 	private Integer district;   //区ID，对应字典ID
@@ -212,4 +213,12 @@ public class Supplier extends BasePO {
 	public String getSupplierCode() { return supplierCode; }
 
 	public void setSupplierCode(String supplierCode) { this.supplierCode = supplierCode; }
+
+	public Integer getSupplierType() {
+		return supplierType;
+	}
+
+	public void setSupplierType(Integer supplierType) {
+		this.supplierType = supplierType;
+	}
 }

@@ -1,22 +1,15 @@
 package com.lxzl.erp.core.service.getIpAndMac.impl;
 
-import com.lxzl.erp.common.domain.getIpAndMac.UdpGetClientMacAddr;
 import com.lxzl.erp.common.domain.getIpAndMac.pojo.IpAndMac;
 import com.lxzl.erp.core.service.getIpAndMac.IpAndMacService;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @Author : XiaoLuYu
