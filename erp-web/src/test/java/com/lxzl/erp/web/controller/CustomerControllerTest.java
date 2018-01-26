@@ -1,6 +1,5 @@
 package com.lxzl.erp.web.controller;
 
-import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CustomerType;
@@ -36,7 +35,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("测试公司名321");
+        customerCompany.setCompanyName("测试公司名321aa");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324590");
         customerCompany.setAddress("企业信息详细地址测试");
@@ -292,10 +291,21 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateRisk() throws Exception {
         CustomerRiskManagement customerRiskManagement = new CustomerRiskManagement();
-        customerRiskManagement.setCustomerNo("CC201711301106206721011");
+        customerRiskManagement.setCustomerNo("LXCC-1000-20180126-00054");
         customerRiskManagement.setPaymentCycle(12);
         customerRiskManagement.setCreditAmount(new BigDecimal(80000d));
         customerRiskManagement.setDepositCycle(12);
+        customerRiskManagement.setIsFullDeposit(0);
+        customerRiskManagement.setIsLimitApple(1);
+        customerRiskManagement.setApplePayMode(0);
+        customerRiskManagement.setAppleDepositCycle(11);
+        customerRiskManagement.setApplePaymentCycle(12);
+        customerRiskManagement.setSingleLimitPrice(new BigDecimal(1000));
+        customerRiskManagement.setIsLimitNew(1);
+        customerRiskManagement.setNewPayMode(0);
+        customerRiskManagement.setNewDepositCycle(11);
+        customerRiskManagement.setNewPaymentCycle(12);
+        customerRiskManagement.setSingleLimitPrice(new BigDecimal(1000));
         customerRiskManagement.setRemark("这是一个备注");
         TestResult result = getJsonTestResult("/customer/updateRisk", customerRiskManagement);
     }

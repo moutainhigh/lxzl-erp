@@ -9,9 +9,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Date;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomerRiskManagement extends BasePO {
@@ -51,7 +50,7 @@ public class CustomerRiskManagement extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
-
+	private Integer isFullDeposit;   //是否是全额押金客户
 
 	private String customerName;
 
@@ -253,5 +252,13 @@ public class CustomerRiskManagement extends BasePO {
 
 	public void setReturnVisitFrequency(Integer returnVisitFrequency) {
 		this.returnVisitFrequency = returnVisitFrequency;
+	}
+
+	public Integer getIsFullDeposit() {
+		return isFullDeposit;
+	}
+
+	public void setIsFullDeposit(Integer isFullDeposit) {
+		this.isFullDeposit = isFullDeposit;
 	}
 }
