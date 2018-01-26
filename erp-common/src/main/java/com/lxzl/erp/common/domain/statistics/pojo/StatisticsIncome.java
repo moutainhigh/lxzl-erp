@@ -22,7 +22,7 @@ public class StatisticsIncome implements Serializable {
     private BigDecimal totalReturnRentDeposit;    //总退租金押金
     private BigDecimal totalRent;    //总租金
     private BigDecimal totalPrepayRent;    //总预付租金
-    private BigDecimal totalOtherPaid;    //总其他费用
+    private BigDecimal totalOtherPaid;    //总其他收入
     private BigDecimal totalIncome;    //总收入
     private Page<StatisticsIncomeDetail> statisticsIncomeDetailPage;    //统计项分页
 
