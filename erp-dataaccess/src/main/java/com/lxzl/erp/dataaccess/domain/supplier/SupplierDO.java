@@ -11,6 +11,7 @@ public class SupplierDO  extends BaseDO {
 	private Integer id;
 	private String supplierNo;
 	private String supplierName;
+	private Integer supplierType;
 	private Integer province;
 	private Integer city;
 	private Integer district;
@@ -167,4 +168,12 @@ public class SupplierDO  extends BaseDO {
 	public String getSupplierCode() { return supplierCode; }
 
 	public void setSupplierCode(String supplierCode) { this.supplierCode = supplierCode; }
+
+	public Integer getSupplierType() {
+		return supplierType;
+	}
+
+	public void setSupplierType(Integer supplierType) {
+		this.supplierType = supplierType;
+	}
 }

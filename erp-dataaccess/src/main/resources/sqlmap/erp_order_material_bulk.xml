@@ -49,7 +49,7 @@
 
 	<select id="findRentByCustomerIdAndBulkMaterialId" resultMap="OrderMaterialBulkDO">
 		SELECT <include refid="column_List"/> FROM erp_order eo INNER JOIN erp_order_material_bulk eomb ON eo.id=eomb.order_id AND eomb.data_status=1
-		WHERE eo.buyer_customer_id = #{customerId} AND eo.data_status=1 AND eo.order_status=20 AND eomb.bulk_material_id=#{bulkMaterialId} AND eomb.actual_return_time IS NULL
+		WHERE eo.buyer_customer_id = #{customerId} AND eo.data_status=1 AND (eo.order_status = 20 OR eo.order_status = 16) AND eomb.bulk_material_id=#{bulkMaterialId} AND eomb.actual_return_time IS NULL
 	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(eomb.id) FROM erp_order_material_bulk eomb 

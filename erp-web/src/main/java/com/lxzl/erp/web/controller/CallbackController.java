@@ -1,9 +1,11 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.payment.WeixinPayParam;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
+import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.se.common.domain.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,9 +28,12 @@ public class CallbackController {
     @Autowired
     private ResultGenerator resultGenerator;
 
+    @Autowired
+    private StatementService statementService;
+
     @RequestMapping(value = "weixinPay", method = RequestMethod.POST)
-    public Result weixinPay(@RequestBody WeixinPayParam param, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
+    public Result weixinPay(@RequestBody WeixinPayCallbackParam param, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = statementService.weixinPayCallback(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

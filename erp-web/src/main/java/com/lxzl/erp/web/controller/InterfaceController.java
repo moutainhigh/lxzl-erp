@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.validGroup.customer.QueryCustomerGroup;
@@ -13,6 +14,7 @@ import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.statement.StatementService;
+import com.lxzl.erp.web.util.NetworkUtil;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -45,6 +49,9 @@ public class InterfaceController extends BaseController {
 
     @Autowired
     private StatementService statementService;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @RequestMapping(value = "queryOrderByNo", method = RequestMethod.POST)
     public Result queryOrderByNo(@RequestBody OrderQueryParam order, BindingResult validResult) {
@@ -73,6 +80,12 @@ public class InterfaceController extends BaseController {
     @RequestMapping(value = "queryStatementOrderDetail", method = RequestMethod.POST)
     public Result queryStatementOrderDetail(@RequestBody StatementOrderQueryParam statementOrderQueryParam, BindingResult validResult) {
         ServiceResult<String, StatementOrder> serviceResult = statementService.queryStatementOrderDetail(statementOrderQueryParam.getStatementOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "weixinPayStatementOrder", method = RequestMethod.POST)
+    public Result weixinPayStatementOrder(@RequestBody StatementOrderPayParam param, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = statementService.weixinPayStatementOrder(param.getStatementOrderNo(), param.getOpenId(), NetworkUtil.getIpAddress(request));
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }

@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CustomerType;
@@ -22,7 +23,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setUnionUser(500006);
+        customer.setOwner(500021);
+        customer.setUnionUser(500003);
 
         List<CustomerCompanyNeed> customerCompanyNeedFirstList = new ArrayList<>();
         CustomerCompanyNeed customerCompanyNeed = new CustomerCompanyNeed();
@@ -34,7 +36,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("测试公司名");
+        customerCompany.setCompanyName("测试公司名321");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324590");
         customerCompany.setAddress("企业信息详细地址测试");
@@ -74,6 +76,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     public void addCustomerPerson() throws Exception {
         Customer customer = new Customer();
         customer.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
+        customer.setOwner(500021);
         CustomerPerson customerPerson = new CustomerPerson();
         customerPerson.setPersonNo("422827999857463210");
         customerPerson.setConnectRealName("测试个人用户紧急联系人姓名");
@@ -88,7 +91,9 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC10002018010100005");
+        customer.setCustomerNo("LXCC-1000-20180125-00043");
+        customer.setOwner(500025);
+        customer.setUnionUser(500029);
         CustomerCompany customerCompany = new CustomerCompany();
 
         //首次所需设备
@@ -101,7 +106,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompanyNeedFirstList.add(customerCompanyNeed);
 
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("测试公司名");
+        customerCompany.setCompanyName("peng测试公司名100");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324578");
         customerCompany.setAddress("企业信息详细地址测试");
@@ -110,31 +115,31 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
 
 
-        Image image1 = new Image();
-        image1.setImgId(28);
-        customerCompany.setBusinessLicensePictureImage(image1);
-
-        Image image2 = new Image();
-        image2.setImgId(26);
-        customerCompany.setLegalPersonNoPictureFrontImage(image2);
-
-        Image image3 = new Image();
-        image3.setImgId(27);
-        customerCompany.setLegalPersonNoPictureBackImage(image3);
+//        Image image1 = new Image();
+//        image1.setImgId(28);
+//        customerCompany.setBusinessLicensePictureImage(image1);
+//
+//        Image image2 = new Image();
+//        image2.setImgId(26);
+//        customerCompany.setLegalPersonNoPictureFrontImage(image2);
+//
+//        Image image3 = new Image();
+//        image3.setImgId(27);
+//        customerCompany.setLegalPersonNoPictureBackImage(image3);
         customer.setCustomerCompany(customerCompany);
 
         //加入经营场所租赁合同
         List<Image> managerPlaceRentContractImageList = new ArrayList<>();
         Image image4 = new Image();
-        image4.setImgId(19);
+        image4.setImgId(40);
         Image image5 = new Image();
-        image5.setImgId(20);
+        image5.setImgId(41);
         Image image6 = new Image();
-        image6.setImgId(21);
+        image6.setImgId(42);
         managerPlaceRentContractImageList.add(image4);
         managerPlaceRentContractImageList.add(image5);
         managerPlaceRentContractImageList.add(image6);
-        customerCompany.setManagerPlaceRentContractImageList(managerPlaceRentContractImageList);
+//        customerCompany.setManagerPlaceRentContractImageList(managerPlaceRentContractImageList);
 
 
         TestResult result = getJsonTestResult("/customer/updateCompany", customer);
@@ -427,5 +432,21 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         Customer customer = new Customer();
         customer.setCustomerNo("LXCC10002018010800035");
         TestResult testResult = getJsonTestResult("/customer/enableCustomer",customer);
+    }
+
+    @Test
+    public void addShortReceivableAmount() throws Exception {
+        Customer customer = new Customer();
+        customer.setCustomerNo("LXCC10002018010800035");
+        customer.setShortLimitReceivableAmount(new BigDecimal(5000));
+        TestResult testResult = getJsonTestResult("/customer/addShortReceivableAmount",customer);
+    }
+
+    @Test
+    public void addStatementDate() throws Exception {
+        Customer customer = new Customer();
+        customer.setCustomerNo("LXCC10002018010800035");
+        customer.setStatementDate(20);
+        TestResult testResult = getJsonTestResult("/customer/addStatementDate",customer);
     }
 }

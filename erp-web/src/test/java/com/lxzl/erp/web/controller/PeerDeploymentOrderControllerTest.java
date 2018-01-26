@@ -27,7 +27,7 @@ import java.util.List;
  * @author kai
  * @date 2018-1-15 09:40
  */
-public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
+public class PeerDeploymentOrderControllerTest extends ERPTransactionalTest {
 
     /**
      * Test 创建同行调拨单

@@ -16,6 +16,7 @@ public class RoleQueryParam extends BasePageParam {
     private String roleName;
     private Integer departmentId;
     private Integer subCompanyId;
+    private String fullRoleName;
 
     public Integer getRoleId() {
         return roleId;
@@ -47,5 +48,13 @@ public class RoleQueryParam extends BasePageParam {
 
     public void setSubCompanyId(Integer subCompanyId) {
         this.subCompanyId = subCompanyId;
+    }
+
+    public String getFullRoleName() {
+        return fullRoleName;
+    }
+
+    public void setFullRoleName(String fullRoleName) {
+        this.fullRoleName = fullRoleName;
     }
 }

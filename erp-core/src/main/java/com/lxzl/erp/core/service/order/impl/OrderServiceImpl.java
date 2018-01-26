@@ -1660,7 +1660,9 @@ public class OrderServiceImpl implements OrderService {
         if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
             for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
                 String materialRecordKey = orderMaterialDO.getMaterialId() + "-" + orderMaterialDO.getRentType() + "-" + orderMaterialDO.getRentTimeLength() + "-" + orderMaterialDO.getIsNewMaterial();
-                if (dbOrderMaterialDOMap.get(materialRecordKey) != null) {
+                OrderMaterialDO dbOrderMaterialDO = dbOrderMaterialDOMap.get(materialRecordKey);
+                if (dbOrderMaterialDO != null) {
+                    orderMaterialDO.setId(dbOrderMaterialDO.getId());
                     updateOrderMaterialDOMap.put(materialRecordKey, orderMaterialDO);
                     dbOrderMaterialDOMap.remove(materialRecordKey);
                 } else {

@@ -99,4 +99,17 @@ public interface CustomerService {
     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.common.domain.Page<com.lxzl.erp.common.domain.customer.pojo.Customer>>
     */
     ServiceResult<String, Customer> queryCustomerByCompanyName(String companyName);
+
+    /**
+     * 增加短租应收上限金额
+     * @param customer
+     * @return
+     */
+    ServiceResult<String,String> addShortReceivableAmount(Customer customer);
+
+    /**
+     * 增加客户结算时间
+     *
+     */
+    ServiceResult<String,String> addStatementDate(Customer customer);
 }

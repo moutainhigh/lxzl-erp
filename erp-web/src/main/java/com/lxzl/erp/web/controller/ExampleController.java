@@ -83,7 +83,11 @@ public class ExampleController extends BaseController {
 		// "[{\"0\": \"表名\"},{\"1\": \"分表字段\"},{\"2\": \"表个数\"},{\"3\": \"数据库\"}]";
 		String excelFieldDefinition = getStringParameter(ContextConstants.EXPORT_FIELD);
 		String file = getStringParameter("file");
-		List<UserDO> objects = new ArrayList<UserDO>();
+		List<UserDO> objects = new ArrayList<UserDO>();//这里是数据
+		UserDO userDO = new UserDO();
+		userDO.setUserName("张三");
+		userDO.setRealName("李四");
+		objects.add(userDO);
 		excelExport(file, objects, excelFieldDefinition, true, 1, response, UserDO.class);
 	}
 

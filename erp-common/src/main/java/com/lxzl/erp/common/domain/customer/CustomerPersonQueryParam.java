@@ -7,18 +7,16 @@ import java.util.List;
 public class CustomerPersonQueryParam extends BasePageParam {
 
     private Integer customerId;
-
     private String customerNo;//客户编号
     private String realName;   //真实姓名
     private String phone;   //手机号
     private Integer province;   //省份ID，省份ID
     private Integer city;   //城市ID，对应城市ID
     private Integer district;   //区ID，对应区ID
-    private Integer isDisabled;   //是否禁用，0不可用；1可用
-
     private String personNo;//身份证号'
     private String connectRealName;//紧急联系人姓名'
     private String connectPhone;//紧急联系人电话'
+    private Integer isDisabled;   //是否禁用，1不可用；0可用
 
     private List<Integer> passiveUserIdList;
 

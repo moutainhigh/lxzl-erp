@@ -6,13 +6,11 @@ import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerPersonGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerPersonGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.*;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -26,7 +24,7 @@ public class Customer extends BasePO {
 	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL , groups = {IdGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class})
 	private String customerNo;   //客戶编号
 	private String customerName; //客户名称
-	private Integer isDisabled;   //是否禁用，0不可用；1可用
+	private Integer isDisabled;   //是否禁用，1不可用；0可用
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -39,7 +37,11 @@ public class Customer extends BasePO {
 	private Integer customerStatus;  //客户状态，0初始化，1资料提交，2审核通过，3资料驳回
 	private BigDecimal firstApplyAmount;		// 首期申请额度
 	private BigDecimal laterApplyAmount;		// 后期申请额度
-
+	private Date localizationTime;	//属地化时间
+	@Min(value=0,message = ErrorCode.SHORT_LIMIT_RECEIVABLE_AMOUNT_NOT_NULL , groups = {AddCustomerShortLimitReceivableAmountGroup.class})
+	private BigDecimal shortLimitReceivableAmount; //短租应收上限
+	@NotNull(message = ErrorCode.STATEMENT_DATE_NOT_NULL , groups = {AddCustomerStatementDateGroup.class})
+	private Integer statementDate; //结算时间（天），20和31两种情况，如果为空取系统设定
 
 	private String ownerName; //业务员姓名
 	private String unionUserName; //联合业务员姓名
@@ -283,5 +285,29 @@ public class Customer extends BasePO {
 
 	public void setCustomerUnionUser(User customerUnionUser) {
 		this.customerUnionUser = customerUnionUser;
+	}
+
+	public Date getLocalizationTime() {
+		return localizationTime;
+	}
+
+	public void setLocalizationTime(Date localizationTime) {
+		this.localizationTime = localizationTime;
+	}
+
+	public BigDecimal getShortLimitReceivableAmount() {
+		return shortLimitReceivableAmount;
+	}
+
+	public void setShortLimitReceivableAmount(BigDecimal shortLimitReceivableAmount) {
+		this.shortLimitReceivableAmount = shortLimitReceivableAmount;
+	}
+
+	public Integer getStatementDate() {
+		return statementDate;
+	}
+
+	public void setStatementDate(Integer statementDate) {
+		this.statementDate = statementDate;
 	}
 }

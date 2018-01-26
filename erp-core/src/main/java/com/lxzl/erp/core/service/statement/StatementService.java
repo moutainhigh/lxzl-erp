@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.statement;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.se.core.service.BaseService;
@@ -56,6 +57,14 @@ public interface StatementService extends BaseService {
      * @return 支付参数
      */
     ServiceResult<String, String> weixinPayStatementOrder(String statementOrderNo,String openId, String ip);
+
+    /**
+     * 微信支付回调
+     *
+     * @param param 回调参数
+     * @return 支付参数
+     */
+    ServiceResult<String, String> weixinPayCallback(WeixinPayCallbackParam param);
 
 
     /**
