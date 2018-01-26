@@ -2644,6 +2644,7 @@ CREATE TABLE `erp_k3_mapping_supplier` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `erp_supplier_code` varchar(64) COMMENT 'erp的供应商编码',
   `k3_supplier_code` varchar(64) COMMENT 'K3供应商编码',
+  `supplier_type` int(11) DEFAULT 0 COMMENT '用户类型,0为普通供应商，1为同行供应商',
   `supplier_name` varchar(64) COMMENT '供应商名称',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3供应商映射';

@@ -11,6 +11,7 @@ public class K3MappingSupplier extends BasePO {
 	private Integer k3MappingSupplierId;   //唯一标识
 	private String erpSupplierCode;   //erp的供应商编码
 	private String k3SupplierCode;   //K3供应商编码
+	private Integer supplierType;
 	private String supplierName;   //供应商名称
 
 
@@ -46,4 +47,11 @@ public class K3MappingSupplier extends BasePO {
 		this.supplierName = supplierName;
 	}
 
+	public Integer getSupplierType() {
+		return supplierType;
+	}
+
+	public void setSupplierType(Integer supplierType) {
+		this.supplierType = supplierType;
+	}
 }

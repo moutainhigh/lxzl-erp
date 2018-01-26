@@ -9,6 +9,7 @@ public class K3MappingSupplierDO  extends BaseDO {
 	private Integer id;
 	private String erpSupplierCode;
 	private String k3SupplierCode;
+	private Integer supplierType;
 	private String supplierName;
 
 	public Integer getId(){
@@ -43,4 +44,11 @@ public class K3MappingSupplierDO  extends BaseDO {
 		this.supplierName = supplierName;
 	}
 
+	public Integer getSupplierType() {
+		return supplierType;
+	}
+
+	public void setSupplierType(Integer supplierType) {
+		this.supplierType = supplierType;
+	}
 }

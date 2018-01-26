@@ -6,11 +6,12 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="erp_supplier_code" jdbcType="VARCHAR" property="erpSupplierCode" />
 		<result column="k3_supplier_code" jdbcType="VARCHAR" property="k3SupplierCode" />
+		<result column="supplier_type" jdbcType="INTEGER" property="supplierType" />
 		<result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
 	</resultMap>
 
 	<sql id="column_List">
-		ekms.id,ekms.erp_supplier_code,ekms.k3_supplier_code,ekms.supplier_name
+		ekms.id,ekms.erp_supplier_code,ekms.k3_supplier_code,ekms.supplier_type,ekms.supplier_name
 	</sql>
 
 	<select id="findById" resultMap="K3MappingSupplierDO" parameterType="java.lang.Integer">
@@ -18,9 +19,9 @@
 		WHERE ekms.id = #{id, jdbcType=INTEGER}
 	</select>
 
-	<select id="findByErpCode" resultMap="K3MappingSupplierDO" parameterType="java.lang.String">
+	<select id="findByErpCodeAndType" resultMap="K3MappingSupplierDO" parameterType="java.util.Map">
 		SELECT <include refid="column_List"/> FROM erp_k3_mapping_supplier ekms
-		WHERE ekms.erp_supplier_code = #{erpCode, jdbcType=VARCHAR}
+		WHERE ekms.erp_supplier_code = #{erpCode, jdbcType=VARCHAR} and ekms.supplier_type = #{supplierType, jdbcType=INTEGER}
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -39,6 +40,9 @@
 			</if>
 			<if test="k3SupplierCode != null">
 				k3_supplier_code = #{k3SupplierCode,jdbcType=VARCHAR},
+			</if>
+			<if test="supplierType != null">
+				supplier_type = #{supplierType,jdbcType=INTEGER},
 			</if>
 			<if test="supplierName != null">
 				supplier_name = #{supplierName,jdbcType=VARCHAR},

@@ -19,6 +19,7 @@ public class CommonConstant {
     public static final int NO  = 0;
 
     public static final String UPLOAD_USER = "admin";
+    public static final Integer SYSTEM_STATEMENT_DATE = 31;
 
     public static final Integer SUPER_MENU_ID = 200000;
     public static final Integer SUPER_DATA_DICTIONARY_ID = 300000;
